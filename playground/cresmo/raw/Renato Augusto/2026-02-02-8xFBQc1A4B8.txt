@@ -1,0 +1,312 @@
+---
+video_title: "Arquitetura Orientada a Eventos | O Guia Completo para ESCALAR MICROSSERVIÇOS do Jeito Certo!"
+video_id: 8xFBQc1A4B8
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=8xFBQc1A4B8
+video_date: 2026-02-02T00:55:00+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  🔗 Leituras Recomendadas:
+  📚 Domain-Driven Design (Vlad Khononov): https://amzn.to/4pFv3QL
+  Domain Driven Design - Eric Evans: https://amzn.to/4qMY4Lq
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  
+  Fala, pessoal! Renato Augusto aqui de novo 👋
+  E dessa vez pra te ensinar uma das arquiteturas mais poderosas quando o assunto são microsserviços, sistemas distribuidos e aplicações de grande porte.
+  
+  Essa arquitetura é chamada de Event Driven Architecture ou Arquitetura Orientada a Eventos e é ela que mantem sistemas como netflix, uber, amazon e youtube no ar, suportando milhões de transaçòes por segundo e milhões de usuários simultâneos.
+  
+  Se você trabalha com microsserviços, sistemas distribuídos ou já sentiu seu código inflar absurdamente por causa de fluxos síncronos e chamadas em cadeia entre serviços, esse vídeo é pra você.
+  
+  Ao longo dessa aula completa, você vai entender por que o modelo tradicional de request/response começa a quebrar quando o sistema cresce, quais são os problemas reais de acoplamento, volumetria e falhas em cascata — e por que Event Driven Architecture faz muito mais sentido quando falamos de escala, resiliência e evolução do sistema.
+  
+  Event Storming: https://www.eventstorming.com/
+  Domain Driven Design: https://github.com/ddd-crew/ddd-starter-modelling-process
+  
+  🚀 O que você vai aprender neste vídeo: ARQUITETURA ORIENTADA A EVENTOS | O GUIA COMPLETO PARA ESCALAR MICROSSERVIÇOS 
+  
+  ✅ O que é Event Driven Architecture
+  ✅ Por que sistemas síncronos sofrem com acoplamento temporal e cascata de falhas
+  ✅ Como a volumetria de acessos impacta arquiteturas tradicionais
+  ✅ O papel de eventos, produtores, consumidores e brokers
+  ✅ Como grandes sistemas escalam usando eventos
+  ✅ Por que o código fica inflado em arquiteturas imperativas
+  ✅ Como EDA melhora resiliência, escalabilidade e extensibilidade
+  ✅ Quando usar (e quando NÃO usar) arquitetura orientada a eventos
+  
+  💡 Por que assistir?
+  🔹 Pra entender os limites reais do request/response em sistemas distribuídos
+  🔹 Pra aprender como arquitetar microsserviços que realmente escalam
+  🔹 Pra evitar código inflado, acoplamento excessivo e fluxos frágeis
+  🔹 Pra evoluir sua mentalidade de programador para arquiteto de software
+  🔹 Pra entender decisões arquiteturais usadas em sistemas de alta escala
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que trabalham com microsserviços
+  📚 Desenvolvedores que querem entender arquitetura além do CRUD
+  💼 Engenheiros e arquitetos que lidam com escalabilidade e sistemas distribuídos
+  🚀 Profissionais que querem tomar decisões arquiteturais mais maduras
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design, microsserviços e carreira tech.
+  
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 🙌
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo, pois eu sempre leio tudo e respondo sempre que posso.
+  
+  #microsserviços #systemdesign #arquiteturadesoftware #programação #backend
+---
+Fala pessoal, Renato Augusto aqui de novo e dessa vez para te ensinar uma das arquiteturas mais poderosas quando o assunto são microsserviços, sistemas distribuídos e aplicações de grande porte. Essa arquitetura é conhecida como Event Driven Architecture ou arquitetura orientada a eventos e é ela que sustenta sistemas como Netflix, Uber, Amazon e YouTube no ar lidando com milhões de transações por segundo e milhões de usuários logados simultaneamente. Então, pra gente não perder tempo aqui, vamos direto pra tela, porque tem muita coisa pra gente ver. E com toda a certeza tu vai sair daqui hoje preparado, não só para lidar com event driven na vida real, mas também completamente preparado para encarar qualquer entrevista avançada para programador ou arquiteto de software que envolva esse tipo de pergunta. Então, sem mais enrolação, bora para tema. Bom, então vamos lá,
+
+vamos direto ao ponto aqui, vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver. E a primeira coisa que a gente vai começar entendendo aqui é a arquitetura tradicional, conhecida como arquitetura cliente servidor, antes da gente entrar na arquitetura orientada a eventos. E por quê? Porque a gente precisa primeiro entender como que a arquitetura tradicional que domina a internet hoje funciona, quais são as limitações dela, quais são os problemas que ela vai trazer pra gente quando o assunto for sistemas distribuídos, microsserviços, grandes aplicações, milhões de usuários e por aí vai. E aí em cima desses problemas, é que eu vou te apresentar arquitetura orientada a eventos e como que ela vai resolver esses problemas para que com isso você tenha uma visão do todo e saiba exatamente quando utilizar esse tipo de arquitetura e quais os contextos que ela se encaixa melhor. Beleza? Então vamos lá, vamos
+
+direto ao ponto aqui para você entender isso aqui, tá? Essa imagem aqui, ela vai ilustrar literalmente como que a internet funciona nos dias de hoje, que é o quê? é a nossa arquitetura tradicional conhecida como cliente servidor, onde um lado a gente tem o nosso cliente, tá? Seja o cliente usando um navegador, um computador, um smartphone, um smart TV, tanto faz. E aí quando ela acessa um aplicativo, um site ou tanto faz, ela envia uma requisição HTTP pro nosso servidor. O nosso
+
+servidor processa essa requisição e devolve uma resposta pro cliente, tá? Uma resposta HTTP. E tudo isso aqui funciona em cima do protocolo HTTP, tá? Isso aqui é fundamento básico da internet, isso é fundamento básico da web. Isso aqui todo programador júnior, por mais iniciante que ele seja, ele tem que dominar muito bem, porque isso aqui é fundamento básico da programação.
+
+Beleza? Então essa aqui é a nossa arquitetura tradicional do dia a dia. É assim que a internet funciona, a maior parte dela pelo menos. E é assim que as coisas se comunicam e é assim que a maioria das aplicações são construídas, tá? E aí o que que a gente tem mais aqui? A gente tem aqui uma variação, né?
+
+uma variação, não a extensão dessa arquitetura, que é basicamente a gente utilizando aqui o nosso cliente para se comunicar com uma suposta API do nosso sistema aqui e a nossa API também pode se comunicar com uma outra API, tá? Então os nossos servidores eles também podem se comunicar entre si através aqui do protocolo HTTP. Isso aqui também domina aí a maior parte da internet hoje. Só que é exatamente aqui que mora o problema. Por vamos lá. Quando a gente
+
+fala de grandes aplicações de milhões de usuários, de Netflix, Uber, Mercado Livre, Walmart, Amazon e por aí vai, a gente tá falando de aplicações que lidam com milhões de requisições por hora, por minuto, por segundo e por aí vai. Então, a arquitetura tradicional, ela não vai servir pra gente. A gente vai precisar primeiro entender as limitações dela e eu vou trazer aqui a arquitetura orientada a eventos. Então, vamos lá, vamos começar fazendo aqui uma pequena simulação, tá? Vamos imaginar que a gente trabalha aqui no marketplace, no e-commerce, tanto faz. E aí dentro desse
+
+marketplace que a gente tá trabalhando, a gente tem vários microsserviços, tá? Vamos botar assim que a gente criou aqui os nossos microsserviços, tá? Cada um responsável por fazer uma coisa. Então a gente vai ter aqui o nosso microsserviço de pedidos, a gente vai ter o serviço de estoque, de notificação para enviar o e-mail, WhatsApp ou SMS lá pro usuário. A gente vai ter um serviço aqui fiscal para emissão das notas fiscais aqui dos pedidos que forem feitos. A gente vai
+
+ter aqui um serviço também para expedição, para enviar o pedido lá pro usuário, para fazer lá a separação do pedido, embalar e por aí vai. Então vamos imaginar que a gente trabalhe aqui no nosso marketplace. Poderia logicamente tá adicionar aqui um microsserviço para pagamento, antifraalude, cadastro do usuário, mas isso aqui é para exemplificar, para você conseguir entender aonde eu quero chegar com essa história, quais são os problemas dessa comunicação HTTP para que a gente consiga trazer aí a solução através de uma outra arquitetura, tá? De uma outra proposta. Então vamos lá. Toda
+
+vez que um pedido é feito, o que que precisa acontecer no nosso sistema? Bom, no nosso sistema aqui, segundo a modelagem aqui, assim que um pedido for feito, tá? O usuário foi lá, pagou o pedido, tá? Eu, mais uma vez, eu não vou colocar aqui o pagamento para não estender demais aqui o exemplo. Então, vamos supor que o pedido já foi pago, ele foi feito. E aí, o que que esse
+
+serviço de pedidos aqui precisa fazer? Ele precisa enviar uma requisição HTTP lá pro estoque para pedir para dar baixa naqueles produtos do pedido, tá? Então, os itens do pedido vão ser dado baixa aqui no nosso serviço de estoque, que vai cuidar ali do da contagem, do balanço do nosso estoque. Então, a gente tem que dar baixa nos itens daquele pedido que acabou de ser feito. Beleza?
+
+Depois disso, o que que tem que acontecer? A gente vai enviar uma notificação pro usuário, tá? Seja um e-mail, um WhatsApp, um SMS, informando que o pedido dele foi aceito, foi criado e que vai seguir aí pras próximas etapas. Então o pedido depois que retornou à resposta aqui do estoque, o que que acontece? Ele envia uma requisição agora pro serviço de notificação. E aí ele envia solicitando
+
+o quê? Para enviar uma notificação pro usuário informando que o pedido dele foi criado. Beleza? E aí agora o que que precisa acontecer? O pedido tem que aguardar a resposta da notificação e enviar uma requisição agora pro nosso serviço fiscal paraa emissão da nota fiscal. E aí nessa emissão da nota
+
+fiscal aqui, vai mais uma requisição HTTP. A nota fiscal vai ser emitida por esse serviço aqui. Depois que ela fori emitida, tem que ser enviada uma notificação pro e-mail do usuário com a nota fiscal em anexo. Então vai mais uma requisição aqui pro serviço de notificação para poder enviar essa nota pro usuário. E aí depois disso tudo ainda tem que ser enviada uma requisição pro serviço da expedição para iniciar a separação do pedido. E aí com a
+
+separação iniciada vai se dar o segmento lá, os procedimentos e tal, aguardando coleta, vai trocar o status do pedido até chegar na casa do usuário. Beleza? O lance aqui é o seguinte, tá? Se você já é um cara mais avançado, você provavelmente já tá vendo quais são os problemas aqui dessa comunicação síncrona via HTTP. Qual que é o problema? Qual que é o primeiro
+
+problema, tá? Eu vou te mostrar uma lista de problemas disso aqui da gente trabalhar com arquitetura distribuída usando HTTP, tá? Quero que você entenda isso. O problema aqui não é o protocolo HTTP, não é arquitetura cliente, servidor. O problema aqui é a gente trabalhar com microsserviços, com sistemas distribuídos, utilizando única e exclusivamente o protocolo HTTP. Vamos
+
+lá. Qual que é o primeiro problema disso aqui? O primeiro problema disso aqui é que as nossas requisições elas são síncronas. Ou seja, eu envio uma requisição e eu sou obrigado a guardar uma resposta. E aí depois disso, eu tenho que enviar outra requisição e aguardar a resposta. Depois disso, eu
+
+tenho que enviar outra requisição e aguardar resposta. Só que para para pensar, quando a gente envia uma requisição pro estoque, a gente aguarda 380 msegundos. E aí depois que essa requisição é finalizada, eu tenho que enviar um para notificação e aguardar 420 msegundos. Juntando os dois aqui, já dá quase 1 segundo. Depois a gente precisa emitir a nota fiscal. E aqui
+
+começa um dos grandes problemas, por o nosso serviço fiscal aqui, ele precisa se comunicar com o sistema da prefeitura. E geralmente sistema de prefeitura tem sérios problemas. E olha o que que vai acabar acontecendo aqui. A gente vai ter que esperar 2 segundos e meio. Então só aqui a gente já tem 3 segundos quase aqui. 3 segundos e meio
+
+aqui de tempo de resposta. Enquanto isso, o usuário tá lá agarrado, tá no delay lá 1 2 3 segundos e milhões de usuários acessando a todo o tempo aqui a nossa aplicação. Isso aqui é um grave problema. Isso aqui já é um problema nítido, tá? Mais uma vez, se você é um cara avançado, você provavelmente já tá pensando aí, vamos processar isso de forma síncrona, vamos tacar na mensageria ali e vai dar tudo certo.
+
+Calma que eu já vou falar sobre mensageria. A gente vai falar muito sobre mensageria, mas não é do jeito que você tá pensando aí, não, tá? Então, segura a onda que eu a ideia aqui é te mostrar o problema primeiro para depois você entender a solução e o por que aquela arquitetura existe. Vamos lá. Então, a gente tem aqui todo esse problema aqui. A gente vai juntar todo
+
+esse tempo de latência aqui, vai esperar todo esse tempo de resposta, tudo isso aqui acontecer para só no final conseguir concluir essa transação. Cara, isso aqui é o primeiro problema. É uma latência extremamente alta. As nossas requisições elas são síncronas. Eu eu acabo agarrando aqui o meu pedido aqui e ele fica preso esperando resposta de todo mundo. Isso aqui inclusive é uma
+
+arquitetura imperativa. A gente vai falar muito sobre isso aí ao longo do vídeo, mas eu quero que você entenda que isso aqui é algo imperativo. O meu pedido precisa controlar fluxo. Ele tem que ficar mandando requisições e dando ordens em outros serviços para que um determinado fluxo consiga chegar do início até o fim dele e concluir uma determinada etapa. Daqui a pouco a gente vai falar um pouquinho mais sobre isso, mas esse aqui é o primeiro problema, tá?
+
+Segundo problema, qual que é o segundo problema? É que se um dos serviços ficar fora do ar, a gente vai acabar derrubando os nossos outros serviços. Por qu imagina que o pedido foi lá, fez uma requisição pro estoque, depois ele fez uma requisição pra notificação e agora ele tentou fazer a emissão da nota fiscal. No momento que ele foi fazer requisição pra nota fiscal, o que que aconteceu? Nota fiscal tá fora do A. Por
+
+quê? Porque o sistema da prefeitura de repente caiu. E aí, qual que é o problema disso aqui? O problema disso aqui é o seguinte, cara. Esse cara aqui vai acabar não respondendo, vai ficar fora do ar. Esse cara aqui, o pedido vai
+
+tomar um time out lá na ponta e vai acontecer o quê? Ele também vai ficar fora do ar. E todo serviço que precisar chamar esse meu pedido aqui vai ficar fora do ar também, porque depende dele. Vai todo mundo tomando time out, vai começar um efeito dominol, um efeito cascato e você derruba a arquitetura como um todo. E aí você deve estar pensando assim: "Ah, mas isso aí é mole de resolver. a gente coloca tudo num
+
+tricat grandão lá, se deu falha, a gente simplesmente esquece a operação, deixa para lá, não conclui, bota lá que o sistema tá fora do A ou algo do tipo. Só que isso não vai resolver. Por quê? Porque repara bem, a gente teve alguns passos antes de chegar na nota fiscal. E quando a gente chega na nota fiscal e não consegue concluir, agora você é obrigado a desfazer tudo que aconteceu até esse passo da nota fiscal. Aqui a
+
+gente tá simulando que foi só uma baixa no estoque e uma notificação, mas imagina que 10 passos aconteceram, tá? 10 comunicações ali com outros serviços aconteceram para executar algum tipo de ação. E no final das contas, um serviço aleatório lá no final do fluxo tava fora do ar e agora você é obrigado a desfazer tudo que você fez. E é aí que começa o grande problema desse tipo de arquitetura utilizando HTTP. Mais uma vez, se você é um cara mais safo, isso aqui tem como resolver através de um padrão conhecido como saga, que é um padrão que vai vir desfazendo tudo que foi feito, tá, ao longo do fluxo ali.
+
+Mas isso é implementação manual, você tem que fazer na mão, é código. E aí o código desse cara vai começar a ficar inflado. Daqui a pouco a gente vai falar um pouquinho sobre código também, mas isso aqui vai ficar uma monstruosidade absurda. Fora isso, você vai ter que implementar Circuit Breaker aqui para poder impedir que um serviço acabe derrubando o outro. Cara, a tua arquitetura, ela vai começar a se tornar uma arquitetura, uma engenharia, na verdade, uma engenharia de contenção de desastres. Você começa a perder a mão da
+
+arquitetura, da modelagem, do domínio da tua aplicação para começar a se preocupar única e exclusivamente com problemas técnicos e problemas de infraestrutura. Inclusive, tem muita gente por aí que eu já vi implementando microsserviços, ensinando microsserviços, se comunicando via HTTP. Isso não se faz, cara. Lógico que uma hora ou outra ali, um serviço vai precisar se comunicar com o outro. Tá tudo bem. perfeitamente comum, algo
+
+pontual, mas o coração da tua arquitetura ser totalmente voltado pro HTTP vai dar problema sério. Isso não se faz em grandes aplicações. A gente vai falar um pouquinho mais sobre isso mais paraa frente, mas vamos lá, vamos dar continuidade aqui. Qual que é o próximo problema aqui? O próximo problema é o seguinte, é exatamente a volumetria.
+
+Imagina que hoje começou uma Black Friday na nossa empresa aqui no nosso marketplace e à meia começou a Black Friday em si, né? E as pessoas começaram a acessar. Só que nesse exato minuto que começou essa Black Friday, diversas pessoas estavam esperando para começar as promoções e a meia-noite1 começou. Só que olha o problema. Num determinado momento ali, chegou 100.000 requisições
+
+de uma vez só no nosso serviço de pedidos. O que que vai acontecer? O nosso serviço vai começar a pegar fogo, nosso servidor vai começar a pegar fogo, o banco de dados vai começar a pegar fogo e aí a gente vai ter um problema generalizado. Por quê? Porque o que que vai acontecer? A gente vai tacar fogo em
+
+toda a nossa arquitetura. Por que que isso aqui acontece? Porque vamos lá, chegou 100.000 requisições no meu serviço de pedidos. Beleza? Vamos
+
+imaginar que ele não tá conseguindo lidar com essa volumetria. Olha o que que acontece. Cada requisição que chegar no pedido, obrigatoriamente vai se transformar numa requisição pro estoque, uma pra notificação, uma pra nota fiscal, uma pra expedição, volta uma pra notificação. E no final das contas, o que que aconteceu? A gente transformou 100.000 requisições em meio milhão de
+
+requisições na arquitetura como um todo. Você acabou multiplicando o problema. Porque cada requisição que chegou no pedido obrigatoriamente teve que virar uma noque, uma na notificação, uma na nota fiscal e uma na expedição. Isso aqui vai taca fogo na arquitetura como um todo. Isso não faz nenhum sentido quando a gente fala de grandes aplicações e sistemas distribuídos. E aí
+
+tu deve estar pensando assim: "Ah, é só a gente escalar horizontalmente que a gente resolve o problema". E não, a gente não vai resolver o problema. Por quê? Porque quando a gente escala horizontalmente, a gente só vai atrasar o problema. A gente não vai resolver ele. Por qu? Vamos lá, vamos entender
+
+isso aqui. Inclusive, se você não sabe o que que é escala horizontal, o que que é escala vertical, já tem vídeo aqui no canal. Vou deixar um card aqui em cima, vou deixar o link na descrição também. Tem um vídeo completaço lá. A gente escala uma arquitetura do 0 a 1 milhão de usuários. Dá uma olhada lá depois.
+
+Mas basicamente escalar verticalmente é você adicionar mais poder computacional, mais memória RAM, mais poder de processamento no seu servidor. E escalar horizontalmente é você criar réplicas do seu servidor, colocar debaixo de um balanceador de carga e replicar também os seus bancos de dados. E aí você consegue lidar com muito mais volumetria aqui, com muito mais transações por segundo. Só que vamos olhar para essa nossa arquitetura e entender se isso aqui resolve. Isso aqui logicamente não vai resolver o problema. Por quê? Porque
+
+o nosso problema não é de processamento. O nosso problema é arquitetural. Nosso problema não vai ser processamento. Tem gente que não conhece os caminhos, vai querer escalar tudo horizontalmente achando que vai resolver. Não vai resolver. Você só vai atrasar o
+
+problema. Por que que você só vai atrasar o problema? Vamos lá. Vamos pegar aqui a nossa arquitetura totalmente escalada. E aí chegou as 100.000 requisições. Quando chegou essas
+
+100.000 1000 requisições aqui, a sua arquitetura tava exatamente do jeito que tá aqui, ó. E aí o que que acontece? Você não estava com a sua arquitetura dessa forma aqui, totalmente escalada. Por quê? Porque você não escala a
+
+arquitetura na mão. Você escala a arquitetura através de um conceito chamado de outcaling. Você vai configurar lá a sua nuvem ou seu servidor lá ou seu um prêmis lá para que a escala aconteça de maneira automática. Ou seja, o pico vai chegar e de acordo com o pico de requisições que chegar, a própria infraestrutura vai se replicando ali, vai criando novas réplicas e subindo novas instâncias ali automaticamente para poder lidar com essa volumetria. Quando esse pico de requisições baixar, aí sim as instâncias começam a ser desligadas ali para poupar recursos. Só que qual que é o problema
+
+nesse nosso cenário aqui de Black Friday? O problema disso aqui é o seguinte, cara. Autos scale nunca responde em tempo hábil, cara. O que que acontece? chega o pico de requisições até o outcaling entender o problema, subir novas instâncias, começar a preparar. Isso tem um delay. As máquinas
+
+ainda estão subindo, estão sendo configuradas. O que que acontece nesse delay de tempo? Você começa a ter este problema aqui, porque você vai perder uma enchurrada de requisições, um monte de gente vai tomar time out, um monte de gente vai ver o servidor fora do ar e você vai ter uma série de problemas e uma série de transações para você processar manualmente depois. Então, escalar horizontalmente esse tipo de arquitetura não faz sentido. E outra, repara uma coisa aqui, tá? A gente foi
+
+obrigado a escalar toda a arquitetura. Isso aqui não se paga ao longo do tempo. Isso aqui é totalmente insalubre fazer isso numa arquitetura. Você escalou literalmente tudo. Isso aqui, cara, a grosso modo, isso aqui é um monolito distribuído. Isso aqui não tem nada de
+
+microsserviços. Isso aqui não é sistema distribuído. Repara bem, a gente foi obrigado a escalar arquitetura como um todo por conta de um serviço que chegou ali uma enchurrada de requisições nele e ele tem que repassar essas requisições. A gente foi obrigado a escalar todo mundo. Isso não se sustenta no longo prazo. Isso é extremamente caro e
+
+custoso para qualquer empresa. Então isso aqui não se faz na vida real. Beleza? E aí, qual que é o próximo ponto aqui, tá? Tem mais problemas aqui ainda, logicamente, tá? O próximo problema é o
+
+seguinte, tá? O próximo problema é que, como eu falei, a nossa arquitetura é uma arquitetura imperativa. A gente tá fazendo controle de fluxo. Quando a gente fala de microsserviços, de arquiteturas distribuídas, quando a gente fala de modelagem, principalmente de domain driven design, a gente fala de desacoplamento. Nesse cenário aqui, a gente tá altamente acoplado. Por quê? O
+
+meu serviço de pedidos aqui, ele é obrigado a saber que ele tem que dar baixa no estoque, ele é obrigado a saber que tem que enviar uma notificação, ele é obrigado a saber que tem que emitir uma nota fiscal, que tem que chamar a expedição e se amanhã ou depois surgir um novo serviço aqui no meio de algum passo, algum fluxo ou regra de negócio que precisa acontecer, a gente vai ter que modificar esse código aqui também. E aí o código lá dentro vai começando a ficar desse jeitão aqui. E se você lembra lá da orientação a objetos e as boas práticas, você lembra que código não foi feito para ser dessa forma totalmente acoplado. O ideal é a gente sempre ter ali a responsabilidade única. Quando a gente fala de arquitetura e de sistemas distribuídos e principalmente de microsserviço, a gente tá falando também de responsabilidade única. Então
+
+o meu serviço de pedido, tá? O código dele lá dentro do código vai ter a chamada pro estoque, vai ter a chamada para notificação, vai ter chamada para nota fiscal, vai ter um tricat enorme, vai ter reversão de fluxo se caso alguma coisa der errado, vai ter uma, aquilo vai se tornar uma coisa tão cebosa de dar manutenção, vai fica um negócio horrível. Então você tá criando literalmente um monolito distribuído, você tá altamente acoplado, tá? Os seus serviços estão altamente acoplados um no outro. Tanto que se um end point aqui de um serviço desse mudar, você vai quebrar o pedido. E não só o pedido, você vai
+
+quebrar todo mundo que chama o determinado serviço que mudou. Então se o end point da nota fiscal mudar, você vai quebrar todo mundo que tá chamando ele. Se você mudar aqui um end point da notificação, por exemplo, você vai quebrar todo mundo que chama ele. Então você mexe num lugar, tem que dar manutenção em outro. E isso acaba trazendo também um outro problema que é o quê? é os times de desenvolvimento
+
+sendo obrigados a trabalhar no ecossistema da arquitetura como um todo. Isso não faz nenhum sentido. Nenhum, nenhum. Isso aqui não faz sentido. Por quê? Quando a gente fala de sistemas
+
+distribuídos, a gente também está falando de times distribuídos. A gente tem que ter times especialistas em cada serviço, tá? Eu sei que tem gente que vai dizer assim: "Porra, não, lá na minha empresa a gente tem cinco microsserviços e todo mundo dá manutenção em todos". Cara, presta bem atenção. Quando a gente fala de microsserviços, de sistemas distribuídos, a gente tá falando de grandes aplicações. A gente tá falando
+
+de cinco servicinhos. Isso aí você criou cinco APIs e botou para se comunicar via rede. Isso não é microsserviço, não é arquitetura distribuída. Só para você ter uma ideia, o a Netflix, por exemplo, ela tem mais de 1000 microsserviços. Como é que um desenvolvedor vai conhecer a regra de negócio que tá dentro de cada um daqueles 1000 microsserviços lá para poder dar manutenção naquilo? Não faz
+
+sentido, cara. A coisa tem que ser totalmente desacoplada. A gente não pode acoplar a nossa arquitetura. Então assim, grandes aplicações são milhares, são centenas e milhares de serviços. Não faz sentido você achar que um desenvolvedor vai conseguir dar manutenção em tudo. Então você acaba não
+
+conseguindo distribuir o seu time de desenvolvimento. E aí o que que acontece? Se eu for alterar o pedido, o cara que vai alterar o pedido, pegar a tarefa de alterar o pedido, ele também vai ter que pegar a tarefa de alterar a notificação, de alterar a nota fiscal, se for necessário ali. Cara, isso é a maior loucura. Isso aqui é pedir para perder tempo e chamar uma coisa horrível dessa de microsserviço é até um delito.
+
+Isso aqui não se faz, cara. Esse é o problema de se utilizar protocolo HTTP e comunicação via rede numa arquitetura de grande porte. Isso não se faz. Beleza? E aí, vamos lá. Qual que é a solução para
+
+todos esses problemas listados aqui? Vamos lá. A solução para isso é Event Driven Architecture, ou seja, arquitetura orientada a eventos, tá? E aí, ó, a gente vai ter aqui Netflix, Uber, LinkedIn, Amazon, Walmart, Mercado Livre e tantas outras empresas aí de grande porte que utilizam essa arquitetura. Inclusive, isso aqui cai muito em entrevista. Se você tem um
+
+sonho de trabalhar numa grande empresa como essa ou numa BigTech, você é obrigado a conhecer esse tipo de arquitetura aqui, beleza? E diferente aqui, tá, desse modelo aqui, ó, encadeado, essa coisa altamente acoplada, tá? Altamente acoplada aqui dessa arquitetura que a gente acabou de ver, a gente vai trabalhar com um conceito de eventos, tá? Fica tranquilo que isso aqui é a coisa mais simples de se entender. Você vai sair daqui entendido com tudo que você precisa saber, inclusive com algumas referências boas também para você dar uma estutada, beleza? Então vamos lá. Primeira coisa
+
+que a gente vai começar fazendo aqui é o seguinte, tá? A gente vai pegar nossa mesma arquitetura que a gente já tinha feito ali, já tinha desenvolvido lá o nosso pedido, estoque, notificação, nota fiscal, expedição e por aí vai. E a gente vai começar a trabalhar agora orientado a eventos. Como que isso aqui vai funcionar? Vamos lá. A gente tem
+
+alguns componentes na arquitetura orientada a eventos, que são os produtores, o event broker ou event. Tem a gente que prefere chamar de eventos consumidores. Só que você provavelmente já deve estar imaginando, pô, isso aí é mensageria. Não, isso aqui não é mensageria. Vai por mim, você vai entender porque que isso aqui não é mensageria. Beleza? Vamos lá. A gente
+
+vai ter o nosso broker aqui no meio e os nossos serviços não vão mais se falar entre si. Eles não vão mais enviar requisições uns pros outros ali e esperar respostas e ficar naquela coisa síncrona. A gente vai começar a transformar nossa arquitetura de uma arquitetura imperativa e síncrona numa arquitetura reativa assíncrona. Você já vai entender porqu. Vamos lá. O nosso
+
+broker aqui a gente pode utilizar algumas tecnologias aqui, tá? como o Rabit MQ, a Past Cf ou Amazon Event Bridge. Ali tem várias outras tecnologias que você pode utilizar. Não recomendo o SQS, tá? Quem já conhece a WS aí, a Amazon aí já utiliza os serviços, não recomendo SQS, porque tem alguns detalhes ali que acaba impossibilitando e atrapalhando a gente de usar aqui os nossos eventos, mas a WS tem o Amazon Event Breedge aqui, que é justamente para trabalhar com arquitetura orientada a eventos.
+
+Inclusive tem uma documentação completa sobre arquitetura orientada a eventos lá num blog da Amazon. Vou deixar o link na descrição, depois você dá uma olhada aí, beleza? Mas vamos direto ao ponto aqui. A gente tem os nossos serviços aqui, eles não se falam mais entre si, eles vão se falar agora através do nosso broker, beleza? E aí, como que isso aqui vai funcionar? Vamos lá. A gente vai ter
+
+aqui, vou selecionar aqui o nosso Rabbit MQ aqui para ser o nosso broker aqui, tá? Como exemplo. E aí o que que acontece? O nosso pedido, assim que um pedido for feito, assim que o pedido for pago, tá? Mais uma vez, eu poderia colocar aqui o serviço de pagamento, antifraalude e tudo mais, mas para exemplificar vamos imaginar que o usuário já foi lá, já pagou e aí o que que acontece? O pedido foi criado. A
+
+partir do momento que esse pedido foi criado, o que que tem que acontecer? A gente tem que simplesmente disparar um evento, tá? O meu serviço de pedido aqui, ele vai enviar um evento pro meu broker aqui, dizendo o seguinte: pedido criado. Poderia logicamente colocar isso aqui em inglês, tá? Order was created ali, ou order created, tá? Mas eu vou
+
+colocar em português para ficar mais simples aqui, mais didático para você entender. E aí ele vai disparar essa mensagem ali pra fila lá com o ID do pedido, com os dados aqui do cliente ou os itens aqui do desse pedido, o total, o endereço do cliente, assim sucessivamente. Logicamente isso aqui poderia ficar melhor, tá? Mas é para exemplificar, para você conseguir entender. E basicamente ele vai mandar essa mensagem pra fila, beleza? Essa
+
+mensagem aqui, por sua vez, quando ela chegar no nosso broker aqui, o que que vai acontecer? Vai acontecer o seguinte, depois que um pedido é criado, o que que acontece posteriormente? O estoque tem que ser dado baixa, a notificação tem que ser enviada pro usuário, a nota fiscal tem que ser emitida, a expedição tem que ser iniciada, né? A separação do pedido tem que ser iniciada, depois ele vai embalado, aguardando coleta e assim sucessivamente. Então o que que vai acontecer agora? Os nossos serviços aqui
+
+são os interessados nesse evento que acabou de acontecer chamado pedido criado. Então os meus serviços aqui, esses três serviços, eles estão conectados no meu broker e aí eles ficam ouvindo lá o tópico lá do pedido criado. Toda vez que chegar um evento na fila chamado pedido foi criado ou pedido criado ou order created ali, eu estou interessado e eu vou reagir a esse evento. Olha o que que vai acontecer. O meu estoque vai pegar essa mensagem, ele vai pegar os itens do pedido que vai est ali na nossa mensagem e ele vai dar baixa no estoque. Simples assim. A minha
+
+notificação aqui, o meu serviço de notificação, ele vai reagir a esse evento. Olha, o pedido foi criado, beleza? Então eu sei que eu tenho que enviar um SMS, um WhatsApp, um e-mail, tanto faz pro usuário, dizendo que o pedido dele foi criado, foi aceito e agora ele vai pras próximas etapas. Show de bola. A nota fiscal, por sua vez, ela também reage a um pedido criado. O
+
+pedido foi criado, ele foi pago, tá OK? Então eu preciso emitir uma nota fiscal. Então ela vai ficar conectada na fila, vai ouvir esse evento e no momento que esse evento pedido criado chegar, ela vai reagir de que forma? Emitindo uma nota fiscal. E aí tu deve est assim: "Tá, mas cadê a mensagem aqui pra expedição?" É por isso que eu te falei
+
+que isso aqui não é simplesmente mensageria. Você precisa de uma modelagem dos seus eventos para você trabalhar com isso aqui. Daqui a pouco a gente vai falar sobre domain driven design, a gente vai falar sobre Divin Storm, sobre as ferramentas que você usa para isso aqui. Mas olha o que que acontece. A minha expedição, ela não pode reagir a um pedido criado. E por
+
+que que ela não pode reagir a um pedido criado? Porque é o seguinte, um pedido ele não pode ser enviado pro cliente sem uma nota fiscal. Você nunca vai ver um pedido transitando de um lado pro outro aí em transportadora, em correio, nem nada do tipo, sem a nota fiscal. Não pode acontecer dessa forma. Isso é uma regra básica. E aí o que que acontece? A
+
+minha expedição não pode reagir a um pedido criado. Por isso que não é simplesmente fila de mensageria. Você tá trocando literalmente a forma de comunicação da sua arquitetura como um todo. Então a minha expedição, por sua vez, ela tem que reagir ao quê? A nota fiscal. Porque eu só posso iniciar a
+
+expedição ou a separação do pedido a partir do momento que a nota fiscal de determinado pedido foi emitida. Então o que que vai acontecer? No momento em que a minha nota fiscal consumiu o pedido criado, ela vai emitir a nota e o que que ela faz? Ela envia um novo evento pra fila dizendo o seguinte: nota fiscal emitida. E aí nesses dados aqui vai colocar o número da nota, o número do pedido, os itens total, impostos, o cliente, né, os dados do cliente ali e tudo mais, o XML, talvez da nota e tal.
+
+Então assim, ela vai disparar isso aqui pra fila, tá? O meu serviço aqui vai disparar esse evento pra fila depois que a nota foi emitida. E aí o que que vai acontecer? A minha mensagem vai parar no broker. E aí do broker, quem é que tem que reagir a esse cara? A minha
+
+expedição e também a notificação, porque a notificação precisa enviar o anexo da nota no e-mail. Então, o meu serviço de notificação, ele tem que ouvir os eventos de pedido criado e ele também tem que ficar ouvindo o evento de nota fiscal emitida. Então, é assim que vai funcionando a nossa arquitetura orientada a eventos. E aí, o que que tem que acontecer depois disso aqui? A minha notificação, logicamente, vai reagir a esse evento enviando e-mail pro usuário e a minha expedição, por sua vez, vai começar a separação do pedido, né? Já a
+
+nota já foi emitida, então agora ele pode começar a separação do pedido. Quando a separação do pedido foi iniciada, o que que tem que acontecer? A expedição tem que enviar um novo evento pra fila, dizendo o seguinte: separação do pedido iniciada. Bota o número do pedido, o cliente, os itens, o total e por aí vai, tá? Isso aqui é para exemplificar, tá? Os dados ali poderiam
+
+ficar melhores, mas ele vai enviar isso pra fila. E aí quando essa mensagem chegar na fila, quem é que tem que reagir a isso aqui? Quem vai reagir a isso aqui vai ser o seguinte, vai ser a nossa notificação. Por quê? Porque a notificação tem que atualizar o status pro nosso cliente dizendo o seguinte: "Olha, o seu pedido foi iniciado a separação dele, ele agora tá na nossa esteira aqui de separação e em breve ele vai passar pelas próximas etapas. E aí
+
+depois que a expedição lá chegar e constatar que o pedido agora já está pronto pra coleta e tudo mais, ele vai disparando novos eventos e todos os interessados aqui que quiserem reagir a esse evento, eles reajam. Então, repara bem como que a gente já resolveu o problema do acoplamento. Olha só, na verdade, olha a quantidade de problemas que a gente vai resolver só com isso aqui. Vamos lá. O nosso pedido aqui, tá?
+
+O nosso pedido que antes tinha que saber da nota fiscal, do estoque, da notificação, tinha que comunicar a expedição, tinha que fazer e acontecer. Repara bem, ele agora só tem que fazer uma única coisa que é criar o pedido. Só isso. Ele só vai ter o código lá de criar o pedido. Não vai fazer mais nada.
+
+O meu serviço de pedido, ele não tem que saber que o estoque tem que ser atualizado, que a notificação tem que ser enviada, que a nota fiscal tem que ser emitida, que a expedição tem que ser iniciada e por aí vai. Ele não tem que saber disso. A única função do meu serviço de pedidos é o quê? Criar um pedido. Quem quiser reagir, que reaja.
+
+Quem quiser fazer qualquer coisa com essa informação, que faça. E aí entra um ponto, vamos lá. A gente tem aqui, ó, eu tenho aqui um exemplo de código, tá? Para você entender aqui qual que é a lógica. E nesse código aqui, basicamente, a gente tem aqui um use case, tá? Isso aqui tem gente que
+
+prefere chamar de classe de serviço, de service e tudo mais, mas é uma classe que cria um pedido, tá? Um create order aqui, que basicamente vai pegar os dados aqui, vai chamar um repositor aqui, vai salvar isso aqui num banco, tá? Logicamente isso aqui tá meio esdrúchulo, né? Poderia ficar melhor, mas ele vai salvar esse pedido num banco ali, beleza? E depois ele vai enviar pro nosso event aqui ou evento, order was created. Ou o pedido criado ou
+
+o pedido foi criado, sempre tem que tá no passado, tá? A gente vai falar um pouquinho sobre isso, mas todo evento sempre tem que estar no passado. O evento é produto de uma funcionalidade, depois a gente vai falar sobre isso, tá? Mas todo evento é algo que já aconteceu e alguém precisa reagir. É por isso que a nossa arquitetura é uma arquitetura reativa, não é mais uma arquitetura imperativa. Vamos lá. E aí o que que
+
+acontece? Ele vai publicar esse evento aqui na fila com todos os dados. O order ID aqui, customer ID, total, time stamp aqui, botar a data e tudo mais. E no final ele chama aqui, ele retorna na verdade aqui o pedido para quem chamar essa classe ponto final. Não tem que ter trcat gigante, chamada de http, client aqui, client ali, chama API fulano, API ciclano, API belano, fica fazendo requisição à torto e à direita. Não tem
+
+isso, cara. Repara como que o a nossa classe aqui ela ficou muito mais inxuta, muito mais objetiva e com uma única responsabilidade. Lógico que o serviço de pedido, de gerenciar um pedido, é, vai ter código, vai ter muita coisa ali dentro, mas isso aqui é só o trechinho que cuidava de todo aquele bolo que fazia toda aquela enchurrada de coisas, cara. Então, no final das contas, que que acontece? Vamos voltar aqui. No
+
+final das contas, o que vai acontecer é o seguinte, cara. A gente vai ter um serviço agora muito mais enxuto e muito mais objetivo. E não só ele, todos os outros serviços agora estão completamente desacoplados. Se eu quiser amanhã ou depois fazer o seguinte, ó, criar um serviço aqui de recomendação, tá? Vamos imaginar aqui que depois que um pedido for finalizado, a gente vai recomendar produtos parecidos para aquele usuário. Então, toda vez que ele
+
+faz uma compra, toda vez que ele efetua um pedido ali e tudo mais e finaliza, depois que é entregue lá para ele, a gente vai receber essa informação no nosso serviço de recomendações aqui e vai fazer novas recomendações para ver se ele volta a comprar no nosso marketplace. E aí o que que acontece? Toda vez que acontecer um pedido de um usuário, de um determinado usuário, o meu pedido aqui, quando ele for finalizado, logicamente, né, quando ele for entregue lá na casa do usuário, o meu serviço de pedidos vai informar aqui pra gente, ó, pedido finalizado. O pedido foi finalizado, vai passar o ID do pedido, o cliente, os itens, o total e por aí vai. Quem quiser reagir a esse evento, que reaja a ele. O meu serviço
+
+de pedido não tem que saber o que que tem que acontecer, não. Ele é agnóstico de qualquer outra coisa. Ele só tem que cuidar do pedido. E aí o pedido foi finalizado, a minha recomendação é interessada. Se ela é interessada, ela tem que reagir a esse evento. Ela vai
+
+ficar lá ouvindo: "Opa, chegou mais um evento aqui de um pedido finalizado." Se o pedido foi finalizado, eu vou pegar o ID daquele cliente, vou mandar uns produtinhos parecidos para ele e aí vai ter aqui o time que vai cuidar justamente do sistema de recomendação, outro de expedição e assim sucessivamente. E aí, vamos lá. O que mais que a gente tem aqui, tá? A gente resolveu praticamente todos aqueles problemas que eu te mostrei do HTTP.
+
+Qual que era o próximo problema lá? O próximo problema era justamente aquele acesso de requisições que chegavam. Então, a gente tem aqui, ó, 100.000 1000 requisições chegando aqui de imediato no nosso pedido que agora consegue lidar com muito mais facilidade. Por quê?
+
+Porque no código que cria um pedido, ele só cria o pedido. Ele só vai criar o pedido, só isso. E aí com esse pedido criado, ele não precisa mais ficar enviando requisição para tudo quanto é lugar e agarrando ali 100.000 requisições, tomando pancada de tudo quanto é lado. Ele vai conseguir dar fluxo com muito mais velocidade. A gente
+
+vai gastar muito menos dinheiro para escalar isso aqui. E olha o que que vai acontecer quando a gente utiliza a arquitetura orientada a eventos. Vamos lá. Chegou 100.000 1000 requisições, o que que vai acontecer? Vão chegar,
+
+logicamente, né, 100.000 mensagens ali no meu broker, né? O meu pedido aqui vai processando, vai criando os pedidos e vai despachando isso pro broker. O broker, por sua vez, ele consegue tancar isso com muita facilidade. E aí o que que acontece depois? Todos os
+
+interessados em ouvir o evento de que um pedido foi criado, eles vão reagir a eles de maneira controlada, ou seja, cada um de acordo com a sua capacidade. Então, se o meu estoque consegue processar 3 por segundo, ele vai processar 3 por segundo. Se a minha notificação só consegue processar um por segundo, vai processar um por segundo. Nota fiscal, 2 por segundo, vai processando dois por segundo. Só que o que eu quero que você entenda aqui é o seguinte. Diferente das 100.000 1
+
+requisições que chegaram na nossa Black Friday lá com tudo conectado via HTTP que explodia literalmente toda a nossa arquitetura. Agora cada um vai reagir de acordo com a sua capacidade. E aí quando eu precisar escalar eu vou escalar somente os consumidores. Eu vou escalar somente quem está ouvindo na fila. E olha só o que que acontece também. O
+
+nosso broker aqui, ele vai servir como amortecedor de impacto. Inclusive diferente do outcaling lá, que quando o problema começa, ele já reage atrasado, porque até ele subir as instâncias, a gente já tá perdendo requisição. Aqui a gente consegue reagir de maneira mais coordenada, de maneira mais pensada. Por quê? Porque a gente vai reagir somente ao fato de que, opa, tá chegando novas mensagens na fila. O número de mensagens
+
+nesse tópico aqui tá aumentando. Qual é o tópico? Ah, é o de pedido criado. Então, tá chegando muita requisição lá. Então vamos fazer o seguinte, vamos escalar os consumidores dos interessados nesse evento ou vamos dar uma melhorada aqui também, vamos dar uma melhorada no broker, tanto faz. Então você consegue
+
+pensar, você consegue saber exatamente aonde tá o gargalo. Quando chega 100.000 requisições. Para você gerar log disso tudo, quando você tá trabalhando com HTTP, para você conseguir rastrear, você tem que ter uma equipe de observabilidade monstruosa e ainda assim você vai sofrer para conseguir encontrar onde é que tá o gargalo. Aqui você consegue perceber com muito mais tranquilidade, cara. Então você olha pra
+
+fila, vê qual é o tópico que tá inflando e aí você reage diretamente nele e aí você vai escalar somente os caras interessados. Cara, isso aqui é magnífico. É essa arquitetura que Uber, Netflix, Amazon e por aí vai, eles utilizam esse tipo de arquitetura para lidar com milhões e milhões de usuários simultâneos nas suas plataformas. Inclusive, vamos lá, repara nisso aqui agora, tá? Com esse desacoplamento que a gente fez aqui, com todos os nossos serviços aqui altamente desacoplados, agora olha o que que acontece. Eu
+
+consigo literalmente distribuir os meus times aqui de maneira ordenada em cada serviço e de maneira especializada. Então, se eu tenho 100, 200, 300 microsserviços, 1000 microsserviços, como é o caso da Netflix ali, não faz nenhum sentido eu colocar todos os desenvolvedores para trabalhar em tudo ao mesmo tempo. Isso não faz o menor sentido. Então, eu preciso ter uma quantidade de desenvolvedores suficientes para dar manutenção nesse bloco todo de código ali na Codebase, em todos os serviços. Só que eu posso distribuir eles de maneira ordenada. E
+
+como que isso funcionaria na vida real? Vamos lá. A gente tem aqui o nosso serviço de recomendação. Vamos imaginar que ele acabou de ser criado. Ele não existia. Olha o que que acontece. O meu
+
+time de recomendação aqui, eles sabem que precisam recomendar novos pedidos pro usuário baseado nos últimos pedidos finalizados dele. Beleza? Se eu sei que o meu serviço precisa reagir a alguma coisa, que coisa é essa? É um pedido finalizado. Então o que que eu vou fazer? O meu time de recomendação vai
+
+entrar em contato com o time de pedido aqui, vai perguntar: "Pessoal, vocês já disparam aí o evento de um pedido finalizado?" Se sim, tá OK? Vamos reagir ele aqui e vamos implementar o que tem que implementar. Senão, vocês poderiam criar esse evento aí e disparar ele pra fila toda vez que um pedido for finalizado. E aí o que que acontece? Se
+
+o time de pedido não tem esse evento ainda, o que que ele vai fazer? Ele vai simplesmente pegar aquele trechinho de código e lá no bloco da regra de negócio, onde um pedido é finalizado, ele vai disparar esse evento pra fila, dizendo: "Pedido finalizado". O meu time de recomendação, por sua vez, vai reagir a esse evento e eles sim vão ir lá, vão implementar as regras de negócio, vai fazer as recomendações e tudo mais. Só que repara, a situação aqui agora é o seguinte: eu não preciso mais acoplar código, eu não preciso mais saber que tal coisa tem que acontecer ou outra coisa tem que acontecer. Eu não preciso mexer em dois, três, quatro serviços para finalizar uma única feature. Por
+
+quê? Porque a minha arquitetura é reativa. O time de recomendação simplesmente vai pegar o evento que vai chegar aqui e vai reagir a ele. É simples assim, não tem mistério. E é assim que funciona. Grandes aplicações,
+
+grandes arquiteturas, Netflix, Uber, Amazon Prime e por aí vai, porque não tem como você trabalhar com grandes sistemas usando HTTP. Não faz sentido. Você pode sim ter um serviço ou outro se falando de maneira controladíssima, mas o coração da tua aplicação tem que ser única e exclusivamente voltados para eventos. E aí, qual que é o detalhe, tá? A gente vai ter essa arquitetura aqui pra gente não ficar preso aqui, só os stickers aqui, né, para você entender um pouco melhor. E aí, como é que vai
+
+funcionar? A gente vai ter aqui os nossos clientes, eles se comunicam aqui com API Gate, que centraliza as requisições e dispara aqui para cada serviço, né, de acordo com a requisição que chegou. E a gente vai ter aqui um serviço de catálogo, um carrinho aqui, um de desconto, um de pedido, né, bem parecido com aquele que a gente fez ali. E aí cada um tem o seu banco de dados, que também é uma das premissas, tá, da arquitetura de microsserviços, dos sistemas distribuídos, tá? usar um banco de dados para vários pseudo microsserviços ali. Isso não é
+
+microsserviços, tá? Tem um monte de gente que implementa isso dessa forma e chama isso de Isso não é microsserviço, isso é monolito distribuído. Isso aí é monolito distribuído. Bota todo mundo via rede para se comunicar e bota um banco de dados só para servir todas as aplicações. Isso não faz sentido nenhum.
+
+Inclusive já tem vídeo aqui no canal sobre isso também, tá? Então vamos lá. Qual que é o detalhe aqui e por que que eu te falei que isso aqui não é mensageria? Isso aqui tá longe de mensageria. Por vamos lá. Por mais que
+
+nós estejamos usando um broker aqui, um rabbitill da vida ou um Cafk, um event breed aqui, o coração da nossa aplicação aqui, ele é totalmente voltado à comunicação via broker. Ele não se comunica, mas os serviços eles não se falam mais, eles não têm noção que um ou outro existe e quem é que reage aos seus eventos. Então, toda a comunicação é feita agora via broker. Como eu falei, dá para comunicar um com o outro aqui de maneira controlada, de maneira ordenada, bem pensada. Dá para acontecer.
+
+Inclusive, isso é normal, tá? Isso é perfeitamente comum de acontecer. Um serviço, uma hora ou outra vai precisar se comunicar com o outro para alguma coisa, seja um web hook, seja alguma coisa do tipo ali. Bem pensado, tá? Bem implementado, mas o coração da sua aplicação, 90% dela vai ser totalmente voltado à comunicação via broker. E como
+
+eu falei, os eventos tm que ser extremamente bem pensados e principalmente modelados. E é por isso que a gente vai entrar agora no tema principal dessa aula aqui, que é domain driven design e event storming, que é uma das ferramentas do domain driven design, justamente para você conseguir trabalhar com esse tipo de arquitetura. Isso aqui, cara, você fazer isso aqui, você pegar isso aqui e sair disparando coisa aleatória pra fila, você vai fazer besteira, você vai ter uma dor de cabeça infinita. Por quê? Porque você não está usando as ferramentas corretas que foram criadas para trabalhar com isso. Tanto
+
+que o nome é event storm ou tempestade de eventos ali, justamente para trabalhar com eventos. Domain driven design vai te ajudar a modelar esses serviços de maneira correta, definir os bounded context, os contextos delimitados e por aí vai. Eu vou deixar esses dois links aqui na descrição, mas se você quiser dar uma olhada mais profunda nisso aqui, você quiser entender um pouco mais sobre essa arquitetura aqui e sobre tudo isso que tá por trás da arquitetura orientada a eventos, vou deixar o link na descrição do mapa do arquiteto, um guia de carreira completo, onde eu te conduzo do zero, passando pelo júnior, pelo pleno, pelo sênior, até você chegar num arquiteto de software, num arquiteto de soluções e com tudo que você precisa saber, com tudo na ordem que você precisa estudar, com roadmap completaço que eu preparei lá para você. Então vou deixar o link na descrição, dá uma olhada aí, porque lá eu te mostro tudo que você precisa saber sobre arquitetura orientada a eventos e não somente sobre ela, mas também sobre o domínio de design, sobre as ferramentas. Inclusive eu te mostro também um pequeno sisteminha que eu modelei lá com event storm pr você entender como que a coisa funciona e te entrego todo o material para você estudar. Então, mais uma vez,
+
+o link vai est na descrição, então não deixa de conferir. Agora vamos pr as nossas considerações finais. Vamos lá. Presta muita atenção no que eu vou te falar agora, cara. Isso tudo que eu te mostrei aqui vai te preparar pras maiores entrevistas que você foi encarar. Isso aqui vai te preparar para
+
+bigtech, isso aqui vai te preparar para um monte de coisa, pra entrevista avançada de arquiteto, de software, de programador sênior. Isso aqui vai te preparar para muita coisa. Além disso, também vai te preparar para implementar isso na vida real, porque a implementação é simples, mas como eu falei, precisa de domain design e precisa de event storm, das ferramentas corretas para você conseguir modelar corretamente a tua aplicação. Mas presta atenção no que eu vou te falar. Isso aqui não é pra sisteminha pequeno, não é pra sisteminha de padaria, de mercadinho. Cara, como eu disse no
+
+começo do vídeo, o HTTP funciona pra 90% ou até mais dos casos. Então, continue trabalhando da forma como você já vem trabalhando há muito tempo, mas vá aumentando a sua base de conhecimento, entendendo um pouco mais sobre isso aqui, por se você não souber trabalhar com esse tipo de arquitetura, você vai fazer merda e vai fazer merda grande, porque você tá tentando desenvolver algo grande. Então, toma cuidado quando você for implementar isso aqui, por quê? Para implementar arquitetura orientada a eventos, você precisa obrigatoriamente conhecer DDD, conhecer as ferramentas e, principalmente, ter um time de desenvolvimento maduro. E também você tem que ter a necessidade de implementar isso. Se você não tem a necessidade,
+
+você não tem por fazer isso. E a necessidade surge justamente dos problemas que eu te mostrei. Quando você tiver aqueles problemas, aí sim você começa a pensar em arquitetura orientada a eventos. ou quando você vê que você precisa projetar uma arquitetura agora ou um sistema que já vai nascer grande ali, né, que já é algo grandioso de uma empresa grande que tá sendo criado agora e vai ser lançado, já tem muita expectativa, aí você já parte do princípio que você tem que trabalhar com eventos. Beleza? Outro ponto também que
+
+tem que ficar claro aqui é que quando a gente fala de arquitetura orientada eventos, eu não tô falando para anular completamente a comunicação HTTP entre um serviço ou outro. Isso ainda existe, isso pode ser feito, não é nenhum crime, só que tem que ser feito de maneira controlada e tem que ter um bom motivo para você fazer isso. Então tudo vai da tua maturidade, da senioridade que você tem, do domínio que você tem sobre a situação. E falando em domínio, mais uma vez domain driven design. Cara, vai por mim, Domain Driven Design. Eventos são
+
+eventos de domínio. Se você não conhece o domínio, você não pode trabalhar com sistemas distribuídos. você não consegue implementar esse sistema no domínio que você tá trabalhando, logicamente, né, na empresa ali ou no contexto que você tá trabalhando. Então, você tem que entender muito sobre o domínio, beleza? Então, fica aqui as minhas recomendações. Presta muita atenção no
+
+que você vai fazer e não fique maluco tentando implementar isso aqui em todo canto, beleza? Bom, e agora que tu chegou até o final desse vídeo aqui, agora tu vai conseguir dar os teus primeiros passos com arquitetura orientada a eventos, vai mandar super bem também na tua próxima entrevista. Deixa teu like aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Não deixa de dar uma olhada também no mapa do Arquiteto, um guia de carreira completaço para te conduzir do zero até o arquiteto de software com tudo que você precisa estudar, inclusive com conteúdos também sobre tudo isso que eu falei nessa aula daqui. Então não deixa de conferir, dá uma olhada aí depois. Se
+
+ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve. Não.

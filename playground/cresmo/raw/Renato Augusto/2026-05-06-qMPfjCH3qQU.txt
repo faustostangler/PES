@@ -1,0 +1,297 @@
+---
+video_title: "ARQUITETANDO O GOOGLE DRIVE NA PRÁTICA | SYSTEM DESIGN"
+video_id: qMPfjCH3qQU
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=qMPfjCH3qQU
+video_date: 2026-05-06T21:00:00+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo 👋
+  E no vídeo de hoje, eu vou te mostrar como arquitetar o Google Drive na prática... Um dos desafios de System Design mais cobrados em entrevistas para programadores e arquitetos de software, e que exige conhecimento de sistemas distribuídos, upload de arquivos em larga escala, sincronização local e armazenamento em nuvem.
+  
+  🚀 O que você vai aprender neste vídeo: ARQUITETANDO O GOOGLE DRIVE NA PRÁTICA | SYSTEM DESIGN
+  ✅ Como funciona a arquitetura completa de um sistema de armazenamento em nuvem como o Google Drive
+  ✅ Como lidar com milhões de uploads e downloads simultaneamente
+  ✅ Como funciona o upload de arquivos utilizando Signed URLs e Multipart Upload
+  ✅ O papel do Amazon S3 no armazenamento de arquivos em larga escala
+  ✅ Como funciona a sincronização entre a pasta local do usuário e a nuvem
+  ✅ Como sistemas detectam mudanças em arquivos usando APIs do sistema operacional como inotify e FSEvents
+  ✅ Como lidar com arquivos gigantes, retomada de upload e tolerância a falhas
+  ✅ Como funciona o fluxo de download eficiente diretamente do Object Storage
+  
+  💡 Por que assistir?
+  🔹 Pra entender como plataformas como Google Drive e Dropbox funcionam por dentro
+  🔹 Pra dominar fundamentos reais de System Design e sistemas distribuídos
+  🔹 Pra aprender conceitos extremamente cobrados em entrevistas técnicas
+  🔹 Pra evoluir sua mentalidade e aprender a pensar como um arquiteto de software
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que querem dominar System Design
+  📚 Desenvolvedores que querem entender sistemas com alta concorrência
+  💼 Engenheiros e arquitetos que trabalham com sistemas distribuídos
+  🚀 Programadores que querem sair do nível intermediário e chegar no avançado
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design e carreira tech.
+  Quer apoiar meu trabalho? Considere se tornar membro do canal!  🚀
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo, eu sempre leio tudo e respondo sempre que posso.
+  
+  #systemdesign #arquiteturadesoftware #programação
+---
+Um dos desafios mais clássicos e que sempre aparecem nas entrevistas para programador e arquiteto de software é a arquitetura do Google Drive, onde o desafio consiste em você ser capaz de desenvolver um sistema de armazenamento que consiga suportar milhões de uploads e downloads diariamente e ainda permita a sincronização de arquivos no computador do usuário com o ambiente remoto em tempo real. Esse tipo de desafio costuma aparecer nas entrevistas tanto para programadores de nível sior e arquiteto, mas também com muita frequência aparecem nas entrevistas para programadores iniciantes. Isso porque esse tipo de arquitetura começa de uma maneira muito simples e básica e vai avançando e se aprofundando até chegar nos fundamentos de sistemas operacionais. E é exatamente essa arquitetura que eu vou te ensinar a projetar no vídeo de hoje. E com toda a certeza tu vai sair daqui muito mais preparado e confiante para encarar esse tipo de desafio na vida real. Então pra
+
+gente não perder mais tempo, vamos direto pra tela, porque tem muita coisa pra gente ver e muita coisa para eu te ensinar. Bora lá. Bom, então vamos lá. Vamos direto ao ponto, vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver. E a gente vai começar por onde a gente sempre começa todo o vídeo de system design e arquitetura de software aqui do canal, que são os requisitos funcionais e não funcionais da nossa aplicação, porque sem isso aqui você não consegue arquitetar absolutamente nada. Toda a
+
+arquitetura foi feita para atender requisitos muito bem definidos, beleza? Então vamos lá. Requisitos funcionais, ou seja, tudo aquilo que a aplicação tem que ser capaz de fazer. Primeiro requisito vai ser o seguinte: os usuários devem ser capazes de fazer upload dos seus arquivos pra nossa plataforma. Então o usuário vai ter lá o arquivinho dele, vai fazer o upload dele pra nuvem lá, pra nossa infraestrutura e a gente vai armazenar no nosso drive lá na conta do usuário esse arquivo que ele fez o upload. Beleza? Mistério nenhum. O
+
+segundo requisito é sobre o download de arquivos, onde os usuários devem ser capazes de baixar os seus arquivos lá da nossa infraestrutura. Então, se ele fez o upload do arquivo, ele também deve conseguir baixar. E aqui também mistério nenhum. E o terceiro requisito fala sobre a sincronização dos arquivos, onde os usuários devem ser capazes de sincronizar arquivos locais com o ambiente remoto. E aí, isso aqui como é que funciona? O usuário tá lá no
+
+computador dele, lá na pastinha dele. Se essa pastinha dele tiver sincronizada com a nossa infraestrutura, a gente tem que sincronizar tudo que tiver dentro dessa pasta, tanto no ambiente local do usuário quanto na nuvem. Então, se ele for lá e adicionar uma foto lá nessa pasta do computador dele, essa foto tem que ser replicada automaticamente pra nossa infraestrutura. E se ele for lá no drive via interface, via navegador ali, incluir algum arquivo dentro da pasta lá no drive dele, esse arquivo tem que ser replicado lá pro computador dele no ambiente local. E isso aqui tem muito fundamento sobre sistemas operacionais, tá? A gente vai explorar todos os
+
+fundamentos de sistemas operacionais aqui, que geralmente é o que é cobrado nas entrevistas, tá? Então esses aqui são os nossos requisitos funcionais e geralmente não passa disso aqui, tá? É geralmente é isso aqui que vai ser cobrado nas tuas entrevistas. Então, se você souber lidar com isso aqui, você vai conseguir passar em qualquer entrevista que te cobra esse tipo de desafio. Beleza? Agora, falando dos
+
+requisitos não funcionais, que é como a aplicação tem que se comportar, como que ela tem que executar esses requisitos funcionais. Vamos lá. Primeiro requisito, o sistema deve suportar 20 milhões de usuários cadastrados. Ou seja, isso aqui não é uma aplicação de pequeno porte, uma aplicação de grande porte. A gente vai precisar lidar com milhões de usuários, beleza? O segundo
+
+requisito diz que o sistema deve fornecer 15 GB de espaço gratuito para cada usuário, então a gente vai precisar lidar com muito armazenamento. O terceiro requisito fala sobre o upload, onde cada upload pode ter até 15 GB de tamanho. Ou seja, se o cara quiser subir um único arquivo lá pro drive dele com 15 GB e lotar o drive dele de uma vez só, tá tudo bem, mas a gente tem que ser capaz de suportar esse upload de 15 GB. O quarto requisito diz que o sistema deve suportar 3 milhões de uploads por dia com média de 50 MB. Ou seja, isso aqui não quer dizer que cada padha 50 MB, quer dizer que a média é 50 MB. E
+
+isso significa que às vezes o usuário foi lá e subiu um arquivo de 2 GB, o outro subiu de 5 GB, o outro subiu um arquivo lá com 1 KB, com 2 KB, com 10 MB, com 5 MB e aí a gente faz a média de 50 MB. Isso aqui não é pra gente mensurar armazenamento, isso aqui é pra gente mensurar tráfego de dados na rede da nossa infraestrutura pra gente poder lidar com isso aqui, tá? Daqui a pouco você vai entender um pouco melhor. O quinto requisito diz que os uploads devem ser retomáveis, ou seja, se você tá fazendo o upload lá do teu arquivo de 15 GB lá pra nossa infraestrutura e chega no 14º GB, a internet cai, imagina você tendo que fazer o upload todo de novo. Isso não faz sentido e a gente precisa retomar de onde parou. Então, se
+
+você subiu 14 GB, quando a tua internet reconectar, você tem que continuar do 14º até o 15º GB e finalizar o teu upload. Beleza? E o sexto e último requisito não funcional diz que o sistema deve operar em modo de alta disponibilidade 24x7, ser resiliente e tolerante a falhas. Isso aqui a gente vai deixar pro final quando a gente for falar de escalabilidade e também de atender esses milhões de usuários, beleza? Então vamos lá. Essa é a
+
+primeira etapa, entender o problema e estabelecer os requisitos, tá? Geralmente é isso aqui que vai ser entregue a você para você resolver na tua entrevista. Então fica ligado nisso aqui. A segunda etapa é o seguinte, tá? É o cálculo de estimativas. Por quê?
+
+Porque se a gente já tem os requisitos bem licitados ali, a gente agora tem que fazer alguns cálculos para saber com o que que a gente tá lidando. E o primeiro cálculo é sobre o armazenamento total da nossa infraestrutura, da nossa arquitetura, que precisa ter o quê? Vamos lá. A gente precisa suportar 20 milhões de usuários cadastrados. Se a gente tem 20 milhões de usuários cadastrados e 15 GB de armazenamento para cada usuário, a gente faz 20 milhões vezes 15 GB, que a gente vai chegar no total de 300 de armazenamento.
+
+Ou seja, a gente precisa encontrar uma ferramenta que consiga fornecer esse armazenamento pra gente. Beleza? Esse é o primeiro ponto. O segundo cálculo que a gente vai fazer aqui é sobre o armazenamento diário médio, tá? Porque se a gente tem 3 milhões de uploads por dia com uma média de 50 MB e a gente multiplica 3 milhões xzes 50 MB, a gente chega num total de 150 TB de dados trafegando por dentro da nossa arquitetura. Então a gente precisa lidar
+
+com isso aqui. A gente vai precisar comportar, suportar esses dados aqui dentro da nossa infraestrutura e utilizar as melhores estratégias e as melhores ferramentas para lidar com isso aqui. E o terceiro e último cálculo fala sobre a operação de escritas no banco de dados. Ou seja, se a gente tem 3 milhões de uploads por dia, significa que a gente também vai ter 3 milhões de inserções de dados no banco de dados, seja o metadado do arquivo lá, a pastinha e tudo mais. Então, a gente tem 3 milhões de inserções no banco de dados. Se a gente dividir 3 milhões por
+
+24 horas, por 60 minutos, por 60 segundos, a gente vai chegar num total de 35 escritas por segundo. Ou seja, não é muita escrita e qualquer banco de dados aí mediano consegue resolver isso aqui pra gente. Então não precisa ter muita preocupação com o banco de dados. E isso é um ponto extremamente importante que você precisa ter, porque geralmente tem muito candidato que chega diante de um desafio desse aqui e já faz igual eu faço em alguns desafios, que sai escolhendo Cassandra, sai escolhendo bancos altamente distribuídos, isso não faz sentido. Então, escolha o banco de dados correto pra sua aplicação. Beleza?
+
+Daqui a pouco a gente vai falar sobre qual é o banco que a gente vai utilizar. A próxima etapa que a gente vai ter aqui é a entidade, tá? a definição das entidades principais do nosso sistema, pra gente saber com o que que a gente tá lidando ali e o que que a gente vai armazenar de fato no nosso sistema, na nossa arquitetura. E aqui, nesse caso, a gente vai ter o quê? A gente vai ter o file, que é o arquivo, o folder, que é o diretório, a pasta que vai ficar esse arquivo, porque todo arquivo tem que estar dentro de uma pasta. Se você for
+
+lá no Google Drive, você consegue colocar o arquivo dentro de uma pasta. Então, a pasta também é uma entidade extremamente importante e a gente vai ter o usuário também. Então, o usuário é dono de uma pasta que tem vários arquivos dentro. Esses arquivos, logicamente, são desse usuário. Então, é assim que vai funcionar esse mínimo relacionamento. Só que aqui tem um
+
+detalhe importante que é o quê? Vamos lá. A gente tem aqui o arquivo em si, ele é o dado bruto, é o binário, tá? São os bytes brutos daquele arquivo, daquele vídeo, do PDF, da foto que você tá enviando. E isso aqui a gente não armazena no banco de dados. Então, o que
+
+que a gente vai ter aqui? A gente vai ter uma outra entidade que você precisa ter em mente, precisa gravar isso aqui muito bem, que são os metadados do arquivo. Então, toda vez que você tiver lidando com upload de alguma coisa, você precisa armazenar os metadados do arquivo, ou seja, o arquivo em si, a gente vai armazenar em um lugar. Agora, a gente precisa também ter o ID desse arquivo, a gente precisa ter uma OURL para ele, a gente precisa ter o status, a gente precisa ter a descrição, type e vários outros dados. Então, esses outros dados são chamados de metadados e a gente precisa armazenar isso. Isso é uma
+
+entidade extremamente importante na nossa arquitetura. E aí, logicamente, a gente vai ter os metadados, o folder aqui, que é o diretório e o usuário. E o arquivo a gente vai armazenar em outro canto. E essas são as entidades principais do nosso sistema. Qual que é a próxima etapa que eu sempre recomendo para você? É a escolha do banco de
+
+dados. E aqui não tem mistério nenhum, tá? a gente vai de post tigre mesmo, não tem necessidade de utilizar um Cassandra aqui, utilizar um Crockout DP, utilizar qualquer banco de dados aqui extremamente distribuído, com alta disponibilidade. Por quê? Porque a gente só tem aqui, ó, 35 escritas por segundo.
+
+E o post ele consegue lidar com isso com maestria, com facilidade, com pé nas costas. Então não tem necessidade de chegar aqui com pé na porta e escolher um Cassandra aqui da vida, um banco altamente distribuído, porque isso provavelmente vai te desclassificar do processo seletivo se você escolher o banco errado. Então escolha o banco adequado. Tem vídeo aqui no canal, vou deixar um card aqui em cima e o link na descrição, onde eu te ensino tudo que você precisa saber sobre a escolha correta do banco de dados pra sua aplicação. Lá dentro eu te falo sobre os mecanismos internos, como que os bancos de dados funcionam por baixo dos panos.
+
+fala sobre o teorema CAP, Passel, que falo tudo que você precisa saber para escolher corretamente o banco pra sua aplicação. E isso é extremamente importante no processo seletivo. Beleza? Entendido isso aqui, qual que é o próximo ponto? O próximo ponto é a gente definir aqui minimamente os end points aqui da nossa API, tá? E aí essa nossa
+
+API, ela vai ter o quê? Vamos lá. A gente pode ter aqui, ó, uma requisição do tipo post para barra folders, pra gente criar um diretório lá no nosso drive, tá? Então eu tô passando aqui um nome aqui do meus arquivos, tá? Eu tô querendo criar uma pasta chamada meus arquivos. Esse parent ID aqui como nulo
+
+significa o seguinte, a gente não faz encadeamento de pastas só por diretório, tá passando aqui barra alguma coisa, barra meus arquivos. A gente não faz isso. Quando a gente tá lidando com algum tipo de arquitetura como Google Drive, Dropbox e por aí vai, a gente utiliza uma coisa chamada Parent ID. Ou seja, se esse parent ID aqui tá nulo, significa que essa pasta aqui eu estou mandando criar na raiz do sistema, lá no root, ou seja, no barra drive. Então, a gente vai ter lá o barraddrive/meusarquivos ponto final. Se eu tivesse algum ID aqui
+
+nesse parent ID, significa que essa pasta, meus arquivos, está dentro de outra pasta, tá dentro da pasta que eu tô passando o ID aqui. E assim a gente vai fazendo esse encadeamento. Então, se essa outra pasta aqui tiver também vinculada a um outro ID, significa que essa pasta tá dentro de outra pasta e assim sucessivamente. E é assim que a gente faz esse controle de encadeamento. Não vou entrar muito em detalhes sobre isso aqui, isso é básico, mas às vezes é importante você saber mencionar se você tiver passando por uma entrevista avançada de system design. Beleza? O
+
+próximo end point é o barrafiles aqui onde a gente pode fazer o upload dos nossos arquivos. Então eu posso passar aqui o folder ID, tá? O ID da pasta que a gente tá querendo enviar esse arquivo. Posso passar o nome aqui do arquivo, M type, o tamanho desse arquivo aqui. E no JWT aqui no corpo do JWT, eu posso passar o user ID por questões de segurança, tá? Nunca é uma boa prática
+
+você passar o user ID, o ID do usuário ali ou informações sensíveis no corpo da requisição. Então geralmente a gente manda isso aqui dentro de um JWT que já tá safe já. E isso é extremamente importante você mencionar. Poderia até ter colocado esse user ID aqui também na criação do folder, mas isso aqui é só para exemplificar, para você ter uma noção mais ou menos da estrutura, não precisa ficar perfeito. Beleza? Depois
+
+desse barra files aqui, para criar um arquivo dentro de um diretório, a gente pode ter aqui o quê? A gente pode ter aqui, ó, esse barra files aqui, passando o ID do arquivo barra download aqui pra gente fazer o download de um determinado arquivo. E aqui não tem mistério nenhum. E o último end point a gente teria aqui um barra files/changes. E a gente passa esse CC aqui com um time stamp. Isso aqui você não precisa se
+
+preocupar agora, porque isso aqui eu vou falar com muito mais detalhes quando a gente for falar de sincronização dos arquivos no ambiente local, ou seja, lá no computador do usuário, sincronizando esses arquivos com a nuvem, tá? Então a gente vai usar esse end point aqui e quando chegar o momento certo eu vou te explicar como que ele funciona e porque que ele é disposto dessa maneira aqui. Beleza? Entendido tudo isso aqui, que que a gente vai fazer agora? A gente vai entrar na parte mais divertida desse nosso vídeo, que é começar a projetar a nossa arquitetura. E a gente vai começar
+
+especificamente aqui pelo upload do nosso arquivo, tá? Então a gente vai separar essa nossa arquitetura aqui em algumas etapas. E essa primeira etapa aqui é o upload do arquivo. E o que que a gente tem aqui? Vamos lá. A primeira
+
+coisa que a gente vai ter aqui são os clientes da nossa aplicação que vão estar acessando lá o nosso sistema via navegador lá o nosso Google Drive. A gente vai ter também o nosso File Service aqui, que vai ser o nosso serviço, nosso servidor ali, que vai cuidar de toda a parte de upload, download e sincronização dos arquivos. A gente vai ter também o nosso banco de dados aqui, que vai ser o nosso post, tá? Que a gente vai est inserindo os dados ali que forem necessários na nossa arquitetura. E a gente precisa também escolher um local para armazenar os arquivos dos usuários, tá? Aqueles
+
+arquivos que eles fizerem upload. E que local é esse que eu vou escolher? Eu vou escolher aqui o Amazon S3, tá? Você poderia escolher qualquer ferramenta que você quisesse. Você poderia escolher as ferramentas do Google lá, como o Google Cloud Storage. Você poderia escolher o
+
+Ager Blob Storage da Microsoft. Você poderia escolher o que você quisesse. Eu vou escolher aqui o Amazon S3, mas fique à vontade para escolher a ferramenta que você quiser. Você só precisa saber se a ferramenta que você tá escolhendo vai dar suporte a atender os nossos requisitos não funcionais lá da nossa arquitetura. Então aqui a gente vai conseguir sim comportar os nossos 300b, a gente vai conseguir trafegar altos volumes aqui e a gente vai falar bastante sobre isso, beleza? E aí vamos
+
+lá, como que vai funcionar aqui a nossa arquitetura, tá? O que que se espera que a nossa arquitetura consiga fazer? Vamos lá. Primeira coisa que a gente vai fazer aqui, logicamente, é o usuário acessando o navegador lá, acessando o nosso Google Drive lá no navegador e escolhendo um arquivo lá do diretório dele lá para poder fazer upload pra nossa infraestrutura. E aí vamos imaginar que o usuário tá fazendo um upload lá do vídeo dele lá, sei lá, do vídeo do casamento dele que tem 8 GB de tamanho.
+
+Então numa requisição HTTP que o usuário vai enviar lá do navegador lá no nosso front end pro nosso servidor, vai conter um arquivo de 8 GB e também vai conter os metadados desse arquivo, ou seja, vai ter o folder ID aqui. E logicamente aqui eu já tô assumindo que a gente já criou um diretório lá que é extremamente simples, tá? Para não perder muito tempo com toda a questão de minuciosidade aqui, o foco deve ser o arquivo, beleza? Então, a gente tem aqui o ID da pasta que esse arquivo tá sendo enviado. A gente vai ter aqui o file name casamento.
+
+A gente vai ter aqui o mim typeví/mp4 e o tamanho desse arquivo aqui que são 8 GB, tá? E aí no JWT a gente passa o user ID e a gente vai passar também os bytes brutos aqui na requisição HTTP. E aí o que que se espera que aconteça? Se espera que o nosso servidor consiga processar isso, enviar os metadados lá pro banco de dados e criar um registro lá na tabela e o arquivo vai ser enviado pro S3. Só que qual que é o problema disso aqui? Se você assistiu o vídeo lá
+
+arquitetando o YouTube na prática, você já sabe até qual é a técnica que a gente vai utilizar e você sabe também quais são os problemas disso aqui. O primeiro problema disso aqui é o seguinte: a gente não consegue trafegar altos volumes de dados, ou seja, arquivos muito grandes via HTTP. Por quê? Porque tanto o nosso servidor web aqui, quanto o nosso cliente, se a gente tivesse usando um load balancer, que a gente vai falar no final do vídeo, se a gente tivesse usando um AP gateway, todos esses serviços têm limitações de payload. a gente não consegue trafegar a quantidade de dados que a gente quiser por dentro de uma requisição HTTP.
+
+Então, o que aconteceria se a gente tentasse fazer um upload de um arquivo de 8 GB de tamanho por dentro da nossa arquitetura? é que a gente ia receber aqui na resposta do nosso servidor ou um 413 payload to large, que quer dizer que o servidor não conseguiu lidar com aquilo que você tá enviando e tá te retornando uma resposta com status code aqui de 413, dizendo que o payload é muito grande, ele não vai conseguir lidar com isso. Ou você vai receber um timeout lá porque a requisição ficou muito tempo agarrada e não conseguiu ser concluída, então a conexão vai ser encerrada ou você vai tomar um 408 request time out. Então a gente não consegue trafegar esses dados aqui. E isso aqui aparece na entrevista justamente para saber se você sabe lidar com uploads de arquivos muito grandes pr dentro de uma arquitetura, pr dentro de uma infraestrutura. Então não é por aqui
+
+que a gente envia dados. Inclusive tem um detalhe aqui. Lembra que a gente falou de 150 TB de dados trafegando por dentro da nossa arquitetura? Se a gente tentar trafegar todos os arquivos por dentro do nosso servidor aqui, o que vai acontecer? Aqui muitos usuários enviando arquivos a todo momento em paralelo. O
+
+que que vai acontecer? vai onerar o nosso servidor. Ele não vai conseguir lidar com isso porque são 150 TB de dados brutos trafegando aqui por dentro da nossa infraestrutura. Então a gente precisa encontrar um jeito de reverter essa situação e desviar o fluxo do upload. Inclusive, tem mais um detalhe aqui. Lembra que o upload ele deve ser
+
+retomável? Por mais que a gente conseguisse enviar alguma coisa aqui por dentro dessa nossa infraestrutura, a gente não consegue retomar porque a gente tá enviando diretamente pro nosso servidor. A gente não consegue gerenciar esse upload por aqui, então a gente não consegue atender aquele requisito. Então esses aqui são os problemas de você fazer uma requisição HTTP diretamente pro servidor, tentando enviar um arquivo muito grande ali para essa nossa infraestrutura. Então, qual que é a forma, como que a gente vai resolver esse problema aqui? Como que a gente vai
+
+solucionar esse problema? Se você assistiu o vídeo do YouTube, você já sabe qual é a técnica que a gente vai utilizar, que é o quê? A gente vai cancelar a comunicação aqui com o S3. A gente não vai fazer essa chamada lá no S3 para enviar arquivo nenhum do nosso servidor. E quem vai enviar esse arquivo vai ser o próprio front end através de uma técnica chamada de multipart. Essa
+
+daqui não é uma característica exclusiva do S3. Isso aqui, qualquer ferramenta de blog stories, vai te fornecer um API de multipart, que eu já vou falar o que que é e como que funciona. Só que o seu foco deve est aqui, ó, em aprender a técnica. Então, todas as vezes que você tiver diante de uma entrevista que te cobrar upload de arquivos muito grande, você vai recorrer ao multipart. Beleza? Essa
+
+daqui é a técnica que você precisa ter em mente. Fechou? Então, vamos lá. Como que vai funcionar esse nosso fluxo aqui a partir de agora, tá? a gente não vai mais enviar o nosso arquivo bruto aqui por dentro da nossa infraestrutura.
+
+Então, a gente vai fazer o seguinte, a primeira coisa que vai acontecer é o usuário enviando uma requisição HTTP somente com os metadados do arquivo que ele tá querendo enviar. Ou seja, ele vai passar aqui o folder ID, o file name, o mim type, o tamanho, ele vai passar lá o user ID dele com o ID do usuário que tá logado. E aí, como que vai funcionar? O nosso servidor vai receber esses metadados, vai processar ali, vai chamar o serviço que vai cuidar dessa parte e vai armazenar esses dados no banco de dados. Então, a gente vai gerar um ID lá para esse novo arquivo que tá sendo upado. A gente vai ter o ID, que é o
+
+proprietário desse arquivo, que é o usuário que tá enviando, logicamente esse arquivo. A gente vai ter o folder ID, o file name, a gente vai ter todos os dados e a gente vai ter um status aqui, pending. Esse status aqui é o status desse arquivo, como que ele tá na nossa arquitetura. Ou seja, a gente só tem os metadados. Ele não foi upado ainda lá no S3, então o status dele tá pendente. E aí, como que vai funcionar?
+
+Depois que o servidor faz essa inserção aqui no banco de dados, o que que a gente vai fazer posteriormente a isso? O nosso servidor vai lá no S3 buscar as URLs pré-assinadas, tá? Não se preocupa com essa nomenclatura aqui. Isso aqui é extremamente simples. Você vai entender agora. Você vai, eu vou te ensinar tudo
+
+que você precisa saber sobre isso aqui. Vamos lá. O que que tá acontecendo aqui? E depois que o servidor insere esses dados no banco de dados, ele precisa ir no S3 buscar essas URL. Por quê? Porque
+
+o cliente não pode conversar deliberadamente com o nosso S3. O S3 faz parte da nossa arquitetura. Isso aqui é algo sensível. Então, a gente precisa primeiro, o nosso servidor aqui, logicamente, ele precisa ir no S3 e falar o seguinte: "Ô, S3, eu tenho um arquivo aqui muito grande para te enviar, só que eu não consigo enviar ele para você. Por quê? Porque o
+
+frontendange não consegue enviar ele para mim via HTTP. Então faz o seguinte, me entrega algumas URLs aí autorizadas para que eu entregue essas URLs procha para que ele consiga fazer o upload diretamente para você. É assim que funciona essa autorização aqui, essas URLs pré-assinadas. Então, como que isso aqui vai funcionar? Vamos lá para você entender mais a fundo a situação. Quando
+
+o nosso servidor vai lá no S3, a gente tem que enviar lá pro S3 a informação de onde que a gente quer salvar esse arquivo já para montar o URL. E a gente precisa enviar também o tamanho desse arquivo. Por quê? Porque o S3 ele vai gerar uma quantidade determinada de URLs, dependendo do tamanho do arquivo. Você já vai entender por isso aqui.
+
+Vamos lá. Que que é uma URL pré-assinado? URL pré-assinado é basicamente isso aqui, ó. A gente vai ter a URL, tá? O local que a gente tá querendo armazenar. Então o nosso S3
+
+aqui vai tá com a URL padrão. A gente vai ter um barra drive, a gente vai ter aqui a barra contendo o ID da pasta e o arquivo aqui casamento. MP4. Que que acontece? Isso aqui é uma RL inteira, tá? Isso aqui é muito grande, então tá
+
+quebrado em pedacinhos aqui pr você entender. E a lógica aqui é o seguinte, ó. Repara nesse parte number aqui. Esse parte number aqui é parte number um. Ou seja, essa é uma URL pré-assinada. Ele
+
+vai gerar um monte de URLs pré-assinadas dependendo do tamanho do arquivo. Então, se tu passa um arquivinho pequeno, ele vai gerar uma quantidade pequena de URLs. Se você passar um arquivo muito grande, ele vai gerar uma quantidade maior de URLs. Por você já vai entender. O foco aqui é o seguinte, ele vai gerar uma assinatura, ele vai gerar uma data de inspiração para essa URL. Para quê?
+
+Para ela não ficar aberta o tempo todo para qualquer um usar. De repente o cliente foi lá, foi hackeado, roubar o cliente lá, o front end e tal. Então, quem tiver acesso a isso aqui posteriormente, quando foi inspirado, não vai conseguir utilizar essas URLs. Beleza? E aí o foco é o seguinte, tá?
+
+Vamos focar aqui na utilização dessas URLs. Por quê? A gente disse lá pro nosso S3 o seguinte, o S3 tem um arquivo de 8 GB aqui, cara, gera aí as URL bé assinada que eu preciso mandar isso pro front end. E aí o S3 vai gerar essas URLs, vai entregar pro nosso servidor e o nosso servidor vai devolver isso lá pro frontend. Então vai ter o RL1, RL2, RL3, RL4, 5, 6, 7, 1000, 2000 e por aí vai. Então, essas aqui são as URLs que o
+
+front end vai receber lá do nosso servidor. E aí o front end logicamente ele vai estar com o arquivinho lá, o vídeo lá, o casamento. MP4 de 8 GB. E o que que vai acontecer lá no nosso front end? Quando o usuário upor esse arquivo, a gente vai acionar um código para fazer o que a gente chama de chunking do arquivo, tá? Um file chunking, que é o
+
+quê? A gente vai picotar esse arquivo em pequenos pedacinhos de 5 a 10 MB. E cada pedacinho desse a gente vai enviar para uma URL. Ou seja, a gente vai abrir uma conexão HTTP, envia 5 MB, fecha a conexão HTTP. Pega o segundo chunk, envia pra segundo URL e fecha a conexão.
+
+Pega o terceiro chunk, envia pra terceiro URL e fecha a conexão. Por quê? Porque a gente não precisa ficar com a conexão aberta o tempo todo, porque ela vai cair. Já que ela vai cair, então a gente picota o vídeo inteiro, pega um monte de URLs pré-assinadas e cada pedacinho a gente envia para uma URL. E o código para gerar isso aqui, cara, é extremamente simples, tá? Imagina, tá?
+
+Isso aqui logicamente é um código de exemplo. Então, imagina que o front end foi lá e recebeu esse bloco de URLs pré-assinadas. A única coisa que a gente vai fazer aqui é dar um for, um contadorzinho aqui, um part index aqui. E aí a gente vai mandando lá, fazendo a requisição do tipo post, passando o chunk na requisição lá pras nossas URLs pré-assinadas, tá? E esse slice aqui é justamente para fatiar esse arquivo todinho, tá? Aquele arquivo de 8 GB em
+
+pequenos pedacinhos aqui, ó, de 5 MB, ou seja, 5 x 1024 x 1024 vai ser o equivalente a 5 MB. Beleza? Então eu vou deixar isso aqui na descrição, você dá um confere aí depois. Isso aqui é só para te mostrar o quão simples é fazer essa questão do file chunking, beleza? E aí o que que vai acontecer posteriormente a isso? Vai acontecer que
+
+os nossos pedacinhos vão ser enviados lá pro nosso S3, bloquinho por bloquinho, conexão por conexão. Abre conexão, fecha a conexão, abre conexão, fecha a conexão. E assim a gente consegue enviar tudo lá pro nosso S3. Inclusive isso aqui vai resolver o nosso problema de uploads retomáveis. Por quê? Porque
+
+imagina que eu já enviei, sei lá, 100 chunks lá pro S3, tava em 75% lá o upload e a minha internet decidiu cair. Que que acontece quando a internet voltar? O próprio S3 aqui ou qualquer blog stories vai fornecer para você dentro do SDK, dentro da biblioteca que você tiver utilizando, uma coisa chamada de list partes. Ou seja, você consegue passar o ID desse upload que você tá fazendo, que já vem na URL pré-assinada, e você pergunta para ele: "Ô, S3, até onde que esse upload foi concluído?" Daí ele vai dizer: "Olha, você me mandou aqui até o chunk 1499".
+
+Ah, beleza. Então eu vou continuar a partir do9. Então vou mandar o 1500, 1501, 15002, 1503 e assim sucessivamente. Então eu não preciso voltar do início para iniciar novamente um upload do zero. E isso aqui é sensacional e resolve mais um desses nossos requisitos não funcionais.
+
+Beleza? E aí vamos lá. Depois que esses chunks foram enviados lá pro nosso S3, o nosso S3 vai receber todos eles e ele por padrão já comprime tudo novamente num arquivo. Ele recria o arquivo novamente e aí esse arquivo vai estar hospedado dentro daquela URL que a gente mandou ele criar. ou seja,/IDdiretório casamento.4
+
+e fim de papo. E aí no final das contas, o S3, depois de finalizar essa requisição, depois de finalizar ali, logicamente essa transação ali com o arquivo, ele envia uma notificação aqui pro nosso front end que pode muito bem enviar o nosso servidor aqui essa resposta, dizendo que o seguinte, olha, finalizou lá o upload, beleza? A gente pega aqui essa requisição e atualiza aqui, ó, o status do nosso banco de dados aqui, do nosso ID, do arquivo lá para uploaded ou para read. ou para seja lá qual for o status que você quiser utilizar. Então é assim que funciona.
+
+Upload de um lado, metadado do outro e os dois aqui, ó, perfeitamente sincronizados. E é assim que funciona o Multipart. Grava somente o Multipart, tá? Muita das coisas aqui é porque eu quero te ensinar como que funciona por baixo dos panos, mas se você souber mencionar o Multipart numa entrevista que te cobra essa questão de envio de arquivos muito grande, tá? de upload, de arquivo muito grande, você pode ter certeza que a tua chance de aprovação acaba de aumentar em 90%. Então é
+
+multiparte upload o nome da técnica, tá? Inclusive tem um ponto que eu não mencionei. A gente tá mencionando aqui um arquivo muito grande e aí você deve estar se perguntando assim: "Tá, Renato, mas e se eu tivesse enviando uma foto de 5 MB ou menos que 5 MB, como que seria?" seria o seguinte, a gente buscaria lá no nosso S3 uma URL pré-assinada, uma única URL, porque como eu te falei, é baseado no tamanho do arquivo, então ele vai devolver apenas uma única URL pré-assinada e a gente faz um único upload, tá? Multipart upload é quando a gente quebra, quando a gente faz o chunk do arquivo e envia isso pra nuvem, tá?
+
+Envia isso logicamente pra nossa arquitetura, pra nossa infraestrutura. Beleza? Entendido isso aqui, vamos lá. Qual que é o próximo tópico aqui? Qual que é o próximo ponto aqui que a gente vai parar? É a parte do download. E o
+
+download é extremamente simples, tá? Vamos lá. A gente tem aqui o nosso arquivinho que tá upado lá no nosso S3. A gente tem os metadados do arquivo que estão armazenados lá no banco de dados. E aí o que que o usuário precisa fazer?
+
+Ele basicamente precisa enviar uma requisição do tipo get pra barra files, passando o ID do arquivo e o barra download aqui no final para poder acessar, para poder fazer o download desse arquivo. E aí o servidor vai receber essa requisição, vai lá no banco de dados buscar os metadados desse arquivo justamente para poder montar o URL. Ou seja, para ele montar o URL, a gente vai pegar o prefixo aqui da URL e concatenar com a pasta aqui, com o ID da pasta e o nome do arquivo. Aqui, ó, o casamento. MP4. E aí, o que que a gente
+
+vai fazer? A gente vai devolver essa URL lá pro cliente? Não, a gente não vai devolver essa URL pro cliente. A gente precisa ir no S3 buscar uma URL pré-assinada para download. Por quê?
+
+Porque por questões de segurança, o ideal não é a gente expor a URL final do arquivo que tá lá no S3. O ideal é a gente ir no S3 e pegar uma URL pré-assinada. Me dá aí, ô S3, uma URLzinha pré-assinada aí com tempo de inspiração que eu vou devolver lá pro cliente lá pro front end e aí o cara vai fazer o download. Se passar o tempo de inspiração, essa URL vai ser inspirada e aí ele tem que gerar novamente uma nova URL. Por quê? Porque se alguém tiver
+
+acesso a essa URL aqui, já complica um pouco a segurança da nossa infraestrutura. Então, o ideal é a gente ir lá no S3, pegar uma URLzinha pré-assinada com tempo de inspiração e devolver pro cliente. E aí o cliente com essa URL na mão, ele inicia o download lá do S3 e fim de papo, ele baixou o arquivo dele e acabou. Ponto final. O download é a parte mais simples dessa nossa arquitetura. Não tem mistério
+
+nenhum nisso aqui. Beleza? E aí, vamos lá. Qual que é a próxima etapa? A próxima etapa é o que vai cair na tua entrevista se você for um programador senior ou se você for um arquiteto de software, tá? Porque isso aqui envolve
+
+fundamentos de sistemas operações penais. Vamos lá. A gente tem aqui, ó, essa nossa arquitetura. E essa daqui é a nossa arquitetura padrão, é arquiteturazinha de nuvem. Aqui a gente tem um front end rodando aqui no cliente lá no navegador. A gente tem o nosso
+
+servidor, banco de dados e o S3 aqui. Todo mundo se comunicando e fim de papo. Só que quando a gente fala de sincronização de arquivos, a gente não pode entrar nesse modelo aqui. A gente vai ter que desfazer isso aqui, tá? Na verdade, a gente vai ter que esquecer isso aqui e deixar um pouco de lado. E a
+
+gente vai ter que dividir a nossa arquitetura em dois pedaços. Vamos lá. Que pedaços são esses? O pedaço, primeiro pedaço aqui é o ambiente local do usuário, ou seja, o computador do usuário, tá? Esquece navegador, esquece front end. A gente tá falando aqui de
+
+ambiente local, tá? O computador, a máquina do usuário, beleza? E o outro lado vai ser o ambiente remoto, tá? O ambiente onde a gente vai ter lá o nosso servidor, o banco de dados, o S3, vai ser o nosso ambiente de nuvem, vamos se dizer assim. Beleza? E aí o que que
+
+acontece? O que que é essa sincronização? Essa sincronização aqui é o fato de que se o usuário tiver uma pasta lá no computador dele que ele sincronizou com o nosso Drive lá, o nosso Google Drive, a gente também tem que ter essa pasta lá no nosso ambiente remoto. E aí se o usuário envia um arquivo lá no computador local dele, tá? Uma foto 001.p PNG lá no ambiente local
+
+dele. Essa foto de alguma maneira e sem nenhum tipo de intervenção manual tem que aparecer lá no ambiente remoto também, ou seja, tem que passar por todo aquele fluxo, tá lá dentro do S3, tem que ter metadados no banco de dados, só que sem o usuário fazer intervenção manual. E o inverso também é verdade. Ou seja, se o usuário acessar via front end lá o ambiente dele, a conta dele lá no nosso drive e enviar uma foto 002 lá dentro do ambiente remoto, fazendo todo aquele fluxo de upload que eu já te mostrei qual que é essa foto 002 também, de alguma forma ela tem que sair lá do nosso ambiente remoto e parar lá na pastinha local do computador do usuário. Então a gente vai precisar lidar com sistemas operacionais aqui. Beleza?
+
+Então vamos lá. Para isso aqui ficar um pouco mais simples, eu vou abrir aqui a minha conta do Google Drive, tá? Uma conta de teste que eu tô fazendo aqui. O que que a gente vai fazer? Eu vou atualizar aqui, ó, pr você ver que não tem nada dentro da minha do meu diretório aqui do meu Google Drive. E o
+
+que que eu vou fazer aqui? Eu vou abrir aqui a pasta de documentos aqui do meu computador e eu vou fazer o seguinte, eu vou criar um novo diretório aqui chamado meus arquivos e vou mandar sincronizar, tá? Eu tenho um agentezinho, tá? Daqui a pouco a gente vai falar. Eu tenho um agente do Google Drive instalado aqui, a gente vai falar sobre isso, mas eu vou mandar sincronizar essa pasta aqui e vou salvar e fim de papo, tá? Posso fechar
+
+isso aqui e essa pasta já tá sincronizada. E aí quando eu venho aqui, ó, se eu atualizar essa pasta, olha o que que acontece. Ele apareceu aqui a pastinha. Então o meu computador local está interagindo diretamente com o ambiente de nuvem, sem que eu tenha que fazer nenhum tipo de intervenção aqui na interface. Beleza? E aí eu vou voltar
+
+aqui, ó, para você entender aquele exemplo que eu te dei. Se eu pegar essa foto 001 aqui e jogar dentro dessa pasta, ela automaticamente, por baixo dos panos, tem que ser enviada lá pro Google Drive e ela vai ter que aparecer aqui dentro dessa pasta aqui meus arquivos. Então vou entrar aqui. Ele provavelmente vai levar um tempinho até sincronizar, mas eu vou atualizar novamente. E pronto, tá aí, ó. Foto 001.
+
+Agora, se eu vier aqui e pegar a foto 002 e jogar aqui dentro do meu ambiente da nuvem aqui e fazer o upload desse arquivo, agora ela tem que aparecer automaticamente aqui dentro dessa pasta, dentro desse diretório, meus arquivos aqui. Pronto, tá aqui dentro. Então você vê que os dois ambientes estão sincronizados, tanto para ir quanto pra volta, local e remoto. Beleza? Entendido isso aqui, agora que você entendeu todo o exemplo aqui da situação, que que a gente vai fazer? Eu vou voltar aqui no
+
+nosso diagrama e a gente vai iniciar aqui a construção desse fluxo pr você entender o que que é isso aqui, como que isso aqui funciona por baixo dos panos, porque tem um detalhe aqui que se você souber responder na entrevista, você com certeza vai ser aprovado. Beleza? Então vamos lá. A primeira coisa que a gente precisa ter em mente aqui é que para o nosso ambiente local, a gente precisa ter o agente, a gente precisa ter o Google Drive Desktop instalado na nossa máquina ali, que vai fazer algumas coisas por baixo dos panos. Só que você não precisa se preocupar em saber arquitetar o Google Drive desktop ou saber desenvolver isso aqui. Não é nada
+
+disso. Tem um detalhezinho aqui, um trechinho de código bem básico aqui, que é a única coisa que você precisa saber, que é o seguinte, vamos lá. Todo o sistema operacional, ele tem uma APIzinha ali interna que fica monitorando os diretórios do nosso computador. Então, essas APIzinhas aqui, ó, no Linux é chamado de iNotify, no MacOS é chamado de FS Event e no Windows, que é o RDCW, tá? E aí, como é que funciona? Tá isso aqui, essas
+
+APinhas aqui, esses módulos do sistema operacional, eles ficam monitorando aqui os diretórios do nosso computador. E aí o que que acontece? O nosso Google Drive aqui, esquece aquela parte da interface, do aplicativo que vai estar instalado na tua máquina e tudo mais e foca somente nisso aqui, tá? Esse nosso aplicativo, ele tem que ter esse trechinho de código aqui, ó. Isso aqui é de exemplo, logicamente, para você entender. Isso
+
+aqui tá em node js, tá? Para você entender aqui como é que funciona a coisa. Mas basicamente a gente dá um require fs de file system e esse fs aqui, esse file system mzinho aqui chamado watch. E a gente pega esse watch aqui e passa um barra meus arquivos. A gente passa o diretório que a gente tá querendo receber as notificações da API do sistema operacional. E aí quando a
+
+gente capturar essas modificações, esses eventos, a gente faz alguma coisa com esse evento. Então vamos lá para você entender. O usuário foi lá e adicionou uma foto 001 lá no ambiente local. O que que vai acontecer? A API aqui do sistema operacional, independente de qual que ele esteja usando, vai notificar esse nosso código aqui com um evento, tá? O
+
+event type aqui e o file name que foi modificado ali ou foi adicionado, foi deletado e tudo mais. E aí a gente vai fazer alguma coisa com isso. Então, quando o usuário adicionou isso aqui, a API do nosso sistema operacional informou pro nosso código. E agora o que que o nosso código tem que fazer? Ele basicamente tem que fazer aquele fluxo que a gente fez de upload manual via interface, via front end navegador.
+
+Então, o que que vai acontecer? O nosso aplicativo, nosso agentezinho ali que vai est instalado na máquina do usuário, vai fazer uma requisição lá pro nosso servidor, tá passando os metadados do arquivo. E aí essa requisição vai ser enviada pro servidor. O servidor vai receber esses metadados, vai armazenar o registro lá no banco de dados. E aí o que que vai acontecer? Ele vai lá no S3
+
+buscar as URLs pré-assinadas, vai devolver pro nosso agente lá, o nosso programinha que vai est rodando lá na máquina local do usuário. E aí esse nosso agente vai iniciar o upload lá pro S3 dessa foto 001.p que foi adicionada aqui. E aí o que que vai acontecer? Essa foto vai terminar lá dentro do nosso S3, tá? Eu tô colocando aqui para
+
+exemplificar, para você entender qual que é a lógica da sincronização. E aí o S3 logicamente finalizou o upload. Que que ele vai fazer? Ele vai devolver aqui uma respostinha aqui, uma notificação aqui pro nosso agente dizendo o seguinte: "Olha, finalizei o upload aqui, agora você notifica lá o servidor". Beleza? Então o nosso agente
+
+vai vir aqui, vai enviar uma nova requisição HTTP pro nosso servidor, informando que o upload foi finalizado. O nosso servidor vai pegar essa requisição HTTP, vai lá no banco de dados trocar o status para uploaded. E o que mais que a gente pode fazer? A gente pode fazer o seguinte, tá? O nosso servidor aqui, ele pode pegar os metadados, tá? desse arquivo, desse file
+
+que foi armazenado e devolver alguns desses metadados lá pro nosso agente como resposta dessa requisição HTTP. E o que que o nosso agente vai fazer? Nosso agente vai ter um banquinho de dados lá, um SK da vida, que é mais do que suficiente porque tá rodando em ambiente local, para poder ter ali alguns metadados, não todos por questões de segurança, mas alguns metadados para poder est controlando aí essa sincronização de um lado pro outro. Daqui a pouco você vai entender melhor porque a gente tá fazendo isso aqui do SK, principalmente aqui, ó, esse created, que vai ser extremamente fundamental quando a gente for fazer o caminho inverso, beleza? Mas o ponto que eu quero que você entenda aqui é que o fluxo é extremamente básico e o teu foco, presta muita atenção no que eu vou te falar, o teu foco tem que ser nisso aqui, ó, nessas APIs aqui nativas, dois sistemas operacionais que fazem o monitoramento de diretórios, de pastas e de arquivos no nosso sistema operacional. E você tem que saber
+
+consumir esse tipo de API através de algum tipo de código que você vai criar ali para ficar monitorando ali os eventos que forem disparados, tá? Esses eventos pode ser de criação de arquivo, de deletar um arquivo, de atualizar um arquivo, tá? Modificar ali um arquivo e por aí vai. Então isso aqui, cara, é fundamento de sistemas operacionais. E eu canso de falar aqui que toda arquitetura, para você se tornar um arquiteto de software, você precisa est muito bem alicerçado dos fundamentos.
+
+Sem fundamentos não adianta. Não existe arquitetura sem requisitos e sem fundamentos, porque senão você não vai conseguir desenrolar esse tipo de desafio. Inclusive, vem pra tela aqui comigo. Por quê? Porque se você quiser aprender muito mais, não só sobre esses fundamentos aqui, mas sobre todos os fundamentos que você precisa para se tornar um arquiteto de software e um arquiteto de soluções de ponta, dá uma olhada aí no mapa do arquiteto, que é um guia de carreira completo para eu te conduzir do absoluto zero, passando pelo júnior, pelo pleno, pelo sénior, até você se tornar um arquiteto de software e um arquiteto de soluções. E lá dentro
+
+eu te entrego tudo que você precisa estudar, na ordem que você precisa estudar e ainda te entrego um roadmap completo que vai conduzir e guiar a tua carreira do absoluto zero. Então, independente de onde você esteja, o mapa do arquiteto é para você. E lá dentro você vai ter acesso à minha pessoa, vai poder tirar dúvida, vai mandar tuas perguntas, eu vou te auxiliar, vou te guiando ali no meio do percurso. Então, não deixa de conferir o mapa do arquiteto. O único caminho para você se tornar um arquiteto de software de soluções de ponta e pra vida real.
+
+Beleza? Vamos voltando aqui porque agora a gente tem que fazer o fluxo inverso lá do nosso ambiente remoto pro nosso ambiente local. Vamos lá. Eu vou fazer o seguinte, eu vou zerar isso aqui, tá? A gente já fez o fluxo indo, agora a gente precisa fazer o fluxo voltando, tá?
+
+Então vamos imaginar que o usuário foi lá na interface, lá no navegador e adicionou um novo arquivo lá. Adicionou uma foto 002 lá no nosso drive via navegador, tá? Ele não fez essa modificação aqui no diretório que tá sincronizado. E aí o que que vai acontecer? Vai acontecer aquele fluxo básico, tá, do upload, tá? Ele foi lá,
+
+ele fez o upload na mão, vai acontecer todo aquele nosso upload que vocês já conhecem e aí os dados vão terminar lá no banco de dados, tá? Vai acontecer todo aquele fluxo e aí a gente vai ter os dados desse arquivo lá no banco de dados armazenado. E agora o que que acontece? A gente tem um novo arquivo no nosso ambiente remoto e a gente não tem esse arquivo no ambiente local. O que que precisa acontecer para que a gente consiga sincronizar? Isso é simples, é
+
+só você lembrar daquele end point que eu mencionei lá no começo quando a gente definiu as nossas APIs, porque é aquele end point que a gente vai utilizar para fazer essa sincronização. E como que isso vai funcionar? Vamos lá. A gente pode configurar o nosso agente aqui, tá? O nosso código aqui dentro para poder fazer uma espécie de pulling, ou seja, ficar de tempos em tempos indo lá no nosso servidor consultar se alguma coisa foi modificado lá dentro do nosso drive.
+
+Ou seja, a gente pode enviar uma requisição http de tempos em tempos lá pro nosso files/changes e a gente passa um time stamp. Que time stamp é esse? Que data é essa que a gente vai passar? A gente vai passar a data do último arquivo alterado aqui, tá? Seja com created, seja com updated.
+
+a gente vai pegar a última data de sincronização. A gente poderia ter até uma tabelinha aqui para poder ficar mais fácil, poder ficar mais conciso aqui. A gente poderia ter uma tabelinha aqui botando ali a data da última sincronização que a gente fez lá com o servidor. Então a gente pode pegar o arquivo aqui nesse nosso caso, né? Pegar essa data dele aqui que foi às 2:32, tá?
+
+E 45 segundos e enviar isso aqui nessa requisição, tá? Passando isso aqui nessa requisição. Que que vai acontecer? O nosso servidor aqui vai receber essa requisição e vai consultar o banco de dados lá. Existe algum arquivo que foi atualizado, foi criado, foi deletado aí após as 2:32,45 segundos? E aí o nosso servidor
+
+logicamente vai encontrar esse arquivo aqui. Por quê? Porque ele foi atualizado, ele foi criado, na verdade, às 3:10 e 12 segundos. Então ele vai dizer: "Olha, existe sim um arquivo aqui." E ele vai retornar os metadados desse arquivo. Ele vai pegar esses
+
+metadados, na verdade. E antes de devolver a resposta, o que que ele vai fazer? Ele vai lá no S3 pegar uma URL pré-assinada para download, devolver isso aqui pro nosso agente e o nosso agente vai fazer o download lá do S3 e alocar esse arquivinho aqui no nosso diretório e salvar um novo registro no banco de dados. E agora a gente vai ter aqui, ó, o created, tá? O novo arquivo aqui, o foto 002, um created aqui, ó, apontando para 3 horas, 10 minutos e 12 segundos. E quando a gente for fazer a
+
+próxima requisição, buscando alterações ali, procurando, perguntando pro servidor se houve alguma alteração, a gente vai passar esse novo horário aqui. Como eu falei, a gente poderia ter uma tabelinha ali só para cuidar dessa parte da sincronização, mas eu espero que você tenha entendido aqui. E aí a gente vai ficar fazendo pulling lá e toda a nova alteração a gente vai puxando pro nosso diretório. Logicamente que tem muito mais coisa que daria pra gente mencionar nessa nossa arquitetura aqui, mas isso daqui é o que vai cair na tua entrevista, pode ter certeza. absoluta do que eu tô falando. Toda entrevista
+
+pedindo Google Drive ou Dropbox vai cair exatamente esse desafio aqui e você precisa est preparado para lidar com isso aqui. Poderíamos logicamente falar de muito mais coisas aqui. Tem muito mais detalhes que daria pra gente aprofundar, só que isso aí demandaria um outro vídeo. Inclusive, se você quiser, a gente faz uma parte dois aprofundando muito mais, porque tem muito mais coisa por trás do Google Drive que dá pra gente arquitetar, dá pra gente desenvolver, como por exemplo, ó, aqui a gente tem esses status aqui, o Created ET, e a gente tem os eventos aqui de monitoramento e tudo mais e tal. A gente poderia até adicionar aqui, ó, um deleted aqui, um updated, que eu sei que tu vai ficar nessa dúvida aí se de repente o cara vier aqui, ó, e deletar um arquivo, como é que a gente vai deletar do lado de cá? Ou então se ele
+
+atualizar um arquivo, como é que a gente vai atualizar? a gente pode controlar tudo via as datas aqui de modificação. Então a gente pode pegar created, deleted, updated, daria pra gente aprofundar até mais ainda aqui, tá? Se a gente for descer mais ainda o nível, por exemplo, imagina que eu tenho aqui uma planilha de 2 GB de tamanho, uma planilha pesada, né? E aí eu fui lá e alterei só um detalhezinho daquela planilha, só uma célula, uma coluninha ali daquela planilha. Que que você acha
+
+que vai acontecer? Vai acontecer o quê? O download da planilha inteira e depois deletar a antiga e colocar ela no lugar? ou a gente vai baixar somente o bloquinho no arquivo lá no binário, no byte lá, para aquele bloquinho que foi alterado. Logicamente que para questões de eficiência a gente teria que baixar somente o pedacinho que foi alterado e atualizar o nosso arquivo sem ter que baixar o arquivo todo de novo. Então
+
+isso é o que a gente chama de sincronizações delta. Daria pra gente falar mais sobre isso aqui, mas isso é um tema extremamente extenso. Isso não é comum de aparecer nas entrevistas. Isso aqui que eu te falei até agora é o que vai cair na sua entrevista. Pode ter certeza, pode escrever aí e fala que fui eu que disse que ia cair na tua entrevista exatamente como tá aqui.
+
+Então, foca no Multiparte Upload, que é a parte mais importante se você é um programador pleno e se você já é um snior ou tá disputando uma vaga de arquiteto, foca nos fundamentos aqui dos sistemas operacionais, beleza? E por fim, antes da gente encerrar esse vídeo aqui, tem mais o detalhezinho aqui, ó, da escalabilidade. E aqui não tem mistério, não, tá? Essa arquitetura aqui você tem que ter o faro, tá? O faro do desafio aqui não é escalabilidade, não é milhões e milhões de transações ocorrendo o tempo todo, disputa no banco de dados, não é isso. O foco aqui tava
+
+na funcionalidade, tava nos requisitos funcionais. Então você tem que ter esse faro muito bem aguçado para você não cair na besteira de ficar focando em escalar tudo horizontalmente e esquecer do que mais importa, que são as funcionalidades e como que aquilo vai funcionar com a aplicação em produção. Beleza? Então aqui não tem mistério. A gente poderia colocar um load balancer aqui na ponta, criar aqui as réplicas, tá? Escalar horizontalmente aqui. Já tem
+
+vídeo aqui no canal, tá? Vou deixar um card aqui em cima, o link na descrição. Então a gente poderia escalar horizontalmente o nosso file service, criando réplicas dele e balanceando a carga através de load balancer. O S3 aqui, cara, isso aqui escala infinito, depende apenas do dinheiro que você tem, do cartão de crédito da empresa. Então, isso aqui escala infinito. Isso aqui a
+
+gente poderia só replicar regionalmente para ficar mais próximo ali do usuário, para ter questões de baixa latência para download e upload de arquivo, mas isso é um detalhe, isso aqui nem entraria aqui na discussão desse tipo de entrevista, tá? Mas isso aqui é só o capricho, beleza? Cereja do bolo. E o banco de dados, a gente poderia utilizar um Aurora, tá? por baixo dos panos, já que a gente tem o posteg ali, a gente poderia usar o Aurora para facilitar a nossa escala, ao invés da gente ter que pegar o Posteg na mão e ter que ficar fazendo réplica, fazer charge, inclusive já tem vídeo de charging aqui no canal também te ensinando como é que você escala horizontalmente um banco de dados relacional. Então, dá uma olhada que eu
+
+vou deixar um card aqui em cima e o outro link na descrição. Então, é exatamente assim que termina a nossa arquitetura e eu espero que você de fato tenha entendido e foque apenas no essencial dessa arquitetura. Multipart upload e as APIs nativa dos sistemas operacionais que monitoram os diretórios pra gente fazer a sincronização. Beleza? Bom, e agora que tu chegou até o final desse vídeo aqui, já entendeu tudo que tu precisava a respeito da arquitetura do Google Drive e como que ela vai aparecer na tua próxima entrevista para programador pleno e sior e até para arquiteto de software. Deixa teu like
+
+aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Não deixa de dar uma olhada também no mapa do arquiteto, um guia de carreira completo para eu te conduzir do absoluto zero até o arquiteto do software. Então dá uma olhada que o link vai estar na descrição. Se ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tiro um tempo para te responder. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos
+
+vemos em breve.

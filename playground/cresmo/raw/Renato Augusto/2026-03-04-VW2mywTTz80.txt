@@ -1,0 +1,281 @@
+---
+video_title: "O QUE NINGUÉM TE ENSINOU SOBRE ARMAZENAR SENHAS NO BANCO DE DADOS!"
+video_id: VW2mywTTz80
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=VW2mywTTz80
+video_date: 2026-03-04T01:00:00+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo 👋
+  E no vídeo de hoje a gente vai voltar no tempo para entender como a indústria de software evoluiu na forma de armazenar senhas — desde os tempos em que empresas simplesmente salvavam senhas em plaintext, passando pelo uso de hashes como MD5 e SHA-1, até chegarmos às técnicas modernas com salt, bcrypt, PBKDF2 e Argon2id.
+  
+  Se você é programador, arquiteto de software ou trabalha com backend, entender como senhas realmente devem ser armazenadas é um conhecimento fundamental de segurança. E o mais curioso é que, mesmo décadas depois da evolução dessas técnicas, muitas empresas ainda cometem erros graves nesse processo.
+  
+  Neste vídeo eu explico toda a linha do tempo da segurança de senhas, mostrando os erros históricos, os ataques que surgiram e as soluções que a engenharia de software desenvolveu para proteger os dados dos usuários.
+  
+  🚀 O que você vai aprender neste vídeo: O QUE NINGUÉM TE ENSINOU SOBRE ARMAZENAR SENHAS NO BANCO DE DADOS!
+  ✅ Por que armazenar senhas em plaintext é extremamente perigoso
+  ✅ Como funcionam algoritmos de hash como MD5, SHA-1 e SHA-512
+  ✅ Por que esses algoritmos não são seguros para armazenamento de senha
+  ✅ O que são Rainbow Tables e como elas quebravam bancos de dados inteiros
+  ✅ Como o salt mudou completamente a segurança de hashes
+  ✅ Como funcionam bcrypt e PBKDF2 e por que eles foram criados
+  ✅ O impacto do paralelismo de GPUs em ataques de força bruta
+  ✅ Como funciona o Argon2id, o algoritmo moderno recomendado para senhas
+  ✅ O conceito de memory-hard hashing e por que ele dificulta ataques
+  ✅ O que é pepper e quando faz sentido utilizá-lo na arquitetura
+  
+  💡 Por que assistir?
+  🔹 Pra entender como a segurança de senhas evoluiu ao longo das décadas
+  🔹 Pra aprender como armazenar senhas corretamente em aplicações modernas
+  🔹 Pra evitar erros comuns que ainda acontecem em muitos sistemas
+  🔹 Pra fortalecer sua base em segurança de aplicações e backend
+  🔹 Pra desenvolver mentalidade de engenharia e arquitetura segura
+  
+  Assista também:
+  https://youtu.be/m_anIoKW7Jg
+  https://youtu.be/bhw4-Kq_RPs
+  https://youtu.be/9g7twJrXqoY
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Desenvolvedores backend e fullstack
+  🔐 Programadores interessados em segurança de aplicações
+  🏗 Engenheiros e arquitetos de software
+  📚 Estudantes de programação que querem entender boas práticas reais de engenharia
+  🚀 Qualquer programador que quer evoluir e escrever software mais seguro
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, segurança, system design e carreira tech.
+  
+  Quer apoiar o canal e ajudar na produção de mais conteúdos profundos como esse? Considere se tornar membro do canal!
+  
+  📩 Tem dúvidas ou sugestões?
+  Deixa nos comentários — eu sempre leio tudo e respondo sempre que possível.
+---
+Se o banco de dados do teu sistema vazasse hoje e um hacker conseguisse acesso aos dados, quanto tempo você acha que levaria para ele decifrar maior parte das senhas dos teus usuários? Minutos, horas, dias, semanas, talvez? Ou você acha que isso simplesmente é impossível de acontecer só porque você utiliza algoritmos de hash? No vídeo de hoje, eu vou te ensinar tudo que tu precisa saber a respeito de segurança e armazenamento de senha nos bancos de dados, incluindo técnicas avançadas que todo programador precisa saber. implementar na hora de lidar com esse tipo de desafio. Fala pessoal, Renato
+
+Augusto aqui de novo e dessa vez para te ensinar sobre segurança e armazenamento de senhas no banco de dados. Isso porque esse é um dos temas mais negligenciados pela maioria esmagadora dos programadores. Ou seja, o cara quando começa a estudar sobre sistemas de login, autenticação, armazenamento de senhas e por aí vai, ele simplesmente utiliza funções prontas da linguagem ou que o framework favorito dele fornece, mas no final das contas ele não faz a menor ideia se o que ele tá fazendo é seguro ou não e muito menos como que aquilo funcionaria em um possível caso de vazamento do banco de dados. E isso é um grande problema, porque se você não entende como que as coisas funcionam por baixo dos panos, você simplesmente não tem como afirmar se o que você tá fazendo é seguro ou não. E para piorar, sem esse entendimento, você também não tem como se defender de um possível ataque hacker que mais dia, menos dia pode e vai acabar acontecendo. Então,
+
+para você entender de uma vez por todas o jeito certo de se armazenar senhas no banco de dados, mitigar possíveis ataques e até inviabilizar um ataque, mesmo que o teu banco de dados já tenha sido vazado, vem comigo pra tela, porque é isso que eu vou te ensinar. E tu vai sair daqui hoje sabendo tudo que tu precisa para nunca mais ter dúvidas na hora de lidar com senhas no teu sistema. Bora lá, pô. Então, vamos lá, vamos direto ao ponto aqui. Vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver. E a
+
+primeira coisa que a gente vai começar fazendo aqui é o seguinte, a gente vai est dando uma olhada nessa imagem aqui que ilustra basicamente o funcionamento da web na década de 90, tá? Isso aqui vai ilustrar como que as empresas armazenavam senhas dos seus usuários na década de 90. Por que que eu tô te mostrando isso aqui? Porque isso aqui literalmente vai fundamentar todo o entendimento de por que as coisas funcionam como funcionam hoje em dia e também como que os ataques foram se aperfeiçoando ao longo do tempo, tá? Nessa aula aqui a gente vai falar do funcionamento interno dos algoritmos de RH. Eu vou falar até de placa de vídeo,
+
+vamos simular ataque. Eu vou rodar código aqui também, mas primeiro eu preciso te mostrar isso aqui, porque é isso aqui que vai pavimentar a nossa estrada, beleza? Então vamos lá. Isso aqui basicamente vai ilustrar pra gente a década de 90, que foi o surgimento da internet, as aplicações web, a propagação da web como um todo. E era assim que era armazenada a senha dos usuários na maioria das aplicações web, tá? Então, o usuário se cadastrava na
+
+nossa aplicação, o nosso servidor pegava a senha dos usuários e armazenava isso no banco de dados em PL Text, tá? O que que é PL Text? É literalmente texto puro, texto plano, literalmente como o usuário digitou. Então ele botou a senha dele lá na aplicação. A gente armazenava isso exatamente dessa forma. Logicamente
+
+que antes da década de 90 já existiam algoritmos lá que vieram da década de 70, como 10, Lucifer, Crypt 3, que foi criado pelo criador do Unix e tudo mais. Só que isso aqui que eu tô te mostrando era o padrão da web, era o padrão da maioria das aplicações, beleza? E era exatamente assim que funcionavam as aplicações, tá? A maioria das aplicações. E aí, qual que era o problema disso aqui? O problema disso
+
+aqui foi que na década de 90 começou-se a popularizar os ataques de hackers, tá? Especificamente um ataque conhecido como SQL Injection, que era o quê? era o cara tentando manipular o teu banco de dados ou ganhar acesso ao teu banco de dados através de algumas brechas na aplicação, tá? Lá na interface da aplicação, seja na URL ou em algum campo que ele podia digitar algum valor ou alguma string, algum número ali, ele tentava manipular, tá? Ele inseria comandos, ele injetava comandos SQL ali e via se ele conseguia ganhar acesso ao teu banco de dados. E
+
+aí isso aqui se popularizou de tal maneira que o mercado precisava se defender, o mercado precisava trocar essa forma. Por quê? Porque toda vez que um banco de dados vazava, qual que era o problema? O problema é que a senha do usuário era exposta, então o cara conseguia acessar a aplicação que ele invadiu com o login dos usuários. E não só isso. Como é cientificamente
+
+comprovado que o ser humano tem uma mania horrível de reaproveitar senha em diversos lugares diferentes, o cara ganhava acesso não só na aplicação que ele invadiu, mas ele tentava o e-mail do cara ou o login do cara e a senha dele que ele pegou em diversos outros serviços e aí ele acabava arruinando a vida do cara. Então isso aqui foi um verdadeiro desastre na década de 90. E essa técnica chamada de plintext, que basicamente é armazenar o texto puro, entrou em desuso ainda na década de 90 e o mercado começou a buscar outras alternativas. Mas vai por mim, até os dias de hoje tem muita empresa ainda armazenando senha de usuário em texto puro. Pode ter certeza do que eu tô te falando. Daqui a pouco eu vou te mostrar
+
+um caso que aconteceu de um vazamento décadas depois e que acabou trazendo uma série de problemas que a gente precisou resolver ao longo do tempo. Beleza? Então vamos adiante. Aqui o que que acontece? O mercado ele precisava de alguma forma encontrar uma solução. Qual
+
+que foi a primeira solução encontrada para tentar reverter ou resolver esse tipo de problema? A primeira solução foi a utilização de algoritmos de hash, especificamente o MD5 e o Sha One. Se você já é da antiga, você já conhece isso aqui, você já trabalhou com isso aqui, beleza? E como que esses algoritmos funcionavam? Basicamente você passava uma senha para dentro de uma função de hash e essa função ela digeria essa tua senha e ela gerava um hash aqui para você. E aí aqui no código,
+
+basicamente era dessa forma que funcionava. A gente pegava a senha do usuário, logicamente que aqui tá chumbado, tá? Vamos imaginar que a gente pegou lá da requisição HTTP na hora que ele fez o cadastro dele e a gente gerava um hash, tá? Toda a linguagem de programação dá suporte a isso aqui. Ele gerava esse hash e armazenava isso lá no banco de dados. E aí essas funções aqui,
+
+tá? Essas funções de hash, elas têm algumas características importantíssimas que você precisa entender. Que características são essas? Elas são determinísticas, elas têm o efeito avalanche e elas são unidirecionais. Você vai entender cada um desses pontos aqui. Vamos lá. O que que é uma função,
+
+tá? O que que é um algoritmo determinístico? É um algoritmo que, basicamente, dado uma entrada, ele sempre vai soltar a mesma saída. Todas as vezes que eu chamar uma função MD5 e passar sem 1 2 3, ele sempre vai me retornar esse mesmo rest e ele nunca vai mudar. Isso aí é uma função determinística. Beleza? Entendido isso
+
+aqui, o que que é o efeito avalanche? O efeito avalanche é literalmente o fato de que se a gente mudar alguma coisinha, por menor que seja na entrada, ele muda completamente a saída. Então repara aqui nesse hash e repara agora quando eu aumentar só a letra A de minúsculo para maiúsculo, olha como é que o R muda. Isso aqui é literalmente o efeito avalanche, essa mudança por completo, dado que a gente só alterou um pequeno detalhe na entrada. Isso aqui é o efeito avalanche, tá? Isso aqui tem a sua
+
+utilização e daqui a pouco você vai entender porque que esses algoritmos funcionam dessa forma. E o fato dela ser unidirecional significa que a gente só consegue fazer o caminho pra frente. A gente não consegue fazer o caminho inverso. A gente não consegue fazer uma espécie de desrachear uma senha, tá? a gente não consegue fazer essa inversão, a gente só consegue ir pra frente. E aí
+
+eu sei que você deve estar pensando, se tu é da antig, você deve est pensando assim: "Porra, mas eu conheço sites lá como MD5 Decrypt, eu conheço o X1 Decrypt, X256 Decrypt, que a gente passa um hash lá dentro lá do site e ele simplesmente me entrega qual que é a senha que tá por baixo daquele hash. Então ele fez o desh daquele hash. Não, ele não fez isso. Isso aí é uma coisa conhecida como rainbow table. Daqui a pouco a gente vai criar a nossa própria rainbow table aqui para entender como que alguns ataques funcionam. Mas
+
+basicamente eles não estão fazendo desh desse hash aqui. Daqui a pouco você vai entender. O que eu quero que você entenda por hora são essas características aqui desse tipo de função e você vai entender porque elas foram criadas daqui a pouco, tá? Que não foi para gerar senha. Isso aqui foi uma solução provisória que o mercado encontrou, mas essas funções não foram feitas para gerar senha. Beleza? Daqui a
+
+pouco você vai entender. E aí como é que isso aqui ficava na aplicação? Isso aqui ficava basicamente dessa forma. O cliente enviava o login e a senha dele, a gente chamava a nossa função de hash aqui, ó, passando a senha que ele enviou pra gente e criava o hash e depois a gente armazenava isso no banco de dados. E aí no banco de dados agora ficava assim, ó. A gente tinha o nome, o e-mail
+
+e aí a senha do usuário era literalmente um hash em MD5, em SHA ou tanto faz. E aí quando um hacker conseguia ganhar acesso na nossa aplicação, ele se deparava com esses hash aqui dentro e ele não tinha muito o que fazer. Ele batia de frente com o R aqui e ele simplesmente deixava para lá e tá tudo bem. Só que qual que é o problema desses algoritmos aqui? O primeiro problema é que algoritmos como MD5 e SHA são extremamente rápidos. Você consegue
+
+gerar na casa dos bilhões por segundo. Isso é um baita de um problema. Já vamos fazer alguns testes e você vai entender porque a velocidade é um problema. Mas grava aí que velocidade é um problema. O segundo problema é que dá uma olhada nessa tabela aqui que você vai reparar o seguinte. A gente tem a Maria e ela tem
+
+esse hash aqui como senha. E a gente também tem a Juliana que tem o mesmo hash. Eu não sei qual é a senha, mas se eu invadir esse banco de dados aqui, eu já sei que as duas utilizam a mesma senha. Então se eu quebrar uma, eu vou levar a outra de brinde. Então eu mato dois coelhos com a caja dada só. Isso
+
+também é um problema. O terceiro problema, qual que é terceiro problema? É o pior de todos. Lembra que eu te falei que até os dias de hoje tem empresa armazenando senha de usuário em texto puro, literalmente como o usuário digita? Então aquilo eu falei para você que entrou em desuso na década de 90. As
+
+primeiras recomendações de segurança surgiram na década de 90, só que em 2009, décadas depois, a gente teve o caso da Rocku. E o que que era Rockyu? Rock You era basicamente uma empresa ligada diretamente ao Facebook e essa empresa ela basicamente criava ali alguns aplicativos, alguns widgets ali pro MySpace. E essa empresa em 2009 ela sofreu um ataque hacker e acabou vazando 32 milhões de senhas dos seus usuários. E todas essas senhas em 2009 estavam armazenadas em texto puro. Isso aqui
+
+causou um baita de um problema. Esse foi um dos primeiros vazamentos monstruosos da história. E aí, qual que é o detalhe aqui? Tá, eu vou deixar alguns links aqui para vocês consultarem depois, mas basicamente o que que a gente tem aqui? A gente tem esse site aqui, Wikips, que é um site muito utilizado por alguns profissionais de segurança, onde a gente consegue encontrar uma série de listas aqui de senhas que já foram vazadas.
+
+Então, por exemplo, se eu vier em Allen One aqui, eu consigo pegar esse TXT aqui, que tem nada mais nada menos que 317 GB e a gente tem 29.6 bilhões de senhas aqui dentro, senhas vazadas. Inclusive, depois desse ataque da Rock em 2009, uma lista chamada Rock, em homenagem a Rocku, vai sendo atualizada pelos próprios hackers, que vão ganhando acesso a vários bancos de dados ao longo do tempo e todo ano ela vai sendo atualizada e incrementada. Então a gente tem a Rocku 2020, a 2021, 22, 23, 24, 25 e 26. E agora a gente tá na casa dos bilhões. Lá atrás, em 2009,
+
+a gente vazou 32 milhões de senhas da Rocku. Hoje a gente tem uma tabela com bilhões de possibilidades, bilhões de senhas reais de usuários reais. E qual que é o detalhe? O detalhe é que esse vazamento, ele acaba proporcionando o quê? Ele acaba proporcionando, ele acaba fazendo com que o hacker consiga criar uma tabela pré-computada, tanto que o nome é ataque de pré-computação, que é o quê? é o fato dele pegar uma tabela
+
+daquela TXT, ele vai gerar o R para cada um daqueles registros que estão lá dentro. E aí quando o teu banco de dados vaza, o que que ele faz? Ele vai só dar um loop na tabela dele. Ele vai pegar lá o resto e vai comparar com o que tá no teu banco de dados e ele vai ver se o teu hash lá, algum ruco de dados está batendo com algum da lista dele. Isso é um ataque de pré-computação. E para você
+
+entender como é que isso funciona, vamos lá. Eu vou abrir aqui a minha IDE. E eu tenho um código aqui bem simples, tá? Feito em Goleng. Esse código aqui, ele vai parar esse nosso rocku.txt que eu
+
+peguei, é uma parte daquela lista lá. E basicamente a gente tem aqui alguns milhões de senhas, tá? A gente tem aqui um arquivo gigantesco aqui com alguns milhões de senhas. E para você entender qual é o problema da velocidade, olha o que que acontece. Eu vou fechar isso aqui, eu vou executar esse código e ele basicamente gerou aqui numa questão de um segundo, uma fração de segundo, ele gerou esse senhas. MD5 para mim. O que
+
+que é esse senha pmd5? É literalmente o arquivo, tá? o mesmo arquivo com as mesmas senhas. 1 2 3 4 5 6 F word, I Love You, Princess, 1 2 3 4 5 6 7 Rock You e por aí vai. E aí quando um banco vazar e aí o banco tá lá em MD5, que que eu faço? Eu dou um loop aqui nessa minha
+
+tabela, procurando o hash que tá lá no banco do cara, procurando ele dentro dessa minha tabela aqui. E ponto final, isso é um ataque de pré-computação, ou seja, eu pré-computei a minha tabela e agora eu vou reutilizar esse trabalho por várias e várias vezes. Toda vez que vazar um banco, eu já tenho uma tabela pronta para poder ir buscar as senhas que estão lá dentro daquele banco. Beleza? E aí, vamos voltar aqui para você entender. É por isso aqui que a
+
+gente não utiliza mais MD5 e SHA por causa da velocidade e também o ataque de pré-computação que foi ocasionado pelos vazamentos ao longo do tempo. Beleza? E aí vamos lá. O que que o mercado precisou fazer para lidar com esse tipo de problema? O que o mercado fez foi basicamente utilizar uma técnica que misturava literalmente os algoritmos de has como MD5 e SHA com uma técnica chamada de salt, que basicamente traduzindo significa sal, que ele é o ato de você salgar a senha. Como que
+
+isso aqui funciona? Vamos lá. Quando o usuário se cadastrava no nosso sistema, o que que a gente fazia? A gente gerava um salt aliatório, tá? O salt é uma string aleatória do jeito que você quiser gerar. E aí a gente pegava a
+
+senha do usuário que ele enviou na requisição e concatenava com esse site. Então a gente juntava os dois aqui e aí a senha 1, 2 3 do usuário acabava se tornando isso aqui. E aí a gente criava o resto disso aqui e armazenava isso, o banco de dados. E aí olha o que que acontece agora a gente tem duas situações aqui. Primeiro, senhas iguais agora vão gerar restes diferentes.
+
+Lembra da Maria e da Juliana que tinha a senha 1 2 3? Então, a Maria tinha senha 1 2 3, só que agora é senha 1 2 3 concatenado com isso aqui que vai gerar esse reste. A Juliana tem a senha 1 2 3, mas agora concatenado com isso aqui que vai gerar um rest completamente diferente. Por quê? Por causa do efeito avalanche. Com isso aqui, isso aqui
+
+resolveu parte do problema. Por quê? Porque agora quando o cara vazava o teu banco de dados, ele batia o olho no hash, só que agora ele tinha o salt. E o site não tem problema, você tem que armazenar ele no banco, até porque quando o cara for realizar o login, a senha dele é senha. 1 2 3. Ele não
+
+digitou senha 1 2 3 D H U Y. Não, ele digita senha 1 2 3. Você tem que buscar isso aqui no banco, concatenar com que ele tá querendo fazer o login, gerar o resto e depois comparar com que tá no banco. Aí beleza, ele efetua o login. Então o salt não precisa ser escondido, ele funciona pra gente impedir a reutilização de trabalho. Uma tabela
+
+pré-computada, uma rainbow table, aquilo ali é trabalho que já foi realizado. Então ele reaproveitava aquela mesma tabela em diversos vazamentos, só que agora ele se lasca. Por quê? Porque a gente pega o salt aqui e o que que ele vai fazer? Ele vai ter que pegar para cada senha candidata daquela, ou seja, eu vou abrir aqui a IDE para você entender. Para cada senhazinha dessa
+
+daqui, ó, ele vai ter que dar um loop nessa tabela. Ele vai ter que pegar essa senhazinha aqui, ele vai ter que concatenar com o teu salt, gerar o hash e depois comparar e ver se tá batendo com o que tá aqui no banco de dados. Então, pra cada uma linha no teu banco de dados, ele vai ter que dar um loop enorme naquela tabela inteira dele. Então, se a tabela dele tem 29 bilhões de registros, ele vai ter que dar um loop em 29 bilhões, concatenando senha por senha com esse teu salt para ver se bate esse hash aqui. Depois disso, ele vai fazer isso para o segundo registros, depois disso pro terceiro, depois disso pro quarto e assim você acaba inviabilizando o ataque dele. Só que
+
+lembra que eu te falei que MD5 e SHA são extremamente rápidos? Eu te mostrei ali na tabela que a gente gerou, eu gerei em menos de um segundo milhões de registros ali. Então a gente consegue, de certa forma, trabalhar na casa dos bilhões por segundo quando a gente fala de MD5 e SHA. Se eu tivesse colocado ali uma gorrotina, se eu tivesse colocado ali um bufferzinho melhor, eu conseguiria rodar bilhões de registros em MD5 ou SHA tranquilamente na casa dos segundos. Então isso aqui não vai ser um problema para qualquer hacker que encontrar um banco dessa forma, mesmo que você esteja utilizando salt, porque ele vai varrer teu banco de dados inteiro, mesmo que ele tenha que dar um loop em 16, 26, 36 bilhões de registros para cada linha no teu banco de dados, ele vai fazer isso com pé nas costas e não vai ter dificuldade nenhuma. É por isso que não
+
+devemos utilizar MD5 ou SHA e nem mesmo tentar utilizar os salts ali. Salt é maravilhoso, a gente vai continuar utilizando, mas não é mais para utilizar esse tipo de algoritmo aqui. Beleza? E aí vamos lá, vamos entender melhor essa situação. Entendido isso aqui, mais uma vez o mercado precisava, de certa forma se atualizar, ele precisava melhorar, porque as técnicas vão avançando, o hardware vai avançando. E aí o que que o
+
+mercado decidiu fazer? O mercado agora decidiu utilizar os algoritmos especializados. E que algoritmos são esses? A gente tá falando especificamente do BeT. E a gente tinha aqui o PBKDF2, que até os dias de hoje é utilizado também por alguns bancos antigos por aí, tá? Então a gente tem
+
+esses dois algoritmos aqui, tem outros algoritmos também que a gente vai falar daqui a pouco, tá? Mas o mercado basicamente começou a utilizar principalmente opt aqui para poder se atualizar e se defender de alguns ataques. E como que esse algoritmo aqui ou esses algoritmos aqui funcionam em específico? Vamos lá. Esse algoritmo aqui, ele também é determinístico, tem o efeito avalanche, é unidirecional, mas agora ele introduz um conceito de CPU hard, ou seja, eles são lentos por natureza. Então, lembra que a velocidade
+
+é um grande problema? Então agora os algoritmos precisam ser lentos propositalmente. Você já vai entender como é que isso funciona por baixo dos panos. Além disso, eles também já geram o saltativamente e a gente não tem mais a necessidade de ter que ficar gerando string randômica ali e concatenando valores. O próprio algoritmo vai cuidar disso pra gente. E aí, vamos lá. Quando
+
+a gente passa uma senha 1 2 3 para dentro de uma função de hash aqui como Becrypt, ele vai gerar esse hash aqui pra gente, que eu já vou te explicar ele detalhadamente. E aí no código, basicamente funciona dessa forma aqui, tá? A gente tem aqui, ó, a senha do usuário, tá simulando que a gente pegou lá da requisição na hora que ele foi fazer o cadastro dele. E aí a gente cria um hash, tá, que eu tô utilizando PHP. Então ele tem uma funçãozinha password hash aqui, onde a gente vai passar a senha do usuário. A gente vai passar uma
+
+constante aqui que significa qual é o algoritmo que a gente quer utilizar, que aqui no caso é o Becrypt. E aqui a gente vai passar o custo desse algoritmo. E aqui eu tô passando 12. O que que é esse custo? Você já vai entender. E é aqui
+
+que acontece a magia. Vamos lá. No final das contas, ele vai gerar esse hash aqui e é isso que a gente vai armazenar no nosso banco de dados. E aí vamos entender primeiro o algoritmo, depois a gente entende a arquitetura. O algoritmo em si a gente vai ter aqui, ó, não se assusta porque é bem simples, esquece o cifrão, porque o cifrão é só para separar uma parte da outra. A gente tem
+
+o 2A, que é a versão do algoritmo. A gente tem o fator de trabalho, que é 12 aqui, que é a função mais importante. A gente configura isso na hora que a gente vai gerar o rest, como eu te mostrei lá, a gente passa o custo lá. Você pode botar o número que você quiser, tem até um rangezinho para você trabalhar. Aqui em roxo a gente tem o salt, que foi gerado aleatoriamente pelo próprio algoritmo. E aqui a gente tem o hash,
+
+tá? O que que é esse hash aqui? É o resultado final. Depois de toda a magia que ele faz ali, ele pega a senha, ele concatena, ele faz tudo que ele tem que fazer, junta com salt e aí ele vai gerar esse rash aqui. E aí, onde é que tá a magia disso aqui? A magia tá justamente
+
+no fator de trabalho, que é o seguinte: isso aqui é uma escala logarítmica, tá? Como que isso aqui vai funcionar? Por baixo dos panos, ele vai pegar o número dois e vai elevar ao número que você passou aqui. Ou seja, 2 x 2 x 2 x 2 x 2 12 vezes, que vai dar o equivalente a 4096. O que que é esse 4096? O Becrypt,
+
+quando você instanciar ele, ele vai chamar teu processador e vai começar a forçar teu processador a fazer uma porrada de cálculo. Por quê? Porque ele tem que ser lento. E aí o que que ele vai fazer? Ele monta todo um aparato, ele gera o rash, ele concatena senha, ele faz tudo que tem que fazer. Ele
+
+monta todo o quebra-cabeça. E quando ele monta todo o quebra-cabeça, o que que ele faz? Ele desmorona o prédio todo e faz tudo de novo. E isso aqui tá ligado diretamente ao tempo que ele vai levar para poder gerar o H. final. E aí, como que isso aqui
+
+funciona? Vou abrir esse site aqui para você entender. E aqui eu vou fazer o seguinte, eu vou pegar aqui, ó, vou selecionar o beccript, tem vários outros algoritmos ali, vou passar senha 1 2 3, vou colocar o fator de custo aqui, o fator de trabalho em 12, ele me dá a opção aqui de eu gerar um salt. Logicamente que o algoritmo ele gera aleatoriamente. Aqui é um sitezinho pra gente gerar alguns testes aqui, pra gente brincar. Então eu vou gerar esse
+
+password hash aqui pra gente. E ele gerou aqui o hash pra gente, tá? o rzinho completo da senha 1 2 3. Só que repara num fator aqui, ele levou 323 msos para poder gerar esse hash o que que isso significa? Lembra que o MD5 e o SHA eles geram na casa dos bilhões por segundo? Então o cara consegue testar
+
+bilhões de possibilidades em pouquíssimo tempo. Então aqui o caldo engrossa. Por quê? Porque o decou 323 msundos para gerar um único hash. Então, pro cara testar, por exemplo, três hashs, ele vai levar um segundo inteiro. Então, repara,
+
+num caso a gente tem bilhões por segundo, aqui a gente só tem 3 por segundo. Esse é o diferencial de um algoritmo CPU hard, tá? Um algoritmo específico para senhas. E aí tudo isso, mais uma vez tá vinculado diretamente ao nosso fator de trabalho aqui, que é 12. Se eu mudar aqui para 11, ele não vai levar mais 323 ms, ele vai levar 161 ms.
+
+Então, toda vez que eu aumento um número aqui, eu dobro o tempo de trabalho. Esse é o grande diferencial. Se a gente reparar aqui nos 312 msos, como que a gente inutiliza o ataque dele? Basicamente aqui, ó, no tempo, 312 ms, significa que ele só consegue testar três possibilidades por segundo. E aí vamos voltar pro nosso diagrama, porque o cálculo vai dar o seguinte: se ele só consegue testar 3 por segundo e a gente multiplica por 60 segundos, por 60 minutos e por 24 horas, significa que ele só vai conseguir testar por dia, ele vai testar apenas 259.000 1
+
+possibilidades. E lembra que eu te falei, ele precisa testar bilhões de possibilidades para cada linha e para cada salte que ele encontrar. Então você inutilizou o ataque do cara e aí ele levaria um ano para testar 94 milhões de possibilidades. Isso não tá nem perto dele terminar a primeira linha do teu banco de dados em um ano. Porque se a tabela dele tem bilhões de registros, como é que ele vai? Ele vai levar uma
+
+eternidade, vai levar um trilhão de anos para conseguir terminar o ataque dele? Então é assim que o Becpt nasceu e foi para isso que ele foi projetado. Beleza? E aí vamos lá. Como que ficaria a nossa arquitetura? Nossa arquitetura
+
+basicamente mantém a mesma. O usuário vai lá, se cadastra, envia a senha pro servidor, a gente gera a função de hash lá usando um bcrypt, por exemplo, e armazena isso aqui no banco de dados dessa forma aqui, tá? E aí vai ter lá o fator de trabalho, vai ter o salto, vai ter tudo. Não precisa ser oculto. O cara pode testar à vontade, ele só não vai conseguir ter força para fazer isso.
+
+Quando ele ganhava o acesso, ele não conseguia ir adiante. Só que vamos lá. Qual que é o detalhe aqui? Qual que é o problema? O problema dessa situação se chama paralelismo. Por quê? A gente tem
+
+processadores hoje com uma porrada de núcleos por aí. Então, por exemplo, se a gente pega esse Ryzen 9 aqui, ele tem 16 núcleos, mas tem processadores aí da Intel com 24 núcleos e às vezes até mais. Então, o que que acontece? Cada núcleo do processador é uma força de trabalho. Então, o que que eu consigo fazer? Eu consigo literalmente, já que
+
+eu consigo só rodar três por segundo, eu posso paralelizar isso. Isso aqui é fundamento. Todo programador precisa conhecer sobre paralelismo, sobre trad, sobre núcleos. Então esse conhecimento, quando o cara tem, ele consegue paralelizar as instâncias do Becrypt. Então ele consegue jogar um em cada um desses aqui. E se cada um consegue rodar
+
+três por segundos, a gente vai ter um cálculo de 3 x 16 núcleos e a gente tem um número de 48 possibilidades por segundo. E aí vamos lá. Se a gente pega 48 possibilidades por segundo, tá? Ele paralelizou o BecT e a gente multiplica por 60 segundos, por 60 minutos e por 24, que é o equivalente a um dia. A gente vai chegar no total de 4.147.000
+
+possibilidades por dia. Em um ano, ele teria conseguido testar 1 bilhão e meio de possibilidades. E aí você deve est assim: "Pô, Renato, isso aí o cara não não mudou nada a vida do cara, porque o cara tinha lá 30 bilhões numa lista lá numa rainbow table, ele precisa rodar tudo para cada linha do meu banco de dados. Em um ano, ele não conseguiu nem chegar no começo da metade da primeira linha do meu banco de dados. Então, tô tranquilo. Beleza, você tá tranquilo até
+
+eu te mostrar isso aqui. Isso aqui é uma obra de arte que você não tem noção. É uma baita de uma placa de vídeo, uma RTX 5090. E ela tem nada mais nada menos que 21.760 60 núcleos, utilizando uma tecnologia chamada cuda. E essa placa de vídeo
+
+aqui, ela tem um poder de processamento monstruoso. E agora, se a gente utiliza de paralelismo com GPU, olha o que que acontece. A gente tem 21.760 núcleos. Logicamente não são núcleos tão poderosos quanto de um processador, mas eles conseguem trabalhar com cálculos tranquilamente. E aí se a gente
+
+multiplicar, tá, fazer uma conta de padeiro aqui e colocar uma instância de bec por cada núcleo desse aqui, a gente vai chegar no número de 3 por segundo vezes 21.760 núcleos e a gente vai conseguir tentar 65.280 80 possibilidades por segundo. Isso significa que se a gente fizer o cálculo diário aqui, a gente vai chegar no número de 5 bilhões de possibilidades por dia. Em um ano, o cara testou 2 trilhões de possibilidões você já varrei o teu banco. Só que o
+
+lance que eu quero que você entenda é que ainda assim eu acredito que você vai pensar assim: "Porra, vai levar um tempo, cara testa 5 bilhões por dia, vai deixar lá a GPU moendo lá e tal. E, cara, assim, vai levar um tempo. Se eu tiver 10.000 1000 usuários, por exemplo, como é que ele vai fazer isso? Então, isso aqui nós estamos falando de uma única GPU. Se o cara monta uma rig igual
+
+aquelas de mineração de Bitcoin, ele varre o teu banco em questão de dias. Em questão de dias, ele varre o teu banco. Então, poder computacional e paralelismo é o que vai arrebentar com o Becft. É por isso que o Becft atualmente não é mais considerado uma solução segura. Então, você precisa entender muito bem como que as coisas funcionam por baixo dos panos. Você precisa entender muito
+
+bem os fundamentos para você ter esse tipo de informação. E esses fundamentos são fundamentos obrigatórios que todo programador precisa conhecer. Que fundamentos são esses? Como que funciona o núcleo de um processador? Como que um processador funciona por baixo dos panos? Como que funciona a questão do
+
+paralelismo, as strades? Como que você consegue paralelizar algumas operações, como que você extrai o melhor de um hardware. Por quê? Porque sem esse conhecimento aqui, você não faz a menor ideia se o que você tá fazendo seguro ou não. Você simplesmente utiliza tudo no modo defu, como ali eu te mostrei a questão do Becrypt, que a gente configurou o fator de trabalho, mas se você não conhece isso, se você não sabe para que que aquilo funciona, você configura tudo no defender se caso você viesse a ser atacado ou o banco de dados da tua aplicação acaba vazando. Então, esse conhecimento de
+
+como que as coisas funcionam é indispensável para todo e qualquer programador. Entender muito bem o funcionamento interno das coisas é o que vai levar a tua carreira para um outro nível. Por quê? Porque com esse conhecimento aqui, se você decidir atacar os outros por aí, sair atacando o banco de dados, atacar a aplicação, é problema teu. Você tem o conhecimento para isso. Se você quiser se defender
+
+também, é problema. você consegue se defender, mas você tem o conhecimento para poder agir de determinada forma, em determinadas situações, beleza? Então, os fundamentos são indispensáveis. Inclusive, vem comigo aqui pra tela. Por quê? Porque se você quiser aprender os
+
+fundamentos, tá, que todo programador precisa aprender, e não somente isso, você aprender tudo que você precisa saber para se tornar um arquiteto de software ou um arquiteto de soluções, dá uma olhada na descrição, porque eu vou deixar o link do mapa do arquiteto, um guia de carreira completo para eu te conduzir do absoluto zero, passando pelo júnior, pelo pleno, pelo snior, até você se tornar um arquiteto de software e um arquiteto de soluções. E lá dentro eu te entrego tudo que você precisa estudar, na ordem que você precisa estudar e ainda te entrego um roadmap completo que vai conduzir guiar a tua carreira independente de onde você esteja. Se você tiver começando hoje, esse roadmap vai te atender. Se você já é um sior calejado de batalha, também vai te atender. Então vou deixar o link na descrição, não deixa de conferir. Vamos
+
+voltando aqui pra tela porque tem muita coisa pra gente falar ainda. Vamos lá. entendido isso aqui, entendido a questão dopt aqui, como que ele funciona e tudo mais, até porque isso é extremamente importante de você conhecer, porque se você tiver lidando com projeto legado, uma linguagem mais antiga que não vai dar suporte ao que eu vou falar daqui pra frente, você precisa saber trabalhar compt porque ali configurando o fator de trabalho e tudo mais, você já se sente mais seguro, beleza? Então sobe esse fator de trabalho porque você sabe que vai dar prejuízo no cara se o teu banco de dados vazar. Beleza? Então vamos lá.
+
+Entendeu isso aqui? O que que aconteceu posterior a essa situação aqui? O mercado, logicamente precisava se atualizar. Por quê? Porque as GPUs estavam avançando numa velocidade extremamente monstruosa. Isso acabou
+
+tornando o Becrypt inseguro e agora a gente precisava encontrar uma nova solução. E que solução foi essa? Foi basicamente analisar o que diabos é uma GPU. Então a gente olha para uma GPU hoje e a gente entende o seguinte: o poder de processamento é um que uma GPU tem de muito. Agora, qual é o ponto fraco de uma GPU? Como que eu consigo
+
+travar uma GPU? O que que ela tem de pouco? Porque processamento tem muito, núcleo tem muito. Mas o que que uma GPU tem pouco? Bom, analisando bem uma GPU, a gente chega na conclusão de que pouco ela tem a memória RAM. Então, 32 GB você
+
+acha que é muito, tá? Isso aqui é topo de linha 5090. A gente tem outras aí que são bem mais fracas. Que que acontece? 32 GB é muito pouco. Então o mercado
+
+precisava encontrar uma solução que travasse ou que quebrasse uma GPU justamente na memória RAM. E foi aí que nasceu o algoritmo Argon 2, atualmente conhecido como Estado da Arte. Por quê? Porque esse cara aqui, além de ser o campeão do Pass World Hash Competition, até os dias de hoje, ele é conhecido como o algoritmo mais seguro do mundo para se utilizar. Por quê? Porque lembra
+
+do CPU hard aqui do Becrypt? Ocpt. Ele só ocupa 4 KB na memória. Então, com 2 GB de memória RAM ali, tu consegue rodar milhões dele paralelo. Então, tu não tem dor de cabeça. Agora, quando a gente
+
+entende que a única forma de travar uma GPU é através da memória, é aí que surge o algoritmo Argon 2 com um conceito chamado de memory hard, ou seja, nós vamos entupir a memória do computador para poder gerar os nossos hashs. E aí, como que isso funciona? Ele basicamente tem aqui as mesmas características dos anteriores. Ele também é CPU hard, só que ele nasce agora com essa questão do memory hard. Como que ele funciona? A
+
+gente passa uma senha para dentro dele, ele gera esse hash aqui que eu já vou te explicar como que ele funciona. E aí, ó, como é que a gente configura? Basicamente, a gente tem aqui, ó, a senha do usuário. A gente tem esse options aqui que a gente vai configurar o nosso algoritmo, já vou falar sobre ele. A gente vai gerar um hash aqui através dessa funçãozinha. Mais uma vez,
+
+qualquer linguagem mais atual aí ou nas versões atuais já dá suporte a isso aqui. E aí aqui dentro a gente vai passar a senha do usuário, o algoritmo que a gente tá querendo utilizar, que aqui no meu caso é o Argon 2, que é o algoritmo que inclusive eu recomendo você utilizar, tá? É o mais poderoso e o mais seguro, porque o Argon 2 tem a versão Argon 2I, Argon 2D e Argon 2 ID. O ID é um híbrido, é uma junção entre eles dois ali e é o melhor dos mundos. Então use a versão Argon 2 IT, beleza? E
+
+o options aqui é uma refiguração, ou seja, a gente não utiliza nada no defu, a gente tem que configurar. E para configurar, a gente vai configurar aqui o seguinte, o custo de memória. Então aqui a gente passa em Kbytes, ou seja, 65.536, que é equivalente a 64 MB, ou seja, para gerar um hash utilizando o Argon 2, ele vai ocupar 64 MB de memória RAM, beleza? E aqui eu tô sendo bem generoso, porque eu poderia colocar 1 GB aqui se eu quisesse, beleza? Então, entendido isso
+
+aqui, o que mais que a gente tem? A gente tem o time coast aqui, que é o quê? É o número de interações, de passagens. Então, lembra do Becrypt que ele tinha aquele fator de trabalho? Isso aqui é extremamente parecido. Então, ele
+
+vai montar todo o aparato, vai gerar tudo que ele tem que gerar, vai ocupar 64 meg de memória RAM. E depois o que que ele vai fazer? Ele vai derrubar tudo e vai fazer de novo, uma vez, duas vezes, três vezes. Beleza? E aí depois disso a gente tem a trads aqui também. A
+
+gente configurou como quatro. Você pode botar o valor que você quiser. Isso aqui é o paralelismo. Ou seja, além dele ocupar a memória RAM, além dele demorar, porque ele vai ficar pancando o seu processador ali, ele também vai ocupar quatro trads. Então é um bicho extremamente espaçoso. Não é à toa que
+
+ganhou o Password Hash Competition em 2015 e até hoje é considerado o algoritmo mais seguro que nós temos. E é assim que você gera um Argon 2, tá? É assim que você gera esse hash aqui. Beleza? E aí vamos entender primeiro ele para você entender aqui mais algumas coisas. Vamos lá. O Argon 2 é o
+
+seguinte, a gente tem aqui, ó, a versão do algoritmo, que é esse V19 aqui é o algoritmo em si, o nome dele, né? Argon 2ID. A gente tem o custo de memória, ou seja, a gente tem 65.536 KB, que é equivale a 64 MB. A gente tem aqui, ó, o T3, que é o número de terações, ou seja, ele vai montar tudo, desmonta tudo, monta tudo, desmonta tudo. Isso é para
+
+ele demorar mais. Beleza? E a gente também tem aqui o P4 de paralelismo, ou seja, ocupa quatro trads. Aí, o bicho é espaçoso demais. E aqui a gente tem o salt, né, que é o sal, vai salgar. Além
+
+de tudo isso, a gente ainda vai salgar aqui a situação. E no final das contas, a gente tem o hash aqui, que é o final de tudo, tá? Depois que fez todo esse trâmite, todo esse aparato, ele junta tudo com catena ali com salt e gera o hash aqui. Beleza? Entendido isso aqui, como que fica a arquitetura pra gente armazenar no banco? Fica basicamente
+
+assim, ó. A gente gera, né? O cara foi lá, realizou o cadastro dele, a gente vai gerar o algoritmo aqui, vai salvar isso no banco de dados. E no banco de dados a gente vai ter algo mais ou menos parecido com isso aqui. E mais uma vez não tem problema, pode demonstrar que pode colocar aqui, ó, o T, o P. É
+
+normal. É normal. Não é para ser oculto essa informação. É para acabar com a vida do cara. Ele não vai querer atacar uma situação como essa. Por quê? Porque
+
+quando ele tenta atacar, ele vai dar de cara com a questão do memory hard. Então, se cada instância do meu Argon 2 ocupa 64 MB, significa que se eu paralelizar 10, eu já ocupei 640 M. Para paralelizar 100, eu já ocupei 6.4 GB. Isso porque, mais uma vez, eu fui generoso, eu coloquei só 64 MB. Se a
+
+gente colocar 100 M, 200 MB, você acaba com a vida do cara. Ele pode ter 2 milhões de núcleos na GPU dele, mas ele não vai ter memória RAM suficiente nessas GPUs. Então é extremamente seguro o Argon 2. Mas é 100% seguro? Não é 100% seguro. Como eu disse para você, nada é
+
+100% seguro. Então existe mais uma técnica que essa daqui você consegue deixar na casa dos 99.9% 9% segura a sua aplicação, que é utilizar o nosso algoritmo Argon 2 aqui. E depois você pode utilizar uma técnica chamada de pepper. O que que é pepper?
+
+Tá? Isso aqui é uma técnica extremamente simples, parecida com o salt, que é o sal. Lembra? O sal? O pepper é pimenta.
+
+Então você meteu sal na comida do cara, ou seja, na senha. Agora você vai jogar pimenta no rabo dele. E como é que essa pimenta funciona? Vamos lá. A gente tem aqui, ó, a senha do usuário. E o pepper
+
+é um valor secreto, tá? uma string secreta que você vai salvar lá no ENV da tua aplicação. Você pode gerar o que você quiser, a string aleatória que você quiser. E aí, o que que tu vai fazer? Na hora de gerar a senha, tu vai concatenar a senha do usuário com esse paper aqui.
+
+E aí a senha 1 2 3 dele, na verdade, vai virar senha 1 2 3 F3 A7C e essa coisa monstruosa aqui. E aí, no final das contas tu vai criar o hash lá utilizando o Argon 2 disso aqui. Por que que a gente faz isso aqui? E por que que a gente armazena lá no ENV da nossa aplicação? Porque se o banco de dados vazar e mesmo que o cara tenha acesso aqui ao salt, né, que vem antes aqui do RH, mesmo que ele tenha acesso aqui o número de passagem, o paralelismo e tudo mais e tal, porque se ele utilizar esses parâmetros aqui e tentar combinar, ele vai conseguir chegar num resultado. Só
+
+que a senha, na verdade, não é senha 1 2 3. A senha que foi criptografada aqui ou foi racheada, na verdade ela é isso aqui. E o Pepper é o seguinte, o Pepper é só um valor único. você vai poder repetir ele em todas as senhas. Por quê?
+
+Porque se o cara ganhou acesso no teu banco de dados, ele não sabe que existe lá no teu Envo um valor aleatório, uma string aleatória que você utiliza para concatenar com todas as senhas. E é um valor único. Você vai gerar ele uma vez só e ele vai servir para todas as senhas. Por, mais uma vez, o cara ganhou acesso ao banco, ele não ganhou acesso ao teu servidor. Só vai complicar a vida se caso esse cara tenha acesso a toda a tua infraestrutura, que hoje é bem difícil, tá? você tiver profissionais de
+
+segurança na tua empresa, isso é bem difícil de acontecer, não é impossível, tá? Grandes empresas ainda caem, mas é um pouco mais difícil ele ganhar acesso a tudo. Então essa técnica do Pepper aqui é extremamente simples, mas muito poderosa e você precisa dominar isso aqui. É assim que se armazena senhas no banco de dados. É dessa forma aqui que você garante a segurança da tua aplicação. Dominando o algoritmo, você
+
+precisa ter conhecimento de threads, paralelismo, entender como que os ataques funcionam. Foi por isso que eu te conduzi lá do início do vídeo, da década de 90 até os dias atuais, quando a gente utiliza Argon 2, quando a gente utiliza também a questão do paper, o que que é o salt, como que ele funciona. E agora você sabe tudo que você precisa saber sobre senhas e não só sobre como utilizar funções prontas, mas também utilizar as coisas do jeito certo e configurar as coisas do jeito certo, beleza? Bom, e agora que tu já entendeu tudo que tu precisava a respeito de segurança e armazenamento de senha no banco de dados, incluindo funcionamento interno dos algoritmos de HTH, deixa teu like aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Não se esquece também de dar uma olhada no mapa do arquiteto, um guia de carreira completo para eu te conduzir do absoluto zero até o arquiteto do software. Então vou
+
+deixar o link na descrição, dá um confere aí depois. Se ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui.

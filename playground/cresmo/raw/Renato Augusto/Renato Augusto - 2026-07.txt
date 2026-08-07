@@ -1,0 +1,282 @@
+---
+video_title: "SERVER-SENT EVENTS: Aprenda a Construir Sistemas que se Comunicam em Tempo Real"
+video_id: uiT4oK19hu4
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=uiT4oK19hu4
+video_date: 2026-07-01T12:30:20+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo e dessa vez pra te ensinar uma das tecnologias mais poderosas quando o assunto são aplicações que precisam se comunicar em tempo real.
+  
+  Essa tecnologia é chamada de Server-Sent Events (SSE) e ela é utilizada em diversos sistemas modernos para entregar atualizações em tempo real de forma extremamente eficiente. 
+  
+  Se você trabalha com backend, frontend, microsserviços, arquitetura de software ou simplesmente quer entender como construir aplicações modernas que se comunicam em tempo real, esse vídeo é pra você.
+  
+  Nesse vídeo você vai entender como tudo funciona por baixo dos panos, desde o protocolo HTTP, conexões TCP, Polling, Long Polling, SSE, WebSockets, EventSource e todas as decisões arquiteturais envolvidas nesse tipo de comunicação.
+  
+  🚀 O que você vai aprender neste vídeo: SERVER-SENT EVENTS: Aprenda a Construir Sistemas que se Comunicam em Tempo Real
+  
+  ✅ O que é Server-Sent Events (SSE)
+  ✅ Como funciona o EventSource no navegador
+  ✅ Como aplicações se comunicam em tempo real
+  ✅ Diferenças entre Polling, Long Polling, SSE e WebSockets
+  ✅ Como o protocolo HTTP consegue trabalhar com comunicação em tempo real
+  ✅ Como funciona o streaming de dados em tempo real
+  ✅ Como implementar um servidor SSE utilizando Node.js
+  ✅ Como consumir eventos em tempo real no frontend
+  ✅ Vantagens, limitações e casos de uso do Server-Sent Events
+  
+  🎯 Quem deve assistir?
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que trabalham com microsserviços
+  📚 Desenvolvedores que querem entender arquitetura além do CRUD
+  💼 Engenheiros e arquitetos que lidam com escalabilidade e sistemas distribuídos
+  🚀 Profissionais que trabalham com aplicações distribuídas, microsserviços e System Design
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design, microsserviços e carreira tech.
+  
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 🙌
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo, pois eu sempre leio tudo e respondo sempre que posso.
+  
+  #https #programação #arquiteturadesoftware
+---
+Você já parou para se perguntar em algum momento como que as respostas do chat GPT ou do Gemini aparecem na tela do teu front end ali meio que em tempo real, conforme ele vai te respondendo palavrinha por palavrinha, ou até mesmo como que o Uber faz para poder te mostrar a localização em tempo real do motorista e qual é o percurso que ele tá fazendo? Ou então aqueles dashboards financeiros com dados e gráficos sendo atualizados a todo instante. Você já parou para se perguntar como que essas coisas funcionam por baixo dos panos? E eu tô te perguntando isso porque eu sei que em algum momento da sua carreira como programador, você vai precisar trabalhar em alguma aplicação que precisa se comunicar em tempo real. Só que o problema é que muitos programadores, por falta de conhecimento, acabam recorrendo ao Web Sockets como a única alternativa para esse tipo de aplicação. Mas no vídeo de
+
+hoje eu vou te ensinar uma tecnologia extremamente poderosa, conhecida como Server Cent Events ou SSE. E essa tecnologia é utilizada por grandes empresas e grandes aplicações, como as que eu acabei de falar aqui agora. E tudo isso a gente vai ver botando a mão na massa. A gente vai codar, vamos desenvolver código aqui, vamos botar as coisas para rodar e funcionar. E tu vai sair daqui hoje completamente competente quando o assunto for trabalhar com aplicações que precisam se comunicar em tempo real. Então, sem mais enrolação,
+
+vamos direto pra tela, porque tem muita coisa pra gente ver e muita coisa para eu te ensinar. Bora lá. Bom, então vamos lá. Vamos direto ao ponto aqui. Vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver. E antes da gente cair com a
+
+mão na massa aqui, tá? Já tem um código aqui pré-pronto que a gente vai utilizar aqui com base pra gente codar tudo que a gente tem que codar. Aqui tem muita coisa pra gente ver, tá? A gente vai botar redis para rodar, vamos botar aqui uma estrutura de microsserviço também. Tem muita coisa pra gente fazer aqui na mão. Só que antes da gente cair com a
+
+mão na massa, tem um detalhe aqui que eu quero te mostrar que é o seguinte, que é como as coisas funcionam por baixo dos panos. Porque mais importante do que você aprender a fazer é você aprender como que funciona por baixo dos panos e quando que você tem que utilizar isso aqui. Beleza? Então vamos lá. A gente tem aqui o protocolo HTTP basicão. Isso
+
+aqui, ó, request response aqui, cliente servidor, arquitetura mais tradicional do universo, onde a gente tem um front end que faz uma requisição HTTP pro servidor. O servidor pega essa requisição, faz o que tem que fazer e devolve uma resposta http e fim de papo. Isso aqui é o básico, isso aqui é o mínimo, isso aqui você já conhece, já tá batido. Beleza? Só que qual que é o ponto? O ponto é que existem algumas
+
+técnicas pra gente poder trabalhar com esse HTTP, que não é somente o request response basicão. Tem algumas técnicas aqui que tem nome essas técnicas e tem algumas motivações para você usar cada uma delas. A primeira delas é o que a gente chama de pulling, tá? O que que é pulling? É basicamente você ficar espancando o servidor toda hora, perguntando se chegou alguma nova mensagem. Então isso aqui serve muito
+
+para aquela aplicaçãozinha, pr aquele dashboardzinho da tua empresa, que não tem muito usuário, não tem muita gente acessando, mas que fica num telão rodando e você quer simular em tempo real ali, alguma atualização em tempo real, o que que você faz? Antigamente a gente utilizava o Ajax, então a gente colocava o Ajax lá meio que em loop, ele ficava batendo aqui, ó, fazendo request response lá no servidor e isso aqui simulava meio que um tempo real porque a gente não precisava ficar recarregando a página. Logicamente que isso não serve para uma arquitetura de milhões de usuários, de centenas de milhões, de centenas de milhares de usuários, isso não serve. Mas para aplicaçõezinhas simples e básicas com poucos usuários, isso aqui é perfeito. É uma mão na roda.
+
+Por quê? Porque a vantagem é a simplicidade. Hoje em dia a gente usa o fet aqui ou oxios, né? E a gente coloca aqui um set intervalo. A cada um segundo eu coloco essa estrutura aqui dentro em loop. E aí eu fico fazendo requisições
+
+lá, pegando a resposta e faço o que eu quiser fazer com a resposta que veio lá do servidor. Então isso aqui vai ficar batendo, voltando, batendo, voltando. E é o que a gente chama de pulling. É basicamente você ficar perguntando o tempo todo pro servidor se chegou alguma nova mensagem. E aí, qual que é a próxima, tá? A próxima é o long pulling,
+
+tá? Que é meio que uma evolução do pulling. Por quê? Porque o pulling em si, tá, esse ato de você ficar fazendo isso aqui, isso aqui tem várias desvantagens, logicamente, né? Isso aqui você tem uma sobrecarga no servidor, tá?
+
+Porque as requisições HTTP elas têm os headers ali, tem cabeçalhos e você fica mandando esses cabeçalhos repetidos o tempo todo e isso dá trabalho, isso consome recurso do servidor. Então imagina muito usuário acessando isso aqui, cara, ia dar problema na certa. É por isso que isso aqui serve mais para aplicações simples. E aí o que que acontece? O long pulling foi feito justamente para evitar essas desvantagens do pulling. Então o que que
+
+ele faz? Ele abre uma requisição HTTP. O servidor, por sua vez, segura essa requisição e fica lá aguardando, aguardando, aguardando, aguardando. Quando o servidor tiver alguma coisa para enviar lá pro cliente, ele manda a resposta e fecha a conexão. E aí quando fecha a conexão, o front end tem que abrir de novo a requisição. Aí fica
+
+aguardando, aguardando, aguardando. Quando o servidor tiver alguma coisa para enviar, ele envia e fecha a conexão de novo. É um pouco mais eficiente que o pulling, logicamente, né? porque você evita de ficar espancando toda hora, mas isso aqui também não vai muito longe. Isso aqui é difícil de escalar. Na
+
+verdade, eu diria que isso aqui é até impensável de escalar. Não faz sentido. Para milhares, milhões de usuários, não faz sentido a gente tentar fazer isso aqui. Mas também tem o seu valor, é mais eficiente que o pulling. Porém, hoje em dia, como a gente tem o SSE, que é o Service S and Events, que é o que a gente vai ver aqui agora, não faz mais sentido a gente trabalhar dessa forma aqui, porque isso aqui é mais complexo que o SSE. Isso aqui dá muito mais
+
+trabalho. Tem um código aqui, ó. Eu vou deixar esse diagrama aqui na descrição. Vocês sempre pedem o diagrama. Então eu vou deixar o diagrama desse desse Miro aqui na descrição para você poder olhar aí como é que tá o código e tudo mais.
+
+Mas basicamente é isso aqui, tá? Eu não vou nem comentar esse código aqui porque esse código aqui basicamente é sobre longing e o vídeo não é sobre long, tá? Eu vou deixar na descrição você dá um confere depois. Mas basicamente você tem que gerenciar dos dois lados, dar trabalho lá no servidor. É um pouco chato trabalhar com longing, tá? Não é
+
+tão fácil assim, tão simplesão igual o pulling normal, tá? E aí a gente tem também o SSE, que é o Server S events, tá? Isso aqui sim dá pra gente trabalhar em aplicações de tempo real, em tempo real, na verdade, né? Então, como é que funciona isso aqui? Isso aqui, basicamente, você vai fazer uma requisição pro servidor, servidor vai segurar a sua requisição, vai fechar uma conexão TCP aqui entre cliente e servidor. Isso aqui é o mínimo, tá? Isso
+
+aqui é fundamento de rede de computadores. Todo programador tem que dominar isso aqui, tá? O HTTP ele roda em cima do TCP. Por baixo dos panos, uma conexão TCP, ela vai ser estabelecida. E aí com essa conexão TCP estabelecida, é aberto aqui uma espécie, tá, de tunelamento entre o cliente e o servidor. E esse tunelamento ele é
+
+unidirecional, onde o servidor vai poder ficar enviando mensagens lá pro front end. Na verdade, o servidor ele não termina a resposta, ele mantém uma resposta aberta e fica dentro dessa resposta mandando novas atualizações. É basicamente isso aqui. E isso tudo gira em torno desse cabeçalho aqui chamado de text/eventstam. Eu vou te ensinar na prática ali como é que você faz. E aí,
+
+logicamente que isso aqui tem as suas vantagens, logicamente, né? Porque é muito fácil, simples da gente implementar isso aqui, tanto no código ali, quanto na arquitetura no geral, isso aqui é muito fácil da gente implementar, é fácil da gente escalar também. E isso aqui é uma das vantagens do SSE contra o Web Socket, que é o próximo aqui que a gente vai falar, é o próximo e último. Tá acabando já, que eu sei que tem agoniado pra gente poder botar a mão na massa logo. A gente também tem aqui o baixo overhead, ou seja, não tem aquele excesso de cabeçalho o tempo todo trafegando ali. A
+
+gente manda uma única requisição HTTP e segura essa requisição HTTP aqui e pronto. Aí as mensagens são enviadas por dentro dela e fim de papo. Não tem aquele overhead o tempo todo de requisição ficar batendo no servidor. Então isso aqui facilita muito a escala das nossas aplicações e da nossa arquitetura no geral, tá? A gente tem também aqui a questão de servir para aplicações em tempo real. E aqui nesse
+
+lance das aplicações em tempo real, eu quero que você tenha em mente aí, porque em algum momento você vai precisar trabalhar com isso, tá? Você vai precisar trabalhar com uma espécie de sistema onde o front end precisa ser notificado sobre alguma coisa que está acontecendo, sobre alguma mensagem, algum evento, sobre geolocalização, como por exemplo o Uber e o iFood ali, onde você consegue ver o caminho, né, que o motorista ali ou que o entregador tá fazendo. Então, geralmente a gente utiliza SSE. Tem muita gente que recorre a utilizar o Web Socket, só que a gente já vai falar sobre o WebSocket, você já vai entender. Eu vou falar um pouquinho sobre ele aqui, só que o Web Socket ele é bidirecional, ele tem algumas desvantagens que eu vou falar também. E
+
+quando a gente tem um front end que precisa ser atualizado em tempo real e você não quer ficar fazendo pulling, ou seja, você não quer ficar perguntando o servidor o tempo todo, fazendo requisição, tendo overhead, latência alta, o que que você faz? você recorre ao SSE, que basicamente é o servidor que vai te notificar quando houver algum evento. Eu só tô mencionando isso aqui para você, para que as coisas fiquem mais claras para você e você entenda a importância extrema de você aprender aqui a questão do SSE, tá? E você vai aprender tudo que você precisa na prática aqui ao decorrer desse vídeo, tá? Então vamos adiante aqui porque ainda tem muita coisa, tá? E aí além
+
+desse lance de servir para aplicações em tempo real, a gente tem mais o quê? a reconexão é automática, ou seja, se essa conexão cair, o próprio front end se encarrega de abrir a conexão novamente com o servidor. E a gente também tem aqui a questão da baixa latência, ou seja, como você abriu uma conexão aqui e ela tá aberta o tempo todo, você não tem aquela coisa de enviar uma requisição, esperar o processamento, pegar a resposta. Então é baixíssima latência e facilita muito quando a gente fala de aplicações em tempo real, beleza? Desvantagens é unidirecional, ou seja, somente o servidor pode enviar mensagens pro front end para atualizar o front end. E só podemos trafegar apenas texto
+
+aqui por dentro, tá? Ele não aceita binário, não aceita, você não vai conseguir passar vídeo, foto, PDF, nada por aqui por dentro, somente texto. Beleza? Então isso daqui é o SSE, que é o que a gente vai implementar na prática hoje com a mão na massa. E a gente tem também aqui, logicamente os web sockets, né, que basicamente aí é uma evolução, é um protocolo ultra moderno aí que dá pra gente criar aplicações em tempo real, estilo chat, Discord, WhatsApp, o Messenger lá do Facebook. Então isso
+
+aqui é para aplicações de grande porte, tá? Não faz sentido você usar isso aqui para aplicaçõezinhas pequenas, tá? A não ser que você tenha necessidade realmente de comunicação bidirecional, que é a diferença ali, uma das principais diferenças pro SSE. Então, Websocket basicamente faz uma requisição aqui, o front end pro servidor do tipo HTTP solicitando upgrade de conexão. O servidor pega essa conexão aqui, ele pega essa requisição HTTP, converte isso para uma conexão do tipo web socket. Ele
+
+devolve um handshake aqui, ou seja, um aperto de mão ali, passando um 101 suitch em protocolos, ou seja, o código 101 informando que trocou o protocolo de comunicação e aí uma conexão web socket persistente vai ser estabelecida entre o cliente e o servidor, tá? Aí o protocolo é o websocket, não é o HTTP. E aí aqui sim é bidirecional. Então o front end consegue mandar coisas pro servidor e o servidor consegue mandar coisas aqui pro nosso front end. E aí como vantagem a gente tem o fato de ser bidirecional.
+
+Ultra baixa latência porque o websocket é muito mais rápido. A gente tem zero overhead porque não fica toda hora mandando cabeçalho. Menor consumo de banda, isso aqui é extremamente importante. Tem suporte a binário, então a gente pode mandar aqui também vídeo, foto e PDF. E a gente tem também, logicamente as desvantagens, né? Tudo a
+
+gente tem que ver ali e ponderar o que vale e o que não vale a pena da gente implementar. E aí, como desvantagem, a gente tem aqui complexidade alta para implementar. Isso aqui exige gerenciamento de conexões. Se você não gerenciar, você vai ter um consumo de recursos muito alto. Geralmente a gente usa load balancer de layer 4, inclusive já tem vídeo aqui de load balancer aqui no canal, tá? Sobre layer 4, layer 7,
+
+como que isso aqui funciona por baixo dos panos, tá? Então, dá um confere aqui. Eu vou deixar um card aqui em cima e o link na descrição. Não é cacheável e exige infraesecializado. Ou seja, não é qualquer um que consegue colocar uma arquitetura no ar, uma arquitetura decente utilizando web socket, tá? Isso
+
+aqui exige diversos pontos de atenção. Beleza? Entendido isso aqui. Agora que você entendeu aqui o SSE e o lugar dele aqui, a diferença pro Web Socket, é na hora da gente botar a mão na massa. Então, não vamos perder tempo, vamos entender aqui como é que a gente faz, como é que a gente trabalha na vida real. Vamos lá, vamos direto ao que
+
+interessa aqui, tá? Eu tenho aqui o meu Node JS aqui, tá? O esqueletinho aqui bem básico aqui pra gente começar a codar na prática aqui. Eu tenho aqui também o meu index HTML aqui também, meu HTML bem basicão aqui, que inclusive eu vou abrir ele aqui no navegador, tá? Eu vou deixar ele aberto aqui, tá? E não
+
+esquenta aqui, ó, com esse monte de parâmetro aqui na URL, porque isso aqui acontece toda vez que eu abro aqui o navegador ou a página que eu tô trabalhando aqui por dentro da minha IDE. Então ele passa esses parâmetros aqui, não esquenta com isso, tá? O mais importante é você entender que isso aqui é um HTML cru, tá? Tem até um CSSzinho bem vagabundo que eu criei aqui, só para dar aquele estilozinho ali, só para não ficar aquela coisa monocromática ali, bem feio. E a magia toda vai acontecer aqui dentro, tá? Dentro do script aqui.
+
+E a gente já vai começar a botar a mão na massa. Vamos lá. A primeira coisa que eu vou começar criando aqui é uma variável do tipo eventour. Vou pegar esse objeto do JavaScript chamado de eventouring e eu vou apontar ele lá pro local roxo, tá? Eu vou fechar isso aqui e eu vou chamar esse barra stringam aqui, tá? Então eu tô fazendo uma
+
+requisição nesse end point, ou seja, no meu local host aqui. E aí eu tô passando aqui a porta 8080 e esse barra string. Da onde vem esse barr stringam? Daqui do meu back end, tá? Do meu node jss aqui, do meu express aqui, onde eu tenho um endp aqui barra string. Você pode
+
+colocar o que você quiser aí, o nome que você quiser. Isso aqui não influencia em nada, mas eu vou deixar assim só para ficar mais coerente, beleza? E basicamente esse eventource aqui é quem vai fazer toda a magia, tá? A gente já vai falar um pouquinho mais sobre ele, mas por hora eu vou terminar esse código para você ver como que é simples da gente implementar isso aqui. Então eu vou pegar esse event source aqui, vou chamar o meu on message, ou seja, toda vez que tiver um evento novo, toda vez que acontecer alguma coisa, eu vou fazer algo, tá? Esse on message aqui, toda vez
+
+que chegar uma mensagem, eu faço alguma coisa. E o que que eu posso fazer aqui? Eu posso simplesmente pegar esse elemento que tá ali em cima, chamado de log, tá? que a minha ideia já até me ajuda a autocompletar e dá um inner html para alterar o valor dele aqui para esse event.data. Esse event aqui vai ser o
+
+valor, tá? Vai ser o resultado da resposta que vai vir dessa requisição. Esse event aqui, ele vai fazer uma requisição por baixo dos panos, passando alguns cabeçalhos específicos. Um desses cabeçalhos é esse cabeçalho aqui, ó, esse accept text/event string. O que que é isso aqui? Ele tá basicamente dizendo
+
+o seguinte, tá? O meu front end aqui, através dessa variável aqui, através da verdade desse objeto eventour, ele faz essa requisição com esse cabeçalho. Ele tá dizendo pro servidor o seguinte: "Ô servidor, eu quero me comunicar com você nesse formato aqui, tá? Eu quero que você mande para mim, eu aceito aqui uma comunicação baseada em event stream, tá? Então o servidor vai ter que trabalhar com esses cabeçalhos também. A gente vai
+
+fazer algumas coisas lá, mas por hora, o SSE, eu quero que você entenda que SSE a gente trabalha comandando aqui, ó, os cabeçalhos. Então, é através dos cabeçalhos que a gente começa a implementar o server s events, tá? E aí, logicamente que através desse event aqui, desse objeto que já vai fazer tudo isso da parte do front end por baixo dos panos, beleza? Então é basicamente isso aqui, é simples, é fácil, desse jeito aqui. Calma que você já vai ver funcionando, tá? Vamos lá pro nosso back
+
+end agora que é quem vai receber essa requisição. O que que a gente precisa fazer? Eu preciso basicamente pegar aqui, ó, a resposta que eu vou enviar de volta, né? A resposta que eu vou estar enviando ali pro meu front end. E eu tenho que setar alguns headers aqui nessa resposta, tá? A gente tem que
+
+trabalhar com os headers. Isso aqui é obrigatório. O primeiro header que eu vou colocar aqui, logicamente, é o content type do tipo text, mas não é text play, é o text/event string, que é obrigatório pra gente trabalhar com SSE. Eu posso colocar aqui também um outro cabeçalho que é o cabeçalho pra gente poder manter essa conexão aberta o tempo todo. Caso você esteja utilizando ali HTTP1, de repente tá usando um protocolo mais antigo, alguma coisa do tipo. Então
+
+a gente pode mandar aqui, ó, um connection e mandar aqui, ó, um Kip Aive, ou seja, isso aqui vai manter a conexão vivo o tempo todo. Skip a live é para manter vivo, beleza? Mistério nenhum. Isso aqui não é obrigatório. Só é obrigatório se caso você tiver trabalhando numa arquitetura muito legada, usando HTTP1 ainda e tudo mais, aí ele vai segurar e manter essa conexão ativa. Setamos aqui os cabeçalhos. Que
+
+que a gente pode fazer? Eu posso devolver uma resposta lá pro meu front end. Então o que que eu posso devolver como resposta aqui? Eu posso simplesmente escrever nessa resposta um data que é obrigatório. Isso aqui é obrigatório. Toda vez que você devolver
+
+uma resposta usando SSE, tudo que for obrigatório eu vou te alertando ao longo do caminho, tá? Isso aqui é um formato, tá? a gente tem que trabalhar com o formato correto. Então, para trabalhar com SSE, você é obrigado a enviar esse data aqui, esse de aqui, que é o quê? São os dados que você tá devolvendo lá.
+
+Então, o dado da mensagem, do evento, vamos se dizer assim. Então, você tem que mandar esse data aqui. Eu vou concatenar isso aqui com algum valor aqui, com alguma coisa aleatória. Então, vou chamar um meth. Random aqui para gerar um número aleatório pra gente. E
+
+eu vou concatenar isso aqui também, ó, com duas quebras de linha, tá? Isso aqui também é obrigatório, a quebra de linha, tá? Por que a quebra de linha é obrigatória? Porque por baixo dos panos, o SSE faz o seguinte, ele segura a resposta, tá? O servidor vai segurar a resposta, ele deixa essa resposta em aberta com o servidor e ele fica escrevendo dentro da resposta. Ele não
+
+finaliza a resposta nunca, ele fica sempre mandando ali por dentro do mesmo tonelamento, vamos dizer assim. Então, a gente tem que quebrar a linha duas vezes aqui. Para quê? para que o protocolo entenda que acabou uma mensagem aqui e começou outra mensagem aqui. Então, para ele interpretar isso, a gente precisa quebrar a linha duas vezes, informando que acabou uma mensagem e a próxima vai começar. Então, é assim que funciona,
+
+você vai entender isso aqui melhor, beleza? E aí, por fim, a gente pode simplesmente vir aqui, ó, e finalizar a conexão, finalizar a resposta. Só que isso aqui tá errado. E isso aqui você vai fazer na base da intuição. Então eu vou deixar do jeito que tá, só para você ver acontecendo, porque eu já vi gente implementando isso aqui pr você não cair nesse erro aqui, beleza? Então vai
+
+funcionar, mas eu vou te mostrar onde que tá o erro, tá? Vamos lá pro nosso front end. Agora eu vou atualizar, nem precisa atualizar, ele já começou a pegar aqui os valores, ele já tá atualizando aqui o valor. Então você vê que ele tá gerando aquele número aleatório através desse meh. Random aqui, que vai gerando números aleatórios. E o que que tá acontecendo?
+
+O nosso front end aqui, ó, ele fez uma requisição pro nosso servidor lá, pro nosso back end, pro nosso node. Nosso node recebeu a requisição, setou os cabeçalhos corretos, tá escrevendo na resposta e aí o servidor aqui, o servidor não, o front end está sendo atualizado, tá? E aqui a gente tem um título aqui, log do servidor e tal, poderia ser qualquer coisa, mas isso aqui é para simular os valores que estão chegando e a gente tá atualizando em tempo real a nossa aplicação. Beleza? Só que aonde que tá o erro e por que isso aqui não seria o tempo real? Isso aqui,
+
+na verdade, é pulling. Por que que isso aqui é pulling? Porque vamos aqui no network, você vai entender. Olha o que que tá acontecendo aqui, ó. Ele fez uma requisição, fez outra requisição, vai fazer outra requisição, vai fazer mais uma requisição e ele vai ficar fazendo requisição infinita aqui. Isso aqui é
+
+pulling, ou seja, se eu clicar aqui, eu venho no header aqui, ó, repara nisso aqui, ó. Ele tá fazendo uma requisição atrás da outra. Teve status code aqui, 200 e tudo mais. Então, o que que tá acontecendo? A gente tá fazendo pulling.
+
+Isso não é SSE. E eu já vi gente implementar isso aqui. Então toma cuidado com isso aqui. Não é SSE, não é assim que se trabalha com SSE. Isso aqui você tá espancando o servidor de requisição. Se você implementar isso em
+
+produção, você vai se dar mal. Então vamos lá. Como é que a gente corrige isso aqui? A gente corrige isso aqui com esse simples detalhezinho aqui, ó, de remover essa finalização da resposta. Por quê? Porque como eu falei, toda vez
+
+que a gente chama esse objeto aqui, esse event source, o que que ele faz? Ele cuida do front end ali. Ele cuida de trabalhar com SSE da seguinte forma. Se fechar a conexão, ele vai reabrir de novo. Então, é assim que ele trabalha com o servidor. Se a gente tá
+
+trabalhando com SSE, ele tem que reabrir a conexão. Então, toda vez que cair a conexão, o front end reabre de novo. Então aqui a gente estava encerrando a conexão e aí o front end, por sua vez, reabria ela novamente e aí isso acabava encadeando uma requisição atrás da outra. É por isso que parecia que estava funcionando. Agora, qual que é o detalhe aqui? Vamos lá. O detalhe aqui é o
+
+seguinte, tá? O nosso front end aqui, ele abre a requisição, o servidor segura a requisição e precisa ficar mandando dentro da resposta. Se a gente volta aqui no front end, ele parou de atualizar, ele não tá mais atualizando, ele não tá mais fazendo aqui, eu vou até limpar aqui, ó. Ele não tá mais fazendo requisições. Por quê? Porque se eu
+
+atualizar, ó, ele vai mudar o valor aqui, ó. Toda vez que eu atualizar, ele muda o valor. Vou limpar de novo, vou mudar aqui de novo, ó. Ele muda o valor, ele faz uma nova requisição e para, acabou. Ele não continua atualizando.
+
+Por quê? Porque a gente respondeu aqui, a gente escreveu na resposta, mas a gente não tá fazendo mais nada. a gente precisa, de certa forma manter essa resposta em aberto e tá constantemente enviando novos valores, fazendo algumas mudanças, enviando literalmente eventos. Que que a gente pode fazer aqui? A gente poderia vir aqui, ó, e dar um set intervalo aqui, ó, e fazer o seguinte, trazer esse código aqui para cá, para cima, e fim de papo, acabou. Quando a
+
+gente voltar no front end, ele já vai estar se atualizando sozinho. Se a gente deixar ele aqui, ele vai levar um tempinho aqui, logicamente. Ó aí, como é que ele fica louco. Ele vai se atualizando sozinho. E aí ele tá maluco desse jeito porque logicamente eu esqueci de vir aqui, ó, e setar quantos segundos aqui, ó. Vou botar aqui um
+
+segundo, a cada 1 segundo, ó. E ele vai levar mais um tempinho e vai começar a se atualizar sozinho. Então, ele fez aqui uma nova requisição e agora repara o seguinte, os valores estão se atualizando, mas não tá acontecendo novas requisições. Então, repara que essa foi a última. Eu vou limpar aqui pr você entender melhor. Eu vou atualizar
+
+de novo. Ele vai fazer essa requisição aqui, ó. Os valores vão se atualizando. Mas aonde que esses valores estão sendo mostrados ou atualizados? Aqui, ó.
+
+Repara nisso aqui, nesse event stream aqui, ó. Se eu clicar aqui, ó, repara, os valores estão chegando aqui dentro. Ou seja, eu mandei uma requisição, eu tenho agora um tonelamento com o servidor e o servidor está me encaminhando novas respostas ali por dentro de uma mesma requisição. Então, de uma mesma resposta, vamos se dizer assim. Então, os valores estão chegando e agora a magia está acontecendo. Só que
+
+logicamente que isso aqui é só a ponta do iceberg. Dá pra gente melhorar muito isso aqui. Dá pra gente fazer muita coisa com isso aqui. A primeira coisa que eu vou fazer com isso aqui é melhorar um pouco mais para ficar cada vez melhor para você conseguir entender. E a gente vai trazer algumas coisas da vida real aqui. A primeira coisa que eu
+
+vou fazer é o seguinte, tá? Eu vou tirar esse código daqui. A gente vai parar de utilizar isso aqui. A gente não vai mais trabalhar ali com essa essa simulaçãozinha básica. a gente vai começar a trabalhar aqui com arquitetura distribuída, vamos se dizer assim, botar aqui uma estrutura de microsserviço aqui para funcionar. Vamos lá, que a gente
+
+vai fazer no meu docker aqui, ó, no meu docker compose aqui, eu tenho o redis aqui e eu tenho o node. Então, a gente vai utilizar o redis pub, tá? Vai funcionar ali meio que como uma, não é como uma fila de mensageria, mas é como um notificador, um agente notificador na nossa arquitetura como um todo, tá? Você já vai entender, ele já tá de pé, já tá rodando. E o que que eu vou fazer aqui no meu código? Basicamente o que eu
+
+tenho que fazer aqui é criar uma conexão com o redis, tá? Então eu posso vir aqui e criar um redist client aqui, vou passar aqui a URL de conexão e vou apontar pro meu redis e ponto final. Tá configurada aqui a minha conexão, não tá pronto ainda, logicamente, mas o objeto de conexão aqui já está pronto. O que que eu vou fazer? Eu vou basicamente dar um a aqui embaixo e vou dar um redis.
+
+Connect, ou seja, para ele conectar no redis. E fim de papo. Agora o que que eu preciso fazer? Eu preciso agora fazer o seguinte, tá? Eu vou utilizar o Redis como um pub sub, ou seja, o Redis é um canivete suíço. Dá pra você usar como
+
+banco de dados, dá pr você usar como cash, dá pr usar como fila de mensageria, dá para usar como pub sub, dá para usar como infinitas coisas. Aí é o seu bel prazer. Eu vou usar como Pub sub. Eu já vou te ensinar como é que ele funciona. Já vou te explicar como é que isso aqui funciona. O que eu preciso
+
+fazer aqui por hora é o seguinte, vou chamar o meu Redist client aqui depois que ele conectou e eu vou dar um subscribe aqui no seguinte ponto, tá? Eu vou chamar aqui um canal chamado de notification. Pode ser o nome que você quiser, tá? Eu vou chamar de notification, já vou te explicar como é que isso aqui funciona por baixo dos panos. E aí eu vou pegar aqui, ó, vou capturar uma mensagem e aqui dentro eu vou fazer alguma coisa. Quando chegar
+
+uma notificação para mim lá do redis, você já vai entender como que tudo funciona, fica tranquilo, tá? Basicamente, o que eu vou fazer aqui é o seguinte, eu vou chamar aqui a minha resposta, vou dar um write aqui novamente, vou passar aquele data que você lembra que é obrigatório, vou concatenar com a mensagem que vai chegar lá do meu redis e se você lembra o que que tá faltando, tá faltando a gente concatenar aqui também com a quebra de linha aqui também, tá? São duas quebras de linha para finalizar a mensagem e fim de papo. Basicamente é isso. O que que tá acontecendo? Eu estou me inscrevendo
+
+lá no Redis e tô dizendo ele o seguinte: "Ô Redis, toda vez que chegar uma mensagem num canal aí chamado notifications, eu quero ser notificado. Eu quero que você me mande aqui a mensagem que chegou nesse canal chamado de notifications." E aí, o que que o Redis vai fazer? O Redis vai lá e vai te enviar essa notificação. O próprio Redis vai notificar o nosso back end aqui, tá?
+
+E aí, vamos lá pr você entender, para ficar mais claro, eu vou vir aqui, ó, na minha IDE aqui e eu já tô conectado aqui com redis, tá? Que que eu vou fazer aqui, tá? Eu vou abrir o console do rediz aqui e eu vou escrever, vou publicar uma mensagem, tá? Eu vou dar um publish aqui num canal chamado Notifications e eu vou mandar uma mensagem aqui, ó. Vou chamar aqui, ó, de minha primeira mensagem. Beleza? Essa
+
+vai ser a primeira mensagem. Isso aqui é a sintaxe do Redista. Já tem vídeo de rediz aqui no canal. Vou deixar um card aqui em cima, o link na descrição. Dá um confere aí depois. O Redis é uma
+
+ferramenta fantástica, tá? Mas é assim que você publica uma mensagem lá no no rediz, no canal chamado notifications. E aí você deve est assim: "Ah, Renato, mas tu não precisa criar esse canal". Não, no Red é diferente. Você não faz igual o banco de dados que você tem que criar uma tabela para depois enviar dado pra tabela. Aqui, só o fato de você publicar
+
+uma mensagem em um canal chamado Notifications, o próprio Red já verifica. Existe esse canal aqui, não existe. Então, já cria e já bota essa mensagem ali dentro. E eu vou disparar para quem tiver ouvindo essa mensagem, para quem tiver inscrito. Beleza? Que
+
+que eu vou fazer aqui? Eu vou apertar o play aqui para executar para ele publicar essa mensagem aqui nesse notifications. Então, cliquei aqui e beleza, fim de papo. E aí, se a gente for lá no nosso front end, que que vai acontecer? Olha aqui a mensagem aqui, ó.
+
+Ela já chegou aqui. Eu vou até fechar o meu meu dev tools ali. E é o seguinte, ó. A mensagem acabou de chegar aqui. O que que tá acontecendo aqui? Tá
+
+acontecendo o seguinte, cara. O meu front end aqui, o meu front endzinho aqui, ó, ele tá aqui. Ele fez a conexão com o meu back end. Ele mandou a requisição, fechou uma conexão. Essa conexão aqui, quando ela chegou, essa requisição, que que o meu back end fez aqui? Que que o meu end point fez? Ele
+
+setou os cabeçalhos, ele abriu uma conexão com redisk. Daqui a pouco eu vou falar sobre isso aqui, vou falar de padrão de projeto, que isso aqui não é a melhor forma da gente trabalhar com a conexão do redis. Tem coisa importantíssima aqui de você saber, se não você faz besteira em produção, que daqui a pouco eu vou falar. Mas ele fechou aqui a conexão com o Redis. Ele abriu, na verdade, a conexão com Redis e aí, ó, ele pegou e se inscreveu lá no Redis. Que que acontece nesse momento
+
+aqui? O meu backend abriu uma conexão com Redis e falou o seguinte: "Ô, Redis, manda para mim aí toda vez que chegar uma notificação aí nesse canal chamado Notifications, eu quero ser notificado. Manda essa notificação para mim, manda essa mensagem para mim, manda o que chegar aí dentro para mim". Beleza? E ele vai ficar pendurado no redis. O meu
+
+back end aqui nesse momento, ele tá pendurado no redis por baixo dos panos. Tá um pendurado no outro, porque o front end tá pendurado aqui no meu back end, no meu no meu end point aqui que recebeu requisição e segurou. Por sua vez, o meu back end está pendurado no redis por baixo dos panos. E agora toda vez que eu vier aqui publicar uma mensagem, tá? Vamos imaginar que eu sou um outro microsserviço, tá? Eu tô publicando
+
+manualmente, mas isso aqui, cara, é perfeitamente normal na vida real. Você tem aqui a minha aplicação, o meu back end aqui, que precisa atualizar o front end de algum evento, alguma coisa que tá acontecendo, que inclusive foi o que eu mostrei no vídeo passado arquitetando o placar da Copa do Mundo ao vivo lá. Se você não assistiu, vou deixar um card aqui em cima, o link na descrição. Eu falei sobre esse tipo de arquitetura. E aí, o que que acontece? O meu backend
+
+aqui pode estar conectado num redis pub sub e toda vez que chegar um evento lá, o próprio redis vai notificar o meu back end. Então eu aqui manualmente eu estou fazendo papel de um outro microsserviço que de repente processou algum dado, pegou alguma coisa, publicou no redis e o meu redis vai fazer o papel de enviar essa notificação lá pro meu outro back end, que no caso é esse carinha aqui. Então eu vou publicar aqui, ó, minha segunda mensagem. E aí eu vou publicar e se a gente voltar aqui no front end, ó, minha segunda mensagem, ele já atualizou. Então é assim que a gente trabalha com grandes arquiteturas. E aí
+
+agora eu espero que tenha ficado claro para você essa questão aí do microsserviço, como que funciona. Tem muito mais coisa aqui pra gente ver, tá? Logicamente tem pontos de atenção também, inclusive para você ter aqui que eu vou te ensinar aqui também. Mas por hora, eu quero que você entenda essa questão da arquitetura, como que a gente trabalha num sistema distribuído aqui e como que isso funciona, principalmente usando redis aqui. Beleza? Então esse é
+
+o ponto que eu quero que você entenda. Inclusive, se você quiser aprender mais sobre toda essa questão dos sistemas distribuídos, da arquitetura de software como um todo, e você quer se tornar um arquiteto de software com conhecimentos práticos pra vida real e capaz de arquitetar grandes aplicações, você vai dar uma olhada no mapa do arquiteto, que é um guia de carreira completo para eu te conduzir do absoluto zero, passando pelo júnior, pelo pleno e pelo sor, até você se tornar um arquiteto de software e um arquiteto de soluções com conhecimentos práticos pra vida real. E lá dentro eu te entrego tudo que você precisa estudar, na ordem que você precisa estudar. E ainda te entrego um roadmap completo que vai conduzir guiar a tua carreira independente de onde você esteja. Então, seja você um júnior, seja você um pleno, se você já é um sênor aí calejado de batalha de longa data e quer se tornar um arquiteto ou até mesmo se você é um iniciante, tá começando agora, tá dando os teus primeiros passos, o mapa do arquiteto é para você, porque lá dentro a gente parte do absoluto zero.
+
+Então eu vou deixar o link na descrição, dá um confere aí depois. Agora vamos voltando aqui porque ainda tem muita coisa pra gente ver e tem diversos pontos de atenção aqui que você precisa ter que se você não tiver vai dar ruim em produção. Vamos lá. Agora que você já entendeu essa questão toda aí dos microsserviços, da arquitetura aqui distribuída, como é que você faz essa ponte, essa comunicação ali usando SSE e atualizando frontend, que que a gente precisa entender mais aqui? A gente precisa entender o próprio SSE em si, né? a própria forma de comunicação, o
+
+formato de comunicação, como por exemplo, a gente tem aqui, ó, esse deir aqui, esse data aqui, que é obrigatório da gente enviar, só que ele não é o único campo, tem diversos campos que você pode enviar aqui. Eu vou deixar o link da documentação na descrição para você estudar mais, você aprender mais a fundo, mas esse não é o único campo. Tem outros campos aqui, como por exemplo, tem um campo extremamente importante que dá para você trabalhar, que é o seguinte: eu vou quebrar a linha aqui e eu vou adicionar aqui mais um campo chamado event, que é o quê? é o nome do evento, ou seja, eu tô tagueando, tô criando uma tag nesse evento aqui. Por quê? Porque numa arquitetura de verdade,
+
+a gente não trabalha com um evento só, um evento para tudo, não. A gente trabalha com eventos nomeados de diversas coisas que acontecem no nosso sistema. Então, a gente pode ter um evento de log, a gente pode ter um evento de transação bancária, de saque, de depósito, a gente pode ter diversos eventos, centenas, milhares de eventos no nosso sistema. Então, nossos eventos precisam ter nomes e a gente dá nome a eles através dessa, desse valor aqui chamado de event que a gente passa na resposta. Isso aqui também é o formato do SSE. E aqui nesse event, eu posso
+
+chamar ele, sei lá, de, eu vou chamar de evento, tá? Poderia chamar de qualquer coisa que você quisesse, mas eu vou chamar de evento, tá? Fica a seu critério, você vai implementar. Eu espero que você bote a mão na massa também para você fazer. E eu vou concatenar com o quê? Eu vou concatenar
+
+aqui, ó, não com duas, mas com apenas uma quebra de linha. Tem que ter a quebra de linha, tá? É obrigatório. As duas quebras de linha. É só no final.
+
+Quando você finalizar aqui o valor aqui, o corpo da resposta, você quebra duas vezes. Mas aí se você quiser passar mais alguns valores, você tem que quebrar a linha uma vez aqui e fim de papo. É assim que funciona, tá? Até embolei aqui, ó. Fiz besteira aqui, mas já consertei. Beleza? Entendido disso aqui,
+
+que que a gente pode fazer? A gente pode vir no nosso front end aqui e no nosso front end aqui, ao invés do onage, que é a forma da gente trabalhar com isso aqui, trabalhando com evento genérico, né? Só tem um evento na nossa aplicação. A gente vai substituir isso aqui, ó, pelo ad event listener, pra gente adicionar um ouvinte no evento XYZ que a gente vai passar aqui. Então, o que que eu vou fazer? Eu vou botar aqui, ó,
+
+evento, que é o nome daquele evento que a gente tá passando aqui dentro, que basicamente eu tô dizendo o seguinte, eu tô dizendo que toda vez que chegar um evento dessa requisição aqui chamado evento, né? Eu botei aqui evento, poderia ter colocado um nome melhor, mas toda vez que uma mensagem chegar com esse nome aqui, evento, eu tenho que fazer alguma coisa. Então isso aqui é um ouvinte, beleza? E aí, que que eu posso fazer aqui? Logicamente que isso aqui tá errado, tá? Tá tá mal formatado aqui.
+
+Falta logicamente eu tirar isso daqui e colocar uma setinha aqui e ponto final. Então, basicamente, a gente substitui aquele on message pelo add eventuer, um ouvinte, para ouvir alguma mensagem que chegar com esse nome de evento. E aí eu posso logicamente trabalhar dessa maneira aqui. Então, toda vez que chegar uma mensagem com esse nome evento, esse meu listener vai fazer alguma coisa. Se a gente tivesse, por exemplo, vários outros aqui, ó, vários outros eventos, a gente poderia criar aqui um evento para, sei lá, depósito bancário, o outro para saque, o outro para, sei lá, transação cancelada e por aí vai. Então, é assim
+
+que a gente trabalha com múltiplos eventos. E aí, ó, a gente pode vir aqui, logicamente, no nosso back end aqui, que não precisa ser ajustado mais nada. E no nosso front end aqui, ó, ele já tá atualizado, ó, recebendo dados do servidor. Vou até dar mais um refresh aqui. Beleza? Que que a gente vai fazer?
+
+Eu vou vir aqui na minha IDE, vou lá no console e vou passar aqui, ó, minha terceira mensagem e vou publicar isso aqui. Beleza, ele publicou. Vamos voltar no front end. E chegou aqui, ó, minha terceira mensagem. Por quê? porque ela
+
+foi enviada com aquela tag evento e o meu front end reagiu àele evento. E é assim que funciona o server S event, tá? É super simples, só que como eu falei, tem diversos pontos de atenção e tem um aqui extremamente importante. Tem alguns pontos extremamente importantes que eu já vou começar a falar agora, tá? Vamos lá. Primeiro ponto extremamente
+
+importante, tá? Você precisa fazer isso aqui, ó. Eu vou pegar aqui, ó, a minha requisição que chegou e eu vou dar um aqui, ó. E eu vou verificar o seguinte, se essa conexão, se essa requisição que chegou, se ela foi fechada, se ela foi encerrada, ou seja, se o cara fechou o navegador ou fechou a aba do navegador, eu preciso fazer isso aqui, ó. Eu preciso finalizar a resposta, ou seja, eu preciso encerrar o fluxo, eu preciso acabar com aquele tunelamento. Por quê?
+
+Porque imagina só, eu tô aqui no meu navegador, se eu fecho o meu navegador, esse carinha aqui, ele continua achando que ele tá preso ainda. Quando chegar uma mensagem, ele vai, ele vai tentar enviar essa mensagem para todo mundo que tá agarrado aqui na requisição no end point e vai tentar enviar para mim também. Você deve achar assim, pô, mas isso aí não tem problema. Não é um problema. É um problema assim quando a gente fala de muitos usuários, de milhares de usuários. Então, gente
+
+fechando, gente abrindo aba, o navegador o tempo todo, isso pode ser um baita problema. Então, é assim que a gente faz o gerenciamento das conexões que estão ativas. Então, a gente deixa isso aqui em aberto e toda vez que o nosso cliente fechar o navegador ou fechar a aba, a gente vai encerrar a conexão e fim de papo. Então isso aqui é o gerenciamento. É extremamente importante você fazer isso aqui. Um outro ponto extremamente
+
+importante é isso aqui, ó. Repara o seguinte, tá? Eu quero que você entenda o fluxo. O meu front end tá aqui. Toda vez que eu faço uma requisição aqui, toda vez que um usuário novo entrar aqui, que que vai acontecer? ele faz uma
+
+requisição. Essa requisição bate aqui no meu back endu back end, por sua vez, ele executa todo esse passo a passo aqui para cada conexão que chega, para cada requisição que chega. Qual que é o problema disso aqui? O problema é que a gente tá abrindo uma conexão com redis toda santa vez que uma requisição chega. Então, se a gente tem 100 usuários ativos agora, significa que a gente se conectou, a gente tá pendurado no redis 100 vezes, tem 100 conexões abertas com redis. Cada usuário que chegar aqui vai
+
+abrir uma nova conexão com o redis Pub sub lá do outro lado. Então isso aqui derrubaria o redis dependendo do número de usuários. Então o que que a gente tem que fazer aqui? A gente teria que usar um padrão de projeto chamado Singleton, que muita gente considera antipattern e tudo mais, mas ele tem o seu valor. Tem vídeo aqui no canal, dá um confere aí depois. Vou deixar um card aqui em cima,
+
+o link na descrição. Você deveria basicamente usar um singleton. Para quê? Para criar uma única conexão com o redis, independente de quantos usuários você tenha. E aí aqui dentro você vai reutilizar a mesma conexão para todo mundo. E o redis logicamente foi feito e
+
+foi preparado para isso. Ele usa um conceito por baixo dos panos chamado de multiplexação, tá? Então essa multiplexação ele reaproveita a mesma conexão para vários usuários, tá? Inclusive tem isso aí lá dentro do mapa do arquiteto. Dá um confere lá depois.
+
+Já deixei o link aí na descrição. E aí vamos lá. Qual que é a ideia aqui? Tá além desse desse ponto aqui de você se atentar a tudo que você conecta quando você tá usando SSE, principalmente bancos de dados também, tá? toma cuidado com conexão, com p de conexões lá com banco de dados, senão você vai explodir o banco. Então tem que tomar cuidado
+
+quando tiver trabalhando com SSE. Um outro ponto de atenção que você precisa ter também é o seguinte, tá? Aqui no nosso front end, repara que a gente tá fazendo a requisição, a gente recebe a requisição aqui no nosso back end, faz o que tem que fazer e fim de papo. Só que numa aplicação da vida real, a gente tem a autenticação dos usuários, ou seja, não dá para sair requisitando end point como se não existisse autenticação. Autenticação você tem que ter ali na vida real. Só que qual que é o ponto? O
+
+ponto é que quando você trabalha com SSE, você não consegue enviar cabeçalhos aqui dentro. Você não consegue usar esse eventur aqui e mandar, por exemplo, um beer token lá para você trabalhar com JWT nem nada do tipo. Então, geralmente na vida real, o que que a gente faz? A gente passa aqui na querer string mesmo, na própria URL, a gente passa aqui um parâmetrozinho chamado de JWT e manda aqui, ó, o JWTzinho aqui e fim de papo. É assim que a gente faz e funciona e não tem problema nenhum, porque o JWT não foi feito para ser secreto, tá? Ele foi
+
+feito justamente para trafegar os dados, desde que você não trafegue dados sensíveis. Então, esses são os pontos de atenção. Eu espero que você tenha entendido. Se ficar qualquer dúvida, deixa nos comentários abaixo. Mas eu tenho certeza, cara, que você agora tá muito mais preparado para implementar isso aqui na vida real, principalmente em grandes aplicações, porque agora você já sabe de todos os pormenores aqui, principalmente do gerenciamento da conexão, do singleton ali, caso você vá abrir alguma conexão. E agora eu tenho
+
+certeza que você tá completamente preparado para lidar com SSE. Beleza? Bom, e agora que tu chegou até o final desse vídeo aqui, já entendeu tudo que você precisava sobre SSE ou Server S Events. Deixa teu like aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Não se esquece também de dar uma olhada no mapa do arquiteto, um guia de carreira completo para eu te conduzir do absoluto zero até o arquiteto de software. Então o link vai est na
+
+descrição, dá um confere aí depois. Se ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui.
