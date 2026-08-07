@@ -1,0 +1,153 @@
+---
+video_title: "What is a passkey?"
+video_id: JNQ_j0d_hCM
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JNQ_j0d_hCM
+video_date: 2026-01-31T00:06:53+00:00
+video_description: |
+  Oliver Dunk, shares what a passkey is and where it can be used. To learn more about passkeys and biometrics, check out the related video "Are passkeys based on biometrics?".
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome
+---
+Today, I want to explain the basics of how passkeys work and how biometrics work alongside them to provide extra security. But first, what even is a passkey? It's like a password, but better. You can use it to log into your favourite sites and apps just like with a password, but in a safer and easier way. Under the hood, it's a public private key pair. Now, unlike with passwords, you don't need to choose between remembering a passkey or saving it somewhere. It's generated for you and is always unique for every site you use.
+
+---
+video_title: "Start using MCP in DevTools today!"
+video_id: 4x1fl67d_Ag
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4x1fl67d_Ag
+video_date: 2026-01-29T19:54:23+00:00
+video_description: |
+  DevTools now also offers an MCP server which can help you debug common issues around web development, using a real Chrome instance on your own device. For more information, check out the related video!
+  
+  Watch more DevTools Tips → https://goo.gle/DevToolsTips 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Matthias Rohmer
+  Products Mentioned: Chrome,  Chrome DevTools
+---
+Have you already heard of MCP? It's short for model context protocol, and long story short, it's APIs specifically designed to be used by AI. DevTools now also offers an MCP server, which can help you debug common issues around web development, using a real Chrome instance on your own device. DevTools MCP works with every IDE that supports the MCP protocol, independently from the used model. Use it with Gemini CLI or ViewScode and Copilot, find Instance instructions and more at Google Slash DevTools MCP.
+
+---
+video_title: "How to use web frameworks with Chrome extensions"
+video_id: XfsXCfv7wKM
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XfsXCfv7wKM
+video_date: 2026-01-28T23:40:20+00:00
+video_description: |
+  Explore the benefits and considerations of using web frameworks for Chrome Extension development in this technical guide. Oliver addresses the core question of framework compatibility with extensions and gives advice on when frameworks like React and Svelte can be a good fit. Learn about essential practices like bundling your code locally and adapting to different browser environments, enabling you to confidently build powerful and performant extensions with your preferred tools.
+  
+  
+  Chapters:
+  0:00 - Introduction
+  0:45 - Can you use a framework to build a Chrome Extension?
+  1:26 - What to consider when choosing a framework 
+  4:25 - Conclusion
+  
+  Watch more Developer Mode → https://goo.gle/dev-mode 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  Patrick's video on Remote Hosted Code → https://www.youtube.com/watch?v=aYxzHUX_elo
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome, Chrome Extensions
+---
+Você pode criar uma extensão do Chrome com qualquer framework web moderno, como React, Angular ou Spelt. Isso é verdade mesmo no manifesto v3, mas existem escolhas boas e ruins, além de algumas considerações interessantes. Então, vamos falar sobre isso. [música] Bem-vindo de volta ao modo desenvolvedor. Esta é a série onde respondemos às suas perguntas com foco em extensões do Chrome e na plataforma de extensões da web em geral.
+
+Antes de começarmos, considere rapidamente se inscrever no canal Chrome para Desenvolvedores, caso ainda não o tenha feito. Normalmente não pedimos isso aqui, mas é uma boa maneira de ver novos vídeos desta série, novos vídeos sobre outras coisas que acontecem no Chrome e também para ver vídeos curtos do YouTube com alguns dos conteúdos mais curtos ou mais divertidos que produzimos. Voltando aos frameworks, a resposta simples é sim, você pode usar frameworks para criar uma extensão do Chrome. Deixe-me dar um exemplo bem rápido. Então, eu tenho uma extensão básica aqui.
+
+Possui um arquivo background.js que abre o index.html. E então o arquivo index.html possui uma tag script que carrega o arquivo index.jsx.
+
+E este é um aplicativo React muito simples que apenas renderiza "Olá, mundo!" na página. E então eu compilo o ES, já que estou usando JSX para templates e isso requer uma etapa de compilação. E então eu posso prosseguir e executar isso. Posso carregar isso no navegador.
+
+E você pode ver que a página se abre e aparece o "Olá, mundo!". Isso funciona muito bem. Existem muitos contextos diferentes em que uma extensão pode querer exibir a interface do usuário, e há algumas considerações diferentes em relação à estrutura que você pode escolher em cada caso. Então, vamos analisar cada um deles.
+
+Tenho a extensão do dicionário do Google instalada no meu navegador. Portanto, podemos usar isso como um ótimo exemplo. Esta é, na verdade, uma das migrações que ajudei a fazer para o manifesto v3 e sei muito bem como funciona. Se eu clicar no ícone de ação, podemos ver a janela pop-up. E se eu inspecionar a janela pop-up, você poderá ver que se trata apenas de HTML e JavaScript.
+
+É totalmente isolado, então qualquer coisa que você executar não vai sobrecarregar a página. E você pode querer uma aplicação bastante complexa aqui. Portanto, usar uma estrutura que seja muito capaz faz muito sentido. Agora, você ainda precisa estar atento ao desempenho, mas eu diria que não precisa se preocupar tanto nesse aspecto. Pela minha experiência, o React pode demorar mais para inicializar do que outras opções, por exemplo, mas acho que seria uma escolha razoável neste caso.
+
+Se eu acessar uma página e selecionar uma palavra, você poderá ver essa janela pop-up. Queremos exibir essa janela pop-up muito rapidamente, e talvez precisemos mostrar várias delas ao longo do tempo, então um framework pesado provavelmente não é a escolha certa. Algo como a linguagem spelt seria ótimo aqui, ou até mesmo JavaScript puro. No caso da extensão do dicionário do Google, estamos usando o mecanismo de templates Mustache. Na verdade, não é bem um framework, mas facilita um pouco a estruturação do nosso código e, no fim das contas, nos fornece o HTML que podemos adicionar à página.
+
+Aliás, inserir conteúdo na página significa que a página tem acesso a ele. Se isso for uma preocupação, considere usar iframes, no mínimo, ou, sinceramente, tente evitá-los completamente. Isso por si só já é um assunto bastante extenso . Isso daria um vídeo inteiro, mas se você tiver interesse em saber mais sobre o assunto, fique à vontade para me avisar nos comentários. Vamos também acessar a extensão e abrir a página de opções.
+
+E esta é novamente uma página completamente isolada. Assim, posso adicionar tags de script e usar qualquer framework que eu preferir. Eu diria que isso é mais parecido com o caso das janelas pop-up, onde o que funcionar para você provavelmente está bom. Existem algumas estruturas que você provavelmente não deveria escolher. Não porque haja algo de errado com elas, mas simplesmente porque não fazem tanto sentido para extensões.
+
+Por exemplo, qualquer framework que se concentre fortemente na renderização do lado do servidor ou em roteamento HTTP complexo provavelmente não é uma boa opção, já que as extensões são executadas inteiramente no lado do cliente. Se você observar muitos sites que incluem frameworks adicionando uma tag de script que carrega o framework de uma CDN ( rede de distribuição de conteúdo), verá que isso facilita muito o nosso trabalho como desenvolvedores. No entanto, essa abordagem não funciona em extensões, pois temos uma política de segurança de conteúdo rigorosa que impede o carregamento de scripts de recursos externos. Então, tenho aqui o ambiente de testes da extensão web, e ele está carregando um script do site do TypeScript. Isso funciona muito bem aqui, mas se eu estivesse criando isso como uma extensão, não funcionaria, e eu precisaria garantir que incluísse esse script no pacote.
+
+Um bundler como o ESB build, rollup ou Webpack pode ajudar com isso. O motivo pelo qual exigimos isso é para evitar os riscos de segurança associados ao carregamento de conteúdo externo. Patrick Kentner, da nossa equipe, tem um ótimo vídeo sobre isso, que você pode assistir se quiser saber mais. Espero que isso responda à pergunta. Você pode, sem dúvida, usar frameworks para criar uma extensão do Chrome.
+
+Se você tiver mais alguma dúvida sobre isso, fique à vontade para deixá- la abaixo. Eu também poderia falar muito mais sobre frameworks específicos, se isso fosse interessante. Basta nos avisar. Até a próxima. [música] [música]
+
+---
+video_title: "Extension Update Testing Tool in action"
+video_id: Lpz6nFy7PQo
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Lpz6nFy7PQo
+video_date: 2026-01-21T18:00:27+00:00
+video_description: |
+  Oliver walks through how to test an update for yourself using the Extension Update Testing Tool. For more information on permissions, check out the related video.
+  
+  Watch more Developer Mode → https://goo.gle/dev-mode 
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome
+---
+Bem, as coisas ficam um pouco mais complexas porque o Chrome tem uma lógica que mescla as permissões e nem sempre exibe todos os avisos de permissão. Por exemplo, digamos que o usuário já tenha concordado em permitir que você leia e altere todos os seus dados em todos os sites, porque você solicitou a permissão para acessar todos os URLs . Agora, você precisa da permissão de solicitação de rede declarativa. Se eu pesquisar essa permissão na documentação, você verá que ela normalmente acionará um aviso de permissão de bloqueio de conteúdo em qualquer página. Mas como o usuário já aceitou algo muito mais abrangente, na verdade não exigimos nenhuma ação adicional da parte dele e não exibimos nenhum aviso adicional. Agora,
+
+existem tantos casos como este que seria impossível documentá-los. Em vez disso, publicamos esta documentação sobre como testar uma atualização. E possui algumas opções diferentes, mas uma em particular é usar a ferramenta de teste de atualização de extensão. E quero mostrar isso a vocês na prática. Então vamos dar uma olhada. Então, eu tenho uma extensão bem básica de "Olá,
+
+mundo!". Você pode ver aqui. E incorporei isso à ferramenta de teste de atualização de extensões. E eu já fiz a configuração básica, então estou pronto para começar. E
+
+se eu clicar no botão de instalar extensão aqui agora, você pode ver que aparece a mensagem para instalar a extensão. E eu não solicitei nenhuma permissão. Portanto, não recebo nenhum aviso de permissão aqui. Posso instalar a extensão diretamente. E então, se eu acessar a página de extensões, você poderá ver que minha extensão foi instalada. E agora vamos
+
+atualizar isso com uma nova permissão. Então, digamos que eu queira aquela permissão de requisição de rede declarativa que analisamos. Então, vou adicionar isso ao manifesto e depois vou baixar a extensão e importá-la para a ferramenta de teste. Na verdade, preciso atualizar a versão aqui também, porque se não houver um aumento no número da versão, o navegador não saberá que há uma atualização disponível para ser instalada. Então, vou pegar isso e mover para a ferramenta de teste de atualização . Como você pode ver, agora estamos disponibilizando a
+
+versão atualizada. E se eu clicar no botão de atualização na página de extensões, você pode ver que minha extensão foi desativada e que estou sendo solicitado a aceitar essas novas permissões para bloquear conteúdo em qualquer página. E isso é exatamente igual ao aviso de permissão que os usuários recebem ao instalar o produto pela Chrome Web Store. Portanto, se você tiver uma atualização sobre a qual não tenha certeza, o que eu aconselho é que você pegue a versão que já foi publicada, a importe para a ferramenta e, em seguida, carregue sua nova versão. E você pode usar isso para percorrer todo o fluxo que um usuário veria e verificar se está confortável com quaisquer avisos de permissão.
+
+---
+video_title: "How to know if permissions are safe to request in your Chrome Extension"
+video_id: gO0TRIYO5v4
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=gO0TRIYO5v4
+video_date: 2026-01-14T19:30:12+00:00
+video_description: |
+  Learn how Chrome handles permission updates for extensions, a crucial aspect for maintaining user trust and ensuring smooth deployments. Oliver shares the mechanics behind permissions and how you can test an update to see what impact it will have on your users.
+  
+  Resources:
+  Permissions list → https://goo.gle/48MkdDb  
+  Extension Update Testing Tool → https://goo.gle/4pLjat6 
+  
+  Chapters:
+  0:00 - Introduction
+  0:34 - What are permissions?
+  2:11 - How multiple permission warnings interact
+  3:03 - Demo
+  4:30 - Conclusion
+  
+  Watch more Developer Mode → https://goo.gle/dev-mode 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome, Chrome Extensions
+---
+You might have noticed that when an extension updates, Chrome will sometimes disable it and ask you to accept new permissions. That can be quite worrying as a developer. While this is really important so that users understand when modern extension can do changes, it does also mean a user has to make a decision about if they continue to use your extension going forward. In this video, I'll tell you why this happens and how it works. Welcome back to developer mode. Today's question is based on something that comes up a lot in the Chromium extensions, meaning list we have, as well as something I've had developers reach out specifically with questions around. I think we're going to breeze through things a bit more quickly this episode, but there are a few things that I want to cover by the end, including the general idea of what permissions are, and then how you can test an update to see what impact it will have on your users. So there's a whole list of permissions that an extension can request. And if we go to the Chrome for developers documentation, you can see the whole list of permissions here. As you can see, I can scroll down quite a way. There's quite a few of these. And these control what an extension can do and what data it has access to. Often you might need to request a new permission for a new feature building, but it can be intimidating to do so if you're not sure what the result of doing so will be. The first thing to mention is that all of the permission warnings are also displayed in our documentation. So if I go here, I can find a particular permission and you can see that this downloads permission will give the warning manage your downloads. And if you don't see a permission warning listed here, then you can add the permission and there will be no impact to a user. This is usually the case if it's a lower risk permission where we don't think we need to give an explicit prompt. Now for permissions with warnings, adding these when your extension updates will usually cause your extension to be disabled. Chrome will show a prompt asking the user if they're comfortable with the new permissions. So if you've ever seen that prompt where Chrome is asking you to reenable an extension, this is why. Now it's important to note that this includes host permissions and matches patterns for content scripts too. So even if you haven't touched the permissions array, there are other situations where this can happen. So shouldn't this video be over? Well, things get a bit more complex because Chrome has some logic where it will merge the permissions and not always show all of the permission warnings. For example, let's say the user has already agreed to let you read and change all your data on all websites because you requested that all you are else permission. Now you want the declarative net request permission. Well, if I search for that permission in the documentation, you can see that will normally trigger a block content on any page permission warning. But since the user's already accepted something far more broad, we actually don't require any steps from the user and we don't show an additional prompt. Now there are too many cases like this to document. So instead we publish this documentation on how to test an update and it has a few different options. But one in particular is using the extension update testing tool and I want to show you that one in practice. So let's take a look. So I have a really basic color world extension you can see here and I brought this into the extension update testing tool and I've done the basic setup so that I'm ready to go. And if I press the install extension button here now, you can see we get the prompt to install the extension and I haven't requested any permissions. So I don't get any permission warnings here. I can just directly install the extension. And then if I go to the extensions page, you can see that my extension has been installed. And now we're going to go ahead and update this with a new permission. So let's say that I want that declared of net request permission that we looked at. So I'm going to add that to the manifest and then I'm going to download the extension and bring that into the testing tool. And actually I need to update the version here as well because if there's not an increase to the version number, then the browser doesn't know that there's an update available to be installed. So I'm going to go ahead and grab this and move it into the update testing tool. You can see we're now serving the updated version. And if I go ahead and press the update button on the extensions page, you can see that my extension has been disabled and I'm being asked to accept these new permissions to block content on any page. And this is exactly the same as the permission warning that users would get installing from the Chrome Web Store. So if you have an update that you're not sure about what I advise you to do is take the version that's already published, bring that into the tool and then upload your new version. And you can use this to go through the full flow that a user would see and check that you're comfortable with any permission warnings. So hopefully this was helpful. If you haven't already consider subscribing as we're planning to keep these videos coming. Also drop a comment if there's a particular question on extension development you'd like to see answered. Now we've covered a number of resources here so we'll put links to all of those in the description. But otherwise, thank you for watching. Until next time. Bye.

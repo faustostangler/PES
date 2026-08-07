@@ -1,0 +1,66 @@
+---
+video_title: "How to build and debug WebMCP tools for browser agents"
+video_id: 5lJ0a6tdj-4
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5lJ0a6tdj-4
+video_date: 2026-07-21T17:07:41+00:00
+video_description: |
+  Join us for this special episode of Developer Tooling Tips on tour from Google I/O Connect Berlin! Alexandra Klepper details how WebMCP bridges the gap between your web application and browser agents. You can define structured tools with JavaScript and the Imperative API, or by adding annotations to your HTML forms with the Declarative API. Once your tools are built, you can debug and test these tools in Chrome DevTools' dedicated interface in the Application panel. 
+  
+  Chapters:
+  00:00 - Introduction
+  00:33 - What is WebMCP?
+  00:52 - Using the Imperative API
+  01:47 - Using the Declarative API
+  02:40 - Browser agent integration
+  03:34 - Debug with the Application panel
+  04:47 - Test with DevTools for agents
+  06:15 - Join the WebMCP Origin Trial
+  
+  Resources:
+  WebMCP docs: https://goo.gle/webmcp
+  Imperative API demo: https://goo.gle/webmcp-smart-home 
+  Declarative API demo: https://goo.gle/webmcp-french-bistro 
+  DevTools for agents: https://goo.gle/dta-setup 
+  WebMCP Origin Trial: https://goo.gle/webmcp-origin-trial 
+  
+  
+  Questions? Find us on LinkedIn:
+  https://goo.gle/alexandraklepper
+  https://goo.gle/chrome-for-developers
+  
+  Watch more DevTools Tips → https://goo.gle/DevToolsTips 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome #WebMCP
+  
+  Speaker: Alexandra Klepper
+  Products Mentioned: Chrome,  Chrome DevTools,
+---
+Olá, meu nome é Alexandra. E eu vou apresentar este episódio muito especial de dicas de ferramentas de desenvolvimento. Hoje, estamos em um dos nossos maiores eventos para desenvolvedores, o Google I/O Connect Berlim, e você vai aprender tudo o que precisa saber sobre o WebMCP: O que é, como fica a experiência dos usuários e até como eles podem depurar nas DevTools. Vamos começar. DICAS DE FERRAMENTAS PARA DESENVOLVEDORES
+
+TUTORIAL EM TOUR O WebMCP é um padrão da web proposto para ajudar você a criar e expor ferramentas estruturadas para agentes de IA. O WebMCP ainda é experimental, assim como as ferramentas de depuração nas DevTools. Acesse chrome://flags e ative as flags devtools-webmcp-support e enable-webmcp-testing para começar a experimentar. Suas ferramentas do WebMCP podem ser imperativas ou declarativas. Com a API Imperative, você pode definir ferramentas em JavaScript para executar diversas funções, como entrada de formulário, navegação em sites e gerenciamento de estado.
+
+Veja nosso aplicativo de casa inteligente. Os usuários podem pedir que seus agentes personalizem o painel de acordo com o que mais importa para eles, seja segurança, clima, energia ou controle de mídia. Para criar este painel, usamos modelContext.registerTool para adicionar uma nova ferramenta. Isso exige o nome da ferramenta, uma descrição e um inputSchema.
+
+Por exemplo, em nosso aplicativo WebMCP Smart Home, criamos a ferramenta rearrangeDOMComponents, que nos permite mover cada componente da sua página específica para o painel. Com o getTools, você pode descobrir e executar ferramentas no documento de forma assíncrona. Na próxima demonstração, implementamos o WebMCP em um sistema de reserva de restaurantes. Veja como peço ao meu agente que faça uma reserva para duas pessoas para comemorar meu aniversário de amizade com o Rei das DevTools, Matthias, nas mesas externas do Le Petit Bistro. Também vou avisar a equipe sobre a alergia grave dele a suflês murchos.
+
+Com a API Declarative, dá para transformar um formulário HTML padrão em uma ferramenta do WebMCP com anotações. Adicione o nome e a finalidade da ferramenta no elemento form, já que os campos do formulário agem como os parâmetros da ferramenta. O navegador traduz essas anotações para os agentes para que usem essas ferramentas de forma semelhante às imperativas. Você pode exigir que os usuários enviem o formulário manualmente para que concluam a tarefa ou adicionar toolautosubmit. O atributo vai ajudar você a acionar o envio e a navegação quando o modelo invocar a ferramenta.
+
+As ferramentas do WebMCP ensinam agentes de navegador, como o Gemini no Chrome, a interagir com as páginas para auxiliar na experiência do usuário. Na demonstração de configuração de carro, veja como personalizar um carro da Dynorun. No site da Dynorun, eu pedi para o Gemini no Chrome criar o carro ideal para festas, com som imersivo, iluminação interna e tudo mais que coubesse no meu orçamento de US$ 40.000. O Gemini no Chrome pede que eu confirme se ele entendeu minha solicitação e então inicia a tarefa.
+
+Graças ao WebMCP, é fácil para o agente customizar meu carro com a ferramenta update_car_configuration. A ferramenta tem parâmetros de cor do carro, iluminação e tecnologia de conforto, além de várias atualizações. Isso é só um exemplo inicial do que o Gemini no Chrome pode fazer interagindo com as ferramentas do WebMCP. Isso ainda é experimental, então a natureza desse fluxo pode mudar. Assim como no resto do seu web app, você pode inspecionar, testar e depurar suas ferramentas do WebMCP com o DevTools.
+
+Em um site que usa as ferramentas do WebMCP, abra as DevTools e acesse o painel do aplicativo. Na parte de baixo do painel, há uma lista das ferramentas disponíveis. Selecione cada uma para revelar os detalhes. Na barra lateral de detalhes, você vê o nome e a descrição da ferramenta, disponíveis aos agentes que acessam o site, além dos outros parâmetros disponíveis. Nessa barra lateral, você também pode invocar a ferramenta selecionada.
+
+Passe o cursor sobre o parâmetro esmaecido para revelar um ícone de "+". Clique no ícone de "+" para editar um valor do parâmetro. Clique no campo de texto aberto para ver um menu suspenso de todas as opções disponíveis para esse parâmetro, como inferido do esquema da ferramenta. Depois de ajustar os parâmetros, clique para executar a ferramenta com os parâmetros selecionados. Assim que clicar para executar, você vai ver a invocação da ferramenta na parte de cima do painel.
+
+com seu status, entrada e saída. Clique em uma invocação para ver outra barra lateral com detalhes, em que você pode inspecionar os objetos de entrada e saída em detalhes. Ou você pode testar as ferramentas do WebMCP com o DevTools para agentes. Vamos ver como é. Com o Chrome DevTools para agentes, seu agente de programação pode virar um agente de navegador.
+
+Saiba como instalar e configurar o DevTools para agentes neste link. Depois de configurá-lo, você pode ativar a compatibilidade com WebMCP usando a flag de configuração categoryExperimentalWebmcp. Isso ativa outras duas ferramentas: list_webmcp_tools e execute_webmcp_tool. Com essas ferramentas ativadas, você pode dar os mesmos comandos que daria a um agente de navegador. No entanto, como o DevTools para agentes tem mais ferramentas para interagir com o site, o agente pode optar por elas em vez das suas ferramentas do WebMCP.
+
+Se quiser garantir que o agente use suas ferramentas do WebMCP, instrua-o explicitamente a fazer isso. Por exemplo, na demonstração do bistrô francês de antes, use o comando "Crie uma reserva para quatro pessoas usando a ferramenta do WebMCP." Seja com as ferramentas do DevTools para agentes ou do WebMCP, você está criando experiências para a web agêntica. Em breve, as pessoas poderão usar os próprios agentes para reservar rapidamente um jantar especial no Le Petit Bistro, onde os suflês são quase sempre perfeitos, pelo que dizem por aí. Inscreva-se para o teste de origem e comece a criar e depurar suas ferramentas.
+
+E não se preocupe! O Matthias já volta às dicas de ferramentas para desenvolvedores. Obrigada por assistir! TODO O PODER DA WEB COM MAIS FACILIDADE. ASSISTA MAIS
