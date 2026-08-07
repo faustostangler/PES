@@ -1,0 +1,202 @@
+---
+video_title: "I Gave Codex a 24/7 Server. Now It Codes While I Sleep."
+video_id: vQebObsd_Cw
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vQebObsd_Cw
+video_date: 2026-06-19T15:56:57+00:00
+video_description: |
+  Deploy your Codex server using Hostinger and use code 'techwithtim' for an additional 10% off: https://www.hostg.xyz/SHJd8
+  
+  No more walking around with your laptop half-open waiting for an agent to finish. In this video I show you how to run Codex CLI 24/7 on a virtual private server — so your coding agent keeps working even when your laptop is closed, your Wi-Fi drops, or you're asleep.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jun26
+  
+  🎞 Video Resources 🎞
+  Hostinger Link: https://www.hostg.xyz/SHJd8
+  Codex CLI Docs: https://developers.openai.com/codex/cli
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:40 | What You'll Learn
+  01:43 | Why This Matters
+  02:45 | VPS Architecture
+  04:04 | VPS Setup
+  06:00 | Connecting to Our Server
+  07:15 | Installing Codex CLI
+  09:20 | Connecting GitHub
+  13:21 | tmux Setup
+  16:09 | Triggering from Our Phone
+  20:24 | Setting up Automations
+  
+  Hashtags
+  #Codex #AIAgents #VPS
+  
+  UAE Media License Number: 3635141
+---
+I'm willing to bet that you've probably seen something like this. Someone walking around with their laptop screen half open, and you know that if they're a programmer, they're waiting for their agent to finish running. I know that this has been me many times. Even the other day at the airport, I was walking around with my laptop screen open, looking like a complete idiot because I needed my Claude code or codex agent to finish running. Now, this is a problem that doesn't need to exist because you can actually run agents in the cloud if you configure them correctly.
+
+And that's what I'm going to show you how to do in this video. I'm going to show you how we can set up Codex that's running 24 over seven in the cloud. So we never need to have our laptop screen half open walking around looking like a complete idiot. So effectively, what I'm going to show you in this video is how you can run long running agent decoding tasks in the cloud, self-hosted using your existing subscriptions. This means that you can be on the go, and then you can actually trigger a task to run from your phone.
+
+You can reconnect to it from your laptop, but the important part is that if that screen closes, your task is going to keep running. Which means if you're sleeping or if your Wi-Fi goes out, or if you're in an area where you just can't open your laptop, you can still trigger these agenetic tasks to run, and you can actually run them on a schedule, which we'll look at a little bit later. Now for this video, we're going to use Codex. The reason for this is the Codex. In my opinion, is currently the best agent out there.
+
+Specifically, we're going to be using Codex CLI. This is something that can run in a headless environment and that we can execute from our phone, which I'll show you later. Now, Codex is currently leading in many of the different benchmarks out there. It can actually run faster than cloud code and more importantly, is significantly cheaper to use, especially on a subscription basis. In terms of the usage that you get, it's practically unlimited if you're not running it, you know, in 20 different sessions, 24 seven.
+
+So I promise we'll get into the set up. But I just want to emphasize why this is worth doing. Now, if you're going to run a coding agent on your own computer, you're going to run, you know, like cloud code or codex CLI or just Codex or whatever. You do need your computer to be open, and that's because it's using your local execution environment or your compute to actually run a terminal command or modify a file or whatever it is that's going on, then this is fine in many situations when you're actually going to be actively on the computer, you're working on something, you're working with it kind of turn by turn, and every prompt you give is taking, you know, maximum a few minutes. However, if you want to do a task that's going to take eight hours, or you want to run a task every day at a certain time, or you just want something to run for a super long period of time, but you're not able to actually have your computer open, or it needs to be in your backpack or whatever.
+
+Obviously, this doesn't work, and even if you could run it on your laptop, if you lose internet, if you do this battery, if you close it, if for some reason it turns off or restarts or goes to sleep or whatever, you're going to lose all of that progress, which obviously is very inconvenient. So the solution here is to have a VPN or virtual private server where you can delegate long running tasks. It doesn't mean you're not going to run stuff locally on your own computer when you want to do something, and you need to close the lid of your laptop, or you know that it's not going to be available for the next eight, ten, 24 hours. Whatever you delegated to the VP. So the basic idea is, in this video, I'm going to show you how to spin up a VPNs, how to install codecs, CLI on it and authenticate with your existing subscription, and then how you can control it from your phone or from your laptop however you want to do it.
+
+You can delegate those long running tasks and have everything handled securely, privately on that virtual private server. This way, any time you need something that's going to take a few hours, you want to run something on a schedule, do it all the VPNs and then the active work you do on your own computers. You separate things out. Now there's three main reasons why this works. First, a virtual private server doesn't go to sleep.
+
+It's available 24 over seven in a secure environment with a hard wired connection to the internet. Just doesn't go out. You keep all of the data because you're self-hosting everything, and you can keep everything in a secure environment. And importantly, you also have data center speeds. So if you're going to be in a low internet environment, which I know I am a lot when I'm traveling, you can just use the virtual private server and get significantly faster speeds for downloading something, uploading something, getting a data set, training a model, whatever it is that you need to do.
+
+So anyways, that is kind of the quick brief here and why this is worth setting up. Now let me show you exactly how to do it. Now, the first thing we're going to need here is a virtual private server or VPN. But you can get any that you want. But for this video, I'm going to be using Hostinger because they have some of the best virtual private servers on the market.
+
+They're the most reliable and they're a long term partner of this channel. Meaning I can give you guys an additional discount. So I would recommend going with the KVM two plan if you want to follow along with me. Here you can see all of the options they have. I'll leave a link to this in the description.
+
+I'm going to go with KVM two. And then from here what I'm going to do is deploy and provision my virtual private server. Now because I have a partnership with Hostinger. If you go here and apply to code tech with Tim, you'll get an additional 10% off as long as you're using a 12 month or 24 month subscription plan here, which gives you a massive discount. So regardless, pick your plan, pick the duration of what you want, apply the discount code.
+
+You can choose the region that you want to have this applied in my case, Indonesia, because that's where I'm located right now. And then you can choose OpenAI Codex, where it's automatically going to deploy this and install some of the dependencies for you, which will save you a lot of time. Hostinger also has a lot of other one click deployments if you want to have a look at them. But of course for this video we need Codex, so we'll apply that and then go ahead and press on. Continue.
+
+Now if you're following along with me here, it may ask you to generate a root password for the server. If it does that you can just generate a random one and then copy it. Obviously save it and make sure you don't leak any anyone else. I will delete this server afterwards. So I'm going to go ahead and press on.
+
+Next I'm going to add the malware scanner because it's free and obviously just a good idea to have on the VPNs and then press finish. And it's going to take a minute or two here to provision the VPNs. Once it's done, I'll be right back. I'll show you how we can connect to it, and then we can proceed to the next step. Okay.
+
+So MVP's is now deployed, and what I can do is go to the dashboard here to view all of the different controls. And you can see that I have Codex deployed. Now at this point I'm going to assume that you have some virtual private server. Whether you're using hosting or not, it doesn't really matter. What we're going to need to do, though, is find the IP address of our server so we can SSH into it and start configuring a few things before we connect it to our phone.
+
+And before we start setting up scheduled tasks, all of that kind of stuff. So what I'm going to do is just copy this right here, the SSH command under root access. And also make sure you have your root password from before. If you forgot it you can change it right here. And what I'm going to do is open up a terminal.
+
+So you can see I've got a terminal open on my computer. Here. Let me just clear this and make it a little bit larger. So you guys can see it. And we're going to paste the command ssh root at.
+
+And then the IP address of our server. Again if you're using a different provider make sure you get the IP address. You get the username which is typically root. And then you know the password for signing it. So let's go ahead and press on enter.
+
+We're going to go yes. And just say okay we can connect to this host. And then we're going to paste in our password. When you paste the password you won't see anything here. It will be invisible.
+
+So just paste it and then press enter okay. So you can see that are now signed into my virtual private server. You'll see that if you see root add and then some name here. In this case it's SRB that just would host or name. So now what we need to do is just verify the codex is installed.
+
+If it's not I'll show you how to install it. In case you didn't use the one click to play from Hostinger, we're then going to need to sign in with our accounts that we can start using our existing subscription, or we can use an API key if we want, but that's going to be quite expensive. Then after that, I'm going to show you a few quick setup steps just to make this work really well. Then we're going to connect it so we can trigger it from our phone. And I'll show you overall how this works.
+
+Automations all of that kind of fun stuff okay. So first things first you can attempt to run the Codex command. Now again, if you use the one click install option from Hostinger, it should automatically be installed for you. But if it's not, what you're going to want to do is the following. I'll leave this link in the description.
+
+It's just the docs from Codex, and you'll see that there is a setup command here. So there's a curl. You can just copy this, paste this as the command and run it. And that will install the Codex CLI for you. Once it's installed you may need to just reconnect to the server again so that your path updates, because sometimes the path variable needs a second to refresh.
+
+I'm not going to talk about that too much in depth, but if you install it in the codex command doesn't work, then just refresh the terminal. So just close it and re ssh back in and it should work. So from here we should be able to trigger the codex command. From here we're going to go to sign in with device code. Or if you have your own API key you can use this.
+
+But it's probably going to be better to use your existing ChatGPT subscription. So I'm gonna go sign in with device code. And what it's going to say is go to this link okay. So we're going to copy this and just paste it in our browser. And then we're going to paste this code right here from the terminal.
+
+So let's copy this. Go back okay. We're use my email here and we're going to paste this device code. And that should allow us to be signed in case what to paste this and press on continue okay. So from here it says that we're signed in now and we can go ahead and press on.
+
+Enter from here. We're just going to go. Yes. Continue. That's fine.
+
+And you'll see that we've now opened up Codex and we're able to start triggering something so we can say, you know, hello world and it will start giving us some input. Now I'm not going to give you a full tutorial on how Codex works here. There's a lot of different slash commands that you can use. I'd recommend triggering the fast mode here. Even though it's going to use more usage.
+
+It's going to run a lot faster, and if we keep going, you can see there's a lot of other stuff that you can run and that you can do. Okay, so Codex is now working. We have it running on our computer if we want to exit out of this, we can hit control C on our keyboard. That should quit out of Codex. And we can type clear just to clear whatever is in the terminal.
+
+So we can have kind of a fresh screen. Now what I want to do next is I want to show you just how to connect to GitHub, because it's going to be very useful to have Codex connected to GitHub so that it can create repositories for us, do pull requests, trigger automations, etc.. So if you don't already, I would suggest that you create a free GitHub account. You can do that just by going to GitHub.com.
+
+You don't need to pay for anything. And then what we're going to do is the following. So first we're going to go to our little avatar here. And we're going to go to settings. Now from settings we're going to scroll all the way down to our developer settings.
+
+And we're going to create an API key that we can use in our virtual private server to connect to our GitHub account. You can actually even give Codex its own GitHub account if you want, but I like to connect it to mine and just restrict the access that it has. So what I'm going to do is go to personal access tokens here and go to fine grained tokens from fine grained tokens. I'm going to go create new token. And what I'm going to do here is just name this.
+
+What are we doing here? You know, Codex. Okay. For the exploration, I'm just going to go. No exploration, so we don't need to change it.
+
+I'm going to go all repositories so it can access all of my repositories. And I'm going to start setting the permissions that I want Codex to have. Now, if I want this to have the ability to create and delete repositories, I need to trigger administration. And if I want it to be able to edit contents of the repository. So make a commit or view it.
+
+I need to add contents. Also, I want it to be able to make pull requests. I need to add pull request. So there's a lot of things here. But for most of you, you're probably just going to need these. Now.
+
+For all of these, I would suggest you go read and write again. Be careful. But what this is going to do is allow it to create a read delete whatever repositories contents same thing. This will allow it to create content, make branches, etc. and then for pull requests this will allow it to pull related comments, assign it, etc..
+
+Now this is one you might want to be careful with because if you put it to read and write, it can delete repos. So if you just want to test it to start, make this read only, which I will do right now. But if you want it to be able to make new repos for you and stuff, then you would have to go to read and write. Okay, so from here we're going to generate token, but we're going to do that in one second after we install a tool called g h in our virtual private server. This is essentially a GitHub tool that Codex will be able to use to do GitHub related commands.
+
+Let me show you how it works. Okay, so from our terminal we're going to run the command API to install g h dash y. Okay. So exactly like I have on screen. And go ahead and press on enter.
+
+It's going to install g h which is GitHub effectively which will take a second. If we want to test if this is working we can run g h. Now after that we're going to type g h. And then I believe the command is not log in. It might be like okay, so start off and then log in okay.
+
+And then what we're going to do is authenticate with GitHub. So to do this we're going to press GitHub.com https. And then we're going to use our git credentials okay. And we're going to paste in authentication token.
+
+So then what we're going to do is go back here. We're going to generate this token. Make sure you don't share it with anyone. And we're just going to paste it inside of here okay. So we're going to paste our authentication token that we just generated from the previous step.
+
+Now you'll see it's logged in. You can see I'm logged in as tech with Tim. So now that I'm logged in my Codex should have the ability to actually do things related to GitHub. And if we just want to test that we can type code like this. And we can just tell it, we can say, hey, you have access to the g h command and you want to use the username tech with Tim.
+
+Can you just tell me a few repos that you have access to? Just to verify that the GitHub command is working? And by the way, if you're wondering what I'm using to dictate here, I'm using a really cool tool called Whisper Flow. It's free to use. I have a long term partnership with them, so I'll leave a link to it.
+
+In the description you can see I am an absolute power user and is the best voice dictation or AI voice dictation. It actually has some really cool insights now where you could see exactly where you're using it. The streaks. Very cool, very good. And you can see that I can speak at 260 words per minute as opposed to my normal typing speed, which is a lot slower than that.
+
+So anyways, I'm going to go ahead and press on, enter here, and it's just going to go and try to use this command. And let's make sure that it works okay. So you can see that it's giving me a whole list of repos here that it has access to private and public, which means this is working and GitHub is now installed active. And we can move on to the next step. Okay.
+
+So the next thing we're going to do is trigger this from our phone, which means we'll essentially just be able to control the virtual private server and use Codex CLI from our mobile device. And I'm going to walk you through how to do that. Now the first thing we need to do here is install a tool called tmux or tmux. What this is going to allow us to do is persist in SSH session, even when we're not connected to the virtual private server. The reason why we're going to need this tool, we need to run this command that I have right here is because if we connect to the virtual private server and we do something, so we say, hey Codex, go do this thing, run CLI, and then we close the terminal by default, whatever was happening is going to be kind of quit out of or it's going to be, you know, stopped.
+
+Right. So what tmux will allow us to do is run what's called a persistent session. So even if we disconnect and we're not currently on the virtual private server, whatever we're doing will keep running in the background, which is super important and kind of the whole point of this video. So we're just going to install tmux like this apt install tmux dash one. I'm going to quickly show you 2 or 3 commands that you need to be aware of.
+
+And then I'm going to show you how we can set this up from our phone, which is really easy. So once you have tmux installed you should be able to run tmux like this. Okay. Now when you just run tmux, let me just exit out of this by typing exit. What it's going to do is bring you into one of those persistent shells.
+
+Now, if we want to view all of the shells that are currently active with tmux, we can type tmux ls. We can see nothing is running right now because I had started a shell. But then I exit out of it, which by default is going to close it. Now what we can do instead though is we can run tmux new dash s, and then we can give this shell a name. So in this case I'm going to call it codecs.
+
+Then when we do this is going to bring us again into a new team shell. Here we can run anything that we want so we can run for example, codecs like this. And let's just say hello world. And now what I'm going to show you is that if I close this virtual private server session and then try to re kind of enter into it, I can get back into the shell without having any of this information lost. So let me show you what I mean. I'm just going to quit out of my terminal.
+
+Let's reopen the terminal and re ssh back in. Okay. Let me just get the password. Okay. And from here, what I can do now is type tmux ls.
+
+You can see the codecs is still running. And then what I can do is type tmux attach. If I just type tmux attach by default it's going to attach to the most recent shell which is going to be codecs. Now if I want to attach to a particular shell because you can have multiple running that I can do dash t sorry. And then codecs.
+
+And what this is going to do now is bring me back into that shell. Now again, if you're not super familiar with virtual private servers, you may not know why this is important, but this again allows us to have this persistent shell so that it can be stored and running in the background no matter what. Okay, so for now, we're going to leave this shell running on my computer and we're going to move over to our mobile device. So I'm going to show you how we can now connect to the virtual private server. So we can trigger tasks on the go from our phone. Okay.
+
+So from our phone here, what we're going to do is go to the App Store and we need to download what's called an SSH client. Now you can use anything that you want. But the app that I'm going to recommend here is called terminus okay says modern SSH client. It's free. You don't need to pay for anything, but you need some kind of SSH client.
+
+You can do this on Android. Maybe they have the same app. If not, you're just looking for any SSH client. Okay, so what we're going to do is just open up this application. And effectively what we're going to do is just go and sign in to our virtual private server from our phone.
+
+So what I can do here is press on the plus button, I can go new host and I can start putting in this information. Now for the label I'm just going to call this codecs okay CLI for the IP or hostname, I'm going to use the same one that I was using on my computer. So that's 187.77.121.81.
+
+If you're wondering how do you find this hostname? You can see it up here on my computer. I'll hopefully have this on the screen as well. It's the same thing that we're ssh ING into from our computer. And if you go back to hostinger, you can actually see it right here or from wherever you deployed your virtual private server.
+
+If we keep going, what we'll be able to do is use credentials so we can set our username. This is going to be root. And then the password is going to be the same password that you used previously as the root password for the server. Okay. So I've got all of those details in.
+
+There's not really anything else that we need to do here. We can just go ahead and press on enter and then wait a second here. And it should start connecting to this server foreign. So if I press on it now it's going to say hey do you want to trust this device I'm going to go yes I do want to trust this. And then it's going to bring me right in to my server.
+
+Now from here, if we want to change what this looks like, you can see in this app there's a little button so I can change. Like, do I want it to be light. Do I want it to be dark? I think it's going to be easier for you guys to read it in kind of this light mode here, this yellow color theme. And we can make the text size larger as well.
+
+One second. Let me move this here. Okay. So that's pretty much it. You can set, you know, how you want it to look.
+
+And then from here you can type anything just like you would if you were on your computer. So what we want to do now is we want to attach to that tmux session that we were running here so that we can start using codecs. And if we don't have an existing session, we should just make a new one. So that again, if we disconnect and reconnect, we're not going to lose that task. So what we can do is type tmux.
+
+And then same thing. Last, if we want to view what we have running we can see that we have codecs and it's currently attached. So I can do tmux okay. And then I'm going to go attach like that dash t and then codecs like so. And you'll see that I'm now inside of here.
+
+It's kind of glitching out on my computer because we call it I'm connected on my phone. But you can see that if I type hello or something, it's appearing on my computer as well as on my phone. Now, I know it looks a little bit weird, and that's just because we're attached from two sessions at the same time. But you can see now that I can trigger a task, I can ask it to write code. I can get it to do something from my mobile device.
+
+And then again, importantly, if I like closed the session here on my computer and I go back to my phone, you can see it's still running and it's still going to be able to execute the various tasks. And then again, if we quit out of this. So let's get out of our session and let's go back in. You can see that it will bring us back here. And then if I want to just completely close out of this, I can press on it, press close.
+
+And then if I reconnect here. So give this a second to reconnect. Same thing we can do tmux and then attach. And then we'll be back in the codec session where we can start asking you to do anything that we want. And I'm going to change the color theme here.
+
+So it's a little bit easier to read because it looks like it's like messing up here okay. So this one looks good. And then we can start triggering various tasks. So just give you an example of something we can do here. I'm just going to paste in a URL.
+
+This is one of the GitHub repos I have access to. And I'm just going to say hey can you review all paths in this repo? And I know I'm kind of spelling some of this wrong, but that should be fine. And let's go ahead and press on, enter and let's see if I can go and review this for us okay. So you can see that it's reviewing all of the PR right now.
+
+It's giving me all of the responses and saying which one should be approved, should it be approved, etc.. And now we're good to go. And the same thing. We could close it, reopen it, go on our laptop, you get the idea.
+
+Now where this is going to become super useful is actually when we start running automation. So I want to show you that now I'm going to go back to the computer. But keep in mind everything that I do on the computer, you could do it from your phone as well. It's just easier for you guys to see on a bigger screen. Okay, so I'm back on the computer.
+
+You can see I've reattached to the team like session where we are running from our phone, and now we can continue working. Now, like I mentioned, I want to talk about automations. Automations are just things that can run on a particular schedule. Now, unlike Cloud Code, Codex doesn't have any built in kind of scheduling feature, although I'm sure they're probably going to add that in the future. But if we want to set that up to run on our VPS, it's very easy and we can create something called a cron job, which is a huge advantage of having this virtual private server.
+
+Now, effectively, all we have to do is just tell Codex to do this for us and say, hey, every day I want you to do X, y, z. Maybe I want you to review all of the code in my code base and tell me if there's any security vulnerabilities. Maybe I want you to review all of the PR and automatically reject or approve. Maybe I want you to write a change log of anything that's occurred in this repo. Maybe I want you to update all of the Readme files.
+
+Whatever. Okay. So what I'm going to do is just define I'm going to say I want to set up a simple automation that runs every single day using the Codex clock. I need you to create a cron job. This is the key term that you want to keep in mind by the way.
+
+Cron job because that's what you want it to ask it to do. That runs correctly on the repo that I just sent you above and reviews all of the PR and then creates a markdown file that's uploaded to the repository that includes the status of this PR and if they should be approved or not. This is a silly automation. Like it doesn't really make sense to run this, but I'm just giving you an example of something you could do. I'm saying, hey, set up an automation to use Codex cli way to create this cron job and execute this.
+
+Now the way that this is going to work is there's this command called Codex exac. And if you run this, it's going to not bring you into a codex session, but it will just execute whatever you ask it to do. So I can say Codex Exec and then like do this thing and it will just execute it and do it so we can set up a cron job that will do that for us. And I'm just going to go, yes. And don't ask for these commands because it's asking us to approve this.
+
+So effectively what it's going to do is say hey on this schedule, it's going to be set up on what's called a cron job, which can run on kind of an automated timing run, Codex Exec, which is going to trigger this thing to happen right where Codex CLI is going to go and run this task and then complete whatever it is that we asked it to do. So you can see that it's currently creating this cron job which is putting under a crontab. It asks me just to approve the command, which I did. And you can see now that the entry is installed and it's going to start running this process. So we're just going to tell it okay, run this.
+
+And again the advantage of the VP is you're in an isolated environment. So it's not going to mess up your own computer. If it actually makes a mistake you can always shut it down. It's not a huge deal. So just running all of these cron the terminal commands for us and it should set this up.
+
+And then we will have that automation running every single day okay. So just doing a dry run now to make sure this is going to work. I'm not going to bore you guys and go through this whole process. I just wanted to show you that setting up these automations is a good way to really utilize this service and have it running in the background, even when you're not manually triggering tasks to execute. And again, the reason why you want something like this is that if you want something that's going to take a long time to run, you just delegated to the VPCs and you don't rely on you having a computer open.
+
+Again. You could set up all these automations. You can have a trigger, you can set up, you know, MCP servers, and you can do really cool stuff using Codex CLI, which is currently kind of the leading agent and harness for coding related tasks. So that's it guys. I'm going to wrap up the video here.
+
+If you enjoyed make sure leave a like subscribe to the channel and I'll see you in another video.

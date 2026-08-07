@@ -1,0 +1,281 @@
+---
+video_title: "How Does Claude Code Actually Work? Let's Make Our Own"
+video_id: vp6Dlx5aHDU
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vp6Dlx5aHDU
+video_date: 2026-07-30T12:22:48+00:00
+video_description: |
+  Download the FREE Claude Code for Marketing Guide from HubSpot! https://clickhubspot.com/4388d4
+  
+  Everyone uses Claude Code, but almost nobody knows what's actually happening under the hood. So I built my own version of it from scratch to find out.
+  
+  In this video I break down how coding agents like Claude Code really work: the agent loop, how the model decides which tools to call, how it reads and edits your files, runs terminal commands, and manages context so it doesn't forget what it's doing. Then I put the pieces together into a working mini Claude Code you can build yourself.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jul26
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:30 | Two Goals
+  00:54 | What is Claude Code?
+  01:45 | 5 Building Blocks
+  02:11 | Model
+  03:26 | Tools
+  05:18 | Memory
+  07:14 | Context
+  09:12 | Guardrails
+  10:19 | HubSpot
+  11:38 | What an LLM Actually Does
+  13:00 | Tool Calls Explained
+  16:29 | Guardrails Demo
+  17:17 | Context Window Breakdown
+  19:26 | Putting it All Together
+  20:40 | Full Code Demo/Build
+  
+  Hashtags
+  #ClaudeCode
+  
+  UAE Media License Number: 3635141
+---
+O Clawed Code é uma das ferramentas de IA mais populares do mundo. No entanto, a maioria das pessoas não tem ideia de como isso realmente funciona. Então, neste vídeo, vou explicar tudo para vocês. Você aprenderá o que um LLM realmente faz internamente, como a chamada de ferramentas funciona na prática, o que é exibido na janela de contexto e como os mecanismos de proteção se encaixam nisso. Em seguida, mostrarei uma versão mínima totalmente funcional que desenvolvi em Python para que você possa ver exatamente como um agente de suporte é integrado. E um breve
+
+agradecimento à HubSpot por patrocinar o vídeo de hoje, mas falaremos mais sobre isso depois. Então, tenho dois objetivos principais para este vídeo. O primeiro passo é compreender cada elemento que compõe o Código Claude. Então, ferramentas, memória, contexto, diretrizes, o que for. Quero que você entenda todos eles e como funcionam em conjunto. O próximo passo é
+
+mostrar como construir o seu próprio. Então, eu já construí um, e no final deste vídeo, vou explicar todo o código, e vocês verão na prática como um ambiente de agente realmente funciona. Vamos começar definindo o que é o código Claude. Agora, o código Claude é efetivamente um agente. Trata-se de um LLM (Learning Learning Machine) que pode ser executado em loop, chamar ferramentas e interagir com o mundo, além de funcionar como um agente interativo. Este é o
+
+software que está integrado ao modelo. Assim, ele lida com o loop, as implementações das ferramentas, o sistema de permissões e, efetivamente, o modelo prevê o que deve ser feito em seguida. O arnês realmente assume o controle e toma conta do ambiente. Então você pode dar uma olhada rápida neste diagrama aqui. No centro temos o LLM. É
+
+algo parecido com o cérebro. Está realmente alimentando tudo. Temos o loop. O loop engloba elementos como ferramentas, memória, contexto, montagem, e então temos o chicote de fios que realmente controla o loop e permite que o LLM execute várias ações. Você vai entender o que quero dizer daqui a pouco, conforme formos nos aprofundando nas explicações. Agora, nessa
+
+estrutura de agentes e dentro do código Claude, existem cinco blocos de construção principais. O primeiro, o modelo, já falamos sobre isso. As ferramentas são coisas como ler um arquivo, pesquisar na internet, excluir algo ou navegar pelo sistema de arquivos, certo? Em seguida, temos a memória. Trata-se de informação persistente que o agente pode memorizar. Então
+
+temos o contexto. É isso que é realmente fornecido ao modelo para que ele possa entender o ambiente ao seu redor, ver o que está em volta e saber qual foi o resultado de uma chamada de ferramenta. E depois temos os guarda-corpos. E esses são os recursos integrados para impedir que o modelo faça algo que não deveria. Agora vou analisar cada bloco um por um. Vamos
+
+começar com o modelo. Quando digo modelo, estou me referindo a um modelo de linguagem de grande porte. Isso é, na prática, um preditor de texto gigante. Tudo o que faz é prever o próximo token em uma sequência. Então, se você disser para a modelo: "Ei, qual é o meu nome?" Sua resposta será "Meu
+
+nome é X" ou "Não tenho nome". Está prevendo qual deve ser a resposta com base no que você diz. E essa é realmente toda a sua função. O importante a entender é que o modelo não guarda memória de nada. Se você conversar com o modelo em uma rodada e depois conversar com ele na rodada seguinte, ele não se lembrará do que você disse. Para que ele se
+
+lembre disso, precisamos passar o que foi dito anteriormente para a sua janela de contexto. Você vai entender o que quero dizer em um instante, mas, por padrão, o modelo não possui estado. Em seguida, ele vê apenas a janela de contexto. OK? Portanto, se algo não estiver dentro do prompt, não será passado para o modelo. Não sabe
+
+que isso existe. E você pode ver um diagrama rápido aqui, certo? Inserimos um texto indicando quais arquivos estão presentes no projeto. O modelo prevê o próximo token mais provável e, em seguida, fornece a resposta. OK?
+
+E, às vezes, esses tokens podem ser, na verdade, chamadas de ferramentas. Assim, podem ser elementos que não sejam texto visível para o usuário , mas sim algo que acione uma determinada ação dentro da estrutura de agentes. Você vai entender o que eu quero dizer em um instante. Não quero te confundir agora. Em seguida, as ferramentas. Provavelmente a
+
+parte mais importante na construção de um agente que seja realmente útil. Temos aqui alguns tipos diferentes de ferramentas. Agora, em plataformas como o Cloud Code e na maioria dos agentes de IA que você utiliza, já existem algumas ferramentas integradas. Essas são ferramentas de E/S, ou ferramentas de entrada/saída. E essas são as funções básicas que permitem ao modelo ler, escrever, editar, executar um comando bash, pesquisar algo, etc. Portanto, quando o modelo está
+
+escrevendo um arquivo, ele não está realmente escrevendo um arquivo. Na verdade, o que está fazendo é chamar uma ferramenta que permite escrever um arquivo. Portanto, está chamando a ferramenta de leitura para efetivamente ler o conteúdo do arquivo. Está chamando a ferramenta de escrita para alterar algo no arquivo. Está chamando o bash para executar um comando do shell. Você entendeu a
+
+ideia. Agora, ferramentas adicionais incluem coisas como servidores MCP e plugins. Assim, você pode adicionar várias outras ferramentas dentro de um agente, como o Claude Code. E tudo o que você está fazendo é dizer ao agente: "Ei, existem outras ferramentas que você pode usar." Esse é o nome dele.
+
+Eles têm esta aparência. E se você quiser ligar , é só me dizer que eu ligo e te dou a resposta. Você vai entender o que eu quero dizer daqui a pouco, quando estivermos com o arnês. Mas, basicamente, temos servidores MCP. São ferramentas externas, de certo modo. E depois os plugins. Normalmente, eles
+
+podem agrupar várias ferramentas em um mesmo pacote. Então talvez vários servidores MCP, comandos, habilidades, e todo esse tipo de coisa. Mas você pode instalá-los e integrá-los ao agente. A ideia principal aqui é que o modelo não executa essas ferramentas. O modelo solicita a ferramenta ou pede para chamar uma ferramenta e, em seguida, o software executa a ferramenta por conta própria. Se um
+
+modelo quiser fazer uma requisição à API, por exemplo, ele não poderá de fato fazer a requisição, pois, lembre-se, tudo o que o modelo faz é prever texto. O que ele faz é escrever um texto que diz: "Ei, quero ligar para esta ferramenta." E então o software que está analisando a saída do modelo pensa: "Ah, o modelo disse que quer executar uma ferramenta." Ok, deixe-me executar a ferramenta. Deixe-me obter a resposta e devolvê-la ao modelo.
+
+E este é o ciclo fundamental que precisamos entender. Em seguida, vamos abordar a memória. Então, vou mostrar alguns exemplos aqui para que você possa ver como fica. Agora, a memória é, na prática, apenas arquivos. Certo, quando dizemos que o agente não tem memória, isso é verdade. Não possui
+
+memória. Por padrão, não memoriza nada. A forma como o programa memorizaria informações persistentes seria gravando esse conteúdo em um arquivo e, em seguida, lendo esse arquivo ou exibindo o conteúdo desse arquivo em sua janela de contexto ou em seu prompt. Então você verá que, dentro de ferramentas como o Clawed Code, haverá uma estrutura que se parece mais ou menos com isso. Você terá um arquivo chamado claw.md. Este é um arquivo de memória
+
+que está sempre carregado, o que significa que ele está sempre presente no prompt. Portanto, ele sempre se lembrará do que está aqui dentro ou saberá o que está aqui dentro porque foi injetado no prompt. Então pode haver uma pasta de memória. Dentro da pasta de memória, podem existir arquivos diferentes. E esses arquivos podem ser carregados quando forem necessários. E aí
+
+você pode ter coisas como habilidades. E as habilidades são apenas arquivos Markdown que podem ser carregados para executar algum tipo de tarefa. A ideia aqui é que o modelo pode não carregar todas essas informações de uma só vez. Mas pode solicitar um artefato de memória ou dizer: "Ei, quero acessar minha memória, ver se há informações aqui, ler o conteúdo dela", e então poderá executar alguma tarefa ou talvez atualizar a memória ou algo do tipo. Assim, no lado direito da tela, você pode ver dois comandos de terminal muito simples: ` cat`, que basicamente lê o arquivo `user preferences.md`.
+
+Então podemos perguntar ao modelo algo como: " Ei, quais são as minhas preferências de usuário?" Se não souber quais são as preferências do usuário, pode simplesmente pensar: "Ok, deixe-me procurar nos diferentes arquivos de memória que tenho." Isso depende da ferramenta utilizada. Ok, vejo que tenho esse arquivo de memória. Deixe-me dar uma olhada nesse arquivo de memória. Mais uma vez, outra
+
+solicitação de ferramenta. Ah, isto é o que está no arquivo de memória. Ok, aqui estão suas preferências de usuário. Então, quero que você entenda que o modelo não salva nada por padrão; para se lembrar, as informações precisam estar em seu contexto. É necessário passar esse valor no prompt. E
+
+normalmente, a forma como isso é injetado nesse prompt é através da solicitação do modelo para uma determinada chamada de ferramenta. A chamada da ferramenta gera algumas informações e essas informações são enviadas de volta ao modelo, como você pode ver aqui com esses arquivos de memória. Em seguida, vamos falar sobre a janela de contexto, onde tudo isso começará a fazer um pouco mais de sentido. Portanto, quando falamos em janela de contexto, estamos nos referindo às informações que o modelo está visualizando no momento . Isso é praticamente a mesma coisa que um prompt. É apenas um
+
+prompt extremamente longo. Então, o que você diz para o modelo é você quem está dando o comando, certo? Mas essa informação que você mencionou está sendo combinada com uma grande quantidade de outros textos, e esses outros textos incluem muitas das informações que acabamos de discutir. Aqui está um exemplo de um contexto um. Vou abordar alguns pontos importantes aqui. Primeiro, temos um
+
+prompt do sistema. Agora, o prompt do sistema é uma informação geral que é sempre passada para o modelo para que ele entenda o que deve fazer ou como deve se comportar. Então, diz que seu código na nuvem, um agente que auxilia com o software, siga as instruções, e por aí vai, certo? Definições de ferramentas. Isso é extremamente importante.
+
+Então, o que fazemos é definir, tipo, você tem acesso a todas essas ferramentas diferentes. Se você quiser acionar alguma dessas ferramentas, basta me avisar e eu a ativarei para você. É isso que estamos dizendo ao modelo. A seguir, as definições de habilidades. Então, coisas como arquivos Markdown ou informações que ele consegue ler.
+
+memória, certo? Esse arquivo claw.md pode conter outros arquivos que estamos importando para cá, além do histórico de conversas. Isto é tudo o que aconteceu até agora na sessão atual. Então, quando digo que o modelo não se lembra de nada, bem, é porque não se lembra mesmo. O
+
+motivo pelo qual ele sabe o que dissemos anteriormente é porque estamos pegando essa informação e inserindo-a no modelo. Assim, ele é obrigado a ver tudo isso. E então, chamadas de ferramentas e resultados. Então, talvez o modelo queira ler um arquivo. Certo, vamos ler o arquivo. Bem, precisamos
+
+fornecer essas informações ao modelo para que ele saiba o que realmente está contido no arquivo. Então, nós o inserimos no contexto. E por último, embora não apareça aqui, teríamos o nosso prompt. Portanto, seja lá o que estivermos pedindo ao agente para fazer, isso normalmente ficaria no final. E então o modelo faria a previsão a partir daí. Então,
+
+na prática, temos apenas um monte de texto, certo? Este texto entra no modelo e, em seguida, descreve as ferramentas, o prompt do sistema, as habilidades, o que realmente queremos fazer. E, por ter todas essas informações, parece que o modelo é superinteligente e se lembra das coisas, mas na verdade tudo o que ele faz é analisar um enorme bloco de texto e prever mais texto que podemos interpretar e usar de alguma forma. E, por último, vamos dar uma olhada nos guarda-corpos. É bem simples, mas às vezes você vai perceber quando pedir para uma modelo: "Ei, leia este arquivo". Ei, apague isso. Ei,
+
+faça alguma coisa, né? E aparece uma pequena janela perguntando: "Tem certeza de que deseja fazer isso?" Bem, isso é um guarda-corpo. E, na prática, isso é imposto pelo software, não pelo modelo. Existem mecanismos de proteção, como a intervenção humana no processo, que é o que acabei de mencionar . Além disso, limites. Não se pode fazer as coisas
+
+muito rápido, por exemplo. E o funcionamento disso é o seguinte: você pode ter uma chamada de ferramenta que é limitada, talvez, por um humano no processo. Portanto, não vamos ativar essa ferramenta a menos que o usuário pressione um botão. E a razão pela qual conseguimos fazer isso, enquanto o modelo não pode simplesmente ignorar essa restrição, é porque essa salvaguarda é definida pelo software, e não pelo modelo. E o ponto crucial que você precisa entender é que o modelo está apenas prevendo texto. Certo? O que
+
+acontece depois disso é controlado por software humano normal, certo? Ou por software escrito por IA, tanto faz. E se quisermos chamar uma ferramenta, por exemplo, podemos escrever algo no software que diga: "Ei, para chamar esta ferramenta, você precisa pressionar este botão", certo? Então, pressionamos o botão e a ferramenta será chamada. Espero que isso faça sentido.
+
+Vamos continuar depois de uma breve mensagem do nosso patrocinador de vídeo de hoje, a HubSpot. Então, aqui está o que é legal: tudo o que acabei de mostrar — os arquivos de memória, as habilidades, as ferramentas — nada disso se limita apenas a escrever código. E essa é a deixa perfeita para falar sobre um ótimo recurso gratuito. Agora, a HubSpot criou um guia gratuito chamado Mastercloud Code for Marketing. E basicamente é tudo o que foi mostrado neste vídeo aplicado ao marketing.
+
+São quatro fluxos de trabalho completos e 12 instruções de copiar e colar que levam você de uma ideia a um recurso implementado em tempo real em apenas uma sessão do Claude Code. E refiro-me aos conceitos reais. O guia orienta você a configurar a memória claw.mmd. Transforme seus melhores fluxos de trabalho em habilidades reutilizáveis, exatamente como as habilidades que mencionamos anteriormente. Além disso, este curso mostra como
+
+integrar ferramentas como Firecrawl e Perplexity para rastrear sites concorrentes e encontrar lacunas de posicionamento em cerca de 20 minutos, em vez de gastar dias fazendo isso. Agora o fluxo de trabalho também é construído um sobre o outro. Você tem uma pesquisa de concorrentes e, em seguida, um lead magnet interativo que é uma ferramenta real, não apenas um PDF. Em seguida, você tem uma página de destino e a implementa diretamente do terminal. do que uma sequência de três e-mails de boas-vindas . Assim, você pode executar todos os quatro e
+
+obter um sistema de marketing completo em apenas uma sessão. Então, se você é um desenvolvedor, este é sinceramente o guia definitivo para divulgar seus projetos paralelos, e é totalmente gratuito com o link na descrição e também no comentário fixado. Um grande agradecimento à HubSpot por patrocinar este vídeo. Agora, vamos voltar ao assunto. Agora que entendemos os principais elementos fundamentais, quero aprofundar em detalhes específicos sobre como essas coisas funcionam juntas. Então, em
+
+primeiro lugar, algo muito importante. É realmente a essência de todo este vídeo. Gostaria de discutir novamente o que um LLM proporciona. Agora, ela só faz uma coisa. Literalmente, apenas prevê o texto. Não pense em um
+
+agente de IA ou em um modelo não-IA (um LLM, por exemplo) como uma caixa preta mágica supercomplicada . Literalmente, não passa de um preditor de texto. Por exemplo, minha linguagem de programação favorita é `Create`, e a próxima palavra tem 71% de chance de ser `Python`. OK. Depois disso, a próxima chance é porque aí é... aí é o
+
+que for, e você entendeu a ideia. Na verdade, tudo o que estamos fazendo é prever a sequência de tokens, e esses tokens podem acabar sendo muito complexos. Podem ser em formato JSON. Podem ser uma chamada de ferramenta. Podem ser respostas realmente perspicazes, ou algo do tipo. Mas
+
+a ideia é que o modelo, na verdade, não está fazendo nada. Está simplesmente cospendo texto. E esse texto que nos é apresentado é o que interpretamos e com o qual fazemos algo. OK? Portanto, não possui memória. Não possui estado.
+
+Não tem objetivos. É literalmente só isso, ei, você recebe todo esse texto. Qual achamos que deveria ser a resposta? Ele nos dá a resposta e a partir daí prosseguimos. É isso. Certo, é isso que o modelo faz. Se
+
+você entender isso, tudo deixará de parecer mágica. Certo, então como um modelo chama uma ferramenta? Porque é isso que permite que ele faça alguma coisa. Bem, ele escreve texto. Ok, então você pode ver que isso nos dá literalmente algo parecido com isto. Se precisar
+
+chamar uma ferramenta, ela nos fornece algo como JSON, neste formato. E este é o texto que nos é apresentado. Diz: "Ei, meu tipo é chamada de ferramenta. O nome da ferramenta é ler arquivo e os argumentos que quero passar para a ferramenta são src main." É isso. Isso simplesmente nos proporciona isso. E então o que
+
+acontece é que o modelo gera o texto estruturado e o código de suporte. Então, o software que está executando esse modelo, certo, que permite que você digite algo, pega essa ferramenta e a chama. Então ele analisa a resposta, certo? Chama a ferramenta. Ele obtém a resposta da ferramenta e a envia de volta para o modelo. A mensagem diz: "Ei, você
+
+queria chamar esta ferramenta. Aqui está a resposta dela." E isso nos leva de volta ao contexto. A mensagem é: "Ok, esta chamada de ferramenta resultou nisto. Ok, agora quero chamar esta ferramenta. Agora quero
+
+fazer isto. Agora quero fazer isto." E é como se estivesse apenas instruindo um software sobre o que fazer. É isso. Essa é basicamente a ideia. OK. Então
+
+todo o sistema funciona como um loop, certo? Na prática, construímos o contexto. Então, reunimos o enunciado completo. Então, estas são todas as definições de ferramentas, todas as coisas que o modelo poderia fazer. O modelo prevê o que deve fazer em seguida. Assim, ele
+
+pode chamar ferramentas, pode gerar texto, o que for. Verificamos com um guarda-corpo. Certo, será que podemos fazer isso? Devemos acionar a ferramenta? Se possível, executamos a ferramenta e passamos o resultado de volta para o contexto. É isso.
+
+É esse loop, certo? Onde o modelo apenas nos fornece o texto. Então, se você olhar para o lado direito, verá que recebemos uma resposta do LLM. Se a resposta exigir uma chamada de ferramenta, tudo bem, vamos executar a ferramenta. Vamos adicionar isso ao contexto e vamos continuar. É exatamente assim que todos
+
+esses agentes trabalham. Então, levando isso em consideração, como o sistema sabe quais ferramentas realmente existem? Bem, você deve se lembrar que, na janela de contexto, normalmente fornecemos o que eu chamarei de uma espécie de menu que descreve as ferramentas disponíveis. Então, temos o nome das ferramentas, sua descrição, seu esquema de parâmetros, e colocamos isso na janela de contexto e listamos tudo . Então, a mensagem é mais ou menos assim: " Ei, vocês são um bando de ferramentas". Aqui
+
+estão as diferentes ferramentas que você tem à sua disposição. Fique à vontade para ligar para eles, certo? E então temos uma ferramenta para ler arquivos, uma ferramenta bash, uma ferramenta de busca, e por aí vai . Então o modelo sabe que pode usar essas diferentes ferramentas. Então, o que realmente acontece é o seguinte: o modelo diz: "Ei, quero chamar esta ferramenta", certo? Ele escreve
+
+o texto, diz: "Ei, aqui está o esquema JSON, aqui está como eu quero chamar a ferramenta", e então o sistema... Novamente, o software, não o modelo, analisa a resposta e pensa: "Ok, você quer chamar esta ferramenta? Certo, vou chamar esta ferramenta". Então, ele implementa a chamada
+
+executando a ferramenta, certo? Ele analisa o esquema e pensa: "Ok, preciso chamar esta função", "Ok, vou chamar esta função", "Ok, a função vai fazer isso", "Vou obter a resposta", "Vou trazê-la de volta para o modelo". É isso. Então, literalmente, adicionamos um menu de ferramentas. E é por isso que às vezes você pode ouvir que não é bom ter tantas ferramentas disponíveis para esses agentes de IA, porque, se isso acontecer, eles podem ficar um pouco confusos. Eles podem escolher a ferramenta errada.
+
+E se eles estiverem analisando milhares de ferramentas diferentes, é mais provável que escolham uma que seja imprecisa do que se você lhes desse apenas cinco ou seis ferramentas realmente pequenas e direcionadas. Certo? Espero que você tenha entendido a ideia. OK. Então, o modelo lê um menu e, em seguida, o chicote de fios efetivamente cozinha, certo? É como se alguém estivesse sentado no
+
+fundo da cozinha dizendo: "Ei, eu quero isso ." E aí a gente vai até a cozinha, eles começam a preparar a comida e depois nos devolvem, certo? Eu sou cliente. Ei, eu quero uma pizza. Ok, na verdade eu não faço a pizza. Vai para a cozinha. A cozinha
+
+prepara a pizza e depois me devolve. Eu consumo e depois posso pedir a próxima coisa. Acho que essa é uma analogia bastante boa para entender como o LLM funciona e o que esses agentes de IA realmente fazem. Certo, então agora vamos falar um pouco sobre os guarda-corpos, ok? É bem simples, mas a ideia básica é que o modelo só pode gerar texto como saída, certo? Então talvez ele queira executar um
+
+comando. Assim, ele gera uma chamada de ferramenta que se parece com algo assim. RM é como deletar, certo? Então, trazemos isso para o arnês. O sistema diz: "Ei, ok, eu vou verificar este comando. Se for um comando
+
+destrutivo, que não esteja na nossa lista de permissões, ou que possa causar algum dano, vamos pedir permissão ao usuário." Então, vou até o usuário e pergunto: "Ei, você quer permitir que este comando seja executado?" E então, se eu clicar em "Permitir", aparece a mensagem: "Ok, vamos executar o programa." Ele executa o comando e, em seguida, nos retorna o resultado para o modelo. É isso. Essa é toda a função do
+
+sistema de proteção "humano no circuito". E você pode construir isso com muita facilidade. Então entenda que é assim que eles funcionam dentro desses softwares. Na verdade, o guardrail é apenas uma instrução condicional que diz: "Ei, se isso for tal coisa, pergunte ao usuário, o usuário aprova e, em seguida, execute o comando." Se eles não aprovarem, não execute o comando. Então, continuando, vamos dar uma
+
+olhada rápida no que o modelo realmente recebe na janela de contexto. Eu sei que já mostramos uma pequena amostra antes, mas só quero que vocês vejam o tamanho e o espaço que algumas dessas coisas ocupam. Portanto, uma janela de contexto tem o tamanho, certo? Ou seja, a quantidade de informações que podemos passar para o modelo. Agora, modelos realmente inteligentes possuem grandes janelas de contexto, um milhão de tokens, que você pode imaginar como um milhão de palavras, por exemplo.
+
+Talvez um modelo menor tenha um tamanho de contexto menor, como 200.000 tokens, certo? E conforme essa janela de contexto se preenche e contém mais informações, normalmente o modelo tem um desempenho pior, especialmente quando começa a atingir 80, 90 ou 100% da janela de contexto, porque tem informações demais para processar. Mas quando você olha em uma janela de contexto, normalmente verá uma distribuição semelhante a esta, onde você tem um prompt do sistema. Talvez isso ocupe, sabe, uma porcentagem muito pequena, tipo 1,2% da janela de contexto. Você tem arquivos de memória. Dependendo
+
+da quantidade de memória disponível, isso pode ser uma pequena quantidade de tokens. Definições de ferramentas. Isso pode ser bastante extenso, pois as ferramentas são bem complexas. Há muitos personagens. O esquema pode ser extenso. Aí
+
+você tem coisas como o histórico da conversa, tipo essa barra cinza aqui, né? Isso também pode ser bastante extenso, porque você pode ficar indo e voltando e ter tudo o que você disse, tudo o que o assistente ou o agente disse e todos os resultados da chamada da ferramenta , certo? Depois, você tem as definições de habilidades. Então, coisas como diferentes arquivos Markdown que ele tem à disposição e que pode ler na íntegra se quiser executar uma habilidade. E então, chamadas de ferramentas e resultados. Então, de certa forma, isso se encaixa
+
+no histórico da conversa. Todas as informações resultantes das chamadas da ferramenta podem ocupar muito espaço. Então, entenda que a engenharia de contexto, certo, é basicamente manipular quais informações serão inseridas na janela de contexto para tentar fazer com que o modelo preveja o melhor próximo token. Melhor próximo token significa melhor resposta seguinte. Então, quando todas essas pessoas aparecem e dizem: "Ei, meu modelo é o melhor em chamar ferramentas. É o melhor em fazer
+
+qualquer coisa. É o melhor em escrever código." Isso significa, na verdade, que eles criaram um modelo que é realmente muito bom em analisar as informações dentro do contexto e, em seguida, nos fornecer uma resposta precisa que realiza algo significativo, como escrever um arquivo, escrever um teste ou abrir um navegador, seja lá o que for que ele deva fazer, prevendo o próximo token correto. Certo, então vamos continuar e juntar tudo . Então, vou mostrar aqui para que possamos ver tudo o que temos.
+
+Temos contexto, certo? Reunimos o roteiro. Reunimos todas as informações . Nós fornecemos essas informações ao modelo. Essa questão engloba a memória, as ferramentas e todas as outras definições que discutimos. Em seguida, passamos isso para o
+
+modelo. Ele prevê o próximo token. Passamos por um guarda-corpo. Se houver uma chamada de ferramenta para verificar se podemos executar isso, então executamos as chamadas de ferramenta, certo? Em seguida, insira isso de volta no contexto e continue repetindo o processo.
+
+É literalmente isso. É só isso que estamos fazendo. E é apenas esse longo circuito que passa por aqui. Então, habilidades, MCPs, aprovações, tudo isso está dentro desse ciclo. Então, o que vamos fazer agora, dando uma olhada rápida aqui, é construir isso em Python.
+
+Tecnicamente, você pode construir isso em 15 linhas de código, como você pode ver aqui. Vou tornar isso um pouco mais complexo para que possamos analisar os detalhes e você possa ter uma noção melhor, do ponto de vista da engenharia, de como isso funciona. Mas este é um exemplo de um modelo simples, certo? Ou um simples agente de IA. Temos mensagens, temos um loop, acionamos o LLM. Se estivermos a utilizar uma ferramenta, verificamos
+
+se ela está aprovada. Se for esse o caso, executamos a ferramenta, certo? Então pegamos isso, colocamos de volta no contexto e continuamos repetindo o processo. E isso resume literalmente tudo o que eu expliquei em um script Python super simples e fácil de entender. Agora vamos ao editor de código e vou mostrar um agente em execução. Ok, então estou aqui dentro do meu
+
+editor de código e tenho uma espécie de mini versão do código Claude rodando. Primeiramente, quero mostrar como funciona para que você possa ver o resultado, e depois vamos analisar o código. Então, esse código Claude específico que eu escrevi tem acesso a algumas ferramentas diferentes e pode escrever arquivos, ler dados e gerar código, assim como o Claude. Então talvez eu queira dizer alguma coisa. Você poderia escrever um jogo da velha simples em Python para mim, por favor?
+
+OK. Então, vou inserir o comando e depois pressionar Enter. Atualmente estou usando o Opus 4.8. E você pode ver o que está acontecendo agora: está me dando os tokens de entrada e os tokens de saída. Está acionando uma ferramenta neste momento
+
+. A ferramenta que está sendo chamada é a de listar arquivos. Agora ele está listando todos os diferentes arquivos que temos em nosso diretório. Agora está escrevendo um arquivo. Como você pode ver, chama-se caminho de escrita. Está
+
+me perguntando, com uma espécie de guarda-corpo, se eu quero escrever isso. Sim, eu permito isso. Certo? E então vamos continuar . Agora, isso vai levar um segundo . Não é super rápido, mas dizem que
+
+criou o jogo da velha. E aqui embaixo , você pode ver que temos este arquivo de jogo da velha que acabou de ser criado, certo? E poderíamos executá-lo, rodá- lo e modificá-lo como quiséssemos. Então, é isso . Tipo, acabamos de receber um resultado completo do código na nuvem. Se eu quiser,
+
+posso limpar. Então, se eu limpar, vou limpar o histórico atual. Então, agora, se eu perguntar, o que você acabou de fazer? Não deveria se lembrar, pois apagamos o histórico. Portanto, não deveria ter nenhum.
+
+Sim, ainda não fiz nada. Você pode ver que estamos no início da conversa porque eu a apaguei. Eu também posso alterar o modelo. Então talvez eu queira mudar para um soneto. Então, por exemplo, o soneto slashmodel. Ok, já
+
+alteramos. Qual é o seu modelo? Não tenho certeza se ele sequer vai saber disso, mas vamos ver se ele nos dá uma resposta. Ok, e você pode ver o soneto de Claude. Eu sou o mini Claude Code.
+
+Ok, interessante. /ajuda. E então recebemos os diferentes comandos. Certo, então posso sair assim mesmo. Então, eu simplesmente criei meu próprio código Claude novamente. Assim como ele
+
+pode editar arquivos. Ele pode gravar arquivos. Eu consigo fazer algo muito mais complexo. É claro que não vai rivalizar com o código real da nuvem, mas isso tem cerca de 300 linhas de código, e eu quero começar a analisá-las agora mesmo. Começando pelo modelo. Como você pode ver, tenho
+
+arquivos diferentes aqui em cima. Tentei mantê-los bem separados para que você possa entender como cada parte funciona. E mesmo que você não entenda Python ou não seja um desenvolvedor, não se preocupe, porque você conseguirá ler isso como se fosse inglês e entenderá as diferentes partes, pelo menos a sequência e o que está acontecendo aqui. OK. Portanto, este arquivo de modelo é o único arquivo relacionado ao uso efetivo de um modelo de linguagem de grande porte. Agora estou
+
+usando apenas o pacote ou biblioteca entrópicos aqui . É claro que eu poderia fazer requisições HTTP diretas se quisesse, mas, na prática, tudo o que este arquivo faz é definir os diferentes modelos. Este é o modelo padrão que vamos usar. Ele é carregado na minha variável de ambiente porque, você sabe, eu não sou antropólogo. Portanto, preciso ter minha própria variável de ambiente para poder chamar o modelo. Então, o que eu faço é
+
+simplesmente criar um cliente e, em seguida, posso fazer uma conclusão e enviar uma solicitação para o modelo. Então você pode ver literalmente tudo o que isso faz, porque este é o único trecho de código que está realmente interagindo com um LLM, certo? Será que está apenas solicitando uma conclusão usando este modelo? Este é o número máximo de tokens. Esta é a mensagem do sistema. Estas são as mensagens anteriores
+
+e estas são as ferramentas. Agora, esses elementos são combinados internamente nessa estrutura em um único prompt de sistema abrangente. Eu poderia ter combinado tudo sozinho, mas, na prática, isso só vai resultar exatamente no que você viu na apresentação, onde temos "ok, aqui está o prompt do sistema". Ok, aqui estão as mensagens anteriores. Ok, aqui estão todas as ferramentas e então elas podem nos dar uma previsão. É isso. Ok, é
+
+literalmente só isso que o modelo está fazendo. Está tudo definido nessas 52 linhas de código, onde na verdade a única chamada é esta linha aqui embaixo. Em seguida, vamos analisar o contexto. Agora, é assim que começamos a construir o contexto para este modelo. Então, você vai notar que eu tenho um prompt básico. O prompt básico define o que
+
+é este agente. Então, diz que você é um agente de codificação CLI do mini Cloud Code. Eis as regras. Estas são as coisas que eu quero que você faça. Em seguida, temos esta função de carregamento de memória. Analisaremos a memória em
+
+instantes. E tudo o que fazemos quando construímos o prompt que vamos passar para este modelo é pegar o prompt do sistema, certo? E então simplesmente adicionamos toda a nossa memória. Assim, a memória pode estar em algo como este arquivo claw.md, onde podemos escrever qualquer informação de memória de longo prazo que desejarmos . OK? Então, simplesmente pegamos isso,
+
+combinamos e, como você pode ver, quando combinamos, dizemos: "Ei, aqui está a memória do projeto." E nós simplesmente injetamos isso diretamente no contexto. Em seguida, temos a própria memória. Agora, a memória simplesmente carrega o arquivo de memória. Então, tudo o que está fazendo corretamente é verificar em nosso computador e perguntar: "Ok, existe um arquivo claw.md?"
+
+Sim, existe um arquivo claw.md. Ok, ótimo. Então, vou aceitar isso. Vou carregá-lo e depois vamos combiná-lo com o prompt do sistema. E agora temos tudo isso
+
+reunido. Em seguida, vamos às ferramentas. Agora, as ferramentas são um pouco mais complexas, mas o que eu quero que vocês entendam aqui é que temos implementações de ferramentas e também definições de ferramentas. Certo, são coisas diferentes. É extremamente importante. Então, vamos começar com as
+
+definições. Na verdade, as definições são a única coisa que o modelo vê. Certo, na verdade não consegue chamar as ferramentas, né? Ele simplesmente consegue saber quais ferramentas estão disponíveis e, em seguida, prever o texto que indica que deseja chamar uma ferramenta. Como podem ver, temos todas essas ferramentas. Temos o nome de uma
+
+lista de arquivos de ferramentas. Segue a descrição da função da ferramenta. Eis como é o esquema para chamá-lo. Ei, trouxemos um objeto. O objeto precisa ter tudo isso. Ok, leia o arquivo. A mesma
+
+coisa, sabe, ler um arquivo. Se você quiser ler um arquivo, precisa usar esta ferramenta. Aqui está o esquema de entrada. Aqui está uma propriedade obrigatória. A mesma coisa, pancada, tanto faz. Você entendeu a ideia. Isto
+
+é tudo o que o modelo vê. E quando precisar chamar uma ferramenta, fará isso nesse formato. Em seguida, como eu disse, temos a implementação. Agora, essas são as ferramentas em si, as funções Python que precisam ser executadas para que a chamada da ferramenta seja realizada. Então, temos uma função que lista diferentes arquivos, uma que lê um arquivo, uma que escreve um arquivo e uma que executa um comando bash. OK? Então, temos essas quatro
+
+funções diferentes. Então temos esses tipos de mapeamentos de funções. Então estamos dizendo, ei, se o modelo quiser usar bash, bem, esta é exatamente a função que vamos executar. Se o programa precisar usar a ferramenta de arquivo correta, esta é a função que usaremos. E então temos apenas uma descrição das ferramentas que são somente leitura. Então, aquelas que deixaremos que sejam feitas
+
+automaticamente. E qualquer outra ferramenta terá uma medida de segurança implementada, que você verá. E então, para executar uma ferramenta, basta pegar o nome da ferramenta, os argumentos para chamá-la e, em seguida, chamar a função dessa ferramenta, certo? Isso é o que acontece na cozinha, a implementação propriamente dita com esses diferentes argumentos do Python. Não se preocupe muito com esse código se ele parecer confuso, mas essa é a ideia. Em seguida, vamos analisar os
+
+guarda-corpos. Novamente, os guarda-corpos são extremamente simples. Ei, se as ferramentas estiverem em modo somente leitura, sim, vamos deixar você chamá-las. Se não estiver em ferramentas somente leitura, vamos simplesmente perguntar: "Ei, você quer permitir que isso seja executado?" E se você digitar "sim", nós executaremos o comando. Se não,
+
+não faremos. Também vamos limitar o número de vezes que podemos correr. Assim, só podemos fazer 25 chamadas de ferramentas por vez para garantir que não tenhamos esse tipo de loop infinito e que o modelo fique instável. Em seguida, vamos falar com o agente. Então o agente importa algumas dessas coisas. Ele importa o modelo, as
+
+ferramentas, as diretrizes e o contexto. Lembre-se daqueles elementos básicos de que falamos. Assim, dentro do agente, definimos o modelo. Criamos o prompt do sistema e começamos a registrar o histórico da conversa. Então, as mensagens que vamos ter. Agora, quando
+
+quisermos executar uma interação, a primeira coisa que faremos é pegar tudo o que o usuário disser e adicionar isso ao nosso histórico de conversas, certo? Então, nós monitoramos isso. Então, vamos repetir o máximo de chamadas de ferramentas por turno, certo? E vamos dizer, ok, vamos enviar uma solicitação ao modelo. O que queremos fazer é usar esse modelo. Este é o prompt que queremos
+
+usar. Aqui está o histórico da conversa e aqui estão as definições das ferramentas às quais o modelo tem acesso. OK. Em seguida, obtemos uma resposta do modelo. Então, é response.content. contente. Vamos
+
+inserir isso de volta no contexto para que nos lembremos. E então, o que faremos é analisar o conteúdo e verificar se há algum texto presente. Se houver algum texto, vamos escrevê-lo, pois o texto é algo que o usuário poderá ler. Agora, se não houver texto, haverá uma chamada de ferramenta, que você verá em um instante, mas essa é a ideia. Certo, então também analisamos o uso e imprimimos o resultado para que possamos visualizá-lo. Em seguida, verificamos se
+
+o modelo deseja parar. Então, esta é a parte que provavelmente você desconhece. Como saber quando parar? Bem, o modelo nos dirá diretamente se deseja parar. Normalmente, isso será feito simplesmente fornecendo uma saída de texto.
+
+Portanto, se não chamar nenhuma ferramenta, significa que não está aguardando nenhuma resposta. Então, o que podemos fazer é simplesmente encerrá-lo imediatamente, sem precisar ficar acionando-o várias vezes. Porque o que você vai entender, certo, é que o que precisamos fazer quando chamamos esse modelo é chamá-lo várias vezes, ou seja, obter várias previsões para uma única solicitação. Então, o usuário diz: "Ei, crie um jogo da velha para mim." Ok, primeiro preciso ler o arquivo. Bem, para ler o
+
+arquivo, isso é uma volta do modelo, certo? É como um gatilho nesse ciclo. Então, vou ler o arquivo. Bem, para ler o arquivo, eu preciso ir até o chicote de fios. Preciso obter o conteúdo.
+
+Em seguida, preciso pegar o conteúdo, passá-lo de volta para o contexto e executar o modelo novamente. Portanto, o modelo pode ser executado 20, 30, 40 vezes, ou quantas vezes forem necessárias, antes de realmente nos fornecer qualquer resultado legível para humanos . E é por isso que está nesse loop. E pode levar um certo tempo para rodar, certo? Então, é isso que esse loop está fazendo aqui. simplesmente utilizando
+
+as ferramentas mais avançadas. Agora, assim que não precisar fazer mais nada e receber uma resposta, podemos simplesmente parar. Mas, fora isso, precisamos analisar e examinar o uso das ferramentas. Então, estamos dizendo: "Ei, se não for uso de ferramentas, simplesmente continue." Caso contrário, o que precisamos fazer é dizer: "Ok, bem, foi uso de ferramenta." Então, o que vamos fazer?
+
+Bem, vou verificar se preciso aprovar uma restrição para essa entrada específica nessa função específica e, em seguida, executar a ferramenta. OK? E se você não aprovar, eu simplesmente direi: "Ei, o usuário negou a chamada da ferramenta." E vou adicionar isso como resultado da ferramenta ao nosso... como é mesmo?
+
+Histórico da conversa. Certo? Então dizemos: " Ei, este é o resultado da ferramenta." Por outro lado, adicionamos isso de volta ao histórico da conversa. E nós continuamos. É assim que
+
+o agente executa o loop. É só isso que está acontecendo . Ou chama uma ferramenta, ou não chama uma ferramenta, ou nos fornece um texto e, em seguida, adiciona tudo isso de volta ao contexto. E continue repetindo em loop, em loop, em loop, em loop até terminar. OK. E o último
+
+arquivo é simplesmente este arquivo principal aqui. Isso serve apenas para lidar com os diferentes comandos e outras coisas. Não se preocupe muito com isso, mas, na prática, tudo o que isso faz é dizer: "Ei, vamos deixar o usuário escrever as perguntas que quiser. Contanto que haja uma pergunta, vamos passá-la para o agente. O agente vai processá- la em seu loop de agente. Em seguida, ele
+
+nos dará a resposta." E isso é literalmente código na nuvem. Bem, é claro que o código na nuvem tem, creio eu, 500.000 linhas de código, então é um pouco mais complicado do que o que tenho aqui. Mas esta é realmente a arquitetura. Este é
+
+o fluxo. É assim que as coisas funcionam. E é exatamente isso que acontece nos bastidores de todos os principais agentes de IA que você vê por aí, só que com vários outros recursos adicionados. Ok, espero que este vídeo tenha sido claro. Se vocês gostaram, não se esqueçam de deixar um like, se inscrever no canal e nos vemos no próximo vídeo.
+
+[música]
+
+[música]

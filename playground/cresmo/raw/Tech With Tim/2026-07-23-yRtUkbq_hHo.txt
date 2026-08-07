@@ -1,0 +1,153 @@
+---
+video_title: "GLM 5.2 in Claude Code is Blowing My Mind"
+video_id: yRtUkbq_hHo
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=yRtUkbq_hHo
+video_date: 2026-07-23T14:01:34+00:00
+video_description: |
+  Use the Zapier MCP server to connect to over 8000 applications/tools: https://bit.ly/4vLT37w
+  
+  GLM 5.2 is one of the best open source models available right now — and almost nobody is talking about it. At $4.40 per million output tokens, it's cheaper than Haiku and Sonnet 4.6, while delivering performance that rivals Opus 4.8 and GPT 5.5. In this video I show you exactly how to set it up in both Claude Code and Cursor, then take it further by connecting it to your real workflow via the Zapier MCP server.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jul26
+  
+  🎞 Video Resources 🎞
+  Use the Zapier MCP server to connect to over 8000 applications/tools: https://bit.ly/4vn0jrC
+  GLM 5.2 Coding Plan: https://z.ai/subscribe
+  GLM 5.2 (Claude Code Setup): https://docs.z.ai/devpack/tool/claude
+  GLM 5.2 (Cursor Setup): https://docs.z.ai/devpack/tool/cursor
+  GLM 5.2 (Claude Model Switching): https://docs.z.ai/devpack/latest-model#switching-models-in-claude-code
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview & Stats
+  01:30 | Benchmarks
+  02:23 | GLM 5.2 Plan/API
+  03:47 | Claude Code Setup
+  06:09 | Switching Models in Claude
+  08:13 | Adding Zapier MCP Server
+  11:39 | Cursor Setup
+  
+  Hashtags
+  #GLM52 #ClaudeCode #Cursor
+  
+  UAE Media License Number: 3635141
+---
+After many requests, I am finally covering GLM 5.2, one of the best open source models out there right now. Significantly cheaper than models like opus 4.8 or GPT 5.5, and in most the exact same level of performance.
+
+In this video, I'm going to share what it is, why you should pay attention to it, and then how to set it up instead of cloud code as well as cursor, and add some really useful MCP servers to it so you can use it for more than just coding. All right. Let's dive in and talk about GLM 5.2. Now this comes from Zevi.
+
+It was released on June 16th. And I think the most important thing is that this has open weights. That means that if you wanted to, you could run it completely locally and it would be free to use. However, in practice, most of us are going to use the API because this is a massive model. It is 753 billion parameters.
+
+Most of the models that you can run locally have like 30 billion parameters or 40 billion parameters. So this is something that would require a massive amount of hardware and be quite expensive if you did actually want to run it locally. Now, that said, it is a coding and long horizon model, meaning that it can perform for hours at a time. When we look at the benchmarks in a second, you'll see it's very close in performance to something like opus or GPT 5.5.
+
+Now it has a 1 million token context window. That means that it can hold a massive amount of context. Then it has 120 8-K max output. Like I said, 753 billion parameters and interestingly, significantly cheaper than these other models at just $4.40 per 1 million output tokens.
+
+If we look at the benchmarks here, you can see how it stacks up against GPT 5.5 and opus 4.8. Of course, models like fable and now the new GPT 5.6 models are going to outperform this.
+
+But when we look at the price comparison, that's where this becomes more interesting. So you can see price per 1 million output tokens $4.40. That's cheaper than haiku, cheaper than sonnet 4.6, significantly cheaper than fable at $50.
+
+And then same thing when we look at the input tokens, just $1.40. So you're going to get significantly more bandwidth with this. And in my experience, this performs almost the exact same level as something like opus 4.8, except it's faster, it's cheaper, and you can just use it for longer because you're not going to run into the same limits that you would if you had, for example, the $20 per month anthropic subscription.
+
+So with all that said, let's go to the computer. Let me show you how to set it up, and then you can test it for yourself and let me know what you think in the comments down below. Now, like I said, you could run this model completely locally. However, that's going to be next to impossible for most of us watching this video. So instead we're going to use it directly from the API.
+
+So what we're going to need to do here is get an API key. We can do that by either doing direct API billing or by purchasing a coding plan. Now you'll see that there's a bunch of plans. The one that I'm using is just $16 per month. I notice that I still get very good usage, so you don't need to go up to anything too expensive and you can always upgrade later depending on how much you actually want to use.
+
+Okay, so in order to get this plan, just make a new account here on said-I. Once you're in, you can purchase a coding plan. You can view the plans from right here. As you can see, I'm on this light monthly plan for $16. And then what we're going to do is just go over to API keys here, make a new API key, and then you can copy.
+
+And I'm going to show you how to set this up directly in Claude code. But I want to note that what I'm going to do after that is show you then how to add something called the Zapier MCP server. And this is what actually makes this tool useful for me. I use Claude actually more for general productivity and work than I do purely for coding. So yes, we can do a bunch of coding stuff, but if you want to connect Claude to your actual workflow, you probably want it to have access to notion, to asana, to Monday, to Gmail, Google Drive, whatever.
+
+And you can do that super easily from the Zapier MCP, where all of the integrations can be handled in one platform, which I'll show you in one second. And big shout out to Zapier for sponsoring this video. Don't worry, it's free. I'll show you the setup. So once we've got the API key here, make sure we can access that.
+
+And what we're going to do is go over here to the Zettai documentation. I'm going to explain how to add this to cloud code. So I'll leave all these links in the description. But you can see that there is actually this tool here NP Zettai Coding Helper. If you run this command it should set everything up for you.
+
+So what you can do is make sure you have no Jeff's installed, make sure you have cloud code installed, and then go to your terminal and simply paste this in. When you do that, it's going to run you through a quick setup process. You'll notice the mine's already set up because I've done this before. But what we're going to do effectively is go to coding plan. We're going to make sure that we select the coding plan.
+
+So the global one not China unless you're from China, then we can set our API key. So we can go update API key. We can copy the API key from here okay. That's not what I want it to open. We can paste this and then press enter.
+
+And it should connect us to our coding plan. From here what we can do is select cloud code. And then we can just say add configuration. Now you can see that mine's already here because I've already added this before. But effectively you'll just press the button that says add config and it will add it automatically to cloud code.
+
+You also then can go to MCP configuration. There'll be a button that says install all of the MCP servers. You can just hit enter, and then it should install all of the MCP servers that come with this coding plan for you. This is going to give you access to vision, meaning it can view images, take screenshots, etc. it's going to give you access to web search and web reader.
+
+And then Zed read MCP. I don't actually know what that one is, but it looks like it's something related to GitHub. And that will be added to cloud code for you. And you can use it for free with your coding plan. Cool. So from there you should be good to go.
+
+And then what you can do is exit out of this. So I'm just going to exit and you can run clot. Now when you run claw just trust the folder. You should notice that you can type something here in Claude and that it will work, but it's still showing that you're using opus 4.8.
+
+So what I'm going to do here in a second is show you how we can actually change the model, so that it shows that we're using the correct GLM model. But we also can verify the MCP servers are added by typing slash MCP. Okay. So right now you are actually using the GLM coding plan. But Claude codes UI is just not updated because we haven't changed a few variables that we need to adjust.
+
+So I'm going to make this full screen and I'm going to show you how we can do that. So if we go to the documentation you'll be able to find something that says how to switch models in use. So I'll leave a link to this directly in the description. But all we're going to do is just find the switching models in Cloud code section, change your operating system so Mac, windows, whatever you're using. So I'm going to go windows and I'm just going to copy this full setup step okay.
+
+Now all I'm going to do is go to cloud code. I'm just going to paste this and I'm going to say can you please update the configuration. So I'm using the correct GLM models inside of cloud code. So I'm just going to tell Cloud Code to do it for me. I don't need to manually set it.
+
+And then just go ahead and press on enter. Now it's going to probably ask me for permission to do this, but you'll see that if we look here, all we're doing is we're updating some environment variables. So we're mapping the default models in Claude to the GLM models. So haiku is going to 4.5 r right.
+
+Sonnet GLM 5.2 opus GLM 5.2. So this way it will show us the correct models. And then we can change the models.
+
+And also here we can change the effort as well by using the slash effort command. And then there's just two effort modes in GLM 5.2 high and max. So we can switch between any of these and they'll kind of map accordingly as you see here. So let's give this a second.
+
+We're going to yes allow it to edit the configuration. And then if we restart Claude we should see this okay. So we can see that it's made the change. So if I get out of this and then I rerun Claude we type. Yes.
+
+And you can see now that it's using GLM 5.2. And then if we do slash model you can see that I can switch between the models. Right. So glm 5.2, GLM 4.5.
+
+And it still shows fable here, even though that won't work right now because we've changed the configuration. Okay. And then in terms of effort same thing we can do slash effort and we can change what we want. Okay. That's a funny animation that they have there.
+
+And it will map to the correct effort modes that you saw from the documentation. So from here we can start using GLM 5.2. And then if we want to keep track of our subscription usage, if we go here to the usage, we should be able to see the percentage here in the five hour window. So you can see I've used 11%.
+
+I was using this before and then we have the weekly quota as well. So now that we've got this setup, I want to show you how to make this genuinely useful for more than just coding tasks. And that's by adding the Zapier MCP server. I'll leave a link to this in the description. Like I mentioned, it's free to use.
+
+Then if you use it a ton, you can upgrade to one of the plans that they have. But what this will do for you is allow you to connect. I believe it's over 9000 different tools directly to cloud code, or pretty much any type of AI agent, and have much more control and efficient tool use than you would if you just individually connected all of these MCP servers, right, to cloud code, you're going to see what I mean in a second here. But what I'm going to do is make a new MCP server. I'm going to go to cloud code because I want to connect to cloud code.
+
+You can connect to pretty much any tool that you want. And then what I can do is start adding apps directly in this Zapier dashboard, and then just add one connection to the Zapier MCP server in Claude, and it will show all of my tools. Now, there's many reasons why this is useful here, but first of all, it just gives you a single interface to manage all of the tools, which makes your life a lot easier. It also then allows you to connect the same MCP server to different devices. So in my case I have like 4 or 5 different computers.
+
+And if I have 100 tools that I want to connect, I would need to connect those 100 times the number of computers that I have. So, you know, 400 times or something. However, if I just connect them one time in Zapier, I can just take this MCP server and just connect to it from my other computer. And I have access to all of the same tools with all of the same permissions. And you'll see here in a second that you can adjust what tools you have access to.
+
+You can set the read mode, write mode, all of that, and connect over 9000 different applications, which is a lot easier than manually to it inside of your MCP tools or inside of your agent tools. So for me, just right now, I'm going to add my Gmail as one of the tools because this is one that I always use. And you can see that I can select all of the tools, or I can go through and manually adjust them so I can change the access that I want. Cloud tap. So I'm just going to do everything for right now.
+
+And then I'm going to select an account here that I've already authored with Sapir. Okay. So you can see that I've got Gmail here and I'll also just hook up Google Calendar. Same thing with the email that I have connected. And I won't bore you with a ton of other connections, but you can see that you can search here.
+
+There's literally thousands of different apps that you can add. I think they have 9000 right now. So you just do them all from one dashboard and it makes it a lot easier. Okay, so now that I've got the apps connected that I want, I'm just going to go over to connect. I can just copy this command right here.
+
+And then I can just run this in my terminal. So if I get out of cloud code I can just run Claude MCP add transport. It's just going to add this Zapier MCP server for me. And then all I need to do is authentic with Zapier. So if I come back in here and type slash MCP, you can see Zapier needs authentication.
+
+So I'm going to go here and go authenticate. Should open a browser window. I can sign in and then I'll be connected okay. So I'm just going to press on allow here okay. And then if we go back to the terminal we should be good.
+
+All right. So we should be able to see. Now if we go to MCP that Zapier is connected, we have a bunch of tools that we can view. And then if we just want to get an example, I can say something like, can you tell me the last five emails that I received and then what I have on my calendar coming up for next week, just give me a quick summary, and then it should be able to use those tools directly. Now using GLM 5.2, if we want to set up automations,
+
+all this kind of stuff, we can do that because we're connected to the tools. So we can see now that it wants to call our tools here. So I'm going to go yes. And I'm going to allow it to find in my email and my calendar. And let's see what we get okay.
+
+So we can see that we got a response here. And it gave me the summary of my inbox and my calendar. All right. So that's how you set up Claude code with GLM. Now let me quickly show you cursor.
+
+All right. So now we're going to move over to setup cursor. Same thing I'll link the docs in the description. This is very easy to do. What we're going to do is go OpenAI protocol, make a new API key and then insert the API base URL here or override the base URL.
+
+So I'm going to show you how to do this. So from cursor we're going to go to settings. We're going to go to models. We're going to scroll all the way down to where it says API keys from API keys. We're going to check this override OpenAI base URL.
+
+From here we're going to put in the URL from z AI. And then we're going to put in our API key right here. So let me go back and grab the API key. Let's copy that. Come here. We're going to paste it.
+
+And then we're just going to select this here to enable the OpenAI API key okay. So now that is enabled what we need to do is simply just add the model here for GLM. So if we go view all models some of you might already have it. So you can see mine already shows GLM 5.2.
+
+So I can enable that. But if there's another model I want to use I would just have to enable the correct name. So if we go here to the docs, it says that we need to put in the GLM model code that we want to use. And it doesn't needs to be all capitals. And in this case it's using a dash.
+
+So I don't know if the one in cursor is going to work by default here of GLM 5.2. So what I can do is add the new one with the dash and just enable that, and we can test both of them and see if it works. And then we can add any other variants that we want just by putting in the correct name. So now if we go to the chat window here we can change over to GLM 5.2 and just give it a prompt.
+
+Hello world. Can you build a simple HTML landing page about Tekla? Tim I don't know. Let's see if this is going to work and then go ahead and press on. Enter and let's see if it's going to start generating some code for us okay.
+
+So we can see that it is added. It actually wrote quite a bit of code. If we look at the number of lines we got like a thousand lines and this was maybe 40s of generation. And then if we want to view this, let's just reveal it in the File Explorer. And let me open it up and you can see that we get a tech with Tim landing page, all built with GLM 5.2.
+
+Very good of course looks a little bit vibe coded. But you know this was 40s and I just asked it to generate a simple page. And I mean that is pretty damn good. Now same thing here inside of cursor. If you do want to add other tools, you can do that again using the Zapier MCP.
+
+I do this all the time. I'm just using a fresh account here. So I would just go new MCP server. I would go to cursor. Same thing. I just connect any apps,
+
+let me connect a few and then I'll show you how we add it. So I just added Slack and Google Docs here so I can show you an interesting demo. And then in order to connect this to cursor I can just press this add to cursor button. From here I can just sign in and directly add the Sapir MCP. Or I can run this slash add plug in Zapier.
+
+So if I go here and I just run the command, you can see that it's going to pop up and I'm just going to add it for myself. So let's go ahead and add okay. Just going to prompt me to authenticate. So we'll do that and go to our browser okay. We can see that it's authenticated now.
+
+And if I just want to test if it's working I can say send me myself a slack message that just summarizes what we just did in this conversation. And then press enter and we should get a message on slack. Okay. And if I go to slack here, you can see that we get the summary message that just sent it to myself as a DM. Okay.
+
+So with that said, guys, that's going to wrap up this video I showed you how to set up GLM 5.2 in Clod Code as well as cursor, and then how to add the Zapier MCP server to make it genuinely useful. If you guys want more content like this, definitely leave a comment down below and I will see you in the next video.

@@ -1,0 +1,346 @@
+---
+video_title: "I Built an AI App to Analyze My Own Business Data (No Code)"
+video_id: jlZfuNoBBCY
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=jlZfuNoBBCY
+video_date: 2026-07-06T13:00:25+00:00
+video_description: |
+  Get started with @KNIMETV  for free: https://www.knime.com/data-app-examples?utm_medium=paid-social&utm_source=influencer&utm_campaign=kapsquad&utm_term=TechWithTim / https://www.knime.com/start?utm_medium=paid-social&utm_source=influencer&utm_campaign=kapsquad&utm_term=TechWithTim
+  
+  I needed a way to quickly analyze hundreds of messages from students in my developer mentorship program — without spending weeks building and maintaining a custom codebase. So I built a full RAG-based AI app in under 30 minutes using a no-code tool called Canine. And I'm going to show you exactly how I did it.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jun26
+  
+  🎞 Video Resources 🎞
+  KNIME YouTube Channel: www.youtube.com/knimetv
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  01:07 | What We're Building
+  02:11 | What is KNIME?
+  03:21 | Example Apps Demo
+  04:36 | KNIME Platform
+  06:17 | RAG Architecture
+  10:34 | Creating a Vector Database - Workflow 1
+  22:03 | Querying the Database - Workflow 2
+  
+  Hashtags
+  #NoCodeAI #AIApp #DataAnalysis
+  
+  UAE Media License Number: 3635141
+---
+If you've ever wanted to build an Air Force or do some data analysis that is costing you tens of hours and requiring a ton of code. Then this video's for you. What I'm going to show you how to do here is build those exact type of applications using a no code tool that's extremely capable and works whether you're technical or not. And the reason I know this is because I actually spent the past two hours playing around with this to build an app that I need myself. Even though I'm technical and I could write code to do this, I don't want to spend tens of hours, you know, building all of this complex stuff and deploying and maintaining an application.
+
+I just want to do some quick data analysis and build a quick AI app. Now my situation what I wanted to do was analyze a bunch of the message data that I had from students in my developer mentorship program that we had like over 200 students. We have all kinds of conversations and chats going on, and I just wanted something where I could quickly surface some insights, search to see what students are talking about, and just understand quickly, kind of semantically what's going on and whether students are happy or sad or whatever. Right? So that's exactly what I wanted to build, and that's what I'm going to show you how to do in this video.
+
+And then of course, you can adapt it to whatever your use case is. So just to give you a bit more context here, what I'm going to be showing you in this video is how to build a rag based application that's retrieval augmented generation. And what that means is that you can take existing data. So in my case it's messages. But it could be a PDF.
+
+It could be internal SOPs. It could be logs. Anything that you might have for your business or any kind of data that you have access to and essentially be able to query that very quickly, pull out the relevant information, and then pass that to some kind of AI model so that it can answer questions based on that. The basic idea is maybe I want to understand what interviews current students are going through. Well, I can query through all of my messages, look for anything related to interviews, pull up that data, pass it to something like OpenAI or GPT or whatever, and say, hey, based on this data, give me y z analysis.
+
+It then takes all of that data, brings it in, and then gives me kind of a natural language response and allows me to go back and forth and ask questions about that data. This is a super popular technique. It's used across all types of businesses, and usually building this out can take tens of hours. But in this video we're going to do it in probably less than 30 minutes. Now the question here becomes, how are we going to do this?
+
+Well, for this video we're going to be using a platform called Knime. Now they've kindly sponsored this video, but they're free to use. You don't need to pay unless you want it deployed or have a bunch of other kind of team or enterprise features. And essentially what this allows you to do is use kind of a drag and drop node based editor to build out AI applications, ETL pipelines, data analysis, etc. you can run it all locally from your own computer that has a lot of advanced configuration to many of these node based editors don't have.
+
+So you don't need to be technical, but if you are, you can get a lot of bandwidth with this, and it saves you a ton of time compared to if you were going to manually write, you know, thousands of Python lines of code. One of the key selling points of this platform is that whatever you build is going to be audible, repeatable and secure, and then you can scale it up if you actually want this to be used by a ton of different people. So anyways, I'm going to show you how it works. I just want to quickly give you an example of some of the apps that you can build with this, because obviously you don't want the exact same thing that I'm going to be building in this video. Then we're going to dive in.
+
+I'm going to give you a full tutorial, I mean, a walk through the editor. We're going to go through all of the different nodes. If you follow along with me, you'll have a rag based application by the end of this video you'll see exactly how this works. Okay, so if we just look at a few example applications that I have here on the landing page, also link this in the description. You see they have stuff for purchases and supply auditing, different KPIs for CEOs, revenue growth KPIs, stock out monitoring, inventory valuation where this is using a bunch of business data, running it through AI tools, doing deep data analysis, filtering rows, etc.
+
+and then if we have a look at one that I personally like, they have this talent acquisition agent. This is just a demo. So you can kind of see what it works, but effectively you could upload a resume. We already have one here. You can upload a job description.
+
+And then what it's going to do is calculate overall fit for the candidate based on the job description and the resume, and then the different weights that you put right here. So you can set the weights for the different categories here based on what you're looking for. Now if we run this you'll see that it's going to start processing. So keep this second okay. So you can see that this ran and now gives us the top five candidates as well as the distribution of the different candidates that it analyzes.
+
+And if we click through here we can see the reason why this candidate was selected. As you know, the top one, two, three, four, whatever and what their final score is based on the different weightings. Again, just a super quick example of something that you can build here. This is done without any coding. It's all a drag and drop editor.
+
+And now what I want to do is get into the platform and show you how this works. So just to give you a sense of kind of what we'll build here, you can see that we have this kind of node based editor here. We can go in, we can configure all of the different properties of any particular node. And this is kind of a table based platform where everything you do is meant to be working with large sums of data. So whether you're connecting to an existing database, making a new one, everything is kind of in this like SQL, like syntax, like you'll see later, even though you don't need to write any code.
+
+Now, here's another one. This is just creating it back to your database. And then this one is querying it. Of course I'm going to build it from scratch, but I just want you to see kind of what it looks like and how you build it out. There's also an AI tool that you can use.
+
+They can build it for you. However, I'm not going to use that in this video because I want to make sure that whatever I do is reproducible. Okay. So in order to get started with Knime here, what we're going to need to do is download the tool. Now you can see that if you just go to Nike.com, I'll leave a link to this
+
+in the description. There should be a button to download this for free. And I would recommend just creating a free account here, because if you want to store different secrets or credentials, it makes it really easy to do this. And then you can deploy it later if you want to upgrade the account. So So the way you would do that is that if you're not signed in and as you can see here, I'm signed into my account.
+
+What you can do is just make a free account here with the Knime hub. download the application, install it, and then when you open it up, you should see something that looks like this and may walk you through a quick tutorial. You can kind of just ignore that. And you can press on this home tab here. And what we can do is just create a new workspace or create a new workflow.
+
+So all we're going to do is just go create new workflow if you're already in one. Don't worry. For now, what I'm going to call this is just vector store creator. And I want to talk about kind of the architecture of what it is that we need to build. So you guys can understand the notes that I'm going to use.
+
+So as I mentioned, we're essentially going to build RAC that stands for retrieval augmented generation. Now the way that rank works is fairly straightforward. Let's say we have a bunch of data. In my case I have a bunch of student messages that we're going to look at. But for you, you might have something different.
+
+Maybe you have documents, maybe you have PDFs, maybe you have a different database with all kinds of vendor data or invoices or whatever it may be. The basic premise is that if I want to query the information that's inside of a database, typically I need some kind of hard query. What I mean by that is I need to look for something based on a date, or based on a specific string, match or regex. I can't really search for something based on kind of semantic information or the meaning of the text. It's also very slow to query super large databases, especially if you have to run multiple to find the information that you need.
+
+So rather than us trying to run these kind of hard queries where we're looking for specific patterns, what we can do is we can vectorize our data. What that allows us to do is pick some information in our data where we say, okay, this is how we want to search for the data. So in my case, it's based on the message content itself. We can then convert that into something called a vector. When we vectorize that data, what it allows us to do is then search for that data later based on the overall meaning of it, rather than specific keywords or numbers, or like a date filter or something like that.
+
+So the best example of this is something like positive and negative sentiment. For example, we have a bunch of different comments and we can kind of classify those comments as like positive, negative, neutral, right. Different sentiment. The way that that works is that we don't just look for words like good, bad, whatever. We overall try to understand the meaning of that text and then analyze it and assign it some kind of sentiment vector embeddings or vector databases, which we're going to create right now.
+
+We're kind of similarly to that, where we're going to take in all of this information. We're going to vectorize it, which just converts it into a bunch of numbers effectively. And then later when we want to search for it, let's say we want to search for something that has to do with interviews. Well, we can find all of the text that's related to interviews without having to just look for a specific word, but we can look for the overall meaning in that text using something called an embedding model. This might seem a little bit complicated to you, and I understand that if you've never seen vector databases before, but the basic idea is we're going to take all of our data, we're going to convert it into these things called vectors.
+
+We're going to store it in a vector database so that it's permanent, and that we can access it later without having to kind of recalculate it every single time. And then when we go and we build out kind of our AI model where we can ask questions about our data, we can go to that database, we can search for information that's relevant to what we're asking about. We can really quickly pull it down, and we're going to get really good, relevant results that we wouldn't otherwise get if we just kept this in a normal database. So that's effectively what we're building. That involves two steps.
+
+The first step is making the vector database. And the second step is querying the vector database or running it through like an AI model where we can ask questions about our data. So that's what we're building. We're going to start with B vector store creation. So taking our existing data and converting it into vectors or embedding the data which we'll look at in a second.
+
+Then we're going to query it. Let's build it out okay. So once you're in your workflow it should look something like this. Now what we're going to want to do right away is we're going to want to go to the menu. And we're going to want to go to install extensions.
+
+From here. It's going to open up an extension menu. So just give this a second. And what we want to do is just install a lot of the major extensions here. So we get access to more notes.
+
+Now. That's because by default, not all of the nodes are here. And nine. So what you can do just to make sure you get all of them is you can press select all next, and then you can download all of these different nodes. So it might take a few minutes to do so.
+
+Just go through the process and download them. I already have most of the ones that I need. Now. If you're looking for a particular node, you can also search for one. For example, if you scroll through here, you can see there's like community extensions for bioinformatics, right?
+
+If we look at other community extensions, image processing. So based on what you need you can download the different extension packs. But if you just want to make sure that you get all of them, then download all of them again. It will take a few minutes and you'll have all of the nodes that you need. So if you're missing a node from here on this left hand side, you can find it.
+
+Just make sure you install those extensions. Okay. So now from the left hand side here you'll see this kind of nodes tab. This is mostly where we're going to be working where it allows us to scroll through all of these different options and just drag a node directly into the editor. Now the first thing we need if we're going to be making a vector database is some data to vectorize.
+
+So you need to decide, okay, what database am I going to pull this from. Is it from an Excel sheet. Is it from Google Sheets. Is it from what do you call it. You know, MongoDB or whatever.
+
+Now my case, my data is going to come from MongoDB. So what I'm going to do is I'm going to bring in this MongoDB connector. Now this is the first node that you need. And then afterwards what we can do is we can connect this to our MongoDB reader. So we essentially have the connector.
+
+And then we can kind of pull this little green connection here and navigate up to the reader. And I'll be zooming in in the editor so you guys can see this a little bit better. And let's move this over okay. So you have Connector reader. And this is typically the process for most of the connections you're going to do where you have some kind of connector and then some kind of reader.
+
+And the readers are going to pull out the data and then give it to you in kind of like a sequel format, which we'll look at in a second. So what I need to do now is I'm just going to click into these nodes. You can see that I can kind of untangle this hand. And for the connector, what I need to do is open the dialog here. And I need to start putting in the information to connect to my MongoDB database.
+
+So I'm going to put in these details and I'll be right back okay. So I just put in the details here of my username my host name and then the password and the authentication database which in MongoDB is typically admin. And I also change this to show v. Of course the connection is going to depend on what database you have. But if you want to see if this is working, what you can do is press on this execute in the bottom so you can kind of toggle this by just pressing this bottom thing.
+
+And you'll see that if you go execute, it should take a second. And then you should get kind of a green dot here indicating that you were connected successfully. Now once you're connected, you can move to the next node. Same thing here. What we can do is we can choose what database and what collection we actually want to connect to here from our MongoDB database.
+
+So now that I'm connected I need to put the database name. So let me put in the information I'll be right back okay. So you can see that I put my database, I put my messages. And then by default you're able to query if you just want to pull all of the information from the database, you can just put an empty set of parentheses, which I'm going to do here, or of whatever you call these braces. And then apply and press okay.
+
+Now that we have the information from the MongoDB reader, we can press execute. It should take a second and it should read all of the information as Json. So now that we have this MongoDB reader, you'll notice that this information is in Json. Now, in order for us to actually work with a vector store, we're going to need this information in a table format. So what I can do is I can just drag out here from this connection, and you'll notice that it's going to show me right away a few things that I can use that are connected to the MongoDB reader.
+
+Now you can search for more. You can use this k I build, but in my case I actually want to go from Json to table data. So I'm just going to press that right here. And then if I click into this you see there's some options that we can use. But I just want to use the default.
+
+And then I'm just going to go ahead and press on execute. Now what this is going to do is just take the information from the previous step. And it's going to put all of this into table data. And it's just blurring some of the personal information. So we don't, you know, leak anyone's information.
+
+But anyway so you can see I have all of these rows here with all of this table data, the particular field that I'm going to be interested in here in kind of searching through my database is this clean content field. And if I scroll through and I kind of sort this, you'll notice that for some of these, it's actually empty. And there's no content here at all. Now our database is going to complain if we have any empty data. So what I'm going to do is just pull this out and I'm going to use a row filter here just to filter out any rows that have empty message content.
+
+So what I can do is just search for row and notice there's this row filter node okay. And you can just play around with these and again see which ones you need to use. Now my case I'm going to go and select my columns. So what I want to select is this clean content. And I'm just going to say clean content is not equal to.
+
+And for the value we're just going to make it empty. So I just want to say okay I want all of the rows where I don't have any empty content. And then I'm going to go apply and execute. And now if we have a look at our clean content field here and we sort this, you can see that we don't have any empty rows and all is working fine. Okay.
+
+So now we've got our MongoDB connection. We've converted it into a Json table. We filtered out the rows. And what we want to do is start creating our vector store. Now in order to create our vector store, we do need to connect to some kind of AI provider, which can provide what's called an embedding model.
+
+The embedding model is what effectively converts our text into this new numeric information, so that we can search it and kind of understand the meat. So in order to do that, what we're going to do is bring in the following. We're going to bring in the OpenAI authenticator. You can see there's all kinds of nodes and different AI models you can use here. Pick anything that you want.
+
+But in my case I want to use OpenAI okay. So I'm going to drag that in. And in order to use the OpenAI authenticator I need some kind of API key. Now we can just manually hardcode the API key here if we want. But what's actually going to be better here is if we use Knime to create a secret and then retrieve the secret so that anytime we sign into our account, we just have it stored here and we don't need to manually go retrieve it, find it, look for it, etc..
+
+There's multiple ways to do this. We're from the top right hand corner. You should see a little profile icon. Just sign in to the account that you would have created previously. If you don't have one, just make one.
+
+It's free. From here. We're going to press on profile. Now from the profile page. We should be signed in.
+
+If you're not, you can just press the little sign in button up here. And we're going to look for this tab called secrets. So again because I know I want kind of kind of fast sorry. You're going to go here profile. It's going to bring you to a page that looks like this.
+
+You're going to sign in. And then you're just going to go to the secrets tab. Now from the secrets tab, what you can do is you can create a new set of credentials. So you can call this like open AI API key. Right.
+
+You can give it a description and then you can give it a type of value like you know a password only. Okay. And then just set the value. And when you set the value it's going to store that in here. So you can see I already have an OpenAI API key that I set a few days ago.
+
+And that's what I'm going to use in order to connect to this authenticator. So if you don't already create an OpenAI API key, make a new secret here with OpenAI API key and then make it or create it. Now, in order to retrieve the secret, what we're going to do is use the Knime hub authenticator. Now, the authenticator is going to allow us to pull that secret. So all we're going to do is go Knime hub, Mount Point.
+
+And then there's the option here. We're just going to leave this as default for the mount point. and go ahead and press on, apply and execute. Now if you're not already signed in you're going to need to sign in here okay. In order for this to work.
+
+And then once it's signed in we're good and we're authenticated. Now the next thing we're going to do is we're going to pull this out and we're going to use the secrets retriever. Now the Secrets Retriever does exactly what it says. It retrieves the secret for us from time. So for this, we can just select the value of the secret that we want for the variable name to set here, we can call it whatever I'll just call it secret.
+
+And then same thing we can apply and execute. And then it should pull that secret out for us okay. Now you're going to notice here that there's no way for me to kind of natively connect the secrets retriever to the OpenAI authenticator. That's because I don't have like a direct inbound connection. But what I can do is use something called a flow variable.
+
+So inside of Knime, any values that you have as variables can be connected to different nodes using these kind of variable output nodes that look like red dots. So what I can do is I can connect this red dot to the top of the red dot here for the OpenAI authenticator. And if I go to flow variables, you'll see that it's actually going to pass the value from here which is set as a flow variable. So this secret value right over to the OpenAI authenticator. And if we go flow variables you can see secret is set.
+
+So what I should be able to do now is select secret as my OpenAI API key. And then press on apply and execute. And it should be able to pass that to OpenAI and authenticate directly with. So we'll look at this a little bit later. But any time you can't directly connect the nodes but you want to pass data between them, you can use this kind of flow variable connection here.
+
+I don't know the exact name, but it's like this variable output. Then to this variable input so that you can kind of flow the variables through this flow or through this work flow, whatever you want to call it. Okay. So now that we have the OpenAI authenticator, what we're going to do is we're going to select an OpenAI model. So we're going to do is say OpenAI AI. And then embedding.
+
+And you can see we have this OpenAI AI embedding model selector. So again all these notes are like built in which saves us a ton of time. So what I can do is connect these two nodes together. And if you didn't know which nodes you need again you can just go here and it shows you a bunch of them. So you can kind of search through and find the one that you want.
+
+So in our case we now have the OpenAI, you know, model selector. So all we're going to do is just go here and for the model select the one that we want. I'm just going to go with small because this is going to be the cheapest one to use. And it's really all we need for this particular video. And I'm going to go execute down there.
+
+And then it's going to select that model for us. Now we just clean up the workflow a little bit by kind of moving it over, and let's just space things out. So it's kind of even with what we have down below okay. And now we're good to go. So now we have two sets right. We have kind of
+
+our authenticator our model and we have our MongoDB connection. Now the next stage is just to create the vector store which is super easy. So what I'm going to do is drag this out here and you'll see that it says for AI as vector store creator. So we're going to use that because that's the vector store that we want. I'm then going to pull in this row filter.
+
+So this is the data that we want to embed. We're passing it into our vector source. We got our data and we have our model that we want to use. And then from here we need to choose the column that we want to embed. So you can only have one column that's actually going to be embedded for kind of the search that we're going to be doing through the vector database.
+
+And in our case we want to use the clean content. So if I scroll through here we should be able to see the clean content in a second okay. So we got clean content. So let's select that the embeddings column. You just leave that empty for right now.
+
+And then for metadata we want to include all of this metadata. So the reason we include the metadata is so that as soon as we find this clean content, we can also pull all of the other information about the message if we need it. Okay. So that's that we're going to go ahead and press on apply and execute. And then it should actually just start creating the vector store for us.
+
+So right now the vector store is just going to be stored in memory. So in memory meaning in our computers Ram. But after this we can actually write this out so we can save it, you know on a server or in our case we're just going to save it on our local computer so we can load it later. Now this is definitely going to take a few minutes to run because we're loading, you know, 18,000 values that we need to embed and store in the vector store. So just give it a second.
+
+And then once it's finished we'll be right back. And then we can save this vector store the basic ideas that we've started by creating it. We're going to save it and we're going to download it. So we don't need to do this every single time. And then as soon as we've got the vector store, we can start searching through it.
+
+And even later, if we wanted to, we could set up like an automatic pipeline to anytime a new message comes in, embed it and add it to the vector store. But that's a little bit more advanced. So you can see actually the vector store is created. Okay. And now what I can do because the vector stores made is I can save it.
+
+So I'm going to pull out a new node here. And you notice that right away it's showing me, hey, probably you want to use this model writer. So I'm going to use the model writer. And from the model writer all I'm going to do is just store this locally on my own computer. That's what this one does. So I'm just going to store it to a file.
+
+So I'm just going to pick a location here. Let me choose one okay. So I'm just going to go right on my desktop here. And I'm just going to call this vector store. And then just choose like that.
+
+And you can see by default it now goes on my desktop and it says it's going to be vector store dot model. And I'm going to go ahead and press on, apply and execute. And then it should just store this as a local file on my desktop that I can then read in anytime I want to use this vector store. Okay. So it looks like we're good here. And if we check on our desktop,
+
+you can see we have this vector store dot model. So it's stored. And now what we're going to want to do is create our next workflow where we can actually load in the vector store and start using it. So this is the first workflow fairly straightforward. You can see we got all these nodes. Again.
+
+If you don't know which nodes to use then you're just going to kind of pull this out and it will give you that recommendation. And what we'll do now is we'll just make our next workflow. So we're just going to press this plus button up here for the next workflow we're going to call this vector store I don't know query or something because that's kind of what we want to do. And we're going to go ahead and press on create. So now what we're going to need to do is we're going to load the vector story that we created previously.
+
+And then we're going to start setting a few different inputs here so that we can actually query the vector store and take maybe a user's name. We can take some string that we want to query. Whatever. Okay. And I'm going to show you how we can make kind of a little bit of an app.
+
+Because right now we just created this workflow that we can kind of execute and go through and mess with like locally in a more experiment type fashion. But what we can actually do using nine here is make something called a data app. A data app is something that can be deployed, just like the application you saw at the beginning of the video and what it will allow us to do is have some different inputs and outputs in kind of like an HTML view. So we can view it like in a website. I'm not going to go crazy with this and we're not going to deploy it, but I'll show you at least how we can get some inputs and outputs in a more visual fashion.
+
+Okay, so let's start here by going to nodes similar to before. We have a few things we need to set up. So first things first we need to load our vector store. We also need to connect to OpenAI because what we're going to do is use OpenAI as a kind of model that's able to analyze the information that we get from the vector store. We also then need to be able to query the vector store.
+
+So we need to kind of have some input from the user. So I'll go step by step and let's start by actually just bringing in some nodes that we've already seen. So let's get started with the Knime Hub authenticator. because I want to be able to pull this secret on my OpenAI API key. So let's just zoom in a little bit so you guys can see this a bit better okay.
+
+So zoom in perfect from this node. Let's select it and let's just go execute just so it kind of signs in. Then we're going to pull in our secrets retriever. So let's pull that in. We've already looked at this one and just connect these guys up.
+
+And then from the secrets retriever okay we give this a second and we can pick our OpenAI API key. Let's apply and execute. And then I'm going to go to my OpenAI authenticator same one we used before. So let's pull this guy in same thing. Let's connect our kind of variables.
+
+And then from this we're going to go and press on execute with secret as our API key okay. We're authenticated here. And then we're going to go to OpenAI lengths selector. So this time rather than using the embedding model we're just going to use the LM. So we're going to connect these guys up.
+
+And from the LM selector we're going to pick the LM that we want to use. So let's go with GPT for mini. Just because it's super cheap for the response length we can just leave it as is. And for the temperature we probably want to go maybe a little bit higher. So let's go 0.5 and go apply and execute okay cool.
+
+So we now have our OpenAI LM. We've kind of now connected here with Knime, and I know it went super fast, but it's because we've already looked at these nodes before. Now we want to load in our vector store. So to load in our vector store we're going to bring in our model loader or model I think it's called model reader. Yeah. Model read okay.
+
+So we're going to pull in this model reader here. And what we're going to do with this guy. Let's move this over and just zoom out a little bit so we can read better, is we are going to select the location where our model is. So how do I do this? I need to click on this guy.
+
+And for the source we're just going to find this from our desktop. So we're going to go desktop. And if I scroll down you can see we got this vector store. So let's choose that file and then apply and execute. And we've now read in our model.
+
+So now what we need to do is we need to use something called a vector store retriever. The vector store retriever is going to allow us to take the model and load this as a vector store. It's also going to allow us to do the query on the vector store to get the results that we need. So what we're going to need to do is we're going to have to pass into this some data here, which is effectively a variable that we want to be able to query the database with. So we're going to have to go here and say, hey, this is like the query that I want to run in the query is going to be what do students say about interviews or how our students performing?
+
+Or what do people say about, you know, DSA and LeetCode, whatever, right. And we need to pass some variable here, which is going to act as that query, which we're going to look at here in a second. So in order to do that, let me just move this down a little bit. So we have a bit of space and we're going to start creating kind of the input. So what we're going to do here is we're going to bring in a string widget okay.
+
+Now a string widget allows us to have some text input which we're going to look at in a second. So in order to kind of treat this as text input, what we need to do is we're going to bring in the string widget. And notice there's other types of widgets right. Like sliders, integers like whatever things you want to bring in as input. We're going to right click on this and we're going to go to Create Component.
+
+Now a component. And we're just going to call this input is kind of a nested view of various different nodes. So what we can do is we can have this input component okay. And we can press into it go component and go open component. Now when we open the component you'll see there's this component input and this component output.
+
+Now by default variables will not float in and out of the component unless you set. So what we're going to do. And I know this seems a bit weird, is we're just going to create these two string widgets. So we're going to have string widget one. And for string widget one I'm just going to double click into it.
+
+And for the label I'm just going to call this query for the description I'm going to say query the db. And for the variable name we'll just go with query okay. And for the editor type we'll go single line and go ahead and press on apply. And then okay. Now what we can also do is we can edit the node comment.
+
+So I'm just going to edit that and call this the query so that we can locate it in a second. Okay. So this is our string widget for our query. The next widget is just going to be a username input. Because what I'm going to allow us to do is query the database based on the user's username.
+
+So we can say hey what did Kevin say? What did Tim say, what it can say. And we can have kind of some more advanced querying. So what I'm going to do same thing is bring this one up. I'm going to say user okay.
+
+So let's type user like this. We're going to say enter username. And then for the variable name we're going to call this username and press on apply like that. So now I'm going to give this a node comments as well. So edit node comment and call this.
+
+And what I'm going to do which will seem a little bit weird, is I'm just going to connect these guys together. So we kind of have these two widgets. We can connect them up maybe like this. And then I'm going to have the output of this one. Just go to the component output here.
+
+And the reason I need to do this is that I want to have these two widgets, passing data between them. And then I want my component to be able to bring these two variables. So you can see that I can include them in the output by bringing them all over here. So what will happen now is I have these two string widgets okay. They're connecting. So we can see if I bring this up.
+
+We have these two variables username and query. We pass that to the component output whereas username in query. And then we include the output so that we can get it outside of this component. Okay. Now you might be wondering how do you actually get like a visual view of this.
+
+Well that's where you can go to this open layout editor. So if you go to this open layout editor, what we can do is we can drag in these widgets here. So you can see I just dragged in my query and I dragged in my username. And now the widgets that we have will just be organized in this particular layout. Of course there's advanced layout stuff that you can do and you can add like all kinds of styles and whatever.
+
+In my case, I'm just making a super simple, basic layout that has the query and the username. And now I'm going to press on apply. So all I did is I open the layout editor. I dragged in the different widgets that we had, and now I have this kind of component that will be able to view in one second. So what we can do is we can just execute all of these.
+
+So I can go here and just go execute. You can see it'll go green now just because it's like making sure that this is going to work. And now what I can do is go back to my back here store query by pressing this button right here. So it shows the input vector store query. And it brings me back to my input component.
+
+So my input component I'm kind of going to line up here. And I'm going to take this now. And I'm going to connect it to a new what is it node. And this node that we need is called variable to table row okay. So what we're going to do is let's move this out a little bit.
+
+So it's a bit cleaner. We're going to set the output of our input component to be this flow variable. And we're just going to pull this over here and connect it to this variable to table row. Seems a little bit weird. But effectively what we're doing is we're saying okay we have some input.
+
+There's going to be two variables here. These variables I then want to connect into variables that will act as table rows. So now I can pass them over to my vector store retriever. We're going to connect it to this variable to table row component. That's going to convert those two variables into a table row, which I can then pass to my vector store retriever, which is then going to allow me to actually pull out the different values that we need.
+
+Now, what I need to do with this input is I just need to execute it. So if I want to execute this node in order to view the input and then pass it, I just need to connect this to some part of my flow. So what I'm going to do is just connect it to this open AI authenticator. And let me just move these again. Just so we kind of clean this up a little bit easier to view okay.
+
+So it just needs to be connected to some part of the flow or earlier. Otherwise it's not going to allow us to execute it. So what we'll do now is we're just going to press on, execute okay. So if for some reason something was going wrong in my component. So I just went into component open component.
+
+And I just connected them like this. I think I had it connected to the top when it needs to connect to this kind of middle one right here. So we just have all of these connected now together. And if we go back here, you can see now I was able to execute this. And it's green.
+
+And now we kind of see this view popping up. So in this view I can say like hello world. And then for username I can put any username I want. For now we'll just leave it empty okay. So now I have this like input where I can put in the query right that I actually want to do. And this is dynamic and it can change.
+
+And now what we can do is we can go to our variable to table row. So from our variable to table row we're going to include this query. And we're going to include this username. And then go apply and execute. When we do that you see now that we get this table row where we have our query and our username, we're now we're going to be able to pass those to our queries column.
+
+So for the queries column we're going to change this to query which means hey we're going to query the vector database for this query. For the number of results we can put like 20 or something whatever we want. And we're going to go to retrieve metadata from documents like this. And go ahead and press on apply and execute. What this is going to do now is go to the vector database and then retrieve all of the information in all of these different kind of weird rows that matches the information that we found.
+
+So what you'll notice is that we get these kind of different columns where we have all our author username, where we have the author username, the author display name, the channel channel content message. All of this stuff is all popping up now in one row, which was retrieved from the vector database. It's a little bit difficult to read, because you'll see that the way that this kind of gets loaded, I can't really open this up, is that we get all of these large lists of data in one row. That's going to be pretty hard for us to kind of parse through when we want to pass it to open AI. So what we're going to do is run a few filters here to kind of clean up this data in a format that's easier for us to work with.
+
+But effectively, what we did is we said, okay, we're going to pull in our OpenAI stuff. We're going to read in our vector database, we're going to get some input from the user, which we just created. And then we're going to take that input, pass that into a variable row or pass it to a table grocery because that's what we need. We can then pass that to the vector store retriever where we can pass a query, and then we get all of the results. And you can actually batch multiple queries here as well.
+
+Okay. Now next thing we're going to do is just add a metadata filter. Now for the metadata filter we're going to choose author Username. And for this we're going to put a variable here. So we can kind of press this little variable button.
+
+And we can select the username okay. So when we select the username let's just make sure it's selected. Yep. Like that. What's going to happen now if we apply and execute is whatever username we put here.
+
+So let's put check with him okay. And if we go here and we execute and then we go here you'll see tech with him is filled in. And effectively what this is going to do now is only retrieve documents where the author's username is tagged with him. So now I can filter for specific information just from, in this case me. And if you don't put anything in then you can remove this metadata filter.
+
+You can add multiple. But in my case I think that's going to make this a little bit more accurate. So I'm going to execute this now. And you're going to see that the only information we get well it's actually nothing because I guess I never said hello world. But you'll see there would only be from me tagged with tip.
+
+So if we go back let's change the query maybe to be I don't know. Hey, maybe that's going to work better. Okay. Same thing. Let's go here.
+
+Let's go here and execute. And let's see if we get something better for hey okay so still not popping up. So maybe my username is wrong or something. Let me change it to one that I think I know works. Okay, cool.
+
+So I just changed it to Kevin because I guess my username wasn't working properly. And we can see now that it's pulling all this information that's related to him saying hey, or whatever, you know, into this query. Okay, cool. So that is working. Now that we have the vector store retriever and we're pulling this information, like I said, we want to change the format.
+
+So it's a little bit easier to work with. And then we're going to pass it to open AI. So we can actually pass it to an alum. And we can get a response and start chatting with it and kind of using this info to get some insights. Okay.
+
+So from our vector store retriever, the next thing that we're going to pull out here is going to be to ungroup this data. Now let's just execute and I'll show you what it does. Ungroup is just going to pull this out into separate values. Here, just to make sure that we don't have all of this grouped into one single table row. So previously right. If we look here so it's all one row.
+
+And when we ungroup it we get three separate rows. So that's what we're looking for. Now the next thing that we want to do after this is we want to execute an expression. And what I want to do with this expression is I essentially just want to pull out the rows that we actually care about, because I don't need to use all of this information. I don't want to pass all of that to my LM.
+
+I just want to pass, for example, like what channel we were talking in, maybe the author's username, and then of course, what the actual text message was that they were sending. So what I'm going to do is the following. I'm going to go expression. Expression allows us, let me see if I can make this a little bit bigger. To write a custom expression where we can create a new column that contains the value of this expression.
+
+So I'm just going to paste one in and then I'll discuss what this is doing. So this is an example of an expression. Let me make it maybe full screen so you guys can see it. We have author username. And notice the way I access a variable is I use this dollar sign.
+
+So I'm saying hey I want to take all the stuff from the author username column. I'm going to add a string. So I'm saying in and then some you know pound sign I'm putting the channel name and then I'm putting a colon. And I'm saying here's the content and here's the date in which this was set. So I'm just taking out some values from my, what do you call a database that we looked at here.
+
+So we have all of those different columns and you'll see that this is going to create a new column. And for the new column what I'm going to call this is prompt okay. So just prompt like that. What this allows us to do is just take out all these values and combine them into one large string that we store in a new column. And if I evaluate the first ten rows, here we come.
+
+Have a look at this. You can see that we now get a prompt. Let me see if I can make the prompt a little bit larger or kind of click into it. Okay. It's not letting me click into it, but it should say like Kevin Duncan Jr is in this channel and this is what he said on this date.
+
+Okay. So we're just creating a prompt from the information here that we care about that's in these rows. That's it okay. So that's what we're going to do. Let me minimize this.
+
+Now that's our expression. What we can do now is we can execute the expression again. Same thing if we go look at this and we click into it. Now we see Kevin non junior and abnormally general okay. On this date.
+
+What is this I don't know January 2010. But working now the issue here is that I eventually want to use a node called Agent Chat View. And what Agent chat View does is it takes in a system message and an initial. I message, and then lets you kind of chat with the model. So what I need to do is I need to eventually be able to take this information from my vector store and turn it into one single string that I can pass as context to this agent chat view.
+
+Now, in order to do that, what needs to happen is that I need to eventually convert the output of this vector store retriever, right? Which we're kind of doing now into one single string. So I now have kind of the different strings with the context for the information that we pulled from our vector store, but I now need to convert that to one string. So what I'm going to do, and it's going to seem a little bit weird, is I'm going to do a group by. So I'm going to pull this and I'm going to use this group by node.
+
+Now with this group by No Name to double click it to get into this information. And I need to group a specific column. Now, the column that I want to group by needs to be a column. That's always going to be the same for all of these different rows. So for now I can just group by this query column because this query column will always be the same.
+
+It doesn't change, in this kind of output, as you'll see. And what I'm going to do now is go to manual aggregation. Now this is going to seem quite weird. What I'm doing because it's a little bit complicated. But essentially what we're doing is we're saying, hey, okay, I now have the kind of finished text prompts that I want.
+
+What I need to do is I need to actually get all of those prompts and have them be in one column. The reason for that is I need to take that column, and I need to pass that into kind of one larger string so that I can pass that eventually to my LLF. So I need to take all of this in kind of condensed into one column. And the way we can do that is we can now group everything back together. Now that we've created the prompts that we need and then aggregate that column together.
+
+So what we're going to do is query like this. We're going to go to manual aggregation. And for manual aggregation what we're going to do is we're going to select this prompt column which is all the way down here. And we're just going to add now when we add this, what we're going to do is we're going to change the aggregation type to say concatenate. And what this means is that we're going to take all of the prompts and we're going to concatenate them together.
+
+That's all this is going to do. So we're going to group all of this together. We are then going to manually aggregate just the prompt so that we get all of the prompts kind of combined together. And then what I'm going to do is change the value delimiter here. Just to be a pipe with a space on each side.
+
+And what that means is what we're going to use to separate the concatenated prompts. So we're just going to have a list of all of the prompts together. So I'm going to go apply okay. And then I'm going to execute this. And you're going to see that.
+
+What happens now is that I get all of my prompts kind of combined together, where you can see all of the different channels, you can see what was said and you can see the dates. And that's exactly what I wanted. Boom. They're added together. Okay.
+
+So now that they're added together, we effectively have the original query and we have all of the concatenated prompts. So what we want to do very lastly is we just want to combine these into one string that we can then pass to this agent chat view. So what we're going to do is we're just going to go and write one more expression. And from this expression. So we're just going to put this right here.
+
+I'm just going to copy one in and I'll show you what this does. So what I've done is I've just said the context is concatenate prompt. So I'm saying hey this is all the context that we have. And it's just this large prompt, right, of all this information. And then I say backslash n.
+
+So new line character original query is and then query. So this is essentially the question or the query that we're looking at to get this information. So now we're just going to do new column. And we're going to call this final prompt okay. And we're going to go ahead and press on apply and execute.
+
+And then you'll see that we get this kind of final prompt. Now it says the context is this the original query is hey, so what we've done is we've taken the original query plus all of the context, right. Combined it into one string. And now that we have this expression and we have this final prompt, there's one last step. We just need to convert this into a table row.
+
+So we're just going to say table column two variable. So all the way around it needs to be a variable so that we can pass it here to our chat view. From here we're just going to take the final prompt. And then we're just going to pass this as a variable to the agent chat view. Now from the agent chamfer you'll notice we have a system message and an initial AI message.
+
+All we're going to do is we're just going to set the system message to be this variable. So the variable is just going to be row zero looks a little bit weird. But effectively row zero is just going to contain this content that we need. So effectively we're saying hey this is the context. Hey this is the original query.
+
+And then we can just start chatting with the AI model. And it's going to have this query in there. And of course we can make the system message better, but we just need to feed the context. So we've said okay we have this expression. We turn it into a variable.
+
+We pass the variable to the agent chat view. We then pass that as the system message. And now with this agent view, if I make this a little bit bigger, if we execute it, it'll give us a second and you'll see that we're going to be able to actually just directly chat with the AI. So I could say, tell me what Kevin says, okay. And now it's going to use this context. Give it a second here.
+
+And it tells us the three things that Kevin said. He said okay. And so now of course this isn't great. So let's go back and let's change our input here. So let's click into this.
+
+Just make this larger so we can see it for the input. Let's change this to interview okay. So I just need to fill in the username. So now it's filled in. Let's go here and let's just press execute.
+
+And then it should start executing all of the nodes before okay. And if we come here we can see now we get the context. And let me just ask the question what is Kevin say about interviewing okay. And give this a second and then it should give us the answers says Kevin mentions interviews in a few context. He asked about what an interview entails, expresses that another interview is great and common to some people.
+
+Interview in a weird way if we want to get more results. If I go back to my vector store here, we can increase the number of results, or we can just fully remove this metadata filter. If we want. And then if I ask about interviewing, it's going to give me the results from everyone, because I have a feeling that sometimes the results are getting skewed with the metadata filter. So if we remove this and let's make this like 100 different results and then apply and come back here, let's change the input as well.
+
+So let's yeah, let's just go interview okay. We can leave that the same and then let's go and re-execute this. Give it a second and let's see if we get a bunch new context. You can see there's a bunch of information about interviewing. And I'm going to say overall what do students think about interviewing.
+
+And let's see what it says okay. And you can see that we get our answer is based on the context provided students have mixed feelings but interviews many students emphasize the importance of preparing some students express anxiety. There's a recognition that interviews often focus on assessing cultural fit and technical experience, and then you get the idea. We kind of get this based on our system message. Okay, so that wraps up this workflow.
+
+Let me make it a bit, what is it? Let me just move the screen so you guys can see it a bit better, in case you want to copy this, let's zoom in a bit. You can see that overall, what we were doing is rereading in the vector store, just going through some of the expressions to kind of manipulate the data here, pulling in our OpenAI information and then going to the agent chat view. So what would happen now is if we wanted to deploy this, we'd be able to have a full app that kind of has these two views, like the input and then the agent chat view. I'm not going to go through that process because you do need a premium account to do that, and it's a little bit more complex, but you can deploy this and just keep that in mind.
+
+That's one of the benefits of using Knime is that once you're happy with these workflows, you can really easily deploy them, or you can just run them in this experimental environment. As we did here. Overall, this is a great tool for anyone, technical or non-technical, who wants to build out these workflows relatively quickly in a pretty auditable way with all of these different nodes, rather than writing all of the code. For me this is really good, especially if I want to do something a little bit more experimental. I want to change things quickly.
+
+I don't want to be, you know, maintaining a code base. And then I can just share these, these workflows with anyone that I want so I can really easily exploit these workflows. I can just go save as or and go export. And then I can send them to someone else who can really easily open them up here and Knime and start running them locally on their own computer, without needing to deal with all of the deployments, secrets, etc..
+
+So anyways, guys, that's going to wrap up this video. I hope that you found this valuable. If you did, make sure leave a like subscribe and I will see you in the next one.

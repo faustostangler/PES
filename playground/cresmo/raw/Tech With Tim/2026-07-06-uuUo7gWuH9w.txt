@@ -1,0 +1,195 @@
+---
+video_title: "The Only Claude Code Plugins You Actually Need"
+video_id: uuUo7gWuH9w
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=uuUo7gWuH9w
+video_date: 2026-07-06T12:27:44+00:00
+video_description: |
+  Add TigerData's MCP to start controlling databases right in Claude! https://tsdb.co/vaezqa19
+  
+  Everyone tells you to install as many Claude Code plugins and MCP servers as possible. Here's the problem: once Claude can see more than about 50 tools at once, it starts picking the wrong ones - and your agent actually gets worse, not better. In this video I went through the entire plugin marketplace and wider MCP ecosystem to find the plugins that genuinely earn their spot. These are the ones I keep installed myself, and I'll show you exactly how to set each one up.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jul26
+  
+  🎞 Video Resources 🎞
+  Tiger Data: https://tsdb.co/vaezqa19
+  TigerData CLI Docs: https://www.tigerdata.com/docs/get-started/quickstart/mcp-cli
+  
+  GitHub MCP Docs: https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-claude.md
+  Frontend Design: https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design
+  Context7: https://github.com/upstash/context7
+  Figma: https://claude.com/plugins/figma
+  
+  ⏳ Timestamps ⏳
+  00:00 | Intro Overview
+  00:37 | What is a Plugin
+  01:18 | Plugin Marketplace
+  02:51 | 1 - Language Servers
+  05:06 | 2 - GitHub MCP
+  08:37 | 3 - Frontend Design
+  10:15 | 4 - Tiger MCP Databases
+  16:20 | 5 - Context7
+  17:33 | 6 - Composio MCP
+  19:59 | 7 - Figma
+  
+  
+  Hashtags
+  #ClaudeCode #Anthropic #ClaudePlugins
+  
+  UAE Media License Number: 3635141
+---
+Everyone's telling you to install as many Claude Code, plugins and MCP servers as you possibly can. More tools, more power, right? More things we can build. Well, here's the problem. Once Claude can see more than about 50 tools at once, it starts picking the wrong ones and your agent actually gets worse, not better.
+
+So I went through the entire plugin marketplace and kind of the wider MCP ecosystem to find the tools that genuinely earned their spot here and that you'd want to install. Now, these are the canonical plugins that I would keep installed, including ones that completely change how Claude works, specifically with tools like databases. So with that said, let's dive in. Okay, so before I get into the actual list here, I want to quickly clear up what a plugin even is. Now, when people say plug in an MCP server, they usually mean two different things.
+
+Now an MCP server is a single capability. It's one connection that gives Claude access to a specific tool or some kind of service. So think like GitHub, maybe a database, a browser, whatever. Now a plugin is bigger. This is actually a container that can bundle a bunch of things together.
+
+So it can be slash commands, hooks, language, server skills. And yes, it can include MC servers as well. So a plugin can just be an MCP server or it can be a lot more than that. Now people throw these terms around. I just want to make sure you understand the difference.
+
+So in order to manage and install plugins in Claude, I'm going to recommend that you use the terminal based version. This means installing Claude Code on your computer, not just using the desktop app. From there, you can open up a terminal or a command prompt. You can type. Claude, I'm just going to trust the folder.
+
+And then you can type the command slash plugin. When you do this it will list a bunch of different plugins for you. So we'll show you this discover tab. And then you can move over to see your installed skills and plugins or MK servers, as well as various marketplaces which I want to talk about now. Now marketplace is basically just an app store for Claude Code, so it has a bunch of plugins inside of it.
+
+You just install it one time, and then you can go add any plugin you want, and it will automatically keep them updated for you. Now out of the box, anthropic gives you two marketplaces. Here it looks like there's one, but there's two based on how you're using the desktop app. Now there's the official marketplace. And this is a very small set of plugins that anthropic actually maintains themselves.
+
+And then there's a community marketplace where there's a bunch of third party plugins. And these are reviewed by anthropic. They have safety checks to make sure they're secure. Now these two cover pretty much everything you need, but you're not locked into just using those. Anyone can host and create a marketplace, and if you want some other skills that aren't in these, you can install another marketplace yourself.
+
+I'm not going to go over that, but it's very easy. You're just essentially adding a git repo. And then you can go through and view all of these other plugins, but make sure you're careful with those, because sometimes there can be some harmful or malicious content in those marketplaces. So if you're not using the official one, just be a little bit cautious. Okay, so with all of that said, let's get into the list of plugins.
+
+So the first plugin or type of plugin that I would recommend you install is a language server for the programing language that you're using inside of Claude. It could be Python, could be rust, can be JavaScript. TypeScript doesn't matter. You need to pick which one you're using, and then you can go and look up the appropriate language server. Now in my case I use Python.
+
+So I'm going to install the Pi write LSP which is essentially the language server. Now what this does is give type inference and environmental awareness via pi right. Again a type of language server. So we'll do static type checking intelligent completions and gives you higher quality code generation and output by verifying the output using some various commands. If you're unsure of what language server to install, just ask Claude Code and it can tell you.
+
+But let me show you how the Pi write one works. You can see some of the commands that it comes with right here. So in order to install this, what we can do is just go to slash plug in. And then we can simply just search in discover because it should be here. So we're going to say pi right. Like that.
+
+You can see the language servers there. I'm going to hover over it. Press on enter. And then I'm going to install this just for my user. You can pick the scope that you want this to be installed. Okay.
+
+So it's installed. And now we can reload the plugins by typing reload plugins. And now we can start using it. Okay. So it would help if we did reload plugins dot reload skills.
+
+Then if we want to verify if this is installed we can go to slash plugins go to installed and we see the Pi right. LSP is here. In order to use this, what we can do is generate some Python code and then have it use the server to verify that. So I'll just say something like generate a relatively complex Python script, and then use the LSP Python language server to verify all of the type checking. Just as an example. Okay, let's go ahead and press on enter.
+
+If you're wondering what I'm using to dictate here because you guys always ask, I'm using a tool called Whisper Flow. It's free to use. It's very, very good AI voice dictation I've used it like for almost a year. I think now I have a ton of words and it's just way faster than typing, so I always use that whenever I'm working with AI. I'll leave a link to it in the description in case you guys want to check it out.
+
+I do have a long term partnership with them. Okay, so it's going to do that now. And let's see the commands that's going to run from the language server. All right. So just finished running.
+
+You can see that it use the plug in multiple times here with the Pi right language server. And then gave us kind of response here saying that everything is good fully resolved all of the static type checking etc.. Let's move on to the next plugin. So the next plugin on my list is GitHub.
+
+Now this might sound obvious, but I promise it's a little bit trickier than it seems because the current official GitHub plugin, which I already installed that comes here from anthropic, actually does not work. And there's a bug that I just found on GitHub. Funny enough, GitHub saying GitHub doesn't work, that you cannot use this right now because it's broken. So I'm going to show you an alternative way to install GitHub using the default MCP server, and walk through the steps you can get this because it's a very important tool, and it's going to allow you to checkpoint and save your code, and then automatically create remote repositories that you could share with other people, other devices, and ultimately just keep track of all of the progress in your project. So if something goes wrong, you can rollback to another version.
+
+Okay, so how do we use this? Let me get out of full screen mode here and show you. So there is this link I'll leave it in the description. It comes from GitHub too which is kind of funny. And you can see that there's a command that you can run to add GitHub as a server to Claude Code.
+
+This is not a plugin. This is an mQTT server which is a little bit different. So what we're going to do is copy this command. But for now we're just going to put it in some kind of notepad. We're not going to actually put it in our terminal yet okay.
+
+So I'm just going to paste in the notepad. And you'll notice here I'm going to have to zoom in a bit that there's this bearer. And then your GitHub part. This stands for Personal Access token which I'm going to show you how to get because we're going to have to replace that in this string. So we're going to go to GitHub. We're going to go to our account.
+
+You need to make one. If you don't already have one it's free. Go to settings from settings. We're going to scroll over to Developer Settings. And then we are going to create a new Personal Access token.
+
+I recommend that you just create a classic token because this is going to be a little bit easier to use and you don't need to scope it. So what I'm going to do is just create a token and I'll be right back. So when we make the classic token, what you can do is just enable all of the repo features here. I also recommend you enable user. You probably don't want to enable the delete repo, and you can go through here and see if there's anything else that you need for your particular key.
+
+But for me, that should be everything. So what I'm going to do is generate the token here. Copy it. Obviously you don't want to share this with anyone. I will delete it afterwards.
+
+And we're going to replace our GitHub personal access token here with the one that we just got. Now we're going to copy this. We're actually going to quit out of Claude Code. So we're going to get out of cloud itself. And we're just going to paste this command okay.
+
+So we're going to paste that hit enter. And okay we get invalid input. Now I'm going to show you how to handle this. So you can see that there's actually a message here from the documentation that says hey on windows you may get this issue that says invalid input. If you do then you need to convert the command to use this.
+
+So what I'm going to show you is how we can use this particular format. It's a little bit annoying, but we're just going to have to kind of pull out some of the information here and put it into this so that we'll be able to run this code. Okay. So this is what the new version is going to look like. If you don't want to write it yourself, you can simply just tell Claude Code to give it to you so you can say, hey, give it to me in this format.
+
+Copy this in and then it will just convert this for you automatically. If you don't want to have to undo the Json. And then if we press enter here, you can see that we've now added this MCP server and we are good to go. So now if we go back inside of Claude, what we can do is rather than running plug ins, we can run MCP. When we do that, we should see GitHub.
+
+And if we look at GitHub and the tools, you can see that we have a bunch of tools here that we now can start using to manage our repos. So now any time you write code it should use GitHub automatically. If it doesn't just tell it to use the GitHub MCP server and it will be able to manage your code for you. Now, fortunately, the next plugin on my list is significantly easier to install, and this is front end design. May have heard it before.
+
+Very popular, but I would recommend installing it if you don't have it. So go to slash plugin. It should be the first one that pops up because it's super popular, but if you don't already have it, you can just search for front end design, press enter and then you can install this. Now what front end design will do is build a design system and various skills and commands into Claude, so that it will just produce significantly better user interfaces for you. Specifically, when you're doing web user interfaces.
+
+So what I'm going to do is reload the plugins here, and let's see if we can do some things with front end design. So if we want to invoke this, we can type the front end design plugin. When we do that, anything we ask afterwards will automatically use this, but it should be routed to use this plugin even if we don't manually invoke it ourself. So just to save me a little bit of time here, I'm going to change the model here just to be sonnet, just so that it doesn't take as long. And I'm going to change the effort here just to be low because I don't want it to take a long time to generate this.
+
+And let's now invoke front end design. And I'm going to say I would like you to create a music streaming application. Just make the front end and landing page for me using HTML and CSS. Okay. And let's see what we get.
+
+So it's chipping away here. And you'll notice that this has been instructed based on the front end design skill to use various different colors, come up with the palette, come up with types elements and kind of create a design system for us, which wouldn't happen by default unless you're using this plugin. So this is the website it created. You know it's not amazing, but it looks pretty decent for a single prompt. And that is what front end design does for you.
+
+Okay, now the next tool on my list is a little bit different because it's not about helping Claude write code. It's actually about giving Claude its own real database that it can build and run directly for you. Right inside of CloudKit. Now here's how it works. Tiger data, the company behind this and also the sponsor of today's video.
+
+But don't worry, this is free to use, has an MCP server that you can plug into Claude Cote. Now once it's connected, Claude can spin up a real Postgres database. It can create your tables, run your queries, and manage the whole database for you just by you asking in plain English. Now they also ship something called pg AI guide, which basically turns Claude into a Postgres expert. So the schema and the SQL writes is actually good.
+
+Now the database itself is time scale DB, which is Postgres but with additional features. So it's especially good for time series data. So anything with timestamps that keeps growing like logs, metrics, events, sensor data, etc. which is the kind of thing the regular Postgres database is really start to choke on once they get up to scale. But here's the thing.
+
+This is still Postgres, so you can use it for a completely normal data app. You can use it for products, orders, whatever, and you're not locked into one type of data effectively. You just get a really powerful database when you need it. And because you can connect it to Claude, it makes building apps a lot easier because it will automatically create the data, write the SQL, etc..
+
+So I'm going to show you the full setup in one second, but I just want to note that again the company behind this is Tiger Data. They were formerly known as Time Scale and they're the creators of time scale DB. Now they run something called Tiger Cloud, which is a fully managed version. Now it spins up in about 60s and you get a 30 day free trial with no credit card required. If you use my link in the description, it will also give you $1,000 in free credits that you can use during this trial.
+
+So if you want to try this out for yourself, go to the link in the description. Create a free account. Once you're in there, what you can do is just spin up a service. So what I'm going to do is just spin up one of my free services here and just go create. And then I'll create a database and I'll show you how we can load it here inside of Claude Code okay.
+
+So once the service is created you can see that you can just directly connected with AI tools. Of course you can use it as a normal database. So I'm going to go connect AI tool. And it gives me the setup steps to do this. Very straightforward.
+
+We're just going to run this curl command. We're going to sign in with the tiger CLI. We're just going to set this environment variable which works a little bit different on windows. And then install the MCP server. So let's go through the steps I'm going to run this command.
+
+I would prefer to use a go because for me that works a little bit easier on windows. And it's going to download the tiger CLI. And then we're just going to copy this command and sign in with our account. Okay. So I just ran Tiger off login I'll just sign into my account okay I will press authorize.
+
+And then we should be good to go here. Let's see okay. So you can see we are signed in. And then the last step here is we just need to copy this where we're just going to set our password as an environment variable. And then just add this to the tiger CLI.
+
+So if you're on Mac or Linux it's very easy. You can just copy this in. If you're on windows you'll need to adjust the command slightly, which I'll show you to be able to set an environment variable okay. So this is the appropriate command here. Notice I'm using this dollar sign env.
+
+And then I have the semicolon here. So it's a little bit adjusted. And we press enter. And we've saved the info. Now what we can do is type tiger mcp install.
+
+And when we do that we can pick where we want to install it. So of course I want Claude Code. And then it will just automatically add this for us. And now gives us a bunch of options for what we can do and how we can set this up. So let's run it and go through a few of the basic steps so you can see how it works.
+
+Okay. So it's loaded up. So I'm going to say something using the Tiger MCP server. Create a database that contains 100 products and all of the different purchase orders simulating an e-commerce store okay. And let's see if it can do that and create a database for us.
+
+So you can see it took a second here, but it created the full database for us. And now we can start using it. And if I went back here to the web and I just refresh here, give it a second and we should be able to see all of the tables we have. So you can see we have five total objects orders products order items. I can go in and inspect them.
+
+So that's just the basic database usage. But I want to show you how fast this can be when we insert, you know, millions of different rows to simulate something like sensor data, like I was talking about with where time scale really shines. So I've got a long prompt here that effectively just tells it to insert a few million rows of fake sensor data, so I can show you how we can optimize this using the features the time scale DB has. Let's run it. Okay, so I've got all the sensor data in.
+
+I'm now just going to ask you to run a query using explain analyze that tells me the what is it average value and count per device for the last hour. Group by device, ordered by average. Descending and let's see how long it takes so I can compare it to when we optimize the table. Okay. So we can see here took about 624 milliseconds for the full execution.
+
+And we can walk through and see exactly what happened. Now this is fine. But there's a way that we can optimize this because we're using time series data like, you know, log sensor readings, etc. to be significantly faster. And we can do that using something called a hyper table.
+
+I'm not going to get into the details too much, but effectively what I can do. First of all, I can say, hey, can you please fork this database? This is a feature that Tiger McPhee has where we can actually create a full copy of this database using the MCP server. We can actually create as many of them as we want, and that will allow us to experiment on another version of the database without touching the original. So if we want to try something but we don't want to risk nuking our entire database, we can do it on the fork, which is what I'm about to do.
+
+Okay, so what I'm going to do now is just tell this, hey, enable the timescale DB extension and convert events into a hyper table partitioned by Createdat. When it does, this is going to make it significantly faster to query. And then we're going to run the same query so we can see how long it takes. Okay. So we just enable that for us and partition it into the hyper table.
+
+So now let's rerun the same query as I asked for and see what the time is okay. And you can see we get the response. And we are 380 times faster due to the optimizations that we performed with the hyper table. Now look, there's a lot of other stuff you can do here, but overall, this is a very cool database that I love working with inside of Claude Code. Feel free to play around with it from the link in the description.
+
+And now let's move to the next tool okay, so the next tool to talk about is something called context seven. Now this is effectively a plugin that pulls live API documentation from the internet. So whenever you're working with some kind of framework, you don't get any deprecated results or things that were in an older version. Now to install this very simple go to plugins and then simply search for context seven. We're going to go ahead and install this.
+
+And again what this will do for you is it will automatically search for the relevant documentation based on what tool or framework you're using to pull the live up to date version, rather than relying on what the model was originally trained on. So I reloaded the plugins, and I'll try to give you a quick demo of how this works. Go and tell me what the most recent version of react changed, and give me a few syntax examples using the context seven plugin. Now, in practice you probably wouldn't ask this. It would just naturally be being called as you're writing code with Claude Code.
+
+So this is probably a faster way for me to show you. Okay. So you can see that what it's doing here is querying the documentation with context seven. Let's go ahead and say yes and see what it comes up with okay cool. And we get the response here with a few different code examples and any key changes that were in this version.
+
+Nice. Let's move to the next plugin. So the next tool for me to show you is personally one of my favorites, which is called compose you. Now compose you allows you to connect multiple different tools in various accounts like multiple gmail's, multiple Google drives, asanas, etc. on a web dashboard.
+
+Then using a single API key or connection string, you can connect all of those to any AI you want without having to reconnect them in every single tool. So imagine I have like 100 different tools that I always want to use on both of my computers, or I want to use them in, you know, codecs, and I want to use them in Claude Code. Well, normally I would have to connect each of them individually with compose yo. I connect them one time in this platform, then I can just connect compose yo to those AI agents. It also allows for discovery of the tools on demand so you don't bloat the context window of the agent with so many tools at once, which can degrade the performance.
+
+So I'll leave a link to it in the description. It's free to use. You get like 10,000 tool calls per month or something for free. But effectively, the way that this works is that once you create an account, make sure you go in this like for you section. You can connect apps so you can connect, you know, different things like I have Google Drive, Gmail, whatever, code interpreter, all of these different static Hacker News, you know, open weather, whatever.
+
+You can connect all of your different tools at once. Then you can install this, and to install it, you just pick what you want to install it in. So I want to do it in Claude Code. Now to install this you can do it through the CLI or through the MCP. I prefer using the MCP.
+
+So you can just copy this setup command here. Go to your terminal and just paste it. And then it should add this. Then what we can do is open up Claude. When we open up Claude, what we're going to have to do is go to slash MCP.
+
+From here. We're going to go over to compose you. It says needs authentication. We're going to authenticate. And then it should open a browser window for us.
+
+If not, we can just click on the link and sign in and authenticate ourself okay. So we're signed in. You can see that it's successful. And now I can just say something like using the compose your MCP server. Tell me what my most recent email was okay.
+
+And it should go to my accounts and be able to connect to Gmail and get my email, even though I don't have Gmail connected here because I've connected compose you. And you'll notice that with compose yo, it's searching for the tool, right? So it's saying, hey, this is what I want to do, this is the tool I want to use, etc.. Okay. Yes. And then it can grab that for us. Okay.
+
+We could see that we get the email back here and I could actually tell it to send an email or delete something or make a draft or pretty much anything else that I want. Compose you super good. It has hundreds and actually thousands of tools that you can connect to check it out. So the next plugin on my list is super useful for anyone who's doing real software development. It has designers on their team and that is Figma.
+
+Now, in order to install this you can go to plugin. You can search for Figma and then what? This will allow you to do is actually load in Figma documents and have them built out using CloudKit. So if a designer gives you a Figma file, you load it in here and it will just create the whole thing for you. So let's go ahead and install this, wait for it to finish.
+
+And then I'm going to show you a quick example okay. So I've got a super simple Figma document here. I just use this for another video. But I'm pulling it in here. And essentially what I want to do is have Claude Code build this for me.
+
+So I download the local copy on my computer, it's on my desktop. And now all I'm going to do is just tell it to build this. so I'm just going to tell it. Can you build a full version that's working using HTML, CSS, just maybe racked up to you what you want to use of the Figma document that I have on my desktop here for the flight based app. Okay. Let's go ahead and press enter.
+
+And hopefully it should be able to view that document and build it for us. Okay. So just by the way I actually lied. You don't need to have the local document. You can actually just authenticate directly in here.
+
+I forgot that you can do that. And then I can just directly read it from the URL on the web, which is obviously much easier. So anyways, it's doing that. Now let's see what we get okay. So we just finished and this is the result that we got I mean pretty damn good.
+
+That's practically the exact same thing that we had from the Figma. And I mean yeah that is the figma in. And that's it guys. That's going to wrap up this video. Let me know what plugins and MQB servers you are using.
+
+How do you have your Claude Code set up? By the way, you definitely don't want to install everything, just pick the ones that make sense. You don't get a ton of bloat with the tools, but these ones that I personally use that I find are extremely useful. So with that said, I'm gonna wrap up the video here. If you enjoyed, make sure you may like subscribe and I will see you in the next one.

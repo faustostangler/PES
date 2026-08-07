@@ -1,0 +1,180 @@
+---
+video_title: "My Real AI Coding Workflow (build anything)"
+video_id: gpOfsGW1xRk
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=gpOfsGW1xRk
+video_date: 2026-06-24T14:00:22+00:00
+video_description: |
+  The the platform that made this app build possible was ImageKit. Register for free here: https://tinyurl.com/2sph69zx
+  
+  This isn't a polished, edited-to-perfection tutorial — it's my actual workflow, bugs and all. I'm building an AI shorts tool completely from scratch, live, so you can see exactly how an experienced developer plans, prompts, and debugs with AI tools in the real world.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jun26
+  
+  🎞 Video Resources 🎞
+  ImageKit Link: https://tinyurl.com/2sph69zx
+  ImageKit AI Docs: https://imagekit.io/docs/build-with-ai
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:27 | Planning & Ideation
+  02:21 | Tools & Tech Stack
+  04:44 | Cursor IDE Setup
+  06:41 | Providing Context
+  10:45 | Agent Skills & MCP
+  13:40 | Adding Rules
+  15:29 | Build Phase
+  21:39 | Summary of Process
+  
+  Hashtags
+  #AICoding #CursorAI #ImageKit
+  
+  UAE Media License Number: 3635141
+---
+Today I'm going to show you my real AI coding workflow. I'm going to build an app completely from scratch using AI and show you how I set up my environment, how I prompt the model, the various tools that I use, and how I overcome the issues that are bound to happen when you're coding with AI. I want this video to be really realistic and very pragmatic, so that you can see an experienced developer uses these tools to build something quickly and effectively. So with that said, let's dive in. So before we can build anything, we need to know what it is we're going to build.
+
+It sounds obvious, but this is the first step in my workflow. And a lot of people skip this and it leads to really poor results later on. You want to spend a lot of time here researching alternatives, seeing what already exists, picking your tech stack, your tools which I'm going to go through in one minute, and coming up with a really good high level outline before you just dive in and start building a random product with AI. Now for this particular video, what I want to build is an AI shorts tool. So something similar to like Opus Clip.
+
+If you've heard of that before, we're effectively I drop in like a long YouTube video and then AI automatically generates a bunch of shorts for me where it has captions. It kind of reframes my face because I need to go from like a 16 by nine to a nine by 16 clip. So like horizontal to vertical. I want to have like obviously good moments. I want to have a title caption, all of that kind of stuff.
+
+So that's my idea. You can build anything that you want, but we start from the idea and then what we need to do after that is start doing some research and understanding. First of all, what tech stack are we going to use? What tools are we going to have in that particular stack? And then how can we set up our coding environments that we access all of those tools in an efficient way, which you're going to see here in just one second.
+
+Now, I've done a little bit of research before this video just to make this a little bit faster, and I'll walk through how I did that, but I created a quick slideshow. I actually used Claude code here to make this slide show for me, where I essentially just kind of dumped in my idea, gave it a prompt and say, hey, this is what I want to build, help me do some research, figure out the tools that I should use, and determine a tech stack that would make sense for this project. I went back and forth with it with multiple questions, and I just kind of started gathering. Okay, what tools make sense? What flow makes sense?
+
+What should the app look like? And that is phase one. I don't want to spend too much time there because I know a lot of you understand that, but let me go through the tools that I'm going to use for this particular video. So you can see kind of how I've mapped that out. So while I was doing some research, I kind of realized that the easy part of this application is actually picking what the clip should be.
+
+So essentially looking at like the transcript of the video and going, okay, like this portion of text makes sense to be a clip. But the more difficult part is actually how we can get those clips to be turned into real clips, right? So like I have the timestamp sections I want, but how do I take the video? How do I turn it into another format? How do I add captions?
+
+How do I stream it? How do I do this quickly? How do I download it, upload it? All of this kind of video processing related stuff? Yes, you can do it locally on your computer.
+
+If you want to build a web app or something though, it's a little bit more complex. So for this particular video, the three tools that I kind of realized that I was going to need is whisper. This comes from grok, and it's going to allow us to do essentially the audio transcription. So we can pass in an audio file, we can get back all of the text that's in there. We're going to be using Claude.
+
+That's kind of our AI model, which is going to handle actually selecting the clips and then writing the different captions and titles for the video. And then we're going to use a platform called image Kit. They've actually been a long term sponsor of this video, and they reached out to sponsor this particular video because obviously this makes sense. What we're going to be able to do is turn whatever moment we have into a real video. I'll talk about how that works later, but don't worry, it's free to use in case you want to follow along.
+
+Okay, so at this point, I kind of know the main components that I'm going to need for this app. And I also decided, okay, I want this to be a web application. So I'm going to build this using Next.js. And that's something that I talked with Claude about.
+
+And we kind of decided, okay, that tech stack is going to make sense now after that. How are we actually going to build this? And now this comes into the AI tooling that we're going to use, which I'm going to show you how to set up live in just one second. Now I'm going to be using cursor, and we're going to use the Claude model to build this out. There's a lot of other models that we can use, but typically I find what I'm building something completely from scratch that whatever the Frontier Claude model is, whenever you're watching this video typically performs a little bit better.
+
+And then what I want to do large refractors revisions. Or if I have a lot of repeated mistakes, I'll switch over to something like GPT 5.5 or a faster model if I just want to do UI related changes like composer 2.5. So what I'm actually going to do here is I'm going to start setting up cursor.
+
+So it has some agent skills and tooling that's going to make it easier to work with the tools that we need for this particular project. So with that in mind, let's start by, if you don't already have it downloading cursor, opening it up. And I'm going to show you how I set up my environment okay. So I've got cursor open here in the first step is just to open a new folder, which I've already done. And you'll notice that I've just opened my kind of agents window over here on the side.
+
+And what I've done is I've just selected the model I want to use, which is opus for eight, because fable five is not available right now. And I've gone into edit, I'm going to turn on the fast mode here. I'm going to leave the thinking mode. I'm going to give this the 1 million context window, and I'm going to put it in medium, which is kind of the sweet spot for a lot of the stuff that we want to build. You can go higher, extra high, but it's going to take quite a bit longer.
+
+Okay. Now this is going to cost me some money, by the way, in cursor. It's not going to be absolutely free to run, but this is personally what I use. I then have the agent modes and all this stuff which we can change, but for now I'm just going to leave it in kind of one agent window, and I prefer to use this view where I can actually see all of the files rather than going into this new kind of agents window thing that they have, which is, I think, the default view that it brings you into where you're just chatting with the agent. I don't really like that because I find that it just, I don't know.
+
+For me, it's easier when I can see the code that it's writing, and I just work kind of in this one shot window right here. And the reason I use cursor is that I found it performs a lot better than things like Claude Code or like Codex, because while it's using the same models, it has a coding harness that's built by the cursor team that I just find works a lot better. That's my personal experience, and that's why I use it. And then you'll notice that I still do keep Claude open. Here I have Claude code open, and sometimes I use the chat windows.
+
+And if I just want to have kind of a side conversation or I'm doing my research, what I want, whatever I do to kind of be saved and easier for me to look up across multiple devices, then I'll do that directly inside of cursor here. So you can see, like I built that presentation, I was doing some research on the video, whatever that I wanted to build, and I do that in a separate window. Of course, I don't do that in cursor. I only go to cursor when I want to write the code. So the first thing that I ultimately want to do here inside of cursor is start developing a plan for what it is that we're going to build out.
+
+So what I'll do is I'll start dictating into cursor and describing my idea and then telling it all of the decisions that I've already made. So I've got this tool on my computer. It's called Whisper Flow. You'll see it working here in just one second, but it allows me just to speak into this microphone and then directly have all of my words transcribed into text, which obviously makes this whole process a lot faster. And I would recommend that you use.
+
+So I'm just going to show you how that works. Then we can dive into that, because that is kind of my dictation that I use for AI. It actually works natively in cursor and it can like tag files and stuff. So what I'm going to say is the following. I want to build an AI shorts tool.
+
+The basic idea is I want to upload a large file, some standard 16 by nine video, and then I want to convert that into multiple shorter clips. The idea is that I want to take this long video, I want to generate those shorter clips, and I want to do that by analyzing the audio transcripts. I would like to build this using Next.js and make this a web app. And I want to use the following tools.
+
+First, for the transcription of the video, I want to use whisper from grok, so I'll provide a grok API key. I then want to use Claude, specifically the sonnet model, for actually picking out the moments in my video and then generating titles and captions for those particular shorts. Lastly, I want to use image kit for handling all of the image and video related tasks. For example, I wanted to reframe the face of the user. I wanted to add captions.
+
+I want it to give me the video format, and I want it to handle actually uploading my video, allowing me to download it, etc.. Can you create a high level plan and kind of architecture document for this application? So we have the context in our project. Ask me any questions that you need before we proceed.
+
+Okay, so I know that's a long prompt, but effectively what I'm trying to do here is I'm trying to give some initial context that we can start generating. So we can have some markdown files in our application or yeah, I guess in our application that we can use kind of forever and in different chat. So if I want to open up multiple agent chats or I want to paralyze this, it can always come back to that initial context and understand what this app is and the decisions that we've already made. So what I'm going to do is I'm going to run this right now. And by the way, if you want to check out Whisper Flow, it's free to use, actually have a long term partnership with them too.
+
+So I have a link in the description you guys can use, and you can see it gives you a bunch of stats and stuff and like you obviously type a lot faster or sorry, speak a lot faster than you're able to type. Okay. So we're going to wait for this to finish. That's what I'll do in this video. I'll skip through a lot of the long prompts.
+
+Once it's back, I'll be right back. I'll kind of show you what it's generated. And actually, we're already here where it's asking me a few questions, so I'm going to go through and answer these different questions. I always recommend you do that. In the beginning prompt you tell the model, hey, ask me some questions.
+
+And now they actually have a built in feature where you can answer it inside of cursor. So I'm going to answer all of those and then we'll continue setting up the environment okay. So answer the questions here. And while it goes through that I just want to show you kind of why I know the capabilities that these tools have. So what I actually did is obviously again before starting this video, and what I would recommend to you is choose the tools that you're going to use.
+
+So in my case I found image Kit. And of course they've sponsored the channel. So I know that they exist. And if we scroll down here I've kind of figured out, okay, they have automatic image and video optimization. They have this like resize, crop and transform feature.
+
+Right? I know that they can do kind of alignment on the face so they can take a video and they can focus it on your face and kind of move it around. So because I know of all of those features in this tool, I know what to ask the AI model to do. Because I've read through the documentation, I understand kind of the capabilities of the tool. Now, same thing here with grok, right?
+
+Like I looked and I saw, okay, they have this whisper large V3 turbo. It's very fast speech recognition. And then of course I know with Claude that I can use an API key and I can kind of get the information back by analyzing the text. So because I have that baseline context and I kind of know what's possible with these tools, I can better inform the AI model. Now, what we're going to do next after this finish is kind of our planning prompt.
+
+And we get that initial context is we're going to start adding various MCP servers to our two cursor, sorry, which is what I always do based on any of the tools that we're using. So now a lot of the tools that exist think, fire, crawl, think, you know, whatever, all of these like just new frameworks, they all probably have an agent skill or some kind of MCP server that help to explain to the model how to use them. So in the case of image Kit, they have this link. I'll leave it in the description build with AI where they have agent skills, MCP servers and plain text documentation. So rather than me having to know all of the docs and copy and paste stuff in and share like a URL to a website, I can install this skills which we can actually go ahead and do right now so that the agent understands how to use this tool.
+
+So what I'm going to do is I'm going to go here to the cursor setup. I'm just going to copy this, and I'm just going to go run this command in my terminal. So let me open up the terminal and go ahead and run this. And it should just install these skills for me and automatically add them here inside of cursor. And you can see it does that.
+
+And we now have agents skills. And we get a bunch of skills built in directly from image kit. The now cursor can start using now as well as that we also want to add the MCP server. So it says hey we can just add these MCP servers right to cursor MCP. Jason.
+
+So rather than me even doing that I'll just go tell cursor, you know, add these MCP servers okay. And it should be able to go in automatically add them for me. And then what we'll have to do is just authenticate with the MCP server so we can sign in and it can manage our image kit account. And obviously for this video, if you want to follow along, you will need an image kit account. Like I said, it is completely free to use.
+
+And of course they have like a pro version you can upgrade to where you get better bandwidth, more memory, higher upload limits, etc. and if you want to get the information from that account, once you create one which you can do from the link in the description, go to Developer Options and you'll see your endpoint which you need, your public key and your private key, which is effectively how you authenticate with image kit. Okay, so I just reloaded the window because it told me that it added the MCP server here. And in order for the MCP server to work, I just need to open the MCP settings. So what I'm doing in cursor here is I'm using the command prompt, command shift P or control shift P.
+
+I'm going to go MCP and then open MCP settings. And you'll see now that our MCP servers are added. Also notice I have the GitHub MCP server which you can add as well. And I'm going to go and press on connect here for my image kit API and paste in my image kit private key. So again this is all me just setting up the environment.
+
+So it's going to be more efficient later. So let me just view and copy this key okay. So now you can see that I'm connected to image Kit. It has all of these tools. So it can manage my image kit account for me right from the MCP server.
+
+And then I have this public MCP where it can search through the documentation and stuff if it needs to use that. So now I'm kind of set up cursor, right. I have my MCP server, I've added the different skills that I need, and if I was using other tools I would go through and I would add all of the ones for those tools. And I want to just quickly kind of have a look at the documentation that we have here and just make sure that this makes sense and that it's kind of outlined, you know, the tools that we have. Okay.
+
+So it looks pretty good to me in terms of the architecture and the roadmap. Of course we can change it later. For now, what I'm going to do is I'm just going to keep the changes and sorry, I need to go to this one and go keep the changes of what it's created. And I'm going to just tell it to start setting up git here just so that we can save everything and we can roll back if we need to. So I would highly recommend adding the git MCP server, the GitHub MCP server so it can create repositories for you.
+
+So what I'm going to tell the model is create a new repository for me and start setting up the project so that we're always going to be making commits anytime we make major changes, so that we can roll back in the future. Add this as a specific rule for this project that we're always going to want to commit after any major changes, and we should just do this automatically. So now what I'm doing is I'm adding another feature where I'm adding rules to cursor here. So cursor has the ability to generate rules which will probably see a due here in one second. Rules are something that will always be brought into the what do you call it here kind of prompt.
+
+So you can see it's created a folder for us called rules. And it's kind of made this rule file. So that cursor always knows are the models that we're using always know, hey, I want to do this thing whenever I'm writing code okay. So actually it's moving it out for some reason or it's doing something with this. But the point is it's going to make this rule.
+
+And then as we keep working with this, we won't need to tell it to make commits. It should just do that automatically. Okay. So now it's created the rule. It made the GitHub repository. I can see it.
+
+It showed up in my git account. And we're essentially ready to go and start actually building this out. So what I'm going to do is I'm just going to gather the API keys that I need because I'm going to have my image kit, public key, private key, URL, etc. and then the grok and anthropic API key. And I'm realizing here that it's using grok, not grok or however you spell this because it's the one with the queue that I want to use, not k.
+
+So of course we're going to have to adjust that. So let me just tell the model. And this is common. It's going to make those mistakes I don't want to use grok I want to use grok with a Q. So we're going to have to just change the say grok like this for the transcription okay.
+
+And let's tell it that and hopefully we'll just that okay. So it adjusted that for me. We're going to keep going. Now I'm going to fill in the API keys. And then we're just going to kick off and start building the app okay.
+
+So I've just put this stuff in env local here. Now what I could do is just say okay let's begin the task here. Start building everything out based on the plan that we've set up. And then if I want in cursor now they have this multi-agent feature or multitask feature I'll select it. I don't normally use it because sometimes it just goes crazy and it makes it a little bit unmaintained.
+
+But for this project, because we've set it up pretty well and we've kind of spent the time to structure it, probably this is going to work. So let's run it and see if I can kind of spin up multiple agents and build this relatively quick. Okay. So the first prompt is finished. It built everything out.
+
+If I go back here you can see we kind of have like these projects for some reason this one failed. So of course we're going to have to start debugging. But we can upload a video. That part worked. And if I go now to image kit because I upload a video from here, we should be able to see if we go to the media library.
+
+And we can see here that it's successfully loading the video. So the upload is working, and this is just like a cut of a larger video I did, just so it's a bit shorter. You can see 335MB and we are good. Now something to notice if you are using the free version of image Kit. The maximum upload size is 100MB, so keep that in mind on the Pro version that I'm using right now, it's two gigabytes and there's a bunch of other things you can see if you go to the billing feature.
+
+I don't have it because I already upgraded, but you'll be able to see all the different things in case you want to upgrade. Regardless, what I'm going to do now is just tell it, okay? This is failing. So upload a video. And we got this result.
+
+So literally this is all I do when it fails. If there's an error message I just copied and I say after uploading and moving to the transcription phase, I get this error message. The video was uploaded successfully and it's an image kit, but for some reason the transcription is not working. Can we debug this? So I'm trying to give it a little bit more info than just hey, this is the error message.
+
+So it knows at least the first phase is working. And now hopefully we're going to go here and debug this okay. Now this is running. I'm kind of realizing that what it's doing doesn't really seem to make sense. It seems like what it's attempting to do maybe is send the entire video over to grok for the transcription, which isn't what I want.
+
+So just to clarify, I'm going to step in here and say, just to clarify, we should make sure that we convert the video to it. So it's just audio. So we don't have any video, and we're just sending the audio file to grok for the transcription. So it's significantly smaller. Image Kit can handle this.
+
+And I know that image kit is able to give us just the pure audio off of the video. There's a lot of transformations that it can do for us, and then the model will be able to figure out all of those because it's connected to the MCP server. But again, I know that because I've read through a lot of the docs and I've looked at like, what's actually possible here with image kit, and I know that it can do the reframing, I know that it can do the resizing. I know that it can give us adaptive betrayed streaming so we can actually view it in real time at different resolutions. And then I know that it is able to give us just the audio.
+
+And there's like URL transformation. So you can see here that the way that this kind of works is that you don't need to do anything special. You just add these query parameters to the end of the video URL that's generated, and it will automatically apply all those transformations for you very quickly, which is why you would use this. So anyways, let's wait for this to complete and hopefully we'll be good to go. Okay, so it looks like it works.
+
+I'm just going to upload another video and we'll see. Now if the transcription is proper and what the state of our app is. And again guys, I'm showing this to you because this is what happens when you build with AI. There are mistakes, there are issues. And I actually am reading what the model is saying here to understand what it's doing and looking at the various tool calls, because a lot of times I can catch very quickly if it's going to go down the wrong direction and just immediately interject, or in this case, again, I just told it, hey, like fix this.
+
+And it went back to the sub agent because we're in the multitask mode, adjusted it, and now hopefully this will work. Okay, so I just retested this looks like it's working now. I mean this is pretty impressive. It has the transcript down here. And then we have the clips.
+
+The clips are not loaded yet. I think they take a second to spin up here from image kit, but at least it's picked like what sections. And then okay, you can see now it's kind of showing up. Looks like there's a bug now with the clips where it's giving me like a full four minute long clip, but I'm not getting the actual transformed version. So let me send it another prompt.
+
+I got to tell what's going on, but at least we're progressing and making progress. And actually what I'm going to do in this case is I'm going to take a photo of this. I find this is super helpful to for the models that can actually see what's on the UI. They should be able to see it themselves, but even still, I like to just highlight something specific. So I'm going to add the photo and I'm going to tell it okay.
+
+So the transcription is working now. However, we didn't actually generate any of the transformed clips with image kit. Right now we just have the original video showing up five times. We need to actually generate the five different videos. Let's make sure we're doing those in parallel at the same time, and then we're adding the captions and that we're doing the face reframing.
+
+And as well as converting to nine by 16 okay. So just giving again some details. So it kind of knows what we need to do. And let's run it and see what we get okay. So after a little bit of back and forth there was a few small errors that I fixed.
+
+I just cut those out. You can see that we now have the generated clips. If I play one, you can see that kind of follows my face around. To tell you I'm very familiar with. And the clip selection is not great.
+
+So we of course can adjust the system prompt and we can keep going back and forth with it. But I can download, I can rerender it, and now it's appearing and you can see we actually even have a thumbnail appearing as well which is generated from image kit as well. Now one thing that we're missing is the captions. So image Kit has the ability to actually burn captions right onto the video so that it's automatically playing them for us and for short form video. Of course we want that.
+
+So I'm just going to go back to the model and just tell it to do that and hopefully that's that. Okay. So all of this is working. However we just don't have the burned in captions. Can we please add the captions to each of the clips?
+
+Okay, so it's been a few minutes now and we are back. And we can see now that it has the captions at the bottom. Now they're not really appearing high enough. So that's going to be another prompt that we need to pass. Let me just mute this.
+
+But if we maybe let my mouse go away here for a second, we should see that there are captions down below on the actual clip. Again, hard to see when the kind of video like I guess what do you call it? Player is covering it so we could tell it just to move it up. But for now at least that's complete. So at this point, the project is pretty much done.
+
+Now, I know there was a lot of back and forth, and there's a lot of kind of messiness going on in the end of this video, but that's just the reality of coding with AI. And I want to kind of summarize what we did. So we start at the beginning of the video by really doing some deep research and understanding what it is that we want to build, making key decisions like the tech stack, the tools, different APIs, whatever that we're going to be using. Then we created a bit of context inside of cursor. So we kind of generally told it what our goal was, what we were attempting to build, and then made those decisions and had the model give us kind of a little bit of an interview.
+
+After that, we started setting up cursor to install any agent skills, MCP servers and different rules or tooling so that it knows what to do for the majority of the project. So right now all of this code is actually just available on GitHub because of the fact that we have the GitHub MCP server, because we added the image kit, agent skills and the MCP server as well, we didn't have to directly go to the docs and copy and paste stuff or read a bunch of information. We could just have the model do that itself, because we said we want to use these tools, and then we provided it to the model. From there, we just started iteratively prompting again. We start by getting something working.
+
+There's a few bugs, we go back and forth and then we fix it. And now we have this finished application. Of course, there's more to do into fine tune, but generally speaking, we got this working with probably five, maybe ten prompts if you count the ones that I cut out of the video because the tooling was there in the first place. Now, had we not added the tools, have we not had the MCP server? How we not spend the time to plan this?
+
+Of course it would have taken significantly longer and we may not have even gotten a completed project. So that's it guys. That's going to wrap up this video. I hope you found it useful. If you did, make sure you a like subscribe to the channel and I will see you in the next one.

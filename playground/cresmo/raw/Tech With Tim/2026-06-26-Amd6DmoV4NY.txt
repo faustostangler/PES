@@ -1,0 +1,149 @@
+---
+video_title: "I Built The Same App with Every LLM"
+video_id: Amd6DmoV4NY
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=Amd6DmoV4NY
+video_date: 2026-06-26T18:42:26+00:00
+video_description: |
+  Start reviewing your code with CodeRabbit: https://coderabbit.link/techwithtim
+  
+  Six models. One prompt. One Mario Kart game. Which AI coding model actually wins? I gave every major LLM available in Cursor the exact same prompt, the same sprite sheet assets, and two prompts max — then judged the results on code quality, completion time, lines of code, and how well the final game actually played.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jun26
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:44 | Methodology & Rules
+  01:51 | CodeRabbit
+  03:14 | Initial Prompting
+  04:26 | Results - Prompt 1
+  06:46 | Results - Prompt 2
+  09:32 | Model Benchmarks
+  11:11 | Judging & Code Review
+  
+  Hashtags
+  #LLMComparison #CursorAI #BuildWithAI
+  
+  UAE Media License Number: 3635141
+---
+Today I'm building the same app with all of the major apps. We're going to see how good the result is, how long it takes, and the quality of the code. Now, the models that I'm going to be testing here are the following. We have opus 4.8, composer 2.5,
+
+Kimi 2.5, Gemini 3.1 Pro. Grok build 0.1 which I believe is in early release, and that OpenAI's GPT 5.5.
+
+Of course, there's many other models we could look at, but I picked the major ones that are available inside of cursor because that's the coding harness that I'm going to use. I'm not going to use Claude Code. I'm not going to use Codex. I'm not going to use some other random provider. We're going to do it all inside of the same tools that we can really compare the models compared to the coding harness.
+
+With that said, let's get into it. Let me break down the rules and talk about what will be building. So in terms of rating and comparing these models, we're going to be looking at the overall quality of the code which will have an AI model independently judge. We're going to look at the completion time, number of lines, the files. And then of course we're just going to look at the result, see how well it works and see what we get.
+
+Now with that in mind, what are we going to build. Well I wanted to pick something that was fun visual and medium complexity. So we're going with Mario Kart. I've already downloaded a ton of assets, which we'll look at later. And we have one single prompt that we're going to give all of these AI models.
+
+The rules are basic. We have a one shot prompt that outlines everything that we want and will allow one secondary prompt, just in case. The model gives us something that's unusable, but that's it. Two prompts Max. We're going to use the exact same settings.
+
+So for all of the models we're going to use the maximum thinking. We're going to use the fastest version of it. Whatever they have, we're just going to crank it up to the max. We're going to use the exact same assets. So all of them will have access to the same tools, the same style sheets and the same base directory.
+
+And we're going to require that all of the models do this in a zero setup way, meaning I can just click one file and view and play the game. With that said, let's dive in. After a quick word from today's sponsor. Now, if you're going to code with I just like I'm doing in this video, you know that there's going to be a ton of mistakes. And that's where today's sponsor CodeRabbit comes in.
+
+Now be honest with me. When a 600 line pull request lands in your queue, do you actually read every single line? Now most of us either rubberstamp it or drop 1 or 2 nitpick comments, then move on. And it's not really our fault, right? Code review has not changed since 2008.
+
+Right now you open a flat list of files that are alphabetical and you just scroll. Now, CodeRabbit takes that exact pull request and turns it into something that you can actually walk. So instead of one giant file dump, related changes get grouped together, ordered the way that you'd actually want to review them, with a short summary on each group telling you what changed and why and when a change is worth seeing, it shows it to you. So if you have a new API endpoint, a change function signature, a schema migration, you get a visual instead of just having to reverse engineer it from the diff. Now there's three panels fully keyboard driven, and every comment you leave gets posted straight back to GitHub.
+
+Your workflow doesn't change at all. You just get a better tool. Now, most AI review tools are just a smarter common pot that's sitting on top of GitHub. CodeRabbit actually rebuilt the entire review surface itself, and it's basically its own IDE, but specifically for reviewing code, which is more important than ever. Now the links in the description go run it on your next messy PR, and I guarantee you're going to see the difference.
+
+So let's start testing the models. This is the prop I'm going to use. I won't read through all of it, but it gives all of the core requirements, stretch goals, and various things that we want. And this is the only prompt I'm going to give each model unless it builds something that's unusable. Then I'll give it one short follow up prompt.
+
+But that's it. And we're going to cut it off there. Now we're going to be using all of these inside of cursor. And you can see that I have various assets. These are all sprite sheets that I'm providing to the models.
+
+They can pick which sprites they want to use. They can do whatever they want. And I have a manifest here that explains all of the stuff that they should use. For example, if we go and have a look at hazards, you can see that we have, you know, different items they can look at. We have different tile sets and it's fully up to them.
+
+All of them are going to have the exact same directory that has this inside of it. You'll see that I've just created a few directories here for all of them. We just have the assets folder copied over. And what I'm going to do is run all of these at the same time, time them, make sure they're in an isolated environment and then see what results we get. Let's go.
+
+All of the agents are running now. You can see I've got them all going right here. If I go back, you can see I have this timer script that's keeping track of everything that's going on so we can see how long they're running, the number of files and the number of lines of code. Once it's done, I'll be back and we'll analyze what we got. Our models have finished and it's time to check out the result.
+
+I'll share the stats with you after, but let's see what each of them built, starting with opus 4.8. So this is what opus 4.8 built? Nothing.
+
+We can see we have a green screen. I can't do anything. If I look at the logs, we can see there's some error here. So of course this is just broken. Let's go to the next one.
+
+Next we look at composer 2.5, also broken. If I go to inspect you can see that there's some error. So we'll have to fix that after. Now we get to Gemini 3.1 Pro.
+
+This one at least seems to work. Let's see. Three. Two. One.
+
+Okay. Very fast gameplay and I can press space and drift around, but pretty broken overall. Let's go to the next one. Now we're looking at grok build 0.1.
+
+This one seems to work has sound effects. But I cannot really move or do anything effective in this one. It looks pretty broken as well. I mean, let's drive around for a second. Can I hit the wall? Maybe.
+
+Yeah, I can just drive right through the wall. Okay, nice. Okay. And this is Kimi 2.5 and I can't move and nothing's happening.
+
+Escape doesn't do anything. Mouse doesn't do anything. But I guess at least you got a map. Okay. And this is GPT 5.5.
+
+One of the only ones that looks to be functioning at this point. Let's play through this and see what we get. Okay, so I can actually move. Looks like I can shoot an item. It's easy to do that. Okay, cool.
+
+It doesn't show me my item, but at least I can do this. I can press space and kind of drift around here, okay? I can go in the grass. And then, of course, that that slows me down. Although it looks like there's nothing stopping me from like, going like that and just crossing the finish line.
+
+Okay, I have like some boost I can bump into the other players. Okay, the shell can hit me. That's pretty cool. And overall, at least this one works. It didn't use any of the assets that I shared, but you can see that, yeah, it's functioning and there you go, I finished fourth.
+
+Okay, nice. So what we're going to do now is I'm going to give a follow up prompt, all of these models and hopefully attempt to fix them. I'm just going to tell them the game's not playable or give them some very vague direction saying, hey, fix this because I cannot play it or it's not working, and let's see if a second chance gets us anything usable. All right, so the second prompt is finished. All I did is just quickly point out the issues that the existing app had.
+
+I didn't give any additional details. I just said, make it work, make it playable. Now let's try the different models. So let's go here to opus 4.8 and wow, amazing.
+
+Looks so much better already is actually functioning. Let's go and maybe try to use toad. Okay we've got sound effects already. That's good. And immediately this looks like you know the best one that we've seen so far.
+
+Let me try to use an item there. Okay. That's super cool. Following this collision, if I go on the grass, it's working. I can drift I think with like shift or something.
+
+Let me try. Okay. Backwards works and let's try this. Yeah. So shift works for drifting.
+
+Nice. Very good okay that's opus. Let's go to the next one okay. And this is composer 2.5.
+
+I told it that it was a little bit unplayable too fast I think. And now at least. Okay, well, I'm stuck in the sand, but at least it was working at the beginning. We've got some metrics. We have a map in the bottom.
+
+But yeah, I guess that's all we're on now if I'm stuck okay. And this is Google Gemini Pro 3.1 now at least I can move. And yeah okay. The items working for a space I can click them. Yes.
+
+Still pretty broken, but at least still a little bit better than the last time okay. And this is Grok build 2.1. Oh my God, this looks like very messed up. You can see the heat, the sprite sheet that I have and yeah, I mean like at least I can move and it's kind of following me around.
+
+Can I maybe pick up an item or something? But let's see. Okay. Can I use the item? I'm not sure how to use the item okay.
+
+So that's XYZ model. Now we're looking at Kimi 2.5 and again I can't move okay so it changed something. It looks a little bit better than last time at least, but I just can't do anything. The keyboard shortcuts don't work if I go in specs, it doesn't show any errors, but I just can't do anything.
+
+So yeah, I guess that's all we got. And if we go back to GPT 5.5, I just told it that I could do some polishes because I want to give it another prompt. To be fair to the other ones, and let's go and press enter. And it looks pretty much the exact same to me.
+
+So I mean, at least it functions and I can move and it has the features we asked for. The only thing it didn't do was add the actual asset pack, like we had in the opus one. But yeah, we get pretty much the same thing we had before. Also looks like it says I can press escape, okay. And pausing works.
+
+I can drift with space. So that's working. And yeah, we get pretty much the same thing that we had before. Okay. So that's what the models builds. A little bit disappointing.
+
+I was hoping we were going to get some better results, but specifically with opus and GPT, at least we got something playable. And now let's have a look at the stats before we go into a code base analysis. So we can see that if we look at the time, which is probably the most important, Gemini ran in three minutes, 56 seconds, OpenAI six minutes and 15 seconds Kimi six minutes 24 cursor 845. Grok 21 minutes and Claude 23 minutes 18 seconds. And notably, Claude didn't even start writing any code until about the 7 or 8 minute mark.
+
+But again, I have this in the max mode or the max pump thinking like I did for all of the models that have those settings. Now, if we go to files, we can see Claude did create the most number of files we kind of go down the line if we look at lines of code. Same thing, Claude at the top, then Kimi, grok, cursor, OpenAI and Gemini. And if we go to lines of code per minute, we can see the ratings that we have. So Kimi is extremely fast, then Gemini, then OpenAI's model, then cursor, Claude and Grok coming in at the slowest.
+
+Again based on the model that I use. And we kind of get an efficiency mapping right here. And then obviously in terms of result, Claude gave us the best result by far. OpenAI or GPT 5.5 gave us a usable result, but didn't have a lot of the assets.
+
+But at least we could play the game and for all four of the rest of them, honestly, it was pretty big letdown, and most of them didn't really build anything close to what we asked. They messed up the assets. They messed up the ViewModel, and it's clear that this level of application in a single prompt was too complex for a lot of these, you know, less capable, less frontier level models. So I've just finished the judging and the code analysis here. Now, keep in mind what I'm showing is not scientific, right?
+
+This is not me claiming that this model is always the best. This is really just on this specific task and something I thought would be a fun video. And you know, we get some interesting results. So don't take this as a key takeaway that you should only use the model that I mentioned here. So let's have a look at a quick verdict here.
+
+If we're just going through an overall rating this is what we're looking at Claude on top I think that's pretty obvious GPT number two composer number three. And then the rest of them kind of following up as we see here, we already looked at the timings and the number of lines. You can see that right here. And then let's go into the scoring. So I had an AI model do the scoring here.
+
+I had multiple models run through just to make sure that we're getting a fair analysis. We don't have any bias. And then of course I double checked everything and adjusted a few values just to make sure that we're getting the fair result. If we have a look at the categories here, we can see the Claude wins in pretty much every single category that we have when it comes to the quality of the code and the quality of the product that was delivered. Now, if we go and we look at a normalized speed score, what I did is I just took the quality and then I also multiplied by how long it actually took to run, because I think the speed is important.
+
+We can see the results get significantly closer. But still, even with Claude taking nearly 23 minutes to run, we're open. I took about 6 or 7. It still comes out on top based on the formula that I have here. Now.
+
+A few interesting things to note here about the top and the worst performing models. So the reason why opus took so long to run here is it actually generated an entire game engine. If I quickly look into the code, you can see that not only did it create a bunch of Python tools to actually analyze the assets, pull things out and grab them so that it used it properly, but it generated a full engine where everything was actually separated out into smaller files. We can see it's pretty modular. You know, I can't comment on the code quality too much, given that it's JavaScript and JavaScript all which just looks like crap when it's written.
+
+Kind of in this way for especially to support HTML, js file or for, application. But you get the idea. And it went above and beyond simply producing, you know, a simple app. If we go to open AI here, it's still had good architecture, it had clean files. Things were not too long.
+
+It had relatively robust physics. It had a simple AI for moving the carts around, but at least that worked. Had a few items, but it didn't have any of the assets that we asked for, as well as, minimal particles. The engine for the audio title screen, all of this kind of stuff was missing. When we go, when we look at composer, you can see that again.
+
+It's just getting worse and worse. We're missing a lot of stats or missing a lot of the assets. It's very minimal, simple. I didn't create anything too complex. Same thing with Kimi.
+
+This runs super fast but hardly gave us really anything in terms of the features we're looking for. For grok, this one was surprising because it took a really long time to run, but really didn't give us any result at all. That was close to what we were looking for. So I would say this is one of the worst performing. And then same thing.
+
+Gemini 3.1 ran extremely quickly, but it just generated you know, five JS files instead of kind of a full game like we were looking for. So if we look at the differentiation chart, you can see there's some different stuff if you want to compare them. Now in terms of the key takeaways, cloud one, but took significantly longer than the rest of the models that were here. GPT gave us something quick, but in like literally a third of the time, actually almost a fourth of the time of cloud.
+
+So that's something to keep in mind. Kimi wrote a massive amount of code, but really didn't give us a great result. In the end, grok was really the worse value proposition in terms of how long it took and the second lowest quality result. And generally speaking, these other models were how they can still code and we can use them for certain tasks. When we give them something complex like this, they really don't hold up to GPT in to Claud.
+
+Now I'm going to do some more videos like this with different sets of tasks. Try to be a little bit more scientific, but hopefully this gave you something to chew on. And I'm curious what your results are when you give these kind of large, complex prompts to these types of models. If you guys want to see more like this, definitely leave a comment down below. Let me know what you think of the video and I will see you in the next one.

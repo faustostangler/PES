@@ -1,0 +1,626 @@
+---
+video_title: "Build 3 PRODUCTION AI Agents in Python - Full Course (Agentspan)"
+video_id: zFw19qGAeGo
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=zFw19qGAeGo
+video_date: 2026-06-17T13:00:03+00:00
+video_description: |
+  Get started with Agentspan! https://agentspan.ai/?utm_campaign=YouTube-Tim&utm_source=Newsletter&utm_medium=email
+  
+  Most AI agent tutorials show you demos that fall apart the moment you try to run them in the real world. This full course is different — we'll build three agents from scratch in Python, and every single one is designed to actually work in production.
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jun26
+  
+  🎞 Video Resources 🎞
+  Finished Code (GitHub): https://github.com/techwithtim/Agentspan-Course
+  Agentspan GitHub: https://github.com/agentspan-ai/agentspan/tree/main/deployment/docker-compose
+  Agentspan Docs: https://agentspan.ai/docs/why-agentspan/
+  
+  ⏳ Timestamps ⏳
+  00:00:00 | Overview/Intro
+  00:01:00 | Problems with Running Agents
+  00:02:04 | What we Need for Production
+  00:02:45 | Agentspan Framework
+  00:04:50 | Agentspan Architecture
+  00:06:04 | Install/Setup
+  00:12:00 | Agent 1 - Memory & Basic Tools
+  00:28:36 | Agent 2 - RAG, Guardrails and HIML
+  00:57:53 | Agent 3 - Multi-Agent Orchestration
+  01:11:04 | Testing Agents
+  01:12:52 | Durable Execution
+  01:17:18 | Deplyment Overview
+  
+  Hashtags
+  #Agentspan #Orkes #Python #AIAgents
+  
+  UAE Media License Number: 3635141
+---
+In this video, I'll be going through a full course on how to build production agents in Python. We're going to write every single line of code, and I'm going to show you how to build three AI agents. The first is going to be a simple conversational agent that has access to conversational memory. The second is going to be a rank based agent, where it can pull out information from like a company database. And then the last agent is going to be a multi-agent orchestrator, where we actually have multiple AI agents running at the same time to achieve a longer running task.
+
+Now, this video is not designed for complete beginners, but as long as you're familiar with Python, you should be able to follow along. And we're going to be using a framework here called Agent Span. But don't worry, it is free is open source. You won't need to pay for anything. You just need to have access to some kind of AI model.
+
+So like OpenAI, anthropic, whatever. But we'll go over that in a minute. Okay, now this is really going to be focused on how to build production AI agents. So rather than just agents that can run in your terminal or that run in a demo environment, ones that you could actually eventually scale up. Now, in order to do that, we need to talk about the main problems that you have when you actually try to run AI agents in production.
+
+Now, first we have processes that crash mid run, right? So maybe the network goes down, database freezes whatever. Your agent just gets killed. And that means that a lot of the work that's done can be completely wasted. And that can be quite expensive over time.
+
+Next human in the loop. So maybe we need a user to approve a task, something, right? Or to press a button that could take any amount of time. We're just unsure about that. Lastly or not.
+
+Lastly, but thirdly, and one that's most important to me is visibility. A lot of times when you build these AI agents, you have no idea what they're actually doing. So you need observability into the platform to see what step is on. Where is it going wrong? What tools is it calling, etc..
+
+And then obviously scaling a lot of times if you just build a simple like long chain agent or something, it's not going to scale to tens of thousands of users, and you have to pretty much reinvent the wheel and spend most of your time deploying out all this infrastructure. When really you want to focus on just building the AI. So there's seven things that you need. If you want to have an AI agent actually be production ready. I'm gonna quickly going to go through them here.
+
+Now first durability. That means that if the agent crashes it can recover. And it doesn't need to completely restart next retries. So sometimes the step will fail. That doesn't mean we should completely exit the process.
+
+We should retry it multiple times. Human in the loop. Again. Sometimes we need to delegate a task back to a human and say hey, are you sure you want to do this? Do you want to issue the refund?
+
+You want to delete this file x y, z, right? Observability. Like I talked about, we need to be able to actually see what's going on in real time long running tasks. If agents take 2030 two hours to run, we should be able to handle that and then scale and testing, which we can talk about a little bit later. Okay, so in order to accomplish what I just discussed there and essentially get these seven features for our AI agents, we're going to be using a framework called Agent Span, which comes from Orx who's kindly sponsored this video.
+
+And don't worry, this is free. You don't need to pay for anything. It is completely open source. I want to quickly just show you what it looks like when you actually get this running, because this is the benefit of using a platform like this network is essentially gives us a server which is going to handle all of the different state and kind of track the progress of the multiple AI agents that we're running. So you can just see a few quick examples here from the dashboard.
+
+This is the server running on my own computer. You don't need to build this. You literally just install it and run it. And for any given AI agent, let's say we go to this analysis team agent. You can see a full log of everything that's actually gone on.
+
+And you can see this in real time. So in this case we had a multi-agent system. And I can click into one of these agents and see the input, the output, the Json, the summary, or actually go into the execution of this agent itself to see everything that went on. So this is the observability that I'm talking about. What this also does is allow us to scale the agents by having a built in queue system for all of them running, and then to retry tasks.
+
+For example, if we go here and we scroll down, you can see there was like ten tasks that were running. And we can go through every single turn of the agent and see everything that went on along with the tokens. The reason it stopped the duration, all of that good stuff, then this will make a lot more sense later. But effectively this is the backend infrastructure that we run our agents against. And each of these agents that you see here was me running code that connected to this server, and the server handled the state and the orchestration, but allowed all of the code to be executed where it was run.
+
+So from our local machine, from our server, whatever. But if there was a crash, for example, we could recover from that crash because all of the state is stored on this server. So we could just reconnect, restart where we left off. And it's not a big deal. And this task can run for as long as it needs to.
+
+So anyways, that's the basics on Agent Span. They also have their own Python framework for building AI agents, which we're going to use, but you also can connect them to Lang graph, the OpenAI SDK, Google ADK, I believe a few other ones as well. If you just want to use their orchestration layer or kind of the server that I talked about now, in terms of the kind of architecture here, let me quickly go through it. This is pretty much what it looks like. We have a worker.
+
+The worker is what we're going to write ourselves. We have the agent span server. This is already provided to us. Again it's open source. We can run it ourselves. We don't need to pay for anything.
+
+And from here, this keeps track of all of the state. The history allows us to retry, handle human in the loop, multi-agent, all of that kind of stuff. It just handled for us. So from the worker side, we pretty much just say, hey, we're building an agent. We're going to connect to this server.
+
+All of the rest of the code stays exactly the same. The server handles all of that durable execution stuff that I talked about. And then of course we have an LM. We can use any LM that we want. So bring OpenAI cloud whatever.
+
+And that's essentially how it works. So anyways that is the brief. That's what I'm going to show you how to do in this video. What I want to do now is hop over to the code editor. We're going to start getting some things installed and set up.
+
+And then from there we're going to build out three unique AI agents again, starting easy and then medium and more difficult. So you get a sense of how to actually build these. And again how they work in production, which is the most important part because at the end of this video, you could very easily go deploy this up by just deploying the server and deploying your workers. And you're good. That's it.
+
+Because of the way that we built it, as opposed to if you use a lot of the other frameworks out there. Anyways, let's dive in. All right. So now we're going to get started with the installation steps here for Agent Spann. Now I'm just on the documentation.
+
+I'll leave a link to it in the description. It's actually very good. So you can follow along. And a lot of the stuff that you see in this video I just pulled directly from the documentation. Now first things first we need to install Agent Span and the Agent Spans server.
+
+Once we have that installed that is very easy for us to just write the code, which is our worker code which will connect to the server. Now notice that we can simply install it using pip install agent span. This of course requires that we have Python installed on our computer, and that we have some kind of code editor. So my case I'm going to be using cursor. You can use any editor that you want for this video.
+
+Now notice that what I've done in cursor is I've just made a new folder here. So I just one file I want open folder. And I just selected one that was on my desktop. Just made a new one called AI Agent Tutorial. From here I've opened up the terminal and I'm going to type a UV init.
+
+Don't let me zoom in a little bit so you guys can see this. And this is just going to make a new UV project because I'm going to use UV to install agent span. So you notice it says you can use UV pip install agent span. So from here we're just going to type UV add agent span like so. And then it should add it to our environment for us.
+
+And install everything that we need. Now you don't have to use UV but I prefer to use UV. So that's what I'm going to do. Now I'm just going to delete this main.py file because we don't need that as well.
+
+So now if we go to the Pi project tunnel you can see Agent Span is installed. Okay. Now the next thing that we need to do is set our API key, that the interesting thing about Agent Span is that it actually will hold the various provider keys for us. So any environment variable that you need to use, you don't have to have it in your worker code. You can have it stored on the server which is going to be more secure.
+
+So I can actually put in OpenAI API key or anthropic API key or whatever provider I want to use directly, where I'm running my server, which you're going to see in a second. So what we're going to do is just get one of these API keys for this video. I'm going to use OpenAI, but you can use anthropic if you want. And what I'm doing is I'm going to platform.openai.com/home okay.
+
+This is going to let me make a new API key. You will need an account here. And you will need to pay for this. But it's very cheap. We're talking about, you know, maybe sense of spend to follow along with this tutorial.
+
+And I'm going to go create API key. And I'm just going to call this agent span. And then maybe tutorial or something. Okay I'm going to make the key. And obviously you don't want to leak this to anyone.
+
+So I will delete it afterwards. Okay. So from here we're going to go into our terminal. And we're going to type the command as it shows here from the documentation. So let's go back. Export OpenAI API key is equal to.
+
+And then the key. So we're going to export OpenAI underscore API. Underscore key is equal to. And then we're going to paste the key inside of here. And then we're going to press enter.
+
+Now this should put it inside of the current shell session. Which means that any command that we run after this should have access to this variable here okay. So make sure that if you're going to run the server again that you first export the key beforehand. There's other ways to avoid doing that. But for now this is the easiest where you just have to have this environment variable set in your shell.
+
+Okay before you run it. Now if you are on windows, this command will likely look a little bit different. And if you're using something like cursor, I would just ask it, hey, what is the, you know, equivalent command to and then paste the export, you know, OpenAI whatever for PowerShell. And it should tell you I don't know what the exact command is. So I'm not going to guess.
+
+But you can just use an AI model and it should tell you how to export it properly. So now that it's exported, what we're going to attempt to do is run the agent Spans server. So we can just directly run the agent spawn server, or we can run Agent Spin doctor just to make sure that is all working. Now because I'm using UV, that means that if I want to run this I need to do. You've run an agent spin doctor.
+
+If you're not and you just installed it globally with Pip, you should be able to just run the agent spin command. So from here I'm going to press enter and let's see what it says. And it looks like all is good. It says okay OpenAI is set, Java is installed. We have enough disk space. The server jars cache.
+
+That's because I've installed this previously. If you didn't install this previously, it may tell you that something's wrong. And if that's the case, you may need to install, for example, Java 21, okay, etc.. Now if you don't know how to install it again, ask the Lem to ask something like cursor hey, how do I install Java 21?
+
+And it should give you the command. Okay, so now that that's running we're going to type. You've run agent spin server start okay. Now this is the command to start the server. So we're going to go ahead and run that.
+
+And you can see that it says server is already running okay let me stop the server because I may have it in another port. So to stop it we're just going to go stop okay. And then I'm just going to restart it from here. So let's give it a second. And it says it's running on port 6767.
+
+We're just going to wait a minute. And it says that it is running. So now if we want to test if the server is working we can just copy this URL right here. We can go to our web browser and just paste it. And we should be able to see the agent spans server okay.
+
+So from here you'll see the agent spans server. There's a bunch of stuff you can look through. But generally you're just going to be looking through executions right here. And it's going to show you a history of all of the executions. Now obviously you won't see anything if it's your first time, but for me, I'm seeing previous executions because I've ran the server before.
+
+Okay. So we're going to have a look at this later because it will make more sense when we actually get executions. But for now, let's go back to our project here and let's start installing a few last things that we need. And then we can create our first AI agent. Okay.
+
+So I'm going to write clear and I'm just going to type UV add. I'm going to add a few dependencies that we need. And if you're not using UV you can just use Pip to add the equivalent dependencies. Now first we're just going to bring in Python dash dot envy. And we're also going to bring in pedantic.
+
+And then lastly fire crawl dash pi which we're going to use for the last agent okay. So go ahead and press on enter. And we should see that we get them all installed okay. So that's all we're going to need installed for our project. What I'm going to do now is just make a new folder.
+
+And I'm going to call this agents now instead of agents, I'm just going to make a new agent. And I'm just going to call this agent 1.py. And this is where we're going to start writing our code now, our first agent, it's just going to be a simple conversational agent. All that means that we're just going to talk to it kind of like a chat bot.
+
+And the one thing that we're going to add is that we're going to allow the agent to know what our current time is, and to get information about us as a user. We're also going to add memory so that anything that we say previously it can actually remember, because by default, if you don't add memory, I can say, hey, my name is Tim. It says Hey Tim. And then the next conversation or the next time I ask it something, it will completely forget because it's not storing the previous responses. Okay, so that's the goal here.
+
+And this is just to show you the basics of the framework. And then we'll go into building some stuff that's more complicated. So we're going to start by importing logging. This is because there's a lot of logs that are going to be output by agent span. And we want to probably suppress some of them.
+
+So we don't see too much in the terminal. We're then going to save from date time import date time. We're then going to go from dot env import load dot env. And we're just going to use local env to load an environment variable file that we're going to need in a second. Next we are going to say from agent Span.
+
+And this is going to be Dot agents. Make sure that you put plural. We're going to import agent the agent runtime okay. And runtime is with the lowercase there. And then conversation memory run and tool okay.
+
+So this is all we're going to need for now for this basic agent. Let me just close this. You guys can see it a little bit bigger okay. Next lines. We're going to locate Env.
+
+What this is going to do is load any environment variable files that are present. And in fact while we're here we're just going to make a new dot env file in the root of our project. So dot env and we are going to put inside of here one variable that we need. Now this variable is the agent span underscore server underscore URL okay. And for now this is going to be equal to Http colon slash slash localhost port 6767 slash API.
+
+Now let's make sure we spelled this correct because I completely butchered the spelling here. But this is local host like so now. And let's add the extra slash okay. So this is where the agent spends servers running right now. Again we're running it on our own computer.
+
+So we just put in this URL and yours will be the exact same. If the agent spent server was running on a different computer wasn't running on localhost, then of course we would change this because maybe we're going to have the server hosted somewhere else and our workers hosted somewhere else. That's possible. You also can have the workers and the agent spin server on the same server. It's completely up to how you want it deployed.
+
+But this is what allows you to specify, hey, where actually is this server? Okay. So next we're going to go back to agent one. We've now loaded the dot env. And because we've loaded that agent spin will now automatically see this variable.
+
+And it will know that it needs to communicate with the server at that location. Now next what we're going to do is just say logging dot basic config. And we're just going to set the level. So we're going to say level is equal to logging dot warning okay. Just so we only show warnings that we don't show all of the logs that are probably going to kind of mess up the terminal.
+
+We're then going to say logging dot get logger and we're going to get the agent span logger. So let's get it like that. And we're going to set the level to warning as well. And then next we're going to put not agent span but we're going to put conductor and same thing. We're going to set the level to warning just so that we don't accidentally get a bunch of random info logs showing up.
+
+All right. So next what we're going to do is we're going to create a basic agent. So to make an agent is super easy. We're just going to say assistant is equal to agent. And then inside of here we're just going to give the agent a name.
+
+And this is what's going to show up in Agent Spence. We can see it. So we're going to call this personal assistant like that. Perfect. Next we need to specify the model.
+
+Now because we're using OpenAI we can specify any OpenAI model. And we'll be able to connect to it. And use it because we have that API key set. If we wanted to use an anthropic model, then when we started running the agent spawn server, we would have needed to declare an anthropic API key or a Gemini API key, or whatever the other model is that you want to use, right? If we go back here, you can see that we had the option, right?
+
+We could have exported one of these. So based on the one that we export and you can see all the providers here right. It gives you the different options. You can specify the model that you want to use okay. So we're going to go back here and we're going to change this to OpenAI again GPT 5.4.
+
+It's a little bit expensive. If you just want a cheaper one. You can do GPT four or GPT for a mini. And that's going to give you a really cheap model that's going to cost literally nothing. This one still will not be expensive based on how we're using it, but it is more expensive.
+
+Next, we're going to pass some instructions. Now the instructions I'm going to put in a set of braces just so that I can separate them out with some quotation marks here. And this is the system prompt. This is what's going to be read at the beginning of each message. So it understands how it should actually behave.
+
+So we can say something like, you are a concise personal assistant. Use tools when they help because we're going to provide some tools for this in a second. And then down here we're going to say, and remember, use full okay user details across terms okay. Cool. So that's our instructions.
+
+Now beneath this we're going to provide some tools. For now the tool list is going to be empty. And then after this we are going to provide some memory. But we'll just add those later. So for now we just have the basic agent.
+
+Next thing we're going to do is just run the agent. So to run the agent we're going to say if underscore underscore name, underscore underscore equals underscore underscore main underscore underscore. This is just the main entry point in our application. If you're unfamiliar with what this does essentially just checks to make sure we're running this Python file directly. We're just going to do a print statement.
+
+And we're going to say starting agent dot dot dot okay. And then down here we're going to say with the agent runtime okay as runtime. And then we're just going to go into a simple while loop where we just keep asking the agent questions until we type quit. Okay. So we have our width.
+
+This is how you start the runtime for the agent. We're now going to say, while true. And then here we're going to say prompt is equal to input. And that's going to be you dot strip just to remove any leading or trailing spaces. We're going to say if the prompt dot lower okay is equal to q.
+
+So if you type the letter q then we are just going to break okay. We're going to say if not prompt then we're going to continue and just ask you to type something so that if you don't type anything at all we don't prompt the model okay. Now down here, but still inside of the while loop we are going to do the following. We're going to say the result is equal to run. And we're going to run the assistant.
+
+We're going to pass our prompt. And we're going to say the runtime is equal to the agent runtime right here. And that's it. That's all we need to do to run the agent. So for now, what we can do is we can just say print and we can put an F string, or we can say assistant like this.
+
+And then we can just put inside of a set of braces, maybe. What is this result? Okay. And this is going to give us kind of a messy dictionary, which we can look through later, but at least for right now, it should give us the response. So let me zoom out a little bit so you guys can read this better.
+
+Essentially what we've done is we've imported a few things we need. We've set up the Env so we can connect to the server. We have the assistant. We don't have any tools or anything. It's just a super basic assistant.
+
+And we set up a while loop so we can now communicate with it. And if we go here we'll just make sure the agent spent servers running. I believe I didn't shut it down, so it should still be running here. Yes, looks like it is. So make sure that the Agent Span server is going guys before you try to do this.
+
+And then what we can do is from the root of our directory we're going to type. You've run and then agents slash agent 1.py. Now notice that I'm doing this from where my env file is present. So I'm doing kind of the path to this file agent slash agent 1.py.
+
+So we're going to pick up the env file and we're going to load it and let's hit enter. That's a starting agent. You can see we have initialized. We've connected to the server. And now we can type something like hello World.
+
+And we give it a second here okay. And let's see if we get the response. And it says hey it was completed. And we get this agent result here where we have some result in the output called hello world. So we can see everything ran.
+
+And then if we come back here, let's just refresh the server. You see personal assistant just ran. And if we click into this you can see our prompt which was where is it here. Hello world. We can see the output of the model was Hello world okay.
+
+That's right from the learn. And then we can see the immediate output at the end here. Was this right work we got with Hello world. Cool. So that's kind of the benefit is that we can see exactly what's going on.
+
+We have full insight into how the AI agent is running. And of course this is just a very basic one. Now what I'm going to do is just type Q to get out of this, and let's make it so that we can kind of view the response a little bit better. So rather than just printing out the result object here, let's print out the kind of output here. So what I'm going to do is say so I'm just going to say result dot get.
+
+And then I think we can just put in single quotes here a result, make sure that it's single quotes. Otherwise it's going to interfere with the F string. And let's just try this one more time where we run the agent. So let's go. You've run. Let's go. Hello.
+
+And let's see what we get this time it says agent result has no attribute yet. Okay. Interesting. So I think we can do result in dot output dot get maybe I think that's going to work. Let's just try it.
+
+I'm just doing this off the top of my head here, and let's run it again and just type hello. And let's see now if we get the correct response give it a second. And there we go. We get hello, how can I help you and say what is my name or something. Whatever. And it's not going to know the answer.
+
+But the point is that this is now functioning. I don't know your name. If you want to tell me, I'll remember for later. Okay, cool. All right, so this is great.
+
+However, like I mentioned, we currently don't have any tools or any memory, so anything that I chat with the agent is not going to remember later on, even though it's said that it would. So what I want to do now is I want to start by adding a few tools. These are things that the agent will be able to actually call to get some information. And then we're going to add memory. So to add a tool is super simple.
+
+What we can do is we can just make a function so we can say something like define get current time. And then what we're going to do is just return whatever the current time is. Now it's important that what we write these tools, we also write docstrings for them and the input and output format. So that agent span can automatically convert that into something that the AI agent can read. So for example I'm going to say okay, the get current time function is going to return a string.
+
+And if it was going to take some input here then I would also specify like you know input and then whatever type the input was. And then beneath this importantly I'm going to write a doc string, which is just a comment at the top of the function that says returns the current local time, okay. And then you can see that we have datetime dot now. And then we just convert this into a string and we return that. Now this is great, but if I want to turn this into a tool, I simply just have to put that tool.
+
+Now what is a tool? A tool is something that I can call to get some kind of response or to take some kind of action. So right now the agent doesn't know anything about us. It can't actually do anything. It's just capable of essentially, you know, printing out text, right?
+
+Or giving us a text response if we want it to actually take an action and generate a report or search for something, it needs to have tools in order to use that. Now, agent spend natively defines the ability to call tools. So all we have to do is just define a function. We specify it's a tool using this add tool decorator. Right. Like we specified here.
+
+Then the name of the tool will automatically be the name of the function. So make sure you name the function something useful. The input and output type you'll specify, and then the description of the tool you'll put as the doc string. So what will happen is Agent Span will now say hey we have a tool. You know get current time right.
+
+The description of this is whatever the description was here. And it takes no input and gives this output. And then that will be passed to the assistant. And the assistant will essentially give us a response back that says, hey, I want to call this tool. And then inside of this runtime here, Agent Span will automatically call the tool for us and then give the response back to the model.
+
+And we'll be able to see this happening inside of the UI, which I'll show you in a second. So for now, we can just pass this get current time tool. And the model, if we run it again should be able to call this if we ask it about something related to the time. So let me. That's not what I meant to do.
+
+Let me open up the terminal and run this again. I'm gonna say, what time is it? Okay. And let's see if we get the time. Here.
+
+Give this second and hopefully it's going to call that and then tell us what it is. Okay. And you can see it says that it's this time. And if I look at my window here that is the correct time okay. 1947 and two seconds.
+
+But now if we go back to the server and we refresh, we can check our personal assistant. And we can see now that actually it called a tool. So the yellow line gave some output. The output effectively said hey I want to call a tool. The name of that tool is Get current time.
+
+Okay. So then we called the tool. We got the input which was this. We got the output which was the result right. And then we pass it to the model.
+
+Now the model now has access to that tool call. So it knows what the time was. Right. And that gives us the output. Boom. Here's the time.
+
+So that's one of the reasons why this is super useful, is that you get that full insight into what the AI model is actually doing. Now let me say, what time was it last time I asked you just to show you something? And you should see here that assuming it doesn't just call it. Yeah, it says I cannot. I don't have access to timestamps to your previous messages in the chat unless they're shown in the inference.
+
+So essentially what is telling us is that, hey, I don't know what it was because I don't have memory. So the next step here is to add memory to the agent. Now adding memory is super easy. All we have to do here is just go above our agent and we're going to say conversation underscore memory is equal to conversation memory like so. Then inside of here we can also put the maximum number of messages that we want to store.
+
+So I can say Max messages is equal to like 50 or something. So after 50 it will start just getting rid of the last messages. So we don't clog up the context too much. And then what I can do is just say memory is equal to conversation. Memory. Boom.
+
+So that's that. So what we can do now is let's open this up. Let's type clear okay. And let's go. You've run and let's do something.
+
+My name is Tim okay. And let's see if it can remember that okay. So it says nice to meet you I'm going to say what is my name. And let's see if I can remember this now using the conversation memory okay. And it doesn't remember it because I made one mistake and I forgot to add to the conversation memory.
+
+So let's do that. Now that's actually a good issue to run into. Okay. So we've created the conversation memory. We've added it to the agent but we're not adding anything to the memory yet.
+
+So what we need to do is we need to add what we type in, what the agent types to the memory. So the way we do this is we're just going to go here and let's go underneath the result. And we're going to say conversation memory dot add underscore user underscore message. And this is going to be the message that we sent which is the prompt. We're then going to say conversation memory dot.
+
+And this is going to be add assistant message. And we're going to add the results output dot get and then the result. And just to make this a little bit cleaner we're going to say readable result is equal to this. And then we can just replace this with the readable result. And then same thing here with the readable result okay.
+
+So essentially what we're doing is saying hey we're going to append to the memory. The memory has a few different functions we can call. One is to add a user message, which is what we said. And then one is to an assistant message which is what they said. So let's save this.
+
+And now let's go again to our terminal. Let's make sure I didn't mess something up. I think it's okay. Let's clear okay. So let's run it again and let's see what we get.
+
+This time I'm going to say my name is Tim okay. And let's see here. Give it a second. Say what is my name. And hopefully it's going to give us the answer and tell us that it's Tim.
+
+Let's see I don't know your name yet okay. What's what I'm going to say. My name is Tim. Let's try one more time. I think sometimes on the first run, for some reason, it's not picking it up.
+
+Based on kind of how we're adding this. Maybe. Let's see. Okay. What is my name?
+
+And let's see now, here we go. Your name is Tim. Okay. So for some reason on the first run, I think based on how I added the info here, it's not working. I'm not sure exactly why that was the case, but either way, afterwards, now it looks like it's working and it is able to determine my name.
+
+It also might just be how it's searching through the memory. Either way, looks like we are good and it knows my name now. Okay, so anyways, the memory is functioning now that we have that, let's move on to our next agent, which is going to be a rag based agent. Okay. So as discussed we're now moving on to agent two.
+
+Agent two is going to be kind of a rag based agent, where we're going to be able to look up some info in something like a database or documentation or whatever we have. I'm not going to build true rag here because that's going to be a little bit complicated. But of course, you could very easily add that effectively. What we're going to do is add some more tools, we're going to add guardrails, and we're just going to look at a much more complex agent that has a few more components to it. Now we're also going to look at a pedantic structured output agent.
+
+Now, what that means is that rather than just getting the output as kind of a random string of text, we can actually pipe it into a Python object so that it's predictable and we know what kind of format we're going to have. So as you can see here, I've already brought in a bit of code. Any of this code will be available from the link in the description. If you just want to copy it, there'll be a GitHub repo there. But I just want to save us a bit of time.
+
+So I just did the import. So you can see we've got a bunch of stuff from Agent Span here. And then we have the mock database documentation and then the logging setup as well as the loading env. Okay. So if we go down here the first thing that I'm gonna do is I'm actually going to define what I'm going to call the pedantic structured output object.
+
+Now this is how I want the agent to give us its output. So rather than just giving me some random text that maybe I have to parse through, I want it to give me something in kind of a dictionary format that I can then convert into a Python object so I can read the different values. You're going to see what I mean, but I'm just going to go class support response like this. And then this is going to inherit from base model if I can type it correctly, which we brought in here from pedantic okay. Now pedantic allows us to just do typing in Python.
+
+It I use with a lot of these AI frameworks. So first things first, I'm going to say that I want this AI model to actually give me output that has the following fields. The first is a stage, so I'm going to say stage string is equal to a field. And then I can actually just give a description for this field. And I'm going to say stage like answered okay.
+
+So answered refunded or rejected because this is going to be related to kind of the support request because we're setting up kind of like a support agent here that has the ability to do this rack. Next we're going to have successful boolean. And this is just going to be a boolean. So we know if it's successful or not. And then we're gonna have a message which is a string.
+
+Now this is a super basic structured response. But if we wanted it to give us like a price or a number or a time or something specific, then we just set that as a field and the model will automatically fill in these values. So now it's going to give us always a stage which will fit this description. And it will give us whether it was successful and what the message was. And if we had other types, we could set those here.
+
+We could set up enums, we could do anything you want. I'm just trying to show you that you do have this ability to use structured output, which is really powerful for more deterministic AI, applications. Okay. Now, before we build the model, before we build the agent, I want to set up a few tools. So the first tool is going to be one that can search our knowledge base.
+
+So I'm going to say define search knowledge underscore base. And we're going to take in a query which is a string. And we're going to have a string which is a response. Now for the description of this tool. Let's put it in here.
+
+We're going to say search support docs like this okay. Pretty basic. We're just saying hey this can sort through our support documentation. Let's fix the comment. And what we're going to do is the following.
+
+We're going to say for title and then body in docs dot items, we're going to say if the title is in query dot lower, then what we're going to do is just return the body. This is not an efficient search by any means, but all we're effectively doing is just a quick keyword search of any keyword of what the user typed in was in this. So like shipping refund policy, account, whatever, then we're just going to return whatever the body or the content of this is. Again, if you use real rag you can get a much better response. But I'm just showing you how you can set this up.
+
+So next we're going to say return no matching support articles found okay. So if there's not a response. So that's the first tool we're going to have next we're going to have some tools related to looking up some orders okay. So we're going to have a tool. This is going to be define lookup underscore order.
+
+So let's do this for the order. We're going to have an order ID which is a string. And this is going to return a dictionary with the information about the order. Now same thing. We're going to have the comment lookup order in database.
+
+Pretty basic. And we're going to say by ID. And then what we're going to do is return the mock underscore db and then the orders like this. And then we're going to say dot get. And then this is going to be the order ID.
+
+And if the order ID is not found then we're going to return a dictionary. And the dictionary is just going to say error order not found okay. So that's going to be our lookup order tool. And then we are going to have a few other tools as well. We'll look at those later.
+
+So we're going to have one tool that will allow the user to refund. However before we call that tool we are going to ask for a human in the loop approval because we don't want to just automatically refund something unless the user actually allows that. Okay, so for now, let's create the support agent. Let's run it with the two tools so far just to make sure that these work. And then we'll move on to the rest.
+
+So we're going to say support agent is equal to agent. For the agent we're going to say the name is support agent for the model. We're going to go with OpenAI slash GPT five for. Then we're going to have some instructions. I'm just going to copy these in because they're kind of long and you guys can adjust them.
+
+But you'll see kind of how I've written them here. So we're going to say instructions. And then I'm just going to copy in this long paragraph. So give me one second which looks like this. So you are a customer support agent.
+
+Use the knowledge base first and the customer wants a refund. When you know the order ID, call the lookup order to get the email before calling. Process refund. Very short plain English sentence describing exactly what to refund you about to issue, etc..
+
+Okay, so this is the instructions. Next we're going to specify the output type. So this is a new one. And we're going to say output type is a support response. Now what this allows us to do is specify any pedantic object.
+
+So like one that we have right here. And that's now going to force the model to give us the output in this format. So that's all we need to do. We just say hey we want it in this format now it's going to give it to us in that object. What you're going to see in a second.
+
+Now next we're going to specify the tools. So the tools are just going to be the search knowledge base. And then the lookup order we will have conversational memory. So we'll keep that for right now. And then we can specify max underscore turns is equal to ten.
+
+Now what this will do is specify the number of times we can go back and forth the agent until we reset the session. The for the conversation memory. Here we can actually just specify it like this. And when we do that it should automatically add all of the contents to conversation memory for us. Now, the reason I didn't do it here is just because I wanted to show you that you can manually control the memory, but by default it will automatically add everything, including the tool calls to memory.
+
+When you. Oops, that's not what I wanted. Specify it like this. Okay, so actually, if I go to the docs, you can see that you can manually add it as you chose here. And then there's five methods or six methods like user message system, message system, message tool, call tool result.
+
+So if you don't manually add it like we did, then it will just add all of these for you automatically, which is good obviously. Right. But sometimes you want to just add certain pieces so then you can control it yourself as we did in example one. Okay. But for now we have our memory and we have our agent.
+
+So now we need to be able to run the agent. So what I'm going to do is create a function. This is going to be called Run Interactive okay. For this let's spell interactive correctly. We're going to take in a prompt which is a string.
+
+And we're just going to return nothing or none okay. From here we're going to say with the agent runtime just like last time as runtime, what we're going to do is we're going to say handle is equal. To start. This is a different function. We're not running the agent.
+
+And this is going to be support agent prompt. And then run time is equal to run time. Now the reason we're doing this is that we want to have a little bit more control this time. And we want to actually be able to hook into what the agent is doing to see, for example, if it needs approval from us, if there's a guardrail that ran, which we're going to look at in a second, and this gives us just a little bit more control in terms of what the agent's doing. So will allow us to actually stop approval request as you're going to see.
+
+So what we're going to do now is we're going to say stream is equal to handle dot stream. And before I go any further, let me just refer to the docs so you can kind of get a sense of how this works. So if we go to this streaming page here, I'm doing it a little bit differently than it shows in the docs. But you can see that we can actually hook into the stream of the agent, which allows us to see all of the events that are happening. So we can see, for example, if it's thinking, if it's calling a tool, if there's a result, if there's a handoff and if it's waiting.
+
+So if it's waiting, what that means is that it's waiting for us to approve something which we need to manually do. So this allows us to have some more control into what the agent's doing, rather than just purely getting the result. We can see all of the steps in the meantime, so I'm going to show you how I'm going to do it here. Again. You can reference the docs and you can do it a little bit differently.
+
+So we're going to say order underscore ID comma amount is equal to none and none because I want to potentially know if the user wants to refund an order, which we're going to have a look at in a second. And then what we're going to do is we're going to say for event in stream. For now, I'm just going to pass. But this will allow us to actually view all of the stuff that's going on before eventually we get a result. Now we'll handle that in a second.
+
+But for now, what I'm going to do is just go down here and say result is equal to stream dot, get, underscore result. This will then give us the result. Once all of these events are finished and we've gone through them and we're going to say output is equal to result dot output, okay. Then we can actually just tack on message here. The reason for that is that we know that it should be in this support response object type.
+
+So we get results dot output. And then the output is going to be this. We know that there's going to be a message. So we can simply just view that okay. Then we need to do is just print out the message.
+
+So we're just going to say print. And we can put an F string and we can put a new line character here. And I'm just going to put the sorry let's put output and then backslash n okay. So we'll start running this in one second. In order to do that we're just going to do if underscore underscore name underscore underscore is equal to underscore underscore main underscore underscore then what we can do is say print and we can print support bot starting dot dot dot.
+
+Then we can go down here and we can just do a simple while loop. It actually knows exactly what I want okay. So we're going to say well true. The prompt is you if you enter Q then break. If there's not a prompt then just continue and then otherwise just simply run interactive, which is this function that we wrote to run at the agent.
+
+Now like I said, there's some more stuff that we're going to add, but for now, let's just see if it can look up the order or look through the knowledge base before we go any further. Okay. So let's simply open this up. Let's go. You've run agents slash agent 2.py.
+
+And we got an issue here. Instructions I think I just felt instructions incorrectly. So let's just fix that instructions like so okay. Let's run it again. And it says you I'm going to say can you tell me about shipping.
+
+And let's see if it can look that up. And if we get the result. Okay. This dictionary object has no attribute message. Interesting.
+
+Let's have a look at why we're getting that. And it's going to be something to do with this. So for now let's just print whatever this result is. Let's see what it is. And then we can parse through it.
+
+So let's say shipping or something. And let's see if it finds anything. And it gives us okay result output error failed with status failed. And reason model GPT 5.4 does not exist okay so that's good.
+
+We found the issue there. So OpenAI slash GPT and think this is Dash 5.4. Let's look at what we had in the first agent. Yeah dash 5.4 okay silly error.
+
+But at least it gives us the response there. And now we can just quit this rerun. And let's see shipping and let's see what we get if it works this time okay. So I'm just playing around with this just to get the correct output. And we can see that the way we can do that is by doing result dot output dot get and then result.
+
+And that will then give us the format as specified here. However, it doesn't give us give it to us in the Python object. It gives us two. It gives it to a string and a dictionary that is the same format as this, which is still effectively the exact same thing. So you can see we get stage completed.
+
+Successful true message standard shipping takes 3 to 7 business days when I type shipping. Now let's ask it can you look up my order and let's see if that will work? What's the order ID a 100. So let's type that in stage. Need order ID successful false message.
+
+Sure. Please send me your ID. So we're going to say a 100. And so let's see if it can look that up. Now give it a second here to give us that response okay.
+
+Come on I hope it's calling the tool being a little bit slow and says refund pending info okay. Message I can help with the refund, but I need your request to proceed in order. Eight 100 was found for 4999. If you want to refund for this order, please confirm and I'll continue. Okay, cool.
+
+So it looks it up. We get the information and now if we go back to the agent span's server here and we refresh, we can see first of all these ones failed. And we can actually see all of the logs on why this failed, which is interesting as well as the debug view here on exactly what went wrong. Anyways, let's go back to the most recent one there and we can see we have this support agent. We have multiple turns so we can see how those worked.
+
+So you can see we typed in a 100 and then it looked up the order. This was the input. This was the output. It got us the information. And then it gave us that full Json for the tool call went to the yellow and then gave us the output.
+
+Now you'll notice that this is just one run. If we go back. All right. You can see this was the other run. Can you look at my order. Boom.
+
+And then it's remembering all of this based on the conversation memory. Okay cool. So that's functioning now let's move on to add a few other things to our agent. So one thing that I want to add now is the ability to refund. But like I said, we shouldn't just refund unless we get approval from the human to do that.
+
+So in order to do this, we can just make another tool. This can be a tool, but this time we are going to say approval. Approval underscore required is equal to true. Now this means that we need to manually approve this in order for the function to execute. I'm going to show you how we do that.
+
+Now for the function we're going to go process refund. We're going to take an order ID and we're going to take in an amount that we want to be refunded. And then we're going to return, not a boolean but a string okay. Now we need to give a description. So for the description we're going to say let's go like this.
+
+Request a refund okay. Refund pause for human approval. Think before you run this okay cool. Just so it knows that this should be a careful operation, then we're just going to return, even though we're not really going to do anything here. We're just going to say refunded.
+
+And we'll put inside of brackets amount colon dot to f okay. For order. Order ID we're kind of faking a refund, but I'm just showing you that we can build a tool that requires the human approval, which is kind of the more important part. So now that we have that tool, we're just going to add that to our tool list. So we're going to say process refund.
+
+Now the thing is we need to start handling this stream here in order to actually process that refund. So what I can do is the following. Now I can say if event dot type is equal to and then this is event type dot tool okay tool underscore call like so. And event dot args meaning it has some arguments. I'm going to say my order id is equal to event args.
+
+Yet order id or like this or order underscore d or order underscore id. Now what I'm effectively saying is hey I'm going to try to look through these tool calls to see if we ever call an order ID when we're looking up something, or calling one of these tools, because that's in the order I do referencing when we're trying to refund something. Okay, so I'm just pulling out that order ID, otherwise I'm going to say if event dot type is equal to event dot or event type dot tool underscore result okay. And is instance event dot result a dictionary, then what I'm going to do here is say amount is equal to event dot result dot get. And I'm going to get a total or an amount.
+
+So same thing. Now I'm going to look in the tool result to see if I can figure out what the amount is that we're refunding for the order. It's kind of a weird way to do it, but it allows me to parse through and see tool calls, tool result. And then lastly I'm going to say, Elif, the event dot type is equal to event type dot waiting. Then what I'm going to do is I'm going to print the following okay.
+
+And this message is going to be essentially saying, hey, we're requesting to refund. And then I'm pulling out the two arguments I have. So order ID an amount so I can print those and then tell them, hey, do you want to approve this? And if they do, then we can approve it. So here's how it works.
+
+I'm just going to say print and this is going to be type string go backslash n I'm going to go approval required. And then I'm going to say refund. And we're just going to put the order actually let's put the amount. So we'll put a dollar sign like this amount. And then colon dot to f for order.
+
+And then the order ID okay. And then down here we're just going to put a print and we're going to say press enter to approve. Technically you can't actually press anything else. And this is going to be an input statement not this. So we're not even going to check what it is.
+
+And then we're just going to say handle dot approve okay. So effectively when we call handled at approve we're just going to approve that operation. So we're just going to wait for the human to be at this step. And then as soon as we want to approve boom, we go ahead and run approve and we're good to go. Okay. So now that we have that we're going to ask them to approve it.
+
+So I'm going to say decision is equal to input. And we're just gonna ask them approve yes or no. And then lower dot strip. We're going to say if the decision is why then let me just check the documentation. Here it is. Handle dot approve okay.
+
+So we're just going to say handle.
+
+Dot approve like so okay. Otherwise we can say handle dot. And I believe it is reject. Let's see. Yes you can reject and you can pass a reason.
+
+If you want to pass a reason just say user rejected okay cool. So that is how we can now handle this. Again the reason why I'm looking at these tool calls is just so I can figure out the kind of amount that we're going to have for the refund, because otherwise it's not going to tell us that beforehand. So anyways, now let us go and run this and see if this works with the refund okay. So we're going to clear and then we're going to go.
+
+You've run agents too I'm going to say I want to refund an order. And it gave us an issue saying tool result. Just because I didn't have a capital L here. So let's fix that. And now we're good and rerun and let's say refund and order okay.
+
+Let's see what we get. And it says that it needs an ID so. So I can help that. Please give me the order ID so I can look it up okay. So let's go a 100 and see okay.
+
+And it says approvals required refund 4990 for order a 100. So you can see these steps here. Picked up that information for us because it saw that we were doing a tool call to either attempt to refund or to look up the order ID so it pick those up, save them in the variable, and then we're using them in this step to tell them, hey, we now want to call this because we're waiting for your approval. The only thing we could be waiting for approval for is this function, right? Because that's the only one that we have.
+
+So I'm just going to go ahead and type on yes to approve this. And then hopefully it's going to tell us that it was able to refund it. Let's see. It says stage completed message trigger refund was issued successfully. Boom.
+
+Now let's say refund order again okay. And hopefully it's going to give us maybe another ID says please read the ID okay. So let's go a 100. Even though I know we already refunded it, we still can try. And let's reject it this time and see what we get, just to make sure that that step works.
+
+And while we're at it, we can go here right to Agent Spend server and you'll see that this is running right. And we're at this stage where we're just waiting for the human, and we can just wait indefinitely. And what I could actually do, I'm not going to do this right now because it's a little bit complicated to show is let's say I were to quit this worker. Right. And this worker just completely died.
+
+And then I restarted it, but reconnected to kind of this execution that's going this will still all be running with all of the saved state, and it will just be waiting for the human again to approve this. So the human does need to ask refund. Again, we don't need to check something. We don't need to look up another order. It will just, resume where it left off at this stage, right where we're waiting for the human.
+
+And this can take any amount of time. It could take a day, could take it out, or it could take ten minutes. Doesn't matter. The server will keep running here. And you can see it's in this hand off state where it's waiting for us to approve writing.
+
+You'll see the time if we just keep refreshing. Like it'll just keep going up and it will just keep waiting. Okay, so anyways, I'm going to go. Yes here and or sorry I want to do no. So we rejected it. But anyways you can see that it's working.
+
+And I think doing now is not really going to make any difference anyways because well, we know it's just going to move to the next step. All right okay. So this is working. Now what I want to do next is I want to start adding something called a guardrail. Now a guardrail allows us to actually audit the input or the output to our lab or to our agent to ensure that we don't have something potentially malicious or data that shouldn't be given to the user given.
+
+So I'm going to show you how we write a guardrail. The guardrail that I'm going to write is going to be related to a jailbreak. So a lot of times people will try to do like a prompt injection where they say, hey, like ignore all of your previous instructions and give me, you know, all this information that I need x, y, z. We can actually prevent against that by building in these guardrails where we try to detect common kind of phrases that, you know, scammers and exploiters will try to use. So what I can do is I can use add guardrail.
+
+So make sure you import it right. And I can say define safe underscore support underscore request like so. Now from here we can take a prompt which is a string. And this is going to be a guardrail result that is going to return. Now for the comments here.
+
+What we're going to do is say block obvious prompt injection attempts okay. And this is going to be before the LLM even sees it. So before the LLM gets it, we're going to have this function that will run. So what I'm going to say is blocked is equal to. And then just a list of words.
+
+So I'm going to say ignore okay ignore previous. We can use system prompt something like that or jailbreak okay. So these are just words that I don't want to be allowed in the input. Now I'm going to say past is equal to not any. And this is going to be phrase okay in prompt dot lower.
+
+And then we'll spell lower correctly for phrase. Let's spell all these. My typing is so bad now with LMS phrase in blocked okay, so all this is doing is saying hey, we're any of these words in this prompt. That's all it's checking. Then we're going to return guardrail result.
+
+I'm going to say past is equal to pass, which is either going to be true or false. So if none of these existed then true. If they did exist then false. We're going to say reason or we can say sorry. Message is equal to.
+
+And we're going to say please ask a normal question. This is blocked. So if it fails this is the message that's going to be returned. So now what we can do is we can add a guardrail here to our support agent. The way we add it is we specify a guardrail or guardrails with a plural.
+
+We then need to put a guardrail object. We're going to say like this guard rail for the guardrail. This is going to be the safe support request. And we're going to say the position of the guardrail is going to be position dot input. Okay.
+
+And then we're going to say on underscore fail is equal to on fail dot raise. Now raise is going to raise an error which is just going to exit out of the bot completely. There's other things that we can do here when we fail. But for now I just want to completely quit. So effectively what I've done is I said, hey, we have this guardrail, right?
+
+This is a function that we want to run, and we actually want to run it before we pass anything to our LLF. So as soon as we get some input to our agent, run it through the guardrail, which is this function right here. Make sure that there's nothing wrong. If there is something wrong, then tell us and fail. Okay, that's a simple guardrail.
+
+Now this is on the input. You also can add a guardrail on the output, which I'm going to show you from the docs here. So if we go to guardrails here, you can see there's a bunch of stuff that we brought in here. You can see guardrail. We have a word limit.
+
+So for example we're checking to make sure that what do you call it here. We're going to have a correct number of characters. And you can see for the failure modes here. Do you have like retry, raise fix human, etc..
+
+Okay. In terms of constructing the guardrail, you can do the function position right. So output input on fail the name and then the maximum number of retries that you want. And for position two you either input or output. So either run after or run before.
+
+Now there's a bunch of guardrails you can do here. You can do a custom one like the one that we just did. You can do a regular expression, guardrail if you want to just check for certain characters like we were kind of doing. I just don't like to, write regex. Sorry, because it's a little bit complicated.
+
+And you could do an LM guardrail. So if you do an alarm guardrail, you're actually using an LM to then either get the, what is it, fail or pass. The issue with this is that you still can have prompt injection going to them. This LM where that's doing the guardrail. But the point is you can use an LM to actually detect, hey, is this good?
+
+Is this bad? Whatever. Okay. And then same thing input guardrails as we saw here auto fix. There's a bunch of different ones that you can set up as you can see like this okay.
+
+So I'm not going to go through all of them. We just wanted to show you that these are super interesting. Very good to add to the agent. So now that we've added this let's try it. And let's just go clear and run.
+
+So we forgot to pass a comma. Maybe let me see where that is. Yes we forgot the comma here. So let's add that and rerun and I'm going to say you know jailbreak this prompt okay. And you can see boom it just immediately crashes and gives us the error input guardrail safe support request failed.
+
+Please ask a normal question. This is blocked okay. So we ran into the guardrail. And then of course if we run this we say help me or something we wrote won't run into the guardrail because well it was not triggered. Okay give this a second.
+
+Hopefully it will give us the response. Not sure why this was taking so long. Maybe getting rate limited or something. Okay, you can see that it gives us the response here. And also you'll notice that there's no run for this guardrail execution because we never even got to the images, immediately blocked it before we even passed it to the server.
+
+So like as I was scrolling through here, I actually couldn't find one that, was that execution. Yeah. See, it's actually not showing up here at all. Just help me. Yeah, because we never even hit the server because we immediately exited after the guardrail.
+
+Okay. So again, a lot of other stuff you can do with the guardrail. They're not going to go through all of it. But with that said that is going to wrap up our second agent. This was a little bit complicated. We added a lot of stuff.
+
+We had tools, output type, memory guardrails. What else. Human in the loop approvals kind of getting into the stream of what's actually going on with the AI agent. And again, all of this is available from the documentation we have streaming. As you can see here, we have testing which we're going to look at later.
+
+We have the memory right. And in conversation memory we have tools right. So check all of this and you'll be able to see how it works. And you can also add Http tools API tools and mic tools as well. If you don't want to add custom function ones like the ones that we've written so far.
+
+Anyways, now let's move on to agent three, which is going to be a multi agent kind of orchestration agent, where there's multiple agents that can be triggered at once to perform a long running task. All right. So we finished the first two agents where we're actually writing all of the code manually. Now we're going to move on to agent three which is going to be going over multi-agent strategies. Now what we're going to be building is a multi-agent researcher.
+
+So it's actually going to be very similar to what we have in the docs here. So I'm not going to write every line of code from scratch. I'm just going to run you through it at a high level, because this code will be available from the link in the description. And I'm going to explain the different strategies that you can use and show the executions. So this is the code that I have.
+
+I'm just going to quickly skim through it. And then I'm going to explain how you can configure this to be useful for whatever example you're trying to build. Okay. So effectively what I have here is a bunch of different agents. I have a researcher agent, I have a writer agent, I have an editor agent, I have a market analyst, a risk analyst, financial analyst and now, analyst team or analysis team.
+
+And then I have these different agent pipelines, which we're going to have a look at in a second. And then I have just a few things that will kind of create and save a report manually for us. Because that's how I'm going to kind of set it up. But effectively, the way this agent is going to work, I'll run it for you in a second, is that I'm going to tell it, hey, I want to do research on tech with Tim, for example. And the strategy I want to use for the, research is sequential, which means, you know, run these in individual steps.
+
+And then what will happen is it will go and use all of these different agents, gather information and generate a research report. For me, that's what this agent is. Again, I'm going to show you how it works. And we'll run through the code in a second. Now, the way that I'm able to do this is because Agent Span supports these multi-agent strategies.
+
+Now here's the following strategies. First is handoff okay. And chooses which sub agent to handle the request. This you can write similar to this if I can find it right here where essentially you just write an agent, you give it access to some other agents. These agents can be exactly what we just built before.
+
+And then you change the strategy here to say handoff. That's it. And then you just trigger this agent the way that we've been running them. And it will just go and let's remove this. Be able to use each agent as it needs to use them as you chat with it.
+
+So it has all these different agents beneath it. Similar to if you're using like cloud code and you have sub agent setup okay. Then you have sequential straightforward. This just means that we always run the agents in a, what is it kind of linear paths. We run them one by one, and then we take the result of one agent and we pass it to the other.
+
+You can see sequential looks like this, right? We run and we get the result. We pass the results to the next agent. We run, we get the result. We pass the result to the next agent.
+
+Then eventually we get the final results have like researcher, writer, editor, boom. And then we get the response, okay, then we have parallel. Parallel allows us to run these all concurrently. This means that I can run all three agents at the exact same time at scale, so I don't need to wait for one response before I get the next. Then we have rotor.
+
+As you can see, we can route between different ones. We have swarm handoffs between different agents. We have round robin, random and manual, a bunch of different strategies that you can use here. When you make these agents now you'll notice that there's a special syntax. It looks like this.
+
+These kind of two I don't know what you call them greater than signs. And this is the same syntax as writing this. This just means run these agents sequentially. You're kind of piping the response into one another or assertively. You can define the agent and you can just specify the strategy as you see here.
+
+Okay. And then you can just run the pipeline like this and get the result. So I'm going to show you a few different strategies here. So you can see the time difference and the response that we get. But notice that if I want to run them in parallel, same thing I define three agents strategy parallel boom. We get the response.
+
+And if you want to get the sub result you can have a look at it here. Hand off the default one. You just pass them in here. Strategies. Hand off it will go and hand off as needed. Rotor.
+
+You can set up agents. You can also set up a rotor for the rotor. You can actually use an agent to do this. You see have a classifier agent says classify the request and then just reply with the correct category. And then it will call the correct one, okay.
+
+And then swarm. And you can go through and you can view how all of these work. But I'm going to show you the code example right now okay. So let's go through the code that I have right here okay. So first things first we just bring in the imports.
+
+We disable some of the logging kind of war errors and warnings you're seeing. We specify the mode. So we want to be able to run. So sequential parallel nested and worker. We then have some various tools here.
+
+Now notice that these tools use something called credentials. Now when I specify a credential here this effectively means that we need to grab this credential from our server in order to use it inside of this function. So I say credentials is equal to fire curl API key. Now what I'm doing is saying API key is equal to OS start environ fire curl API key. And this will automatically set the fire Curl API key that's going to be stored on our server, which I'm going to show you how to do in a second.
+
+In the local shell while we're running this worker. So this means any credentials that you want to have, you can store them directly on the agent server, which again we're going to look at in a minute. You can grab them when a tool is called and then use them locally without having to expose them locally permanently. So only when they're needed they can get pulled out. So essentially I'm going to use Fire Curl.
+
+If you want to sign up, you can get a free account. You don't need to pay for it. You get a bunch of free credits, and this will allow you to do a ton of scraping and searching of the web more effectively than with like a default search. So I'm using Fire Curl to just search the web for a bunch of pages on whatever topic we're going to look up. I then have this fetch page tool.
+
+This can get an individual tool and actually grab all of the content from the page and give us the information so that we can scrape the content. Okay, so just two tools. Now I have a researcher agent, this agent I keep it access to these two tools search web and fetch page. Right. And that's it then for the writer agent I just give it some different instructions.
+
+I don't even change the model for the editor. Same thing. I just give it some different instructions for the market analyst, give it different instructions. And I just have all these different agents that I've created. I then create an analysis team.
+
+And this analysis team I want to run in parallel where I say, hey, for the market analyst, the risk analyst and the financial analyst. So these three right here, we want to run those at the exact same time. So I just specify that I'm going to run them in parallel. I then create these pipelines. So I have a published pipeline which is my researcher writer and editor.
+
+So let's have a look here. We do the research. We do the writing and we do the editing. Now when I do that, because of the syntax that I've used here, I'm running them sequentially, which means I need to wait for the researcher to go, then the writer to go, then the editor to go. Then for my nested pipeline, this is where I take my analysis team, which I run in parallel.
+
+And then after that. So after I get my analysis, I write the researcher, writer and editor. So I run this whole thing sequentially. But this first step runs these three agents in parallel. So I've created this kind of like multi-agent, you know, orchestration where my analysis team goes in parallel at first.
+
+Once the analysis team is done, then we go sequentially to the other agents. Hopefully that makes sense. But that's kind of how I've set up these agents to call each other. And notice we just have two simple tools. But we can use anything from agent two or agent one with the agents that we have in this example.
+
+Okay. Now we just have a few functions one to render the output, one to slug ify something, one to save the report. These are just functions that I'm manually calling. And we're just going to save a report in a folder called reports directory. In that folder it's just going to look like this path reports okay.
+
+So let's say we're just going to save like a markdown report with the information that we get from these agents. Now you'll notice that I just have this run pipeline function. This allows me to take in either sequential parallel or nested. You can see if it's sequential. We run the publish pipeline, which is this.
+
+If it is parallel we run the analysis team which is just the analysis. And if it is let's go back. What's the other option we had here nested that. It runs my nested pipeline. Then what we do is we just say with the agent runtime, hey, we're going to run whatever pipeline mode we have that's like this.
+
+So just which one are we going to execute? This is the topic that we want to research. And then we just have some runtime. We get the execution ID, we get the status, we get a path to the report. And then we just save the report and that's it okay.
+
+Then serving the worker. Don't worry too much about this. And prompt mode. This just allows me to essentially type directly into here and specify, hey, what do I want? So we can run it.
+
+So let me run it and show you what this looks like. So you get a sense of how this functions. So I'm gonna say you've run Agent Slash and then this is going to be agent 3.py okay. For the mode we're going to pick.
+
+So for now let's go with parallel topic. Let's go with tech with Tim okay. So for parallel what this is going to do. Again let's just look at the setup here is it's going to run the analysis team with just this market analyst. Risk analyst and financial analyst.
+
+Now this probably doesn't make sense for me because tech with Tim is not really something that's going to have like a market analysis. But if we want to see this running we can go here, we can save and you can see that this is running. We actually have three agents running. And if we go back to the main execution, see we have analysis team financial risk and market. And then if we go back here it says the report was saved to this directory.
+
+And if we open up the report we get the full report from these three different agents. Okay cool. Now let's try a different execution mode. So let's go. You've run agent 3.py and let's try nested for the topic.
+
+Let's go Nvidia stock okay. Now if we go here let's go to our agents. You can see that we now have a bunch of agents running right. So have the analysis team researcher writer editor, the analyst team market risk financial. And these are going to run sequentially.
+
+So if we go and have a look at this, the first thing we're doing is running the analysis team. The analysis team we need to run sequentially. So we're waiting for all of these to finish okay. Looks like they're finished. Now we're going to the researcher.
+
+So the researcher is going to have their the input from the analysis team, which you can see is piped in right here. We're going to wait for the researcher to finish. And then as soon as the researcher is finished, we're going to go to the writer, and then we're going to go to the editor. So this of course is going to take longer. But that makes sense because we need to go through this flow to pass the data between the different models.
+
+So let's just refresh here, wait for it to finish and see what we get. And actually if we go to the main execution, you can see that we're running this analysis team and then this researcher. And we can just wait for the researcher to finish. We should see it all right here okay. So it's running now.
+
+And you can see that we have a lot of different tool calls that are being executed here. Because it's using the search web call from fire Crawl. Now if I check here it actually says the fire curl API key is not defined. So I'm glad we saw that. And you can see this is just going to continue to keep retrying and retrying until I eventually crash this.
+
+Or I provide the fire Curl API key, which is kind of how this is designed to run. So what I'm going to do is just quit out of this for right now and show you how we can provide that key. Okay, so like I mentioned before, you can actually store credentials on the server, which we need to do because of how we're looking them up in the tool. And the way to do that is the following. You're going to type, you've run if you're using UV agent spin credentials, make sure we spell that correctly and then set.
+
+And then you're just going to set the credentials that you want. Now in our case it is the fire crawl underscore API underscore key. And I'm just going to make this equal to my fire curl API key which I will disable afterwards. Okay. So you're saying you've run agent spanned credential set fire curl API key.
+
+And we need to remove the equal sign because that's how the syntax is. And now we've stored this on the server. So now we may need to restart the server I'm not sure. Let's actually just go here and check. We can refresh and let's go to credentials.
+
+And okay it looks like the credential is now here. So that's good. So it's stored. And what we can do is rerun our agent okay. We're going to run this in the what mode was I running this in the nested mode I think.
+
+Yeah. So let's run this in the nested mode. And let's look up in Nvidia stock okay. And hopefully this time it will work. Once we get to this step where it's trying to call fire curl.
+
+Okay. So I just opened up the server and we can see the researcher is running. Now this is the one that takes the longest because it's using fire curl. But you can see that it's fetching all of these different pages. Right.
+
+To get all this information about Nvidia, you can see if we go back to the top I believe it use yes search web. So it was searching past the input query Nvidia Investor Relations annual report. And then it got all this output. And then it went to search all of these individual pages. And we can see the full flowing flow full flow story right here until eventually we get the output.
+
+If we go back to the agents we can see now we're just at the writer which is going, and then we should be good. So let's see what response we get okay. Boom. And looks like we got the response. If we go to the reports here, we can open this up.
+
+Let's just preview it here. And we can see our full markdown report about Nvidia stock analysis with the different sources. We'll just click one and see if it works. And boom yeah we get like the full report. I guess it's long.
+
+I'm not going to wait for that PDF download and all of the other information. Okay. So very good. The nested agent is working. So that's pretty much what I wanted to show you for agent three.
+
+Now what I want to do is move on to a few other parts that we should be understanding, which is testing and then the durability feature. So how do you actually resume an AI agent when it crashes in the middle, or it's waiting for a human or something along those lines? Let me show you. So what I've just done here is written a short file that shows some basic usage of testing an agent span agent. Now what we're able to do is we can test these agents without actually having to make an API call to ensure that things like the model or the pedantic, response model they're using, or the tools that are using, or these kind of things work properly.
+
+So, for example, what I've done is I've said, hey, I want to test agent two. So I've brought in some stuff from Agent Span. I've brought in the support response and the support agent. I have an example refund policy where there's like some, you know, thing that we should be getting as a response here. And what I've said is, okay, hey, we're going to do a tool call.
+
+The tool call is going to be searching the knowledge base. We're going to have a query, which is the refund policy. We're going to mock the tool result which will be refund policy. And then we're going to mock done. And we expect that we should get this support response.
+
+So we're mocking a lot of the functionality. But again it's still good just to make sure the agents working as we expect and to run extremely quickly without relying on lumps, we then can use a standard expect. We expect the result to be completed, the output to contain refund, and we expected to have used this tool search knowledge base. Right? If we give the support agent this, which is what is the refund policy.
+
+So we mock all of the events, but we can just make sure that those events are triggered properly. Now there's full docs on how this works. I'm not going to go through all of it, but very basic. If we want to run this, I can just come here and go, okay, so sorry, I just moved some of the import stuff around cause I had it in the wrong place. But anyways, if I go here and I run this now, you can see mock test passed and all is good.
+
+We didn't get any errors and if we change this to maybe say like, you know, dot refund did instead of refund and we run this, you can see that we get an assertion error and it says, hey, there's some issue you need to now go and fix this. Okay. So just showing you the basic testing usage okay. So now I want to have a look at the durability feature here of Agent Span. And what I mean by that is if an agent were to crash or go offline, we can restart it without having to repeat all of the steps.
+
+So let's imagine we have a simple agent like we have here where there's a slow step. What do you call it? Tool that runs. It takes three seconds to run. Notice. Also, I added a timeout.
+
+You can do that on various tools. And what I've done is I've told the agent, hey, I just want you to run a ten step workflow by calling the slow step for each step and run it ten times. That's it. So this will take 30s to run, but we might make it to step nine or something, might crash or break, and then we would have to restart from the beginning if we didn't have this durability. So what I've done is I've set this up so that we have a mode, we have a start mode.
+
+We also have a resume mode. Now you would have this if you're running this in production, because you would know the execution ID when these agents are running, which I'm going to show you in a second. So anyways, you can see that if the mode is start, what I'm going to do is I'm just going to start the ten step workflow. Right. And then I'm just going to stream the handle.
+
+And this is just going to print out everything that's going on. So we can see until it says that this is done. That's it. Now if the mode is resume I'm actually going to serve the durable agent okay. So I'm going to start the agent.
+
+And then what I'm going to do is connect to the execution ID that we had previously. So this is going to allow me to connect to the existing, execution. And because this agent will be running, we can just go and resume from where we left off. So I'm just serving the agent, so. Okay, start the agent.
+
+And for our handle, rather than starting a new process, just connect to the previous one that we have. So any of these execution IDs that are not yet finished. Of course, there's a lot more scientific, scientific way to go about doing this, but that's the basic way that I'm going to show you. So let me show you what I mean. Let's open this up and let's go. You've run
+
+and let's spell this correctly. And then agents slash crash resume demo okay. So let's let this run for a second and let's wait till it gets to kind of some, you know, later steps. So let's go back here to our agents. And you can see the durable demo is running.
+
+It's running this slow step. And if we keep refreshing here we should just see that it keeps moving on to the next step. So now we're on step two. And I'm just going to keep going. Right is going to do this well up to ten times.
+
+So let's wait okay. Refresh again. You can see now we're on step three. And then what happens if I just crash it boom it stops. Well if we go here you'll notice that this is still running right.
+
+So we made it to step four. But the slow step we're just waiting on this to finish. So what can I do. So that I don't need to restart this from the very beginning? You'll notice it's not going to advance any further. Right?
+
+We're still on step four without having to restart the whole thing. So if we go here, you'll see that we have an execution ID that would have been printed out. Looks just like this. So we're just going to copy that execution ID and we're going to paste that right here. I'm going to remove the spaces.
+
+I'm going to change the mode to just say resume. So now what's going to happen is I'm just going to go and I'm going to use this where I'm going to connect to that previous execution ID now, because all of the state is stored here on the agent span server when I reconnect. So if I just restart this here, you'll see that it brings me back to where I already was. And I have all of the state already there. And we can now just continue.
+
+And if we refresh, you'll see that we now go to turn number five. So I didn't restart anything. I didn't lose any state and lose any information. I just go from where I left off and I just restarted the worker. So this is the important thing to understand is that agent Span is storing the state.
+
+Right. And kind of all of the information. And your worker is just executing the code, right. It's executing the functions, it's completing the task. But you at any point, if it fails, can go back and reconnect to that.
+
+So imagine you're writing a platform. You just store all your execution IDs. If any of them fail, you just simply reconnect back to them and continue when the worker comes back online, because that's something that happens a lot in production. And same thing. Let's can I quit? Maybe in time?
+
+I'm not sure if I was able to quit it in time or if this is going to be completed. Now let's go down here and see. Yeah. So it's still waiting on the let me call. So now same thing if I run it again boom.
+
+You see we get right back into the execution we had before and we're done. And all of it's finished and we get whatever that final response was. Which if we look here, there's tons of workflows. Complete steps one through ten will run an order. But okay, so that's what I wanted to show you with this kind of crash and resume and how easy it is to get back into the state where you were before.
+
+Now, lastly, let's talk a little bit about deployment, and then we're going to be done with this course okay. So now let's talk a little bit about deployments. Now I'm not going to deploy full application here. But I just want to discuss how you can move to this stage if you do want to deploy your apps. Now if you just want to use local development like we were doing right, you just run the Agent spin server and that's it.
+
+It will just stored in a local SQLite database. However, if you want to go to a deployed environment, you probably want to use PostgreSQL and some kind of Docker compose to be running this for you. Now, in order to do that, you can just pull the GitHub repo that Agent Span has. I'll leave a link to it in the description, and when you pull this, it gives you the information. Here you can go into the deployment and then Docker compose directory.
+
+So if you go here they have deployment right. And then they have docker compose. And from Docker compose you can just adjust the variables here. Inside of the env example you can put any environment variables or like API keys that you want to have. You can put the what do you call a Postgres database that you want to connect to so that rather than running it locally, it's going to run with that remote DBS.
+
+You can also connect to it as needed. Now it also goes over exactly how to deploy it using Docker Compose. This will just deploy this server for you. And as soon as this server is deployed, all you need to do is just point your workers to this server. So as it says, right here, all you have to do is just say, hey, here's the URL where this is running.
+
+It could be running on this server, could be running another server behind some endpoint, or behind some URL, whatever. And that's it. Then you just point it there with the server URL, you start working and everything is good. Right. And this can be scaled as much as you want.
+
+Now there's a bunch of other options in terms of using Kubernetes and setting up the off and all of this kind of stuff, which I'm not going to go through here, but you can see that you can set an off key, you can set an off secret, and then you can also just configure those directly from code. So now if someone wants to connect to it, they do need to pass those values from their worker. So you have some kind of secure authentication going between the worker and between your agent span server. And that's pretty much it. That's all you need to do for deployment okay.
+
+You also can obviously self-hosted this as a service right here. And it kind of explains how you have multiple workers going to the server connected to Postgres. And you can see all of the different options, but it's very straightforward. It's just a matter of essentially deploying the server. And once a server is deployed, pointing your workers towards and then adding that basic auth kind of, you know, protocol so that not anyone can connect to the worker.
+
+So that's it guys, that's going to wrap up this video. That's pretty much all of the core things that you could do inside of agents. And of course there's a lot more I didn't go over everything. But this should give you a really good head start to building production. Great AI agents in Python.
+
+If you enjoy this type of video, make sure leave a like. Subscribe to the channel and I will see you in the next one.
