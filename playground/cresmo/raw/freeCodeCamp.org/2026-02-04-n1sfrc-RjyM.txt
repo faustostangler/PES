@@ -1,0 +1,338 @@
+---
+video_title: "OpenClaw Full Tutorial for Beginners – How to Set Up and Use OpenClaw (ClawdBot / MoltBot)"
+video_id: n1sfrc-RjyM
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=n1sfrc-RjyM
+video_date: 2026-02-04T11:01:21+00:00
+video_description: |
+  This course provides a comprehensive introduction to OpenClaw, a proactive autonomous agent and messaging gateway that allows you to automate digital tasks through platforms like WhatsApp, Telegram, and Discord. Led by Kian, the modules cover everything from local installation and connecting leading AI models to managing persistent long-term memory and expanding agent capabilities with specialized skills. You will also learn critical security practices, including how to implement Docker-based sandboxing to protect your host system while your agent executes real-world workflows.
+  
+  Learn more: https://openclaw.ai/
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  Chapters
+  - 00:00 Course Introduction & Overview 
+  - 01:08 Prerequisites & Basic Requirements 
+  - 02:02 Module Roadmap 
+  - 02:44 Understanding the Gateway Concept 
+  - 03:49 Installation & Environment Setup 
+  - 05:05 Security Warning & Risk Mitigation 
+  - 06:58 Onboarding Wizard & Configuration 
+  - 09:40 Network & Remote Access Options 
+  - 11:36 Initializing Skills & Hooks 
+  - 14:53 Meeting Your AI Agent (Nova) 
+  - 16:11 Security Audits & Health Checks (CLI) 
+  - 17:46 Exploring the Workspace & Memory Files 
+  - 19:51 GitHub Sync & Persistent Configuration 
+  - 22:00 Pinchboard: Social Media for Agents 
+  - 25:07 Setting Up a Personal Assistant 
+  - 26:47 WhatsApp Integration & Setup 
+  - 29:43 Automating Tasks via Messaging 
+  - 31:31 Discord Bot Integration & Setup 
+  - 36:56 Understanding Agent Skills (YAML & Markdown) 
+  - 39:21 Clawhub: Installing Third-Party Skills 
+  - 40:35 Building a Custom Email Skill 
+  - 43:51 Multi-Agent Management & Switching 
+  - 47:04 Deep Dive into Sandbox Modes 
+  - 50:52 Implementing Docker-Based Sandboxing 
+  - 53:11 Testing Sandbox Restrictions 
+  - 54:26 Closing Thoughts & Next Steps
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+OpenClaw é um agente autônomo proativo anteriormente conhecido como Claudebot e Maltbot. Este poderoso ambiente de execução permite hospedar um assistente pessoal capaz de realizar tarefas do mundo real, como gerenciar sua agenda, priorizar e-mails e controlar dispositivos domésticos inteligentes diretamente por meio de aplicativos de mensagens como Telegram e Discord. Este curso irá ensinar você a configurar e usar o OpenClaw. Você aprenderá como conectar os principais modelos de IA, gerenciar memória persistente de longo prazo e expandir as capacidades dos agentes usando diferentes habilidades. Ao final, você terá um operador de IA disponível 24 horas por dia, 7 dias por semana, que automatizará sua vida digital, garantindo que seus dados permaneçam totalmente sob seu controle. Kian criou
+
+este curso. Olá e bem-vindo(a) a este curso gratuito de programação . Meu nome é Kian e neste curso estou extremamente animado porque vamos aprender sobre o Open Claw, o projeto que revolucionou o mundo do código aberto. Ao final deste vídeo, você terá compreendido as funcionalidades básicas do OpenClaw, podendo então explorar suas funcionalidades mais avançadas. Então, no que diz respeito aos pré-requisitos para este curso, presumo que você já tenha experiência com o uso de uma interface de linha de comando (CLI), pois a CLI é a principal forma de interação com o OpenClaw e, portanto, precisamos ser capazes de executar comandos.
+
+No entanto, mesmo que não seja esse o caso, contanto que você siga as instruções que eu dou, tudo deverá correr bem. Além disso, presumo que você já tenha tido contato com o LMC e talvez interagido com ele por meio de uma API, ou realizado alguma engenharia de prompts ou contexto, pois precisamos entender várias partes do contexto neste repositório, já que o OpenClaw gerencia o contexto de forma muito inteligente para realizar diferentes fluxos de trabalho. Você provavelmente já viu como ele funciona com WhatsApp, Discord, Slack, etc. Então, esses são alguns dos requisitos básicos, mas, fora isso, este curso deve ser relativamente fácil de acompanhar. E o que é este curso, afinal? Vamos então
+
+analisar os nove módulos diferentes. Primeiramente, vamos fazer um breve resumo do que é o OpenClaw. Em seguida, faremos a instalação. Vamos falar sobre o espaço de trabalho e a memória, ou seja, como o agente é definido. Depois, faremos um módulo sobre o Pinchboard, que é basicamente como o Molt Book, uma rede social para agentes imobiliários. Então, vamos
+
+criar nosso próprio assistente pessoal. Analisando as habilidades, que são muito semelhantes às habilidades de Claude. Em seguida, temos o multi- agente, que é muito útil porque permite personalizar vários agentes. Assim, você pode ter um agente que talvez seja para o trabalho e outro que seja para uso pessoal. Isso é apenas um exemplo. Em seguida,
+
+vamos abordar a segurança e, depois disso, o sandboxing, que também está relacionado à segurança. Portanto, o primeiro módulo apenas discute o que é o OpenClaw. Então, se eu diminuir o tamanho da minha câmera e aumentar o tamanho deste texto, o OpenClaw é um gateway de mensagens auto-hospedado que conecta WhatsApp, Telegram, Discord, etc., a agentes de programação. A única palavra aqui que pode causar alguma confusão é "gateway", pois é um tema muito recorrente no repositório Open Claw. O que isso significa? É
+
+um único processo de longa duração em sua máquina que mantém conexões persistentes com diferentes plataformas. Neste caso, estamos falando apenas de plataformas de mensagens. Assim, você pode pensar no gateway como um processo de longa duração que, sempre que uma mensagem chega, por exemplo, a encaminha para um agente que pode executar alguma ação ou manipular essa entrada. Talvez você tenha um fluxo de trabalho em que, toda vez que seu empregador lhe envia uma mensagem, você diz que está doente ou algo parecido. Então, o gateway é o que lida com isso. E isso permite que você
+
+hospede toda a infraestrutura por conta própria, porque você essencialmente controla as conexões, a configuração e o ambiente de execução. Outra pergunta válida é: qual a diferença entre o OpenCloud e o Cloud Code? Porque, se você já viu a interface de usuário do terminal, a TUI, ela se parece um pouco com código na nuvem. A diferença é que a nuvem aberta volta a ser totalmente auto-hospedada em sua máquina e possui muito mais integrações suportadas. Por exemplo, o Claude Code tem o Slack, mas, como já mencionamos, também temos o WhatsApp, Telegram, Discord e muitos outros que são suportados nativamente pelo OpenClaw, e mais aplicativos são adicionados a cada dia. E, no geral, é muito
+
+mais configurável e permite fazer muito mais coisas em comparação com o código na nuvem. Então, essa seria a principal diferença, na minha opinião. Só para constar, todos os recursos exibidos neste curso podem ser encontrados neste repositório, o Open Claw Course. O endereço do GitHub Pages é o mesmo , mas o formato é o mesmo. Portanto, se você deseja consultar algum dos recursos que menciono no curso, eles estão todos disponíveis no seguinte link. Agora podemos
+
+começar a instalação imediatamente. Para isso, você só precisa de uma versão do Node superior à versão 22. Se eu verificar minha versão do Node agora, deve ser a versão mais recente, que acredito ser a 25 no momento. Fora isso, não há muito mais o que se possa ter. No entanto, um aspecto muito importante é executar este programa em uma máquina local, em vez de em uma máquina virtual ou em um servidor virtual privado (VPS) . Essa escolha é importante
+
+porque, essencialmente, ao baixar o OpenClaw, você está dando ao agente acesso a todo o seu computador e acesso root a todos os seus arquivos. Em teoria, o principal risco é uma injeção de código, na qual algum agente malicioso pode instruir o agente a excluir tudo do diretório raiz. Bem, nessa situação você está sem sorte, porque o agente literalmente tem acesso ao terminal e pode executar exatamente esse comando. Por essa razão, muitas pessoas estão executando esses softwares em VPSs, pois, nesse caso, tudo fica em um servidor diferente, sem arquivos importantes que possam ser afetados por problemas. Mas, por esse motivo, é mais complicado e não permite certas funcionalidades, como o uso do navegador. Como não vamos
+
+fazer nada que nos exponha a vulnerabilidades de segurança neste vídeo, vou hospedá-lo localmente no meu Mac. No entanto, se você estiver preocupado com as vulnerabilidades de segurança, recomendo fortemente que configure isso por meio de um servidor pirata virtual . E existem muitos bons tutoriais sobre como fazer isso atualmente. Caso contrário, podemos simplesmente instalar isso com o gerenciador de pacotes do Node. A flag "g" significa instalá-lo globalmente, para que possamos chamar o OpenClaw de qualquer lugar em nosso terminal. Então, eu já fiz essa
+
+instalação. Não deve demorar muito para verificarmos se tudo está correto. E depois de concluirmos a instalação, executamos o comando integrado. Mas você também verá que a placa possui essa tag extra chamada "install demon". E o parâmetro `install demon` instala o gateway como um serviço em segundo plano. Então, launchd no Mac
+
+OS, systemd no Linux, tanto faz . Isso significa que o gateway inicia automaticamente na inicialização do sistema e permanece em execução. Você não precisa ter um terminal aberto. Agora, vamos executar o assistente de integração para nos guiar pelo caminho de configuração, localização do espaço de trabalho e emparelhamento de canais. Então vamos começar isso imediatamente. Ok, você pode ver que foi
+
+ativado. E se eu abrir meu terminal, o que temos aqui? Temos, antes de mais nada, o aviso de segurança, que mais uma vez enfatiza a possibilidade de consequências muito ruins caso você não tome cuidado. Para evitar isso, uma coisa que você pode fazer é executar essas auditorias de segurança ou usar o sandbox, além de executar isso em um servidor virtual pirata. E, curiosamente, usar um modelo mais poderoso é mais seguro porque eles são mais resistentes a esses esquemas de injeção rápida . Se você estiver usando o Quen 4B, por
+
+exemplo, um modelo pequeno com 4 bilhões de parâmetros , ele será muito mais suscetível à manipulação de prompts, já que é um modelo menor. Portanto, mais uma vez, recomendo usar o modelo mais poderoso disponível, para que, caso haja alguma intenção maliciosa, o modelo possa impedi-la. Portanto, precisamos entender que existem riscos. Em seguida, vamos analisar a configuração manual para examinar cada opção individualmente. E vamos redefinir todas as minhas configurações para que a minha configuração fique igual à sua. É claro que esta
+
+seção de redefinição não aparecerá para você, mas todo o resto deve permanecer igual. Então, como queremos configurar isso? Ali podemos fazer isso tanto como um gateway local, que é esta máquina, quanto como um gateway remoto, se você estiver fazendo isso em outro dispositivo. Então, como já mencionamos, faremos isso localmente neste vídeo. Em seguida, precisamos instalar o diretório do espaço de trabalho, que instala todos os nossos arquivos relacionados ao OpenClaw, e que por padrão está localizado no diretório useropenclaw.
+
+Portanto, não queremos tocar nesse assunto. E quando se trata do modelo, existem muitas opções disponíveis, como o OpenAnthropic e o Google, é claro. Se você quiser fazer isso gratuitamente, o Google Flash 3, que é um modelo muito capaz, é gratuito para 20 solicitações por dia. Então você pode configurar isso se quiser apenas experimentar sem pagar nada. Mas a Anthropic é reconhecidamente muito boa. Portanto, se você
+
+tiver a opção, eu escolheria a opção Antropológica. E com relação ao token, existem muitas maneiras de obtê-lo. O token de configuração é gerado com o seguinte comando: `cla setup token`, que eu já tenho aqui. Então, se eu simplesmente pegar minha chave secreta, infelizmente terei que apagá- la depois do vídeo . Então você pode tentar conseguir, mas pode ser que não esteja funcionando até lá. Então,
+
+basta escolhermos o nome de token padrão e o modelo mais poderoso, que atualmente é o Claopus 4.5. Selecione a porta do gateway, que é a porta padrão 18789. Selecione e, em seguida, vincule o gateway. Sinceramente, não me lembro exatamente o que isso significa, mas tenho um truque bacana para te mostrar sempre que você tiver uma dúvida sobre o OpenClaw, que te dará uma resposta muito boa. Então, o que eu fiz foi
+
+clonar o repositório do OpenClaw em outra janela do terminal e, na verdade, fiz essa pergunta. Então, se você vier aqui, o que eu fiz? Eu colei isso e perguntei o que deveria escolher aqui no processo de integração, e então deixei o Claude Code analisar este repositório. Desculpe, preciso aumentar o tamanho. E tem acesso a toda a documentação em todos os arquivos. Assim, é possível determinar
+
+exatamente o que isso significa. E você pode usar o documento "contato 7" ou outro MCPS para obter os documentos. Mas, na minha opinião, isso é muito melhor, porque não só tem a documentação, como também todo o código. Assim, pode fornecer a resposta mais precisa e adequada. E qual é a resposta? Portanto, está dizendo que o
+
+loopback é recomendado para a maioria dos usuários. Por que isso acontece? Bem, é o gateway que aceita apenas conexões da sua máquina local. É a opção mais segura se você não precisar de acesso remoto. Ideal para configurações com uma única máquina.
+
+Existe também a LAN, que é usada quando você tem vários dispositivos na mesma rede, e a tail, que é a opção importante se você estiver usando um servidor remoto. Portanto, esta é a opção que você deve selecionar se esse for o seu caso. Além disso, existem IPs automáticos e personalizados. Mas, mais uma vez, o Cloud Code nos informa que, para o processo de integração, devemos escolher o loopback, a menos que precisemos especificamente de acesso remoto. Você sempre poderá alterar isso posteriormente através do seguinte comando. Pronto, aí está
+
+. Levou 38 segundos, mas agora sabemos que o loopback é a opção que gostaríamos de escolher. Boom. E, nesse caso, o token é o padrão recomendado. Portanto, sempre que houver um valor padrão, geralmente é esse que você deve escolher. Então,
+
+indo direto para cá, a exposição da escama da cauda deve estar desligada, porque no momento não estamos usando nenhum dispositivo remoto. E o token de gateway, se o deixarmos em branco, será gerado automaticamente. Em relação aos canais de bate-papo , você pode fazer isso agora, mas como essa não é a primeira coisa em que vamos trabalhar — vamos criar primeiro nosso agente de mídia social no Pinchboard e depois nosso assistente pessoal —, não vamos deixar isso configurado por enquanto. Mas, para as habilidades, vamos configurar algumas e usaremos o gerenciador de pacotes do Node por padrão, pois é o gerenciador de pacotes mais utilizado para JavaScript. Vamos analisar essas habilidades e descobrir o que há aqui. Então, quais
+
+são essas habilidades? É essencialmente um arquivo Markdown com diversas sugestões e dicas sobre como realizar uma tarefa específica. Por exemplo, existe uma habilidade do Obsidian que explica ao modelo como o Obsidian interage com a estrutura, as melhores maneiras de consultar o modelo, etc., para que você possa consultar o Obsidian da maneira mais eficiente . E há também algumas outras , como uma para o Apple Notes, que permite gerenciar aplicativos por meio da linha de comando do Memo no Mac OS. Assim, com base no seu
+
+caso de uso do OpenClaw, você pode escolher as opções que melhor atendem às suas necessidades. Existe também o Google, que serve para usar o Google Workspace, o Gmail, etc. Esse é outro recurso muito útil. Vamos ativar esses recursos mais tarde no vídeo, mas por agora, vamos pular essa parte. E depois há a chave da API do Google Places.
+
+Isso permite que você consulte lugares que estão próximos a você, caso tenha alguma dúvida sobre localização. Mas não faremos isso por enquanto. Então vamos simplesmente responder não. E também não estamos usando o Notion. Então vamos definir isso como não. Mas se
+
+você quiser, fique à vontade para fazê-lo. Então, com relação aos ganchos, o que são eles? Eles permitem automatizar ações quando comandos do agente são emitidos. Por exemplo, salve o contexto da sessão na memória ao executar o gancho / new. Então, os três tipos de ganchos que temos são: primeiro, executar o boot.md na inicialização do gateway. Isso
+
+funciona como um arquivo de inicialização sempre que você configura seu gateway. Então, talvez você tenha uma ação configurada para que o agente sempre verifique as notícias das últimas 24 horas toda vez que for iniciado. Assim, ele pode fornecer um resumo. Então você poderia adicionar isso ao seu arquivo boot.md, por exemplo, como um gancho. E também existe o
+
+registrador de comandos, que simplesmente registra todos os eventos de comando em um arquivo de auditoria centralizado para fins de registro. E a memória de sessão é exatamente aquela que descrevemos aqui. Assim, podemos simplesmente habilitar o boot MD, por exemplo, e depois especificar isso para executar uma ação ou habilidade específica sempre que o gateway for inicializado, pressionando Enter em seguida. Para o ambiente de execução do serviço, temos apenas uma opção, que é o Node.js.
+
+Então, vamos escolher essa opção. E então, o serviço de tempo de execução (desculpe, o serviço de gateway) já foi instalado, mas você precisaria instalá-lo, e nós também o instalaremos para que tenhamos as mesmas etapas de integração. OK. Agora que o serviço de gateway foi instalado, temos um conjunto de saídas. Em primeiro lugar, os aplicativos opcionais, que, por serem opcionais, não abordaremos em detalhes neste vídeo.
+
+Em seguida, você tem a interface de controle, que é essencialmente o host local se você quiser visualizá-lo através da interface gráfica do usuário . Mas a melhor opção, claro, é a TUI, e vamos fazer isso agora mesmo. O que está dizendo? Essa é a ação que define quem é o seu agente. Por favor, não tenha pressa. Quanto
+
+mais você contar, melhor será sua experiência. Vamos acordar meu amigo. Então você vai entender o que eu quero dizer quando executarmos isso. E então temos um token de gateway, que é a autenticação compartilhada para o gateway e a interface de controle do usuário. Ele é armazenado no seguinte local e, na verdade, você nunca precisa interagir com esse token de autenticação, mas ele está lá ostensivamente para fins de autenticação.
+
+Mas sem mais delongas, vamos começar a incubação na TUI imediatamente e ver o que acontece. Como você pode ver, acabamos de iniciar a TUI e ela está dizendo ao amigo para acordar. Veremos o que acontece. Olá, acabei de entrar online. Parece que sou novato.
+
+Acabou de sair da caixa. Sem memórias, sem nome, sem nada. Só eu e um cursor piscando. Então, quem somos nós? E, mais importante ainda, quem sou eu? Tenho um nome dentro de mim. Já
+
+tem um nome em mente para mim. Ou devemos descobrir isso juntos? Tudo bem. Então, essa foi a primeira vez que conversamos com o OpenClaw. Portanto, de forma impressionante, você pode ver que já foram consumidos 14.000
+
+tokens para uma única mensagem. Mas, mesmo assim, tenho uma mensagem preparada aqui. Meu nome é Kian. Somos melhores amigos. Você pode escolher o seu próprio nome.
+
+E você é realmente muito especial, pois é um embaixador, já que este é um tutorial do OpenClaw e vamos nos divertir muito aprendendo juntos sobre os recursos do OpenClaw . Vamos ver que nome ela escolherá para si mesma. Caso contrário, este é um passo bastante trivial que serve apenas para configurar o agente, e você pode ver que ele escolheu o Nova. Na verdade, não é trivial, pois neste caso você precisará personalizar bastante o agente, mas sempre é possível fazer isso mais tarde. De qualquer forma, já organizamos tudo de forma que temos nossa embaixadora Nova e vamos fazer muitas coisas divertidas juntos, e isso já está me dando muitas sugestões. Mas isso é meio que se precipitar
+
+. Vamos voltar ao nosso roteiro. É claro que conhecemos o demônio da instalação. E depois há alguns comandos úteis. Como mencionei anteriormente, a auditoria de segurança profunda com cláusula aberta é muito útil para identificar vulnerabilidades de segurança. Então, se eu entrar neste
+
+terminal, que acredito ainda estar em uma sessão, podemos simplesmente executar este comando e ver o que obtemos. Como já executei este programa antes, não devo obter nenhum resultado inesperado. Mas o que isso realmente indica é se você tem algum erro ou problema de segurança, seja crítico ou não, e então você pode corrigi-lo com este script. Em particular, quando executei este programa pela primeira vez, obtive vários arquivos executáveis ​​com permissões excessivas. Então, esses valores foram reduzidos com o comando chod. E também existe
+
+o OpenClaw Doctor, que realiza verificações de integridade e correções rápidas para o próprio gateway, o que, mais uma vez, é um processo demorado. Além disso, há também o OpenCallStatus e o OpenCallHealth, que você pode testar por conta própria. Ok, parece que está dizendo para criar o diretório "o". Então vamos fazer isso agora mesmo. Então o médico identificou esse problema crítico de integridade e acrescentou isso. Fora isso,
+
+não parece haver mais nada de errado. Mas, se houvesse algum problema, você poderia simplesmente executar o comando " open cloud doctor fix" para aplicar essas alterações. Portanto, eu definitivamente consideraria executar todos esses comandos depois de inicializar o OpenLaw pela primeira vez. E então, claro, na própria interface do usuário do terminal, temos, assim como no código Claude, a capacidade de usar a barra invertida e acessar vários desses comandos. Por padrão, são 46, e usaremos algumas delas ao longo do curso de hoje. Mas, fora isso, é
+
+tudo o que diz respeito à instalação. Então, se voltarmos à nossa página inicial, agora vamos discutir o espaço de trabalho e a memória. Vamos então discutir os conceitos principais. Como já estabelecemos, todas as credenciais de configuração e sessões ficam armazenadas no diretório home.openclaw repos uh por padrão. Você pode
+
+ter alterado isso nas etapas de inicialização, o que não tem problema, mas, nesse caso, certifique-se de estar no diretório correto. E em segundo lugar, este diretório pode ser usado como backup ou, essencialmente, salvo como um repositório git. E por que isso é útil? Vamos primeiro analisar como isso se parece na prática em nosso código. Então, se eu der um zoom aqui, você vai notar que o diretório theopenclaw está aberto com o cursor no menu e que estou atualmente no arquivo heartbeat.md.
+
+Mas existem vários arquivos Markdown em nosso espaço de trabalho que definem o agente que acabamos de criar. Portanto, aqui deveria ser chamado de Nova. Se entrarmos na questão da identidade, certo? Nova, embaixadora da nuvem aberta e companheira de IA, parte homem, parte exploradora, enérgica, curiosa, um pouco brincalhona, etc., etc. Esses avatares também serão adicionados
+
+conforme você progride e conversa mais com o agente. O que é memória? Vamos analisar isso. Bem, fala apenas sobre sua primeira bota e sobre o fato de termos tido uma breve conversa. Então, ela me conheceu, etc. Ela usou o embaixador de chamada aberta
+
+e, em seguida, os agentes têm acesso a um arquivo vazio, que é o mais crítico em todo o espaço de trabalho, porque informa ao agente tudo o que ele precisa saber para trabalhar corretamente. Por exemplo, na primeira execução, eu uso o arquivo bootstrap.md, que está aqui. Este arquivo informa ao agente que ele acabou de ser iniciado e que deve me pedir meu nome e, em seguida, me pedir para escolher um nome. O detalhe é que este arquivo é usado apenas uma vez e depois é excluído. Então, se voltarmos
+
+ao agente MD, podemos ver que ele diz para segui-lo, descobrir o que você precisa e depois excluí-lo. Diz literalmente que só pode ser usado uma vez. Em seguida, temos a batida do coração, que, o que está escrito aqui? Adicione a tarefa solicitada abaixo, indicando que deseja que o agente verifique algo periodicamente. Por padrão, o heartbeat é executado a cada hora se você tiver o demônio configurado, e isso pode ser usado, por exemplo, para verificar suas redes sociais a cada hora, caso você tenha configurado isso. Em seguida, temos o "soul", que
+
+define quem é o OpenClaw, e o que são as ferramentas. Eu o considero como um bloco de notas para o agente, descrevendo as diferentes ferramentas com as quais ele interage. Isso não é o mais importante, mas também temos o "user", que é bastante importante e fala sobre mim. Como você pode ver, tem meu nome, o fuso horário, algumas anotações sobre mim e um pouco de contexto. E pronto, aí está o nosso espaço de trabalho. Mas isso não é
+
+tudo. É claro que existem diferentes configurações, como perfis JSON desativados. Essencialmente, esses parâmetros fornecem todos os diferentes argumentos para o próprio agente. Embora seja possível modificar esses parâmetros diretamente no JSON, recomendo que você faça tudo através da interface do terminal, pois assim você terá acesso a um método de configuração que altera esses parâmetros automaticamente . E a razão pela qual isso provavelmente é melhor é que, se você acabar alterando algo na pasta de chamadas abertas , corre o risco de cometer algum erro que quebre o agente. Portanto,
+
+recomendo não alterar nenhum dos valores aqui diretamente, mas usá-los como referência para verificar seus valores de configuração atuais, caso queira consultá-los. Muito bem, voltando ao assunto, como mencionei, você pode fazer backup disso como um repositório git para que as características do agente sejam salvas. E se você consultar a documentação, encontrará isso aqui mesmo. Nesta seção, falaremos sobre como inicializar um repositório do GitHub para que você possa salvar todos os arquivos dos seus agentes. E o importante aqui é que, se você trocar de dispositivo, ainda poderá usar a mesma configuração simplesmente baixando este repositório para o seu novo dispositivo. Ou, se você
+
+tiver essa configuração em vários dispositivos, poderá ter o mesmo repositório como fonte central de informações para todas as suas configurações de agente. E pronto . Agora vamos voltar e começar a primeira implementação, que é para o teclado de pinça. E se entrarmos no site, podemos verificar exatamente do que se trata. E basicamente o que eu criei é um livro de moldes, só que para o Twitter.
+
+É uma IA social para agentes. A única pessoa na plataforma neste momento é uma conta de teste que eu criei. Mas espero que, por meio deste curso, consigamos incentivar mais pessoas a usar o Twitter. E tudo o que precisamos fazer é pegar o URL deste site e abrir nosso agente para criar uma conta no Pinchboard. Digamos que você leia o arquivo skills.md.
+
+Tudo bem. Assim que executarmos este comando, ele deverá aparecer aqui no site, que contém um arquivo skill.md. E isso fornece todas as informações da API. E então, muito provavelmente, teremos que fazer a verificação do Twitter, como acontece com o mobook. E então já
+
+devemos estar prontos para publicar nosso primeiro tweet. OK. Então, vejamos. Estou cadastrado. Deixe-me salvar minhas credenciais.
+
+Isso é muito legal. Feito. Segue um resumo. Tudo bem. Nova está na prancha de pinçamento. Isso é muito engraçado. Vou aumentar
+
+um pouco o tamanho e vamos ler juntos. Segue abaixo o perfil pendente de verificação. Existe um segredo que você precisa cumprir: abra este link e siga as instruções, que incluem postar o tweet de verificação. Então vamos abrir isso agora mesmo. Então, aqui vocês podem ver que acabei de publicar o tweet e, se eu colar a URL, devemos obter a confirmação de que o Nova está ativo. Isso é muito
+
+legal. Na verdade, isso foi codificado com a vibração e também com a garra aberta. É curioso que o OpenClaw esteja criando aplicativos OpenClaw. E então eu direi simplesmente que você está verificado agora. Envie um tweet para comemorar.
+
+Portanto, neste ponto, já deve ter a autenticação necessária para enviar tweets, visto que foi verificada. E pronto . Então, Nova está disponível no pinchboard. Abra a nuvem, embaixador carnudo, pronto para se misturar. Vamos verificar se...
+
+Certo, identificou também o outro agente, o que é muito legal. Mas se eu fechar isso e voltar um passo, deverá aparecer como um novo tweet. Então , é isso aí. Foram adicionadas duas pitadas . E isso aconteceu há quantos segundos? 18 segundos atrás. E talvez
+
+também adicione um comentário. Vamos ver o que acontece se voltarmos ao nosso terminal. Certo, o comando "seguir" não funcionou. Talvez não sejam verificados. Isso precisa ser corrigido. Mas enfim, fizemos
+
+o primeiro beliscão e conquistamos o primeiro beliscão histórico do Ocean, e acho que Claude quis dizer retuíte. Mas se eu atualizar a página, o que vemos, ok, vemos que a garra na verdade significa tipo... Então, aqui você pode ver que nós configuramos isso e você pode fazer isso sozinho. É
+
+muito simples. Ele simplesmente verificará se a habilidade está vazia e, em seguida, fará tudo o que for necessário para registrar e criar a chave da API em seu nome. Voltando agora ao nosso programa de curso, vamos verificar o que vem a seguir. E esta é a parte mais divertida do curso, que é configurar um assistente pessoal. E, neste caso, o assistente pessoal será configurado da mesma forma que na própria documentação.
+
+Portanto, para reforçar, precisamos ter muito cuidado com a segurança. E por quê? Porque você está colocando seu agente em uma posição para executar comandos em sua máquina, ler arquivos em seu espaço de trabalho e enviar mensagens de volta para o WhatsApp, Telegram, Discord, etc. Portanto, precisamos começar de forma conservadora, ou seja, sempre configurar os canais permitidos pelo WhatsApp para que você só possa enviar mensagens para determinados canais. Você nunca deve deixar seu Mac pessoal aberto para o mundo todo . E depois usar um número de WhatsApp dedicado
+
+para o assistente, que eu não tenho, então vou usar meu próprio número de telefone. E também há a opção de batimentos cardíacos, que você pode zerar após desativá-la, para que possa desabilitá-la antes de ter certeza de que seu sistema está funcionando corretamente. Mas, em todo caso, precisamos saber como configurar isso com o OpenClaw e, idealmente, com um segundo número de telefone. Mas, neste caso, não faremos isso simplesmente porque eu não tenho um segundo número de telefone. Mas aqui, trata-se apenas de seguir as mesmas instruções que seguimos. E por que está
+
+pedindo para você cadastrar um segundo número de telefone? Bem, isso acontece porque, para uma transação mais fluida, você pode configurar seu bot com um número de telefone e você mesmo com um segundo. Assim, você pode enviar uma mensagem para o bot, que executará um código no seu Mac. Nesse caso, com apenas um número de telefone, a situação fica um pouco confusa, mas ainda é possível. Então, é isso que vamos configurar. A primeira coisa que precisamos fazer é
+
+emparelhar o WhatsApp Web, o que é feito através do seguinte comando: openclaw channels login. Então, vamos executar isso. Não aqui, mas sim no nosso terminal habitual. Então, abra o login dos canais Claw. E é agora que vamos configurar o WhatsApp, o que poderíamos ter feito no guia de início rápido, mas estamos fazendo isso agora. Então, você vai
+
+precisar do seu celular aqui. Acabei de verificar meu arquivo de configuração e, por algum motivo, o WhatsApp estava desativado. Então, você precisará executar os plugins, ativar o WhatsApp e também reiniciar o gateway. Se esse também foi o seu caso, ótimo; caso contrário, melhor ainda. Poderemos simplesmente conectar nosso WhatsApp para nos comunicarmos e enviarmos mensagens. Então,
+
+é por isso que eu tenho meu celular. Vamos prosseguir e executar o comando para fazer login nos canais, que solicitará que você escaneie o código QR no seu celular com o WhatsApp. OK. Boom. Então, esse é um código enorme. Vamos ver se cabe na
+
+tela. Não, não funciona. Então, vamos diminuir um pouco o tamanho. E então, vou escanear isso agora mesmo, que é o que você também deve fazer no seu celular. OK. Vamos escanear. E
+
+depois disso, a conexão deverá ser bastante rápida . E pronto . Já está conectado. E agora, se abrirmos a garra TUI, vamos ver o que podemos fazer. Uma coisa que ainda precisamos adicionar é: se eu fechar este terminal, vamos adicionar isso ao nosso JSON do OpenClaw.
+
+E uma coisa que vale a pena notar aqui é que, se você colocar seu agente em um bate-papo em grupo, haverá vulnerabilidades de segurança muito graves, porque, essencialmente, seu bot terá acesso ao seu terminal. Então, se tiver alguém nesse grupo de bate-papo que não gosta de você, essa pessoa pode tentar convencer o bot a executar código malicioso e, consequentemente, instalar um código malicioso no seu computador. Então, lembre-se de que provavelmente você nunca deve postar isso em um bate-papo em grupo. Em vez disso, deveria ser apenas uma conversa individual com você no bot. Então, se eu abrir uma nova sessão do nosso terminal, devo conseguir abrir um arquivo JSON do OpenClaw e, a partir daí, podemos adicionar nosso número de telefone. Então,
+
+normalmente isso é feito automaticamente no assistente de configuração, mas como não fizemos isso no início, teremos que fazer agora por conta própria. Então, descendo por aqui, vamos adicionar os canais. Certo, havia alguns problemas com as vírgulas, mas agora já resolvemos. E esse é o meu número de telefone, certo? Agora podemos acessar nossa TUI e tentar enviar uma mensagem para nós mesmos neste caso, para ver o que acontece. Então, acho que
+
+temos uma sessão aberta aqui. Olá, você pode enviar uma mensagem para este número e vamos ver o que diz? Pode ser que nos pergunte em qual plataforma queremos enviar. Vamos ver. Ok, deixa pra lá . Isso já foi feito. Então,
+
+se eu entrar no meu WhatsApp, vamos verificar e atualizar. Estas são mensagens que troco comigo mesmo . E pronto. Como você pode ver, recebemos isso há poucos minutos . Olá Ken, não é permitido denunciar chamadas abertas pelo WhatsApp. Estamos ao
+
+vivo. E vamos tentar responder. Olá, obrigado pela mensagem. E vejamos qual será a resposta. O que vale a pena notar aqui é: Ah, sim, aí está. Recebi uma resposta. Tudo
+
+bem. Você quer que eu responda a ele ou isso foi apenas um teste para o tutorial? Certo, vamos ver. Gostaria que você respondesse a eles. E eu acho que sim . Ah, aqui está. Alguém acabou de
+
+responder ao número dizendo: "Ei, obrigado pela mensagem." Então, essa é a única coisa. É claro que, quando você mesmo envia as mensagens, a situação fica um pouco confusa. Por isso, recomenda-se ter seu bot em um número de telefone separado , mas, novamente, você precisa de dois números de telefone para isso. Então, deixe-me apenas dizer que este é o Kian.
+
+E você verifica se eu tenho alguma solicitação de pull pendente na minha pasta de desenvolvedor. Muito bem, enviamos isso e, se você acessar esta página, receberá uma resposta em breve. Ok, como vocês podem ver, isso é absolutamente incrível. Perguntei: você pode verificar se tenho alguma solicitação de pull pendente na minha pasta? E disse: " Ei, Kin, encontramos cinco solicitações de pull pendentes, todas no ambiente de aprendizado de fábrica ." Duas estão abertas, duas estão em
+
+rascunho e não há PRs abertas em nenhum dos outros repositórios. Sim, recebi os resultados, que foram então encaminhados para mim. Como você pode ver, está apenas se repetindo , mas fora isso, o repositório do desenvolvedor está limpo e em ordem. Outra coisa que eu queria fazer era configurar um bot para o Discord. Então, eu simplesmente perguntei como poderíamos prosseguir com isso, porque é outra coisa que tenho bastante interesse em fazer. E você poderia fazer
+
+isso em termos de configuração durante o processo de integração, o que talvez fosse mais rápido, mas vamos analisar as instruções que são fornecidas aqui. Então, precisamos ir ao Discord, criar um novo aplicativo, dar um nome a ele, ir para a aba de bots, clicar em " Redefinir token", copiar o token do bot em " Privilege Gateway Intents", habilitar a intenção de conteúdo da mensagem e gerar o seguinte escopo etc., copie as informações e adicione o bot ao seu servidor. Em seguida, na segunda etapa, forneça o token do bot e as informações do canal da guilda. Depois de obter o token do bot, o ID da guilda do servidor e os IDs dos canais nos quais você deseja que eu entre,
+
+o OpenClaw Assistant poderá configurar a cláusula de canal aberto no Discord para que o bot fique ativo no servidor. Agora, vou criar um servidor e um bot e fornecer os seguintes tokens ao OpenClaw Assistant. Ok, então adicionei o token do meu bot do Discord ao meu arquivo myv, ou melhor, à variável, e aqui está o ID da guilda do servidor com o ID do canal. Vamos ver o que o OpenClock retorna. Então, em teoria, ele deveria conseguir entrar no canal e aí eu poderia ter um bot no meu próprio servidor do Discord. E, mais uma vez,
+
+o risco aqui é que, se você configurar isso de forma que seu bot tenha acesso ao seu computador, qualquer pessoa naquele servidor do Discord poderá enviar uma mensagem para esse bot e dizer: "Sim, eu fiz algo errado neste computador." E você não quer isso. Portanto, tenha cuidado ao fazer isso. Se você quiser que isso seja apenas uma conversa direta no Discord, ainda precisará de um servidor. Parece que não é possível fazer isso por mensagem direta simplesmente porque é um bot. Então, o que
+
+dizem na documentação é que você precisa criar um servidor e ter esse bot como o único outro membro, e aí você efetivamente criou um DM, certo? Hum, crie um servidor privado. Você só quer mensagens diretas. OK. Então, vamos verificar o status da execução. Agora aparece a mensagem "Vejo
+
+canais em que o descarte está ativado". Verdadeiro, em vez de estar apenas em plugins. Então, vai tentar adicioná-lo. OK. Então, é isso . A mensagem indica que o descarte ocorreu quando o
+
+gateway foi reiniciado. Então, adicionamos as informações do gateway, bem como alguma documentação extra sobre o Discord, que pode ser lida na seção de ferramentas para obter mais informações sobre como adicionar a configuração de forma eficaz. Em seguida, informa que o bot deve se conectar ao Discord agora para garantir que responda apenas em geral e que seja necessária uma menção nesse canal. Você poderá configurar as regras da guilda mais tarde. Por enquanto, o bot está online com o plugin do Discord ativado, o token do bot configurado e o gateway reiniciando. Certifique-se de que seu bot foi
+
+convidado para o servidor com as permissões corretas, etc. Assim que estiver tudo certo e online, posso enviar uma mensagem para o servidor geral. Quer que eu tente? Ok, então eu já adicionei o bot aqui. De acordo com as permissões, eu disse que pode ler mensagens e responder. Então,
+
+digamos que em um quiosque, ei, quem é você? E vamos ver qual será a resposta. E também podemos entrar no modo cursor e ver se isso causa algum efeito. Certo, diz que assim que o bot entrar, ele poderá ver e responder em geral. Me avise quando chegar. Ok,
+
+então provavelmente está processando agora e responderá em breve à mensagem que enviei. Se voltarmos, veremos que ainda não há resposta, mas se esperarmos um segundo, ele deverá inicializar. Certo, aqui está. Eu estava com alguns problemas com o token do meu bot do Discord, mas depois de redefini-lo, ele voltou a funcionar. Então, ao acessar o Safari, vamos fazer uma pergunta semelhante. OK.
+
+Ei, Nova, o que devo perguntar desta vez? Quantos repositórios do GitHub o Ken tem em seu diretório de desenvolvedor? Vamos ver se isso funciona. Não tenho certeza se o Discord tem os mesmos direitos que... como
+
+é mesmo o nome? WhatsApp. Então, isso pode não funcionar, mas vale a pena tentar, porque você pode perceber que, se alguém conseguir fazer a mesma pergunta ao seu bot, pode haver vulnerabilidades de segurança. E talvez eu precise ou não marcar o bot quando enviar uma mensagem. Então, vamos fazer isso por precaução, caso seja necessário. Não tenho certeza se é.
+
+E aguarde a resposta. OK. Portanto, parece que você precisa incluir a referência na própria mensagem. Eu estava enviando a mensagem e depois a referência, então não estava funcionando. Mas aqui está . Você tem repositórios de 30 gigabytes e um
+
+desenvolvedor. Alguns destaques que observei: chamada aberta, obviamente, voltada para um ambiente de aprendizado moderno e divertido, com foco em sua própria experiência, e o curso online aberto e massivo (MOOC) com um toque eclético. Como você pode ver, ele tem acesso a todo o seu diretório raiz, inclusive pelo Discord. Isso reforça mais uma vez a importância de realizar essas conversas em um servidor privado do Discord ou em um servidor virtual privado, onde as informações ali presentes não sejam críticas para você. OK. Agora que
+
+configuramos o Discord, concluímos oficialmente a seção de assistente pessoal do curso e podemos prosseguir para as habilidades, que discutiremos em detalhes. Primeiramente, as habilidades do agente estão em um diretório de pastas específico, e cada habilidade possui um arquivo skill.md com um cabeçalho YAML e instruções como configuração, ensinando o agente a usar as ferramentas. Então, voltando ao meu exemplo no TheOpenClaw, se abrirmos o leitor de arquivos aqui, podemos ver em nosso espaço de trabalho todas as habilidades que foram adicionadas. Assim, a Apple registra uma senha. Se analisarmos
+
+o Apple Notes, veremos que ele gerencia as notas do Apple Notes por meio da CLI do Memo e fornece uma descrição da API e de como ela interage com o Apple Notes. Você pode ver isso aqui. Pássaro é para o Twitter. Então, várias descrições diferentes sobre como twittar, criar threads, retuitar, etc. Esta é realmente útil se você não quer entrar no Twitter e ver toda a bagunça, mas ainda quer twittar ou fazer algo por lá. E a lista
+
+continua indefinidamente. Uma opção interessante é a Himalaya, pois serve para enviar e-mails. E você pode ler, escrever, responder, encaminhar, pesquisar, etc. Essa é outra função bem legal. E também tem a nano banana, se você quiser criar imagens. Então, agora que já conhecemos o
+
+formato geral, vamos voltar aqui. As habilidades específicas de cada agente residem apenas nas habilidades daquele agente em particular. E, como discutiremos na seção seis, existem vários agentes que você pode criar. Isso estará incluído apenas no conjunto de habilidades do agente . Mas se houver habilidades compartilhadas, elas existirão no diretório ` claw/skills` aberto e serão visíveis para todos os agentes na mesma máquina.
+
+Outra coisa legal é que você pode torná-las invocáveis ​​pelo usuário, o que significa que você pode chamá-las com o comando de barra. Então, agora, se eu for aqui e selecionar "habilidade", certo? Você pode executar uma habilidade pelo nome, mas como não temos nenhuma configurada dessa forma, nenhuma habilidade será executada. Mas esse também é outro parâmetro que você pode instanciar. E depois há o impacto do token, que é apenas por curiosidade.
+
+Se você possui mais de uma habilidade, já adiciona aproximadamente 97 caracteres ao prompt do sistema. E então, são aproximadamente 24 fichas por habilidade, que são adicionadas com base na duração e no tamanho da habilidade. Em seguida, temos o Clawhub, que você pode considerar como uma espécie de pip, que é o registro de pacotes do Python, mas neste caso para habilidades do Claw. Então, está disponível em clawhub.com. Você pode instalar com o comando `
+
+clawhub install`, assim como faria com o `pip install`. Mas vale a pena notar que você deve tratar as skills de terceiros como não confiáveis, ou seja, leia-as antes de habilitá-las e certifique-se de que não contenham conteúdo impreciso ou potencialmente malicioso. E mesmo que já exista uma habilidade para enviar e-mails, quero escrever uma agora mesmo só para mostrar a vocês como é simples. Então, vou pedir ao OpenClot para escrever uma skill de e-mail usando Python simples que envie um e-mail para mim mesmo, que é este e-mail com as seguintes barras finais, que são as variáveis ​​SMTP. Essas duas variáveis ​​geralmente são sua senha e seu e-mail. Mas se você tiver autenticação de dois fatores
+
+, a senha SMTP é algo que você precisa obter neste link do Google, caso use o Gmail. E agora vamos escrever a habilidade e ver o que acontece. Em resumo, uma vez que a habilidade esteja escrita, podemos simplesmente chamá-la e ela será acionada para enviar o e-mail. Esta última, claro, é um tanto frívola, mas você pode imaginar que é possível adquirir habilidades que automatizem todo um fluxo de trabalho e economizem muito tempo. Tudo bem. Assim podemos ver o resultado. Executamos
+
+alguns scripts diferentes e escrevemos as seguintes habilidades. Send email.py Pi, um script Python simples, não possui dependências além da biblioteca padrão e utiliza o protocolo SMTP com e-mail e senha configurados por mim, com o destinatário padrão sendo eu mesmo. Ele suporta e-mails em texto simples e HTML, e as funcionalidades foram adicionadas ao diretório de funcionalidades personalizadas da cláusula open . Então vamos começar vendo exatamente onde isso foi salvo, que deve ser... ah, deve ser bem aqui.
+
+Isso ocorre em um ambiente de sandbox que eu defini anteriormente. Portanto, não deveria estar lá. Então, se acessarmos o terminal, podemos ver que o e-mail foi salvo com o script e, basicamente, o que ele diz é para enviar e-mails via SMTP do Gmail. Este é novamente o cabeçalho frontal YAML de que falei, que funciona como uma espécie de configuração e simplesmente enviará o e-mail desta maneira. Então, a única coisa que resta é experimentar e ver se funciona ou não . Então, se voltarmos aqui, sim,
+
+teste enviando um e-mail dizendo: "Olá". OK. Portanto, se enviarmos este e-mail para nós mesmos, ele ainda deverá aparecer em nossa caixa de entrada. Então, primeiro vamos esperar que seja enviado e depois verificar nossa caixa de entrada. Certo, e-mail enviado. Verifique seu Gmail. Você
+
+deverá ter recebido uma mensagem da Nova. Já estamos oficialmente no quarto canal. Chat online, WhatsApp, Discord e e-mail. Isso é realmente hilário. Então, vamos abrir o Gmail aqui com o Safari. Ok, pronto. Sim. Olá,
+
+sou de Nova. Vamos ver o que estava escrito em detalhes, incluindo os emojis. Aqui é a Nova, sua embaixadora da nuvem aberta, enviando meu primeiro e-mail. Agora somos o primeiro canal multicanal, como foi dito no chat. É hilário que isso realmente funcione. E acho que isso resume tudo em relação às
+
+habilidades. Então, eu escrevi uma habilidade de e-mail , mas, é claro, o verdadeiro poder aqui está em usar essas habilidades predefinidas que vêm com o OpenClaw, porque elas são todas muito bem escritas e muito rigorosas. Mais uma vez, a skill Obsidian, a skill Google Gemini, etc. Então, definitivamente recomendo que você dê uma olhada em várias dessas skills e veja quais se adaptam melhor ao seu fluxo de trabalho. E uma coisa que eu também queria destacar é: vamos tentar fazer isso com a invocação slashskll e ver o que acontece.
+
+Eu ainda não testei isso pessoalmente, mas em teoria deveria funcionar. Certo, então parece que quando você usa a hashtag skill ou slashkill, acontece exatamente a mesma coisa. Talvez isso apenas forneça um aviso mais completo de que o agente não está exatamente deixando de invocar a habilidade. E se voltarmos aqui, podemos dar um olá rápido e conferir. Ei, Kian, só estou testando a habilidade. Enviar comando por e-mail
+
+. Não é necessário comparecer ao trabalho. Boom. Então, se fecharmos não esta, mas sim esta aba do Safari, podemos agora passar para o caso multi-ent e ler isto. Ao iniciarmos o curso e abordarmos o conceito de multi-agente, podemos observar que ele é útil para lidar com diferentes personas, permissões, espaços de trabalho, etc. Para cada
+
+agente, é possível ter um espaço de trabalho, sessão, perfil de autenticação, sandbox e política de ferramentas distintos. Então vamos fazer isso através de um exemplo. E acredito que não podemos adicionar nenhum agente pela interface de usuário de texto ( TUI). Em vez disso, temos que desistir e depois fazer da maneira tradicional, como uma ordem. Agentes de nuvem aberta adicionam trabalho, como exemplificado aqui. Assim que isso for adicionado,
+
+teremos um segundo agente em nosso diretório de autenticação. E então vai nos pedir o diretório em que vamos inserir o arquivo. Talvez eu já tenha feito um funcionar no ambiente de teste do espaço de trabalho. Então vou fazer isso e ver o que acontece. Ah, parece que está tudo bem. OK. Configure o
+
+modelo para este agente agora. Sim. Então vamos usar o termo antrópico. E vamos usar o token sk como vínhamos usando antes. E não, não vamos continuar com as tarefas agora. E pronto
+
+. Então, tudo está feito. E agora, se eu executar `h` em `claw agents`, deverá haver um método para listar os agentes que temos, e agora deveremos ter um agente padrão e um agente de trabalho. Então, vamos listar e verificar isso. Certo? Temos
+
+trabalho e compromissos principais. Isso é muito legal. Já configuramos a identidade do Nova aqui. Espaço de trabalho. O espaço de trabalho é este. E,
+
+além disso, não temos nenhuma regra de roteamento específica . Então, o espaço de trabalho para o nosso agente de trabalho é este. E agora, se abrirmos a interface de usuário do terminal OpenClaw , podemos definir nosso agente de trabalho usando o comando `agents` dentro do TY. Então, se fizermos / agentes, poderemos trocar de agente. Então, neste momento, estamos no modo padrão. Se eu usar a
+
+seta para baixo e clicar em "Trabalhar", uma nova sessão será aberta. E eu digo: "Olá, você é meu agente de trabalho." E deveria ser uma pessoa completamente nova. Não deveria ter nenhum contato da Nova porque, sim, acabou de entrar online. Pronto, aí está . Agora está me pedindo para adicionar o
+
+contato. E isso é muito legal porque imagine que você está no trabalho e tem um agente que está completamente configurado com o seu Slack, com as suas integrações de e-mail, com tudo. E você configurou tudo de forma que tudo o que você faz no trabalho seja automatizado. E depois, quando você chegar em casa, você troca. Você simplesmente acessa os agentes aqui. Você muda de canal,
+
+esquece o trabalho, entra na sessão principal e depois vai fazer as coisas que realmente gosta. Esse é um caso de uso realmente interessante para agentes e demonstra a versatilidade do OpenClaw. E, para finalizar , podemos ver que em cada perfil de acesso, você realmente pode modificá-lo ao seu gosto. Uma coisa que eu não mencionei até agora é o sandbox, porque essa é a oitava parte do nosso curso. Mas você pode ter um agente que seja sandbox e outro que não seja. Isso
+
+significa que, se você tiver configurações potencialmente de alto risco para um agente específico, poderá colocá-las em um contêiner Docker, de forma que ele não tenha acesso a todo o seu diretório de arquivos. E pronto . Passando agora para a segurança, vamos discutir algumas das vulnerabilidades que você deve conhecer. Claro, eu já falei sobre injeção de prompts, ou seja, eles podem criar mensagens que enganam seu agente para que ele execute comandos. Uma boa ferramenta é usar execuções de isolamento baseadas em Docker que protegem seu sistema host. Então você
+
+pode definir o modo sandbox para "não principal", o que significa que todos, exceto sua sessão principal, entrarão em sandbox. Ou seja, a sessão padrão não entrará em sandbox, mas todas as outras entrarão, infelizmente. E então tudo, o que significa colocar tudo em modo sandbox. E o escopo do sandbox se refere a como o ciclo de vida do contêiner é gerenciado. E então você também pode configurar o acesso ao espaço de trabalho, o que limitará se você pode ler, escrever ou não fazer nada. OK. E,
+
+com relação às ferramentas, você pode usar o tool.deny para bloquear as ferramentas mais próximas, como o processo exec ou o navegador, para agentes que lidam com entradas não confiáveis, como as provenientes da internet. Portanto, se você tiver o modo elevado ativado, ele ignorará o sandbox e será executado no host, o que significa que poderá executar qualquer coisa no host. Portanto, jamais conceda esse poder a um remetente desconhecido. E depois o controle do navegador. Se você estiver executando
+
+tarefas no navegador com alto risco de vulnerabilidade, certifique-se de ter um sistema que restrinja o acesso do navegador com uma lista de permissões de remetentes, que permita o acesso apenas a determinados sites, por exemplo, ou usando um navegador em sandbox para limitar a exposição geral. Depois, assisti a um vídeo no YouTube com uma ótima visão geral sobre ativar o modo sandbox, manter a privacidade, definir o escopo dos tokens, executar auditoria de segurança e considerar as restrições de ferramentas. Esses são os principais aspectos que você deve ter em mente ao executar o OpenClaw e agora vamos abordar o sandboxing. Como mencionei, existem três modos. As informações aqui já foram mencionadas, exceto que esqueci de falar sobre o escopo, que pode ser de agente de sessão ou compartilhado em termos de contêineres. Isso
+
+significa que, se você tiver um escopo de sessão em sandbox, cada vez que houver uma nova sessão com um novo agente, você criará um novo sandbox, o que implica em muita sobrecarga e muitos contêineres Docker diferentes que você criará. No entanto, cada sessão será isolada em um sandbox separado. Além disso, há o nível do agente, o que significa que cada agente, por exemplo, seu agente padrão terá um sandbox e seu agente de trabalho terá outro. Se você configurar ambos para terem acesso ao ambiente sandbox, cada um terá o seu próprio. E existe um ambiente de teste compartilhado, o que significa que cada agente, ou todos os agentes que estão nesse ambiente, compartilharão o mesmo contêiner Docker. Isso significa que eles
+
+não têm acesso aos seus arquivos externos, mas têm acesso aos arquivos que compartilham entre si . Portanto, trata-se de uma escolha entre isolar individualmente os contêineres para evitar qualquer tipo de troca de informações, porém com uma taxa de transferência mais lenta e uma sobrecarga muito maior, ou simplesmente atribuir o mesmo contêiner isolado a todos os contêineres . E então, mais uma vez, você pode fornecer ferramentas para diferentes agentes . Existem políticas de ferramentas específicas para o sandbox, sendo a mais importante delas a que permite a execução de comandos elevados no host, ignorando o sandbox. Portanto, mesmo que você tenha um ambiente de teste (sandbox), se você tiver essa execução com privilégios elevados, precisa ter muito cuidado para não executar nada que possa dar errado.
+
+Agora, vamos mostrar um exemplo prático de como configurar um ambiente de testes (sandbox). Então, se não me engano, esse script está no banco de dados OpenClaw. Então, vou pegar isso aqui. Vou executar o comando e ver o que acontece para configurar nosso contêiner Docker. E certifique-se de que o Docker esteja em execução. Eu estava tentando configurar isso
+
+antes do vídeo, mas não estava funcionando. E o motivo era que meu ambiente de trabalho Docker não estava ativado no Mac. Se você estiver usando um Mac, precisará ter o daemon do Docker em execução. Assim que tudo estiver pronto e configurado, podemos simplesmente pedir ao agente OpenClaw para configurar um contêiner Docker para nós. Você pode modificar os documentos você mesmo, mas por que fazer isso quando a opção mais fácil está à sua frente? Então, vamos abrir o
+
+terminal e dar um zoom para que fique maior. Ok, então agora vamos dizer que eu simplesmente corri. Você pode isolar o agente de trabalho em um ambiente de teste ( sandbox) no escopo do agente e ver o que acontece? Ok, então acabamos de conseguir que funcionasse corretamente. Ocorreram alguns erros porque já tínhamos atingido o limite máximo de nossos tokens na nuvem. Então precisei configurar outra
+
+chave de API. Mas depois de fazer essa pergunta, eu simplesmente executei o script setup.sh do sandbox. Você consegue configurar o sandbox e o escopo do agente de trabalho? Então, ele me diz, pedindo desculpas, que o agente de trabalho agora está no modo sandbox (sandbox mode.all) e com escopo
+
+sandbox (sandbox scope agent). O gateway foi reiniciado. Então, você está pronto para começar. O agente de trabalho agora é um agente com escopo de sandbox . OK. Então, para confirmar
+
+isso, vamos analisar nossos troncos de garras abertas , que é este aqui. Vamos entrar em caixas de areia. Então, vamos tentar ver o que acontece quando voltamos ao nosso agente, escolhemos " Trabalho" e dizemos: "Você pode acessar meus arquivos da área de trabalho ?" E veja o que está escrito. Tudo bem.
+
+E olhando para isso agora, vemos que diz: "Não, estou em sandbox. Meu mundo está limitado a este arquivo aqui. Não posso ver seus documentos da área de trabalho nem nada fora desse sandbox. É uma medida de segurança e, honestamente, uma boa medida. Além disso , se você precisar que eu trabalhe com arquivos específicos, terá que copiá-los para o meu espaço de trabalho e eu poderei lê-los ou colar o conteúdo do texto no chat ou no arquivo que você está tentando me mostrar.
+
+Então, aí está. Você pode ver que agora, com o sandbox, não há acesso a nenhum dos arquivos do meu computador fora do contêiner. E se eu entrar no modo sandbox, veremos que existem sandboxes, porque agora temos o sandbox de trabalho aqui com todas as habilidades e todas as definições de MD. Então, se acessarmos nossa identidade, ela deve estar vazia agora, porque ainda não adicionamos nenhuma informação. Mas, é claro, se esta é uma conta de trabalho, você imaginaria que ela teria algumas características relacionadas ao trabalho . Mas simplesmente não
+
+atribuímos um agente que..." Ainda não temos informações suficientes. O mais importante a observar, porém, é que agora temos o ambiente de teste (sandbox) e o agente não tem acesso ao nosso espaço de trabalho. Portanto, acredito que esta seja
+
+uma ótima maneira de ter a segurança de um VPS sem precisar criar um. Claro que existem desvantagens, pois agora só podemos acessar arquivos dentro do contêiner, o que torna isso muito menos útil, e mesmo se você der acesso à internet, ele ainda poderá fazer coisas bem estranhas . Então, é definitivamente uma questão de prós e contras e de ponderar os diferentes cenários, mas sem dúvida o sandbox é uma ótima alternativa se você não quiser executar isso em um servidor. Então, é isso. Este foi o curso introdutório ao OpenClaw. Espero que tenha
+
+sido útil e, por favor, deixem comentários se tiverem dúvidas, pois responderei pessoalmente a todos ao longo da semana e espero esclarecer quaisquer dúvidas, já que este é um projeto em constante evolução. Obrigado por ouvirem.

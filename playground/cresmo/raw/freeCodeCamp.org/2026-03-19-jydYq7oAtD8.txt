@@ -1,0 +1,383 @@
+---
+video_title: "Software Testing Course – Playwright, E2E, and AI Agents"
+video_id: jydYq7oAtD8
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=jydYq7oAtD8
+video_date: 2026-03-19T10:01:20+00:00
+video_description: |
+  Learn the essentials of software testing, from fundamental concepts like the testing pyramid to hands-on automation using Playwright. You will explore real-world case studies of software failures and learn advanced techniques such as mocking, edge case testing, and accessibility. Finally, discover how AI-powered tools like Kane AI are enabling natural language test generation and auto-healing capabilities.
+  
+  ✏️ Course created by @beau 
+  
+  Code: https://github.com/beaucarnes/software-testing-course
+  
+  🔗 Sign up for KaneAI here: https://www.testmuai.com/kane-ai/?utm_source=youtube&utm_medium=freecodecamp_ifm&utm_campaign=kane_ai&utm_content=dv&via=vibetest
+  
+  🏗️ TestMu provided a grant to make this course possible.
+  
+  ⭐️ Video Chapters ⭐️
+  - 0:00:00 Course Introduction and Overview
+  - 0:01:18 Why Software Testing Matters
+  - 0:01:43 Case Studies: Knight Capital & Therac-25
+  - 0:02:43 The Boeing 737 Max & The Cost of Everyday Bugs
+  - 0:03:33 Testing as "Insurance" for Your Code
+  - 0:04:32 The Testing Pyramid: Unit, Integration, & E2E
+  - 0:11:19 Test-Driven Development (TDD) Explained
+  - 0:12:15 Hands-on: Setting Up the TechMart Sample App
+  - 0:14:12 Playwright Framework Installation & Setup
+  - 0:16:48 Understanding Playwright Test Structure & Assertions
+  - 0:19:13 Writing a Search Functionality Test from Scratch
+  - 0:22:02 Strategic Locators: Finding Elements Effectively
+  - 0:23:05 Testing Complex Shopping Cart Logic
+  - 0:24:53 Login Forms, Validations, & Error Handling
+  - 0:27:09 Full End-to-End Checkout Flow Walkthrough
+  - 0:30:00 Direct API Testing with Playwright
+  - 0:31:59 Debugging Tests in Headed and UI Interactive Modes
+  - 0:34:15 Testing Edge Cases and Security (XSS) Vulnerabilities
+  - 0:37:29 Mocking API Responses and Simulating Slow Networks
+  - 0:41:26 Accessibility Testing for Screen Readers & Keyboards
+  - 0:45:40 Challenges: Learning Curves and Maintenance Burdens
+  - 0:47:18 Introduction to AI-Powered Software Testing
+  - 0:50:11 Hands-on with KaneAI: Authoring Tests in Plain English
+  - 0:56:18 Natural Language Code Generation & Auto-Healing Tests
+  - 0:57:48 Executing API Tests Using AI Agents
+  - 0:59:57 Professional Best Practices: CI/CD & Page Objects
+  - 1:02:06 Final Takeaways: When to Use Manual vs. AI Tools
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Olá e bem-vindo(a) a este curso de testes de software. Meu nome é Bo Carnes e eu criei este curso. Neste tutorial, você aprenderá tudo sobre testes de software, desde os conceitos fundamentais até a criação de seus próprios testes automatizados e, finalmente, como as ferramentas modernas baseadas em IA estão transformando a maneira como as equipes abordam os testes. E aqui está o que abordaremos. Primeiramente, vamos explorar por que os testes são importantes e analisar alguns exemplos reais do que acontece quando o software não é testado adequadamente. Em seguida, vamos nos aprofundar nos
+
+fundamentos de testes, os diferentes tipos de testes, quando usar cada um e a famosa pirâmide de testes. Depois disso, vamos colocar a mão na massa. Criaremos testes automatizados usando o Playwright, uma das estruturas de teste JavaScript mais populares. Você escreverá testes reais para uma aplicação real. E, por fim, vamos explorar como a IA está mudando os testes. Vou
+
+mostrar a vocês o Kain AI da TestMee, uma ferramenta de testes com inteligência artificial que permite escrever testes usando linguagem natural em vez de código. A TestMee concedeu uma bolsa para tornar este curso possível, e demonstrarei como ela pode tornar os testes mais acessíveis e eficientes. Ao final deste curso, você terá uma base sólida em testes de software e habilidades práticas que poderá aplicar imediatamente. Vamos começar. Antes de escrevermos uma única linha de código de teste, vamos falar sobre por que os testes são importantes.
+
+Porque, sinceramente, elaborar provas leva tempo. E quando você está sob pressão para lançar funcionalidades, pode parecer que os testes estão te atrasando. Mas o fato é que o custo de não fazer o teste é quase sempre maior do que o custo de fazê-lo. Então, deixe-me compartilhar alguns exemplos do mundo real que ilustram esse ponto. Primeiramente, gostaria de falar sobre a Knight Capital. Assim, em 2012, a Knight Capital,
+
+uma das maiores empresas de negociação dos EUA, desenvolveu uma atualização de software para seu sistema de negociação, mas devido a um bug que não foi detectado nos testes, seu sistema começou a fazer negociações erráticas e, em apenas 45 minutos, eles perderam US$ 440 milhões. Portanto, não se trata de um erro de digitação. 440 milhões de dólares em 45 minutos. A empresa nunca se recuperou e acabou sendo vendida. Um exemplo ainda mais sério é o Therac 25. Trata-se de um
+
+aparelho de radioterapia da década de 1980. Falhas de software no sistema fizeram com que ele administrasse doses maciças de radiação aos pacientes. Várias pessoas morreram e outras ficaram gravemente feridas. Esses erros poderiam ter sido detectados com testes adequados. Depois temos o Boeing 7, ou melhor, o 737 Max. Problemas de software
+
+no sistema de controle de voo do Boeing 737 Max contribuíram para dois acidentes fatais. A falta de testes adequados para avaliar o comportamento do software em determinados cenários foi um fator determinante. Bem, a maioria de nós não está construindo sistemas de negociação, dispositivos médicos ou aviões, mas erros em aplicativos do dia a dia também custam dinheiro. Um bug que faz com que os usuários abandonem seus carrinhos de compras, um problema de login que impede os clientes de acessar seu serviço, um bug de corrupção de dados que exige horas de limpeza manual, vulnerabilidades de segurança que levam a violações de dados. Portanto, estudos mostram consistentemente que encontrar e corrigir um bug em produção é de 10 a 100 vezes mais caro do que encontrá-lo durante o desenvolvimento. Isso porque os
+
+erros em produção exigem medidas como depuração emergencial sob pressão, implementação de correções rápidas, custos de suporte ao cliente, potencial perda da confiança do usuário e, às vezes, consequências legais. Portanto, pense nos testes como um seguro para o seu código. Você paga um pequeno valor inicial, que é o tempo gasto na elaboração dos testes, mas assim pode evitar custos potencialmente enormes mais tarde. Mas, testar não se resume apenas a encontrar erros. Bons testes também servem como documentação de como seu código deve funcionar, dão confiança para refatorar e aprimorar o código, ajudam a integrar novos membros da equipe mais rapidamente, permitem integração e implantação contínuas e reduzem o estresse do lançamento de novos recursos.
+
+Agora que entendemos por que os testes são importantes, vamos nos aprofundar nos fundamentos. Então, vamos construir uma base sólida entendendo os diferentes tipos de testes e quando usar cada um deles. Então, aqui está a pirâmide de testes. Um dos conceitos mais importantes em testes é esta pirâmide de testes. Este modelo, popularizado por Mike Cohn, nos ajuda a entender como equilibrar diferentes tipos de testes.
+
+Então, imagine uma pirâmide com três níveis. Na parte mais complexa, e a mais surpreendente, temos os testes unitários. São testes rápidos e focados que verificam funções ou componentes individuais de forma isolada. No meio, temos os testes de integração. Esses testes verificam se as diferentes partes do seu sistema funcionam corretamente em conjunto.
+
+E então, no topo, na menor parte, temos os testes de ponta a ponta, também chamados de testes E2E. Esses testes avaliam toda a sua aplicação a partir da perspectiva do usuário. Então, por que uma pirâmide? O formato de pirâmide nos diz algo importante. Deveríamos ter muitos testes unitários, alguns testes de integração e ainda menos testes de ponta a ponta.
+
+Porque, à medida que se sobe na pirâmide, os testes tornam-se mais lentos para executar, mais caros de manter e mais frágeis e propensos a falhas. Os testes unitários são executados em milissegundos. Os testes E2E podem levar alguns minutos. Vamos analisar cada nível em detalhes. Os testes unitários focam em testar uma única unidade de código, geralmente uma função, um método ou uma classe, e são testados em completo isolamento. Por exemplo, se você tiver uma
+
+função que calcula o preço total de um carrinho de compras, um teste unitário chamaria essa função com entradas específicas e verificaria se ela retorna a saída correta. Os testes unitários são rápidos. Você pode executar milhares em segundos. Eles são confiáveis. Eles não dependem de nenhum sistema externo e são precisos. Quando
+
+falham, você sabe exatamente onde está o problema . Então, aqui está um exemplo. É basicamente um teste unitário simples, e veja como ele poderia ser em JavaScript. Então, chamamos essa função de função de soma, ou melhor, função de cálculo do total . Chamamos isso com entradas conhecidas. Esses são os itens
+
+que criamos, esse array de itens. Assim, após inserirmos esses dados de entrada conhecidos, verificamos se a saída corresponde ao que esperamos. Portanto, esperamos que o total seja 25. Esperamos que, após chamarmos essa função, ela retorne a soma correta. Agora, subindo na pirâmide, os testes de integração verificam se os diferentes componentes funcionam corretamente em conjunto.
+
+Por exemplo, um teste de integração pode verificar se o endpoint da sua API lê e grava corretamente no banco de dados. Ou talvez possa testar se o seu front-end está se comunicando corretamente com o seu back-end. Ou que seu sistema de pagamento se integre corretamente com um provedor de pagamentos. Os testes de integração detectam erros que os testes unitários não detectam, erros que só aparecem quando os componentes interagem. Assim, uma integração de API pode ter a seguinte aparência.
+
+Então, eu não disse isso antes, mas esse é basicamente o nome do teste . E estamos fazendo uma requisição POST para esta API com esses dados específicos. E então recebemos uma resposta. Então, esperamos que o ` response.status`, o status dessa resposta, seja 200.
+
+E então vamos verificar se ela realmente estava no banco de dados. Então, vamos chamar o método database.getcart para obter o carrinho. E esperamos que os itens tenham comprimento um. Vamos assumir que este item já está no banco de dados. Portanto, envolve vários
+
+componentes. O endpoint da API, o banco de dados e sua interação. No topo da pirâmide, os testes de ponta a ponta simulam o comportamento real do usuário. Eles interagem com seu aplicativo através da mesma interface que seus usuários, clicando em botões, preenchendo formulários e navegando por páginas. Os testes de ponta a ponta são poderosos porque testam todo o seu sistema funcionando em conjunto.
+
+Mas também são mais lentos, mais complexos e mais propensos a apresentar problemas quando a interface do usuário muda. Aqui está um exemplo de teste completo usando o Playwright. Então, o Playwright é uma biblioteca JavaScript que basicamente permite interagir programaticamente com um site. Então, neste caso, trata-se de o usuário conseguir concluir uma compra. Então, vamos para a página inicial. Estamos clicando
+
+no elemento que contém o texto "adicionar ao carrinho". Em seguida, clicamos no elemento que contém o texto "finalizar compra". Estamos preenchendo este campo de texto com este ID e usando este endereço de e-mail. Em seguida, preenchemos o outro campo de texto com o número do cartão de identificação e clicamos no elemento que contém o texto "fazer pedido". Esperamos que o texto "pedido confirmado" e o elemento com a mensagem "pedido confirmado" fiquem visíveis.
+
+Basicamente, trata-se de percorrer toda a jornada gerada pelo usuário, exatamente como um cliente real faria. Assim, além dessas três categorias principais, existem outros tipos de testes especializados. Um teste de fumaça é um teste rápido que verifica se as funcionalidades básicas estão funcionando, como por exemplo, se o aplicativo inicia . Testes de regressão são testes que garantem que funcionalidades que funcionavam anteriormente não tenham sido afetadas por alterações. Testes de desempenho são testes que medem a rapidez com que sua aplicação responde sob carga.
+
+Testes de segurança, testes que verificam vulnerabilidades como injeção de SQL ou cross-site scripting. Os testes de acessibilidade são testes que verificam se o seu aplicativo funciona para usuários com deficiência. Uma pergunta frequente é: o que devo testar? Então, aqui está uma estrutura prática. Teste o fluxo de comportamento ideal, que é a principal forma como os usuários interagem com o seu recurso.
+
+Teste casos extremos, como entradas vazias, valores máximos e caracteres especiais. Basicamente, você não sabe o que um usuário realmente fará, então precisa testar todos esses possíveis casos extremos que talvez sejam menos comuns. Em seguida, teste o tratamento de erros, ou seja, o que acontece quando algo dá errado? Teste também as funcionalidades críticas para o negócio, que são aquelas em que os erros teriam o maior custo. Nem sempre é preciso testar tudo. Concentre-se apenas no que é
+
+mais importante. Você talvez já tenha ouvido falar em desenvolvimento orientado a testes, ou TDD. Essa é uma prática em que primeiro você escreve um teste que falha, depois escreve o código mínimo necessário para que ele passe e, finalmente, refatora o código, mantendo seus testes passando. Verde significa que estão passando. Portanto, o TDD pode levar a um código com melhor design, mas nem sempre é prático. Use
+
+quando for útil, mas não force quando não for. Então, vamos resumir o que aprendemos. A pirâmide de testes consiste em muitos testes unitários, alguns testes de integração e menos testes de ponta a ponta . Os testes unitários são rápidos e precisos. Os testes de integração verificam se os componentes funcionam em conjunto. Os testes de ponta a ponta simulam o
+
+comportamento real do usuário. Concentre seus testes no que é mais importante. Agora, vamos colocar esse conhecimento em prática. Tudo bem. Agora, vamos colocar a mão na massa.
+
+Criei um aplicativo de comércio eletrônico simples chamado TechMart, que usaremos ao longo do restante deste curso. É uma loja simples onde os usuários podem navegar pelos produtos, adicionar itens ao carrinho e concluir a compra. Então, eu tenho todo o código no GitHub. Você pode acessar o link na descrição. Vamos entrar no diretório do aplicativo de exemplo e, em seguida, executaremos o comando `npm install`.
+
+E para iniciar, basta executar o comando `npm start`. Certo, então agora vamos abrir um navegador. Podemos acessar este URL e dar uma olhada em nossa aplicação. Ok, aqui está a nossa loja TechMart. Basicamente, temos uma página inicial com a lista desses produtos.
+
+Temos um filtro. Então, basicamente podemos filtrar pelo preço máximo. Podemos resolver isso. Podemos começar por diferentes categorias, como eletrônicos ou acessórios. Podemos até mesmo pesquisar produtos. Então,
+
+eu posso simplesmente digitar "mouse" aqui em cima. Nós também temos um sistema de login. Há informações de uma conta de demonstração que podemos usar para fazer login. E depois de fazermos login, aparece a mensagem "Olá, usuário de demonstração". Aqui em cima, e posso adicionar alguns itens ao meu carrinho.
+
+E então posso ir ao meu carrinho, ver a página do meu carrinho e prosseguir para o pagamento. Basicamente, também temos o cadastro do usuário e o processo de finalização da compra. Este é um aplicativo real e funcional com uma API de backend. Possui produtos, sistema de carrinho de compras, autenticação de usuários, tudo o que você encontraria em um site de comércio eletrônico de verdade. Então, vamos escrever testes para todas essas funcionalidades.
+
+Agora, vamos configurar nossa estrutura de testes. Então, vou voltar ao diretório raiz deste curso. E então vou para esta pasta cd {slash} test {slash} traditional. Vamos usar o Playwright, que é uma das melhores estruturas de teste disponíveis. Foi criado pela Microsoft e oferece suporte a testes no Chrome, Firefox e Safari.
+
+Então, vou simplesmente executar o comando npm install. npm install Isso instalará o Playwright e todas as suas dependências. Agora, deixe-me mostrar meu arquivo playwright.config.js.
+
+Isso está naquela pasta em que estávamos agora há pouco. E esse arquivo de configuração informa algumas coisas ao Playwright. Primeiro, onde todos os nossos testes são realizados. Além disso, indica quais navegadores devem ser usados ​​nos testes . Bem, temos isso aqui embaixo: Chromium, Firefox, WebKit, Chrome para dispositivos móveis , Safari para dispositivos móveis e assim por diante.
+
+Em seguida, ele informará onde nosso serviço local está sendo executado e se devemos iniciar nosso aplicativo antes dos testes. Essa configuração também habilita recursos úteis, como capturas de tela em caso de falha. Então, é isso, uma captura de tela de uma falha. E depois um vídeo sobre fracasso. Basicamente, ele gravará vídeo para depuração. Então, vamos executar nosso teste para
+
+garantir que tudo esteja configurado corretamente. E agora, outra coisa que você precisa fazer antes de testar é instalar os navegadores Playwright. Então, vamos instalar o NPX Playwright. Assim, serão instalados todos os navegadores corretos necessários para executar os testes. OK. Agora, posso simplesmente executar o comando `NPM test` para
+
+executar todos os testes que já criamos para nossa aplicação. E então, só me resta esperar. Já foram criados 265 testes. Então, você só precisa esperar que todos eles corram. Ok, podemos ver que todos eles passaram.
+
+Em seguida, podemos visualizar o relatório com o NPX Playwright e, depois, exibir o relatório. E então, ele simplesmente abrirá o arquivo no seu navegador. Então, agora vai mostrar todos os testes e, em seguida, o navegador em que foram realizados, como WebKit ou Chrome para dispositivos móveis. E podemos pesquisar o teste. Podemos ver quais foram aprovados. Nenhuma delas apresentou falhas, comportamento instável
+
+ou foi ignorada, mas se houvesse alguma, poderíamos testar. Poderíamos procurá- los. Agora, vou abrir meu teste na minha página inicial, no arquivo home page.spec.js.
+
+Agora, vamos entender a estrutura dos testes e começar a escrevê-los. Todos os arquivos de teste do Playwright seguem uma estrutura semelhante. Vamos analisar esta que acabei de abrir, a especificação da página inicial . Então, primeiro, temos esta primeira linha. Primeiro, vamos importar os testes e as expectativas do Playwright. O comando `test` é usado para
+
+definir casos de teste, e o comando `expect` é usado para fazer asserções. Então, temos esta página inicial test.describe. Então, isso vai para o teste. O método `describe` vai agrupar testes relacionados .
+
+Portanto, este bloco inteiro contém todos os nossos testes da página inicial. Basicamente, tudo isso aqui. Agora, temos esta seção test.beforeEach. Este comando é executado antes de cada teste neste bloco. Então, vamos
+
+navegar até a página inicial. Basicamente, vamos limpar o carrinho e, em seguida, o usuário será redirecionado para a página inicial antes de cada teste, com o carrinho vazio. Dessa forma, cada teste começa do zero. Agora, vamos analisar um teste real. Então, temos o teste e aqui está a descrição.
+
+E isso definirá um único caso de teste. Agora, temos uma sincronização onde está escrito "página assíncrona". Isso nos dará acesso ao objeto da página. E esta linha aqui afirma que o título da página contém "TechMart". Assim, o objeto de página funciona como um controle remoto para o navegador. Podemos usá-lo para navegar,
+
+clicar, digitar e verificar elementos. Agora, deixe-me mostrar como escrever um teste do zero. Vamos supor que você queira testar a funcionalidade de busca. Então, vou até o final de todos esses testes. Já existem vários deles por aqui.
+
+Deve exibir as informações do produto corretamente e deve ter uma barra de pesquisa funcional . Novamente, tudo isso está na descrição, se você quiser, ou o código está na descrição, então você pode abrir e verificar como os testes são feitos. Mas vou adicionar um teste totalmente novo aqui. Então, vou fazer um teste para verificar se os produtos devem ser filtrados durante a busca. Obtemos o objeto de página novamente.
+
+Agora, o primeiro passo é encontrar o campo de busca. Então, faça uma pesquisa constante e, em seguida, vou atribuir o valor de `page.locator` a ela. E depois vou adicionar um campo de busca por ID. Basicamente, sempre que usamos page.locator, ele encontra
+
+elementos na página. Em seguida, usamos seletores CSS, ou podemos usar conteúdo de texto, ou outras estratégias para identificar elementos. Nesse caso, usamos apenas o ID. Então, o próximo passo seria digitar o termo de busca. Lembre-se, estamos simulando um usuário aqui. Então, vou usar o comando `await
+
+search input`. Então, esse é o seletor que acabamos de obter, preenchimento de pontos. Então, com o que vamos preencher a caixa de texto? Bem, vamos digitar no teclado. Então, desta vez vamos realizar uma ação.
+
+Então, para as ações, neste caso, estamos usando o preenchimento. Também é possível usar o clique ou a digitação. Esta é apenas uma forma de interagir com os elementos, tal como um utilizador faria. Então, depois de preenchermos isso, vamos realizar outra ação. Então, aqui temos o `page.locator`,
+
+e agora estamos combinando a busca por um elemento, o elemento do botão de busca , e a ação, o clique, em uma única linha de código. Clicando no botão que contém a opção de busca por ID. Agora, vamos esperar. Então, vou usar `await page.wait` para aguardar o tempo limite. E queremos apenas dar
+
+um tempo. Vamos aguardar 500 milissegundos. Portanto, às vezes precisamos esperar que uma página seja atualizada. Então, essa é uma maneira, mas o Playwright também possui outros mecanismos de espera. E agora que temos tudo configurado, vamos fazer alguns testes . Então, aqui obtemos os
+
+produtos usando page.locators e, em seguida, procuramos o cartão do produto, a classe. E esperamos que os produtos tenham apenas uma unidade. Portanto, deve haver apenas um produto, pois adicionamos um produto à página com base na pesquisa por um teclado, e só deve haver um teclado na página. Agora, faremos uma última verificação e esperaremos que, ao acessar ` page.locator`, encontremos o
+
+elemento exato na página e esperemos que ele contenha o texto "keyboard". E esse é todo o teste. Portanto, preciso de um parêntese de fechamento aqui. E esse teste está concluído. Certo, deixe-me falar um pouco mais sobre estratégias de localização.
+
+Basicamente, quero dizer como encontrar elementos em uma página. Essa é uma das habilidades mais importantes em testes. Agora, vou inserir um pouco de código aqui, só por enquanto, para poder explicar algo para você. Então você pode localizar por ID, por classe, por conteúdo de texto simplesmente digitando "texto igual a adicionar ao carrinho", por função ou acessibilidade. Então, isso acontece com o botão chamado "login", com um texto de espaço reservado ou combinando seletores.
+
+Basicamente, qualquer CSS que você possa inserir ali. Minha recomendação é dar preferência a localizadores que sejam estáveis ​​e relevantes. Os atributos IDs e data-test-id são ótimos. O conteúdo de texto funciona bem para botões e links. Evite seletores frágeis que dependem de uma estrutura CSS exata. Então,
+
+vou apagar tudo isso por enquanto. Vamos guardar isso. Agora, vamos analisar outro arquivo de teste. Vou analisar o arquivo cart.spec.js.
+
+E vamos analisar um teste mais complexo , que é o teste do carrinho de compras. Então, temos o que já foi dito, como as importações, que descrevem o nome do bloco " carrinho de compras". Temos o "antes de cada um", que será sempre o mesmo. Então, vamos analisar se este teste chamado "deve adicionar item ao carrinho" deve funcionar. Observe como existem alguns elementos diferentes. A primeira é
+
+realizar uma ação. Basicamente, esta ação serve para adicionar ao carrinho. Basicamente, clicamos para adicionar o primeiro produto ao carrinho. Em seguida, vamos verificar as medidas imediatas. Isso é...
+
+ou o feedback imediato da mídia. Estamos verificando o feedback, que é a mensagem de notificação. E, finalmente, estamos verificando a alteração de estado, ou seja, se a contagem de carrinhos foi atualizada. Esse padrão, que consiste em ação seguida de verificação, é fundamental para um bom teste. E podemos analisar esse arquivo de teste.
+
+Podemos observar muitos outros testes seguindo esse mesmo padrão. Por exemplo, estamos navegando até o carrinho. Estamos verificando se houve algum feedback imediato e, em seguida, estamos verificando a mudança de estado. Portanto, ao criar testes, esse é um padrão muito bom a seguir. Novamente, você pode conferir você mesmo para ver os outros testes aqui.
+
+Ok, vamos conversar, vamos analisar outro arquivo de teste. Vou analisar o arquivo auth.spec.js. Os formulários estão por toda parte em aplicações web. Então, aqui vamos
+
+analisar como testar o formulário de login. Então, vai começar de forma muito semelhante aos nossos outros arquivos de teste. Agora, vou rolar a página para baixo até encontrar esta aqui. O login deve ser feito com sucesso utilizando credenciais válidas. Vamos seguir o mesmo padrão de antes. Uma coisa que é importante notar é
+
+que estamos em sintonia diferente. Estamos na página de login porque temos isso antes de cada página aqui. Então, primeiro vamos inserir credenciais de demonstração válidas na página de login. Vamos enviar o formulário. Vamos executar a ação.
+
+Agora, basta verificarmos o feedback. Em seguida, verificamos a mudança de estado, que é se o usuário foi redirecionado para a página inicial. Bem, acho que não estamos verificando nada. Sim, sim, estamos verificando. Não é bem assim.
+
+Ok, isso é algo importante a dizer. Mesmo que não tenhamos a expectativa, ainda assim estamos verificando se isso aconteceu. O teste falhará se nunca chegar a este URL, mesmo que não seja um URL específico que se espera que contenha algo do tipo. Se uma dessas ações não funcionar, o teste falha. E então, então vamos passar para este teste aqui.
+
+Deveria exibir um erro para senhas incompatíveis. Como eu disse, é importante testar o tratamento de erros. Agora, o processo seguirá exatamente o mesmo padrão de antes, mas utilizando credenciais diferentes. Então, primeiro ele preenche uma senha, mas depois confirma a senha com uma senha diferente. E então estamos esperando que a mensagem de erro seja exibida, e então ela deve dizer que as senhas não correspondem. Testar
+
+cenários de sucesso e de fracasso é importante. Os testes de funcionamento normal verificam se tudo está funcionando corretamente. Os testes de tratamento de erros verificam se as falhas ocorrem de forma controlada. Agora, vou analisar outro arquivo de teste, que é o checkout spec.js.
+
+Vamos analisar um teste completo de ponta a ponta, que é o fluxo de finalização da compra. Então, vou descer aqui para concluir o processo de finalização da compra com sucesso. Portanto, este é um teste muito longo porque percorre todo o fluxo. Então, será necessário preencher um formulário completo com várias etapas. Então, você pode ver como usamos o checkout, ou melhor, como usamos o preenchimento para entradas de teste.
+
+Usamos a opção de seleção para menus suspensos. Ainda estamos preenchendo aqui, preenchendo aqui, e depois usaremos várias asserções para verificar o resultado. Então, temos que preencher vários campos e, em seguida, verificar várias coisas para confirmar o resultado. Agora, vamos abrir outro arquivo de teste, que é o arquivo API spec.js. O
+
+Playwright não serve apenas para testes de interface do usuário. Ele também pode testar APIs diretamente. Aqui está, portanto, a URL base da nossa API. E então teremos nosso primeiro teste. Estamos testando uma requisição GET para /api/products e queremos verificar se ela retorna todos os produtos.
+
+Então, vamos aguardar essa solicitação GET para a URL. Esperamos que a resposta seja "ok" , indicando que a requisição foi bem-sucedida, e que o status seja 200. Também aguardaremos a resposta JSON. Esperamos que seja uma variedade de produtos. E então, esperamos que o comprimento seja de seis. Portanto, temos
+
+seis produtos quando acessamos este URL da API. E se descermos por aqui, podemos ver outro. Temos a opção de adicionar o item ao carrinho. Os testes de API são mais rápidos do que os testes de interface do usuário e ótimos para testar a lógica do back-end. Então, antes estávamos basicamente simulando o navegador, mas aqui não estamos simulando o navegador de forma alguma. Estamos
+
+apenas verificando se a API consegue lidar com a adição de itens ao carrinho. Então, vamos acessar a URL e enviar os dados para ela, o que deverá adicionar o item ao carrinho. Em seguida, verificamos se a resposta indica "adicionar ao carrinho". Verificamos se o comprimento dos dados é um, pois isso deveria ter sido adicionado. Em seguida, verificamos se os dados, o ID do produto e a quantidade foram adicionados corretamente aos dados.
+
+Assim, combinar testes de interface do usuário e de API oferece uma cobertura abrangente. Vamos falar mais sobre como executar testes e como executá-los de forma eficaz. Então, eu já mostrei como executar o comando `npm test` para rodar todos os testes, mas existem diferentes maneiras de executar testes. Poderíamos executar ` npm run test`, mas posso colocar algo que me chamou a atenção . Portanto, este programa será executado no modo com cabeçalho, que exibirá um navegador.
+
+Ok, você pode ver que os navegadores estão abrindo, o navegador abre e você pode ver o navegador rodando no modo com cabeçalho, e você pode ver o que está acontecendo no teste. Você pode ver a rapidez com que os testes estão sendo executados. Eles estão correndo muito rápido. Então, os primeiros testes foram apenas da API. Portanto, nenhum navegador foi aberto. Mas muitos deles
+
+realmente usarão o navegador quando os testes estiverem em execução. E então também podemos executar testes com o modo de interface de usuário interativo. Então eu executo ` npm run test` e depois faço a interface do usuário. E então veremos como isso pode ser feito em modo interativo. Basicamente, trata-se de abrir o Google Chrome para testes.
+
+E então podemos basicamente interagir. Podemos realizar diferentes testes. Então, eu tive que clicar em "Reproduzir" para executar todos os testes neste bloco aqui. E isso lhe dará muito mais informações sobre seus testes. Vamos encerrar por agora.
+
+Você também pode simplesmente executar um arquivo de teste específico . Então, eu posso fazer npx playwright test tests tests/ cart.spec.js. Mas antes de executar isso, vou acessar os testes e alterar um deles.
+
+Então, digamos que esperamos que apareça " item adicionado ao carrinho" em vez de "adicionado ao carrinho". Agora o teste vai falhar porque não vai mostrar que o item foi adicionado ao carrinho. Vai aparecer " teste adicionado ao carrinho". Eu só quero mostrar um exemplo de um teste reprovado também. Portanto, agora vamos executar apenas esse arquivo de teste em vez de todos os arquivos no diretório de teste.
+
+E às vezes o teste pode demorar um pouco para ser concluído. Como podem ver, agora temos um teste reprovado. Nosso primeiro teste falhou. Mas os restantes, que não alterámos, continuam a ser aprovados. Então, às vezes você teria alguns testes reprovados e alguns aprovados. Então, na verdade temos
+
+vários testes com falha porque na primeira vez todos os testes são executados no Chromium. Em seguida, ele executa todos os testes no Firefox. Em seguida, ele executa todos os testes no WebKit. E cada vez que esse teste é executado, ele falha. Ok, agora vai abrir o nosso relatório. Você também pode simplesmente executar o comando `npm run
+
+test colon report` para abrir este arquivo, caso o tenha fechado acidentalmente ou ele não tenha aberto corretamente. E é aqui que podemos ver que alguns testes falharam. Os fracassos estão vindo à tona aqui. Podemos classificar por falhas ou por aprovação nos testes. Mas se eu fizer tudo isso, nossos fracassos voltarão a estar no topo. É aquele teste específico, mas
+
+ele está sendo executado em diferentes tipos de navegadores e falhou todas as vezes. Outra coisa que podemos fazer é executar testes que correspondam a um padrão. Não vou executar o comando desta vez, mas estou apenas mostrando que podemos executar o comando `npx playwright test -g login`. Então, basicamente, ele executará todos os testes que contêm a palavra "login". Agora, voltei ao site que está exibindo o teste.
+
+Vou clicar aqui. E quando clicamos nos testes reprovados, podemos ver muito mais informações. Assim, podemos ver a substring esperada, a string obtida e o registro de chamadas. Podemos ver o código de teste propriamente dito aqui. Agora podemos ver as etapas do teste. E, dentro das etapas do teste,
+
+podemos ver muito mais detalhes, e também podemos fazer uma captura de tela. Desta vez parece estar com problemas para exibir a captura de tela. Também temos esse contexto de erro, que será um arquivo Markdown com todos os erros que você pode usar para depuração adicional. Agora que você já conhece o básico sobre como escrever testes, vamos subir de nível. Nesta seção, abordaremos três técnicas importantes que diferenciam os testadores iniciantes dos experientes.
+
+Há testes de casos extremos e tratamento de erros, simulação de respostas de API e testes de acessibilidade. Essas são as técnicas que você realmente usará em projetos reais. Então, vamos começar. O teste que escrevemos anteriormente abrange o que chamamos de caminho feliz. Tudo funciona como esperado. Mas os usuários reais fazem
+
+coisas inesperadas. Eles enviam formulários vazios, clicam duas vezes em botões e colam caracteres estranhos em caixas de pesquisa. Então, vamos escrever testes que detectem esses cenários. Então, se você está acompanhando o código na descrição, temos este arquivo edge-cases spec.js.
+
+Então, vamos analisar esses casos extremos e testes de casos extremos. Então, deixe-me explicar o que torna esses testes valiosos. Então, primeiro temos esses casos extremos de busca. Portanto, deve lidar com pesquisas vazias de forma adequada. Basicamente, vai clicar no botão sem digitar nada primeiro.
+
+E devemos esperar que os cartões de produto tenham seis unidades. Isso significa que todos os produtos ainda estão lá. Então, isso é algo que as pessoas costumam fazer com frequência. Eles pesquisam sem digitar nada. Portanto, alguns aplicativos podem travar ou apresentar erros.
+
+Mas o nosso site deveria mostrar todos os produtos. Em seguida, temos o teste de caracteres especiais . Portanto, não deve mostrar resultados para pesquisas sem sentido. Então, aqui estamos apenas digitando alguns caracteres aleatórios. Então, a próxima dica é sobre não mostrar nenhum resultado se a pesquisa for sem sentido. Então, se pesquisarmos por alguns
+
+caracteres aleatórios, veremos que não haverá nenhum cartão de produto. Também queremos procurar caracteres especiais para garantir que os tratamos corretamente. Então, estamos procurando uma maneira de adicionar um script, um código JavaScript, a uma caixa de pesquisa. Basicamente, trata-se de uma verificação de segurança básica . Portanto, se alguém digitar HTML ou JavaScript na caixa de pesquisa, o código não deverá ser executado. Este teste detecta ataques de
+
+cross-site scripting (XSS), uma das vulnerabilidades mais comuns na web. Portanto, não deveríamos obter nenhum resultado, e a página ainda deveria estar visível. E temos algumas outras, como lidar com a pesquisa usando apenas espaços em branco, adicionar o produto várias vezes e não permitir a finalização da compra com o carrinho vazio. Então, na verdade, o formulário será preenchido e tentará criar uma página de finalização de compra, mas queremos que esta mensagem de erro sobre o carrinho vazio seja visível. Você ficaria surpreso com a quantidade de sites de comércio eletrônico reais que já tiveram esse bug, em que alguém podia tentar finalizar a compra com o carrinho vazio. Então,
+
+existem alguns outros que você pode ler por conta própria. Portanto, a regra de ouro para testes de casos extremos é pensar no que poderia dar errado e, em seguida, escrever um teste para isso. Agora, vamos falar sobre simular uma resposta de API, o que basicamente significa enviar uma resposta falsa da API. Às vezes, você quer testar como seu aplicativo lida com situações difíceis de reproduzir naturalmente. E se a API estiver fora do ar? E se
+
+retornar dados inesperados? E se um produto estiver fora de estoque? O Playwright nos permite interceptar solicitações de rede e retornar respostas personalizadas. Isso se chama zombaria, e é muito poderoso. Então, vou abrir meu arquivo mocking.spec.js,
+
+e aqui temos alguns testes para nossa aplicação. Então, vamos falar um pouco sobre o que está acontecendo aqui. Portanto, page.route é o método principal. Isso nos permite interceptar qualquer solicitação de rede que corresponda a um padrão de URL e decidir qual resposta enviar . Portanto, neste primeiro teste, vamos
+
+simular a API completamente indisponível, retornando um erro 500. Então, estamos seguindo essa rota e retornando o status 500 e esse corpo de erro interno do servidor. E então, se eu rolar a página para baixo, poderemos ver o restante; a grade de produtos deverá estar vazia. Portanto, não deve haver nenhum cartão de produto. Este teste verifica se o aplicativo lida com falhas de forma adequada, em vez de exibir uma página em branco ou travar. Em seguida,
+
+temos um teste que deve verificar se o sistema lida adequadamente com respostas lentas da API. Portanto, podemos ver que vamos interceptar essa rota e, em seguida, definir um tempo limite. Então, basicamente, vai levar 3 segundos antes de continuar. Isso vai adicionar um atraso de 3 segundos. Isso é ótimo para testar estados de carregamento. Seu aplicativo exibe um indicador de carregamento? O
+
+aplicativo permanece interativo durante a espera? E, eventualmente, vamos testar se ainda é utilizável durante o carregamento e se os produtos devem aparecer. Então, eventualmente, queremos mostrar todos os produtos. E depois temos um que vai testar a falta de estoque. Basicamente, isso nos permite controlar exatamente quais dados a API retorna. Nesse caso, estamos
+
+retornando esses dados e podemos ver que o estoque para os fones de ouvido sem fio está zerado . Portanto, não precisamos realmente modificar o banco de dados. Nós apenas zombamos da resposta. Isso facilita muito o teste de cenários específicos . E então podemos simplesmente mostrar que existem dois produtos e que haverá um indicador de produto fora de estoque. E
+
+a última coisa que vou abordar agora é a falha ao adicionar itens ao carrinho . Este teste apenas intercepta a requisição POST. Assim, as requisições GET serão processadas normalmente, mas a requisição POST será simulada. Portanto, essa simulação seletiva é poderosa para testar pontos de falha específicos e podemos ver o que acontece quando a utilizamos. Então, quando você deve zombar? Bem, isso acontece ao testar estados de rede
+
+difíceis de reproduzir quando a API real é lenta, instável ou cobra por solicitação, quando você precisa de controle preciso sobre os dados e ao testar integrações de terceiros que você não controla. E quando você não deve usar mocks é quando precisa verificar se a API real está funcionando. E você deve usar testes de integração para isso. Além disso, zombar tornaria o teste sem sentido. Agora vamos falar sobre testes de acessibilidade. Existem muitas pessoas no
+
+mundo que vivem com algum tipo de deficiência. Se o seu site não for acessível, você estará excluindo um grande número de usuários em potencial. Em muitos países, a acessibilidade é, na verdade, lei. A boa notícia é que o Playwright facilita bastante os testes básicos de acessibilidade. Os problemas de acessibilidade mais comuns são: ausência total de texto em imagens, baixo contraste de cores, falta de rótulos em formulários, navegação por teclado que não funciona e leitores de tela que não conseguem entender a estrutura da página.
+
+Então, vamos abrir nosso arquivo spec.js de acessibilidade e falar sobre alguns testes de acessibilidade. Portanto, se analisarmos este caso, as imagens alt devem conter texto alternativo ou descrição alternativa. Esta ferramenta verifica todas as imagens da página. Os leitores de tela dependem do texto alternativo para descrever as imagens para usuários cegos. Se uma imagem
+
+não tiver texto alternativo, um leitor de tela simplesmente dirá " imagem", o que é inútil. Então, isso vai percorrer todos eles e garantir que todos tenham o texto alternativo. A próxima exigência é que todos os campos de formulário tenham rótulos. O teste de rótulos de formulário verifica se cada entrada possui uma forma de ser identificada pela tecnologia assistiva . Sem rótulos, um usuário cego se depara com uma caixa de texto sem contexto. Eles não sabem se é referente ao
+
+e-mail, à senha ou ao termo de pesquisa deles. Portanto, aqui vamos assumir que todos eles têm um rótulo. Em seguida, a página deve ter uma hierarquia de títulos adequada. Basicamente, isso verifica se seus títulos fazem sentido lógico. Usuários de leitores de tela frequentemente navegam por meio de títulos, às vezes pulando de H1 para H2 e para H3. Então, se você pular de H1 para H3,
+
+pode ficar confuso, como um livro que tem o capítulo um e depois o capítulo três, mas não tem o capítulo dois. Então, isso vai garantir que todos os títulos não pulem níveis. E por último, vamos verificar se os elementos interativos são acessíveis pelo teclado. O teste de navegação por teclado verifica se os usuários que não conseguem usar um mouse ainda podem navegar. Muitas pessoas com deficiência motora dependem da navegação por teclado. Se seus botões e links
+
+não forem acessíveis pressionando a tecla Tab, eles serão basicamente invisíveis. Ok, com o terminal aberto, estou executando o comando para rodar esses testes. E podemos ver que a maioria deles está sendo aprovada, mas alguns estão sendo reprovados. Isso é realmente uma coisa boa. Significa que encontramos problemas reais de acessibilidade que precisam ser corrigidos. Portanto, esse é o poder dos
+
+testes de acessibilidade. Ele detecta problemas que a inspeção visual não identifica. Para testes de acessibilidade mais abrangentes, você pode usar ferramentas como o Axe Core com o Playwright. Ele detecta automaticamente violações das WCAG. Você pode usar o Lighthouse CI, que é a ferramenta de auditoria de acessibilidade do Google, ou o Pally, que é uma ferramenta de teste de acessibilidade via linha de comando .
+
+Aqui está um exemplo rápido de como usar o Axe Core com o Playwright. Este único teste verifica automaticamente dezenas de problemas de acessibilidade. Então, só para recapitular rapidamente, para casos extremos, você precisa testar entradas inesperadas, vazias, caracteres especiais, interações rápidas e estados de erro. É aqui que os bugs do mundo real se escondem. Além disso, a zombaria é importante.
+
+Controle seu ambiente de teste interceptando chamadas de API, estados de falha de teste , redes lentas e dados de casos extremos sem modificar seu back-end. Acessibilidade. Faça um teste para garantir que todos consigam usar seu aplicativo. Verifique o texto alternativo, os rótulos, a estrutura do cabeçalho e a navegação por teclado. Essas três técnicas tornarão seus conjuntos de testes muito mais eficazes. Ok, agora vamos falar sobre os
+
+desafios dos testes tradicionais. Agora que você viu como escrever testes com o Playwright, vou ser sincero sobre alguns dos desafios. Em primeiro lugar, existe uma curva de aprendizagem significativa. Para escrever testes eficazes, você precisa conhecer uma linguagem de programação, como JavaScript, Python, etc., a API da estrutura de testes , seletores CSS ou outras estratégias de localização, async/await e promises, além das melhores práticas para testes confiáveis.
+
+Aprender isso leva tempo, e nem todos em uma equipe podem ter essas habilidades. Além disso, há o custo da manutenção. Basicamente, os testes precisam de manutenção. Quando a interface do usuário muda, os seletores podem parar de funcionar, os fluxos de teste podem precisar ser atualizados e as asserções podem se tornar inválidas. Uma única reformulação da interface do usuário pode quebrar, tipo, toneladas de testes, dezenas de testes.
+
+Também temos o problema dos testes instáveis. Assim, os testes de ponta a ponta costumam ser instáveis, o que significa que às vezes são aprovados e às vezes falham sem nenhuma alteração no código. Isso pode acontecer devido a fatores como problemas de sincronização, instabilidade da rede, inconsistências do navegador e conteúdo dinâmico. Testes instáveis ​​podem minar a confiança no seu conjunto de testes. Além disso, elaborar provas leva tempo. Para o teste de finalização de compra que
+
+vimos, eu tive que identificar todos os campos do formulário, descobrir os seletores corretos, lidar com o envio do formulário, escrever asserções de sucesso e testar casos de erro. Isso representava cerca de 50 linhas de código para um único fluxo. Multiplique isso por cada funcionalidade do seu aplicativo. Então, basicamente, quero falar sobre uma maneira diferente de escrever testes, que é o teste com inteligência artificial. A inteligência artificial está transformando muitos aspectos do desenvolvimento de software, e os testes não são exceção. Em resumo, os testes com inteligência artificial
+
+utilizam ferramentas como aprendizado de máquina e processamento de linguagem natural para gerar testes a partir de descrições em inglês simples , identificar automaticamente elementos na página, manter os testes atualizados quando a interface do usuário muda e detectar possíveis bugs e problemas. Então, em vez de escrever coisas como page.locator uh uh e depois inserir o ID, first name.fill e então o que você está tentando preencher, você poderia simplesmente dizer: "Digite John no campo de nome." Portanto, os testes de IA têm algumas vantagens.
+
+Acessibilidade. Assim, membros da equipe que não sabem programar ainda podem escrever testes, como analistas de controle de qualidade, gerentes de produto, enfim, quaisquer partes interessadas. Temos a velocidade deles. Descrever um teste em inglês é mais rápido do que codificá-lo manualmente. Manutenção. A IA
+
+pode se adaptar automaticamente às mudanças na interface do usuário, reduzindo a carga de manutenção. E então, a cobertura. Mais pessoas criando testes significa melhor cobertura. Então, existem algumas maneiras de escrever testes com IA, incluindo simplesmente acessar um serviço como o ChatGPT e solicitar testes. Mas, neste curso, vamos usar o Kain AI da Testim.
+
+Eles são um agente de teste nativo de primeira geração que permite criar e executar testes usando linguagem natural. E, como mencionei anteriormente, a Kain AI concedeu uma bolsa para tornar este curso possível. E vou mostrar a vocês, na prática, como isso funciona. Então, Kain AI... bem,
+
+há algumas coisas que o tornam interessante. Capaz de redigir testes em inglês simples. É compatível com aplicações web e móveis. Ele exporta para várias linguagens de programação. Ele corrige automaticamente os testes quando a interface do usuário é alterada. E se integra com pipelines de CI/CD
+
+. Agora, algo para se ter em mente. As ferramentas de teste de IA são assistentes poderosas, mas não substituem o julgamento humano. Você ainda precisará decidir o que testar, revisar os testes gerados por IA para verificar sua precisão, lidar com casos extremos complexos e entender o que os testes realmente fazem. Portanto, pense nas ferramentas de teste de IA como um multiplicador de produtividade, não como um substituto para o conhecimento em testes. Então,
+
+deixe-me mostrar como a IA Kain funciona na prática. Então, eu tenho meu pedido de depoimento. E vamos usar a Kain AI para fazer alguns testes. Normalmente, a Cain AI trabalha em sites que já estão em produção. Então, vamos precisar de um URL ativo. Neste momento, este está sendo
+
+executado apenas em um host local. Então, preciso de uma maneira de tornar meu site local acessível pela internet para que eu possa testá-lo usando o Cain AI. Então, vou usar o Cloudflared para criar um túnel do Cloudflare. Agora, se você já tem seu site hospedado em algum lugar, o problema está resolvido. Posso executar o comando `brew install Cloudflared`.
+
+E ainda temos o nosso servidor em execução na minha outra aba do terminal. E então vamos simplesmente usar o túnel Cloudflare - - URL e depois localhost:3000. Agora, estamos torcendo para que tudo esteja configurado corretamente. Certo, e se eu diminuir um pouco o zoom, ficará mais fácil de ler, mas diz que seu túnel rápido foi criado e depois me dá um URL. Então, vamos testar isso. Ok, está funcionando. Temos um
+
+URL de acesso público para o nosso site, que está sendo executado localmente. Ok, agora estou em testmew.ai.com. Você pode começar gratuitamente ou fazer login.
+
+E há vários tipos diferentes de testes que você pode fazer aqui. Mas vamos falar sobre a Cain AI. Vou falar especificamente com o agente. E é aqui que podemos simplesmente usar a linguagem natural para criar testes. E podemos testar em um navegador de computador, aplicativo móvel ou navegador móvel.
+
+Então, vou continuar usando o navegador do computador. Ok, acabei de inserir tudo isso. Então, primeiro acesse este site, depois certifique-se de que o título contenha " TechMark", verifique se o texto "Bem-vindo ao TechMark" está visível, em seguida, role para baixo e certifique-se de que pelo menos quatro cartões de produto estejam visíveis. E então eu simplesmente clico neste botão para iniciar a sessão. E nós íamos ver que tínhamos o navegador do lado direito e o que estava acontecendo do lado esquerdo. Então, está
+
+nos fornecendo nosso plano de testes. Podemos fazer algumas alterações se quisermos, mas vamos aprovar este plano de testes. E então veremos o que acontece . Então, você pode ver que está abrindo o site e que este é um navegador de exemplo. Ok, agora terminou de criar todos os testes e podemos ver o sistema ocioso.
+
+Basicamente, o programa acessou o site, verificou se a página de boas-vindas do TechMark estava visível, rolou a página para baixo e confirmou que pelo menos quatro cartões de produto estavam visíveis. Então, vou salvar este teste. Ok, agora podemos ver todas as diferentes etapas. Então, acesse o URL, verifique se o título contém "TechMark", confirme se o título é verdadeiro, depois verifique se o texto na página também contém "TechMark", confirme se é verdadeiro, role para baixo, obtenha uma contagem e, em seguida, confirme se essa contagem é maior ou igual a quatro. Então, agora podemos analisar o código. Isso aqui, de
+
+fato, escreve código de verdade. Então, podemos simplesmente ir lá e visualizar o código. Agora, trata-se de código Python, não de código JavaScript como estávamos falando antes, mas muitos dos mesmos princípios se aplicam a este código Python e ao uso do Selenium. Agora, você nunca precisará realmente fazer nada com o código, mas saiba que ele é um código, então é importante garantir que o teste possa ser executado exatamente da mesma maneira todas as vezes. E podemos sempre executar o teste novamente. Se acessarmos o
+
+resumo do teste, agora podemos executá- lo. Portanto, se fizermos alterações no site, basta executar o teste novamente. Assim, podemos garantir que todos os testes sejam aprovados. E irá criar automaticamente uma descrição dos testes. E então podemos definir algumas pré-condições.
+
+Mas, podemos adicionar configurações e tags a tudo isso. E podemos abordar as questões, as questões sugeridas. E esse é um problema potencial que poderíamos ter. E também podemos ter diferentes versões do teste. Então, temos nosso histórico de versões ali.
+
+Agora, vou adicionar uma tag, que será simplesmente "TechMart". E nós vamos economizar. Agora, temos uma etiqueta associada a isso. Agora, vou tentar criar outro teste que terá mais interação com o usuário. Ok, desta vez vamos acessar o site novamente, clicar no campo de busca, digitar " teclado" na caixa de pesquisa, clicar no botão de busca, garantir que apenas um produto esteja visível após a busca e que o produto seja o teclado mecânico. Então, vou começar
+
+o processo aqui. E então ele me dará um plano de teste, e eu poderei simplesmente aprová-lo. Ou, se eu quisesse mudar primeiro, eu poderia. Agora vou apenas esperar enquanto o processo termina, testa tudo e cria o teste. E você pode ver que ele continua fazendo tudo e testando tudo exatamente como eu descrevi.
+
+Ok, terminou e criou todos os testes. Então, posso simplesmente salvar este teste, e ele me levará à página onde serão mostrados todos os diferentes passos para realizar todas as interações na página. E aqui temos a descrição . Novamente, temos o código. A geração de código ainda está em andamento, então basicamente temos que esperar até que esteja concluída. E então, eventualmente, podemos executar
+
+o teste novamente clicando simplesmente em "Executar teste". Por agora, vou adicionar uma etiqueta a isto e vamos salvar as alterações. E aqui podemos, de fato, classificar nossos testes. Então, tenho todos os meus testes do TechMart na minha pasta do TechMart. E isso tornará mais fácil reunir todos eles . Agora, deixe-me mostrar
+
+outra coisa muito legal na aba de código. Então, ele gera código automaticamente em Python, mas digamos que queremos gerar código em outra linguagem, como o Playwright. Isso é o que estávamos aprendendo no início deste tutorial. Basta clicar em gerar novo código. Bem, esta é uma funcionalidade que está prestes a ser implementada. Ainda não, mas vamos
+
+escolher uma estrutura e então isso estará disponível em breve. Basta clicar em Playwright e selecionar JavaScript para criar o código JavaScript. Portanto, é um código com o qual você já está mais familiarizado para o seu projeto. Isso permite que você revise e personalize o código gerado, integre-o a conjuntos de testes existentes e o execute em seu pipeline CSCD. E já podemos baixar o código.
+
+Já podemos baixar o código atual, o Python. Basta clicar neste botão para baixar o código Python. Uma das funcionalidades mais poderosas do Kaindy é a autorrecuperação. Então, basicamente, imagine que nossos desenvolvedores alterem um ID. Assim como temos essa entrada. E se
+
+alterarmos o ID da entrada para um ID diferente? Bem, em testes tradicionais isso quebraria nossos testes, mas a IA da Kaindy entende a intenção do teste, não apenas o seletor exato. Assim, quando não consegue encontrar o elemento original, procura alternativas que correspondam à finalidade original. Isso realmente reduz a manutenção dos testes. Agora, também podemos usar a IA da Kainos para testes de API. Então, deixe-me mostrar como podemos
+
+adicionar uma API em um teste web. Em primeiro lugar, em vez de digitar nesta caixa aqui, vou clicar no teste do navegador do autor . E vou manter as opções padrão. Essa também é uma forma de testar em dispositivos móveis específicos , mas vou clicar em " teste do autor". E então, tudo será configurado aqui.
+
+OK. Agora, a interação manual está ativada. Agora, podemos usar isso para duas coisas. Podemos usar a interação manual para acessar um site manualmente, testar as funcionalidades manualmente e, em seguida, a IA da Kainos registrará tudo o que fizermos e criará um teste com base nessa interação manual. Mas eu não vou fazer isso. Vou
+
+realizar um teste de API. Então, eu coloquei uma barra para abrir esses comandos especiais que posso executar, e vou adicionar uma API. E agora, vou colar meu URL aqui, que é em {slash} API {slash} produtos. E nós a temos como uma solicitação GET. Basicamente, este é o comando curl.
+
+Agora, também podemos configurar os parâmetros, autorização, cabeçalhos, corpo e configurações. Bem, para esta API, na verdade não precisamos fazer nada disso. Estamos apenas fazendo uma solicitação GET. E então, basta clicar em enviar. E então, para executar a API de fato, vou desativar a interação manual.
+
+E executará a API, que retornou uma resposta 200. Nesse caso, o teste seria bem-sucedido porque a API retornou um código 200. Agora, posso simplesmente salvar o teste, e o programa executará os passos necessários para realizar uma requisição à API. Assim, agora podemos garantir que o teste será aprovado se a solicitação da API for bem-sucedida. Então, é assim que você pode testar APIs com a IA da Kainos.
+
+Dessa forma, posso criar testes de API abrangentes e combiná-los com testes de interface do usuário para obter uma cobertura completa. Ok, vamos finalizar com algumas práticas recomendadas que se aplicam tanto a quem escreve testes manualmente quanto a quem usa ferramentas de IA. Primeiro, você vai querer escrever testes que sejam legíveis. Qualquer pessoa que analise um teste pode entender , primeiro, o que ele está testando, segundo, como ele testa e, terceiro, qual é o resultado esperado. Portanto, bons nomes para os testes ajudam. Por exemplo, deveria exibir um
+
+erro quando a senha for muito curta. Isso é muito melhor do que simplesmente fazer teste 1, 2, 3. Você também precisa manter os testes independentes. Um teste não deve depender do resultado de outro teste. Isso significa que cada teste configura seus próprios dados. Cada teste realiza a limpeza necessária após
+
+sua execução, e os testes podem ser executados em qualquer ordem. Além disso, você deve usar o padrão de objeto de página . Portanto, para conjuntos de testes maiores, considere usar o padrão de objeto de página. Basicamente, em vez de interagir diretamente com os elementos, você cria objetos que representam páginas. Então, você pode ver esse exemplo na tela agora mesmo.
+
+Isso torna os testes mais limpos e a manutenção mais fácil. Você também deseja integrar com CI/CD. Os testes são mais valiosos quando executados automaticamente. Você pode integrar seus testes ao seu pipeline de CI/CD, para que eles sejam executados a cada alteração de código. A API da Kainos AI torna isso bastante fácil .
+
+Você pode acionar execuções de teste a partir do GitHub Actions, Jenkins ou qualquer ferramenta de CI. Por fim, lembre-se de que os testes automatizados não substituem todos os testes. Você ainda precisa de testes exploratórios para encontrar problemas indesejados, testes de usabilidade para avaliar a experiência do usuário e testes de segurança realizados por especialistas. Os testes automatizados detectam regressões, os humanos encontram novos problemas. Então, aqui está um guia prático. Assim, você pode usar os
+
+testes tradicionais do Playwright quando precisar de controle preciso sobre a lógica de teste, estiver testando casos extremos complexos ou quiser testar sua base de código. No entanto, a IA da Keenia pode ser útil quando você deseja prototipar testes rapidamente, quando pessoas sem conhecimento de desenvolvimento precisam criar testes, quando você quer reduzir os custos de manutenção e quando precisa de testes em vários navegadores em grande escala. E muitas equipes podem usar ambas as abordagens em conjunto. Ok, vamos recapitular o que aprendemos neste curso. Começamos por entender por que os testes são importantes. Erros
+
+são caros, e os testes são a sua garantia contra erros dispendiosos. Aprendemos sobre a pirâmide de testes: testes unitários na base, testes de integração no meio e testes de ponta a ponta no topo. Cada tipo tem uma finalidade, e um conjunto de testes eficaz inclui os três. Tivemos contato direto com o Playwright, escrevendo testes para nossa candidatura ao TechMark. Você aprendeu a navegar pelas páginas, interagir com elementos e verificar resultados usando asserções. E exploramos os
+
+testes com inteligência artificial usando a Keenia AI. Você viu como a linguagem natural pode ser convertida em testes funcionais e como recursos como a autorrecuperação reduzem a carga de manutenção. Aqui estão os principais pontos que tirei. Comece a testar agora. Não espere até que sua inscrição esteja completa. Quanto mais cedo você
+
+começar a testar, mais valor você obterá. Concentre-se no que importa. Você não precisa testar tudo. Priorize as funcionalidades em que os erros seriam mais custosos. Use a ferramenta certa para cada tarefa.
+
+Codificação manual para precisão, ferramenta de IA para velocidade e acessibilidade. Eles se complementam . Integre seus testes ao seu fluxo de trabalho. Testes que não são executados regularmente não agregam valor. Automatize a execução dos seus testes .
+
+Obrigado por assistir a este curso. Bons testes.

@@ -1,0 +1,401 @@
+---
+video_title: "Build Your Own Video Sharing App – Loom Clone with Next.js and Mux JavaScript Tutorial"
+video_id: IBTx5aGj-6U
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=IBTx5aGj-6U
+video_date: 2026-03-02T11:00:33+00:00
+video_description: |
+  Learn how to build a video sharing Loom clone using Next.js and Mux.
+  
+  Code: https://github.com/beaucarnes/screen-recorder
+  
+  ✏️ Course created by @beau 
+  
+  Check out Mux: https://www.mux.com/
+  
+  Mux provided a grant to make this course possible.
+  
+  ⭐️ Contents ⭐️
+  – 0:00:00 Course Introduction & Building a Loom Clone
+  – 0:00:13 Why Video is Hard: Encoding, Codecs, and Large Files
+  – 0:00:52 Understanding HLS & Adaptive Bitrate Streaming (ABR)
+  – 0:01:43 How Mux Solves Video Infrastructure
+  – 0:02:06 Project Roadmap: Features & AI Integration
+  – 0:02:45 Architecture: Server Relay vs. Direct Upload
+  – 0:03:25 The Direct Upload Flow Explained
+  – 0:04:06 Initializing the Next.js 15 Project
+  – 0:04:51 Installing Dependencies: Mux SDK & Lucide React
+  – 0:05:40 Setting Up Mux API Tokens & Permissions
+  – 0:06:55 Creating Server Actions for Mux Integration
+  – 0:08:23 Configuring Upload Settings & Asset Quality Tiers
+  – 0:10:44 Implementing Video Status Polling
+  – 0:12:17 Fetching & Parsing VTT Transcripts
+  – 0:16:10 Building the Screen Recorder Component
+  – 0:18:32 Capturing Screen & Mic via Browser APIs
+  – 0:20:37 Merging Media Streams for Combined Audio/Video
+  – 0:21:42 Handling Media Recording Chunks & Blobs
+  – 0:24:47 Implementing the Secure Direct Upload
+  – 0:30:29 Integrating the Mux Player React Component
+  – 0:32:15 Adding Share Links & Clipboard Functionality
+  – 0:34:20 Designing the Video Preview Page
+  – 0:37:25 Building the Video Thumbnail & Hover GIF Preview
+  – 0:41:07 Creating the Dashboard & Dynamic Rendering
+  – 0:45:12 Adding Automatic Video Watermarking
+  – 0:47:04 AI-Powered Summaries & Tags with Mux AI
+  – 0:54:43 Securing Content with Signed Playback URLs
+  – 1:00:49 Simulating User Authentication & Access Controls
+  – 1:03:17 Conclusion & Final Production Tips
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+In this course, we're going to build a fully functional screen recording platform, basically our own clone of Loom. We'll use Next.js 15 and Mux. I'm Beau Carnes and I created this course. Before we dive into code, let's talk about why video is traditionally hard and also what Mux actually solves for us. When you
+
+record a video on your computer, you get a RAW file, maybe a webm or MP4. That file might be 500 megabytes or a five minute recording. If you just upload that to a server and try to play it back, you'll run into problems. First, there's encoding. Raw video files use different codecs, and not every browser supports every codec. Second, there's
+
+streaming format. You can't just point a video tagged to a 500 megabyte file and expect smooth playback. The user would have to download the entire file before watching. Instead, professional video platforms use something called HLS, HTTP live streaming. HLS works by chopping your video into tiny chunks, usually 2 to 10 seconds each, and the player downloads chunks as needed, so playback starts almost instantly. There's also a
+
+playlist file with an M3U8 extension that tells the player which chunks to fetch next. Third, there's adaptive bit rate streaming or ABR. So instead of encoding one a file once, you encode it multiple at multiple quality levels, maybe 360p, 720p, 1080p. The player monitors the user's internet speed and automatically switches between quality levels. The user never has to manually change settings. Fourth, there's storage
+
+and CDN distribution. Your video chunks need to be stored somewhere and delivered fast to users worldwide. This is what Mux handles for us. We upload a raw video file and Mux automatically transcodes it into multiple quality levels, generates HLS streams with proper chunking, stores everything on their global CDN, provides a simple playback URL, and thanks to Mux for providing a grant to make this course possible. So, here's exactly what we'll create. One, a custom screen recorder
+
+that captures your screen and microphone directly from the browser. Then a direct upload system so videos go straight to Mux's cloud. No server bottleneck. AI powered automatic transcription using OpenAI's whisper model. And AI generated summaries and tags using the Mux AI library. Automatic watermarking to brand
+
+every video. A sharable video page with Mux's custom player. By the end, you'll have a production-ready foundation you could turn into a real product. So let's get started. Before we write any code, let's understand how our app will work.
+
+This architecture pattern is important because it's how most professional video applications are built. When a user records a video, we need to upload it to Mux. We have two options. Option one is server relay. But don't do this. It goes
+
+from the user to our server to Mux. The user sends the video to our Next.js server. Then our server forwards it to Mux. This is problematic because video files are huge, hundreds of megabytes.
+
+Uh, our server becomes a bottleneck. We pay for bandwidth twice and server memory usage spikes during uploads. Option two is direct upload. That's what we'll use. So, it goes just from user directly to Mux with a signed URL from our server. Here's the flow. The user
+
+clicks upload. Our server asks Mux for a temporary signed upload URL. Our server sends that URL back to the browser. The browser uploads directly to Mux's servers. Our server never touches the video file. This is more secure, too.
+
+The signed URL expires after a short time, can only be used once, and includes our asset settings, which is like the quality, the transcription, etc. The user's browser uploads directly to Mux's CDN, which is globally distributed and optimized for large file uploads. In our app, we'll be using both server and client components. Next.js 15.
+
+Next.js 15 uses server components, the default for server side work like accessing databases and secret API keys and client components marked with use client for browser side interactivity like recording and playback. This separation keeps your API key secure on the server while letting React Hooks run in the browser. So let's create a new Next.js project in the terminal. Just run
+
+this command and then we'll just accept basically all the defaults. Now we'll just wait for the project to be created and then we'll just go into the directory. We'll just CD into the directory. And now we can install our dependencies. So we'll use Mux Node which is the official Mux SDK for Node.js. uh
+
+Mux Player react which is Mux React's video player and then Mux AI which is for generating AI summaries and tags and then just lucide-react which is an icon library then we just have to wait for all these to be installed and notice we're using Mux Player instead of a generic player like Video.js. Since we're building on Mux's infrastructure, their player is purpose-built for this. It includes built-in analytics, automatic quality selection, and features like thumbnail previews on hover. Okay. Now, we need to set up Mux.
+
+So, go to mux.com, and you can either log in or sign up for a free account. So, once you you're logged in, you'll see the dashboard, or maybe you'll be on the assets tab. and the assets. This is where all the videos will appear on upload. You may not have
+
+any. I've been doing some tests, so I have some videos uploaded here. Now, we'll just go to settings on the side here. And then I can go over to access tokens and then we can create a new token. Now, you can basically use call it anything. I'm just going to call it
+
+recorder. And this is important. We don't want to just give it any permission here. We're just going to give it Mux Video. So uh it's uh basically the best security practice to only give it the permissions that are required which we are going to do read and write. So we can leave the other
+
+permissions unchecked and because our API is only going to need the Mux Video permissions. Okay. And then I'll save this. And then we can see the token ID and the secret key. And you can either copy them or you can download it as an ENV file which is pretty convenient. And
+
+we're going to be needing those. So I've opened the directory in VS Code. You can use any code editor if you're following along. And I'm going to create a new file. We're just going to start with our ENV file. So env.local.
+
+Make sure it's spelled correctly. Now we can just put in our environment variables that we got from before which will have a token a ID and a MUX_TOKEN_ID and a MUX_TOKEN_SECRET. So let's start with the back end our server actions. We'll create these first so they exist when our front end needs to import them. So I will create a file which will be in a new well actually not in the root directory in the app directory I'll create a file and this will be called actions.ts.
+
+Okay, I've got my action.ts file. We're going to use the use server directive which tells Next.js this file contains server actions. These are functions that run on the server but can be called from client components like regular functions. Next.js handles the network
+
+request behind the scenes. Then we're going to just import Mux which we're using from Mux Node. We're then going to just in uh initialize the Mux client with a new Mux and then we just pass in the token ID and the token secret from our environment variable file. This creates our connection to Mux's API using the credentials from the environment variables. And these values are only accessible on the server. They're never
+
+sent to the browser. Now let's write our first function. Uh the Basically, the upload URL function. This is the one that requests a direct upload URL from Mux. So, we're just going to call it create upload URL. So, we're going to
+
+have a variable called upload and we're going to just get it from mux.video.uploads.create. And we're going to pass it some settings. So, this is how you set up the
+
+settings uh for this. And we're going to start with the Playback policy public. Now, this means anyone with the playback URL can watch the video for Loom clone. This is what we want, sharable links. You could also use signed for private videos that require authentication. Then
+
+we're also going to set the video quality to plus. Now, Mux has three quality tiers: basic, which is the lower cost and fewer renditions. Plus, more quality levels, enables MP4 downloads and AI features, and premium, which is the maximum quality with 4K support. We're using Plus because it enables MP4 downloads. And importantly, it unlocks Mux's AI capabilities. If you try to use
+
+their Mux AI library, which we're going to use with a basic tier asset, it won't work. The plus tier is the sweet spot for most applications. Then we are going to set the MP4 support to standard. This is going to tell Mux to also generate a downloadable MP4 file, not just the HLS streams. Next, we have the input. This
+
+is where we configure what happens to the video after upload. We're requesting automatic transcription with generated subtitles. Mux uses OpenAI's whisper model under the hood. And in this case, we're creating English subtitles. Finally, we have our CORS origin asterisk. And this is critical. It tells
+
+Mux's servers to accept uploads from web browsers. Now, without this, the browser security rules would block the upload. in production uh you'd want to restrict this to your actual domain uh with like your domain.com instead of allowing any origin. Next, we'll add an action to check upload status. So, we're going to
+
+create a new function the well we're going to get for first we have to get the asset ID from the upload and basically when the browser finishes uploading the video isn't immediately ready. Mux needs time to process it. Uh and all it's going to transcode into multiple qualities, generate the hls streams, create thumbnails, run transcription. This can take maybe 10 to 30 seconds depending on the video length. So we need a function to check uh check the status. So we are going to
+
+get this um retrieve the upload. Basically we're going to pass in the upload ID to this uploads. And then upload is basically the temporary container where the raw file goes. And asset is the final process video with all of its uh rendition. So we're going to check if there is an asset ID. Then we are going to get
+
+access to the asset with the mux. We pass in the asset ID and then we're just going to return what we need. We need the playback ID and the asset status. Basically, when processing completes, the upload gains an asset ID and then we fetch the asset to get the playback ID, which is the magic string we'll use to build streaming URLs and then we will return the status of waiting. Uh, so it's waiting until it gets that information. Now, for a
+
+dashboard, we'll need to fetch all videos. So I'm going to create another function which is just going to list all the videos. Now uh if it's we have in a try catch block and basically we're going to get a list of all the assets which comes just from our Mux account. So it's going to list all the videos that have been saved to our Mux account and we're going to just return that data. So, Mux returns assets newest first by default, which is perfect for a recent recordings dashboard, and we're obviously going to also handle errors.
+
+Finally, we need a comprehensive function that fetches video status and parses the transcript. First, let's create a helper function to format the the time codes basically from the the subtitle file. So, format VTT time. We're just going to split this. And now we are going to create our get asset status function. So we're going to pass
+
+in the playback ID. So first we're going to get the list of all the assets with the mux.video.assets.list up to 100 assets. We can set the limit.
+
+And then we get the specific asset we're looking for by doing our assets.data.find. And we do just pass in our playback ID. So basically we're first going to find the asset by the playback ID. Then we
+
+are going if we don't find the asset then we can return errored. And then we have to prepare to get our transcript by um setting up this transcript variable and then also uh setting our transcript status to be preparing. Then our next step which is to check if the asset the the video is ready. We're going to see if the status equals ready and then also to see if we have tracks. So we're basically going to look for the autogenerated subtitle tracks asset.find
+
+and we're going to see where the subtitle tracks are. So if there is a subtitle track and it's ready then we can set the transcript status ready. Now we are going to fetch and parse the VTT or the web video text track file. So this is a specific URL from stream.mux.com.
+
+We're going to basically put in the playback ID and the text track ID and then we can get the subtitle file. So we we got that whole that's the URL to get the subtitle file and then we can basically fetch the response from that URL and then after we get the response we just need to get the text. So we're going to wait for response.text and then we're going to format it. So, first we're going to split the text uh whenever there's uh two new lines and then we have this whole function to uh reduce the all the the text to the format that we'll need for our application. We just want to make sure
+
+we return a clean JSON array that our React components can render. And we'll even use our helper function, our format VTT time function. And once we got it formatted correctly, we just return the status, the transcript status, and the transcript. And then we just handle the errors. Now, in a production app with many videos, you'd store the asset ID in your own database like PostgreSQL or MongoDB rather than searching through the list. But for this tutorial, quering
+
+Mux directly keeps things simple and most importantly, serverless. So now let's build the heart of our app, the screen recorder. This component uses browser APIs to capture the screen and microphone. Okay, now we're going to create the screen recorder. So I'm going to save this file and I'm going to create a new file. This is basically the
+
+heart of our app, the screen recorder. And we're going to create a component that uses the browser APIs to capture the screen and microphone. So I'm going to create a new file and a direct new directory. The directory is called going to be called components. And I'll just call this screen recorder.tsx.
+
+So just like before, we're going to mark this use client because it needs to use React hooks uh access browser APIs, respond to user clicks, and then we'll just put in our imports. And let me clarify something important. Uh the screen and microphone capture we're about to use is standard browser functionality. The media recorder API and the get user media API are basically right within the browser. They're they're built into all modern browsers.
+
+Mux doesn't provide the recording. It just handles what happens after. There's upload, processing, streaming, and playback. So after we got our imports including our actions that we created, let's set up our state. So we're going to create the screen recorder function and then our variables to store the state. Basically, we're going to use
+
+state for UI state. Is it recording? Is it uploading? Do we have all the finished files? The finished file is just the media blob. Now we'll use use
+
+ref for things we need to access but shouldn't trigger rerenders. The media recorder ref uh which is the media recorder instance. Then we have the chunks ref which is an array collecting video chunks as they're recorded. Then the screen stream ref and also the mic stream ref which are the media streams we need to stop later. And then our final state is the live video ref which is a reference to the preview video element. And then we also set up our
+
+router with uh the use router function. Okay. Now the recording logic the let's create our core recording function which was called start recording async function and we'll just put it in a try catch block. So first we are going to capture the screen and we'll use that by creating a variable stream screen and we'll await navigator media devices.get display media. Again this is right from
+
+the browser. This is going to prompt the user to pick a screen window or tab to share. We'll do um video equals true, but audio equals false because we don't want system audio, the computer sounds. Uh we only want the user's voice. So then for our step two, we're going to capture the microphone. So we're going
+
+to uh have a variable called micstream. And this is where we use just the built-in browser navigator. Devices.get user media. And this is going to request microphone access. We And so we were
+
+going to set some preferences. Echo cancellation is going to be true. And then noise suppression, we're also going to set that to true for cleaner audio. Then we can set the sample rate of the audio to just 44100. Now, here's a uh we're also going to set um video um to to false because here this just going to be the audio stream.
+
+And so browsers treat screen and microphone as completely separate streams. If we only captured the screen, we get silent video. And so we basically need to combine them. So our step three is going to be to store references for cleanup because we're going to need to basically um stop these u and clean up these. So, we're going to have our uh screen stream ref.current, which is the
+
+screen stream, and then the micstream ref.current, which is going to be the mic stream. And we need to merge the streams. So, basically we create a new media stream uh and then we are going to combine the video track from the screen with the audio track from the microphone. So basically the screen stream.get video tracks and the
+
+micstream.get audio tracks. And then next we are going to uh this step five we're going to show a live preview. So basically we're going to pipe the current stream to a video element so users can see what they're recording. So this is helpful so the users can see that it's actually just recording correctly. The next we are going to set
+
+up the recorder. Now the media recorder is the browser API that actually records the stream. So, we're going to pass in the combined stream, and we're using the web m format with the with the codec we're going to set to VP9, which has excellent quality and broad broad browser support. Okay. Now, we just have to make sure to set our media recorder ref to the media recorder. And we're
+
+going to set up our chunks ref to an empty array. And now we are going to collect chunks as they're recorded. So as the recording happens, the browser gives us small chunks of data every few millisecond. We need to collect them in our array. So basically we're doing chunksref.current.push.
+
+So we're pushing the data to our array. And then we have our next step which is to handle the completion of the recording. So when the recording stops, we're going to do a few things. First, we're going to create a blob. Basically, that's going to be we're going to be merging all the chunks into a single blob, which is our complete video file. So then we
+
+just have to set the media blob to this blob, the complete video file. And next we're going to um we're going to clear the preview. So if there is a live video reference, we can set the live reference.current. SRC object to null. This will clear the preview.
+
+And then uh a very important step which is to stop all tracks. Now this is important. If we skip this step, the browser keeps showing the red recording indicator even after the user stops. So we basically have to stop the the the a screen capture and we also have to stop the mic capture. So after um we set up how this also is to stop, we have to do the the real thing we're trying to do, which is to actually start recording. So
+
+everything's all set up. So we can just call media recorder.start. And then we can set set is recording to true. So we know that the recording is currently happening. And then we also want to
+
+handle the native stop sharing button. So basically when that's um when that happens we're going to stop recording and then we're just going to handle any errors. Then we're just going to have a stop recording uh function here. Basically we're going to check if there's a current there's a media recorder ref and if it currently is recording then we just call the media recorder ref.current.stop
+
+and we set recording to false. So that's how we just stop the recording. We also want to handle the upload. So we're going to create a handle upload function. We have to make sure there is something to upload. So if there's no
+
+media blob, we can return. And while we're uploading, we need to set uploading to true. Then we'll have a try catch block. First of all, we need a signed upload URL from our server. So basically this is the pattern. Our
+
+server is going to ask Mux for a signed URL because the server has our API keys. So after we create upload URL, we we are going to next upload directly to Mux. But importantly, this is not through the server. So the video never touches our server. So we're going to do a fetch.
+
+We're going to pass in the URL. And then we just do set the method to put and then the body of the method is just going to be our video the media blob. Then we're going to start pulling. Basically uh while this process is happening we want to keep pulling and saying is it ready yet? Is it ready?
+
+Have have we finished this process yet? So while true we're going to get the we're going to call this function which is get asset ID from upload and we pass in the asset ID and that allows us to get our playback ID result.playback ID and once we get the playback ID we can uh redirect to the video page. So router.push and we just pass in the video page which uh was just video and then it's going to be the playback ID. That's the the URL
+
+and then uh this is we have to create the promise which is this is just going to be the timeout. So it will be pulling this every second every 1,00 milliseconds and then we just handle the errors and if there is an error obviously we're going to set uploading to be false. Now we're going to re render the component. Now it's going to put in this component all at once. Let me zoom out a little bit so you can see it because we have our uh CSS right within here. So, we're just going to
+
+check if it's recording. It's either going to say recording or you can there's going to be a button to um create a new recording. And then we have our preview area. So, in our preview area, we're either going to have a live preview, which is going we're going to have this video here with um the live video reference that we've created. And depending on whether it's recording, it's either going to be hidden or it's going to exist. And we also have uh when
+
+our recording is ready. So if it's not recording, but there is the media blob, the file, we can say recording ready. And we're going to have the video there. And we also have an idle state. So if it's not recording and there's no file, then we're going to put in this monitor and it's going to say preview area. We
+
+also have our recording indicator to indicate whether the recording is happening. We have our controls. There's going to be a few buttons here. We have our start recording button uh which is going to call our start recording function. Our stop recording button which is going to call our stop recording function. And then we are
+
+going to see if there is a file then there'll be a button upload and share which is going to basically upload the file to Mux. So one thing to look at is when we go to where the um where is it the the live preview you can see we have some settings here like auto plays in line muted. Now, muted is very important. Since we're capturing the microphone, if we play the audio through speakers, the microphone would pick it up again, causing horrible feedback screech. So, that's why we have this set to muted.
+
+Okay, we're getting close to being able to test this out, but let's create the homepage. So, I'm going to go into our files here, app, and then we're going to go to the page.tsx. We already have it exists, but we're going to make some changes. Okay, I just already put in all the updated code here because it's pretty straightforward.
+
+It's just basic uh Next.js and components. So, there's going to be a section for um navigating to the dashboard with the recordings. There's going to be the header and then just the screen recorder component that we've already created. So, now we have everything to test this out.
+
+So, let me open up a terminal here and I'll do just do npm run dev. Okay, I got this running locally so we can test this out. We got the my recordings button. We got the title here. So, to start recording, I just hit the start recording button and then I can choose I'm going to choose my first screen because I'm recording this on two screens here. And since this is the
+
+first time I'm doing this, I need to allow my microphone. So I can choose which one I want to allow and then just allow while using this site. Okay, now we can see I'm recording my screen here. And then I can also stop recording. Okay, now we just have to create some more pages and make sure this upload and share button will work correctly because it should upload the video to Mux and then it should go into the video preview page which we still have to create.
+
+Okay, since Mux Player requires browser APIs, we need to wrap it in a client component. So, I'm going to go and create a new file in the components directory called Mux Player Wrapper.tsx. So, we just have to import Mux Player from Mux Player React. And then we create a new interface. We'll call it Mux
+
+wrapper Mux Player wrapper props. And we need a playback ID and a a title. the playback ID, the the Mux playback ID is uh basically automatically constructs the HLS URL and handles everything. So right now I'm just actually creating a function here and we pass in the playback ID and the title and then we just return the Mux Player and we have the playback ID. We also have the metadata which is information that gets sent to Mux Data for analytics. Um, you
+
+can see the video title, viewer location, and playback quality in your dashboard. And then stream type is on demand because it's a pre-recorded video, not a live stream. And then auto play is false. Don't start playing until the user clicks, which is good for user experience. And then we can customize the player's accent color to match the brand. Now, one huge advantage of Mux
+
+Player is the built-in accessibility. We have keyboard navigation which works out of the box. Screen reader support. Captions display automatically if available. Uh focus indicators for all controls. And remember the transcripts
+
+we're generating. Mux Player will automatically detect those subtitle tracks and display a CC button. Users can toggle captions on or off. For professional content, you'd want to review and correct autogenerated transcripts, add speaker identification, and include sound descriptions, but the infrastructure is all there. So now we'll create a component for the share button. So this
+
+is just going to be called share share button.tsx. And here's all the code. It's more straightforward. So I just put right right in here. Um what we're importing
+
+uh you state and then from lucide-react. And then we're basically it's going to either be copied uh the we're going to keep track of whether we've copied the the link and then we're going to handle the share by writing the text to the clipboard of the URL. Set copy equals true. And then we're setting a timeout because um it it's after 200 2,000 milliseconds um it will allow you to share it again or copy it again. And then we just have the the button here.
+
+Now I'm going to create another component, the status poller. So video status poller.tsx. Now the videos and transcripts take time to process. So we need a component that pulls the server and refreshes when things are readying ready. So we just
+
+get our imports and then we create our function, our status poller function with the ID whether the video is ready. And on use effect, we're going to be able to check the status. Basically, we need to get the status of the of the URL and the transcript. And then we can refresh based on the status. So, we need to make sure both the video is ready and the transcript is ready. And we're going to
+
+just pull basically every 3 seconds. And so the whole thing is just checking whether um it the the server whe whether things are ready and then we're going to have a loader on the page which will say processing video until everything is ready. So this is what the final HTML that's going to be loaded onto the page is going to look like. Okay. Now we have to create a page for the videos. So we
+
+are going to just create a new file and this is going to have a specific folder structure. So video slash and then I'm going to do a brackets id. So this will basically be based on the specific ID of the of the video and then just page.tsx. And I'm going to just start with the code already in here for our uh pa our video. And then there's the ID here
+
+within the brackets. So we can actually pull that ID right from the URL. So we have all of our imports including our components that we've already made. And then we have our function, our video page function. So we're going to get the the ID. We're going to get the basically
+
+we're getting the ID from the parameters which uh which is the in the URL bar. We're getting the ID of the video we're trying to get. And now we're going to basically try to get the asset status of that video including the transcript status and the transcript itself. Then we check to see we set when these are ready. And then we have this download URL. Now this is a specific URL right
+
+from Mux. We put in the playback ID here and it's going to be the MP4 file. And then we have the file name here. And so we can get the URL to download the the video right to our computer. And then we just have our HTML here with all of our CSS. And there's a few different
+
+components. We have our navigation, which is going to just be a link to record a new video, which is just going to be at our root of our website here. And then we have our left column with um our video player. So, our video player, we're going to use the Mux Player wrapper, which is the component that we created, and it's going to just going to pass in the playback ID. And then we're checking if the transcript is ready. And also, we're
+
+we're finding out from the the video status poller. We're basically trying to um using that component to find out if the video is ready to show on the page or not. And then we have our action buttons. We have two key things. We have our share button to get our link and then our download button, but only will I will only show if our video is ready.
+
+And we use our download URL that we just talked about above. And then we have our column with our transcript, our AI transcript. We're going to check if the transcript is ready and is making sure there's something in the transcript. And then it's just going to display the transcript or else. If there's nothing in the transcript, it'll say no speech detected or if this transcript is not ready, it will say generating transcript.
+
+So this was showing a single video page. Now we need to build the dashboard that will show all the recordings. So I'm going to go into the components here and then I'm just going to create a component called video thumbnail. Video thumbnail.tsx.
+
+because on our dashboard, we're going to have a thumbnail for each each video. So, we're going to create a new function that's going to give the video thumbnail for each video with the we pass in the player ID, which we're going to use to get the thumbnail. And there'll be two states. There'll be the hovered state and the not hovered state of the thumbnail. And we also want to check to see if there's an error. So, we're going
+
+to keep track of if there's an error. So, this is where Mux makes things easy. We're going to get the poster URL, which is basically the thumbnail. And we just have this specific URL with the playback ID. And this is just going to give the thumbnail of the image. And we can get
+
+the thumbnail for the video based on any time of the video. So, we're going to do time zero, which will just give the first frame of the video. However, we're also going to be when when the video is hovering over, we can get a GIF, an animated GIF. So, this is another thing that that Mux will automatically create. We just have another URL to get the GIF.
+
+We pass in the playback ID, animated.gif, and then we can um say the size width 320. And so that's all we need to get the thumbnail and the GIF for when it's hovering. So we also want to check if there's an error. So if there's an error, we'll just uh return that there's going to be no preview, but if there's no error, then we'll return either the it's going to return the thumbnail. So
+
+um if the mouse has gone over it, we'll say set is hovered. So it'll be an animated, but then when the mouse leaves, we'll do set is hovered to false. So it'll go back to the just still image. So for the image, it's going to be either the GIF URL or the poster URL depending on if it's being hovered. And then we have the alt. And
+
+we want to say that we're going to fill the whole section unoptimized. And then set what happens if there is an error. And then we can just set what the the the styling the styling is going to be. Okay, so we got the styling set up. The unoptimize we want to set to be true since Mux's image CDN already optimizes the images.
+
+So having Next.js reoptimize them can cause issues. So that's why we put unoptimized for the image. Now it's time to create the dashboard page. So now that we have this this component, I can go back over here and then in we'll do app and then we'll do slashdashboard slashpage.tsx.
+
+And here's the full code for the dashboard. So we we have all of our imports including our video thumbnail component that we just created. And we have this dynamic equals forced dynamic. This is a next.js configuration option.
+
+uh a part of app router that forces a this page to be re rendered dynamically on every request. So it acts as a way to opt out of static rendering and caching. So this ensures that the route is always re-evaluated at runtime. And since we're going to be constantly adding more videos to this page, that's going to be needed. So we have our function dashboard page and then first we're going to list videos and that comes from our actions. We've already created this.
+
+So, it's going to get a list of all the videos basically right from Mux. And then we just have our HTML here, our base, our heading, our arrow to go back to the recorder. And then we are going to um if there's zero videos, it'll say create your first recording and then it will link back to the homepage where the recording happens. or it's going to basically go through it's going to map through each video and basically create a thumbnail for each video. We see that we are using our thumbnail component that we just created. We're um creating
+
+a link to our um to our URL to get more information to see the video. And then while it's loading it will just say processing. So it will also show the date of the video on here. Now we should have to add some configuration. We have to configure Next.js to allow images from
+
+Mux's CDN. So I'm going to go into next.config.ts here. And so this is the default next config, but I'm going to update it with this images remote patterns protocol HTTPS and then adding the host name of image.mux.com.
+
+So by default, Next.js's image component blocks external images for security. This config whitelists the image.mux.com.
+
+So we can use Mux video thumbnails and stills with Next.js's image optimization. So we would have had an error without this. But now Next.js will fetch the image fetch the image from Mux, optimize and resize it, cache it, and serve it in modern formats like webp and AVIF. So I'm about to test out, but
+
+yeah, I did realize there's a mistake here. This should be um page, not page.tsx. Okay, we can test out our app now. So now we can click on my recordings and see all the different recordings. Now
+
+you can see there's the recordings of date. If I hover over, let's see if we can see the the GIF. Yep. See this is moving around. You can see a the mouse, but some of them you'll be able to see a lot more. So you can see this moving
+
+when we hover over. Okay. Let's go through the whole process, though. So I'm going to start a new recording. I'll choose my screen one.
+
+And we can go through and move things around. And now I'm going to click stop recording. And now we're going to test out the upload and share button. Okay. And it loaded. So let's check this
+
+out. I can play this and we can go through and move things around. And now I'm going good. So you can hear the audio. We have the AI transcript over on the side here.
+
+We have the subtitles right on the video here. This is looking pretty good. I can click share video and it copies the link. So, I can just Yeah, if I paste in the link uh that Let's see if that's the right link. Yep, that's the right link.
+
+And then we can also download the video. Yeah, I just downloaded the video to my computer. See, here's the video that I just downloaded to my computer. This is on QuickTime. And then if we go to my recordings, we can see the dashboard.
+
+So, this is basically all the different videos that have been recorded. Some of them were recorded before, not on camera here. And if I hold my mouse over here, we can see the hovering. So, yeah, looks pretty good. Now, let's add a new feature. So, right now we just record
+
+the screen and you just get the screen recording video, but I'm going to show you how you can easily add a watermark to the video. Now, Mux makes this pretty easy. So, we have our create upload URL and I'm just going to change this to make it so we can easily add a watermark to our video. Basically, we we just have to add another input. So our first input is going to be the video uh and the video with subtitles with generated subtitles. Our second input is going to
+
+be the the um watermark image. Okay. So I just added this other input here and we just put the URL. This is just a PNG item uh PNG file. So this is our image which is the freeCodeCamp logo. And
+
+then we just put some settings here. And so where we're going to align it, the some margins, horizontal alignment, the width, and then uh one thing to note is that for the opacity, you have to put an actual percentage, not just a decimal here. So that's pretty much it. So now let's make this update and test it out. So I'm going to start a new recording.
+
+Choose my screen. And then we can just make a recording. And this is a test. I want to make sure to have some talking in here. We can close my extension that pops up. And then I'll just stop
+
+recording. And then we'll just click upload and share. And we can see the processing video. Um before we didn't see that. And now let's try it out. And then we can just make a
+
+recording. And this is a test. And you can see the watermark right in the corner here. This the watermark. So now every video we record will automatically have this watermark.
+
+And you can see on the my recordings page, it gets cut off a little bit, but you can still see the watermark in the corner there. Okay, we have transcripts, but what if we want to automatically generate a title, a summary, and tags for each video. This is a per this is perfect for a dashboard where users can quickly scan what each recording is about. Mux provides a dedicated AI library called @mux/AI that can analyze your videos and generate intelligent metadata. We already installed this at the start of the project. So, let's use
+
+it. So, I'm going to continue to be in actions.ts and we're going to add a new function. So, I'll just go toward the bottom here and then we'll create a new function called generate video summary. and we'll pass in the playback ID of the video and we just have a try catch block. So we're
+
+going to first get the assets from the video based on the playback ID. So we're going to search through the list of uh assets for the playback IDs and get that the one that we're going to be working with and then an error if it doesn't come up. So we got the asset ID from the playback ID. Now we're going to import dynamically to avoid issues with module resolution. So we're going to import the the Mux AI AIworkflows, the get summary and tags. Now we're
+
+going to generate the summary using Mux AI. This is going to use the autogenerated transcript under the hood. So this get summary and tags function does something uh clever. It pulls the transcript that Mux's already generated for your video, feeds it to an LM, and returns structured data, a suggested title, a summary paragraph, and relevant hashtags. The tone parameter, in this case, professional, affects the writing style. So, since this is a professional
+
+screen recording app, professional makes sense. If you were building something more casual, you could use playful. And then we're just going to return everything. um return all the data. We have the title. We have the summary
+
+which is just the description and then the tags. And finally, we just handle the error. Okay, we've added the action. Now, we have to add a component. So, let's go into the components folder. And
+
+then I'll just add video summary.tsx. So, we have the imports. We're going to have an interface of our summary data with the data we need. just the title, the summary, and then the tags. And then
+
+we'll have our function, just the video summary function. And like all of these, we're going to use the playback ID. And we'll keep track of the summary with use state. And we'll keep track of if it's generating or if it's already generated and just keep track of the errors. Then we just have our handle generate function. So start by basically setting
+
+our variables. And then we're going to await the generate video summary functions by passing in the playback ID. So we've already created that. And then we're either going to we're going to get the result and set the result or there's going to be an error. And if there is a summary, then we'll return our HTML.
+
+Okay. And let's put in the rest of this so we can go over it pretty quickly here. So this is basically just the HTML to have the summary. And then we uh map over the tags to show all the tags. But if there is no summary then we are just going to show analyzing video or there could be a a button to try again to and then to generate the AI summary. Okay.
+
+Now we just have to add this to the video page. So I'm going to the video the with the ID and the brackets and then we just have to import our component and then we'll go down before below these action buttons and we'll just add AI summary. So um if the video is ready and the transcript is ready then we can use our video summary component here. So, we're only going to show the summary button once once both the video and the transcript are ready because the AI needs the transcript to generate a meaningful summary. Oh, and before we test out the summary, there's one more thing we have to do. This
+
+actually uses the open OpenAI API under the hood. So, we have to go into our environment variables. And then I'm just going to add a a variable called OPENAI_API_KEY with capital letters and just put my OpenAI key. Then I just have to make sure I restart my server with the new API key in there. Okay, I'm on a video page and we can just say generate AI summary.
+
+Testing a browser screen recording extension. A user records their desktop while viewing a freeCodeCamp curriculum page in a web browser. The screen shows a dark theme course dashboard with multiple learning modules listed. So you can see that it's getting the summary both from the transcript and the actual video because some of these things I didn't actually say. So I'll do one more test. I'm going to pretend like I'm
+
+creating a JavaScript tutorial. So I'll choose my screen. Okay. Think of a JavaScript variable as a labeled box. So if I say have let score equals 10, the name of the variable is score.
+
+That's the box. We declare it with the word let. And inside the box, we're putting the number 10. And then after we create the variable, we can change it. So I can say score equals 9. And then
+
+we've are able to change the score to a different number. And we can even use the variable later in our code. Okay. Now, we're going to do upload and share. So, it's not going to let us create the generate AI summary until the AI transcript is done. Okay, we can play
+
+this. Okay, think of a JavaScript variable as a label box. So, if I say have let score equals 10. Okay. And we can see the transcript on the side here of the video. And now I
+
+can click generate AI summary. It's going to analyze the video for this short tutorial about JavaScript variables. And yep, explain JavaScript variable with a score example. Gives the description, the tags. Okay, this is pretty nice. It's working
+
+exactly how we wanted it to work. So all this autogenerated content um this is powerful for building features like search. You can index videos by their AI generated summaries, autotitling, you can suggest titles, uh content discovery, previews and our the Mux AI that we use the Mux AI to create this. It has a lot of other capabilities. So the library has a lot of other things like it can automate automatically generate chapters. It can segment long videos by
+
+topic. Can translate uh clip extraction custom prompts. So for a screen recording app some reason tags are the most immediately useful. But if you were building a course platform auto chapters would be very helpful. Okay. Right now
+
+anyone with a video URL can watch it. So that's fine for public content. But what if you want private videos? So, I'm going to show you how to use Mux's signed playback URLs to see how authentication would work. Now, we're not going to implement a full like production uh authentication system. This is mainly
+
+just an example of how you could get this to work. So, it's going to be very a very simplified example. So, basically there's two playback policies that Mux supports. There's a public, which is what we've been using. anyone with a URL can watch and then signed which requires a cryptographically signed token to watch. The token is a JWT, a JSON web
+
+token signed with a private key. Even if someone steals a URL, the token expires quickly and cannot be forged. So for this demo, we're going to simulate a loggedin user with a simple cookie. In real app, you'd use a proper O system system like NextAuth.js, Clerk, or Auth0.
+
+So, we're going to need a Mux signing key. We need to get this from Mux. So, we're going to go to settings and then signing keys and then generate new key. Now, we just have to add these to our environment variables. So, we we're calling it Mux signing key ID and then Mux signing key private. Now, I'm just
+
+going to install the JWT library with npm here. So you can see uh install JSON web token typeJSON web token. Now let's create a simple way to simulate a logged in user. So I'm going to create a new file an app and then I'm going to create a directly uh API the directory API slashfake login because this is just a demo slash route.ts ts and then I I'm just going to put this code in here. Again, I'm just
+
+going through this pretty quickly just to show you how this would work, but we're getting um a username. Um and so it says like right here, in a real app, you'd validate credentials here, but we're just trying to accept any username just for an example. And then we also have the delete function. So we have the post function and then we have the delete function which is basically going to delete the the cookie. Basically it's it's the it's going to delete the the user but we're just doing it all within the the cookies. Then in our actions
+
+file we're going to add a new action which is basically just get current user. And then we have to make sure we have these imports at the top. Import cookies or import JWT. And then we can add a new function at the end here which is going to be the get signed playback token function. So basically it's going to get the current user. It's this
+
+function here. And then it's going to check if it's authenticated which is basically just in the cookies going to decode the private key and then create a JWT. Basically we have sub which is the the Mux playback ID. this token is four. We have the AUD is V, which V for video playback. And then the expiration,
+
+that's when the token expires, which is in 1 hour. And then for kid, it's your signing key ID. So Mux knows which public key to verify with. And now we're going to need to use this signed playback policy. So in this actions under create upload URL so to to require signed URLs we're going to change the playback policy when creating uploads. So instead
+
+of public we can change this to signed and then everything else is the same. Now we just have to update the player component. So I'm going go back o go into the Mux player wrapper and then I'm going to add a new property to the Mux Player. So this is the tokens property. Now this will tell the Mux Player to include the JWT with all requests. And now we just need
+
+to make a simple login UI. So under the components I'll make simple auth.tsx. And I'll just put in the code. Basically we have this simple auth function with the username. We're going to need the
+
+router. And then we have a function to handle the login which is basically going to fetch from our the API we created with um the the username that's going to be passed in and then we have have handle a log out which is again going to fetch that API with the delete method and then refresh the router. So then it's going to show what the current user is and then there'll be a button to handle logout and we are going to basically have this input form where we can set the username. We can basically enter any username and handle login with this button. Again this is not production. This is just an example so
+
+you can see how login works with Mux. Okay. Now let's go over to the player page. That's the video and with the ID page.tsx.
+
+So we are going to need to input get the get signed player get signed playback token that we created in the action. Then we need to get access to the token. We just need to add a token await sign uh playback token uh for the playback ID. And then finally down in the Mux player wrapper, we're going to pass in the playback ID and then the token here. Now we need to add the login to the homepage. So we just go to the
+
+app/page.tsx. Make sure we import uh cookies and the simple o here. And then I'm just going to add a function that's going to get the current user that's going to use the cookies. And then we have to get that current user with the can you get current user function. And then I'm just
+
+going to add this authentication in the top left here. I'll make sure add this closing bracket. Now we can check this out. So do npm run dev. Okay. Let's test
+
+this out. Now we have this enter username up here. So I can enter username and just log in. Now it says logged in as B. And I'll choose my first screen.
+
+Okay. Okay, now I can stop recording and then upload and share. So now I can see this video. But if I go back over and I log out, I go into my recordings, now it's showing no preview for this video. If I go into here, it's going to throw a not authenticated error, which uh obviously I should handle that, but uh currently I have not implemented that.
+
+Basically, we're saying that we can only access the video if we're authenticated. Now, one thing to clarify, the Mux signing key is not per user. The way that we implemented it, we have one signing key for the entire application. It's used to assign tokens for any video. So, the security comes from the application logic. User requests to
+
+watch video. The server checks, does this user have permission to watch this video? If yes, generate assigned token. If no, deny access. So in this simple simple demo, we're skipping the ownership check. Any logged in user can
+
+watch any video. In a real app, obviously you'd store which user owns which video in a database and verify ownership for generating the token. So that's all we're going to do for this project. But if you're going to deploy this live, you would want to do a few extra things like you would want to um set do some core settings to restrict your domain. You would want to do a little more error handling, add retry logic, user friendly messages, error tracking, and then um you would think about costs. Quality tiers affect
+
+pricing. So we have quality tiers through Mux. We have basic plus premium uh web hooks. Uh you could use Mux web hooks instead of polling for production efficiency. And we're done. We built a complete
+
+screen recording platform with custom recording, Mux uploads, AI transcription and summaries, animated thumbnails, watermarking, and sharable video pages. Check out the code on GitHub and thanks for watching.

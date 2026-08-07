@@ -1,0 +1,459 @@
+---
+video_title: "AI-Assisted Coding Tutorial – OpenClaw, GitHub Copilot, Claude Code, CodeRabbit, Gemini CLI"
+video_id: wlpBCazAY9Q
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=wlpBCazAY9Q
+video_date: 2026-03-31T10:01:00+00:00
+video_description: |
+  Learn how to use AI tools to become more productive as a developer.
+  
+  You will master AI pair programming and agentic terminal workflows using top-tier tools like GitHub Copilot, Anthropic's Claude Code, and the Gemini CLI. The course also covers open-source automation with OpenClaw, teaching you how to set up a highly customizable, locally hosted AI assistant for your development environment. Finally, you will learn how to maintain high code quality and streamline your team's workflow by integrating CodeRabbit for automated, AI-driven pull request analysis.
+  
+  Some of this course is based on this article from Mrugesh Mohapatra:  https://www.freecodecamp.org/news/how-to-become-an-expert-in-ai-assisted-coding-a-handbook-for-developers/
+  
+  CodeRabbit provided a grant to make this course possible.
+  Try out CodeRabbit: https://coderabbit.link/fcc
+  
+  Contents
+  - 0:00:00 Introduction to AI-Assisted Development 
+  - 0:00:42 Core Fundamentals: Tokens, Context Windows, and Hallucinations 
+  - 0:05:48 When to Use AI vs. When to Code Manually 
+  - 0:06:57 Setting Up GitHub Copilot in VS Code 
+  - 0:09:42 Copilot Pricing and Plans 
+  - 0:10:18 First Steps: Ghost Text and Code Completions 
+  - 0:13:40 Pro Tip: The Neighboring Tabs Trick 
+  - 0:15:52 Practice Exercise: Building a To-Do App 
+  - 0:17:15 Interaction Modes: Ask, Edit, and Agent Mode 
+  - 0:21:44 Agent Mode: Building a Full REST API Autonomously 
+  - 0:24:52 Repository Customization with Instruction Files 
+  - 0:26:34 Using Participants and Slash Commands 
+  - 0:28:34 Automated Code Reviews with CodeRabbit 
+  - 0:30:57 Setting Up CodeRabbit for GitHub Repositories 
+  - 0:32:03 Simulating Real-World PR Reviews and Security Fixes 
+  - 0:37:33 Chatting with AI Directly in Pull Requests 
+  - 0:41:12 Configuring CodeRabbit Behaviors (.yaml) 
+  - 0:41:58 Local Reviews via the CodeRabbit CLI 
+  - 0:48:13 Powerful Terminal AI: Claude Code vs. Gemini CLI 
+  - 0:49:12 Claude Code: Reasoning, Thinking Modes, and Fixes 
+  - 0:53:02 Gemini CLI: Million-Token Context and Multimodal Features 
+  - 0:57:01 OpenClaw: Your Open-Source Personal AI Assistant 
+  - 1:01:01 Automating Tasks with Cron Jobs and Desktop Actions 
+  - 1:03:33 Orchestrating Your AI Workflow 
+  - 1:08:27 Model Context Protocol (MCP): Giving AI Real-World Tools 
+  - 1:12:40 AI Code Quality and Security Essentials 
+  - 1:15:03 The Formula for Better Prompt Engineering 
+  - 1:16:13 Course Recap and Final Resources
+---
+Neste curso, você aprenderá sobre desenvolvimento de software assistido por IA. Meu nome é Bo KS e sou o professor deste curso. As ferramentas de programação com IA não são apenas uma tendência passageira ou um artifício. Eles estão realmente transformando a maneira como os desenvolvedores profissionais trabalham. Estudos mostram que desenvolvedores experientes podem obter ganhos de produtividade extremos, mantendo a qualidade, quando utilizam essas ferramentas de forma eficaz. Mas aqui está a
+
+palavra-chave: efetivamente. Não basta instalar uma ferramenta de programação com IA e esperar que a mágica aconteça. Você precisa entender como essas ferramentas funcionam, quando usá-las e, talvez ainda mais importante, quando não usá-las. Então, o que exatamente vamos abordar neste curso? Vamos começar pelos fundamentos.
+
+Entender como os modelos de IA realmente funcionam, o que são tokens, por que as janelas de contexto são importantes e o que significam as alucinações no mundo da IA. Em seguida, vamos colocar a mão na massa, guiando você por todo o ciclo de vida da codificação, da geração à revisão. Você dominará a programação em pares com IA e os fluxos de trabalho de terminal Agentic usando ferramentas de ponta como GitHub C-Pilot, Anthropics Claude Code e Gemini CLI. O curso também aborda a automação de código aberto com o OpenClaw, ensinando como configurar um assistente de IA altamente personalizável e hospedado localmente para seu ambiente de desenvolvimento. Por fim, você aprenderá como manter alta qualidade de código e otimizar o fluxo de trabalho da sua equipe integrando o CodeRabbit para análise automatizada de pull requests orientada por IA. A Code
+
+Rabbit concedeu uma bolsa para tornar este curso possível, e ele é uma ótima adição ao seu conjunto de ferramentas de IA. Então, vamos falar sobre para quem é este curso. Este curso pressupõe que você tenha alguma experiência em programação. Você não precisa ser um especialista, mas deve se sentir confortável escrevendo programas básicos, saber usar um editor de código e ter uma compreensão básica de Git. As ferramentas de IA são mais poderosas quando você já entende os fundamentos da programação. Só mais uma coisa
+
+antes de começarmos. Ao longo deste curso, quero que você programe junto comigo. Não fique só assistindo. Abra o VS Code, instale as ferramentas que vou mostrar e pratique. A melhor maneira de aprender programação assistida por IA é praticando.
+
+Você desenvolverá uma intuição sobre o que funciona e o que não funciona, e encontrará seu próprio fluxo de trabalho que se adapta à sua maneira de programar. Muito bem, vamos começar com o básico. Antes de começarmos a usar ferramentas de codificação de IA, precisamos entender alguns termos-chave. Esses conceitos serão abordados ao longo do curso, e compreendê-los ajudará você a obter melhores resultados com qualquer ferramenta de IA que utilizar. Primeiro, as fichas. Considere os
+
+tokens como fragmentos de palavras. É assim que a IA lê seu código e texto. Quando você digita algo para uma IA, ela não vê caracteres ou palavras individuais da mesma forma que nós. Ele divide tudo em tokens. Um símbolo pode ser uma palavra, parte de uma palavra, um sinal de pontuação ou até mesmo um espaço. A palavra "function" pode ser um único
+
+token, enquanto "functionalize" pode ser dividida em vários tokens. Por que isso importa? Porque os serviços de IA geralmente têm limites de tokens. Os planos gratuitos limitam a quantidade de tokens que você pode usar por dia ou por mês. Assim, entender os tokens ajuda você a compreender por que às vezes você atinge os limites e por que solicitações mais longas custam mais.
+
+Em seguida, uma janela de contexto. A janela de contexto representa a quantidade de informações que a IA consegue reter simultaneamente durante uma conversa. Pense nisso como a memória de curto prazo da IA. Se você tiver uma janela de contexto pequena, a IA só poderá considerar uma pequena quantidade de código ou conversa por vez. Com uma janela de contexto maior, a IA consegue entender melhor o seu projeto, lembrar partes anteriores da sua conversa e dar sugestões mais relevantes . As janelas de contexto são
+
+medidas em tokens. Por exemplo, o GPT4 tem uma janela de contexto de cerca de 128.000 tokens. Claude possui até 200.000 fichas. Gemini consegue processar mais de um milhão de
+
+tokens. Mas, ao assistir a este vídeo, você perceberá que muitos desses serviços podem ter ainda mais tokens que conseguem processar. Na prática , isso significa que algumas ferramentas de IA podem analisar toda a sua base de código de uma só vez, enquanto outras só conseguem analisar alguns arquivos por vez. Agora, esta é realmente muito importante. Alucinações. Uma
+
+alucinação ocorre quando a IA sugere, com muita convicção, algo que está completamente errado. Pode criar uma função que não existe, fazer referência a uma biblioteca que foi descontinuada há anos ou até mesmo inventar métodos de API que nunca existiram. A IA não sabe que está errada. Trata-se apenas de prever quais tokens provavelmente virão a seguir, com base em seus dados de treinamento. Às vezes, essas previsões são certeiras, e às vezes são completamente inventadas. Por isso, você deve sempre verificar as
+
+sugestões da IA. Não aceite o código cegamente. Você precisa testar. Você precisa consultar a documentação. Você precisa garantir que todas as funções realmente existam. E, por fim, as sugestões. Um
+
+prompt é uma instrução simples, uma instrução simples para a IA. Pode ser um comentário no seu código, uma pergunta em uma interface de bate-papo ou uma descrição detalhada do que você deseja. A qualidade das suas instruções afeta diretamente a qualidade das respostas da IA. Instruções vagas geram respostas vagas, mas instruções específicas e detalhadas geram código específico e útil. Falaremos mais sobre engenharia de prompts adiante, mas por agora, basta lembrar que quanto mais claro você for sobre o que deseja, melhores serão os resultados. Certo,
+
+vamos falar sobre quando você deve usar a assistência da IA ​​e quando deve simplesmente programar tudo sozinho. Então, a IA é boa para escrever código repetitivo, como getters, setters, operações CRUD básicas de aplicativos , aprender novas estruturas ou sintaxes, escrever testes e documentação, refatorar padrões repetitivos e resolver erros de sintaxe. Mas às vezes você precisa programar você mesmo, como quando está projetando a arquitetura de um sistema, tomando decisões críticas de segurança, escrevendo lógica de negócios complexa, aprendendo novos conceitos pela primeira vez ou trabalhando em otimizações críticas de desempenho. Basicamente, você precisa lembrar que deve usar IA para acelerar a implementação, mas mantenha as decisões arquitetônicas em sigilo. A IA é ótima no " como", em como implementar algo, como escrever a sintaxe, como estruturar uma função, mas você deve decidir o "o quê" e o "porquê". O que você está construindo e
+
+por que está construindo dessa maneira. Pense na IA como um desenvolvedor júnior muito rápido e muito experiente . Eles conseguem escrever código rapidamente, mas você precisa revisá-lo, orientar a arquitetura e tomar as decisões importantes. Ok, hora de colocar a mão na massa. Estou com o VS Code aberto agora e vou mostrar como configurar e usar o GitHub Copilot. Portanto, se você
+
+ainda não tem o VS Code instalado, basta pausar o vídeo e baixá-lo em code.visualstudio.com. É totalmente gratuito. Então, vamos instalar o Copilot. Agora, vou clicar neste
+
+ícone de extensões aqui e pesquisar por GitHub Copilot. Agora, uma observação importante: você pode ver duas extensões no marketplace porque existe uma versão original do C-Pilot no GitHub que agora está obsoleta. O que você quer é o chat do GitHub Copilot. Então, vou clicar no botão de instalação do GitHub Copilot Chat e ele será instalado. Depois, verei esta página sobre a extensão. Portanto,
+
+esta é uma extensão completa. Antes existiam alguns modelos diferentes. Assim, essa única extensão agora gerencia tanto o chat quanto o preenchimento automático de código. Então, depois da instalação, você precisará fazer login. Pode ser que apareça uma página de login ou você pode clicar no ícone de pessoa. ao ícone da conta aqui. Em
+
+seguida, vamos fazer login. Existem algumas maneiras diferentes de fazer login. Vou clicar em " Configurações de backup e sincronização". E aqui está o botão de login. E então farei login com o GitHub. Agora,
+
+um navegador será aberto e eu precisarei me autenticar com o GitHub para fazer login. Então, basta clicar em "Continuar" e depois em " Autorizar". E agora, vamos voltar ao Visual Studio Code. E agora podemos confirmar que estamos conectados ao GitHub Copilot. Vou acessar as preferências da conta de extensão e entrar no chat do GitHub Copilot. E então, vou apenas
+
+confirmar que estou usando minha conta corrente, que é do BOCS. OK. Agora você deverá ver um ícone do GitHub C-Pilot no canto. Caso contrário, podemos simplesmente clicar com o botão direito do mouse nesta barra. Vou ativar o modo C-Pilot . E posso clicar aqui para concluir
+
+a configuração. Vou clicar em " Usar recursos de IA" e isso concluirá a configuração do GitHub Copilot. E agora que está tudo configurado, podemos ver o chat aqui no lado direito da tela. E podemos ativar/ desativar o chat com este botão no canto. Então, basicamente, é assim que podemos abrir o chat. Então, posso fechar o chat
+
+com o X. Posso abrir o chat clicando ali . E então podemos iniciar um novo bate-papo, um bate-papo rápido. Há algumas outras coisas. Configure as sugestões embutidas.
+
+E agora, um pouco sobre preços. O GitHub oferece o Copilot gratuitamente, que é extremamente poderoso. Basicamente, você recebe 2.000 conclusões de código e 50 solicitações de chat ou de agente por mês. Se você é estudante, professor ou mantenedor de projetos de código aberto , ainda pode obter o plano Pro gratuitamente, que oferece conclusões ilimitadas e modelos premium mais avançados, como GPD5 ou Cloud 4. Portanto, você
+
+sempre pode conferir se isso lhe interessa. Ok, vamos testar nossas primeiras sugestões de IA. Vou criar um novo arquivo. Então, vou criar um arquivo chamado demo.j. JJS
+
+e eu vamos encerrar o chat por agora. Então, neste arquivo demo.js, mesmo tendo instalado apenas a extensão de chat, o recurso de autocompletar texto já está integrado. Por exemplo, se eu adicionar uma função para calcular a área de um círculo, você verá que, mesmo enquanto eu digito o comentário, o sistema sugere o final. Agora que vejo isso, posso pressionar Enter para aceitar uma linha ou Tab para aceitar toda a função. Então você pode
+
+ver o texto cinza aparecer e, quando você clica, ele é temporário, mas se você pressionar Tab, o texto inteiro será inserido. E esta é uma função para calcular a área de um círculo. Eu nem precisei escrever nada. E agora, deixe-me mostrar mais alguns exemplos. Na verdade, isso me dá uma sugestão para outro comentário embutido aqui. Mas vou fazer
+
+outra coisa. Vou sugerir uma função para validar um endereço de e-mail usando Reax. E se eu ficar esperando aqui, vai sugerir toda essa função aqui. Validar e-mail. Portanto, esta é uma função com um padrão reax adequado, o que é bastante impressionante. Então, vou
+
+pressionar a tecla Tab aqui para selecionar. Agora vou tentar outra função, algo ainda mais complexo, para buscar dados de uma API e registrar a resposta. Neste momento, está mostrando apenas o começo disso. Então eu apertei Enter e está me dando a URL de busca de dados da função assíncrona. Se eu passar o cursor sobre isso, algumas opções serão exibidas . No momento, está oferecendo apenas uma
+
+opção. Portanto, só há uma opção a aceitar. Mas deixe-me mostrar- lhe algo. Vou pressionar a tecla Tab para aceitar esta opção. Pressione a tecla Tab para aceitar esta opção. E agora eu pressiono Enter. Eu
+
+não pressionei a tecla Tab. Mas se eu passar o cursor sobre isso, em vez de aceitar a opção inteira, podemos aceitar uma palavra de cada vez. Então, será ou a tecla Command ou Alt e depois a tecla de seta. Basicamente, estou aceitando uma palavra de cada vez. E agora está me dando o restante da função. Agora,
+
+se eu passar o cursor sobre isso novamente, posso ver que está escrito "um em três". Isso significa que existem três opções diferentes que posso aceitar. Veja, eu posso simplesmente percorrer esses três códigos diferentes que ele está me dando. E também existe o atalho. Se você passar o cursor sobre isso, o atalho será exibido. Então,
+
+vai ser o colchete Alt ou o colchete Option, dependendo se você usa Mac ou Windows. Assim, posso simplesmente percorrer essas listas usando os atalhos de teclado. Isso é muito bom, porque o Copilot nem sempre sabe exatamente o que você quer, mas pode ter algumas opções diferentes. E depois de encontrar a que você gosta, basta pressionar a tecla Tab para selecioná-la. Basicamente, você pode escolher o código que melhor se adapta ao seu estilo de programação ou às necessidades do seu projeto.
+
+OK. Agora, vou dar outra dica profissional que vai melhorar drasticamente suas sugestões. É o truque das abas vizinhas. Então, deixe-me criar mais alguns arquivos rapidinho. OK. Então, vamos ver o que eu acabei de
+
+configurar. Tenho um arquivo test.js com um teste para nossos usuários. Tenho um arquivo users.css com alguns estilos para nossos usuários. E agora vou
+
+acessar o nosso arquivo user.js. E veremos que, basicamente, a IA tem uma janela de contexto limitada , uma memória de curto prazo daquilo em que você está trabalhando. Por padrão, o Copilot analisa o arquivo em que você está digitando no momento, mas também verifica as outras abas abertas no VS Code. Para que vocês entendam melhor este exemplo, quero mostrar mais uma vez o `user.est`, que
+
+estou usando para buscar um dado específico, um ID de teste chamado nome do cartão de usuário. Então, o que aconteceu? Vamos ver o que aconteceu. Voltei ao arquivo users.js.
+
+Vou importar meu arquivo users.css. Ele preencherá automaticamente o CSS do arquivo users.css e sugerirá uma função. Vou preencher essa função, mas também vou passar um URL de avatar. E então, veja, você pode
+
+basicamente usar o recurso de autocompletar e depois entrar e fazer algumas alterações. E agora veja, está me dando uma sugestão completa. E vou usar a tecla Tab para preencher isso. E você pode ver que está obtendo as classes do nosso CSS e adicionando o nome do cartão de usuário com o ID de teste . Então, ele está obtendo as classes que criamos diretamente no CSS e sabe usar o nome do cartão de usuário com o ID de teste. E
+
+é exatamente isso que queremos, ele descobre o contexto com base em nossos outros arquivos. Assim, sem essas abas abertas, o Copilot pode sugerir um nome genérico como "container" ou "user box". Mas, com os arquivos, ele sabia exatamente do que precisávamos. Certo, vamos fazer um exercício rápido juntos. Vou criar um novo arquivo. Este aqui vai se chamar
+
+to-do.js. E vamos fechar todos esses outros arquivos que temos abertos. Ok, vamos começar com este comentário. Aplicativo de tarefas com funções de adicionar, remover e listar.
+
+E então eu simplesmente pressionarei Enter aqui. E veja só, ele sabe que eu quero começar com um array. Então, basta pressionar a tecla Tab para configurar isso. Além disso, só para garantir que eu escreva "funções" corretamente aqui em cima. E aí, automaticamente, nem preciso comentar mais nada. Já está indicando a função
+
+adicionar à lista de tarefas. Então, vou pressionar a tecla Tab para aceitar. Agora está cumprindo a função. Basta pressionar a tecla Tab para aceitar . Agora está me dando a função de remoção. Então eu pressiono a tecla Tab para selecionar.
+
+E agora está me dando minha função de lista. Então eu pressiono a tecla Tab para aceitar. E basicamente, em apenas alguns segundos, conseguimos criar uma estrutura básica de aplicativo de tarefas. E tudo o que eu precisava fazer era adicionar esse comentário logo no início. É claro que você gostaria de testar isso e garantir que funcione da maneira esperada, mas a IA nos poupou muito trabalho de digitação. Ok, agora que já entendemos o básico
+
+, vamos desbloquear os recursos realmente poderosos do GitHub Copilot. Portanto, o Copilot não é apenas um completador de código. É basicamente um parceiro de desenvolvimento completo. Então, vamos abordar os três principais modos de interação, a seleção do modelo e como fornecer ao C-Pilot um conjunto de regras para o seu projeto específico. O GitHub Copilot agora categoriza sua busca em três modos distintos. Portanto, o modo
+
+padrão é este. É ótimo para perguntas, explicações e aprendizado. O modo de edição de especificações serve especificamente para refatorar e fazer alterações diretas nas especificações dos seus arquivos existentes, com uma visualização clara das diferenças. E o modo agente é o modo autônomo. É aqui que o Copilot planeja e executa tarefas de várias etapas em todo o seu repositório. Saber quando
+
+alternar entre essas opções evitará que você tenha alucinações com a IA e garantirá que seu código permaneça limpo. E, mais uma vez, tudo isso acontece no chat, que vou mostrar para vocês agora mesmo. Então, deixe-me demonstrar como isso se sente na prática. Então, vou abrir o chat principal. Podemos clicar neste botão de bate-papo aqui em cima , ou podemos usar Ctrl+Alt+I ou Command+Alt+I, dependendo se você estiver usando Windows ou Mac. Então, eu simplesmente apertei Command +
+
+Alt + I e abri esta sessão de bate-papo. Vou encerrar isto. Então, depois de abrirmos esta janela de bate-papo, observe este menu suspenso aqui. Temos a opção de alterar o modo entre modo agente, modo de consulta, modo de edição ou modo de planejamento. Então vou entrar no modo de perguntas. Além disso, podemos selecionar diferentes
+
+LLMs ou modelos que desejamos usar para a solicitação. Então, estamos no modo de perguntas. Então, no modo de perguntas, posso ser bem abrangente. Então, posso perguntar algo como: "O que o método reduce faz em JavaScript e como ele se compara a um loop for?", e então posso enviar essa informação e ele simplesmente vai processar a informação. Esta
+
+seção de processamento mostra basicamente o que ele está pensando antes de chegar à resposta. Ok, então agora ele encontrou a resposta. O método ` Array.prototype.reduce` executa uma função redutora em um array de elementos. Assim,
+
+ele fornece assinaturas, comportamentos-chave, quando usar um loop `for` em vez de um loop `for`, e até mesmo alguns exemplos. Então, basicamente, é uma resposta no estilo de um tutorial . É um modo seguro porque não vai alterar uma única linha do meu código, a menos que eu a copie manualmente. E você pode entrar nesse modo de perguntas simplesmente a partir do seu arquivo. Por exemplo, digamos que você tenha uma função aqui. Posso clicar com o botão direito aqui
+
+e selecionar "Explicar". Basicamente, agora ele vai usar o modo de perguntas para explicar uma função no meu código e vai detalhar a lógica para mim. Aqui está a explicação desse código. Então, este é mais um exemplo de como usar o modo de perguntas, que pode ajudar a explicar o código em que você está trabalhando. Ok, vou abrir um novo chat aqui em cima, ou você pode continuar usando este mesmo chat. Mas basicamente agora vou entrar no modo de
+
+edição. É aqui que você percebe que quer mudar alguma coisa. Então, vou analisar este código aqui e você pode ver que ele já adicionou o arquivo ao contexto do arquivo atual. Isso fornece o contexto do arquivo atual para o chat. E esta é basicamente uma função antiga baseada em callbacks . Então, vou sugerir que você refatore
+
+para usar um método assíncrono de espera e adicione um tempo limite de 5 segundos. E nós apenas esperamos. E nós vamos apenas observar o editor. Basicamente, em vez de apenas exibir um bloco de código na barra lateral, ele aplica as alterações diretamente ao meu arquivo em uma visualização de diferenças. Consigo ver o código antigo em vermelho e o código novo em verde. E então
+
+posso revisar cada linha individualmente e clicar em aplicar, descartar, manter ou desfazer. Então, vou apenas clicar em "manter". Portanto, essa é a maneira mais rápida de refatorar. E mantive o novo código aqui, que será muito mais robusto do que o meu código anterior. OK. Eu
+
+poderia continuar no modo agente neste chat, mas às vezes, quando estou fazendo algo completamente diferente, prefiro iniciar um novo chat. E agora vou entrar no modo agente. Como você pode ver, está escrito " descreva o que construir em seguida". Portanto, o modo agente faz mais do que apenas escrever código. Vai pensar e vai agir. Assim, posso atribuir-lhe uma tarefa gigantesca.
+
+Então, estou sugerindo que você crie uma API REST completa com Express, que tenha autenticação JWT e salve os usuários em um banco de dados SQLite local, e depois simplesmente comece a usar. Agora vamos observar a barra lateral, que começará fazendo todo o planejamento aqui. Basicamente, depois de criar o plano, ela poderá criar novos arquivos, instalar os pacotes mpm necessários no meu terminal e escrever middleware. Ele pode até executar uma versão de teste para garantir que seu próprio código não tenha erros de sintaxe. Como você pode ver, agora foi criado um plano e será implementado. E, conforme o processo
+
+avança, basicamente teremos que dar algum feedback. Então, diz que é possível permitir a edição de arquivos confidenciais. O modelo deseja editar o arquivo package.json. Então, vou clicar em "permitir". E
+
+você pode ver que agora ele está gerando todos esses arquivos diretamente no diretório do nosso projeto . E, conforme vai funcionando, podemos ver que há um pequeno ícone embaixo de cada item que foi criado. Assim, podemos analisar e verificar o código que está sendo criado. Então, ele está até criando pastas e diretórios dentro das pastas. Então, vamos deixar isso funcionando por um tempo e depois voltaremos quando estiver concluído. Ok, agora basicamente
+
+acabou. Diz o que foi feito. Ele indica o que foi compilado e os arquivos adicionados. O próximo passo é executar a instalação e iniciar o servidor localmente. Ele nos fornece os comandos para executar e alguns exemplos de teste, além de instruções sobre como fazer login. Então agora podemos
+
+tentar. Primeiro, deixe-me manter todas essas alterações. E diz: "O que você gostaria que eu fizesse?" Sim, instale e inicie o servidor. Agora poderemos ver se ele consegue executar comandos no terminal diretamente do agente.
+
+E sempre que for executar um comando, muitas vezes teremos que permitir. Então agora está executando a instalação do mpm. E em vez de clicar em "Permitir", posso ativar a aprovação automática. Agora, tudo será permitido automaticamente. Agora isso é mais arriscado, mas por enquanto vou fazer isso.
+
+E, bem, isso sugere que... bem, apenas quer ter certeza de que realmente queremos fazer isso. E sim, eu confio nisso. Então agora ele está
+
+percebendo que existem alguns problemas no servidor e vai tentar corrigi-los por conta própria. Então, ao longo do processo, o programa vai fazer algumas perguntas e continuar tentando descobrir as coisas e fazer tudo funcionar. Então, acabamos de criar um aplicativo totalmente funcional. Assim, embora os agentes sejam poderosos, eles não são mágicos. Portanto, é sempre bom analisar o plano gerado e garantir que ele não cause alterações excessivas no seu código.
+
+E em seguida, quero falar com vocês sobre a personalização do repositório. Na verdade, você pode treinar o Copilot com as regras do seu projeto usando um arquivo específico. Então, em vez de instruir o Copilot a usar TypeScript ou componentes funcionais toda vez, você pode criar um arquivo chamado "Instruções do GitHub" ou " Instruções do Copilot" e inserir as instruções nele . Assim, o Copilot usará todas essas instruções sempre que estiver em execução. Além disso, você nem precisa mais escrever esse arquivo você mesmo . O que eu posso fazer é simplesmente entrar no
+
+chat e digitar slashinit. E isso irá gerar ou atualizar instruções para o local de trabalho. E aí eu simplesmente executo isso. E agora vai digitalizar meu projeto. Basicamente, vai descobrir o que estou usando. E vai
+
+gerar um arquivo de instruções personalizado para mim. Agora, todas as sugestões fornecidas seguirão automaticamente as convenções de nomenclatura e as diretrizes de estilo específicas do projeto. Neste caso, ele está criando instruções com base no aplicativo que criou, mas ainda assim é um bom exemplo de como você pode criar essas instruções. Então eu posso ir aqui e ver as instruções que foram criadas. Então, essas são as instruções que foram criadas com base neste aplicativo, e eu posso analisá-las e sempre alterar as configurações, como, por exemplo, definir o uso do segredo JWT para o ambiente e alterar a assinatura ou verificação dos tokens. Eu poderia mudar isso para
+
+usar outra coisa. Talvez eu não queira usar SQL SQL light. Posso alterar para que use o que eu quero. OK. Agora vou falar sobre participantes e comandos de barra. Portanto, pense nos participantes
+
+como chefes de departamento. Basicamente, nós colocaríamos isso no chat. Assim, posso fazer isso no espaço de trabalho sempre que quisermos, quando tivermos alguma dúvida sobre o projeto como um todo. Então, deixe-me mostrar um exemplo disso. Então, por exemplo, no espaço de trabalho, onde a conexão com o banco de dados está definida?
+
+Basicamente, trata-se de analisar todo o nosso projeto para encontrar essa informação. Então, a conexão com o banco de dados é definida em DB.js como a instância de endpoint do banco de dados que o modelo de usuário importa e, em seguida, pode responder a uma pergunta. Você usaria o comando `at terminal` para perguntar como fazer coisas na linha de comando, como por exemplo, como faço para limpar minhas imagens do Docker. Podemos usar o comando `at vs code` para fazer algo diretamente relacionado ao VS Code, como configurar a depuração para o Node.js. Outra opção seria usar o comando `
+
+at git`. O `at git` é um recurso novo que permite pesquisar seus PRs e issues diretamente do VS Code. E também temos nossos comandos de barra: barra para gerar documentação, barra explicativa para explicar o código, barra fixa para corrigir erros na seleção, barra test para gerar testes unitários e barra new para criar uma nova estrutura de projeto. Então, neste momento, não tenho nenhum teste. Então, vou digitar apenas "testes com barra". E indica que parece que
+
+você não configurou os testes neste repositório. Você gostaria de configurá-los? E aceitar. Agora, ele simplesmente criará todos os testes para este projeto. E então eu tenho a opção: quero usar o Mocha?
+
+Para o teste, usarei basicamente duas estruturas de teste JavaScript diferentes. E vai começar a me fazer perguntas sempre que precisar de alguma informação do usuário. OK. Agora, vamos falar mais sobre o Code Rabbit. A revisão automatizada de código é um dos usos mais valiosos da IA ​​no fluxo de trabalho de desenvolvimento. Pense nisso.
+
+Quantas vezes você já enviou um código, esperou um ou dois dias pela revisão e depois teve que voltar ao trabalho para corrigir problemas? Com a revisão de código por IA, você recebe feedback em minutos, enquanto o código ainda está fresco na sua mente. Então, o que é o Code Rabbit? Portanto, o Code Rabbit é uma plataforma de revisão de código com inteligência artificial. Ele tem... Então,
+
+aqui estão algumas das coisas que ele faz. Temos revisões automáticas de relações públicas. No momento em que você cria uma solicitação de pull request, o Code Rabbit analisa suas alterações, incluindo a análise de segurança. Ele detecta vulnerabilidades antes que elas cheguem à produção. Além disso, sugestões sobre a qualidade do código, não apenas correções de bugs, mas também maneiras de aprimorá-lo. Em
+
+um chat em linguagem natural, você pode discutir se o feedback está correto nos comentários da reunião. Além disso, é um sistema de aprendizagem. Ele aprende sua base de código e seus padrões de código ao longo do tempo. Ele se integra com GitHub, GitLab, quer dizer, GitLab, Bitbucket e Azure DevOps. Se você utiliza alguma dessas plataformas, pode usar o Code Rabbit. Então,
+
+deixe-me explicar o fluxo de trabalho. Primeiro, você cria uma solicitação de pesquisa. Em seguida, o Code Rabbit inicia automaticamente uma revisão. Em questão de minutos, você recebe um resumo das alterações, problemas identificados com seus respectivos níveis de gravidade, sugestões específicas para melhorias e alertas de vulnerabilidade de segurança . Em seguida, no quarto passo, você pode conversar com o Code Rabbit para fazer perguntas ou solicitar esclarecimentos.
+
+E, finalmente, quando você envia novas alterações, o CodeRabbit realiza revisões incrementais. E haverá diferentes tipos de revisão com base na gravidade, desde as críticas, que são problemas graves que podem causar falhas ou violações de segurança, até as triviais, que são melhorias de qualidade de baixo impacto. Então, deixe-me mostrar o Code Rabbit em ação. Tenho aqui um projeto de exemplo chamado techart. É basicamente uma API de e-commerce simples, construída com ExpressJS, que está no GitHub, mas aqui está ela rodando localmente no meu computador. Basicamente,
+
+você pode adicionar todos esses produtos ao seu carrinho. E depois de adicionar os itens ao seu carrinho, você poderá vê-los aqui no carrinho . por aqui. Você pode filtrar por preço, por categoria, do menor para o maior, e como eu disse, é basicamente um site de comércio eletrônico. Então, vamos começar configurando o Code Rabbit. Então, estou
+
+no Code Rabbit AI, coderabbit.ai, e você pode fazer login ou obter um teste gratuito. Você quer conectar sua conta do GitHub ao CodeRabbit porque ela funcionará perfeitamente através do GitHub. Então, vou autorizar o Code Rabbit. E então eu instalarei isso. E eu posso autorizar a
+
+instalação para todos os repositórios ou para repositórios específicos. Como estou usando apenas uma para este tutorial, vou autorizá-la apenas para uma específica. E eu irei à Techmart, instalarei e autorizarei. E é sempre bom ter autenticação de dois fatores no GitHub e em qualquer outro site importante. E isso resume basicamente toda a configuração. Agora, se
+
+já tivéssemos solicitações de pull request (PRs) neste repositório, poderíamos revisar uma PR aqui mesmo. Mas ainda não. Vou fazer um. Então, vamos direto ao aplicativo. OK. Portanto, a
+
+configuração está completa e o Code Rabbit agora está monitorando as solicitações de sondagem. Então, vamos simular um cenário de desenvolvimento real. Meu código está aqui no VS Code. Vou adicionar um recurso de código de desconto a este aplicativo de comércio eletrônico e, intencionalmente, cometerei alguns erros comuns entre desenvolvedores, o tipo de coisa que passa despercebida quando se está programando rapidamente. Então, deixe-me criar uma nova ramificação. Então, vai se chamar simplesmente
+
+feature/discountcodes. E agora, vou criar um novo arquivo chamado discount service.js. JS: isso vai lidar com a lógica do nosso código de desconto e vou colar um pouco de código aqui. Temos códigos de desconto na memória.
+
+Em produção, seria um banco de dados, mas isso é apenas um exemplo. Temos as credenciais de administrador e o código para aplicar um código de desconto ao carrinho. Não vou analisar isso em detalhes porque não é o objetivo deste tutorial, mas temos uma rota para criar um novo código de desconto, para excluir códigos de desconto e para pesquisar códigos de desconto para autocompletar. Então vou salvar isso e depois vou atualizar nosso arquivo server.js.
+
+Então queremos poder usar a rota. Então, vou solicitar um serviço de desconto e, em seguida, vou usar a rota aqui para a API/discounts. OK. Ok, agora aqui no terminal, vou confirmar as alterações e criar um pull request. Então, adicionei o código e depois confirmei a compra com esta mensagem sobre a adição de um código de desconto. E aí eu só vou
+
+empurrar. Então, vou enviar isso para o GitHub. Agora, vou acessar o GitHub e criar uma solicitação de pull request. E vou adicionar uma descrição bem simples, não o que você normalmente faria, mas para este exemplo, vou criar esta solicitação de pull request. Então agora podemos apenas esperar aqui e você pode ver que está fazendo algumas verificações, então só temos que esperar um ou dois minutos e então o CodeRabbit inicia sua revisão e está processando as novas alterações, nos dando essa pequena e legal arte do Asky aqui. O Code Rabbit acabou de finalizar e
+
+olha só isso. Então, o que ele faz primeiro é gerar um resumo exato do que o PR faz. Adicionada a funcionalidade de código de desconto . Apresentamos um painel administrativo para gerenciar códigos de desconto, oferecer suporte a códigos de desconto e rastrear o vencimento para controlar os períodos de validade. É muito bom ter um resumo do que o commit representa e do que o PR representa. Mas é aqui que a coisa
+
+fica interessante. Se rolarmos um pouco para baixo, encontraremos os problemas. Primeiramente, gostaria de fazer uma pequena correção: a criação de conteúdo atualmente aceita código vazio e inválido. Basicamente, é algo que você poderia mudar, mas não é super importante. E, em seguida, solicitar todos os comentários da avaliação com agentes de IA. Então, se um agente de IA for
+
+analisar isso, veja só . Tivemos alguns problemas. Então, cada um deles terá diferentes tipos de problemas e usará uma cor e uma palavra como esta para nos dizer que tipo de problema é. Este é um problema grave. Remova a senha de administrador embutida no código . A inclusão de segredos e códigos embutidos no código
+
+representa um risco de segurança que dificulta a rotação de funções. Obviamente, ninguém vai colocar uma senha de administrador no código, provavelmente não. Mas você pode acidentalmente inserir algumas chaves ou outras informações codificadas, e este programa irá encontrá-las e nos fornecerá uma solução proposta, incluindo o código necessário para corrigi-las, além de algumas sugestões que podem ser implementadas. Então eu posso simplesmente clicar em "Confirmar sugestão". Posso simplesmente clicar em "Confirmar sugestão" assim, e a alteração será adicionada. E então
+
+podemos rolar para baixo. Isso vai gerar outro problema. Portanto, isso indica que este é outro problema grave. Não confie nos totais fornecidos pelo cliente. Validar entradas e limitar os totais. Basicamente, isso
+
+aceita o total do carrinho do cliente, que pode ser manipulado. Isso deve ser calculado no servidor. Agora, ele vai nos dar algumas sugestões de como resolver isso. Então poderíamos corrigir isso aqui mesmo, se quiséssemos, com esta sugestão que pode ser confirmada. Hum, vou pular essa parte por enquanto, porque você já sabe como funciona. E agora temos um
+
+problema crítico. Isso é ainda pior. Proteger lista de administradores e excluir endpoints. Eles não estão autenticados no momento. Assim, qualquer pessoa pode acessar esses endpoints de administração sem estar autenticada. Qualquer pessoa pode enumerar ou
+
+excluir códigos de desconto. Isso é obviamente muito ruim. Descemos até aqui e vemos que se trata apenas de um problema menor. Então, isso apenas diz para remover ou inserir corretamente o desconto de pesquisa. É um código morto com bugs não corrigidos. Portanto, podemos ver que isso
+
+nos mostrará algumas coisas diferentes que precisamos fazer para resolver esse problema. E uma coisa legal é que podemos conversar com o CodeRabbit diretamente no PR. Portanto, aqui posso dizer algo como: este é o problema de autenticação. Posso perguntar ao CodeRabbit AI como proteger adequadamente esses endpoints de administração usando middleware e depois comentar aqui. Depois disso, precisei atualizar a página e agora podemos ver a resposta do CodeRabbit. Vou mostrar como
+
+criar um middleware de autenticação para proteger seus endpoints de administração. Eis uma abordagem simples. E agora, será apresentada a abordagem completa de como isso será feito. Algumas vantagens, algumas alternativas. E não precisávamos necessariamente fazer isso neste caso, pois também poderíamos ter analisado esta solução de exemplo. Mas
+
+agora você pode ver que isso nos dá uma solução muito mais aprofundada de como resolver esse problema. E também podemos usar comandos para interagir com o CodeRabbit. Então, se eu executar o comando `atcode rabbit ai summary`, isso irá regenerar o resumo do PR. E então podemos ver que eu simplesmente atualizo a página e a informação aparece aqui. Resumo: Regeneração iniciada.
+
+E podemos ver que o resumo aqui em cima será um pouco diferente. Também podemos usar a IA do CodeRabbit para resolver comentários de marcação. E podemos usar a IA do CodeRabbit para gerar docstrings. E isso vai adicionar documentação. Basicamente, isso vai adicionar e gerar documentação para as funções de desconto. E agora podemos ver que está
+
+escrito "Geração de string de ancoragem em andamento". Como você pode ver, foi adicionado um commit que faz referência ao pull request. E, basicamente, também se trata de criar um novo PR (Publicidade de Reserva). Então, depois de analisar tudo isso e escolher se quero resolver a discussão, se quero implementar essas sugestões que podem ser confirmadas (e também avisa para revisar o código antes de confirmar), neste caso, vou confirmar essa sugestão e, quando estiver tudo pronto, você pode mesclar a solicitação de pesquisa e eu confirmarei a mesclagem aqui. Posso acessar a string de fluxo do Dock que foi criada e podemos ir em "Arquivo alterado" e podemos ver que temos strings de documentação sobre esta função aqui. E se descermos um pouco, podemos
+
+ver que desta vez a revisão foi ignorada porque foi escrita pelo usuário configurado para revisões do CodeRabbit. Basicamente, por padrão, o CodeRabbit ignora a revisão de Pull Requests (PRs) criados por ele mesmo. Então eu posso simplesmente aceitar esse pull request. Aqui estão alguns comandos essenciais do Coderabbit que você deve conhecer. Eu mencionei um pouco sobre isso, mas temos uma opção de pausa que interromperá as revisões automáticas.
+
+Revisões automáticas de currículos. Uma revisão que solicitará uma revisão incremental. Análise completa que finaliza uma nova avaliação. Em seguida, temos o resumo, que já vimos, que atualiza o resumo do PR com a resolução, que marcará os comentários como resolvidos. Em seguida, podemos mostrar a configuração.
+
+Podemos mostrar a referência de comando. Já podemos mostrar a geração de documentação. Podemos gerar um diagrama de sequência, que é basicamente uma forma de visualizar o fluxo do código, e assim podemos ajudar no planejamento da implementação. Agora também podemos personalizar o comportamento do CodeRabbit com um arquivo coderabbit.yaml na raiz do repositório. Então eu posso simplesmente adicionar o
+
+código ao rabbit.yaml. Aqui está um exemplo do nosso arquivo de configuração. Portanto, a configuração do perfil é interessante. Então, a Chill vai se concentrar em questões importantes, sem se ater a detalhes insignificantes. Mas se mudarmos para "
+
+assertivo", será mais completo e incluirá sugestões de estilo. E temos ainda outras opções, como o fluxo de trabalho de solicitação de alteração, em que o resumo de alto nível está definido como verdadeiro, a revisão automática está ativada, mas para rascunhos está desativada. Sim, a resposta automática do chat está ativada. Então você pode basicamente configurá-lo para se comportar da maneira que desejar. Agora, quanto ao perfil, para um repositório de produção, eu recomendo o modo assertivo, mas para projetos pessoais ou aprendizado, o modo tranquilo funcionará muito bem . Agora o CodeRabbit possui uma ferramenta de linha de comando
+
+que permite obter revisões antes mesmo de confirmar a alteração. Você pode instalar com o Homebrew MPM. Então você só precisa se autenticar e depois pode usá-lo para fazer uma revisão interativa e também obter uma saída em texto simples ou uma saída para agentes de IA. Então, vou executar `brewtap code rabbit AI tap`, depois `brew install code rabbit` e, em seguida, `code rabbit o` para autenticar e fazer login. Então, vou entrar aqui. Ok, consegui
+
+entrar. E agora posso simplesmente chamar o CodeRabbit diretamente da linha de comando. Coelho de código. E a revisão será das mesmas alterações de código que estávamos revisando no site, porque eu ainda não baixei todas as correções para o meu repositório local. Assim, podemos ver como ele consegue analisar todas essas mesmas coisas, mas localmente. Ok, agora
+
+encontrou esses problemas. O bug crítico, as credenciais e o código-fonte embutidos no código , a falta de peso e referência, o endpoint inexistente, a falta de validação de entrada, e alguns outros são críticos. Então, se eu analisar o problema, podemos ver qual é. E temos a oportunidade de encerrar isto. Podemos nos candidatar. Então, vemos que se pressionarmos A,
+
+a sugestão será aplicada, ou podemos copiar o prompt para corrigir com IA, ou R para rejeitar o commit. Então, vou simplesmente aplicar essa sugestão. Ah, acho que neste caso não havia nenhuma sugestão, mas sei que alguns têm. Então, se eu chegar a esse ponto crítico, posso aplicar essa sugestão e você poderá ver que ela foi aplicada e confirmada . Temos um ponto verde porque aquele foi... comprometido. E
+
+também podemos aplicar essa sugestão. OK. Novamente, nenhuma sugestão para se candidatar. Às vezes eles têm sugestões, às vezes não. Mas, se não houver uma sugestão, ele nos dirá o que fazer para corrigir o problema. E
+
+podemos sempre copiar essa solicitação para corrigi-la com IA. Então, deixe-me mostrar como isso funcionaria. Isso indica que está faltando uma forma de acesso e faz referência a um ponto de extremidade inexistente. Então, o que vou fazer é pressionar C para copiar a mensagem e corrigi-la com a IA. E aqui está o texto que será copiado. Agora posso simplesmente abrir
+
+meu chat aqui, colar o texto e enviar. Assim, podemos usar um programa de IA chamado Code Rabbit para encontrar os erros e, em seguida, usar outro programa de IA chamado GitHub Copilot para corrigi-los. Então, para alguns deles, conseguiremos aplicar uma correção diretamente do Code Rabbit, mas para outros será um pouco mais complexo. Assim, podemos usar o GitHub Copilot para fazer as correções necessárias. OK. Agora,
+
+ele fornece um resumo das alterações. Podemos analisar as alterações aqui e constatar que elas foram feitas com base no problema encontrado pelo CodeRabbit. Assim, podemos manter essas alterações e basicamente continuar fazendo isso usando nosso copiloto do GitHub ou outro agente de IA para corrigir os problemas. E existe uma maneira ainda mais rápida de fazer isso . Então, vou fechar o CodeRabbit. E desta vez
+
+vou executar o CodeRabbit novamente, mas vou definir apenas o prompt. Então agora não terá mais esse modo visual. Não vai te dar uma chance, não vai te dizer o que está errado. Isso não lhe dará a oportunidade de aplicar as alterações. Isso apenas nos dará a instrução necessária para passar para o GitHub Copilot ou para outro agente de IA, para que ele possa fazer todas as correções por conta própria. Porque, sinceramente, se
+
+eu só quero agilizar o processo, principalmente se for um projeto pessoal simples, eu não me importo muito com os problemas ou por que eles existem. Só quero que sejam consertados. Dessa forma, podemos obter a instrução para simplesmente dar o comando correto à IA, e então ela corrigirá o problema. E enquanto esperamos que isso nos dê a instrução para passar para a IA, quero falar sobre como você pode automatizar esse processo. Então eu poderia simplesmente acessar minha IA e dizer: "Implemente o recurso de código de desconto", depois executar o comando `code rabbit-prompt-on` e corrigir quaisquer problemas encontrados. Agora que o sistema
+
+sabe implementar o recurso de código de desconto, ele pode simplesmente executar a IA. O agente de IA pode executar o CodeRabbit por conta própria, encontrar os problemas e corrigi-los. Ok, mas agora que isso terminou de funcionar. Assim, ele nos fornece o prompt que podemos simplesmente copiar e colar no agente. Mas quando instruímos o agente de IA a usar o CodeRabbit, criamos um poderoso ciclo de feedback no qual o assistente de IA escreve o código e o CodeRabbit verifica sua qualidade. É basicamente como ter
+
+dois assistentes de IA colaborando. Então, um escreve e o outro revisa. Então, o processo está em andamento para escrever o código com base na revisão do CodeRabbit que já recebemos. Acabamos de abordar os principais recursos de revisão de código do Code Rabbit, a CLI e como ele funciona com agentes de IA. Mas o Code Rabbit tem lançado alguns novos recursos poderosos, e eu quero demonstrar aqueles que considero mais úteis. Plano Code Rabbit, verificações de pré-fusão
+
+e alguns fluxos de trabalho avançados da CLI. Em primeiro lugar está o Code Rabbit Plan. A ideia é simples. Antes de escrever qualquer código, você cria um plano. Você descreve o que deseja em uma issue do GitHub e o Code Rabbit analisa sua base de código e gera um plano de codificação detalhado. Deixe-me mostrar
+
+como funciona. Então, eu tenho um problema registrado no GitHub aqui no meu repositório de demonstração do TechMart. O texto afirma que os usuários devem poder salvar produtos, sua lista de desejos pessoal, visualizar sua lista de desejos e assim por diante. Agora, veja só. Vou criar um novo comentário no CodeRabbit AI Plan e depois comentarei lá. Então, agora o Code Rabbit
+
+vai começar a analisar toda a minha base de código e gerar um plano de codificação. Ok, agora terminou de criar um plano. Então, temos um resumo do plano, que nos apresentará algumas opções de design e até mesmo algumas alternativas diferentes que podemos usar, além de algumas etapas de implementação detalhadas. Então, a tarefa um, a lista de desejos, a estrutura de armazenamento de status e o que temos que fazer, depois o que temos que fazer para a tarefa dois, todas as diferentes coisas que temos que implementar e assim por diante, e também temos a fase dois, a lista de desejos da experiência do frontend, que nos dará tudo o que temos que fazer, e se rolarmos um pouco, podemos ver o prompt para agentes de IA, então basicamente podemos copiar este prompt para agentes de IA para escrever todo o código que precisamos. E aqui temos outro prompt para agentes de IA. E depois temos
+
+a pesquisa. Também temos os nossos próximos passos. Então, isso vai combinar basicamente todas as nossas solicitações em uma só. E então podemos, segundo o que dizem, iterar sobre o plano e continuar a obter mais feedback. Basicamente, em vez de dizer a um agente de IA para adicionar um recurso da lista de desejos e esperar que ele descubra sua arquitetura, você fornece a ele esse plano rico em contexto. O agente sabe
+
+exatamente quais arquivos modificar, quais padrões seguir e quais são os critérios de aceitação. Você também pode responder a este comentário. Podemos responder aqui e refinar o plano. Então, se eu discordar da escolha de design, posso simplesmente dizer isso e o CodeRabbit fará a atualização. E isso funciona com problemas do GitHub, GitLab, Jira e Linear. Você pode até configurar para
+
+planejamento automático. Sempre que você adiciona uma etiqueta de recurso a uma tarefa, um plano é gerado automaticamente . Em seguida, quero falar sobre verificações de pré-fusão. Isso transforma o Code Rabbit de um revisor útil em um verdadeiro filtro de qualidade que pode impedir que pull requests ruins sejam incorporados. Deixe-me mostrar um exemplo real.
+
+Eu já criei um PR (Publicidade de Solicitação) no TechMart que adiciona um recurso de programa de fidelidade. Mas antes de analisarmos o PR, deixe-me mostrar como ativar a verificação de pré-merge. Então, no CodeRabbit, você pode ir em Configuração, clicar em Revisão e depois em Verificações de pré-mesclagem. E é aqui que você o ligaria. Você precisa do modo profissional para ativá-lo, mas ainda pode criar um cheque mesmo se o modo profissional não estiver ativado. Basta iniciar
+
+a verificação manualmente. Para iniciar a verificação manualmente, basta acessar nossa solicitação de pesquisa, comentar o código de revisão de IA e pronto! A verificação será realizada. Agora, se tivéssemos as verificações de pré-fusão ativadas, elas seriam iniciadas automaticamente sem precisar comentar isso. E podemos ver que essa relação comercial não é muito boa. Bem, o título
+
+apenas diz "coisas" e a descrição apenas diz "algumas mudanças" e "o código tem alguns problemas". Ok, terminou e fez um passo a passo do que está acontecendo, encontrando alguns problemas, como um título inadequado e sugerindo como substituí-lo. Também temos alguns cheques aqui. Na verdade, a descrição está marcada porque um resumo é adicionado automaticamente aqui. Basicamente, isso vai corrigir nossa descrição incorreta e inserir um resumo totalmente novo do que aconteceu. E então
+
+temos todas essas soluções práticas. Portanto, todos esses problemas são exatamente como os que já vimos antes. E não só temos os problemas, como também temos o recurso que podemos usar com nossos agentes de IA. E você pode ver que ele está encontrando todos os problemas no código. Assim, você pode configurar isso para que seja executado automaticamente em cada solicitação de pull request. Uma verificação prévia. Gostaria também
+
+de mencionar a análise multirreo. Isso se destina a equipes que possuem vários repositórios interdependentes, como uma API de backend e um aplicativo de frontend em repositórios separados. Você pode vinculá-los nas configurações do CodeRabbit, seja através da interface web ou no arquivo `seu.coderabbit.yaml`.
+
+Portanto, no seu arquivo rabbit.yaml, você só precisa especificar o repositório que está vinculado. Assim, quando alguém altera um endpoint da API no repositório de backend, o CodeRabbit verifica o repositório de frontend e avisa: "Ei, o frontend está consumindo este endpoint e sua alteração vai quebrá-lo." Essas conclusões aparecem diretamente na análise de relações públicas . Portanto, se você trabalha com microsserviços ou repositórios separados para front-end e back-end, isso pode ser um diferencial e está disponível no plano profissional. Agora
+
+vou mostrar a CLI em ação com alguns fluxos de trabalho avançados. Já abordamos os conceitos básicos, mas deixe-me mostrar o verdadeiro poder disso, que é usar essa ferramenta como um critério de qualidade para o código que você está escrevendo. Então, tenho algumas alterações não confirmadas. Este é o arquivo rewards calculator.js. Vou
+
+executar o CodeRabbit antes mesmo de confirmar qualquer alteração . Então, no terminal, vou executar o comando "code rabbit". E eu já sei que alguns arquivos foram alterados. Então, vou pressionar Enter para começar a análise. E você pode ver que o CodeRabbit vai encontrar alguns problemas bem antes mesmo de confirmarmos o código. Isso pode ser útil
+
+quando você está efetivamente em desenvolvimento. E assim como antes, você pode copiar o prompt para corrigir com IA. Basicamente, entramos nesse ciclo de gerar, revisar e corrigir. E há mais uma coisa que quero abordar em relação ao CodeRabbit. Uma empresa independente chamada Martian publicou recentemente o primeiro benchmark rigoroso para ferramentas de revisão de código com IA. Chama-se
+
+bancada de revisão de código e eles testaram 13 ferramentas diferentes. Então você pode ver todas essas ferramentas, incluindo o CodeRabbit, o Gemini Code Cloud e o cursor, sendo que o CodeRabbit está bem no topo. Assim, ficou em primeiro lugar na sua pontuação F1, que mede o equilíbrio entre detectar problemas reais e evitar falsos positivos. Isso ocorreu em quase 300.000 solicitações de enquete. E é uma
+
+organização completamente independente, sem qualquer ligação com a Code Rabbit. Então esse é o Code Rabbit. Resumindo, ele revisa automaticamente cada solicitação de pull que você cria, detectando problemas de segurança, bugs e problemas de qualidade de código. Você pode conversar com ele para discutir e dar feedback. A interface de linha de comando (CLI) permite que você revise antes de confirmar a alteração. E
+
+integra-se com agentes de codificação de IA para controle de qualidade automatizado. OK. Ok, agora vamos falar sobre ferramentas de IA de linha de comando. Essas são alternativas poderosas a ferramentas baseadas em IDE, como o C-Pilot. Vamos nos concentrar em dois deles: Clog Code e Gemini CLI. Então, por que usar ferramentas de linha de comando?
+
+Bem, eles são um sistema de capotamento autônomo mais potente . Eles possuem capacidades autônomas mais poderosas . São mais adequados para fluxos de trabalho que envolvem muito uso do terminal. Elas geralmente possuem janelas de contexto maiores e são ótimas para administração de sistemas e DevOps. Portanto, acredito que o código em nuvem da Anthropic seja bom para tarefas de raciocínio complexo. Então podemos
+
+instalar com este comando `npm install` e depois simplesmente executar `anthropic-ai/cloud-code`. Agora, o Cloud Code requer uma assinatura Claude Pro ou créditos de API. Não existe versão gratuita, mas vale a pena pelas funcionalidades oferecidas. Podemos iniciar uma sessão interativa simplesmente digitando claude. Então, basicamente, vamos fazer algumas configurações e precisaremos fazer login. Isso me levou a um site no qual
+
+eu precisei me autenticar. E agora o login foi concluído com sucesso. Então, podemos prosseguir com o restante da configuração. OK. Agora posso começar a falar com Claude. Então
+
+vamos começar por aqui. Analise este código-fonte e sugira melhorias. E ainda estamos usando a base de código do TechMart. Então, Claude está lendo os arquivos, tentando entender a arquitetura, e eventualmente isso deverá nos dar algumas recomendações. Então, o processo continua através da leitura dos diferentes arquivos no código-fonte. E aqui está a visão geral.
+
+Então, apresenta uma visão geral e depois levanta alguns problemas. Alguns dos problemas são conhecidos por nós, mas também surgem outros, como essa condição de corrida na coleta de IDs de usuário durante o registro. O carrinho pode fazer referência a produtos inválidos que foram excluídos. Hum, e contém algumas informações sobre a arquitetura, a qualidade do código, o tratamento de erros e até mesmo algumas informações sobre a interface e alguns recursos ausentes. Em seguida, apresenta um resumo dos cinco principais itens. Algumas dessas
+
+coisas nós já sabíamos de aulas anteriores, mas outras são totalmente novas, já que o curso aceita inscrições de qualquer origem, desde que haja credenciais. E aí eu posso simplesmente pedir para consertar. Posso dizer que sim, por favor, conserte todos os cinco. E então podemos prosseguir, podemos ver que isso vai levar em consideração . Ele cria uma lista das coisas em que está trabalhando. E então começa a
+
+funcionar em tudo. E então direi que sim, permitirei todas as edições durante esta sessão. Então, simplesmente fará todas as alterações. E agora podemos observar enquanto ele basicamente faz todas as alterações diretamente no terminal. E agora podemos dar permissão para executar comandos bash. Basicamente, vai
+
+instalar o b-crypt. Uma das grandes vantagens da CLI é que ela permite realizar diversas ações diretamente no terminal, executando diferentes comandos. Agora, o código Clog possui modos de raciocínio diferentes para diferentes níveis de análise. Assim, quando damos comandos, podemos dizer para ele pensar para uma análise rápida, pensar com afinco para um raciocínio profundo, pensar ainda mais profundamente e pensar ultra para uma análise com máxima profundidade. Basicamente, dizemos para ele "ultra pensar" e depois dizemos o que ele deve fazer. E então Cloud
+
+dedicaria mais tempo a analisar o problema antes de responder. Ok, agora está feito. E mostraria um resumo de todas as alterações, indicando o que foi alterado e quais arquivos foram modificados. Basicamente, fazia tudo. Agora, também podemos criar um arquivo chamado claude.md dentro do diretório do nosso projeto
+
+e, em seguida, fornecer o contexto para o Claude. Basicamente, poderíamos dizer que tipo de aplicativo estamos usando, que tipo de tecnologia estamos usando, diferentes padrões de codificação, a estrutura do projeto. Poderíamos simplesmente explicar tudo isso em linguagem simples. Assim, ela conseguia entender o projeto e as convenções e, em seguida, as seguia, assim como as sugestões. Então, aqui está uma visão geral do que eu estava falando sobre o Claude, e também podemos retomar uma sessão anterior. Eu não
+
+disse isso, mas podemos retomar uma sessão anterior com o comando `claude dash resume`. E aqui estão os diferentes modos de pensamento de que eu estava falando. Agora vamos falar sobre a CLI do Gemini. A CLI Gemini do Google possui algumas vantagens exclusivas. Existe uma enorme janela de contexto com mais de 1 milhão de tokens. Existe um bom plano gratuito
+
+com 1.000 mensagens por dia e é multimodal. Ele consegue processar imagens. Para instalar o Google Gemini, basta executar os comandos `mpm install -g` e `Google Gemini CLI`, e então podemos fazer login com `Gemini O login`. Então, temos uma pequena configuração aqui, e faremos login com o Google. Em seguida,
+
+a página de autenticação será aberta no meu navegador, que está na outra tela, mas é bem simples. Ok, consegui entrar e precisamos reiniciar. E neste momento estou apenas analisando e aprendendo sobre minha inscrição. E nos dá dicas para começar por aqui. Incluindo a criação de um Gemini MD, algo semelhante ao nosso Cloud MD, para personalizar as interações. E, basicamente, trata-se de
+
+explorar nossa base de código para começar . E na verdade está executando o aplicativo e apenas testando-o. E eu nem sequer fiz nada. É que eu não dei nenhuma ordem. Está apenas tentando descobrir por conta própria como tudo funciona. Então, o sistema conseguiu
+
+acessar a conta de demonstração, verificar a sessão e, basicamente, executar toda a conta. Eu nem sequer preenchi todo o formulário de inscrição, fiz login e tudo mais. E basicamente, assim como no CLI do Claude, eu posso simplesmente digitar qualquer mensagem, dar qualquer comando e ele atualizará todos os arquivos. Uma das coisas incríveis sobre o Gemini é que você pode mostrar imagens a ele e ele as entenderá. Basicamente, se você tiver um esboço de uma interface de usuário no papel, pode enviar a foto e pedir para transformá-la em um componente React, ou então vou tentar algo diferente. Vou tirar uma
+
+captura de tela deste teclado e colocar essa captura de tela nesta pasta chamada Ziotechart, e vou executar um comando nela. Então, estou dizendo para encontrar a imagem do produto na captura de tela e adicionar mais duas teclas, passando o teclado como parâmetro. Então, neste momento, temos 1 2 3 4 5 6 7 ou 1 2 3 4 5 6 7 8, nove teclas no teclado. Vamos ver se realmente é possível adicionar mais teclas ao teclado. É apenas um arquivo SVG. Então, estou
+
+vendo se consigo obter essa imagem, descobrir qual SVG ela representa e, em seguida, adicionar as legendas ao SVG. E então me dá algumas opções do que eu quero que faça. Está perguntando o que eu quero fazer. Vou inserir um valor personalizado e atualizar o arquivo SVG para adicionar mais teclas à imagem. Agora, não tenho certeza se ele realmente leu o arquivo PNG ou se simplesmente encontrou o arquivo keyboard.svg por acaso, já que era
+
+o mesmo. Tudo começou com o teclado. Mas vamos ver se ele realmente consegue adicionar legendas a essa imagem no arquivo SVG. Ah, que bom. Isso me rende uma pequena piada enquanto esperamos. E eu só
+
+digo para permitir a mudança. E acho que isso pode ser a adição das chaves ao arquivo. Ok, vamos verificar novamente. Portanto, temos oito chaves. Vou atualizar. E há 10 chaves. Funcionou.
+
+Isso adicionou mais duas teclas a este teclado. OK. Então, na verdade não leu a captura de tela como eu esperava, mas ainda assim conseguiu fazer o que eu queria. E possui a capacidade de ler imagens. Portanto, tanto o Clog Code quanto o Gemini CLI são ótimos por motivos diferentes. Sinceramente, eu prefiro o Clog Code
+
+, mas você precisa pagar e contratar um bom plano para que ele funcione da melhor maneira possível. Ok, agora quero mostrar algo diferente para vocês. Já falamos sobre IA que ajuda você a escrever código, mas e uma IA que realmente possa fazer coisas por você? Portanto, o OpenClaw é um assistente pessoal de IA de código aberto que funciona no seu próprio computador. É um pouco como ter um desenvolvedor júnior que nunca dorme, consegue usar qualquer ferramenta e se lembra de tudo o que você já disse a ele. Eu tenho usado pessoalmente
+
+e tenho gostado muito. Tem me ajudado em muitas coisas. Eis o que diferencia o OpenCloud de outras ferramentas de IA. Primeiro, está sempre disponível. Você pode enviar a mensagem pelo WhatsApp, Telegram, Discord ou qualquer aplicativo de bate-papo que você já utilize. É como mandar uma mensagem para um
+
+colega de trabalho que por acaso tem acesso ao seu computador. Em segundo lugar, possui memória persistente. Diferentemente do GPT de bate-papo, onde você começa do zero a cada conversa, o OpenCloud se lembra do contexto 24 horas por dia, 7 dias por semana. Ele conhece seus projetos, suas preferências e suas tarefas em andamento . A memória não é perfeita, mas é melhor do que a de algumas outras ferramentas. Terceiro, ela pode de fato tomar
+
+medidas. Ele pode executar comandos, abrir navegadores, gerenciar arquivos, implantar projetos e até mesmo enviar e-mails. Para desenvolvedores em particular, o OpenClaw é poderoso porque pode executar testes e corrigir aqueles que falham automaticamente. Ele pode gerenciar sessões de código ou codec na nuvem a partir do seu telefone, verificar suas notificações do GitHub e responder a problemas, implantar código em ambientes de teste ou produção, monitorar seus serviços e alertá-lo sobre problemas. Imagine que você está caminhando e recebe uma notificação de que os testes estão falhando. Basta enviar uma mensagem de texto para o seu
+
+OpenClaw, corrigir o teste com falha e abrir um PR (Pull Request). Ele faz o trabalho enquanto você termina sua caminhada. Então, aqui está o site do OpenClaw. Agora, a configuração é muito simples, pois basta acessar o site, que fornece um guia rápido com apenas uma linha de comando, e então você só precisa executá-lo no computador em que deseja instalar o sistema . Basicamente, ele roda no seu laptop, Mac Mini ou em uma máquina virtual na nuvem.
+
+Você pode configurar quais serviços de bate-papo conectar, configurar suas chaves de API e começar a conversar. Então, não vou explicar toda a configuração porque é muito simples, mas vou mostrar como funciona, já que já está configurado no meu computador. Eu tenho um laptop, mas também tenho outro computador Mac. E eu tenho o OpenCloth instalado no meu outro computador Mac. Hum, acho que é um Mac Studio, não um Mac Mini, mas você pode executá-lo em vários tipos diferentes de computadores. Então, aqui está a minha
+
+interface de bate-papo. Eu estava justamente conversando sobre isso. Eu estava conversando com o pessoal do OpenClaw sobre meu site pessoal, kins.cc. Então, se eu acessar o site, ele está muito desatualizado. Faz muito tempo que não atualizo isso,
+
+então pensei em simplesmente contar... basicamente, perguntei se seria possível acessar meu site pelo GitHub, já que ele está hospedado no meu GitHub, que já está conectado . Eu já me conectei ao OpenClaw e, portanto, ele clonou o repositório.
+
+Encontrou o repositório correto. Ele clonou o arquivo e depois me deu essas sugestões. Então, na verdade, eu só vou dizer para atualizarem o site. Então, estou apenas dizendo para atualizar o site da maneira que você achar melhor. Assim, como tem acesso ao meu GitHub e este está armazenado no GitHub Pages, pode efetivamente fazer alterações em tempo real no meu site. Então, está dizendo que farei uma
+
+reformulação completa, design moderno, conteúdo atualizado, tudo atual. Deixe-me explicar. Na verdade, não faço ideia do que vai sair e já está no ar, mas sabe, este site não é super importante. Normalmente, você vai querer verificar as coisas antes de atualizar tudo , mas vamos ver o que acontece. Enquanto isso acontece, vou mostrar algumas outras coisas sobre o OpenClaw. Então, existem algumas coisas que
+
+você pode configurar aqui. Uma delas são as tarefas cron, que são muito interessantes. Basicamente, você pode dizer ao Open Claw que deseja executar tarefas regularmente, e ele criará uma tarefa cron. Então, eu tenho algumas coisas preparadas. Então, configurei para que ele verifique diferentes patrocínios para o meu canal pessoal no meu e-mail do hey.com. Eu já o
+
+tenho, então vai funcionar em um SAS que estou construindo todas as noites. Configurei para receber um resumo matinal com informações importantes todas as manhãs, que é adicionado ao meu calendário. Basicamente, toda semana o programa escreve um roteiro para o YouTube com slides para eu criar um vídeo. Configurei para que ele entre em contato automaticamente com patrocinadores para o meu canal pessoal. Portanto, ele terá que executar essas tarefas com base na tarefa cron. Uma das coisas legais
+
+do OpenClaw é que eu o configurei para se conectar ao meu e-mail, mas ele também consegue fazer coisas que não têm uma forma direta de conexão. Então, eu uso o e-mail do hey.com e não há uma API ou é difícil conectar diretamente, mas posso usar um navegador da web, um navegador visual no computador. Então, eu consigo acessar meu e-mail do hey.com como se fosse um navegador comum, e ele usa os recursos visuais e tudo mais para acessar e realizar ações no meu e-mail do hey.com. Uma das coisas legais
+
+é que não é apenas uma interface de linha de comando, também pode executar tarefas na sua área de trabalho. Então, deixe-me voltar ao meu chat e lá diz que está concluído. se terminasse de fazer todas essas alterações no meu site pessoal. Então, deixe-me ir lá, atualizar a página e ver como está . Ok, isso é interessante. Então, isso simplesmente
+
+fez todas essas alterações no meu site pessoal. Temos até uma foto nova aqui, que diz no que estou trabalhando, onde me encontrar, alguns vídeos em destaque e como entrar em contato. Agora está mostrando meu endereço de e-mail do hey.com e tenho uma página sobre o que estou trabalhando no momento. Então, ok, vou deixar isso aqui por enquanto . Hum, parece muito bom.
+
+É interessante como eu posso simplesmente pedir para o programa fazer alterações em um site em funcionamento e ele simplesmente as implementa . Eu nem sabia o que esperar. E o interessante é que agora adicionou um link para nowow ...
+
+Gostaria de saber onde está esse link. Ah, esta é uma página atual. Então, isso é algo criado por Derek Civers, um autor e criador que eu sigo. Basicamente, você pode dizer ao OpenClaw para fazer qualquer coisa. Bem, como eu disse, algumas pessoas me pediram para fazer um tutorial com uma apresentação de slides e um roteiro. Então, se eu acessar
+
+meu site pessoal de tutoriais, encontrará tudo sobre sintaxe SQL em 14 minutos, sintaxe SQL o mais rápido possível. Se você está apenas começando ou precisa de uma rápida atualização, departamento e projetos. Essas tabelas possuem colunas como ID, nome, salário, ID do departamento, data de contratação e assim por diante. Então, todo esse tutorial tem duração de 13 ou 14 minutos . Foi criado com o OpenClaw.
+
+Eu simplesmente criei todos esses slides e o roteiro, e depois li o roteiro e revisei os slides para explicar a sintaxe SQL em 14 minutos. Basicamente, o Open Clock pode te ajudar, seja você um desenvolvedor de software, um criador ou qualquer outra coisa que você faça; ele poderá te ajudar em tudo o que você fizer no computador. E também funciona muito bem com outras ferramentas, como as que abordamos com o CodeRabbit. Ele pode se conectar com o CodeRabbit. Ele pode se conectar com código na nuvem. Ele pode se conectar com o
+
+copiloto. Qualquer coisa que tenha uma interface de linha de comando (CLI) que eu possa usar, porque está funcionando perfeitamente no meu computador local. Assim, ele pode monitorar seus PRs e te avisar quando o Code Red Rabbit encontrar problemas. Ele pode criar sessões de código na nuvem e gerenciá-las remotamente. É basicamente uma camada de orquestração para todo o seu fluxo de trabalho de IA. Portanto, a
+
+documentação da nuvem aberta contém muita informação. Basicamente, essas são todas as plataformas de mensagens às quais você pode se conectar . Atualmente, configurei o OpenClaw no WhatsApp e no Discord para poder entrar em contato com outras pessoas e enviar mensagens pelo Discord. Então, eu me conectei a essa garra aberta, uh, esse maltbot. Basicamente, é isso que eu chamo de garra aberta. E
+
+eu posso dizer: "O que está na minha agenda?" E só responderá ao Discord se você enviar uma mensagem por lá . Só responderá no WhatsApp se você tiver enviado uma mensagem pelo WhatsApp. Mas você pode configurar isso em qualquer plataforma para enviar para qualquer outra plataforma. Então, no Discord, eu podia pedir para ele enviar algo para o meu WhatsApp. Ok, agora está me mostrando
+
+meu calendário de eventos futuros. Legal. Está até me desejando feliz aniversário. A principal vantagem do OpenClaw é que ele se aprimora automaticamente. Você pode literalmente pedir para ele desenvolver novas funcionalidades por conta própria. Imagine que você quisesse verificar seu
+
+e-mail todas as manhãs. Você pode criar uma habilidade que verifique minha caixa de entrada do hey.com todas as manhãs e resuma os e-mails importantes? Ele cria a integração, testa- a e começa a usá-la. Isso é diferente do software tradicional, onde você precisa esperar que alguém adicione recursos. Com o OpenClaw, se você
+
+consegue descrever, provavelmente ele consegue construir . O OpenClaw também funciona perfeitamente com as outras ferramentas que abordamos. Com o Code Rabbit, o OpenClaw pode monitorar seus PRs e notificá-lo quando o Code Rabbit encontrar problemas. Com o Cloud Code, o OpenClaw pode criar sessões de código na nuvem e gerenciá- las remotamente. E com o C-Pilot, o OpenClaw pode confirmar e enviar o código que você está escrevendo no VS Code. Ela se torna a
+
+camada de orquestração para todo o seu fluxo de trabalho de IA. Se tiver interesse, dê uma olhada no OpenClaw.ai. Existe uma comunidade ativa desenvolvendo habilidades e compartilhando fluxos de trabalho. Os desenvolvedores mais produtivos não usam apenas uma ferramenta de IA. Eles os combinam
+
+estrategicamente. Então, aqui está como você pode usar ferramentas diferentes para coisas diferentes. Assim, para o planejamento, você pode usar código na nuvem com o Ultraink para decisões de arquitetura. Em seguida, você pode implementar o uso do C-pilot no VS Code para uma codificação rápida. Você pode usar o CodeRabbit para detectar problemas. Você pode usar o Gemini
+
+por sua grande janela de contexto, e o Open Clock consegue combinar todas essas funcionalidades, já que o Open Clock pode usar qualquer ferramenta de linha de comando. Então, ele pode usar o Clog Code, o CodeRabbit, o Gemini, e basicamente cada ferramenta tem uma coisa diferente na qual se destaca. Assim, a combinação é mais poderosa do que qualquer ferramenta isoladamente. Agora vamos falar sobre o protocolo de contexto do modelo, ou MCP. É basicamente uma forma de dar às ferramentas de IA capacidades adicionais. Portanto, pense nos servidores MCP
+
+como aplicativos para sua IA. Sem o MCP, sua IA fica limitada ao que você lhe diz. Não consegue pesquisar documentação, acessar bancos de dados ou testar sites. Mas com o MCP, ele pode acessar informações em tempo real e interagir com sistemas externos. Basicamente, é uma forma de fornecer à sua IA diferentes ferramentas que ela pode usar. Por exemplo, para código na nuvem,
+
+você pode criar um arquivo de configuração em cl.cloudmcp.json se estiver usando um Mac. E então, se você inserir esse código ou esse JSON, basicamente dará ao Cloud a capacidade de navegar na web e testar sites para você. Então, está dando à ferramenta Puppeteer a capacidade de navegar por sites e, em seguida, ao Duck.Go, que é
+
+basicamente para pesquisa na web. Assim, para os controladores de navegador , você também pode fornecer diferentes servidores MCP que permitirão realizar operações com arquivos ou conectar-se ao GitHub para gerenciamento de repositórios ou ao PostgreSQL para consultas de banco de dados. E aqui está outro padrão que você pode usar para combinar diferentes ferramentas de IA. Você pode começar escrevendo testes com código na nuvem. Em seguida, você pode gerar código de teste com o Gemini. Você pode implementar isso no
+
+modo de agente copiloto, dizendo algo como " implemente o serviço de serviços de pagamento para passar em todos esses testes". Em seguida, você pode revisar com o CodeRabbit, que detectará diferentes casos extremos que você deixou passar. Assim, os testes podem orientar a implementação da IA ​​e o Code Rabbit verifica a qualidade de tudo. Esse é um bom padrão porque os testes fornecem à IA objetivos concretos para programar e, em seguida, você tem o feedback imediato sobre a correção. Então vamos tentar combinar tudo agora mesmo. Primeiro, vou executar o
+
+Claude e, em seguida, vou digitar "ultrathink planeje a arquitetura para um painel de controle do usuário com análises". Então, vamos começar planejando tudo com o Claude. E então eu só preciso confirmar que quero prosseguir. E constatou-se que o diretório do projeto está vazio. E então, simplesmente me dará algumas opções de como quero fazer ou qual estrutura quero usar.
+
+Então, basicamente vou responder a algumas perguntas para que o sistema saiba exatamente o que eu quero. E eu enviarei minhas respostas. E agora ele é capaz de usar ferramentas. Ele pode realizar uma busca na web. OK. O plano foi criado
+
+e eu posso executá-lo . Assim posso dizer a ele o que quero fazer. Vou executar todo o plano. E agora, basicamente, vai construir todo o projeto. Demorou um pouco, mas na verdade conseguimos construir todo o painel de controle. Vou apenas pedir para que ele confirme
+
+isso. Agora vou pedir para executar localmente. Ok, o servidor está rodando localmente. Ok, aqui está, funcionando e com login. Não precisamos analisar tudo agora. E agora posso
+
+abrir o VS Code e basicamente analisar o código. E eu vou simplesmente instruí-lo a analisar o código e sugerir melhorias. E vai implementar um sistema de identificação de visitantes seguro e algumas outras melhorias. Agora vou apenas pedir para abrir um PR com a alteração. Pronto, aí está. OK. Agora
+
+vou instruí-lo a executar apenas o prompt do CodeRabbit e corrigir quaisquer problemas que encontrar. Basicamente, é assim que podemos usar uma ferramenta de IA dentro de outra ferramenta de IA, e então eu só preciso autorizar o comando. Ok, neste caso parece que a avaliação da Code Rabbit não relatou nenhum problema que exigisse ação . Acho que isso é bom. Mas agora você pode ver como isso funcionaria.
+
+Bem, se você tiver, é sempre bom executar uma revisão para verificar se há problemas e, em seguida, corrigi-los diretamente na ferramenta de IA. Ok, vamos falar um pouco sobre a qualidade do código de IA . Portanto, a geração de código por IA requer supervisão humana. Eis aqui uma lista de verificação de boa qualidade . Você precisa garantir que o programa funcione corretamente, que a lógica faça sentido, que as funções e variáveis estejam definidas e verificar se algo parece errado, além de testar casos extremos.
+
+E há muitas coisas com as quais você precisa ter cuidado . Às vezes, a IA inventa funções, parâmetros errados e coisas do tipo. Pode haver algum problema com o sistema de ventilação . Sinceramente, atualmente, a IA consegue resolver alguns desses erros sozinha, pois muitas ferramentas de IA verificam seu próprio código após escrevê-lo e, em seguida, fazem as correções necessárias. Mas ainda assim é bom verificar as coisas você mesmo. E o que é realmente importante é
+
+verificar a segurança. Existem inúmeras histórias de pessoas que desenvolvem um aplicativo do zero e ele acaba com uma segurança terrível. Portanto, você nunca deve aceitar código de IA que tenha senhas ou APIs embutidas, que utilize entrada do usuário em suas funções, que execute SQL sem dados sensíveis parametrizados na consulta, mensagens de erro e recursos de segurança desativados. E você sempre vai querer verificar se a verificação de entrada está presente, se há autenticação e autorização adequadas e se os segredos usam variáveis ​​de ambiente. Isso é muito importante. Muita gente
+
+codifica coisas secretas no GitHub, onde qualquer um pode usá-las. Queremos garantir que as dependências estejam atualizadas e que os erros não exponham informações internas. Esses são aspectos essenciais de segurança, independentemente de você usar ferramentas de IA ou não. Mas é fundamental verificar isso ao usar IA para programação. A IA não entende seu contexto de segurança. Só
+
+você. Então, deixe-me mostrar um exemplo concreto. A IA pode criar um código como este aqui, que é basicamente uma função que constrói uma consulta SQL usando concatenação de strings. Essa é uma vulnerabilidade clássica de injeção de SQL . Então, aqui está a versão segura.
+
+Em vez disso, utiliza consultas parametrizadas. E esse é exatamente o tipo de problema que o Code Rabbit detecta automaticamente nas revisões de código. Então, o Code Rabbit é especialmente útil quando você está usando IA para escrever código. Então, vamos falar um pouco sobre como escrever uma boa pergunta inicial, porque perguntas iniciais melhores resultam em melhores resultados. Basicamente, use esta fórmula fornecendo muito mais informações. Não
+
+tente ser o mais específico possível. Basicamente, você precisa ser específico sobre os parâmetros e tipos de entrada, o formato de saída esperado, os requisitos de tratamento de erros e as preferências de estilo, e isso tornará seu código resultante melhor. Então, aqui está uma referência rápida final sobre qual ferramenta usar, com base nas ferramentas que abordamos neste tutorial. O GitHub Copilot é ótimo para programação em tempo real no VS Code, para obter sugestões rápidas e para aprender novas APIs. Em seguida, utilize o Code Rabbit para revisões de RP e para garantir a consistência da equipe de análise de segurança e controle de qualidade. Em seguida, temos o
+
+Cloud Code e o Gemini, que são ótimos para refatoração complexa, discussões arquitetônicas e sessões de desenvolvimento autônomo, e o OpenClaw para automação em segundo plano, orquestração de múltiplas ferramentas e assistência proativa. E como eu disse antes, a garra aberta pode ajudar a unir todo o resto . Então, abordamos muita coisa neste curso. Então, vamos recapitular o que aprendemos. A IA acelera a implementação, mas as decisões são suas. Além disso, você
+
+sempre deve usar a ferramenta certa para o trabalho. Sempre verifique o código gerado por IA. A segurança é sua responsabilidade. E melhores instruções resultam em melhores resultados. Aqui estão algumas ferramentas e recursos do curso de hoje. Você também pode consultar
+
+a descrição para encontrar links. E obrigado por assistir. Deixe um comentário e conte-nos quais ferramentas de IA você está ansioso para experimentar. Boa programação! E quero demonstrar aquelas que considero mais úteis. Plano Code Rabbit, verificações de pré-fusão
+
+e alguns fluxos de trabalho avançados da CLI. Em primeiro lugar está o plano Code Rabbit. A ideia é simples. Antes de escrever qualquer código, você cria um plano. Você descreve o que deseja em uma issue do GitHub e o Code Rabbit analisa sua base de código e gera um plano de codificação detalhado. Deixe-me mostrar
+
+como funciona.

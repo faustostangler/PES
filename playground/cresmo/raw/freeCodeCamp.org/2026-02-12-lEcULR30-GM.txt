@@ -1,0 +1,1556 @@
+---
+video_title: "Master Full-Stack Docker & CI/CD – Build a Production-Ready Pipeline"
+video_id: lEcULR30-GM
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=lEcULR30-GM
+video_date: 2026-02-12T14:02:47+00:00
+video_description: |
+  This course is made possible by a grant from Hostinger. Get 10% off your cloud hosting at https://hostinger.com/freecodecamp using coupon code: FREECODECAMP
+  
+  Learn to take a full-stack React, Go, and MongoDB application from local development to a fully containerized production environment. 
+  
+  You'll master Docker orchestration, learn to manage environments with Docker Compose, and deploy live to Hostinger using both manual and automated methods. By the end, you’ll have a professional CI/CD pipeline powered by GitHub Actions that automatically builds and deploys your updates with every push.
+  
+  🎥 Build a Full Stack Movie Streaming App in Go – Golang, React, MongoDB, OpenAI API Project Course: https://www.youtube.com/watch?v=jBf7of9JTV8
+  💻 Magic Stream Code: https://github.com/GavinLonDigital/MagicStream
+  
+  Contents
+  - 0:00:00 Introduction
+  - 0:08:29 Deploying a full-stack web app to Hostinger (using Docker Manager)
+  - 0:27:26 Create a CI/CD Pipe-line
+  - 0:40:25 A Deep Look at Deployment
+  - 0:40:56 Clone the full-stack Web App from GitHub repo
+  - 0:42:41 Setup Development Environment
+  - 0:53:41 Test full-stack Web App Running on Bare Metal (Dev machine)
+  - 0:57:41 Lets Containerise our Web App’s Components
+  - 0:58:22 Create Dockerfiles for Server and Client Components
+  - 1:02:45 Build Docker Images and Launch Containers (docker run)
+  - 1:20:41 Test Dockerized Web Application
+  - 1:22:41 Create docker-compose.yaml file
+  - 1:28:58 Launch Containerised Web App using docker-compose
+  - 1:31:41 Test Containerzed Web App Launched through docker-compose
+  - 1:33:33 Update React Code to Read docker-compose env variables
+  - 1:45:11 Update docker-compose.yaml to Containerise MongoDB Database
+  - 1:56:41 Test Web App with Containerised MongoDB Database
+  - 2:00:31 Separate Dockerfiles into Dev and Production Versions
+  - 2:09:41 Separate docker-compose files into Dev and Production Versions
+  - 2:19:41 Test Run docker-compose.dev in Watch Mode (hot reload feature)
+  - 2:24:15 Push Production Docker Images to DockerHub
+  - 2:39:11 Make Code Update to Golang (Go) code
+  - 2:42:39 Push Updated Code to new GitHub Repo
+  - 2:59:41 Build New Version of Docker Images and push to DockerHub
+  - 3:08:18 Manual Installation on Hostinger (using Terminal) - One Time Setup
+  - 3:15:41 Test Containerized Web App Running on Hostinger
+  - 3:17:41 Create GitHub Action to Automate Deployment using a CI/CD Pipe-line
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Pare de dizer que funciona na minha máquina e Comece a enviar produtos de nível profissional. software para a nuvem. Neste curso, Gavin Lawn vai adotar o React em sua totalidade. Aplicação Go e MongoDB local desenvolvimento para um ambiente totalmente conteinerizado ambiente de produção. Você vai dominar Orquestração Docker: aprenda a gerenciar ambientes com Docker Compose e implantar em produção no Hostinger usando ambos Métodos manuais e automatizados. Pelo
+
+No final, você terá um CI/CD profissional. pipeline alimentado por ações do GitHub que cria e implementa automaticamente o seu Atualizações a cada atualização. E graças a Hostinger por fornecer uma bolsa para fazer este curso é possível. Olá e seja bem-vindo(a) todos. Eu sou Gavin Lawn. Estou animado para
+
+Apresentamos este vídeo onde vamos analisar... os detalhes técnicos envolvidos no automação da implantação de um sistema completo aplicação web de pilha. O aplicativo que vamos usar implantar na Hostinger é este filme aplicação web fullstack de streaming onde o componente cliente está escrito em React e o componente do lado do servidor web O componente da API foi escrito em Go. Esse
+
+O pedido já está escrito e Disponível para download no GitHub. Então Você não precisa se preocupar com tudo isso. detalhes técnicos e a codificação do código de a aplicação os detalhes de codificação de o aplicativo. Primeiramente, vamos...
+
+Utilize o recurso Docker Manager da Hostinger. Para implantar o aplicativo na Hostinger, que destacará como o Docker Manager funciona. abstrai uma quantidade enorme de o processo de automação de implantação e nos proporciona uma maneira incrivelmente fácil Automatizar o processo de implantação. Doente Em seguida, mostraremos como você pode criar um CI/CD. integração contínua contínua pipeline de implantação para que quando você faça alterações de código em sua máquina local Em seu ambiente de desenvolvimento, você pode muito facilmente, quase como um portal mágico.
+
+alterações no ambiente de produção em Hostinger. Isso é incrivelmente eficiente e fornece aos usuários de seus aplicativos Com atualizações contínuas. Assim que eu mostrar você sabe como a automação de implantação é feita fácil com o Docker Manager da Hostinger da instalação, vamos dar uma olhada por baixo do capuz, por assim dizer, para que possamos obter um compreensão mais profunda dos fundamentos conceitos de implantação como imagens Docker, Contêineres Docker, arquivos Docker, Docker Crie arquivos YAML e até mesmo um GitHub. Ação. Fazendo isso, ganharemos um senso das complexidades que a hospedagem envolve.
+
+como o gerenciador do Docker abstrai em para tornar nossas vidas muito mais fáceis quando Isso se refere à implantação e à implementação. automação. Então, depois de termos vivenciado a vantagem de usar hospedagem como Docker gerente para automatizar a implantação de Nossa aplicação web full stack, nós somos então vou mergulhar de cabeça no Docker arquivos, arquivos docker-compose.yl e github ações e toda essa grande implantação coisas relacionadas. Se você for minimamente parecido com...
+
+Como desenvolvedor, você adora projetar. e criar aplicativos, mas odeiam o complexidade e irritação do processo de implantação seu código para produção para o ambiente de produção em uma produção servidor em algum lugar. Funcionou no meu computador. Eu sei o que você está dizendo quando seu projeto web full stack começa. O aplicativo falha miseravelmente em produção e você grita em agonia dor enquanto você tenta explicar o quê ocorrido. [música]
+
+Mas ninguém se importa. Ninguém quer ouvir Suas desculpas. Tragam-me o chefe, o desenvolvedor, é a atitude do seu gerente. Seu Os gerentes e seus usuários simplesmente querem isso. trabalhar. Ok, então não é tão ruim assim.
+
+Mas uma maneira de garantirmos o que funciona em O desenvolvimento funcionará da mesma forma em A produção é feita através da conteinerização do componentes de nossas aplicações. Então vamos Digamos que nossa aplicação seja composta por um componente React do cliente e uma API web componente escrito em go e que quero garantir que os ambientes em que Nossos componentes funcionam de forma consistente em todos os lugares. tanto o ambiente de desenvolvimento quanto o ambiente de produção. Podemos garantir essa consistência em diferentes ambientes por conteinerizar um ambiente consistente para o componente React do lado do cliente e conteinerizar um ambiente consistente para o componente de API web do lado do servidor. Então você não implantar mais o componente React e os componentes da API web para a produção servidor, ou seja, para rodar em hardware dedicado.
+
+Em vez disso, você implanta os contêineres que encapsular cada componente no servidor de produção. Isso garante que os contêineres executando, por exemplo, em seu local máquina em seu ambiente de desenvolvimento funcionará da mesma forma que funcionava em sua máquina local quando eles estiverem Implantado no servidor de produção. Falando em um aplicativo que possui ambos um componente cliente React e uma API web componente escrito em Go, eu recentemente criou este aplicativo de streaming de filmes e documentou todas as etapas envolvidas em Como construir o aplicativo neste vídeo que foi publicado recentemente para o Free Code Camp English no YouTube canal. O link para este vídeo foi Conforme descrito abaixo. Um das coisas maravilhosas sobre DevOps e Infraestrutura como código é inerente separações dos detalhes de codificação do aplicação da implantação Detalhes do código de infraestrutura. Então,
+
+Há uma clara separação de responsabilidades. Então Você não precisa assistir a este vídeo antigo. onde eu te guio pelo processo de escrita do código passo a passo para entender tudo os detalhes de codificação para seguir juntamente com este vídeo que é dedicado para a conteinerização e implantação do aplicativo Magic Stream completo Vamos usar uma pilha de aplicações web para...
+
+Faça o deploy para a Hostinger neste vídeo. No entanto, permita-me dar-lhe apenas uma breve explicação. Visão geral do aplicativo antes de nós Aprenda como implantar o Magic Stream aplicação para Hostinger usando O recurso Docker Manager da Hostinger. Então, É um serviço de streaming de filmes com um recomendação integrada com inteligência artificial serviço. Então, membros do fluxo mágico O aplicativo também pode transmitir o Faça login e o aplicativo recomendará filmes.
+
+cinco filmes que se encaixam no perfil do O usuário e os filmes são ordenados por IA. Sistema de classificação baseado em tecnologia, do topo ao topo. do filme mais bem classificado ao filme com a pior classificação. Então você pode assistir a este vídeo para saber tudo sobre detalhes, mas como eu disse, você não precisa Para assistir a este vídeo, que mostra um guia passo a passo sobre como construir o aplicativo para acompanhar isso vídeo, que se concentra no DevOps lado da implantação e a eficiência de Hospedagem como recurso do Docker Manager. Então, Há uma clara separação de responsabilidades.
+
+entre DevOps e desenvolvimento. Esse significa que você pode ter uma equipe focada em desenvolvimento e outro completamente diferente equipe separada ou indivíduo focado em a automação e gestão de Implantação. Os desenvolvedores não precisam Conhecer os detalhes da implantação código de automação. A infraestrutura como código e a equipe DevOps ou indivíduo não precisa saber os detalhes do código que compõe a aplicação. No entanto, como desenvolvedores, eu vou Sugiro que isso vai abrir caminho para você.
+
+ter um desenvolvedor mais competitivo no mercado É necessário ter pelo menos um conhecimento básico de DevOps. Isso é É importante entender o Docker, como usá-lo. Crie e conteinerize seus componentes, e como usar o Docker Compose para extrair suas imagens Docker e execute-as como contêineres em seu desenvolvimento ambiente, bem como configurar o seu recipientes adequadamente com informações relevantes variáveis ​​de ambiente. Nós vamos Veja isso neste vídeo. Isso permite você, por exemplo, compartilhar facilmente desenvolvimento consistente em contêineres ambientes com outros membros da equipe onde os fatores ambientais são eliminado durante a depuração do código. Então, isto
+
+permite que os membros da equipe economizem tempo resolução de problemas e fatores ambientais e concentrar-se na depuração do código. lógica. Então, conteinerize seus componentes. garante um ambiente consistente para membros da equipe de desenvolvimento e também um Ambiente consistente entre as equipes. Para Por exemplo, a equipe de testes. Então o
+
+a equipe de desenvolvimento e a equipe de testes têm ambientes consistentes a partir dos quais trabalhar. E, como já foi discutido, também garante de forma eficaz e eficiente o O ambiente da aplicação é consistente. em servidores de teste e produção. Então, vamos começar analisando como automação de implantação eficiente e fácil é feito através do uso do Docker. Instalações para gerentes fornecidas pela empresa de hospedagem.
+
+OK. Então, a forma como estruturei isto foi a seguinte: O vídeo está meio que ao contrário. Com isso quero dizer que não vou incluir uma longa preparação com muitos Explicações técnicas antes da implementação o aplicativo Magic Stream para Hostinger. Vou sair correndo do Os portões implantam o Fluxo Mágico aplicação para Hostinger em execução no meu Servidor virtual privado VPS através de O recurso Docker Manager da Hostinger. e Você ficará surpreso com a facilidade de...
+
+implantar um aplicativo web fullstack bastante complexo aplicação usando o docker da hospedagem instalações do gerente. Assim que tivermos implementado a mágica transmitir aplicação web fullstack para Hospedando usando o gerenciador do Docker, então fornecer uma explicação mais detalhada de os vários componentes envolvidos no processo de automação de implantação. para Exemplo: arquivos Docker, imagens Docker, Contêineres Docker, Docker Compose e até mesmo ações do GitHub. Observe que o O recurso Docker Manager é fornecido com Todos os planos DockerVPS da Hostinger. Certo, então deixe-me mostrar como é fácil.
+
+para implantar uma pilha completa bastante complexa Aplicação web para Hostinger. Eu tenho criou uma nova versão do Mágico Código de transmissão e um novo repositório no GitHub chamado Domínio do Sonho Mágico. Então, Então, se olharmos para o GitHub aqui, você pode Veja Domínio do Fluxo Mágico, que pode ser Encontrado neste URL aqui. E se voltarmos, você poderá ver o Código original Magic Stream. O repositório é chamado Magic Stream é criado neste local.
+
+URL aqui. E isso, claro, combina com o vídeo que eu recentemente que eu Desenvolvido recentemente para o Free Code Camp. E é este vídeo aqui. O link está em a descrição. Eu encorajo você a ir por meio deste vídeo. Mostra-lhe o
+
+passos que segui para construir o Aplicação web full stack usando React no cliente e depois no servidor e Então, o banco de dados utilizado é o MongoDB. E então usamos o Atlas para hospedar o Banco de dados MongoDB. Então eu te encorajo para fazer este curso, mas você Na verdade, não precisa para acompanhar. com este vídeo. Os motivos pelos quais criei o novo repositório, o repositório Magic Stream Mastery, o O repositório original do Magic Stream era mais sobre o código. Isso tem mais a ver com
+
+Implantação. Então, clonei todo o código. do repositório original do Magic Stream, mas Incluí estes arquivos Docker Compose. aqui. E aquela que é importante para Aqui, o que temos é apenas o dockery-mpose.
+
+Aqui está o arquivo Docker Compose relevante. será usado pela Hostinger para extrair o Imagens Docker relevantes do DockerHub e executá-los na Hostinger. Então eu tenho já enviou o Docker relevante imagens para o DockerHub. Uma imagem que define a infraestrutura para o Contêiner Docker que encapsula o Funcionalidade React, o front-end funcionalidade para o Magic Stream aplicação e a outra imagem que define a infraestrutura para o Contêiner Docker que encapsula o Funcionalidade do lado do servidor. O A funcionalidade do lado do servidor é indicada por um Componente de API web escrito em Go. Eu poderia
+
+Incentivamos você a conferir este recurso gratuito. Claro, mas como eu disse, você na verdade não precisa. Você precisa ir, mas na verdade não precisa. Faça este curso para acompanhar. com este vídeo. Mas isso lhe dará
+
+mais um contexto sobre como isso O aplicativo foi desenvolvido. Então você não Você precisa acompanhar este vídeo. Mas se você quiser ver uma lista detalhada demonstração de como eu construí isso Para se candidatar, por favor, veja o vídeo. O link foi incluído no descrição. Este é o repositório de onde Vamos implantar o fluxo mágico candidatura à Hostinger. Você pode ver que nós
+
+Tenho o arquivo Docker. Entramos no mundo da magia. cliente de streaming. Temos este arquivo Docker. produção arquivo aqui dentro do componente React código. Este arquivo dockerfile.pro define o
+
+infraestrutura para o contêiner docker que encapsula o react funcionalidade, a interface funcionalidade. E se entrarmos no componente do servidor, Como você pode ver, temos um arquivo do mesmo tipo. nome. Este arquivo dockerfile.prod define o infraestrutura para o contêiner docker que encapsula o servidor da API web funcionalidade secundária que tem sido Escrito em Go.
+
+Então, se formos à raiz, que está aqui, Temos este arquivo docker-compose.yamel Arquivo aqui. Este arquivo automatiza obtendo a versão mais recente do imagens relevantes, configurando o variáveis ​​ambientais relevantes, e iniciar o docker relevante contêineres que serão feitos em hospedagem. Então vamos usar a mágica. aplicação de streaming para hospedagem por simplesmente apontando o gerenciador do Docker para o Arquivo docker compos.yml relevante
+
+contido no fluxo mágico repositório principal e clique em implantar botão. Então, vou entrar no... Hostinger. Então, vamos acessar minha conta.
+
+aqui. Vou apenas fazer login. Acabei de entrar no site da Hostinger e Estou na página inicial. Você pode ver aqui em a parte de baixo esta seção com o cabeçalho VPS. Então Isso indica meu VPS. Então isso denota o meu
+
+instalação de servidor virtual privado bem aqui. Então, para chegar ao Docker instalações do gerente onde poderemos Implantar o aplicativo Magic Stream em Nosso VPS, vamos clicar no botão de gerenciamento. aqui. Ok, vou pular essa parte. Então, para acessar as instalações do Docker Manager.
+
+onde poderemos implantar a Mágica Transmita a aplicação para o nosso VPS, nós temos clicou no botão de gerenciar E agora vocês podem ver que temos um novo painel. apresentado a nós. Aqui à esquerda, dentro do painel, nós Possui diversas opções de menu. Aquele que O que nos interessa está rotulado como Docker. Gerente. Então vamos clicar ali. Temos um
+
+número de opções que nos são apresentadas aqui. Mas queremos clicar na opção do menu, a opção submen rotulada como projeto. Então Vamos fazer isso. OK. Então, por favor, ignore isto.
+
+instalação. Esta instalação aqui é minha instalação do N8N que realmente funciona em um contêiner dentro de um contêiner Docker. Então É uma implementação auto-hospedada do N8N. que está hospedado na Hostinger. Mas por favor ignore isso. Não vamos fazer isso.
+
+lidar com isso neste contexto específico. vídeo. Então vamos realizar a instalação. do aplicativo Magic Stream. Então para Para isso, primeiro clique neste botão.
+
+Abra aqui a opção "Compor". E você Podemos ver que temos várias opções. aqui. Componha manualmente, componha a partir de URL, implantação com um clique. Vou explicar o quê Estas são para mais tarde, mas por agora estamos focados, queremos concentrar nossa atenção ao compor a partir de uma URL.
+
+Então, vamos clicar nesta opção "compor a partir de" URL. E você pode ver aqui que estamos apresentado com um formulário, um deles rotulado como URL, um nome de projeto identificado e o cabeçalho é compor. Cole seu GitHub, GitLab, ou qualquer URL de arquivo Docker Compose para implantação sua candidatura. Vamos organizar tudo. liga automaticamente. Então, essa é a beleza.
+
+disso. Vai funcionar assim mesmo Tudo o que acontece nos bastidores. Vai acontecer abstrair todas as complexidades de a automação de implantação e isso simplesmente torna nossas vidas muito mais fáceis em termos de Implantação. Então, vamos fazer isso. Vamos lá O URL para o arquivo Docker Compose está aqui.
+
+do nosso repositório Magic Stream Mastery. Mas queremos o URL bruto, não este URL. Para fazer isso, clicamos neste botão bruto. aqui. E então podemos simplesmente copiar esse URL.
+
+a partir da barra de endereços aqui dentro do nosso navegadores. Volte para a Hostinger. Volte para o Docker Manager e vamos colar isso URL aqui. Ok, excelente. E você pode ver que é O nome do projeto foi definido como padrão. Foi escolhido
+
+Um nome para o nosso projeto. Claro que podemos atualizaremos isso para o nome do projeto que usarmos escolha, mas vamos ficar com o aquela que a empresa de hospedagem escolheu para nós. E Em seguida, basta clicar em "Implantar". OK. E você pode ver que temos um indicador, um indicador de progresso aqui em cima mostrando-nos o progresso da implantação.
+
+Ótimo. E de fato aconteceu. Implantação. E você pode ver aqui que nós temos Existem várias opções. Se clicarmos aqui, Podemos, de fato, atualizar os contêineres.
+
+Podemos parar e iniciar os contêineres. Nós Podemos visualizar os registros e podemos excluí-los. Se quisermos. Podemos desinstalar o contêineres. Mas vamos analisar os registros.
+
+aqui. Certo, então, nós temos muito status. nesses registros e na instalação Na verdade, ainda não está completo neste momento. porque precisamos configurar vários variáveis ​​de ambiente. Como eu disse mais cedo, Este é um site bastante complexo.
+
+aplicativo. Portanto, depende de determinados valores de variáveis ​​de ambiente. Se Vamos acessar o editor YAML aqui, você pode Entendeu o que eu quis dizer? Então, nosso docker O arquivo de composição aqui está puxando para exemplo, esta chave de API OpenAI de você saber localmente que ele o puxaria de arquivo AV, mas precisamos mesmo. configure isso na hospedagem para que aqueles As variáveis ​​de ambiente estão disponíveis para nosso arquivo docker-compose. Então ele puxa
+
+os valores relevantes antes de executar o arquivos. Executamos o arquivo docker-compose. mas não vai funcionar, a instalação não está concluído neste ponto devido a estes variáveis ​​de ambiente. Sim, faz. envolver outra etapa onde precisamos Configure essas variáveis ​​de ambiente.
+
+E você tem isso por um motivo, permita. origens para que o para que o componente do lado do servidor permita o lado do cliente este lado do cliente componente para conectar a ele via HTTP. Então, é isso que isso permite. A configuração de origem está aqui. e você pode ver o endereço IP do host da API, que é o Endereço IP no qual o código do lado do servidor está localizado.
+
+Vai funcionar. Então precisamos configurar todas essas configurações e precisamos de configurar isso porque poderíamos ser Executando isso em um ambiente de teste. ambiente de teste e configurações como esta pode ser diferente em cada um deles ambientes. É por isso que temos isso. configuração e em nosso local ambiente isto é apenas um exemplo host local. Portanto, está configurado como local.
+
+anfitrião em nosso desenvolvimento local ambiente. Portanto, precisamos adaptar este v o valor da variável para o nome do nosso VPS ou o endereço IP do nosso VPS. Qualquer um dos dois Vai funcionar, mas vou usar o nome. do VPS, o servidor virtual privado, meu servidor privado virtual neste caso particular. E você verá isso em Ação em instantes. Então vamos começar.
+
+nossas variáveis ​​de ambiente. OK. OK. E você pode ver que nós temos Nosso contêiner web e nosso contêiner de API. Então, com este editor visual, este visual interface, podemos configurar nosso ambiente variáveis. Você pode adicionar mais
+
+contêineres aqui. Você pode editar o configuração existente contêineres. Você pode ver o porto que O cliente está sendo executado na porta 8081. mapeado para a porta 80 porque a doca de o arquivo Docker relevante para o A imagem expõe a porta 80. Ela está usando o mecanismo.
+
+X. O Engine X está, na verdade, hospedando o Componente React do cliente. Então está expondo porta 80 e aqui estamos mapeando a porta 80 para a porta 8081. Portanto, este contêiner será Ouvindo na porta 8081. E você pode criar volumes para que os dados possam ser persistiu através dos volumes e depende Dependências de contêiner. Depende de
+
+a API, o código escrito em Go, que é o outro recipiente. Vamos voltar aqui. OK. Ok, vamos para a parte visual. Sou o editor e vamos adicionar o variáveis ​​de ambiente que serão incluído no arquivo docker-compose antes de executar o docker compose. Para fazer
+
+Para facilitar a nossa vida, eu gravei o variáveis ​​de ambiente relevantes aqui, então que podemos simplesmente copiar e colar o valores relevantes em uh o relevante campos. Então vamos criar nosso ambiente. variáveis. E é simplesmente um caso de atingindo o ambiente aqui mais ambiente e o primeiro é chamado chave secreta. Então vamos copiar isso para lá. Chave secreta e
+
+Seu valor é a sua chave secreta. E vamos Cole isso aí. E pronto. Vamos Acesse a próxima variável de ambiente. E Esta é a chave secreta do token de atualização.
+
+Vamos colar isso. O nome é refresh chave secreta do token. Vamos colar isso lá. E vamos colar o valor dele aqui. E vamos configurar essa variável de ambiente.
+
+Chave da API OpenAI. E vamos colar isso. aqui. Esse é o nome do meio ambiente. variável. E esse é o valor. Isso é
+
+a chave da API. Isso não será válido quando Você faz o curso, aliás. Então você terá que criar seu próprio espaço aberto. Chave da API AAI. Aquele vídeo que é este Vídeo aqui.
+
+Este vídeo explica como você pode ir para Abra a OpenAI e obtenha uma chave de API válida. OK. Então, vou copiar esta chave de API. Ops, para o serviço de hospedagem relevante. variável de ambiente que estamos definindo aqui em cima. Chave da API OpenAI. Entendi.
+
+lá. E você poderá perceber o seu valor se você Clique no ícone "I" dentro do campo. Enfim, vamos falar sobre meio ambiente e vamos...
+
+faça o host da API Endereço IP do host da API. Então, este é o endereço IP. mas estamos usando o nome do verdadeiro VPS aqui. Você pode usar qualquer um dos dois. o endereço IP e você pode encontrar isso valor na Hostinger, o endereço IP de seu VPS, mas estou usando o nome de meu VPS, que também funcionará. Então eu sou
+
+Vou colar isso ali. E então vamos permitir origens. Isso é Por uma boa causa. Para que o componente do servidor, o código Go, o componente da API web Go permite que o cliente que está sendo executado em Use a porta 8081 para se conectar a ele via HTTP. Então Vamos colar isso ali. E isso é
+
+nossas variáveis ​​de ambiente concluídas. E nós podem garantir que estejam corretos. Pode veja-os. E acho que é isso. EU Acho isso bom.
+
+E acho que agora estamos prontos para a implantação. E sabe de uma coisa? Agora que já configuramos tudo As variáveis ​​de ambiente, você pode na verdade, percebo que é apenas um caso de clicando em implantar. Portanto, é uma configuração única. onde a parte mais complicada disso é realmente preparando o ambiente variáveis, o que é extremamente simples. Então o
+
+A ordem das operações é: primeiro você conecta ao arquivo Docker Compose relevante, o Arquivo YAML hospedado em seu repositório e Em seguida, ele salva no gerenciador do Docker. Então Você pode ver isso aqui e você pode até mesmo editá-lo. Você pode editar seu arquivo e faça uma instalação subsequente se algo algo dá errado. E agora você pode ver o nosso As variáveis ​​de ambiente estão presentes no painel direito. E agora estamos prontos para implantar. E este é, na verdade, o último.
+
+etapa. Isso é tudo o que é preciso para implantar um web fullstack bastante complexo aplicativo. Então, se eu clicar em "Implantar", Você pode ver agora que está implantando o aplicativo. E, em seguida, quaisquer alterações de código subsequentes, Você poderia configurar um pipeline de CI/CD. e quaisquer alterações de código subsequentes que você faça, por exemplo, na sua região.
+
+máquina, seu ambiente de desenvolvimento. Agora que Você fez essa configuração única, é É só uma questão de clicar em implantar. botão. É isso. Então, ele foi implantado.
+
+Com sucesso. E se formos para Vamos visualizar os registros. Você pode ver exatamente o que aconteceu. lá. Veja, ele está ouvindo e Servindo HTTP na porta 8080. É isso aí.
+
+código. E há algumas informações de status para o cliente. E tudo parece bem. aqui. Vamos ver se realmente funcionou.
+
+Vamos ver se nossa inscrição foi... implantado. Então vamos abrir um novo navegador.
+
+janela aqui. Vou incluir o meu nome do servidor seguido da porta 8081 onde O cliente está em execução e clique no tecla Enter. Olha só isso. O aplicativo Está funcionando corretamente. Então vamos registrar sobre. Incluí alguns dados de exemplo.
+
+dentro do banco de dados. Assim podemos fazer login. automaticamente. Então bobjones@hotmail.com e a senha é a senha com P maiúsculo e depois um ponto de exclamação. Vamos
+
+Entrar. Excelente. E você, se formos para recomendações, você pode ver que estas são os filmes que foram Recomendado para Bob. E isto O serviço de recomendação é baseado em IA. Por favor, dê uma olhada neste curso.
+
+Para todos os detalhes. OK, portanto, foi implementado com sucesso. E poderíamos, sabe, testar isso mais a fundo. assistindo a um filme. Ótimo. Olha só isso. Excelente.
+
+Rick Dalton. Legal. Pronto. Uma vez Era uma vez em Hollywood. Excelente filme.
+
+E agora eles podem transmitir isso do nosso site. Serviço Magic Stream. Isso é incrível. Ok, vamos para a página inicial. página e Você pode ver todos os nossos filmes aqui. E
+
+Observe que, se acessarmos o YAML, editor, podemos ver o docker compose Arquivo aqui. Observe que isso se aplica ao servidor. No lado do contêiner, temos o MongoDB. Variável de ambiente uri configurada dentro do arquivo docker-compose e que aponta para um Banco de dados MongoDB hospedado no Atlas. Então, se Se você for a este curso aqui, eu explico.
+
+Como criar um banco de dados MongoDB em Atlas gratuito e importe os dados relevantes. dados. E os dados relevantes são, na verdade, incluído aqui dentro do fluxo mágico repositório. Então, se você for até o riacho mágico repositório, Você verá se for até aqui. Temos dados de sementes de fluxo mágico e você pode simplesmente importar os dados relevantes. Cada um deles
+
+arquivos representa uma coleção dentro do Banco de dados MongoDB e você pode simplesmente importar os dados contidos nesses arquivos e Então você verá algo semelhante aqui. de todos os filmes relevantes e você estará capaz de jogá-los e fazer todo o resto e faça login como Bob Jones e teste o Aplicativo, brinque com o aplicativo você mesmo. Excelente. Então, nós implantamos Riacho Mágico. Foi só isso que bastou.
+
+Vou te mostrar como isso realmente pode acontecer. nos sirva como CI/CD oleoduto. Agora, agora que temos o nosso Com o aplicativo instalado, nós poderíamos realmente Impulsionar uma mudança em nosso Magic Stream repositório, e este não é o que eu quero. EU quero voltar agora para
+
+E agora quero voltar à Magia. Repositório Stream Mastery. Então, Domínio do Fluxo Mágico, este é o uma que contenha todas as nossas implantações. Informação. Eu só quero te mostrar esse. Criei esta ação no GitHub.
+
+e você não precisa saber tudo detalhes disso, mas basicamente é o que é O que ele faz é responder a um evento, um impulso. evento da minha máquina local onde eu empurro alterações, alterações de código do meu local máquina para este repositório e qual Aciona a compilação e a implantação. E o que é isso? O que ele faz é se conectar ao DockerHub. Então é Constrói a imagem relevante a partir de Arquivos Docker fornecidos. Dockerhub, Docker
+
+arquivo.pro Para o cliente e para o servidor. constrói as imagens relevantes e isso as impulsiona push igual a verdadeiro para o docker hub e então quando executamos o docker compose a partir de hostinger clicando no botão de implantação implementa essas alterações na hospedagem e Vou te mostrar isso agora. Então você você pode ver aqui na página inicial Não temos nada acima este primeiro filme aqui. Então nós não temos Quaisquer cabeçalhos ou algo do tipo. O que eu vou fazer
+
+Basta adicionar um cabeçalho acima disso. Assim, isso demonstrará como podemos propagar alterações por meio de um CI/CD pipeline usando o Docker Manager. OK. Então Vou para lá E eu vou, eu vou para o componente inicial do código do cliente. Então Cliente de fluxo mágico para o componente React.
+
+Vou apenas mostrar para você agora. Vou adicionar um título. Então, H2. Agora você pode ver que foi verificado. código. Isso significa que há um problema.
+
+Mas isso porque ainda não concluímos. o código. Então, H2 ali. E vou apenas adicionar um título. lá. Magia. Então, acima dos filmes,
+
+Você verá este título: fluxo mágico filmes, desse tipo. E eu vou economizar que. Agora, isso foi verificado, afirmando que Ele modificou esse arquivo. Então precisamos de Basta verificar isso. E isso resolverá o problema.
+
+Acione a ação do GitHub. Então eu quero Isso deve ser o Git Bash neste terminal. Então Vou usar o Git Bash agora.
+
+OK. E agora estamos prontos para verificar isso. Insira o código com esses comandos. Adicionar ponto. Então, estamos adicionando isso localmente em todos os nossos As alterações serão feitas primeiramente em nosso repositório local.
+
+E então vamos confirmar o pedido. Eram Comprometendo-nos com a mudança. Devemos incluir um mensagem aqui. Hífen M. E eu vou para diga mineiro cabeçalho mudar para lar. Ops.
+
+Página inicial. Assim. Vamos pressionar o tecla Enter. Parece bom. Então vamos agora insistir nisso.
+
+mude para o nosso Magic Stream repositório de domínio que então acionará nosso Ação do GitHub que irá construir as imagens relevantes com base em e envie-os para o Docker files relevante. DockerHub. Então, pressione Enter e agora tudo parte dessa magia vai acontecer por trás as cenas.
+
+Excelente. E se formos para domínio da árvore mágica aqui e partimos para as ações, podemos Ver o progresso de fato. Então você pode Veja aqui o cabeçalho secundário de progresso Alterado para a página inicial. Essa era a nossa mensagem, nossa mensagem de compromisso. E isto girará e, se completar Com sucesso, isso nos apresentará um visto verde. E se não for concluído
+
+Com sucesso, isso nos apresentará um cruz, uma cruz vermelha daquelas. Agora só nos resta esperar que isso aconteça. Faz a sua magia. Excelente. E isso já passou Com sucesso. Ok, ótimo. Isso foi
+
+bem-sucedido. Bem, agora, se voltarmos a Docker Manager, tudo o que precisamos fazer para Baixe essas alterações do Docker Hub. Para Hostinger, o que significa essencialmente executar isto nosso Arquivo Docker Compose aqui. Tudo o que precisamos é para executar nosso Docker Compose funcionalidade aqui, que extrai o imagens relevantes, desde hospedagem até execuções. eles como recipientes.
+
+Basta clicar em "Implantar". botão agora. Então, vamos fazer isso. E podemos ver que temos o nosso indicador aqui, nosso indicador de progresso pois ele executa nosso Docker Compose. instruções, puxa as imagens para baixo e lança os contêineres relevantes.
+
+O projeto foi implementado e concluído. para nós. Super eficiente, Muito impressionante. E então você poderá ver se Se atualizarmos nossos navegadores, você poderá ver Filmes em streaming mágico. É propagado por meio do nosso ambiente de desenvolvimento até o nosso ambiente ao vivo hospedado em nosso VPS na Hostinger. Eu só quero
+
+deixe claro o ponto que você normalmente faria deseja incluir testes automatizados em seu Pipeline CI/CD para que apenas seu código seja implantado se os testes automatizados forem executados com Resultados bem-sucedidos. Eu não incluí automação de testes ou HTTPS para segurança em esta funcionalidade de implantação deliberadamente para não complicar o processo geral. Meu foco para este vídeo está no Docker Manager, arquivos Docker, Imagens Docker, Docker Compose e de claro a automação da implantação processo em geral. Então vamos continuar. Analisando o Docker Manager.
+
+Se olharmos para esta instalação aqui, você Pode, por exemplo, adicionar um contêiner. Eram Não vou fazer isso, mas você poderia adicionar um contêiner para sua rede de contêineres aqui. Isso torna tudo consideravelmente mais fácil. Para nós, isso nos proporciona comodidade, e então É claro que você pode configurar o relevante. variáveis ​​de ambiente ali. E você pode
+
+compõem uma rede de contêineres que Trabalhem juntos para a sua candidatura. a partir desta interface visual aqui. Isso torna tudo muito fácil. Então vamos Veja algumas dessas outras composições. Opções aqui. Você tem que compor
+
+manualmente, que é o que acabei de mostrar. Você está aqui. Isso lhe proporciona um editor visual onde você pode realmente adicionar contêineres para sua rede de contêineres. Você pode ver o fluxo de trabalho aqui. Você tem editor YAML e você pode escrever o seu Arquivo Docker Compose para iniciar seu contêineres relevantes aqui. Então, realmente
+
+é um editor visual conveniente fornecido por meio do Docker Manager na Hostinger. Vamos sair dessa situação. E então você tem Entendi, se formos compor, você tem Compor manualmente. Nós usamos, nós apenas demonstrado com bastante detalhe Como usar o recurso "compor a partir de uma URL". E então Você tem a opção de implantação com um clique aqui. E
+
+Vou explicar o que é isto aqui. Implantação com um clique no seu VPS da HostKing Permite instalar e executar aplicativos prontos. stacks como N8, WordPress e Docker, etc. com uma única ação em vez de Configuração manual. Nos bastidores, utiliza um arquivo Docker Compos predefinido para isso aplicativo, imagens, redes, volumes, variáveis ​​de ambiente, extrai o imagens Docker necessárias e inicia tudo contêineres automaticamente. Aplica-se
+
+configurações padrão sensatas para que você ajuste apenas um algumas configurações como domínios, senhas, portas em vez de configurar tudo Do zero. Então, agora que temos implantamos nosso aplicativo da maneira mais fácil através de Gerenciador do Docker, vou te mostrar como isso poderia ser feito da maneira mais difícil. Então Aqui vamos abordar o processo de construção. As imagens Docker do zero. Bem Crie um arquivo Docker Compose para executar nosso contêineres em nossas máquinas locais. Bem
+
+criar uma versão de desenvolvimento do Arquivo Docker Compose onde podemos executar nosso Contêineres Docker em modo de observação para que Podemos depurar nosso código em tempo real com Uma função de recarregamento a quente. Vamos criar versões de produção de nossas imagens Docker e enviá-los para o DockerHub. Vamos criar uma versão de produção do Docker Compor arquivo. Em seguida, realizaremos um Configuração única na Hostinger usando o terminal. Você poderia realmente entrar em um terminal aqui, que a Hostinger fornece conosco.
+
+que vai ser muito mais difícil de fazer porque você realmente Executando comandos em um terminal em vez de usar uma interface gráfica de usuário interface que o Docker Manager fornece conosco. Mas vou te mostrar como Para fazer isso na próxima seção deste documento. curso porque ele lhe proporcionará um conhecimento mais profundo Informações sobre contêineres Docker, Docker imagens, Docker Compose e tudo mais diversas funcionalidades sob o capô que ocorre quando a implantação é automatizado. Em seguida, realizaremos uma única apresentação. Configuração na Hostinger usando o terminal nos foi fornecido na Hostinger, onde nós...
+
+Criar um arquivo AV que contenha o variáveis ​​ambientais relevantes. Bem Em seguida, escreva uma ação do GitHub que será executada. sempre que enviamos alterações de código do nosso máquina local para GitHub. Isso nos permite para fazer alterações no código e redirecioná-las alterações diretamente na produção ambiente para hospedá-lo em nosso Ambiente de desenvolvimento hospedado localmente. Assim, as mudanças se propagam para a vida.
+
+da nossa máquina de desenvolvimento local sem causar qualquer perturbação ao usuário. Quando a ação do GitHub é Ao ser acionado, ele criará o Docker. imagens e enviá-las para o Docker Hub. Usando SSH, nossa ação do GitHub então Baixe as imagens mais recentes do DockerHub para Hostinger. Os contêineres serão então lançado na Hostinger e o antigo Os contêineres serão destruídos. Então em
+
+efeito, criaremos um CI/CD contínuo integração implantação contínua oleoduto. Você vai ver como é fácil O Docker Manager facilitou a criação de um ambiente de CI/CD. pipeline quando seguimos os passos usando o terminal. Agora vou demonstrar uma versão mais detalhada. uma maneira demorada de fazer isso para que você possa Veja quanto tempo leva a hospedagem em Docker.
+
+O gerente vai te salvar quando se trata de Implantação de suas aplicações. Mas você vai também obter uma compreensão mais profunda do que Está acontecendo algo que está acontecendo nos bastidores, por assim dizer. O principal objetivo de analisar tudo isso os detalhes do manual nesta seção de O objetivo do curso é proporcionar a você um conhecimento mais aprofundado. Compreensão de imagens Docker, Docker contêineres e a automação de implantação usando Docker Compose e um Ação do GitHub. Resumos do Docker Manager elimina muitas das complexidades do processo de implantação, que é excelente para maior eficiência. No entanto, também quero
+
+lhe proporcionar uma compreensão mais profunda do quê O que está acontecendo debaixo do capô. Só para ser Claro, certamente não estou defendendo isso. Indo por baixo do capô e criando tudo os detalhes você mesmo desnecessariamente Sempre que você quiser fazer uma implantação. Toda a base para a tecnologia A evolução visa nos tornar mais eficientes. e, com sorte, tornar nossas vidas um pouco melhores.
+
+um pouco mais fácil. A ferramenta Docker Manager O serviço oferecido pela Hostinger lhe poupará uma muito tempo e aumente o seu eficiência. Mas vamos dar uma olhada mais de perto. um pouco para obter uma compreensão mais profunda. Compreensão de imagens Docker, Docker contêineres e Docker Compose. Então
+
+Antes de começarmos, eu só queria saber se você... Acompanhando, eu só quero te fazer...
+
+para que você saiba que pode fazer referência a isso. o código porque eu vou realmente passo a passo crie outra versão de o aplicativo de fluxo mágico neste Repositório aqui, aplicativo de streaming mágico. Então, neste Na próxima seção do curso, você pode Consulte o código no aplicativo Magic Stream. Se você ficar preso(a) durante o acompanhamento. OK. E agora
+
+Vamos inicializar tudo. Então agora que que criamos através do Docker Manager, Vamos criar a mesma coisa, mas do jeito mais difícil, atravessando o terminal, só para... Você pode obter uma compreensão profunda de O que está acontecendo debaixo do capô?
+
+Automação de implantação. Então, o que eu vou fazer é... Na verdade, vou desinstalar este Magic.
+
+Instalação do Stream Mastering, estes contêineres, API Magic Stream, Pro, Magic Transmita contêineres We Pro, e eu vou Para fazer isso, utilize esta ferramenta aqui. Vou clicar nos três pontos. aqui e pressione delete. Excluir. E nós somos Agora, pronto para começar, aqui está o nosso indicador.
+
+Está excluindo esses contêineres. E agora Estamos prontos para criar nossa implementação. automação Começando do zero. E nós vamos Desta vez, faça isso pelo terminal. do que o Docker Manager. E você verá por
+
+Fazendo isso, você obterá uma compreensão mais profunda. compreensão dos componentes relevantes envolvido no processo de automação. E Você verá quanto tempo o Docker Manager leva. Pode realmente te salvar. Então vamos lá direto ao ponto.
+
+Então, a primeira coisa que vamos fazer é Vamos acessar o GitHub. Então, estou navegando até onde meu GitHub está localizado. O repositório é para o Magic Stream. repositório. E aqui está. E nós queremos
+
+Clone este repositório em sua máquina local. Então Para fazer isso, basta pressionar isto. clique aqui e depois baixe o arquivo zip e Isso o colocará em nossa pasta de downloads. pasta. Ótimo. Então, já está baixado. Então
+
+Posso navegar até a pasta dessa forma. E então queremos copiar o conteúdo. em um diretório designado, um diretório de trabalho diretório em nossa máquina local. Então eu sou vai criar isso uh dentro do cdev golang. Você pode ver que eu tenho Tenho experimentado várias coisas.
+
+versões do fluxo mágico aplicativo. Então vamos criar um nova versão disto. Então eu vou Crie uma pasta de trabalho aqui. Dentro da pasta raiz, o Golang pasta porque é uma espécie de Golang aplicativo. É um React em Golang aplicativo. Reaja, é claro, ao
+
+Lado do cliente e Golang no servidor lado para a funcionalidade da API web. Então Enfim, vou criar a pasta. e vamos chamar isso de Magia Fluxo aplicativo. Mantenha as coisas simples e diferenciado de todos os outros mágicos Versões de streaming que tenho jogado por aí com. Então vou abordar o seguinte: essa pasta e eu vou simplesmente copiar o conteúdo do que baixamos do GitHub para esta nova pasta que Eu criei isso aqui. E claro, se
+
+Você está acompanhando, então faça um Algo semelhante. Ótimo. Então agora nós temos todos os arquivos relevantes. Podemos carregar Visual Studio. OK. E eu vou
+
+Abra uma pasta. OK. Então eu vou Abra uma pasta. Aquela pasta que nós temos Acabei de criar. Então, Golang. E então, onde?
+
+É mesmo? Aplicativo Magic Stream. Aqui está. Ótimo. E queremos abrir isso. Então, selecionamos
+
+a pasta e estamos abrindo o aplicativo, o aplicativo Magic Stream dentro Visual Studio. E é claro que é muito é fácil carregar um projeto dentro Visual Studio. E agora podemos chegar a trabalhar em nossa aplicação para que possamos Execute-o dentro de contêineres Docker. Então, Em primeiro lugar, você obviamente notará que nós temos baixado o cliente aqui e claro que não possui todos os nós relevantes módulos. É claro, um aplicativo React.
+
+depende de ter o Node instalado para o módulos de dependência relevantes e de curso que não está armazenado em uh o Repositório GitHub. Então nós queremos Para instalar, queremos executar o comando `npm install`. Então vamos Acesse nosso terminal, navegue até o cliente, cliente de transmissão mágica. Ops. Então é mágico.
+
+fluxo cliente. Ótimo. E então queremos executar o npm. Instale todas as dependências. E isto é, obviamente, para que possamos Em primeiro lugar, faça o projeto funcionar a partir de on.
+
+nossas máquinas locais antes de nós conteinerizar os componentes relevantes. Então conteinerizar a funcionalidade do React como bem como a funcionalidade do Golang.
+
+Ok, parece que desapareceu. Certo, então que instalou todos os nós relevantes dependências que nossa aplicação precisa, Nossa aplicação React. Observe que eu usei Vit para realmente criar este projeto. Hum, Haverá um significado para o porquê de eu ter...
+
+Mencionei Vit um pouco mais tarde, mas Por agora, vamos apenas continuar a configuração. nosso ambiente local. Certo. Então, você é Provavelmente você vai querer instalar MongoDB. Não vou detalhar tudo.
+
+instruções de como instalar um local versão do MongoDB hum, porque eu já fiz isso em um Curso anterior gratuito de programação. E daí O que eu vou fazer é ir para uh Vou participar do acampamento de programação gratuito. Canal do YouTube aqui. OK, Vamos assistir aos vídeos. E é o vídeo que me preocupa aqui eu te guio por um passo a passo criação do código para a mágica aplicação de fluxo. Então, é isso.
+
+Aqui está o vídeo específico que você deseja. E se você olhar os capítulos que são detalhados dentro do descrição, Você pode encontrar o local onde estou me instalando. MongoDB em uma máquina local e apenas siga essas instruções um para orientá-lo(a) durante o processo. Então Você quer instalar o MongoDB e quer Para instalar um utilitário de interface do usuário chamado Compass, mas isso faz parte da instalação. processo pelo qual eu te guio através deste curso aqui. OK.
+
+Excelente. Então, vamos fechar isso aqui. Ótimo. Então, presumo que agora você já tenha o MongoDB Edição comunitária instalada em seu máquina local, sua máquina de desenvolvimento. E o próximo passo é criar o variáveis ​​de ambiente. Você vê o
+
+variáveis ​​ambientais dos quais depende esta aplicação uh obviamente não existirá dentro do Repositório GitHub. Então precisamos de Crie isso manualmente. Então, esse é o próximo passo. etapa. E vamos criar o ambiente.
+
+arquivo que armazena nosso ambiente variáveis ​​dentro do aplicativo cliente. Então, se você selecionar esta pasta aqui e for novo arquivo, vamos chamá-lo de enving convenção para um arquivo que irá Armazene as variáveis ​​de ambiente. Para economizar tempo, eu só vou copiar o variável de ambiente de Um arquivo fora da tela para o meu arquivo UHV aqui. Então você pode simplesmente adicionar isso em particular. variável de ambiente. Então, nós somos apenas
+
+tentando obter o aplicativo inicialmente executando em nossas máquinas locais. Isso é É tudo o que estamos fazendo aqui. Ótimo. Então nós conseguimos todos os nossos módulos do Node, nossas dependências. Criamos o arquivo de ambiente para o cliente e precisamos criar outro bit de arquivo no servidor e isso tem significativamente mais ambiente variáveis. Então, de qualquer forma, nós fazemos o mesmo.
+
+coisa. Selecionamos a raiz do servidor. código lateral aqui e clicamos neste ícone para novo arquivo env. E só para poupar tempo, eu sou Vou copiar e colar. essas variáveis ​​ambientais de um arquivo que tenho fora da tela.
+
+Então você pode simplesmente essencialmente imitar o que eu tenho aqui. E, hum, não. Não se preocupe demais com esta API de IA aberta. Campo chave aqui. Isso significa que Você terá que acessar o Open AAI.
+
+site e crie um acesso para você mesmo ficha. Bem, você terá que criar um conta no site da OpenAI e você Acho que será cobrado um mínimo de 5 dólares. só para começar, mas o seu Os créditos duram bastante tempo. Então, é isso. Vale a pena. Hum, e então você poderá
+
+Utilize os recursos de IA dentro do Magic Aplicativo de transmissão. Vou explicar isso a Um pouco mais tarde explicarei o que quero dizer com isso. Então Esta é apenas a minha chave da API OpenAI. Isso não será válido quando você assistir o vídeo. Então, temos todos esses variáveis ​​ambientais configurado aqui
+
+E isto é para o lado do servidor. Então inicialmente para o URI do MongoDB é apontando para o MongoDB, o banco de dados MongoDB que nós Estamos nos instalando localmente. É isto que essa string de conexão significa. Então é vou me conectar a partir do contêiner para uma versão local do banco de dados que na verdade vamos usar Criar agora. Mas na verdade é isso que queremos.
+
+um porque estamos correndo, vamos para Execute este programa localmente primeiro. Então isso vai conectar esta é a string de conexão apropriado para conectar-se a partir de um contêiner um contêiner docker do componente Go armazenado em um contêiner Docker executando dentro de um contêiner Docker para um instância local de um banco de dados que estamos Vou criar agora algo que funcione em sua máquina de desenvolvimento. Então, e isto é apenas a string de conexão local porque Vamos executá-lo localmente. Mas usaremos essa string de conexão em O próximo passo. Mas vou explicar melhor.
+
+isso quando chegarmos lá. Então, URI do MongoDB é igual àquilo ali. E agora podemos Carregar bússola, que nos fornece um Interface do usuário para que possamos criar um banco de dados MongoDB. bancos de dados, manipular os dados, importar dados, etc. Então, esta é a bússola aqui e Você pode ver que estou me conectando.
+
+até este caso do MongoDB e você pode ver que eu criei diversos bancos de dados e este é o fluxo mágico banco de dados que vamos criar agora mas vamos criar outro exemplo disso. Então, se você simplesmente seguir Vamos lá, comigo, vamos clicar no positivo. ícone aqui. E o nosso banco de dados, nós queremos Podemos chamar isso de mágica. fluxo Aplicativo como este. E o nome da coleção,
+
+O primeiro nome da coleção será filmes. Certo, assim mesmo. E então vamos criar banco de dados. Então, temos uma coleção. no momento e precisamos criar estes outros aqui. Então, eu vou
+
+Faça isso rapidamente. Vou criar Outra coleção chamada gêneros. Excelente. Criar outra coleção chamado classificações. E outra coleção chamada usuários assim.
+
+Excelente. E agora queremos importar o dados relevantes. Para importar dados, podemos Aperte este botão e nós vamos Importe primeiro os gêneros. OK. Então, na verdade, podemos importá-los.
+
+a partir deste diretório. Mas eu vou levar você à nova versão que nós criado a partir do aplicativo Magic Stream no aplicativo Magic Stream. E você vai veja, porque você clonou o repositório, você verá um diretório chamado magic-stream-c dados. Se você entrar nisso, você pode basta importar os dados relevantes para cada um das coleções. Então vamos importar gêneros.json.
+
+Excelente. Importar. Então, os gêneros têm todos os Dados para gêneros. Você pode assistir a um thriller, Fantasia, faroeste, tudo sendo importado. E depois os filmes, isso é o que importa.
+
+importante coleção contém todos os Informações sobre o filme. É um filme Aplicativo de streaming. Então, obviamente, o A coleção de filmes é extremamente importante. Então, vamos clicar duas vezes. nesse. Importar. Então, nós temos todos os
+
+Informações sobre filmes aqui. E vamos importar os rankings Dados aqui. Importar. Temos todos os rankings lá. E por último, o Usuários. Esses são apenas usuários falsos. Eu tenho
+
+Configurar usuários padrão. Assim podemos obter Começou imediatamente e faça login no aplicativo. Bob Jones, Sarah Smith, São apenas usuários fictícios inventados. OK. Agora que nosso banco de dados está configurado, tudo está pronto.
+
+acima. configurar o banco de dados MongoDB e Temos todas as coleções preenchidas. com dados. Já inserimos os dados na base de dados. Ótimo. Uma coisa que preciso mudar é o
+
+Nome do banco de dados. Então, este é o Magic Stream. aplicativo. Vamos apenas confirmar isso. Se formos para Compass, Ah, nós temos o aplicativo Magic Stream. Isso é
+
+nosso banco de dados. Então, queremos que isto seja aplicativo magic stream porque esse é o banco de dados MongoDB que criamos usando o utilitário de bússola que foi instalado quando instalamos o versão comunitária do MongoDB em nosso máquinas locais. OK. OK. E você precisa a string de conexão a ser definida como esta porque estamos correndo uma instância do MongoDB localmente inicialmente. Nós só queremos conseguir o
+
+Primeiro, o aplicativo está funcionando. Então eu acho Estamos prontos para realmente executar o aplicativo. Acho que é isso mesmo. E Estamos apenas fazendo isso antes de nós conteinerizar um os componentes. Então o cliente e o servidor. Então vamos
+
+Execute primeiro o lado do servidor. Então eu vou para criar uma nova instância do terminal aqui. Estamos usando o PowerShell aqui. E Vamos navegar para o servidor aplicativo fluxo mágico mágico servidor assim. Ok, estamos no servidor de streaming mágico e então o comando para executar o nosso O código do lado do servidor é executado com o comando `go run ponto`, assim: OK.
+
+OK. Excelente. Então, está ouvindo em porta 8080 e podemos realmente testar isso que está funcionando corretamente e Conecte-se ao nosso banco de dados navegando até para localhost. Hum, queremos a porta 8080 aqui. E então nós Quero testar o endpoint de filmes e ver se nossos dados retornarem. E você pode ver
+
+todos os nossos filmes armazenados dentro do nosso banco de dados MongoDB foram devolvidos para nós. Isso é o Usuários. Queremos filmes. Então nós conseguimos o Um Sonho de Liberdade, Era uma vez Em Hollywood, etc. E esses dados são sendo devolvido a nós de uma forma bastante feia maneira no momento deste filme ponto final. E nós usamos esses dados.
+
+obviamente na parte frontal e exibi-los adequadamente no página inicial. Mas podemos ver isso um pouco um pouco mais tarde. Mas está funcionando. Isso é Conectando-se ao nosso banco de dados. Nós temos o código Go está funcionando onde Está tudo parecendo bem.
+
+para o nosso meio ambiente local. OK, perfeito. Então vamos sair dessa situação e nós você pode interromper a execução disso simplesmente indo Ctrl+C. Então, estamos cancelando isso. Limpando a tela e depois vamos lá.
+
+Voltar à pasta do cliente aqui. E eu não sei por que fiz isso. EU Deveria ter deixado funcionando. Vá executar ponto Porque queremos executar o cliente. E Você pode ver todos os filmes exibidos em a página inicial. Então, certo, é isso.
+
+Ouvindo novamente na porta 8080. Vamos De volta ao cliente, vamos executar. o cliente. E o comando para isso é npm rundev porque eu realmente usei o vit para criar a aplicação React. A reação componente para esta aplicação. Então o
+
+comando apropriado para executar o React O componente é npm rundev. Pressione Enter. chave. Excelente. OK. E está ouvindo.
+
+neste local em nosso site máquinas. Então, vamos lá. Nós vamos para lá. E agora, o que deveria Exibir todos os nossos filmes para nós, supondo Nada deu terrivelmente errado.
+
+Aqui está. Eba! Então, nós temos a Magia Transmissão local em andamento. E podemos? Conecte-se? Acho que podemos. Vamos fazer login como
+
+Bob Jones@hotmail.com.
+
+E esse é um dos nossos usuários fictícios. Bob Jones. E aqui está. Estamos conectados dentro. E este é o um IA uh recurso que eu estava te falando, que você não poderá executar a menos que Você possui uma chave de IA aberta. Então, se formos para
+
+Em resumo, o que ele faz é... faz uma crítica de cinema administrativa e...
+
+reduz tudo a uma palavra que resume o O sentimento por trás do filme em si análise. Então, eu adorei a atuação neste filme. filme. Foi absolutamente sublime. Que vai para a Open AI e a Open AI usa sua inteligência para produzir uma palavra que resume o sentimento por trás a crítica do filme e, neste caso, que O sentimento é excelente. Ok, então eu acho
+
+Isso já é suficiente. Temos tudo Executando localmente. Isso é ótimo. O próximo O próximo passo é conteinerizar o componente React do cliente e o Go componente. Excelente.
+
+Vamos sair. Feito. Nós temos a magia. O aplicativo Stream está sendo executado com sucesso em nosso servidor. máquinas locais. Acabamos de provar
+
+que. Então, está tudo resolvido localmente. Mas Agora queremos conteinerizar o cliente. componente lateral React, bem como o componente de API web do lado do servidor que é Escrito em Go. OK. Então, para fazer isso nós
+
+É necessário criar dois arquivos Docker. Um em um no servidor e outro no cliente. Então Vamos começar pelo servidor. Então Vamos acessar esta pasta aqui e vamos...
+
+Crie um arquivo na raiz do componente do servidor. Servidor de streaming mágico. E vamos clicar neste ícone aqui para criar um novo arquivo. E vamos chamar isso de Arquivo Docker. Então, esta é uma convenção para o nome de um arquivo Docker onde estamos vamos estabelecer a imagem para o nosso Código do lado do servidor. A imagem é obviamente
+
+separado do recipiente. A imagem define o ambiente para o contêiner, se preferir, e os comandos que precisam ser executados para obter o aplicativo Executando dentro do contêiner. E de claro que o contêiner é como uma instância da imagem, que é o que realmente funciona. quando você executa uma imagem do Docker. Então o O recipiente é o que realmente importa.
+
+Executa em memória. A imagem é a informações declarativas sobre o que você quero executar dentro desse contêiner essencialmente e todas as suas dependências e coisas do gênero. Então, nós usamos o Docker. arquive lá e isso é tudo o que precisa ser feito. é um arquivo Docker. Isso é uma nomeação.
+
+convenção para um docker para um arquivo que Contém uma definição de imagem. se você como. E vamos criar o Definição da imagem agora. Mas na verdade eu já Isso já foi criado fora da tela. Então Vou copiar só para economizar tempo.
+
+que. Copie isso aqui. E isso é essencialmente isto. Essa é a definição para o nosso imagem. Cada linha representa uma camada.
+
+dentro do arquivo Docker. E esta camada específica aqui está usando uma imagem leve do Alpine Linux com Go 1.24.2 instalado. Então, isso nos permitirá para executar Go dentro do Docker relevante recipiente. Trabalho durapp
+
+sets for/ app é o diretório de trabalho dentro do contêiner. Então é aqui que Vamos copiar tudo arquivos relevantes, por exemplo. Então aqui está Temos um comando de cópia. Então copie o gomod. gossum O comando `dot slash` copia os arquivos de dependência para outro lugar.
+
+o contêiner e, em seguida, execute o comando `go downloads`. as dependências do Go E eles são armazenados em cache se não forem alterados. Então O que isso significa é que se nada tiver alterou na próxima vez que você executar a imagem. Na verdade, essa camada será executada, mas Ele executará a versão em cache do camada. Mas se algo mudou Com relação a esse comando específico, uh, irá invalidar o cache e executá-lo novamente.
+
+Isso fará o download novamente do arquivo relevante. dependências. O documento "Copiar" copia o restante de o código-fonte no contêiner e então exponha 8080 documentos que o aplicativo escuta na porta 8080. E você verá quando realmente...
+
+executar a imagem como um contêiner que nós será necessário mapear a porta exposta para a porta do host local para que possamos executar o aplicativo. Podemos executar o lado do servidor código em uma porta específica. Então nós estaremos mapeando a porta 8080 que está exposta a partir de A imagem está contida neste arquivo. Eram documentando que deveria escutar em porta 8080. E vamos mapear a porta 8080.
+
+para 8080, mas estamos mapeando o contêiner. porta para a porta do host. Estamos mapeando isso. para uma porta na máquina local, que Também vou ouvir no AT80, mas vamos ver...
+
+Entraremos em detalhes daqui a pouco. E então, finalmente, nós estávamos realmente Executando o componente Go. Então, definimos Basicamente, melhorar o ambiente aqui. E Este é o nosso aplicativo em execução. A parte do aplicativo que fica no servidor.
+
+E você pode ver aqui que estamos usando o cmd comando dentro da imagem para executar main.go que é o ponto de entrada para o nosso servidor. componente lateral o componente da API web Escrito em Go. Excelente. Então, já definimos a imagem.
+
+aqui. Então agora queremos construir a imagem. Com base em todas essas informações. Então para Para isso, precisamos primeiro navegar até a raiz do cliente onde nosso docker O arquivo foi criado. a raiz do servidor. Desculpe, não o cliente. Então, nós
+
+É preciso acessar a seção do servidor aqui. E Ainda estou usando. Então, eu só vou Para cancelar isso. Limpe o Servidor de streaming de tela e Magic. E agora Queremos criar a imagem. Criar
+
+a imagem real. Então, para fazer isso, nós usamos um comando específico. Então, para criar o imagem, vamos para o docker construir. Então, a primeira parte da criação de um O contêiner em si serve para construir a imagem. E é isso que estamos fazendo aqui. Eram
+
+Construindo a imagem. docker build então traço t então o nome da nossa imagem, o nome que É isso que queremos para a nossa imagem. Tão mágico fluxo API e então esta é a etiqueta que é na verdade, a versão que queremos para o imagem que é apenas 1.0.0.
+
+Assim, conseguimos versionar nossa imagem e então precisamos incluir um ponto aqui que significa que nós somos usando o diretório atual como diretório de construção contexto onde o arquivo docker reside. Então vamos analisar isso. Então, Docker O comando `build` cria a imagem do Docker e então Temos o traço t, que marca a imagem. com o nome de API de fluxo mágico e o versão que segue os dois pontos aqui e depois temos o ponto que significa que ele usa o diretório atual. como o contexto de construção onde o Docker O arquivo é. Resumindo, constrói o
+
+imagem docker da pasta atual e O nome é magic-stream-app 1.0.0 1.0.0 zero é a versão do imagem. Então, temos nosso comando lá em
+
+Vamos definir o local e construir nossa imagem. E é isso. Construindo nossa imagem, nossa Imagem Docker. E nós podemos realmente ver que. Como eu disse antes, você deveria Instale o Docker Desktop.
+
+Você precisa instalar o Docker Desktop em para executar esses comandos. Então nós conseguimos Docker Desktop aqui. Você precisa Na verdade, instale o Docker Desktop para para executar esses comandos. Mas também nos fornece uma interface gráfica de usuário. interface onde podemos, você sabe, executar nossos contêineres, impeça nossos contêineres de Em execução, veja as imagens que temos.
+
+Criado em nossa máquina local. Pudermos Apague essas imagens se precisarmos. Então Isso nos fornece uma interface de usuário. onde podemos realmente ver o que está acontecendo em termos de nossas imagens Docker e nossos contêineres. E você também pode começar o seu contêineres, parem com seus contêineres, Remova seus recipientes, remova seus imagens e assim por diante usando este gráfico interface do usuário aqui.
+
+OK. Então, se formos em imagens, temos API de fluxo mágico e nós a criamos imagem. Você pode ver isso ali. Então agora nós É possível executar isso como um contêiner. OK. Precisamos garantir que nosso
+
+As variáveis ​​de ambiente estão configuradas. corretamente. Precisamos garantir que MongoDB URI mudou porque vamos correr isto como um recipiente e isto é o string de conexão que precisamos se quisermos ainda use essa versão local do instância local desse específico banco de dados que é o banco de dados MongoDB. E daí O que eu vou fazer é comentar. isso usando o símbolo de cerquilha (#) dentro o arquivo relevante e comente este.
+
+E isso, como eu disse, nos permite... conectar à versão local do banco de dados, o banco de dados MongoDB, uh o instância local em vez de uma que seja Executando em um contêiner, por exemplo. Então, queremos nos conectar com a instância local, e é assim que nós Posso fazer isso. Criamos um local
+
+por exemplo, mas mais tarde, nós vamos executar o banco de dados MongoDB em seu próprio recipiente. Mas, por agora, é assim que nós... É necessário conectar-se ao banco de dados MongoDB.
+
+do nosso código do lado do servidor. Então, este é o Cadeia de conexão correta. E nós temos O nome do banco de dados está aqui. Corrente mágica aplicativo. Ótimo. E agora, para administrar o nosso
+
+contêiner, temos um comando específico que podemos executar. E é algo assim assim. O comando `docker run` não está funcionando. docker run dash d porque queremos executá-lo em modo separado, para que funcione no fundo e depois d-p e agora fazemos nosso mapeamento de portas como discutido anteriormente, então queremos mapear o porta um queremos mapear o porta de contêiner que é 80 opa que é 8080 para a porta do host, que é 8080. Então Isso significa que em nossa máquina local nós pode acessar o contêiner e o código executando dentro do contêiner onde está Ouvindo na porta 8080. Portanto, precisamos mapear.
+
+a porta de contêineres que foi definida dentro da nossa imagem de arquivo Docker. aqui expor 8080 e estamos mapeando esse contêiner porta. Esse é o porto de contêineres. Aquele À direita fica o porto de contêineres. Esse é o porto de contêineres. E isso é
+
+a porta do host na máquina local. Então para que possamos ter acesso ao funcionalidade desta API específica, nós quero que a porta do host esteja escutando em e mapeado para o contêiner relevante, então que podemos fazer para criar o HTTP relevante solicitação ao contêiner que é obviamente dentro desse recipiente. Nosso go O código está sendo executado. Nosso código de API web é correndo. Então, queremos dar um nome ao nosso recipiente. Vamos para o nome d.
+
+E vamos chamar nosso recipiente de magia. API de fluxo. API mágica do Dashream assim. Vou apenas mover isso para o lado. um pouco.
+
+E o que também precisamos fazer é... queremos injetar em nosso ambiente variáveis ​​do arquivo env que nós criado anteriormente. E para fazer isso você vai d- env ​​como este e arquivo dash e depois inveje que contém o ambiente relevante configurações variáveis. E então queremos
+
+Isso deriva da API de fluxo mágico. imagem que, como verificamos através de O Docker Desktop já está em execução em nosso servidor. máquina local. Então, a API mágica do Dashream cólon 1.0.0
+
+que é a versão da nossa imagem e Então deveríamos conseguir executar isso. Que Parece bom. Docker run-d em execução em mapeamento d-p em modo separado das portas apropriadamente, estamos nomeando o contêiner d- evilleenv Estamos lendo as variáveis ​​de ambiente. para dentro do recipiente e então fluxo mágico api colon 1.00 que é apenas o nome de a imagem hum, de onde estamos derivando nosso contêiner de. Então, vamos pressionar a tecla Enter.
+
+Bandeira desconhecida-p. OK. Então, presumo que vamos apenas copiar. e cole isso. Acho que P só deve ter um traço. Acho que talvez seja isso que...
+
+O problema é. Então, vamos tentar isso. Vamos remover um hífen ali. OK. Vamos tentar novamente.
+
+Ok, perfeito. E isso funcionou. Então Esse era o problema. Então esse comando é Não é d-p, é -p, e é onde estamos mapeando. o número do porto de contêineres para o local Número da porta do host. E este é o
+
+O resultado correto que queremos ver. E isso é o ID do contêiner. OK. Se nós Vá até lá, podemos ver nossa imagem. Podemos ver aqui o nosso contêiner e isso é o ID do contêiner. Sim, é isso mesmo.
+
+ID do contêiner. Esse é o contêiner que temos. Simplesmente corra. E agora podemos testar isso. O contêiner está funcionando corretamente.
+
+navegando através de nossos navegadores para host local e queremos a porta que é 8080 filmes e podemos ver que está funcionando corretamente. Então, nosso contêiner está no ar e correndo. Está exposto na porta 8080. Portanto, Podemos fazer uma requisição HTTP para o nosso contêiner e retorna o relevante dados do filme. Então está funcionando perfeitamente.
+
+Então, podemos ver aqui que temos nossas imagens. Temos a API magic-stream 1.00 e Descobrimos se você gosta de um contêiner. Estamos executando um contêiner a partir disso. Imagem, se quiser, que é magic-stream- API. E esse é o seu ID de contêiner, que
+
+foi gerado para identificar exclusivamente o recipiente. Ótimo. Então nós criamos o contêiner para o código Go deste Imagem aqui. Agora queremos criar um contêiner para O cliente, o código React aqui. Então é Essencialmente o mesmo processo. Precisamos
+
+Crie um arquivo, um arquivo Docker que define a imagem que queremos criar. Então estamos na raiz do Sou o cliente e vamos resolver isso. ícone para criar um novo arquivo e nós seguimos a convenção docker file a nomenclatura convenção. Você pode ver que tem uma baleia. Agora há um ícone de baleia que denota que é um arquivo Docker. Ótimo. Eu tenho
+
+Na verdade, o arquivo Docker já foi criado. exatamente como antes. Vou apenas copiar. e cole isso para economizar tempo. Aqui está a definição da imagem para o Componente React, o cliente recipiente aqui. Então, vou explicar.
+
+Tudo isso um pouco mais tarde, mas por Agora vou comentar este comando. e vou comentar sobre isso. comando. Esta é uma versão mais simples. E vou explicar tudo isso um pouco melhor.
+
+mais tarde. E não precisamos disso por enquanto. qualquer. Ok, então vou comentar. isso está resolvido. Então vamos analisar essa camada.
+
+Por camada ou linha por linha. Lembre-se de cada um cada uma dessas linhas representa uma camada no arquivo docker. Então, a partir do nó 20- Alpino, Este sistema utiliza uma distribuição leve do Alpine Linux. imagem com NodeJS 20 instalados. Então, estamos criando um ambiente que é a partir de uma imagem existente. Então, é baseado em
+
+uma imagem existente. É isso que vem de significa aqui. A partir dessa imagem, estamos derivando outra imagem. Então você poderia Digamos que está herdando todas as camadas. a partir desta imagem antes de criar o imagem que estamos criando com isso arquivo docker específico. Então é isso.
+
+Estamos fazendo aqui a partir do nó do cólon 20-y Em seguida, criamos o diretório de trabalho. Define o aplicativo como o diretório de trabalho interno. o recipiente. Então ele copia o pacote JSON e package-lock.json arquivo e então executamos o npm para instalar todas as dependências, o nó dependências que nossa aplicação React requer. E então estamos copiando ponto ponto
+
+copia o restante dos arquivos do aplicativo para dentro do recipiente. E então, como antes. quando expomos a porta 8080 para o servidor contêiner que estamos expondo 5173 para o recipiente que será derivado desta imagem. Então nós queremos expor 5173 e então temos o comando aqui que está apenas executando o nosso Nosso cliente React. Você reconhecerá o npm.
+
+rundev porque nós executávamos isso quando estávamos executando-o localmente, ou seja, fora de um recipiente. E, essencialmente, é isso. O que estamos fazendo aqui com este comando? camada aqui. Assim, no início do contêiner, O comando inicia o servidor de desenvolvimento e Vincula-se a todas as interfaces.
+
+Basicamente, é isso que esse comando faz. fazendo. OK. Então, agora estamos em um estágio. onde podemos construir nossa imagem. E nós fazemos.
+
+que como antes. Usamos este comando docker construir. Lembre-se de que todos esses comandos são disponível porque você instalou docker desktop. Então você tem o docker build então traceje o t e então podemos depois do opção traço t nós, ou trocar, ou o que você quiser. Podemos chamar assim: podemos dar um nome ao nosso imagem e queremos chamá-la de mágica fluxo web magic-stream web e vamos dar isso uma versão de 1.0.0 zero
+
+e então você também deve incluir o ponto posteriormente, que usa a corrente diretório como contexto de construção onde o O arquivo Docker é. Então é isso que aquele ponto então é isso que esse ponto representa e Vamos pressionar a tecla Enter para construir o nosso imagem. Ok, e isso parece muito bom. Fornece a atualização de status. À medida que constrói a imagem, ela nos fornece O status está bom e parece promissor.
+
+Como sempre, só nos resta ter paciência. Não deve demorar muito. Então, eu acho Criamos uma imagem bastante eficiente. aqui. Então, duas de cinco camadas. São cinco
+
+camadas na imagem. Está construindo o segunda camada aqui. Então, está construindo o quarta camada. Instalação via NPM. Isso é instalando todas as dependências para o Aplicação React usando npm install.
+
+OK. E estamos na quinta camada. E Está copiando todos os arquivos do aplicativo. E agora isso está encerrado. E Agora estamos prontos para construir nosso contêiner.
+
+Vamos acessar o ambiente de trabalho do Docker. E você Podemos ver se formos à aba de imagens aqui. Você pode ver que foi construído com a tecnologia magic-stream web. Foi isso que construiu a imagem ali. E é possui seu ID de imagem. Agora podemos derivar um
+
+contêiner daquela imagem. E nós fazemos. que através do comando executar. E eu quero você perceber algo que é bonito incômodo. o fato de que quando estamos Ao executar nossas imagens como contêineres, nós preciso criar dois comandos separados para o cliente e o servidor. Idealmente, o que
+
+O que gostaríamos é de um único comando para executar ambos. imagens. Então, você tem o cliente e os contêineres do servidor em execução e Eles fazem parte da mesma rede. Então, Não seria melhor se pudéssemos simplesmente Use um único comando para executar todo o processo. rede de contêineres? E nós podemos fazer
+
+que utiliza o Docker Compose. E isso é O que faremos depois que tivermos testei a execução deste computador com os componentes individualmente. Executamos o servidor. componente e o testei. Agora estamos Executando o componente cliente e realizando testes.
+
+isto. Estamos derivando o cliente Contêiner Docker e nós vamos para testar, então poderemos testar o aplicação completa. A diferença entre testar agora e quando nós já testamos o aplicativo antes, nós estávamos executando-o no computador host antes E agora estamos correndo a aplicação dentro de uma rede de contêineres. Temos um contêiner de cliente e um contêiner de servidor se comunicando uns com os outros. Então eles são conteinerizado e mais tarde também vamos conteinerizar o Banco de dados MongoDB. Mas por agora, vamos
+
+Vamos apenas testar o cliente e... os componentes conteinerizados do servidor e veja-os trabalhando juntos como um só aplicação, uma aplicação full stack. Então, já configuramos o servidor. Agora queremos
+
+executar, queremos derivar o cliente contêiner e fazemos isso através do comando docker run. Mas mais tarde nós executar ambos os contêineres ao mesmo tempo usando o Docker Compose e chegaremos a Isso daqui a pouco. Então vamos executar isso. recipiente individualmente. o cliente recipiente. Então, é docker run dashp.
+
+Lembre-se, é apenas um traço. Eu coloquei dois havia traços antes e o programa não gostou disso. E eu vou simplesmente correr...
+
+primeiro. - O hífen indica que estamos em execução em modo separado, executando-o no fundo. Então, execute docker run-d e queremos mapear a área exposta Porta do contêiner para a porta do host local. Então, esta é a porta do host local 51 73. Nós queremos expor essa porta e nós estamos mapeando o porto de contêineres ou a porta de imagem que expomos aqui nesta linha, esta camada da imagem expor 5153. Então estamos expondo, então estamos
+
+mapeando 5153 para 5153. Mas este é 51 Desculpe, 5173. 5173 é o número da porta do contêiner Isso está definido na imagem aqui. E então 5173 Esta é a porta do host local. Então nós somos mapeando a porta do contêiner para o local porta do host com isso uh, mude aqui esta opção -p. OK. Então
+
+Obtivemos -p e então queremos nomear nosso recipiente. Então, este é o nome traço traço seguido do nome que queremos dar a ele vamos chamar isso de web de fluxo mágico e então nós vamos d- inveja assim porque queremos injetar em as variáveis ​​ambientais relevantes de que ambiente arquivo que contém o relevante configurações de variáveis ​​de ambiente seguidas por magia web de transmissão e isso é claro o imagem da qual estamos derivando a recipiente. OK. E acho que é isso. Vamos pressionar a tecla Enter e ver o que acontece.
+
+acontece. OK. Ótimo. E agora retorna. o identificador único para o real contêiner, o que significa que o contêiner é agora estão em funcionamento na rede local máquina. Vamos ver isso. Então nós temos
+
+Temos a imagem aqui e depois temos... o recipiente daquela imagem mágica transmissão web. Então eles estão correndo. Então agora
+
+deveríamos conseguir executar o programa completo. aplicação, certo? OK. Então nós temos nossos dois contêineres em funcionamento. Você pode ver que aqui. API de fluxo mágico, Mágico
+
+Transmita para a Web. Eles estão correndo. O A desvantagem é que tivemos que executá-los. individualmente. Então, depois de testarmos esses contêineres trabalhando juntos como uma equipe completa aplicação, o que vamos fazer é Crie o que é conhecido como Docker Compose.
+
+arquivo. E isso nos permitirá... Para executar um comando, use docker compose up e Ele executará ambos os componentes.
+
+apropriadamente e executá-los como uma rede de contêineres. Basicamente, nossa pilha completa O aplicativo é executado como uma rede de contêineres que é o que queremos alcançar aqui. Mas veja bem, tivemos que execute dois comandos separados para criar o contêineres para o lado do servidor e o componente do lado do cliente. E isso é Não é o ideal. E você pode imaginar se nós Temos vários contêineres que queremos funcionar como uma rede, uh, você realmente não faz isso.
+
+quero executar cada contêiner individualmente sempre que você quiser testar sua candidatura. Então é isso. Necessidade do arquivo docker compose. O arquivo docker compose, que estamos O próximo passo é criar algo que nos permita...
+
+Para executar um comando e executar todos os nossos contêineres em uma rede. E nós vamos olhar Isso daqui a pouco. Mas vamos apenas testar o que fizemos até agora. Vamos abrir o navegador e começar. localhost 51. E pronto. Então, é
+
+Tudo funcionando conforme o esperado. Bem, vamos fazer login com uma das nossas contas. usuários, Bob Jones. Ok, só para garantir. E lá você vai. Esses são filmes recomendados para
+
+Prumo. Ele gosta de ficção científica, fantasia e Comédia, claramente. Ótimo. OK. Então, o aplicativo é Funcionando claramente. Excelente. Vamos registrar
+
+fora. Então, agora queremos criar o nosso Arquivo Docker Compose. E o que eu vou fazer, na verdade, é que eu...
+
+Vou migrar para o Docker Desktop. Eu vou para impedir que eles continuem funcionando e eu vou para remover esses recipientes. É assim Você pode fazer isso de dentro do Docker. Computador de mesa. Queremos criar um docker compor arquivo e vamos criar esse arquivo dentro da raiz do mágico diretório de aplicativos de streaming.
+
+Então vamos fazer isso. Vamos criar um Docker. Arquivo YAML composto. É um arquivo YAML que é apenas um formato para um arquivo como xml ou JSON, mas YAML usa recuos e cólons. Você vai entender o que eu quero dizer quando...
+
+quando nós criamos este arquivo. Então, tudo bem. Então, vamos criar o Docker. compor.yamel arquivo dentro da pasta raiz fluxo mágico aplicativo. Vamos fazer isso. Vamos clicar neste ícone.
+
+para fazer isso. E nós vamos para a doca- compor. E esta é a nomenclatura. Convenção para um arquivo docker compose. E vamos usar YAML. Você também pode usar YML.
+
+Mas vamos digitar a extensão inteira, que é YAML. Então, estamos criando o nosso Arquivo Docker Compose. E você pode ver o O ícone relevante apareceu ali dentro Visual Studio. Então, trata-se de reconhecer o Arquivo Docker Compose. O Visual Studio é reconhecendo o Docker Compose.yamel
+
+arquivo. E eu vou simplesmente copiar isso. aqui. Apenas o básico para o arquivo. Nós Teremos que alterar alguns itens dentro este arquivo, mas vou copiar o Arquivo docker compos que eu tenho.
+
+Armazenado fora da tela aqui e cole-o em Estou aqui só para poupar tempo e já vou. através das partes relevantes disto arquivo. Então, isto contém o real Imagem conteinerizada para MongoDB banco de dados as informações definição para a imagem um da qual Derivamos um contêiner que contém o banco de dados MongoDB, mas não queremos Para fazer isso agora mesmo. Então eu sou e uh isso também alimenta o banco de dados. Eu automatizei a inicialização do banco de dados e nós criar o que é conhecido como volume, mas eu vou Vamos analisar isso daqui a pouco. Nós queremos
+
+para criar uma versão mais enxuta para agora. Então, vou remover este banco de dados. coisas aqui. Nós também não precisamos disso. Então, nós só queremos a definição de Componente API e React componente por enquanto apenas para que possamos teste básico funcionalidade do Docker Compose e seus significado. Esse nome não é o mesmo.
+
+como temos atualmente. Então precisamos de Basta modificar isso. OK. E o nome do contêiner será fluxo mágico web para react componente. E essa é a imagem que nós...
+
+criado anteriormente. OK. E Depende se podemos remover isso porque Não estamos conteinerizando o banco de dados. Bem, pelo menos por enquanto. Assim podemos remover que ali. E vamos alterar esse nome.
+
+aqui. Portanto, trata-se da API de fluxo mágico 1.0.0. Foi assim que chamamos nossa imagem e nosso recipiente. Vamos nos ater a isso.
+
+API de fluxo mágico de convenções. Ok, nós Conseguimos mapear as portas e temos... Obtive as variáveis ​​de ambiente relevantes.
+
+E vocês podem ver aqui que nós realmente estamos lendo. Então, quando usamos o Docker. compor queremos as configurações relevantes para ser lido nos contêineres como aqui para o componente React e então todas essas configurações para o Go componente. Então, queremos essas variáveis ​​de ambiente. leia quando o comando docker compose está em execução e vamos analisar isso em breve.
+
+pedaço. Então, na verdade, precisamos criar um AV. arquivo e essa é a importância disso O arquivo de ambiente específico é o que estes As configurações serão lidas e injetadas. no contêiner quando o docker compose é executado. OK. Então, agora, dentro dessa magia
+
+pasta raiz do aplicativo de streaming para nossa aplicação fullstack. Vamos criar arquivo AV. Então, vamos clicar com o botão direito do mouse neste painel. ir novo arquivo e env é o nome do arquivo Queremos criar. E eu vou simplesmente copiar isso.
+
+Para poupar tempo. Não se preocupe com o indivíduo em questão. configurações. Posso explicar isso um pouco melhor. um pouco mais tarde. E nós temos todos esses
+
+agora. Todas essas configurações dentro do ambiente arquivo, que será recolhido quando nós Execute o comando docker compose. E essas configurações serão injetadas em o arquivo docker compose. Hum, E, na verdade, cometi um erro aqui. Criei este arquivo Docker Compose.
+
+dentro de o diretório do servidor, e não queremos que. Então, vou apenas arrastar isso. dali em direção à raiz. [música] Sim, é aí que queremos. Nós queremos este arquivo Docker Compose dentro do Diretório raiz do aplicativo Magic Stream. Então,
+
+Eu expus isso, e é Vou aplicar essas configurações. Então chave secreta deste arquivo env quando nós Execute o comando docker compose e pronto. Vou construir o contêiner web. da imagem que criamos para react para o componente cliente React e seus Vou criar um contêiner para o Imagem da API Magic Stream e você pode ver que temos todos esses detalhes aqui para Por exemplo, estamos mapeando as portas. Aqui, apropriadamente, temos o contêiner.
+
+nome imagem, mas estamos colocando em um Arquivo formatado de maneira diferente aqui. Enquanto estamos usando o comando `run` para criar o recipientes individuais antes, agora nossos O arquivo docker compose criará ambos os... contêineres em uma rede de contêineres automaticamente.
+
+Certo, então nós queremos Na verdade, vamos criar um novo terminal. aqui e vai definir o padrão para a direita direito a este diretório até a raiz diretório onde está nosso docker-mpos.yamel O arquivo está localizado. E agora vamos para derivar os contêineres relevantes de suas imagens apropriadas usando o Docker compor. Vamos executar um Docker.
+
+compor arquivo. Você pode ver aqui se nós dê uma olhada na aba de contêineres, nós estávamos Excluímos os contêineres que criamos. usando o comando executar. E agora estamos Vou criar os contêineres com um. comando. Enquanto nós tivemos que criar o
+
+contêineres com dois comandos separados antes, o que não é o ideal, especialmente porque Você amplia a escala da sua aplicação. E você Poderia ter vários contêineres. Docker Compose é uma forma muito mais eficiente de criando seus contêineres. Precisamos Altere mais uma configuração aqui. Então eu sou Vou apenas comentar isso aqui.
+
+E queremos que se conecte a partir do container para MongoDB hospedado localmente. Então Vamos nos conectar com a instância MongoDB hospedada localmente um que você pode ver aqui através da bússola neste caso específico, e este é o string de conexão apropriada para conectar de um recipiente, o recipiente que... encapsula nossa funcionalidade Go.
+
+Funcionalidade da API web que estamos conectando para o hospedado localmente Instância do MongoDB aqui. E nós precisamos de alterar o nome do banco de dados para aplicativo de transmissão mágica um aplicativo como esse. E vai acontecer Selecione essas configurações. É isto que este dólar e depois embrulhando o variável ambiental relevante dentro É disso que se trata o uso de chaves. Vai acontecer para ler essas configurações daqui quando executamos o docker compose. OK. E
+
+Agora podemos simplesmente digitar `docker compose up`. um comando para criar contêineres tanto para o cliente quanto para o servidor componentes. docker compose traço para cima d. Tomara que a mágica funcione. OK.
+
+Digitar. Assim, criou-se a rede. chamado aplicativo padrão do Magic Stream. E essa rede contém estes contêineres. API magic-stream código do lado do servidor e magic-stream-web que encapsula o React do lado do cliente código e se olharmos no Docker Desktop, Podemos ver que temos nossa rede, que é chamado aplicativo Magic Stream e se nós acertarmos esta flecha nós temos estas duas contêineres dentro dessa rede que foi criado através de um comando muito eficiente e agora se nós Vamos testar nosso aplicativo.
+
+navegador Será que funciona? Espero que sim. Veja, hosts locais. 513. Kapow. Aqui está. Olha só isso. E
+
+Já estamos em funcionamento. E todos os funcionalidade Funciona como esperado. Prumo Jones@hotmail.com.
+
+Você pode fazer login com a senha um. Ponto de exclamação com o P em maiúsculas. E vamos clicar em "Entrar". E aqui está. Está tudo funcionando. E
+
+Essas são as recomendações para Bob. E Você pode até reproduzir um filme, se quiser. para. Olha só isso. Transmite o filme.
+
+Fantástico. Harry Potter e a Pedra Filosofal. [sino] [música] Sua mão direita sobre a vassoura. E Muito legal. OK. Claro,
+
+a ressaca.
+
+Portanto, nosso aplicativo está funcionando. Fantástico. OK. Então, antes de prosseguirmos, Só quero garantir que estes contêineres que estamos executando agora Os processos que utilizam o Docker Compose são interrompidos. Vamos parar com isso. Pare com isso.
+
+Remova este. E vamos remover o Contêiner React do cliente. Então, removemos aqueles. E antes de prosseguirmos, eu gostaria de...
+
+corrigir o que pode ser visto como uma aresta emitir. Deixe-me explicar essa questão. Portanto, isso envolve alterar o código. Antes de prosseguirmos. Então, o problema é no momento em que um contêiner é construído para o componente React do cliente variável de ambiente este ambiente variável aqui. Então, se eu for aqui, não, não.
+
+Aquele. Se analisarmos o cliente env podemos ver que temos isso variável de ambiente. O que está acontecendo exatamente agora? Esta variável de ambiente está sendo incorporado na imagem, o que significa quando Se você executar o docker compose, não poderá. Substitua esta configuração, que será uma problema quando realmente fazemos a portabilidade do contêineres para hospedagem porque obviamente, hospedar terá um cenário diferente. Não vai acontecer
+
+ter host local. Nós queremos, nós queríamos lemos a variável de ambiente quando nós Execute o Docker Compose no Hostinger. Nós queremos para lê-lo a partir deste ambiente variável que está situada na raiz do aplicativo aqui. Então, quando corremos docker compose irá injetar isso Configuração no arquivo docker-compose. Você pode ver aqui.
+
+Portanto, não queremos um host local. Nós queremos o O nome real do servidor ou o endereço IP. por exemplo um para o nosso VPS na Hostinger. Então, para fazer isso, precisamos...
+
+alterar nosso código para que isso aconteça A variável de ambiente não está integrada ao sistema. a imagem para o cliente React componente. Então, para fazer isso, nós apenas...
+
+Vou seguir alguns passos em ordem. para conseguir isso. Então, em primeiro lugar, vamos...
+
+nesta pasta pública. Ah, e só mais uma mais uma coisa é o motivo pelo qual temos que fazer Isso ocorre porque nós criamos o React. aplicação usando vit. Então, isto é um problema com o docker especificamente em relação à criação de um React componente em vit e querendo conteinere esse componente no React componente. Então, para contornar isso, nós vamos no diretório público aqui. Então
+
+Primeiramente, precisamos criar um novo arquivo. dentro deste diretório público. Então vamos Criar um novo arquivo e dar um nome a ele. esse. Tem que ter um nome específico.
+
+convenção. ENV ponto template.js assim. Pressione a tecla Enter. Ótimo. E então a configuração propriamente dita.
+
+Precisa ter esta aparência. Então, só você imitar o que eu tenho aqui para o configuração para o oops chamado enc Isso não está certo. Vamos renomear isso. env.template.
+
+Portanto, deve ser env.late.js. E então, este arquivo deve ser assim. Parece que deve conter. Então, ponto da janela
+
+em capitais env igual a chaves abertas api url dois pontos e então quisemos ler aquilo variável de ambiente um quando docker O comando compose é executado e você pode ver que variável de ambiente aqui dentro do Arquivo YAML para o Docker Compose. arquive o arquivo YAML do Docker Compose. Este é o conteúdo do arquivo JS env.late.js.
+
+fazendo. Estamos focando nesse público em particular. variável de ambiente e nós podemos ver que está dentro do arquivo docker-compose. Então O que isso vai fazer é injetar o que quer que seja esse cenário é Esse cenário está lá e estamos lendo. o real nome do host de dentro deste Arquivo aqui. Então, estamos interpretando isso como...
+
+o arquivo docker compos. quando Docker O comando Compose foi executado. E é assim que nós somos capaz de injetar as informações relevantes quando executamos o Docker Compose. Então isso não é para que essa configuração não seja aplicada. na imagem, o que significa que não podemos sobrescrever essa configuração ao executar o Docker.
+
+Compor. E isso nos permitirá... Configure facilmente os recursos relevantes um nome de servidor quando o portamos e implantá-lo na Hostinger. E isso é
+
+Por que estamos fazendo isso dessa maneira? Ótimo. Então São apenas alguns passos para conseguir Isso está feito. Então, isso está resolvido. Já fizemos isso. A próxima é que precisamos
+
+Alterar algum código. Então, onde quer que estejamos lendo a configuração relevante Ao definir a variável de ambiente, nós É preciso mudar isso. Então vamos para src e nós só precisamos mudar isso em dois lugares. Então, axiosconfig.js.
+
+E aqui estamos nós lendo o vit variável de ambiente que é esta aqui. Não queremos ler isso. não mais. Queremos ler tudo o que for injetado. Queremos ler tudo o que...
+
+variável de ambiente é isso que está atribuído ao URL da API aqui em o arquivo docker compos relevante. OK. Então vamos voltar aqui e é apenas um questão de alterar o código. Eu sou apenas Vou comentar isso. Então, onde é?
+
+lendo a variável de ambiente, nós Preciso mudar isso para isto. API constante URL assim igual a ponto de janela e depois sublinhado sublinhado env ponto de interrogação ponto e depois aplique P I URL assim. Ótimo. E então podemos simplesmente...
+
+Copie isto porque precisamos configurar em outro lugar. Veja, isto é para endpoints desprotegidos. E nós temos Aqui temos outra configuração para proteção. pontos finais que precisamos alterar. Isso é dentro de ganchos.
+
+Use o recurso privado do Axio. Então, isto é para o Pontos finais protegidos. Comente essa parte. E podemos colar isso agora. Então é leitura do ambiente apropriado variável para que possa ser injetada no O contêiner de reação se transforma no contêiner que O componente React é armazenado quando o executamos.
+
+docker compose. Então, quando estivermos executando isso Na hospedagem, queremos uma configuração diferente. injetado e é por isso que estamos fazendo isso. estão tomando essas medidas e todo o processo. A raiz do problema é que usamos vitamina C.
+
+Para criar o componente React. Então isto é o que temos que fazer quando queremos conteinerizá-lo e queremos o relevante variáveis ​​de ambiente lidas quando nós Execute o Docker Compose. É por isso que estamos fazendo isso. Então, mudamos isso agora em dois lugares e lá eu sei que é um pouco É tedioso fazer tudo isso, mas...
+
+Infelizmente, é isso que temos que fazer. porque criamos isso usando vit nós Criei este componente React usando o Vit. Então precisamos incluir isso a tag de script com o atributo src definido para for/env.js aqui. Certo? E isto é muito importante. Nós
+
+É necessário alterar o arquivo Docker propriamente dito. código. E eu não sei se você se lembra que nós inicialmente comentei esta linha de código aqui fora e depois o substituiu por isto. linha de código. Então ficou mais simples. Mas
+
+agora precisamos da linha mais complexa de Código aqui para habilitar este ambiente env.late.js arquivo para trabalhar. Então, gostaríamos de comentar isso. aqui fora. Fazemos isso com o hash
+
+símbolo ali. OK. E para que Isso para funcionar aqui, Precisamos instalar um pacote específico. Então, para instalar o env substin imagem, certo? Então agora deve estar tudo bem.
+
+ir. OK. Então, já corrigimos isso. problema de configuração, mas precisamos de reconstruir essa imagem. Então vamos para Docker Desktop.
+
+E em primeiro lugar, queremos parar. Eu só... Vou parar todos esses contêineres.
+
+Poderíamos simplesmente nos safar impedindo o contêiner web de fluxo mágico porque é na verdade apenas o cliente uh contêiner web que queremos reconstruir a imagem do contêiner que queremos reconstruir. Então vamos pressionar o Ícone relevante para excluir fluxo mágico web. Esse é o recipiente. Precisamos Descarte o recipiente. Nós faremos Tenho certeza que não está funcionando, pelo menos antes de nós Apague a imagem. Então eu vou apenas
+
+Apague isso dali. Apagar para sempre. E Também vou simplesmente apagar a magia. contêiner de API de fluxo também. E vamos agora às imagens.
+
+E nós temos essa teia de fluxo mágico imagem da qual queremos nos livrar. Então Vamos apagar esta imagem daqui. OK. Apagar para sempre. Então essa imagem não não existe mais lá. Claro que pode.
+
+Use a linha de comando para executar todas as tarefas. essas tarefas. Sabe, deletar o contêiner, excluir a imagem, seja lá o que for Você precisa fazer isso, mas eu acho mais fácil. apenas para usar o Docker Desktop. Certo, então agora Queremos construir a imagem a partir de Arquivo Docker. Então agora vamos construir
+
+a imagem deste código aqui, que é localizado no arquivo Docker que nós criado anteriormente. Então vamos construir o imagem e o comando é docker build traço t fluxo mágico [bufa] web colon 1.0.0 e então devemos incluir o ponto para o contexto de construção. Ok, vamos pressionar a tecla Enter.
+
+Ok, cinco das seis camadas funcionam. Seis de seis. Cópia. Está copiando todo o código-fonte. Insira o código no contêiner.
+
+Excelente. Então, está tudo bem entre nós. Criamos a imagem. Vamos verificar isso. acessando o Docker Desktop. Estamos no
+
+Aqui está a aba de imagens e podemos vê-la aqui. Então, essa imagem foi construída. OK. Então, agora alteramos os vários partes do código para que a configuração agora injeta o ambiente relevante variáveis nos recipientes. E então podemos correr.
+
+docker compose. E vou incluir um específico opção apenas para garantir que não haja armazenamento em cache já aconteceu. OK. Então, vamos usar o docker compose. Criar e depois não queremos cache Dash.
+
+Ops. Sem cache Dash. Assim. Imprensa a tecla Enter. Excelente. Agora, vamos correr.
+
+docker compose up para executar nossos contêineres e uma rede, e então podemos testar nosso Aplicação full stack. Então, Docker Vamos compor e executar em modo independente. modo. Pressione a tecla Enter. Excelente.
+
+Ok, ótimo. Então, está tudo funcionando. Ótimo. E agora o que eu quero fazer é se Você olha para o arquivo docker-compose, Atualmente estamos apontando o Go contêiner, o contêiner que abriga o Funcionalidade de API web. Atualmente estamos apontando-o do contêiner para o nosso instância local do MongoDB E na verdade não queremos fazer isso.
+
+Queremos conteinerizar nosso MongoDB, nosso banco de dados MongoDB e, em seguida, aponte para o cadeias de conexão relevantes. Então é isso O que vamos fazer nesta parte de o curso. E eu também escrevi algumas coisas. funcionalidade para popular o banco de dados dentro do recipiente. E nós também Discuta brevemente o que são volumes. Então em
+
+ordem para que os dados sejam persistidos uma vez Isso ocorre depois que o banco de dados é modificado. porque lembre-se que nós vamos estar primeiro criando um banco de dados em branco dentro de o recipiente e então, como você pode ver Aqui temos todos esses dados inseridos. o que fizemos através da importação de dados. importação, mas na verdade vamos para executar algum código para popular o banco de dados quando Executamos o banco de dados MongoDB dentro de um recipiente. Então, em primeiro lugar, dentro do nosso docker-compos.yamel
+
+Vamos incluir o código relevante no arquivo. OK. Então, estou apenas colando isso de um arquivo que eu tirei da tela que irá Inclua o código relevante para hospedar um imagem para MongoDB. E você pode ver aqui que é a imagem. Isso vai extrair isso de Docker Hub em um contêiner em nosso ambiente local.
+
+máquinas. O nome do contêiner é Mongo. E você pode ver que estamos adequadamente Mapeando os portos aqui. E aqui temos Conseguimos o nosso volume. Isso nos permite agora persistir os dados relevantes no banco de dados, uma vez que tenhamos modificado os dados em o banco de dados depois que inserimos os dados, dados atualizados, etc. E então temos um
+
+Realizei um exame de saúde aqui apenas para garantir que... Sim, conseguimos pingar o banco de dados MongoDB. E o que eu fiz aqui foi escrever um parte extra no arquivo YAML que irá executar um comando que alimenta o banco de dados aqui.
+
+Então, o que isso faz é executar apenas uma vez. E então para. É isto que isto contêiner faz isso aqui. E aqui está o volume. Chama-se filmes.
+
+E você pode ver aqui que o volume é referenciado aqui. Banco de dados de filmes. OK, ótimo. Então, este é o código. para alojando o banco de dados MongoDB dentro de um recipiente. E este código de semente aqui sementes
+
+o banco de dados executando um JavaScript arquivar no banco de dados relevante. E Vamos popular esse banco de dados dentro de o contêiner executando este JavaScript dados iniciais de código C.js. Agora precisamos de Inclua este diretório de dados C em nosso aplicativo. Então vamos direto ao assunto.
+
+Diretório raiz aqui. Ignore esta. aqui. Foi lá que importamos o dados de. Precisamos de um novo diretório chamada semente. E eu já fiz isso, na verdade.
+
+Isso foi criado aqui. Então, vou copiar. que o Magic Stream implanta aqui. Aqui está o diretório de dados do Siege. E Dentro dele, você pode ver que você tem gênero.json, filmes.json, rankings.json,
+
+e user.json. Isso contém apenas os dados que queremos. Importar para as coleções relevantes. E este arquivo seed.js contém o conteúdo real.
+
+código. OK. E você pode baixar isso diretório do meu repositório GitHub aqui. Implantação de fluxo mágico. E aqui está. Essa é a semente
+
+diretório. E contém as informações relevantes. Arquivos JSON que contêm as informações relevantes. dados. E depois o arquivo seed.js. Agora,
+
+Este documento contém algum código que eu... escrito que irá importar que irá executar a importação. Então ele importa os dados de esses arquivos no banco de dados e porque estamos usando volumes que O banco de dados será mantido. Então, o que significa?
+
+que quando você abaixa o recipiente se você como quando o recipiente não está mais Em seguida, você executa o contêiner. Novamente, ele se lembrará desses dados que Os dados são armazenados estaticamente. Então o Os dados são armazenados no host. computador e não dentro do contêiner. Quando o contêiner é iniciado, ele é montado.
+
+que persistiram dados dentro do recipiente. Portanto, os próprios dados são na verdade, está armazenado estaticamente no host. E quando o contêiner é executado, o O contêiner do MongoDB está em execução. Então, quando o contêiner aqui é executado, ele faz referência a esse volume e a esse volume agora podem persistir porque os dados serão em última instância, serão armazenados no host. computador e não dentro do contêiner.
+
+o recipiente é... o recipiente pode ser destruído basicamente na memória. Então você não quero que os dados sejam destruídos dentro aquele contêiner quando você destrói o o próprio recipiente. Precisamos incluir
+
+esse diretório C. Então eu vou vá aqui e copie este diretório. Isso é de um outro instância do aplicativo de fluxo mágico que eu estava usando para se preparar para este curso. e você pode baixá-lo aqui de GitHub. É o mesmo diretório. Minas
+
+existe atualmente localmente em outro instância de Fluxo Mágico. Então, eu só estou Vou copiar isso. E vou acessar o aplicativo Magic Stream. que é o versão do Magic Stream que estamos Atualmente estou trabalhando com. E eu vou Cole aqui.
+
+Semente. Ótimo. Então isso agora deveria existir dentro do meu aplicação dentro Visual Studio Code. E aqui está. Excelente. Vamos só confirmar isso.
+
+Não estamos correndo. os contêineres atualmente por meio do Docker Computador de mesa. Então, nós obtivemos as imagens. contêineres. Pouco antes de executarmos o Docker Compor, precisamos garantir que nós Inclua este código aqui.
+
+OK. Depende do banco de dados. DB é isto Aqui está o código que cria o contêiner. que abriga nosso banco de dados MongoDB. Então É o banco de dados MongoDB que pode ser executado em este recipiente porque somos Em primeiro lugar Obtendo a imagem do Docker Hub. Mongo
+
+a imagem mais recente de Mongo executando o contêiner e então o nosso O volume será montado aqui. que contém nosso banco de dados. E aqui Estamos fazendo uma avaliação de saúde para ver se...
+
+É possível pingar o banco de dados. E então temos isto aqui, que depende de DB. Portanto, esse código não é executado até que O contêiner de banco de dados relevante foi iniciado. e o ping foi enviado e a verificação de integridade foi executada. E isso também garante que o É realizado um exame de saúde antes do procedimento.
+
+semeia os dados. E este código de semente aqui Executa apenas uma vez para popular o banco de dados com os dados relevantes. E você pode ver aqui o código JavaScript que é executado e tudo o que faz é Lê os arquivos JSON nos campos relevantes. coleção como esta. Ótimo.
+
+OK. Ótimo. E há alguns modificações que temos que fazer para para que isso funcione. Então você pode ver aqui Estamos chamando o fluxo mágico do banco de dados de fluxo mágico. aplicativo que é obviamente apropriado para este banco de dados está hospedado localmente máquina, mas estamos hospedando o MongoDB em um contêiner e nós o chamamos de streaming mágico de filmes do banco de dados. O
+
+O banco de dados dentro do contêiner está indo para serem chamados de filmes de streaming mágico. Então Vamos mudar o nome aqui para mágico. fluxo filmes. Ótimo. E então queremos essa conexão.
+
+string aqui porque isso aponta para o nosso local banco de dados onde o MongoDB está hospedado diretamente em nossa máquina host. E aqui Queremos hospedar nosso banco de dados MongoDB. dentro de um recipiente. Então os dois são diferente. As cadeias de conexão são diferente. Não estamos mais conectados.
+
+a versão do MongoDB para o host local. Então Vamos comentar isso lá fora. E vamos comente isso ali. É aqui que nós quero me conectar e é isso que versão conteinerizada do MongoDB e O Magic Stream Movies é o nosso banco de dados. Você pode ver dentro das sementes arquivo ao qual estamos nos conectando contêiner e, em seguida, preencher o recipiente com o re o relevante coleções com os dados relevantes aqui.
+
+OK. Então acho que estamos prontos para correr. docker compose. Vamos confirmar novamente que todas as nossas configurações estão corretas. Que Parece correto. O direito mais recente.
+
+Excelente. Riacho mágico. Corrente mágica "Movies" deve ser o nome do nosso banco de dados. Magia Assista a filmes online. A conexão correta cordas no lugar.
+
+Isso define o contêiner com base em A imagem do MongoDB foi obtida do Docker Hub. E isto é apenas um recipiente que recebe execute uma vez este comando para semear nosso banco de dados. Excelente. Reiniciar. Não. Então nós queremos isso.
+
+para executar uma vez e popular o banco de dados e Então, basicamente, pare de correr. E nós temos o volume definido aqui. E nós somos fazendo referência a esse volume aqui dentro do Código MongoDB aqui. Então, isto é um definição para essencialmente o contêiner chamado Mongo, que vai abrigar nosso Banco de dados MongoDB aqui. E Temos aqui um exame de saúde que envia pings para o banco de dados. E então, antes disso
+
+Executamos a funcionalidade de banco de dados de sementes, Estamos verificando se estamos executando isso. serviço de saúde condição aqui para garantir que o O banco de dados está funcionando antes do Ocorre a semeadura. OK. E eu acho Estamos em uma boa posição para usar o Docker. compor. Vamos dar uma olhada no Docker Desktop.
+
+que nada está funcionando. Ótimo. Ótimo. Está tudo bem. Conseguimos nossas imagens lá.
+
+E eu vou... eu já tenho... na verdade, tenho
+
+esta imagem do MongoDB aqui porque eu executei isso antes da gravação e é retirado a imagem do dock para a imagem do Mongo para minha máquina local. Então, na verdade, eu vou... para excluir isso para que você possa ver o quê Isso acontece quando você não tem a imagem.
+
+sua máquina local. Então, nosso Docker O código Compose vai extrair essa imagem. do Docker Hub Bem aqui, a imagem mais recente. E É assim que conseguimos administrar um instância do MongoDB dentro do recipiente. E então, claro, isto é apenas para inserir os dados iniciais. E funciona
+
+aquele arquivo seed.js que eu criei especificamente para popular o banco de dados. Então, sem mais delongas, vamos fazer isso. Então vamos usar o docker compose. uh, para cima e depois pressione dash para executar.
+
+Modo de desacoplamento. Excelente. E você pode ver todo o status aqui como ele inicia os dados e puxa o Instale a imagem Docker do MongoDB localmente. máquina. Portanto, os volumes do Docker são a forma como o Docker armazena dados.
+
+e compartilha dados fora do contêiner. Camada gravável. Assim, seus dados sobrevivem. reinicializações, atualizações e mudanças. Então, obviamente, quando você...
+
+destruir o contêiner docker dentro memória você não quer os dados no seu banco de dados destruído com isso porque quando você ressuscita seu contêiner você Você quer que esses dados sejam persistidos? Você quer isso? os dados estão lá uma vez quando o contêiner reinicia. Então é isso que os volumes são para. Eles permitem que você mapeie o volume para um local de armazenamento no seu máquina host. Assim, os dados permanecem.
+
+Ótimo. Então, isto é teve sucesso. Vamos confirmar novamente e executá-lo em nossos navegadores. Vamos Execute a aplicação full stack em nosso navegadores e certifique-se de que isso seja trabalhando.
+
+Ok, parece que temos um problema. Eu posso ter Algo recebeu um nome errado. Ok, podemos simplesmente Veja esse erro aqui. desenvolvedor ferramentas. OK.
+
+O site Movies Axio está coletando dados. Ok, justo. Ocorreu um erro ao buscar. os dados. Então, vamos verificar. Eu acabei de
+
+Quero verificar se o código do servidor é coletando os dados. Então, vamos para este ponto final. Isso é. Então, o servidor. Os dados estão de fato retornando. Lá
+
+Parece haver um problema com o cliente. Vamos usar o host local. Ótimo. OK. Excelente. Então, é isso.
+
+trabalhando. Deve ter havido algum tipo de problema de cache. Foi por isso que não aconteceu. funcionou na primeira vez que o executamos. OK.
+
+Então, agora está funcionando. E esses dados está sendo extraído do MongoDB banco de dados que agora está hospedado dentro do recipiente. e somos capazes de persistir esses dados para nossas máquinas locais através de O que é conhecido como volume. Um Docker Volume é um diretório gerenciado pelo Docker. armazenado no host montado em um ou mais contêineres. Do contêiner
+
+Do ponto de vista de quem vê, parece normal. diretório. Este é um suporte de volume. especificamente um bind mount do seu host máquina para dentro do contêiner. Quando o contêiner é iniciado, o Docker o monta.
+
+o diretório do host para dentro do contêiner. E é assim que os volumes funcionam. Então, nós somos Agora, extraindo esses dados do banco de dados. Executar dentro do contêiner Mongo. E se Você olha aqui, opa.
+
+Se você olhar aqui, no Docker Desktop, nós temos Consegui colocar o contêiner do Mongo em funcionamento dentro de nossa rede de contêineres. Aqui está o contêiner do MongoDB em execução. dentro de nossa rede de contêineres, juntamente com nossa API Magic Stream e Magic Stream contêineres web. Ótimo. Então é isso.
+
+trabalhando. Criamos agora um novo contêiner para hospedar nosso banco de dados funcionalidade, nosso banco de dados MongoDB. Excelente. Neste momento, nesta parte do Claro, o que vamos fazer é separar o ambiente de desenvolvimento do ambiente de produção através criando dois arquivos Docker separados para cada um de nossos componentes. O lado do cliente componente, componente React e o Componente de API web Go do lado do servidor. Então
+
+Vamos criar duas separadas. Primeiro, os arquivos Docker, porque queremos uma imagem para cada um desses componentes. Desejamos que seja criada uma imagem de contêiner para o código React e também um para e nós Quero que sejam criadas duas imagens para o Código Go para API web. Queremos um empreendimento imagem e queremos uma imagem de produção. Então É assim que vamos fazer isso.
+
+OK. Então, em primeiro lugar, o que queremos fazer é Renomeie este arquivo Docker no React. código do cliente na raiz deste cliente de fluxo mágico de diretório. E nós somos Vou renomear este arquivo Docker. Então Vamos manter o nome.
+
+convenção, mas estamos adicionando assim. Então estamos distinguindo isto código específico que cria o Imagem relevante para o código React. Então Estamos criando uma imagem separada e distinta. para este componente cliente React. E nós Faça isso, em primeiro lugar, distinguindo-o.
+
+por meio de uma convenção de nomenclatura docker arquivo.dev dev assim. Ótimo. E então vamos criar um versão de produção desta imagem que está ligeiramente mais otimizado. Eu não sou vou percorrer as linhas de código dentro da imagem de produção, mas nós Talvez possamos fazer isso um pouco mais tarde. Mas para
+
+Agora, eu só quero separar o imagem de desenvolvimento da produção imagem. Então, como fazemos isso? Eu só vou para duplicar isso. Então eu vou. Ctrl+C e depois Ctrl+V. Então eu só...
+
+duplicar isso simplesmente para maior eficiência. Arquivo Docker ponto e Vamos chamar isso de dot prod. Então Estamos separando a imagem de produção. a partir da imagem de desenvolvimento. E então eu estou Vou colar o código aqui.
+
+versão de produção da imagem de um arquivo que eu peguei fora da tela. Não vou abordar todos os... O código está aqui, mas você pode ver claramente A diferença aqui é que expõe a porta.
+
+80 e estamos usando o mecanismo X para hospedar o Código React para hospedar o React compilado código. Excelente. Então, você pode ver o código aqui. Eu não sou Vou explicar tudo detalhadamente. linha aqui como eu disse antes, mas nós temos separou as duas imagens através do Existem convenções de nomenclatura diferentes aqui. Então,
+
+Temos o arquivo docker-file.prod prod e Temos o arquivo dockerfile.dev lá e nós quero fazer o mesmo no go for the go componente o componente da API web. Então Vamos analisar a raiz deste componente. aqui servidor e então temos o Arquivo Docker e nós vamos apenas para Renomeie este desenvolvedor porque este é o Código exato que queremos para a imagem de desenvolvimento. Então
+
+desenvolvedor, vamos duplicar isso simplesmente indo Crl + V e então vamos renomear o O arquivo está duplicado e queremos renomeá-lo. arquivo docker prod. Excelente. E eu vou fazer o mesmo. coisa. Vou apenas copiar.
+
+o código relevante que é simplesmente uma versão mais otimizada do código de desenvolvimento. E eu só vou Cole-o no arquivo dockerfile.pro. Arquivo aqui. Excelente. E agora precisamos construir o nosso
+
+imagens. Mas, antes de mais nada, quero ter certeza de que... que eu não estou executando nada. Eu quero
+
+É preciso começar do zero. Então você Podemos ver que estamos executando todos esses contêineres aqui neste momento. Então, eu sou vou usar Vou usar o Docker Desktop para Apague estes. E você pode fazer isso simplesmente a partir de aqui. Você pode excluir tudo isso apenas excluindo da rede de nível superior nó. OK. E isso resolveu o problema. E
+
+Então, obtivemos as imagens aqui. Hum, só Para maior clareza, na verdade vou... Apague estes. Poderíamos deixá-los lá,
+
+Mas eu prefiro começar do zero. ardósia. Então, vou apagar esta. API de fluxo mágico, a API de fluxo mágico imagem, e depois a web do Magic Stream imagem também. Vamos apagar isso. Ótimo.
+
+Então, estamos começando do zero, e nós podemos construir nossas imagens. Ah, e apenas um Observação: vou manter a imagem do MongoDB. Não precisamos reconstruir aquele Mongo imagem. Vamos manter isso em nossa seção local. Máquinas criadas apenas para eficiência.
+
+E agora queremos construir essas imagens. Então, a primeira coisa que queremos abordar é... o diretório de clientes. Então vamos lá, CD
+
+ponto Magia do cliente. Ops. Desculpe. Corrente mágica cliente assim. Então estamos no diretório apropriado. Estamos na raiz
+
+do diretório de clientes. e vamos construir nossa imagem. Ok, então é só o Docker. construir. Já fizemos isso antes, mas E aqui está a pequena reviravolta: agora temos...
+
+Alteramos os nomes dos nossos arquivos. Agora estamos distinguindo a imagem de desenvolvimento da imagem de produção. Então precisamos incluir este interruptor ou opção - hífen f se você quiser e depois docker arquivo.dev. Portanto, estamos especificando um arquivo específico.
+
+aqui. É por isso que temos um específico Nome do arquivo aqui. Docfile.dev. Nós não fizemos isso tenha isso -f. Vai procurar por
+
+Arquivo Docker sem isso. Mas nós queremos especifique o arquivo apropriado que é docker file.dev. Então estamos tentando produção separada do desenvolvimento imagem de produção de um desenvolvimento imagem. OK. E vamos lá, vamos lá. Esse
+
+É igual a antes. traço t para nomear nossa imagem. E vamos chamar isso de magia fluxo painel da web E vamos atribuir um número de versão a ela. Então 1.0.0
+
+assim. E então, esse é o ponto final da construção. contexto que é a raiz do nosso cliente código. E vamos pressionar a tecla Enter. E que deve construir nossa imagem sem um problema.
+
+E está ficando bom. e irá construí-lo camada por camada. o que equivale a dizer linha por linha a partir do nosso arquivo Docker. Ok, cinco ou seis camadas e está pronto. Ok, isso é genial. E para sempre.
+
+medir, vamos apenas verificar se isso tem De fato, construímos nossa imagem. E aqui está. Perfeito. Então, está nas nossas imagens. Se nós Clique na aba "Imagens" dentro do Docker.
+
+Na área de trabalho, você pode ver que a imagem foi... construído. Magic Stream WebDev 1.0.0 Z é
+
+a versão e esse é o ID da imagem e Vamos minimizar isso e vamos fazer o O mesmo agora para o servidor. Então vamos lá Vamos lá, CD. OK. E é um riacho mágico. Ah, não, desculpe. Acho que é servidor
+
+servidor. Magia servidor de streaming. Assim. Ótimo. Eram no diretório correto. E então nós
+
+Execute um comando semelhante. Então é Docker. Construir e estamos construindo nossa imagem. hífen f. Queremos especificar um nome de arquivo específico. Então não vai acontecer
+
+para construir a imagem com base no Docker arquivo, mas queremos que ele construa a imagem baseado em docker file.dev. E então vamos dar um nome à nossa imagem. E nós Quero chamar isso de mágico. API de fluxo-dev cólon 1.0.0.
+
+Essa é a versão. E então não devemos esqueça o ponto que significa a construção contexto que é a raiz do servidor diretório que contém nosso código Go. OK. Então, vamos pressionar a tecla Enter. EU Acho que ficou bom. Sim, faz sentido.
+
+OK. E constrói-o camada por camada. para o lado do servidor. Excelente. Parece bom. E vamos
+
+Basta verificar o Docker. Sim, o Docker Desktop, quero dizer. Então, nós temos Obtive a API Magic Stream versão 1.0 para desenvolvedores. Então, nós temos Já temos as duas imagens prontas. E agora nós
+
+É possível examinar os arquivos do Docker Compose. Agora precisamos separar o Funcionalidade do Docker Compose integrada ao ambiente de desenvolvimento. e produção. Vou te mostrar como podemos Faça isso aqui. E em primeiro lugar, você pode ver que os nomes são diferente. Está apontando para a magia.
+
+streamdev 1.00. Não queremos isso. porque agora estamos apontando para um Imagem diferente. Então, o que eu vou fazer é simplesmente copiar.
+
+e cole o código relevante do Docker. Componha isso que eu tenho fora da tela aqui. Ok, vamos selecionar tudo aqui e colar. sobre este código. Então, esta é a nossa nova Arquivo docker-compose aqui. E isto é
+
+na verdade vai servir como uma espécie de base imagem porque queremos sobrescrever certas configurações para desenvolvedores e produção para o desenvolvimento ambiente e produção ambiente. O ambiente de produção ela será a anfitriã. O desenvolvimento O ambiente é a nossa máquina local. Então nós quero manter esta estrutura básica aqui em nosso arquivo docker-compose. Mas nós podemos substituir determinadas configurações para o desenvolvimento e produção ambientes. Funciona de forma semelhante.
+
+à herança. Então, o que fazemos é... Inclua o arquivo de desenvolvimento do Docker Compose e um arquivo docker compose prod. E dentro
+
+Esses arquivos incluem as configurações. que queremos sobrescrever dentro do docker-mpos.l arquivo. Então, em primeiro lugar, vamos criar nosso ambiente de desenvolvimento. arquivo docker compos. Então eu só vou
+
+Para duplicar este, visando maior eficiência. Ok, vamos renomear isto. docker compose.dev.yamel.
+
+Assim. OK. E eu só vou Faça o mesmo por conveniência. Eu sou Vou copiar o código relevante de um arquivo que eu peguei fora da tela como um referência e vou colá-la por cima O código está aqui. Excelente. E você pode
+
+Veja, este é o código de desenvolvimento que sobrescreve. algumas das configurações em Arquivo Docker Compose aqui. Como você pode ver, eu tenho todo esse código. comentado no arquivo docker-compose e isso significa um modo de observação para quando Estamos executando o contêiner relevante em modo de desenvolvimento e podemos executar e quando Estamos executando tanto o código Go quanto o código react uh em seu contêiner em seus respectivos recipientes em no modo de desenvolvimento podemos incluir isso opção de visualização, o que significa que podemos realmente Altere o código em tempo real e veja o efeitos disso em tempo real. Então, se nós alterar um título, por exemplo, do página inicial da interface de usuário React, será aparecer imediatamente na interface do usuário dentro do navegador. Isso é excelente.
+
+uma excelente ferramenta de depuração que é fornecido pelo Docker Desktop. Então eu vou mostrar como podemos fazer isso usando o basicamente assistir uh opção. Ok, mas Em primeiro lugar, vamos incluir também o produção versão do arquivo docker compos. Então, Vou apenas duplicar o Docker. Crie um arquivo assim. E eu vou
+
+Criar o arquivo. Vou renomear o arquivo docker compose assim.pro. Ok, perfeito. E então preciso colar.
+
+o código de produção real de um arquivo Saí da tela sobre o código duplicado aqui. E lá Nós vamos. E você pode ver o que está acontecendo Aqui em produção. Na verdade é puxando uma versão de produção da imagem. E Vou explicar esse código um pouco melhor.
+
+mais tarde em termos de versionamento que se tornará relevante quando criarmos o Versão de produção na Hostinger. Mas você Podemos ver que estamos sobrescrevendo as portas. Para Por exemplo, queremos executar o Código React, o código da web. Queremos correr que na porta 8081. Então estamos mapeando o motor X porta que expusemos a partir do nosso arquivo Docker. Vamos apenas ter um
+
+dê uma olhada rápida nisso Arquivo Docker aqui. docker file.dev. Você Podemos ver que estamos expondo O desenvolvedor está, na verdade, expondo a vulnerabilidade 5173. mas a produção que estamos realmente expondo porta 80, a porta do motor X ali. E
+
+então dentro do versão de produção do docker compose arquivo, Estamos mapeando a porta 80 para a porta 80. 8081. Enquanto que em nosso dev dev ambiente, estamos usando o padrão react port que eu acho que é 5173, se não me engano. Vamos apenas Verifique novamente. 5173. Estamos expondo isso.
+
+porta e mapeamento 5173 para 5173 em nosso ambiente de desenvolvimento. Código aqui. E você pode ver isso aqui. Então Como você pode ver, estamos sobrescrevendo isso de alguma forma. das configurações no docker compose o arquivo base para nossos compos do Docker funcionalidade. E estamos anulando algumas
+
+das configurações apropriadas para o ambiente relevante. Então, aqui está o desenvolvedor. ambiente e você pode ver o nome desenvolvimento web de fluxo mágico. E uma coisa que eu tenho Acabei de perceber que está no meu arquivo de referência. A versão é 1.0. 0,1 e precisamos disso
+
+ser 1.0.0. Então, vou mudar o nome disso. para combinar com a imagem. 1.0.0
+
+lá. E com o resto estou satisfeito. o médico. OK. Um nome de imagem.
+
+Sim. Nome do servidor. Desenvolvimento da API Magic Stream. OK. E garantimos que o As versões estão corretas. Você pode ver o
+
+Nome do contêiner. API de fluxo mágico para desenvolvimento nome do contêiner aqui fluxo mágico webdev e o mapeamento de portas é apropriado para o contexto do ambiente de desenvolvimento você Você pode ver ali o arquivo docker docker dev isso é apropriado para o desenvolvimento ambiente que é o arquivo relevante que contém a definição da imagem e Então, aqui está o que é importante: nós estamos incluindo uma seção de desenvolvimento com o Aqui você encontra a opção de visualização, o que significa que podemos executar. docker compose em modo de observação, o que significa Podemos alterar o código em tempo real e ver essas mudanças se propagam em tempo real enquanto estamos executando o código. O que é uma excelente característica. Então e Você pode ver a sincronização de ações relevante.
+
+Os caminhos estão incluídos. Então, se você mudar para Exemplo: uma dependência que pode ser propagado porque você pode ver Incluímos o caminho para a magia do cliente. pacote cliente de streaming Por exemplo, o arquivo package.json. Então, se um novo A referência está incluída, caso você esteja adicionando algo.
+
+uma nova referência enquanto você está codificando um mudar, essa mudança se propagará para o código que você está executando em tempo real. Então Esta é uma excelente maneira de você ser capaz de depurar toda a sua pilha de tecnologias. aplicativo. E o mesmo se aplica a o código Go. Você também pode executá-lo em modo de observação e faça alterações que irão propagam-se enquanto você está executando seu código Em tempo real. Então, essas são excelentes.
+
+características. E então, na produção, vamos... Dê uma olhada rápida na produção.
+
+não estou tão preocupado com a produção neste momento. apontar. Analisaremos a produção quando...
+
+porta para Hostinger. Mas você pode ver aqui as diferenças relevantes entre produção e a base Docker Compose Imagem aqui. Ainda estamos incluindo todos as variáveis ​​de ambiente na base imagem. Mas na verdade é uma boa maneira de limpar. Seu código é feito incluindo estes substituições que são muito parecidas com a forma como funciona na herança onde você usa Herança para um código mais limpo. Então você tem
+
+Você tem o ambiente de desenvolvimento e o de produção. eles são sobrescrevendo as configurações apropriadas. Então, estamos incluindo, estamos mantendo o variáveis ​​de ambiente e a base imagem, mas comentei a linha do relógio código e porque isso só é relevante para o ambiente de desenvolvimento. Então, na verdade eu sou Vou excluir essas configurações aqui. E vamos excluir as configurações do relógio para o código web, o código React do cliente.
+
+Ótimo. Parece bom. Estamos ignorando. os portos. Podemos manter isso lá, mas Estamos anulando essas configurações. E observe que
+
+Vamos manter todas as funcionalidades do banco de dados. dentro da base arquivo docker compos.yamel porque isso aplica-se tanto ao desenvolvimento quanto ao ambiente de produção. Mas eu direi Há, no entanto, uma ressalva. Em produção, Você realmente não quer inserir dados aleatoriamente na sua base.
+
+assim. Mas, bem, estamos fazendo isso apenas Para fins de demonstração. Então os dados está povoado e podemos ver o que está acontecendo imediatamente. Então, essa é a razão pela qual nós somos incluindo a funcionalidade de semente aqui apenas para fins de demonstração e eficiência propósitos, mas eu não aconselharia você a Inclua essa funcionalidade quando você estiver implantação em produção mas isso se aplica ao nosso caso aqui. apenas para fins de demonstração para o tanto o ambiente de desenvolvimento quanto o de produção e é por isso que estou mantendo isso no docker composey Arquivo base, se quiser, aqui está. Certo, então agora
+
+Queremos executar o Docker Compose. Eu penso Estamos satisfeitos com tudo isso. Posso estar enganado. Veremos o que acontece. quando o executarmos. Pode tudo explodir, mas
+
+Tomara que não. Isso está incorreto. Queremos essa versão 1.0.0.
+
+1.0.0. Mesmo que seja anulado de qualquer forma pelo docker compose dev ou docker compose arquivo de produção. Acho que ainda devemos fazer tenho certeza de que essa versão está correta no arquivo base. Ótimo. E vamos dar uma olhada em
+
+docker desktop. Acho que agora estamos prontos. Obtive o MongoDB como imagem. Nós não queremos que mudar. Desenvolvimento web de fluxo mágico.
+
+Criamos estas imagens na versão 1.0.0. Eram referenciando-os a partir do nosso docker Arquivo composdev. Correto com eles nomes corretos.
+
+E agora acho que podemos simplesmente executar o Docker. compor. E você verá que da maneira como nós Executar o Docker Compose é um pouco diferente. porque nós, mais uma vez, assim como vimos, nós vimos com quando estávamos criando desenvolvimento específico e imagens de produção, imagens que vamos usar estar fazendo referência a composições Docker específicas arquivos. Então precisamos do hífen f e Você verá como usamos isso agora. OK.
+
+Então, vamos executar nosso docker compose. hífen de arquivo f. Vamos incluir a base Aqui está o arquivo base do Docker Compose. E vamos incluir o docker compose de desenvolvimento. Arquivo aqui. docker-compose.dev.yamel
+
+assim. E então queremos executá-lo em Modo de observação. Então, em vez de executá-lo, nós o fizemos. no modo up, onde você estará apenas correndo Seu código para testar seu código, nós somos executando-o no modo de observação. Então isso significa Podemos fazer alterações em nosso código e no O código se propagará na vida real.
+
+tempo. Assim você pode alterar o lado do servidor. código ou seu código de cliente e aqueles As alterações serão propagadas. E Isso facilita muito a depuração. ferramenta. Então, estou incluindo o relógio aqui.
+
+em vez de, por exemplo, subir dentro disto comando docker compose e docker compose-f docker compose yamlf docker compose.dev.yamel. Então, algumas das configurações de desenvolvedor irão substituir as configurações do docker compose porque essas configurações são específicas para nosso ambiente de desenvolvimento. Vamos pressionar o Digite a tecla e veja o que acontece. OK.
+
+E até agora, tudo indica que está indo bem. Isso é Construindo nossos contêineres. Construído. Construído. Bom. Uau.
+
+É bastante rápido. Iniciando o monitoramento ativado. Ok, é Muito emocionante. Então, vamos ao nosso navegador aqui e vamos testar a execução do nosso código no modo de observação. modo. Configuramos nosso ambiente de desenvolvimento.
+
+por meio de nossas imagens e nosso Docker Compor arquivos. Vamos ver o que acontece. quando executamos nosso código. OK. Uau.
+
+Excelente. Olha só isso. Então, nós somos nós somos já está lá. E eu vou apenas colocar isso no painel direito, assim, e coloque Nosso código no painel esquerdo. E vamos Faça uma alteração básica e veja se funciona.
+
+propaga-se através de. Veja se o nosso relógio O modo está funcionando Como esperado. Então, vamos analisar o código. componentes de origem. Vamos para casa.
+
+componente aqui. Mova isso um pouquinho para o lado. OK. Certo, vamos descer até onde está renderizando o Elementos relevantes para o navegador. E Vamos incluir uma tag H2.
+
+assim. E vou incluir apenas um título, Filmes em streaming mágico. Ops. Assim. E quando o salvamos, queremos para fazer o que queremos é o fluxo mágico rumo, os filmes de streaming mágico rumo aparecerá aqui mesmo quando salvarmos em testar se o nosso modo relógio está realmente funcionando trabalhando. Vamos lá, então vou pressionar Ctrl.
+
+S. Veja isso em tempo real. Isso mudou. no navegador. E é exatamente isso.
+
+O que queremos ver. Nosso modo relógio e nosso ambiente de desenvolvimento é simplesmente Funcionando maravilhosamente bem. Então, se eu fosse filmes de streaming mágico, excelente. Algo assim. Qualquer que seja.
+
+Filmes em streaming mágico. Excelente. E Pronto. E se o removermos, tempo real. Agora podemos depurar nosso código.
+
+em tempo real sobre o nosso desenvolvimento ambientes. Excelente. Nós vamos construir a versão de produção destes imagens agora. E nós vamos pressioná-los. para o DockerHub porque quando implantamos para Hostinger, você pode ver em nosso docker Arquivo YAML compos.pro.yml. Estamos puxando
+
+Essas imagens foram baixadas do Docker Hub. Então, se Eles não existem na Hostinger, eles irão ser baixado primeiro do Docker Hub e então, posteriormente quando executarmos o Docker Compose posteriormente, Essas imagens serão locais. Então eles vão serão executados a partir deles, serão os contêineres serão criadas a partir das imagens que são Executando localmente. Então, a primeira coisa se As imagens não são encontradas localmente, elas Faça o download no Docker Hub aqui. OK.
+
+E outra coisa que precisamos ter em mente de é que se a tag de imagem não existir aqui em a variável de ambiente, ela vai para Marque com "mais recente". Então, esse é o padrão. etiqueta que isso lhe dará. Mas eu tenho configurado para produção, eu fiz É possível configurar a versão? aqui. Portanto, esta é a versão apropriada.
+
+Queremos a versão 1.0.0 para as imagens de produção. Então vamos Primeiro, vamos construir essas imagens e depois nós...
+
+Envie-os para o Docker Hub. Então você quer Vá para dockerhub. É este aqui: hub.docker.com e crie uma conta gratuita. Então
+
+Você tem meu hub aqui. Você me pegou repositórios. Não tenho nenhum. Existem repositórios lá no momento. É por isso que só diz "criar".
+
+repositórios. Então, se você não tiver nenhum repositórios, esta é a tela que você verá Veja e você poderá baixar a versão para desktop. Aplicativo Docker Desktop daqui Para Windows, Mac ou Linux. OK, Então, eu já tenho isso rodando no meu computador de mesa. Então, vou construir estes.
+
+imagens. E só para deixar claro, se você Olhe aqui, Minha conta, meu nome de usuário é Gavin Lawn. Então é isso que você deve fazer para prosseguir com o seu imagens com antes de você enviá-las para docker hub assim. Então nós temos gavlon para barra e depois o nome de a imagem e depois a tag, a tag da imagem E, como já foi discutido, essa imagem, se existir. dentro do arquivo .v na raiz do
+
+Aplicativo de fluxo mágico, ele irá puxar esta configuração aqui que está definida como 1.0.0 Z, que é a versão que queremos, e então irá etiquetá-lo adequadamente através disto. arquivo docker compose.pro.yaml e ele irá
+
+Faça isso para ambos os componentes. Então o versão de produção do docker compost O arquivo é muito mais simples. Você não Possui todas as funcionalidades do relógio aqui. A mensagem simplesmente diz para reiniciar sempre, e é isso. Vai ser muito útil quando criarmos nosso CI/CD pipeline, nossa integração contínua pipeline de implantação contínua um pouco um pouco mais tarde. Então, quando fazemos uma mudança
+
+localmente e nós o enviamos para o GitHub, um A ação do GitHub será executada e fará o pull. Todas as imagens mais recentes foram enviadas para a Hostinger. e reinicie a imagem. Então será sem interrupções para os usuários do nosso aplicativo quando fazemos alterações. Então eles não vão Vai funcionar perfeitamente quando estiverem em execução.
+
+sua candidatura. As mudanças simplesmente irão acontecer propagam-se quando fazemos uma mudança localmente e enviar para o GitHub. Todos esses As alterações se propagam para a Hostinger. e vamos resumir isso funcionalidade um pouco mais tarde em um Ação do GitHub. Mas, por agora, tudo o que queremos é...
+
+O que se precisa fazer é criar essas imagens e publicá-las. eles para o Docker Hub por causa da nossa ação, Nossa ação no GitHub conterá código que baixa essas imagens para a Hostinger. Você verá os detalhes disso um pouco mais adiante. um pouco mais tarde. Por agora, vamos apenas construir o imagens. Certo, então é igual a antes.
+
+Com algumas pequenas alterações. Então nós queremos docker construir hífen f e queremos fazer referência ao versão de produção da imagem. Isso é para o cliente. Estamos na raiz do problema. componente do cliente hífen t. E queremos dar um nome à nossa imagem.
+
+Gavin grama. Então será o seu nome de usuário para o seu conta do Docker Hub barra e Então, que nome você quer dar ao seu versão de produção web- produção 1.0.0 assim. E não se esqueça do ponto.
+
+para o contexto de construção que é a raiz do código do componente React. E Vamos verificar novamente o arquivo Docker. Opa, quase cometi um erro. Sempre Vale a pena dar uma segunda olhada rápida. Antes de executar qualquer coisa. docker build f
+
+docker file.pro hífen t gavan gramado/creme mágico webpro colon 1.0.0 digitar. Ótimo. Está construindo a imagem.
+
+para nós. Parece bom. E é bastante rápido e eficiente. Quatro de seis camadas. É o quarto camada de seis camadas que está atualmente correndo. Execute o npmci. Você pode imaginar que
+
+Leva um pouco de tempo. Ok, ótimo. Cinco de seis camadas. Está copiando tudo. código-fonte e estamos executando o npm construir. Excelente. E isso tem sido
+
+bem-sucedido. Ótimo. Assim podemos verificar essa imagem. foi criado localmente porque irá Crie-o localmente primeiro. E lá estava é. Essa é a nossa imagem para o fluxo mágico.
+
+produção web 1.00. Então essa imagem foi criado. E nós vamos realmente Envie isso para o Docker Hub agora mesmo. Então vamos fazer isso. E o comando para
+
+Isso é muito simples. É só o Docker. empurrar. Você precisa estar conectado à sua conta. Conta do Docker Hub.
+
+Bem, se você não estiver, o sistema deverá te avisar. para fazer login. Mas eu já estou logado. Então, vamos lá. Veja o que acontece. Docker push
+
+e então Gavinon barra magia fluxo painel web prod. Então, fluxo mágico na web- versão de produção da imagem. Docker push. OK. Dois pontos e depois a versão 1.0.0.
+
+E sabe de uma coisa? Acho que é isso. Então É um comando bastante simples. Docker push gavlon para/produção web de fluxo mágico. OK.
+
+Pressione a tecla Enter. E devemos ver isso dentro do Docker Hub. uma vez que essa imagem tenha sido enviada para o Docker eixo. Mas você precisa ter certeza de que está Conectei-me ao Docker Hub antes que isso possa acontecer. Que seja feito. Excelente resumo e é fornecido
+
+me dê algum tipo de ID exclusivo aqui que Parece que sim, o que significa que tudo tem Tudo ocorreu conforme o esperado. Então, se formos para Meu hub está aqui. Você pode, você é Na verdade, estou olhando para o seu Docker Hub. repositórios através do Docker Desktop aqui porque estou logado como Gavin Lawon através de Docker Desktop. Então, se formos para o No site real você verá o mesmo.
+
+coisa. Se eu atualizar isso, Aqui está. Ótimo. Então, é isso. bem-sucedido. Agora, queremos fazer o mesmo.
+
+Algo relacionado ao código Golang no servidor. Vamos esclarecer isso. Hum, e então Vamos ao servidor. Estamos no Servidor aqui. Podemos esclarecer e vamos Criar a imagem. Então, é a mesma coisa.
+
+coisa, mas apenas para o Código do lado do servidor. Docker construir-f Arquivo Docker prod. especificando um arquivo específico do versão de produção da imagem hífen, espaço e depois é Gavin grama meu nome de usuário do Docker Hub para magia de corte fluxo API produção Parece bom e depois queremos cólon 1.0.0 zero assim. Então é Docker.
+
+construir hífen f especificando a produção Código para a imagem que queremos construir. docker file.pro hífen t gavan lawon produção da API de fluxo mágico cólon 1.0.0 E acho isso bom. Vamos construí-lo.
+
+Erro ao compilar o comando docker? Tudo bem ser um idiota. Eu esqueci o ponto. Continuo te lembrando de incluir o ponto. E depois eu esqueço. Que bobagem a minha. OK,
+
+Vamos copiar. Vou apenas limpar a tela. Certo, então o que temos aqui é o ponto. Docker build hífen f docker file.pro para uh hífen t gavan lawon/mágico stream api-ra colon 1.0.0 e depois não
+
+esqueça o ponto. Esse é o contexto de construção. que é o servidor de streaming mágico diretório raiz para todos os nossos servidores Vamos escrever o código da API web em Golang! Pressione Enter. Agora está funcionando. OK,
+
+Não se esqueça que o ponto é a moral da história. essa história. Certo, então está passando pelo processo de compilação. processo. Ah, um de seis. Então, este está levando um
+
+um pouco mais de tempo, um pouco mais de envolvimento no Parece que é do lado do servidor. Mas estamos a caminho disso. Sempre é preciso ter paciência. Quando estamos instalando as coisas, quando estamos construindo e compilando coisas coisas e renderização de coisas. Ok, quatro de seis, execute o download. O
+
+A quarta camada de seis camadas está em execução. Então, a quarta linha em nosso docker O arquivo file.prod está em execução. Vá para o mod. E isso tem a ver com o dependências. Está baixando o
+
+dependências, o que, claro, leva um tempo de tempo Mas estamos a caminho disso. Ótimo. Estamos em A sexta camada executa o comando de construção. Excelente. API Golang.
+
+E estamos quase lá. Excitante. Excelente. Então, funcionou. Vamos pegar Uma olhada na nossa imagem através do Docker Hub.
+
+Ok, ainda não queremos meu HHub. Nós Ainda não publiquei no Docker Hub. Vamos acessar as imagens locais. E você pode Veja lá. API Magic Stream em produção.
+
+E esse é o ID da imagem. E agora podemos Envie isso para o Docker Hub. Vamos esclarecer o tela. E podemos usar o comando docker push. comando. Então é docker push gavan lawn
+
+barra fluxo mágico [bufa] API prod cólon 1.0.0. E, na verdade, acho que é isso mesmo. Então é docker push gavan lawon/magicstream api prod 1.0.0.
+
+Vamos ver se isso funciona. E você É necessário estar conectado ao Docker Hub para isso. trabalhar. Se você não estiver, isso deve sugerir Você e você podem fazer isso enquanto correm este processo. OK, Parece que está surtindo efeito positivo.
+
+lá.
+
+Ok, vamos ver se a nossa API foi criada. Então vamos verificar novamente. Então aqui está o Golang Construa essa imagem. OK. Empurrando isso para lá. Vamos lá verificar.
+
+Então OK. Então, Gavin Lawon/API MagicStream prod. E lá está o seu ID de imagem. E isso parece bom. Se formos ao meu centro, Podemos ver ambas as imagens lá.
+
+foram pressionados. Ótimo. Então estamos prontos. construir o ambiente de produção para Implante nosso fluxo mágico fullstack web aplicação em execução em contêineres aplicação web fullstack conteinerizada na Hostinger. Então, na nuvem é muito emocionante e vamos criar um integração contínua contínua pipeline de implantação. Então, quando mudamos
+
+algo que podemos verificar localmente. para o GitHub e se propaga diretamente até a Hostinger sem problemas. Então o nosso Os usuários praticamente não percebem nenhuma interrupção no serviço. de qualquer forma, e é isso que somos Almejando chegar aqui. Então, nesta parte de o curso em que vamos implementar o código em nosso projeto de aplicativo de fluxo mágico para um repositório no GitHub com o mesmo nome.
+
+O motivo pelo qual estamos fazendo isso é porque Mais tarde, queremos criar uma ação do GitHub. para facilitar um CI/CD contínuo integração implantação contínua oleoduto. Isso significa que poderemos fazer alterações no código em nosso fluxo mágico projeto de aplicativo no Visual Studio Code em nossas máquinas locais. E quando nós pressionamos o alterações no GitHub relevante repositório, nossas alterações acontecerão como mágica propagar-se até a produção versão que será hospedada em Hostinger. Assim, quando forem feitas alterações em O código e as alterações são perfeitos.
+
+propagada através de Hostinger e do Os usuários do nosso aplicativo não são incomodados. pela atualização ao vivo relevante e pelo a reinicialização dos contêineres será tratado adequadamente. Mas antes de nós Para enviar nosso código ao GitHub, precisamos fazer...
+
+Algumas pequenas alterações no código. A razão para isso é que quando o O código foi criado primeiro, o código que agora existe no fluxo mágico repositório, foi criado para usar HTTPon cookies para armazenar tokens de autenticação, o que é ótimo para a prevenção de XSS ataques. O uso do HTTPS também foi fundamental. parte da estratégia de segurança cibernética. Em Esta versão do código, no entanto, eu tenho Decidi usar HTTP e não HTTPS para a comunicação entre o cliente Código React e código da API web escritos em Golang. O motivo dessa escolha é
+
+para não turvar as águas, por assim dizer. com o código relacionado ao certificado nós precisam ser incluídos no relevante Ação do GitHub que vamos realizar criar um pouco mais tarde para o facilitação do nosso pipeline de CI/CD. EU No entanto, eu o encorajaria a obter o código funcionando posteriormente com HTTPS porque isso é importante em termos de segurança. Mas neste vídeo eu quero o O foco será no pipeline de CI/CD e Como o Docker Compose se encaixa nisso. O motivo pelo qual precisamos alterar o código em Esses dois métodos, o método de login do usuário e o método de logout do usuário é porque o código usado para armazenar o HTTPON Os cookies usados ​​para autenticação são ligeiramente diferente em comparação com o código que foi originalmente criado para É para isso que o HTTPS é usado. Se nós
+
+não crie esses códigos apropriados mudanças, haverá problemas com o Funcionalidade de login e logout. EU Recomendo que você confira o original. curso no acampamento de programação gratuito em inglês Canal do YouTube onde eu te mostro...
+
+uma demonstração passo a passo de criação o código para o fluxo mágico fullstack aplicação web. Então, se você ainda não fez isso Entendi perfeitamente o que acabei de dizer. explicado aqui, passando por isso O curso pode lhe proporcionar clareza sobre esse. Então, para obter esse código originalmente adaptado para funcionar com HTTPS para funcionar para HTTP, Precisamos fazer pequenas alterações no código para os métodos de login de usuário e logout de usuário onde estamos lidando apenas com HTTP biscoitos. Para simplificar, você pode simplesmente...
+
+copie esses métodos do Magic Stream. implantar repositório onde apropriado Já foram feitas alterações no código e Em seguida, cole-os sobre a sua contraparte. métodos no código do aplicativo Magic Stream que você tem aberto no Visual Studio. Studio Code em suas máquinas locais. Certo, então a primeira coisa que queremos fazer é...
+
+Antes de enviarmos nosso código para o Magic Stream aplicativo para um repositório com o mesmo nome, Criaremos o repositório em apenas um pedaço. Precisamos fazer mudanças no métodos de login e logout de usuário porque estamos atualmente lidando com o armazenamento do nosso HTTPON cookies com código apropriado para HTTPS. E precisamos alterar esse código. Portanto, é apropriado usar apenas HTTP. Se você Não entendo completamente isso, não faz sentido.
+
+matéria. Isso é exatamente algo de que precisamos. fazer para garantir que o A autenticação ainda funciona quando nós Implantação na Hostinger. No momento, isto não vai funcionar dentro dos nossos contêineres para autenticação. Então, precisamos tornar isso necessário.
+
+ajustes antes de enviarmos o código para o repositório relevante no GitHub. Então para Para isso, vamos abrir nossos navegadores. e vou acessar o GitHub onde estou atualmente conectado ao meu conta e o código atualizado podem ser encontrado neste repositório fluxo mágico implantar. Então vamos entrar lá e se nós Acesse o código do lado do servidor e então nós desejam controladores e controle do usuário Contém o usuário que fez login e o usuário que fez logout. métodos.
+
+OK, Então aqui está. Isso é Usuário que fizer login. Então, certo, para copiar o método que vou usar Aprenda esse método. Ah, e nós temos sair manipulador abaixo dele ali para a funcionalidade de logout e chama-se simplesmente manipulador de logout. usuário de login e manipulador de logout função.
+
+Esses são os dois que queremos copiar. Então, Vamos pegar esses, copiar e copiar. o código para nossas áreas de transferência. Vamos lá. em nosso código.
+
+Vamos analisar nosso código e substituir essas funções aqui. Usuário que inicia sessão e manipulador de logout aqui E basta colar esse código por cima. E se você perceber que o O armazenamento de cookies somente HTTP é tratado de forma ligeiramente diferente. Então agora nós substituímos esse cookie é o cookie exclusivo do HTTP. funcionalidade de gerenciamento para o login método do usuário e o método de tratamento de logout. Ótimo. Então nós
+
+Agora podemos fazer o check-in do nosso código. Então, o primeiro A coisa que eu quero fazer é criar um novo janela do terminal, mas para obter bash como esse. OK. Certo. Perfeito.
+
+Então, vamos usar o Git Bash para executar. Nossos comandos no terminal. E você Podemos ver que estamos no local apropriado. Diretório aqui, aplicativo Magic Stream. Então, Primeiramente, quero criar um repositório.
+
+E você pode fazer login com sua conta do GitHub. credenciais e também criar um repositório do mesmo nome, se você estiver seguindo junto. Então, vou criar um repositório aqui assim. Novo repositório. E vou chamar isso de magia fluxo aplicativo assim.
+
+Então, queremos chamá-lo de aplicativo de transmissão mágica. Assim mesmo. E então, simplesmente crie repositório. Então estamos criando um espaço vazio repositório e vamos usar comandos para enviar nosso código para este repositório. OK. Excelente. Então vamos lá
+
+de volta aqui e então os comandos são Bem simples. nós vamos, hum, pegar isso para Inicialize nosso repositório localmente. Portanto, é um repositório vazio inicializado. e então queremos ir pegar opa pegar Adicione um ponto para incluir nosso código. repositório local. Ok, só vou para
+
+Limpe a tela. Então, nós fizemos o get add. ponto e então obtemos o que queremos comprometer nosso código. faça o commit assim: dash m e Então queremos incluir uma mensagem. Eu sou Só vou dizer inicial comprometer-se.
+
+Uma mensagem bem básica assim. OK. Confirmação inicial. Confirme o recebimento. Sim. Vamos pressionar Enter.
+
+chave. OK. O código foi compilado localmente. Primeiramente, queremos garantir que estamos na filial principal. Então eu vou.
+
+pegar filial traço m maiúsculo m e depois principal como esse. Digitar. E agora precisamos enviar o código. para o repositório o repositório remoto Hospedado no GitHub. Então, esse comando é get remoto assim. adicionar origem
+
+origem assim e depois precisamos incluir. Então, na verdade, aqui está o código que queremos. bem aqui. Esse é o código que precisamos em ordem para empurrá-lo. Já fizemos a ramificação principal e precisamos Para executar este comando aqui. Então, eu só estou
+
+Vou copiar isso de código de exemplo criado para nós depois que nós criou o repositório do aplicativo Magic Stream no GitHub. Então, já temos muito de O código já está escrito, mas eu vou... Apague isso e cole logo em seguida.
+
+lá. E esse é exatamente o código que nós... queremos que tenhamos criado a partir da amostra código criado quando criamos o nosso aplicativo de fluxo mágico relevante GitHub repositório. E vamos pressionar Enter.
+
+chave. Ok, isso já aconteceu por nós. Certo, e agora nós só precisamos executar o comando get pressione dash u
+
+e principal é a filial. Então, pegue o Push Dash. u origem principal assim. Pressione Enter. chave.
+
+Ótimo. E isso parece positivo. Nossa, isso foi bem rápido. E Vamos ver se o nosso código foi devidamente encaminhado para o nosso Fluxo Mágico repositório de aplicativos. E aqui está. Isso é
+
+excelente. Então agora estamos prontos para o próxima etapa, que é basicamente conseguir um Versão funcional disponível na Hostinger. E Em seguida, escreveremos a ação do GitHub para Automatize o pipeline de CI/CD. Então estamos dentro Aqui está tudo bem. Brilhante. OK. OK,
+
+Acabamos de fazer uma modificação em nosso código e, portanto, queremos construir o nosso imagens novamente. Vamos alterar o versão aqui. Por exemplo, para o arquivo dev.yamel do docker composite, nós estamos Vou alterar isso para a versão 1.0.1 0.1
+
+porque criamos uma nova versão de o código e quero ter certeza de que Tudo é trabalhado para que o As modificações que acabamos de fazer não irão afetar a funcionalidade do nosso código, o funcionamento do nosso código de forma negativa caminho. Então, precisamos testar isso. Nós temos mudado a forma como estamos lidando com cookies somente HTTP para que estejamos usando HTTP em vez de HTTPS. E eu só quero ter certeza de que a modificação que fizemos no login funcionalidade e funcionalidade de logout não afetou o geral funcionalidade o funcionamento do nosso aplicativo. Então, por causa disso modificação, agora estamos aumentando nosso versionamento e isso é obviamente um coisa subjetiva, como você sabe até gestão de mudanças: como isso funciona seria feito em relação a um determinado aplicação, mas, bem, acabei de decidir por para fins de demonstração, o que vamos fazer aqui está aumentar o número da versão para o docker compose dev arquivo yaml e então Faremos isso também para a produção.
+
+versão do docker compose. Então, para o Componente da API, queremos a versão 1.0.1. aqui. E também para o cliente React.
+
+componente para a imagem do contêiner React, Nós também queremos a versão 1.0.1. Então, nossos contêineres agora temos, então incrementamos o versão para nossos contêineres aqui basicamente em desenvolvimento com Docker Compose. E nós Quero fazer o mesmo em produção.
+
+Docker compose.pro.yml YAML e você pode Veja, aqui isso é tratado de forma diferente. Isso é feito através da configuração. Então Está detectando um ambiente de tag de imagem.
+
+variável aqui e depois injetando isso inserir o valor no código real quando o executarmos. docker compose. E esse valor pode ser Encontrado o inv que precisa estar no local máquina. Então, temos a tag de imagem e queremos basta atualizar para a versão 1.0.1.
+
+assim. E vamos guardar isso. E você é possível ver que as modificações Estão bem. O arquivo env não entra em GitHub. Então não afeta, não afeta.
+
+Confira ou algo assim, porque não existe no GitHub porque nós Tenho um arquivo git ignore que garante que os arquivos de ambiente não foram incluídos no check-in. GitHub. Mas isso foi verificado automaticamente. docker-compos.dev.yml
+
+esta modificação aqui. Então, nós vamos querer verificar essas modificações no GitHub. Então, tudo é consistente. com nosso ambiente local versus nosso ambiente de produção em termos de código. Embora este arquivo Docker Compose Não será executado na Hostinger, nós somos Vou executar a versão de produção para Razões óbvias. Isso tem a ver com o
+
+ambiente de produção. O produto.proy O arquivo tem a ver com a produção. ambiente e o docker-mpos.dev O arquivo dev.yamel tem a ver com o
+
+Estabelecendo o ambiente de desenvolvimento. Então Primeiramente, vamos testar nossas alterações em certifique-se de que isso não afetou o funcionalidade do nosso site full stack aplicativo. Então vamos falar sobre o Docker. desktop aqui e vamos apenas abaixar como está Esses contêineres eram só para que possamos começar de um ponto de partida Recomeçar do zero. Então eu vou simplesmente bater a exclusão do nó principal que encapsula os outros contêineres. Então
+
+isso representa a rede de contêineres e nós simplesmente os excluímos. Apague para sempre e isso derrubará todos os seus dispositivos. recipientes constituintes, se preferir dentro da rede de contêineres. E essas imagens podem permanecer como estão. porque você pode ver que as versões deles são 1.0.0 1.0.0. Todos eles são 1.0.0. E
+
+Estamos apenas criando outra versão de essas imagens. Então, nós vamos recrie essas imagens para a versão 1.0.1. em vez de 1.0.0. Então, vamos reconstruir o nosso
+
+imagens. OK. Então, vou abordar o assunto. cliente de CD Ah, desculpe, mágica. fluxo cliente dash assim. OK. Então estamos dentro
+
+o diretório raiz do código do cliente, o código React, e queremos construir nosso imagem. Então vamos usar o Docker. construir traço f, e queremos construir esta imagem com base na versão de desenvolvimento do Arquivo Docker. É por isso que temos o hífen f alternar ali. Então é hífen f e então o arquivo docker dev assim: hífen no t porque queremos nomear nossa imagem.
+
+e vamos incluir o novo versão desta imagem em particular. Então hífen t e depois mágica fluxo de hífen hífen web hífen dev essa é a nossa nomenclatura convenção dois pontos e depois a versão 1.0.1 0.1.
+
+OK. E não se esqueça do ponto. o que indica o nosso contexto de construção que é, obviamente, o diretório raiz para o React componente. E vamos pressionar Enter. chave. Ótimo. E isso construirá nossa imagem.
+
+para nós. Excelente. E podemos verificar que o nosso A imagem foi construída através do Docker. Computador de mesa. E nós conseguimos as imagens.
+
+E agora você pode ver que temos uma mágica. desenvolvimento web de fluxo Imagem criada. Mas a diferença entre a imagem criada anteriormente está Esta é a versão 1.0.1.
+
+e a versão anterior é a 1.0.0. Então, aqui está nossa nova imagem. E nós Quero fazer o mesmo para o servidor. Eu sou
+
+Vou apenas limpar a tela. Ops. Limpe a tela. E vamos voltar. até a raiz. E vamos ao servidor de CD
+
+Servidor de streaming mágico. Então estamos no diretório raiz do código do servidor que é escrito em Go para nossa API web. componente. E nós fazemos algo semelhante, mas para o nosso código de API web. Então estamos construindo Agora temos uma imagem para o nosso código de API web. Então
+
+vamos docker build. Ops. docker build hífen f docker div file.dev e depois hífen t e então, magicamente, o nome do imagem magic dash stream dash API dashdev Ok, e então dois pontos 1.0.1 0.1 assim.
+
+E, claro, não se esqueça do contexto de construção indicado por este ponto e Vamos pressionar a tecla Enter e construir o nosso nova imagem. Arquivo não encontrado. Ah, é por causa da letra maiúscula I. pensar maiúsculas e minúsculas. Ah, sim. OK. Portanto, é obviamente um caso.
+
+sensível a esse comando. Então é isso. motivo pelo qual isso falhou. Então, eu só estou Vou copiar isso lá. para a minha área de transferência, colar lá, e Em seguida, altere isso para um F minúsculo.
+
+Então, houve um pequeno deslize. OK. Então, Construa isso em torno disso. Isso deve funcionar. Pressione a tecla Enter. E lá se foi.
+
+Ótimo. OK. E está feito. Então, vamos falar sobre o Docker. computador de mesa. Verifique novamente. E aqui está.
+
+Então, temos nosso desenvolvedor web de fluxo mágico e a versão de desenvolvimento da API de fluxo mágico 1.0.1. Ótimo. Ok, vamos esclarecer isso. E agora
+
+Vamos verificar isso. Na verdade, só... fez uma modificação subsequente.
+
+yaml do Docker compose.dev. Vamos verificar isso no GitHub para que tudo esteja consistente. OK. E isto É claro que a variável de ambiente não faz isso.
+
+acessar o GitHub e teríamos que altere isso na Hostinger. Temos que Crie o arquivo manualmente, mas você irá Você verá isso daqui a pouco. Hum, e você vai Veja o que faremos lá daqui a pouco. Mas Por agora, vamos usar o Git Bash. Então, eu sou Vou criar um novo terminal para o Git.
+
+Bash, e vamos verificar esse código. modificação em. OK. E é simplesmente obter adicionar ponto ótimo obter compromisso traço m Vou fazer apenas uma pequena modificação. para imagem para docker compose dev arquivo respeito a respeito de versionamento. Ok, não é muito bom.
+
+mensagem, mas enfim. Certo, então está bom. Obtenha o commit minor modificação no arquivo de desenvolvimento do docker compos referente ao versionamento. Ok, ótimo. Então, pressione a tecla Enter. Ok, está feito.
+
+Essa pequena mudança é importante para nós. E então nós estamos no diretório principal. Principal, Desculpe, a filial principal. E é simplesmente Obtenha incentivo para impulsionar essa mudança. para o nosso repositório remoto no GitHub.
+
+Pressione a tecla Enter. Excelente. Isso deveria ter se propagado. através do nosso repositório GitHub apropriadamente. Ok, vou limpar que ali. Vamos voltar ao nosso outro assunto.
+
+Janela de terminal para o PowerShell. E agora Quero ir direto ao ponto porque eu Deseja executar o Docker Compose para o nosso ambiente de desenvolvimento e apenas criar Temos certeza de que nosso código está correto, já que o criamos. essas mudanças. Então vamos...
+
+digite docker compose e então é uma mudança f porque queremos a versão de desenvolvimento do docker compose docker-compose.dev.yaml
+
+assim. Na verdade, eu estava enganado. É o Docker. compose.yaml.
+
+E então queremos executar o desenvolvimento. versão do docker compose sobre a base Arquivo docker-compose. Então é docker compose.dev.yamel assim. E então vamos lá, vamos executar!
+
+no modo de desanexação, assim. Então, Docker compose-f dockermposey-f do.dev.yamel. E acho que isso deve resolver o problema. Vamos ver
+
+O que acontece. Ok, está construindo tudo como esperado.
+
+Ok, excelente. Só vamos garantir que aqueles Os contêineres já estão instalados e em operação. Vá para contêineres e eles são. Certo, e você? É possível ver que foram construídos à sua imagem e semelhança.
+
+foram construídos a partir de. 1.0.1. Isso é excelente. Agora podemos testar nosso código.
+
+através de nossos navegadores. Vamos para localhost colon 5173 e certifique-se. Ótimo. Tudo parece ótimo por lá. Está tudo funcionando. Conecte-se.
+
+Bobjones@hotmail.com. Senha: um ponto de exclamação com o P capitaliz login. E estamos bem. Fizemos login como Bob.
+
+E podemos ver as suas recomendações. E Podemos exibir um filme se quisermos. Brilhante. Tudo está funcionando. corretamente. OK.
+
+OK. Então, agora o que vamos fazer é Vamos criar uma instalação em Hostinger. Então, esta é a produção. versão do nosso site full stack aplicativo. E a maneira como vamos O que faremos é algo que faremos apenas uma vez.
+
+Primeiro a instalação, antes de escrevermos um Ação do GitHub que automatizará o processo. Sempre que implementamos mudanças para No GitHub, vai funcionar automaticamente, como por mágica. ser propagado através da Hostinger e Apenas trabalhe. Então, antes de mais nada, precisamos...
+
+para reconstruir as imagens e enviá-las. para o Docker Hub. Estas são as produções imagens. Então, vamos fazer isso. Então, eu vou para entrar em Vamos começar pelo cliente.
+
+uh mágica fluxo cliente. Ok, limpe a tela. E Vamos criar a produção. versão da imagem para o cliente. Docker construir.
+
+OK. F e depois dockerfile.prod porque Queremos usar a versão de produção de arquivo docker para construir nossa imagem neste caso particular e então hífen t e nós devo lembrar para usar o nome de usuário da sua conta para dockerhub para preceder o nome da imagem e Isso é importante, isso é importante convenção para quando você for empurrar Uma imagem Docker para o Docker Hub. Certo, então Incluí meu nome de usuário antes do nome da imagem que é mágica opa sonho mágico dash web dash prod neste em particular caso e depois dois pontos 1.0.1.
+
+Excelente. E não se esqueça de incluir O ponto representa o contexto de construção. Então, Docker construir f docker file.pro hífen t gavanlon para/magicstream web prod um. É exatamente isso que eu quero. Pressione Enter.
+
+E está construindo a versão de produção. da imagem que contém nossas alterações. Fazendo os cookies HTTP funcionarem corretamente Em HTTP, somente cookies HTTP são permitidos, o que é...
+
+a alteração de código que fizemos no logout e funcionalidade de login mais cedo. e que estamos basicamente reconstruindo o imagens Ah, para refletir essa mudança. OK. E Então vamos limpar a tela. OK. E
+
+Queremos apenas verificar se isso aconteceu. construiu a imagem. Acesse as imagens. Ali está é. Aqui está. 1.0.1. Então nós construímos isso.
+
+lá. Construí aquilo ali. E, na verdade, nós Quero enviar isso agora para o Docker Hub. Então Vou acessar o Docker Hub. OK. OK. Então, estou conectado ao Docker.
+
+Eixo. Como você pode ver, nós já temos esses. Então, se entrarmos nesse assunto...
+
+repositório, você pode ver que temos a versão 1.0.0. naquele repositório. API de fluxo mágico prod.
+
+E o mesmo vale para o lado do cliente. Código React. Nós entramos lá. Você pode ver Já temos nossas etiquetas. seja 1 0.0 e queremos 1.0.1
+
+agora incluído lá. Então, nós vamos estarei enviando esta nova versão para estes repositórios aqui. Ok, ótimo. Então, Agora queremos enviar isso para o Docker Hub. Garantimos que estamos...
+
+Antes de prosseguirmos, faça login no Docker Hub. esse. Então, Docker push E depois Gavin Lawn, esse é o meu Docker. Nome de usuário do Hub. Então você gostaria do seu Nome de usuário do Docker Hub seguido de encaminhamento barra e depois o nome magic stream web- dev não, desculpe, opa, prod, isso é para o ambiente de produção e depois cólon 1.0.1 0.1.
+
+Excelente. E essa é a nossa ordem. E vamos pressionar a tecla Enter. Push se refere ao repositório, certo? Excelente.
+
+OK. E deveria ter feito isso. Que Parece bom. E vamos lá, de fato. para ver se isso funcionou. Então, se formos
+
+para este repositório, já foi carregado? que? E possui a versão 1.0.1. Então essa imagem
+
+O upload foi concluído com sucesso. O uma nova versão da imagem foi lançada. carregado no repositório relevante em Docker Hub. E nós precisamos fazer o mesmo. para o servidor. Então vamos fazer isso. Vamos
+
+Limpe a tela aqui. Eu vou cd cd vá para a raiz e cd servidor slashmagic servidor de streaming. E queremos construir um Crie uma imagem de produção para o servidor. Então vamos fazer isso. Então é Docker.
+
+construir- f então docker arquivo.pro OK hífen t gramado gavan. Então, o nome de usuário seu nome de usuário para dockerhub slash mágico API de fluxo prod hifenizado cólon 1.0.1 para o contexto de construção.
+
+Ótimo. Vamos construir isso. Isso deveria ser refletido localmente em primeiro lugar. Excelente.
+
+Está ótimo. Excelente. Então, vamos verificar novamente isso. que de fato criou a imagem. Então, temos a imagem 1.01.
+
+para a web. E aqui está. Gramado de Gavin API magic stream prod.0.1.
+
+Então, tínhamos a versão anterior lá. E esta é a versão mais recente, a versão atual 1.0.1. Excelente. Agora podemos avançar com isso. Vamos
+
+Primeiro limpe a tela e vamos pressionar que para o Docker Hub. Empurrar. Docker push. OK. E então queremos Gavin Lawn, a conta de usuário para DockerHub seguido do nome da barra então mágica API de fluxo prod.0.1.
+
+Excelente. Vamos migrar isso para o Docker. eixo. Excelente. Incrível.
+
+Perfeito. Isso parece ótimo. Vamos para Execute o Docker Desktop e verifique. Na verdade, queremos ir para o Docker Hub. mas podemos verificar isso através do Docker.
+
+Na verdade, é um computador de mesa. Então, se formos ao meu hub, você deverá conseguir vê-los lá. E pronto. 1.1 para o API, versão 1.1 para o lado do cliente. Então, nós temos
+
+Duas imagens foram enviadas. duas imagens para o código do lado do servidor e duas imagens para o código do lado do cliente enviado para docker hub e você pode ver que este é o A versão mais recente é a 1.0.1.0.1 que acabamos de lançar.
+
+Criado devido a uma alteração no código. Nós queremos diferencie-a da imagem anterior. e nós fizemos isso através de versionamento através das tags. Você pode ver aqui agora, se formos para no site do Docker Hub, se formos para este repositório magic stream API prods
+
+Temos a versão 1.0 0.0 e 1.0.1.
+
+Excelente. Certo. Então, antes de nós Crie nossa ação no GitHub para automatizar o processo de quando fazemos alterações em nosso E nós enviamos nosso código para o GitHub, ele obtém essas alterações automaticamente. propagam-se automaticamente para Hostinger. Queremos fazer uma instalação única.
+
+Então vamos prosseguir para a Hostinger e Vamos fazer Vamos extrair o código manualmente. migrou do GitHub para a Hostinger. Eram Vou criar um arquivo de ambiente AV. no Hostinger em um diretório designado. E então vamos executar o Docker.
+
+compostagem para verificar se tudo está bom. E depois de fazermos isso, nós criará a ação git para automatizar Nosso pipeline de CI/CD. Então, vamos entrar em Hostinger. OK. Então, acesse www.hostinger.com.
+
+Vamos à Hostinger. Acesse minha conta. Vou fazer login. Então, estou entrando. para a Hostinger.
+
+Então, presumo que você tenha um, se você for Se você está acompanhando, já tem uma conta. já está configurado, hum, onde você pode usar Docker Em um VPS, servidor virtual privado. OK, ótimo. E então a primeira coisa que eu quero Basta clicar em "Gerenciar". Quero gerenciar meu servidor virtual privado. Então, eu vou
+
+Clique em "Gerenciar" ali. OK. Ok, eu só Vou pular essa parte. Ótimo. Você pode ver que estou correndo.
+
+Ubuntu 24.04. Ótimo. E eu também estou usando o N8. baseado no Ubuntu 24.04.
+
+Excelente. E agora você pode ver que nós temos Esta é a opção do gerenciador Docker. E você Posso ver todos os projetos que você tem. Para executar, clique nesta opção aqui. Ótimo.
+
+Então, estou executando dois contêineres. Que seria minha funcionalidade relacionada ao NA10 dentro de um recipiente. Mas agora eu quero. girar os recipientes relevantes para a nossa mágica Aplicativo de streaming, aplicação web fullstack. Então Como vou fazer isso? Primeiramente, eu sou
+
+vamos para o terminal porque podemos executar comandos para Docker a partir do nosso próprio terminal aqui. Então, atingiu o terminal e podemos executar os comandos relevantes. preciso correr em nosso VPS. Excelente. Então, como você pode ver, estou no meu servidor lá. Estou no diretório raiz.
+
+E eu vou apenas limpar a tela. Para maior clareza. E a primeira coisa que vou fazer agora é...
+
+que estou no meu servidor, meu VPS em Hostinger é... Vou criar um novo diretório. E vou usar MK durante o comando mk dur para isso seguiu pelo nome do diretório que eu quero criar. M j
+
+fluxo aplicativo assim. E vou gravar um CD. isso agora. Magia aplicativo de streaming. Então, estou no diretório de Onde eu quero que meu projeto seja desenvolvido. Todos
+
+os arquivos relevantes. OK. Então, o primeiro A coisa que vou fazer é...
+
+clone o repositório do GitHub neste diretório. Então, para fazer isso, executamos este comando. obter clone https dois pontos/ barra então github.com e depois o nome de usuário da minha conta do GitHub. Gavinlon digital, então será qualquer conta.
+
+nome que você seguiu pelo nome de o repositório relevante e que está em meu caso mágico aplicativo de streaming.get assim e depois espaço ponto então pegue clone https github.com gavlon digital Baixe o aplicativo magic stream app.get e vamos ver se que clona o repositório em nosso Clonagem do diretório do aplicativo Magic Stream. Excelente. Isso é ótimo. E o próximo
+
+A coisa que eu quero fazer é criar o arquivo relevante. Agora, isto contém o configurações que serão injetadas em nosso versão de produção do docker compose arquivo quando executamos docker compose para girar Aumentamos o tamanho dos nossos contêineres no aplicativo de hospedagem. OK, Então estamos no aplicativo Magic Stream. Nós queremos Crie esse arquivo. E como fazemos isso, Lembre-se que estamos usando Ubuntu, estamos usando Linux.
+
+Ubuntu. Então, queremos usar o nano comando para isso. Então, não é...
+
+nv. E agora queremos colar o nosso configurações, nossa variável de ambiente valores. Então, na verdade, eu tenho estes. configurações fora da tela e eu só vou para colá-los aqui assim. E há alguns ajustes a serem feitos.
+
+Precisamos fazer isso porque temos todos esses referências ao host local. Agora estamos em Hostinger. Então, queremos esses hosts locais. por exemplo, para refletir nosso virtual Nome do servidor privado aqui. Então eu vou para fazer esses ajustes. e seja lá o que for
+
+O nome do seu servidor virtual privado é, É isso que você estará substituindo o local. Hospede com seu servidor virtual privado. nome. Então, se eu for aqui, Ok, e o nome do meu servidor virtual privado. Isto está aqui. Então vou copiar isso.
+
+e vou colar isso aqui aqui. OK. E então a porta que eu quero executar o Se o cliente estiver ativado, o cliente React está ativado na porta 808. Ops, Isso vai ser apagado. O porto I quero executar este componente cliente em porta 8081.
+
+Assim. E também queremos substituir o host local. aqui o host da API porque quando o cliente Conecta-se ao servidor, Deve ser o nome do servidor correto. Então Precisamos colar o endereço de hospedagem VPS correto. Nome aqui.
+
+OK. Então, isso parece bom e deve funcionar. trabalhar. Então, isto é por uma causa, para que porque o cliente e o servidor são executando em dois domínios separados Precisamos permitir que o cliente...
+
+Conecte-se ao servidor. Então isso é o que acontece causa redonda. OK Ótimo, ficou ótimo. Então, o próximo passo é Para escrever isso. Então vamos Ctrl+O, Escreva, pressione a tecla Enter e Em seguida, pressione Ctrl+X para sair. E podemos dobrar
+
+verifique se nossas configurações estão corretas indo para nano.env. E você poderia modificar as configurações como Isso também. nano.env. E isso nos leva a
+
+nossas configurações, que se mantêm até agora. Então, nossas configurações estão definidas. correto. Então vamos lá, x. E agora podemos executar docker compose para ativar nossos contêineres porque agora nossos arquivos docker-compose porque nós clonamos o repositório do nosso docker compose.
+
+Os arquivos agora estão em nosso VPS dentro do Pasta do aplicativo Magic Stream. Então podemos correr docker compose
+
+hífen f então docker dash compose a base arquivo compos yaml e depois em cima disso Queremos executar a versão de produção de docker comp do docker compose o arquivo docker compos relevante e isso O arquivo se chama docker. composição de traços ponto prod.yamel e vamos incluir a palavra-chave "para cima". seguido de hífen d porque queremos Execute os contêineres em modo separado. Então Vamos testar isso.
+
+puxando. Está fazendo o que faz. Isso é Está ótimo. É bastante rápido também. Olhar nisso.
+
+OK. E, com sorte, depois disso teremos um versão do nosso aplicativo web instalada na Hostinger. Muito emocionante. E então Podemos começar a automatizar nosso CI/CD. oleoduto.
+
+Uau. Olha só isso. Saudável. Criado. Criado. Criado. Iniciado. Iniciado.
+
+Iniciado. Isso parece muito positivo. E agora podemos testar se isso aconteceu. funcionava digitando o nome do nosso Servidor VPS e dois pontos em 81 porque é isso onde o cliente React está sendo executado. Imprensa a tecla Enter. Não está seguro. Isso é
+
+correto. Funcionou de primeira. Nós temos já implantado nosso aplicativo Magic Stream fullstack web candidatura à Hostinger. E o próximo O próximo passo é desenvolver nosso pipeline de CI/CD. que quando fizermos as alterações em nosso máquinas locais para o código e nós enviamos essas alterações no GitHub, é refletido automaticamente dentro do Aplicativo em execução no servidor Hostinger.
+
+Isso é incrível. Certo, vamos ver. Se conseguirmos fazer login. OK. Bobj Jones@hotmail.com
+
+senha um ponto de exclamação com o P em maiúsculas. Olha só isso. Que incrível! E está funcionando maravilhosamente bem. E Vamos curtir a ressaca só de vez.
+
+medir para ver se nossa aplicação é filmes em streaming. E é mesmo. Veja que. Falando sobre Bem, você sabe, Phil e Stew, seu traseiro. OK. Excelente. Vamos sair.
+
+Então agora vamos criar o GitHub. ação que é a parte central do nosso Automação de pipeline CI/CD. E como eu tenho Conforme mencionado anteriormente, isso significa que quando verificamos nosso código com nosso código alterações, isso será automaticamente exibido ao vivo no aplicativo Hostinger. Então é É como mágica. Estou muito animado para chegar a esta etapa do nosso curso. Hum, então
+
+A primeira coisa que queremos fazer é criar Nossa ação do GitHub é obedecer a uma determinada regra. estrutura de diretórios convenção. Então precisamos criar um pasta bem na raiz do Aplicativo de transmissão mágica. E nós podemos simplesmente fazer que ao clicar neste ícone aqui para novas pasta. E então esta pasta deve ser chamado get hub.github. Então é ponto
+
+precedendo o GitHub assim. OK. Então Criamos essa pasta e então Dentro da pasta do GitHub, precisamos de Crie um subdiretório chamado workflows. Na verdade, eu já preparei o Ação do GitHub offline. Você pode, na verdade Encontre a ação relevante do GitHub. Se nós
+
+Acesse o GitHub. Então, se olharmos aqui, temos Consegui implantar o fluxo mágico. E você pode Encontre todos os arquivos relevantes aqui. incluindo o docker composdev, docker Arquivos compos.yaml, docker compose.yaml
+
+arquivo, bem como o docker file.dev e docker file.pro para o cliente e o servidor. E também Nós temos isso. arquivo deploy.yaml
+
+deploy.yaml. E nós vamos criar esse arquivo agora está em nossas máquinas locais dentro da mesma estrutura de diretórios que visto aqui. Porque, por convenção, o GitHub sabe onde encontrar as ações relevantes e os executarão com base nos eventos. que você detalha em seu GitHub Ação. Então você pode ver aqui, aqui está o
+
+Ação do GitHub que queremos criar. E eu vou simplesmente colar isso aqui. para um novo arquivo que vou criar aqui, dentro do diretório de fluxos de trabalho. Então Vou clicar em "Novo arquivo" e criar um arquivo chamado deploy.yaml Assim ou em YML. Você pode chamar isso de YAML.
+
+Se você quiser, mas eu vou embora. YML, que é a abreviação do arquivo. extensão para YAML. E então vou colar o O código relevante está aqui. E vamos analisar.
+
+Uma breve explicação. Aliás, um extensão útil que você pode querer A instalação é feita através das ações do GitHub aqui. A extensão GitHub Actions permite gerenciar seus fluxos de trabalho, visualizar o fluxo de trabalho, executar história e ajuda na autoria fluxos de trabalho. Portanto, pode ser útil para Instale esta extensão do GitHub Actions. Vamos voltar aqui e vamos analisar.
+
+uma breve explicação do que está acontecendo neste arquivo YAML. Então, aqui temos o nome do fluxo de trabalho. Construir, enviar e implantar em um servidor de hospedagem. VPS. Esse é o nome que escolhemos para nossa ação do GitHub. E aqui temos em
+
+Empurre os ramos. Executa o fluxo de trabalho sempre que o código é inserido. Empurrado para a filial principal. É isto que Estamos declarando aqui. Isso é código declarativo. E então temos o
+
+Seção de vagas aqui. Certo, o que define um único trabalho chamado Construir e implantar. Portanto, está definindo um único trabalho chamado Construir e implantar. Então ele executa o trabalho em o executor mais recente do Ubuntu hospedado no GitHub. Ok, vamos aos passos. Isto é um
+
+lista de comandos de ações executados sequencialmente aqui. E você pode ver que nós somos Analisando o código. Então vai ser Clone o repositório no executor. que é... está rodando na versão mais recente.
+
+versão do Ubuntu. OK. Então, com fetch A profundidade zero busca todo o git. histórico necessário para versionamento de tags ou diferenças totais. E depois temos a API de exibição.
+
+Arquivos de contexto aqui. Lista os arquivos em o contexto de construção do Docker da API. Verdadeiro impede que o fluxo de trabalho falhe se O diretório não existe. Então isto Verdadeiro impede que isso aconteça. E Isso é apenas para fins de depuração. Aqui,
+
+É assim que o GitHub Actions sabe como fazer ler configurações de segredos. E nós somos vou criar esses segredos depois Já demos uma breve explicação. desta ação do GitHub. Então nós vamos Crie todas essas configurações dentro de segredos. E eu vou te mostrar como fazer.
+
+Isso daqui a pouco. Então, nós temos o Nome de usuário do Docker Hub e o Docker Hub ficha. É assim que funciona nossa ação do GitHub. O GitHub consegue fazer login no Docker. Eixo. O que vai acontecer é que vai...
+
+para criar as imagens para o cliente e o servidor e isso vai impulsionar aqueles para DockerHub e então ele vai puxar essas imagens foram enviadas para a Hostinger e é vão aumentar esses contêineres, o contêineres relevantes. Então, é isso. inicia a aplicação web sem problemas. em seus respectivos recipientes sem causando muitos transtornos ao usuário. Em seguida, temos a criação e o envio da imagem da API.
+
+Assim, constrói-se a imagem no corredor e envia isso para o Docker Hub e essa imagem. serão recuperados posteriormente para hospedagem e executará o contêiner relevante. E depois temos a criação e publicação da web. imagem que faz a mesma coisa. Isto constrói a imagem no corredor e então Ele envia essa imagem para o Docker Hub, que será posteriormente removido do serviço de hospedagem.
+
+baixado para hospedagem e o contêiner será lançado. E então temos esta seção muito importante aqui, configuração Agente SSH. Então, inicie um agente SSH no corredor. É isso que isto faz aqui. Carrega sua chave privada de VPS a partir de segredos.
+
+Então, a chave privada que vamos usar gerar, eu vou te mostrar como fazer isso quando revelamos nossos segredos, que nós somos Vou fazer logo depois disso. Então é Obtém isso de segredos no GitHub E esta é a chave privada. Isso permite nossa ação do GitHub para executar comandos em A Hostinger, por exemplo, puxando o Baixei as imagens do DockerHub e elas estão em execução. os contêineres relevantes e, em seguida, implantá-los. sobre Hospedagem de um VPS. Então, este VPS adicional é conhecido.
+
+O host executa um comando de shell de várias linhas. Então, SSH hospedando um usuário que hospeda um host. Conecta-se ao servidor virtual privado (VPS) servidor via SSH. Esta tag de exportação de imagem aqui define o Tag da imagem Docker para implantação. Então, ele se define.
+
+a tag da imagem do Docker para implantar este CD O diretório de aplicativos do host secrets.host é movido para o diretório de aplicativos no local de hospedagem. Então é faz com que tudo o que configuramos aqui seja...
+
+diretório atual. Então é daqui que Vamos administrar nosso Próximo passo, nosso próximo comando. Consiga puxar origem principal aqui. Então, este pull origin main extrai o código mais recente, por exemplo, o compor arquivos que vamos executar posteriormente. Então está puxando isso de git pull origin main. Então é p puxando
+
+Isto é do GitHub. Assim, podemos executar docker compose usando a versão mais recente do compose Arquivos no Hostinger. E é basicamente isso que estamos fazendo. Portanto, trata-se de uma automação. Então, estamos automatizando nossas alterações. Então, quando
+
+nós pressionamos código para a ramificação principal, então alterações que Fabricamos em nossas máquinas locais, nós empurrar isso para a filial principal, Isso desencadeia a ocorrência dessas ações. Então Confira o repositório Por exemplo, criar e enviar imagens de API, Criar e publicar imagens na web, Adicione o VPS aos hosts conhecidos e então implantar no host AVPs que inicia o contêineres. Mas você pode ver tudo isso código no GitHub aqui mesmo neste em este repositório uh fluxo mágico implanta. Ok, ótimo. Ok, então eu só quero Chamem a sua atenção para estes comandos.
+
+aqui. Então, docker compose/afmpose compose prod yaml pull this one here, Este comando aqui baixa o novo docker. imagens do docker hub e depois isto comando aqui recria contêineres em modo separado e remove os antigos. E isto é Como podemos ter uma integração perfeita? Pipeline CI/CD onde as alterações são feitas e as alterações são propagadas desde a hospedagem até a integração perfeita para o usuário. Assim, ele remove os contêineres antigos.
+
+e lança os novos contêineres. Então isto O comando `line` baixa as imagens do Docker. do DockerHub e então esta linha recria o contêineres em modo separado e remove os antigos. Remover órfãos. Ótimo. Então
+
+Resumindo, em um único comando para o modo principal, isso O fluxo de trabalho cria APIs e sites em Docker. imagens, tags e as envia para O DockerHub usa SSH para acessar o seu sistema. Hospedagem de VPS, baixa novas imagens, Reinicia o aplicativo usando o Docker Compose. e remove os recipientes antigos. Então Agora, como vocês podem ver, nós temos todos esses segredos. Por exemplo, hospedar um usuário
+
+secrets dot hospedagem um host. Hum, secrets.hosting um diretório de aplicativos, que é o aplicativo magic-stream. Nós criamos isso diretório de aplicativos na parte anterior de o curso. Hospedar uma chave SSH. Eram
+
+Vou precisar gerar chaves SSH. Doente Mostraremos como podemos fazer isso em apenas um pedaço. Portanto, temos muito o que fazer aqui. Precisamos do Nome de usuário do Docker Hub, token do Docker Hub, que precisamos criar no Docker Hub. E é assim que conseguimos fazer login.
+
+Docker Hub a partir da nossa ação no GitHub. Então nós precisamos criar esses segredos neste momento apontar. Então, vou abordar o assunto. GitHub aqui e Vamos acessar nosso aplicativo atual. que é o aplicativo Magic Stream. Então, isto é
+
+a versão do Magic Stream Aplicativo no qual estamos trabalhando agora. E agora vamos ver como nós pode criar esses segredos. Então, para fazer isso, Queremos acessar as configurações. Queremos acessar segredos e variáveis. aqui.
+
+Queremos partir para a ação. Brilhante. OK. E queremos criar estes como novos segredos do repositório. Tão novo Segredo do repositório. Agora queremos registrar
+
+no Docker Hub porque precisamos gerar um token do Docker Hub, um token para que nossa ação do GitHub pode fazer login em Docker Hub. Certo, então vamos começar. Docker Hub. Ok, fizemos login no Docker. Eixo. Agora queremos acessar a conta.
+
+configurações aqui. Queremos usar tokens de acesso pessoal. aqui. OK. E você pode ver que eu gerei uma infinidade de essas chaves aqui. E então nós simplesmente vamos
+
+Gerar novo token. OK. Descrição do token. Eu só vou chamar isso de uh meu token do Hostinger. Chame-o como quiser.
+
+Vou definir um prazo de validade de 30 dias. A data está nele. Isso é muito importante. As permissões de acesso devem ser de leitura e escreva pelo menos. Eu só vou dar Ele lia, escrevia e apagava. OK. Então meu
+
+Vamos hospedar um token e gerá-lo. Ok, ótimo. Assim também o Meu nome de usuário é Gavin Lawn. Então eu sou Vou copiar isso ali e simplesmente colar. temporariamente ali no bloco de notas E copie isso. Este é o verdadeiro
+
+token de acesso pessoal que precisamos para criar como um segredo no GitHub, dentro do GitHub relevante. repositório. Você agora acessou os segredos e ações variáveis ​​e queremos criar um novo segredo de repositório. Então, crie um novo segredo de repositório assim. E aqui queremos chamar isso de...
+
+docker_hub sem sublinhado, desculpe, Docker Hub ficha como essa e então queremos colar o token. que acabamos de criar no Docker Hub. Isso permitirá o uso do GitHub Actions. Para fazer login no Docker Hub. Vamos colar isso lá. Adicionar segredo. E aqui está. Então
+
+Se analisarmos o nosso código aqui, veremos que... Ainda não fizemos o check-in, mas faremos. que. Já temos o token do Docker Hub. E
+
+agora consegue ler esse segredo a partir dos segredos que estamos criando dentro do repositório relevante aqui. Então São os segredos deste repositório. Nós temos Token do DockerHub criado. E agora vamos Criar nome de usuário no DockerHub. Então, novo Segredo do repositório. Vamos usar o Docker.
+
+eixo nome de usuário assim. E o nosso nome de usuário, bem, o meu nome de usuário para Docker Hub é Gavin Lawn. Sua vontade de Claro que será diferente. Então, cole o quê? Seu nome de usuário está aqui e depois vá Adicione um segredo assim. Ótimo. Então nós temos
+
+Adicionamos dois segredos que agora podem ser lidos. da nossa ação no GitHub aqui. Então nós podemos Leia-os. Assim, nossa ação do GitHub pode ler o usuário, nosso nome de usuário do DockerHub e Token do Docker Hub, que significa nosso GitHub agora pode fazer login no DockerHub e Reunir informações relevantes. OK. Então,
+
+Ele pode puxar e enviar imagens. e uh encontrar determinadas informações de versão É esse tipo de coisa que vem da nossa empresa. Ação do GitHub porque basicamente somos concedendo permissão à nossa ação do GitHub por fazendo isso. E claro, estes são Segredos aqui. Então, ninguém pode entrar e Basta ler esses segredos. Mesmo se você for
+
+Para editar, você não pode... você não pode ler esses...
+
+segredos. Você pode atualizá-los, mas as pessoas não consigo lê-los. OK. Portanto, é totalmente seguro. OK. E então podemos hospedar um aplicativo.
+
+também. Então, novo segredo do repositório. Vamos aplicativo de hospedagem
+
+dur assim. E é mágico. aplicativo de streaming, porque era assim que o chamávamos. foi quando fizemos aquela configuração única do nosso Aplicação web na Hostinger. Então nós queremos A ação do GitHub serve basicamente para fazer login.
+
+via SSH para Hostinger e então queremos isso migrar para o aplicativo Magic Stream que diretório antes de executar o relevante comandos docker compose. E Vamos adicionar esse segredo ali. Certo, isso Parece bom. Ótimo. Então, hospedar um aplicativo dura. Então, já concluímos três dos nossos seis objetivos.
+
+Segredos que precisamos criar. OK. E também precisamos do nome de usuário do Hostinger. OK. Então, meu nome de usuário do Hostinger. Vamos
+
+Crie o nome de usuário do Hostinger. OK. Então este anfitrião A configuração do usuário deve ser definida para rotear a raiz. Excelente. Vamos adicionar o segredo.
+
+E a outra configuração de hospedagem que nós precisam incluir é o endereço IP do seu VPS, seu Servidor virtual privado, seu VPS. Ok, vou apenas copiar meu endereço IP. Endereço daqui. Você pode ver isso, certo? na primeira página aqui. Então, eu vou
+
+Copie isso aí. E vou colar Está aqui dentro. Vamos chamar isso de Hostinger. anfitrião assim. E depois é só colar.
+
+seja qual for o seu endereço IP VPS na Hostinger. Então, aqui está. E você pode simplesmente copiar isso ali, assim: que. E depois cole-o. aqui assim. Em seguida, clique em "Adicionar segredo".
+
+Ótimo. Então, descobrimos cinco dos nossos segredos. criado. E na verdade, só precisamos fazer Mais uma, que é a chave SSH privada. E vamos usar o gerador de chaves SSH para Gerar um par de chaves pública e privada. e
+
+A chave privada será armazenada em um segredo no GitHub. E a chave pública Parte do par de chaves será instalada. na Hostinger. E eu vou te mostrar como Farei isso daqui a pouco. E foi assim Nossa ação do GitHub pode acessar via SSH.
+
+Hostinger e execute os comandos relevantes. para que possamos propagar as mudanças. por meio da Hostinger. As alterações feitas localmente, depois eles enviaram para o GitHub e então nossa ação se desenrola e então o As imagens relevantes são criadas e enviadas para docker hub e depois da hostinger Os comandos podem extrair nossos componentes Docker. Os comandos podem extrair essas imagens de docker hub e pode executar o relevante recipientes e remova os antigos contêineres.
+
+É assim que conseguimos, magicamente... Implementaremos nossas alterações no Hostinger. OK. OK. Agora precisamos gerar um
+
+par de chaves pública e privada e vamos lá para fazer isso usando um utilitário chamado gerador de chave SSH que é instalado no Windows 101 Mac OS e a maioria das distribuições Linux. Então nós vamos Execute a linha de comando e nós vamos gerar um par de chaves públicas e a chave pública Será armazenado no Hostinger. Bem Instale isso na hospedagem e no servidor privado. A chave será definida como secreta em nosso sistema. Repositório GitHub.
+
+Vou navegar até a unidade C e estou vou criar mk Bem, vou apenas criar um diretório. chamado meu chaves, não sei, hostinger, seja lá o que for Ok, então eu criei isso e vou... CD para dentro das minhas chaves hostinger, certo? E agora vou correr.
+
+esse comando e é assim que o comando acessa SSH gerador de chaves. OK. Então, espaço para geração de chave SSH- T edED255 1 9 anos E então você pode chamar isso de C maiúsculo e então você pode chamar isso de isto o que você quiser. Eu só vou chame isso de pegar G pegar ações Hospedagem de ações do GitHub para hospedagem espaço e depois o arquivo que queremos. ser anfitrião Ações do GitHub para, então, o que você quiser o nome do arquivo pode ser o que você quiser Dê nome aos arquivos que armazenarão os pares de chaves relevantes e você verá o Mais detalhes em breve. Então, SSH
+
+gerador de chaves 2 55 1 9 hífen C Hospedagem de ações do GitHub de quatro e então apenas -ashf e estes estes As configurações podem ser praticamente o que você quiser. tipo, e esse será o nome do arquivo que Armazena as chaves relevantes. Você verá É isso que eu quero dizer agora. Então, vou pressionar a tecla Enter. Então, aqui, entre senha. Basta pressionar Enter.
+
+Digite a mesma senha. Basta pressionar Enter. Deixe em branco e pressione Enter. E é fez isso por nós lá. E agora podemos ir.
+
+sair daqui e podemos entrar aquele diretório que criamos. Então C, Vou acessar a unidade C e então minhas chaves de hospedagem. E temos estes dois. Os arquivos foram gerados para nós. E nós queremos Aqui estará contida a chave privada. Então
+
+Vou abrir isso no bloco de notas. Faça isso com o bloco de notas. E agora queremos Basta copiar e colar toda essa chave. Então, vamos criar um novo segredo de repositório. E eu vou anunciar este como... Devemos
+
+Chame isso de Hostinger porque é isso mesmo o que é segredo, é assim que o segredo é referenciado. Este é o nome do segredo que é mencionado no Ação relevante do GitHub. Então deve ser hospedando aer SSH chave como essa com sublinhados entre hospedagem e SSH e SSH e chave como que. Então, hospedamos uma chave SSH e depois nós Preciso copiar tudo isso, incluindo o início. abra a chave privada SSH e a parte final aqui e nós simplesmente colamos assim.
+
+E adicionamos um segredo. [limpa a garganta] OK. E agora temos tudo segredos. Agora criamos valores para Todos os segredos estão aqui. Então, o final O próximo passo é acessar o terminal.
+
+Certo. Esqueça isso. Então, vamos entrar no terminal aqui. Janela do terminal. Quero abrir isso.
+
+Vou apenas limpar a tela. Nós Preciso criar um diretório específico. e isto pode ou não ser criado em seu VPS. Só para confirmar se é isso mesmo. criado ou não criado, você pode digitar ls-d e então o diretório o especial diretório é tilda barra fazer opa. Ssh assim. OK.
+
+E isso significa que eu tenho isso. instalado. E se você não o tiver Após a instalação, você está no diretório raiz. aqui. Desculpe, acho que deveria ter sido Foi difícil, mas funcionou mesmo assim.
+
+[risos] Ok, vamos tentar com o "ls". Então, deve ser ld e então tilda ponto ssh. OK. Certo. Então, isso ainda funcionou. Isto
+
+Disse-me que isso existe. OK. OK. Mas se tivesse, se lhe dissesse isso não existe, se esse diretório não existe, você pode criá-lo facilmente. digitando mk durante p e depois til barra. Sshops
+
+ssh. E eu não preciso criá-lo porque Eu já tenho esse diretório no meu máquina. Então vou inserir o CD nele. aqui. cd tilda barra.sh
+
+aqui. E então queremos Cole essa chave pública em um arquivo chamado authorized_keys. Então, vamos digitar nano autorizado opa, autorizado Teclas de sublinhado como essa. E se isso Se o arquivo existir, ele será iniciado. arquivo. Se não existir, vai...
+
+crie-o. Bem, você terá que economizar. após a modificação para criá-lo. Mas Se já existir, irá abri-lo. Abra o arquivo em um editor de texto para nós. Então, nano
+
+chaves autorizadas. E aqui está. Você Vejo que já colei o texto. Chaves aqui, chaves públicas de quando eu era Preparando-se para o curso. Então, tudo o que eu sou O que vou fazer aqui é...
+
+Pressione a tecla Enter. Então, estou colocando-o em uma nova linha e eu vou Abra aquela chave que geramos, pub. Esta é a chave pública que queremos. Nós queremos Para abrir isso no Bloco de Notas.

@@ -1,0 +1,623 @@
+---
+video_title: "Kubernetes Course – Certified Kubernetes Administrator Exam Preparation (2026 Update)"
+video_id: l57xKN6OBhY
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=l57xKN6OBhY
+video_date: 2026-02-10T11:01:25+00:00
+video_description: |
+  Learn Kubernetes and prepare to pass the Certified Kubernetes Administrator (CKA) examination. This course is designed to provide a deep, practical understanding of Kubernetes administration, from foundational concepts to advanced troubleshooting. 
+  
+  🏗️ The Linux Foundation provided a grant to make this course possible.
+  
+  Use code FREECODECAMP to get 30% off training, certifications, and bundles from Linux Foundation.
+  
+  https://training.linuxfoundation.org/
+  
+  💻 All commands and code from the course: https://www.freecodecamp.org/news/prepare-for-the-kubernetes-administrator-certification-and-pass
+  
+  Course developed by  ⁨@beau⁩  
+  
+  ⭐️ Course Contents ⭐️
+  ⌨️ 0:00:00 Introduction
+  
+  ⌨️ 0:06:23 Kubernetes Fundamentals and Lab
+  - Understanding the Kubernetes Architecture
+  - Core Kubernetes Objects
+  - Setting Up Your CKA Practice Environment
+  
+  ⌨️ 0:22:09 Cluster Architecture, Installation & Configuration
+  - Bootstrapping a Multi-Node Cluster with kubeadm
+  - Managing the Cluster Lifecycle
+  - Implementing a Highly-Available (HA) Control Plane
+  - Managing Role-Based Access Control (RBAC)
+  - Application Management with Helm and Kustomize
+  - Extending Kubernetes
+  
+  ⌨️ 0:55:23 Workloads & Scheduling
+  - Mastering Deployments
+  - Configuring Applications with ConfigMaps and Secrets
+  - Implementing Workload Autoscaling
+  - Advanced Pod and Container Configuration
+  - Advanced Scheduling
+  
+  ⌨️ 1:26:04 Services & Networking
+  - Pod-to-Pod Connectivity
+  - Kubernetes Services
+  - Ingress and the Gateway API
+  - Network Policies
+  - CoreDNS
+  
+  ⌨️ 1:43:45 Storage
+  - Volumes, PersistentVolumes (PV), and PersistentVolumeClaims (PVC)
+  - Volume Configuration
+  - StorageClasses and Dynamic Provisioning
+  
+  ⌨️ 1:55:31 Troubleshooting
+  - The Troubleshooting Methodology
+  - Troubleshooting Applications and Pods
+  - Troubleshooting Cluster and Nodes
+  - Troubleshooting Cluster Components
+  - Troubleshooting Services and Networking
+  - Monitoring Cluster and Application Resource Usage
+  
+  ⌨️ 2:04:56 Conclusion
+---
+Bem-vindo(a) a este curso completo de Kubernetes . Este curso é perfeito para qualquer pessoa que queira aprender sobre Kubernetes, mas foi desenvolvido especificamente para aqueles que estão se preparando para o exame de certificação de administrador de Kubernetes. Meu nome é Bo KS e eu sou o professor deste curso. Na atualização mais recente de 2026, este curso está totalmente alinhado com a versão 1.34 do Kubernetes e com o ambiente de exame aprimorado . Este curso oferece uma
+
+compreensão prática aprofundada da administração do Kubernetes, desde conceitos básicos até a resolução avançada de problemas. Fornecerei explicações detalhadas e demonstrações práticas para cada tópico do currículo oficial da CKA. O Kubernetes é uma plataforma de orquestração de contêineres de código aberto que automatiza a implantação, o dimensionamento e o gerenciamento de aplicativos em contêineres. No desenvolvimento de software moderno, os aplicativos são frequentemente empacotados em unidades portáteis e leves chamadas contêineres. Embora executar um único contêiner seja simples, gerenciar centenas ou milhares deles em uma frota de máquinas apresenta desafios significativos. O Kubernetes
+
+aborda esses desafios fornecendo uma estrutura robusta para executar sistemas distribuídos de forma resiliente. Os principais benefícios do Kubernetes incluem a autorrecuperação, que reinicia automaticamente os contêineres com falha e os reprograma em nós íntegros; o escalonamento automático, que permite que os aplicativos sejam dimensionados com base no uso de recursos; e as implantações sem tempo de inatividade, essenciais para implementar atualizações sem interromper o serviço. Dominar o Kubernetes é uma habilidade essencial para engenheiros DevOps, administradores de nuvem e desenvolvedores de software atualmente. O programa Certified Kubernetes Administrator (CKA) foi criado pela CloudNative Computing Foundation e pela Linux Foundation para validar as habilidades necessárias para desempenhar as responsabilidades de um administrador de Kubernetes. E a Linux Foundation concedeu uma bolsa para tornar este curso possível. E no
+
+site da Linux Foundation, você pode usar o código "code free code camp" para obter 30% de desconto em certificados e pacotes de treinamento. Você pode conferir isso na descrição do vídeo. O exame CKA é um teste online rigoroso, supervisionado por um supervisor, baseado em desempenho, que exige a resolução de múltiplas tarefas práticas a partir de uma interface de linha de comando, dentro de um limite de tempo de 2 horas. Note que, a partir do final de 2025, o exame será administrado exclusivamente por meio de uma área de trabalho YUbuntu remota. Isso significa que você precisa estar familiarizado com a troca de nós via SSH e com o uso dos atalhos de copiar e colar específicos do terminal integrado.
+
+Na última atualização do currículo, o foco continua sendo nas habilidades práticas. Esses são testes de solução de problemas a 30%. Instalação e configuração da arquitetura de cluster em 25%, serviços e redes em 20%, cargas de trabalho e agendamento em 15%. E armazenamento a 10%. A importância significativa dada à resolução de problemas e à instalação de clusters reforça o foco do exame em habilidades práticas de administração do mundo real . Durante o exame, os
+
+candidatos têm acesso à documentação oficial do Kubernetes, tornando-o um teste de conhecimento, aplicação e velocidade de resolução de problemas, em vez de memorização de textos. O princípio fundamental que sustenta o Kubernetes é seu modelo declarativo. Em vez de emitir uma série de comandos imperativos como "execute este contêiner" ou "pare aquele", um administrador define o estado desejado do sistema em arquivos de manifesto YAML. Esses arquivos descrevem quais aplicativos devem estar em execução, quantas réplicas eles devem ter, quais políticas de rede devem ser aplicadas e assim por diante. Uma vez que esses manifestos são aplicados ao cluster, os controladores do Kubernetes trabalham continuamente em um loop de controle para observar o estado real do cluster e fazer alterações para reconciliá-lo com o estado desejado. Se um pod falhar, o
+
+controlador percebe a discrepância entre a contagem de réplicas desejada e a contagem real e cria uma nova. Este modelo é a base dos recursos de autorrecuperação e automação do Kubernetes. Um CKA bem-sucedido deve pensar de forma declarativa e ser proficiente na leitura, escrita e modificação desses manifestos YAML. Aqui estão algumas dicas essenciais para o dia da prova. Como você está trabalhando em uma área de trabalho remota baseada em navegador, os atalhos padrão do sistema operacional geralmente não funcionam. Então, copie e
+
+cole. Use Ctrl+Shift+C para copiar e Ctrl+Shift+V para colar no terminal Linux. Evite usar Ctrl+W. Isso fechará a aba do seu navegador em vez de apagar uma palavra no terminal. Use Ctrl+Alt+Backspace ou simplesmente acostume-se com Alt+B ou Alt+F para mover o cursor. A regra de troca de nós SSH.
+
+Nos exames da versão 1.34, você quase nunca permanecerá no nó base. A maioria das tarefas exige que você acesse um nó específico do plano de trabalho ou do plano de controle via SSH. Sempre verifique o prompt antes de executar um comando. Verifique em qual nó você está e eleve seus privilégios imediatamente. Muitas tarefas exigem
+
+acesso root. Use o pseudo-i depois de fazer login em um nó para evitar erros de permissão negada ao editar arquivos do sistema, como o server.yaml da API do Cube. Otimize o navegador. Você tem permissão para usar uma aba para o exame e uma aba para a documentação oficial, como kubernetes.io/doccks.
+
+Pesquise com eficiência. Use a barra de pesquisa no site de documentação oficial para encontrar rapidamente modelos YAML para API de gateway ou políticas de rede. Não dependa demais dos favoritos. O ambiente remoto pode não ter seus favoritos pessoais, então pratique navegar manualmente pela estrutura da documentação para que você possa encontrar o que precisa em segundos. Acelere seu YAML. O tempo é o seu recurso mais escasso. Portanto,
+
+não escreva YAML do zero. Faça ensaios a seco. Gere sempre seu manifesto base usando este comando de execução do controlador Cube que você pode ver na tela agora. O guia Vim Essentials garante que você saiba como configurar a indentação no Vim RC. Defina rapidamente a flexibilidade da aba como 2, a largura da tecla Shift como 2 e expanda a aba.
+
+Antes de se aprofundar em tarefas administrativas avançadas, é importante ter um sólido conhecimento da arquitetura do Kubernetes e de seus componentes principais . Esta seção aborda a estrutura conceitual de um cluster Kubernetes e fornece um guia passo a passo para configurar um ambiente de prática local que reproduza as ferramentas e configurações que você encontrará no exame CKA. Um cluster Kubernetes segue uma arquitetura mestre-escravo ou, mais precisamente, uma arquitetura de nó de trabalho com plano de controle. O plano de controle atua como o cérebro, tomando decisões globais e gerenciando o estado do cluster, enquanto os nós de trabalho são os músculos que executam as cargas de trabalho reais do aplicativo. O plano de controle é o conjunto de componentes responsáveis ​​pela orquestração dos contêineres e pela manutenção do estado desejado do cluster. Ele pode ser
+
+executado em uma única máquina ou replicado em várias máquinas para alta disponibilidade. O servidor da API do cubo é o hub central e a interface do plano de controle. Toda a comunicação de e para o cluster passa pelo servidor de API. Ele expõe uma API do Kubernetes, valida e processa todas as solicitações da API e coordena todos os processos entre o plano de controle e os componentes do nó de trabalho . ETCD é a única fonte de verdade do cluster. Trata-se de um armazenamento de
+
+chave-valor distribuído, consistente e de alta disponibilidade, onde todos os dados do cluster, seu estado de configuração e metadados são armazenados para garantir segurança e consistência. O acesso direto ao ECTD é restrito. Todas as interações devem ser feitas através do servidor da API do cubo. O cubeuler atua como o intermediário do cluster. Ele monitora pods recém-criados que ainda não possuem um nó atribuído. Para cada pod desse tipo, o
+
+Theuler encontra o melhor nó para sua execução com base em um conjunto complexo de fatores, incluindo requisitos de recursos, restrições de hardware, regras de afinidade e antiafinidade e localidade de dados. O gerenciador do controlador do cubo é o piloto automático do cluster. Ele executa vários processos de controlador em segundo plano. Cada controlador é um circuito de controle que monitora o estado compartilhado do cluster por meio do servidor da API do cubo e trabalha para mover o estado atual em direção ao estado desejado. Exemplos incluem o controlador de nós, que lida com falhas de nós, e o controlador de replicação, que mantém o número correto de pods. Os nós de trabalho
+
+são as máquinas onde seus aplicativos são executados. Eles são gerenciados pelo plano de controle e contêm todos os serviços necessários para executar contêineres. O cublet é o agente de nó primário que é executado em cada nó de trabalho. Ele se comunica com o servidor da API do cubo para receber instruções e reportar o status do nó e seus contêineres. Sua principal função é garantir que os contêineres descritos nas especificações do pod estejam em execução e funcionando corretamente. Ele gerencia
+
+todo o ciclo de vida dos contêineres em seu nó. O Cube Proxy é um proxy de rede que roda em cada nó e é parte fundamental do conceito de serviço do Kubernetes. Ele mantém regras de rede no nó, permitindo a comunicação de rede com seus pods tanto de dentro quanto de fora do cluster. Ele pode usar vários modos para direcionar o tráfego destinado ao IP virtual de um serviço para o pod de backend correto. Por fim, o ambiente de execução do contêiner é o software responsável por executar os contêineres. O
+
+Kubernetes suporta vários ambientes de execução de contêineres, como containerd e CRIO. O cublet se comunica com o ambiente de execução do contêiner usando a interface de ambiente de execução do contêiner ou CRI. Para gerenciar operações de contêineres, como baixar imagens e iniciar e parar contêineres, os objetos do Kubernetes são entidades persistentes no sistema Kubernetes. Ao criar um objeto, você está dizendo ao sistema Kubernetes como deseja que seja a carga de trabalho do seu cluster. Este é o estado desejado do seu cluster. Os pods
+
+são a unidade implantável mais pequena e fundamental no Kubernetes. Eles representam uma única instância de um processo em execução no seu cluster. Um pod encapsula um ou mais contêineres fortemente acoplados que compartilham recursos de armazenamento, um endereço IP de rede exclusivo e opções que regem como o contêiner deve ser executado. Embora uma cápsula possa conter vários recipientes, o padrão mais comum é um recipiente por cápsula. Conjuntos de réplicas e implantações. O
+
+objetivo de um conjunto de réplicas é manter um conjunto estável de pods de réplica em execução a qualquer momento. Isso garante a disponibilidade de uma especificação de um número determinado de cápsulas idênticas. Um deployment é um objeto de nível superior que gerencia conjuntos de réplicas e fornece atualizações declarativas aos pods. Você descreve um estado desejado em uma implantação e o controlador de implantação altera o estado atual para o estado desejado a uma taxa controlada. Os deployments são a maneira padrão e recomendada de gerenciar aplicações sem estado em serviços do Kubernetes. Como os pods são
+
+efêmeros e seus endereços IP podem mudar, um serviço fornece um ponto de extremidade estável para acessar um conjunto lógico de pods. Um serviço atua como uma abstração, definindo uma política para acessar os pods e fornecendo um endereço IP virtual estável ou o IP do cluster e um nome DNS. Todo o tráfego enviado para o serviço é automaticamente balanceado para os pods de backend apropriados. Os espaços de nomes fornecem um mecanismo para isolar grupos de recursos dentro de um único cluster. São uma forma de dividir os recursos do cluster entre vários usuários ou equipes. Os nomes dos recursos precisam ser
+
+únicos dentro de um espaço de nomes, mas não entre espaços de nomes diferentes. Isso permite que diferentes equipes usem os mesmos nomes de recursos sem conflito. O exame CKA é inteiramente prático, tornando a experiência prática o componente mais importante da preparação. Esta seção detalha como criar um cluster Kubernetes local usando o Cube ADM, a mesma ferramenta usada para inicializar clusters de produção. Essa abordagem proporciona uma visão profunda do funcionamento interno do cluster, o que é inestimável tanto para o exame quanto para a administração no mundo real.
+
+Serviços gerenciados de Kubernetes, como GKE ou EKS, abstraem muitas dessas camadas fundamentais, mas a certificação CKA valida sua capacidade de construir e manter um cluster do zero em máquinas Linux genéricas. Entender por que cada etapa de configuração é necessária é tão importante quanto conhecer os próprios comandos. Antes de instalar o Kubernetes, cada máquina ou máquina virtual que se destina a ser um nó no cluster deve atender a certos requisitos. Um host Linux compatível , por exemplo, Ubuntu 22.04 ou CentOS 7, com pelo menos 2 GB de RAM por máquina, pelo menos duas CPUs para o nó do plano de controle e conectividade de rede completa entre todas as máquinas. Portanto,
+
+nosso primeiro passo é instalar um ambiente de execução de contêineres. O Kubernetes requer um ambiente de execução de contêineres em cada nó para gerenciar os contêineres. Embora o Docker tenha sido historicamente popular, o ambiente do exame CKA e os clusters modernos normalmente usam runtimes que implementam diretamente o CRI, como containerd ou CIO. Vamos instalar em contêineres. Portanto, esses comandos que vou mostrar a seguir devem ser executados em todos os nós, tanto no plano de controle quanto nos nós de trabalho. Primeiro, vamos
+
+carregar os módulos do kernel necessários. A infraestrutura de rede do Kubernetes depende da capacidade do kernel de visualizar o tráfego da ponte. Então temos cat eo f pseudo t etc modules-load.dks.com overlay brnet filter e eof.
+
+Basicamente, esses comandos servem a dois propósitos principais: persistência e ativação imediata do Activis. Primeiro, criamos um novo arquivo de configuração. É isto aqui. E o conteúdo do arquivo simplesmente lista os dois módulos: o filtro de sobreposição e o filtro de rede BR. Portanto, esses arquivos neste diretório são lidos pelo sistema durante a inicialização. Qualquer
+
+módulo listado nesses arquivos será carregado automaticamente no kernel sempre que o sistema for iniciado. E aqui está a ativação. E vamos usar o pseudo mod pro overlay e depois o pseudo probr net filter para ativá-los agora mesmo. Assim não precisamos reiniciar nada. Dessa forma, os componentes do Kubernetes podem iniciar imediatamente e encontrar os recursos de rede de que precisam. E só para
+
+você entender melhor, eles se sobrepõem. Este é o driver de armazenamento preferido usado por ambientes de execução de contêineres modernos, como o containerd, para criar e gerenciar imagens de contêineres. O Overlay FS permite que um contêiner utilize uma camada de imagem base somente leitura e uma camada gravável por cima, tornando a inicialização do contêiner rápida e eficiente em termos de espaço em disco. E então o filtro de rede BR , é um módulo que permite ao kernel processar corretamente os pacotes de rede provenientes de uma ponte em funcionamento. OK. Em seguida, configuraremos o controle CIS
+
+para rede. As próximas configurações garantem que o iptables processe corretamente o tráfego da ponte, o que é importante para o Cube Proxy e o plugin CNI. Assim como antes, estamos criando este arquivo de configuração e inserindo essas configurações personalizadas do kernel . Basicamente, essas configurações serão aplicadas sempre que iniciarmos o sistema e, em seguida, executaremos esse pseudo-sistema ciscontrol para ativar os comandos imediatamente. Como eu disse, esses parâmetros são cruciais para a forma como a rede interna do Kubernetes, gerenciada pelo Qoxy e pelo plugin CNI, lida com os pacotes de dados. Agora finalmente podemos instalar em
+
+contêineres. Primeiro, vamos atualizar o pseudoaplicativo executando `pseudoapp get update` e, em seguida, executaremos `pseudoapp get installed containered`. OK. E deixe-me esclarecer isso novamente. Agora vamos configurar o ambiente de contêineres. Vamos gerar
+
+o arquivo de configuração padrão e modificá-lo para usar o driver de grupo do sistema . O Cublet e o ambiente de execução do contêiner devem usar o mesmo driver de cluster para gerenciar corretamente os limites de recursos. Incompatibilidades aqui são uma fonte comum de instabilidade em clusters. Primeiro, vamos criar um diretório e depois temos o pseudo containered config default pipe pseudo tetcontainered config.tml tl e então esta linha na parte inferior pseudo set- i s/system cgroup equals false system group equals true e temos etc/ontainer config tunnels.
+
+Basicamente, vamos terminar de atualizar a configuração, como eu disse antes, e depois vamos limpar a tela. Agora só precisamos reiniciar e habilitar o modo container. Então, reinicie o controlador de sistema pseudo em contêiner e, em seguida, habilite o controlador de sistema pseudo em contêiner. OK. Em seguida, vamos instalar os binários do Kubernetes. Vamos instalar o Cube Adm, o Cublet
+
+e o Cube Controller em todos os nós. Essas são basicamente ferramentas essenciais do Kubernetes e garantem que o sistema operacional esteja configurado corretamente para uma operação estável. Então vamos desativar a troca (swap). O cublet requer que a troca de memória (swap) seja desativada para garantir um gerenciamento de recursos e desempenho previsíveis. Então, pseudo swap off-a e esta linha servem basicamente para tornar isso persistente após reinicializações.
+
+Comentamos a linha de troca em slash ect stab. OK. Agora vamos adicionar o repositório apt do Kubernetes. pseudoepkin instala um certificado de transporte https curl gpg. Agora, precisamos criar esse diretório, caso ele ainda não exista, para preparar o terreno para o próximo comando. E isso vai
+
+baixar a chave de login do Kubernetes e registrá-la com um. Estamos adicionando isso para que o appget saiba onde procurar por cube, cube adm e cube controller. E faremos uma atualização pseudo appgget para garantir que as listas de pacotes sejam atualizadas. Agora vamos executar o pseudoaplicativo `get install cubelet cubeadm` e `cube controller`. O que precisaremos para este tutorial. E qual
+
+serviço deve ser reiniciado? Por enquanto, não faremos nada. Em seguida, faremos uma marcação de retenção que impedirá atualizações acidentais, uma prática importante para manter uma versão estável do cluster Vision. OK. Em seguida, vamos configurar um cluster de nó único. Assim, para a
+
+prática inicial, um cluster de nó único é suficiente. Isso envolve inicializar a máquina como um plano de controle e, em seguida, remover uma contaminação que impede a execução de cargas de trabalho do usuário nela. Então temos este comando pseudo cubadm nele pod network cider e depois 10.244.0.016.
+
+O parâmetro `pod network cider flag` especifica o intervalo de endereços AP para a rede do pod. Isso é um requisito da maioria dos plugins CNI. Em seguida, vamos configurar o controlador de cubo. Primeiro vamos criar o diretório. Em seguida, copiamos o arquivo de configuração do administrador do cluster criado pelo cube adm para o local padrão.
+
+E então, este próximo comando altera a propriedade do arquivo para que o usuário não root atual possa interagir com segurança com o cluster usando a ferramenta de controle do cubo . Assim, o usuário agora pode executar comandos do cubecontroller para gerenciar o cluster sem precisar de pseudo-instrumentos. OK. Acabei de executar este comando para remover a contaminação do plano de controle. Por padrão, o nó do plano de controle é marcado como "tainted" para impedir que pods de aplicativos regulares sejam executados nele. Mas, para um cluster de nó único, a
+
+contaminação deve ser removida. E agora é. E agora, para o próximo comando, vamos instalar um plugin CNI. O cluster não estará totalmente funcional até que uma interface de rede de contêiner ou um plugin CNI seja instalado. Sem ele, os pods não conseguem se comunicar entre si e o DNS principal não inicia corretamente.
+
+Usaremos flanela para esta configuração de nó único. E agora podemos verificar o cluster. Podemos verificar se o nó está no estado pronto e se todos os pods do sistema no namespace do sistema Cube estão em execução. Então, vou executar o comando `cube controller get nodes` e podemos ver que um deles está pronto. Em seguida, executarei ` cube controller get pods in cube systems` e podemos ver que os pods estão em execução.
+
+Muito bem, agora temos um cluster Kubernetes de nó único funcional, pronto para as outras atividades que faremos com o Kubernetes neste curso. Esta seção aborda as principais competências de um administrador de Kubernetes. Construção, gerenciamento e segurança de um cluster com vários nós. As tarefas detalhadas aqui são fundamentais para o exame CKA e representam uma parte significativa da sua pontuação total. Vamos expandir a configuração de nó único para construir um cluster de vários nós em estilo de produção, gerenciar seu ciclo de vida por meio de atualizações e backups, implementar alta disponibilidade e configurar ferramentas de controle de acesso e gerenciamento de aplicativos . A construção de um cluster com vários nós
+
+envolve um processo de configuração coordenado em todas as máquinas. Os passos a seguir pressupõem que você tenha pelo menos dois nós, um designado como plano de controle e outro como nó de trabalho. Os passos prévios da primeira parte devem ser concluídos em todos os nós que farão parte do cluster. Isso inclui garantir nomes de host, endereços MAC e IDs UU de produto exclusivos. Desativar a memória swap, configurar os módulos do kernel necessários e as configurações de controle CIS, instalar um ambiente de execução de contêiner e garantir que seu driver de grupo esteja definido como systemd e, finalmente, instalar os binários do Kubernetes cubeadm, cublet e cube control, e colocá-los em espera.
+
+Os passos que vou descrever a seguir pressupõem que você tenha duas máquinas em execução ou duas máquinas virtuais. Portanto, um deles deve ser designado como plano de controle. É esta aqui. E o outro é designado como trabalhador. Então, aquele com o fundo branco é o trabalhador.
+
+Agora tenho duas máquinas virtuais rodando no meu Mac OS usando UTM. Agora você também pode acompanhar de outras maneiras, mas precisei fazer algumas configurações extras para garantir que cada um tivesse um endereço IP diferente . Quando eu não tinha as VMs em execução, havia algumas configurações no UTM, e isso fica a critério de vocês, caso pretendam usar o UTM ou algo semelhante. Bem, isto é UTM. E para garantir que elas não tivessem o mesmo endereço IP, eu tive que... parar
+
+as máquinas virtuais. Não vou fazer isso agora, mas você pode ir em editar, depois em preferências de rede e então pode alterar o endereço MAC de um deles. Eles precisam ter endereços MAC diferentes. E também preciso mudar o modo de rede para " bridged". Basicamente, eu tive que ir nas configurações, na aba de rede, e então mudar o modo de rede de rede compartilhada para rede em ponte. E então eu tive que reiniciar as
+
+máquinas virtuais. Assim, as etapas prévias que já mostramos, onde instalamos tudo, devem ser concluídas em todas as máquinas que farão parte do cluster. Então, eu já configurei ambas as máquinas. o plano de controle e o trabalhador da mesma forma que eu vi na configuração anterior. Agora vamos continuar configurando o plano de controle do Linux ou a máquina virtual. Este aqui é o que
+
+vai gerenciar o cluster. Vamos começar removendo a configuração antiga do cluster. Vamos desmontar o cluster CL existente que criamos anteriormente, pois agora vamos criá-lo usando um método ligeiramente diferente. Agora precisamos obter o endereço IP. Isso é algo que não fizemos quando criamos o cluster anteriormente e, depois, usamos o pod network CIDER. Essa faixa de IP
+
+é exigida pela maioria dos CNIs (interfaces de rede locais) e, para o Calico, esse é o padrão comum. Em seguida, precisamos usar o endereço IP privado dessa VM do plano de controle . Outros nós usarão esse endereço para se comunicar com ele. Então, vou copiar o endereço IP e colá- lo aqui no final. OK. E
+
+funcionou. Se você receber um erro, é possível que precise desativar o swap novamente com pseudo swap off-a. Já fizemos isso antes, mas às vezes, se você reiniciar o computador ou algo do tipo , ele pode não estar mais desligado. É algo com que você precisa ter cuidado. OK. Bem, o resultado desse comando
+
+é importante. Ele fornece um comando `cube adm join` contendo um token e um hash de certificado CA de token de descoberta. Portanto, precisamos copiar todo esse comando e salvá-lo. Precisaremos dele para conectar o nó de trabalho. Em seguida, vamos instalar uma interface de rede de contêiner ou um plugin CNI. Portanto, ainda estamos no
+
+nó do plano de controle, a máquina virtual. Assim, imediatamente após a inicialização, nosso nó do plano de controle terá o status "não pronto" porque lhe falta um plugin de rede. O cluster não estará funcional até que um CNI seja instalado. Então vamos instalar o Calico. Calico é uma CNI popular que oferece serviços de rede e aplicação de políticas de rede . O exame CKA geralmente envolve
+
+tarefas relacionadas a políticas de rede, o que torna o Calico uma excelente opção para um ambiente de prática. Então, vamos executar o comando ` cubecontroller apply-f` e, em seguida, temos esta URL aqui para o Calico. Ok, então instalamos isso e agora só queremos verificar a instalação do CNI. Após alguns instantes, o pod Calico deverá estar em execução no namespace do sistema Cube e o status do nó do plano de controle deverá mudar para pronto. Então, vamos executar esses dois comandos. Ao executar os comandos `CubeController get
+
+pods-cube system` e `cubecontroller get nodes`, podemos ver na saída que os pods estão em execução e com o status " pronto". Ok, agora precisamos adicionar o nó de trabalho ao cluster. Portanto, precisamos estar na máquina virtual de trabalho. Lembra daquela com fundo branco? Então, estamos na máquina virtual de trabalho e vamos conectá-la ao cluster. Vamos executar o comando cube adm
+
+join. Portanto, precisamos colar o comando ou usar o mesmo comando que salvamos do plano de controle na etapa de inicialização. E esse comando deve ser executado com privilégios de root. Ok, conseguimos resolver isso. Então, vamos voltar à máquina virtual do plano de controle e verificar o cluster a partir do plano de controle. Então, vamos retornar
+
+ao plano de controle e só queremos garantir que tudo foi conectado com sucesso. Então, vou usar o comando ` cubecontroller get nodes-o wide`. O parâmetro `o wide` fornece informações adicionais, incluindo o endereço IP interno de cada nó. E agora podemos ver ambos os nós, o plano de controle e o nó de trabalho. Agora temos um cluster Kubernetes multi-nó totalmente funcional, em estilo de produção . Uma das principais responsabilidades
+
+de um administrador do Kubernetes é gerenciar o ciclo de vida do cluster, o que inclui realizar atualizações de versão e garantir que o estado do cluster possa ser recuperado em caso de desastre. O Cube ADM fornece um fluxo de trabalho estruturado para atualizar um cluster Kubernetes. O processo deve ser realizado com cuidado, atualizando primeiro o plano de controle e, em seguida, os nós de trabalho um de cada vez, para garantir a disponibilidade da carga de trabalho. Então vamos atualizar o plano de controle. Então, vamos executar três comandos. Um para o appmark manter
+
+unhold cube QD cube ADM para up unhold do pacote. Em seguida, instalaremos a versão desejada e a manteremos ativa novamente. Nesse caso, algumas dessas melhorias também podem ser consideradas pioras. Você pode usar o mesmo processo tanto para atualizar quanto para fazer o downgrade para uma versão diferente. Em seguida, queremos verificar a compatibilidade de atualização e visualizar as versões de destino com o pseudocubo de plano de atualização (admgrade plan).
+
+OK. Agora queremos aplicar a atualização com o comando `cubadm upgrade apply` e, em seguida, a versão. Este comando atualiza o manifesto estático do pod para os componentes do plano de controle, como o servidor da API do Cube, etc. Agora, vamos atualizar o Cublet e o controlador do Cube. Basicamente, queremos atualizar os outros binários no mesmo nó. Vamos
+
+soltar novamente o cubelet e o controlador de cubo. Em seguida, instalaremos as novas versões. Então, nós os reuniremos novamente. Segure o Cublet e o controlador de cubo novamente. Agora queremos reiniciar o cubículo. Então,
+
+usamos apenas um pseudo controlador de sistema diamond damon reload e um pseudo controlador de sistema restart cublet. Agora precisamos atualizar os nós de trabalho. Nesse caso eu só tenho um, mas você precisará repetir esse processo para cada nó de trabalho individualmente. O primeiro passo para atualizar os nós de trabalho é, na verdade, no nó do plano de controle. Primeiro, precisamos remover com segurança todas as cargas de trabalho do nó de trabalho que estamos prestes a atualizar. Então, vamos executar
+
+este comando, o controlador de drenagem do cubo, e então obteremos o nó. Mas nós temos o nome do nó que está lá em cima e ignoramos os conjuntos de Damon. OK. Agora vamos para o nó de trabalho e você pode acessá-lo diretamente, como estou fazendo, ou pode usar SSH para acessar e atualizar os binários, assim como fizemos antes. Então, desative o cube adm e o cublet. Em seguida, podemos executar o comando appkit update
+
+app install e, depois, as diferentes versões atualizadas do cubeadmin e do cublet. E depois só temos que segurá- los novamente. segure o cubo adm e o cubículo. Agora precisamos atualizar a configuração do nó com o comando `cube adm upgrade node`, que atualiza a configuração local do Cublet para o nó de trabalho e, em seguida, reinicia o Cublet. Então, recarregue o controlador de controle do sistema (damon) e reinicie o controlador do sistema ( cubble). Em seguida, na
+
+máquina virtual do plano de controle, queremos marcar o nó de trabalho como agendável novamente, permitindo que os pods sejam colocados nele com o controlador Uncordin Cube Uncordin para atualização do nó. Agora vamos falar sobre backup e restauração, etc. Na máquina virtual do plano de controle, como o ECCD armazena todo o estado do cluster, ter um backup confiável é muito importante. Essas operações utilizam a ferramenta de linha de comando etc dctl ou etc controller. Portanto, precisamos fazer um backup. Assim,
+
+no cluster cubeadm, o servidor etc é executado como um pod estático. Este comando aqui conecta o dispositivo usando os certificados TLS necessários para criar um snapshot. Arquivo DB. Se você receber algum erro, também precisa se certificar de que não há nenhuma troca de memória (swap). Pode ser necessário executar o pseudo swap off-a novamente para que esses comandos funcionem. OK. Agora podemos
+
+realizar uma restauração. Esta é uma operação destrutiva que substitui o estado do cluster. Então, primeiro paramos o cublet para evitar interferência com o controlador do sistema. Em seguida, restauramos o instantâneo para um novo diretório com este comando. E então teremos que editar manualmente o manifesto do pod estático etc e, em seguida, atualizar a montagem do volume para apontar para o novo diretório de dados.
+
+Então, para atualizá-lo, usaremos o nano. Então, precisamos instalar o nano e, em seguida, podemos usá-lo para editar o manifesto do etc. Dentro do editor, precisamos encontrar a definição de volume para o diretório de dados etc. Usaremos as teclas de seta para rolar para baixo e encontrar a seção de volume. Bem, dentro desse volume, encontre a chave do caminho do host e altere o caminho para varlibetcdrestored.
+
+Precisamos adicionar o dashrestored. Então, basta salvar e sair do nano control X. O passo final é reiniciar o cublet para iniciar o pod etc com os dados restaurados usando o comando `system controller start cublet`. O cublet detectará a alteração do manifesto e reiniciará o pod etc. usando os dados restaurados. Os
+
+demais componentes do plano de controle serão então reinicializados e reconciliados com base nos dados restaurados, etc. Um único nó de plano de controle representa um único ponto de falha para ambientes de produção. Um plano de controle de alta disponibilidade (HA) com múltiplos nós de plano de controle replicados é essencial. O Cube ADM suporta duas topologias de alta disponibilidade: plano de controle empilhado e ETCD externo. A topologia de pilha onde os membros do ETCD estão localizados nos nós do plano de controle é mais simples de configurar e comum em cenários CKA. Uma configuração de alta disponibilidade (HA)
+
+requer um ponto de extremidade estável para que todos os nós se comuniquem com o servidor da API. Isso geralmente é conseguido com um balanceador de carga externo. Primeiro, provisione um balanceador de carga que fique à frente dos nós do seu plano de controle. Em seguida, configure o balanceador de carga para encaminhar o tráfego TCP em uma porta específica para a mesma porta nos endereços IP privados de todos os seus nós do plano de controle. Por fim, o balanceador de carga deve executar uma verificação de integridade TCP na porta 6443 para garantir que encaminhe o tráfego apenas para instâncias íntegras do servidor da API do cubo . Ok, tenho um balanceador de carga externo
+
+rodando neste endereço IP, mais um aqui na minha rede local . Então, no nó do plano de controle, vamos simplesmente executar este comando `cube ADM init` com o endpoint do plano de controle. E como eu disse, este é o endereço IP mais baixo e a porta. Em seguida, usamos o sinalizador de pesquisa de upload de atualização, que é fundamental para a segurança, para compartilhar com segurança os certificados do cluster com os outros nós do plano de controle que se juntarão a ele. Agora, usaremos apenas um plano de controle para o nosso exemplo. E
+
+então vamos anunciar o endereço deste plano de controle. Os endereços IP mudaram desde o início do vídeo. Agora, isso nos dará dois comandos. Este é o comando que indica que agora você pode conectar qualquer número de nós do plano de controle executando o seguinte comando. Basicamente, se tivéssemos outros nós do plano de controle, executaríamos este comando e, para o nó de trabalho, podemos executar este comando. OK. Agora vamos
+
+executar, vamos simplesmente colar o comando. Este é o comando padrão de junção de trabalhadores que usaremos para adicionar os nós de trabalho ao cluster de alta disponibilidade. Agora, todos os nós apontarão para o balanceador de carga como o endpoint do servidor da API. O controle de acesso baseado em funções, ou RBAC, é o principal mecanismo para regular o acesso a recursos dentro de um cluster Kubernetes. Isso determina o que você pode fazer depois de provar quem você é. Um
+
+conhecimento profundo de RBAC é essencial para garantir a segurança de um cluster. O RBAC é construído sobre quatro objetos de API principais. Uma função que contém um conjunto de regras que representam permissões. As funções são organizadas em namespaces, o que significa que elas concedem acesso apenas a recursos dentro de um único namespace. Uma função de cluster é semelhante à função somente leitura (RO), mas não utiliza namespace.
+
+Pode ser usado para conceder permissões a recursos com escopo de cluster ou a recursos em todos os namespaces. A vinculação de função concede as permissões definidas em uma função a um conjunto de usuários, grupos ou contas de serviço. Também possui um namespace e conecta um sujeito a uma função dentro desse namespace. Por fim, uma vinculação de função de cluster concede as permissões de uma função de cluster a todos os sujeitos do cluster. Certo, vamos falar sobre conceder acesso somente leitura. Vou demonstrar o
+
+fluxo de trabalho padrão para criar uma conta de serviço dedicada para um aplicativo e conceder a ela acesso restrito de leitura aos pods dentro de um namespace específico. Vamos seguir o princípio do menor privilégio. Não queremos conceder direitos de administrador completos a um aplicativo se ele precisar apenas ler algumas informações. É por isso que estamos criando uma identidade especial para um aplicativo, chamada conta de serviço, e concedendo a ele apenas as permissões necessárias para ler pods em um espaço de nomes específico, e nada mais. Então, vamos criar um espaço de trabalho isolado para este experimento. Um namespace é como um
+
+cluster virtual dentro do seu cluster principal. Ajuda a manter tudo organizado e evita que afetemos outros aplicativos acidentalmente. Então, o controlador do cubo cria um namespace para teste RBAC. Portanto, o espaço de nomes é chamado de RBAC- test. Ok, vamos criar uma conta de serviço. Precisamos de uma identidade para
+
+nossa candidatura. No Kubernetes, você não concede permissões diretamente a um pod. Em vez disso, você os atribui a uma conta de serviço e, em seguida, instrui o pod a usar essa conta. Pense nisso como um usuário, mas para um programa em vez de uma pessoa. Então, vamos criar uma conta de serviço chamada usuário de desenvolvimento. Portanto, este comando aqui será
+
+usado para criar uma conta de serviço chamada "usuário dev" em nosso novo namespace. Portanto, não é o padrão. OK. Conta de serviço do usuário desenvolvedor criada. Agora, o terceiro passo é definir as permissões para uma função. Assim, para a essência do RBAC,
+
+precisamos definir um conjunto de permissões. No Kubernetes, uma função (role) é um objeto que contém regras que representam um conjunto de permissões dentro de um único namespace. Então, vamos criar um arquivo YAML chamado roll.yaml. Então, execute o comando `nano roll.yaml`
+
+e vamos definir um leitor de pods (` ro`). Então vou colar este "ro" aqui. Esta função permitirá apenas ações de leitura em nossos pods. Então temos o tipo de metadados, temos o namespace e o nome. Então, as regras são onde definimos quais ações são permitidas. Portanto,
+
+no caso dos pods de recursos, isso significa que as permissões se aplicam somente aos pods, não aos deployments, não aos serviços, apenas aos pods. E depois temos os verbos obter, listar e assistir. Estas são as ações permitidas. Assim, você pode obter um único pod, listar todos os pods e monitorar as alterações, e não estamos incluindo criação, exclusão ou atualização. É por isso que o torna somente leitura. Então, vamos
+
+salvar isso e agora vou aplicar o manifesto ao cluster. Então, o cubecontroller aplica o ro.yml. E esse comando pega o modelo do nosso arquivo YAML e cria o objeto RO propriamente dito dentro do nosso cluster Kubernetes. Ok, o quarto passo é conectar o usuário e o RO com uma vinculação RO. Até o momento, temos
+
+um usuário, o usuário de desenvolvimento, e um conjunto de permissões de leitor de pods, mas eles não estão conectados. Precisamos uni-los. Uma vinculação de funções faz exatamente isso. Concede as permissões definidas em RO a um usuário ou a um conjunto de usuários. Primeiro vamos criar um arquivo. Então,
+
+um nano rolebinding.yamel e é aqui que definiremos nossa vinculação de função. Então, vou colar o texto aqui. Vamos então analisar isso passo a passo. Temos o nosso tipo de vinculação de função e então sabemos qual é o espaço de nomes que estamos usando. Portanto, isso
+
+define quem tem permissão. No nosso caso, trata-se da conta de serviço chamada " usuário dev" neste namespace. E depois temos a função de referência. Isso define quais permissões eles recebem. Estamos nos referindo à função de leitor de pods que acabamos de criar. Assim posso salvar isso. E agora
+
+vou aplicar o manifesto para oficializar a conexão. Ok, já criamos isso. Agora vamos verificar as permissões. Portanto, este é um passo bastante importante. Testando nosso trabalho. Configuramos tudo
+
+corretamente? O Kubernetes possui um excelente comando integrado para verificar isso. Então, basta colar o comando aqui. É o controlador de cubo, posso? E é isso que usamos para perguntar ao servidor da API do Kubernetes se um usuário pode executar uma determinada ação.
+
+Então, posso listar os pods? Então essa é a ação, e o parâmetro - nos permite representar nossa conta de serviço. Então, inserimos o nome da nossa conta, o usuário dev dev, ali mesmo . E então podemos simplesmente executar isso para ver se conseguimos. Então, a resposta é sim, era isso que queríamos. Então, agora vamos
+
+testar um caso negativo. Nosso usuário de desenvolvimento pode excluir pods? Então, vou colar outro comando aqui. Posso excluir pods como o usuário que acabamos de criar? Não. Não podemos excluir pods. E pronto
+
+. O primeiro comando retornou " sim" e o segundo retornou "não", o que confirma que nossa política RBAC está funcionando perfeitamente. Nossa conta de usuário de desenvolvimento pode ler os pods, mas não pode executar nenhuma ação destrutiva. Este é um padrão fundamental para proteger suas aplicações Kubernetes. Embora o comando `cubecontroller apply-f` seja fundamental, gerenciar aplicações complexas com muitos manifestos interdependentes pode se tornar trabalhoso. Helm
+
+e customize são duas ferramentas populares que simplificam esse processo. O Helm é o gerenciador de pacotes padrão para Kubernetes. Ele permite definir, instalar e atualizar até mesmo os aplicativos Kubernetes mais complexos como pacotes chamados charts. Os charts são uma coleção de arquivos que descrevem um conjunto relacionado de recursos do Kubernetes, agrupados como uma única unidade. Os valores fazem parte de um arquivo values.yaml
+
+que fornece os valores de configuração padrão que podem ser substituídos no momento da instalação. Uma versão (release) é uma instância de um gráfico (chart) em execução em um cluster Kubernetes. O Customize é uma ferramenta sem modelos para personalizar manifestos do Kubernetes. Ele é integrado diretamente ao CubeController através da flag -K e funciona aplicando patches e sobreposições a um conjunto comum de arquivos YAML base. Essa abordagem evita a complexidade das linguagens de modelagem.
+
+Ok, vamos ver isso na prática. Primeiro, vamos instalar o Helm, que é o gerenciador de pacotes para Kubernetes. Vamos instalá-lo usando o script de instalação oficial, que é a maneira mais rápida de começar a usar um sistema Linux como o nosso plano de controle. Portanto, este comando irá baixar o script de instalação oficial do Helm e, em seguida, enviá-lo diretamente para o shell bash para ser executado. Isso instalará a versão mais recente do Helm em seu diretório user/loc/bin.
+
+Agora podemos verificar se funciona com a versão do Helm. Ok, conseguimos instalar. Vamos então ver tudo em ação instalando um servidor web EngineExt. Primeiro, precisamos informar ao Helm onde encontrar os gráficos que queremos usar. Então, temos este comando aqui: Helm repo add bit nami. E aqui temos o URL.
+
+Portanto, estamos adicionando o popular repositório Bitnami, que contém centenas de gráficos prontos para uso. E já foi adicionado aos nossos repositórios. Agora, podemos executar `Helm rep` e `Helm repo update`. E isso irá buscar a lista mais recente de gráficos de todos os nossos repositórios adicionados. E então recebemos esta mensagem divertida: boa viagem! Agora que o Helm sabe onde
+
+procurar, podemos instalar nosso mapa EngineExt. Então, temos o comando `helm install my engineext bitami/engineext set.type equals nodeport`. Isso cria uma nova versão. Então, temos o nome para nossa versão, que é o nome que estamos dando ao meu Engine X, e o gráfico a ser instalado aqui.
+
+O parâmetro `set` irá sobrescrever um valor padrão na configuração do gráfico para expor o Engine X usando um serviço NodePort, tornando-o acessível de fora do cluster. E assim, com um único comando, o Helm criou a implantação, um serviço e outros recursos necessários para o gráfico do Engine X. Temos alguns avisos, mas nenhum deles impedirá o funcionamento. Agora você pode gerenciar todo o ciclo de vida deste aplicativo com comandos como `helm upgrade`, `helm roll black`, `roll back` e `helm uninstall`. É muito poderoso. Agora,
+
+vamos falar sobre a personalização gratuita de modelos . Assim, enquanto o Helm usa uma linguagem de modelos , o customize adota uma abordagem diferente, sem modelos. Ele permite definir um conjunto comum de arquivos YAML básicos e, em seguida, aplicar camadas de personalizações ou sobreposições sobre eles. Isso é perfeito para quando você tem um aplicativo principal que precisa de pequenas modificações para diferentes ambientes, como desenvolvimento, teste e produção. Então, vamos configurar um projeto para ver como funciona.
+
+Imagine que temos um aplicativo engineext simples . Primeiro, vamos criar nossa configuração básica. Esta é a versão padrão do nosso aplicativo. Primeiro, vou criar um diretório chamado app/space. E agora vamos criar nosso arquivo de implantação. Você pode criar o arquivo
+
+da maneira que quiser. Antes eu usava nano. Agora estamos usando apenas o gato. Aqui você pode ver que esta implantação tem uma réplica e nós a temos, temos os rótulos. Temos o aplicativo, o nome do aplicativo.
+
+Temos o Container Engine X e a imagem que estamos usando. E cada diretório personalizado precisa de um arquivo customization.yamel. É isso que estamos criando aqui. Isso indica quais recursos devem ser gerenciados.
+
+Portanto, os recursos são apenas aqueles especificados no arquivo deployment.yamel que acabamos de criar. OK. Agora que temos nossa base, podemos criar uma camada sobreposta para nosso ambiente de produção. Na produção, precisamos de maior disponibilidade.
+
+Portanto, queremos executar três réplicas em vez de uma. Então, vou transformar o diretório de produção no diretório de produção de sobreposições. E agora vamos criar um arquivo patch.yaml. Este arquivo contém apenas as alterações que desejamos fazer. A opção de personalização irá
+
+integrar isso estrategicamente à implantação base. Então agora estamos dizendo que serão três réplicas. OK. Assim como antes, precisamos criar nosso arquivo customization.yamel no diretório de produção.
+
+Basicamente, esse arquivo sobrepõe os pontos da base e lista os patches a serem aplicados. Então, vamos simplesmente aplicar este arquivo YAML patch.yaml que criamos. Então, está tudo pronto. Já temos nossa base.
+
+Temos nossa camada de sobreposição de produção que altera a contagem de réplicas. Agora, para implantar nossa configuração de produção, usamos o mesmo comando de aplicação do controlador de cubo. Você pode ver isso na parte inferior. E agora temos um sinalizador -K que apontará para o nosso diretório de sobreposição. Assim, este comando lerá a base, aplicará o patch de aprovação de produção e, em seguida, enviará a configuração de mesclagem final para o servidor da API do Kubernetes.
+
+E está avisando que não devemos usar bases, mas sim recursos. Mas parece que podemos resolver isso com a correção do CustomizedEdit. Ah, sim, nós não temos a ferramenta de linha de comando para personalização. Então, basta corrigirmos isso manualmente com o nano, renomeando o arquivo, e então podemos alterar a palavra "bases" para " resources". Depois disso, podemos simplesmente sair . OK. Então agora temos isso
+
+atualizado. Assim, da próxima vez que executarmos o comando ` cubernetes cube controller apply`, não veremos esse aviso, mas funcionará de qualquer maneira. OK. Agora vamos ver se tudo funcionou. Vamos executar o comando ` cubecontroller getit deployment my app` e podemos ver que ele tem três réplicas, ou zero de três réplicas, exatamente como especificamos em nossa sobreposição de produção. Conseguimos
+
+personalizar nossa aplicação com sucesso sem nunca alterar os arquivos base ou lidar com modelos complexos. É uma forma muito clara e declarativa de gerenciar configurações específicas do ambiente. Embora possuam filosofias diferentes, Helm e Customize podem ser usados ​​em conjunto. Um padrão comum é usar o modelo Helm para gerar os manifestos básicos a partir de um gráfico e, em seguida, usar a personalização para aplicar patches específicos do ambiente antes de aplicá-los ao cluster. E este gráfico mostra as principais diferenças entre Helm e Customize. O
+
+Kubernetes foi projetado para ser extensível. Sua funcionalidade principal pode ser aprimorada por meio de interfaces padronizadas e pela adição de tipos de recursos personalizados. A CRI, ou interface de tempo de execução de contêiner, é uma interface plug-in que permite ao cublet usar uma ampla variedade de tempos de execução de contêiner sem a necessidade de recompilar o Kubernetes. A CNI, ou interface de rede de contêiner, é uma especificação para configurar interfaces de rede para contêineres Linux. Permite que diferentes soluções de rede se integrem ao Kubernetes para fornecer rede para os pods. A CSI, ou
+
+interface de armazenamento de contêineres, é um padrão para expor sistemas de armazenamento a cargas de trabalho conteinerizadas. Isso permite que fornecedores de armazenamento de terceiros desenvolvam plugins que funcionem em diferentes orquestradores de contêineres, incluindo o Kubernetes, sem precisar adicionar seu código ao repositório principal do Kubernetes. Uma definição de recurso personalizada, ou CRD, é um recurso poderoso que permite estender a API do Kubernetes com seus próprios tipos de recursos personalizados. Se você deseja gerenciar um novo tipo de objeto, como um banco de dados, pode criar um CRD para ele e interagir com ele usando o controlador de cubo, assim como faria com um recurso integrado, como um pod. Um operador é um controlador personalizado que utiliza CRDs (Registros de Requisitos de Configuração) para gerenciar aplicativos e seus componentes. Segue os
+
+princípios do Kubernetes, principalmente o loop de controle, para automatizar tarefas operacionais complexas. Por exemplo, um operador de banco de dados poderia automatizar backups, failovers e atualizações para um cluster de banco de dados definido por um recurso personalizado. Esta parte se concentra nos objetos principais usados ​​para executar aplicativos no Kubernetes. Este documento aborda como gerenciar o ciclo de vida de aplicativos com implantações, como injetar dados de configuração, como dimensionar cargas de trabalho automaticamente e como controlar onde e como os pods são agendados nos nós do cluster. Os deployments são a maneira padrão de executar aplicativos sem estado. Eles proporcionam
+
+controle preciso sobre a atualização e reversão de versões de aplicativos sem tempo de inatividade. A estratégia de atualização padrão para implantações é a atualização contínua. Essa estratégia garante que o aplicativo permaneça disponível durante uma atualização, substituindo incrementalmente os pods antigos por novos. O comportamento de uma atualização contínua é controlado por dois parâmetros principais na especificação de implantação. Spec.strategy.rollingupdate.mmax
+
+unavailable é o número máximo de pods que podem ficar indisponíveis durante a atualização. Spec.st strategy.rollingupdate Rolling update.mmax surge é o número máximo de novos pods que podem ser criados em relação ao número desejado de réplicas.
+
+A atualização contínua é a solução elegante do Kubernetes para o desafio de atualizar uma aplicação em execução. Em vez de desativar tudo de uma vez, o Kubernetes substitui cuidadosamente os pods antigos por novos, um por um, garantindo que seu aplicativo permaneça disponível para os usuários durante todo o processo. Então vamos ver isso na prática. Primeiro, precisamos de um aplicativo para trabalhar. Na seção anterior, criamos um aplicativo, mas vamos criar outro para esta seção.
+
+Criaremos uma implementação simples do EngineX executando uma versão mais antiga do software. Então, usei o comando `nano deployment.yamel` para criar esse arquivo de implantação. Assim, este manifesto define uma implantação chamada engineext deployment que mantém três réplicas de pods. Cada pod executa um único contêiner com a imagem engineext, especificamente a versão 1.24.0,
+
+que é uma versão mais antiga. Então, vou salvar isso e depois podemos implantá-lo em nosso cluster com o comando `cubecontroller apply -f deployment.yaml`. Ok, já implementamos isso . Ok, então agora vamos iniciar a atualização gradual. Portanto,
+
+vamos atualizar nosso aplicativo para uma versão mais recente do EngineX. A maneira mais simples de acionar uma atualização contínua é alterar a tag da imagem do contêiner na especificação de implantação. Podemos fazer isso diretamente pela linha de comando. Então, eu tenho este comando aqui. QController define a implantação da imagem X. Foi isso que acabamos de
+
+criar aqui em cima. E então engineext é igual a enginex 1.25.0. Lembre-se que era a versão 1.24.0.
+
+Basicamente, isso instrui o Kubernetes a encontrar a implantação, localizar o contêiner com o nome engine X e atualizar sua imagem para engineext 1.25.0. Então podemos fazer isso. Ok, imagem atualizada. Essa é
+
+a parte legal. O Kubernetes agora realiza as atualizações contínuas em segundo plano. Podemos observar o ocorrido a partir de duas perspectivas diferentes. Primeiro podemos usar o comando de status de lançamento. Então, se eu colar isso em `cubecontroller rollout status` e colocarmos o nome da implantação, você poderá ver `wait it waiting to finish uh one of three new replicas have been updated`. Portanto, esse comando
+
+bloqueará e fornecerá atualizações em tempo real sobre o processo de implementação. É basicamente uma visão geral em destaque. Agora vou abrir outra aba do terminal e dar um zoom . Aqui podemos observar as cápsulas individuais sendo substituídas. Então, temos o comando ` cubecontroller get pods-l` e este é o rótulo que estamos procurando. Os pods com essa etiqueta "-w"
+
+significam que vamos receber informações em tempo real . OK. OK. E aqui está como ficou depois de todas as atualizações. Agora eles estão funcionando novamente depois de terem sido interrompidos, recriados e estarem funcionando novamente. O
+
+Kubernetes mantém um histórico de revisões para cada implantação, permitindo que você reverta facilmente para uma versão estável anterior caso uma atualização introduza um bug. Isso desencadeia outra atualização contínua. Desta vez, substituindo os novos pods por pods que executam a imagem da revisão anterior. Agora vamos falar sobre como executar e verificar os rollbacks. E se a nossa nova versão 1.25.0 tiver um
+
+bug crítico? Uma das funcionalidades mais poderosas das implantações é o histórico de revisões integrado, que funciona como uma rede de segurança. Vamos então analisar o histórico das alterações que fizemos em nossa implantação. Então, insira este comando: cubecontroller rollout history deployment engineext deployment. Ok, podemos ver a lista de revisões. A
+
+primeira revisão foi nossa implementação inicial com a versão 1.24.0 e agora temos a atualização atual, 1.25.0.
+
+Então vamos voltar à versão anterior. Digamos que a nova versão esteja com defeito. Podemos reverter instantaneamente para a última configuração válida conhecida com um simples comando de desfazer. Então, vou simplesmente desfazer a implantação. Portanto, se observarmos os pods novamente, veremos o mesmo processo de atualização contínua, mas ao contrário. Então, se funcionar, ele encerra
+
+os pods da versão 1.25.0 e os substitui pelos pods da versão 1.24.0. Você também pode reverter para uma
+
+versão específica. Então, se usarmos o comando desfazer, duas revisões equivalem a uma. Isso é útil se você precisar voltar mais de uma etapa no seu histórico de implantação. No nosso caso, temos apenas uma ou duas etapas. É uma boa prática separar o código da aplicação da sua configuração. O
+
+Kubernetes fornece dois recursos principais para isso. Mapas de configuração para dados não sensíveis e segredos para dados sensíveis. Um mapa de configuração é um objeto de API usado para armazenar dados não confidenciais em pares de chave-valor. Os pods podem consumir mapas de configuração como variáveis ​​de ambiente, argumentos de linha de comando ou como arquivos de configuração em um volume. Vamos então ver como criar um mapa de configuração de forma imperativa. Portanto, esta linha aqui
+
+criará um mapa de configuração chamado app config com dois pares de chave-valor. Veja que app.color é azul e app.m mode é produção. Então, veja, diz que o mapa de configuração foi criado. Você
+
+também pode criar um mapa de configuração a partir do conteúdo de um arquivo . Então, aqui vamos inserir o valor " retries igual a 3" no arquivo config.properties e, em seguida, executar o comando `cubecontroller create config map app-config from file config.properties`. Então, estamos criando isso a partir desse arquivo. Você também pode
+
+criar um mapa de configuração de forma declarativa. Portanto, para produção, é sempre melhor definir os recursos em arquivos YAML para que você possa incluí-los no controle de versão. Então, vou criar um arquivo chamado config map.yaml e colar o código ou o YAML aqui. Como você pode ver, temos o nome e os dados. Portanto, a
+
+URL do banco de dados é a URL da interface do usuário. Ela está escura. Essas são as configurações e agora, depois de criar nosso arquivo config.yaml, basta executar o comando qcontroller apply para aplicar o mapa de configuração. Um segredo é um objeto que armazena informações confidenciais, como senhas, chaves de API ou certificados TLS. Os dados
+
+em um segredo são armazenados em codificação B64. É importante entender que B64 é uma codificação, não uma criptografia. Não oferece segurança real e pode ser facilmente decodificado. A verdadeira segurança para segredos depende da ativação da criptografia em repouso para ATCD e do uso de RBAC para restringir o acesso aos próprios objetos de segredo . Vamos então analisar o método de criação. Então, aqui está como criar
+
+um segredo de forma imperativa. O Kubernetes irá codificar automaticamente em base64 os valores de string aqui, admin e secret, no S3C R3T. Assim, eles serão codificados e nosso segredo, nossas credenciais de banco de dados, será criado, e você também pode criar segredos declarativamente com YAML . Então, se eu criar esse arquivo YAML, vou colar algum código YAML aqui. Bem, ao usar YAML, você tem um campo muito conveniente chamado "dados de string".
+
+Isso permite que você forneça valores em texto simples e o Kubernetes cuidará da codificação base64 automaticamente quando o segredo for criado. Isso é muito mais fácil do que codificar os valores você mesmo. Então, se eu salvar isso. OK. Agora vamos falar sobre como usar mapas de configuração e segredos em pods.
+
+Então, eu criei nossos objetos de configuração. Então agora vamos usá-los. Um método comum é expor as chaves dos mapas de configuração e segredos como variáveis ​​de ambiente dentro de um contêiner. Então vamos criar um pod que faça isso. Então, vou criar o arquivo pod config.yaml. Então, estamos criando
+
+um pod, assim como mostramos anteriormente, e podemos injetar valores do mapa de configuração. Portanto, o valor vem da referência da chave do mapa de configuração. Então, este é o nome do mapa de configuração e esta é a chave. Então, estamos extraindo esse valor do mapa de configuração e o inserindo em nossa variável de ambiente do tema. E então podemos injetar um valor do nosso segredo de maneira muito semelhante. Chave secreta de referência das
+
+credenciais do banco de dados e a senha. E assim, isso será inserido na nossa variável de ambiente de senha do banco de dados . Então, vou salvar isso e vamos criar esse pod com o comando `qcontroller reply podconfig.yaml`. E agora vamos verificar seus registros.
+
+Pod de demonstração de configuração de logs do QController. OK. Agora, se analisarmos os registros aqui, podemos ver que o tema e a senha foram definidos. Agora vamos falar sobre montagem como um volume. Outro método poderoso é montar um mapa de configuração ou um segredo como um volume. Isso faz com que os dados apareçam como
+
+arquivos dentro do contêiner, o que é perfeito para aplicativos que esperam ler a configuração do disco. Então, deixe-me inserir este YAML aqui. Este manifesto instrui o Kubernetes a criar um volume chamado "config volume" usando os dados do nosso mapa de configuração "app-config" . Em seguida, ele monta o volume dentro do nosso contêiner em /cconfig. Então é isto que estamos instalando aqui. E
+
+cada chave no mapa de configuração se torna um arquivo nesse diretório. Então vamos sair daqui e salvar. Então vamos criar isso e verificar os registros. Então, execute ` cubecontroller apply pod-vol.yaml YAML` e, em seguida, `cubecontroller logs volume-demo-pod`.
+
+A saída será `retries equals 3`, que é o conteúdo do arquivo que criamos ao montar nosso mapa de configuração. Isso demonstra a flexibilidade do Kubernetes no gerenciamento da configuração de aplicativos. O Kubernetes pode dimensionar automaticamente o número de pods em uma carga de trabalho com base na utilização de recursos. Isso é gerenciado pelo escalonador automático de pods horizontal ou HPA. A HPA depende de uma fonte de métricas para tomar decisões de dimensionamento. A fonte mais comum
+
+de métricas básicas de CPU e memória é o servidor de métricas, um complemento de cluster que coleta métricas de recursos de cada cublet e as expõe por meio da API do Cubernetes. Então, é assim que você instala o servidor de métricas. Basicamente, basta executar o comando `cubecontroller reply-f` e, em seguida, temos a URL de onde baixamos o servidor de métricas e, então, podemos ver que o servidor de métricas foi criado. Assim, deveremos ser capazes de verificar a instalação e obter métricas usando os nós principais deste controlador de cubo . Se você receber um erro que às vezes pode ocorrer em clusters Kubernetes autohospedados como este, e ele estiver tentando verificar com segurança os certificados autoassinados dos nós ou dos cublets, o que não consegue fazer por padrão. Portanto, a solução é editar a
+
+implantação do servidor de métricas e adicionar um argumento de linha de comando que instrua o sistema a ignorar essa verificação. Talvez você não tenha esse problema, mas vamos executar o comando ` cubecontroller edit deployment metric server` e, em seguida, descer até os argumentos e adicionar uma linha extra aqui. O Cubullet usa TLS inseguro, depois basta salvar e sair. Acabamos de finalizar a edição. Agora, só precisamos esperar um minuto para que as cápsulas iniciem e fiquem prontas.
+
+Podemos sempre usar o comando `get pods` para verificar o status. Quero dizer, os controladores de cubo obtêm pods. Ok, o servidor de métricas está em execução. Portanto, devemos ser capazes de obter os nós principais do controlador. Ok, agora podemos ver as métricas aqui e também podemos executar o comando `get cubecontroller top pods a` para ver as métricas dos pods.
+
+Ok, o servidor de métricas está funcionando corretamente. O controlador HPA consulta periodicamente a API de métricas e ajusta o campo de réplicas de um recurso de destino para aproximar o valor da métrica atual do valor de destino definido por você. Um pré-requisito fundamental para o dimensionamento automático baseado em CPU ou memória é que os contêineres na carga de trabalho de destino tenham solicitações de recursos definidas. A HPA calcula a utilização como uma porcentagem dessas solicitações. Sem eles, o eixo HPA não pode funcionar. Portanto, o HPA precisa de um alvo para ser
+
+dimensionado. Vamos criar uma implantação simples do PHP no Apache . A parte mais crítica deste manifesto é a solicitação de recursos. Então, execute o comando `nano HPA demo deployment.yml` e, em seguida, criaremos a implantação. Então,
+
+vamos analisar atentamente a linha resources.request.cpu 2000M. Isso é essencial. Isso informa ao Kubernetes que este pod precisa de cerca de 20% de um núcleo de CPU para ser executado. A HPA utiliza essa
+
+solicitação como ponto de partida. Quando instruímos o HPA a atingir uma utilização de CPU de 50%, isso significa 50% dessa solicitação de 200 milésimos de segundo. Sem uma solicitação de recurso, o HBA não tem ideia de qual é a porcentagem de processamento em relação à qual ele está sendo utilizado e, portanto, não funcionará. Então, vou salvar isso e vamos aplicar esse manifesto e, em seguida, expô-lo como um serviço para que possamos enviar tráfego para ele. Então, aplicamos o comando `cubecontroller apply` e, em seguida, criamos um serviço de cluster IP chamado PHP Apache para expor a implantação na porta 80. Ok, agora que
+
+temos nossa aplicação em execução, vamos criar o HPA (Horizontal Pod Autoscaler) para gerenciá-la. Usaremos um comando simples de autodimensionamento de um controlador de cubo. Portanto, este comando aqui cria um recurso HPA. Portanto, a implantação de escalonamento automático é um PHP Apache. Estamos instruindo o HPA a direcionar nossa implantação do PHP Apache . Então, a porcentagem da CPU será de 50%.
+
+Esse é o nosso objetivo. O HPA tentará manter a utilização média da CPU em todos os pods em 50% da CPU solicitada. E então o mínimo é igual a 1. Este é o número mínimo de réplicas. O HPA nunca será reduzido para menos de um pod. E então
+
+temos um máximo de 10, que é o nosso limite de segurança. O HPA nunca criará mais de 10 pods, protegendo-nos de eventos de escalonamento descontrolado que poderiam travar nosso cluster ou gerar uma conta enorme na nuvem. Ok, nosso HPA está pronto, mas no momento está ocioso porque nosso aplicativo não tem tráfego. Vamos resolver isso. Vamos executar um pod temporário que ficará em um loop infinito, enviando constantemente solicitações ao nosso serviço PHP Apache . Isso aumentará o
+
+uso da CPU e acionará o dimensionador automático. Então é isso que vamos usar. Então, este será o loop enquanto for verdadeiro. E então, basicamente, ele vai executar o pod interativamente. Como você pode ver, o parâmetro -at executa o pod interativamente. O comando `dash rm` limpa tudo
+
+automaticamente quando saímos. E estamos usando uma imagem de caixa de informações bem pequena. E esse comando é um script shell simples que baixa a página inicial do nosso serviço repetidamente. Ok, parece que nosso servidor precisa de um arquivo para funcionar. Então, basta criarmos um arquivo para que ele possa ser executado. Então, vamos excluir a
+
+implantação e excluir o serviço. Teremos que refazer alguma coisa aqui. E então, este comando criará um novo mapa de configuração chamado PHP-index que contém um script PHP simples. O script foi projetado para realizar alguns cálculos a fim de gerar a carga de CPU necessária para nossa demonstração HPA. Agora precisamos instruir nossa implantação a montar o arquivo do nosso mapa de configuração no diretório raiz da web do Apache. E adicionei uma nova
+
+seção ao arquivo. Temos esta seção de suportes de volume e, aqui embaixo, a seção de volume. Então, vamos salvar e fechar o arquivo, aplicar a implantação atualizada e, em seguida, basta expor como um serviço novamente. Agora, em um terminal, vamos monitorar o HVA com este controle de cubo para obter o HVA e, em seguida, vou abrir um novo terminal e executar o gerador de carga novamente. Ok, está funcionando. Então,
+
+aqui podemos ver que o controlador do cubo está configurado para HPA-W e podemos monitorar o status do HPA, pois com o parâmetro -w, estamos recebendo uma transmissão ao vivo e podemos ver o estado inicial. Então, nos alvos, podemos ver que é um número muito baixo, 2% de 50, 0% de 50, mas depois a carga aumenta. Então, após o servidor de métricas relatar o alto uso da CPU do nosso gerador de carga, vemos que a meta está chegando a 270% ( 134%). Isso significa que a média atual da CPU é de 270% da nossa meta de 50%. Assim que o HPA (Acesso de Alta Pressão) detecta que a meta foi excedida, ele entra em ação. Então
+
+veremos a contagem de réplicas. Então, veja, eram 114.610. O máximo é 10. O HPA está adicionando mais pods para distribuir a carga. E então, como mais pods
+
+estão sendo adicionados, podemos ver que a carga diminui novamente. Agora estamos em apenas 41%. Portanto, tudo foi estabilizado. Então podemos ir até lá e impedir isso. Vou usar o comando ou Ctrl+C. Se
+
+voltarmos aqui, agora podemos ver uma redução na escala. Se esperarmos um pouco. Agora podemos ver que esse valor subiu para 4%. 4% de 50. E então, eventualmente, as réplicas também voltariam a ser reduzidas a uma. É isso aí
+
+. Acabamos de presenciar um dimensionamento totalmente automatizado baseado em recursos no Kubernetes. Este é um conceito fundamental para a construção de aplicações resilientes e eficientes. Além da configuração básica, o Kubernetes oferece diversos mecanismos para criar implantações de aplicativos robustas e com capacidade de autorrecuperação. As sondagens de saúde são verificações realizadas pelo cubículo para determinar o estado de um recipiente. Uma sonda de atividade determina
+
+se um recipiente está em funcionamento. Se a sonda de atividade falhar, o cublet encerra o contêiner e o contêiner fica sujeito à sua política de reinicialização. Uma sonda de prontidão determina se um contêiner está pronto para atender o tráfego. Se a verificação de prontidão falhar, o controlador de endpoints remove o endereço IP do pod dos endpoints de todos os serviços que correspondem ao pod. Uma verificação de inicialização indica se o aplicativo em contêiner foi iniciado com sucesso. Se uma
+
+sonda de inicialização estiver configurada, ela desativa as verificações de atividade e prontidão até que seja bem-sucedida, protegendo aplicativos com inicialização lenta de serem encerrados prematuramente. Ok, vamos colocar a mão na massa e ver como tornar nossos aplicativos mais robustos e controlar exatamente onde eles são executados em nosso cluster. Começaremos configurando sondas de saúde para ensinar o Kubernetes a determinar se nossa aplicação está realmente íntegra. Então, vamos criar um módulo com dois tipos diferentes de sondas. Uma verificação de prontidão para ver se o aplicativo está pronto para o tráfego e uma verificação de atividade para verificar se ele ainda está funcionando corretamente. Ok,
+
+estou criando este arquivo pod probe.yaml que usaremos para configurar isso. Certo, aqui está o nosso arquivo. Vamos analisar isso passo a passo antes de aplicarmos. Na verificação de prontidão, estamos usando uma sonda HTTP getit.
+
+Isso instrui o Kubernetes a enviar uma solicitação HTTP GET para a porta 80 do contêiner, no caminho que corresponde ao diretório inicial (ou barra). Se receber uma resposta positiva, um código de status de nível 200 , o contêiner é considerado pronto. O atraso inicial de alguns segundos faz com que o Cublet aguarde cinco segundos após o início do contêiner antes de realizar a primeira verificação de prontidão, o que dá tempo para o nosso aplicativo iniciar. E então temos o período de 10 segundos. O cublet realizará essa verificação de prontidão a cada 10 segundos. E então, na
+
+verificação de atividade, estamos usando uma sonda de socket TCP . É bem aqui. E esta é uma verificação mais simples. O cublet simplesmente tenta obter uma conexão TCP na porta 80. Se conseguir se conectar, o aplicativo é considerado ativo. E estes são exatamente
+
+iguais aos anteriores. OK. Então podemos salvar isso e começar. Criaremos a resposta do controlador do pod. Então, conseguimos criar isso. Agora, para ver isso em
+
+ação, vamos executar o comando `cubecontrol describe pod`. E se observarmos esta seção de eventos, podemos ver as mensagens do Cublet à medida que ele executa as sondagens. Você verá que a verificação de viabilidade e prontidão do contêiner foi concluída com sucesso. Agora vejamos o que acontece quando uma sonda falha. O teste de prontidão é o mais fácil de demonstrar. Digamos que
+
+implementemos uma nova versão com um erro de digitação no endpoint de verificação de integridade. Podemos simular isso excluindo o pod e alterando o caminho e uma sonda de prontidão para algo que não existe. Então, execute o comando ` cube control delete pod probe demo` e, em seguida, entraremos na edição. Para este caminho, basta alterar para `bad`, salvar novamente e reaplicar a alteração. Depois, podemos voltar a executar o comando ` describe pod`. Agora vou fazer uma
+
+demonstração da sonda pod. Podemos ver que já é zero em um. O pod está em execução, mas ainda não está pronto para receber tráfego. E então, se executarmos a descrição novamente, podemos ver que a verificação de prontidão falha. A sonda HTV falhou com o status 404.
+
+Se este pod fizesse parte de um serviço, o Kubernetes já o teria removido do conjunto de endpoints disponíveis, protegendo nossos usuários de erros graves. Esta é uma ferramenta importante para implantações sem tempo de inatividade. Definir solicitações e limites de recursos é importante para a operação estável do cluster. As solicitações representam a quantidade de CPU e memória garantida para um contêiner. O Kubernetes usa o valor da solicitação para decidir em qual nó colocar o pod. Os limites representam a
+
+quantidade máxima de memória da CPU que um contêiner pode usar. O cubículo impõe esses limites. Se um contêiner exceder seu limite de CPU, seu desempenho será limitado. Se exceder o limite de memória, será encerrado com um erro de OOM (Out of Memory). A relação entre solicitações de recursos, agendamento e escalonamento automático é um sistema crucial que precisa ser compreendido. A falha em configurar as solicitações
+
+impede o funcionamento do HPA. Definir um número excessivo de solicitações pode fazer com que os pods fiquem presos em um estado pendente se nenhum nó individual tiver recursos alocáveis ​​suficientes para atender à solicitação. Definir limites muito baixos pode fazer com que os aplicativos sejam encerrados inesperadamente sob carga. Um administrador competente deve compreender toda essa cadeia causal para projetar e solucionar problemas de cargas de trabalho de forma eficaz. O agendador do Kubernetes toma decisões inteligentes sobre onde colocar os pods. Os administradores podem influenciar
+
+essas decisões utilizando diversos mecanismos. A afinidade de nós atrai pods para um conjunto de nós com base em rótulos presentes nesses nós. Isso permite restringir em quais nós seu pod pode ser agendado. Existem dois tipos. Requerido durante o agendamento, mas ignorado durante a execução, o que é um requisito obrigatório. O
+
+agendador só colocará o pod em um nó que corresponda à regra. E a preferência durante o agendamento é ignorada durante a execução, o que é um requisito flexível. O agendador tentará encontrar um nó que corresponda à regra, mas agendará o pod em outro lugar se não for possível. Agora, vamos controlar onde nossos pods serão agendados. A afinidade de nós é como dizer a um pod: "Gostaria que você fosse executado em nós que tenham essa característica específica." Fazemos isso com etiquetas.
+
+Então, primeiro vamos adicionar um rótulo ao nosso nó de trabalho. Então, eu uso o comando `cubecontroller get nodes` para obter os nós. Podemos ver que nosso nó de trabalho é simplesmente o trabalhador ks. Então, o nó de rótulo do controlador de cubo está no nó do plano de controle, mas podemos rotular o nó de trabalho a partir daqui. Portanto, estamos atribuindo a ele o rótulo "tipo de disco igual a SSD". Então, estamos meio que fingindo que
+
+ele tem um disco de estado sólido. Ok, já etiquetamos isso. Agora podemos criar um pod que requer esse rótulo. Então, vou criar um arquivo chamado affinity pod.yaml.
+
+E aqui na seção de afinidade, estamos definindo um requisito obrigatório. A parte das expressões de correspondência indica que o agendador deve colocar a chave do pod em um nó onde o rótulo do tipo de disco tenha um valor que esteja nesta lista de valores, que neste caso é apenas SSD. Então, vamos apenas fechar ou salvar e fechar, e então aplicarei com o comando `cubecontroller apply-finity pod.yml`. E para verificar se funcionou, vamos obter nossos pods e usar a flag -o wide, que nos mostra em qual nó cada pod está sendo executado. Deixa eu diminuir um
+
+pouco o zoom para que fique mais fácil de ver. E podemos ver o pod SSD que está sendo executado no nó de trabalho KS porque esse é o único nó que corresponde à nossa regra de afinidade. Na verdade, neste caso, esse é o único nó que temos. Mas se tivéssemos vários nós, isso garantiria que o pod SSD, ou o único nó de trabalho que tivéssemos, fosse direcionado para um nó de trabalho específico. Theuler ignorou corretamente o nó do plano de controle porque ele não possuía o rótulo necessário. Não foi
+
+agendado no nó do plano de controle. Os mecanismos de taint e tolerância trabalham em conjunto para garantir que os pods não sejam agendados em nós inadequados. Uma marca é aplicada a um nó, identificando-o como repelente a certos tipos de vagens. É aplicada uma tolerância a um pod, permitindo que ele seja agendado em um nó com uma taint correspondente. As impurezas têm um de três efeitos. Sem agendamento, o que
+
+significa que nenhum novo pod será agendado no nó contaminado, a menos que tenha uma tolerância correspondente. A opção " Preferir sem agendamento" significa que o agendador tentará evitar a colocação de pods sem uma tolerância correspondente no nó. e nenhuma execução que remova do nó quaisquer pods em execução que não tolerem a contaminação. Então vamos contaminar nosso nó de trabalho. Então, adicionaremos uma marcação indicando que este nó está reservado para aplicações de GPU. Então, a menos que seja GPU, não há
+
+agendamento. Então, o efeito de ausência de agendamento significa que nenhum novo pod será agendado neste nó, a menos que tenha uma tolerância correspondente. Ok, então agora está contaminado. Agora vamos tentar agendar um pod engineext normal sem nenhuma permissão especial. Então, ele foi criado e, se tivermos pods, tanto os normais quanto os grandes, como este que acabamos de criar, podemos ver que ele não está em nenhum nó porque, bem, ele evitou o nó de trabalho contaminado. Em um
+
+cluster real, ele ficaria pendente se nenhum outro nó estivesse disponível. Agora vamos criar um pod especial que possa ser executado em nosso nó de GPU. Então, estamos criando este arquivo de tolerância pod.yaml e podemos ver que temos um valor de efeito de GPU sem agendamento. Então vamos fechar, salvar e podemos aplicar as alterações. E então
+
+iremos novamente aos nossos pontos de coleta. E podemos ver que nosso pod de GPU foi agendado em nosso nó de trabalho aqui. Possui a chave certa para contornar a placa de "proibida a entrada". Assim, você cria nós dedicados para cargas de trabalho específicas, garantindo que apenas os aplicativos corretos possam ser executados neles. A gestão de redes é uma parte central e complexa do Kubernetes. Esta seção aborda como o
+
+Kubernetes facilita a comunicação entre pods, expõe aplicativos ao tráfego interno e externo e protege os caminhos de rede. Compreender bem esses conceitos é importante para implantar e solucionar problemas em aplicações multicomponentes. O modelo de rede fundamental no Kubernetes é que cada pod recebe seu próprio endereço IP exclusivo dentro do cluster. Fundamentalmente, cada pod pode se comunicar com qualquer outro pod em qualquer outro nó sem precisar de tradução de endereço de rede (NAT). Este modelo de rede plana é implementado por uma interface de rede de contêiner ou plug-in CNI. Ao instalar um CNI como o
+
+Calico ou o Flannel, ele se responsabiliza por atribuir endereços IP aos pods e configurar o roteamento necessário em cada nó para permitir essa comunicação direta. Embora os pods possuam IPs exclusivos, eles são efêmeros. Eles podem ser criados e destruídos, e seus endereços IP podem ser alterados. Isso torna a comunicação direta com os IPs dos pods pouco confiável. O objeto de serviço resolve esse problema fornecendo uma camada de abstração estável sobre um conjunto lógico de pods. Um serviço
+
+recebe um endereço IP virtual estável ou o IP do cluster e um nome DNS, e usa um seletor para identificar o grupo de pods de backend para os quais deve encaminhar o tráfego . Existem vários tipos de serviços, cada um projetado para um caso de uso diferente. Este é o tipo de serviço padrão. Isso expõe o serviço em um endereço IP interno do cluster. Isso faz com que o serviço só possa ser acessado de dentro do cluster. É a forma padrão de permitir a
+
+comunicação entre diferentes microsserviços em execução no mesmo cluster. Ok, vamos ver como funciona o funcionamento em rede do Kubernetes na prática. Começaremos com o objeto mais fundamental para expor aplicações, que é o serviço. Portanto, isto diz respeito ao serviço de IP em cluster. Precisamos de um aplicativo para expor. Desta
+
+vez, criaremos uma implantação simples do EngineX com duas réplicas. O importante a observar aqui é que o Kubernetes adicionará automaticamente o rótulo "app igual a meu aplicativo" aos pods que criar. Ok, já criamos isso. Se você acompanhou até aqui, talvez precise executar o comando " delete deployment my app" para excluir a implantação que criamos anteriormente neste tutorial, pois quero garantir que ela seja diferente para esta seção. Agora que nossos pods estão em execução, vamos criar um serviço de IP de cluster para fornecer a eles um endereço IP interno estável. Então, como de costume,
+
+faremos isso de forma declarativa usando um arquivo YAML. Então, vou criar este arquivo chamado cluster IP service.yaml. Vamos analisar este arquivo. Temos o tipo de IP do cluster, que é o padrão, mas estamos sendo explícitos aqui. O
+
+aplicativo de seleção de linha mais importante, meu aplicativo, o link crítico. Bem, isso instrui um serviço a encontrar todos os pods neste espaço de nomes que tenham o rótulo "app" igual a "meu aplicativo" e enviar tráfego para eles. É a ponte entre o serviço e os pods. Então, vou sair, salvar e agora vamos aplicar as alterações. Agora que o serviço foi criado, podemos testá-lo. Por se tratar de um endereço
+
+IP de cluster, ele só pode ser acessado de dentro do cluster. Então, vamos iniciar um pod temporário e usá-lo como um shell para testar nossa conexão. É exatamente isso que esta linha está fazendo aqui. OK. Agora que estamos dentro do nosso pod temporário, podemos acessar nosso aplicativo EngineX simplesmente usando o nome do serviço. Então, vou apenas
+
+obter o serviço do meu aplicativo. E aqui está ela , a página de boas-vindas do EngineX. Isso comprova que nosso serviço está atualmente encaminhando o tráfego para nossos pods de backend. Agora, basta digitar um comando de saída para destruir nosso pod temporário. Um serviço nodeport expõe a aplicação em uma porta estática no endereço IP de cada nó. Um serviço de porta de nó
+
+cria automaticamente um serviço de IP de cluster e a porta do nó encaminha o tráfego para esse IP de cluster interno. Isso é útil para desenvolvimento ou para expor um serviço quando um balanceador de carga na nuvem não está disponível. Agora vamos expor nossa aplicação ao mundo exterior usando uma porta de nó. Isso é ótimo para desenvolvimento ou quando você não tem um balanceador de carga na nuvem . Então, vamos criar um arquivo chamado node nodeport service.yaml.
+
+E a única mudança significativa aqui é este tipo de porta de nó. Então vamos criar isso. Então vou guardar. E agora vamos simplesmente aplicar o serviço de porta do nó. Ah, o que nós criamos foi isso. E para acessar isso, precisamos de
+
+duas informações. O endereço IP de um de nossos nós e a porta que o Kubernetes atribuiu. Vamos então obter os detalhes do serviço para encontrar a porta. Então, na saída, podemos olhar para a coluna da porta, que é a porta do nosso nó, 332149. Agora, vamos usar o comando `get nodes wide` para garantir que podemos obter o endereço IP dos nossos nós de trabalho, que está aqui: 192.1681.161.
+
+Então, vamos tentar usar o comando `curl hp slash` e, em seguida, inserir o endereço IP e o número da porta do nó. OK. E podemos ver a página de boas-vindas do engineext. Assim, conseguimos acessar nosso cluster externamente com sucesso. E agora veja isto. Bem, eu estava
+
+executando o Kubernetes em uma máquina virtual no meu Mac OS e agora, ao acessar um navegador web no meu Mac OS, fora da máquina virtual, consigo acessar a página de boas-vindas do EngineX a partir desse URL, usando o endereço IP e o número da porta. A criação de um serviço de balanceamento de carga provisiona automaticamente uma porta de nó e um endereço IP de cluster para os quais o balanceador de carga externo encaminhará o tráfego, já que cada serviço requer seu próprio balanceador de carga e endereço IP público. O Ingress e a API de gateway mais recente oferecem maneiras mais sofisticadas de gerenciar o acesso externo, permitindo roteamento de camada 7 ou HTTP/HTPS . Um ingress é um objeto da API do Kubernetes que gerencia o acesso externo aos serviços em um cluster, normalmente via HTTP. Ele pode fornecer balanceamento de carga, terminação SSL e hospedagem virtual baseada em nomes . Um recurso de entrada em si não faz
+
+nada. Para que isso seja atendido, é necessário que um controlador de entrada esteja em execução no cluster . O controlador de entrada é um proxy reverso que monitora a API do Kubernetes em busca de recursos de entrada e se configura de acordo. Agora vamos falar sobre roteamento baseado em caminho com entrada (Ingress). E se tivermos vários serviços, mas quisermos usar apenas um endereço IP externo? É para isso que serve o ingress
+
+. É um roteador inteligente para o nosso cluster. Primeiro precisamos instalar um controlador de entrada. Usaremos o popular controlador de entrada EngineX. OK. Agora vamos implantar duas
+
+aplicações diferentes. Usaremos uma imagem de servidor de eco simples que apenas repete informações sobre a solicitação. Então, aqui vamos implantar e expor o primeiro aplicativo. Crie um aplicativo de implantação, obtenha o servidor Echos e, em seguida, exponha-o. E assim, essa está concluída. E
+
+agora faremos o mesmo com o aplicativo dois. E assim, também preparamos essa. OK. Agora, para a parte principal da demonstração, vamos criar um recurso de entrada que define nossas funções de roteamento. Então, vou começar criando um arquivo YAML. E
+
+agora temos este arquivo que diz que se uma solicitação recebida for para o serviço slapp, ela deve ser encaminhada para o nosso serviço app one. E então, se for para o aplicativo 2, encaminhe para o nosso serviço do aplicativo 2. Então vou guardar isso. E então podemos aplicá-lo simplesmente com ` cubecontroller apply ingress at yaml`. Ok, agora precisamos testar. Bem, existem algumas
+
+maneiras. Se pudéssemos obter o IP externo, seria ótimo, mas não teremos um IP externo porque estamos executando o programa localmente. Mas o serviço de balanceamento de carga cria automaticamente uma porta de nó como alternativa, e podemos usar essa porta juntamente com o endereço IP dos nós de trabalho para acessar o controlador de entrada. Vamos então obter os detalhes do serviço do controlador de entrada engineext para descobrir em qual porta ele está exposto. Aqui podemos ver que é 32733.
+
+E basicamente isso é muito semelhante ao que fizemos recentemente no tutorial, onde obtemos o endereço IP do nosso nó de trabalho e depois podemos combiná-lo com a porta aqui. OK. Podemos executar este comando curl com o endereço IP e o número da porta que obtivemos, e depois o comando com a barra "app", e conseguimos. Agora vamos para o aplicativo dois. E funciona.
+
+O primeiro comando retorna uma resposta do pod do aplicativo. O segundo retorna uma resposta do aplicativo dois. Assim, conseguimos ler o tráfego para dois serviços diferentes usando um único endereço IP e caminhos de URL diferentes. Esse é o poder da entrada. A API de gateway é um projeto oficial do Kubernetes que representa a próxima geração do Ingress. Ele foi
+
+projetado para ser mais expressivo, flexível e orientado para a rota. Ele desacopla a configuração em três tipos principais de recursos. A classe Gateway é um modelo com escopo de cluster que define um tipo de balanceador de carga. O gateway define onde e como o balanceador de carga escuta o tráfego. Por fim, as rotas HTTP e outras, como as rotas TCP, definem regras de roteamento específicas de cada protocolo. A separação
+
+de funções permite que as equipes de infraestrutura gerenciem os gateways, enquanto as equipes de aplicativos gerenciam suas próprias regras de roteamento com segurança. Embora um serviço de balanceamento de carga seja eficaz para expor um único serviço, ele pode ser ineficiente e dispendioso. Por padrão, todos os pods em um cluster Kubernetes podem se comunicar com todos os outros pods. As políticas de rede atuam como um firewall para os pods, permitindo controlar o fluxo de tráfego no nível de endereço IP e porta ou nas camadas três e quatro. Para aplicar políticas de rede, você deve usar um plugin CNI que as suporte, como Calico, Celium ou WeaveNet. Uma
+
+prática de segurança comum e altamente recomendada é começar com uma política de negação padrão que bloqueia todo o tráfego e, em seguida, adicionar explicitamente regras de permissão para os caminhos de comunicação necessários. Vamos falar sobre como proteger uma aplicação com políticas de rede. Por padrão, qualquer pod pode se comunicar com qualquer outro pod. Vamos restringir isso usando políticas de rede que atuam como um firewall. Então, vamos criar uma política padrão, uma política de negação padrão, que é uma prática recomendada de segurança. Então,
+
+nós temos esse arquivo "deny all" e depois temos "é assim que você faz". O seletor de cápsulas está vazio. Então, selecione todos os pods e, em seguida, não forneça regras de entrada, o que significa que todo o tráfego de entrada será bloqueado. Assim podemos guardar isso. Podemos aplicá-lo e então eu criarei um servidor engineext rapidinho e depois o exporemos e implantaremos. Então vou
+
+tentar entrar em contato. Basicamente, estamos criando uma estrutura temporária. E então vou executar este comando wget com um tempo limite de dois, porque esperamos que ele falhe. Ok, falhou, o que é perfeito. Nossa política de recusa está funcionando. Agora vamos criar uma
+
+regra de permissão específica. Criaremos uma política que permita o acesso ao nosso servidor web, mas apenas a partir de pods que tenham o rótulo `access` definido como `true`. OK. Então, vou criar um novo arquivo YAML e permitir o acesso apenas de pods que tenham o rótulo `access` definido como `true`. Então vou guardar isso. Vou aplicar isso.
+
+Agora, vamos executar nosso pod cliente novamente, mas desta vez daremos a ele o rótulo " access true". OK. Agora devemos conseguir acessar a página de boas-vindas do EngineX. Implementamos com sucesso o firewall em nosso cluster, bloqueando o tráfego e permitindo apenas conexões específicas e necessárias . O Core DNS é o servidor DNS padrão para o Kubernetes. É um
+
+servidor DNS flexível e extensível que fornece descoberta de serviços dentro do cluster. Ao criar um serviço, o DNS principal cria automaticamente registros DNS que permitem que outros pods no cluster resolvam o serviço pelo seu nome. Os registros DNS padrão seguem esse padrão. Para um serviço, é nome_do_serviço.namespace.
+
+SVC.cluster.local. E para um pod, é pod-ip-namespace.pod.cluster.local. O
+
+CoreDNS é configurado por meio de um mapa de configuração no namespace do sistema Cube, que contém um arquivo core. O arquivo principal utiliza uma arquitetura baseada em plug-ins para processar consultas DNS. Os principais plugins padrão incluem o Kubernetes, que responde a consultas de DNS com base em serviços e pods do Kubernetes. O encaminhamento direciona as consultas que não podem ser resolvidas dentro do cluster para um servidor DNS upstream. e cache, que fornece uma camada de armazenamento em cache para melhorar o desempenho. Ok, agora vamos falar sobre a
+
+personalização do DNS básico. Por padrão, ele sabe como encontrar qualquer serviço que criarmos. Mas e se nossos pods precisarem se comunicar com um servidor em uma rede corporativa privada? Digamos que temos um domínio interno como mycorp.com que só pode ser resolvido pelo servidor DNS privado da nossa empresa . Vamos personalizar o
+
+DNS principal para ensiná-lo a resolver esses endereços privados sem interromper suas funções normais de cluster. Portanto, o primeiro passo é inspecionar a configuração DNS atual . Então, antes de alterarmos qualquer coisa, vamos dar uma olhada na configuração padrão. O DNS principal é configurado por meio de um mapa de configuração localizado no namespace do sistema Cube e podemos editá-lo diretamente. Então, temos o mapa de configuração, e este é um mapa de configuração ativo no cluster. Então veremos uma chave chamada
+
+arquivo principal. Esta é a configuração principal. Observe este bloco col53. O ponto significa que o bloco é o padrão para qualquer consulta. Lá dentro você verá um plugin de encaminhamento apontando para o diretório etc/resolve.
+
+Este é o comportamento padrão. Se o DNS principal não conseguir resolver um nome sem o cluster, como google.com, ele encaminha a solicitação para os mesmos servidores DNS upstream que o próprio nó utiliza. Você também verá o plugin de recarregamento, que é a linha bem aqui. Isso é importante. Significa que o
+
+Cordiness monitora este arquivo em busca de alterações e as aplicará automaticamente, sem a necessidade de reinicialização. É isso que nos permite fazer essa edição ao vivo com segurança. Então, vamos adicionar uma regra de encaminhamento personalizada. Vamos adicionar um novo bloco de servidor específico. Este bloco processará apenas consultas para nosso domínio interno, que será mycorp.com. Então, vamos descer passando por esta chave
+
+aqui, logo antes de " tipo". E eu preciso pressionar I para entrar no modo de inserção. E agora vou adicionar um novo bloco para o nosso domínio interno. Ok, então temos os erros do domínio 53 e os erros do cast 30, e depois o encaminhamento para onde ele será direcionado. Basicamente, o comando `my corp 53` define uma nova zona DNS. O núcleo do DNS agora sabe que qualquer
+
+consulta que termine em mycorp.com deve ser tratada especificamente por este bloco. As CDNs sempre escolhem o bloco correspondente mais específico . Portanto, isso será usado antes do bloco padrão para essas consultas. Onde está escrito "erros", isso apenas indica que quaisquer erros devem ser registrados na saída padrão. O
+
+cache 30 significa que estamos instruindo o sistema a armazenar as respostas em cache por 30 segundos para reduzir a carga em nosso servidor interno. E a linha de ataque é a parte fundamental. Isso instrui o DNS principal a encaminhar qualquer consulta recebida neste bloco para o nosso servidor DNS privado, que, segundo indicamos, está no endereço IP 10.10.0.53.
+
+Então, vamos salvar isso. Então, vamos pressionar Esc e depois dois pontos wq. OK. Agora vamos verificar se a regra personalizada funciona. Então, o passo final, que é o mais importante de todos . Precisamos testar a
+
+resolução do ninho a partir do interior de uma cápsula. Então, vamos executar um pod temporário com algumas ferramentas de rede. Então, vou executar o pod temporário com isso. Vou usar uma imagem de uma caixa de destroços e obter uma estrutura interativa. Então, usaremos o comando nsookup para consultar um servidor falso em nosso domínio corporativo. E mesmo que
+
+o servidor não exista, tudo bem, aí está . Portanto, mesmo que o servidor não exista, ele deverá retornar uma resposta do nosso DNS interno falso. Embora muitas aplicações conteinerizadas sejam sem estado, aplicações com estado, como bancos de dados, exigem armazenamento que persista além do ciclo de vida de um único pod. O Kubernetes fornece uma estrutura de armazenamento poderosa e abstrata, construída em torno de volumes persistentes, solicitações de volumes persistentes e classes de armazenamento. É importante distinguir entre os diferentes conceitos de volume no Kubernetes. Um volume é um diretório
+
+que contém dados acessíveis aos contêineres em um pod. O ciclo de vida de um volume está ligado ao ciclo de vida da cápsula que o contém. Quando o pod deixa de existir, o volume é destruído e seus dados são perdidos. Isso é adequado para dados efêmeros. Um volume persistente, ou PV, é uma unidade de armazenamento no cluster que foi provisionada por um administrador ou provisionada dinamicamente usando uma classe de armazenamento. É um recurso
+
+do cluster, assim como uma CPU ou memória. A principal característica de um sistema fotovoltaico é que seu ciclo de vida é independente de qualquer célula individual que o utilize. Quando um pod é excluído, os dados no PV são mantidos. Uma solicitação de volume persistente, ou PVC, é uma solicitação de armazenamento feita por um usuário. Um desenvolvedor cria um PVC especificando o tamanho e o modo de acesso necessários, sem precisar conhecer os detalhes da infraestrutura de armazenamento subjacente. O
+
+PVC funciona como uma garantia sobre um recurso fotovoltaico. Quando um usuário cria um PVC (Platinum Volume Controller), o plano de controle do Kubernetes procura um PV que possa atender aos requisitos das declarações. Se um PV adequado for encontrado, o plano de controle vincula o PVC a esse PV. Trata-se de um mapeamento um-para-um . Uma vez vinculado, nenhum outro PVC pode reivindicar esse PV. Um pod pode então solicitar
+
+o armazenamento fazendo referência ao PVC em sua definição de volume. Ao definir PVs e PVCs, duas das especificações mais importantes são o modo de acesso e a política de recuperação. Os modos de acesso definem como um volume pode ser montado pelos nós do cluster. O modo de acesso escolhido deve ser compatível com o provedor de armazenamento subjacente . Os modos de acesso primários são leitura e gravação uma única vez, ou RWO, o que significa que o volume pode ser montado como leitura e gravação por um único nó. Este é o
+
+modo de acesso mais comum e é compatível com a maioria dos tipos de volume. Mini ou ROX somente leitura, o que significa que o volume pode ser montado como readon por vários nós simultaneamente. O modo de leitura e gravação "RWX" significa que o volume pode ser montado como leitura e gravação por vários nós simultaneamente. Isso é suportado por sistemas de arquivos de rede como NFS ou SEF FS e pelo modelo RWOP (Read Write Once Pod), que é um modelo mais recente que restringe o acesso ao volume a um único pod. Esta é a opção mais restritiva e segura . A política de recuperação de um
+
+volume persistente informa ao cluster o que fazer com o volume depois que sua reivindicação de volume persistente vinculada for excluída. Uma política de retenção significa que, quando o PVC é excluído, o PV permanece. O volume, seus dados e o recurso de armazenamento subjacente não são excluídos. O administrador do cluster deve limpar manualmente o volume e seus dados. Essa é a política mais segura para dados de produção. Uma política de exclusão significa que, quando
+
+o PVC é excluído, o PV e o ativo de armazenamento externo associado são excluídos automaticamente. Essa é geralmente a configuração padrão para volumes provisionados dinamicamente . Uma política de reciclagem realiza uma verificação básica do volume e o disponibiliza novamente para uma nova solicitação. Essa política não é mais recomendada devido a preocupações com a segurança e foi substituída pelo provisionamento dinâmico. OK.
+
+Armazenamento do Kubernetes. Vamos começar com o método manual fundamental chamado provisionamento estático, que é uma ótima maneira de entender os componentes básicos de como o Kubernetes lida com dados persistentes. Neste exemplo, vou desempenhar dois papéis. Primeiramente, serei o administrador do cluster, responsável por criar o armazenamento disponível. Então, vou mudar de função e me tornar o desenvolvedor de aplicativos que precisa solicitar e usar o armazenamento. Então, como
+
+administrador, minha primeira tarefa é disponibilizar algum espaço de armazenamento para o cluster. Então, vou definir um volume persistente ou PV em um arquivo YAML. Então, nanopv.yaml. Vamos então analisar isso passo a passo. Em termos de
+
+capacidade, estou reservando 5 GB de armazenamento. Nesse caso, o modo de acesso é leitura/gravação única, o que significa que o volume só pode ser montado para leitura e gravação por um único nó de cada vez. E então o nome da classe de armazenamento é manual, o que significa que estamos usando um nome personalizado que eu criei, que é como um rótulo. É assim que os desenvolvedores encontrarão e solicitarão esse tipo específico de armazenamento. E então o caminho do host simplesmente mapeia para um diretório no sistema de arquivos do nó.
+
+Mas tenha cuidado. Isso é ótimo para demonstrações locais, mas você nunca usaria isso em produção porque os dados ficam vinculados a um único nó. Então, vamos aplicar isso. Vou salvar isso e depois aplicaremos o arquivo para criar um PV. Agora, vejamos o que fizemos.
+
+Então, vamos usar o controle do cubo para obter o PV. OK. Portanto, podemos ver ali mesmo que o status é disponível. É como uma vaga de estacionamento reservada , vazia e à espera de um carro para ocupá-la. Então, vamos para o segundo passo, que basicamente é eu trocar de função.
+
+Sou um desenvolvedor que precisa armazenar dados para meu aplicativo. Não preciso saber nada sobre o armazenamento subjacente. Só preciso fazer um pedido. Esta solicitação é uma reivindicação de volume persistente ou PVC. Então, vou fazer o nano pvc.yaml.
+
+Então, é isso que eu quero. Estou solicitando armazenamento com o nome de classe de armazenamento manual. Isso instrui o Kubernetes a encontrar um PV com o mesmo nome de classe. E também estou solicitando um acesso de leitura e gravação único, que deve corresponder ao PV. Estou solicitando 2 GB. O Kubernetes encontrará
+
+o menor PV disponível que possa atender à solicitação, e nosso volume de 5 GB é perfeito para isso. Então vou salvar isso e depois aplicar. E agora podemos listar tanto nossos imóveis fotovoltaicos quanto os de PVC ao mesmo tempo. Hum, chicotes com vírgula. E deixe-me dar um zoom out um pouco. Ok, agora podemos
+
+ver tudo em uma única tela aqui. Agora podemos ver que o status disso é "vinculado". A solicitação do desenvolvedor foi correspondida com sucesso ao volume dos administradores. O Kubernetes agora manterá esse PV (Volume de Ponto) para o nosso PVC (Volume de Ponto) até que o liberemos. Agora vamos falar sobre o uso do PVC em uma cápsula. O
+
+passo final é efetivamente usar o armazenamento em uma aplicação. Então, vamos criar um módulo que faça referência ao nosso PVC. Então, vamos começar criando um arquivo YAML chamado pod storage.yaml. E então, em volumes, estamos definindo um volume para o nosso pod chamado my storage. E estamos
+
+instruindo-o a obter seu armazenamento da solicitação de volume persistente chamada task pv claim. Em seguida, na seção de montagem de volumes , montamos esse volume em nosso contêiner engineext neste caminho aqui, que é a rota da web. Então vamos salvar isso e depois aplicar. Certo, é isso. Nosso pod EngineX agora está em execução e quaisquer arquivos que ele gravar em seu diretório de website serão salvos em /mount/data em nosso nó host. Os
+
+dados agora são persistentes e permanecerão mesmo se este pod for excluído e recriado. A criação manual de PVs é inflexível e não escala bem. O provisionamento dinâmico automatiza a criação de PVs (Personal Volumes). Em vez de provisionar PVs previamente, um administrador define um ou mais objetos de classe de armazenamento. Uma classe de armazenamento fornece aos administradores uma maneira de descrever as classes de armazenamento que oferecem. Cada classe de armazenamento especifica um
+
+provisionador que sabe como criar o armazenamento e os parâmetros específicos desse provisionador. Quando um usuário cria um PVC que especifica um nome de classe de armazenamento, o provisionador correspondente é acionado para criar automaticamente um PV correspondente e vinculá-lo ao PVC. Provisionamento dinâmico com classes de armazenamento. Esse método estático dava muito trabalho para o administrador. Agora vamos analisar o método moderno e automatizado.
+
+Provisionamento dinâmico. Aqui, o administrador simplesmente configura um modelo e o armazenamento é criado sob demanda. Vamos então inspecionar a classe de armazenamento. O modelo para criar armazenamento é chamado de classe de armazenamento. A maioria dos ambientes Kubernetes já vem com uma configuração padrão. Então vamos ver
+
+o que temos com o comando `get storage class`. Ok, nenhum foi encontrado. Mas não se preocupe, nenhum será encontrado. Isso é completamente normal e esperado para um cluster que você mesmo construiu com o Cube ADM. Provedores de nuvem como o Google Cloud ou a AWS fornecem automaticamente uma classe de armazenamento padrão que está vinculada aos seus serviços de armazenamento em bloco. Mas nosso
+
+cluster local não possui um, porque o Kubernetes não tem ideia de que tipo de hardware de armazenamento temos disponível. Então precisamos instalar um nós mesmos. Para um ambiente de laboratório local como o nosso, a solução mais fácil é instalar um provisionador de caminho de host. Isso criará uma classe de armazenamento que provisiona espaço de armazenamento simplesmente criando diretórios no disco local de nossos nós de trabalho. Mas antes de instalá-lo, é importante entender que esse método de caminho hostpad é fantástico para aprendizado e desenvolvimento, mas nunca deve ser usado em um ambiente de produção real. Isso vincula todos os
+
+nossos dados ao disco de um único nó, que não é durável nem altamente disponível. Com isso em mente, vamos instalar o provisionador de caminho local do Rancher. Portanto, este comando que tenho aqui fará o download do manifesto e criará todos os componentes necessários em nosso cluster. Após a instalação, podemos executar nosso comando de armazenamento Git. E podemos ver que agora existe um comando de armazenamento ou uma classe de armazenamento aqui. Assim, nosso
+
+cluster agora possui uma maneira de fornecer armazenamento automaticamente. Então vamos ver isso na prática. Essa é a mágica do provisionamento dinâmico. Como desenvolvedor de aplicativos, não preciso mais pedir a um administrador para criar espaço de armazenamento para mim. Posso simplesmente fazer a solicitação criando um volume persistente no PLC. Então, vou criar um
+
+arquivo chamado PVC.yml para definir nossa solicitação de armazenamento. Portanto, podemos ver que vamos usar a classe de armazenamento que acabamos de criar, o caminho local, e esse volume pode ser montado por um único nó, e estamos solicitando um gigabyte. Então, vou salvar isso e depois aplicaremos. Então, o CubeController recebe PVC?
+
+Podemos ver que essa solicitação está pendente e, basicamente, é isso que queremos ver. O provisionador de armazenamento está aguardando a criação de um pod que realmente utilize esse PVC antes de se vincular. A resolução de problemas é o domínio com maior peso no exame CKA, refletindo sua importância no trabalho diário de um administrador de Kubernetes. Uma abordagem sistemática e lógica é fundamental para diagnosticar e resolver problemas de forma eficiente em um sistema distribuído complexo como o Kubernetes. Uma abordagem caótica para a resolução de problemas leva à perda de tempo e a possíveis diagnósticos incorretos.
+
+Uma metodologia estruturada é essencial, especialmente em um ambiente de exame com tempo determinado. A abordagem recomendada envolve cinco etapas. Primeiro, identifique o problema. Defina claramente o que não está funcionando. Algum pod está apresentando falhas? O serviço está inacessível?
+
+O cluster não está respondendo? Comece com uma verificação de alta prioridade, como obter pods do controlador de cubo . Em segundo lugar, reúna informações. Coletar registros, eventos e definições de recursos para entender o contexto da falha. O comando `describe` do controlador de cubo é uma das ferramentas mais poderosas para esta etapa. Terceiro,
+
+analise os dados. Analise as informações coletadas para formular uma hipótese sobre a causa raiz. Procure por mensagens de erro, condições de status e eventos relevantes. Quarto, implemente uma solução. Aplique uma correção com base na sua hipótese. Isso pode
+
+envolver a edição de um manifesto YAML, a correção de um comando ou a reinicialização de um componente. E em quinto lugar, verifique a solução. Confirme se a correção resolveu o problema e não introduziu nenhum novo problema. Na resolução de problemas, costuma ser eficaz trabalhar da camada de aplicação para a camada de infraestrutura. Componentes de pod, serviço, nó e cluster. As
+
+falhas de pods são os problemas mais comuns que um administrador enfrentará. Os pods podem não iniciar ou apresentar falhas durante a execução por diversos motivos. O estado de um pod fornece a primeira pista sobre o que pode estar errado. O status "pendente" significa que o pod foi aceito pelo cluster, mas um ou mais de seus contêineres ainda não foram criados. Isso pode ocorrer porque está aguardando agendamento ou está baixando imagens. A criação de um contêiner
+
+significa que o pod foi agendado para um nó, mas o ambiente de execução do contêiner está em processo de inicialização do contêiner. A mensagem "Image pull back off" ou "error image pull" significa que o Cublet não conseguiu extrair a imagem do contêiner do registro. "Crash loop back off" significa que um contêiner no pod foi iniciado, mas sua execução apresentou um erro. O Cublet tenta reiniciar repetidamente, mas continua travando. Um status de erro significa que o pod falhou e a fase não foi concluída com sucesso, enquanto "om killed" significa que o contêiner foi encerrado porque excedeu seu limite de memória. O motivo mais comum para
+
+um pod ficar preso no estado pendente é uma falha de agendamento. Isso pode ocorrer devido a recursos insuficientes, falha nas regras de afinidade/antiafinidade de nós, o nó estar corrompido e o pod não possuir tolerância ou uma solicitação de volume persistente não vinculada . O comando `cube controller describe pod` é a ferramenta mais importante aqui. A seção de eventos na parte inferior fornecerá um motivo claro, como por exemplo, "0/3 nós disponíveis, três CPUs insuficientes". Se a causa estiver relacionada a recursos, verifique a capacidade do nó com o controlador de cubo "descrever nó". A
+
+causa geralmente é um nome ou tag de imagem incorretos no manifesto do pod, um erro de autenticação com um registro privado ou o registro estar inacessível. A melhor maneira de depurar o problema é usar novamente o comando `cube controller describe pod`. Os eventos mostrarão um evento com falha, com a mensagem "falha ao obter a imagem" e um erro específico. Este costuma ser o problema mais complexo, pois indica uma falha no aplicativo ou em sua configuração. A causa provavelmente é um erro no código do aplicativo ou uma configuração incorreta, uma falha na sonda de luminosidade ou permissões de arquivo incorretas. O
+
+passo mais crítico aqui é verificar os registros. Os registros quase sempre conterão a mensagem de erro ou o rastreamento da pilha que revela a causa raiz. Você também pode verificar a descrição do pod para procurar pistas e o código de saída do contêiner. Se o contêiner iniciar, mas falhar muito rapidamente para que você possa obter os registros, talvez seja necessário modificar seu comando para mantê-lo ativo para depuração. Por exemplo, altere o comando para sleep 3600 e, em seguida, use cubecontroller exec para obter um shell dentro do sistema. O
+
+Kubernetes fornece outro mecanismo para que os contêineres relatem eventos fatais. Mensagens de encerramento. Um contêiner pode escrever uma mensagem breve em um arquivo e o Kubernetes exibirá essa mensagem no último estado. Campo de mensagem de término do status do contêiner, que é visível na saída do comando `cube control describe pod`. Isso pode ser útil para fornecer um resumo conciso de uma falha quando os registros completos são muito extensos.
+
+Se as aplicações estiverem apresentando falhas em todo o cluster, o problema pode estar nos nós ou no próprio plano de controle. Os nós podem estar em vários estados. Os estados problemáticos mais comuns são "não pronto" e " agendamento desativado". Um nó não pronto significa que o cublet no nó não está reportando um estado saudável para o plano de controle. Isso pode ocorrer porque o processo do Cublet não está em execução. O nó
+
+possui uma partição de rede que o impede de alcançar o servidor da API, ou a máquina subjacente está inativa. O primeiro passo para depurar o problema é acessar o nó afetado via SSH e verificar o status do serviço Cublet. Se não estiver em execução, tente iniciá-lo. Você também pode examinar os registros do Cublet em busca de erros. Um nó com agendamento desativado significa que o agendador não colocará novos pods nele. A causa
+
+geralmente é que um administrador isola manualmente o nó com frequência para manutenção. A solução é usar o comando uncordone do controlador de cubo em um cluster com o Cube ADM instalado. Os componentes do plano de controle são executados como pods estáticos. Os seus manifestos YAML estão localizados em etc/ubernetes/manifests no nó do plano de controle. O cublet nesse nó é responsável por garantir que esses pods estejam em execução. Falha no serviço de API
+
+. Se o servidor da API estiver inativo, os comandos do controlador do cubo falharão com um erro de conexão recusada. Para depurar o acesso SSH ao nó do plano de controle, verifique se o contêiner do servidor da API do Cube está em execução usando a interface de linha de comando do ambiente de execução do contêiner . Verifique os registros. Por fim, inspecione o arquivo de manifesto em busca de erros de sintaxe ou parâmetros incorretos.
+
+Falha no agendador ou no gerenciador de controladores. Os sintomas incluem novos pods permanecendo pendentes indefinidamente em caso de falha do agendador ou implantações que não criam novos pods devido a uma falha do gerenciador de controladores. O processo de depuração é o mesmo que para o servidor de API. Acesse o nó do plano de controle via SSH e inspecione o pod estático correspondente e seus logs. Os problemas de conectividade de serviço podem ser complexos. Uma verificação sistemática é a melhor
+
+abordagem. Suponha que você tenha um pod cliente que não consegue se conectar a um serviço. Primeiro, verifique a resolução de DNS. A partir do pod do cliente, tente resolver o nome do serviço com uma pesquisa NS. Se isso falhar, o problema provavelmente está no núcleo do DNS. Em segundo lugar,
+
+verifique o serviço e os endpoints. Verifique se o serviço existe e se selecionou os pods de back-end corretos usando o comando `cubecontroller describe service`. Se a lista de endpoints estiver vazia, significa que o seletor de serviços não corresponde aos rótulos de nenhum pod em execução. Corrija as etiquetas nos pods ou no seletor do serviço. Terceiro, verifique a conectividade do pod. Tente conectar-se diretamente ao
+
+endereço IP de um pod de back-end a partir do pod cliente. Se isso falhar, o problema está em um nível inferior, possivelmente relacionado ao plugin CNI ou a uma política de rede. E, por fim, verifique as políticas de rede. Se as políticas de rede estiverem em vigor, elas podem estar bloqueando o tráfego. Exclua temporariamente quaisquer políticas relevantes para verificar se a conectividade é restaurada. Caso isso ocorra, a
+
+política precisa ser ajustada para permitir o tráfego necessário. Compreender o consumo de recursos é importante para diagnosticar problemas de desempenho e falhas de agendamento. O comando principal de controle do cubo, que depende do servidor de métricas, é a ferramenta essencial para isso. Você pode verificar o uso de recursos do nó para obter uma visão geral da utilização de CPU e memória de cada nó. Isso ajuda a identificar nós que estão sob pressão, o que pode explicar por que os pods estão sendo limitados ou removidos. Você também pode detalhar a análise
+
+para visualizar o uso de recursos de pods individuais. Isso é extremamente valioso para diagnosticar erros de "om killed", por exemplo, comparando o uso com o limite de memória do pod, e para ajustar o HPA e os alvos do HPA observando o uso típico da CPU sob carga. Este guia oferece um caminho prático e abrangente para se preparar para o exame de administrador certificado do Kubernetes. Ao progredir em cada seção, desde a arquitetura básica até a solução de problemas avançados, os candidatos desenvolverão não apenas o conhecimento teórico, mas também a memória muscular essencial da linha de comando necessária para o sucesso. Os principais temas que emergem são a importância de uma mentalidade declarativa, uma compreensão profunda dos componentes subjacentes aos agrupamentos e uma abordagem sistemática para a resolução de problemas. O CKA
+
+não é um teste de memorização, mas sim de aplicação prática. O sucesso depende da capacidade de diagnosticar problemas de forma rápida e precisa em um ambiente Kubernetes em produção , manipular recursos usando o controlador Cube e YAML, e gerenciar todo o ciclo de vida do cluster com ferramentas como o CubeADM. Ao trabalhar diligentemente com as demonstrações e laboratórios apresentados aqui, os aspirantes a administradores estarão bem preparados para enfrentar os desafios do exame CKA e, mais importante, para gerenciar com eficácia clusters Kubernetes de produção no mundo real. Obrigado por assistir e boa sorte no seu exame de administrador certificado do Kubernetes.

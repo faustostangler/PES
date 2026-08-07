@@ -1,0 +1,524 @@
+---
+video_title: "What happens when the model CAN'T fix it? Interview w/ software engineer Landon Gray [Podcast #213]"
+video_id: tZef2ZzbyuQ
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=tZef2ZzbyuQ
+video_date: 2026-03-27T10:00:57+00:00
+video_description: |
+  Today Quincy Larson interviews Landon Gray. He's a software engineer who worked at agencies for years. Then he taught himself AI assisted software development. And now he's helping other devs do the same. 
+  
+  Landon's famous for proving that RAG pipelines can be written in Ruby and popularizing Ruby as a language for building machine learning projects.
+  
+  He works as an AI Engineer at a enterprise software company and runs a popular newsletter.
+  
+  We talk about:
+  - How Large Language Models are just the raw fuel, and harnesses are the real engine to get things done
+  - Why building your professional network is so helpful for finding clients and landing job interviews
+  - Why Landon helped port Python machine learning libraries to Ruby, and why he thinks that – now that AI is just an API call away – the Ruby ecosystem is better-positioned than ever.
+  
+  Support for this podcast comes from the 10,113 kind folks who donate to our charity each month. Join them and support our mission at https://donate.freecodecamp.org
+  
+  Get a freeCodeCamp tshirt for $20 with free shipping anywhere in the US: https://shop.freecodecamp.org
+  
+  Links from our discussion:
+  - Landon's Substack newsletter: https://landongray.substack.com
+  
+  
+  Community news section:
+  
+  1. freeCodeCamp just published a new YouTube course that will teach you beginner Front-end Development skills like HTML, CSS, and JavaScript. You can code along at home and build a variety of projects: your own interactive quiz game, a currency converter app, and even a Trello-style kanban board. Along the way you'll learn how to use APIs and local storage to extend the functionality of these bite-sized apps. (12 hour YouTube course): https://www.freecodecamp.org/news/build-19-web-dev-projects-using-html-css-javascript/
+  
+  2. Learn how to properly test your software and ensure it doesn't break when you add new features. Prolific freeCodeCamp instructor Beau Carnes teaches this course. He'll introduce you to the Testing Pyramid and show you how to balance fast unit tests against complex end-to-end user journeys. You'll also learn how to automate some of this testing using an open source library called Playwright and an LLM testing tool. (1 hour YouTube course): https://www.freecodecamp.org/news/software-testing-with-playwright/
+  
+  3. More and more apps are relying on probabilistic LLM output alongside deterministic API calls. This makes life harder for devs who now need to ensure that hallucinations don't escape to end users. freeCodeCamp just published this advanced observability tutorial that will teach you emerging best practices and architectural patterns for dealing with this. (40 minute read): https://www.freecodecamp.org/news/build-end-to-end-llm-observability-in-fastapi-with-opentelemetry/
+  
+  4. Learn how to containerize your MLOps pipelines. This tutorial is the result of hard-won deployment wisdom. The author spent three weeks debugging a Python library error due to dependency conflicts. His eventual answer: containerize entire project with Docker. This tutorial will show you how to structure your containers with multi-stage builds. You'll also learn how to set up experiment tracking with MLflow, versioning with DVC, GPU passthrough, and other advanced techniques. (40 minute read): https://www.freecodecamp.org/news/containerize-mlops-pipeline-from-training-to-serving/
+  
+  6. Today's song of the week is 2006's Everybody by UK producers Basement Jaxx. If you're familiar with their work, you know you're in for a psychedelic yet silly romp. Between the spoons, bongos, and swooning chorus the song feels like it's held together with duct tape but it works. https://www.youtube.com/watch?v=OrMot81VE8g
+  
+  00:00 Intro & New Courses: Front-End (HTML/CSS/JS), Testing (Playwright), and MLOps (Docker/LLMs).
+  02:15 Song of the Week and how to support Free Code Camp.
+  03:16 Landon Gray on AI-assisted dev and "Harnessing" LLMs for structured outputs.
+  08:12 Iterative cycles, defining AI vs. Data roles, and avoiding "black box" engineering.
+  16:41 Creative solutions for model latency and reliability.
+  19:20 AI's impact on code quality and the importance of cultivating "Taste."
+  24:25 Inbound job searches, building in public, and the dangers of career isolation.
+  32:25 Specializing in your "Top 10%" and practicing servant leadership.
+  40:02 Consulting tips: Rapid learning, closing deals, and avoiding unmotivated buyers.
+  51:41 The rise of niche teams and selling strategy over raw code.
+  58:44 Protecting your reputation, researching culture fit, and preventing burnout.
+  1:11:32 Client trust and value-based pricing.
+  1:18:00 Why Ruby/Rails is a powerful alternative for rapid AI/SaaS development.
+  1:24:46 Networking at conferences and the power of community support.
+---
+Bem-vindos de volta ao podcast do freecodecamp. Eu sou Quincy Larson, professor e fundador do freecodecamp.org, e hoje estou entrevistando o engenheiro de software Landing Gray, famoso por provar que pipelines rag podem ser escritos em Ruby e por popularizar Ruby como linguagem para a construção de projetos de aprendizado de máquina . Antes de ouvirmos o que ele tem a dizer, algumas notícias da comunidade. A Freecodecamp lançou um novo curso no YouTube que ensina habilidades básicas de desenvolvimento front-end, como HTML, CSS e JavaScript.
+
+Você pode programar em casa e criar diversos projetos, como seu próprio jogo de perguntas e respostas interativo, um conversor de moedas e até mesmo um quadro Kanban no estilo Trello . Ao longo do processo, você aprenderá como usar APIs e armazenamento local para ampliar a funcionalidade desses aplicativos compactos. É um curso de 12 horas, dividido em 19 projetos, disponível gratuitamente no canal do freeCodeCamp no YouTube . Confira depois de terminar este tutorial. Também publicamos um curso que lhe ensinará como testar seu software e garantir que ele não apresente problemas ao adicionar novos recursos.
+
+Este curso é ministrado por Beau Carnes, um instrutor renomado do freeCodeCamp . Ele apresentará a você a pirâmide de testes e mostrará como equilibrar testes unitários rápidos com jornadas de usuário completas e complexas. Você também aprenderá como automatizar alguns dos testes usando uma biblioteca de código aberto chamada Playwright e a ferramenta de teste LLM. É um curso de 1 hora no canal do freecodecamp no YouTube. Publicamos também um tutorial que ajudará você a entender que cada vez mais aplicativos dependem de resultados probabilísticos do LLM, além de chamadas de API determinísticas . Isso torna a vida mais difícil para os desenvolvedores,
+
+que agora precisam garantir que as alucinações não cheguem aos usuários finais. A Freecodecamp publicou este tutorial avançado sobre observabilidade que ensinará as melhores práticas emergentes e os padrões arquitetônicos para lidar com isso. A leitura leva cerca de 40 minutos. Confira. Inclua o link na descrição e aprenda como conteinerizar seus pipelines de operações de aprendizado de máquina. Isso é o que chamamos de
+
+operações de aprendizado de máquina. Este tutorial é o resultado de muita experiência em implantação de sistemas . O autor passou 3 semanas depurando um erro em uma biblioteca Python devido a conflitos de dependência. Sua resposta final? Containerize todo o projeto com o Docker. Este tutorial
+
+mostrará como estruturar seus contêineres com builds em várias etapas. Você também aprenderá como experimentar e rastrear com o fluxo de aprendizado de máquina, além de aprender sobre versionamento com DVC, passagem direta de GPU e várias outras técnicas avançadas. Leitura de 40 minutos. Link na descrição. A música desta semana é "Everybody", de 2006, da produtora britânica Basement Jaxx. Se você conhece o
+
+trabalho deles, sabe que vai embarcar numa viagem psicodélica e divertida entre os suspiros, os bongôs, o refrão arrebatador, e a música parece estar se mantendo unida por fita adesiva, mas funciona. Eu amo isso. Link na descrição. Se você deseja apoiar o Code Camp gratuito, saiba que somos uma organização beneficente. Somos isentos de impostos. Você
+
+pode fazer uma doação para nós, deduzi-la de seus impostos nos EUA e apoiar nossa missão. doe.freecodecamp.org. 10.338
+
+pessoas generosas fazem doações todos os meses, e isso é uma grande ajuda. Isso nos ajuda a continuar produzindo esses recursos de aprendizagem de código aberto. Você também pode adquirir uma camiseta gratuita do Code Camp , com entrega em qualquer lugar dos EUA, por US$ 20. Se você estiver fora dos EUA, basta usar nossos materiais, imprimi-los em uma camiseta ou usar uma técnica de transferência térmica para criar sua própria camiseta gratuita do Code Camp . Gratuito para uso pessoal não comercial .
+
+Se você estiver nos Estados Unidos e quiser encomendar um, acesse shop.freecodecamp.org. Agora, minha entrevista com Landon Gray. Ele é um engenheiro de software que trabalhou em agências por muitos anos. Então ele
+
+aprendeu sozinho desenvolvimento de software assistido por IA e agora está ajudando outros desenvolvedores a fazerem o mesmo. Ele trabalha como engenheiro de IA em uma empresa de software empresarial e administra um boletim informativo popular. Vamos falar sobre como os grandes modelos de linguagem são apenas o combustível bruto, enquanto os chicotes e a lógica dos chicotes são o verdadeiro motor que faz as coisas acontecerem. Por que construir sua rede profissional é tão útil para encontrar clientes e conseguir entrevistas de emprego. E por que Landon ajudou a portar bibliotecas de aprendizado de máquina do Python para o Ruby. E é por isso que ele acha que,
+
+agora que a IA está a apenas uma chamada de API de distância, o ecossistema Ruby está melhor posicionado do que nunca. Landon Gray, bem-vindo ao podcast freeCodeCamp. Obrigado por me receberem. Feliz por estar aqui. Bom, fico feliz em tê-lo(a) aqui. Tenho
+
+gostado muito de ler seus trabalhos. Você é um dos muitos desenvolvedores que não apenas se abaixam e fazem seu trabalho, mas também compartilham publicamente o que estão criando, contribuem para projetos de código aberto e participam de conferências. Então, você migrou para a engenharia de IA como área de atuação. E este é um novo campo onde essencialmente você combina habilidades de engenharia de software com o aproveitamento máximo de todas as ferramentas focadas em LLM e outras ferramentas que são amplamente descritas como " IA" (Inteligência Artificial), um termo tão vago que é basicamente sem sentido. Mas, bem, eu queria te perguntar, já que você está fazendo isso, todo mundo pode aprender alguma coisa logo de cara . O que é um "harp"
+
+no contexto de grandes modelos de linguagem? Sim, com certeza. Então, eu postei uma publicação nas redes sociais, republicando sobre arreios, e tipo, um arreio, quando eu penso em LLMs (Little Life Motors - Motores de Longa Duração), é como se fosse o combustível bruto. Bem, você não pode... quer
+
+dizer, você pode conversar com ele. Você pode, você pode ter uma conversa. Agora ele pode fazer muito mais. Mas todas as empresas que usam um modelo de linguagem grande o utilizam como combustível e constroem ferramentas e infraestrutura em torno dele para que ele tenha o desempenho e o comportamento desejados, alcançando os resultados que buscam . Então, recentemente, e eu adoro essa empresa, parei de assinar porque os planos de preços ficaram meio absurdos, mas tenho usado bastante o Perplexity para minhas pesquisas aprofundadas.
+
+Hum, e eu também estávamos usando os serviços do Claude e sua capacidade de pesquisa. Mas, na minha opinião, a teoria é que Perplexity tem um sistema de arreios realmente excelente. Então, eles podem estar usando Claude, que eu estou usando como matéria-prima para fazer pesquisa e suas ferramentas. Mas eles têm uma infraestrutura muito boa construída em torno de grandes modelos de linguagem para fazer pesquisas aprofundadas e essa infraestrutura, seu produto e suas ferramentas são o mecanismo pelo qual estou obtendo melhores resultados com eles do que diretamente com o modelo Claude . Então. Sim, então, essa pode ser
+
+uma forma de definir "harpass" quando as pessoas usam essa palavra da moda: essencialmente, são todas as ferramentas em torno do LLM que, de alguma forma, melhoram a saída e reduzem erros, estruturam a saída de alguma forma, a organizam ou fazem perguntas adicionais para esclarecer ainda mais, ou, no caso de obter código de volta, realizam uma série de testes de fuzzing e coisas do tipo. Sim . Sim, exatamente. Então, é interessante porque eu sinto que está havendo uma corrida em que, de um lado, você tem engenheiros de aprendizado de máquina trabalhando em grandes modelos de linguagem e tentando tornar o modelo o melhor possível. E, por outro lado, temos pessoas que usam esses modelos e atenuam suas falhas, sejam elas boas ou ruins, escrevendo softwares para restringir o leque de capacidades ou melhorar os resultados. E eu
+
+vejo muito disso como, digamos, um dos lados da moeda da engenharia de IA, por assim dizer. Sim. Sim, então muita gente pode estar simplesmente fazendo chamadas de API diretas para um LLM e aceitando o resultado como verdade absoluta, pensando que é péssimo. Por que alguém usaria isso? Mas o que eles não estão fazendo é obter aquele fluxo direcionado por força, digamos assim, que vem de algo que passa por um chicote de fios a caminho do seu aplicativo. Sim. E eu
+
+vejo um arnês como algo mais... Você já ouviu falar de algo como um invólucro GPT? Sim. É que
+
+eles têm o ChatGPT ou algo como o GPT-40 ou algum modelo assim, e aí eles têm um prompt, e uma camada por cima que só serve a resposta a esse prompt e a chamada de resposta do modelo, e eu vejo que a ideia é: "Ei, estamos construindo uma camada de complexidade entre o modelo e o usuário do software para realmente obter resultados mais robustos." Sim . Bem, é bom saber que, obviamente, é extremamente caro melhorar o modelo fundamental subjacente. Bem, muitas vezes são necessários centenas de milhões de dólares em processos de treinamento para se obter uma nova versão do GPT ou uma nova versão do Claude. Mas muitas dessas melhorias que podem ser feitas no chicote de fios podem ser alterações de software bastante simples. É como se você estivesse
+
+trabalhando com uma base de código tradicional, e você pode iterar rapidamente sem esse longo ciclo de vida. Exatamente. E agora você pode ajustar os modelos por um custo um pouco menor, então não precisa treinar um modelo do zero se quiser melhorar o ChatGPT. Agora temos algo como: entre escrever o software e treinar um modelo do zero, existe todo esse espaço intermediário onde você pode ajustar o modelo e obter resultados realmente excelentes que superam o modelo base, e isso não precisa ser tão custoso. É apenas mais uma camada na pilha de tecnologias . Sim
+
+. Bem, já que você trabalha como engenheiro de IA e também trabalhou como engenheiro de software tradicional, e estudou bastante aprendizado de máquina para entender o que realmente acontece nos bastidores. Para desenvolvedores que estão entrando na área de engenharia de IA, como você diferenciaria a engenharia de IA de outros campos centrados em dados, como ciência de dados e engenharia de dados? Sim, então vamos começar. Quando penso em ciência de dados, vejo um grande foco em estatística, como regressão linear, algoritmos bayesianos, e muitos outros tópicos que você dominará se estudar matemática com bastante profundidade.
+
+Então, quando penso em ciência de dados, penso em pessoas com uma sólida formação em estatística, que trabalham para encontrar soluções através dessa perspectiva . Quando penso em engenharia de dados, penso que é mais ou menos... como posso dizer isso? Como, por exemplo,
+
+o encanador ou o responsável pela preparação desses dados. Assim como os dados são como matéria-prima, eles também são como matéria-prima. Não está no formato que você precisa. Não está estruturado da forma que você precisa. Então, o engenheiro de dados trabalha para construir sistemas que permitam obter os dados no formato necessário, transferi-los e encaminhá-los para onde forem precisos, de forma confiável para que um engenheiro de aprendizado de máquina ou um cientista de dados possa começar a analisá-los.
+
+É como se houvesse muito trabalho, tipo, eu não vou dizer que é a parte inicial, onde provavelmente está o trabalho mais valioso - alguns dos trabalhos mais valiosos são, por exemplo, a preparação dos dados. As pessoas passam 80% do seu tempo analisando dados. Existe algo como a regra 80/20. Então, 80% do seu tempo é gasto com os dados, e 20% é dedicado à construção de modelos, como aprendizado de máquina ou à escolha do modelo apropriado. Então, e a parte de engenharia de dados...
+
+engenharia de dados é uma área realmente interessante, que eu acho que não está muito bem definida. Acho que a primeira pessoa que realmente fez um ótimo trabalho tentando definir esse mundo foi Swyx, e ele tem um artigo que fala sobre engenharia de dados. E assim, existem todas essas camadas diferentes. Então, minha entrada na engenharia de IA, ou melhor, na engenharia de dados, foi na engenharia de IA, pois venho de uma formação em software. Como eu já fiz muita consultoria de software. No
+
+início da minha carreira, trabalhei como desenvolvedor de software . Então, quando comecei a me interessar por IA , pensei: "Ok, ainda não tenho as habilidades necessárias e nunca treinei um modelo de aprendizado de máquina até então". Então, me perguntei: " Como faço isso?". Meu forte era mais na área de software. Como posso
+
+abordar o campo da IA ​​de processos a partir dessa perspectiva? Encontrei coisas que eram mais adjacentes às minhas habilidades. Também precisei reforçar minhas habilidades fazendo alguns cursos. Fiz alguns cursos na UT Austin para aprimorar minhas habilidades, aprender a treinar modelos e coisas do tipo. Mas acho que me desviei do meu ponto inicial. Existem
+
+diferentes camadas na pilha de tecnologias. Existem engenheiros de aprendizado de máquina que às vezes podem ser diferenciados de engenheiros de IA. Às vezes, quando uma empresa diz " engenheiro de IA", ela quer dizer um engenheiro de aprendizado de máquina. E às vezes, ela quer dizer um engenheiro de software que é muito bom em usar o modelo. Então, é muito confuso. Você precisa olhar
+
+a descrição da vaga para ver... "Ok, que tipo de engenheiro de IA/ML é esse para essa vaga?" Então, é, eu não acho que exista uma boa definição.
+
+Não acho que as empresas necessariamente a respeitem quando estão procurando engenheiros de IA. Existe uma definição, que, você sabe, é a do Swyx, que já participou do podcast do freeCodeCamp três vezes, a mais recente eu o entrevistei ontem. E isso provavelmente foi publicado algumas semanas antes disso. Mas confira minha entrevista com ele. Ele cunhou o termo "engenharia de IA" e criou a série de conferências de engenheiros de IA , que agora tem eventos na Europa, Ásia e em todos os lugares, certo? Sim. E
+
+basicamente o que você está dizendo é que esse termo não foi totalmente padronizado aos olhos dos empregadores. Eles podem estar usando esse rótulo para vagas que não são necessariamente de engenharia de IA, mas sim de engenharia de ML, e vice-versa, dependendo do nível de experiência. sofisticação do empregador. Hum, sim. Sim. Então, uh, UT Austin, rapidinho,
+
+Universidade do Texas em Austin, uma das melhores universidades públicas dos EUA e, por extensão, do mundo. Uh, eu sou do Texas e uh, você também cresceu no Texas ? Uh, eu cresci em uh, Rochester, Nova York, uh, interior do estado de Nova York. E sim, depois acabei me mudando para o Texas. Fui para a Universidade Cristã de Abilene e me formei em ciência da computação lá e foi meio que onde comecei minha carreira. Muito legal. Bom, vamos falar sobre
+
+sua carreira daqui a pouco, mas eu preciso perguntar, por que gastar todo esse tempo e energia aprendendo como os modelos realmente funcionam por baixo dos panos? Por que aprender aprendizado de máquina como você fez quando, para a maioria dos desenvolvedores, usar um LLM é apenas fazer uma série de chamadas de API? Sim, tempo, energia e dinheiro. Eu investi muito em alguns dos programas. Então, para mim, muito se resume a princípios básicos e, você sabe, Se você quiser usar essas ferramentas, pode simplesmente usá-las, sabe, brincando com os modelos, interagindo com eles o dia todo, e isso lhe trará muito valor.
+
+Mas aí você pode se deparar com um obstáculo e pensar: "Bem, eu queria que fizesse isso". E quando esse momento chegar, você precisa se aprofundar. Precisa entender por que o modelo está produzindo essa saída em vez de outra. E é difícil se você não tiver uma base, nem mesmo para saber como depurar ou pensar no problema de uma forma que possa resolvê-lo. Coisas como confiabilidade e latência. Por que o modelo está demorando tanto
+
+para obter uma resposta? Ter um entendimento fundamental de como esses modelos funcionam, algo que devo dizer que ainda estou aprendendo. Continuo crescendo a cada dia, tentando entender as diferentes camadas da pilha, como inferência, e onde podem estar os gargalos. Mas ter esse entendimento no ambiente de trabalho pode ajudá- lo a encontrar soluções para problemas realmente difíceis. Sim, e eu vou Citando novamente o modo de demonstração do jogo de arcade Mortal Kombat 3: " Não existe conhecimento que não seja poder.
+
+Vocês sabem, quanto mais você sabe, mais você sabe. É , tipo, saber é metade da batalha, certo?" Então, parece que você buscou isso. Foi um grande investimento de tempo, energia, dinheiro, voltando a estudar, e você conseguiu porque acredita que, no futuro, esse conhecimento, essa compreensão de como esses sistemas realmente funcionam e não apenas como uma caixa preta que é responsabilidade de outra pessoa saber como funciona, certo? Tipo, isso está acima da minha alçada. Não suporto quando as
+
+pessoas dizem isso. Sabe o que estou dizendo? Mas é a maior desculpa esfarrapada. Mas você não se contentou apenas em usar essas ferramentas. Você queria entender como elas realmente funcionam. Porque
+
+esta é provavelmente uma das inovações mais importantes da nossa geração. Exatamente. E eu não queria ficar preso nesse momento em que você fica preso e... por um tempo. Muitas
+
+pessoas, quando ficam presas em um problema, perguntam ao modelo como resolvê- lo, e existem alguns problemas que o modelo não saberá como resolver. Por exemplo, eu já participei de equipes que experimentaram isso. Tivemos problemas sérios de latência em uma organização, relacionados a um aplicativo de chat. Tínhamos problemas de latência muito sérios e, sabe, se você simplesmente depende do modelo para escrever seu código e fazer tudo, eventualmente você vai se deparar com um gargalo e vai perguntar a ele: "Ei, Claude, dê uma olhada em todo o meu código e tente corrigir os problemas de latência." E ele não vai funcionar. Na hora,
+
+não funcionou, e agora? Você vai dizer ao seu CEO que não podemos corrigir os problemas de latência e que o usuário terá que esperar muito tempo para receber uma resposta, ou vai pensar criativamente e recorrer a estudos sobre latência? Vai analisar aqueles exemplos de código branco? Você vai explorar a internet para encontrar informações que te ajudem a resolver o problema porque o modelo não consegue? Eu sei que sempre queremos que o modelo resolva o problema, e na maioria das vezes ele resolve, mas quando você chega ao limite e só restam você e seu concorrente, um de vocês conseguirá resolvê-lo, ou ambos . E sim, você quer ser capaz
+
+de resolvê-lo. Então, sabe, eu gosto muito do que Kelsey Hightower fala sobre desenvolver habilidades e adicionar novas competências ao seu repertório . Estou tentando fazer isso o tempo todo. Por exemplo, tenho algumas habilidades em aprendizado de máquina, como usar modelos de aprendizado de máquina. Tenho muitas habilidades em usar modelos de aprendizado de máquina porque trabalho muito com isso.
+
+Mas também tenho um colega que é muito habilidoso em usar modelos de aprendizado de máquina, e temos competências diferentes, mas à medida que você resolve problemas, você desenvolve diferentes conjuntos de habilidades e consegue lidar com diferentes tipos de problemas. Sim, é isso aí . Engenheiros são pagos para pensar. São pagos para resolver problemas. Não são pagos para desistir e dizer: "É assim que as coisas são."
+
+Fundamentalmente, existe essa latência. " Ninguém sabe o que está acontecendo." Sim. Você é pago para descobrir o que está acontecendo e como consertar. Certo?
+
+Exatamente. Então, mantenha sua curiosidade intelectual. Sua carreira depende disso. Vamos falar sobre conselhos de carreira, porque você teve uma carreira bastante diversificada. Você fez muita coisa.
+
+E você é relativamente jovem. E em apenas sua década trabalhando como desenvolvedor, você conquistou muito mais do que muitos outros desenvolvedores. E eu quero descobrir como isso é possível para que todos possamos aprender com isso. Então, primeiro, assistência de IA, desenvolvimento de software assistido por IA. O freeCodeCamp publicou um livro popular sobre isso, escrito por Mruguesh Mohapatra, que gerencia a maior parte do nosso DevOps . Ele usa bastante
+
+essas ferramentas, como o CloudCode. Ele tem várias equipes de agentes fazendo o trabalho para ele. E praticamente todos na equipe usam essas ferramentas. Embora , é claro, você precise ter cuidado com elas e Eles não são perfeitos. Mas como a assistência por IA está mudando o desenvolvimento de software? Como
+
+você acha que está impactando sua carreira e como você vê o impacto nas carreiras das pessoas ao seu redor? Eu acho que acelera tudo. Uma velocidade incrível. E as pessoas pensam: "Isso é bom". Mas se você estiver fazendo a coisa errada, isso só acelera e se prolifera em todos os lugares também. Então, se
+
+você estiver escrevendo código ou usando o LLM para escrever código, digamos que haja um padrão ruim no seu sistema e você esteja usando programação assistida por IA , esse padrão ruim vai persistir e, eventualmente, o sistema que você está construindo vai desmoronar porque não foi bem projetado. Então, a programação assistida por IA definitivamente ajudou os profissionais a construir mais, mas você ainda precisa dos fundamentos. Você ainda precisa saber como projetar software e pensar sobre software, mas é mais uma questão de... Do
+
+ponto de vista conceitual, se você estiver no seu palácio mental, você consegue arquitetar um sistema e comunicar exatamente o que precisa ser feito de forma eficaz por meio de instruções. Você consegue construir esse sistema, mas a maioria das pessoas não tem essa experiência e não viu vários sistemas diferentes. Eu já estive em grandes organizações, com bilhões de dólares em receita, e também em pequenas organizações, com uma ou duas pessoas. É nisso que me baseio quando uso essas ferramentas para programar sistemas de IA. Não começo do zero e digo: "Faça isso". Então,
+
+não sei se respondi à sua pergunta ou se me desviei do assunto, mas sim. Basicamente, não saber o que está fazendo pode acelerar a taxa de erros e a deterioração da base de código. Portanto, você precisa saber o que está fazendo. Uma coisa que costumo dizer é: se você usa LLMs para escrever todo o seu código, se você só aperta Tab sem pensar, se você programa tudo por instinto, por que você não é um componente totalmente automatizado? Por que não podemos simplesmente contratar um trabalhador mal remunerado de um país para fazer o que você faz? Por que não podemos automatizar
+
+completamente o seu trabalho? E essas habilidades, esses fundamentos, são o que diferenciam um desenvolvedor capaz de usar essas ferramentas com grande eficácia de alguém que só acumula dívida técnica o dia todo. Certo? Sim. Com certeza.
+
+E muita gente fala sobre isso, e eu concordo, é como se você chegasse ao trabalho com uma perspectiva, um gosto, e, sabe, todos nós esperamos que você tenha opiniões fortes. O que é isso? Opiniões fortes, mas flexíveis, ou algo assim? Tipo, espero que você tenha desenvolvido um senso de, sabe, "é assim que eu acho que as coisas deveriam ser feitas", e você não precisa se apegar a isso, mas deveria ter alguma perspectiva. Tipo, você deveria dizer, sabe, "eu quero fazer isso, talvez eu seja bom nisso e não naquilo", ou, sabe, "é assim que eu construo sistemas". Isso é algo que
+
+você não vai conseguir do modelo. Hum, eu acho que o modelo é treinado com toda a internet. Você quer a média, sabe, a média de tudo o que todo mundo disse? Tipo, não, eu quero, sabe, eu quero algo selecionado, sabe? Eu gosto de seguir streamers do YouTube ou da Twitch. Eles têm
+
+um gosto e opiniões bem selecionados. Às vezes são bem polarizadores, mas você segue essas pessoas porque é uma perspectiva, sabe? Mas você não quer a perspectiva média, certo? Você quer cultivar a sua própria, e É isso que te torna valioso. Sim.
+
+Uma coisa que te torna valioso. Com certeza. Então, vamos falar um pouco sobre a busca por emprego e a busca por trabalhos freelance. Você... bem, você sabe. Os
+
+dois lados disso. Atualmente você trabalha em tempo integral, mas antes trabalhava como freelancer e em agências, o que significa que trabalhou para dezenas de organizações. Uma das coisas que você disse e que eu adoro é: "Pare de ir atrás de outras pessoas para encontrar empregos." "Forçar as pessoas a virem até você." Sim.
+
+Eu acho que isso é muito verdade. Quer dizer, no início da minha carreira, sabe, eu tive professores, eu fiz um curso de desenvolvimento web 2, e todo mundo dizia : "Ei, monte um portfólio." Sabe, construir um portfólio. Comece a blogar. Comece a fazer vídeos para o YouTube. Comece a criar
+
+pequenos aplicativos de demonstração. Vou postá-las no GitHub e ver se alguém adiciona uma estrela, um coração ou um like. Sabe, essa é uma ótima maneira de ser notado. Acho que a pior maneira de ser notado é colocar um pedaço de papel ou algo do tipo "Acho que tenho meu currículo em algum lugar". É, coloque um pedaço de papel em uma pilha com outros mil candidatos e espere que você consiga superar todo mundo para conseguir um único papel. Tipo,
+
+essa é uma forma, e eu já me candidatei a vagas da maneira tradicional, mas alguns dos melhores empregos que consegui, incluindo o atual, foram por meio de recrutadores que disseram: "Nossa, vimos todo o trabalho que você está fazendo. Você gostaria de fazer uma entrevista aqui?" E tipo, para mim, é legal porque, de 10 ou 20 pessoas que entram em contato, uma delas eu digo: "É isso aí." E para as outras, eu digo: "Não, obrigado". É ótimo ter a opção de escolher o tipo de trabalho , mas, por outro lado, é muito difícil porque você está competindo. E eu digo: "Parem de
+
+competir." É como descobrir no que você é bom. Descubra o que te torna excepcional e explore seus pontos fortes. Não tente jogar o jogo que todo mundo joga. Não tente jogar como se soubesse que este jogo é finito. Experimente jogar
+
+esse jogo infinito onde você define no que é melhor e demonstra essas habilidades nas redes sociais ou em eventos presenciais e coisas do tipo . Sim . Sim. Conselhos muito práticos. Você diz às pessoas para construírem em espaços públicos. O que
+
+isso implica? Sim, eu digo, poste o que você está fazendo. Curta se você estiver trabalhando em um projeto, compartilhe sobre ele. Se você estiver estudando, pare. Tire uma foto.
+
+Publique sobre isso. Tipo, acho que as pessoas ficam inseguras, tipo, elas ficam inseguras com o trabalho que fazem, o que eu também ficava e às vezes ainda fico. Ou você fica lá pensando: "Bem, se eu postar sobre esse conceito, as pessoas vão achar que sou uma fraude, porque talvez eu devesse dominar esse conceito." Quero dizer, há tantas coisas para aprender na vida. Sim . Achar que
+
+todo mundo já viu de tudo é um absurdo. Tipo, eu fui a uma palestra em uma conferência e conversei com alguém que tinha uma formação matemática mais sólida. Acho que ele tinha mestrado em matemática, talvez tivesse tentado fazer doutorado, e também administrava uma empresa na época, e ele perguntou: "Você está familiarizado com esse conceito?" E eu pensei: "Não." E ele ficou tipo, "Sério?" E ele achou isso
+
+interessante. Ele respondeu algo como: "Tudo bem." E então ele começou a me explicar . Conversamos sobre isso. Eu podia fazer perguntas para ele, e acontece que, muitas vezes, no ensino médio, ninguém queria responder às perguntas porque não queriam parecer estúpidos. Mas, no meu caso
+
+, muitas vezes pareci muito estúpido, mas consegui chamar a atenção de muita gente, e melhorei as coisas em que estava errado, e isso só me ajudou. Como eu disse, já pronunciei palavras errado antes, e eu penso : "Ninguém liga. Ninguém liga." Assim como você joga o seu jogo. Não gosto disso. E
+
+não estou falando de joguinhos, sabe, tipo, todo mundo tem um joguinho, mas eu só digo: faça o que você quiser. Tipo, aprender, encontrar pessoas com quem seja divertido brincar e trabalhar, e acho que as coisas vão melhorar. Assim como você, você encontrará sua tribo. Você encontrará pessoas com quem se dá bem. Você vai construir coisas.
+
+Você vai se divertir. Como você sabe, é um mundo aberto. É, no ensino médio todo mundo tem medo de parecer estúpido. Você gosta do que eu quero dizer? Atreva-se a ser estúpido. Sim, com certeza. Faça isso. Isso vai te dar
+
+muitas oportunidades. Você disse para não termos medo de pronunciar as palavras incorretamente. Tipo, eu dei uma palestra para umas 300 pessoas na conferência inaugural da Code Land. Então, Ron, eu organizei tudo e ele me convidou para ser um dos palestrantes. Uh uh Scott Hanselman está na plateia, uma lenda e um dos meus grandes modelos. Sim, um dos meus grandes ídolos e uh
+
+, eu também. Eu... eu não me lembro do que eu disse, mas eu pensei algo como "há uma palavra, um ditado". É tipo um truque curto e
+
+conciso, uma espécie de regra prática, eu acho. E por algum motivo eu pensei que fosse uma palavra francesa ou algo assim, então eu disse "adágio". E depois ele foi muito educado. Ele sempre dizia: "É um ditado popular." E eu pensei: "Nossa, me sinto tão idiota." E ele disse,
+
+acho que ele disse algo como, sabe, nunca se sinta burro quando pronunciar uma palavra errada, porque isso significa que você a aprendeu em um livro. E você é sim. Sabe, basicamente ler. Tipo, você provavelmente está usando um vocabulário que pessoas que não leem nem imaginariam que existisse , né? Então, é, foi uma experiência muito legal. Nunca mais pronunciarei
+
+esse ditado de forma errada. Sim. É uma lembrança muito marcante para consolidar a pronúncia dessa palavra. O importante é que, quando você vivencia esse momento, você aprende com ele e depois simplesmente segue em frente. Mas algumas pessoas ficam estagnadas e não expõem o que sabem. A vantagem é que
+
+você recebe feedback. Tipo, se você nunca receber feedback, tudo bem. Sinceramente, estou gostando muito do livro "As 48 Leis do Poder", não por uma questão maquiavélica, mas porque acho que ele dá mais poder às pessoas com empatia em um mundo frequentemente controlado por pessoas que nem sempre têm muita empatia. Você gosta de entender o pensamento dos outros, mas um dos conceitos é...
+
+Ah, cara, eu me perdi. Era aquele livro famoso que os líderes de seitas usam. Acho que houve algo como " Sim, conheço o livro". banido das prisões e coisas do tipo. Mas, mas, existe, existe, existe, existe, existe uma das 48 Leis do Poder: o isolamento é perigoso. Então, o que
+
+isso quer dizer é que aquele engenheiro, aquele engenheiro brilhante e discreto que está num canto construindo algo enorme, está fazendo a coisa mais perigosa e prejudicando seriamente a própria carreira, porque o que ele realmente precisa fazer é expor o seu trabalho para o resto da organização, para que as pessoas possam vê- lo, dar feedback e assim ele possa melhorar. Assim como se isolar e não compartilhar suas opiniões e pensamentos acaba criando uma visão distorcida do mundo. É como se você estivesse vivendo em seu próprio mundo, tipo a caverna de Platão, e pensasse que as sombras na parede são o mundo. Mas por fora é muito, muito diferente. E isso é algo com que muitas pessoas lutam em suas carreiras, sabe? Elas acham que estão arrasando
+
+, que são boas em programação, e aí vão para o Google ou para outra empresa e se veem em um nível completamente diferente. Se você se expõe a novas experiências, pode receber feedback de algumas das melhores pessoas e isso vai te tornar um profissional melhor. É tudo uma questão de aprimoramento e de se aperfeiçoar na sua área, sabe? Mas você não consegue fazer isso isoladamente. Quer dizer, algumas pessoas não conseguem, mas eu não sou uma dessas pessoas. É,
+
+sempre tem alguém mais legal que você. Sim, então . Entenda em que áreas você está entre os 10% melhores e onde você gosta de trabalhar, estando disposto a se dedicar mais do que todos os outros. Isso é como uma citação sua que resume sua abordagem sobre como se especializar. E eu só quero deixar isso bem claro.
+
+Mas sabe, estar entre os 10% melhores significa que existem muitas áreas onde você poderia chegar aos 10% melhores, e você diz às pessoas para se aprofundarem em apenas algumas áreas, mas leva tempo para identificar o que vale o seu tempo, dinheiro (se você estiver voltando a estudar) e energia. Bem, as pessoas têm carreiras com prazo determinado, elas precisam decidir. Eles terão que tomar uma decisão em algum momento . Eles pulam, né? Eles não podem simplesmente ficar parados na ponte o tempo todo.
+
+Em algum momento, eles terão que pular no rio. Eles precisam descobrir onde, certo? Sim. Como você identifica áreas que valem a pena explorar em profundidade? Sim, essa é uma boa pergunta. Acho que, para
+
+mim, descobrir no que você é bom... um membro da família que eu sempre citava para mim mesma era minha mãe. Ela diz: "Conheça seus pontos fortes, conheça seus pontos fracos." Tipo, e, e,
+
+para mim, eu sou muito, muito clara sobre as coisas em que sou realmente boa . Tenho muita clareza sobre as coisas em que não sou bom ou as coisas que detesto fazer. Então, tento pegar todas as coisas em que sou realmente ótima e que adoro fazer, que também são as coisas que adoro fazer, e talvez eu não saiba se é uma questão de causa e efeito, tipo, eu adoro fazer coisas boas, boas, boas, boas, boas, boas, boas, boas, boas, boas, boas, boas, boas . Mas eu tento encontrar essas coisas e tento ver se consigo organizá- las, sabe, de uma forma muito, muito boa. Então, para mim, se estou olhando para mim mesma, não me refiro apenas a habilidades técnicas. Para mim,
+
+grande parte da minha infância foi dedicada ao serviço militar. Então, a serviço do mundo, sabe, fazendo trabalho voluntário, sabe, meu colégio tinha esse lema: homens para os outros. Eu estudava em uma escola só para meninos. Sabe, servir, servir, servir. Sabe, quando você serve aos outros, ajuda os outros, orienta os outros e retribui, você acaba interagindo com muitas pessoas. Então, tipo, eu tive a oportunidade de
+
+trabalhar com todos os tipos de pessoas diferentes e, tipo, ok, essa é uma habilidade que eu tenho. E aí você quer combinar isso com, sabe, outra habilidade. Assim como no desenvolvimento de software. Na verdade, eu não era um programador muito bom . Eu realmente tive dificuldades. Nem
+
+quero falar sobre como me saí nas provas de nível avançado ( AP) no ensino médio. Mas eu pratiquei essa habilidade e fui melhorando. Mas eu percebi cedo, eu disse: "Eu não vou ser... tem um podcast que fala
+
+sobre a máquina de programação da Meta. Eu não vou ser a máquina de programação, mas posso ser bom o suficiente para causar um bom impacto e ser um engenheiro sólido. Mas agora, se eu combinar isso com minhas habilidades de trabalho em equipe e colaboração, então eu vou ser realmente bom." E, aliás, eu fiz alguns testes de personalidade, incluindo um chamado StrengthsFinder. Ele me ajudou a descobrir meus pontos fortes. E meus pontos fortes
+
+mudaram, mas alguns dos meus maiores pontos fortes são a empatia. Então, eu combinei isso com um dos meus outros maiores pontos fortes, meu ponto forte mais forte, que é novo porque eu refiz o teste, que é a capacidade de olhar para outras pessoas e identificar quais são seus pontos fortes. Isso é ótimo quando você está em uma equipe, porque se você está com dificuldades em alguma coisa, você olha para a sua equipe e diz: "Ei, sabe aquela pessoa naquele canto, em outro projeto, sem relação com o seu?" Eles são realmente bons nessa única coisa em que nós somos péssimos. E podemos integrá-los e criar uma equipe que seja realmente bem-sucedida na resolução dos problemas X ou Y?
+
+Então você começa a analisar seus pontos fortes e pensa: "Certo, como eu me encaixo em uma organização ou em diferentes situações?" Bem, e então começa a definir que tipos de organizações são melhores para você. E quanto à parte de marketing, é ainda melhor se você começar a postar nas redes sociais ou escrever sobre seus pontos fortes. As pessoas percebem essas características em você e dizem: "Nossa, você se encaixa perfeitamente no perfil de todas as pessoas da nossa organização." Então, eles acabam te envolvendo, e é por isso que algumas das empresas de que mais gostei me atraíram, porque eu falava sobre o que fazia e eles viam, sabe, que eu era uma pessoa com muita empatia, que postava nas redes sociais de uma forma que estava alinhada com os nossos valores.
+
+Será que são bons? Então, eles dizem tipo: "Ei, você quer dar uma entrevista?" E eu fiz uma entrevista e me saí muito bem . Por exemplo, no caso da Deal Maker, o vice-presidente de engenharia é meu gerente direto. Ele é realmente ótimo. Ele se preocupa muito
+
+com a equipe. Ele realmente se importa com as pessoas. Ele sempre me apoia. O que eu mais gosto nele é que em muitas reuniões ele diz: "Leigo, eu vou desabafar e falar abertamente", e depois do meu desabafo ele diz: "Ok". Ou em nossas conversas individuais ele pergunta: "Há algo em que eu possa te ajudar?". E eu penso: "Hum,
+
+essa é uma boa pergunta." Eu não tenho certeza. Acho que estou bem. Acho que... acho que tenho
+
+isso sob controle. Tipo, obrigada. Tipo, obrigada. Tipo, com que frequência as pessoas perguntam coisas como: "Tem alguma coisa de que você precisa? Tem alguma coisa em que eu possa te ajudar?" Tipo, isso é simplesmente
+
+fantástico. Mas, para encontrar essa cultura, sabe, eu tive que mostrar o meu valor para que as pessoas com os mesmos valores pudessem pensar: "Ei, junte-se ao que estamos fazendo." Então, basicamente, mentalidades semelhantes atraem mentalidades semelhantes. Então, basicamente, você é muito voltado para o atendimento ao cliente. Isso faz parte, em grande parte, da sua criação. Hum,
+
+existe toda uma categoria de gestão. Não sei se ainda está na moda nos círculos de gestão, mas chama-se liderança servidora. Sim. Liderança servidora. E a ideia é que, essencialmente, o gerente está na base da organização, tentando dar suporte a todos os outros. E todo mundo
+
+vai até o gerente e diz: "Ei, eu preciso disso." Ou algo como: "Ah, isso deu errado e foi por causa disso e daquilo." E o gerente está tentando essencialmente reagir e facilitar, em vez de ditar regras. Sim . Sim. Então, parece que você encontrou
+
+esse tipo de líder. E como você é tão voltado para o serviço, você se sentiu atraído por essa organização. Eles se sentiram atraídos por você. Sim, exatamente. O mesmo aconteceu comigo, e eu trabalhei para outra empresa chamada Test Double.
+
+Certo dia, durante uma reunião em que estávamos trabalhando totalmente remotamente, o CEO se levantou e postou o organograma, sabe, que é tipo um gráfico hierárquico, mas acho que estava invertido. E era como se o CEO estivesse lá embaixo, exatamente como você está dizendo. E isso me deixou de boca aberta. Eu pensei : "Nossa! Você está apoiando todos nós." E aí todas as pessoas comuns
+
+estão dando suporte a essas pessoas, e eu estou na base da pirâmide, mas agora estou no topo . É uma analogia excelente. Sim, e se você pensar em quem realmente precisa de apoio e quem precisa de ajuda, geralmente são os recém-chegados que estão na base da pirâmide, por assim dizer. Bem, essas são as pessoas que precisam receber mais apoio, energia e tempo. As pessoas que estão lá há muito tempo, especialmente as que ocupam os cargos de alta gerência e dirigem a organização, provavelmente já fazem isso há bastante tempo. Eles precisam de mínimo
+
+contexto, de mínimo apoio. E provavelmente eles também têm os meios para adquirir tudo o que precisam para realizar seu trabalho, e possuem o conhecimento prático, o conhecimento tácito e tudo mais . Portanto, faz sentido pensar dessa forma se você quiser administrar uma pequena empresa. Você já trabalhou em empresas de diversos portes e eu gostaria de aprofundar esse assunto, pois você tem a vantagem de ter trabalhado com dezenas de equipes diferentes. E você até já disse isso antes, que um dos motivos pelos quais gostava tanto de consultoria era justamente por não estar morando na casa em que estava entrando. É como se você fosse
+
+um convidado entrando numa casa, tentando descobrir o que há de errado com aquela família, o que é disfuncional, o que há de errado com a própria casa, e consertar tudo. Depois, você pode ir embora e não precisa dormir naquela cama . Você não precisa permanecer nessa organização. Você pode simplesmente ser como um convidado amigável para um jantar, essencialmente. E então você pode sair, ir para outra casa e fazer a mesma coisa em uma organização diferente. É como ser um
+
+conselheiro organizacional, por assim dizer, ajudando a resolver problemas, e essa é a natureza da consultoria. Isso se aplica, em certa medida, ao trabalho freelancer. Você poderia falar um pouco sobre o que te atraiu para esse estilo de vida, em vez de simplesmente trabalhar na mesma empresa por muitos e muitos anos, como muitos desenvolvedores preferem fazer? Sim, acho que é tédio, sinceramente. Como sempre digo, me entedio rápido, e o que quero dizer com isso é que, quando entro em um ambiente novo, aprendo muito, fico 80% ou 90% confiante no que faço e, então, começo a procurar outras coisas que posso fazer dentro daquela organização. Eu
+
+aceito esses. E eu me sinto bastante confortável. Sinto que posso causar impacto e, muitas vezes, é aí que sei que devo ir embora, porque preciso continuar aprendendo. Eu sou basicamente assim, eu simplesmente adoro aprender. Fazer provas é outra coisa. Mas eu adoro
+
+aprender coisas novas e, então, comecei a perceber que um padrão estava surgindo e, quando descobri a consultoria, pensei: "Ah, é a mesma coisa. Você pode sair de empresas e ir para outras diferentes, mas tem uma base sólida para onde voltar. Tem pessoas com quem pode se comunicar, trabalhar e construir relacionamentos, sabe, ter um senso de pertencimento, mas também pode explorar outros lugares, diferentes setores." Isso me atraiu muito naquela fase da minha carreira porque, sabe, era um pouco cedo e eu só queria ver tudo o que existia . Eu pensava: "Quero trabalhar na área da saúde." Quero trabalhar no setor de fintech.
+
+"Quero trabalhar na indústria automotiva." Bem, passei grande parte da minha carreira na indústria automotiva, o que é irônico porque eu entrei na área de consultoria. Tive um emprego de dois anos na indústria automotiva e outro de dois anos também. Então, de certa forma, eu consegui ver outras coisas, mas foi meio que, "Nossa, isso é irônico." É como se o universo dissesse: "Haha, você achou que ia conseguir..." Mas,
+
+honestamente, eu adorei e foi muito divertido. Sim, e uma pergunta que eu tenho para quem está começando. Quer dizer, resumindo o que você disse, saber a hora de ir embora para poder continuar aprendendo em outro lugar. Quando você os leva a 80 ou 90%, eles provavelmente conseguem continuar a partir daí, certo? Você já os preparou para o sucesso e pode se retirar educadamente da mesa porque a química familiar está se curando, ou qualquer analogia que você queira usar, como a do jantar, em que os primos que se odeiam voltam a se falar. E então seu trabalho está feito.
+
+Você pode ir embora e confiar que tudo se resolverá sozinho e você pode ir encontrar outra família disfuncional para apoiar, essencialmente. Sim. Então, vamos falar sobre conseguir clientes, certo? Quando você estava na consultoria, eles provavelmente te ajudaram a conseguir a Test Double. Claro, tínhamos um dos fundadores conosco... Justin
+
+Searls. Uma conversa muito legal que já deve estar no ar quando isso for publicado. Ele era seu superior imediato, ou melhor, seu chefe. Sim, ele tinha várias funções diferentes. Ele não era meu superior imediato. Acho que a maioria das
+
+pessoas na época se reportava diretamente ao CEO. Tecnicamente, do jeito que a organização funcionava, tínhamos uma pessoa de suporte, mas o Searls tinha diferentes funções de liderança técnica, como evangelização. Acho que em um certo momento ele chegou a ser CTO e coisas do tipo, e ele fazia parte do pipeline de vendas, ajudando a conseguir mais trabalho e clientes e coisas assim . Então você trabalhou com ele e eles meio que te diziam para onde ir? Sim, muitas vezes era uma conversa do tipo: "Ei, temos essa oportunidade e essas são suas habilidades", e você era bem direto sobre essas linguagens, sabe, eu sou um comunicador muito bom.
+
+Eu trabalho muito bem em equipe, sabe? E tipo, temos certeza de que esses são os desafios que estamos enfrentando com nossos clientes, ou temos um novo cliente chegando e achamos que você se encaixa no perfil, que você pode ajudá-los de alguma forma. Então, você teria liberdade, pelo menos nas empresas de consultoria para as quais trabalhei, como a Paravirtual e a Test Double. Você tem a liberdade de dizer: "Sabe, eu realmente não acho que esse seja um bom lugar para mim." Ou você pode dizer: "Sabe, eu quero, eu quero trabalhar lá." Às vezes é fartura e às vezes é escassez,
+
+né? Então, quando a economia está ótima e o dinheiro está jorrando, você pode pensar: "É, não sei se esse é o emprego certo para mim." Mas quando está escasso, às vezes você tem que pensar: "Ok, eu preciso fazer esse, porque, sabe, só algumas pessoas podem fazer e precisamos de dinheiro." É importante que a organização continue funcionando, mas sim, é uma maneira muito legal de conseguir novas oportunidades, com certeza. Bem, vamos falar sobre quando você está fora da organização, quando está caçando clientes sozinho, por assim dizer, e tentando conseguir clientes freelance por conta própria. Agora que você
+
+fez isso, um dos conselhos que você sempre dá é falar sobre problemas reais que você resolveu. Agora, você tem a vantagem de já ter feito muito trabalho antes de sair e se sentar com esse cliente em potencial. Como você conduziria uma reunião com um cliente em potencial? Talvez você possa nos explicar um cenário do início ao fim, como você prospectaria esses clientes e como, no final, fecharia o negócio, conseguiria o trabalho e o contrato. É, então, eu sou bem ruim em prospecção, tipo, em fazer ligações a frio ou descobrir onde entrar em contato com as pessoas e dizer: "Ei, posso te ajudar de alguma forma?" Tipo, a maior parte do meu trabalho tem sido
+
+inbound, então o que vai acontecer é que as pessoas veem a ampla rede que estou criando com meu blog, Substack e palestras em conferências, e então elas dizem: "Nossa , essa pessoa parece que pode nos ajudar." E aí recebo uma mensagem no meu e-mail dizendo tipo: "Ei, você pode nos ajudar?" ou uma introdução ou algo assim. Então, simplesmente conversamos e, na maior parte do tempo, apenas ouvimos. É tipo, "Ei, o que você está tentando fazer?
+
+Quais são os problemas que você está enfrentando?" E aí eles vão te contar um pouquinho sobre isso, e você vai fazer perguntas, vai dizer coisas como: "Bom, sabe, você meio que entendeu." E você faz muito disso como tentar avaliar a motivação. Às vezes, eles só querem conversar com alguém, e isso pode ser o fim da conversa. É como se você conversasse por uma hora ou meia hora, oferecesse algum conselho, talvez, e depois a pessoa não voltasse mais. Mas
+
+às vezes parece que o problema é mais profundo , e eles dizem: "Estamos procurando alguém para nos ajudar a resolver este problema". Quando essa é a oportunidade, você entra na fase de apresentar diferentes soluções. E isso foi um desafio para mim no início, porque eu não sabia como elaborar essas propostas e coisas do tipo . Então, tive que ler bastante. Uma pessoa que eu gosto é Alan Weiss, autor de " Million Dollar Consultancy". Acho que
+
+foi um dos livros que ele escreveu, e ele fala sobre como estruturar a coleta de informações do cliente e como iniciar o projeto. Então, eu elaborei uma espécie de requisitos do projeto, tipo, "isso é o que estamos tentando resolver", coloquei os custos e eles assinaram, dizendo "oi, vamos nessa" e começamos o projeto. Então, eu já fiz projetos de gerenciamento de projetos... Já participei de
+
+projetos exploratórios de IA em que eles estavam experimentando com IA. Eles não sabiam exatamente o que queriam fazer. Queriam ver o que a IA poderia fazer por eles, então eu participei de um projeto curto onde os ajudei com isso. E coisas do tipo. Incrível. E quando você ajuda essas
+
+pessoas, você oferece uma espécie de consultoria gratuita, essencialmente. Você se encontra com elas e é como um trabalho de vendas, mas também como uma missão de levantamento de informações. Você está tentando descobrir se realmente há trabalho ali que faça sentido para você entrar e ajudá- los. Em que momento você identifica isso? Eu, por exemplo, se alguém estivesse fazendo isso, tentaria absorver o máximo de informações possível antes de ter que emitir um cheque, enviar uma transferência bancária ou assinar qualquer contrato . Mas a responsabilidade é sua,
+
+do consultor, de abordar a questão. Bom, agora estamos entrando no território em que eu... Para realmente começar a trabalhar a sério, como você faria para que alguém lhe pagasse? É
+
+engraçado, é engraçado como eu ajudo as pessoas, mas geralmente não aceito pagamento. Recentemente, tive um projeto em que alguém me procurou e disse: "Temos dinheiro, queremos te pagar". Essa é a maneira mais fácil de conseguir dinheiro: eles dizem que têm dinheiro e querem te pagar pela sua experiência. É o jeito mais fácil. Mas, como você disse, às vezes as pessoas entram em contato com frequência e nem sempre pagam.
+
+Então você precisa... e eu tenho sido ruim nisso, honestamente, eu só converso com as pessoas. Mas em algum momento você precisa se impor, precisa analisar seu tempo e pensar: " Isso é muito caro". E
+
+nem todo comprador está motivado; algumas pessoas só querem conselhos gratuitos, outras têm um projeto em mente. Mas acho que o mais importante é descobrir se a pessoa tem condições de te pagar. Se não, você vai ficar horas em ligações sem conseguir nada. Eu fui abordado por alguém assim. Por um indivíduo, e havia algum trabalho a ser feito, basicamente de uma empresa de private equity, e tivemos essas longas conversas que duraram meses, depois começamos a ter reuniões. Eu nunca recebi um centavo, e
+
+isso foi um erro total. Acho que foi uma perda de tempo. Eu deveria ter dito algo como: "Ei, vou te dar duas ligações gratuitas". Quer dizer, você não deveria dar tanta coisa de graça, mas sim: "Ei, vou fazer uma ou duas ligações, mas depois disso você tem que me pagar X dólares pelo resto do tempo". Porque, do contrário, acho que seria meio explorador, sabe?
+
+Quais são algumas outras boas práticas que você aprendeu? Com ​​certeza vou colocar o link para o livro "Alan Weiss Multi Million Dollar Consulting". Vou lê-lo também. É uma recomendação muito forte, é ótimo. Ele só quer ter mais perspectiva quando eu oriento pessoas na comunidade do Free Code Camp.
+
+Uma coisa que eu acho que é... Tangencialmente, esta não é uma pergunta direta, mas com todas as ferramentas poderosas do LLM e a produtividade dos desenvolvedores potencialmente disparando, algumas pessoas argumentariam que isso só exigirá muito trabalho de reparo, pois o código gerado será de baixa qualidade. E eu já tive o Internet of Bugs e outros criadores que, suponho, são mais céticos em relação à geração de código LLM no canal também. Então, não quero dizer
+
+que estou entusiasmado com uma ou outra opção, mas supondo que os desenvolvedores realmente melhorem drasticamente sua produtividade individual e que uma determinada empresa precise de menos desenvolvedores, e talvez algumas pequenas e médias empresas que antes contratavam um desenvolvedor, agora estejam contratando apenas casos específicos. Talvez elas tenham questões jurídicas. Por exemplo, o freeCodeCamp não tem um advogado na equipe. Temos diferentes especialistas com quem entramos em contato, por exemplo, para questões relacionadas à propriedade intelectual. Precisamos de um advogado, sabe, precisamos contratar um advogado especializado em contratos. Precisamos aprovar este contrato
+
+para esta subvenção que estamos recebendo, ou, sabe, direito internacional." Temos vários especialistas diferentes em nossa equipe, por assim dizer, dos quais tenho os dados bancários e os pago basicamente por hora faturável, com foco em direito. É possível que, para muitas pequenas e médias empresas, um acordo semelhante surja com desenvolvedores, em que eles digam: "Precisamos de uma solução que faça XYZ." E você, como é especializado nesse tipo de trabalho, quanto custaria para você implementar uma solução que faça XYZ? Minha teoria é que muito mais trabalho de desenvolvimento, em geral, não será mais um emprego tradicional com carteira assinada, como chamamos nos EUA, mas sim algo como contratos por projeto, caso a caso .
+
+Você acha que isso tem chances de acontecer? Acho que sim, e definitivamente espero que sim. Gostaria muito de ver as grandes empresas de tecnologia encolherem e perceberem que não precisam de tantas pessoas, e talvez estejamos vendo isso acontecer. Agora, estão simplesmente lançando desenvolvedores no mercado de trabalho, mas existe uma oportunidade para que as pessoas que estão por aí tenham ideias brilhantes e criem empresas menores, focadas em desafios específicos. E as pessoas no mercado podem trabalhar para essas empresas menores, o que, francamente, reduz os riscos para nós como nação.
+
+Quando as grandes empresas falham e demitem 10.000 pessoas, isso pode impactar o desemprego e a capacidade das pessoas de manter a máquina econômica funcionando. Se tivermos muitas empresas com 10.000 demissões, mas também pequenas empresas com 2, 20 ou 50 funcionários que precisam de mão de obra, não precisamos depender dessas grandes empresas para arcar com o peso do sistema que criamos. Eu realmente gosto dessa ideia e gostaria de viver nesse mundo. Ah
+
+, legal. Fico feliz em saber que você se animou com a ideia. Se isso acontecer, muito mais gente vai ter que sair e prospectar. E vão precisar entender de vendas, atendimento ao cliente, gerenciamento de projetos e muitas outras coisas que, em teoria, se você estivesse num cargo de engenheiro de software no estilo Dilbert, alguém simplesmente jogaria uma lista telefônica cheia de especificações por cima da divisória do cubículo e você começaria a trabalhar, certo? É. Você
+
+acha que esses dias já passaram ou, na sua experiência, quantos desenvolvedores as grandes empresas ainda vão manter em suas equipes ? Quero dizer, se você trabalha como desenvolvedor em uma empresa, quantos desenvolvedores eles têm? Quantos desenvolvedores nós temos? Não sei o número exato. Acho que uns 100, mais ou menos, certo? É. E esses são desenvolvedores dedicados. Acho que as
+
+startups gigantes da Série D e coisas do tipo, e claro, as empresas de capital aberto, ainda terão grandes equipes de desenvolvedores. Mas estou falando de pequenas e médias empresas. Empresas, e talvez, em certa medida, startups. Sim, quero dizer, se você é uma empresa em rápido crescimento, acho que agentes, IA e tudo isso podem compensar parte do trabalho, mas às vezes você precisa de pessoas para trabalhar, precisa de pessoas colaborando e resolvendo problemas. Então, acho que as agências menores não podem ter uma equipe completa.
+
+Por isso, terceirizam para um indivíduo ou uma equipe menor para realizar algumas de suas funções internas. Mas essas empresas podem consultá- los para resolver outros problemas. E assim, você cria um ambiente muito saudável, onde, eventualmente, as pequenas equipes ficam saturadas. Como consultor individual, eu posso ter que dizer: "Não posso aceitar seu trabalho, mas aqui está alguém com quem já trabalhei ". E agora essa pessoa tem o que sustentar sua família. E então a equipe fica
+
+saturada porque, se você fizer um bom trabalho, Acontece que você acaba conseguindo mais trabalho. Tipo, as pessoas espalham seu nome por aí, sabe? E aí, eventualmente, você fica saturado. E nem todo mundo que fica saturado diz: "Quero expandir para uma empresa enorme e fazer isso e aquilo". Não é todo mundo que quer isso. Algumas
+
+pessoas só querem acordar, cuidar da família, ganhar dinheiro, aumentar as vendas e manter o negócio como uma empresa individual ou pequena, e ficam felizes em delegar trabalho para parceiros de confiança. Tipo, honestamente, eu tenho um amigo que trabalha com consultoria, e alguém me procurou e disse: "Ei, você pode fazer esse trabalho?". E eu respondi: " Não tenho tempo agora para fazer muitos projetos". Aí eu disse: "Ei, você pode fazer este projeto?". E eu vou te apresentar, vou te
+
+apresentar, sabe, e dizer tipo, 'Ei, vou te apresentar, você faz o trabalho e aí eu não preciso realmente participar disso.' Talvez eu receba uma comissão por ter encontrado o contato, o que é bom. Tipo, sabe, eu bem que poderia tirar férias, mas ao mesmo tempo não preciso trabalhar. Às vezes as pessoas não querem fazer o trabalho. Tipo, eu pessoalmente gosto muito do trabalho de engenharia.
+
+Se eu fosse consultor em tempo integral de novo, provavelmente não faria o que faço agora na minha empresa atual . Em outras empresas, eu provavelmente gostaria de fazer algo diferente e usar meus pontos fortes, sabe? Provavelmente gostaria de trabalhar com estratégia ou ajudar as pessoas a descobrirem soluções em termos de velocidade, algo que explore meus pontos fortes que estão sendo subutilizados. Então, acho que é um mundo aberto. Há muitas oportunidades. Mas
+
+acho que as pessoas estão em uma situação muito difícil agora porque estudamos para isso e essa talvez seja nossa identidade, ou para o que fomos treinados, mas o mundo não está valorizando isso. Inteligência Artificial, mestrados em Direito, a forma como o mundo está mudando não está valorizando isso. Então, temos que... Mudar a forma
+
+como pensamos sobre o que fazemos e como agregamos valor é importante. Há alguns meses, eu estava fazendo um trabalho de estratégia para uma empresa, uma organização sem fins lucrativos, e não era desenvolvimento de software. Eu estava conversando com o fundador, basicamente dizendo: "Ei, estou enfrentando alguns problemas". E eu respondia: "Bem, aqui está como você resolve esses problemas". E ele estava me pagando. Eu estava muito
+
+ansioso porque era muito diferente de alguns dos trabalhos que eu já tinha feito. Eu estava me perguntando: "Como estou conseguindo gerar valor?". Então, perguntei a ele: "Você está obtendo valor com isso?". Ele respondeu:
+
+"Ah, isso tem sido extremamente valioso". E eu fiquei tipo: "O quê?". Então, se isso for verdade, acho que existem muitas outras pessoas com habilidades extremamente valiosas que estão procurando emprego , mas não conseguem. Sei que ainda é valioso. E
+
+isso se encaixa no que eu estava dizendo antes: o isolamento é perigoso. Você precisa sair e mostrar às pessoas que você pode fazer coisas diferentes, mesmo que você não ache que sejam valiosas, outras pessoas podem pagar muito por isso. Então, sim. E o que eu acabei de ouvir foi basicamente um discurso de vendas de 3 minutos sobre como construir uma rede de contatos. Construir uma reputação, essencialmente. E
+
+para divulgar meu próprio livro, que eu publiquei e é gratuito. É só pesquisar " livro para aprender a programar" no Google. Mas, basicamente, as pessoas precisam desenvolver suas habilidades, mas também precisam construir sua rede de contatos e sua reputação. E eu acho que, por muito tempo, as pessoas se concentraram apenas em habilidades, porque, sabe, se você está na escola, ninguém se importa com sua rede de contatos ou com o seu desempenho. O importante é: o que você realmente sabe fazer? Quais são as suas
+
+habilidades? Você vai para uma hackathon, o que você constrói? As habilidades são muito importantes. É o pré-requisito até mesmo para entrar em... A
+
+porta, né? Ninguém quer contratar um desenvolvedor que não sabe programar. Mas, quando suas habilidades atingem um certo nível, você precisa se concentrar em construir e fortalecer sua rede de contatos e sua reputação. Como você disse, se você tem uma boa reputação, as pessoas vêm até você. E para quantas vagas você se candidatou na sua busca de emprego mais recente?
+
+Na minha busca de emprego mais recente, eu me candidatei a muitas vagas. Tipo, centenas de empresas para as quais eu me candidato, e eu estava fazendo isso, enviando currículos em meio a uma pilha de currículos, como você disse. Como você está se saindo? Sim. Eu já fiz das duas maneiras. Não acho que
+
+você possa se candidatar a empresas e vencer a batalha dos currículos em meio a uma pilha de currículos. Eu já me candidatei a empresas, passei por quatro rodadas de entrevistas e eles simplesmente decidem... em uma direção diferente ou algo assim acontece e é muito desafiador. Quer dizer,
+
+acho que o currículo deveria te abrir portas, então acho que já venci. Considero uma vitória se consigo uma entrevista de emprego. Tipo, o currículo fez o que fez. Mas, quando você olha o LinkedIn e vê que 100 pessoas se candidatam, provavelmente há mais do que isso em outros setores. É muito trabalho e já fiz entrevistas com empresas que não se alinham com meus valores e eu não quero trabalhar lá.
+
+Tipo, eu sei que essa é a empresa, uma empresa grande que eu já vi, sabe, no ramo de seguros ou algo assim, e eu penso: "Nossa, seria tão legal ter isso no meu currículo". Aí eu chego lá e penso: "Não quero estar aqui". As pessoas não têm a mesma personalidade e meio que nos autoselecionamos e elas ficam tipo: "Eu "Nem eu quero você." E nem sempre é uma questão de habilidade técnica. É simplesmente porque você não se encaixa naquela cultura, seja lá o que isso signifique. Então,
+
+é muito trabalho. É muito esforço tentar descobrir o que funciona. Sei lá , horas e horas da sua vida enviando sua candidatura, indo ao local da entrevista, participando da entrevista, só para descobrir que essa é uma das muitas vagas que não são adequadas para você. Então, minha solidariedade a todos que estão procurando emprego. Mas existe um jeito mais fácil? Tipo, você já
+
+conseguiu algum emprego puramente por causa da sua reputação, em que alguém entrou em contato e disse: "Ei, vamos criar uma vaga para você"? Isso já começou a acontecer com você ? Sim, com certeza. Quer dizer, acho que não sei se alguém criou uma vaga especificamente para mim, mas eles tinham uma vaga, eu me encaixava, e aí eu consegui a vaga e acabou sendo uma experiência maravilhosa. Sinceramente, em muitos lugares para os quais me candidatei e fui aceito, acabei não gostando e pensando: " Este não é um bom lugar para mim". E
+
+essa é provavelmente a pior coisa que poderia acontecer. Acho que é quase pior do que uma demissão. Digo isso porque você fica meio que preso a uma espécie de grilhão dourado, trabalhando em um lugar que você realmente não gosta e sem poder sair porque não tem nada garantido. Se você for demitido, entra numa corrida sem fim. Não pode sair porque não tem outro emprego em vista e percebe que não quer ficar lá por muito mais tempo. É uma
+
+sensação terrível. Por causa de certas experiências que tive, passei a pesquisar as empresas muito a fundo. Uso inteligência artificial, uso o Glassdoor, leio tudo sobre elas, sobre o CEO e... Tipo, quais são os
+
+diretores de engenharia deles e quais são as experiências reais que as pessoas estão tendo aqui? E pode não ser que seja uma empresa ruim, mas pode ser ruim para mim. Tipo, a maneira como eu trabalho, a maneira como eu uso meus pontos fortes, pode ser uma fraqueza nessa empresa e meus pontos fortes não serão valorizados lá . Então você precisa encontrar empresas onde seus pontos fortes sejam de primeira linha. É isso que eles querem e será mais fácil para você, será mais fácil desenvolver sua carreira lá do que em algum lugar que não valoriza o que você traz para a mesa. Então, o que estou ouvindo é:
+
+faça sua pesquisa antes de começar a se candidatar a empresas, porque você está apenas perdendo tempo se se candidatar a uma empresa onde, tipo, eu costumo entrar no GPT-5 também e simplesmente dizer: "Ei, aqui está o nome dessa pessoa." Tipo, encontrar o LinkedIn deles, o blog, as redes sociais e criar um dossiê sobre essa pessoa. Sim. E muitas vezes, se houver material suficiente na internet, eles vão reunir tudo isso e, claro, às vezes são alucinações ou eles estão pensando em alguém chamado John Smith ou algo assim. Então você tem que ser bem específico, mas clicar em todos os links diferentes e usar isso.
+
+Basicamente, reúne todos os links para que você possa fazer isso. Você pode ter uma espécie de indicador. Ok, essa pessoa é alguém que eu teria interesse em entrevistar, por exemplo, para o podcast do freeCodeCamp, ou é alguém de quem o freeCodeCamp aceitaria uma doação? Tipo, nunca aceitamos uma doação de uma empresa de tabaco, por exemplo. Isso é algo bem óbvio que você não quer fazer.
+
+Mas, às vezes, há critérios mais vagos, como: como eles tratam os clientes? Eles têm uma boa reputação no Reddit? Coisas assim. Então, tipo, essas ferramentas são muito poderosas para fazer pesquisa e tem muita gente por aí que é bem tóxica, mas você pode sobreviver por muito tempo como um indivíduo tóxico ou como uma empresa tóxica, tipo uma empresa inteira de babacas tóxicos, certo? Sim.
+
+E sabe, o mercado vai te permitir sobreviver assim e você não quer se ver trabalhando para uma dessas empresas, certo? Sim, com certeza. E se você está entre os melhores talentos – e eu acho que todo mundo deveria ser –, tipo, você deveria encontrar um conjunto de habilidades em que você é realmente bom , dominá-las e se tornar um dos 10% ou 20% melhores nessa área. Quando eu digo isso para as pessoas, elas ficam tipo: "Ah, você não pode simplesmente dizer isso, cara." E eu respondo: "Não, eu estou dizendo para você ser o melhor no que você faz, olhar para dentro de si e descobrir o que você ama fazer, o que te anima a acordar de manhã, e simplesmente ir lá e ser o melhor nisso."
+
+Mas eu acho que esse é o caminho certo, e acho que essas empresas estão tentando encontrar grandes talentos para ajudá-las a resolver problemas, e elas começarão a perder pessoas extraordinárias se não construírem uma cultura que atraia pessoas extraordinárias. É como se você desse uma olhada no Glassdoor e visse algumas dessas empresas da Fang com uma classificação de 4,4. Sabe, eles garantem que esse nível seja realmente alto porque querem pessoas realmente boas trabalhando lá. Tipo, sabe, se eu recebesse uma oferta da Fang e uma oferta de uma empresa de médio porte fazendo a mesma coisa, e a empresa Fang me oferecesse US $ 200.000 a mais, eu não aceitaria se achasse que a empresa que não me oferecesse US$ 200.000
+
+seria muito mais agradável e eu provavelmente construiria uma carreira que eu amasse mais lá, entende? E para outras pessoas, isso é um absurdo. Tipo, sim . Isso equivale a cerca de 200 mil dólares. Você pode, você pode, você pode se aposentar 20 anos mais cedo.
+
+E se aposentar cedo, certo? Sabe, é o que muita gente pensa, mas até você ter estado lá e trabalhado em um ambiente hostil, acho que as pessoas subestimam o impacto que isso causa. Realmente. E as pessoas não calculam os custos. Tipo, acho que isso é coisa do Stephen Covey. Faça as contas dos custos. Acho que
+
+é Stephen Covey. O custo não é um problema, eu não gosto de lá, então procuro outro lugar. O preço a pagar é a sua saúde, os seus relacionamentos, o seu casamento, a forma como você interage com o mundo. Você está com raiva, você está chateado porque o trabalho não está bom. Você desconta no seu cachorro, desconta na sua esposa, no seu marido, e acaba tendo câncer de cólon. Tipo, eu estava assistindo a
+
+uma entrevista e pensei: "Ok". Acho que a Netflix provavelmente é um ótimo lugar, mas tinha um cara que era diretor na Netflix. Ele estava em uma entrevista, em um podcast, e disse que estava trabalhando o tempo todo, se esforçando muito, e então teve um susto com a saúde, tipo, " você agora tem câncer". E é como se eu perguntasse: " Será que o quanto você trabalhou contribuiu para esse resultado?" E também, sabe, parte disso é trabalho pessoal, tipo, acho que precisamos estabelecer limites para nós mesmos e nem sempre a culpa é da empresa pelo quanto trabalhamos, pelo que fazemos ou por como nos sentimos.
+
+Precisamos ter algum controle sobre isso. Mas não deve chegar ao ponto de você ser pressionado. Fomos sutilmente incentivados nessa direção por alguns empregadores. Tipo, eu li um livro chamado "Apple in China". Eu li isso recentemente. É um livro muito bom se
+
+você se interessa pela China, especialmente pela Apple, pelo setor de manufatura e pela migração da produção para a China. Mas há uma cena muito comovente no livro em que eles falam sobre muitas pessoas que estavam indo para a China para investigar o fato de que os engenheiros de software e hardware estavam morrendo. E tipo, 45 a 50 por causa de fumar muito, beber muito, por causa do estresse. apropriadamente. E, tipo, um dos gerentes de engenharia estava no funeral de outro gerente de engenharia em uma tarde de domingo, e aí ele teve que sair mais cedo para ir a uma reunião geral da equipe de engenharia. Como se ele nem tivesse tido
+
+tempo de ir ao funeral do amigo falecido. Sabe, um funeral num domingo porque a cultura de trabalho era tal que eles não conseguiam diminuir o ritmo de forma alguma. Eles precisavam continuar se movimentando para cumprir esses prazos divulgados publicamente e coisas do tipo . Então, sabe, tipo, de novo, eu não sei de nada, não sou médico. Quero deixar claro que não somos uma instituição médica. Nada disso constitui aconselhamento médico
+
+ou algo do gênero. Hum, não sei sobre o caso a que você se refere, da pessoa que contraiu câncer. Hum, isso pode ter sido genético. Pode ter sido apenas uma coincidência. Pode ser algo relacionado ao estilo de vida.
+
+Câncer evitável. Pode ser que eles estivessem muito ocupados para fazer uma colonoscopia. Assim que seu plano de saúde cobrir o exame de colonoscopia, faça o exame. Pegue. Eu consegui um. Certo? Faça um
+
+exame de próstata. Sim. Eu sei que é humilhante. Faça um exame de próstata. Por exemplo, se você tem histórico familiar, argumente com o médico que precisa realizar esses procedimentos o quanto antes. Obtenha a aprovação deles
+
+porque você não quer morrer aos 40 anos de uma doença evitável que estava no histórico da sua família, porque, sim. Muito ocupado para conseguir um... Então, esse é o meu anúncio de utilidade pública para o podcast. Eu sempre tenho que dar um jeito de encaixar um.
+
+Isso realmente muda tudo. Isso realmente se encaixa no trabalho, porque é como se você estivesse trabalhando em um lugar onde não pode se afastar do teclado por uma hora e a empresa simplesmente pensasse: "Meu Deus." Tipo, você está preocupado em ser demitido. Tipo, você provavelmente não vai tomar mais. Você provavelmente não vai à consulta médica. Provavelmente você não chegará
+
+um pouco mais cedo ao jogo da liga infantil dos seus filhos . Tipo, isso não promove a vida, eu acho, sabe? Então, ao mesmo tempo, quero que todos que estão assistindo a isso se solidarizem e pensem: "Caramba, meu aluguel está vencendo, meus filhos estão com fome. Eu aceitaria literalmente qualquer emprego." Certo? Tipo, eu entendo perfeitamente
+
+isso. E eu não quero que as pessoas recusem, tipo, se elas realmente precisam de renda, que recusem por princípios . Não, vou esperar e encontrar um emprego que me agrade . Sei que eles estavam falando de uma posição de relativo privilégio, por terem essas opções à sua disposição. Então, uma das coisas que você disse e que eu acho realmente interessante é justamente ser seletivo.
+
+E você já realizou dezenas de trabalhos de consultoria e como freelancer. Você disse que realmente acredita nas pessoas. Seu modo de operar é chegar, aprender, chegar a um consenso e fazer com que a equipe trabalhe em conjunto. Hum, como esse processo geralmente se desenrola na prática? Por exemplo, digamos que você consiga um cliente e apareça de surpresa .
+
+Como você gerencia esse relacionamento? Como você define o escopo? Hum, eu só quero conselhos práticos para pessoas que estão planejando fazer isso. Sim, então você poderia repetir a pergunta , Stephen? Sim, qual é o fluxo de negócios? Qual é o fluxo de trabalho
+
+associado a ajudar um cliente e ser pago por isso? Sim, então, suponho que isso aconteça depois que o contrato for assinado e vocês começarem a analisá-lo? Talvez se você pudesse nos explicar todo o processo, como você o abordaria. OK. Acho que desde o início você já tinha isso em mente por ter trabalhado em consultoria e como freelancer.
+
+Sim, acho que desde o início funciona assim: eles entram em contato comigo, você entra em contato com eles, e então vocês conversam. Se a conversa correr bem, pode acabar se transformando em um relacionamento. Se não correr bem, nada acontece. Mas se tudo correr bem, pode até virar um noivado, mas acho que você precisa fazer muitas perguntas. E uma pergunta que você precisa se fazer é: "Eu posso ajudar essas pessoas?"
+
+Você sabe? E às vezes a resposta é não, mas às vezes a resposta "não" não é óbvia. Por exemplo, às vezes eu tecnicamente não tenho a capacidade técnica para ajudá-los, e eu diria que isso é muito raro. É muito raro. Tipo, e não estou dizendo que seja raro para mim. Acho que
+
+muita gente ficaria surpresa com o quão pouco você precisa saber — não pouco, mas as pessoas pensam que você precisa saber muito para poder ajudar uma empresa. Sabe, você só precisa saber um pouco mais sobre o problema, e muito disso se resume ao reconhecimento de padrões. Como já trabalhei em duas empresas, sei quais são os problemas que elas enfrentam e sei como os resolvemos. Vou aplicar exatamente a mesma coisa. É como se você não estivesse reinventando a roda muitas vezes.
+
+Então, posso ajudá-los? Então, na parte técnica, sim, posso ajudá-los tecnicamente. Posso ajudá-los em termos de organização? Será que eles vão me permitir entrar, ensinar, ajudar e apoiar a resolução do problema que eu sei resolver? Essa é uma questão diferente. Às vezes você consegue entrar em certos
+
+lugares e resolver o problema em uma ou duas semanas. Às vezes, a cultura é tal que você precisa influenciar as pessoas e construir confiança. Em praticamente todas as organizações em que você trabalhar, terá que construir confiança, porque não conseguirá realizar a parte técnica sem as pessoas que lá trabalham. Então, não é "Então", porque você não terá as permissões necessárias para acessar os sistemas. Você não sabe como o sistema funciona porque você é... você é... você é novato desde o primeiro
+
+dia. Então, se você não consegue construir confiança, eles não vão te contar nada nem facilitar a sua vida para que você descubra como ajudá-los, o que parece contraditório, já que eles te contrataram para estar lá e agora não vão te ajudar a resolver o problema? Eles vão gastar de 10 a 50 mil dólares para sabotar você. E vão mesmo. Podem até conseguir.
+
+Tipo, se você for um babaca e aparecer lá e eles disserem: "Eu sei de tudo. Eu construo todos os sistemas. Eu trabalho para o Google." E isso...
+
+E tipo, eles não vão querer, eles não vão querer nada com você. Então, você precisa ser uma pessoa com quem você gostaria de trabalhar. Mas, quando se chega a esse ponto, é preciso tentar descobrir, tipo , quais são os desafios que eles estão enfrentando? Muitas vezes, e isso é praticamente o padrão na área de consultoria. Eles vão te chamar para resolver um problema, e você ou resolve esse problema ou descobre que esse não é o problema que precisa ser resolvido. Então, você precisa
+
+voltar atrás e dizer algo como: "Ei, eu sei que você disse que esse é o problema, mas isso é um sintoma, e o problema real é muito mais profundo. O problema real é que existe um processo falho que está causando essa dor, ou as pessoas estão infelizes, talvez por estarem sobrecarregadas, por causa de algum alarme de plantão ou algo assim. Então, trata-se de tentar melhorar a vida das pessoas . É isso que você está tentando fazer. Você está tentando reduzir a dor organizacional. Sabe, alguém está recebendo ligações,
+
+alguém está sendo bombardeado o tempo todo. É assim que você se move dentro da organização. Acho que me desviei do assunto novamente. Sim, deixe-me recapitular o que você disse porque acho importante. Você precisa influenciar as pessoas na organização. Fechar a venda é apenas o
+
+primeiro passo. Depois, você precisa entrar e realmente conseguir acesso, e com sorte você conseguirá acesso sendo gentil com todos." Os responsáveis ​​pela seleção dentro da organização te respeitam, te dão acesso fácil às coisas que você precisa e não ficam paranoicos pensando: "Será que essa pessoa vai me substituir em algum momento? Será que vão terceirizar meu trabalho? Será que estou treinando meu substituto?". Tenho certeza de que
+
+esse tipo de paranoia é comum, principalmente entre desenvolvedores, que tendem a ser mais paranoicos do que a média das pessoas. Mas, basicamente, você descobre quais são os desafios. Muitas vezes, eles te contratam para resolver um problema. É apenas um sintoma de um problema muito maior. E aí, você pensa: "Será que você precisa reavaliar o escopo do contrato? Tipo, 'Olha, eu
+
+também posso te ajudar com isso, mas está além do escopo do meu contrato de 10 mil dólares'". " Isso vai levar alguns meses." Sim. Então, você começa do zero, agrega valor imediatamente, ajuda a aliviar o sofrimento das pessoas e, depois de fazer isso e resolver o problema em questão, na maioria das vezes eles terão outros problemas, então você simplesmente permanece lá. Tipo, você resolve esse problema, resolve esse problema e continua trabalhando naquela organização à medida que os problemas surgem. Porque
+
+não há mais problemas e você termina. Tipo, você pensa: "Ok, eu ajudei vocês com tudo o que eu achava que podia ajudar." E então você segue em frente. Ou você diz: "Sabe, esses não são mais os problemas que eu quero resolver." E então você segue em frente. Então, você
+
+cobra por hora ou com base no escopo do trabalho? Como você calcula quanto cobrar? Ah. Dê uma olhada naquele livro do Alan Weiss. Não você, mas todo mundo. É muito
+
+interessante. Então, eu cobro por projeto. Já trabalhei com cobrança por hora. Recentemente, tenho sido muito convencido Sobre essa ideia de precificação baseada em valor, que muita gente pensa ser apenas precificação por projeto, precificação baseada em projeto. Mas é como quando você está falando com um cliente: " Veja, eu nunca mais vou fazer consultoria porque agora todo mundo vai assistir a este vídeo e pensar: 'Ah, você sabe como vender.'"
+
+Mas, basicamente, os clientes querem manter o dinheiro deles na maioria das vezes. Bem, depende. Alguns clientes, eu acho, clientes maiores, sabe, se você consegue resolver o problema deles, a racionalidade é: eles pagarão o que for preciso , mas muitas vezes as pessoas olham para o custo. Elas não olham para o valor. Então, precificação baseada em valor, venda baseada em valor, é para que eles mantenham o dinheiro. Eles vão ficar perguntando:
+
+"Qual é o preço?" E você desconversa e diz: "Bem, este é o problema que você está tentando resolver." Quanto isso vale para você? Qual é o valor disso para você? Dessa forma, você é pago pela sua expertise.
+
+Sabe, eu não sou pago para ficar sentado fazendo esse trabalho por horas a fio. Sou pago porque existe algo que eu sei intrinsecamente , através de todos os meus empreendimentos em consultorias, que é como um valor de juros compostos ao qual você tem acesso. Então, podemos cobrar por hora, mas eu vou te ajudar com uma solução. Se o resultado que eu entrego vale 10 milhões de dólares, é justo que eu receba apenas 200 dólares por hora? Não sei.
+
+É, talvez você queira tentar obter uma parte desse valor, sabe? Sim, faz todo o sentido. Então, descobrir o que... e, em geral,
+
+na minha humilde opinião, não como alguém que fez isso por muito tempo, trata-se de identificar centros de custo e reduzi- los, ou de identificar oportunidades de lucro. Essencialmente, você percebe isso. Exatamente. Ajudá-los a ganhar dinheiro ou ajudá- los a gastar menos? E se você os ajudar a economizar muito mais do que o valor que está pedindo, será fácil contratá- lo para resolver esse problema, desde que você tenha a reputação e a experiência necessárias para ser confiável nessa tarefa.
+
+Há riscos associados a isso, e isso influenciará o quanto você poderá receber deles. Mas parece que, se você conseguir mudar o foco para o valor — você disse que usou o termo "precificação baseada em valor" —, se você conseguir mudar isso, ótimo. Não quero tomar muito do seu tempo, mas gostaria de falar brevemente sobre Ruby. Obviamente, muitas pessoas devem estar pensando: " Quem se importa com isso hoje em dia? Os desenvolvedores de Ruby on Rails só vão gerar código Python ou JavaScript? As pessoas ainda
+
+olham para o código?". Vejo muito cinismo assim, mas você é um Rubyista convicto. Você é... Sou fã da
+
+linguagem Ruby e da comunidade de desenvolvedores Ruby . Você começou sua trajetória de sucesso e se tornou um nome conhecido na comunidade Ruby por meio de palestras extremamente populares que ministrou em conferências. E eu preciso te perguntar: por que Ruby? Bem, acho que tudo começou quando
+
+eu observava todos esses projetos em Python e pensava: " Por que não Ruby? Qual é o fator limitante?". E o que descobri foi que a comunidade Python era mais voltada para ciência de dados, mais focada em dados. Havia uma comunidade vibrante em torno disso. Eu pensei: "Ok,
+
+então por que não?". Bem, algumas das bibliotecas necessárias para treinar modelos não existem em Ruby. E então, um senhor chamado Andrew Kane começou a desenvolver bibliotecas Python, como se dissesse: " Certo, biblioteca Python, agora vou criar uma em Ruby". Ele simplesmente começou a construir todas elas. E eu fiquei tipo...
+
+Isso é realmente interessante. Mas ninguém da minha parte estava usando, não havia muita gente usando, não o número de usuários que você imaginaria . Então eu pensei: "Bem, essas pessoas ainda não estão desenvolvendo em Ruby", e pensei: " Deixa eu tentar fazer algo, porque acho que é possível, e acho que se as pessoas soubessem como fazer, elas iriam querer fazer". Então, minha primeira tarefa foi tentar construir um modelo de aprendizado de máquina que pudesse prever o tempo usando alguns dados. E eu construí , apresentei na RailsConf e centenas de desenvolvedores apareceram, a fila estava enorme porque eles nunca tinham visto alguém fazer isso em Ruby. Mesmo com
+
+as ferramentas disponíveis, ninguém tinha se dedicado a explicar cada passo do que é necessário para treinar um modelo de aprendizado de máquina. E eu tinha acabado de aprender isso, porque paguei uma fortuna para fazer um curso sobre como fazer exatamente a mesma coisa em Python. Eu pensei: "É só portar para Ruby", e as pessoas adoraram. E eu fiquei tipo, Tem algo aqui, tipo, existe motivação. Então, isso me deu a energia para continuar trabalhando nisso. Mas o
+
+que reforçou minha tese foi que, naquela época, eu pensava: " Bem, você não ia querer dizer para o seu CTO: 'Vamos treinar todos os nossos modelos de e-mail em Ruby', certo? Você usaria Python porque é o padrão e é o que todo mundo usa.' É tipo, ' Ah, claro'. Mas no mundo do aprendizado de máquina , era totalmente diferente. Porque se tudo o que você precisa fazer para começar a construir seu produto de IA é fazer uma chamada de API para Anthropic, OpenAI, Mistral ou qualquer que seja seu modelo favorito , adivinhe? Nada disso é inerentemente
+
+Python. Nada disso é inerentemente Ruby, Elixir. Cite sua linguagem favorita." Então, ficar preso à linguagem simplesmente não faz sentido. E a outra coisa é que Ruby, e especificamente o Rails, que o DHH construiu, tem um Uma maneira muito, muito opinativa de desenvolver um aplicativo web, um produto SaaS, muito, muito rápido.
+
+Eu apostaria todas as minhas fichas em um desenvolvedor Ruby para desenvolver um aplicativo SaaS muito rápido para sua startup, mais rápido do que um desenvolvedor Python, melhor arquitetado, melhor estruturado, porque é para isso que o Rails serve . Ainda existem startups que constroem coisas em Ruby. Então, se essa é a tese, você constrói seu aplicativo SaaS e depois faz suas chamadas de API para o Rails e é ótimo. E então eu comecei a realmente acreditar que você poderia fazer isso com Ruby e Rails. E então eu comecei a construir uma pequena biblioteca, chamada SimpleRag.
+
+Era uma pequena biblioteca de recuperação, geração aumentada, para demonstrar, explicar e ensinar como você pode usar recuperação, geração aumentada ou busca por IA em um aplicativo em Ruby e Rails, para dizer que você também poderia fazer isso aqui. Agora, em escala de produção, você sabe... Não posso usar isso, mas... mas... mas...
+
+mas os conceitos, sabe, tentando me afastar apenas da linguagem e das ferramentas e entender fundamentalmente os conceitos, você entende que isso pode ser feito em várias linguagens, mas a questão é se há suporte para fazer isso em nível de produção . Isso é realmente interessante. Então, se eu tivesse que tentar resumir da melhor forma possível o que você acabou de dizer, porque o mundo meio que deixou de lado a ideia de fazer seu próprio aprendizado de máquina para simplesmente fazer chamadas de API para esses modelos já treinados e deixar que eles façam todo o trabalho pesado, bem, o Rails é muito bom em fazer chamadas de API e integrar coisas a um aplicativo web existente. E como o Rails é tão poderoso e tão opinativo, é muito mais rápido construir um aplicativo Rails do que construir um aplicativo Node.js e Express.
+
+É provavelmente uma ordem de magnitude mais rápido em termos de manutenção e tudo mais. Toda vez que eu mexo em um repositório Python, mesmo nas bibliotecas Python, Quando eu estava experimentando portar algumas coisas para Ruby, eu sempre pensava: "Esse código não está limpo." "Não gosto dessas funções, esses métodos ou funções são muito longos." E os programadores Ruby tendem a ter métodos bem pequenos. E eu conseguia ver como alguém pode fazer uma bagunça no mundo das aplicações Python.
+
+E você precisa contratar consultores, muitos consultores, porque é preciso limpar tudo. Já no Rails, toda vez que me deparo com uma aplicação Rails, a estrutura é sempre a mesma. Pode haver bagunça, mas elas parecem um pouco mais contidas. Incentiva a uniformidade. Sim, e o Rails toma muitas decisões simples para você, para que você possa se concentrar em: "Ok, o que essa plataforma realmente faz?"
+
+Não nos detalhes de implementação dessa plataforma de negócios. Na tecnologia, sim. São as pessoas. Novamente, voltando às pessoas. As pessoas na comunidade Ruby e Rails têm seu próprio ethos sobre uma cultura de ensino, honestamente. Quando programadores
+
+Ruby ensinam outros programadores Ruby, eles dizem: "Ah, sabe, aqui está..." A maneira idiomática como fazemos, como escrevemos certas coisas. E você pode fazer isso de várias maneiras, mas nós fazemos assim como comunidade porque torna tudo mais simples." E então esses padrões
+
+se proliferam por toda parte. Então, quando você sai de uma empresa Ruby on Rails e vai para outra, você pode confiar que certos padrões estarão lá se alguém tiver tido um mentor, sabe? Eu acho que a mentoria é muito forte nessa comunidade. E acho que é importante. Sabe, a Pivotal Labs e muitas outras organizações são, digamos, exemplos de melhores práticas, no sentido de que elas contratam pessoas, as imergem na maneira Rails de fazer as coisas e muito disso está ligado a metodologias ágeis.
+
+Clean Code é um livro popular, assim como os livros do Pragmatic Programmer e coisas do tipo. Então as pessoas já estão imersas nessa cultura de profissionalismo. E isso facilita a substituição de um desenvolvedor Rails por outro, por exemplo. Sim. Então, essas são todas grandes vantagens. E acho que agora,
+
+graças ao trabalho que Você e o Andrew Kane, e várias outras pessoas, têm feito isso. Você pode continuar usando Ruby e não há motivo para migrar só porque o Python pode ter uma vantagem absoluta em termos de ferramentas e bibliotecas. O valor comercial real dessas bibliotecas específicas do Python que ainda não foram portadas para Ruby não é necessariamente tão grande a ponto de você precisar usar Python para elas. Faz sentido ? Foi um bom resumo do que você disse? Sim, eu diria
+
+que sim. Ótimo. Foi um prazer absoluto. Aprendi muito com você e gostei muito de conversar sobre como você é seletivo em relação às vagas para as quais se candidata e sobre a importância de haver uma boa compatibilidade cultural entre você e a organização para a qual está se candidatando, e sobre o papel de construir sua reputação por meio dessas palestras. Você participa de muitas conferências.
+
+Acho que a Test Double tinha alguma política em relação a isso. Basicamente, você poderia ir à Test Double, a agência onde você trabalhava antes, sob a supervisão de Justin Searles. Eles tinham uma política de que, se você conseguisse submeter um artigo para uma conferência, eles basicamente pagariam sua participação para que você pudesse apresentar. Essa foi uma ótima ideia. Quantas conferências você já participou?
+
+Nossa, eu teria que verificar... Foram muitas. Dezenas? Talvez uma dúzia
+
+, talvez não exatamente uma dúzia, mas... É, provavelmente participei de quase tantas conferências quanto palestrei, porque em muitas delas acabei palestrando. Mas sim, foram muitas. E, só para finalizar, qual seria
+
+sua humilde opinião ? Hum. Se alguém quiser se envolver com conferências, vale a pena ir a uma conferência presencial em 2026, quando tudo está online e existem servidores no Discord , subreddits e tantos outros lugares onde as pessoas podem ir para potencialmente discutir sobre o assunto? São coisas diferentes. Por exemplo, você acha que a participação presencial em uma grande conferência agrega muito valor? É
+
+justificável? Ah, é 100% justificável. Acho que ainda mais agora, sabe, a COVID obrigou muita gente a ficar em casa, então essa interação humana, aprender, sabe, se comunicar com outras pessoas é enorme. Aliás, tão importante que muitas vezes, quando...
+
+Comecei a fazer isso mais. Não fazia isso no começo, mas existe esse conceito chamado " corredor", onde em vez de ir às palestras — e eu apoio totalmente as palestras também, porque... — você fica no corredor conversando com as pessoas. É tipo, por que
+
+alguém gastaria 900 dólares em um ingresso que talvez tenha pago do próprio bolso , só para ir a um corredor conversar com as pessoas? É porque ter uma alta concentração de engenheiros, pessoas com a mesma mentalidade, que não estão falando só de software, programação, nossa profissão, mas conversando... Falar sobre cerveja artesanal favorita, comida, sair, sabe, se divertir, ir ao karaokê.
+
+É muito significativo. É muito divertido. E a vida não pode ser só ficar sentado em frente a um teclado, trabalhando, trabalhando, trabalhando. Quer dizer, isso também é divertido . Eu amo meu trabalho. Você precisa sair
+
+e fazer outras coisas. Precisa sair, conhecer pessoas e construir sua comunidade. E, honestamente, minha opinião é que, sim, eu estou fazendo muito marketing, conhecendo outras pessoas, mas conforme as coisas mudam no nosso mundo, sabe, com mestrados em direito e o trabalho indo para lá e para cá, sua defesa contra a mudança se torna sua comunidade. Se você está sozinho, pensando: "Sou só eu, estou sozinho, me inscrevendo em conferências ou fazendo meu currículo, tentando sobreviver sozinho", vai ser muito difícil, porque existe um grupo inteiro de pessoas conversando, se comunicando e se ajudando. Outra coisa. Tipo, recentemente, sabe,
+
+um amigo meu está mudando de emprego e eu disse: " Ei, se eu puder te ajudar de alguma forma, seja porque já passei por um processo de negociação antes ou fazendo qualquer coisa, tipo, dar uma olhada no seu currículo. Eu já revisei currículos." Meu amigo não está indo para o emprego sozinho. Ele está indo com 20 amigos que o apoiam e o ajudam a conseguir a vaga, tanto dentro da empresa quanto fora dela. Se a gente for sozinho, é muito mais difícil porque não tem todo esse apoio. E
+
+eu acho isso muito importante. Tipo , apoie os outros, divirta-se , conheça outras pessoas, você aprende muito. Eu aprendi tanta coisa diferente. E as pessoas têm trajetórias de carreira super interessantes. Tipo, elas nem são da área de tecnologia e aí estão nessa conferência. E você pensa: "Como você
+
+foi da educação musical para isso?" Ou, acho que um dos meus colegas de trabalho é da área de música... Antes, dávamos aulas particulares de música, tínhamos uma banda e coisas do tipo. E agora nós dois
+
+trabalhamos com engenharia de IA. É muito interessante ver como as trajetórias são diferentes. Você olha o currículo de alguém no LinkedIn e imagina como a pessoa chegou onde está, mas a verdade é que cada um encontra seu próprio caminho, o que torna tudo menos intimidante. Aliás, esse é um dos motivos da existência do freeCodeCamp. Eu era um professor de 30 anos que aprendeu a programar para otimizar e automatizar os processos administrativos da minha escola antes de me envolver com o freeCodeCamp e começar o projeto, que cresceu bastante. Em organizações como o
+
+freeCodeCamp, encontro professores na casa dos 30, caminhoneiros, pessoas de 40 e 50 anos que trabalhavam com direito corporativo e queriam mudar de área, e que aprenderam a programar. A comunidade de desenvolvedores é incrível! Nem todo mundo, né? Tem muita gente que acabou de se formar em Ciência da Computação e conseguiu o primeiro emprego como desenvolvedor aos 22 anos, e coisas assim. Mas pessoas que estão em uma segunda carreira, mudando de carreira, são muito bem representadas na comunidade de desenvolvedores, e se você for a qualquer conferência, vai perceber isso.
+
+Não são só as pessoas que fazem isso desde que o pai delas comprou um computador quando elas tinham 5 anos, certo? Tem gente que nem tinha computador até a idade adulta, talvez tenha ganhado um smartphone e se aprofundou nele, depois comprou um laptop e se aprofundou ainda mais, depois instalou Linux, e aí tem toda essa progressão de se tornar cada vez mais técnico, e parece que você está conhecendo muita gente assim. Seguir sozinho é muito mais difícil. Acho que essa é uma ótima dica para terminar. Construa sua comunidade, encontre seus defensores internos quando estiver se candidatando a vagas, seja uma pessoa tranquila e faça muitos amigos. Imagino que você, Landon,
+
+tenha muitos amigos na comunidade Ruby. Na comunidade de consultoria, simplesmente sair e fazer amigos é fundamental, e esses relacionamentos vão te ajudar no futuro, independentemente do que você escolher fazer. Esse é o segredo pelo qual eu vou a conferências agora. É como se eu fosse assistir a uma palestra específica. Literalmente, vou lá para encontrar pessoas que conheço e, muitas vezes, fazer novos amigos. Isso
+
+é uma parte enorme. É isso aí, cara . Bom, eu realmente agradeço por você ter nos dado tanto do seu tempo e por ter gravado tanto do seu conhecimento em áudio. Eu recomendo que todos confiram o link para o seu blog, que eu coloquei na descrição do vídeo/notas do podcast, e fiquem de olho em você, porque estou muito animado para ver aonde você vai chegar daqui para frente . É, obrigado por me receber no podcast e, claro, foi ótimo. Eu
+
+agradeço. Bom, pessoal, até a semana que vem, boas programações!
