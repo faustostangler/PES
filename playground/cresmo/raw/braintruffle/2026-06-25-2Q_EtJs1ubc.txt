@@ -1,0 +1,175 @@
+---
+video_title: "Stabilizing an Unseen Triple Pendulum"
+video_id: 2Q_EtJs1ubc
+channel_name: "braintruffle"
+channel_id: UCV4Rx1m-9HmtqHET7GjnVOA
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=2Q_EtJs1ubc
+video_date: 2026-06-25T11:08:21+00:00
+video_description: |
+  Try Brilliant’s tutor for free: https://brilliant.org/braintruffle/ . You’ll also get 20% off an annual Premium subscription.
+  The Math of Uncovering Hidden Motion
+  
+  
+  Free & Exclusive content for this video
+  https://www.patreon.com/braintruffle
+  --------------------------------
+  + 2 Code examples (free for everyone)
+  + 2 Coding tutorials
+  
+  
+  Chapters
+  -----------------
+  00:00 The Triple Pendulum Problem
+  02:25 How Intuition Fails
+  05:28 The Language of Modes
+  09:12 When the Motion Is Hidden
+  10:31 The Observer Trick
+  12:52 Seeing Through Motion
+  16:18 How to Build It in Real Life?
+  
+  
+  Special thanks to my Patreon supporters
+  https://www.patreon.com/braintruffle
+  --------------------------------
+  Alexandros Karypidis
+  Aris
+  Brian Terry
+  Dane
+  Darrell Thomas
+  David
+  FinTech800
+  G Ryan
+  Gaelan Chen
+  Houston Lucas
+  Ka Lok Lam
+  Ken
+  Luis Adame Rodríguez
+  Marac
+  Marco Mariani
+  Matthew Chang
+  Matthew Piziak
+  Nandan Shettigar
+  Nathan Manville
+  nullstyle
+  Иннокентий Мокин
+  Pensées
+  Ruben Fernandez
+  Ryan Fergerson
+  Samuel Bencid Santana
+  TedMeftah
+  Tony Tonglin Zhang
+  Torey Hilbert
+  Tristan
+  whetupaitai gmail com
+  William Strealy
+  Yanqi Jing
+  3ichess
+  .. and all my patrons!
+  
+  
+  Music by Epidemic Sound
+  --------------------------
+  Echo - Lennon Hutton
+  Miles - Out To The World
+  Axon Terminal - Out To The World
+  Coast Phase - David Celeste
+  
+  
+  This video was sponsored by Brilliant.
+  
+  
+  Thank you for watching!
+  Torsten
+---
+How would you balance a triple pendulum without seeing it? This is about one of the cleverest ideas in control using the few things you can measure to infer what’s happening underneath, and then using that estimate to control systems that seem impossible to control. And this is not an AI trick. It is classical theory, used in rockets, robots, drones and so on. So let’s build up to it, starting with a single pendulum where we can see everything.
+
+And once you get a feel for how it reacts, you can move the tip around quite easily. It’s a bit shaky, but still easier than balancing a double pendulum. I mean, you can kind of feel how each pendulum has to move to support the next one. For instance, to catch this mass before it tips over, I need this mass to move over here. And to make that happen, I need to push the cart over there.
+
+It feels a bit like backing into a parking space with two trailers, under time pressure. But knowing what to do and actually doing it are two different things. And it gets worse the more pendulums I add. For the triple pendulum, even keeping it still is impossible for me. Now, in slow motion, I could probably do a better job.
+
+So it makes sense that a fast controller should be able to balance it. And … yeah. This controller can balance 3 or even 7 pendulums, and drive them to a goal position. But it can even do this without seeing the intermediate pendulums. It only receives the x-position of the cart and the top mass.
+
+And yet it can still balance the system and move it toward different goals. And just look at this problem. I was already bad at balancing the double pendulum, but here I have no useful feedback at all. And it gets wilder, because we can remove the top-mass measurement as well. This controller only sees the cart and yet it can balance.
+
+It feels unreal, because it seems to require information you do not have. And I don’t want this to be a show-off of some cool controller where you just leave with a feeling of resignation. Because as hard as this problem looks, the control logic is surprisingly simple. So let’s start by controlling a single pendulum by intuition, and then see why that breaks down for a double or triple pendulum. This video is sponsored by Brilliant.
+
+More at the end. So, here is what we can measure about the pendulum’s motion: the cart’s position and velocity, and the pendulum’s angle and angular velocity. And if we know all four variables, we can use them to write a rule for the push force. That is the controller’s job. It senses that something is going wrong, and commands the actuator to push back.
+
+So what could be the simplest rule to prevent this pendulum from tipping over? Obviously, the angle is the “out of balance” measure. So the more the pendulum leans to the right, the more we push the cart to the right as well. Which means the push force is just the angle times some factor. And if that factor is too small, the push won’t catch the pendulum.
+
+But if we make it stronger, the pendulum is caught and balances. The problem is that the angle keeps asking for a push until the pendulum is upright. But by then, inertia carries it past the top, and we catch it again from the other side. So it oscillates. To reduce that, we reduce the push force when the pendulum approaches the upright position quickly.
+
+And that is exactly what angular velocity tells us. Near the top, the angular velocity is large, and during approach it has the opposite sign of the angle. So if we add some angular velocity to the push force, it takes away part of the “too much pushing around the top.” And it works because we basically attached a virtual spring-damper to the pendulum. Now the pendulum balances, but the whole cart drifts, and I want it to reach different goal positions.
+
+How do we do that? The cart drifts because catching the pendulum required more push in one direction than the other. So if we want the cart to drift toward a goal, we can create that imbalance deliberately: we bring the pendulum out of balance toward the goal. And we do that by pushing the cart away from the goal. Then the pendulum tips toward the goal, and as we catch and balance it again, we are left with the drift we wanted.
+
+And again, we use cart velocity to remove the overshoot. It is a bit like pulling a rug under your feet, so you have to step in that direction to stay balanced. So the idea was to first tune the factors that balance the pendulum, and then add the factors that take care of the cart position. And that separation works because once the pendulum is balanced, it does not matter quite as much how quickly we take care of the cart. But with a double pendulum, the controller has to balance two pendulums at the same time, and the top one is only influenced indirectly through the lower one.
+
+We measure two more variables for the new pendulum, but a push that helps the top pendulum may hurt the lower one. It is still only about those six feedback factors. But choosing them by trial and error feels like playing the lottery. So we need a more structured way to think about motion. The six variables are convenient for describing the system, but they are not always the best language for understanding it.
+
+A better language is modes. And you have seen modes before in vibrating strings, as their natural ways of moving. Instead of describing the motion of every point on the string individually, we can describe the whole motion as a unique mixture of patterns from a natural catalogue. Here, for instance, the motion is composed of two times the first mode, minus half of the third mode, and a bit of a higher mode. And this language is insightful because each mode has its own personality.
+
+Some modes oscillate. Some die out. Some grow. For a real string, these patterns usually oscillate, and the higher modes often decay faster. But more generally, when a system moves, decaying modes disappear over time, while growing modes take over.
+
+And that is the problem with an inverted pendulum. Around the upright position, every possible small motion can be built from a combination of these six modes. And some of these modes are unstable, so tiny deviations grow. Without feedback, those modes, those fundamental motion patterns, are simply part of the system’s natural behavior. We can observe them, but we do not get to choose them.
+
+So how is the mode language useful for calculating the six feedback factors? Well, once we connect the controller, the old system and the feedback law together become a new system. And that new system has new modes. There are still six modes in total, but some come in pairs that move together, so visually we end up with four distinct motion patterns. And because the feedback factors are now part of the system, they show up in the modes, and in how fast those modes grow or decay.
+
+And now we can go backward. Instead of accepting the modes the pendulum naturally has, we decide what kind of modes we want. And because we want the pendulum to balance, to return upright, we want all modes to decay. And the math of modes tells us how to tune the six factors so that this happens. That is how we end up with these final modes.
+
+And you can see this as two different worlds. In the physical-variable world, we choose the feedback factors directly, without immediately seeing what kind of motion they create. In the mode world, we choose the behavior directly, so that all modes decay, which is much closer to what we actually care about. So it is helpful to think of control as changing the system’s natural behavior. The uncontrolled pendulum naturally falls away.
+
+The controlled pendulum naturally returns upright, at least around the upright position for which we calculated the modes. We made a new system. Now, in principle, the cart can influence a longer and longer chain, because every link is connected. But the farther up the chain you go, the more delayed and less direct that influence becomes. So each added pendulum makes balancing more sensitive.
+
+And while all of this pendulum’s modes are theoretically controllable, the cart does not influence all of them equally strongly. In a real system, with noise and limited force, that matters. But you don’t necessarily need to control every mode. If you can practically control all the unstable ones, the system can realistically be stabilized. More generally, a controller can only damp modes that the push force can actually influence.
+
+For example, if we control a string by pushing only at its center, then any mode with a node at the center is invisible to that actuator. Keep that idea in mind, because later we’ll ask the same question about measurements. Ok, so we have seen that if we can measure the full state of the pendulum, then we can find feedback factors that turn those measurements into the right push force. And we found those factors by describing motion as a combination of modes, and then defining the important modes to decay, which implied the factors. Now, that is all good if we can see the full pendulum.
+
+But what if we cannot? Well, we have to guess it. But let’s start with an easier version, where we at least see the cart and the top mass of this double pendulum. At a single instant, this already tells us something. Given the known link lengths, the hidden joint can only be in one of two places.
+
+And a moment later, it can again only be in one of two places, which over time traces two possible hidden trajectories. So which one is more believable? Well, this one already looks odd. But we can also check the total energy of each possibility, by adding the kinetic energy of the cart and the masses plus their potential energy. And since there is no active push, and the joints have friction, we would expect the total energy to decrease over time.
+
+So the other one is probably the motion the real system took. But energy is only one clue. Consider this upswing situation, where we initially know that the middle mass is moving in from the left. After the pendulum is fully stretched, the geometry becomes ambiguous again. But dynamically, the two options are not equally likely.
+
+The mass has inertia, and tends to keep moving according to the dynamics of the pendulum. So we should use a model of how constrained masses move. Luckily, we already have one. Starting from a known initial state, we run a copy of the pendulum inside the controller. And whenever we push the real cart, we apply the same push to the copy.
+
+And that copy predicts what the hidden middle mass is doing. Of course, here both systems are simulations. But the idea would be the same if the left one were a real, noisy experiment. Here, I just added some random gusts to the real one that the controller cannot see. So the prediction is useful, but only for a while, because the two systems drift apart.
+
+Now, to make this useful, we need to keep the deviation between what we can measure on the real system and the equivalent quantities in the internal model close to zero. So the model’s cart position should stay close to the real cart position. And the model’s top position should stay close to the real top position. But since we only want to balance near the upright position, we can focus on the top mass’s x-position. So now we have measurable deviations.
+
+And this should feel familiar. When we balanced the pendulum earlier, we also had variables we wanted to keep close to zero: the cart-position deviation, the velocity, and so on. And then we fed those deviations back through carefully chosen factors, producing a push force that made the deviations shrink. So we can view the current problem in the same way. And first, I’ll show you how it is done, and then why it works.
+
+And also, if you want to play with the simulations yourself, the code is free on my Patreon feed. So we feed the measured deviations back into the internal model, so that the model is pulled toward the real system. But importantly, because this is only a model inside the controller, we are not limited to a physical cart force. We can inject correction terms directly into the model’s states wherever it helps. Finding these factors looks more complicated, but structurally it is the same problem: what feedback factors make the deviations decay?
+
+And again, the mode language gives us a way to choose them. So the controller is really two controllers. One pulls the internal model toward the real measurements. That is the observer. The other uses the predicted full state from the internal model to choose the real push force.
+
+That is the state controller. And with both parts combined, we can, for instance, balance this triple pendulum. But we still have not really answered why the observer works. Because right now, we only measure deviations at a few visible points. And those deviations tell the observer that the internal model needs correction.
+
+But we never directly enforce that the hidden masses match, because we cannot measure them. And yet, if we peek inside, those hidden deviations cluster around zero as well. So it works. But why? Let’s isolate the question.
+
+We let the state controller see the full real state again, so it can balance the pendulum directly, here, quite aggressively. And in parallel, we run the observer, which only gets to see the cart and the top mass, but whose output we do not use for control. So we can simply ask: How well does the observer reconstruct the hidden motion while the pendulum is being balanced? In the fully stretched case, matching the cart and the tip almost forces the middle masses to match as well. But in general, the reason is in the dynamics.
+
+Before we added any corrections, when the hidden state was only slightly wrong, the model still predicted a plausible motion for a moment, because it contained the same physics. But if the hidden state is wrong in a way that matters, then sooner or later it predicts the wrong visible future. And that visible error is exactly what the observer feeds back into the internal model. So when we start with a wrongly initialized internal model, hidden errors that reveal themselves in the measurements get corrected away over time. Repeated correction of the visible part forces the hidden part to fall into place as well.
+
+Eventually, the only internal motion that can keep matching the measurements over time is the true motion, or at least something very close to it. That is the core idea. The visible motion, together with the model physics, can contain enough information to reconstruct what is hidden. But not always. Sometimes the observer cannot keep up.
+
+And if we then use those wrong estimated states for control, the balancing fails. But even then, it still feels odd that the controller does not need to see the top mass. This one here only measures the cart position. So the pendulum is not directly visible to it. Why should this work?
+
+Remember the modes of a string? For control, modes that move at the point where we push can be influenced. And modes with a node at that point are invisible to that push. And the same idea applies to observing modes. Every mode that creates motion at the measurement point leaves a trace in the easurement.
+
+So we can infer its amplitude and direction. It is observable. And only modes with no trace at the measurement point are hidden. So if we inspect the modes of the double pendulum again, we can see that all of them leave some signature in the cart motion, each with its own personality. And this means hidden errors, which are just combinations of mode errors, eventually reveal themselves in the cart measurement alone. It’s all there.
+
+Of course, in practice, this gets harder the longer the chain becomes. But again, we do not necessarily have to observe every mode. If we can observe all unstable modes, the system is called detectable, and that is enough to recover the information we need for stabilization. So in the end, it is all about where you push and where you look that determines controllability and observability. And if you build something like this in real life, measurements are noisy.
+
+So you do not want to blindly trust the sensor. You want an estimate of the true state underneath the noise. And that is often done with an observer: you run a model in parallel, compare its predicted measurements with the real noisy measurements, and feed the difference back into the model. And if the correction factors are chosen with noise and uncertainty in mind, this becomes a Kalman filter, which shows up everywhere from robotics to navigation. Structurally, it is very close to the Luenberger observer we used in this video.
+
+The difference is how the correction factors are chosen. But what stays with me most from making this video is this: after balancing so many pendulums without looking, balancing a triple pendulum while looking suddenly feels much less mysterious. At least in theory. But the reason is not that the system became easy. It is that we found a better way to look at it.
+
+Modes essentially give us a different coordinate system for describing the same motion. This whole video is about changing perspectives. And that is why Brilliant’s new personal tutor feels so natural to me, especially in a course like Coordinate Transformations: It guides you toward the useful perspective.
+
+I don’t see the first step.
+
+And their math and coding curriculum is designed by experts from MIT, Harvard, and Stanford. And with the tutor, it feels like having that experience looking over my shoulder. Click the link below or scan the QR code to get started with Brilliant’s tutor for free You can upgrade to Premium to unlock all courses. And right now, braintruffle viewers can save 20% off an annual subscription at Brilliant.org/braintruffle .
+
+Thanks for watching, and thanks for your support.
