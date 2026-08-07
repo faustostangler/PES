@@ -1,0 +1,77 @@
+---
+video_title: "How To Create Your OWN VPN (and why)"
+video_id: Vj183XU3mb4
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=Vj183XU3mb4
+video_date: 2026-07-05T15:00:37+00:00
+video_description: |
+  Join The Family:💻👩🏻‍💻https://cyberflow-academy.framer.website/
+  Check Out The Courses We Offer: https://cyberflow-academy.framer.website/courses
+  
+  Educational Purposes Only.
+  
+  In this video we're building a complete self-hosted VPN from scratch and answering a question almost nobody asks: why trust a random VPN company when you can run your own infrastructure?
+  
+  You'll learn how VPNs actually work, why commercial VPN marketing is often misleading, how WireGuard changed modern VPN technology, and how you can create a private VPN server using a cheap VPS and a simple setup.
+  
+  We cover:
+  
+  • Why a VPN doesn't magically make you anonymous
+  • The difference between privacy and trust
+  • Why self-hosting can give you more control
+  • How WireGuard works
+  • VPS setup basics
+  • SSH and server security fundamentals
+  • Firewall configuration mistakes people make
+  • Using your VPN for public Wi-Fi protection and remote access
+  • Why anonymity and privacy are not the same thing
+  • Bonus: turning your VPN into a network-wide ad blocker with Pi-hole
+  
+  A lot of people think VPNs are some magical invisibility cloak for the internet. They're not. A VPN mainly changes who can see your traffic. Instead of blindly trusting a company with your data, we're building something ourselves and understanding every piece of it.
+  
+  Resources:
+  
+  • WireGuard Official Site: https://www.wireguard.com
+  • Ubuntu Server Download: https://ubuntu.com/server
+  • Pi-hole Official Site: https://pi-hole.net
+  • DigitalOcean VPS Hosting: https://www.digitalocean.com
+  • Oracle Cloud Free Tier: https://www.oracle.com/cloud/free
+  
+  If you're into cybersecurity, networking, Linux, ethical hacking, self-hosting, and learning how things actually work behind the scenes, subscribe because we break down complex concepts without the corporate nonsense.
+  
+  #vpn #wireguard #cybersecurity #linux #selfhosting #ethicalhacking #networking #privacy #homelab #tech
+  
+  00:00 Why I Stopped Trusting VPN Ads
+  00:31 What a VPN Actually Does
+  01:20 Why WireGuard Took Over
+  01:44 Building Your Own VPN Server
+  02:21 Connecting Your Devices
+  02:46 What a Self-Hosted VPN Does NOT Do
+  03:37 Upgrading Your VPN with Pi-hole
+  04:00 Why You Should Build One Yourself
+  
+  → Email: cyberflow10@gmail.com  
+  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+So I keep seeing the same ad on every single video I watch. Some VPN sponsor telling me they don't keep logs while operating out of a jurisdiction with zero legal requirement to ever prove that. And at some point you have to ask yourself a simple question , why am I paying a company ten dollars a month to "trust them" when I could just build the exact same thing myself, host it on a server I actually control, and trust nobody but myself. So that's what tonight is. We're building our own VPN.
+
+First, let's actually talk about why this matters because most people think a VPN is just "for privacy" in some vague sense and that's not really it. When you connect to a commercial VPN, you're not removing surveillance, you're relocating it. Your ISP can no longer see your traffic, sure, but now the VPN company can see all of it instead. Every site you visit, every connection you make, all routed through their servers. You've just swapped one company that can see everything you do for a different company that can see everything you do, and the second one is actively marketing to you about how trustworthy they are. When you run your own VPN, that data goes to a server
+
+you provisioned, that you pay for, that nobody else has root access to. You're not eliminating the need for trust. You're just making sure the only entity you're trusting is yourself. The tool that's basically taken over this entire space is WireGuard and for good reason. It's a relatively new VPN protocol built into the Linux kernel itself, it uses modern cryptography that's actually been properly audited, and the entire codebase is around four thousand lines of code.
+
+For comparison, OpenVPN, which used to be the standard, is well over a hundred thousand lines. So here's how you actually build this. Grab a cheap VPS from any provider , five dollars a month gets you more than enough for personal use. Spin up an Ubuntu instance, SSH into it, and install WireGuard with one command since it's in basically every distro's default repos now. From there you generate a key pair for the server and a key pair for each device you want connected , your laptop, your phone, whatever. WireGuard's whole configuration model
+
+is refreshingly simple compared to the old OpenVPN era. A short config file with your private key, the server's public key, and the IP range you want to use, and you're most of the way there. Once your server's locked down, you generate a QR code from your client config and scan it with the WireGuard app on your phone, and that's genuinely it. You now have a VPN server that you fully control, running modern cryptography, on infrastructure that you provisioned, with a total monthly cost that's less than what most commercial VPNs charge and a setup that took maybe forty minutes start to finish once you know what you're doing. Now here's the thing I want to be straight about, because this matters more than people running self-hosted VPN tutorials usually admit. Running your own VPN is genuinely great for
+
+things like securing your traffic on public Wi-Fi, accessing your home network remotely, or just not handing your browsing habits to a random company. What it does not do is make you anonymous. Your VPS provider knows it's your server. Your traffic is still exiting from one identifiable IP address that's tied to your billing information. If real anonymity is the goal, that's a completely different and much harder problem involving things like Tor, and even then it comes with serious tradeoffs. Don't let anyone, including me,
+
+oversell what a self-hosted VPN actually buys you. It buys you control and it buys you privacy from your ISP and from commercial VPN companies. It does not buy you invisibility. If you want to take this further once your basic setup is running, look into setting up Pi-hole alongside your VPN so you're also blocking ads and trackers network-wide across every device that connects through it. It's one of the most satisfying upgrades you can add to a setup like this, and it turns your little five dollar VPS into something that's doing real, meaningful work every single day instead of just sitting there.
+
+Build it once, understand every piece of it, and you'll never look at a VPN sponsorship segment the same way again.
