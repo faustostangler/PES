@@ -1,0 +1,195 @@
+---
+video_title: "MiniMax M3 Lançado: Testei tudo e me surpreendeu (Análise Completa)"
+video_id: 0yB2IA31H5k
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0yB2IA31H5k
+video_date: 2026-06-10T14:00:38+00:00
+video_description: |
+  ✅ DESCONTO DE 12% no MiniMax: https://platform.minimax.io/subscribe/coding-plan?code=2XYVmDkIK5&source=link
+  
+  MiniMax Platform: https://platform.minimax.io
+  
+  Documentação do MiniMax: https://platform.minimax.io/docs/guides/text-generation
+  
+  ⭐ Inscreva-se na Lista de Espera do Curso Pare de Brigar com a IA: https://app.horadecodar.com.br/lp/pare-de-brigar-com-a-ia-claude-code
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  MiniMax M3 é o modelo open-weight lançado dia 1 de junho que junta três frontiers num modelo só: código forte, 1 milhão de tokens de contexto e multimodalidade nativa, tudo rodando dentro do Claude Code que você já usa, por uma fração do custo de um modelo fechado de ponta. Neste vídeo eu mostro como plugar o M3 no Claude Code, construo um app full-stack do zero em fluxo spec-driven (o próprio modelo escreve o PRD e constrói a partir dele), e no final faço o teste que modelo só de texto não passa: fotografar uma nota fiscal e deixar o M3 ler a imagem e extrair os dados sozinho.
+  
+  Se você usa Claude Code todo dia e quer testar um modelo open-weight poderoso sem trocar de ferramenta, ou busca alternativa mais barata pros modelos fechados sem abrir mão de capacidade, esse vídeo é pra você. O MiniMax M3 é o primeiro open-weight a combinar coding de alto nível, contexto de 1 milhão de tokens e leitura de imagem nativa ao mesmo tempo, o que abre uma faixa de casos de uso que antes exigia juntar vários modelos diferentes.
+  
+  A grande sacada técnica do M3 é a arquitetura MSA, que deixa o contexto longo barato de processar (prefill cerca de 9 vezes mais eficiente e decoding cerca de 15 vezes). Na prática isso significa rodar tarefas longas e contexto gigante sem o custo explodir. Pra dar dimensão, um dos destaques de lançamento foi o modelo rodar 12 horas sozinho reproduzindo um paper do ICLR.
+  
+  A integração com o Claude Code é direta: você ajusta o settings.json apontando o ANTHROPIC_BASE_URL pra API da MiniMax no formato Anthropic, cola a API key, e define o MiniMax-M3 como modelo padrão. A partir daí, tudo que o Claude Code faz roda no M3. A chave sai da plataforma da MiniMax, e o vídeo mostra o passo a passo completo, incluindo o cuidado de dar unset nas variáveis de ambiente que têm prioridade sobre o arquivo.
+  
+  O diferencial do vídeo é o fluxo spec-driven. Ao invés de pedir "faz um app" e torcer, eu peço pro M3 agir como engenheiro de produto sênior e escrever um PRD completo primeiro, com problema, escopo do MVP, features priorizadas, modelo de dados, contratos de API, fluxos, telas e critérios de aceite. Esse PRD vira o documento que amarra todos os próximos passos. A qualidade do spec gerado é o que faz o build sair coerente, com telas batendo com o modelo de dados e rotas batendo com os contratos.
+  
+  A partir do PRD, o M3 constrói o app NotaFlow em etapas: primeiro o frontend em Next.js com App Router, TypeScript e Tailwind, com dados mockados respeitando o modelo de dados do spec. Depois a camada de persistência com Prisma e SQLite, criando os models exatamente como definido no PRD, gerando migration e implementando as rotas de API. Cada etapa puxa do spec ao invés de inventar.
+  
+  O momento mais impressionante é a leitura multimodal. O M3 implementa uma rota que recebe a foto de uma nota fiscal em base64, manda pra própria API multimodal do modelo, e extrai estabelecimento, valor total, data e categoria num JSON estruturado. Você fotografa a nota, o modelo lê a imagem, preenche o formulário pra revisar, confirma, e o gasto aparece no dashboard. Imagem entra, dado estruturado sai. Multimodalidade nativa, algo que modelo só de texto não faz.
+  
+  Sobre benchmarks, sendo transparente: no SWE-Bench Pro o M3 marca 59.0, atrás do Opus 4.7 e do Opus 4.8, mas na frente do GPT-5.5. No BrowseComp ele faz 83.5, passando o Opus 4.7. O M3 não é o melhor do mundo em código puro, mas construiu um app full-stack spec-driven com leitura multimodal por uma fração do preço, rodando no Claude Code. E vários benchmarks foram rodados na infra da própria MiniMax, então validar no caso real, como fiz aqui, conta mais que tabela.
+  
+  O acesso vem via Token Plan em três tiers (Plus, Max e Ultra), com pool único que dá acesso à família toda de modelos da MiniMax, incluindo M3, imagem, fala e música. Tem cupom de desconto pra audiência do canal em todos os tiers, e também dá pra usar via OpenRouter com preço promocional.
+  
+  E você, qual modelo open-weight você quer ver rodando no Claude Code em seguida? Comenta aqui embaixo!
+  
+  #MiniMax #MiniMaxM3
+---
+Galera, lançou o Minimx M3. Eu gosto muito dessa família de modelos, eles estão sempre atualizando. E além da LM, tem várias coisas no ecossistema, que é bem interessante porque é uma empresa bem completa. O grande diferencial do Minimx, na minha opinião, é ter uma qualidade alta. Ele não vai chegar num Opus 4.8, né? A própria empresa já diz
+
+isso, ele não tá nesse nível ainda, mas ele tem uma qualidade, vamos dizer assim, de um 4.7, né? com Opus 4.7 por um preço muito, muito mais baixo. Então é um excelente modelo aí pra gente poder criar pequenos projetos para que a gente possa tocar tarefas paralelas do projeto principal e gastando muito pouco. Eles
+
+tm o ecossistema deles, né, com várias ferramentas. Tem o próprio agent, mas a gente pode executar no Cloud Code ou outros agentes de código, que é bem interessante, bem versátil, dá para deixar ele ali configurado e quando precisar usar. Nesse vídeo aqui eu vou te mostrar tudo sobre essa nova versão. A gente vai fazer um projeto na prática e também tirar as conclusões aí do que ela pôde criar. Já testei, gostei bastante, testei as outras versões aqui no canal e fica de olho aí que eu troco uma ideia com o pessoal da Minimx também. Vou tentar descolar um cupom de
+
+desconto para vocês que queiram aí experimentar os tiers pagos, né, lá da Minimx. Beleza? Mas chega aí, vamos ver tudo sobre ele agora na prática. Lembrando, né, galera, se eu conseguir compor o desconto, vai tá aqui na descrição ou no comentário fixado, tá? Então deem uma olhada. Bom, esse aqui é
+
+o site deles, minimax.io, tá? Eles têm modelo de voz, eles tm modelo de vídeo, imagens, tem muita coisa aqui no catálogo deles, mas o principal é o Minimx M3 aqui e esse é o artigo de lançamento, tá? Vou deixar esse link aqui na descrição também para vocês conferirem, né? Dar uma olhada aí como ele funciona. Aqui tem todos os
+
+detalhes, né? Tá tudo muito bem explicado, como foi construído o modelo. Então, para quem se interessa ali, além do uso da LLM em si, né, que é conhecer como tá funcionando por baixo dos panos, é bem interessante aqui esse artigo, tá? Eu condições que eu vou mostrar para vocês depois de uma forma um pouco mais leve, assim, para quem não entende eh muito da IA conseguir compreender os detalhes também, tá? Então, fiquem tranquilos que eu vou dar uma passada aqui depois. Mas,
+
+primeiramente, vamos testar na prática, que eu acho que é isso que vocês estão interessados, tá? Então, eu já configurei aqui o meu mini max, tá? Mas ele funciona em qualquer agent, se tu tem um preferido, como Open Code, por exemplo, ou outro, tu pode estar utilizando aqui no Cloud Code. Setup é bem simples. Tu vai aqui, cria pasta.Cloud, do cloud, cria um settings
+
+Jon e depois tu vai colocar o arquivo dessa maneira aqui. Tu vai apontar a base URL lá pra URL da Minimax. Tu vai colocar tua chave de API que tu pode obter naquele site que eu mostrei para vocês ali, né? Tem a plataforma deles, como todas as outras IAS, né? Tu consegue criar uma chave de API, botar alguns créditos e testar. E tu pode
+
+configurar os modelos da Tropic, vamos dizer assim, né? Para refletir os modelos do Mini Max M3. Aí quando tu abre o teu cloud code, se tu configurar nele, né, ele vai tá mostrando aqui Minx M3, quer dizer tá configurado. Então barra model também tu vai ter os outros os outros modelos representados ali da Antropic com Minimx M3. Isso aqui é legal que a gente pode fazer um fallback, né, para outros modelos menores. Se eles tivessem aqui, seria o
+
+caso, né, por exemplo, Haik, botar um modelo menor que gasta menos. Mas aqui o M3 ele é um modelo, como eu falei, bom e ele gasta pouco, então a gente pode trabalhar assim, tá? Qual que é o meu objetivo aqui? Eu vou criar um projeto real, tá galera? Porque sempre quando eu crio esses essas análises de a, muita gente pede para criar projetos mais próximos da realidade, para testar realmente como ela tá funcionando. E
+
+aqui vou fazer esse modelo, né, um tipo um mini SAS. Então eu vou começar como eu gosto de começar em qualquer IA, né, que é criando um PRD. Eu vou utilizar o próprio Minimx para criar esse documento que vai servir de base pro nosso projeto, tá? Esse projeto aqui eu vou chamar ele de nota flow, que é um aplicativo onde a pessoa fotografa, tipo um cupom fiscal e aí ela vai conseguir extrair os dados, tá? Então eu vou pedir exatamente isso para ele nesse primeiro prompt para ele criar o PRD desse projeto, tá? Então eu botei aqui que dei
+
+uma roll para ele, que ele é um engenheiro de produto snior. Antes de escrever qualquer código, ele vai ter que criar o PRD MD. Eu dei um contexto sobre o projeto, né? Não é um projeto muito longo, só para ele entender aqui o que que vai ter que ter e ele vai criar esse documento. Aí depois, com base nele, eu vou ter aqui, ó, pastinha já criou. Então ele tem as tools, né? Isso
+
+é bem essencial. qualquer modelo avançado de LLM, ele tem que poder criar arquivo, buscar na internet, programar pela gente, né? Eu testei outros modelos aqui que não atingiam isso, então é interessante que ele tem, né, como os modelos top tier funcionam. Então ele tá criando aqui com base nisso o nosso PRD, tá? E depois disso, a ideia é criar em três prompts esse projeto. Primeiro ali
+
+um esboço dele, vamos dizer assim, né? para a gente ter alguma tela, a gente conseguir inicializar o design do aplicativo, né? Então a gente vai criar a base mais esse design e depois eu vou colocar aí banco de dados e por fim colocar a IA no projeto, né, para poder ler a nota fiscal. Então olha só galera, ele criou aqui o PRD, tá? E esse PRD aqui tem a descrição do produto. Então
+
+se a gente ler aqui, a gente vai ver que foi um documento bem completo, né? Ele botou Persona, botou os casos de uso, ele colocou ali o MVP. Aqui não entra, né? Também é bom a gente limitar. Então as funcionalidades principais, né? Vai
+
+ter cadastro, upload de imagem. Depois ele botou o que que é depois do MVP desejável. Ele já escreveu aqui as entidades do banco de dados. Então, perder bem completo aí de quase 500 linhas. Então, o nosso objetivo agora é dar o pontapé inicial, é a gente criar ali o nota flow, o projeto que eu chamei, né, com base no que tem no PRD.
+
+Como eu falei, vai ser em três prompts, né? Então, eu vou dar uma limitada também no que ele vai criar para mim. Então, vamos lá. Que que eu vou pedir aqui? Implementar um alta flow. Signi
+
+exatamente o docd ele acabou de criar. Escolhi uma stack que é bem utilizada, Max Typecript IND. Isso vai ser interessante para verificar se o modelo tem conhecimento aí desses recursos, né, que praticamente todo sistema que a gente cria aí com IA, ele já escreve nessas tecnologias, né, em mais avançadas. Eu pedi aqui todas as telas, dashboard com o total do mês, pedi alguns dados mocados, claro, para que ele possa também criar uma base, já preencher alguma coisa. E também eu pedi para ele não criar eh implementar o banco, nem a IA ainda, né, que vai ser as próximas etapas. Então vamos ver como
+
+é que ele desempenha aqui. Então vejam aqui tem o feedback do que ele tá criando, né? Bem bem próximo do que a gente vê no GPT, no Gemini, no Opus, né? uma hora lista de tarefas. Então o modelo é inteligente e competente, né?
+
+Na minha opinião, né? Para ser sincero aqui com vocês, que que eu faria, cara? Provavelmente eu criaria uma base ali com um modelo bem avançado, tipo um Opus 4.8 e depois eu desenrolaria o projeto com esse, né? A gente tá vivendo aí uma época onde a IA tá ficando cada vez mais cara. Então a gente tem que saber
+
+observar bem esses modelos, né, que eles estão ali em 90, 95% da qualidade dos modelos mais top para poder adiantar os projetos, né? Com isso a gente vai conseguindo conciliar o custo e qualidade. Eu acho que dá para ter resultados bem bacanas assim, pretendo trazer vídeos inclusive aqui pro canal para que a gente possa est tratando, né, desses temas que eu tenho certeza que interessa vocês, né, de a gente conseguir ter qualidade com custo, OK? Tá? Então aqui, galera, a gente percebe que ele tá chegando quase ao fim, né?
+
+Ele tá fazendo até uma um teste. Isso muito dos modelos também tem adotado, né? Eles tem feito testes para poder garantir que realmente tá se chegando, né, no resultado ideal antes de entregar pra gente. Então, bem interessante essa parte. Tudo isso é baseado, né, no conhecimento que a IA tem. Ó, galera,
+
+então ele terminou aqui, né, e falou que ainda falta fazer e tudo mais, né? Agora aqui eu vou fazer o seguinte, eu gosto de dar um compact, né, para poder compactar o contexto e também a gente vai pedir para ele rodar. Rode o projeto para ele provavelmente vai me dar ali a o local host para acessar e vamos fazer o teste inicial, né? Vamos analisar a interface e tal. Vamos ver o que ele me entrega nessa rodada inicial. Ó aqui, galera,
+
+compactou o contexto, me entregou na porta 3.000. Vamos dar uma olhada, galera. Só antes a gente ver ali, queria lembrar vocês de um detalhe. A gente tá aqui, a, galera, antes de mostrar para vocês, só queria lembrar de um detalhe.
+
+Tô desenvolvendo aqui um pequeno curso, um mini curso, galera, que vai mudar a visão de vocês em relação a IA, tá? Que acontece, muita gente tem problemas com inteligências artificiais, né, no plural mesmo, porque não consegue chegar no resultado esperado, falam que elas alucinam, erram, não chegam no objetivo que precisa. Bom, eu trabalho com a IA desde que lançou o GPT lá, né, na prática assim, desenvolvendo coisas e eu desenvolvi um método que foi meio sem querer, né, aperfeiçoando ele. Não queria desenvolver o método, mas acabou que virou um padrão meu. Eu aplico todos os projetos e eu não tenho tantos erros, né, ou praticamente nenhum erro quando eu crio as coisas com IA, tá? E diante
+
+disso, né, das pessoas terem esse problema e de eu não ter tanto esse problema, eu tentei entender qual era o ponto. Eu encontrei alguns detalhes que podem fazer toda a diferença. Vou juntar nesse minicurso aqui, tá? Vai ser super acessível e também não vai passar de 3 horas, né? Realmente algo suscinto para que vocês consigam aplicar. Eu vou
+
+deixar esse link aqui na descrição. Então se inscrevam aqui para poder pegar o valor do lançamento nas próximas semanas. Aí já deve estar no ar, tá? Então, se tu quer aprender a ter melhores resultados com a IA, seja em cloud code, grave, qualquer coisa, já faz tua pré-escrição para pegar o melhor valor, tá? Aqui explica o método ali como ele funciona, né? Talhamento das
+
+fases do curso, tá? Vai ser um miniurso respeitando tempo de vocês para que vocês tenham o resultado rápido, beleza? Então tô te esperando lá. Vamos ver nota flow aqui. Então aqui a gente tá vendo, né? Ã, os dados, né, tudo mais. Então
+
+não tem muitas, não tem páginas ainda, né? tá só com alguns dados marcados e tal, cara. Vamos dizer, deixa eu ver se tem home. Não, não tem. Layout padrão, bem OK. Tá tudo feito pelo modelo deles,
+
+né? Aquele layout de dashboard. Gostei, tá? É simples, funciona, mas é aquela coisa, nenhuma vai criar um layout excelente, né? Tu vai precisar de alguma skill, de parâmetros bem feitos. Então,
+
+tá dentro do esperado, né? Não ficou nada feio, ficou tudo condizente, respeitou o PRD. Então, para mim passou aí nesse critério. Agora eu quero ir pra segunda etapa, né? Eu quero começar a deixar a brincadeira mais intensa. Nós
+
+vamos colocar banco de dados, né? Começar a persistir os dados aqui na aplicação. Então eu vou colocar o prompt que é o seguinte: adiciona acabada de persistência seguindo o modelo de dados e os contratos de API definidos no PRD. Vou usar Skalight para simplificar aqui o banco de dados. Não precisa instalar dependência nenhuma para poder tu poder testar de boa aí também, tá? E aqui
+
+também vou botar que a autenticação deve estar funcional. Login, registro e logout para poder criar o meu próprio usuário, né? E isso vai fazer com que a gente consiga estar fazendo esse ciclo inicial do sistema, que é interessante também, né? Porque o frontend a gente viu que ele deu conta, né? Não é ultra bem elaborado, mas funcional. Morri de
+
+sistemas começa com front end simples para ver se vai pra frente. Então é isso que a gente quer e precisa no ponto um, né, no MVP. Então vamos ver aqui como é que ele vai desempenhar agora a parte de banco de dados, né? Ele vai ter que integrar as telas com banco, fazer autenticação e deixar tudo redondo para mim testar. Qualquer problema também a gente pode tentar correção no prompt, né? que vem, é interessante ver a IA
+
+também lidando com os próprios bugs que ela cria. Mas vamos lá, vamos ver se vai dar tudo certo. E a princípio aqui acontece tudo novamente da mesma forma. Coloca ali as tarefas, professora ligou aqui, ele vai continuar a criar tudo que ele precisa pra gente ter essa parte de integração com o banco de dados. Novamente aqui, galera, ele tá fazendo uma parte de migration, né, e também um teste. Note que o tempo, né, de execução
+
+aqui vai dar por volta de talvez 8, 10 minutos, né? Então foi um tempo interessante. Deixa eu ver se eu consigo resgatar aqui do projeto que eu nem me atentei. Aquele inicial é acho que não vai ter aqui. Aí não foi muito demorado não, né? Geralmente o prompt inicial ele
+
+demora ali é mais 10 minutos, né? E acho que foi por volta disso também, como em outras IA, né? Então, tempo de resposta, né? Porque isso conta, né? A batida do da PI, o retorno ali da resposta para trocar os tokens, tá rápido, né? Então,
+
+um bom servidor tá respondendo bem. Isso conta positivamente também. Ó, galera, então ele terminou aqui, tá? Mais uma vez deu resumo do que fez, não fez. Vamos dar um compact para poder agilizar o próximo prompt, né? Agora vamos testar
+
+o fluxo de autenticação. Vamos ver se deu certo. Ó, a gente já foi encaminhado pro login, né? Ele deslogou. Ó lá, Dark Mode tá funcionando também. Eu vou
+
+cadastrar aqui então. Criar conta. Conta criada. Ele não, né? Ah, ele mandou sim, só deu um delayzinho, mas ele realmente enviou aqui pro pra parte de dashboard, né?
+
+Então tá tudo certo, fez todo o fluxo de autenticação aqui pra gente, tá? Então mais um ponto, né, que ele conseguiu desempenhar. Muito bem. Ó, aqui o novo gasto já tá funcionando, né? Ele já tá começando a trabalhar aqui na parte de enviar algo para ele poder extrair as informações. Perfil também já
+
+funciona. Tem o logout aqui e pronto, né? Ó, fez login de novo. Beleza? Então, olha só, todas as funcionalidades que a gente pediu, a gente já desenvolveu.
+
+Então, tá indo muito bem aqui a evolução do sistema, né? Não teve nenhum erro, né, até então. E foram promptes grandes assim, né? Não fez pouca coisa, né? Não foi só ajusta isso aqui, muda a corrido lá, não. Foram realmente ações que
+
+demandam um raciocínio avançado de uma IA, né? Que para quem tem experiência, né? Se fosse programar na mão aqui é a questão aí de semanas até para chegar num resultado como esse partindo do zero, né? Bom, eh, agora vai vir a parte crítica, né, que é integração com IA. Eu vou integrar com a minimax mesmo, né?
+
+Aproveitar a IA deles para ver se consegue ler a imagem, já que ela é multimodal, né? E também verificar se ele consegue me entregar mais esse passo aqui sem erros, tá? Então, o último passo é justamente ler aí a imagem da nota fiscal e extrair os dados. Então vamos voltar lá, vou mandar o prompt aqui. E é o seguinte, implementar a leitura de nota por imagem utilizando a PI multimodal do Minimx M3, conforme o fluxo e a rota definidos nocs PRDMD. Tá
+
+claro, né, galera? Essa estratégia ter o PRD também é muito útil para EA se balizar, né? Então talvez se criasse solto poderia ter um erro, né? Então, o PRD ajuda bastante. Então, aqui tô pedindo para ele criar o a integração com ENV também, né? E o meu papel aqui é
+
+colocar essa chave de API lá no DNV. Então, isso que eu vou fazer agora. Aqui eu já posso me adiantando, né? Aqui a gente vai colocar igual a nossa chave de API. Então, galera, aqui coloquei minha chave de API, tá? Então, galera, a gente
+
+colocou a chave de API lá, né? Aí talvez ele confirme com a gente depois ali para botar a chave. Daí a gente vai dizer que a gente já colocou e pronto, né? ele vai provavelmente recarregar o projeto, que é o que acontece quando tu muda o ENV. E aí vai conseguir colocar uma imagem de uma nota fiscal, de um recibo ali, ele vai extrair os dados pra gente. Então
+
+vamos dar uma olhada como é que anda aqui, né? Talvez essa daqui seja mais rápida, né? Porque não tem tanto o que fazer aqui. É basicamente fazer a rota que aceita a imagem e extrair os dados, né? Via IA. Bom, galera, aqui ele
+
+terminou, tá? Eh, eu vou fazer o teste aqui. Ele falou que pode ter um probleminha aqui na API, mas vamos testar. Vamos ver se vai dar certo, tá? Eu vou falar aqui que coloquei aqui no ENV.
+
+Se precisar reinicie. Bom, galera, então eu tô aqui com o projeto, né, após aquela integração com a IA. Vamos fazer aqui então o teste. Eu vou eh enviar a imagem de uma nota que eu tenho aqui fictícia e vamos ver se vai dar certo. Ó, peguei essa nota aqui, peguei da internet mesmo e vamos extrair os dados.
+
+Aparentemente tá lendo com a EA. Vamos ver se bate os valores, né? Tem dois produtos, ó. Loja Renner. Então, pegou o valor certinho. A data. Caraca, nem eu
+
+tô vendo a data aqui. Ah, tá aqui, ó. 3 5 compras. Detector que é uma compra aqui. Comprei umas roupas bacanas.
+
+Salvar. Pronto. Tá aqui a nota, né? Ele só não contabilizou aqui no mês, mas o lançamento foi feito corretamente, tá? Então posso falar isso para ele, que os lançamentos estão feitos, sendo feitos corretos e não tá contabilizando na dashboard. botar aqui. Os lançamentos
+
+estão sendo feitos corretamente, porém na dashboard não são exibidos os valores de despesas totais e lançamentos totais. Corrija. Então vou deixar ele corrigindo aqui, galera, que eu quero mostrar para vocês os highlights que eu reuni aqui do Minimx, né, que eu falei para vocês lá no começo, rapidamente aqui, só pra gente ver, ter alguns dados interessantes, tá? Eu preparei uma apresentaçãozinha aqui, vai ser legal de ver. Bom, vamos lá, então. Minimx M3 foi
+
+lançado dia 1eo de junho, né? Tô gravando dia 2, então foi lançado ontem, né? E o que acontece é um modelo com alto contexto, né? Tem 1 milhão de contexto. Beleza? Eh, ele tem essa parte
+
+de programação de eh coding agent, então ele consegue usar várias ferramentas, que é muito interessante, né? É apenas são apenas IAS avançadas que tem o tocar, raciocínio mult. Então ele tem isso, né? Além do 1 milhão de contexto, ele tem essa arquitetura aqui, MSA. Recomendo vocês darem uma olhada no na página de lançamento que ele explica melhor como é que funciona isso aqui, que é como se fosse um tuning, digamos assim, no contexto dele, tá? E o mínimo
+
+garantido é 512.000 tokens. Multimodal, como a gente pode ver ali, ele aceitou a imagem, conseguiu extrair os dados dela. Então, ele vai trabalhar com texto, imagem, vídeo. Então, é muito interessante porque tem essas capacidades do modelo, tá bom? alguns
+
+números que chamam a atenção. Ali são os estudos, né, que eles fizeram, que sempre que lançam o modelo, a empresa tenta passar algumas coisas que eles fizeram para garantir que o modelo é bom. Por exemplo, esse aqui, ele rodou aproximadamente por 12 horas para poder reproduzir um paper do ICLR 2025. Então é mais um estudo que tá lá também, vale a pena conferir quem tem interesse. Então é é um feito interessante pro modelo ficar rodando ali e diante de tanto tempo conseguir ter um trabalho concluído, né? Outra coisa importante
+
+são os benchmarks. Esse modelo saiu muito bem em vários testes, tá? E esse aqui chama atenção que é de browsing autônomo, né? Ou seja, navegação autônoma. E ele tá performando melhor que o Opus 4.7. Como falei para vocês,
+
+em alguns quesitos ele é melhor que o 4.7, né? A versão 4.7 do Opus. Aqui, por exemplo, é o benchmark de SWE, que é programação, né? E aqui ele tá na frente
+
+de GPT 5.5 e de MN 3.1, que são esses dois aqui, tá? Não saiu aqui as redes, as as IAs, mas dá para conferir lá no site oficial deles, né? Ele tá perdendo paraa programação, para o Opus 4.7 e o
+
+4.8, respectivamente, tá? Então eles foram eh bem honestos, né, em colocar esses dados aqui, que é bem interessante, porque a gente já viu várias e tentando manipular os dados, colocando ali acima dos modelos ou muito pareado e não são nada disso, né? Então aqui estão sendo honestos, que vale mais em consideração, tá? Aqui são alguns outros benchmarks que eu achei interessante, por exemplo, de browser autônomo que eu trouxe antes, né? Que
+
+ele saiu na frente do Opus. Esse aqui também de criação de SVG que ele também saiu na frente do Opus 4.7, né? Então é legal porque é um modelo que compete com uma versão que era topo de linha até algumas semanas atrás, tá? E aqui trouxe agora sim, né, aparecendo a tabela com os concorrentes para vocês verem aí a comparação de valores com outras e as.
+
+Então ele liderou em browse comp, que é a navegação autônoma, né? Em terminal ele perdeu para as outras IAS, né? O próximo, né? Mas perdeu em desenvolvimento de software. Ele também chegou lá, né? Aqui são os dados que
+
+estavam lá nas barrinhas, né? Agora descritos. Então, vejam aqui que ele chega perto ali do, aliás, ele passa o GPT um pouco, ele passa bem GN 3.1 e não chega perto do 4.8, né? Mas o que é
+
+interessante aqui é que ele tem a questão de ter um preço muito menor, né? Então aqui é o output de 1 milhão de tokens. A gente vai pagar 20, né? Comparado com Opus que é 25. Então um grande uma grande economia, né?
+
+E aqui seria a comparação de preços que eu coloquei aqui de input. Então vejam aqui a diferença, né? Os toques que a gente manda para tanto input como output é muito mais barato que as topo de linha. Por isso que vale o teste, né? Vale ver se funciona pra gente. Bom, galera, então
+
+dados apresentados. Agora vamos dar uma olhada se já terminou ali o fix para que a gente possa ver esse bug corrigido. E aí encerramos o ciclo aqui no Minimx. Até então não corrigiu, tá? Terminando, já volto aqui para mostrar para vocês e concluir o vídeo. Ó, ele terminou aqui,
+
+galera. Então, ele falou que o fix foi feito. Vamos dar uma olhada, ó. Recarreguei aqui, ainda não veio, né? Então, tentar adicionar um novo gasto para ver se agora contabiliza ali em cima, ó. Então, aqui, galera, ainda não
+
+corrigiu, né? Bom, talvez mais alguns promps ali conseguisse resolver, né? explicar para ele onde foi passar essa imagem que o print tá acontecendo ali nos testes dele deu certo, mas aqui por esse caminho não foi, tá? Então o bugzinho que ficou para resolver, mas nada próximo, né, do que a gente já conseguiu fazer aqui, então estou feliz com os resultados. Não é isso que me desmotivou de utilizar mais aí minimax M3. Beleza? Bom, só de concluir,
+
+lembrando a vocês, estamos aqui para lançar esse miniurso para que vocês usem melhor qualquer tipo de IA, tá? Se inscrevam ali para conseguir garantir o preço do lançamento, tá? E galera, agora quero saber de vocês, deixa aqui nos comentários o que que acharam desse modelo, se já testaram, de uma conferida aqui que pode ser que tenha um cuponzinho de desconto para vocês, tá? E é claro, espero vocês no próximo vídeo. Também considera se tornar membro aqui do canal e tem vários vídeos exclusivos para membros. que são assuntos mais
+
+específicos, assuntos que eu trago o que acontece aqui na hora de codar, né? como é que eu uso a IA. São assuntos mais internos que talvez interessem vocês e vai ajudar muito a agregar conhecimento. Bom, vou ficando por aqui para vocês no próximo vídeo. Valeu,

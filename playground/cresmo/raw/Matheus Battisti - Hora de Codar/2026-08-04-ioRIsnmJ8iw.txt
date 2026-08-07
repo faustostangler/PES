@@ -1,0 +1,120 @@
+---
+video_title: "Seu agente queima 20 mil tokens só pra se orientar (a skill code review graph resolve)"
+video_id: ioRIsnmJ8iw
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ioRIsnmJ8iw
+video_date: 2026-08-04T14:00:35+00:00
+video_description: |
+  Code Review Graph é um repositório que mapeia todo o teu código e transformar numa estrutura de grafo. Isso faz com que ele sabia exatamente onde está cada coisa e ajude sua IA a economizar MUITOS tokens.
+  
+  ⭐ Pré-inscrição Formação Claude Code: https://app.horadecodar.com.br/lp/lancamento-formacao-claude-code
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  💳 Sistema de pagamentos que eu indico: https://appmax.com.br/desenvolvedores/?utm_source=hora-de-codar&utm_medium=social&utm_campaign=influencer-tech (Pix com taxa zero via API)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  LINK
+  
+  Repositório Code Review Graph: https://github.com/tirth8205/code-review-graph
+  
+  
+  TIMESTAMPS
+  
+  00:00 O problema das IAs no consumo de tokens
+  00:35 Como funciona o Code Review Graph
+  05:10 Instalando o Code Review Graph
+  07:00 Utilizando o Code Review Graph no projeto, para mapear código
+  09:28 Outros usos do Code review Graph
+  11:40 Ampliando o projeto e verificando reflexão no grafo
+  13:20 Considerações finais sobre o Code Review Graph
+---
+Hoje a gente tem um problema nos projetos de A, porque ela tem que redescobrir o projeto a cada vez que a gente inicia uma nova sessão, a cada funcionalidade muito grande que a gente adiciona e isso gera um custo desnecessário. Para resolver isso, uma galera inventou um projeto chamado Code Review Graphic, que vai criar ali uma visualização do projeto para ir a não esquecer de nada e ter uma consulta rápida antes de varrer o código todo para o teu novo prompt. Isso ajuda a economizar tokens e também deixar as respostas mais rápidas e precisas. Hoje a gente vai entender melhor como é que funciona o projeto, testar na prática e ver se realmente funciona. Então chega aí sem enrolação. Bora lá. Porém, antes
+
+de mais nada, galera, quero comentar com vocês sobre a formação Cloud Code. Ela tá chegando aí, vai nascer no começo de setembro, beleza? E já estou lançando a lista de pré-inscrição, vai tá aqui no comentário fixado para tu poder garantir a tua vaga com valor especial do lançamento e bônus exclusivos para essa turma fundadora, vamos dizer assim. Então já se inscreve aí para garantir a tua vaga e dominar o cloud code. Isso é uma formação bem completa, 100% prática, orientada a te ensinar a ferramenta e colocar os projetos no ar com segurança, performance e escalabilidade. Fechou?
+
+Prosseguimos. Bom, primeiro aqui trouxe aquela apresentação marota pra gente poder entender melhor como é que funciona. E o nome do projeto é esse aqui, ó, Code Review Graph. Vou deixar o link na descrição depois do repositório para vocês poderem analisar, tá? Ele tá crescendo bastante, tá com mais de 27.000 stars, né? Tava 26.9 quando eu
+
+criei os slides aqui. E a ideia é essa, o teu agente, ele leu o projeto inteiro toda vez, tá? Claro que não é bem assim. A gente tem o Cloud MD para ajudar a contextualizar, né? A gente tem o contexto que ajuda a salvar as informações, mas uma hora o projeto cresce para caramba, outra hora a gente limpa a sessão, a gente inicia o novo chat, a gente compacta o contexto. Então
+
+o problema acontece e detalhe, né? Quanto maior o projeto, mais isso aqui é eficiente. Então tem uma comparaçãozinha, né? Trouxe algumas informações que eles liberaram lá. Então a gente sem o mapa, né, que é gerado pelo code rev graph, ele trabalha no escuro, digamos assim. Então o que
+
+acontece? Se ele vai lá e ler o código todo, ele vai enviar para o modelo 208.000 tokens, que tem muito ruído de informação, nem tudo é necessário para fazer a tarefa nova, né, para eh dar resultado, o resultado que a gente precisa. E aí quando a gente usa o code review, ele vai perguntar para esse grafo que é gerado ali pelo plugin, vamos dizer assim, e menos tokens são enviados porque ele vai direto ao ponto. Então a gente vai ter aqui uma redução que pode chegar até a 93 vezes. Beleza?
+
+Eu boto aqui que ele mapeia o código uma vez e responde rápido para sempre. Porque o que acontece, né? Uma coisa que é fato e que pouca gente fala é que o nosso código não muda toda hora, né? A estrutura do projeto sempre é a mesma. se é um e-commerce, é um e-commerce, ele vai vender produtos, se é, sei lá, um sistema de chamados, ele vai ajudar as pessoas a responderem os chamados de alguma maneira. Então essa base ela fica
+
+mapeada e quando mudar, claro, o gráfico muda também, mas a estrutura como ela é fixa, vamos dizer assim, a regra de negócios ajuda a esse cara dar certo, porque ele vai mapear isso e aí e aí o cloud code ou a gente já em vez de consultar o projeto todo, vai consultar esse gráfico que já vai estar montado e aí que a gente tem o ganho. Então a gente tem o repositório, é como os arquivos estão, né? Depois a gente tem esse treiter, que é um pers em ST, que é onde vai se convertendo, né, o código para o grafo, que fica em um banco de dados esquelite local, beleza? E ele tá dividido entre nós e arestas, funções, classes, importes, chamadas, heranças, testes, né, as componentes do projeto para poder otimizar essa consulta ao que tem dentro do projeto, né? Fica tudo lá bem catalogado no banco de dados suas tabelas e aí isso gera um MCP acessível ali para cloud code, cursor, codex e onde tu quiser instalar. Parte legal é
+
+que ele vai ficar sempre dentro do projeto no banco local. É um arquivo, né? Não tem complexidade para instalar. Se atualizar sozinho, né? Porque eu comentei com vocês, né? Ah, estrutura
+
+não muda, mas pode vir a ter novos módulos, novas funcionalidades, uma coisa que funcionava assim, agora funciona assado. Então ela vai se atualizar também com o tempo, né, galera? Fiquem tranquilos. Então aqui tá o coração da coisa blast radius que quebra se eu mexer aqui, por exemplo, vou mudar alguma coisa na autenticação. Aí o grafo vai retornar quem que chama essa função, os tesques que envolvem essa função, quem depende dela para funcionar. E isso aqui vai para o
+
+modelo, vai para IA, né? Então não vai tudo que tá fora do contexto que o aí aleria para resgatar as informações, somente o que realmente importa. É bem fácil de instalar, tá galera? A gente instala com o pip, então tem que ter o Python dentro do teu PC, né, instaladinho. E aí depois a gente tem aqui alguns comandos que vão fazer a instalação de fato do plugin no nosso agente, né, para o nosso agente e depois o build para construir o que a gente precisa, tá? Então é bem tranquilo, bem
+
+simples. Bora lá ver na prática. Bom, galera, então esse aqui é o repositório, tá? Só para vocês verem. Tá com passando de 27.000 stars. A galera tá atualizando
+
+aqui, ó. 19 horas atrás teve atualizações. Tem uma galera contribuindo, né? Open source. Aqui ele explica e mais profundamente, né, o que eu passei nos slides para vocês. Então,
+
+dá para dar uma olhada aqui e entender melhor como é que funciona a coisa por baixo do capô. Fechou? Bom, vamos lá. Então, como eu falei para vocês, o projeto ele funciona em projetos maior, o recurso aqui funciona em projetos maiores, né, melhor, porque claro, vai ter mais arquivos, mais dependências, mais coisas rolando. Então, se justifica, né, a gente passar por esse processo aqui, tá? Então, tenham isso em
+
+mente também. Aqui eu vou começar a instalar. Então, a gente vai dar um pip install code review graph. Eh, tem que ter o Python instalado, como eu falei para vocês, os comandos de instalação estão aqui, beleza? Então fica fácil de acompanhar também. Aí ele começa a
+
+instalar aqui. Primeiro ele instala no computador, né, o pacote Python e depois a gente instala via no projeto, tá? Porque tem que instalar de acordo com o agental, o que tá criando. Então tem todas essas coisas aqui. Nesse caso, eu tô com e-commerce, tá? Não sei se eu já
+
+comentei isso para vocês. É um projetinho um pouco maior. A gente fez ele no desenvolvimento, aliás, nos testes de Fable versus Kim versus GPT 5.6, tá? Ó, aqui ele instalou. Então,
+
+depois de instalar, eu tenho que instalar no projeto. Aí ele já deve responder no terminal aqui. Code review graph install. Tá? Aí a gente vai instalar aqui, ele vai instalar as dependências e ele plugou aqui, tá? Tá?
+
+Que que eu faço agora? Depois do code review style, eu vou dar o build. Esse build é o que vai fazer aquele processo lá que transforma o código num grafo, né? Naquele esquelite. Eu vou rodar o build aqui. Aí ele começa a entender o
+
+projeto, transformar no que precisa, tá? E aí agora eu vou rodar o comando status, que vai fazer a contagem, né, de coisas, elementos que ele criou. Então, olha só. sete nós, eh, 60, que seriam as arestas, cinco arquivos, quais as linguagens que ele detectou, quando foi a última vez atualizado, né? Tem tudo isso que a gente pode acompanhar durante a execução do projeto, né? Ver isso aqui
+
+evoluir depois, tá? Então agora eu também tenho acesso ao comando code review graph visualize, tá? que vai me dar esse arquivo aqui em HTML, que eu posso entender melhor como ficou o grafo do projeto, tá bom? Então, vamos acessar, ó, galera. Então, o resultado é esse aqui, tá? Eh, vejam que é bem
+
+complexo, né? Um projeto bem grande, mas essa daqui é a estrutura de grafos que ele vai usar para poder eh contextualizar mais rápido a IA, né? E também de forma mais precisa. Então, sempre que a gente tem uma bolinha aqui, é um arquivo que ele mapeou, tá? Aí os quadrados são as classes, os triângulos são as funções, né? A
+
+gente pode suprimir aqui também. Roxo tem os testes. Então aqui tá aqui nas pontas, né? Os testes. Então aqui é um teste. E aqui os mais que não consigo
+
+ver nenhum são os eh tipos, né? algum tipo, uma coisa tipada no cóo, a gente consegue ver que realmente tem muitas interligações, né, um projeto maior e aí isso aqui tende a crescer também e aumentando, tá claro? A gente não precisa ficar vendo essa visualização aqui, é só pra gente entender o fluxo do projeto, como cada coisa se interliga, entender que realmente tá funcionando e mapeou tudo, né? Uma coisa que eu não comentei também é que o projeto tem que ficar no Git, né? ele vai pegar ali as alterações pelo Git para poder fazer o build. Então
+
+vocês tm que colocar um repositório do projeto, não precisa estar no GitHub, mas precisa estar com o Git inicializado. E a cada commit ele vai se atualizando, né, para poder implementar mais coisas no gráfico. Aí aqui, galera, a gente pode fazer consultas no gráfico também, né? A gente pode utilizar ele para entender alguma coisa. Vou dar aqui, ó, use o gráfico do projeto, me dê o raio X da arquitetura da loja pisada.
+
+Então aqui agora ele tem acesso a isso e ele consegue entender melhor como funciona de maneira mais rápida e efetiva. Ó, aqui ele tá chamando o code review graph. Então ele tá entendendo baseado no que foi gerado, ó. Então veja aqui, ele começa a me dar os diagnósticos. Raios X da loja pisada, módulos principais, ele fala que é o Y da loja, camada de serviço, acesso ao dados, roti, como se conectam, fluxo dominante é clássico em camadas, páginas, componentes, servers, repositories, banco de dados, acoplamento mais forte, aviso de arquitetura, né? Olha só, ele
+
+achou alguns problemas também que a gente poderia melhorar o projeto. E aqui eu poderia mandar um outro prompt também de análise. Tem código morto. Isso aqui é bem interessante, galera, para quem programa em Vibe Code, né? Às vezes vai crescendo demais o projeto, refator e aí isso aqui pode ajudar a gente a entender se o projeto tem algum problema, tá?
+
+Então ele também se encaixa com uma ferramenta de análise, né? Não só pra economia de tokens, mas também para entender melhor os problemas que o projeto tem, né? como esse tor aqui em cima, como eu tô fazendo aqui embaixo, né, com a questão do código morto. Então, muito legal fazer isso também, ó. Então tá aqui, galera, ele encontrou o quê? Ó, código morto e ser verificado.
+
+Refactor 2 acusou 55 símbolos, mas a maioria falso positivo. Página X3s handlers, o gráfico não rastrei. Verifiquei cada candidato real com a busca de uso no repositório inteiro. Resultado. Morto, confiança. Morto,
+
+confiança alta. Zero referências fora da própria definição. Aí aqui, ó, ele encontrou esse aqui que ninguém usa, tá vendo? Então isso pode ajudar a gente também a entender o que que dá para remover, o que que dá para enxugar mais no projeto. Ó, total remov segurança, dois arquivos inteiros mais 12 funções.
+
+Bom, e seguindo aqui, galera, eu quero fazer uma nova funcionalidade do projeto, né, para trabalhar em conjunto com o fluxo que a gente adiciona nesse code review graph. Então, eu vou colocar aqui, por exemplo, o pagamento Pix na loja pisada com 10% de desconto sobre o valor dos produtos. Aí básico dentro do checkout, o Pix entra como opção de pagamento ao lado que já existem, um destaque visual indicando desconto. Aocionar, resumo do pedido atualiza na hora e mostra o desconto do Pix em uma linha própria separada do cupom desconto por pontos. Expliquei ali como é que funciona o resto da regra de negócio.
+
+Também pedi para ele usar o grafo levantar tudo que depende do cálculo total e me mostra essa lista. Então, posso interagir com o grafo durante os meus prompts também, não somente na hora de executar alguma coisa ali que a IA vai se apoiar nele, mas eu posso também pedir algo enquanto eu crio algo também, tá? Ó, galera. Aí, então ele vai lá, termina o prompt, né? Foi bem mais rápido, né? Eu adicionei uma
+
+funcionalidade grande, demorou só 6 minutos aqui. Ele me mostrou o levantamento do grafo, né? Então, um núcleo é calcule calculate totals, né? Ele mostrou CFS que faz isso, ó, tudo que tá envolvido, né, na tarefa. Então, vejam aqui que tá bem mais direcionado, né? Daí ele botou aqui, documentou, que
+
+que mudou realmente e tá aí a gente tem nova funcionalidade. O que que a gente faria para não ter problemas com o grafo, né? A gente pode vir aqui e dar um code review graph e aí ele vai atualizar, ó, ele atualizou 293 arquivos e pronto. Aí agora o nosso gráfico está atualizado. Quando a gente recarrega aqui, a gente vai ter a nova implementação do Pix, os novos arquivos, as modificações feitas, as novas ligações, se necessário, e assim segue. Então, a gente tem o
+
+gráfico pronto para continuar o projeto, tá? E isso vai deixar muito mais rápido e eficiente as nossas interações com o modelo de a, porque ele só vai tocar no que precisa, né? Tanto na leva do contexto como na volta das informações. Então, acaba que a gente cria um túnel para ele onde ele só trabalha onde é realmente necessário. Não que ele fosse mexer em arquivos que fossem desnecessários, né? se a gente não
+
+tivesse isso, mas ele enviaria muito mais coisa. Então essa que é a ideia. Só que claro, né, como eu falei antes, é melhor trabalhar num projeto maior que tem esse curso de gerar isso aqui, de ler isso aqui. Então, se for um projeto pequeno, pode caber no contexto, tá? Tudo que ele tem que enviar ou o contexto que ele envia não atrapalhar no consumo do modelo de IA. A grande
+
+questão aqui é que tem as IAS novas, principalmente, né? O GPT 5.6 Sol, ele tem um um contexto que quando ele passa daquilo de tokens, ele começa a gastar mais tanto na assinatura como da API. Então, para evitar isso, né, para evitar esses problemas, para não ter tanta demora nas respostas, a gente pode estar utilizando ferramentas como essa, tendo resultados mais rápidos, mais precisos, mais econômicos. Fechou? Mas claro,
+
+galera, tudo é baseado em teste, não acredita em promessas milagrosas. tem que ver se realmente funciona, se cabe no uso de vocês. Então, para isso, vou deixar o link aqui na descrição para que vocês possam ver com os próprios olhos. Fechou? Não se esqueçam também formação cloud code, galera, dá para lançar aí comecinho de setembro, tá? Então já se
+
+inscrevam para garantir a oferta especial. Aqui vocês vão dominar a ferramenta, entender como eu crio os meus projetos, como eu uso o cloud code de maneira eficiente, tá? Eu vou deixando aqui para vocês se inscreverem. Bom, por hoje é isso. Ferramenta apresentada. Quero saber o que vocês
+
+acham. Deixem nos comentários, se já usam também. Mostrem pra galera aí que vocês tiraram de benefício do Code Review Graph. Claro, se possível, deixa o like, se inscreve. Isso ajuda bastante meu trabalho. Galera, vou ficando por
+
+aqui. Espero vocês no próximo vídeo.

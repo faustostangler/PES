@@ -1,0 +1,164 @@
+---
+video_title: "Parei de Gastar com Claude Code: O Manifest Cortou 70% Do Meu Gasto (INSANO)"
+video_id: 30Z5CZQFPm8
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=30Z5CZQFPm8
+video_date: 2026-06-08T14:00:06+00:00
+video_description: |
+  Manifest é o roteador de LLM open source que decide automaticamente qual modelo usar pra cada task do Claude Code, cortando até 70% do gasto mensal sem você reescrever uma linha de código.
+  
+  ⭐ Inscreva-se na Lista de Espera da Formação Codex Master: https://app.horadecodar.com.br/lp/esquenta-codex-master
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_manifest
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  Neste vídeo eu mostro o setup completo da ferramenta, a sacada técnica de misturar assinaturas pagas (Claude Max e ChatGPT Plus) com API barata (DeepSeek) num único proxy, e a bateria de prompts ao vivo que comprova como a roteação funciona na prática. O conceito é simples: você paga preço de Opus pra task de Haiku quando deixa tudo cair no mesmo modelo. Manifest resolve isso classificando cada request e mandando pro modelo mais barato que dá conta.
+  
+  Se você usa Claude Code todo dia, tem Claude Max ou ChatGPT Plus assinado, e quer parar de queimar quota com tasks simples que poderiam rodar num modelo barato, esse vídeo é pra você. Cubro instalação via Docker, conexão dos providers (Anthropic, OpenAI e DeepSeek), configuração dos 4 tiers de roteação, integração com Claude Code via 1 linha de variável de ambiente, e demo ao vivo mostrando o dashboard atualizando em tempo real.
+  
+  O Manifest é open source com licença MIT, tem 4.4k stars no GitHub, roda local em Docker (self-hosted, sem cloud proxy), é compatível com OpenAI API e classifica cada request em 23 dimensões em menos de 2 milissegundos. Tem 4 tiers configuráveis: simple (tasks triviais como listar arquivos), standard (componentes simples, refactors leves), complex (sistemas com estado), e reasoning (decisões arquiteturais e debugging profundo).
+  
+  A sacada técnica que faz tudo brilhar é o custo marginal zero das assinaturas. Se você já paga Claude Max, aqueles tokens viram efetivamente gratuitos dentro do Manifest. Mesma coisa com ChatGPT Plus. O Manifest manda task de tier complex pro Sonnet via Claude Max, tier standard pro GPT via ChatGPT Plus, e só tier simple cai no DeepSeek (que cobra centavos via API). No fim do mês, o único gasto novo é a API do DeepSeek (5 dólares duram semanas).
+  
+  A instalação roda em 1 comando com bash e Docker Compose. O dashboard sobe em localhost:2099. Primeira conta criada vira admin. Conecta os 3 providers via interface visual. Configura os 4 tiers definindo qual modelo cada um usa. Define fallbacks pra quando algum provider cair. Pronto.
+  
+  A integração com Claude Code é literalmente 1 linha: você define ANTHROPIC_BASE_URL apontando pro localhost:2099/v1 e ANTHROPIC_API_KEY com a chave do Manifest. Claude Code não sabe que mudou. Continua funcionando igual, mas agora todo request passa pelo proxy que classifica e roteia.
+  
+  Na bateria de demos rodo 8 prompts variados, com janela do Claude Code ocupando a tela e dashboard do Manifest visível no canto. Cada prompt pausa pra mostrar qual tier foi escolhido e qual modelo recebeu. Listar arquivos cai em simple (DeepSeek). Componente UI cai em standard (GPT). Sistema com estado e Context API cai em complex (Sonnet). Comparativo de tradeoffs arquiteturais cai em reasoning (Opus).
+  
+  No final mostro o resultado real: 8 prompts rodados, custo total de poucos centavos, distribuição equilibrada entre os 4 modelos, e comparativo de quanto teria custado se tudo tivesse caído no Sonnet (4x mais caro).
+  
+  Quando vale: você usa Claude Code todo dia, tem assinatura Claude Max ou ChatGPT Plus, workload variada. Quando NÃO vale: uso esporádico, só API key paga, só task pesada de reasoning.
+  
+  Se curtiu deixa like e se inscreve. Comenta aí quanto você gasta hoje no Claude Code.
+  
+  
+  Manifest: https://manifest.build
+  Manifest GitHub: https://github.com/mnfst/manifest
+  
+  TIMESTAMPS
+  
+  00:00 Roteador de LLM para gastar MUITO MENOS tokens (Manifest)
+  01:25 Como funciona o Manifest
+  04:40 Instalando o Manifest
+  05:50 Configurando o Manifest
+  10:10 Iniciando os testes do Manifest, criando projeto
+  11:40 Verificando o roteamento de LLMs na interface do Manifest
+  15:40 Relatório de gastos do Manifest por LLM
+  18:30 Considerações finais sobre o Manifest
+---
+Galera, imagina só uma tecnologia que ajuda a rotear a LLM escolhida pelo nosso agente de código. O que que isso quer dizer? Baseado no esforço que a tarefa precisa, na dificuldade da tarefa, ela vai escolher IAS mais fracas, vamos dizer assim, ou Iá mais parrudas, como opos. E isso vai gerar pra gente uma economia absurda de tokens, ou seja, a gente vai gastar muito menos com IA ou até utilizar IAS gratuitas para tarefas bestas. e também conseguir ter o mesmo resultado que se tivesse utilizando OPOS para tudo, porque as IA são boas para determinadas tarefas, só que a gente não tem ali a paciência de escolher elas durante o nosso dia a dia, porque ia gerar muito trabalho e retrabalho. Então, com essa
+
+tecnologia, com Manifest, tu consegue fazer isso de forma automática. A decisão é tomada em milissegundos, é totalmente gratuito e tu já pode começar a economizar tokens agora mesmo. Fica comigo até o final desse vídeo que eu vou te explicar como configurar totalmente o manifest, como utilizar ele na prática e ver ali a real economia que ele vai trazer pra gente, beleza? E é claro, não esquece, deixa o teu like e também se inscreve aqui no canal para receber vídeos de A todos os dias que vão fazer muita diferença aí na tua vida, no teu trabalho. Bora chegar aí e conhecer melhor o Manifest. Só antes,
+
+galera, deixar aqui para vocês que estamos produzindo, ou melhor, eu estou, né, produzindo uma formação de codex, que tem para mim sido a melhor do momento, né? A gente tá tendo uma grande evolução no modelo do GPT, a gente tá tendo um preço justo para utilizar uma e usas de boa, ou seja, a gente consegue utilizar por muito tempo. E por isso eu decidi focar meus esforços e trazer uma formação super completa em Codex, tá? Vou deixar o link aqui no comentário fixado para tu poder se inscrever para a lista de espera que vai te dar um desconto especial de lançamento. Lembrando, acesso vitalício e vai ter grupo VIP de WhatsApp pros alunos pra gente trocar uma ideia marota lá e evoluir juntos em Codex. Então se
+
+inscreve aí, garante o teu desconto porque é totalmente gratuito, né? Bom, bom, bom. Vamos lá então conhecer o Manifest. Manifest é esse cara aqui, tá? E ele permite utilizar várias LLMs, né?
+
+Aqui nesse caso, desse vídeo, eu vou usar três para vocês verem como é que é, porque eu também acho que se tem muitas à disposição, pode ficar confuso. Então eu gosto de trabalhar com, por exemplo, uma para coisas idiotas, uma para coisas do dia a dia corriqueiro, que eu tô utilizando mais e uma para extra f, né, planejamento. Assim, eu acredito que seja uma stack interessante de as, mas fica teu critério quantas tu quer colocar. Beleza? Bom, ele é um router open source, ou seja, é gratuito, a gente vai conseguir instalar na nossa máquina e ele vai estar escolhendo aí a que a gente usa. Beleza? Então, qual que
+
+é o problema hoje? A gente vai usar o cloud code, ou seja, outra que tu usa, né? E ele vai tá usando na maioria das vezes o modelo que tu escolheu. Hoje em dia, a gente já tem algumas estratégias para ele alternar ali, mas não é tão automático quanto essa. Então, a gente tem que tarefas que poderiam talvez até ser utilizadas ali e feitas pelo Haik são feitas pelo Opus. E a gente tem uma
+
+queima de tokens e a gente acaba aí gastando muito, tendo pouco resultado. A solução é o manifest, que ele vai classificar ali a tua tes que tu precisa fazer em simple, standard, complex, reasoning. Para cada uma dessas vai ter ali modelos configurados e ele vai est ali e mandando para ir a certa, né, fazendo com que a gente economize, porque vocês vão perceber que muitas tarefas acabam caindo em simple e standard, a gente nem sabe. Aqui no vídeo eu vou fazer uma configuração de deepsek, GPT e cloud, né, modelos do cloud pr poder, né, cair em cada uma dessas quatro classificações, mas tu pode usar qualquer um que tu queira. Inclusive, tu pode colocar LMs que estão na tua máquina, LLMs gratuita, sei lá, tu roda um Quen, tu roda um GLM na tua máquina, pode fazer isso também. E o
+
+fluxo vai ser o seguinte, o cloud code vai mandar o request, o manifest intercepta, ele vai fazer a pontuação do que tu precisa executar em 23 dimensões, classifica em um desses tiars, manda pro modelo e aí a resposta volta pra gente. Então a gente tem aqui esses quatro passos sendo executados pelo manifesto, rapidamente, tá? E aqui eu botei um disclaimer, se tu assina e as vai ter uma facilidade, não precisa colocar chave de API, né? Sai mais barato também fazer pelo usage da assinatura do que por API, tá? Mas o deep que eu vou usar via PI porque não tem assinatura, pelo menos não que eu saiba. E eu também não
+
+assino, né? Eu acho ele muito barato pela PI, então já tá valendo. Bom, o Manifest ele tem uma landing page legal para tu poder dar uma olhada, né, como é que ele funciona mais a fundo, tá? Que é bem interessante. E também eles tm o repositório deles aqui para que vocês possam acompanhar a evolução do do pacote em si, né? Última atualização foi
+
+ontem, como vocês podem ver. Então, tá bem atualizado. Aqui ele mostra os processos de instalação e os providers, ou seja, ele aceita um número limitado, né? Não é tanto provider assim. E eles eh até tem ali, não gostam do Open Houter porque ele vai um pouco contra o propósito do pacote aqui, porque o opener vai cobrar a comissão deles, né?
+
+E aí vai fazer com que tu gaste a mais, porque tu poder utilizar a IA que o openhouder tá utilizando. Então dá para conectar, né? É interessante porque ele vai ter várias IAS, né? Muito mais que teria aqui, mas vai apagar ali o fizinho do openhouter. Então a gente vai se ater as outras aqui. Comando de instalação é
+
+um só, precisa ter Docker, tá instalado. E tu pode no Windows abrir o WSL, beleza? Terminalzinho aqui, ó. E colocar esse comando bash. O meu já tá instalado, então ele não vai reinstalar.
+
+Mas ele vai seguir a instalação normal aqui, vai te dar esse IPzinho aqui para acessar, ó, local host 2.299. E aqui é o resultado final, vai ter essa tela. Aí tu vai cadastrar aqui. Bom, galera, cadastro finalizado, né? É a
+
+primeira conta que tu cria, ele já cria como admin, então tu vai ter pleno acesso ao sistema. Beleza? Aqui a primeira coisa que a gente tem que fazer é conectar o agents, né? Ou seja, quem que a gente vai estar, né, utilizando para ele controlar os custos e fazer o roteamento. Então aqui eu vou utilizar o Cloud Code, tá bom?
+
+Create. E ele fala que eu tenho que criar esse arquivo aqui no meu projeto ou, né, no próprio root ali do do cloud para que se tu quiser usar para todos os projetos, tá? Mas eu vou fazer a nível de projeto porque eu acho que é melhor. Se eu quiser mudar a configuração depois eu sei onde é que tá. Tá? Então, o que
+
+que a gente tem que fazer? Abre a pastinha aí do cloud, cria uma pasta poncoud, cria um arquivo settings Jonou ali naquele arquivo. Aí, galera, a gente colocou aqui, salvou, pode fechar. Agora tá tudo certo. O cloud ele já tá sendo roteado aqui pelo manifest, tá? Agora a
+
+gente vai ter que conectar os providers. Então, como eu falei para vocês, eu vou fazer Antropic, vou fazer Open AI e vou fazer a chave do dipsic. Então, vou conectar aqui o Antropic. Então, aqui, galera, esse comando aqui tu vai executar onde tu usa o cloud, tá? Então pode ser aqui no VS Code mesmo para mim.
+
+Vai ter que autorizar aqui e ele vai te dar um token. Aí é só fechar aqui, tá galera? O token vai aparecer lá no terminal de vocês e basta colar aqui e conectar. Se der tudo certo ali, ele vai dizer que tá conectado. Beleza, vamos fazer a mesma coisa com o GPT. Então
+
+veja que é bem simples o processo, né? É aqui um login. Aí aqui, galera, é um pouco diferente. Tu vai ter que pegar essa URL porque ele dá um erro, ele justamente mostra aqui e jogar aqui nesse input. Beleza? Essa callback URL
+
+aqui. Aí aqui, galera, ele traz o GPT5 como default, tá? Mas eu posso pedir para ele rotear por complexidade. E aí ele já começa a trazer aqui as opções, ah, o simples, o standar, o complex, tá? Então eu já consigo ter a parte de roteamento porque só com o modelo não faz sentido, né? Quando eu tenho dois ou
+
+mais aí começa. Então vou conectar mais um que agora vai ser o deep seek. Essa a parte setup é só chatinha no começo, né? Então tu vai vir aqui e aí tu vai ter que pegar tua chave de ap do de psiqueic, tá? Lá no site deles. Aí colou
+
+a chave, conecta. Pronto. Aí tu pode agora colocar, né, quais tu queira, né? Tem os providers aqui. A ideia é que sempre eles adicionem mais. E tem a
+
+opção ali também do local, né, galera? O local seria a gente ter alguma LLM aqui na máquina rodando. Eu até tenho, posso até fazer o setup aqui, ó. Eu tenho alguns modelos aqui. Eu posso conectar rapidamente ao OLAMA, por exemplo, LM Studio, se eu quiser, ou esse Lama CPP, que eu não conheço. E aí tu vai ter
+
+acesso aos teus modelos locais também. Bom, galera, aqui ele configurou os tiars dessa maneira, né? Eu posso deixar assim, mas aí ele tá usando sempre os mais caros para tudo praticamente, né? Eu posso fazer o seguinte, ah, reasoning, que é raciocínio, eu vou adicionar o opus 4.6 e eu vou deixar ele como principal e o fall o sonet complexo. Ah, vou deixar o sonet mesmo.
+
+Padrão, vou deixar o GPT 5.5. Simple, eu vou colocar aqui o dipsic. Deepsic flash, que é o mais barato que tem, tá? Ah, vou deixar aqui o standard, como o Deepsic Pro, que é bom também, tá? E aqui eu vou deixar o complex no
+
+GPT 5.5, que também é uma excelente a Aí, pronto. Assim eu consegui fazer um mix, né, de as para cada tier que ele vai contabilizar ali automaticamente, né? Aqui no meu local, ó, ele detectou o Gema e o Kim 2.5 Cloud, né? Eu poderia
+
+também colocar para ele se eu quisesse, que são esses dois modelos que eu tenho aqui no local no momento, tá bom, galera? Aí agora a gente pode vir aqui em overview, que é o monitoramento, onde ele vai mostrar pra gente tudo o que que vai acontecer, tá? Eu vou voltar aqui pro nosso projeto que eu vou fazer alguns promptes pra gente ver ali e acompanhar. Eu não vou criar o projeto com a LLM porque eu sei que ele já vai usar mais pesada de cara. Então eu vou utilizar aqui um comando que vai criar um projeto de next, né, zerado. Então
+
+esse aqui npx create app latest na pasta manifest test, tá? Então, um comando que não precisa de LLM e vai criar a base do projeto pra gente. E aí eu vou poder entrar nele, né, e utilizar. Bom, daí eu vou entrar naquela pastinha ali, manifest, e eu vou abrir o cloud nela. Aqui tem um projeto next normal, tá? Ah, desculpa isso aqui. Aí o
+
+que acontece, né? Ali não vai funcionar nunca, né? Eu tenho que usar essa pasta cloud lá dentro. Bom, galera, agora que eu arrastei aqui a pasta do setting Jon, né, do cloud com setting Jon aqui para dentro, eu vou abrir o cloud. Aí o que que acontece? Quando eu abro aqui, tem
+
+uma coisa que a gente tem que ficar ligado, ele mostra opos, tá? Só que ele fala aqui, ó, está no settings JSON. Isso quer dizer que ele tá sendo configurado pelo setting Jon. Não precisa se preocupar com isso aqui. E vamos fazer o teste na prática. Eu vou
+
+pedir aqui para ele duas coisas. primeiro para ele listar todos os projetos e me mostrar a estrutura em formato de árvore. Isso teoricamente é uma tarefa simples. E vamos tentar aqui um outro comando que é para criar um arquivo Redmi com o título manifest, uma descrição de duas linhas. Então vejam aqui, galera, a gente teve duas execuções, né, que uma delas foi para criar essa estrutura em árvore de como é que tá o projeto, outra para criar um RIDM, tá? Descrevendo o projeto. E se a
+
+gente volta aqui no manifest, a gente vê que teve 16 mensagens, né? As interações com o modelo. Nem sempre quando a gente manda uma mensagem para ele, ele vai e volta com a resposta. Ele tem que se comunicar, fazer raciocínio e tal. Isso teve um custo de menos de centavo de dólar, essa quantidade aqui de tokens e uma economia de $4. Se a gente
+
+acompanhar aqui, ele utilizou, né, alguns dos modelos, ele utilizou GPT, na verdade utilizou todos, tá? E aqui a gente vê que algumas tarefas foram delegadas pro 5.5. Eu acho que até o deepsic aqui não está funcional. Deixa eu ver aqui, ó. A gente tem o flash o
+
+pro aqui, o 5.5. como como fall, né? Então ele acabou não utilizando de psipsic, mas tentou chamar ele, né? Veja aqui que o flash ele conseguiu utilizar, né? Uma vez aqui também ele utilizou o
+
+pro, tá? Mas depois de um certo momento ele não conseguiu mais usar o deep que aí foi pro fall. Pode ter sido por questões de, ó, vamos ver aqui. É, aqui eu acho que foi um erro do próprio manifest, né? Não consegui se comunicar com o modelo ou esse modelo não tem esse recurso que ele tentou ativar e aí recebeu um erro de API, tá? Por isso a
+
+gente não conseguiu utilizar o depisc pro nesse caso aqui, tá? Mas vejam que ele evitou bastante utilizar ali o modelo que tá como reasoning, que é o Opus 4.6. E se a gente tivesse em condições normais, né, de projeto, ele utilizaria praticamente o modelo que tá definido, né, e todas as requests seriam para ele. Então é muito interessante que já se tem feito em poucos usos. Aqui
+
+agora eu vou pedir algumas coisas mais complexas assim entre aspas, né, pra gente ver também como ele vai se comportar. Então vou pedir aqui para ele criar um componente em SRC components header com logo, texto, menu horizontal com três links, tá? Eu também vou pedir para ele iniciar o projeto para testar. Então vamos ver aqui como é que ele vai lidar com esses dois requests encadeados, né? pra gente ver se vai funcionar tudo certinho. E o
+
+interessante, né, galera, que pelo que eu tô usando aqui, ele pede muito mais confirmação de tools assim que o Opus não utilizaria, né? Porque os modelos diferentes acessam tools diferentes. Legal ali, mas pode atrapalhar um pouco aqui nas confirmações que a gente tem para fazer o desenvolvimento. Ó, galera, ele abriu o projeto aqui, tá? O nosso componente aqui em cima, tá? Só pra
+
+gente ver que tá funcional mesmo, né? Não adianta nada os prompts ali parecerem que tá dando certo, mas ele não entregar o proposto, né? Então vamos ver aqui de novo, ó. 36 mensagens, potencial economia. Claro que é por assinatura, né, galera?
+
+Mas a gente vê que ele não tá usando o Opus para tudo, né? E aqui a gente vê que agora sim ele conseguiu utilizar o de PSIC Pro, né? Então são tarefas um pouco mais complexas, né? que ele tá considerando. Então ele tá utilizando, alternando, né, entre os modelos complexos, complexo e de raciocínio, tá?
+
+Agora vou pedir para ele criar uma página aqui. Então, vou pedir para ele criar uma página sobre com texto introdutório, uma sessão de FAC com três perguntas e respostas usando detail sumaries do HTML. E aqui, né, já linka essa página na nave barra. Então, ele falou aqui que terminou, galera. Vamos dar uma testada. página sobre, ó, já tá
+
+funcional, beleza? Bem interessante, né? E aqui agora eu vou pedir para ele, antes da gente ver ali o teceu, criar aqui um pequeno sistema de todoo na página toos com formulário para adicionar tarefas, né? Então, um tozinho bem simples e linka na nave barra para ele não esquecer, tá? Então, olha só, a gente tá tendo aqui um uso bem parelho de raciocínio e de tarefas complexas, né? Ele tá destinando
+
+bem pouco ao deepsic pro que seria para as tarefas padrão, tá? Isso pode ser uma questão do harness, né, do próprio cloud code, tá? Sugiro vocês testarem em outras soluções, como um open code da vida ali que ele permitir para que vocês também tenham a impressão do uso, né? em uma ferramenta mais neutra aqui. Eh, até a intenção deles puxar, né, mais para o uso alto, alta demanda, para torrar os créditos logo da gente e entregar um resultado bom. Mas de qualquer maneira,
+
+se eu colocasse, por exemplo, o modelo para complexo com Deepsic Pro, dependendo do projeto, dá para fazer isso, eu acredito que estaria desempenhando bem e estaria economizando mais ainda, né? Vamos ver aqui como é que tá se comportando ali, ó. que ele já me perguntou coisas, né? Antes de eu codar, confirma esse desenho rápido to list. Botar aqui, provar, né, para ele salvar em local storage e tal. Vamos ver
+
+esse resultado final aqui que eu planejei, né? Bom, galera, aí ele fechou ali as últimas alterações que a gente fez, tá? Então, vou fazer o teste pra gente poder ver. Tudos. Posso marcar ele salva em local storage, tá tudo funcional. Então quer dizer que a
+
+qualidade, né, pelo routing, que pode ser uma dúvida de vocês, não foi sacrificada, né? Vejam aqui, ele acabou utilizando standard para algumas coisas, né? Para bastante coisa, na verdade, 100.000 tokens nessa última interação. Então, algumas coisas ele delegou para o modelo do standard do dipsic. Então, bem
+
+legal. Aí a gente economizou bastante, né? E aqui só nessas interações, ele calculou essa economia aqui, né? Lembrando que ele tá calculando pelo consumo da API, né, que GPT e OPOS são bem caras, né, em relação ao de PSIC. Então é por isso que a gente tá vendo esse consumo, mas na verdade tá na verdade tancando a minha usage, né? Eu
+
+tô conseguindo usar mais todas os modelos, né? Ou o Opus nesse caso, né? Por causa dessa manobra aqui do manifestar aí também. Beleza? Além disso, galera, gostaria de comentar com vocês que temos aqui no canal playlists tanto de Codex como de cloud Code, tá? O editor vai
+
+deixar a T aqui do Cloud Code. Eu vou deixar o Izinho para que vocês possam ter esse curso gratuito, né? São mais de 50 vídeos aí sobre cloud code. A primeira aula, inclusive, é um miniurso com projeto e deploy, tá? Bem interessante. Então, deem uma olhada de
+
+codex segue a mesma linha, né? A gente tá começando a trazer mais conteúdos de Codex agora por eu já ter comentado antes, né? da formação Codex Master, inclusive do Codex tá sendo uma ferramenta que eu tô usando bastante. Então esperem mais conteúdos de Codex e Open Code, que também é uma outra alternativa, né? Bom, eu quero saber de vocês que que acharam, deixe nos comentários aí, bora fazer uma discussão, bora trocar essa ideia para entender se vocês vão utilizar, se já estão utilizando, se enfrentaram algum problema. Como eu vi ali, né? Por mais
+
+que a gente tenha a troca de modelos ainda, para mim parece tá meio rígida. Acredito que seja por causa do hardness ali do cloud code que tá chamando tudo pro modelo mais forte. E o teste, talvez um outro teste muito bom que poderia ser feito é com open code, que é algo bem mais neutro, como eu comentei também, tá? Se possível testem aí para poder ver se funciona legal. Uma coisa que eu comento pouco aqui no canal, galera, mas é importante, nós temos vídeos exclusivos para membros, tá? Aquele
+
+precinho do YouTube ali, acho que é uns R$ 8, tu já consegue ter acesso a todos eles. Uma frequência semanal, quinzenal que eu coloco aqui bem focado na tecnologia, em recursos que eu uso pessoalmente, né? Algo mais próximo a mim. Então, se tu tem interesse, seja membro aqui do canal também que ajuda a gente e tu vai ter acesso a vários vídeos que são exclusivos para os membros, beleza? E também, é claro, se puder ajudar, deixando o like, se inscrevendo, isso fortalece muito aqui meu trabalho e ajuda eu manter a frequência de vídeos todo santo dia.
+
+Então, vou ficando por aqui, espero vocês no próximo vídeo também na formação Codex Master. Se inscreva. Valeu,

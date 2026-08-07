@@ -1,0 +1,193 @@
+---
+video_title: "Printing Press: A Fábrica que Deixa o Claude Code 10x Melhor (ABSURDO!)"
+video_id: UDTdsLLwGWw
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UDTdsLLwGWw
+video_date: 2026-06-11T14:00:19+00:00
+video_description: |
+  Printing Press é a fábrica que transforma qualquer site ou API em CLI agent-native pro Claude Code, com workflow até 10x mais rápido que MCP tradicional. Neste vídeo eu mostro a ferramenta completa: instalação do binário, carregamento das skills, uso de um CLI pronto da biblioteca de 52 disponíveis, e duas gerações do zero ao vivo, uma a partir de uma API documentada brasileira (Asaas) e outra a partir de um site sem API pública (OLX). 
+  
+  ⭐ Inscreva-se na Lista de Espera do Curso Pare de Brigar com a IA: https://app.horadecodar.com.br/lp/pare-de-brigar-com-a-ia-claude-code
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  O conceito é poderoso: ao invés de carregar um MCP server pesado que consome token só pra existir no contexto, você usa um CLI enxuto que o agente sabe exatamente como chamar via skill.
+  
+  Se você usa Claude Code todo dia, sente que MCPs estão pesando no contexto e quer parar de gastar token à toa, esse vídeo é pra você. Cubro o problema do MCP tradicional carregando 30 tools de uma vez, a sacada do Printing Press de gerar 4 outputs de uma só geração (binário Go standalone, skill Claude Code, skill OpenClaw e MCP server), e a parte brasileira gerando CLI pra Asaas e OLX em poucos minutos.
+  
+  A instalação é direta: go install pra baixar o binário, git clone do repo de skills, claude com plugin-dir pra carregar tudo. As 5 slash commands aparecem no help: printing-press, polish, publish, reprint e import. O conjunto cobre o ciclo completo de uma fábrica de CLIs.
+  
+  A primeira demo é o flight-goat, que junta Google Flights com Kayak nonstop sem precisar de API key. Rodo busca direta GRU para LHR, scan de range de datas pro mais barato, e mostro a flag agent que ativa json compact no-input no-color yes de uma vez. Esse é o argumento literal do vídeo: o CLI nasce desenhado pra agente, não adaptado pra agente. Termino chamando o flight-goat via prompt em PT-BR no Claude Code, que identifica a skill sozinho.
+  
+  A segunda demo é gerar CLI do zero pro Asaas, gateway de pagamento brasileiro. Disparo o slash command passando só o nome da empresa, e o Claude Code roda 5 fases automaticamente: research lendo docs, discovery mapeando endpoints, code generation criando o Go CLI, verification rodando dogfood contra a spec, polish limpando e gerando README. No final tem quality score, dois binários (asaas-pp-cli e asaas-pp-mcp), e SKILL.md pronta. Crio conta sandbox em um minuto, exporto a API key como variável de ambiente e rodo customers list e payments list no terminal.
+  
+  A terceira demo é o pulo do gato: gerar CLI pra um site brasileiro sem API pública. Aponto o printing-press pra URL do OLX, e a fábrica abre browser headless, sniffa o tráfego do front, identifica endpoints internos e parâmetros de paginação, gera CLI igual o do Asaas. Rodo busca de iPhone 15 em Santa Catarina, e chamo via Claude Code em PT-BR pedindo os 5 anúncios mais baratos em Florianópolis das últimas 24h. O mesmo padrão funciona pra Mercado Livre, Vagas, Quinto Andar, qualquer site brasileiro.
+  
+  Mostro também os recursos extras: o modo Codex delega code generation pro Codex CLI mantendo o Claude como cérebro, economizando 60% dos tokens Opus. O polish roda diagnóstico completo e conserta falhas. E o publish empacota e abre PR automático na biblioteca pública, deixando você como autor, com convite pra ser o primeiro brasileiro a publicar.
+  
+  Os casos de uso pro seu fluxo: transformar seu SaaS em CLI pro Claude Code chamar direto, virar site BR sem API em agente IA, substituir MCPs pesados liberando contexto, padronizar time inteiro com o mesmo CLI. Tudo open source, gratuito, funciona em Claude Code, Codex, OpenClaw e Hermes, e o autor é endossado publicamente pelo Garry Tan da Y Combinator.
+  
+  E você, qual API ou site brasileiro quer ver virar CLI no Claude Code? Comenta aqui embaixo que o mais pedido eu gero ao vivo no próximo vídeo. Já testou alguma fábrica de CLI ou ainda usa MCP tradicional? Deixa o like, se inscreve no canal e ativa o sininho pra não perder os próximos drops do ecossistema Claude Code.
+  
+  
+  LINKS
+  
+  Printing Press: https://printingpress.dev
+  
+  TIMESTAMPS
+  
+  00:00 Agora o Claude Code vai conseguite integrar com qualquer serviço!
+  01:25 Como funciona o Printing Press
+  03:10 Instalando o Printing Press
+  09:10 Utilizando o Printing Press
+  15:24 Criando um CLI com o Printing Press (Exemplo Asaas)
+  18:25 Criando CLI do OLX para buscar produtos
+  21:30 Testando os CLIs criados com o Printing Press
+  25:00 Considerações finais sobre o Printing Press
+---
+Galera, quanto mais complexo um sistema fica, mais ele tem que integrar com outros serviços. Aí tu vai ter que correr atrás de documentação de API, de servidor MCP, de como funcionam essas integrações. E isso é um grande problema, um rolo e dá um stresse danado. Criaram uma lib chamada printing press, que ela vai receber o nome ou uma URL de um serviço e vai conseguir gerar como se fosse uma documentação. E isso vai servir para tu poder manusear essas APIs e integrações no teu sistema de uma maneira simples, porque o teu agente vai entender como ele funciona e economizando muitos tokens no processo.
+
+Não serve só para isso. Tem vários serviços já mapeados no printing press e tu consegue utilizar eles como se fosse tu, né? Ou seja, dá para colocar um Open Cloud rodando ali para encontrar uma passagem barata, para encontrar um produto em promoção. É um negócio muito interessante, tá crescendo bastante essa libraça. Nesse vídeo aqui eu vou te mostrar como instalar ela, como utilizar e como tirar o melhor proveito, porque ela tem vários recursos, beleza? Então,
+
+se tu gostou da ideia, não se esquece de deixar aquele like para fortalecer e também se inscreva aqui no canal para receber vídeos de inteligência artificial todo santo dia. Bora lá. entender melhor como é que funciona o print impress. Chega aí, galera, antes de começar, só queria falar sobre o nosso novo treinamento que a gente tá produzindo aqui, tá? A ideia é bem simples, é um curso bem prático, um curso direto ao ponto, onde tu vai aprender a utilizar as melhores estratégias com a IA para criar projetos da maneira certa e conseguir atingir o resultado mais rápido. O que eu tenho
+
+percebido é que muita gente esbarra ali em algumas situações usando qualquer Ra, né? Não tem uma IA específica, por exemplo, tem gente que tem problema com cloud code, com Codex, com Gemini, enfim, a que tu usa. Só que o problema não tá exatamente na IA, né, e sim na maneira que a gente pede as coisas para ela. Então, eu extraí o meu método de criar projetos pessoais e coloquei nessas aulas práticas. Tô produzindo tudo isso para vocês. Vai ter o valor
+
+bem bacana e ainda tem lista de pré-lançamento para poder garantir uma oferta especial. Beleza? link no comentário fixado e na descrição desse vídeo, garanta a tua vaga nessa lista para conseguir esse desconto. Bora seguir, galera. Então, como de proo trouxe aqui um infográfico só pra gente poder contextualizar todo mundo e aí depois a gente vai instalar e usar, tá?
+
+Printing Press, que é o nome da ferramenta, ele é uma fábrica mais biblioteca de celis para agentes. Então ele não vai criar só uma skill que a gente vai conseguir utilizar, ele vai ter ali vários outputs, né, várias saídas que são utilizáveis. por todos os agentes praticamente, tá? Como é que ele funciona? Ele lê ali uma API, uma ORL, o nome de uma biblioteca famosa, também dá para botar nesse sentido, tá? Ele vai
+
+gerar esse binário que vai poder ser utilizado por ti. Então, não necessariamente tu precisa estar utilizando ele para um sistema. Como eu falei antes, tu pode estar utilizando para um fim pessoal teu. Os Outpus são o Celai, né, que tu vai poder utilizar via linha de comando, que é bem interessante, bem fácil de usar, uma skill de cloud, uma skill de open cloud e um MCP pronto para uso também. Temos também uma biblioteca, eu já vou mostrar aqui para vocês, tem uns repositórios aqui e tem uma biblioteca com vários deles já pronto, né? Então, ah, se eu
+
+quero aqui instalar o Printing Impress do ISPN para saber ali alguma coisa de programação esportiva, dá também. Então, é como se tivesse já literalmente uma biblioteca com vários serviços já feito por outras pessoas. Tu vai usar e pronto, tá? Ele vai rodar basicamente no cloud code, no Codex, no OpenCloud ou AVS, né, que são e agentes de autônomos. Qual que é a vantagem? Se a gente
+
+tivesse comparando com um consumo de MCP, a gente vai estar utilizando 60 a 80% menos tokens para ter serviço praticamente local na nossa máquina, né, offline, entre aspas. E aí teremos muito mais usage do nosso agente, né? Então depende também do serviço externo estar on pra gente poder fazer alguma coisa. Como é que funciona a instalação? Bom, vai precisar do GO, tá? A linguagem go
+
+instalada é bem simples, só entrar no site deles aqui, fazer o download e next, next da vida, não tem segredo, tá? Então entrem aqui em go.dev e já baixem. Para testar se o go tá funcionando, é simples. Depois da instalação, tu vai abrir um terminal e vai digitar go version.
+
+Então, para verificar se o GO tá instalado, depois da instalação é bem simples. Abre um terminal e digita o comando GO version. Ele vai mostrar a versão do GO que tu instalou. Fechou? Então esse é um pré-requisito. O outro
+
+aqui é o Cloud Code, tá? Ele vai gerar via cloud code, embora a gente possa executar via codex depois, como se o Cloud Code fosse o motor que o pessoal ali do printing press escolheu para criar essas ferramentas, tá? E aí tu vai utilizar aqui também o binário deles, tá? Que precisa instalar. Tu pode clonar as skills já existentes, né? Como eu
+
+falei, tem aquela lib ali com várias skills prontas. E depois basta abrir ali o cloud code utilizando essa flag aqui que tu vai ter acesso a tudo, tá? Trouxe também aqui uma comparação, né, de utilizar MCP, API e o Celai. Então a gente tem uma vantagem em praticamente todos os quesitos, porque o CELI ele vai est na nossa máquina, ele vai est com as informações já prontas depois de gerar, ele vai trabalhar com um banco de dados local para salvar as informações. Então vai ter fácil acesso, vai ter rápido acesso também e ele pode se autocorrigir caso tenha algo errado, né? algo que não
+
+tá bem escrito a documentação, que até a documentação tá errada, mas ele consegue achar uma saída, se for possível, se autocorrigir e ficar pronto para sempre, né, com essa correção. Como eu falei, tem quatro tipos de saída. O binário, que a gente vai utilizar via terminal, uma skill de cloud code, uma skill de open cloud, que serve pro também e o servidor MCP, tá? Aí tem outras questõezinhas que a gente vai ver ao longo do tutorial aqui, galera, e eu vou apresentando para vocês ao decorrer do vídeo, beleza? E antes de seguir, é claro, né, galera, lembrando, estamos com as inscrições abertas da formação Vibe Coding. O link vai est aqui no
+
+comentário fixado. É o melhor lugar para tu aprender cloud code, gravity, Codex, Open Code, enfim, qualquer software de AP para programação. Tem tudo nesse grande curso, nessa formação. Tá com mais de 39 horas, tô atualizando semanalmente e também tem acesso vitalício e grupo VIP no WhatsApp. No link tá aqui na descrição e no comentário fixado, tu entra nessa página, pode conferir tudo. Recomendo
+
+que assista esse vídeo aqui onde eu explico todos os detalhes do treinamento. Fechou? Então bora aqui entender melhor o printing press. Eles têm aqui um uma página, tá? Onde a gente pode dar uma olhada como funciona o método, tipo uma documentação. Tem a
+
+forma de instalação aqui, tá? E eles mostram também alguns casos de uso. E tem a biblioteca, ó, que é onde a gente vai ter acesso, já mostrei para vocês ali, a, até o momento 58 celes em 13 categorias. Então, ele fala aqui, tem SPN, tem de voos, né, para achar voos baratos e assim por diante. Então, é bem interessante porque não é só para desenvolver software, é bem utilitário isso aqui também, tá? Esse é o
+
+repositório de biblioteca e esse é o repositório do da ferramenta em si, né? Celide printing press. Então vamos instalar aqui pra gente poder fazer alguns testes. Tô com terminal aberto numa pasta, tá? E o primeiro comando aqui, como ele bem fala, é esse. Deixa
+
+eu ver aqui. Comando aqui, ó, instale o binário. Se tu colocar o kit inicial, ele vai trazer algumas que talvez tu não queira, né? por exemplo, eh, de receita, de filme, de voos. Então, vai vir coisas a mais. Então, eu vou pela instalação
+
+crua e depois instalo só o que quer, tá? Então, vou instalar o binário, copio aqui, coloca aqui. Aí ele vai fazer a instalação do pacote em go que a gente precisa para gerar as questões ali do printing press em lib. Por exemplo, se eu quero integrar com sistema de pagamento, Pagarme, asas que são brasileiros, vamos dizer assim, né? Aí eles não vão ter essa integração pronta, eu vou ter que criar e é possível. Então, exatamente isso que a
+
+gente vai fazer aqui também, vocês verem que dá pra gente adaptar pro nosso cenário aqui, não precisa depender só do que eles tm pronto também. Bom, galera, aí ele terminou de instalar aqui e eu vou usar o comando do printing press para justamente ver se dá tudo certo. É printing traço pression. Então aqui ele tá dizendo não tá reconhecendo, tá? Então a gente tem que fazer duas coisas aqui, né? Para checar
+
+se é um problema do terminal que tá com cash ali, né? Ou se foi algum erro de instalação. Ó, aqui ele tá funcionando. Que não? Ah, tá digitando comando errado. Não dá, né?
+
+Printing press. Agora sim. Beleza. Então, erro humano, né? Não foi erro da IAP. Beleza? Então, deu certo ali. E o
+
+que acontece agora? Eu vou precisar clonar um repositório. Ó, vejam aqui, ele pede para colonar essas habilidades, que é justamente o cara que instrui o cloud code a como criar esse celar e essas skills, tá? Então, vou copiar aqui, vou colocar aqui e ele vai colocar essa pastinha e selar printing press. Então, a gente pode entrar nela, dar um CD, beleza? E
+
+aqui dentro eu vou fazer o seguinte: cloud menos plugin traço de ponto. E aí o cloud ele inicia nessa pasta com essa flag. Essa flag plugin de ela faz carregar o plugin que tá instalado dentro dessa pasta que é o plugin do printing press, né? E eu posso digitar barrah help. Aí aqui agora eu posso tentar utilizar já as skills do printing press. Então printing press. E eu vejo
+
+aqui e printing press, printing press, retrô, score, polish, cada uma delas faz alguma ação do printing press. Aí eu sugiro até vocês darem uma olhada na própria documentação para que vocês possam entender como funciona, né, cada uma das skills. Aqui a gente vai utilizar o pacote e tal, mas a gente não vai ter a oportunidade de utilizar todas. Beleza? Bom, com o celular instalado e dando tudo certo, agora eu posso instalar, por exemplo, algumas coisas das bibliotecas. né? E aqui é o
+
+repositório de biblioteca. Eu vou deixar aqui, galera, no na descrição. Se eu não deixar, vocês me lembrem, tá, que eu coloco também não é difícil de achar. Então eu vou instalar um desses celis aqui, vou instalar o de Vols, tá? Pra gente poder utilizar ele. Então, todos
+
+eles vão seguir essa mesma ideia aqui, ó. E npx- Y, printing press, install e o nome do do pacote, né? Então, ele pô aqui, ó, por exemplo, instalar o npm, tá? Então ele botou aqui, ó, instalar o SPN, vai ser dessa maneira. Eu vou instalar aqui o Flight Gold, que é para Voltos, tá?
+
+Então aqui eu posso até sair do cloud, que é um comando NPX. Vou usar aqui o NPX men Y. Aí o nome do repositório do cara, install flight goat, que é o de Volvs, tá? E aí automaticamente ao instalar esse cara, ele vira um celai, porque ele vai ter os mesmos outputs que eu falei para vocês, selai, as skill e tal. Então, instalando é a mesma coisa que gerar, tá? Então, só deixa ele
+
+terminar aqui que eu vou mostrar para vocês na prática. Bom, galera, aqui como vocês podem ver, ele instalou corretamente o Selai, tá? Só que ele deu um erro para instalar skill. Eu tenho um outro comando aqui que eu posso fazer para tentar instalar skill diretamente. Aí o NPX, mesmo nome do pacote menos a cloud code, tá? Mas como vocês podem
+
+ver, o celai funciona. Botei aqui, ó, version e ele tá funcionando, tá? Só que aqui a skill realmente falhou de novo, tá? E aí pode ser que seja algo que aconteça aí também eu tive esse problema na documentação. Eu tive esse problema seguindo a documentação antes também e tem algumas alternativas que a gente pode fazer. Esse aqui é um outro
+
+comando. Então o mesmo lá de install - G - A cloud code - Y. Olha aqui acho que agora vai. Então aqui a gente vai ter a skill do do Flight Gold também, tá? Ó, agora deu certo. Mas eu posso usar via
+
+selai, como eu falei para vocês. Então, eu posso utilizar ali, ó, fight goat pp sell e aqui help. Aqui eu vejo todos os comandos do celai, né, para me ajudar com a questão de vols, beleza? E cada selai vai ter o seu, né? Isso que é interessante, a gente tem que saber como se usa cada um deles. Aqui eu já
+
+preparei alguns comandos, né, pra a gente poder adiantar um pouco o vídeo, mas, por exemplo, se eu quisesse procurar um voo de Guarulhos para Londres, né, que é esse LHR ali, e o, por exemplo, sair, né, então vejo as flags from, né, Guarulhos to LHR, que é o aeroporto lá de Londres, né, que dia que eu saio aí vou sair dia 19 de maio, por exemplo, né, non stop, compact, né, Non, stop seria sem paradas e compact é uma flag para ajudar a economizar tokens. Então vamos lá, galera. Para entender como utilizar o Cai, tu vai sempre digitar o comando menos help. Ele vai passar aqui a estrutura de comandos, tá? E flags. Cada selai vai ter o seu,
+
+beleza? Fight Gold tem esse. E vocês precisam estudar ali o que que vocês vão utilizar para poder saber utilizar via Cine, né? Claro que tu pode pedir pro cloud code, por exemplo, utilizar skills e vai dar na mesma, porque aí vai usar IA. Aqui a gente tá usando via comandos, né? E aí, se eu quisesse, por exemplo,
+
+procurar um voo, ó, de Guarulhos para Londres no dia 19 de maio 2026, sem paradas, né, sem escala e ordenado pelos mais baratos, eu posso fazer dessa maneira aqui. Aí agora ele me mostrou aqui, esses são os voos, né, que ele encontrou, né, eu poderia também utilizar a flag agents, tá? É o mesmo comando, só que com a flag agent. Isso vai fazer com que ele me dê uma estrutura aqui em JSON, tá? Então tem outras variações que a gente pode fazer.
+
+Essa estrutura aqui tecnicamente tem mais informações ainda. Claro que prejudica um pouco a nossa leitura, mas pensem para um sistema, né? Poder utilizar esses dados aqui de forma estruturada. Fica bem interessante para eles colocarem a amostra, né, de alguma maneira mais fluida no sistema. E, né, se eu não quiser decorar comandos, eu posso usar também os pacotes via cloud.
+
+Então, vou pedir aqui para ele buscar vo direto São Paulo para Londres, né? Sai no dia 19 de maio, volta dia 22 de maio, ordenado por preço top 5. Então, o cloud ele vai usar praticamente aqueles comandos ali que a gente viu, tá? baseado na skill que a gente tava ali com baseado na skill que a gente instalou ali, né, com aquele último comando. E isso vai fazer com que a gente tenha uma resposta de, certo?
+
+Então vou pedir aqui para ele, ele vai ativar aquela skill. Se ele não ativar, ó, ele tá ali, ó, use skill PP Fight Gold. É exatamente essa. E essa. Então ele vai usar a skill ali do cel que a gente instalou e tudo mais e vai fazer as coisas mais simples pra gente, né?
+
+Mas aqui eu gasto token. Então ó, galera, agora ele trouxe aqui para mim, tá? O que acontece? Eu tive que brigar um pouco aqui com ele porque a skill que ele trouxe parece que usava uma outra API, tá? Aí eu falei assim: "Ah, por que que o comando dele não queria trazer, né? Fiá, por que que o
+
+comando se lá dá e aqui não dá?" Aí ele contou o erro e conseguiu trazer para mim, tá? Então, como vocês podem ver, às vezes pode ser que a skill não seja aquela bala de prata, o celular é mais confiável, tá? Então é assim que vocês vão utilizar via cloud code, mas pode dar esses problemas que eu mostrei para vocês aqui, tá bom? Agora voltando ali pro celar, eu vou mostrar como que a gente pode criar um nosso, tá? Então a
+
+ideia é que a gente utilize o comando printing press, o cloud code, tá? Então vou botar aqui comando, vai começar comando plugin de, tá? E aí vai ter aqui acesso ao printing press, que é o comando de inicialização de um celai nosso, tá? Aqui eu posso colocar uma ORL de documentação, um nome de um serviço, se ele for reconhecido, vamos dizer assim, ou qualquer coisa que eu consiga ter acesso a informações que ajudem ele a criar um celai. Aqui eu vou tentar colocar o asas, é um serviço de pagamento, tá? Então vou ver se ele
+
+consegue criar pra gente aqui. A ideia é que ele vai entender o que é esse asas procurar, porque o cloud code tem tools para isso. Eu tô usando o Opus. Ele vai procurar tudo que ele conseguir e criar um celai para mim naqueles quatro moldes lá que eu comentei para vocês. Então aqui na teoria é quando eu quero criar um serviço para mim que não existe lá na documentação, tá? Então ele foi lá e tá
+
+buscando as coisas. Agora vamos ver o que vai acontecer aqui para ele criar. Tem todas as fases, né, que ele vai seguir, pesquisa, descoberta, geração de código. Ele provavelmente vai passar aqui no terminal e deve demorar um pouquinho aqui pra gente, né? Ó, aqui é a primeira fase, né? Então, ele falou
+
+que pode levar de 30 a 60 minutos, dependendo da complexidade da PI, tá? E ele falou que eu vou precisar de uma chave de API, né, para poder rodar, porque AS é uma API pública. Eu posso criar ali a chave no sandbox, não tem problema nenhum, tá? Eu vou aqui em seguir as recomendadas e só para vocês verem aqui, ele vai provavelmente ler essa documentação aqui do AS padrãozinha, tá? E tu pode criar uma conta aqui no Sandbox Asas, Sandbox Asas, tá? E gerar uma chave de API, que
+
+é totalmente gratuito para fazer o teste também, se tu quiser, ou usar um serviço que tu queira, tá bom? Aí eu creio que ele vai fazer isso que eu falei, todo esse processo, né? E vai retornar aqui pra gente selar e pronto. Tá? Onde vai ficar esse celai? Quando tu instala ele,
+
+ele vai criar uma pasta chamada print impress no teu usuário. Provavelmente ele vai colocar aqui os celis que a gente cria, tá? Por isso que ele vai conseguir acessar de maneira fácil. Aqui em library não tem nada. Deixa eu ver aqui. Nosscritos. É, por enquanto tá
+
+vazio, né? Só tem o celai deles ali. Vamos ver se se concretiza. Ó, daí ele tá perguntando sobre a chave de API. Eu vou botar aqui, eu vou definir ela. Eu
+
+tenho a chave de API aqui, tá? Isso a gente consegue fazer baseado num comando chamado export. Eu vou usar o sandbox, não é produção ainda. Tem algumas perguntas que são importantes a gente seguir certinho, senão pode dar errado ali a questão, né? E aqui, galera, como eu sei que vai demorar, eu vou fazer o seguinte, eu vou gerar um outro celai de alguma coisa mais simples, sem API, para vocês verem que é possível também, tá?
+
+Então, vou deixar ele fazendo em paralelo os dois. Esse segundo eu vou gerar do OLX pra gente poder procurar, por exemplo, produtos lá. Vamos ver se vai dar certo. Então vai ser printing press. Deixa eu ver tava ali na pasta errada. Vai ser printing press, tá? E
+
+aqui eu vou utilizar o site do LX mesmo para ver o que ele consegue gerar pra gente. Então vamos fazer os dois em paralelo porque como eu falou pode demorar até 30 minutos, né? Tem várias fases aqui que ele tá fazendo e tal. E aqui eu vou responder as perguntas também. Depois, provavelmente, a gente vai ter acesso a um help, né, para poder ver como é que usa cada um desses dois serviços, tá? Então vou
+
+seguir assim. Tu pode criar um aí se tu quiser também. Depois eu vou mostrar o resultado final para vocês. Galera, ele terminou aqui, tá? E a parte mais duas partes bem legais que eu achei é o seguinte. ele ao longo do processo, né,
+
+ele vai fazer mais algumas perguntas e tal, porque ele também se preocupa em gastar tokens, mas ele tem duas coisas que eu acho interessantes. Se ele encontra algum erro ali que foi, vamos dizer assim, o pacote que não conseguiu criar algum comando, né, ele reporta automaticamente lá pro gitub dos caras. Então o meu aqui acabou acabou abrindo uma issue, né, lá no repositório que eu achei bem interessante. Eu recebi um e-mail, por que isso, cara? Nem abri.
+
+ele abre automático, não sei se dá para tirar essa configuração, porque encontrou um problema aqui durante um dos meus fluxos, tá? E a outra coisa é que ele vai perguntar se tu quer deixar o teu, vamos dizer assim, o teu celai pronto para subir ele, porque tu pode colocar o que tu criou dentro da biblioteca deles, que é bem massa também, tá? Por exemplo, LX, provavelmente ninguém deles lá que são gringos vão criar, eu posso criar, deixar pronto pra produção, né? Passar nos testes deles ali e enviar, né? Aí deve ter algum processo de aceite. Isso
+
+é bem interessante, né? Tá aí o que acontece quando ele termina? Ele fala aonde que vai ficar ou onde ficou o nosso printing press, vamos dizer assim. E aqui tá em library, asas, asas, pp, cai, tá? E o que acontece? Nessa pasta
+
+vão ficar os que a gente cria. Deixa eu só abrir ela aqui, ó. Como vocês podem ver aqui, são os arquivos que ele criou pros nossos celis, tá? Então, bem interessante, né? A skill também e tal, já está aqui como os que a gente baixa lá do repositório deles. E para
+
+utilizar, dependendo como for teu sistema operacional, ele não vai criar o comando selai direto, porque na teoria era pra gente poder utilizar como a gente utiliza o sellamente. Porém, se não vier, basta ir na pasta que ele criou, como essa daqui do ASA. E aí tu vai utilizar os comandos baseado no executável. nesse ponto ez. E aqui nesse cenário do AS, eu posso é uma plataforma de pagamentos onde eu posso cadastrar meus clientes lá, fazer as cobranças e aqui nesse end point, vamos dizer customer list 5, ele vai trazer todos os clientes cadastrados, né? Todos
+
+os cinco últimos clientes cadastrados. E aqui ele trouxe um que eu coloquei lá, então a gente vê que tá funcional, né? tem cliente aqui que a gente colocou manualmente. E também como ele cria já seguindo um padrão, se eu dou um menos menos help, ele vai mostrar todos os comandos e flags que tem no AS. Então aqui, por exemplo, ele vai ter o que a gente utilizou ali, né? O customers foi
+
+o que a gente utilizou, mas ele teria também outros como gerenciar finanças, eh, deixa eu ver aqui, notas fiscais, minha conta. Então, basicamente, ele lê a documentação API e reflete aqui em comandos que a gente poderia utilizar tanto no cloud code ou manualmente aqui no nosso Cai, tá? E o OLX eu ainda nem testei, então vamos fazer aqui o teste junto com vocês. É a mesma coisa seria aqui utilizar o help e eu consigo ver os comandos que ele criou para mim. Então consigo ver ads, API, categorias, profile. Então vamos ver se a gente
+
+consegue algum comando interessante que possa extrair algum dado do LX pra gente. Lembrando também, né, galera, o asas ali precisa da chave de API. Então, em determinado ponto ali, se tu criar o AS também, ele vai pedir aqui para tu colocar tua chave de API, né? E aí ele vai te dar o comando certinho que tu tem que fazer. Só assim conecta, senão vai dar erro, tá? O LX a gente criou sem
+
+chave de API, então a gente pode, tá? fazendo aqui o uso dele sem isso, tá? E antes de fechar, né, galera, queria relembrar vocês, se inscrevam no nosso novo treinamento que tem um ótimo nome, né, de passagem, pai de briaconá, para tu poder ter resultados melhores com as inteligências artificiais, né? Não tô limitando a nenhuma aqui. O curso vai ser com cloud code, mas tu vai poder utilizar com outras porque eu vou dando ali as dicas, vou dizer assim, para tu poder adaptar a outras e as beleza? o
+
+link aqui no comentário fixado, garante aí a tua vaga com desconto. Voltando aqui, vamos fazer então uma pesquisa. Por exemplo, aqui eu vou ter o comando ads, aí eu posso entrar também nele e dar um help, porque daí eu vou ter acesso ao subcomandos do comando, né? É meio estranho isso, mas, por exemplo, eu posso em anúncios, né, que são as anúncios dos produtos, fazer várias coisas, né? Por exemplo, veículos, né? Então, a gente vai ter
+
+categorias diferentes. Isso. Pera aí. E isso não é coisa da minha cabeça ou coisa do próprio printing press, é pela documentação do LX. Então ele seguiu lá e criou todas as possibilidades possíveis. Então aqui eu vim no search,
+
+ele já deu algumas informações, né? Mas eu vou aqui, aliás, se eu vi no ads, ele já deu algumas informações, mas eu vou no search para ver como é que eu vou fazer a pesquisa. Então aqui ele me mostra como que uma pesquisa pode ser feita via celai. Então, por exemplo, aqui, se eu quisesse procurar um iPhone 15 no estado de Santa Catarina, eu poderia utilizar esse comando aqui, provavelmente vai dar certo. Vejam aqui, ele trouxe o resultado dos produtos, né?
+
+Eu posso já entrar nessa URL e vai tá aqui o anúncio, ó. Bem legal, né? Então agora eu posso criar um sistema baseado nos resultados do LX, por exemplo, ou qualquer outra funcionalidade que eles disponibilizem sem chave de API, que fica bem interessante, tá? Então o printing press é essa ferramenta, ela vai te dar ali um sell skills, tudo pronto, baseado em algum recurso, algum sistema que tu conhece e queira utilizar. Além disso, eles tem vários prontos aqui na library e a gente pode eventualmente mandar os nossos próprios para a library deles para vocês aprovarem vai ficar disponível aqui também. Então vocês
+
+podem agora dar uma olhada aqui, ver se algum deles faz sentido para vocês. Beleza? Bom, galera, espero que tenham gostado. O vídeo um pouco mais detalhado, né? Não é um negócio tão simples, mas eu acho que vai ajudar muita gente, principalmente esses temas, né, a consumirem menos e serem mais efetivos, né? não utilizando MCP, não
+
+tento consultar direto em APIs, né, para pegar informação. Então é muito interessante, muito legal a iniciativa desse pessoal. Galera, uma coisa que eu não comento muito aqui, a gente tem vídeos exclusivos para membros. Eu coloco eles numa frequência de sete ou a cada 15 dias, que são vídeos bem focados, bem práticos em vários dos assuntos que a gente aborda aqui no no canal diariamente. Então, faz sentido dar uma olhada lá. É no valorzinho ali
+
+do YouTube, acho que é uns R$ 7 R$ 8, já tem acesso a tudo, tem bastante vídeo lá. já disponível, a galera tá gostando bastante. Te peço também para deixar um like, se inscrever aqui no canal. Isso ajuda bastante aí a eu continuar meu trabalho, trazer vídeos todos os dias sobre essas novidades e ferramentas excelentes de A, como o Printing Press. Vou ficando por aqui, galera, e espero vocês no próximo vídeo.

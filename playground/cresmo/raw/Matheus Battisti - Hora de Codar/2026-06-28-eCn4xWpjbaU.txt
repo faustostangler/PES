@@ -1,0 +1,150 @@
+---
+video_title: "Meta-Harness: A Camada Que Coordena Claude Code E Codex Juntos (Omnigent)"
+video_id: eCn4xWpjbaU
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eCn4xWpjbaU
+video_date: 2026-06-28T14:00:21+00:00
+video_description: |
+  ⭐ Inscreva-se na Lista de Espera do Curso Pare de Brigar com a IA: https://app.horadecodar.com.br/lp/pare-de-brigar-com-a-ia-claude-code
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_omnigent
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  Omnigent é um meta-harness open source da Databricks que coordena vários agentes de código ao mesmo tempo, tipo Claude Code, Codex, Cursor e Pi, sob uma camada única de controle. A grande sacada é fazer um agente revisar o trabalho do outro, então você pode ter o Claude construindo um app e o Codex auditando a segurança do que ele gerou, tudo dentro da mesma sessão. Nesse vídeo eu instalo o Omnigent do zero e construo um projeto completo pra mostrar esse review cross-vendor funcionando na prática.
+  
+  Se você usa mais de um agente de IA pra programar e vive copiando código de um pro outro, esse vídeo é pra você. O Omnigent resolve justamente essa dor: em vez de cada ferramenta viver na própria caixinha, ele coloca todas sob um maestro só. Pra entender o conceito, pensa numa pilha de três camadas. Na base tem o modelo, que é o cérebro, tipo Claude ou GPT. Em cima vem o harness, que são as mãos: Claude Code, Codex, Cursor, aquilo que dá ferramentas pro modelo e transforma ele num agente que age. E acima de tudo vem o meta-harness, que é o maestro: o Omnigent coordena vários harnesses diferentes trabalhando juntos. É uma camada nova que pouca gente conhece, e a aposta da Databricks é que é assim que vamos trabalhar com agentes daqui pra frente.
+  
+  O Omnigent tem três pilares. O primeiro é composição: você combina Claude Code, Codex, Cursor, Pi e até agentes que você mesmo escreve, sem reescrever nada, trocando ou somando harnesses com uma linha. O segundo é governança: você define políticas em linguagem natural, tipo um teto de gasto na sessão ou uma aprovação obrigatória antes de rodar comando no shell, e essas regras são aplicadas na camada do meta-harness, não dependem de prompt. O terceiro é colaboração: a sessão te segue, você começa no terminal, continua no navegador e pega no celular, tudo em sync, e dá pra compartilhar a sessão ao vivo por URL pra um colega acompanhar e interagir junto.
+  
+  O recurso que mais impressiona é o review cross-vendor. Tem um agente exemplo que vem junto, a Polly, que funciona como uma tech lead que não escreve código: ela planeja, delega o trabalho pra sub-agentes em paralelo, e roteia cada diff pra um reviewer de outro vendor revisar. Na prática, o Claude implementa uma funcionalidade e o Codex revisa, apontando problemas que o Claude deixou passar. E isso é especialmente valioso em segurança: no vídeo, o Codex pega uma falha real de IDOR (onde um usuário logado conseguiria ver os dados de outro) que tinha passado batido. Um vendor auditando o outro é uma camada de proteção que você não tem usando um agente só.
+  
+  A instalação é tranquila: um comando baixa e configura tudo, resolvendo as dependências sozinho. E tem um detalhe que facilita muito: se você já está logado no Claude CLI e no Codex CLI, o Omnigent detecta seus logins automaticamente e monta em cima das suas assinaturas (Claude Pro ou Max e ChatGPT), sem precisar colar chave de API. Um aviso prático: se você tiver a variável ANTHROPIC_API_KEY no ambiente, ela tem prioridade sobre a assinatura e acaba sendo cobrada, então vale remover ela pra usar o plano que você já paga.
+  
+  Agora a parte honesta, que é a minha marca: o Omnigent não é pra toda tarefa. Cada vez que o trabalho passa de um vendor pro outro, o cache de contexto pode ser perdido e reenviado, o que gasta mais tokens, e com dois modelos de fronteira via API isso encarece. O veredito: vale muito pra review cross-vendor (ainda mais em segurança) e pra quem trabalha de vários dispositivos, mas pra tarefa simples e solo pode ser exagero. E o projeto está em alpha, então ainda muda rápido.
+  
+  Resumindo o que o Omnigent oferece: uma camada de orquestração que junta vários agentes de código sob um controle só, com composição livre, governança por políticas, colaboração multi-dispositivo e o grande diferencial do review cross-vendor, onde um agente audita o outro.
+  
+  
+  LINKS
+  
+  Omnigent no GitHub: https://github.com/omnigent-ai/omnigent
+  
+  TIMESTAMPS
+  
+  00:00 Introdução Meta-harness e Omnigent
+  01:10 Como funciona o Meta-harness
+  04:15 Instalando o Omnigent para usar o meta-harness
+  06:20 Utilizando o Omnigent para criar um projeto
+  10:15 Meta-harness em ação auditando com agent diferente
+  14:00 Testando o projeto criado pelo Omnigent
+  17:10 Considerações finais sobre Meta-harness e Omnigent
+---
+Galera, hoje vamos falar de meta hardance. Hardness, para quem não sabe, é a inteligência de utilizar uma LLM do jeito certo, ou seja, executar comandos quando precisa, criar o código uma maneira que seja correto para um tipo de projeto. E o metaharness está acima disso, ou seja, coordenar vários harness de várias inteligências artificiais, LLMs, para que o projeto seja feito da melhor forma possível, unindo várias inteligências artificiais, vários hardness e com isso combinando todos esses recursos e chegando no resultado ideal. A gente tem uma ferramenta para isso chamada Omni Agents. Ela é open source, está lá no GitHub. Eu vou
+
+ensinar justamente isso a instalar ela, utilizar e criar um projeto para ver o MetaNers em ação. É um termo que vocês vão ouvir falar bastante daqui pra frente, né? Harness já esteve muito em alta, agora ele é basicamente fundamental e o metaharn está crescendo, ele está ganhando demanda e é necessário para que a gente tenha projetos cada vez melhores. Então chega aí, bora conhecer o Omniedit. Bora lá. E galera, só antes
+
+de começar, não se esqueçam, a gente tá com pré-inscrição pro nosso mais novo treinamento. Para de brigar com aá. O lançamento tá chegando, já estou finalizando aí ele por completo. A ideia é a seguinte, te dá conhecimento necessário para criar qualquer tipo de projeto com IAS, independente da LLM que tu use, tu vai entender o meu método, o processo que eu uso para extrair o melhor delas, beleza? Tudo num treinamento prático, objetivo, criando o projeto do zero e em cada etapa usando o que eu uso no meu dia a dia para programar com IA. O link vai tá aqui no
+
+comentário fixado na descrição. Se inscreve e garanta o valor especial de lançamento. Fechou? Agora sim, bora entender melhor o meta hardness. Então, o cara da vez vai ser o Omni Agent.
+
+Provavelmente vão surgir ferramentas, né, que também trabalhem com isso, mas essa é a mais famosa que a gente tem para lidar de forma automática, né? Dá para configurar manualmente e tal, mas como já tá pronto, poupa bastante do nosso trabalho. Então eu trago aqui que o meta hardness ele é o maestro dos agentes, é uma camada acima do hardness, por exemplo, que existem cloud code, cursor, gravity, cursor pi agents, né? Todo agent tem o seu hardness. Aí muita gente comenta que agentes que não estão ligados a LLMs, por exemplo, o PI ou o Open Code, tem hardness brandos e tal e talvez seja o modo ideal de programar porque não puxa muito pro para LLM que a empresa tá desenvolvendo. Mas pra gente
+
+tirar isso da jogada de vez, né, e usar qual a gente quiser ou vários, surge o metaharness. Então a gente pode estar utilizando ele para coordenar todos esses agentes do ao mesmo tempo, né? Então o homem de Aents é a implementação disso de forma open source, tá? Ele aborda esse conceito e deixa fácil de utilizar. Ele existe porque cada modelo é bom em alguma coisa. Um talvez para
+
+segurança, outro para verificar performance projeto, outro para programar, outro para validar bugs, né? Para entender se tem bugs no projeto. Então se a gente une vários modelos, a gente tem o melhor resultado. Que que tu ganha? uma orquestração multia, multidevice, governança e colaboração entre IAS, né? Algo que no mundo
+
+corporativo não é possível, né? As empresas estão competindo entre si e isso acaba unindo elas de alguma forma, tá bom? Só para mostrar para vocês aqui, então, qual que é a pilha, né, a stack que tá por trás. A gente tem um modelo que é o cérebro, é a inteligência bruta que vai realizar algo. Depois a gente tem o harness, que são esses agents como cloud code, codex cursor e eles vão lá e ajudam a LLM a entender o que tá acontecendo e a concentrar a sua inteligência onde precisa, acessando comandos, sabendo qual arquivo editar, como criar o projeto da forma que a gente precisa. E aí agora tem o meta que
+
+é uma camada acima, o maestro que vai controlar vários harnessers e lls e ter resultados melhores. Beleza? Bom, o repositório é esse daqui. Vou deixar o link na descrição. Fechou? Bem fácil de
+
+instalar. Eh, basta um comando, esse cur aqui vou fazer junto com vocês. Então, copia aí, coloca no teu terminal. Então, vou executar por WSL, né, galera? Geralmente instaladores não funcionam bem com Power Shell, essas coisas. Vou
+
+aceitar aqui a as requisições dele, né? E pelo que eu entendi ali, ele consegue até pegar as instalações ativas que tu tem, por exemplo, de Codex, de cloud, que já estão no teu PC e já integrar automaticamente. Mas também tem como fazer manual. Tem alguns pré-requisitos aqui. Deixa eu ver se eu acho, ó. Tá
+
+aqui, ó. Precisa de Python 3.12 mais, tá? para poder fazer instalação e execução desse agente, como o link vai ficar aqui na descrição. Deem uma olhada, explore bem o repositório, tá?
+
+Aqui ensina a utilizar ele de modo mais avançado que a gente vai fazer aqui, né? Esse vídeo é só uma demonstração aqui. Ele ensina a tu criar políticas de governança, a criar o teu próprio agente. Então, vai além do que é o proposto do vídeo, tá? Ó, ele tá fazendo instalação. Eles também tm aqui uma
+
+página onde eles explicam de forma mais visual, né, fora aí do GitHub. E aqui tu pode entender o que eu tava falando, né? Sellar agents, custom agents, junta tudo no próprio Omni Agent e ele consegue tá entendendo qual a melhor solução para a tua finalidade e transformar isso em várias outras coisas, como eh aplicativos web, eh mobile, API, qualquer projeto que tu queira, né? Então, bem interessante aqui entender como funciona. Vou aguardar a instalação, já mostro para vocês como a gente vai executar isso. Bom, galera, aí
+
+ele finaliza aqui, tá? E ele já detectou aqui que eu tenho cloud codex, tá? E eu posso fazer o launch específico para eles, mas não é o que a gente quer. A gente quer rodar o padrão, o omni agents mesmo, tá? Então vou rodar aqui. Ele vai
+
+startar um servidor local, tá? Escolhe o tema aí, clicando ali, né? Ele vai abrir teu local, uma nova sessão, tipo um chat EPT, né? Só que tá atrelado ao teu computador, né? Desenvolvimento local aqui para poder criar os teus projetos, a tua máquina. Bom, e aqui, galera, como
+
+você deve perceber, bom, e aqui, galera, como vocês perceberam, ele tá numa pasta que tava terminal, né? Não é isso que eu quero. Então eu vou iniciá-lo na pasta que eu quero criar o projeto de fato. A gente pode fechar ali só para ver se deu certo. Pode cancelar aqui, dar dois contrl C. Abrir o VS Code, por exemplo.
+
+Abrir o VS Code, por exemplo, né? Pra gente até ver o código por aqui, se a gente quiser, e começar aqui. Então, tem que trocar aqui pro WSL, né? Tu vai dar o omnent, ele vai fazer o launch que tu pode seguir por aqui ou abrir a session dele. Pronto, agora tá na pasta certa, tá? O que acontece aqui?
+
+Ele tem alguns agents, né? A gente pode criar os nossos, como eu falei, mas ele inicia com esse poli, que é como se fosse um tec lead, né? E aí ele vai ajudar a gente a criar o código também. A gente pode trocar uma ideia com ele, tá? Só para falar para vocês que isso é bem importante. Ele comenta sobre esse
+
+polile na documentação. Beleza? Então vou começar aqui para testar. Vou colocar um prompt que vai criar uma aplicação pra gente aqui de finanças pessoais. Então botei aqui crie um app de finanças pessoais chamado bolso, um nextjscript intelas dashboard modal ali de nova transação, dados e memória. Eu coloquei
+
+alguns dados ali de despesas, né? Tem visual caprichado, le alt limpo. E aqui ele começa já a coordenar os modelos que a gente tem. Olha só, ele colocou cloud code, codex e pi. São os três que eu tenho configurados aqui. Aí o poly já tá
+
+trabalhando para como que ele vai fazer para criar o código, né? Como vocês podem ver, ele vai fazer a implementação com cloud code e a cross review com o codex. Então, traduzindo, o cloud code vai criar e o codex ele vai revisar e ver o que tem de problema, né? E com isso a gente vai ter a nossa aplicação pronta, beleza? Então ele fala que ele roda de forma autônoma, né? Não vai
+
+atrapalhar essa janela aqui porque a gente tá falando com o polil. Então a gente tem que mudar aqui pro agent que tá criando a aplicação. E é exatamente esse aqui, né, que está desenvolvendo a aplicação via cloud code, dá para ver pelo ícone aqui. Então esse está sendo o meta harness aqui dessa aplicação. Ele decidiu quem vai executar e quem vai revisar. Vamos dar uma esperada aqui e
+
+ver o que acontece. Bom, galera, aí eu fui lá e fui perguntar pra Poly, né, quais agentes tem disponíveis, quais são os modelos, porque eu tenho Open Code aqui também, eu queria ver se ele detectava, mas para mim a surpresa, né, ele colocou que tem o Codex e o PI, só que não tem modelo nenhum nenhum pros dois, né? Daí ele perguntou se eu queria consertar e tal, né? Aí eu falei que queria habilitar os dois, ele falou que o Codex ele tá quebrado e o pi aqui ele tá verificando. Então, provavelmente vocês vão ter que fazer isso também aí para poder entender se os modelos estão funcionando, tá? E aqui eu vou ter que
+
+fazer um login de credenciais de novo do Codex para poder habilitar. Então vou esperar ele responder aqui sobre o pi e aí eu volto para mostrar para vocês a solução. E detalhe, né, o Poly está utilizando o cloud, né, por isso que ele tá funcionando. Então, acabou que deu um falso positivo ali, né, ele mostrou que tava tudo certo, começou a rodar com o cloud, mas como não chegou na etapa dos outros, ele não identificou nenhum erro. Eu só me produtifiquei aqui para que a gente conseguisse validar de forma, de fato, né, e ver o que tava acontecendo e se ia acontecer. Então, vou deixar ele
+
+terminar e vou mostrar a possível solução para vocês. Bom, galera, aí o que que eu fiz aqui? Eu abri o terminal WSL, não tava logado no Codex nele, tá? Eu testei em outro ambiente antes, o Gentes, aí não tinha o Windows, né, para ter o WSL e as coisas ficaram separadas. E aí agora eu só rodei o Codex login aqui no WSL. E aí ele detectou, pode ver
+
+aqui, né, que tá as duas subscriptions e aqui eu pedi para ele testar de novo e ele rodou. Então agora ele consegue acessar o Codex. E aí eu vou ter que pedir para ele fazer isso, né, para fazer a parte do Codex novamente. Vou botar assim, ó. Vamos seguir só com cloud e Codex. Refaça o plano a partir
+
+do que o agents de cloud já criou. E aí eu vou replanejar, vamos dizer assim, para que ele faça esse metaharness, né, com esses dois que eu tenho. E aí ele vai fazer a revisão com codex. Aqui eu só tenho que terminar, né, primeiro e já vai fazer sequência. Mas o ideal é a gente ter aqui, né, vários agents para que ele possa decidir pela gente, né, a gente que tem LL mais baratas e tal de diferentes providers, né, isso vai ajudar a gente a ter um resultado muito melhor. Por
+
+exemplo, colocar um depsic aqui na jogada, seria bem interessante. Aí, pronto, ó, ele falou que o projeto terminou, tá? E agora ele detectou aqui no poli, terminou o codex. fez tudo que precisa, aliás, o Cloud Code fez tudo que precisava e agora ele vai colocar o Codex na jogada. Vejam que aqui parece que não tá acontecendo nada, mas o botão de pausar está ativo, né? Então o poli
+
+está trabalhando. Esse poli é sempre quem está fazendo meta hardness, né? Nesse caso aqui que a gente tá usando do padrão, mas como eu comentei lá antes, a gente pode criar os nossos, beleza? Ó, então aqui, galera, ele fez o DIF, né? Ou seja, ele viu tudo que tem de diferente do projeto original. Aqui a
+
+gente acabou de criar o projeto, então de fato é tudo, né? Fora a instalação padrão ali do Next. Aí ele vai fazer o crosser view para conduzir revisão cruzada com o Codex, né? Ele vai usar essa skill aqui para isso, que é uma skill do Omni Agents. E aí ele vai começar esse trabalho. Depois a gente
+
+vai fazer mais um prompt para isso acontecer de forma mais eh linear, né? vamos dizer assim, sem esse problema que a gente teve aqui. E olha só, galera, ele abriu aqui agora o novo agents, né, para poder fazer a revisão com o Codex. Bom, galera, aí o que aconteceu? O Codex falhou. Tentei reiniciar aqui com o o
+
+Agents, mas realmente o WSL tá dando algum pau. Talvez tenha que dar mais uma ajustada ali para funcionar nesse ambiente aqui. Aí eu fui lá e configurei o PI com Open Houter. Ele vai fazer [limpando a garganta] aqui a revisão com o modelo Deepsic Pro, que foi o que eu configurei. Interessante também, né, que a gente pode fazer isso, deixar ali um provider, né, que tem vários modelos à disposição. Aí dependendo do preço, é
+
+claro, né? Alguns não vale a pena, tu não vai usar um opus da vida, mas tu vai conseguir ter mais versatilidade ainda, porque o Open Houter é um roteador de LLMs, né? Eu mostro aqui diversas vezes no canal, eles tm at tem alguns modelos gratuitos, então vale a pena deixar ele configurado o pi dessa maneira como eu fiz aqui. Inclusive a gente tem um vídeo de pista, tu quer aprender mais sobre ele. Editor vai deixar tamb aqui. Vou
+
+deixar o izinho para tu conhecer o P agent que é bem interessante e muita gente tem falado dele. É como se fosse um open code da vida, tá? Depois dar uma olhada nesse vídeo que é que é legal para aprender mais o recurso. Ó, esse de fato tá funcionando, né? Como eu falei ali, o Codex deu feio, né? Não conseguiu
+
+iniciar. E aqui tá dando a revisão correta pra gente, né? Tudo que ele achou, todas as sugestões que ele acredita que tem que melhorar e assim por diante. Beleza? Aí o Poly vai esperar, vai receber isso e vai dizer como trabalhar com esse cross, né? com a
+
+criação do cloud e a revisão do dipsic pro ali do PI. Ó, daí ele vem aqui, fala que o app está pronto verificado e o e o cross review de vendor diferente. Exatamente o portão que faltava. Nenhuma fix tesque necessária. Beleza, tá tudo certo. A gente pode rodar ele para
+
+testar. Vou iniciar ele aqui. E olha só, tá aqui o nosso app iniciado, né, o bolso, né, com algumas transações de seed e tal, tudo feito de forma correta. Tá aqui. Restaurante, almoço de terça. Pronto, adicionou aqui
+
+e entrou nas saídas. Beleza. Agora vamos fazer um fluxo que ele vai eh criar, né, sozinho. Vou fazer uma autenticação aqui que ainda pode ser que ele consiga encontrar, né, algum problema, que são tarefas mais demoradas, vamos dizer assim. Vou colocar assim, ó. Agora
+
+adicione persistência com esquelite, né? Colocar banco de dados e autenticação, telas registros e login. Eh, cada usuário vê apenas as próprias transações, né? Proteja a Dhbard e API sem sessão, redireciona pro login, migreu se para o banco. Então, vamos fazer tudo isso. Ele vai novamente
+
+escolher os agents para cada coisa. E agora a ideia é que o processo fique mais linear, né? Ele faz tudo de uma vez só. Vite de quebrar como quebrou antes porque não tinha o setup pronto, apesar dele dar aquele falso positivo, que é importante vocês checarem aí também. Aí ele escolheu o cloud code como a de código, né? Provavelmente ele sempre vai
+
+optar por esse tiver opção. E depois o cross ref pelo pi. Ele fala que vai despachar e aí vai começar o desenvolvimento novo todos os ciclos. E vamos ver como é que ele segue. Ó, novamente disparou um agent que vai criar e depois a gente vai ver o outro em ação que vai revisar. Aí galera, uma
+
+coisa legal também de se observar aqui no Omgent é que o prompt, né, ele pega do pólio que a gente pediu, tenta melhorar ainda mais, né? Então esse aqui é o prompt que ele tá utilizando para criar parte de autenticação que ele mandou pro cloud code. O cloud code tá desenrolando aqui, tá? Então a gente tem uma uma transformação de promptem em inglês, né, que ajuda a IA a entender mais fácil também o que ela precisa fazer, né? ela não precisa fazer a tradução e tal, então isso ajuda ainda mais no resultado. Bom, galera, aí aqui
+
+ele terminou o desenvolvimento. Dá até para notar que ele demora um pouco mais por causa do prompt ser mais complexo, ele faz mais idas e vindas, mas é pro bem da aplicação, né? Como eu tenho falado. Agora ele vai disparar o pi para poder fazer a revisão da aplicação e assim se reinicia o ciclo de novo. Agora foi automático, não precisei pedir nada.
+
+A gente já tá se virando aqui, né? Agent já tá configurando tudo que precisa para disparar o próximo agent. Ó, agora tá aqui o outro agent fazendo a parte de segurança, né? E ele molda o prompt exatamente no que precisa. Ele fala persistência, prisma esquelite, autenticação. E se a gente for na nossa
+
+aplicação aqui, ó, ela caiu, tá? Talvez por causa das alterações. Eu vou reiniciar ela aqui. Aí, pronto, né, galera? A nossa aplicação tá funcional aqui, ele adiciona a parte de autenticação e agora ele tá fazendo o review de segurança e assim segue o ciclo, né? A gente tem aqui agora esse
+
+moodness em ação, beleza? Então vou deixar os links do Omni Agents para vocês testarem e instalarem, tá? Pacote bem interessante. É um assunto, como eu falei, que vai ter muita relevância nos próximos dias, meses assim, né? Quando a gente tiver tratando de IA. E claro, não
+
+se esqueçam de se inscrever para esse desconto do nosso novo treinamento, tá? do para de brigar com a IA. Como eu falei, é um método que eu uso nos meus apps que eu desenvolvo, traduzido aqui totalmente passo a passo para que vocês consigam me acompanhar, criar o projeto de vocês e entender como eu faço terem mais sucesso, gastando menos tokens com qualquer IA. Fechou? Bom, vou ficando por aqui. Espero que vocês tenham
+
+curtido. Deixem um like, se inscrevam se não forem inscritos, isso ajuda bastante. A gente tem também os vídeos exclusivos para membros. Então, tu quer ir além, né? Quer entender mais como funciona as tecnologias que a gente traz aqui no canal, esses vídeos estão disponíveis naquela assinatura do YouTube padrãozinho, menor valor possível para que tu possa explorar mais, continuar o teu aprendizado e espero vocês no próximo vídeo. Valeu,
+
+até mais. Yeah.

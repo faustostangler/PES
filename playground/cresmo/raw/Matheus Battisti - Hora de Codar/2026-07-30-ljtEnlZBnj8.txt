@@ -1,0 +1,167 @@
+---
+video_title: "O Google lançou uma ferramenta que caça falhas de segurança com IA (Google Mantis)"
+video_id: ljtEnlZBnj8
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ljtEnlZBnj8
+video_date: 2026-07-30T14:00:09+00:00
+video_description: |
+  Google Mantis é uma skill de segurança do Google e open source, neste vídeo vou te mostrar como usar e encontrar bugs do seu projeto.
+  
+  ⭐ Pré-inscrição Formação Claude Code: https://app.horadecodar.com.br/lp/lancamento-formacao-claude-code
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  💳 Sistema de pagamentos que eu indico: https://appmax.com.br/desenvolvedores/?utm_source=hora-de-codar&utm_medium=social&utm_campaign=influencer-tech (Pix com taxa zero via API)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  LINKS
+  
+  Repoistório Google Mantis: https://github.com/google/mantis
+  
+  TIMESTAMPS
+  
+  00:00 Google Mantis acha qualquer bug no seu projeto!
+  00:35 Como funciona o Google Mantis
+  04:05 Instalando o Google Mantis no projeto
+  05:55 Executando as fases do Google Mantis
+  15:20 Relatório final do Google Mantis
+  18:00 Como corrigir os problemas com o Mantis e considerações finais
+  
+  PROMPT
+  
+  Execute o pipeline Mantis neste projeto, uma etapa por vez, nesta ordem exata:
+  
+  mantis-summarize
+  mantis-architecture
+  mantis-threat-model
+  mantis-plan
+  mantis-researcher
+  mantis-dedupe
+  mantis-review
+  mantis-critic
+  mantis-calibrate
+  mantis-report
+  
+  Regras da execução:
+  
+  Rode uma etapa por vez e nunca junte duas na mesma execução.
+  Não pule etapa e não crie etapa que não está na lista.
+  Não execute mantis-reproduce nem mantis-patch.
+  Ao terminar cada etapa, pare e me mostre o nome da etapa concluída, os arquivos criados ou alterados dentro de workspace/ e quantos achados existem no momento.
+  Depois de mostrar isso, aguarde minha confirmação antes de seguir para a próxima etapa.
+---
+Cara, eu descobri o ouro. São mais de 18 skills soltadas pelo time do Google para verificação de segurança de projetos. E por que isso importa? Nessa era do Vibe Coding? Nada mais importante do que segurança, já que a gente cria muita coisa e não tá validando passo a passo como era antigamente ali no desenvolvimento software. Essas skills,
+
+essa suitch de skills vai ajudar a melhorar a segurança do teu projeto. Eu vou te mostrar quais são, como instalar e como executar tudo direitinho. Chega mais, sem enrolação, bora entender essas skills do Google. Chega aí. Então galera, o nome do projeto é Google Mants. Eu fiz essa apresentação aqui
+
+para falar mais sobre ele, né, para vocês entenderem, porque não é uma skill ou várias skill soltas, é um pipeline mesmo. É um processo que tem que seguir do começo ao fim para dar certo, tá? Então é um pacote com 18 skills que elas precisam ser executadas numa ordem para que ela possa ou que elas possam, né, validar toda a segurança do teu app depois entregar o que tu precisa fazer, tá bom? O que acontece aqui? Não tem muita dificuldade, né, de configuração.
+
+Basicamente a gente vai instalar no nosso projeto ou ou no nosso agente, né, de forma mais global. E aí depois a gente vai ter as skills, o agente vai levar um prompt para aprender a utilizar elas, né, o pipeline, correto? E por fim, a gente tem ali um relatório com falhas, risco e correção do nosso projeto, tá? Então é bem interessante, bem fácil de usar e isso facilita. O pipeline é esse daqui. Então, as skills,
+
+né, elas são divididas aqui em várias categorias que eu vou explicar para vocês aqui rapidamente. A gente tem a parte de mapear, onde o próprio nome diz, né? Ela vai fazer ali um processo de conhecimento do código, depois caça os problemas com o researcher, filtra para não dar falso positivo, para não dar achado inventado, né? Então isso aqui é muito interessante também pra gente receber só realmente o que interessa. Depois ele prova, né? Isso
+
+aqui é interessante porque a gente tem ali a evidência de que é um problema de fato, não só uma orientação. E por fim a gente tem a entrega final, que é tudo ali que a gente precisa fazer no nosso projeto. Fechou? Tem mais algumas aqui que não entram no pipeline que tu pode fazer mais enxuto, né? Que estão lá no repositório também. Depois tu vai poder
+
+conferir elas. Bom, como eu falei, o nome do projeto é Mantis, tá? Tu vai instalar aqui com o NPX Skills, aquela forma de instalar ali da Versel e pronto, vai est no nosso PC, nosso projeto, a gente vai conseguir instalar e a gente vai conseguir usar elas. Beleza? Então, sem mais delongas, bora conhecer ali o repositório. Ó, galera, o
+
+repositório é esse aqui, tá? Google Mantes oficial do Google mesmo. E aqui tem tudo que a gente precisa, né? Tudo dividido em pastas. Cada uma faz uma coisa. Eu li toda a documentação, mas
+
+fica à vontade para ler também. Eu acho que é importante todo mundo dar uma olhada, bota para traduzir, se não manja de inglês, mas tu tem que saber o que tá acontecendo ali no teu projeto, né? Então aqui a pipeline, né? Como tinha comentado, a gente tem que seguir uma sequência de skills. A gente pode fazer na mão uma por uma, mas é muito trampo, né? Ou mandar um prompt, que eu vou
+
+mostrar para vocês ali que facilita muito as coisas e vai dar no mesmo no final, né? A gente vai rodar, vamos dizer assim, em loop, né? para poder executar tudo. E no final a gente tem ali o resultado que é a correção dos problemas. Fechou? Então bora lá
+
+instalar num projeto que eu já tenho pronto aqui que eu vou mostrar para vocês em execução esse cara. Só antes, galera, se vocês querem aprender comigo como eu crio meus projetos com IA, se matriculem no Pare de Brigar com IA, nosso mais novo treinamento. O link vai est aqui no comentário fixado. Lá tu vai aprender a usar a IA para programar, né, do jeito certo. Eu vou te mostrar como é que eu planejo meus projetos, como é que eu crio as funcionalidades, versiono no GitHub, coloco no ar, cuido da segurança, performance e muito mais.
+
+curso bem prático, objetivo para quem quer criar um projeto comigo, entender o meu processo e colocar na prática aí no teu fluxo também, fechou? Cesso vitalício, tem suporte bem completo para todos vocês, tá? Então, galera, voltando aqui, tem os comandos de instalação aqui também, né? Ó, tu instala skills via, né? Então, a gente vai instalar BNPX skills. Eu já tenho aqui o meu VS Code
+
+aberto. Vou sair, vou abrir um terminal aqui e vou instalar o Ah, aliás, que que eu posso fazer aqui? Deixa eu ver, ó. Rodei aqui. Aí ele mostra todas elas, né? A gente pode instalar uma só ou
+
+todas se a gente quiser, né? É um pacote de skills. Então, o que que eu vou fazer aqui? vão instalar todas para cloud code. Então esse tem esse comando aqui, nx Google mantes men a e o teu agente, né?
+
+Ela funciona para vários agentes, já que é um um skilld, né, galera? Não tem dificuldade nisso aqui, né? Ele vai funcionar para qualquer IA. Aí aqui tu vai selecionar todas que tu quer, tem a descrição delas e tal. Pode escolher todas se tu quiser ou só do pipeline que a gente vai rodar. Beleza? Seleciona com
+
+barra. E aqui eu vou instalar via eh para o projeto, tá? Vou fazendo isso aqui porque fica mais separada a responsabilidade das coisas. Então, instalou, né? Tá aqui as skills. Beleza.
+
+Eu posso vir aqui no cloud, dar um reload skills. E aqui agora tem, ó, barra mantes. Tem todas as skills do mantis, né, do Google Mants. Galera, que que eu vou fazer agora? Eu vou rodar o pipeline exatamente na ordem que vocês tm que rodar para verificar projetos web, né? Aqui é o foco do canal, né?
+
+Então eu vou vou trabalhar nesse sentido. Mas vendi eles falam que tu pode fácilmente adaptar para outros tipos de projeto, como hardware, infraestrutura, eh pipeline de machine learning. Então o negócio é bem interessante mesmo. Vocêam, vamos dizer assim, genérico, né, pra gente poder fazer essa adaptação. Então o prompt de vocês tem que ser nesse sentido aqui também, tá? Execute o pipeline ms nesse
+
+projeto. Não criou, tem que esperar criar. Dar uma pausa aqui do vídeo, depois a gente volta ali de onde tava. Então galera, para testar as skills aqui Google MS, o eu criei o projeto no Cloud Code, né? Eu deixei ele bem completo aqui pra gente poder ver se encontra algum problema, né? Pode ser que não
+
+encontre, né? Mas pelo menos o fluxo aqui a gente vai acompanhar dele fazendo. Então ele me deu dois usuários e tal, iniciou o projeto para mim. Projeto é esse aqui, ó. Fiz o login, é um projeto de guardar senhas, né? Aí tem quatro senhas aqui e
+
+tal, e esse usuário administrador. Fechou? Então vamos utilizar agora o prompt que vai ativar aquelas skills, né? Em pipeline, como eu falei para vocês, né? É algo que tem que ser usado de forma sequencial para ele encontrar e aliás, para ele ler o projeto, encontrar e depois seguir o restante delas, tá? Eu
+
+vou botar só aqui no final. Projeto é o cofre fácil, só para ele se referenciar, porque o Prompt não tem isso. Então o Prompt tá assim, ó. Execute o pipeline mantes nesse projeto, uma etapa por vez nesta ordem exata. Então ele vai fazer em loop, né, como eu falei, até terminar. Aí primeiro sumariz
+
+architecture, crit researcher, the dup review, critic, calibrate report. Então essa daqui é a sequência mais otimizada para tu fazer tudo que eu falei lá nos slides, identificar o projeto, encontrar as coisas, eliminar redundâncias, eh trazer as evidências que são problemas de fato e depois reportar, tá? Regras de execução. Rode uma etapa por vez e nunca junte as duas na mesma execução. Não pule etapa, não execute mant reproduce nem mant. Dá problema, galera. Ele
+
+quebra o fluxo ali, tá? Mas tem as skills ao dispor. Ao terminar cada etapa, pare mostre o nome da etapa concluída, os arquivos criados ou alterados dentro de workspace, porque essa workspace aqui é uma parte que ele cria, tá? E quantos achados existem no momento. Depois de mostrar isso, aguarde minha confirmação antes de seguir pra próxima etapa. O projeto é o cofre
+
+fácil. Então ele vai começar a executar. Ele já cria o workspace. Isso aqui é parte do fluxo de trabalho, tá? Então ele começa aqui a fazer o raciocínio para poder encontrar os problemas do projeto. Primeira parte é identificar o
+
+mesmo, né? Então ele vai ler a code base toda. Isso, claro, né, galera, consome tokens. Então tem que ficar ligado aí para talvez até isolar o projeto, né, fazer por módulo, vai depender do que vocês querem atingir do tamanho do projeto e se vocês estão ligando, né, pra economia de tokens, que pode ser que não seja o caso, né? Mas enfim, aqui ele vai me reportar cada etapa e eu vou mostrando para vocês cada um dos pontos, né, que ele vai trazer para mim aqui.
+
+Então, vejo que ele vai detectando as camadas, né? E quanto mais ele passa pelo projeto, vai criando também esses arquivos markdown aqui, ó, que é, por exemplo, as actions do projeto, já que é um projeto em next, né, vai ter isso. Se fosse um projeto de outra tecnologia, teria outra coisa, né, galera? Mas o Next trabalha em actions, né? Aí tem aqui lib para entender as bibliotecas do projeto. Ele vai montando aqui, né, em
+
+workspace toda a code base detalhadamente. E isso é a primeira parte, né, a exploração, entendimento do projeto. Então, galera, aqui ele termina a primeira etapa, né, que é a summarize. Então, aqui tem tudo o que ele resumiu, né, do projeto para poder entender melhor ele. Então ele não tem nenhum achado até o momento, tá? E aqui ele
+
+fala que o servidor tá no ar, né? A gente já sabe disso. E aí ele quer ir paraa segunda parte, que é a parte de arquitetura. Vou botar aqui, pode seguir para a próxima etapa do mantes. E aí essa etapa aqui, ela vai criar uma outra pasta, tá? A gente já vai ver como
+
+é que ela vai seguir aqui, ó. Ela basicamente vai criar esse essa pasta KB que vai condensar toda a etapa inicial ali que a gente rodou numa parte só. Então ela vai entender a arquitetura do projeto como um todo, né, de todos os achados dos sumers. Então vai ficar tudo aqui dentro para que depois a gente possa ir pra etapa de th model. Ó, galera, daí aqui ele vai criar o architury MD, que é a, como eu falei, né, condensa todas as informações que ele encontrou ali na etapa que criou sumar. Então, depois todo todas as
+
+etapas em sequência, né, consultam esse arquivo aqui. Ele é o arquivo que contém as informações finais, né, paraas próximas etapas. Bom, galera, e aqui ele termina e ele vai pro treit model, tá? Então aqui ele mostra tudo que ele criou dentro de KB, tá? E ele explica exatamente para que que serve cada arquivo. Mas é como eu falei, é
+
+basicamente tudo que ele encontrou na primeira condensado. Agora a gente vai pedir para ele seguir. Esse tr model é o seguinte, é tudo o que ele consegue atacar dentro do nosso projeto. Então no final a gente vai ter um arquivo markdown baseado em possíveis falhas de segurança que esse sistema aqui que eu criei tem e o de vocês também, né? Então a gente vai poder conferir depois para ver como que funciona, né? Como é que esse arquivo
+
+foi montado. E vejam aqui, a gente tá na etapa três de 10, né? Então é um processo longo, né, galera? Então a gente não vai rodar toda hora também, né? Mas vamos ver aqui porque vale a pena. Pô, galera, aí essa etapa aqui foi
+
+mais rápida, né? Ele fez aqui o treat model, tá? E claro, também depende do tamanho do sistema, né? Então resumo, né? Ele bota aqui a intenção de implantação, ó. ele falou aqui, ó,
+
+nenhuma entidade crítica, nenhum serviço a pint externamente alcançável. Então isso aqui também vai crescer, né, ao longo do crescimento do sistema, tá? Claro, né, ele também deu aqui eh um resumo, né, de tudo que foi feito e ele vai dando os achados também, né, até o momento. Então, como eu falei, né, pode ser que não encontre nada, mas vamos seguindo aqui. Eu vou agora pedir para ele seguir pro planejamento.
+
+Essa etapa, como o próprio nome disse, é a etapa que vai planejar, né, a varredura de testes que serão executados a seguir para encontrar alguma coisa, tá? Então, eh, a última parte do planejamento e aí começa a ação. Bom, galera, então aqui ele terminou mais uma etapa, né, que é a etapa de planejamento, tá? E aqui ele começou a me dizer por onde que ele vai, né, fazer os testes. Então, ão aqui oito deep drives transversais, né? Integridade do
+
+predicado de autorização em todos os seus sítios, travessia do segredo decifrado até navegador. Caminhos que esvaziam users e armam a promoção automática admin. Estratégia que ele vai tomar ali para poder fazer a as validações do sistema. Então agora sim, a gente vai pra etapa de pesquisa, né, o researcher. Vamos lá, então, mandar ele seguir aqui e vamos acompanhar o resultado dessa próxima etapa também.
+
+Esse é o cara que vai pegar o plano e vai fazer as varreduras baseado no que foi planejado. Beleza? Aí, galera, ele começa a trabalhar aqui, né, os scripts, ele vai criando muita coisa, né, documenta bastante, tá? E a gente pode acompanhar cada caso que se a gente quiser, né? E aí começa a surgir também uma pasta de vulnerabilidades, tá? E
+
+logo logo a gente vai ter o feedback geral pra gente entender o que aconteceu. E aí tem aquela etapa de filtro ainda, né, que são três processos para poder reduzir a somente o que tem que ser feito, ó. E tá aí, galera, a gente teve aqui 15 achados, né? Um crítico, três alto, oito médium e três low, né? baixo. Aí agora a gente vai
+
+rodar a etapa de filtro, então que é a deduplicação. Você pode ser tipo que ele achou esses oito mediuns, né, em lugares iguais. Aí talvez corrigindo em um lugar já resolva. Então etapa seis dê duplicação. Ó, galera, aí aqui ele fez ali o filtro de deduplicação, não tinha nenhuma, tá? Mas que acontece? se ele
+
+encontrou ali alguns problemas em nomenclatura e tal, daí ele corrigiu. E agora vem a etapa de revisão. Essa etapa é para resolver alucinações do modelo, tá? Então ele vai fazer uma revisão para ver se ele não alucinou e nenhuma evidência aqui que ele deu pra gente. Bom, galera, aí aqui ele me dá também o parecer desses filtros, né? Então, olha
+
+só, somente nove foram válidos, né? E aqui ele destacou cinco como falso positivo. E aí depois dessa etapa de revisão, a gente tem a etapa crítica, né, de crítica ao que ele evidenciou para saber se o que ele trouxe é algo que vai acontecer no dia a dia da aplicação ou é um caso inventado, né, somente para ser um problema, tá? Então, um caso que nunca aconteceria, que não é do fluxo, simplesmente que tem ali uma possibilidade, só que devido ao fluxo da aplicação, ela não é praticável. Então, vou pedir para ele seguir aqui pra etapa de crítica. Ó, galera, da ele terminou
+
+aqui a etapa, né, do filtro, né, a categoria toda de filtro, a crítica ali que era o final, ficou tudo como o a anterior, né, que ele encontrou os falsos positivos. Então, no fim das contas tem 10, tá? E aí agora começa a outra etapa, né, que é a de calibrate, onde ele vai dar uma nota de risco para cada um dos problemas. Então vou pedir para ele seguir. Então galera, a gente tem essa etapa de calibrar cada problema. Então olha só, cadastro
+
+anônimo vira de mim. Pô, isso aqui é bem crítico, né? Eh, login sem limite de tentativas ruim também. E por aí vai, né? A gente tem aqui todos os problemas encontrados e os cinco descartados também que ele falou, né? Então, a
+
+última etapa é o relatório. Aí o relatório ele vai criar um relatório, né? E aí a gente vai ter via arquivo, só que eu vou pedir para ele resumir aqui também. Então vou botar assim, pode seguir, me envie aqui também um resumo do relatório. Pronto. Aí a gente entra
+
+na etapa final que é o report. Bom, aí aqui, galera, uma informação importante, né? A gente não vai corrigir nada, né? Só se a gente pedir, tá? Ele tem uma skill que corrige, que é o mantis patch.
+
+Esse cara aqui, ele vai fazer os fix de segurança, tá? Então, se tu quiser ir pela skill, tu vai usar isso aqui. Mas claro, né, com tudo evidenciado, tudo documentado, tu pode mandar um prompt pra gente e ele arrumar sem problema nenhum também, tá? Mas aí ficam as duas maneiras de fazer essa etapa final, né, que seria a final de fato, corrigir o problema e aí pronto, o nosso projeto estaria seguro. Bom, galera, e aqui a gente tem todos os problemas, né? Resumo
+
+do relatório, está aqui pra gente ver e corrigir, tá? Aqui, galera, na pasta reportds, né, com todos todas as informações que a gente precisa para entender os problemas que foram encontrados, né? Então, são foram dois arquivos bem densos, com mais de 700 linhas. Eh, o primeiro, né? Depois tem o esse outro aqui foi criado também. E aí os dois contém, né? Deixa
+
+eu ver aqui uma coisa. Na verdade são eles são iguais porque ele sempre vai manter o histórico e vai mostrar o latest, né? Seria o último. Então depois vai começar a ficar diferente, né? Mas esse relatório que ele criou tem mais 100 linhas explicando todos os problemas e contratos. Aí eu poderia chegar aqui e
+
+pedir com base nas evidências, corrija todos os problemas do projeto. E pronto, ele parte pro ataque, né? Ele deixa de ficar somente leitura e começa a executar, corrigir tudo e me entregar o projeto mais seguro. Ó, galera, da aqui ele tá resolvendo todos os problemas, né? O o Mantis, né? Ele vai deixando
+
+alguns comentários também, fica mais fácil de entender onde que estão os apontamentos, tudo mais. Então, até nisso ajuda, né? Ele não interfere no código até a gente pedir, mas ele vai criando também esses pontos que depois vão sendo removidos, né? Como vocês podem ver, esse vermelhinho aqui, né, e vai sendo corrigido e os problemas vão acabando, o projeto naturalmente fica mais seguro. Bom, galera, então sobre o Google Mants, era isso, tá? Projeto
+
+relativamente novo, tá sendo bem atualizado, descobri ele aqui, achei um bom achado, bem estruturado, bem interessante, uma empresa que é confiável, né? Então, sugiro vocês darem uma olhadinha aí e conhecerem o projeto, testarem. Quero ouvir de vocês, ler os comentários. Vocês vão fazer a respeito dessa biblioteca aqui de skills que ajuda a melhorar a a questão de vulnerabilidade, né, dos nossos projetos. Lembrei também, galera, se vocês querem aprender a criar projetos comigo, utilizando a minha metodologia que eu aplico aqui na hora de codar, vou deixar o link aqui no comentário fixado.
+
+nosso treinamento. Pare de brigar com a vou te ajudar desde o planejamento para planejar bem, estruturar a base da aplicação, desenvolver ela, version da maneira correta, deixar ela segura, né, com estratégias similares aí a Dumantes, colocar no ar e manter ela atualizada com novas funcionalidades do jeito certo para que ela cresça, evolua e também aguente o tranco aí dos usuários que ela vai ter. Fechou? Então, tô esperando todos vocês. Bom, se puderem deixar aquele like também ajuda bastante. Se inscreva se
+
+não for inscrito, isso fortalece muito meu trabalho. E galera, vou ficando por aqui. Espero vocês aí no próximo vídeo. Valeu,
