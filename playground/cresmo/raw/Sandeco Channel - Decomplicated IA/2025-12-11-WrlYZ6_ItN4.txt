@@ -1,0 +1,64 @@
+---
+video_title: "OpenAI vs Open Source: O Dilema dos Embeddings em RAG Custo vs  Precisão. Você Paga ou Não Paga"
+video_id: WrlYZ6_ItN4
+channel_name: "Sandeco Channel - Decomplicated IA"
+channel_id: UCIQne9yW4TvCCNYQLszfXCQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=WrlYZ6_ItN4
+video_date: 2025-12-11T20:45:01+00:00
+video_description: |
+
+---
+de embedds, OpenAI versus modelo OpenSource, impacta muito o custo e a precisão do RAG, quando vale a pena pagar por um? Que pergunta boa! Breno Serafim perguntou assim, vou perguntar, vou falar de novo, a escolha do modelo de embedd, por exemplo, OpenAI versus OpenSource, impacta muito o custo e a precisão do RAG? Vale a pena pagar por um? Essa é a pergunta do Breno, certo?
+
+Primeiro eu vou explicar o que ele quer dizer, o que quer dizer um modelo tipo OpenAI versus um modelo OpenSource, como por exemplo a gente usar um modelo da RAG in Face, tá? O modelo OpenAI quando gera um embed, ele gera um embed, se não me engano, de 3 mil e pouquinho de espaço, são 3 mil e poucos números que representam texto, ou 2 mil e pouco, eu não tenho certeza ainda, certo? O modelo OpenSource, dos primeiros capítulos que eu usei no livro, é um modelo que gera 348 números, veja uma diferença enorme, né? Mas o que que isso quer dizer na prática? Certo?
+
+Eu vou explicar primeiro, matematicamente, tá certo? Deixa eu tentar construir aqui um um plano cartesiano, acho que eu tenho já um construído aqui, eu tenho um plano cartesiano aqui, que vai mostrar exatamente essa questão dessa diferença, tá?
+
+Eu vou entender exatamente por que ter mais dimensões pode ser mais em um RAG, e isso tem tudo a ver com o tipo de modelo, tá? Porque primeiro tem que ver a qualidade da saída desses modelos, ou seja, que números que eles estão gerando, certo? É mais interessante, e também você precisa ver o tamanho desse embed, e o tamanho do embed é importante, muito importante, tá? Muito importante mesmo. Deixa eu copiar aqui, isso aqui, ó, vou copiar isso aqui para a gente poder olhar isso aqui, vou criar uma nova caixa de representação e vou apresentar, deixa eu só abrir aqui a caixa para mostrar para vocês o que que isso quer dizer, tá?
+
+E vocês vão entender
+
+fácil, fácil.
+
+Vamos lá, vamos compartilhar a tela, eu vou compartilhar aqui a minha tela, vou colocar aqui um fundo escurinho para a gente poder criar o nosso queridíssimo, nossos dados aqui, deixa eu colar esse aqui primeiro, tá? Eu vou pegar essas informações aqui, vou pegar esses esses chunks aqui. Então, vamos supor que eu estou criando um espaço vetorial, tá? Não se preocupe não, tá? Eu estou falando alguns termos que podem ser um pouco difíceis para você, mas você vai ver tudo acontecendo, então é tranquilo de entender.
+
+Porque, na verdade, pessoal, o que ele vai trabalhar aqui são coisas da sétima série, coisas que você viu na sétima série, e você vai usar inteligência artificial com essas coisas que você aprendeu na sétima série e que são potentes demais, entendeu? E aí você vai começar, cara, então é por isso que eu estudei na sétima série essa coisa, né? Então, temos aqui eixos, né? Dois eixos aqui, x, tá? x e y, né?
+
+x e y aqui, e nós temos esses pontos de dados, tá ok? Que representam chunks. Estão aqui. Ok? Você vai perceber que nessa visualização aqui, esses chunks, certo?
+
+O chunk 2, 1 e 3, eles estão perto uns dos outros, tá? Eles estão perto uns dos outros. E esses chunks aqui representam uns textos aqui, que são esses textos aqui, esses textos aqui, é chunks de verdade, tá? No Airbus 320, uma das aeronaves comerciais mais utilizadas em voos e parará, parará. Qual é o tema aqui?
+
+A aeronave, ou aviação, ou avião, alguma coisa assim. Agora aqui, onde ele marcou três gols decisivos na final do campeonato que garantiu o título do Vasco? Estou falando de futebol, estou falando do Vasco, estou falando de campeonato, estou falando de título, beleza? Esse é o assunto. Esse outro aqui, em voos regionais, que no Bung 737 também é amplamente usado para esse outro chunk.
+
+A pergunta é, você concorda que esse assunto aqui está relacionado com este assunto aqui embaixo, o azul com verde, certo? E você pode ver que o cálculo do chunk dele, deu mais ou menos parecido, 0,92 com 0,94, 0,28 com 0,32, 0,41 com 0,50, menos 12, menos 20. Já esse embed de baixo que representa esse texto, ou seja, assinatura, os números são diferentes. Então, isso representa alguma coisa, em termos de representação gráfica. Mas se eu usasse somente dois números, X e Y, eu teria alguma coisa mais ou menos assim.
+
+E aí, nesse plano cartesiano, quando eu, isso aqui representa um texto, isso aqui representa um texto, isso aqui representa um texto, de certa forma, eles não estão tão separados assim, certo? Em alguns casos, eles podem estar até assim, um em cima do outro, beleza? É como se eles estivessem assim, deixa eu fazer isso manualmente, para vocês poderem ver, é como se eles estivessem assim, ok? Esse aqui é um dado, um chunk, esse aqui é um chunk, mas você vai ver ele assim. Nessa vista que vocês têm, eles são a mesma coisa, ou do mesmo tipo, né?
+
+A questão é que quando a gente joga um 3D, a gente aumenta a dimensionalidade do embed, o que acontece é que ele dá uma virada assim, e aí você percebe que, na verdade, essas duas informações, elas estão longe uma da outra, essa visão é que me atrapalhava, entendeu? Então, quando eu adiciono um número, ou adiciono uma visão, né? O que vai acontecer é isso aqui, ó.
+
+Certo? O que vai acontecer é isso aqui. Perceba que o chunk 1 e 3 ainda continuam juntos, aqui eles estão falando de voo, né? Vou aumentar aqui, aqui eles estão falando de voo, beleza? E esse aqui está falando de futebol.
+
+mais, mas o que aconteceu foi que porque eu coloquei um número a mais, eles separaram um pouco mais, beleza? Ok? Então, aí seriam, em 3D, eu teria que ter um vetor com três números. Só que eu falei para vocês, né? que o que a gente usa é um de 348, que é um gratuito, beleza?
+
+Então, são 348 dimensões, não é só 3D, mas 348 dimensões, certo? Na matemática e na física isso é possível, certo? Sem problema nenhum. De tal forma, você concorda comigo que se em três dimensões eu tive uma separação mais interessante, se eu aumentar as dimensões, eles vão separar um pouco mais, vão ficar cada vez mais longe? E os que devem ficar juntos, devem agrupar num lugar e os outros que devem ficar juntos ficaram agrupados por lá?
+
+Se eu tiver um milhão de terços aqui, isso pode ser impactado em 348, então eu posso jogar, sei lá, pegar o da OpenAI e jogar para 2 mil ou 3 mil embeddings, entendeu? Tamanho de embedding, então eu terei mais dimensões ainda, o que separa mais os dados ainda, entendeu? Então, esse lance do modelo do embedding tem muito a ver com isso. Primeiro, a qualidade da geração dos números. Segundo, a dimensionalidade, porque o crescimento dimensional do embedding vai ajudar a separar os dados, consequentemente, o RAG será melhor.
+
+É por isso que o modelo OpenAI, que gera com mais qualidade os números, e esses números serão vários números, não só 348 ou só 3, mas serão 3 mil números bem escolhidos para representar determinado dado, será muito melhor do que o modelo Open Source, tá certo? E se impacta muito o custo, impacta sim, porque você vai precisar fazer buscas de RAG em um LLM de API e tem um custo. Se você fizer 100, 100 vezes mais, 1 milhão, 1 milhão de vezes mais é aquele custo, beleza? Então, aí você tem um problema de custo. E a precisão?
+
+Aumenta. Certo? Com certeza aumenta. Então, a gente pode até fazer alguns testes, né? Nossa, nossa, nossa, nossa, nossa, nossa mentoria.
+
+Quando vale a pena pagar por um? Ora, quando o problema é muito crítico, certo? Quando eu preciso realmente de informação do mais correto possível na geração do RAG. Então, aí vale a pena pagar por um. Só que você tem que ter noção, tem que fazer cálculo, velho, para saber balancear a carga aí de perguntas e respostas e tudo mais e tal.
+
+Às vezes, a empresa é grande demais como a Petrobras. A Petrobras usa o RAG da OpenAI. Só que a Petrobras tem um acordo com a OpenAI, beleza? Então, ela fecha um contrato de um lote de acesso lá e beleza. A Petrobras pode fazer isso.
+
+No caso do Ministério Público de Goiás aqui,
+
+eles compraram máquinas e vão instalar um LLM interna. Gastaram um milhão e meio de reais em máquinas, beleza? Para poder rodar as LLM internas. Então, depende do caso, certo? Só que lá, no caso do Ministério Público, são 30 milhões de arquivos, beleza?
+
+Está sendo trabalhado. Então, temos isso aí como informação, certo? Escolha do modelo do Embed impacta-se no custo? Sim, impacta. Na precisão?
+
+Também. então é a velha história do Perde e Ganha que eu sempre falo para os meus alunos. Tudo na computação e na inteligência artificial é um Pé de Ganha e você tem que aprender a equilibrar esse Perde de Ganha, certo? Aprender a equilibrar esse Pé de Ganha. Ok?
+
+É isso.

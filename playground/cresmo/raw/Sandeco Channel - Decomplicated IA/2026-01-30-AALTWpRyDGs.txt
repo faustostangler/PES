@@ -1,0 +1,127 @@
+---
+video_title: "Contexto INFINITO? O truque do GTA que revolucionou a IA (RLM)"
+video_id: AALTWpRyDGs
+channel_name: "Sandeco Channel - Decomplicated IA"
+channel_id: UCIQne9yW4TvCCNYQLszfXCQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=AALTWpRyDGs
+video_date: 2026-01-30T20:09:36+00:00
+video_description: |
+  O segredo para a janela de contexto infinita nas LLMs veio de onde você menos esperava: dos Games. 🎮🤖
+  
+  Você já percebeu que, por maior que seja a janela de contexto do GPT-4 ou do Claude, a qualidade da resposta cai drasticamente quando você insere textos gigantes? Isso se chama degradação de contexto.
+  
+  Github do projeto: https://github.com/alexzhang13/rlm
+  
+  Links do grupo de whatsapp: https://linktr.ee/sandeco.macedo
+  
+  
+  Neste vídeo, o Prof. Sandeco revela a técnica RLM (Recursive Language Model), desenvolvida por pesquisadores do MIT. Inspirada em como jogos como Minecraft, GTA e Cyberpunk carregam mundos imensos sem travar o PC, essa técnica permite que a IA manipule contextos virtualmente infinitos de forma recursiva.
+  
+  🔹 O que você vai aprender:
+  A analogia dos Games: Por que o carregamento "sob demanda" é a chave para a IA.
+  
+  Degradação de Contexto: Por que enfiar 100k tokens na IA nem sempre funciona.
+  
+  Mecânica RLM: Como a LLM escreve o próprio código Python para navegar no texto.
+  
+  Mão na Massa: Execução prática de um código que encontra segredos escondidos em 18.000 linhas da Odisseia de Homero.
+  
+  🚀 Mentoria RAG - Gerência de Contexto
+  Quer dominar 10 técnicas avançadas de RAG e gerência de contexto como esta? No meu livro e mentoria, você terá aulas em vídeo, acesso a um grupo exclusivo com +400 alunos e todos os códigos fontes. 👉 Acesse aqui: https://physia.com.br
+---
+Qual a relação entre os games como Minecraft, GTA, Assassin's Creed, Red Dead Redemption e Cyberpunk com uma nova técnica de gerenciamento de contexto em LLMs? Como você sabe muito bem, o mundo dos games nos deram as GPUs e sem as GPUs nós não teríamos a IA como nós temos hoje. Só que agora tem uma virada curiosa. Um truque que esses games usam pode fazer você chegar perto de uma janela de contexto praticamente infinita. Hoje eu vou mostrar os RLMs.
+
+Eu vou mostrar o problema, vou explicar em detalhes a solução e além disso nós vamos executar essa solução de RLM em código Python mais pro final do vídeo. Então fica conosco e vamos nessa.
+
+>> Olá, eu sou Sandeco, sou professor e pesquisador pelo Instituto Universidade Federal de Goiás. Além disso, eu sou embaixador da Campus Pari Brasil. E se você gosta de inteligência artificial, com informações descomplicadas, mas sem perder a qualidade técnica e científica, considere se inscrever no meu canal. Ative as notificações para ser avisado sempre que eu postar um novo conteúdo. E além disso, se você quiser falar comigo diretamente, vem pro nosso grupo de WhatsApp. O link tá aqui na descrição. E
+
+é claro, se esse vídeo te ajudar, deixa o like e comenta aqui embaixo que eu leio tudo e respondo, tá bom? Imagina tentar resolver um caso policial com 1000 páginas de depoimentos, mas você só consegue deixar poucas páginas abertas na mesa. Quanto mais páginas você tenta colocar em cima da mesa, mais você começa a se confundir, mesmo antes que acabe o espaço, não é verdade? Não basta simplesmente as LLMs aumentar a janela de contexto e você jogar tudo que é texto lá para dentro. O que acontece é que mesmo com grandes janelas de contexto, pesquisadores mostraram que conforme o volume da informação cresce, a qualidade da resposta ela cai muito rápido. Para medir isso, eles criaram
+
+três missões para LLM. Bom, para provar a degradação do modelo em relação a grandes textos dentro da Ll, os pesquisadores fizeram três missões. A primeira missão é buscar a agulha no palheiro. Ou seja, eu coloco a informação no meio de um bocado de texto e eu quero buscar aquela informação específica. Essa é a base de dados específica para isso. Depois, o próximo
+
+problema, a próxima missão era transformar e agrupar informações ao longo de todo o texto, chamado aí de ou long, tá bom? problema. E por fim, o mais difícil dos problemas, né, eh, é transformar, agrupar e parear esses essas informações, que é o chamado long pairs. Então, eu tenho que pegar as informações, a LM tem que pegar as informações, agrupar as informações, depois separar em pares. Muito complicado. E o que aconteceu
+
+basicamente foi o seguinte. O modelo GPT5 usado, né, se saiu super bem em buscar uma agulha no palheiro, mas transformar e agregar as informações degradou o sistema muito rapidamente. E quando foi transformar, agregar e parear, olha só o que aconteceu. Em 33.000 1 tokens, a qualidade da informação caiu absurdamente.
+
+Isso aqui é o que eles chamam de degradação do contexto, tá bom? Por mais que você tenha uma janela de contexto muito grande, que você possa enfiar informação lá dentro, dependendo da tarefa, o contexto degrada completamente e a LLM não consegue responder de forma satisfatória a ao problema proposto, tá bom? Aí os caras pensaram o seguinte: "Bom, como é que eu posso resolver esse problema de carregar várias informações, muita informação num contexto limitado?" E foi dessa forma que eles olharam para os jogos e aí descobriram que, por exemplo, os jogos de mundo aberto, aí jogos como Minecraft, GTA, Cyberpunk e esses outros mais foi inspiração para que eles pudessem criar, né, essa técnica chamada de RLM. Esse é o artigo do RLM, o modelo de linguagem recursivo do pessoal do MIT que criou aí, né, essa técnica. Bom, qual é a analogia em
+
+relação aos jogos, né? Porque quando você tem um jogo de mundo aberto, o jogo ele não carrega toda a informação de uma vez só, ele vai carregando aos poucos, né? Você sabe disso muito bem. Ele vai carregando a visão aonde você está e não tudo de uma vez, entendeu? Porque senão você vai carregar coisa demais na memória e você pode travar, né? Quando o
+
+jogo é pesado demais, não cabe tudo na memória, você carrega por partes e sob demanda. Então, quando eles aplicaram essa técnica, né, de carregamento por partes e sob demanda, o que aconteceu foi que o resultado, ó, o desempenho foi superior com as janelas de contexto do mesmo tamanho. E quando você tem janela de contexto que supera, né, o tamanho da janela, nesse caso aqui do GPT5, ó, uma informação além da janela de contexto, ele conseguiu sair muito bem. Ou seja, a gente pode ampliar a janela de contexto do LLM usando o RLM, eh, fazendo que a gente possa usar informação que suplante a janela de contexto a partir dessa técnica, né? Bom, mantendo a analogia com jogos, vamos ver aqui uma correspondência direta antes de eu entrar na teoria efetivamente. Nos games
+
+a gente tem o mundo inteiro é grande demais para caber na memória. O prompt de conhecimento é grande demais para caber na janela de contexto. Depois no game, mantém carregada somente a área próxima ao jogador. No RLM mantém o contexto só os textos relevantes para a pergunta atual. No game você carrega e descarrega áreas, né, dos jogos sob demanda. Na no RLM,
+
+busca, lê e processa textos sobre demanda. No game usa um cash do que está sendo usado. Na RLM mantém variáveis e buffers com evidências e resultados intermediários. Beleza? OK. Então vamos
+
+explicar aqui o RLM que vai começar na raiz profundidade igual a zero. Todo LRM tem basicamente três coisas. Bom, a primeira coisa é um modelo de linguagem que vai fazer o raciocínio todo. Pode ser o GPT5, DMIN, Cloud, o que você quiser. Depois você vai dizer a esse modelo de linguagem que ele tem um ambiente de programação para poder usar.
+
+É exatamente isso, porque no RLM o modelo de linguagem vai viajar pelo contexto escrevendo códigos, entendeu? E usando os textos que ele recebeu. Então a gente tem que habilitar para esse modelo de linguagem um ambiente, nesse caso aqui, o Python, né? E aí uma outra coisa importante é que o prompt ele é todo carregado em uma variável. Nesse caso aqui, esse prompt, ó, você está lendo um livro extremamente longo. Você
+
+consegue listar todos os itens que foram feitos antes da grande catástrofe. E aí essa é a pergunta, porque o livro deve tratar de alguma catástrofe dentro da do livro lá, né? O modelo de linguagem, como eu falei, cria os códigos para poder manipular o contexto, tá certo? Então, o que ela pode fazer é o seguinte, recebeu o contexto, por exemplo, aqui, ó. Então, ele vai ter que manipular os capítulos, né, eh, do livro e partes do livro para poder encontrar informação. Como é que ele faz isso? Ele
+
+vai usar um conceito de escrever o próprio código para executar. Ele escreve o código, tá? A Llóprio código e ela vai executar de forma recursiva. Olha só o que ele tá fazendo aqui, ó. Ele chama uma LLM, chama uma query aqui, ó, chamado LLM query, ou seja, a LLM chama ela mesma para executar uma ação à parte, certo? Então, é exatamente isso
+
+que acontece aqui. Veja que tem duas execuções. A primeira linha da execução diz respeito a isso aqui, ó. é uma chamada recursiva à parte, dizendo aqui instrução, no capítulo um, encontre todos os itens que constam como pertencentes às pessoas com aí, no caso aí seria eh eh itens que foram feitos, né? E aí tem o modelo de linguagem internamente também. Aqui eles usaram
+
+modelos de linguagem um pouco mais fraco, dizendo que aqui, por exemplo, poderia ser um GPT5 e aqui um GPT5 mini, entendeu? Mas isso depende muito da configuração que você fizer. O interessante é que você tem que ver a recursão, ou seja, eu chamei o modelo de linguagem e o modelo de linguagem chamou o modelo de linguagem de novo, entendeu? Percebeu a recursão aí? Então isso aqui é legal. E aí ele processa parte do
+
+texto, só parte do contexto, não tudo, e retorna para para que para ela, para quem chamou, né? no caso, a o modelo de linguagem chefão, [risadas] digamos assim, eh o que foi encontrado aqui nessa parte aqui, beleza? E aí depois, na segunda parte ele pode mandar para uma chamada de modelo de linguagem de novo aqui, nesse caso, a segunda linha, né? Procure os itens nas sessões que dizem explicitamente que foram encontrados, entendeu? Então, veja, ele fez duas chamadas aqui, uma ele meio que mapeou e outra ele procurou. Então,
+
+usando o método map reduce, a técnica quem vai dizer é o modelo, o próprio modelo vai dizer como é que ele vai trabalhar com o contexto e abrindo os os códigos que ele vai executar aqui. O que a gente somente diz internamente é que ele tem que usar essas chamadas de querer para ele, né? A gente libera para ele poder usar a própria LLM. Por isso que o nome é modelo recursivo, tá? Porque ela chama ela mesma. Na
+
+programação, a gente tem uma função que pode chamar ela mesma, é uma função recursiva, tá? Então essa aqui é a ideia. Uma linguagem que chama ela mesma é uma linguagem recursiva, sacou? Então no final das contas, quando ele trabalhar com tudo, essa execução do modelo pode acontecer aí em várias interatividades, certo? em várias ações de forma cíclica até que ele encontre aí um ponto de parada que talvez seja exatamente a a grande catástrofe, né?
+
+Que achou a grande catástrofe ele para com tudo que tá acontecendo, entendeu? E aí no final das contas o que ele vai ter aí é o resultado dizendo, né? No capítulo um, Bob foi o único personagem que estava vivo e carregando um frasco antes da grande catástrofe. No capítulo 3, Alice descobre o anel que pertencia ao rei Herodes, né, que havia caído. E mais tarde aí ele continua aqui no capítulo 5, achou tal coisa. E aí depois
+
+ele vai montar a partir dessa resposta final, né? Ele printa a resposta final, entregando o usuário a resposta final, caminhando sobre todo o contexto, sem precisar passar tudo de uma vez só. Beleza? É basicamente isso. Bom, espero que você ainda esteja aí, porque agora a gente vai executar o código Python dessa técnica. E antes da gente executar o
+
+código Python dessa técnica, que eu quero falar sobre o meu livro sobre Hag, né, que também é uma técnica parecida com essa que é técnica de gerenciamento de contexto. No livro Hag, você tem aí 10 técnicas que eu explico sobre Hag. Além disso, eu expliquei todos os ah todas as aulas em vídeo para você, eu encontro ao vivo e também você tem direito a um grupo de WhatsApp onde tá toda a galera lá. São mais de 400 alunos do livro de Haag, onde a gente pode discutir sobre essa técnica e também você vai receber todos os códigos que a gente produziu nas aulas e nos livros, tá bom? Então basta você acessar o link que tá aqui na descrição, vem para mentoria de Haag sobre gerência de contexto. Bom, vamos lá, né? Eu já estou
+
+no GitHub aqui de um dos autores do artigo. Esse aqui é o Alex Zang, né? Eh, bom, pra gente poder fazer, usar esse projeto, basta você vir aqui no código, vou copiar esse comandozinho aqui, tá? Aí, vou abrir o prompt de comando do Windows. Aqui na pasta onde eu quero que seja instalado, você vai colocar aqui, ó, git clone e cola lá aquele endereço do GitHub. Vamos lá. Pronto, já está
+
+copiado. O que eu que eu tenho que fazer agora é simplesmente abrir no meu VS Code ou no meu caso, eu vou abrir no Antigravity, tá bom? Já aqui no Antigravity, eu vou abrir então o folder aonde eu deixei o meu projeto, tá? Aqui nos meus projetos do test Python. Ah, cadê ele? RLM, tá aqui ele. Então, vou
+
+abrir. E agora eu tenho o projeto do RLM já aqui nas minhas mãos, certo? Agora o que eu vou fazer é criar um ambiente virtual aqui, né, executando esse esse projects, né, usando exatamente o nosso querido IUV. Então eu vou aqui, ó, IUV Sync. Basta fazer isso aqui. E aí o que
+
+vai acontecer é que ele vai criar a máquina virtual, né? Aqui o ambiente virtual e também vai instalar todas as dependências. Tá bom? Muito bem. Agora que tá instalado já aqui, eu preciso fazer três coisas básicas. A primeira
+
+coisa que eu precisa criar aqui é criar um arquivo ponto envi para colocar a chave da opini, certo? API K. Porque a gente vai usar, né, o a LLM como referência. Beleza? Então já já vou colar aqui. Façam isso. Colem sua chave
+
+aqui. Já vou colar a minha, obviamente, não vou mostrar aqui, né? Então é isso. Próximo passo aqui criar uma main.p, que é onde a gente vai utilizar para poder executar o nosso código ll. E a terceira
+
+coisa é o seguinte, eu vou trazer para cá um texto grandão, mas grande mesmo. Eu tenho a de Homero aqui e em Mark. Então vou colocar aqui a Odissé de Homero é exatamente esse texto que a gente vai usar que ele é grandão. Sac que eu fiz na linha 18.000.
+
+18.000 aqui na linha eu coloquei um segredo, certo? Aqui, ó, esse mensagem de oráculo. Então eu vou fazer a RLM buscar essa informação para mim, que é exatamente esse aqui, né? Recussão 2026. Beleza?
+
+Então nós vamos usar esse texto aqui como referência. Vamos voltar então para main. E aí nós vamos fazer na main essas importações. Eu vou importar a própria biblioteca RLM que eles criaram. Se você quiser ver a biblioteca por dentro, segura o control aqui, clica em cima, ó, que ele abre todos os detalhes de como a recurão acontece. Você pode até dar uma
+
+olhada nos promptes que eles escreveram aqui, tá bom? Isso é legal para caramba. Próximo passo aqui, nesse caso, é ler o arquivo, né? Então vou colocar aqui o nome do arquivo Odisseia Sandec MD e mandar abrir o arquivo aqui pra gente poder nesse código aqui eh vou mandar pedir para abrir o arquivo. Agora eu vou fazer uma chamada a RLM aqui usando o back end da Open com modelo GPT5. Se
+
+você quiser, você pode também usar o GPT5 mini, tá? Eh, ele pode ter algum problema, tá, pessoal? De vez em quando eu tenho um probleminha com ele quando eu vou rodar o RLM com o GPT5 mini, mas você pode rodar com GPT5 mini, GPT5, tanto faz. Agora a gente vai ver o prompt. O prompticamente é esse aqui, ó.
+
+Você está recebendo um texto muito longo de um livro antigo, odisédia Homero. Em meio ao texto, existe uma mensagem escondida, uma mensagem do oráculo. Examine o contexto. Encontre o código junto com a mensagem do oráculo para Ulisses, para que Ulisses possa atravessar a o mar de tokens. Retorne somente o código secreto. Então isso aqui é o
+
+prompt que ele vai receber. E mais embaixo aqui eu vou simplesmente mandar rodar a completação do RLM. A completação recebe o quê? O prompt em si, que é a odisseia completa, né? Mais o prompt raiz, que é o que eu escrevi, aquela instrução. Quando terminar, o que
+
+eu vou fazer é imprimir o resultado. Simplesmente imprimir o resultado aqui eh da nossa querida resposta que vem. Eu vou simplesmente imprimir o resultado aqui, ó. O result response, tá vendo? do que a RLM encontrou. OK? Então vamos
+
+nessa. Vamos executar.
+
+Muito bem. Depois da execução, a gente vê exatamente o código que a gente queria aqui, ó. Recursão 2026. Está aqui. Ele achou certinho. O total de
+
+interações que ele levou foram duas. O total de tempo que ele levou foi 166 segundos. Aqui foram 183.000 tokens, tá? E o output apenas 5.000 tokens. Você vai
+
+ver aqui em cima, se eu rodar aqui um pouco para cima, ó, as interações. Então, eu vou mostrar para você que ele escreveu alguns códigos, tá? Ele escreveu alguns códigos para executar. Ele pegou o contexto aqui, ó, e aqui embaixo ele escreveu códigos para poder trabalhar com o contexto na interação. Quer ver? Ó,
+
+mostrar um pouquinho aqui para baixo.
+
+Então aqui, veja só, aqui, ó, ele tem uma chamada lá em cima e aqui embaixo tem uma subchamada ao GPT5, tá? dizendo que ele é um assistente especializado em achar mensagem escondida longo texto. No texto, a partir da parte três de eu disséria, veja que ele escreveu prompt para para o próprio GPT5, tá? E ele vai chamar e vai executar. Muito interessante, né? Aí o texto que ele
+
+passou foi aquele texto inteiro lá e aí tem alguns detalhes que ele coloca lá nas exclusão e tudo mais, né? Para que ele possa executar toda a ação. Beleza? Aí aqui embaixo é interessante porque também ele mostra, quando eu coloco no verbose true lá no código, ele mostra também o código que ele criou para executar. Ó, na interação, tá vendo que levou 20 segundos? Ele escreveu esse
+
+código aqui e tentou encontrar essas informações dentro do texto. Ele mesmo, ele mesmo escreveu o código e ele mesmo executou. Interessantíssimo, né? Então ele usa LLM, traz informação e executou. Ah, aí nesse caso aqui, ó, ele já encontrou, né, a recursão 2026, colocou esse if aqui, eh, enfim, e aí executou a informação e no final já tinha variável com saída, né? E aí depois também tem a
+
+execução do código aqui, ele mostrando o que que rola da execução. E aí na extração ele já mostra aqui, ó, recursão 2026, que é exatamente o código que eu tô querendo. Então, a resposta final qual é? Recussão 2026, exatamente como eu esperava. Beleza? Bom, é isso. Eu
+
+espero que você tenha gostado desse vídeo. Se você gostou, se inscreve no canal, deixa seu like, deixa seu comentário aí, tenta rodar nessa programação. Eu vou deixar o link aí das coisas que eu falei ao longo do vídeo. Espero que você tenha gostado de tudo isso aí. Um grande abraço para você e até a próxima. M.
