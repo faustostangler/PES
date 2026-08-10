@@ -108,14 +108,9 @@ def get_staged_files_bytes(staged_files: list[str]) -> int:
     return total_bytes
 
 
-def get_staged_files_size_str(staged_files: list[str]) -> str:
-    """Calculates total disk size formatted for a list of staged repository-relative paths."""
-    return format_bytes(get_staged_files_bytes(staged_files))
-
-
 def get_uncommitted_files_set() -> set[str]:
-    """Returns set of relative file paths that are untracked or modified in working tree."""
-    res = run_git(["git", "-c", "core.quotePath=false", "ls-files", "--others", "--modified", "--exclude-standard"])
+    """Returns set of relative file paths that are untracked, modified, or deleted in working tree."""
+    res = run_git(["git", "-c", "core.quotePath=false", "ls-files", "--others", "--modified", "--deleted", "--exclude-standard"])
     if res.returncode == 0:
         return {line.strip() for line in res.stdout.splitlines() if line.strip()}
     return set()
@@ -158,7 +153,7 @@ def stage_and_commit_file_list(
         # Stage files in sub-chunks for CLI argument length safety
         for j in range(0, len(file_chunk), STAGE_CHUNK_SIZE):
             stage_subchunk = file_chunk[j : j + STAGE_CHUNK_SIZE]
-            run_git(["git", "add"] + stage_subchunk)
+            run_git(["git", "add", "-A"] + stage_subchunk)
 
         diff_res = run_git(["git", "-c", "core.quotePath=false", "diff", "--cached", "--name-only"])
         staged = [f for f in diff_res.stdout.splitlines() if f.strip()]
@@ -167,7 +162,7 @@ def stage_and_commit_file_list(
             part_suffix = f" (part {idx}/{total_parts})" if total_parts > 1 else ""
             commit_bytes = get_staged_files_bytes(staged)
             commit_size_str = format_bytes(commit_bytes)
-            msg = f"{commit_prefix}: add {len(staged)} files{part_suffix}"
+            msg = f"{commit_prefix}: sync {len(staged)} file changes{part_suffix}"
             print(f"  ➜ {msg} ({commit_size_str})")
             res = run_git(["git", "commit", "-m", msg])
             if res.returncode == 0:
@@ -194,18 +189,22 @@ def step1_commit_raw_channels() -> None:
     total_commits = 0
     for idx, channel_dir in enumerate(subdirs, 1):
         clear_lock()
-        txt_files = sorted(list(channel_dir.rglob("*.txt")) + list(channel_dir.rglob("*.md")))
-        if not txt_files:
+        channel_rel = str(channel_dir.relative_to(REPO_ROOT))
+        disk_files = [str(f.relative_to(REPO_ROOT)) for f in channel_dir.rglob("*") if f.is_file() and (f.suffix in [".txt", ".md"])]
+        uncommitted_channel = [f for f in uncommitted_set if f.startswith(channel_rel + "/")]
+        combined_paths = [REPO_ROOT / p for p in sorted(set(disk_files + uncommitted_channel))]
+
+        if not combined_paths:
             continue
 
         prefix = f"sync(raw): '{channel_dir.name}'"
         c_count, f_count, b_count = stage_and_commit_file_list(
-            txt_files, commit_prefix=prefix, uncommitted_set=uncommitted_set
+            combined_paths, commit_prefix=prefix, uncommitted_set=uncommitted_set
         )
         if c_count > 0:
             print(
                 f"  [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': "
-                f"{f_count} committed files ({format_bytes(b_count)}) -> {c_count} commits."
+                f"{f_count} committed changes ({format_bytes(b_count)}) -> {c_count} commits."
             )
             total_commits += c_count
 
@@ -226,18 +225,22 @@ def step2_commit_enriched_channels() -> None:
     total_commits = 0
     for idx, channel_dir in enumerate(subdirs, 1):
         clear_lock()
-        enriched_files = sorted([f for f in channel_dir.rglob("*") if f.is_file()])
-        if not enriched_files:
+        channel_rel = str(channel_dir.relative_to(REPO_ROOT))
+        disk_files = [str(f.relative_to(REPO_ROOT)) for f in channel_dir.rglob("*") if f.is_file()]
+        uncommitted_channel = [f for f in uncommitted_set if f.startswith(channel_rel + "/")]
+        combined_paths = [REPO_ROOT / p for p in sorted(set(disk_files + uncommitted_channel))]
+
+        if not combined_paths:
             continue
 
         prefix = f"sync(enriched): '{channel_dir.name}'"
         c_count, f_count, b_count = stage_and_commit_file_list(
-            enriched_files, commit_prefix=prefix, uncommitted_set=uncommitted_set
+            combined_paths, commit_prefix=prefix, uncommitted_set=uncommitted_set
         )
         if c_count > 0:
             print(
                 f"  [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': "
-                f"{f_count} committed files ({format_bytes(b_count)}) -> {c_count} commits."
+                f"{f_count} committed changes ({format_bytes(b_count)}) -> {c_count} commits."
             )
             total_commits += c_count
 
@@ -251,15 +254,13 @@ def step2_commit_enriched_channels() -> None:
 
 
 def step3_commit_code_and_skills() -> None:
-    """Stages and commits any remaining project code, agent skills, cresmo, and configs."""
-    print("\n--- STEP 3: Staging Remaining Code & Skills ---")
+    """Stages and commits any remaining project code, agent skills, cresmo, configs, and file deletions."""
+    print("\n--- STEP 3: Staging Remaining Code, Skills & Deletions ---")
     clear_lock()
 
     targets = [
         ".agents/",
-        "playground/cresmo/",
-        "playground/isb.ai/wiki/",
-        "playground/isb.ai/*.py",
+        "playground/",
         ".gitignore",
         "pyproject.toml",
         "uv.lock",
@@ -267,19 +268,22 @@ def step3_commit_code_and_skills() -> None:
     ]
 
     for t in targets:
-        run_git(["git", "add", t])
+        run_git(["git", "add", "-A", t])
 
-    diff_res = run_git(["git", "diff", "--cached", "--name-only"])
+    # Stage any remaining tracked deletions across the repository
+    run_git(["git", "add", "-u"])
+
+    diff_res = run_git(["git", "-c", "core.quotePath=false", "diff", "--cached", "--name-only"])
     staged = [f for f in diff_res.stdout.splitlines() if f.strip()]
     if staged:
-        msg = f"feat: sync project code, cresmo pipeline, skills ({len(staged)} files)"
+        msg = f"feat: sync project code, cresmo pipeline, skills & deletions ({len(staged)} changes)"
         res = run_git(["git", "commit", "-m", msg])
         if res.returncode == 0:
-            print(f"  Committed {len(staged)} project code and skills files.")
+            print(f"  Committed {len(staged)} remaining changes (including file deletions).")
         else:
             print(f"  Commit error in step 3: {res.stderr.strip()}")
     else:
-        print("  No unstaged code/skills files found.")
+        print("  No unstaged code/skills/deletion changes found.")
 
     print("Step 3 Complete.")
 
