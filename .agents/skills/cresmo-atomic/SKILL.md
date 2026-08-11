@@ -11,7 +11,7 @@ The `cresmo-atomic` skill processes expanded narrative Markdown texts (from `cre
 
 Each note addresses a single entity, concept, event, or process, using strict YAML metadata, standardized Obsidian WikiLinks (`[[Note Title]]`), declarative triple connections, causal attribution matrices, and bi-directional cross-context linking.
 
-Save output directly to `playground/cresmo/<transcript_slug>/02_atomic_notes.xml`.
+Save output directly to `playground/cresmo/enriched/<channel_name>/<video_id>.xml`.
 
 ---
 
@@ -61,12 +61,12 @@ Every note MUST be formatted using this exact Markdown template:
 ```markdown
 ---
 type: entity | concept | event | process
-tags:
-  - content/[primary_tag], content/[primary_tag]/[theme_subtag]
-  - type/[type]
-  - domain/[domain]
-  - cluster/[cluster]
-  - source/[channel_name_slug]/[video_id]
+content:
+  - [primary_tag]
+  - [primary_tag]/[theme_subtag] (se e quantas houverem)
+domain: [domain]
+cluster: [cluster]
+source: [channel_name_slug]/[video_id]
 aliases: ["Alternative Name 1", "Acronym or Short Name"]
 ---
 # [Exact Note Title]
@@ -113,5 +113,5 @@ The complete batch of generated atomic notes MUST be presented inside XML contai
 </xml>
 ```
 
-Save output directly to `playground/cresmo/<transcript_slug>/02_atomic_notes.xml`.
+Save output directly to `playground/cresmo/enriched/<channel_name>/<video_id>.xml`.
 Do not output any introductory greetings, conversational commentary, or postscripts outside the `<xml>...</xml>` block.

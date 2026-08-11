@@ -691,6 +691,8 @@ def main() -> None:
         run_process_subcommand(args)
     elif args.command == "pipeline":
         run_pipeline_subcommand(args)
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
