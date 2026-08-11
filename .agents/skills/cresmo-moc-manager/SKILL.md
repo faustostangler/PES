@@ -13,7 +13,7 @@ It enforces zero orphaned notes (every note is woven into a fluid narrative Map 
 
 **File Proliferation Directive**: This phase transforms the XML batch of atomic notes into individual Markdown (.md) files. Each atomic note extracted from `<xml><nota>...</nota></xml>` must be saved as an individual `.md` file in `playground/cresmo/wiki/<note_type>/` (where `<note_type>` is `entity`, `concept`, `event`, or `process`), named exactly after the note's title (`[Exact Note Title].md`). 
 
-Save the overall reconciliation log report directly to `playground/cresmo/<transcript_slug>/03_moc_reconciliation.md`.
+Save the overall reconciliation log report directly to `playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md`.
 
 ---
 

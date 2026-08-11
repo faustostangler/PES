@@ -76,7 +76,6 @@ Examples:
     args = parser.parse_args()
 
     if not args.command:
-        print("ℹ️ No subcommand specified. Defaulting to FULL Cresmo Pipeline execution ('full').\n")
         args.command = "full"
         args.playlist = getattr(args, "playlist", str(CRESMO_ROOT / "playlist.txt"))
         args.csv = getattr(args, "csv", str(CRESMO_ROOT / "brain.csv"))
