@@ -340,7 +340,7 @@ def normalize_yaml_tags(content: str) -> str:
 
 
 
-def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR) -> list[Path]:
+def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR, force: bool = False) -> list[Path]:
     """Parses <xml><nota>...</nota></xml> and saves individual .md files into cresmo/wiki/<note_type>/."""
     if not xml_file.exists():
         return []
@@ -375,6 +375,8 @@ def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFA
         type_dir.mkdir(parents=True, exist_ok=True)
 
         note_file = type_dir / f"{clean_title}.md"
+        if not force and note_file.exists():
+            continue
         note_file.write_text(block, encoding="utf-8")
         created_files.append(note_file)
 
@@ -389,11 +391,17 @@ def execute_stage56_moc_manager(
     session_id: str,
     cresmo_dir: Path = DEFAULT_CRESMO_DIR,
     cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR,
+    force: bool = False,
 ) -> Path:
     """Stage 5 & 6: MOC Management, Vault Graph Sync, & Reconciliation (cresmo-moc-manager)."""
     video_id = meta.get("video_id", xml_file.stem)
     reconciliation_log = xml_file.parent / f"{video_id}_reconciliation.md"
     index_file = cresmo_wiki_dir / "_index.json"
+
+    # Skip if reconciliation log already exists — stages 5 & 6 are complete for this video.
+    if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > 200:
+        print(f"  ✓ [Stage 5/6 Skip] Reconciliation log exists -> {reconciliation_log}")
+        return reconciliation_log
 
     skill_doc = SKILL_MOC_MANAGER_PATH.read_text(encoding="utf-8") if SKILL_MOC_MANAGER_PATH.exists() else ""
     xml_content = xml_file.read_text(encoding="utf-8") if xml_file.exists() else ""
@@ -469,8 +477,6 @@ def process_candidate_blocks(
     pipeline_start_time = time.time()
 
     for idx, block in enumerate(candidate_blocks, 1):
-        b = 1000
-        if 
         meta = block.get("metadata", {})
         txt_file = block.get("source_file")
         video_id = meta.get("video_id", "unknown")
@@ -489,15 +495,23 @@ def process_candidate_blocks(
 
         print(f"[{idx}/{total_candidates}] ({pct:.1f}% | ETA: {eta_str}) [{domain.upper()}/{cat_type.upper()}] Channel: '{channel}' | Video: {video_id} ({meta.get('video_title', '')[:30]}...)")
 
+        # Derive the completion sentinel path (written only after stage 6 finishes).
+        # If it exists, this video was fully processed end-to-end — skip stages 3-6.
+        xml_file = enriched_dir / channel / f"{video_id}.xml"
+        reconciliation_log = xml_file.parent / f"{video_id}_reconciliation.md"
+        if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > 200:
+            print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
+            continue
+
         # Stage 2: Expander & Detranscriptor
         enriched_file = execute_stage2_expander(txt_file, meta, session_id, output_dir=enriched_dir, force=force)
 
         # Stage 3 & 4: Atomic Generator & Proliferation
         xml_file = execute_stage3_atomic_notes(enriched_file, meta, session_id, cresmo_dir=cresmo_dir, force=force)
-        parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir)
+        parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
 
         # Stage 5 & 6: MOC Manager & Graph Reconciliation
-        execute_stage56_moc_manager(xml_file, meta, session_id, cresmo_dir=cresmo_dir, cresmo_wiki_dir=cresmo_wiki_dir)
+        execute_stage56_moc_manager(xml_file, meta, session_id, cresmo_dir=cresmo_dir, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
 
         # Mark completed in processed_cresmo.json
         save_processed_cresmo_log(video_id, metadata=meta, log_path=PROCESSED_CRESMO_LOG)
