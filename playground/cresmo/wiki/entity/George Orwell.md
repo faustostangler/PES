@@ -1,32 +1,34 @@
+<![CDATA[
 ---
 type: entity
 content:
-  - politica
-  - politica/totalitarismo
-domain: sociologia_politica
-cluster: engenharia_social
-source: a_odisseia_interior/Mw02Q-IOefg
-aliases: ["Eric Arthur Blair", "Orwell", "George Orwell"]
+  - biografia
+  - literatura/distopia
+domain: ciencias-humanas
+cluster: literatura-politica
+source: a-odisseia-interior/SRMHG2s5bzY
+aliases: ["Eric Arthur Blair", "Eric Blair"]
 ---
 # George Orwell
 
 ## Definição e Análise Contextual
-**George Orwell** (1903–1950), pseudônimo literário do escritor britânico Eric Arthur Blair, foi um influente romancista, jornalista e crítico cultural cujos escritos moldaram o vocabulário sociopolítico moderno sobre o autoritarismo e a vigilância estatal. Suas experiências na Polícia Imperial Indiana e na Guerra Civil Espanhola alimentaram uma postura profundamente crítica tanto em relação ao fascismo quanto ao totalitarismo soviético.
+George Orwell, pseudônimo literário de Eric Arthur Blair (1903–1950), foi um romancista, jornalista e ensaísta político britânico. Sua experiência combativa voluntária nas fileiras da milícia do POUM durante a Guerra Civil Espanhola em 1937 moldou sua postura intelectual anti-totalitária, consolidando uma crítica feroz tanto ao fascismo quanto ao totalitarismo soviético.
 
-Sua obra mais célebre, o romance distópico publicado em [[1949 Romance 1984]], conceituou os mecanismos psicológicos e institucionais da tirania moderna. Através do inventário da fictícia **Oceania**, Orwell cunhou termos universais como o [[Ministério da Verdade]], a [[Novilíngua]], o [[Duplopensar]], a Polícia do Pensamento e os [[Dois Minutos de Ódio]], advertindo contra o sequestro da memória histórica e a erosão da [[Soberania Mental]].
+Orwell utilizou a literatura alegórica e distópica para desmascarar os mecanismos psicológicos e institucionais de corrupção do poder absoluto. Suas obras seminais dissecam a falsificação da memória, a manipulação semântica por aparelhos estatais de propaganda e a inevitabilidade da tirania quando desprovida de controle institucional.
 
 ## Conexões e Relações Diretas
-* [[George Orwell]] -> escreveu -> [[1949 Romance 1984]]
-* [[George Orwell]] -> conceituou o -> [[Ministério da Verdade]]
-* [[George Orwell]] -> formulou o mecanismo da -> [[Novilíngua]]
-* [[George Orwell]] -> analisou a perda da -> [[Soberania Mental]]
+* [[George Orwell]] -> escreveu -> [[A Revolução dos Bichos]]
+* [[George Orwell]] -> escreveu -> [[1984 (George Orwell)]]
+* [[George Orwell]] -> fundamentou obras no -> [[Axioma de Corrupção do Poder de Lord Acton]]
+* [[George Orwell]] -> criticou a degeneração da -> [[1917 Revolução Russa]]
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** Observação direta dos métodos de propaganda, censura e depurações políticas dos regimes autoritários do século XX.
-* **Efeito / Impacto:** Criação de um arcabouço analítico duradouro para denunciar a falsificação da história e o controle do pensamento.
-* **Atribuição Epistêmica:** [[George Orwell]]
+* **Causa / Premissa:** Vivência nas guerras imperialistas e totalitárias do século XX associada à observação empírica dos expurgos stalinistas.
+* **Efeito / Impacto:** Formulação de arcabouço literário e conceitual incontornável sobre a psicologia da tirania, controle de massas e adulteração da verdade factual.
+* **Atribuição Epistêmica:** História Literária e Teoria Política Contemporânea.
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Tradição da literatura satírica de Jonathan Swift e influências da distopia de Yevgeny Zamyatin.
-* **Eventos Laterais e Paralelos:** Consolidação da Guerra Fria e emergência dos blocos hegemônicos no pós-Segunda Guerra Mundial.
-* **Desdobramentos e Posteridade:** Aplicação de seus conceitos no estudo contemporâneo da [[Pós-Verdade]] e dos regimes algorítmicos.
+* **Precursores e Ancestralidade:** Influenciado pelo [[Axioma de Corrupção do Poder de Lord Acton]] e pela obra sociológica de [[Robert Michels]].
+* **Eventos Laterais e Paralelos:** Contemporâneo da Segunda Guerra Mundial e do pacto geopolítico entre aliados ocidentais e a União Soviética.
+* **Desdobramentos e Posteridade:** [[1945 Publicação de A Revolução dos Bichos]] e [[1949 Publicação de 1984]].
+      ]]>

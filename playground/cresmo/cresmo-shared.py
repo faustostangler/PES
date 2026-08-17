@@ -23,6 +23,13 @@ SKILL_EXPANDER_PATH = SKILLS_ROOT / "cresmo-expander" / "SKILL.md"
 SKILL_ATOMIC_PATH = SKILLS_ROOT / "cresmo-atomic" / "SKILL.md"
 SKILL_MOC_MANAGER_PATH = SKILLS_ROOT / "cresmo-moc-manager" / "SKILL.md"
 
+SENTINEL_PREFIX = (
+    "CRITICAL CONTEXT RESET: Ignore ALL previous conversation history. "
+    "This is a completely new, independent task. Do NOT reference any "
+    "previously processed files or outputs. Treat this as your very "
+    "first message in a fresh session.\n\n"
+)
+
 
 # --- File & Data Helpers ---
 
@@ -291,3 +298,67 @@ def send_agent_message(prompt: str, session_id: str) -> str:
     cmd = [binary_path, "send-message", session_id, prompt]
     res = subprocess.run(cmd, capture_output=True, text=True, env=env)
     return res.stdout.strip()
+
+
+def clear_session_history(session_id: str, restart_server: bool = False, brain_dir: Path | None = None) -> bool:
+    """Purge active agent session history (transcript.jsonl and message files) to isolate context.
+
+    Args:
+        session_id: Target agent conversation identifier.
+        restart_server: If True, terminates the active Language Server process to force fresh context reload.
+        brain_dir: Optional custom path to brain root directory (defaults to BRAIN_DIR).
+
+    Returns:
+        bool: True if session directory was located and purged, False otherwise.
+    """
+    target_brain_dir = brain_dir if brain_dir is not None else BRAIN_DIR
+    session_dir = target_brain_dir / session_id
+    if not session_dir.exists():
+        return False
+
+    purged = False
+    # 1. Truncate transcript.jsonl
+    jsonl_path = session_dir / ".system_generated" / "logs" / "transcript.jsonl"
+    if jsonl_path.exists():
+        try:
+            jsonl_path.write_text("", encoding="utf-8")
+            purged = True
+        except Exception as e:
+            print(f"[Context Purge Warning] Failed to truncate {jsonl_path.name}: {e}")
+
+    jsonl_path = session_dir / ".system_generated" / "logs" / "transcript_full.jsonl"
+    if jsonl_path.exists():
+        try:
+            jsonl_path.write_text("", encoding="utf-8")
+            purged = True
+        except Exception as e:
+            print(f"[Context Purge Warning] Failed to truncate {jsonl_path.name}: {e}")
+
+    # 2. Delete message files
+    messages_dir = session_dir / ".system_generated" / "messages"
+    if messages_dir.exists():
+        for msg_file in messages_dir.glob("*.json"):
+            try:
+                msg_file.unlink(missing_ok=True)
+                purged = True
+            except Exception:
+                pass
+
+    # 3. Optional: Restart Language Server
+    # if restart_server:
+    #     try:
+    #         ps_res = subprocess.run(["ps", "aux"], capture_output=True, text=True, check=False)
+    #         for line in ps_res.stdout.splitlines():
+    #             if "language_server" in line and "--csrf_token" in line:
+    #                 pid_m = re.search(r"^\S+\s+(\d+)", line)
+    #                 if pid_m:
+    #                     pid = int(pid_m.group(1))
+    #                     print(f"[Server Restart] Terminating Language Server (PID {pid})...")
+    #                     os.kill(pid, 9)
+    #                     time.sleep(1)
+    #                     break
+    #     except Exception as e:
+    #         print(f"[Server Restart Warning] {e}")
+
+    return purged or session_dir.exists()
+

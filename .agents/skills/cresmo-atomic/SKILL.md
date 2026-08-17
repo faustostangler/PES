@@ -1,6 +1,6 @@
 ---
 name: cresmo-atomic
-description: Converts expanded fluid text into a collection of interconnected Atomic Notes formatted for Obsidian Second Brain in XML format. Maps WikiLinks, note typologies, causal matrices, and double-side linking. Use whenever expanded text needs to be broken down into structured, interlinked atomic Markdown notes wrapped in XML tags. Make sure to trigger this skill during Stage 2 of the Cresmo pipeline or whenever atomic note generation for Obsidian is requested.
+description: Converts expanded fluid text into a collection of interconnected Atomic Notes formatted for Obsidian Second Brain in XML format. Maps WikiLinks, note typologies, causal matrices, and double-side linking. Use whenever expanded text needs to be broken down into structured, interlinked atomic Markdown notes wrapped in XML tags. Make sure to trigger this skill whenever atomic note generation for Obsidian is requested.
 ---
 
 # Cresmo Atomic (Atomic Notes Generator & WikiLinks Mapper)
@@ -11,7 +11,7 @@ The `cresmo-atomic` skill processes expanded narrative Markdown texts (from `cre
 
 Each note addresses a single entity, concept, event, or process, using strict YAML metadata, standardized Obsidian WikiLinks (`[[Note Title]]`), declarative triple connections, causal attribution matrices, and bi-directional cross-context linking.
 
-Save output directly to `playground/cresmo/enriched/<channel_name>/<video_id>.xml`.
+Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
 
 ---
 
@@ -29,7 +29,7 @@ Save output directly to `playground/cresmo/enriched/<channel_name>/<video_id>.xm
 Every generated note must belong to one of four strict categories:
 
 1. **Entity Notes (`type: entity`)**:
-   - Scope: Relevantly named entities (NER) such as figures, institutions, military equipment, systems, or countries.
+   - Scope: Relevantly named entities (NER) such as figures, institutions, equipment, systems, countries, cities or etc.
    - Title Convention: Official Name (e.g., `[[Federação Russa]]`, `[[Lloyd Austin]]`, `[[Sistema 9K720 Iskander]]`).
 
 2. **Concept Notes (`type: concept`)**:
@@ -38,7 +38,7 @@ Every generated note must belong to one of four strict categories:
 
 3. **Event / Temporal Milestone Notes (`type: event`)**:
    - Scope: Historical events, treaties, agreements, conferences, or tests delimited in time.
-   - Title Convention: **Big-Endian date notation** prefix (e.g., `[[1994-12-05 Memorando de Budapeste]]`, `[[2022 Terceiro Trimestre Crise Nuclear de Kherson]]`, `[[2026 Fim do New START]]`).
+   - Title Convention: **Big-Endian date notation** prefix (e.g., `[[1994-12-05 Memorando de Budapeste]]`, `[[2022-Q3 Crise Nuclear de Kherson]]`, `[[2026 Fim do New START]]`).
 
 4. **Process / Causal Synthesis Notes (`type: process`)**:
    - Scope: Operational sequences, cause-and-effect dynamics, systemic flows, and phenomena.
@@ -50,7 +50,7 @@ Input transcripts contain a YouTube YAML frontmatter header:
 - `video_id`: (e.g. `eYFTRQHaPgw`)
 - `channel_name`: (e.g. `"HENI OZI CUKIER"`)
 
-Every generated atomic note MUST extract `channel_name` and `video_id` from the source transcript header and populate the `tags:` list in the YAML frontmatter with `#fonte/[channel_name_slug]/[video_id]` along with category, domain, and cluster tags.
+Every generated atomic note MUST extract `channel_name` and `video_id` from the source transcript header and populate the `tags:` list in the YAML frontmatter with `#source/[channel_name_slug]/[video_id]` along with category, domain, and cluster tags.
 
 ---
 
@@ -72,7 +72,7 @@ aliases: ["Alternative Name 1", "Acronym or Short Name"]
 # [Exact Note Title]
 
 ## Definição e Análise Contextual
-[Analytical description of 1 to 3 continuous paragraphs. Consolidates fundamental definition, historical/technical context, and global role. All domain terms must use [[WikiLink]] syntax.]
+[Analytical description of 1 to 3 continuous paragraphs. Consolidates fundamental definition, historical/technical context, and global role. Use parataxis, direct and swift word order, single and self-contained clausesAll domain terms must use [[WikiLink]] syntax.]
 
 ## Conexões e Relações Diretas
 * [[Nota Origem ou Sujeito]] -> [Verbo de Ação ou Conector de Ligação] -> [[Nota Destino ou Objeto]], em linguagem natural similar ao texto original
@@ -103,15 +103,20 @@ aliases: ["Alternative Name 1", "Acronym or Short Name"]
 The complete batch of generated atomic notes MUST be presented inside XML container tags:
 
 ```xml
-<xml>
-<nota>
-[Complete Markdown content of first atomic note]
-</nota>
-<nota>
-[Complete Markdown content of second atomic note]
-</nota>
-</xml>
+<?xml version="1.0" encoding="UTF-8"?>
+<notas>
+   <nota>
+      <![CDATA[
+      [Complete Markdown content of first atomic note]
+      ]]>
+   </nota>
+   <nota>
+      <![CDATA[
+      [Complete Markdown content of first atomic note]
+      ]]>
+   </nota>
+</notas>
 ```
 
-Save output directly to `playground/cresmo/enriched/<channel_name>/<video_id>.xml`.
+Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
 Do not output any introductory greetings, conversational commentary, or postscripts outside the `<xml>...</xml>` block.
