@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ A obra descreve o processo pelo qual animais de uma fazenda expulsam seu proprie
 * **Precursores e Ancestralidade:** Inspirada na tradição das fábulas esópicas e na crítica libertária ao autoritarismo bolchevique.
 * **Eventos Laterais e Paralelos:** Redigida entre 1943 e 1944 durante a aliança militar britânico-soviética.
 * **Desdobramentos e Posteridade:** Culminou no evento [[1945 Publicação de A Revolução dos Bichos]] e na gestação conceitual de [[1984 (George Orwell)]].
-      ]]>

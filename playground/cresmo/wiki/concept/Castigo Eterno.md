@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Segundo a crítica de [[Richard Dawkins]], o castigo eterno representa uma das f
 * **Precursores e Ancestralidade:** Conceitos de Geena no judaísmo helenístico e Tártaro na mitologia greco-romana.
 * **Eventos Laterais e Paralelos:** Desenvolvimento da iconografia medieval de julgamento e suplício das almas.
 * **Desdobramentos e Posteridade:** Rejeição crescente por filósofos iluministas e denúncia pelo [[Novo Ateísmo]].
-      ]]>

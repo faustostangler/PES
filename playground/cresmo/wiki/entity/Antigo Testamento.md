@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -30,4 +29,3 @@ Sob a perspectiva crítica secular de [[Richard Dawkins]], o texto retrata uma d
 * **Precursores e Ancestralidade:** Mitologias e códigos legais do Antigo Oriente Próximo (como o Código de Hamurabi e a Epopeia de Gilgamesh).
 * **Eventos Laterais e Paralelos:** Transição do henoteísmo para o monoteísmo estrito no pós-exílio babilônico.
 * **Desdobramentos e Posteridade:** Reinterpretação de suas leis no [[Novo Testamento]] e contestação moral no [[Novo Ateísmo]].
-      ]]>

@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -31,4 +30,3 @@ Capitaneado pelos intelectuais conhecidos como os "Quatro Cavaleiros" — [[Rich
 * **Precursores e Ancestralidade:** Iluminismo francês (Voltaire, Diderot), Thomas Paine e a filosofia analítica de Bertrand Russell.
 * **Eventos Laterais e Paralelos:** Expansão da internet e criação de fóruns globais de debate secular.
 * **Desdobramentos e Posteridade:** Influência duradoura na divulgação científica e na defesa da laicidade estatal.
-      ]]>

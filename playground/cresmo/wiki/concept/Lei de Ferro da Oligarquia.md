@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ A teoria demonstra que a complexidade logística e as exigências de eficiência
 * **Precursores e Ancestralidade:** Teoria da burocratização racional de Max Weber.
 * **Eventos Laterais e Paralelos:** Burocratização do movimento sindical e partidário europeu da virada do século XIX para o XX.
 * **Desdobramentos e Posteridade:** Confirmação empírica durante a burocratização pós-[[1917 Revolução Russa]] e nas sátiras de [[George Orwell]].
-      ]]>

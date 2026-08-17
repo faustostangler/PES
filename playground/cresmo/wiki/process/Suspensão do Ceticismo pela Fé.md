@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: process
 content:
@@ -31,4 +30,3 @@ Segundo a crítica formulada no [[Novo Ateísmo]] e na obra de [[Richard Dawkins
 * **Precursores e Ancestralidade:** O fideísmo de Tertuliano ("creio porque é absurdo") e a crítica cética de David Hume.
 * **Eventos Laterais e Paralelos:** Tensões históricas entre dogmas eclesiais e avanços da medicina, astronomia e geologia.
 * **Desdobramentos e Posteridade:** Desmistificação permanente nos tratados de epistemologia científica e em [[Deus, um Delírio]].
-      ]]>

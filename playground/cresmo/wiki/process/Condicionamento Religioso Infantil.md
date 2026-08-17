@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: process
 content:
@@ -30,4 +29,3 @@ Para [[Richard Dawkins]], esse mecanismo constitui uma modalidade perniciosa de 
 * **Precursores e Ancestralidade:** Estudos sobre condicionamento clássico e operante e formação de crenças na infância.
 * **Eventos Laterais e Paralelos:** Debates sobre os direitos da criança e laicidade na educação básica ocidental.
 * **Desdobramentos e Posteridade:** Proposições de Dawkins contra a rotulação confessional de crianças em prol da liberdade cognitiva.
-      ]]>

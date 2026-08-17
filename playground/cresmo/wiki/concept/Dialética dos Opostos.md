@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Para [[Heráclito de Éfeso]], os contrários não são entidades excludentes e 
 * **Precursores e Ancestralidade:** Pensamento oriental sobre Yin e Yang e a doutrina pitagórica das oposições.
 * **Eventos Laterais e Paralelos:** Desenvolvimento da medicina hipocrática baseada no equilíbrio humoral dos contrários.
 * **Desdobramentos e Posteridade:** Filosofia da contradição em Nicolau de Cusa e [[Georg Wilhelm Friedrich Hegel]].
-      ]]>

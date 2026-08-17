@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ A obra expande em nível microscópico e institucional os temas germinados em [[
 * **Precursores e Ancestralidade:** [[A Revolução dos Bichos]] e a distopia _Nós_ de Yevgeny Zamyatin.
 * **Eventos Laterais e Paralelos:** Início da Guerra Fria e polarização geopolítica e nuclear do pós-Segunda Guerra.
 * **Desdobramentos e Posteridade:** Estabeleceu o adjetivo "orwelliano" e conceitos atemporais como Grande Irmão e Novilíngua.
-      ]]>

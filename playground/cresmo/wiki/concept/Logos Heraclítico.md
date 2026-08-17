@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Heráclito sustenta que o Logos é comum a todos os seres, embora a maioria dos 
 * **Precursores e Ancestralidade:** Noção arcaica de Diké (Justiça Cósmica) em Hesíodo e Anaximandro.
 * **Eventos Laterais e Paralelos:** Desenvolvimento da lógica racional nas pólis gregas clássicas.
 * **Desdobramentos e Posteridade:** Apropriação do Logos pelo estoicismo, pelo neoplatonismo e pela teologia joanina no cristianismo primitivo.
-      ]]>

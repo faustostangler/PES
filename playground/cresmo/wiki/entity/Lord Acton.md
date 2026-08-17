@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -29,4 +28,3 @@ Acton sustentava que os julgamentos éticos dos historiadores não deveriam conc
 * **Precursores e Ancestralidade:** Tradição do liberalismo clássico e historiografia whig britânica.
 * **Eventos Laterais e Paralelos:** Consolidação da era vitoriana e debates sobre a infalibilidade papal no Concílio Vaticano I.
 * **Desdobramentos e Posteridade:** Incorporação de seus postulados por [[George Orwell]] em [[A Revolução dos Bichos]].
-      ]]>

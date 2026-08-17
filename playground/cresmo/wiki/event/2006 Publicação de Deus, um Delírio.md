@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: event
 content:
@@ -30,4 +29,3 @@ A publicação catalisou a consolidação midiática e cultural do [[Novo Ateís
 * **Precursores e Ancestralidade:** _O Fim da Fé_ (2004) de Sam Harris.
 * **Eventos Laterais e Paralelos:** Lançamento de _Quebrando o Encanto_ (2006) de Daniel Dennett.
 * **Desdobramentos e Posteridade:** Lançamento de _Deus Não É Grande_ (2007) de Christopher Hitchens.
-      ]]>

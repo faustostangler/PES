@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ Napoleão adestra secretamente uma matilha de cães ferozes que utiliza como gua
 * **Precursores e Ancestralidade:** Herdeiro ideológico do [[Velho Major (A Revolução dos Bichos)]], embora desprovido de seu idealismo originário.
 * **Eventos Laterais e Paralelos:** Paralelo histórico direto com a ascensão de Stalin na União Soviética e a consolidação do totalitarismo na Europa nos anos 1930.
 * **Desdobramentos e Posteridade:** Conduz o processo até a confraternização final com os humanos opressores.
-      ]]>

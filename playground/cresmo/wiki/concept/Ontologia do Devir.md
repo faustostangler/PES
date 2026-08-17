@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -31,4 +30,3 @@ Ao afirmar a primazia ontológica da mudança sobre a permanência, a filosofia 
 * **Precursores e Ancestralidade:** Cosmologias de transmutação elementar dos primeiros filósofos jônicos.
 * **Eventos Laterais e Paralelos:** Controvérsias entre eleatismo e mobilismo jônico na Grécia arcaica.
 * **Desdobramentos e Posteridade:** Filosofia do processo de Alfred North Whitehead e ontologia da diferença de Gilles Deleuze.
-      ]]>

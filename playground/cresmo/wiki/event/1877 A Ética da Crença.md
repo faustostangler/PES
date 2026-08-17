@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: event
 content:
@@ -30,4 +29,3 @@ O ensaio inaugurou o debate moderno sobre o dever moral da honestidade intelectu
 * **Precursores e Ancestralidade:** Racionalismo empirista de John Locke e David Hume.
 * **Eventos Laterais e Paralelos:** Consolidação da era vitoriana e expansão da ciência naturalista darwiniana.
 * **Desdobramentos e Posteridade:** Inspiração axial para [[Deus, um Delírio]] e debates contemporâneos sobre desinformação.
-      ]]>

@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Heráclito compara o papel cósmico do fogo ao ouro no comércio: assim como tod
 * **Precursores e Ancestralidade:** A água de Tales e o ar de Anaxímenes na cosmologia jônica.
 * **Eventos Laterais e Paralelos:** Cultos zoroástricos e simbolismo sagrado da chama na Pérsia antiga.
 * **Desdobramentos e Posteridade:** Física estóica da conflagração universal (_ekpyrosis_).
-      ]]>

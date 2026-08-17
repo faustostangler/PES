@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: process
 content:
@@ -30,4 +29,3 @@ Na narrativa orwelliana, essa dinâmica manifesta-se nas emendas noturnas aos [[
 * **Precursores e Ancestralidade:** Retórica demagógica clássica e propaganda militar na Primeira Guerra Mundial.
 * **Eventos Laterais e Paralelos:** Edições de fotografias oficiais soviéticas com remoção sistemática de trotskistas e dissidentes expurgados.
 * **Desdobramentos e Posteridade:** Matriz seminal para os conceitos de Novilíngua e Duplopensar em [[1984 (George Orwell)]].
-      ]]>

@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -32,4 +31,3 @@ Nas décadas seguintes, Dawkins destacou-se como um dos principais intelectuais 
 * **Precursores e Ancestralidade:** Influenciado pela epistemologia de [[William Kingdon Clifford]] e pela tradição secular de Charles Darwin e Bertrand Russell.
 * **Eventos Laterais e Paralelos:** Consolidação dos debates pós-11 de Setembro sobre fundamentalismo e ciência.
 * **Desdobramentos e Posteridade:** [[2006 Publicação de Deus, um Delírio]] e debates contemporâneos sobre a [[Evolução Biológica da Moralidade]].
-      ]]>

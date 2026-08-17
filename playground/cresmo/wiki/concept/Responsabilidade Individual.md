@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ No direito moderno e na ética secular, o princípio estabelece a inadmissibilid
 * **Precursores e Ancestralidade:** Ética kantiana da autonomia e imperativo categórico.
 * **Eventos Laterais e Paralelos:** Declaração dos Direitos do Homem e do Cidadão (1789).
 * **Desdobramentos e Posteridade:** Reivindicação permanente na jurisprudência contemporânea e na filosofia secular.
-      ]]>

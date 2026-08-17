@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -29,4 +28,3 @@ No campo da filosofia moral, Clifford imortalizou-se com seu célebre ensaio de 
 * **Precursores e Ancestralidade:** Iluminismo britânico de David Hume e empirismo de John Stuart Mill.
 * **Eventos Laterais e Paralelos:** Debate filosófico com William James, autor de _A Vontade de Crer_ (1896).
 * **Desdobramentos e Posteridade:** Assimilação direta pelo [[Novo Ateísmo]] e por defensores contemporâneos do ceticismo.
-      ]]>

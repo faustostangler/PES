@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -31,4 +30,3 @@ A tese é expressa na célebre metáfora do rio: nenhum ser humano pode entrar d
 * **Precursores e Ancestralidade:** Observações cosmológicas jônicas sobre a mutação da matéria.
 * **Eventos Laterais e Paralelos:** Debate com as teses monistas da Escola de Eleia.
 * **Desdobramentos e Posteridade:** Síntese dialética em Platão na [[Teoria das Ideias (Platão)]] e no existencialismo moderno.
-      ]]>

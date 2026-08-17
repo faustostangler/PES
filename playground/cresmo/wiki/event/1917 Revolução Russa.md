@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: event
 content:
@@ -30,4 +29,3 @@ Após a vitória revolucionária e a Guerra Civil Russa, a estrutura do novo Est
 * **Precursores e Ancestralidade:** Revolução de 1905 e difusão do marxismo revolucionário europeu.
 * **Eventos Laterais e Paralelos:** Primeira Guerra Mundial e dissolução dos impérios otomano e austro-húngaro.
 * **Desdobramentos e Posteridade:** Ascensão de Stalin, Processos de Moscou e inspiração para a denúncia de [[George Orwell]].
-      ]]>

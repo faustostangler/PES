@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Os Sete Mandamentos do Animalismo constituem a carta constitucional e doutrinár
 * **Precursores e Ancestralidade:** Tradição das declarações universais de direitos e constituições revolucionárias modernas.
 * **Eventos Laterais e Paralelos:** Constituição Soviética de 1936 e sua flagrante incompatibilidade com a realidade dos expurgos stalinistas.
 * **Desdobramentos e Posteridade:** Modelo literário de degradação da verdade factual que originou a Novilíngua em [[1984 (George Orwell)]].
-      ]]>

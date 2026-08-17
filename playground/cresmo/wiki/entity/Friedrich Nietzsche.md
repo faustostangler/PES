@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -30,4 +29,3 @@ Nietzsche expressou admiração incondicional por [[Heráclito de Éfeso]], cons
 * **Precursores e Ancestralidade:** Arthur Schopenhauer e a tragédia grega arcaica (Ésquilo e Sófocles).
 * **Eventos Laterais e Paralelos:** Ruptura com Richard Wagner e publicação de _Assim Falou Zaratustra_ (1883).
 * **Desdobramentos e Posteridade:** Influência sobre Heidegger, Foucault, Deleuze e Camus.
-      ]]>
