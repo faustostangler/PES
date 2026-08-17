@@ -17,6 +17,9 @@ aliases: ["Carl Jung", "C. G. Jung"]
 Impulsionado por observações clínicas como o [[Episódio do Escaravelho Dourado]], Jung postulou que mente e matéria não funcionam de maneira isolada. Em colaboração intelectual com o físico [[Wolfgang Pauli]], elaborou o conceito de [[Conceito de Unus Mundus]], articulando a ideia de uma unidade psicofísica subjacente ao universo, posteriormente consolidada na publicação de [[1952 Naturerklärung und Psyche]].
 
 ## Conexões e Relações Diretas
+* [[Carl Gustav Jung]] -> fundou a -> [[Psicologia Analítica]]
+* [[Carl Gustav Jung]] -> estruturou o -> [[Processo de Individuação]]
+* [[Carl Gustav Jung]] -> redigiu a obra seminal -> [[1913-1930 O Livro Vermelho]]
 * [[Carl Gustav Jung]] -> formulou a teoria da -> [[Sincronicidade]]
 * [[Carl Gustav Jung]] -> colaborou com o físico -> [[Wolfgang Pauli]]
 * [[Carl Gustav Jung]] -> presenciou o -> [[Episódio do Escaravelho Dourado]]

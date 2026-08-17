@@ -17,6 +17,9 @@ Festinger é célebre pela criação da [[Teoria da Comparação Social]] (1954)
 
 ## Conexões e Relações Diretas
 * [[Leon Festinger]] -> formulou a -> [[Teoria da Comparação Social]]
+* [[Leon Festinger]] -> formulou a -> [[Teoria da Dissonância Cognitiva]]
+* [[Leon Festinger]] -> publicou a obra seminal no evento -> [[1954 Teoria dos Processos de Comparação Social]]
+* [[Leon Festinger]] -> liderou e publicou o estudo -> [[1956 Livro When Prophecy Fails]]
 * [[Leon Festinger]] -> influenciou o estudo da autopercepção na -> [[Sociedade do Desempenho]]
 
 ## Matriz Causal e Atribuição Epistêmica
