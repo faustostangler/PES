@@ -106,14 +106,10 @@ The complete batch of generated atomic notes MUST be presented inside XML contai
 <?xml version="1.0" encoding="UTF-8"?>
 <notas>
    <nota>
-      <![CDATA[
-      [Complete Markdown content of first atomic note]
-      ]]>
+      Complete Markdown content of first atomic note
    </nota>
    <nota>
-      <![CDATA[
-      [Complete Markdown content of first atomic note]
-      ]]>
+      Complete Markdown content of second atomic note
    </nota>
 </notas>
 ```
