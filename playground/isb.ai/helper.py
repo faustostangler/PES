@@ -43,19 +43,41 @@ _COOKIE_LOCK = threading.Lock()
 
 
 def get_cached_cookiefile() -> str | None:
-    """Extract Chrome cookies ONCE into a static Netscape cookies file to eliminate SQLite DB locking across thread pools."""
+    """Extract browser cookies ONCE into a static Netscape cookies file to eliminate SQLite DB locking across thread pools."""
     global _COOKIE_JAR, _COOKIE_FILE_PATH
     with _COOKIE_LOCK:
         if _COOKIE_FILE_PATH is not None:
             return _COOKIE_FILE_PATH if _COOKIE_FILE_PATH != "" else None
 
         cookie_file = Path(__file__).parent / ".yt_dlp_cookies.txt"
+        
+        # If valid cookiefile already exists and has content, load it directly
+        if cookie_file.exists() and cookie_file.stat().st_size > 50:
+            try:
+                mcj = http.cookiejar.MozillaCookieJar(str(cookie_file))
+                mcj.load(ignore_discard=True, ignore_expires=True)
+                _COOKIE_JAR = mcj
+                _COOKIE_FILE_PATH = str(cookie_file)
+                # print(f"✓ Using existing cookie file: {cookie_file.name}")
+                return _COOKIE_FILE_PATH
+            except Exception:
+                pass
+
         tmp_cookie_file = cookie_file.with_suffix(".tmp")
         try:
             from yt_dlp.cookies import extract_cookies_from_browser
-            cj = extract_cookies_from_browser("chrome")
-            if cj:
-                _COOKIE_JAR = cj
+            
+            # On Linux, Firefox does not lock behind OS keyrings, followed by Chrome
+            browsers_to_try = ["firefox", "chrome", "chromium", "brave"]
+            for browser_name in browsers_to_try:
+                try:
+                    cj = extract_cookies_from_browser(browser_name)
+                except Exception:
+                    continue
+
+                if not cj:
+                    continue
+
                 mcj = http.cookiejar.MozillaCookieJar(str(tmp_cookie_file))
                 count = 0
                 for c in cj:
@@ -64,9 +86,9 @@ def get_cached_cookiefile() -> str | None:
                         continue
                     if any(sub in domain for sub in ("takeout", "docs", "mail", "drive", "cloud", "meet", "chat", "play", "store", "admin", "sites", "groups", "photos")):
                         continue
-                    if not c.name or not c.value:
+                    if not c.name or not c.value or len(c.value.strip()) == 0:
                         continue
-                    if len(c.name) > 200 or len(c.value) > 500:
+                    if len(c.name) > 200 or len(c.value) > 2000:
                         continue
                     if not re.match(r"^[!-~]+$", c.name) or not re.match(r"^[ -~]+$", c.value):
                         continue
@@ -74,16 +96,20 @@ def get_cached_cookiefile() -> str | None:
                         c.expires = 2147483647
                     mcj.set_cookie(c)
                     count += 1
-                mcj.save(ignore_discard=True, ignore_expires=True)
-                tmp_cookie_file.replace(cookie_file)
-                _COOKIE_FILE_PATH = str(cookie_file)
-                print(f"✓ Chrome cookies extracted once to {cookie_file.name} ({count} clean YouTube/Google cookies)")
-                return _COOKIE_FILE_PATH
+
+                if count > 0:
+                    mcj.save(ignore_discard=True, ignore_expires=True)
+                    tmp_cookie_file.replace(cookie_file)
+                    _COOKIE_JAR = mcj
+                    _COOKIE_FILE_PATH = str(cookie_file)
+                    print(f"✓ Cookies extracted from {browser_name} to {cookie_file.name} ({count} clean YouTube/Google cookies)")
+                    return _COOKIE_FILE_PATH
+
         except Exception as e:
-            print(f"Warning: Failed to extract Chrome cookies: {e}")
             if tmp_cookie_file.exists():
                 tmp_cookie_file.unlink(missing_ok=True)
 
+        _COOKIE_JAR = None
         _COOKIE_FILE_PATH = ""
         return None
 
@@ -93,19 +119,23 @@ def apply_cookies_to_ydl_opts(ydl_opts: dict, use_cookies: bool = True) -> None:
     if not use_cookies:
         return
     cookie_path = get_cached_cookiefile()
-    if cookie_path:
+    if cookie_path and Path(cookie_path).exists() and Path(cookie_path).stat().st_size > 0:
         ydl_opts["cookiefile"] = cookie_path
 
 
 def _get_chrome_cookies():
     global _COOKIE_JAR
-    if _COOKIE_JAR is None:
+    if _COOKIE_JAR is None and _COOKIE_FILE_PATH is None:
         get_cached_cookiefile()
-    return _COOKIE_JAR if _COOKIE_JAR is not False else None
+    return _COOKIE_JAR if _COOKIE_JAR else None
 
 
-def fetch_url_content(url: str, headers: dict | None = None, use_cookies: bool = True) -> str:
-    """Fetch content of a URL as string with a user-agent header and Chrome cookies to avoid 429 blocks."""
+def fetch_url_content(url: str, headers: dict | None = None, use_cookies: bool = False) -> str:
+    """Fetch content of a URL as string with a user-agent header.
+
+    Timedtext URLs are pre-signed by YouTube and will return HTTP 400 if attached with mismatched/corrupted cookies,
+    so use_cookies defaults to False.
+    """
     if headers is None:
         headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -119,8 +149,16 @@ def fetch_url_content(url: str, headers: dict | None = None, use_cookies: bool =
             handlers.append(urllib.request.HTTPCookieProcessor(cj))
 
     opener = urllib.request.build_opener(*handlers)
-    with opener.open(req, timeout=10) as response:
-        return response.read().decode('utf-8')
+    try:
+        with opener.open(req, timeout=10) as response:
+            return response.read().decode('utf-8')
+    except urllib.error.HTTPError as e:
+        # If a request fails with 400 and cookies were used, retry without cookies
+        if e.code == 400 and use_cookies:
+            clean_opener = urllib.request.build_opener()
+            with clean_opener.open(req, timeout=10) as response:
+                return response.read().decode('utf-8')
+        raise e
 
 def get_full_upload_date(info: dict) -> str:
     """Retrieve full upload date if available (ISO timestamp), falling back to YYYYMMDD."""

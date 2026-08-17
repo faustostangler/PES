@@ -26,6 +26,7 @@ from gemini_web import (
     load_processed_log,
     save_processed_log,
 )
+from export_cookies import ensure_cookies
 from helper import parse_merged_transcriptions, read_playlist_urls
 from time_logger import log_time_data, plot_time_log
 
@@ -36,7 +37,7 @@ DEFAULT_ENRICHED_DIR = ISB_ROOT / "enriched"
 DEFAULT_WIKI_DIR = ISB_ROOT / "wiki"
 DEFAULT_CHROME_PROFILE = Path.home() / ".isb-ai-chrome-profile"
 PROCESSED_LOG_FILE = ISB_ROOT / "processed_gemini.json"
-MAX_WORKERS = 1 # int(os.environ.get("MAX_WORKERS", "32"))
+MAX_WORKERS = 1 # int(os.environ.get("MAX_WORKERS", "32")) # 1
 
 
 # ==================== FIRST-PASS INGESTION ROUTER ====================
@@ -535,6 +536,9 @@ def run_pipeline_subcommand(args: argparse.Namespace) -> None:
 # ==================== CLI PARSER ====================
 
 def main() -> None:
+    # Ensure fresh Netscape cookies file is active and present for ingestion & yt-dlp
+    ensure_cookies(output_file=ISB_ROOT / ".yt_dlp_cookies.txt", verbose=True)
+
     # Default subcommand to 'pipeline' (sync + stage2 + process) if not specified
     if len(sys.argv) < 2:
         sys.argv.insert(1, "pipeline")

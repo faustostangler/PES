@@ -22,9 +22,13 @@ from cresmo_shared import (
     DEFAULT_ENRICHED_DIR,
     DEFAULT_RAW_DIR,
 )
+from export_cookies import ensure_cookies
 
 
 def main() -> None:
+    # Ensure fresh Netscape cookies file is active and present for ingestion & yt-dlp
+    ensure_cookies(output_file=CRESMO_ROOT / ".yt_dlp_cookies.txt", verbose=True)
+
     parser = argparse.ArgumentParser(
         description="Cresmo Unified Entrypoint CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,

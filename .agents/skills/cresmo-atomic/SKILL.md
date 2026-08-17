@@ -100,7 +100,7 @@ aliases: ["Alternative Name 1", "Acronym or Short Name"]
 
 ## Automated XML Output Specification
 
-The complete batch of generated atomic notes MUST be presented inside XML container tags:
+The complete batch of generated atomic notes MUST be presented inside XML container tags, with correct indented tabulation:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
