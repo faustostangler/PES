@@ -17,7 +17,10 @@ Na ausência de padrões físicos objetivos, o indivíduo busca referenciais em 
 
 ## Conexões e Relações Diretas
 * [[Teoria da Comparação Social]] -> foi formulada por -> [[Leon Festinger]]
+* [[Teoria da Comparação Social]] -> formalizada no evento -> [[1954 Teoria dos Processos de Comparação Social]]
 * [[Teoria da Comparação Social]] -> intensifica a busca por status na -> [[Sociedade do Desempenho]]
+* [[Teoria da Comparação Social]] -> agrava a -> [[Síndrome do Impostor]]
+* [[Teoria da Comparação Social]] -> induz a -> [[Vergonha Existencial]]
 * [[Teoria da Comparação Social]] -> alinha-se ao vício do prestígio criticado por -> [[Lúcio Aneu Sêneca]]
 
 ## Matriz Causal e Atribuição Epistêmica

@@ -102,7 +102,7 @@ def execute_stage2_expander(
     enriched_file = channel_dir / f"{video_id}.md"
 
     if not force and enriched_file.exists() and enriched_file.stat().st_size > 500:
-        print(f"  ✓ [Stage 2 Skip] Enriched file exists -> {enriched_file}")
+        # print(f"  ✓ [Stage 2 Skip] Enriched file exists -> {enriched_file}")
         return enriched_file
 
     with open(txt_file, "r", encoding="utf-8") as f:
@@ -162,11 +162,11 @@ def execute_stage3_atomic_notes(
     xml_output_file = enriched_file.parent / f"{video_id}.xml"
 
     if not force and xml_output_file.exists() and xml_output_file.stat().st_size > 300:
-        print(f"  ✓ [Stage 3 Skip] Atomic XML exists -> {xml_output_file}")
+        # print(f"  ✓ [Stage 3 Skip] Atomic XML exists -> {xml_output_file}")
         return xml_output_file
 
     if not enriched_file.exists():
-        print(f"  ⚠️ [Stage 3 Skip] Enriched file missing -> {enriched_file}")
+        # print(f"  ⚠️ [Stage 3 Skip] Enriched file missing -> {enriched_file}")
         return xml_output_file
 
     enriched_text = enriched_file.read_text(encoding="utf-8")
@@ -380,7 +380,9 @@ def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFA
         note_file.write_text(block, encoding="utf-8")
         created_files.append(note_file)
 
-    print(f"  ✓ [Proliferation] Unpacked {len(created_files)} individual atomic .md note(s) into {cresmo_wiki_dir}")
+    if len(created_files) > 0:
+        print(f"  ✓ [Proliferation] Unpacked {len(created_files)} individual atomic .md note(s) into {cresmo_wiki_dir}")
+
     return created_files
 
 
@@ -400,7 +402,7 @@ def execute_stage56_moc_manager(
 
     # Skip if reconciliation log already exists — stages 5 & 6 are complete for this video.
     if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > 200:
-        print(f"  ✓ [Stage 5/6 Skip] Reconciliation log exists -> {reconciliation_log}")
+        # print(f"  ✓ [Stage 5/6 Skip] Reconciliation log exists -> {reconciliation_log}")
         return reconciliation_log
 
     skill_doc = SKILL_MOC_MANAGER_PATH.read_text(encoding="utf-8") if SKILL_MOC_MANAGER_PATH.exists() else ""
