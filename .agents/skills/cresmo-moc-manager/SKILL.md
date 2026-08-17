@@ -73,6 +73,14 @@ Rule: Notes in the same semantic micro-context MUST share at least one `#cluster
 
 ---
 
+## Tool Execution Directive (Strict Automated Governance)
+
+**MANDATORY RULE**: The MOC Manager agent must execute all file modifications, MOC narrative updates, and reconciliation report generation EXCLUSIVELY via native file manipulation tools (`write_to_file`, `replace_file_content`).
+- **ABSOLUTE PROHIBITION**: NEVER invoke `run_command` or shell/terminal commands to manipulate files, run python one-liners, or parse XML. 
+- In the automated pipeline (`cresmo-pipeline.py`), the proliferation of individual `.md` notes and the synchronization of `_index.json` are performed automatically by Python. The MOC Manager agent's responsibility is to weave the links into the appropriate narrative MOCs and write the final reconciliation report using `write_to_file`.
+
+---
+
 ## Step-by-Step Execution Algorithm
 
 For each incoming XML batch (`<xml><nota>...</nota></xml>`):
@@ -80,9 +88,9 @@ For each incoming XML batch (`<xml><nota>...</nota></xml>`):
 1. **Read Candidate Note**: Parse YAML, title, body, and WikiLinks from `<nota>`.
 2. **Execute Entity Resolution**: Run Tiered Lookup (`_index.json` -> Category MOC -> Semantic Audit).
    - If match found: Perform **Incremental Merge**.
-   - If match not found: Write new `.md` note file in the Vault.
+   - If match not found: Write new `.md` note file in the Vault (or verify pipeline proliferation).
 3. **Execute Trans-Text Sync**: Scan note body for references to existing vault files and update those existing files with reciprocal `[[WikiLinks]]`. Use the descriptive narrative content of MOCs to guide exactly where to weave the new back-links naturally into existing paragraphs.
 4. **Map Epistemological Category**: Identify the target Global MOC or Sub-MOC.
-5. **Update/Create MOC Narrative**: Integrate the note's `[[WikiLink]]` into the fluid text paragraphs of the MOC.
-6. **Update Global Index**: Write newly created titles and aliases into `_index.json`.
-7. **Generate Reconciliation Summary**: Save a complete log of created, merged, and updated MOC links to `playground/cresmo/<transcript_slug>/03_moc_reconciliation.md`.
+5. **Update/Create MOC Narrative**: Integrate the note's `[[WikiLink]]` into the fluid text paragraphs of the MOC using `replace_file_content`.
+6. **Update Global Index**: Ensure newly created titles and aliases are reflected in `_index.json`.
+7. **Generate Reconciliation Summary**: Save a complete log of created, merged, and updated MOC links directly to `cresmo/enriched/<channel_name>/<video_id>_reconciliation.md` using `write_to_file`.

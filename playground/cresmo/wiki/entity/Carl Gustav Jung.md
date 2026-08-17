@@ -1,36 +1,28 @@
 ---
 type: entity
-content:
-  - psicologia
-  - psicologia/psicologia_analitica
-domain: psicologia_de_profundidade
-cluster: teoria_junguiana
-source: a_odisseia_interior/c-nwb4nRVZk
-aliases: ["Carl Jung", "C. G. Jung"]
+domain: psychology_philosophy
+cluster: analytical_psychology_individuation
+source: a_odisseia_interior/EvJWM1oWajU
+aliases: ["C. G. Jung", "Jung", "Carl Jung"]
 ---
-
 # Carl Gustav Jung
 
 ## Definição e Análise Contextual
-**Carl Gustav Jung** foi um psiquiatra e psicanalista suíço, fundador da psicologia analítica. Afastando-se da abordagem estritamente mecanicista e sexual da psicanálise clássica, Jung investigou as camadas profundas da psique humana, introduzindo conceitos fundamentais como o inconsciente coletivo, os arquétipos e a [[Sombra Psíquica]]. Sua busca por compreender a relação entre a experiência psíquica interior e os acontecimentos materiais externos culminou na formulação do princípio de [[Sincronicidade]].
+Psiquiatra e psicoterapeuta suíço, fundador da psicologia analítica. Desenvolveu conceitos fundamentais como inconsciente coletivo, arquétipos, processo de individuação e a teoria da integração dos complexos e aspectos reprimidos da personalidade.
 
-Impulsionado por observações clínicas como o [[Episódio do Escaravelho Dourado]], Jung postulou que mente e matéria não funcionam de maneira isolada. Em colaboração intelectual com o físico [[Wolfgang Pauli]], elaborou o conceito de [[Conceito de Unus Mundus]], articulando a ideia de uma unidade psicofísica subjacente ao universo, posteriormente consolidada na publicação de [[1952 Naturerklärung und Psyche]].
+Jung formulou uma compreensão pioneira de que o vício compulsivo representa uma busca distorcida e inconsciente por totalidade psíquica e conexão espiritual, sintetizada na correspondência histórica sobre alcoolismo pelo axioma *spiritus contra spiritum*, defendendo o acolhimento do sintoma através da [[Integração da Sombra]].
 
 ## Conexões e Relações Diretas
-* [[Carl Gustav Jung]] -> fundou a -> [[Psicologia Analítica]]
-* [[Carl Gustav Jung]] -> estruturou o -> [[Processo de Individuação]]
-* [[Carl Gustav Jung]] -> redigiu a obra seminal -> [[1913-1930 O Livro Vermelho]]
-* [[Carl Gustav Jung]] -> formulou a teoria da -> [[Sincronicidade]]
-* [[Carl Gustav Jung]] -> colaborou com o físico -> [[Wolfgang Pauli]]
-* [[Carl Gustav Jung]] -> presenciou o -> [[Episódio do Escaravelho Dourado]]
-* [[Carl Gustav Jung]] -> coescreveu a obra -> [[1952 Naturerklärung und Psyche]]
+* [[Carl Gustav Jung]] -> desenvolveu a teoria clínica da -> [[Integração da Sombra]]
+* [[Carl Gustav Jung]] -> articulou a relação entre anseio místico e compulsão abordada na -> [[Origem Traumática da Adicção]]
+* [[Gabor Maté]] -> aplica os preceitos integrativos de -> [[Carl Gustav Jung]]
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** Limitações do determinismo causal em explicar coincidências psíquico-materiais na prática clínica.
-* **Efeito / Impacto:** Fundação da Psicologia Analítica e integração da acausalidade na compreensão dos fenômenos mentais.
-* **Atribuição Epistêmica:** Psicologia Analítica Junguiana.
+* **Causa / Premissa:** Investigação clínica da dinâmica dos símbolos, sonhos e fissuras na personalidade consciente.
+* **Efeito / Impacto:** Criação da psicologia analítica e reorientação do tratamento de vícios para a esfera simbólico-espiritual.
+* **Atribuição Epistêmica:** [[Carl Gustav Jung]]
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Sigmund Freud, Alquimia Medieval, Immanuel Kant.
-* **Eventos Laterais e Paralelos:** [[Episódio do Escaravelho Dourado]], Revolução da Mecânica Quântica.
-* **Desdobramentos e Posteridade:** [[1952 Naturerklärung und Psyche]], [[Sombra Psíquica]], [[Sincronicidade Sintética Algorítmica]].
+* **Precursores e Ancestralidade:** Diálogo crítico com a psicanálise freudiana e as explorações fenomenológicas de [[William James]].
+* **Eventos Laterais e Paralelos:** Paralelismos teóricos profundos com a filosofia da [[Não-Dualidade]] e o [[Budismo Zen]].
+* **Desdobramentos e Posteridade:** Aplicação na formulação de terapias informadas pelo acolhimento de traumas por [[Gabor Maté]].

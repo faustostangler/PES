@@ -17,6 +17,7 @@ import argparse
 import json
 import re
 import sys
+import textwrap
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -234,6 +235,7 @@ def execute_stage3_atomic_notes(
 
 def normalize_yaml_tags(content: str) -> str:
     """Format YAML frontmatter to structured format: type, content, domain, cluster, source, aliases."""
+    content = textwrap.dedent(content).strip()
     if not content.startswith("---"):
         return content
 
@@ -242,7 +244,7 @@ def normalize_yaml_tags(content: str) -> str:
         return content
 
     frontmatter_text = parts[1]
-    body = parts[2]
+    body = textwrap.dedent(parts[2]).rstrip()
 
     note_type = ""
     aliases_line = ""
@@ -253,46 +255,67 @@ def normalize_yaml_tags(content: str) -> str:
 
     lines = frontmatter_text.splitlines()
     in_tags = False
+    in_content = False
     in_aliases = False
 
     for line in lines:
         stripped = line.strip()
+        if not stripped:
+            continue
 
-        if line.startswith("type:"):
-            note_type = line.split(":", 1)[1].strip()
+        if stripped.startswith("type:"):
+            note_type = stripped.split(":", 1)[1].strip().lower()
             in_tags = False
+            in_content = False
             in_aliases = False
             continue
 
-        if line.startswith("aliases:"):
-            aliases_line = line.strip()
+        if stripped.startswith("aliases:"):
+            aliases_line = stripped
             in_tags = False
+            in_content = False
             in_aliases = True
             continue
 
-        if line.startswith("domain:") and not line.startswith("domain/"):
-            domain_val = line.split(":", 1)[1].strip()
+        if stripped.startswith("domain:") and not stripped.startswith("domain/"):
+            domain_val = stripped.split(":", 1)[1].strip()
             in_tags = False
-            continue
-
-        if line.startswith("cluster:") and not line.startswith("cluster/"):
-            cluster_val = line.split(":", 1)[1].strip()
-            in_tags = False
-            continue
-
-        if line.startswith("source:") and not line.startswith("source/"):
-            source_val = line.split(":", 1)[1].strip()
-            in_tags = False
-            continue
-
-        if line.startswith("content:") and not line.startswith("content/"):
-            in_tags = False
-            continue
-
-        if line.startswith("tags:"):
-            in_tags = True
+            in_content = False
             in_aliases = False
-            inline_match = re.match(r"^tags:\s*\[(.*)\]$", line)
+            continue
+
+        if stripped.startswith("cluster:") and not stripped.startswith("cluster/"):
+            cluster_val = stripped.split(":", 1)[1].strip()
+            in_tags = False
+            in_content = False
+            in_aliases = False
+            continue
+
+        if stripped.startswith("source:") and not stripped.startswith("source/"):
+            source_val = stripped.split(":", 1)[1].strip()
+            in_tags = False
+            in_content = False
+            in_aliases = False
+            continue
+
+        if stripped.startswith("content:") and not stripped.startswith("content/"):
+            in_content = True
+            in_tags = False
+            in_aliases = False
+            inline_content = stripped.split(":", 1)[1].strip()
+            if inline_content:
+                inline_match = re.match(r"^\[(.*)\]$", inline_content)
+                if inline_match:
+                    for item in inline_match.group(1).split(","):
+                        if item.strip():
+                            content_list.append(item.strip().strip("'\""))
+            continue
+
+        if stripped.startswith("tags:"):
+            in_tags = True
+            in_content = False
+            in_aliases = False
+            inline_match = re.match(r"^tags:\s*\[(.*)\]$", stripped)
             if inline_match:
                 raw_tags = [t.strip().strip("'\"") for t in inline_match.group(1).split(",")]
                 for tag in raw_tags:
@@ -309,12 +332,21 @@ def normalize_yaml_tags(content: str) -> str:
                 in_tags = False
             continue
 
-        if in_tags:
-            if re.match(r"^[a-zA-Z0-9_-]+:", line):
-                in_tags = False
+        if in_content:
+            if re.match(r"^[a-zA-Z0-9_-]+:", stripped):
+                in_content = False
+            elif stripped.startswith("- "):
+                content_item = stripped[2:].strip().strip("'\"")
+                if content_item:
+                    content_list.append(content_item)
                 continue
+            else:
+                in_content = False
 
-            if stripped.startswith("- "):
+        if in_tags:
+            if re.match(r"^[a-zA-Z0-9_-]+:", stripped):
+                in_tags = False
+            elif stripped.startswith("- "):
                 tag_item = stripped[2:].strip().strip("'\"")
                 tags = [t.strip().strip("'\"") for t in tag_item.split(",")]
                 for tag in tags:
@@ -329,12 +361,11 @@ def normalize_yaml_tags(content: str) -> str:
                     elif not tag.startswith("type/"):
                         content_list.append(tag)
                 continue
-            elif stripped == "":
+            else:
                 in_tags = False
-                continue
 
-        if in_aliases and line.startswith("  - "):
-            aliases_line += "\n" + line
+        if in_aliases and stripped.startswith("- "):
+            aliases_line += "\n  " + stripped
 
     new_lines = []
     if note_type:
@@ -361,18 +392,28 @@ def normalize_yaml_tags(content: str) -> str:
         new_lines.append(aliases_line)
 
     new_frontmatter = "\n".join(new_lines)
-    return f"---{chr(10)}{new_frontmatter}{chr(10)}---{body}"
+    return f"---{chr(10)}{new_frontmatter}{chr(10)}---{chr(10)}{body.strip()}{chr(10)}"
 
 
 
 def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR, force: bool = False) -> list[Path]:
-    """Parses <xml><nota>...</nota></xml> and saves individual .md files into cresmo/wiki/<note_type>/."""
+    """Parses <xml><nota>...</nota></xml>, saves individual .md files into cresmo/wiki/<note_type>/, and updates _index.json."""
     if not xml_file.exists():
         return []
 
     xml_text = xml_file.read_text(encoding="utf-8")
     note_blocks = re.findall(r'<nota>(.*?)</nota>', xml_text, re.DOTALL)
     created_files = []
+    
+    index_file = cresmo_wiki_dir / "_index.json"
+    index_data = {"notes": {}}
+    if index_file.exists():
+        try:
+            index_data = json.loads(index_file.read_text(encoding="utf-8"))
+            if "notes" not in index_data:
+                index_data["notes"] = {}
+        except Exception:
+            index_data = {"notes": {}}
 
     for block in note_blocks:
         block = block.strip()
@@ -383,14 +424,15 @@ def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFA
         block = re.sub(r'^\s*<!\[CDATA\[\s*', '', block)
         block = re.sub(r'\s*\]\]>\s*$', '', block)
         block = block.replace("<![CDATA[", "").replace("]]>", "").strip()
+        block = textwrap.dedent(block).strip()
 
         block = normalize_yaml_tags(block)
 
         # Clean H1 title in block if it has [[ ]]
-        block = re.sub(r'^#\s+\[\[(.*?)\]\]', r'# \1', block, flags=re.MULTILINE)
+        block = re.sub(r'^\s*#\s+\[\[(.*?)\]\]', r'# \1', block, flags=re.MULTILINE)
 
-        # Extract title from # [Title]
-        title_match = re.search(r'^#\s+(.+)$', block, re.MULTILINE)
+        # Extract title from # [Title] (allowing optional leading whitespace)
+        title_match = re.search(r'^\s*#\s+(.+)$', block, re.MULTILINE)
         note_title = title_match.group(1).strip() if title_match else "Untitled_Note"
         note_title = re.sub(r'\[\[(.*?)\]\]', r'\1', note_title).strip()
         clean_title = re.sub(r'[\\/*?:"<>|%\[\]]', "", note_title).strip()
@@ -401,17 +443,32 @@ def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFA
         if note_type not in {"entity", "concept", "event", "process"}:
             note_type = "concept"
 
+        # Extract aliases from frontmatter YAML
+        aliases = []
+        aliases_match = re.search(r'aliases:\s*\[(.*?)\]', block)
+        if aliases_match:
+            aliases = [a.strip().strip("'\"") for a in aliases_match.group(1).split(",") if a.strip()]
+
         type_dir = cresmo_wiki_dir / note_type
         type_dir.mkdir(parents=True, exist_ok=True)
 
         note_file = type_dir / f"{clean_title}.md"
-        if not force and note_file.exists():
-            continue
         note_file.write_text(block, encoding="utf-8")
         created_files.append(note_file)
 
+        # Update index entry
+        rel_path = f"{note_type}/{clean_title}.md"
+        existing_aliases = index_data["notes"].get(clean_title, {}).get("aliases", [])
+        combined_aliases = sorted(list(set(existing_aliases + aliases)))
+        index_data["notes"][clean_title] = {
+            "type": note_type,
+            "path": rel_path,
+            "aliases": combined_aliases
+        }
+
     if len(created_files) > 0:
-        print(f"  ✓ [Proliferation] Unpacked {len(created_files)} individual atomic .md note(s) into {cresmo_wiki_dir}")
+        index_file.write_text(json.dumps(index_data, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"  ✓ [Proliferation] Unpacked {len(created_files)} individual atomic .md note(s) & updated _index.json in {cresmo_wiki_dir}")
 
     return created_files
 
@@ -439,14 +496,16 @@ def execute_stage56_moc_manager(
 
     skill_doc = SKILL_MOC_MANAGER_PATH.read_text(encoding="utf-8") if SKILL_MOC_MANAGER_PATH.exists() else ""
     xml_content = xml_file.read_text(encoding="utf-8") if xml_file.exists() else ""
-
-    prompt = (
+    
+    pre_prompt = (
         f"You are Cresmo MOC Manager. Reconcile the XML atomic notes into the Obsidian vault at '{cresmo_wiki_dir.resolve()}'.\n"
-        f"1. Extract and write individual .md notes under '{cresmo_wiki_dir.resolve()}/<note_type>/'.\n"
-        f"2. Update narrative MOCs under '{cresmo_wiki_dir.resolve()}/MOCs/'.\n"
-        f"3. Update global index at '{index_file.resolve()}' with all new note titles and aliases.\n"
-        f"4. FINAL STEP: Save the reconciliation report directly to: {reconciliation_log.resolve()}\n"
-        f"   DO NOT save the reconciliation report until steps 1, 2, and 3 are fully written to disk.\n\n"
+    )
+
+    prompt = pre_prompt + (
+        f"NOTE: All atomic notes and '{index_file.resolve()}' have ALREADY been unpacked and indexed by the pipeline.\n"
+        f"Your tasks are:\n"
+        f"1. Weave and integrate the new atomic notes into the relevant narrative Map of Content (MOC) under '{cresmo_wiki_dir.resolve()}/MOCs/' using file writing/editing tools.\n"
+        f"2. FINAL STEP: Save the reconciliation report directly to: {reconciliation_log.resolve()} using write_to_file.\n"
         f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
         f"--- XML ATOMIC NOTES BATCH ---\n{xml_content}"
     )
@@ -462,8 +521,7 @@ def execute_stage56_moc_manager(
         if (
             reconciliation_log.exists() 
             and reconciliation_log.stat().st_mtime >= (dispatch_time - 1.0)
-            and index_file.exists()
-            and index_file.stat().st_mtime >= (dispatch_time - 1.0)
+            and reconciliation_log.stat().st_size > 200
         ):
             print(f"  ✓ [Stage 5/6 Success] MOC reconciliation complete -> {reconciliation_log}")
             return reconciliation_log
