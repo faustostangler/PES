@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ Orwell utilizou a literatura alegórica e distópica para desmascarar os mecanis
 * **Precursores e Ancestralidade:** Influenciado pelo [[Axioma de Corrupção do Poder de Lord Acton]] e pela obra sociológica de [[Robert Michels]].
 * **Eventos Laterais e Paralelos:** Contemporâneo da Segunda Guerra Mundial e do pacto geopolítico entre aliados ocidentais e a União Soviética.
 * **Desdobramentos e Posteridade:** [[1945 Publicação de A Revolução dos Bichos]] e [[1949 Publicação de 1984]].
-      ]]>
