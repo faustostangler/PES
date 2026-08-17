@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -31,4 +30,3 @@ Sob a análise filosófica e ética de [[Richard Dawkins]], a expiação é fund
 * **Precursores e Ancestralidade:** Sacrifícios expiatórios do Templo de Jerusalém no Levítico.
 * **Eventos Laterais e Paralelos:** Sistematização medieval da teoria da satisfação por Santo Anselmo de Cantuária em _Cur Deus Homo_ (1098).
 * **Desdobramentos e Posteridade:** Reexame crítico e rejeição por humanistas seculares e pelo [[Novo Ateísmo]].
-      ]]>

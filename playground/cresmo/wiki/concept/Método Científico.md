@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Caracteriza-se pela falibilidade intrínseca, pela refutabilidade (critério de 
 * **Precursores e Ancestralidade:** Empirismo aristotélico e experimentos ópticos de Alhazen na Idade de Ouro Islâmica.
 * **Eventos Laterais e Paralelos:** Revolução Copernicana e física galileana-newtoniana.
 * **Desdobramentos e Posteridade:** Aplicação na biologia evolutiva contemporânea e defesa pública no [[Novo Ateísmo]].
-      ]]>

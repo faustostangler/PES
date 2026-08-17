@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: process
 content:
@@ -31,4 +30,3 @@ O processo desdobra-se em etapas previsíveis: expulsão dos antigos dominadores
 * **Precursores e Ancestralidade:** Crítica do Terror Jacobino na Revolução Francesa e diagnósticos de anarquistas e liberais sobre a ditadura do proletariado.
 * **Eventos Laterais e Paralelos:** Ascensão dos fascismos e do stalinismo nas décadas de 1920 e 1930.
 * **Desdobramentos e Posteridade:** Formação dos regimes de partido único no bloco soviético no pós-guerra.
-      ]]>

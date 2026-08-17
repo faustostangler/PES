@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Alimentada pelo pavor da incerteza e pelo desejo de controle sobre o futuro, ess
 * **Precursores e Ancestralidade:** Crítica estoica e budista ao apego às coisas transitórias.
 * **Eventos Laterais e Paralelos:** Estudos sobre aversão à perda na economia comportamental de Daniel Kahneman.
 * **Desdobramentos e Posteridade:** Treinamento em resiliência psicológica e aceitação ativa do devir.
-      ]]>

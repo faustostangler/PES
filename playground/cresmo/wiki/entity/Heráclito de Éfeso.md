@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -32,4 +31,3 @@ Sua contribuição seminal para a história do pensamento reside na formulação
 * **Precursores e Ancestralidade:** Escola Milesiana (Tales, Anaximandro, Anaxímenes) e cosmologias orientais arcaicas.
 * **Eventos Laterais e Paralelos:** Conflitos greco-persas e consolidação do Templo de Ártemis em Éfeso.
 * **Desdobramentos e Posteridade:** Assimilação por [[Georg Wilhelm Friedrich Hegel]] na [[Dialética Hegeliana]] e reverência por [[Friedrich Nietzsche]].
-      ]]>

@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: event
 content:
@@ -30,4 +29,3 @@ A publicação rompeu com o pacto de silêncio condescendente dos meios intelect
 * **Precursores e Ancestralidade:** Recusa formal de editores como T. S. Eliot da Faber and Faber em 1944.
 * **Eventos Laterais e Paralelos:** Conferência de Potsdam e capitulação do Japão em agosto de 1945.
 * **Desdobramentos e Posteridade:** Antecedeu a consolidação da Guerra Fria e a preparação de [[1949 Publicação de 1984]].
-      ]]>

@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ O conceito herda diretamente a [[Dialética dos Opostos]] de [[Heráclito de Éf
 * **Precursores e Ancestralidade:** [[Heráclito de Éfeso]] e a dialética platônica.
 * **Eventos Laterais e Paralelos:** Publicação da _Fenomenologia do Espírito_ (1807).
 * **Desdobramentos e Posteridade:** Dialética materialista de Karl Marx e Friedrich Engels.
-      ]]>

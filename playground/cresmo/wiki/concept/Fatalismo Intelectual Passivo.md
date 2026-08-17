@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Personificado pelo burro [[Benjamim (A Revolução dos Bichos)]], esse comportam
 * **Precursores e Ancestralidade:** Ceticismo pirrônico e pessimismo antropológico de pensadores desiludidos da modernidade.
 * **Eventos Laterais e Paralelos:** Passividade de frações expressivas das elites intelectuais perante o avanço dos totalitarismos europeus no entreguerras.
 * **Desdobramentos e Posteridade:** Advertência contínua na teoria democrática contemporânea sobre o perigo do cinismo cívico.
-      ]]>

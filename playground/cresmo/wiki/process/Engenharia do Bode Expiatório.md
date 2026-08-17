@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: process
 content:
@@ -30,4 +29,3 @@ Na trama de [[A Revolução dos Bichos]], essa tática é aplicada quando [[Bola
 * **Precursores e Ancestralidade:** Dinâmicas antropológicas de sacrifício ritual estudadas por René Girard e caças às bruxas históricas.
 * **Eventos Laterais e Paralelos:** Processos de Moscou e a perseguição internacional a trotskistas na União Soviética nos anos 1930.
 * **Desdobramentos e Posteridade:** Precursor direto dos "Dois Minutos de Ódio" direcionados a Emmanuel Goldstein em [[1984 (George Orwell)]].
-      ]]>

@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -29,4 +28,3 @@ Em sua obra capital de 1911, _Sociologia dos Partidos Políticos na Democracia M
 * **Precursores e Ancestralidade:** Diálogo com Max Weber e a sociologia da burocracia moderna.
 * **Eventos Laterais e Paralelos:** Expansão do sufrágio universal e formação de partidos operários de massa na Europa pré-1914.
 * **Desdobramentos e Posteridade:** Sua [[Lei de Ferro da Oligarquia]] tornou-se conceito-chave para explicar o destino da [[1917 Revolução Russa]].
-      ]]>

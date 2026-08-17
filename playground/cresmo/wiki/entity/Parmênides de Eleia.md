@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -30,4 +29,3 @@ Parmênides postulou que o Ser é uno, indivisível, eterno, homogêneo e imutá
 * **Precursores e Ancestralidade:** Xenófanes de Cólofon e o monoteísmo filosófico incipiente.
 * **Eventos Laterais e Paralelos:** Surgimento dos paradoxos de Zenão de Eleia para defender a imobilidade do Ser.
 * **Desdobramentos e Posteridade:** Síntese ontológica operada por Platão e Aristóteles na Grécia clássica.
-      ]]>

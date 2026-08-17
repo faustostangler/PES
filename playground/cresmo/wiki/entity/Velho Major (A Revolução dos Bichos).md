@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ Em seu discurso inaugural na Granja do Solar, o Velho Major preconiza uma socied
 * **Precursores e Ancestralidade:** Filosofia marxista do século XIX e tradições do socialismo utópico e científico.
 * **Eventos Laterais e Paralelos:** Publicação do Manifesto Comunista e gestação do pensamento revolucionário russo pré-[[1917 Revolução Russa]].
 * **Desdobramentos e Posteridade:** Subversão e adulteração de sua doutrina originária pela cúpula burocrática dos porcos.
-      ]]>

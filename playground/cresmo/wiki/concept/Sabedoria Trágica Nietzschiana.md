@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Inspirada no [[Pólemos (Heráclito)]] e no fluxo do [[Panta Rei]], a sabedoria 
 * **Precursores e Ancestralidade:** [[Heráclito de Éfeso]] e a tragédia ática pré-socrática.
 * **Eventos Laterais e Paralelos:** Publicação de _O Nascimento da Tragédia_ (1872) e _Crepúsculo dos Ídolos_ (1889).
 * **Desdobramentos e Posteridade:** Filosofia do absurdo de Albert Camus e estética dionisíaca contemporânea.
-      ]]>

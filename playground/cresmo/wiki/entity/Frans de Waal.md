@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -29,4 +28,3 @@ Suas obras (como _A Era da Empatia_ e _O Bonobo e o Ateu_) demonstraram empirica
 * **Precursores e Ancestralidade:** Teoria da evolução das emoções de Charles Darwin.
 * **Eventos Laterais e Paralelos:** Desenvolvimento da psicologia moral empírica e neuroética no final do século XX.
 * **Desdobramentos e Posteridade:** Alinhamento com as teses secularistas sobre moralidade independente de deuses em [[Deus, um Delírio]].
-      ]]>

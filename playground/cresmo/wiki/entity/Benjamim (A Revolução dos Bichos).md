@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -30,4 +29,3 @@ Apesar de sua clarividência, Benjamim adota uma postura de desdém irônico e f
 * **Precursores e Ancestralidade:** Tradição do estoicismo e ceticismo filosófico desengajado da ação cívica.
 * **Eventos Laterais e Paralelos:** Silêncio e complacência de intelectuais europeus diante da ascensão do totalitarismo no entreguerras.
 * **Desdobramentos e Posteridade:** Representação da tragédia do [[Fatalismo Intelectual Passivo]] na sustentação de regimes tirânicos.
-      ]]>

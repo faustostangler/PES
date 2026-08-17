@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ Garganta utiliza argumentos falaciosos, intimidação psicológica e manipulaç�
 * **Precursores e Ancestralidade:** Tradição da sofística e da propaganda de guerra estatal.
 * **Eventos Laterais e Paralelos:** Métodos de propaganda política desenvolvidos na Europa entre as guerras mundiais.
 * **Desdobramentos e Posteridade:** Precursor direto dos conceitos de Ministério da Verdade e Novilíngua em [[1984 (George Orwell)]].
-      ]]>

@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -30,4 +29,3 @@ Apesar de seu compromisso inicial com a melhoria coletiva, é derrotado pela vio
 * **Precursores e Ancestralidade:** Co-autor e sistematizador inicial dos [[Sete Mandamentos do Animalismo]] junto ao [[Velho Major (A Revolução dos Bichos)]].
 * **Eventos Laterais e Paralelos:** Paralelo com a Oposição de Esquerda russa e o exílio internacional de Leon Trotsky até seu assassinato em 1940.
 * **Desdobramentos e Posteridade:** Sua demonização viabilizou a consolidação da [[Engenharia do Bode Expiatório]].
-      ]]>

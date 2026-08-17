@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Aristóteles definiu a mudança como a passagem da potência (capacidade intrín
 * **Precursores e Ancestralidade:** Hilemorfismo aristotélico e teleologia das causas finais.
 * **Eventos Laterais e Paralelos:** Fundação do Liceu de Atenas em 335 a.C.
 * **Desdobramentos e Posteridade:** Escolástica tomista e debates modernos sobre potencialidade na mecânica quântica.
-      ]]>

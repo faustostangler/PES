@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Decorrente da aplicação prática do [[Panta Rei]] de [[Heráclito de Éfeso]],
 * **Precursores e Ancestralidade:** Noção búdica de impermanência do ego (Anatta) e fragmentos de Heráclito.
 * **Eventos Laterais e Paralelos:** Psicologia do desenvolvimento e plasticidade neural contemporânea.
 * **Desdobramentos e Posteridade:** Filosofia da individuação de Gilbert Simondon e Carl Jung.
-      ]]>

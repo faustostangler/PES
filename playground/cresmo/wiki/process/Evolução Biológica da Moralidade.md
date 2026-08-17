@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: process
 content:
@@ -30,4 +29,3 @@ Conforme demonstrado por etólogos como [[Frans de Waal]] e biólogos como [[Ric
 * **Precursores e Ancestralidade:** _A Descendência do Homem_ (1871) de Charles Darwin e _O Gene Egoísta_ (1976) de Dawkins.
 * **Eventos Laterais e Paralelos:** Estudos de neurociência sobre os neurônios-espelho e a neuroquímica do apego (ocitocina).
 * **Desdobramentos e Posteridade:** Consolidação da ética secular e do humanismo no âmbito do [[Novo Ateísmo]].
-      ]]>

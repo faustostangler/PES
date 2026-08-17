@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Platão dividiu a realidade em duas esferas: o Mundo Sensível, dominado pelo de
 * **Precursores e Ancestralidade:** [[Heráclito de Éfeso]], [[Parmênides de Eleia]] e o método maiêutico socrático.
 * **Eventos Laterais e Paralelos:** Fundação da Academia de Atenas em 387 a.C.
 * **Desdobramentos e Posteridade:** Neoplatonismo de Plotino e idealismo filosófico ocidental.
-      ]]>

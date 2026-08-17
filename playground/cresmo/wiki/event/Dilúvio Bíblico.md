@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: event
 content:
@@ -30,4 +29,3 @@ No escrutínio ético de [[Richard Dawkins]], a história do dilúvio constitui 
 * **Precursores e Ancestralidade:** Mitos sumérios e babilônicos de dilúvio na Epopeia de Atrahasis e na Epopeia de Gilgamesh.
 * **Eventos Laterais e Paralelos:** Tradições míticas de cataclismos aquáticos em diversas culturas antigas.
 * **Desdobramentos e Posteridade:** Exame crítico por teólogos e filósofos iluministas como Voltaire e no [[Novo Ateísmo]].
-      ]]>

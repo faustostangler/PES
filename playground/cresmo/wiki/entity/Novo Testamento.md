@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ Apesar de enfatizar mandamentos de misericórdia e amor fraterno, o Novo Testame
 * **Precursores e Ancestralidade:** Profetismo messiânico do [[Antigo Testamento]] e apocalíptica judaica do Segundo Templo.
 * **Eventos Laterais e Paralelos:** Pax Romana e helenização do Mediterrâneo oriental.
 * **Desdobramentos e Posteridade:** Consolidação da teologia patrística e debates teológicos da Idade Média e Reforma Protestante.
-      ]]>

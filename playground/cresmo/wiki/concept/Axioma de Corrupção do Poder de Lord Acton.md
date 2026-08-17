@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ A tese postula que governantes e vanguardas políticas, independentemente de sua
 * **Precursores e Ancestralidade:** Pensamento de Montesquieu sobre a separação dos poderes e tradição do ceticismo político clássico.
 * **Eventos Laterais e Paralelos:** Debates sobre o dogma da infalibilidade papal na década de 1870.
 * **Desdobramentos e Posteridade:** Complementado sociologicamente pela [[Lei de Ferro da Oligarquia]] de [[Robert Michels]].
-      ]]>

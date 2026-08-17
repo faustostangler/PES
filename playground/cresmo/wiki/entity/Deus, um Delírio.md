@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -31,4 +30,3 @@ A obra examina a genealogia da moralidade independente de sanções divinas, cri
 * **Precursores e Ancestralidade:** Ensaios céticos iluministas e obras clássicas do racionalismo britânico.
 * **Eventos Laterais e Paralelos:** Publicação de manifestos correlatos por Sam Harris, Christopher Hitchens e Daniel Dennett.
 * **Desdobramentos e Posteridade:** [[2006 Publicação de Deus, um Delírio]] como marco inaugural do ceticismo de massas na era digital.
-      ]]>

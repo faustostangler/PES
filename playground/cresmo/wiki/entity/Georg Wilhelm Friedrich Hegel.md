@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -30,4 +29,3 @@ Hegel declarou expressamente sua dívida filosófica para com [[Heráclito de É
 * **Precursores e Ancestralidade:** Immanuel Kant, J. G. Fichte, F. W. J. Schelling e a tradição de Heráclito.
 * **Eventos Laterais e Paralelos:** Guerras Napoleônicas e restauração monárquica prussiana.
 * **Desdobramentos e Posteridade:** Materialismo histórico de Karl Marx e filosofia existencial de Kierkegaard.
-      ]]>

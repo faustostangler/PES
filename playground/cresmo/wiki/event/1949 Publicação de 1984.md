@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: event
 content:
@@ -30,4 +29,3 @@ A publicação consolidou o ápice do diagnóstico de Orwell sobre o perigo de s
 * **Precursores e Ancestralidade:** [[1945 Publicação de A Revolução dos Bichos]] e ensaios anteriores de Orwell como _Politics and the English Language_ (1946).
 * **Eventos Laterais e Paralelos:** Criação da OTAN em abril de 1949 e primeiro teste nuclear soviético em agosto de 1949.
 * **Desdobramentos e Posteridade:** Legado literário permanente e preservação dos direitos autorais como patrimônio cultural global.
-      ]]>

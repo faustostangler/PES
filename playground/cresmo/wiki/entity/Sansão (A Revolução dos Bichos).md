@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: entity
 content:
@@ -30,4 +29,3 @@ Guiado pelas máximas "Vou trabalhar mais duro" e "O camarada Napoleão tem semp
 * **Precursores e Ancestralidade:** Inspirado no movimento stakhanovista e na figura de Aleksei Stakhanov na União Soviética dos anos 1930.
 * **Eventos Laterais e Paralelos:** Planos Quinquenais soviéticos e industrialização forçada à custa de milhões de operários.
 * **Desdobramentos e Posteridade:** Seu assassinato desmascara definitivamente a mentira da solidariedade no interior do regime totalitário.
-      ]]>

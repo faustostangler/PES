@@ -379,6 +379,11 @@ def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFA
         if not block:
             continue
 
+        # Strip CDATA tags if present
+        block = re.sub(r'^\s*<!\[CDATA\[\s*', '', block)
+        block = re.sub(r'\s*\]\]>\s*$', '', block)
+        block = block.replace("<![CDATA[", "").replace("]]>", "").strip()
+
         block = normalize_yaml_tags(block)
 
         # Clean H1 title in block if it has [[ ]]

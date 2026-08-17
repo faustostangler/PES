@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Historicamente originário dos rituais do Yom Kippur no Levítico bíblico, o co
 * **Precursores e Ancestralidade:** Ritos arcaicos de purificação no Mediterrâneo antigo (como o pharmakós grego).
 * **Eventos Laterais e Paralelos:** Caças às bruxas medievais e perseguições políticas modernas.
 * **Desdobramentos e Posteridade:** Crítica no humanismo iluminista e desconstrução em [[Deus, um Delírio]].
-      ]]>

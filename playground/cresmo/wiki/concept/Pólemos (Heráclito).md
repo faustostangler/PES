@@ -1,4 +1,3 @@
-<![CDATA[
 ---
 type: concept
 content:
@@ -30,4 +29,3 @@ Longe de representar uma apologia irrefletida à violência militar destrutiva, 
 * **Precursores e Ancestralidade:** Mitologia homérica de personificação dos deuses da contenda (Ares e Eris).
 * **Eventos Laterais e Paralelos:** Guerras e disputas hegemônicas entre cidades-Estado gregas na época arcaica.
 * **Desdobramentos e Posteridade:** Luta de classes em Karl Marx e vontade de poder em [[Friedrich Nietzsche]].
-      ]]>
