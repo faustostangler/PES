@@ -1,6 +1,6 @@
 ---
 name: cresmo-expander
-description: Performs Socratic audit, fact-checking, gap analysis, and fluid text expansion on raw transcripts. Strips all speech noise, oralities, diagrams, tables, formulas, and bullet lists, producing continuous, highly dense factual prose with Markdown headings and a complementary information section. Use whenever a transcript or text needs to be cleaned, audited, expanded, and converted into continuous fluid Markdown prose before generating atomic notes. Make sure to trigger this skill during Stage 1 of the Cresmo pipeline or whenever transcript detranscription and gap expansion are requested.
+description: Performs Socratic audit, fact-checking, gap analysis, and fluid text expansion on raw transcripts. Strips all speech noise, oralities, diagrams, tables, formulas, and bullet lists, producing continuous, highly dense factual prose with Markdown headings and a complementary information section. Use whenever a transcript or text needs to be cleaned, audited, expanded, and converted into continuous fluid Markdown prose before generating atomic notes. Make sure to trigger this skill during Stage 2 of the Cresmo pipeline (saving output to the enriched directory, never to raw) or whenever transcript detranscription and gap expansion are requested.
 ---
 
 # Cresmo Expander (Detranscriptor & Gap Expander)
@@ -11,9 +11,9 @@ The `cresmo-expander` skill transforms raw transcripts, lecture notes, audio tra
 
 It executes a strict 2-pass auditing process (Socratic Audit across 6 Epistemic Dimensions + Historical-Scientific Genealogy Mapping), purges all speech noise, direct audience interactions, oralities, and visual noise (diagrams, tables, ASCII charts, LaTeX, blockquotes, and bullet lists), and formats the output exclusively as continuous narrative prose.
 
-Input transcripts contain a YouTube YAML frontmatter header (containing `video_title`, `video_id`, `channel_name`, `channel_id`, `url`, `video_date`, `video_description`). Set `<transcript_slug>` strictly to the extracted `video_id`.
+Input transcripts contain a YouTube YAML frontmatter header (containing `video_title`, `video_id`, `channel_name`, `channel_id`, `url`, `video_date`, `video_description`) originating from the `cresmo/raw/<channel_name>/<video_id>.txt` directory. Set `<transcript_slug>` strictly to the extracted `video_id`.
 
-Save output directly to `playground/cresmo/<video_id>/01_expanded.md`.
+**Target Location**: Save output directly to `cresmo/enriched/<channel_name>/<video_id>.md` (in the `enriched` directory, NEVER in the `raw` directory).
 
 ---
 
@@ -76,8 +76,8 @@ Execute an internal 2-pass audit on the input text before writing the final expa
   - `##` for Eras, Centuries, or Major Macro Phases.
   - `###` for Decades, Years, or Hierarchical Conceptual Blocks.
 - **Typography Rules**:
-  - Bold (`**...**`): Apply **exclusively** on the first occurrence of named entities, dates, theoretical concepts, and key atomic terms.
-  - Italics (`_..._`): Apply strictly for foreign terms, titles of cultural works, software, and hardware names.
+  - Bold (`**...**`): Apply **exclusively** on the first occurrence of named entities, dates, theoretical concepts, and key atomic terms and etc.
+  - Italics (`_..._`): Apply strictly for foreign terms, titles of cultural works, software, and hardware names and etc.
 - **Continuous Fluid Prose**: Write strictly in continuous paragraphs. No bullet lists, no numbered lists, no tables, no LaTeX, no blockquotes, no ASCII diagrams.
 
 ### Complementary Information Section
@@ -88,12 +88,13 @@ Append a dedicated section at the end of the text under the exact heading:
 ## Informações Complementares
 ```
 
-In this section, provide numbered continuous paragraphs detailing mini-biographies, geographical contexts, treaty details, additional statistical data, and secondary gap expansions that would otherwise impede narrative velocity in the main body.
+In this footnotes section, provide numbered continuous paragraphs detailing mini-biographies, geographical contexts, treaty details, additional statistical data, and secondary gap expansions that would otherwise impede narrative velocity in the main body.
 
 ---
 
 ## File Delivery Directive
 
-Write the final output directly to:
-`playground/cresmo/<video_id>/01_expanded.md`
+Write the final output directly to the `enriched` directory:
+`cresmo/enriched/<channel_name>/<video_id>.md`
+
 Do not output meta-commentary, conversational preambles, or postscripts.

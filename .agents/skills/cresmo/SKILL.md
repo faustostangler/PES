@@ -81,16 +81,18 @@ Executed when the user requests a single isolated task (e.g., only expand a text
 When chaining sub-skills in multi-stage pipelines, `cresmo` enforces the following data transfer rules:
 
 ### Directory & File Conventions
-All outputs MUST be saved under the designated playground structure:
-- Main pipeline directory: `playground/cresmo/<video_id>/` (where `<video_id>` is the YouTube `video_id` extracted from input YAML frontmatter).
+All outputs MUST be saved under the designated pipeline structure:
+- Raw Transcripts Input: `playground/cresmo/raw/<channel_name>/<video_id>.txt`
+- Enriched Expander Output: `playground/cresmo/enriched/<channel_name>/<video_id>.md` (CRITICAL: Stage 2 expanded output is ALWAYS saved to `enriched/` and NEVER to `raw/`).
+- Atomic XML Output: `playground/cresmo/enriched/<channel_name>/<video_id>.xml`
 - Atomic notes wiki proliferation directory: `playground/cresmo/wiki/<note_type>/` (where `<note_type>` is `entity`, `concept`, `event`, or `process`).
+- Reconciliation Report: `playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md`
 
 Stage Outputs:
-- **Stage 1 Output**: `01_expanded.md` (Strictly continuous narrative Markdown prose; no diagrams, tables, formulas, blockquotes, or bullet lists).
-- **Stage 2 Output**: `02_atomic_notes.xml` (Strictly `<xml><nota>...</nota></xml>` XML container with Obsidian YAML frontmatter and WikiLinks).
-- **Stage 3 Output**:
-  - Individual Atomic Note `.md` Files: Placed in `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` (file proliferation phase).
-  - Global Reconciliation Report: `playground/cresmo/<video_id>/03_moc_reconciliation.md` (Reconciliation log, entity resolution audit, and updated MOC narrative summaries).
+- **Stage 2 Output (cresmo-expander)**: `playground/cresmo/enriched/<channel_name>/<video_id>.md` (Strictly continuous narrative Markdown prose; no diagrams, tables, formulas, blockquotes, or bullet lists; saved in `enriched/`, never in `raw/`).
+- **Stage 3 Output (cresmo-atomic)**: `playground/cresmo/enriched/<channel_name>/<video_id>.xml` (Strictly `<xml><nota>...</nota></xml>` XML container with Obsidian YAML frontmatter and WikiLinks).
+- **Stage 4 Output (Proliferation)**: Individual Atomic Note `.md` Files placed in `playground/cresmo/wiki/<note_type>/[Exact Note Title].md`.
+- **Stage 5 & 6 Output (cresmo-moc-manager)**: MOC updates (`playground/cresmo/wiki/MOCs/MOC_*.md`) and Reconciliation Report (`playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md`).
 
 ---
 

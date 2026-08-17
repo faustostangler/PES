@@ -60,6 +60,18 @@ Examples:
     process_parser.add_argument("--cresmo-dir", default=str(DEFAULT_CRESMO_DIR), help="Path to Cresmo vault root directory")
     process_parser.add_argument("--limit", type=int, default=None, help="Limit number of videos to process")
     process_parser.add_argument("--force", "-f", action="store_true", help="Force re-processing of completed videos")
+    process_parser.add_argument(
+        "--isolate-context",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Purge session transcript and message history before each dispatch to isolate context (default: True)",
+    )
+    process_parser.add_argument(
+        "--restart-server",
+        action="store_true",
+        default=False,
+        help="Restart Language Server process before each dispatch to isolate context (default: False)",
+    )
 
     # --- Full Subcommand (Stage 1 -> Stage 6) ---
     full_parser = subparsers.add_parser("full", help="Run FULL end-to-end pipeline (Sync + Process)")
@@ -72,6 +84,18 @@ Examples:
     full_parser.add_argument("--model", default="base", help="Whisper fallback model size")
     full_parser.add_argument("--limit", type=int, default=None, help="Limit number of videos to process in pipeline")
     full_parser.add_argument("--force", "-f", action="store_true", help="Force re-processing of completed videos")
+    full_parser.add_argument(
+        "--isolate-context",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Purge session transcript and message history before each dispatch to isolate context (default: True)",
+    )
+    full_parser.add_argument(
+        "--restart-server",
+        action="store_true",
+        default=False,
+        help="Restart Language Server process before each dispatch to isolate context (default: False)",
+    )
 
     args = parser.parse_args()
 
@@ -86,6 +110,8 @@ Examples:
         args.model = getattr(args, "model", "base")
         args.limit = getattr(args, "limit", None)
         args.force = getattr(args, "force", False)
+        args.isolate_context = getattr(args, "isolate_context", True)
+        args.restart_server = getattr(args, "restart_server", True)
 
     if args.command == "sync":
         run_cresmo_ingestion(
@@ -105,6 +131,8 @@ Examples:
             cresmo_dir=Path(args.cresmo_dir),
             limit=args.limit,
             force=args.force,
+            isolate_context=args.isolate_context,
+            restart_server=args.restart_server,
         )
 
     elif args.command in {"full", "all"}:
@@ -114,6 +142,8 @@ Examples:
             cresmo_dir=Path(args.cresmo_dir),
             limit=args.limit,
             force=args.force,
+            isolate_context=args.isolate_context,
+            restart_server=args.restart_server,
         )
 
 
