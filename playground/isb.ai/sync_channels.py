@@ -436,7 +436,7 @@ def process_and_compile_video(
 ) -> dict:
     """Process video: download JSON subtitle immediately; if unavailable, push to audio queue for parallel processing."""
     if not info:
-        info = extract_video_metadata(url)
+        info = extract_video_metadata(url, use_cookies=False)
     if not info or not info.get("id"):
         return {}
     video_id = info.get("id", "unknown_video")
