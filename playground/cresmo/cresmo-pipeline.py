@@ -15,18 +15,18 @@ Directory Topology:
 
 import argparse
 import json
+from pathlib import Path
 import re
 import sys
 import textwrap
 import time
-from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
 
 # Ensure script directory is in sys.path
 sys.path.insert(0, str(Path(__file__).parent.resolve()))
 
 from cresmo_shared import (
     BRAIN_DIR,
+    DATETIME_FORMAT,
     DEFAULT_CRESMO_DIR,
     DEFAULT_CRESMO_WIKI_DIR,
     DEFAULT_ENRICHED_DIR,
@@ -38,8 +38,6 @@ from cresmo_shared import (
     SKILL_MOC_MANAGER_PATH,
     classify_channel,
     clear_session_history,
-    get_agentapi_binary,
-    get_antigravity_env,
     load_processed_cresmo_log,
     parse_merged_transcriptions,
     resolve_active_session,
@@ -47,8 +45,66 @@ from cresmo_shared import (
     send_agent_message,
 )
 
+# --- Polling & Timing Defaults ---
+DEFAULT_TRAJECTORY_TIMEOUT_SECONDS: int = 15
+POLL_MAX_ATTEMPTS: int = 1000
+POLL_SLEEP_SECONDS: float = 1.0
+POLL_DISPATCH_TIME_BUFFER: float = 1.0
 
-def fetch_trajectory_response(session_id: str, tag_open: str, tag_close: str, timeout_seconds: int = 15) -> str:
+# --- Payload & File Size Thresholds ---
+PROMPT_MAX_BYTES_INLINE: int = 40_000
+MIN_ENRICHED_EXISTING_BYTES: int = 500
+MIN_VALID_OUTPUT_BYTES: int = 300
+MIN_RECONCILIATION_LOG_BYTES: int = 200
+MAX_CANDIDATE_PARSE_LIMIT: int = 1000
+
+# --- Domain & Typology Standards ---
+VALID_NOTE_TYPES: frozenset[str] = frozenset({"entity", "concept", "event", "process"})
+DEFAULT_NOTE_TYPE: str = "concept"
+DEFAULT_NOTE_TITLE: str = "Untitled_Note"
+DEFAULT_CHANNEL_NAME: str = "Unknown Channel"
+DEFAULT_VIDEO_ID: str = "unknown"
+INDEX_JSON_FILENAME: str = "_index.json"
+
+# --- Markers & Tag Delimiters ---
+TAG_MARKDOWN_H2: str = "## "
+TAG_COMPLEMENTARY_INFO: str = "## Informações Complementares"
+TAG_XML_OPEN: str = "<xml>"
+TAG_XML_CLOSE: str = "</xml>"
+
+# --- Compiled Regular Expressions ---
+YT_ID_PATTERN: re.Pattern[str] = re.compile(r"^.*-([a-zA-Z0-9_-]{11})$")
+NOTA_XML_PATTERN: re.Pattern[str] = re.compile(r"<nota>(.*?)</nota>", re.DOTALL)
+CDATA_START_PATTERN: re.Pattern[str] = re.compile(r"^\s*<!\[CDATA\[\s*")
+CDATA_END_PATTERN: re.Pattern[str] = re.compile(r"\s*\]\]>\s*$")
+TITLE_H1_BRACKET_PATTERN: re.Pattern[str] = re.compile(r"^\s*#\s+\[\[(.*?)\]\]", re.MULTILINE)
+TITLE_H1_PATTERN: re.Pattern[str] = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
+BRACKETS_PATTERN: re.Pattern[str] = re.compile(r"\[\[(.*?)\]\]")
+CLEAN_TITLE_SANITIZE_PATTERN: re.Pattern[str] = re.compile(r'[\\/*?:"<>|%\[\]]')
+TYPE_EXTRACT_PATTERN: re.Pattern[str] = re.compile(r"type:\s*(\w+)")
+ALIASES_EXTRACT_PATTERN: re.Pattern[str] = re.compile(r"aliases:\s*\[(.*?)\]")
+TAGS_INLINE_PATTERN: re.Pattern[str] = re.compile(r"^tags:\s*\[(.*)\]$")
+INLINE_LIST_PATTERN: re.Pattern[str] = re.compile(r"^\[(.*)\]$")
+YAML_KEY_PATTERN: re.Pattern[str] = re.compile(r"^[a-zA-Z0-9_-]+:")
+
+# --- Prompts & Directives ---
+STAGE2_PROMPT_TASK: str = (
+    "You are Cresmo Expander. This is your most important task: Clean the transcript, "
+    "purge all oralities, speech noise, direct audience addresses, \n"
+    "and REMOVE ALL DIAGRAMS/ASCII ART/TABLES/BULLET LISTS. Produce continuous fluid Markdown prose.\n"
+)
+STAGE3_PRE_PROMPT: str = (
+    "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text inside "
+    "<xml> <notas><nota></nota></notas> tags.\n"
+)
+
+
+def fetch_trajectory_response(
+    session_id: str,
+    tag_open: str,
+    tag_close: str,
+    timeout_seconds: int = DEFAULT_TRAJECTORY_TIMEOUT_SECONDS,
+) -> str:
     """Scan transcript.jsonl for complete MODEL response containing target tags."""
     log_path = BRAIN_DIR / session_id / ".system_generated" / "logs" / "transcript.jsonl"
     if not log_path.exists():
@@ -81,7 +137,7 @@ def fetch_trajectory_response(session_id: str, tag_open: str, tag_close: str, ti
                 return candidates[-1]
         except Exception:
             pass
-        time.sleep(1)
+        time.sleep(POLL_SLEEP_SECONDS)
     return ""
 
 
@@ -105,16 +161,15 @@ def execute_stage2_expander(
     `playground/cresmo/enriched/[Channel_Name]/[Video_ID].md`.
     Stage 2 output is saved in the enriched directory and NEVER in the raw directory.
     """
-    channel_name = meta.get("channel_name", "Unknown Channel")
+    channel_name = meta.get("channel_name", DEFAULT_CHANNEL_NAME)
     video_id = meta.get("video_id", txt_file.stem)
-    
+
     # Target directory is strictly within enriched/
     channel_dir = output_dir / channel_name
     channel_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = channel_dir / f"{video_id}.md"
 
-    if not force and enriched_file.exists() and enriched_file.stat().st_size > 500:
-        # print(f"  ✓ [Stage 2 Skip] Enriched file exists -> {enriched_file}")
+    if not force and enriched_file.exists() and enriched_file.stat().st_size > MIN_ENRICHED_EXISTING_BYTES:
         return enriched_file
 
     with open(txt_file, "r", encoding="utf-8") as f:
@@ -122,19 +177,14 @@ def execute_stage2_expander(
 
     skill_doc = SKILL_EXPANDER_PATH.read_text(encoding="utf-8") if SKILL_EXPANDER_PATH.exists() else ""
 
-    prompt_task = (
-        f"You are Cresmo Expander. This is your most important task: Clean the transcript, purge all oralities, speech noise, direct audience addresses, \n"
-        f"and REMOVE ALL DIAGRAMS/ASCII ART/TABLES/BULLET LISTS. Produce continuous fluid Markdown prose.\n"
-    )
-
-    prompt = prompt_task + (
+    prompt = STAGE2_PROMPT_TASK + (
         f"Save output directly to enriched file: {enriched_file.resolve()}\n\n"
         f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
         f"--- RAW TRANSCRIPT METADATA & TEXT ---\nFile: {txt_file.name}\n{raw_text}"
     )
 
-    if len(prompt.encode("utf-8")) > 40_000:
-        prompt = prompt_task + (
+    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+        prompt = STAGE2_PROMPT_TASK + (
             f"Save output directly to enriched file: {enriched_file.resolve()}\n"
             f"Input raw transcript file: {txt_file.resolve()}\n"
             f"Skill specification: {SKILL_EXPANDER_PATH.resolve()}\n"
@@ -149,14 +199,18 @@ def execute_stage2_expander(
     send_agent_message(prompt, session_id)
 
     # Poll for Option A direct file write
-    for _ in range(1000):
-        if enriched_file.exists() and enriched_file.stat().st_mtime >= (dispatch_time - 1.0) and enriched_file.stat().st_size > 300:
+    for _ in range(POLL_MAX_ATTEMPTS):
+        if (
+            enriched_file.exists()
+            and enriched_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
+            and enriched_file.stat().st_size > MIN_VALID_OUTPUT_BYTES
+        ):
             print(f"  ✓ [Stage 2 Success] Enriched text created -> {enriched_file}")
             return enriched_file
-        time.sleep(1)
+        time.sleep(POLL_SLEEP_SECONDS)
 
     # Fallback Option B
-    content = fetch_trajectory_response(session_id, "## ", "## Informações Complementares")
+    content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
     if content:
         enriched_file.write_text(content, encoding="utf-8")
         print(f"  ✓ [Stage 2 Fallback Success] Saved enriched text -> {enriched_file}")
@@ -181,30 +235,24 @@ def execute_stage3_atomic_notes(
     video_id = meta.get("video_id", enriched_file.stem)
     xml_output_file = enriched_file.parent / f"{video_id}.xml"
 
-    if not force and xml_output_file.exists() and xml_output_file.stat().st_size > 300:
-        # print(f"  ✓ [Stage 3 Skip] Atomic XML exists -> {xml_output_file}")
+    if not force and xml_output_file.exists() and xml_output_file.stat().st_size > MIN_VALID_OUTPUT_BYTES:
         return xml_output_file
 
     if not enriched_file.exists():
-        # print(f"  ⚠️ [Stage 3 Skip] Enriched file missing -> {enriched_file}")
         return xml_output_file
 
     enriched_text = enriched_file.read_text(encoding="utf-8")
     skill_doc = SKILL_ATOMIC_PATH.read_text(encoding="utf-8") if SKILL_ATOMIC_PATH.exists() else ""
 
-    pre_prompt = (
-        f"You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text inside <xml> <notas><nota></nota></notas> tags.\n"
-        )
-
-    prompt = pre_prompt + (
+    prompt = STAGE3_PRE_PROMPT + (
         f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
         f"Save output directly to file: {xml_output_file.resolve()}\n\n"
         f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
         f"--- ENRICHED TEXT ---\n{enriched_text}"
     )
 
-    if len(prompt.encode("utf-8")) > 40_000:
-        prompt = pre_prompt + (
+    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+        prompt = STAGE3_PRE_PROMPT + (
             f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
             f"Save output directly to file: {xml_output_file.resolve()}\n"
             f"Input enriched file: {enriched_file.resolve()}\n"
@@ -219,13 +267,17 @@ def execute_stage3_atomic_notes(
     dispatch_time = time.time()
     send_agent_message(prompt, session_id)
 
-    for _ in range(1000):
-        if xml_output_file.exists() and xml_output_file.stat().st_mtime >= (dispatch_time - 1.0) and xml_output_file.stat().st_size > 300:
+    for _ in range(POLL_MAX_ATTEMPTS):
+        if (
+            xml_output_file.exists()
+            and xml_output_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
+            and xml_output_file.stat().st_size > MIN_VALID_OUTPUT_BYTES
+        ):
             print(f"  ✓ [Stage 3 Success] Atomic XML generated -> {xml_output_file}")
             return xml_output_file
-        time.sleep(1)
+        time.sleep(POLL_SLEEP_SECONDS)
 
-    content = fetch_trajectory_response(session_id, "<xml>", "</xml>")
+    content = fetch_trajectory_response(session_id, TAG_XML_OPEN, TAG_XML_CLOSE)
     if content:
         xml_output_file.write_text(content, encoding="utf-8")
         print(f"  ✓ [Stage 3 Fallback Success] Saved Atomic XML -> {xml_output_file}")
@@ -304,7 +356,7 @@ def normalize_yaml_tags(content: str) -> str:
             in_aliases = False
             inline_content = stripped.split(":", 1)[1].strip()
             if inline_content:
-                inline_match = re.match(r"^\[(.*)\]$", inline_content)
+                inline_match = INLINE_LIST_PATTERN.match(inline_content)
                 if inline_match:
                     for item in inline_match.group(1).split(","):
                         if item.strip():
@@ -315,7 +367,7 @@ def normalize_yaml_tags(content: str) -> str:
             in_tags = True
             in_content = False
             in_aliases = False
-            inline_match = re.match(r"^tags:\s*\[(.*)\]$", stripped)
+            inline_match = TAGS_INLINE_PATTERN.match(stripped)
             if inline_match:
                 raw_tags = [t.strip().strip("'\"") for t in inline_match.group(1).split(",")]
                 for tag in raw_tags:
@@ -333,7 +385,7 @@ def normalize_yaml_tags(content: str) -> str:
             continue
 
         if in_content:
-            if re.match(r"^[a-zA-Z0-9_-]+:", stripped):
+            if YAML_KEY_PATTERN.match(stripped):
                 in_content = False
             elif stripped.startswith("- "):
                 content_item = stripped[2:].strip().strip("'\"")
@@ -344,7 +396,7 @@ def normalize_yaml_tags(content: str) -> str:
                 in_content = False
 
         if in_tags:
-            if re.match(r"^[a-zA-Z0-9_-]+:", stripped):
+            if YAML_KEY_PATTERN.match(stripped):
                 in_tags = False
             elif stripped.startswith("- "):
                 tag_item = stripped[2:].strip().strip("'\"")
@@ -395,17 +447,20 @@ def normalize_yaml_tags(content: str) -> str:
     return f"---{chr(10)}{new_frontmatter}{chr(10)}---{chr(10)}{body.strip()}{chr(10)}"
 
 
-
-def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR, force: bool = False) -> list[Path]:
+def parse_and_proliferate_xml_notes(
+    xml_file: Path,
+    cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR,
+    force: bool = False,
+) -> list[Path]:
     """Parses <xml><nota>...</nota></xml>, saves individual .md files into cresmo/wiki/<note_type>/, and updates _index.json."""
     if not xml_file.exists():
         return []
 
     xml_text = xml_file.read_text(encoding="utf-8")
-    note_blocks = re.findall(r'<nota>(.*?)</nota>', xml_text, re.DOTALL)
+    note_blocks = NOTA_XML_PATTERN.findall(xml_text)
     created_files = []
-    
-    index_file = cresmo_wiki_dir / "_index.json"
+
+    index_file = cresmo_wiki_dir / INDEX_JSON_FILENAME
     index_data = {"notes": {}}
     if index_file.exists():
         try:
@@ -421,31 +476,31 @@ def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFA
             continue
 
         # Strip CDATA tags if present
-        block = re.sub(r'^\s*<!\[CDATA\[\s*', '', block)
-        block = re.sub(r'\s*\]\]>\s*$', '', block)
+        block = CDATA_START_PATTERN.sub("", block)
+        block = CDATA_END_PATTERN.sub("", block)
         block = block.replace("<![CDATA[", "").replace("]]>", "").strip()
         block = textwrap.dedent(block).strip()
 
         block = normalize_yaml_tags(block)
 
         # Clean H1 title in block if it has [[ ]]
-        block = re.sub(r'^\s*#\s+\[\[(.*?)\]\]', r'# \1', block, flags=re.MULTILINE)
+        block = TITLE_H1_BRACKET_PATTERN.sub(r"# \1", block)
 
         # Extract title from # [Title] (allowing optional leading whitespace)
-        title_match = re.search(r'^\s*#\s+(.+)$', block, re.MULTILINE)
-        note_title = title_match.group(1).strip() if title_match else "Untitled_Note"
-        note_title = re.sub(r'\[\[(.*?)\]\]', r'\1', note_title).strip()
-        clean_title = re.sub(r'[\\/*?:"<>|%\[\]]', "", note_title).strip()
+        title_match = TITLE_H1_PATTERN.search(block)
+        note_title = title_match.group(1).strip() if title_match else DEFAULT_NOTE_TITLE
+        note_title = BRACKETS_PATTERN.sub(r"\1", note_title).strip()
+        clean_title = CLEAN_TITLE_SANITIZE_PATTERN.sub("", note_title).strip()
 
         # Extract type from frontmatter YAML
-        type_match = re.search(r'type:\s*(\w+)', block)
-        note_type = type_match.group(1).lower().strip() if type_match else "concept"
-        if note_type not in {"entity", "concept", "event", "process"}:
-            note_type = "concept"
+        type_match = TYPE_EXTRACT_PATTERN.search(block)
+        note_type = type_match.group(1).lower().strip() if type_match else DEFAULT_NOTE_TYPE
+        if note_type not in VALID_NOTE_TYPES:
+            note_type = DEFAULT_NOTE_TYPE
 
         # Extract aliases from frontmatter YAML
         aliases = []
-        aliases_match = re.search(r'aliases:\s*\[(.*?)\]', block)
+        aliases_match = ALIASES_EXTRACT_PATTERN.search(block)
         if aliases_match:
             aliases = [a.strip().strip("'\"") for a in aliases_match.group(1).split(",") if a.strip()]
 
@@ -463,15 +518,14 @@ def parse_and_proliferate_xml_notes(xml_file: Path, cresmo_wiki_dir: Path = DEFA
         index_data["notes"][clean_title] = {
             "type": note_type,
             "path": rel_path,
-            "aliases": combined_aliases
+            "aliases": combined_aliases,
         }
 
     if len(created_files) > 0:
         index_file.write_text(json.dumps(index_data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"  ✓ [Proliferation] Unpacked {len(created_files)} individual atomic .md note(s) & updated _index.json in {cresmo_wiki_dir}")
+        print(f"  ✓ [Proliferation] Unpacked {len(created_files)} individual atomic .md note(s) & updated {INDEX_JSON_FILENAME} in {cresmo_wiki_dir}")
 
     return created_files
-
 
 
 def execute_stage56_moc_manager(
@@ -487,16 +541,15 @@ def execute_stage56_moc_manager(
     """Stage 5 & 6: MOC Management, Vault Graph Sync, & Reconciliation (cresmo-moc-manager)."""
     video_id = meta.get("video_id", xml_file.stem)
     reconciliation_log = xml_file.parent / f"{video_id}_reconciliation.md"
-    index_file = cresmo_wiki_dir / "_index.json"
+    index_file = cresmo_wiki_dir / INDEX_JSON_FILENAME
 
     # Skip if reconciliation log already exists — stages 5 & 6 are complete for this video.
-    if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > 200:
-        # print(f"  ✓ [Stage 5/6 Skip] Reconciliation log exists -> {reconciliation_log}")
+    if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
         return reconciliation_log
 
     skill_doc = SKILL_MOC_MANAGER_PATH.read_text(encoding="utf-8") if SKILL_MOC_MANAGER_PATH.exists() else ""
     xml_content = xml_file.read_text(encoding="utf-8") if xml_file.exists() else ""
-    
+
     pre_prompt = (
         f"You are Cresmo MOC Manager. Reconcile the XML atomic notes into the Obsidian vault at '{cresmo_wiki_dir.resolve()}'.\n"
     )
@@ -517,29 +570,30 @@ def execute_stage56_moc_manager(
     dispatch_time = time.time()
     send_agent_message(prompt, session_id)
 
-    for _ in range(1000):
+    for _ in range(POLL_MAX_ATTEMPTS):
         if (
-            reconciliation_log.exists() 
-            and reconciliation_log.stat().st_mtime >= (dispatch_time - 1.0)
-            and reconciliation_log.stat().st_size > 200
+            reconciliation_log.exists()
+            and reconciliation_log.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
+            and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES
         ):
             print(f"  ✓ [Stage 5/6 Success] MOC reconciliation complete -> {reconciliation_log}")
             return reconciliation_log
-        time.sleep(1)
+        time.sleep(POLL_SLEEP_SECONDS)
 
     # Fallback report generation if agent log write pending
     reconciliation_log.write_text(
         f"# Cresmo MOC Reconciliation Report - {video_id}\n\n"
         f"- **Channel**: {meta.get('channel_name')}\n"
         f"- **Video ID**: {video_id}\n"
-        f"- **Timestamp**: {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"- **Timestamp**: {time.strftime(DATETIME_FORMAT)}\n"
         f"- **Status**: Atomic notes proliferated into `{cresmo_wiki_dir}`.\n",
-        encoding="utf-8"
+        encoding="utf-8",
     )
     return reconciliation_log
 
 
 def format_duration(seconds: float | int) -> str:
+    """Format seconds into HHhMMmSSs string."""
     sec = max(0, int(seconds))
     m, s = divmod(sec, 60)
     h, m = divmod(m, 60)
@@ -561,26 +615,15 @@ def process_candidate_blocks(
     isolate_context: bool = True,
     restart_server: bool = False,
 ) -> None:
-    """Iterate through candidate blocks and execute Stages 2 through 6 for each video.
-
-    Args:
-        candidate_blocks: List of raw transcription block dictionaries to process.
-        session_id: Active agent session identifier.
-        enriched_dir: Output directory path for enriched markdown files.
-        cresmo_dir: Root directory path for the Cresmo vault.
-        cresmo_wiki_dir: Directory path for atomic wiki notes.
-        force: If True, re-processes candidate blocks even if already logged.
-        isolate_context: If True, purges transcript and message history before each dispatch.
-        restart_server: If True, restarts Language Server process before each dispatch.
-    """
+    """Iterate through candidate blocks and execute Stages 2 through 6 for each video."""
     total_candidates = len(candidate_blocks)
     pipeline_start_time = time.time()
 
     for idx, block in enumerate(candidate_blocks, 1):
         meta = block.get("metadata", {})
         txt_file = block.get("source_file")
-        video_id = meta.get("video_id", "unknown")
-        channel = meta.get("channel_name", "Unknown Channel")
+        video_id = meta.get("video_id", DEFAULT_VIDEO_ID)
+        channel = meta.get("channel_name", DEFAULT_CHANNEL_NAME)
         domain, cat_type = classify_channel(channel)
 
         pct = (idx / total_candidates) * 100
@@ -599,7 +642,7 @@ def process_candidate_blocks(
         # If it exists, this video was fully processed end-to-end — skip stages 3-6.
         xml_file = enriched_dir / channel / f"{video_id}.xml"
         reconciliation_log = xml_file.parent / f"{video_id}_reconciliation.md"
-        if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > 200:
+        if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
             print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
             continue
 
@@ -661,19 +704,18 @@ def run_cresmo_pipeline(
     cresmo_wiki_dir.mkdir(parents=True, exist_ok=True)
     processed_log = load_processed_cresmo_log(PROCESSED_CRESMO_LOG)
 
-    print(f"==================================================")
-    print(f"🧠 Cresmo Master Pipeline (Stages 2 -> 6)")
+    print("==================================================")
+    print("🧠 Cresmo Master Pipeline (Stages 2 -> 6)")
     print(f"   Raw Directory:      {raw_dir}")
     print(f"   Enriched Directory: {enriched_dir}")
     print(f"   Cresmo Vault:       {cresmo_wiki_dir}")
     print(f"   Processed Log:      {PROCESSED_CRESMO_LOG.name} ({len(processed_log)} items completed)")
     print(f"   Isolate Context:    {isolate_context}")
     print(f"   Restart Server:     {restart_server}")
-    print(f"==================================================")
+    print("==================================================")
 
     # 1. Discover raw transcript files
     txt_files = sorted(raw_dir.rglob("*.txt"))
-    yt_id_pattern = re.compile(r"^.*-([a-zA-Z0-9_-]{11})$")
 
     candidate_blocks = []
     total_txt = len(txt_files)
@@ -681,9 +723,8 @@ def run_cresmo_pipeline(
     last_parse_pct = -1
 
     for txt_idx, txt_file in enumerate(txt_files, 1):
-        b = 1000
-        if txt_idx > b:
-            print(f"breaking at {b} records")
+        if txt_idx > MAX_CANDIDATE_PARSE_LIMIT:
+            print(f"breaking at {MAX_CANDIDATE_PARSE_LIMIT} records")
             break
         blocks = parse_merged_transcriptions(txt_file)
         for b in blocks:
@@ -691,7 +732,7 @@ def run_cresmo_pipeline(
             meta = b.get("metadata", {})
             video_id = meta.get("video_id")
             if not video_id:
-                m = yt_id_pattern.match(txt_file.stem)
+                m = YT_ID_PATTERN.match(txt_file.stem)
                 video_id = m.group(1) if m else txt_file.stem
                 meta["video_id"] = video_id
 
@@ -708,7 +749,6 @@ def run_cresmo_pipeline(
                 remaining = avg_time * (total_txt - txt_idx)
                 total_est = elapsed + remaining
                 eta_str = f"{format_duration(elapsed)} + {format_duration(remaining)} = {format_duration(total_est)}"
-                # print(f"", end="\r", flush=True)
                 print(f"{txt_idx}/{total_txt} ({parse_pct}%) | {eta_str}", end="\n", flush=True)
 
     if limit:

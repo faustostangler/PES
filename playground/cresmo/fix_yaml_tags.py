@@ -4,7 +4,13 @@
 from pathlib import Path
 import re
 
-WIKI_DIR = Path("/mnt/gamer_d/Fausto Stangler/Documentos/Python/PES/playground/cresmo/wiki")
+# --- Constants & Defaults ---
+DEFAULT_WIKI_DIR: Path = Path(__file__).parent.resolve() / "wiki"
+
+# --- Compiled Regexes ---
+INLINE_TAGS_PATTERN: re.Pattern[str] = re.compile(r"^tags:\s*\[(.*)\]$")
+YAML_KEY_PATTERN: re.Pattern[str] = re.compile(r"^[a-zA-Z0-9_-]+:")
+
 
 def normalize_tags_in_content(content: str) -> str:
     """Find YAML frontmatter and format tags block to have one tag per line."""
@@ -26,8 +32,7 @@ def normalize_tags_in_content(content: str) -> str:
         stripped = line.strip()
         if line.startswith("tags:"):
             in_tags = True
-            # Handle inline list if present e.g. tags: [tag1, tag2]
-            inline_match = re.match(r"^tags:\s*\[(.*)\]$", line)
+            inline_match = INLINE_TAGS_PATTERN.match(line)
             if inline_match:
                 raw_tags = inline_match.group(1).split(",")
                 new_lines.append("tags:")
@@ -41,15 +46,13 @@ def normalize_tags_in_content(content: str) -> str:
             continue
 
         if in_tags:
-            # Check if we exited tags block (new key or empty line or header)
-            if re.match(r"^[a-zA-Z0-9_-]+:", line) or line.startswith("---"):
+            if YAML_KEY_PATTERN.match(line) or line.startswith("---"):
                 in_tags = False
                 new_lines.append(line)
                 continue
 
             if line.strip().startswith("- "):
                 raw_item = line.strip()[2:].strip()
-                # Split by comma if present
                 tags = [t.strip().strip("'\"") for t in raw_item.split(",")]
                 for t in tags:
                     if t:
@@ -66,12 +69,12 @@ def normalize_tags_in_content(content: str) -> str:
     return f"---{new_frontmatter}\n---{body}"
 
 
-def process_all_files():
-    md_files = list(WIKI_DIR.rglob("*.md"))
+def process_all_files(wiki_dir: Path = DEFAULT_WIKI_DIR) -> None:
+    """Scan all Markdown files in wiki directory and normalize tag layout."""
+    md_files = list(wiki_dir.rglob("*.md"))
     modified_count = 0
-    total_tags_split = 0
 
-    print(f"Scanning {len(md_files)} markdown files in {WIKI_DIR}...")
+    print(f"Scanning {len(md_files)} markdown files in {wiki_dir}...")
 
     for md_file in md_files:
         try:
@@ -80,7 +83,7 @@ def process_all_files():
             if new_text != text:
                 md_file.write_text(new_text, encoding="utf-8")
                 modified_count += 1
-                print(f"  ✓ Fixed: {md_file.relative_to(WIKI_DIR)}")
+                print(f"  ✓ Fixed: {md_file.relative_to(wiki_dir)}")
         except Exception as e:
             print(f"  ❌ Error processing {md_file}: {e}")
 

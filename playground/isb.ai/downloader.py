@@ -357,7 +357,7 @@ def get_youtube_audio_or_transcript(
 
         # Adaptive initial delay: start at half the estimated timeout if known, or 10s default
         est_timeout = get_estimated_timeout_seconds()
-        in_del = 2
+        in_del = 1
         if _GLOBAL_429_ATTEMPT == 0 and est_timeout and est_timeout > 20.0:
             initial_delay = max(in_del, est_timeout / 2.0)
         else:
