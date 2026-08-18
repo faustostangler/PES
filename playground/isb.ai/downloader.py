@@ -169,8 +169,15 @@ class QuietLogger:
     def warning(self, msg): pass
     def error(self, msg): pass
 
-def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
-    """Extract and return video metadata using yt-dlp with auto-refresh on bot/login errors."""
+def extract_video_metadata(url: str, use_cookies: bool = False) -> dict:
+    """Extract and return video metadata using yt-dlp.
+
+    Why use_cookies defaults to False:
+    Querying video metadata/subtitles without account cookies avoids binding large batches
+    of requests to a single logged-in Google session. Authenticated sessions face aggressive
+    global rate-limiting (HTTP 429) across YouTube's timedtext/player endpoints.
+    If bot protection is detected, cookies can be applied on retry.
+    """
     ydl_opts_meta = {
         'quiet': True,
         'no_warnings': True,
@@ -186,8 +193,8 @@ def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
             return res or {}
     except Exception as e:
         err_msg = str(e).lower()
-        if use_cookies and any(pattern in err_msg for pattern in ("sign in to confirm", "bot", "cookie", "login")):
-            # Attempt auto-refreshing cookies from browser
+        if any(pattern in err_msg for pattern in ("sign in to confirm", "bot", "cookie", "login")):
+            # Attempt auto-refreshing cookies from browser if blocked anonymously
             print(f"  ⚠️  Bot detection/expired cookies detected for {url}. Auto-refreshing cookies from browser...")
             apply_cookies_to_ydl_opts(ydl_opts_meta, use_cookies=True, force_refresh=True)
             try:
