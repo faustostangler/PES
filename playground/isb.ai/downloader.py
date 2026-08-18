@@ -170,7 +170,7 @@ class QuietLogger:
     def error(self, msg): pass
 
 def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
-    """Extract and return video metadata using yt-dlp."""
+    """Extract and return video metadata using yt-dlp with auto-refresh on bot/login errors."""
     ydl_opts_meta = {
         'quiet': True,
         'no_warnings': True,
@@ -185,8 +185,19 @@ def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
             res = ydl.extract_info(url, download=False)
             return res or {}
     except Exception as e:
-        # print(f"  Warning: Failed to fetch metadata for {url}: {e}")
+        err_msg = str(e).lower()
+        if use_cookies and any(pattern in err_msg for pattern in ("sign in to confirm", "bot", "cookie", "login")):
+            # Attempt auto-refreshing cookies from browser
+            print(f"  ⚠️  Bot detection/expired cookies detected for {url}. Auto-refreshing cookies from browser...")
+            apply_cookies_to_ydl_opts(ydl_opts_meta, use_cookies=True, force_refresh=True)
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
+                    res = ydl.extract_info(url, download=False)
+                    return res or {}
+            except Exception as retry_err:
+                print(f"  ❌ Retry after cookie refresh failed for {url}: {retry_err}")
         return {}
+
 
 def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies: bool = True) -> Path:
     """Download audio stream using yt-dlp and convert to OGG format for Whisper fallback."""
@@ -215,7 +226,14 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
         with yt_dlp.YoutubeDL(ydl_opts_download.copy()) as ydl:
             ydl.extract_info(url, download=True)
     except Exception as e:
-        raise e
+        err_msg = str(e).lower()
+        if use_cookies and any(pattern in err_msg for pattern in ("sign in to confirm", "bot", "cookie", "login")):
+            print(f"  ⚠️  Bot detection on audio download for {video_id}. Auto-refreshing cookies...")
+            apply_cookies_to_ydl_opts(ydl_opts_download, use_cookies=True, force_refresh=True)
+            with yt_dlp.YoutubeDL(ydl_opts_download.copy()) as ydl:
+                ydl.extract_info(url, download=True)
+        else:
+            raise e
     ogg_file = output_dir / f"{video_id}.ogg"
     return ogg_file.resolve()
 

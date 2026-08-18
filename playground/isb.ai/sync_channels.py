@@ -18,6 +18,7 @@ from pathlib import Path
 import yt_dlp
 
 from downloader import extract_video_metadata, get_youtube_audio_or_transcript
+from export_cookies import ensure_cookies
 from helper import (
     apply_cookies_to_ydl_opts,
     clean_filename,
@@ -510,6 +511,9 @@ def sync_channels_and_seeds(
     max_workers: int = 32
 ) -> None:
     """Core synchronization execution flow with parallel channel scanning, streaming video processing, and incremental caching."""
+    # Ensure fresh, authenticated cookies exist before dispatching parallel jobs
+    ensure_cookies(max_age_hours=12, verbose=True)
+
     synced_ids, synced_channels = load_historical_metadata(output_dir, csv_path=csv_path, max_workers=max_workers)
     with QUEUED_IDS_LOCK:
         QUEUED_IDS.clear()

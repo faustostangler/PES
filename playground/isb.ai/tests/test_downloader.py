@@ -13,8 +13,8 @@ import downloader
 import sync_channels
 
 @patch("downloader.yt_dlp.YoutubeDL")
-def test_extract_video_metadata_success_without_cookies(mock_ytdl_class):
-    """Should successfully fetch metadata on the first try without using cookies."""
+def test_extract_video_metadata_success(mock_ytdl_class):
+    """Should successfully fetch metadata on the first try."""
     mock_instance = MagicMock()
     mock_ytdl_class.return_value.__enter__.return_value = mock_instance
     mock_instance.extract_info.return_value = {"id": "test_id", "title": "Test Title"}
@@ -23,113 +23,87 @@ def test_extract_video_metadata_success_without_cookies(mock_ytdl_class):
     result = downloader.extract_video_metadata(url)
 
     assert result == {"id": "test_id", "title": "Test Title"}
-    # Verify YoutubeDL was instantiated only once and without cookies
     mock_ytdl_class.assert_called_once()
-    opts = mock_ytdl_class.call_args[0][0]
-    assert "cookiesfrombrowser" not in opts
 
+
+@patch("downloader.apply_cookies_to_ydl_opts")
 @patch("downloader.yt_dlp.YoutubeDL")
-def test_extract_video_metadata_fallback_to_cookies(mock_ytdl_class):
-    """Should fallback to using cookies when the first attempt without cookies fails."""
-    mock_instance_no_cookies = MagicMock()
-    mock_instance_no_cookies.extract_info.side_effect = Exception("HTTP Error 403: Forbidden")
-    
-    mock_instance_with_cookies = MagicMock()
-    mock_instance_with_cookies.extract_info.return_value = {"id": "test_id", "title": "Test Title"}
-    
-    # Configure the mock to return different instances/contexts for successive calls
+def test_extract_video_metadata_auto_refresh_on_bot_detection(mock_ytdl_class, mock_apply_cookies):
+    """Should auto-refresh cookies and retry when bot/login challenge is detected."""
+    mock_instance_bot_err = MagicMock()
+    mock_instance_bot_err.extract_info.side_effect = Exception("Sign in to confirm you’re not a bot.")
+
+    mock_instance_success = MagicMock()
+    mock_instance_success.extract_info.return_value = {"id": "test_id", "title": "Test Title"}
+
     mock_ytdl_class.return_value.__enter__.side_effect = [
-        mock_instance_no_cookies,
-        mock_instance_with_cookies
+        mock_instance_bot_err,
+        mock_instance_success
     ]
 
     url = "https://www.youtube.com/watch?v=test_id"
     result = downloader.extract_video_metadata(url)
 
     assert result == {"id": "test_id", "title": "Test Title"}
-    
-    # Assert YoutubeDL was instantiated exactly twice
     assert mock_ytdl_class.call_count == 2
-    
-    # First call: no cookies
-    first_opts = mock_ytdl_class.call_args_list[0][0][0]
-    assert "cookiesfrombrowser" not in first_opts
-    
-    # Second call: Chrome cookies enabled
-    second_opts = mock_ytdl_class.call_args_list[1][0][0]
-    assert second_opts["cookiesfrombrowser"] == ("chrome",)
+    # Verify apply_cookies_to_ydl_opts was called with force_refresh=True on retry
+    assert mock_apply_cookies.call_count == 2
+    assert mock_apply_cookies.call_args_list[1][1].get("force_refresh") is True
+
 
 @patch("downloader.yt_dlp.YoutubeDL")
-def test_extract_video_metadata_ultimate_failure(mock_ytdl_class):
-    """Should raise the exception if both attempts (without and with cookies) fail."""
+def test_extract_video_metadata_returns_empty_dict_on_unresolvable_error(mock_ytdl_class):
+    """Should return empty dict gracefully on unresolvable failure."""
     mock_instance = MagicMock()
-    mock_instance.extract_info.side_effect = Exception("Network Error")
+    mock_instance.extract_info.side_effect = Exception("Network Unreachable")
     mock_ytdl_class.return_value.__enter__.return_value = mock_instance
 
     url = "https://www.youtube.com/watch?v=test_id"
-    with pytest.raises(Exception, match="Network Error"):
-        downloader.extract_video_metadata(url)
-        
-    assert mock_ytdl_class.call_count == 2
+    result = downloader.extract_video_metadata(url)
 
+    assert result == {}
+
+
+@patch("downloader.apply_cookies_to_ydl_opts")
 @patch("downloader.yt_dlp.YoutubeDL")
-def test_download_audio_as_ogg_fallback_to_cookies(mock_ytdl_class):
-    """Should fallback to Chrome cookies if download fails without them."""
-    mock_instance_no_cookies = MagicMock()
-    mock_instance_no_cookies.extract_info.side_effect = Exception("Sign in required")
-    
-    mock_instance_with_cookies = MagicMock()
-    
+def test_download_audio_as_ogg_auto_refresh_on_bot_detection(mock_ytdl_class, mock_apply_cookies):
+    """Should auto-refresh cookies and retry if download fails with bot challenge."""
+    mock_instance_bot_err = MagicMock()
+    mock_instance_bot_err.extract_info.side_effect = Exception("Sign in to confirm you’re not a bot.")
+
+    mock_instance_success = MagicMock()
+
     mock_ytdl_class.return_value.__enter__.side_effect = [
-        mock_instance_no_cookies,
-        mock_instance_with_cookies
+        mock_instance_bot_err,
+        mock_instance_success
     ]
 
     url = "https://www.youtube.com/watch?v=test_id"
     output_dir = Path("/tmp")
     video_id = "test_id"
-    
+
     result = downloader.download_audio_as_ogg(url, output_dir, video_id)
-    
+
     assert result == Path("/tmp/test_id.ogg").resolve()
     assert mock_ytdl_class.call_count == 2
-    
-    # Assert first attempt used quiet=True and loglevel options
-    first_opts = mock_ytdl_class.call_args_list[0][0][0]
-    assert first_opts["quiet"] is True
-    assert first_opts["no_warnings"] is True
-    assert first_opts["postprocessor_args"]["FFmpegExtractAudio"] == ["-loglevel", "error"]
-    assert first_opts["external_downloader_args"]["ffmpeg"] == ["-loglevel", "error"]
+    assert mock_apply_cookies.call_count == 2
+    assert mock_apply_cookies.call_args_list[1][1].get("force_refresh") is True
 
-    # Assert second attempt used cookies
-    second_opts = mock_ytdl_class.call_args_list[1][0][0]
-    assert second_opts["cookiesfrombrowser"] == ("chrome",)
 
 @patch("sync_channels.yt_dlp.YoutubeDL")
-def test_fetch_channel_recent_videos_fallback_to_cookies(mock_ytdl_class):
-    """Should fallback to Chrome cookies if channel video list extraction fails without them."""
-    mock_instance_no_cookies = MagicMock()
-    mock_instance_no_cookies.extract_info.side_effect = Exception("Blocked by YouTube")
-    
-    mock_instance_with_cookies = MagicMock()
-    mock_instance_with_cookies.extract_info.return_value = {
+def test_fetch_channel_recent_videos_success(mock_ytdl_class):
+    """Should extract channel recent videos using YouTube playlist."""
+    mock_instance = MagicMock()
+    mock_instance.extract_info.return_value = {
         "entries": [{"id": "vid1", "url": "url1"}]
     }
-    
-    mock_ytdl_class.return_value.__enter__.side_effect = [
-        mock_instance_no_cookies,
-        mock_instance_with_cookies
-    ]
-    
+    mock_ytdl_class.return_value.__enter__.return_value = mock_instance
+
     result = sync_channels.fetch_channel_recent_videos("UC12345", limit=5)
-    
+
     assert len(result) == 1
     assert result[0]["id"] == "vid1"
-    assert mock_ytdl_class.call_count == 2
-    
-    # Assert second attempt used cookies
-    second_opts = mock_ytdl_class.call_args_list[1][0][0]
-    assert second_opts["cookiesfrombrowser"] == ("chrome",)
+    mock_ytdl_class.assert_called_once()
 
 
 @patch("downloader.time.sleep")

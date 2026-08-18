@@ -44,6 +44,8 @@ MAX_WORKERS = 1 # int(os.environ.get("MAX_WORKERS", "32")) # 1
 
 def run_sync_subcommand(args: argparse.Namespace) -> None:
     """Invokes sync_channels to crawl/download transcripts."""
+    ensure_cookies(max_age_hours=12, verbose=True)
+
     playlist_path = Path(args.playlist)
     csv_path = Path(args.csv)
     output_dir = Path(args.raw_dir)
