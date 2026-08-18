@@ -244,6 +244,7 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
     ogg_file = output_dir / f"{video_id}.ogg"
     return ogg_file.resolve()
 
+import random
 import yt_dlp
 from helper import fetch_url_content
 
@@ -251,12 +252,64 @@ RATE_LIMIT_LOG_FILE = Path(__file__).parent / "rate_limit_log.json"
 _GLOBAL_429_ATTEMPT = 0
 _ACCUMULATED_BLOCKED_TIME = 0.0
 
+# TCP Retransmission Timer (RFC 6298 / EWMA) state parameters
+_BASE_BACKOFF_QUANTUM = 1.0  # B_0: initial base quantum (seconds)
+_EWMA_ALPHA = 0.5            # alpha: historical memory decay factor in [0, 1)
+_T_MAX_DELAY = 60.0          # t_max: maximum backoff upper bound (seconds)
 
-def reset_429_state() -> None:
-    """Reset the accumulated 429 rate-limit attempt counter and blocked time to 0."""
-    global _GLOBAL_429_ATTEMPT, _ACCUMULATED_BLOCKED_TIME
+
+def reset_429_state(reset_quantum: bool = False, default_quantum: float = 1.0) -> None:
+    """Reset the accumulated 429 rate-limit attempt counter and blocked time to 0.
+
+    Optionally resets the EWMA base quantum B_k to default_quantum.
+    """
+    global _GLOBAL_429_ATTEMPT, _ACCUMULATED_BLOCKED_TIME, _BASE_BACKOFF_QUANTUM
     _GLOBAL_429_ATTEMPT = 0
     _ACCUMULATED_BLOCKED_TIME = 0.0
+    if reset_quantum:
+        _BASE_BACKOFF_QUANTUM = default_quantum
+
+
+def update_base_quantum(latency: float, alpha: float = _EWMA_ALPHA) -> float:
+    """Update smoothed base quantum B_k using EWMA on successful response latency X_k.
+
+    Formula: B_k = alpha * B_{k-1} + (1 - alpha) * X_k
+    """
+    global _BASE_BACKOFF_QUANTUM
+    _BASE_BACKOFF_QUANTUM = (alpha * _BASE_BACKOFF_QUANTUM) + ((1.0 - alpha) * latency)
+    return _BASE_BACKOFF_QUANTUM
+
+
+def get_base_backoff_quantum() -> float:
+    """Return the current EWMA smoothed base quantum B_k."""
+    return _BASE_BACKOFF_QUANTUM
+
+
+def set_base_backoff_quantum(quantum: float) -> None:
+    """Set the EWMA base quantum B_k."""
+    global _BASE_BACKOFF_QUANTUM
+    _BASE_BACKOFF_QUANTUM = max(0.001, float(quantum))
+
+
+def calculate_backoff_delay(
+    n: int,
+    base_quantum: float | None = None,
+    t_max: float = _T_MAX_DELAY,
+    jitter: bool = False
+) -> float:
+    """Calculate exponential backoff delay based on RFC 6298 TCP Retransmission Timer logic.
+
+    Formulas:
+        t(n) = min(t_max, B_k * (2 ** n))
+        t_jitter(n) = Uniform(0, min(t_max, B_k * (2 ** n)))
+    """
+    if base_quantum is None:
+        base_quantum = _BASE_BACKOFF_QUANTUM
+
+    delay = min(t_max, base_quantum * (2 ** n))
+    if jitter:
+        return random.uniform(0.0, delay)
+    return delay
 
 
 def get_429_attempt_count() -> int:
@@ -333,7 +386,8 @@ def get_youtube_audio_or_transcript(
     output_dir: str = ".",
     force_audio: bool = False,
     info: dict | None = None,
-    download_audio_if_missing: bool = True
+    download_audio_if_missing: bool = True,
+    jitter: bool = False
 ) -> tuple[str | None, str | None, str]:
     """Retrieve the transcript directly from YouTube subtitles if available (json3 paragraphs -> srv1 raw text).
     Otherwise, download the audio and convert it to OGG format for Whisper.
@@ -344,6 +398,7 @@ def get_youtube_audio_or_transcript(
         force_audio: If True, skips subtitle checks and forces audio downloading.
         info: Optional pre-extracted yt-dlp metadata dictionary.
         download_audio_if_missing: If False, returns (None, None, video_id) when subtitles are absent.
+        jitter: If True, applies uniform stochastic jitter in [0, t(n)] to backoff delay.
 
     Returns:
         A tuple of (transcript_text, ogg_file_path, video_id).
@@ -380,14 +435,6 @@ def get_youtube_audio_or_transcript(
         if sub_srv1:
             candidates.append(("SRV1", sub_srv1[0], sub_srv1[1], fetch_and_parse_srv1))
 
-        # Adaptive initial delay: start at half the estimated timeout if known, or 10s default
-        est_timeout = get_estimated_timeout_seconds()
-        in_del = 1
-        if _GLOBAL_429_ATTEMPT == 0 and est_timeout and est_timeout > 20.0:
-            initial_delay = max(in_del, est_timeout / 2.0)
-        else:
-            initial_delay = in_del
-
         max_accumulated_attempts = 5
         attempts_for_this_video = (
             1 if _GLOBAL_429_ATTEMPT >= max_accumulated_attempts else (max_accumulated_attempts - _GLOBAL_429_ATTEMPT)
@@ -395,12 +442,15 @@ def get_youtube_audio_or_transcript(
 
         sub_success = False
         transcript_text = None
+        observed_latency = 0.0
 
         for _ in range(attempts_for_this_video):
             is_429 = False
             for fmt_name, lang, sub_url, parse_fn in candidates:
                 try:
+                    start_time = time.perf_counter()
                     transcript = parse_fn(sub_url)
+                    observed_latency = time.perf_counter() - start_time
                     if transcript and transcript.strip():
                         sub_success = True
                         transcript_text = transcript
@@ -413,7 +463,8 @@ def get_youtube_audio_or_transcript(
                         print(f"Warning: Failed to parse {fmt_name} subtitles ({e}).")
 
             if sub_success:
-                # ACCESS PERMITTED: Log telemetry and reset global state!
+                # ACCESS PERMITTED: Update EWMA base quantum, log telemetry, and reset global streak!
+                update_base_quantum(observed_latency)
                 log_rate_limit_telemetry(
                     video_id=video_id,
                     streak=_GLOBAL_429_ATTEMPT,
@@ -425,7 +476,12 @@ def get_youtube_audio_or_transcript(
                 return transcript_text, None, video_id
 
             if is_429:
-                delay = initial_delay * (2 ** min(_GLOBAL_429_ATTEMPT, 5))
+                delay = calculate_backoff_delay(
+                    n=_GLOBAL_429_ATTEMPT,
+                    base_quantum=_BASE_BACKOFF_QUANTUM,
+                    t_max=_T_MAX_DELAY,
+                    jitter=jitter
+                )
                 _ACCUMULATED_BLOCKED_TIME += delay
                 log_rate_limit_telemetry(
                     video_id=video_id,
@@ -436,7 +492,7 @@ def get_youtube_audio_or_transcript(
                 )
                 print(
                     f"  ⚠️ Rate limit (HTTP 429) hit fetching subtitles for '{title[:30]}...'. "
-                    f"Waiting {delay:.1f}s for reset (global 429 streak: {_GLOBAL_429_ATTEMPT + 1}, total blocked time: {_ACCUMULATED_BLOCKED_TIME:.1f}s)..."
+                    f"Waiting {delay:.1f}s for reset (global 429 streak: {_GLOBAL_429_ATTEMPT + 1}, total blocked time: {_ACCUMULATED_BLOCKED_TIME:.1f}s..."
                 )
                 time.sleep(delay)
                 _GLOBAL_429_ATTEMPT += 1

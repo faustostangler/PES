@@ -240,4 +240,38 @@ def test_rate_limit_telemetry_logging_and_estimation(tmp_path):
     assert test_log.exists()
 
 
+def test_ewma_base_quantum_update():
+    """Should update base quantum using EWMA formula: B_k = alpha * B_{k-1} + (1 - alpha) * X_k."""
+    downloader.reset_429_state(reset_quantum=True, default_quantum=1.0)
+    assert downloader.get_base_backoff_quantum() == 1.0
+
+    # Test with alpha = 0.8, initial B_0 = 1.0, observed X_1 = 0.5
+    # B_1 = 0.8 * 1.0 + 0.2 * 0.5 = 0.8 + 0.1 = 0.9
+    new_q = downloader.update_base_quantum(latency=0.5, alpha=0.8)
+    assert pytest.approx(new_q, rel=1e-4) == 0.9
+    assert pytest.approx(downloader.get_base_backoff_quantum(), rel=1e-4) == 0.9
+
+    # X_2 = 2.0 -> B_2 = 0.8 * 0.9 + 0.2 * 2.0 = 0.72 + 0.40 = 1.12
+    new_q = downloader.update_base_quantum(latency=2.0, alpha=0.8)
+    assert pytest.approx(new_q, rel=1e-4) == 1.12
+
+
+def test_calculate_backoff_delay():
+    """Should calculate exponential backoff delay t(n) = min(t_max, B_k * 2^n) and support jitter."""
+    # n = 0, 1, 2, 3 with base_quantum = 1.5, t_max = 60.0
+    assert downloader.calculate_backoff_delay(n=0, base_quantum=1.5, t_max=60.0, jitter=False) == 1.5
+    assert downloader.calculate_backoff_delay(n=1, base_quantum=1.5, t_max=60.0, jitter=False) == 3.0
+    assert downloader.calculate_backoff_delay(n=2, base_quantum=1.5, t_max=60.0, jitter=False) == 6.0
+    assert downloader.calculate_backoff_delay(n=3, base_quantum=1.5, t_max=60.0, jitter=False) == 12.0
+
+    # Capped by t_max
+    assert downloader.calculate_backoff_delay(n=10, base_quantum=1.5, t_max=60.0, jitter=False) == 60.0
+
+    # With jitter: value should be in [0, t(n)]
+    for _ in range(10):
+        val = downloader.calculate_backoff_delay(n=2, base_quantum=2.0, t_max=60.0, jitter=True)
+        assert 0.0 <= val <= 8.0
+
+
+
 
