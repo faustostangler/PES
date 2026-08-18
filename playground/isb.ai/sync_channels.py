@@ -177,8 +177,14 @@ def record_synced_video(log_path: Path, channel_id: str, video_id: str, upload_d
     except Exception as e:
         print(f"Error saving to Markdown log: {e}")
 
-def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: bool = True) -> list[dict]:
-    """Query recent videos from a channel using its uploads playlist ID."""
+def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: bool = False) -> list[dict]:
+    """Query recent videos from a channel using its uploads playlist ID.
+
+    Why use_cookies defaults to False:
+    Querying public channel playlists without user session cookies prevents YouTube from
+    accumulating quota usage or flagging the user account with 429 rate limits across
+    the multi-channel crawler pipeline.
+    """
     if not channel_id.startswith("UC"):
         print(f"Warning: Channel ID '{channel_id}' does not match standard UC prefix. Fetching videos page directly.")
         url = f"https://www.youtube.com/channel/{channel_id}/videos"
@@ -213,11 +219,12 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: b
     try:
         return extract_with_opts(ydl_opts)
     except Exception as e:
-        if use_cookies:
-            ydl_opts_no_cookies = ydl_opts.copy()
-            ydl_opts_no_cookies.pop("cookiefile", None)
+        if not use_cookies:
+            # Fallback to try with cookies if anonymous scraping encounters bot defense
+            ydl_opts_with_cookies = ydl_opts.copy()
+            apply_cookies_to_ydl_opts(ydl_opts_with_cookies, use_cookies=True)
             try:
-                return extract_with_opts(ydl_opts_no_cookies)
+                return extract_with_opts(ydl_opts_with_cookies)
             except Exception:
                 pass
         print(f"Error fetching channel playlist {channel_id}: {e}")
@@ -669,13 +676,14 @@ def sync_channels_and_seeds(
                 return chan_id, []
 
         with ThreadPoolExecutor(max_workers=max_workers) as chan_executor:
-            future_to_cid = {chan_executor.submit(_fetch_channel, cid): cid for cid in chan_list}
-            for future in as_completed(future_to_cid):
-                cid, entries = future.result()
-                if entries:
-                    update_channel_cache(cache_path, cid, entries)
-                    for entry in entries:
-                        _submit_candidate_video(cid, entry)
+            print('skip syncing channel videos')
+            # future_to_cid = {chan_executor.submit(_fetch_channel, cid): cid for cid in chan_list}
+            # for future in as_completed(future_to_cid):
+            #     cid, entries = future.result()
+            #     if entries:
+            #         update_channel_cache(cache_path, cid, entries)
+            #         for entry in entries:
+            #             _submit_candidate_video(cid, entry)
 
         # 4. Wait for all submitted video processing tasks to complete
         video_executor.shutdown(wait=True)
