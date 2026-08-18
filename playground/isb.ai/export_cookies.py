@@ -21,6 +21,10 @@ except ImportError:
     print("Error: yt-dlp is required. Install it with: pip install yt-dlp", file=sys.stderr)
     sys.exit(1)
 
+AUTH_COOKIE_NAMES = {
+    "SID", "SSID", "HSID", "SAPISID", "APISID", "LOGIN_INFO",
+    "__Secure-1PSID", "__Secure-3PSID", "__Secure-1PAPISID", "__Secure-3PAPISID",
+}
 SUPPORTED_BROWSERS = ["firefox", "chrome", "chromium", "brave", "edge", "opera", "vivaldi"]
 DEFAULT_COOKIE_FILE = Path(__file__).parent / ".yt_dlp_cookies.txt"
 
@@ -29,7 +33,8 @@ def export_cookies_from_browser(
     browser: str,
     output_file: Path | str = DEFAULT_COOKIE_FILE,
     domains: tuple[str, ...] = ("youtube.com", "google.com", "ytimg.com"),
-    verbose: bool = True
+    verbose: bool = True,
+    require_auth: bool = False
 ) -> bool:
     """Extract cookies from a single browser and save to Netscape cookie file."""
     output_path = Path(output_file).resolve()
@@ -52,6 +57,7 @@ def export_cookies_from_browser(
     mcj = http.cookiejar.MozillaCookieJar(str(temp_path))
     valid_count = 0
     yt_count = 0
+    has_auth_cookies = False
 
     for c in cj:
         domain = (c.domain or "").lower()
@@ -74,14 +80,18 @@ def export_cookies_from_browser(
         if c.expires and c.expires > 2147483647:
             c.expires = 2147483647
 
+        if c.name in AUTH_COOKIE_NAMES:
+            has_auth_cookies = True
+
         mcj.set_cookie(c)
         valid_count += 1
         if "youtube.com" in domain:
             yt_count += 1
 
-    if valid_count == 0:
+    if valid_count == 0 or (require_auth and not has_auth_cookies):
         if verbose:
-            print(f"   ⚠️  '{browser}' had no readable (decrypted) YouTube cookies.")
+            reason = "no authenticated session" if require_auth and not has_auth_cookies else "no readable cookies"
+            print(f"   ⚠️  '{browser}' had {reason}.")
         if temp_path.exists():
             temp_path.unlink(missing_ok=True)
         return False
@@ -91,7 +101,8 @@ def export_cookies_from_browser(
     temp_path.replace(output_path)
 
     if verbose:
-        print(f"   ✅ Saved {valid_count} active cookies ({yt_count} YouTube-specific) from '{browser}' -> {output_path.name}")
+        auth_tag = " [Authenticated Session]" if has_auth_cookies else " [Guest/Unauthenticated]"
+        print(f"   ✅ Saved {valid_count} active cookies ({yt_count} YouTube-specific{auth_tag}) from '{browser}' -> {output_path.name}")
 
     return True
 
@@ -100,17 +111,26 @@ def export_cookies_auto(
     output_file: Path | str = DEFAULT_COOKIE_FILE,
     verbose: bool = True
 ) -> bool:
-    """Scan all installed browsers and save the best set of unencrypted YouTube cookies."""
+    """Scan all installed browsers and save the best set of YouTube cookies (prioritizing authenticated sessions)."""
     output_path = Path(output_file).resolve()
-    print(f"🚀 Searching for YouTube authentication cookies across browsers...")
+    if verbose:
+        print(f"🚀 Searching for YouTube authentication cookies across browsers...")
 
     # Firefox is checked first on Linux as it doesn't suffer from keyring locks
     priority_order = ["firefox", "chrome", "chromium", "brave", "edge"]
     
+    # 1. First pass: Search strictly for authenticated browser sessions
     for browser in priority_order:
-        if export_cookies_from_browser(browser=browser, output_file=output_path, verbose=verbose):
+        if export_cookies_from_browser(browser=browser, output_file=output_path, verbose=verbose, require_auth=True):
             if verbose:
-                print(f"✓ Cookies successfully configured for pipeline: {output_path.name}\n")
+                print(f"✓ Authenticated cookies successfully configured: {output_path.name}\n")
+            return True
+
+    # 2. Second pass: Fallback to any valid browser cookies (guest/unauthenticated)
+    for browser in priority_order:
+        if export_cookies_from_browser(browser=browser, output_file=output_path, verbose=verbose, require_auth=False):
+            if verbose:
+                print(f"✓ Fallback cookies configured: {output_path.name}\n")
             return True
 
     if verbose:
@@ -118,12 +138,25 @@ def export_cookies_auto(
     return False
 
 
+def has_valid_auth_cookies(cookie_file: Path) -> bool:
+    """Check if the existing cookie file contains valid authenticated session tokens."""
+    if not cookie_file.exists() or cookie_file.stat().st_size < 50:
+        return False
+    try:
+        content = cookie_file.read_text(encoding="utf-8", errors="ignore")
+        return any(f"\t{auth_token}\t" in content or content.endswith(f"\t{auth_token}") for auth_token in AUTH_COOKIE_NAMES)
+    except Exception:
+        return False
+
+
 def ensure_cookies(output_file: Path | str = DEFAULT_COOKIE_FILE, max_age_hours: int = 12, verbose: bool = False) -> None:
-    """Ensure a valid cookie file exists. Refreshes if missing or older than max_age_hours."""
+    """Ensure a valid authenticated cookie file exists. Refreshes if missing, expired, or missing auth tokens."""
     out_p = Path(output_file).resolve()
     should_refresh = False
 
     if not out_p.exists() or out_p.stat().st_size < 50:
+        should_refresh = True
+    elif not has_valid_auth_cookies(out_p):
         should_refresh = True
     else:
         import time

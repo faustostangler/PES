@@ -23,11 +23,12 @@ def test_clean_gemini_response():
     assert stage2.clean_gemini_response(no_wrap) == "Plain text content"
 
 def test_validate_response():
-    """Should validate non-empty responses and reject error states or too short responses."""
-    assert stage2.validate_response("A very valid response text that is long enough to pass validation thresholds.") is True
-    assert stage2.validate_response("") is False
-    assert stage2.validate_response("Too short") is False
-    assert stage2.validate_response("Something went wrong with the request, please try again.") is False
+    """Should validate XML responses, extract inner content, and reject error states or too short responses."""
+    valid_xml = "<response>A very valid response text that is long enough to pass validation thresholds.</response>"
+    assert stage2.validate_response(valid_xml) == "A very valid response text that is long enough to pass validation thresholds."
+    assert stage2.validate_response("") == ""
+    assert stage2.validate_response("Too short") == ""
+    assert stage2.validate_response("<response>Something went wrong with the request, please try again.</response>") == ""
 
 def test_discover_unprocessed_files(tmp_path):
     """Should find all .txt files in raw_dir that do not exist in enriched_dir."""
@@ -113,5 +114,5 @@ Raw transcript content
     content = target_file.read_text(encoding="utf-8")
     assert "video_title: Title" in content
     assert "video_id: 999" in content
-    assert "Downgraded final content" in content
+    assert "Expanded content" in content
 

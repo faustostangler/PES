@@ -37,88 +37,60 @@ def format_date_for_path(upload_date_str: str) -> str:
 import http.cookiejar
 import threading
 
+from export_cookies import DEFAULT_COOKIE_FILE, ensure_cookies, export_cookies_auto
+
 _COOKIE_JAR = None
 _COOKIE_FILE_PATH = None
 _COOKIE_LOCK = threading.Lock()
 
 
-def get_cached_cookiefile() -> str | None:
-    """Extract browser cookies ONCE into a static Netscape cookies file to eliminate SQLite DB locking across thread pools."""
+def invalidate_cookie_cache() -> None:
+    """Invalidate in-memory cookie state so fresh cookies are loaded or re-extracted."""
     global _COOKIE_JAR, _COOKIE_FILE_PATH
     with _COOKIE_LOCK:
+        _COOKIE_JAR = None
+        _COOKIE_FILE_PATH = None
+
+
+def get_cached_cookiefile(force_refresh: bool = False) -> str | None:
+    """Extract and validate browser cookies into a static Netscape cookies file.
+    
+    Eliminates SQLite DB locking across thread pools and ensures authenticated sessions.
+    """
+    global _COOKIE_JAR, _COOKIE_FILE_PATH
+    with _COOKIE_LOCK:
+        if force_refresh:
+            _COOKIE_JAR = None
+            _COOKIE_FILE_PATH = None
+
         if _COOKIE_FILE_PATH is not None:
             return _COOKIE_FILE_PATH if _COOKIE_FILE_PATH != "" else None
 
-        cookie_file = Path(__file__).parent / ".yt_dlp_cookies.txt"
-        
-        # If valid cookiefile already exists and has content, load it directly
-        if cookie_file.exists() and cookie_file.stat().st_size > 50:
+        if force_refresh:
+            export_cookies_auto(output_file=DEFAULT_COOKIE_FILE, verbose=True)
+        else:
+            ensure_cookies(output_file=DEFAULT_COOKIE_FILE, max_age_hours=12, verbose=False)
+
+        if DEFAULT_COOKIE_FILE.exists() and DEFAULT_COOKIE_FILE.stat().st_size > 50:
             try:
-                mcj = http.cookiejar.MozillaCookieJar(str(cookie_file))
+                mcj = http.cookiejar.MozillaCookieJar(str(DEFAULT_COOKIE_FILE))
                 mcj.load(ignore_discard=True, ignore_expires=True)
                 _COOKIE_JAR = mcj
-                _COOKIE_FILE_PATH = str(cookie_file)
-                # print(f"✓ Using existing cookie file: {cookie_file.name}")
+                _COOKIE_FILE_PATH = str(DEFAULT_COOKIE_FILE)
                 return _COOKIE_FILE_PATH
             except Exception:
                 pass
-
-        tmp_cookie_file = cookie_file.with_suffix(".tmp")
-        try:
-            from yt_dlp.cookies import extract_cookies_from_browser
-            
-            # On Linux, Firefox does not lock behind OS keyrings, followed by Chrome
-            browsers_to_try = ["firefox", "chrome", "chromium", "brave"]
-            for browser_name in browsers_to_try:
-                try:
-                    cj = extract_cookies_from_browser(browser_name)
-                except Exception:
-                    continue
-
-                if not cj:
-                    continue
-
-                mcj = http.cookiejar.MozillaCookieJar(str(tmp_cookie_file))
-                count = 0
-                for c in cj:
-                    domain = (c.domain or "").lower()
-                    if not (domain.endswith("youtube.com") or domain.endswith("google.com") or domain.endswith("ytimg.com")):
-                        continue
-                    if any(sub in domain for sub in ("takeout", "docs", "mail", "drive", "cloud", "meet", "chat", "play", "store", "admin", "sites", "groups", "photos")):
-                        continue
-                    if not c.name or not c.value or len(c.value.strip()) == 0:
-                        continue
-                    if len(c.name) > 200 or len(c.value) > 2000:
-                        continue
-                    if not re.match(r"^[!-~]+$", c.name) or not re.match(r"^[ -~]+$", c.value):
-                        continue
-                    if c.expires and c.expires > 2147483647:
-                        c.expires = 2147483647
-                    mcj.set_cookie(c)
-                    count += 1
-
-                if count > 0:
-                    mcj.save(ignore_discard=True, ignore_expires=True)
-                    tmp_cookie_file.replace(cookie_file)
-                    _COOKIE_JAR = mcj
-                    _COOKIE_FILE_PATH = str(cookie_file)
-                    print(f"✓ Cookies extracted from {browser_name} to {cookie_file.name} ({count} clean YouTube/Google cookies)")
-                    return _COOKIE_FILE_PATH
-
-        except Exception as e:
-            if tmp_cookie_file.exists():
-                tmp_cookie_file.unlink(missing_ok=True)
 
         _COOKIE_JAR = None
         _COOKIE_FILE_PATH = ""
         return None
 
 
-def apply_cookies_to_ydl_opts(ydl_opts: dict, use_cookies: bool = True) -> None:
+def apply_cookies_to_ydl_opts(ydl_opts: dict, use_cookies: bool = True, force_refresh: bool = False) -> None:
     """Apply pre-extracted clean cookiefile to yt_dlp options."""
     if not use_cookies:
         return
-    cookie_path = get_cached_cookiefile()
+    cookie_path = get_cached_cookiefile(force_refresh=force_refresh)
     if cookie_path and Path(cookie_path).exists() and Path(cookie_path).stat().st_size > 0:
         ydl_opts["cookiefile"] = cookie_path
 
