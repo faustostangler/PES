@@ -2,12 +2,15 @@
 """Inspect YAML frontmatters across all Markdown files in Cresmo wiki."""
 
 from pathlib import Path
-import re
 
-WIKI_DIR = Path("/mnt/gamer_d/Fausto Stangler/Documentos/Python/PES/playground/cresmo/wiki")
+# --- Constants & Defaults ---
+DEFAULT_WIKI_DIR: Path = Path(__file__).parent.resolve() / "wiki"
+TAG_PREFIX_DELIMITER: str = "/"
 
-def inspect():
-    md_files = list(WIKI_DIR.rglob("*.md"))
+
+def inspect(wiki_dir: Path = DEFAULT_WIKI_DIR) -> None:
+    """Inspect discovered tag prefixes across all markdown files."""
+    md_files = list(wiki_dir.rglob("*.md"))
     print(f"Total MD files: {len(md_files)}")
     tag_prefixes = set()
 
@@ -23,10 +26,11 @@ def inspect():
             line = line.strip()
             if line.startswith("- "):
                 item = line[2:].strip()
-                prefix = item.split("/")[0] if "/" in item else item
+                prefix = item.split(TAG_PREFIX_DELIMITER)[0] if TAG_PREFIX_DELIMITER in item else item
                 tag_prefixes.add(prefix)
 
     print(f"Discovered tag prefixes: {sorted(tag_prefixes)}")
+
 
 if __name__ == "__main__":
     inspect()

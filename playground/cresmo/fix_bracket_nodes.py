@@ -2,16 +2,24 @@
 """Clean bracketed filenames and H1 titles across Cresmo wiki and merge colliding files."""
 
 import json
-import re
 from pathlib import Path
+import re
 
-WIKI_DIR = Path("/mnt/gamer_d/Fausto Stangler/Documentos/Python/PES/playground/cresmo/wiki")
-INDEX_FILE = WIKI_DIR / "_index.json"
+# --- Constants & Defaults ---
+DEFAULT_WIKI_DIR: Path = Path(__file__).parent.resolve() / "wiki"
+DEFAULT_INDEX_FILE: Path = DEFAULT_WIKI_DIR / "_index.json"
+DEFAULT_NOTE_TYPE: str = "concept"
+MARKDOWN_EXTENSION: str = ".md"
+
+# --- Compiled Regexes ---
+BRACKETS_REGEX: re.Pattern[str] = re.compile(r"\[\[(.*?)\]\]")
+H1_WITH_BRACKETS_REGEX: re.Pattern[str] = re.compile(r"^#\s+\[\[", re.MULTILINE)
+YAML_KEY_REGEX: re.Pattern[str] = re.compile(r"^[a-zA-Z0-9_-]+:")
 
 
 def clean_title_str(title: str) -> str:
     """Remove brackets [[ and ]] from title string."""
-    return re.sub(r'\[\[(.*?)\]\]', r'\1', title).strip()
+    return BRACKETS_REGEX.sub(r"\1", title).strip()
 
 
 def parse_frontmatter_and_body(text: str) -> tuple[dict, str]:
@@ -33,7 +41,7 @@ def parse_frontmatter_and_body(text: str) -> tuple[dict, str]:
         "domain": "",
         "cluster": "",
         "source": "",
-        "aliases": []
+        "aliases": [],
     }
 
     lines = fm_raw.splitlines()
@@ -63,7 +71,7 @@ def parse_frontmatter_and_body(text: str) -> tuple[dict, str]:
         elif line.startswith("content:"):
             in_content = True
         elif in_content:
-            if re.match(r"^[a-zA-Z0-9_-]+:", line):
+            if YAML_KEY_REGEX.match(line):
                 in_content = False
             elif stripped.startswith("- "):
                 fm_dict["content"].append(stripped[2:].strip().strip("'\""))
@@ -73,7 +81,6 @@ def parse_frontmatter_and_body(text: str) -> tuple[dict, str]:
 
 def format_markdown_file(fm: dict, clean_title: str, body: str) -> str:
     """Format markdown file with clean H1 and normalized frontmatter."""
-    # Ensure H1 title is clean (no [[ ]])
     body_lines = body.splitlines()
     new_body_lines = []
     h1_found = False
@@ -111,7 +118,6 @@ def format_markdown_file(fm: dict, clean_title: str, body: str) -> str:
         fm_lines.append(f"source: {fm['source']}")
 
     if fm.get("aliases"):
-        # Format aliases list nicely
         aliases_json = json.dumps(list(dict.fromkeys(fm["aliases"])), ensure_ascii=False)
         fm_lines.append(f"aliases: {aliases_json}")
 
@@ -121,7 +127,7 @@ def format_markdown_file(fm: dict, clean_title: str, body: str) -> str:
     return f"---{chr(10)}{fm_str}{chr(10)}---{chr(10)}{body_str}"
 
 
-def merge_files(primary_path: Path, secondary_path: Path, clean_title: str):
+def merge_files(primary_path: Path, secondary_path: Path, clean_title: str) -> None:
     """Merge secondary_path into primary_path and remove secondary_path."""
     print(f"  🔄 Merging: {secondary_path.name} -> {primary_path.name}")
     text1 = primary_path.read_text(encoding="utf-8")
@@ -132,7 +138,7 @@ def merge_files(primary_path: Path, secondary_path: Path, clean_title: str):
 
     # Merge frontmatter
     merged_fm = {
-        "type": fm1.get("type") or fm2.get("type") or "concept",
+        "type": fm1.get("type") or fm2.get("type") or DEFAULT_NOTE_TYPE,
         "content": list(dict.fromkeys(fm1.get("content", []) + fm2.get("content", []))),
         "domain": fm1.get("domain") or fm2.get("domain") or "",
         "cluster": fm1.get("cluster") or fm2.get("cluster") or "",
@@ -141,11 +147,9 @@ def merge_files(primary_path: Path, secondary_path: Path, clean_title: str):
     }
 
     # Merge bodies section by section
-    merged_body_lines = []
     lines1 = body1.splitlines()
     lines2 = body2.splitlines()
 
-    # Simple non-destructive merge: preserve lines from body1, append non-duplicate lines from body2
     seen_lines = set(l.strip() for l in lines1 if l.strip())
     merged_body_lines = list(lines1)
 
@@ -159,25 +163,25 @@ def merge_files(primary_path: Path, secondary_path: Path, clean_title: str):
     final_content = format_markdown_file(merged_fm, clean_title, merged_body)
 
     primary_path.write_text(final_content, encoding="utf-8")
-    secondary_path.unlink()  # Remove secondary file
+    secondary_path.unlink()
 
 
-def run_fix():
-    md_files = list(WIKI_DIR.rglob("*.md"))
-    print(f"Scanning {len(md_files)} markdown files in {WIKI_DIR}...")
+def run_fix(wiki_dir: Path = DEFAULT_WIKI_DIR, index_file: Path = DEFAULT_INDEX_FILE) -> None:
+    """Clean bracketed filenames, headers, and synchronize _index.json."""
+    md_files = list(wiki_dir.rglob("*.md"))
+    print(f"Scanning {len(md_files)} markdown files in {wiki_dir}...")
 
     # Step 1: Handle bracketed filenames
     bracket_files = [f for f in md_files if "[[" in f.name or "]]" in f.name]
     print(f"Found {len(bracket_files)} files with brackets in filename.")
 
     for bfile in bracket_files:
-        clean_name = clean_title_str(bfile.stem) + ".md"
+        clean_name = clean_title_str(bfile.stem) + MARKDOWN_EXTENSION
         target_path = bfile.parent / clean_name
 
         if target_path.exists() and target_path != bfile:
             merge_files(target_path, bfile, clean_title_str(bfile.stem))
         else:
-            # Simple rename + clean header
             text = bfile.read_text(encoding="utf-8")
             fm, body = parse_frontmatter_and_body(text)
             clean_t = clean_title_str(bfile.stem)
@@ -188,25 +192,24 @@ def run_fix():
             print(f"  ✓ Renamed: {bfile.name} -> {target_path.name}")
 
     # Step 2: Clean H1 titles in all remaining files
-    all_files = list(WIKI_DIR.rglob("*.md"))
+    all_files = list(wiki_dir.rglob("*.md"))
     title_fixed_count = 0
 
     for f in all_files:
         text = f.read_text(encoding="utf-8")
         clean_t = clean_title_str(f.stem)
 
-        # Check if H1 has [[
-        if re.search(r'^#\s+\[\[', text, re.MULTILINE):
+        if H1_WITH_BRACKETS_REGEX.search(text):
             fm, body = parse_frontmatter_and_body(text)
             new_content = format_markdown_file(fm, clean_t, body)
             f.write_text(new_content, encoding="utf-8")
             title_fixed_count += 1
-            print(f"  ✓ Cleaned H1 title in: {f.relative_to(WIKI_DIR)}")
+            print(f"  ✓ Cleaned H1 title in: {f.relative_to(wiki_dir)}")
 
     # Step 3: Update _index.json
-    if INDEX_FILE.exists():
+    if index_file.exists():
         print("\nUpdating _index.json entries...")
-        index_data = json.loads(INDEX_FILE.read_text(encoding="utf-8"))
+        index_data = json.loads(index_file.read_text(encoding="utf-8"))
         notes = index_data.get("notes", {})
         new_notes = {}
         index_updated = False
@@ -214,7 +217,7 @@ def run_fix():
         for title, info in notes.items():
             clean_title_key = clean_title_str(title)
             raw_path = info.get("path", "")
-            clean_path = re.sub(r'\[\[(.*?)\]\]', r'\1', raw_path)
+            clean_path = BRACKETS_REGEX.sub(r"\1", raw_path)
 
             if clean_title_key != title or clean_path != raw_path:
                 index_updated = True
@@ -224,7 +227,7 @@ def run_fix():
 
         index_data["notes"] = new_notes
         if index_updated:
-            INDEX_FILE.write_text(json.dumps(index_data, indent=2, ensure_ascii=False), encoding="utf-8")
+            index_file.write_text(json.dumps(index_data, indent=2, ensure_ascii=False), encoding="utf-8")
             print("  ✓ Cleaned bracketed entries in _index.json")
 
     print(f"\nDone! Cleaned H1 titles in {title_fixed_count} files.")

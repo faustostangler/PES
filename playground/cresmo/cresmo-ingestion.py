@@ -6,8 +6,8 @@ YAML metadata headers in playground/cresmo/raw/[Channel_Name]/[Video_ID].txt.
 """
 
 import argparse
-import sys
 from pathlib import Path
+import sys
 
 # Ensure script directory is in sys.path
 SCRIPT_DIR = Path(__file__).parent.resolve()
@@ -19,20 +19,27 @@ if ISB_DIR.exists():
 
 import sync_channels
 from cresmo_shared import (
-    CRESMO_ROOT,
+    DEFAULT_BRAIN_CSV,
+    DEFAULT_PLAYLIST_FILE,
     DEFAULT_RAW_DIR,
     read_playlist_urls,
 )
 
+# --- Ingestion Defaults ---
+DEFAULT_DAYS: int = 30
+DEFAULT_WHISPER_MODEL: str = "base"
+DEFAULT_KEEP_AUDIO: bool = False
+DEFAULT_MAX_WORKERS: int = 1
+
 
 def run_cresmo_ingestion(
-    playlist_path: Path = CRESMO_ROOT / "playlist.txt",
-    csv_path: Path = CRESMO_ROOT / "brain.csv",
+    playlist_path: Path = DEFAULT_PLAYLIST_FILE,
+    csv_path: Path = DEFAULT_BRAIN_CSV,
     output_dir: Path = DEFAULT_RAW_DIR,
-    days: int = 30,
-    model_name: str = "base",
-    keep_audio: bool = False,
-    max_workers: int = 1,
+    days: int = DEFAULT_DAYS,
+    model_name: str = DEFAULT_WHISPER_MODEL,
+    keep_audio: bool = DEFAULT_KEEP_AUDIO,
+    max_workers: int = DEFAULT_MAX_WORKERS,
 ) -> None:
     """Execute Stage 1 raw ingestion pipeline."""
     playlist_urls = []
@@ -43,12 +50,12 @@ def run_cresmo_ingestion(
         print(f"[Stage 1 Ingestion] No seed URLs found in {playlist_path}. Exiting.")
         return
 
-    print(f"==================================================")
-    print(f"🚀 Cresmo Stage 1: Ingesting Raw Transcripts")
+    print("==================================================")
+    print("🚀 Cresmo Stage 1: Ingesting Raw Transcripts")
     print(f"   Target Channels: {len(playlist_urls)}")
     print(f"   Output Directory: {output_dir}")
     print(f"   Days Limit: {days}")
-    print(f"==================================================")
+    print("==================================================")
 
     sync_channels.sync_channels_and_seeds(
         days=days,
@@ -64,13 +71,13 @@ def run_cresmo_ingestion(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Cresmo Stage 1 Ingestion CLI")
-    parser.add_argument("--playlist", default=str(CRESMO_ROOT / "playlist.txt"), help="Path to playlist seed text file")
-    parser.add_argument("--csv", default=str(CRESMO_ROOT / "brain.csv"), help="Path to brain metadata CSV")
+    parser.add_argument("--playlist", default=str(DEFAULT_PLAYLIST_FILE), help="Path to playlist seed text file")
+    parser.add_argument("--csv", default=str(DEFAULT_BRAIN_CSV), help="Path to brain metadata CSV")
     parser.add_argument("--raw-dir", default=str(DEFAULT_RAW_DIR), help="Path to raw output directory")
-    parser.add_argument("--days", type=int, default=30, help="Number of days to search back for uploads")
-    parser.add_argument("--model", default="base", help="Whisper fallback model size")
-    parser.add_argument("--keep-audio", action="store_true", help="Keep downloaded audio files")
-    parser.add_argument("--max-workers", type=int, default=1, help="Max parallel worker threads")
+    parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help="Number of days to search back for uploads")
+    parser.add_argument("--model", default=DEFAULT_WHISPER_MODEL, help="Whisper fallback model size")
+    parser.add_argument("--keep-audio", action="store_true", default=DEFAULT_KEEP_AUDIO, help="Keep downloaded audio files")
+    parser.add_argument("--max-workers", type=int, default=DEFAULT_MAX_WORKERS, help="Max parallel worker threads")
 
     args = parser.parse_args()
 

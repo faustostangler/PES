@@ -14,8 +14,14 @@ import argparse
 from pathlib import Path
 import sys
 
-
-DEFAULT_MAX_WORDS = 500_000
+# --- Constants & Defaults ---
+DEFAULT_MAX_WORDS: int = 500_000
+DEFAULT_ENRICHED_SUBDIR: str = "enriched"
+DEFAULT_MASTER_SUBDIR: str = "master"
+MARKDOWN_EXTENSION_GLOB: str = "*.md"
+CHUNK_SEPARATOR: str = "\n\n---\n\n"
+FILE_ENCODING: str = "utf-8"
+FALLBACK_ENCODING_ERRORS: str = "replace"
 
 
 def count_words(text: str) -> int:
@@ -68,7 +74,7 @@ def concatenate_folder(
         A list of tuples containing (written_file_path, word_count).
     """
     folder_name = folder_path.name
-    md_files = sorted(folder_path.glob("*.md"))
+    md_files = sorted(folder_path.glob(MARKDOWN_EXTENSION_GLOB))
 
     if not md_files:
         print(f"  [SKIP] No .md files found in '{folder_path}'")
@@ -85,9 +91,9 @@ def concatenate_folder(
 
     for md_file in md_files:
         try:
-            content = md_file.read_text(encoding="utf-8")
+            content = md_file.read_text(encoding=FILE_ENCODING)
         except UnicodeDecodeError:
-            content = md_file.read_text(encoding="utf-8", errors="replace")
+            content = md_file.read_text(encoding=FILE_ENCODING, errors=FALLBACK_ENCODING_ERRORS)
 
         # Strip trailing/leading spaces to keep consistent formatting
         content = content.strip()
@@ -135,8 +141,8 @@ def concatenate_folder(
     for idx, chunk in enumerate(valid_chunks, start=1):
         filename = f"{folder_name}-{idx}.md" if is_multi_part else f"{folder_name}.md"
         target_path = output_dir / filename
-        merged_text = "\n\n---\n\n".join(chunk) + "\n"
-        target_path.write_text(merged_text, encoding="utf-8")
+        merged_text = CHUNK_SEPARATOR.join(chunk) + "\n"
+        target_path.write_text(merged_text, encoding=FILE_ENCODING)
 
         total_words = count_words(merged_text)
         written_files.append((target_path, total_words))
@@ -195,13 +201,13 @@ def main() -> None:
     parser.add_argument(
         "--enriched-dir",
         type=Path,
-        default=base_dir / "enriched",
+        default=base_dir / DEFAULT_ENRICHED_SUBDIR,
         help="Path to the enriched directory containing subfolders.",
     )
     parser.add_argument(
         "--master-dir",
         type=Path,
-        default=base_dir / "master",
+        default=base_dir / DEFAULT_MASTER_SUBDIR,
         help="Path to the master output directory.",
     )
     parser.add_argument(

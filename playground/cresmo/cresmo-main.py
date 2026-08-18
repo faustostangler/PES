@@ -8,8 +8,8 @@ Provides a single CLI interface to run individual stages or the full Cresmo pipe
 """
 
 import argparse
-import sys
 from pathlib import Path
+import sys
 
 # Ensure script directory is in sys.path
 sys.path.insert(0, str(Path(__file__).parent.resolve()))
@@ -18,21 +18,25 @@ from cresmo_ingestion import run_cresmo_ingestion
 from cresmo_pipeline import run_cresmo_pipeline
 from cresmo_shared import (
     CRESMO_ROOT,
+    DEFAULT_BRAIN_CSV,
+    DEFAULT_COOKIES_FILE,
     DEFAULT_CRESMO_DIR,
     DEFAULT_ENRICHED_DIR,
+    DEFAULT_PLAYLIST_FILE,
     DEFAULT_RAW_DIR,
 )
 from export_cookies import ensure_cookies
 
+# --- CLI & Pipeline Defaults ---
+DEFAULT_DAYS: int = 30
+DEFAULT_WHISPER_MODEL: str = "base"
+DEFAULT_MAX_WORKERS: int = 1
+DEFAULT_KEEP_AUDIO: bool = False
+DEFAULT_ISOLATE_CONTEXT: bool = True
+DEFAULT_RESTART_SERVER: bool = False
+DEFAULT_COMMAND: str = "full"
 
-def main() -> None:
-    # Ensure fresh Netscape cookies file is active and present for ingestion & yt-dlp
-    ensure_cookies(output_file=CRESMO_ROOT / ".yt_dlp_cookies.txt", verbose=True)
-
-    parser = argparse.ArgumentParser(
-        description="Cresmo Unified Entrypoint CLI",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+CLI_EPILOG_EXAMPLES: str = """
 Examples:
   # Run Stage 1 Raw Ingestion only
   .venv/bin/python playground/cresmo/cresmo-main.py sync --days 14
@@ -42,20 +46,30 @@ Examples:
 
   # Run FULL End-to-End Pipeline (Sync + Process)
   .venv/bin/python playground/cresmo/cresmo-main.py full --days 7 --limit 10
-""",
+"""
+
+
+def main() -> None:
+    # Ensure fresh Netscape cookies file is active and present for ingestion & yt-dlp
+    ensure_cookies(output_file=DEFAULT_COOKIES_FILE, verbose=True)
+
+    parser = argparse.ArgumentParser(
+        description="Cresmo Unified Entrypoint CLI",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=CLI_EPILOG_EXAMPLES,
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
     # --- Sync Subcommand (Stage 1) ---
     sync_parser = subparsers.add_parser("sync", help="Run Stage 1 Raw Ingestion")
-    sync_parser.add_argument("--playlist", default=str(CRESMO_ROOT / "playlist.txt"), help="Path to seed playlist file")
-    sync_parser.add_argument("--csv", default=str(CRESMO_ROOT / "brain.csv"), help="Path to brain metadata CSV")
+    sync_parser.add_argument("--playlist", default=str(DEFAULT_PLAYLIST_FILE), help="Path to seed playlist file")
+    sync_parser.add_argument("--csv", default=str(DEFAULT_BRAIN_CSV), help="Path to brain metadata CSV")
     sync_parser.add_argument("--raw-dir", default=str(DEFAULT_RAW_DIR), help="Path to raw output directory")
-    sync_parser.add_argument("--days", type=int, default=30, help="Days limit to check back")
-    sync_parser.add_argument("--model", default="base", help="Whisper fallback model size")
-    sync_parser.add_argument("--keep-audio", action="store_true", help="Keep downloaded audio files")
-    sync_parser.add_argument("--max-workers", type=int, default=1, help="Max worker threads")
+    sync_parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help="Days limit to check back")
+    sync_parser.add_argument("--model", default=DEFAULT_WHISPER_MODEL, help="Whisper fallback model size")
+    sync_parser.add_argument("--keep-audio", action="store_true", default=DEFAULT_KEEP_AUDIO, help="Keep downloaded audio files")
+    sync_parser.add_argument("--max-workers", type=int, default=DEFAULT_MAX_WORKERS, help="Max worker threads")
 
     # --- Process Subcommand (Stages 2 -> 6) ---
     process_parser = subparsers.add_parser("process", help="Run Stages 2->6 Cresmo Skills Pipeline")
@@ -67,55 +81,55 @@ Examples:
     process_parser.add_argument(
         "--isolate-context",
         action=argparse.BooleanOptionalAction,
-        default=True,
+        default=DEFAULT_ISOLATE_CONTEXT,
         help="Purge session transcript and message history before each dispatch to isolate context (default: True)",
     )
     process_parser.add_argument(
         "--restart-server",
         action="store_true",
-        default=False,
+        default=DEFAULT_RESTART_SERVER,
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
 
     # --- Full Subcommand (Stage 1 -> Stage 6) ---
     full_parser = subparsers.add_parser("full", help="Run FULL end-to-end pipeline (Sync + Process)")
-    full_parser.add_argument("--playlist", default=str(CRESMO_ROOT / "playlist.txt"), help="Path to seed playlist file")
-    full_parser.add_argument("--csv", default=str(CRESMO_ROOT / "brain.csv"), help="Path to brain metadata CSV")
+    full_parser.add_argument("--playlist", default=str(DEFAULT_PLAYLIST_FILE), help="Path to seed playlist file")
+    full_parser.add_argument("--csv", default=str(DEFAULT_BRAIN_CSV), help="Path to brain metadata CSV")
     full_parser.add_argument("--raw-dir", default=str(DEFAULT_RAW_DIR), help="Path to raw transcriptions directory")
     full_parser.add_argument("--enriched-dir", default=str(DEFAULT_ENRICHED_DIR), help="Path to enriched directory")
     full_parser.add_argument("--cresmo-dir", default=str(DEFAULT_CRESMO_DIR), help="Path to Cresmo vault root directory")
-    full_parser.add_argument("--days", type=int, default=30, help="Days limit to check back for ingestion")
-    full_parser.add_argument("--model", default="base", help="Whisper fallback model size")
+    full_parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help="Days limit to check back for ingestion")
+    full_parser.add_argument("--model", default=DEFAULT_WHISPER_MODEL, help="Whisper fallback model size")
     full_parser.add_argument("--limit", type=int, default=None, help="Limit number of videos to process in pipeline")
     full_parser.add_argument("--force", "-f", action="store_true", help="Force re-processing of completed videos")
     full_parser.add_argument(
         "--isolate-context",
         action=argparse.BooleanOptionalAction,
-        default=True,
+        default=DEFAULT_ISOLATE_CONTEXT,
         help="Purge session transcript and message history before each dispatch to isolate context (default: True)",
     )
     full_parser.add_argument(
         "--restart-server",
         action="store_true",
-        default=False,
+        default=DEFAULT_RESTART_SERVER,
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
 
     args = parser.parse_args()
 
     if not args.command:
-        args.command = "full"
-        args.playlist = getattr(args, "playlist", str(CRESMO_ROOT / "playlist.txt"))
-        args.csv = getattr(args, "csv", str(CRESMO_ROOT / "brain.csv"))
+        args.command = DEFAULT_COMMAND
+        args.playlist = getattr(args, "playlist", str(DEFAULT_PLAYLIST_FILE))
+        args.csv = getattr(args, "csv", str(DEFAULT_BRAIN_CSV))
         args.raw_dir = getattr(args, "raw_dir", str(DEFAULT_RAW_DIR))
         args.enriched_dir = getattr(args, "enriched_dir", str(DEFAULT_ENRICHED_DIR))
         args.cresmo_dir = getattr(args, "cresmo_dir", str(DEFAULT_CRESMO_DIR))
-        args.days = getattr(args, "days", 30)
-        args.model = getattr(args, "model", "base")
+        args.days = getattr(args, "days", DEFAULT_DAYS)
+        args.model = getattr(args, "model", DEFAULT_WHISPER_MODEL)
         args.limit = getattr(args, "limit", None)
         args.force = getattr(args, "force", False)
-        args.isolate_context = getattr(args, "isolate_context", True)
-        args.restart_server = getattr(args, "restart_server", True)
+        args.isolate_context = getattr(args, "isolate_context", DEFAULT_ISOLATE_CONTEXT)
+        args.restart_server = getattr(args, "restart_server", DEFAULT_RESTART_SERVER)
 
     if args.command == "sync":
         run_cresmo_ingestion(

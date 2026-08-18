@@ -14,6 +14,7 @@ import http.cookiejar
 from pathlib import Path
 import re
 import sys
+import time
 
 try:
     import yt_dlp.cookies
@@ -21,15 +22,44 @@ except ImportError:
     print("Error: yt-dlp is required. Install it with: pip install yt-dlp", file=sys.stderr)
     sys.exit(1)
 
-SUPPORTED_BROWSERS = ["firefox", "chrome", "chromium", "brave", "edge", "opera", "vivaldi"]
-DEFAULT_COOKIE_FILE = Path(__file__).parent / ".yt_dlp_cookies.txt"
+# --- Browser & Cookie Defaults ---
+SUPPORTED_BROWSERS: list[str] = ["firefox", "chrome", "chromium", "brave", "edge", "opera", "vivaldi"]
+DEFAULT_COOKIE_FILE: Path = Path(__file__).parent.resolve() / ".yt_dlp_cookies.txt"
+DEFAULT_TARGET_DOMAINS: tuple[str, ...] = ("youtube.com", "google.com", "ytimg.com")
+IGNORED_SUBDOMAINS: tuple[str, ...] = (
+    "takeout",
+    "docs",
+    "mail",
+    "drive",
+    "cloud",
+    "meet",
+    "chat",
+    "play",
+    "store",
+    "admin",
+    "sites",
+    "groups",
+    "photos",
+)
+BROWSER_PRIORITY_ORDER: list[str] = ["chrome", "chromium", "firefox", "brave", "edge"]
+DEFAULT_MAX_AGE_HOURS: int = 12
+
+# --- Cookie Validation Limits ---
+MAX_COOKIE_NAME_LENGTH: int = 200
+MAX_COOKIE_VALUE_LENGTH: int = 2000
+MAX_COOKIE_EXPIRY: int = 2147483647
+MIN_COOKIE_FILE_BYTES: int = 50
+
+# --- Compiled Regexes ---
+COOKIE_NAME_REGEX: re.Pattern[str] = re.compile(r"^[!-~]+$")
+COOKIE_VALUE_REGEX: re.Pattern[str] = re.compile(r"^[ -~]+$")
 
 
 def export_cookies_from_browser(
     browser: str,
     output_file: Path | str = DEFAULT_COOKIE_FILE,
-    domains: tuple[str, ...] = ("youtube.com", "google.com", "ytimg.com"),
-    verbose: bool = True
+    domains: tuple[str, ...] = DEFAULT_TARGET_DOMAINS,
+    verbose: bool = True,
 ) -> bool:
     """Extract cookies from a single browser and save to Netscape cookie file."""
     output_path = Path(output_file).resolve()
@@ -59,20 +89,20 @@ def export_cookies_from_browser(
             continue
 
         # Skip noise subdomains
-        if any(sub in domain for sub in ("takeout", "docs", "mail", "drive", "cloud", "meet", "chat", "play", "store", "admin", "sites", "groups", "photos")):
+        if any(sub in domain for sub in IGNORED_SUBDOMAINS):
             continue
 
         # Crucial check: Cookie value MUST be non-empty (filters encrypted/locked entries)
         if not c.name or not c.value or len(c.value.strip()) == 0:
             continue
 
-        if len(c.name) > 200 or len(c.value) > 2000:
+        if len(c.name) > MAX_COOKIE_NAME_LENGTH or len(c.value) > MAX_COOKIE_VALUE_LENGTH:
             continue
-        if not re.match(r"^[!-~]+$", c.name) or not re.match(r"^[ -~]+$", c.value):
+        if not COOKIE_NAME_REGEX.match(c.name) or not COOKIE_VALUE_REGEX.match(c.value):
             continue
 
-        if c.expires and c.expires > 2147483647:
-            c.expires = 2147483647
+        if c.expires and c.expires > MAX_COOKIE_EXPIRY:
+            c.expires = MAX_COOKIE_EXPIRY
 
         mcj.set_cookie(c)
         valid_count += 1
@@ -98,17 +128,14 @@ def export_cookies_from_browser(
 
 def export_cookies_auto(
     output_file: Path | str = DEFAULT_COOKIE_FILE,
-    verbose: bool = True
+    verbose: bool = True,
 ) -> bool:
     """Scan all installed browsers and save the best set of unencrypted YouTube cookies."""
     output_path = Path(output_file).resolve()
     if verbose:
-        print(f"🚀 [Cookie Exporter] Auto-refreshing YouTube authentication cookies...")
+        print("🚀 [Cookie Exporter] Auto-refreshing YouTube authentication cookies...")
 
-    # Firefox is checked first on Linux as it doesn't suffer from keyring locks
-    priority_order = ["chrome", "chromium", "firefox", "brave", "edge"]
-    
-    for browser in priority_order:
+    for browser in BROWSER_PRIORITY_ORDER:
         if export_cookies_from_browser(browser=browser, output_file=output_path, verbose=verbose):
             if verbose:
                 print(f"✓ Cookies successfully configured for pipeline: {output_path.name}\n")
@@ -119,18 +146,23 @@ def export_cookies_auto(
     return False
 
 
-def ensure_cookies(output_file: Path | str = DEFAULT_COOKIE_FILE, max_age_hours: int = 12, verbose: bool = False) -> None:
+def ensure_cookies(
+    output_file: Path | str = DEFAULT_COOKIE_FILE,
+    max_age_hours: int = DEFAULT_MAX_AGE_HOURS,
+    verbose: bool = False,
+) -> None:
     """Ensure a valid cookie file exists. Refreshes if missing or older than max_age_hours."""
     out_p = Path(output_file).resolve()
     should_refresh = True
 
-    if not out_p.exists() or out_p.stat().st_size < 50:
+    if not out_p.exists() or out_p.stat().st_size < MIN_COOKIE_FILE_BYTES:
         should_refresh = True
     else:
-        import time
         age_seconds = time.time() - out_p.stat().st_mtime
         if age_seconds > (max_age_hours * 3600):
             should_refresh = True
+        else:
+            should_refresh = False
 
     if should_refresh:
         export_cookies_auto(output_file=out_p, verbose=verbose)
@@ -143,13 +175,13 @@ def main() -> None:
         type=str,
         default="auto",
         choices=["auto"] + SUPPORTED_BROWSERS,
-        help="Specific browser to extract from, or 'auto' (default: auto)."
+        help="Specific browser to extract from, or 'auto' (default: auto).",
     )
     parser.add_argument(
         "--output", "-o",
         type=str,
         default=str(DEFAULT_COOKIE_FILE),
-        help=f"Destination Netscape file path (default: {DEFAULT_COOKIE_FILE})."
+        help=f"Destination Netscape file path (default: {DEFAULT_COOKIE_FILE}).",
     )
 
     args = parser.parse_args()

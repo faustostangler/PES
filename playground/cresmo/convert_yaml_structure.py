@@ -5,7 +5,18 @@ type, content, domain, cluster, source, aliases (without tags: or type/ tag)."""
 from pathlib import Path
 import re
 
-WIKI_DIR = Path("/mnt/gamer_d/Fausto Stangler/Documentos/Python/PES/playground/cresmo/wiki")
+# --- Constants & Defaults ---
+DEFAULT_WIKI_DIR: Path = Path(__file__).parent.resolve() / "wiki"
+TAG_TYPE_PREFIX: str = "type/"
+TAG_CONTENT_PREFIX: str = "content/"
+TAG_DOMAIN_PREFIX: str = "domain/"
+TAG_CLUSTER_PREFIX: str = "cluster/"
+TAG_SOURCE_PREFIX: str = "source/"
+
+# --- Compiled Regexes ---
+INLINE_TAGS_PATTERN: re.Pattern[str] = re.compile(r"^tags:\s*\[(.*)\]$")
+YAML_KEY_PATTERN: re.Pattern[str] = re.compile(r"^[a-zA-Z0-9_-]+:")
+
 
 def transform_frontmatter(content: str) -> str:
     """Transform YAML frontmatter from old tags-based format to new structured format."""
@@ -47,22 +58,22 @@ def transform_frontmatter(content: str) -> str:
             in_aliases = True
             continue
 
-        if line.startswith("domain:") and not line.startswith("domain/"):
+        if line.startswith("domain:") and not line.startswith(TAG_DOMAIN_PREFIX):
             domain_val = line.split(":", 1)[1].strip()
             in_tags = False
             continue
 
-        if line.startswith("cluster:") and not line.startswith("cluster/"):
+        if line.startswith("cluster:") and not line.startswith(TAG_CLUSTER_PREFIX):
             cluster_val = line.split(":", 1)[1].strip()
             in_tags = False
             continue
 
-        if line.startswith("source:") and not line.startswith("source/"):
+        if line.startswith("source:") and not line.startswith(TAG_SOURCE_PREFIX):
             source_val = line.split(":", 1)[1].strip()
             in_tags = False
             continue
 
-        if line.startswith("content:") and not line.startswith("content/"):
+        if line.startswith("content:") and not line.startswith(TAG_CONTENT_PREFIX):
             in_tags = False
             continue
 
@@ -70,7 +81,7 @@ def transform_frontmatter(content: str) -> str:
             in_tags = True
             in_aliases = False
             # Check inline list tags: [tag1, tag2]
-            inline_match = re.match(r"^tags:\s*\[(.*)\]$", line)
+            inline_match = INLINE_TAGS_PATTERN.match(line)
             if inline_match:
                 raw_tags = [t.strip().strip("'\"") for t in inline_match.group(1).split(",")]
                 for tag in raw_tags:
@@ -79,7 +90,7 @@ def transform_frontmatter(content: str) -> str:
             continue
 
         if in_tags:
-            if re.match(r"^[a-zA-Z0-9_-]+:", line):
+            if YAML_KEY_PATTERN.match(line):
                 in_tags = False
                 continue
 
@@ -133,25 +144,24 @@ def transform_frontmatter(content: str) -> str:
     return f"---{chr(10)}{new_frontmatter}{chr(10)}---{body}"
 
 
-def process_tag(tag: str, content_list: list) -> tuple[str, str, str]:
+def process_tag(tag: str, content_list: list, domain_hint: str = "", cluster_hint: str = "", source_hint: str = "") -> tuple[str, str, str]:
     """Parse single tag item and assign to appropriate field."""
-    domain_val = ""
-    cluster_val = ""
-    source_val = ""
+    domain_val = domain_hint
+    cluster_val = cluster_hint
+    source_val = source_hint
 
-    if tag.startswith("type/"):
-        # Ignore type/ tag
+    if tag.startswith(TAG_TYPE_PREFIX):
         pass
-    elif tag.startswith("content/"):
-        item = tag[len("content/"):].strip()
+    elif tag.startswith(TAG_CONTENT_PREFIX):
+        item = tag[len(TAG_CONTENT_PREFIX):].strip()
         if item:
             content_list.append(item)
-    elif tag.startswith("domain/"):
-        domain_val = tag[len("domain/"):].strip()
-    elif tag.startswith("cluster/"):
-        cluster_val = tag[len("cluster/"):].strip()
-    elif tag.startswith("source/"):
-        source_val = tag[len("source/"):].strip()
+    elif tag.startswith(TAG_DOMAIN_PREFIX):
+        domain_val = tag[len(TAG_DOMAIN_PREFIX):].strip()
+    elif tag.startswith(TAG_CLUSTER_PREFIX):
+        cluster_val = tag[len(TAG_CLUSTER_PREFIX):].strip()
+    elif tag.startswith(TAG_SOURCE_PREFIX):
+        source_val = tag[len(TAG_SOURCE_PREFIX):].strip()
     else:
         # Generic tag becomes content tag
         if tag:
@@ -160,8 +170,8 @@ def process_tag(tag: str, content_list: list) -> tuple[str, str, str]:
     return domain_val, cluster_val, source_val
 
 
-def main():
-    md_files = list(WIKI_DIR.rglob("*.md"))
+def main(wiki_dir: Path = DEFAULT_WIKI_DIR) -> None:
+    md_files = list(wiki_dir.rglob("*.md"))
     modified_count = 0
 
     print(f"Converting YAML frontmatter in {len(md_files)} markdown files...")
@@ -172,7 +182,7 @@ def main():
         if new_text != text:
             md_file.write_text(new_text, encoding="utf-8")
             modified_count += 1
-            print(f"  ✓ Transformed: {md_file.relative_to(WIKI_DIR)}")
+            print(f"  ✓ Transformed: {md_file.relative_to(wiki_dir)}")
 
     print(f"\nDone! Successfully transformed {modified_count} out of {len(md_files)} files.")
 
