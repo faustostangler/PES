@@ -230,16 +230,16 @@ def execute_stage3_atomic_notes(
     force: bool = False,
     isolate_context: bool = True,
     restart_server: bool = False,
-) -> Path:
-    """Stage 3 & 4: Atomic Note Generation & File Proliferation (cresmo-atomic)."""
+) -> tuple[Path, bool]:
+    """Stage 3: Atomic Note Generation (cresmo-atomic). Returns (xml_file, is_newly_generated)."""
     video_id = meta.get("video_id", enriched_file.stem)
     xml_output_file = enriched_file.parent / f"{video_id}.xml"
 
     if not force and xml_output_file.exists() and xml_output_file.stat().st_size > MIN_VALID_OUTPUT_BYTES:
-        return xml_output_file
+        return xml_output_file, False
 
     if not enriched_file.exists():
-        return xml_output_file
+        return xml_output_file, False
 
     enriched_text = enriched_file.read_text(encoding="utf-8")
     skill_doc = SKILL_ATOMIC_PATH.read_text(encoding="utf-8") if SKILL_ATOMIC_PATH.exists() else ""
@@ -274,15 +274,16 @@ def execute_stage3_atomic_notes(
             and xml_output_file.stat().st_size > MIN_VALID_OUTPUT_BYTES
         ):
             print(f"  ✓ [Stage 3 Success] Atomic XML generated -> {xml_output_file}")
-            return xml_output_file
+            return xml_output_file, True
         time.sleep(POLL_SLEEP_SECONDS)
 
     content = fetch_trajectory_response(session_id, TAG_XML_OPEN, TAG_XML_CLOSE)
     if content:
         xml_output_file.write_text(content, encoding="utf-8")
         print(f"  ✓ [Stage 3 Fallback Success] Saved Atomic XML -> {xml_output_file}")
+        return xml_output_file, True
 
-    return xml_output_file
+    return xml_output_file, False
 
 
 def normalize_yaml_tags(content: str) -> str:
@@ -508,8 +509,13 @@ def parse_and_proliferate_xml_notes(
         type_dir.mkdir(parents=True, exist_ok=True)
 
         note_file = type_dir / f"{clean_title}.md"
-        note_file.write_text(block, encoding="utf-8")
-        created_files.append(note_file)
+
+        # Non-destructive preservation: Only write if note does not exist, or force is True
+        if not note_file.exists() or force:
+            note_file.write_text(block, encoding="utf-8")
+            created_files.append(note_file)
+        else:
+            print(f"  ℹ [Vault Match] '{clean_title}.md' already exists in vault -> preserved for Stage 5/6 incremental merging")
 
         # Update index entry
         rel_path = f"{note_type}/{clean_title}.md"
@@ -521,9 +527,12 @@ def parse_and_proliferate_xml_notes(
             "aliases": combined_aliases,
         }
 
-    if len(created_files) > 0:
+    if len(created_files) > 0 or len(note_blocks) > 0:
         index_file.write_text(json.dumps(index_data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"  ✓ [Proliferation] Unpacked {len(created_files)} individual atomic .md note(s) & updated {INDEX_JSON_FILENAME} in {cresmo_wiki_dir}")
+        if created_files:
+            print(f"  ✓ [Proliferation] Unpacked {len(created_files)} new atomic .md note(s) & updated {INDEX_JSON_FILENAME} in {cresmo_wiki_dir}")
+        else:
+            print(f"  ✓ [Proliferation] All {len(note_blocks)} note(s) already existed in vault & updated {INDEX_JSON_FILENAME}")
 
     return created_files
 
@@ -658,7 +667,7 @@ def process_candidate_blocks(
         )
 
         # Stage 3 & 4: Atomic Generator & Proliferation
-        xml_file = execute_stage3_atomic_notes(
+        xml_file, is_newly_generated = execute_stage3_atomic_notes(
             enriched_file,
             meta,
             session_id,
@@ -667,7 +676,10 @@ def process_candidate_blocks(
             isolate_context=isolate_context,
             restart_server=restart_server,
         )
-        parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
+        if is_newly_generated:
+            parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
+        else:
+            print(f"  ℹ [Stage 4 Skip] XML already exists/cached ({xml_file.name}) -> skipping file proliferation to protect vault")
 
         # Stage 5 & 6: MOC Manager & Graph Reconciliation
         execute_stage56_moc_manager(
