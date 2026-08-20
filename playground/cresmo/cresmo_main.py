@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Cresmo Unified GOD Main Entrypoint (cresmo-main.py).
+"""Cresmo Unified GOD Main Entrypoint (cresmo_main.py).
 
 Provides a single CLI interface to run individual stages or the full Cresmo pipeline:
-- `python cresmo-main.py sync`     : Runs Stage 1 Raw Ingestion.
-- `python cresmo-main.py process`  : Runs Stages 2 through 6 Cresmo Skills Pipeline.
-- `python cresmo-main.py full`     : Runs the complete end-to-end flow (Stage 1 Ingestion -> Stage 2-6 Pipeline).
+- `python cresmo_main.py sync`     : Runs Stage 1 Raw Ingestion.
+- `python cresmo_main.py process`  : Runs Stages 2 through 6 Cresmo Skills Pipeline.
+- `python cresmo_main.py full`     : Runs the complete end-to-end flow (Stage 1 Ingestion -> Stage 2-6 Pipeline).
 """
 
 import argparse
@@ -19,6 +19,7 @@ from cresmo_pipeline import run_cresmo_pipeline
 from cresmo_shared import (
     CRESMO_ROOT,
     DEFAULT_BRAIN_CSV,
+    DEFAULT_CATEGORIES,
     DEFAULT_COOKIES_FILE,
     DEFAULT_CRESMO_DIR,
     DEFAULT_ENRICHED_DIR,
@@ -39,13 +40,19 @@ DEFAULT_COMMAND: str = "full"
 CLI_EPILOG_EXAMPLES: str = """
 Examples:
   # Run Stage 1 Raw Ingestion only
-  .venv/bin/python playground/cresmo/cresmo-main.py sync --days 14
+  .venv/bin/python playground/cresmo/cresmo_main.py sync --days 14
 
   # Run Stage 2->6 Pipeline on downloaded raw transcripts
-  .venv/bin/python playground/cresmo/cresmo-main.py process --limit 5
+  .venv/bin/python playground/cresmo/cresmo_main.py process --limit 5
 
-  # Run FULL End-to-End Pipeline (Sync + Process)
-  .venv/bin/python playground/cresmo/cresmo-main.py full --days 7 --limit 10
+  # Run Stage 2->6 Pipeline filtered by category (e.g. politics_br)
+  .venv/bin/python playground/cresmo/cresmo_main.py process --category politics_br --limit 5
+
+  # Run Stage 2->6 Pipeline filtered by multiple categories
+  .venv/bin/python playground/cresmo/cresmo_main.py process --category politics_br,tech_ai
+
+  # Run FULL End-to-End Pipeline (Sync + Process) filtered by category
+  .venv/bin/python playground/cresmo/cresmo_main.py full --days 7 --category politics_br --limit 10
 """
 
 
@@ -76,6 +83,13 @@ def main() -> None:
     process_parser.add_argument("--raw-dir", default=str(DEFAULT_RAW_DIR), help="Path to raw transcriptions directory")
     process_parser.add_argument("--enriched-dir", default=str(DEFAULT_ENRICHED_DIR), help="Path to enriched directory")
     process_parser.add_argument("--cresmo-dir", default=str(DEFAULT_CRESMO_DIR), help="Path to Cresmo vault root directory")
+    process_parser.add_argument(
+        "--category", "--categories", "-c",
+        dest="categories",
+        nargs="+",
+        default=list(DEFAULT_CATEGORIES),
+        help="Filter videos by category (default: 'politics_br,tech_ai'. Use 'all' for all categories)",
+    )
     process_parser.add_argument("--limit", type=int, default=None, help="Limit number of videos to process")
     process_parser.add_argument("--force", "-f", action="store_true", help="Force re-processing of completed videos")
     process_parser.add_argument(
@@ -100,6 +114,13 @@ def main() -> None:
     full_parser.add_argument("--cresmo-dir", default=str(DEFAULT_CRESMO_DIR), help="Path to Cresmo vault root directory")
     full_parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help="Days limit to check back for ingestion")
     full_parser.add_argument("--model", default=DEFAULT_WHISPER_MODEL, help="Whisper fallback model size")
+    full_parser.add_argument(
+        "--category", "--categories", "-c",
+        dest="categories",
+        nargs="+",
+        default=list(DEFAULT_CATEGORIES),
+        help="Filter videos by category (default: 'politics_br,tech_ai'. Use 'all' for all categories)",
+    )
     full_parser.add_argument("--limit", type=int, default=None, help="Limit number of videos to process in pipeline")
     full_parser.add_argument("--force", "-f", action="store_true", help="Force re-processing of completed videos")
     full_parser.add_argument(
@@ -126,6 +147,7 @@ def main() -> None:
         args.cresmo_dir = getattr(args, "cresmo_dir", str(DEFAULT_CRESMO_DIR))
         args.days = getattr(args, "days", DEFAULT_DAYS)
         args.model = getattr(args, "model", DEFAULT_WHISPER_MODEL)
+        args.categories = getattr(args, "categories", list(DEFAULT_CATEGORIES))
         args.limit = getattr(args, "limit", None)
         args.force = getattr(args, "force", False)
         args.isolate_context = getattr(args, "isolate_context", DEFAULT_ISOLATE_CONTEXT)
@@ -147,6 +169,7 @@ def main() -> None:
             raw_dir=Path(args.raw_dir),
             enriched_dir=Path(args.enriched_dir),
             cresmo_dir=Path(args.cresmo_dir),
+            categories=getattr(args, "categories", list(DEFAULT_CATEGORIES)),
             limit=args.limit,
             force=args.force,
             isolate_context=args.isolate_context,
@@ -158,6 +181,7 @@ def main() -> None:
             raw_dir=Path(args.raw_dir),
             enriched_dir=Path(args.enriched_dir),
             cresmo_dir=Path(args.cresmo_dir),
+            categories=getattr(args, "categories", list(DEFAULT_CATEGORIES)),
             limit=args.limit,
             force=args.force,
             isolate_context=args.isolate_context,

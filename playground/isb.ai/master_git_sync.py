@@ -13,7 +13,8 @@ from pathlib import Path
 ISB_ROOT = Path(__file__).parent.resolve()
 REPO_ROOT = ISB_ROOT.parent.parent
 CRESMO_ROOT = ISB_ROOT.parent / "cresmo"
-RAW_DIR = CRESMO_ROOT / "raw"
+CRESMO_RAW_DIR = CRESMO_ROOT / "raw"
+ISB_RAW_DIR = ISB_ROOT / "raw"
 ENRICHED_DIR = ISB_ROOT / "enriched"
 LOCK_FILE = REPO_ROOT / ".git" / "index.lock"
 
@@ -176,37 +177,40 @@ def stage_and_commit_file_list(
 
 
 def step1_commit_raw_channels() -> None:
-    """Finds and commits all channel text transcripts (.txt and .md) per channel in chunks."""
+    """Finds and commits all channel text transcripts (.txt and .md) per channel in chunks for both Cresmo and ISB.ai raw directories."""
     print("\n--- STEP 1: Staging & Committing Raw Channels ---")
-    if not RAW_DIR.exists():
-        print(f"Directory {RAW_DIR} does not exist.")
-        return
-
-    subdirs = sorted([d for d in RAW_DIR.iterdir() if d.is_dir()])
-    print(f"Found {len(subdirs)} channel directories in raw.")
-
+    raw_dirs = [("cresmo", CRESMO_RAW_DIR), ("isb.ai", ISB_RAW_DIR)]
     uncommitted_set = get_uncommitted_files_set()
     total_commits = 0
-    for idx, channel_dir in enumerate(subdirs, 1):
-        clear_lock()
-        channel_rel = str(channel_dir.relative_to(REPO_ROOT))
-        disk_files = [str(f.relative_to(REPO_ROOT)) for f in channel_dir.rglob("*") if f.is_file() and (f.suffix in [".txt", ".md"])]
-        uncommitted_channel = [f for f in uncommitted_set if f.startswith(channel_rel + "/")]
-        combined_paths = [REPO_ROOT / p for p in sorted(set(disk_files + uncommitted_channel))]
 
-        if not combined_paths:
+    for label, raw_dir in raw_dirs:
+        if not raw_dir.exists():
+            print(f"Directory {raw_dir} ({label}) does not exist. Skipping.")
             continue
 
-        prefix = f"sync(raw): '{channel_dir.name}'"
-        c_count, f_count, b_count = stage_and_commit_file_list(
-            combined_paths, commit_prefix=prefix, uncommitted_set=uncommitted_set
-        )
-        if c_count > 0:
-            print(
-                f"  [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': "
-                f"{f_count} committed changes ({format_bytes(b_count)}) -> {c_count} commits."
+        subdirs = sorted([d for d in raw_dir.iterdir() if d.is_dir()])
+        print(f"Found {len(subdirs)} channel directories in {label} raw.")
+
+        for idx, channel_dir in enumerate(subdirs, 1):
+            clear_lock()
+            channel_rel = str(channel_dir.relative_to(REPO_ROOT))
+            disk_files = [str(f.relative_to(REPO_ROOT)) for f in channel_dir.rglob("*") if f.is_file() and (f.suffix in [".txt", ".md"])]
+            uncommitted_channel = [f for f in uncommitted_set if f.startswith(channel_rel + "/")]
+            combined_paths = [REPO_ROOT / p for p in sorted(set(disk_files + uncommitted_channel))]
+
+            if not combined_paths:
+                continue
+
+            prefix = f"sync({label}/raw): '{channel_dir.name}'"
+            c_count, f_count, b_count = stage_and_commit_file_list(
+                combined_paths, commit_prefix=prefix, uncommitted_set=uncommitted_set
             )
-            total_commits += c_count
+            if c_count > 0:
+                print(
+                    f"  [{label}] [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': "
+                    f"{f_count} committed changes ({format_bytes(b_count)}) -> {c_count} commits."
+                )
+                total_commits += c_count
 
     print(f"Step 1 Complete: Created {total_commits} raw channel commits.")
 

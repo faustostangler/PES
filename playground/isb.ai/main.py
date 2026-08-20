@@ -78,43 +78,158 @@ def classify_channel(channel_name: str) -> tuple[str, str]:
     """
     name_clean = channel_name.lower().strip()
 
-    # Perennial channels
-    perennial_tech = {
-        "fabio akita", "lucas montano", "mano deyvin",
-        "matheus battisti - hora de codar", "chrome for developers",
-        "augusto galego", "onde eu clico"
-    }
-    perennial_ai = {
-        "sandeco channel - decomplicated ia", "inteligência mil grau",
-        "inteligencia mil grau"
+    # --- Category Sets ---
+    # [VOLATILE] politics_br: Brazilian political scenario, judiciary (STF/TSE/Congress), investigative journalism.
+    politics_br = {
+        "ancapsu", "alexandre garcia", "ana paula henkel", "andré marsiglia",
+        "andre marsiglia", "auriverde brasil", "band jornalismo", "brasil paralelo",
+        "canal tragicômico", "canal tragicomico", "claudio dantas", "cláudio dantas",
+        "cnn brasil", "cortes de direita", "deltan dallagnol", "estadão", "estadao",
+        "felipe moura brasil", "fernão lara mesquita", "fernao lara mesquita",
+        "folha de s.paulo", "folha de s. paulo", "folha de sao paulo",
+        "gazeta do povo", "ideias radicais", "josé nêumanne pinto",
+        "jose neumanne pinto", "leandro ruschel", "luís ernesto lacombe",
+        "luis ernesto lacombe", "metrópoles", "metropoles", "na direita cortes",
+        "nando moura", "o povo", "oiluiz tv", "paulo figueiredo show",
+        "renato battista", "revista oeste", "rádio cbn", "radio cbn",
+        "sbt news", "tv band rio", "veja+", "visão libertária", "visao libertaria",
+        "paulo baltokoski", "jeffrey chiquini", "spotniks",
     }
 
-    # Volatile channels
-    volatile_politics = {
-        "ancapsu", "andré marsiglia", "andre marsiglia", "deltan dallagnol",
-        "nando moura", "felipe moura brasil", "renato augusto",
-        "jeffrey chiquini", "leandro ruschel", "full texts"
+    # [VOLATILE] geopolitics: Foreign affairs, international armed conflicts, superpower strategy, diplomacy.
+    geopolitics = {
+        "behind asia", "china uncensored", "china unscripted", "heni ozi cukier",
+        "hoje no mundo militar", "knowledgia", "makarov",
+        "professor ricardo marcílio", "professor ricardo marcilio",
+        "serpentza", "spectacles", "world revolving",
     }
-    volatile_geo = {
-        "hoje no mundo militar", "ronnald hawk"
+
+    # [PERENNIAL] tech_ai: Artificial Intelligence, LLMs, software engineering, cloud, DevOps, dev ecosystem.
+    tech_ai = {
+        "ag grid", "ai engineer", "ai progbr", "ai search",
+        "anderson adelino | ia e automações", "anderson adelino | ia e automacoes",
+        "andrej karpathy", "augusto galego", "austin marchese", "ben ai",
+        "boot dev", "brain station", "chrome for developers", "cloud codes",
+        "cododev", "cole medin", "cyberflow", "código fonte tv", "codigo fonte tv",
+        "dataquest", "dev aprender | jhonatan de souza", "devops toolbox",
+        "eli rigobeli - ai", "estudio 68 by micah 6 ai", "estúdio 68 by micah 6 ai",
+        "fabio akita", "fábio akita", "filipe deschamps", "fireship",
+        "freecodecamp.org", "freecodecamp", "google deepmind", "google for developers",
+        "ibm technology", "italo diego teotonio", "ítalo diego teotônio",
+        "jeff geerling", "josé ángel ai", "jose angel ai", "julian goldie seo",
+        "lucas montano", "maestros da ia", "mano deyvin", "marie haynes",
+        "matheus battisti - hora de codar", "matheus battisti – hora de codar",
+        "mindmesh ai", "mischa van den burg", "nate friedman",
+        "nate herk | ai automation", "networkchuck", "neurix", "onde eu clico",
+        "privacy matters", "riley brown", "rob braxman tech", "safesrc",
+        "sandeco channel - decomplicated ia", "sandeep swadia",
+        "systemdr - scalable system design", "systemdr – scalable system design",
+        "tech with tim", "tool drop", "two minute papers",
+        "vini - ai coders academy", "vini – ai coders academy", "well pires",
+        "worldofai", "xperiun | data analytics", "yurirdev",
+        "inteligência mil grau", "inteligencia mil grau", "sancler miranda",
+        "ronnald hawk", "elton machado", "jeff su", "paul j lipsky", "ana jords",
     }
-    volatile_finance = {
-        "investidor sardinha l raul sena", "investidor sardinha",
+
+    # [PERENNIAL] finance: Financial markets, macroeconomics, Austrian economics, valuation, personal finance.
+    finance = {
+        "andrei jikh", "breno perrucho - jovens de negócios",
+        "breno perrucho – jovens de negócios", "breno perrucho - jovens de negocios",
+        "brian feroldi", "bruno perini - você mais rico",
+        "bruno perini – você mais rico", "bruno perini - voce mais rico",
+        "capital global", "clube do valor", "curioso mercado",
+        "dinheiro com você - por william ribeiro",
+        "dinheiro com você – por william ribeiro",
+        "dinheiro com voce - por william ribeiro", "dividendos news", "eo",
+        "exame", "fernando ulrich", "helio beltrão", "hélio beltrão",
+        "helio beltrao", "instituto mises brasil",
+        "investidor sardinha l raul sena", "investidor sardinha | raul sena",
+        "investidor sardinha", "market makers", "o conselho | flávio augusto",
+        "o conselho | flavio augusto", "o primo rico",
         "rafael quintanilha – quantbrasil", "rafael quintanilha - quantbrasil",
-        "world revolving"
+        "rafael quintanilha", "renato augusto", "tapa da mão invisível",
+        "tapa da mao invisivel", "conhecimento disruptivo", "adam erhart",
+        "bruno okamoto", "bruno ávila", "bruno avila",
     }
 
-    if name_clean in perennial_tech:
-        return "technology", "perennial"
-    elif name_clean in perennial_ai:
-        return "ai_data_science", "perennial"
-    elif name_clean in volatile_politics:
-        return "politics_law", "volatile"
-    elif name_clean in volatile_geo:
-        return "geopolitics_military", "volatile"
-    elif name_clean in volatile_finance:
-        return "finance_economics", "volatile"
+    # [PERENNIAL] engineering: Pure and applied math, physics, engineering disciplines, scientific outreach.
+    engineering = {
+        "3blue1brown", "anton petrov", "braintruffle", "ciência todo dia",
+        "ciencia todo dia", "engenheiro matheus", "floatheadphysics",
+        "hank green", "hindemburg melao jr.", "hindemburg melão jr.",
+        "infinitamente", "kurzgesagt – in a nutshell",
+        "kurzgesagt - in a nutshell", "matematizei", "practical engineering",
+        "real science", "scienceclic english", "simulation sandbox",
+        "somos míopes porque somos breves", "somos miopes porque somos breves",
+        "steve mould", "technology connections", "veritasium", "ponto em comum",
+    }
 
+    # [PERENNIAL] architecture: Architectural projects, interiors, sustainable construction, housing comparison.
+    architecture = {
+        "laion fernandes - arquitetura e interiores",
+        "laion fernandes – arquitetura e interiores", "planarq campos",
+        "ricardo molina usa", "ugreen consultoria e educação",
+        "ugreen consultoria e educacao",
+        "ugreen: decifrando a ciência das construções",
+        "ugreen: decifrando a ciencia das construcoes",
+    }
+
+    # [PERENNIAL] history: Ancient and modern history, archaeology, etymology, language evolution, historical docs.
+    history = {
+        "estranha história", "estranha historia", "etimosofia",
+        "história simples", "historia simples", "jaydone history",
+        "marcelo andrade", "periscopefilm", "robwords",
+        "study of antiquity and the middle ages", "the present past",
+        "words unravelled",
+    }
+
+    # [PERENNIAL] philosophy: Classical and modern philosophy, psychology, communication, negotiation, rhetoric.
+    philosophy = {
+        "a odisseia interior", "a psique", "big think", "clóvis de barros",
+        "clovis de barros", "design theory", "jefferson fisher",
+        "lara brenner", "marcos campos", "metaforando", "paulo cruz",
+        "sprouts", "descobri depois de adulta",
+        "descobri depois de adulta podcast", "ted-ed",
+    }
+
+    # [PERENNIAL] health: Preventive medicine, nutrition, metabolism, mental models, health, self-mastery.
+    health = {
+        "dr. bruno salles, phd | psicólogo & neurocientista",
+        "dr. bruno salles, phd | psicologo & neurocientista",
+        "chris voss & the black swan group", "el professor da oratória",
+        "el professor da oratoria", "ernesto reis", "rationality rules",
+        "arata academy", "artem kirsanov", "dr. eric berg dc",
+        "sajjaad khader", "sleepwise", "smarter while you sleep",
+    }
+
+    # [VOLATILE] entertainment: Cinema, series, TV backstage, television history, pop culture.
+    entertainment = {
+        "canal 90", "canal peewee", "nerd show", "ricardo feltrin",
+    }
+
+    # --- Classification Rules: (domain, category_type) ---
+    if name_clean in politics_br:
+        return "politics_br", "volatile"
+    elif name_clean in geopolitics:
+        return "geopolitics", "volatile"
+    elif name_clean in tech_ai:
+        return "tech_ai", "perennial"
+    elif name_clean in finance:
+        return "finance", "perennial"
+    elif name_clean in engineering:
+        return "engineering", "perennial"
+    elif name_clean in architecture:
+        return "architecture", "perennial"
+    elif name_clean in history:
+        return "history", "perennial"
+    elif name_clean in philosophy:
+        return "philosophy", "perennial"
+    elif name_clean in health:
+        return "health", "perennial"
+    elif name_clean in entertainment:
+        return "entertainment", "volatile"
+
+    # [VOLATILE] uncategorized: Fallback for all other channels
     return "uncategorized", "volatile"
 
 

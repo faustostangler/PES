@@ -269,24 +269,48 @@ def test_classify_channel():
 
     # Perennial channels
     domain, cat = classify_channel("Fabio Akita")
-    assert domain == "technology"
+    assert domain == "tech_ai"
     assert cat == "perennial"
 
     domain, cat = classify_channel("Sandeco Channel - Decomplicated IA")
-    assert domain == "ai_data_science"
+    assert domain == "tech_ai"
+    assert cat == "perennial"
+
+    domain, cat = classify_channel("Fernando Ulrich")
+    assert domain == "finance"
+    assert cat == "perennial"
+
+    domain, cat = classify_channel("3Blue1Brown")
+    assert domain == "engineering"
+    assert cat == "perennial"
+
+    domain, cat = classify_channel("PLANARQ CAMPOS")
+    assert domain == "architecture"
+    assert cat == "perennial"
+
+    domain, cat = classify_channel("Estranha História")
+    assert domain == "history"
+    assert cat == "perennial"
+
+    domain, cat = classify_channel("Clóvis de Barros")
+    assert domain == "philosophy"
+    assert cat == "perennial"
+
+    domain, cat = classify_channel("Dr. Bruno Salles, PhD | Psicólogo & Neurocientista")
+    assert domain == "health"
     assert cat == "perennial"
 
     # Volatile channels
     domain, cat = classify_channel("ANCAPSU")
-    assert domain == "politics_law"
+    assert domain == "politics_br"
     assert cat == "volatile"
 
     domain, cat = classify_channel("Hoje no Mundo Militar")
-    assert domain == "geopolitics_military"
+    assert domain == "geopolitics"
     assert cat == "volatile"
 
-    domain, cat = classify_channel("Investidor Sardinha l Raul Sena")
-    assert domain == "finance_economics"
+    domain, cat = classify_channel("Canal 90")
+    assert domain == "entertainment"
     assert cat == "volatile"
 
     # Fallback
