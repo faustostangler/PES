@@ -1,0 +1,115 @@
+---
+video_title: "O QUE REALMENTE ACONTECEU NA COLDCARD | E POR QUE DEMOROU 5 ANOS"
+video_id: yqmD2oA3h7w
+channel_name: "mano deyvin"
+channel_id: UC1VZDEtGNxfQzh7EYcD2frg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yqmD2oA3h7w
+video_date: 2026-08-07T15:00:09+00:00
+video_description: |
+  Um bug no gerador de números aleatórios (RNG) da Coldcard drenou 1.196 carteiras de Bitcoin em 41 minutos quase US$ 88 milhões. Neste vídeo eu abro o root cause, linha por
+  linha, e explico por que esse mesmo erro pode estar escondido no seu backend agora.
+  
+  ADVISORY OFICIAL (leia se você tem Coldcard Mk2/Mk3 correção no firmware 4.2.0):
+  https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/
+  
+  Root cause técnico (Block Engineering) — a checagem errada da flag e o fallback pro gerador determinístico:
+  https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware
+  
+  
+  ⭐ Seja membro do canal: https://www.youtube.com/channel/UC1VZDEtGNxfQzh7EYcD2frg/join
+  📸 Instagram: https://instagram.com/manodeyvin
+  📌 Canal de cortes: https://www.youtube.com/@cortesdomanoofc
+  
+  FONTES
+  
+  O incidente:
+  https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/
+  https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware
+  https://thehackernews.com/2026/08/coldcard-hardware-wallet-flaw-linked-to.html
+  https://www.bleepingcomputer.com/news/security/coldcard-wallet-rng-flaw-likely-linked-to-88-million-bitcoin-theft/
+  https://blog.coinkite.com/entropy-technical-backgrounder/
+  
+  Fundamentos:
+  https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
+  https://factorable.net/weakkeys12.conference.pdf
+  https://safeguard.sh/resources/blog/csprng-secure-random-number-generation
+  https://man7.org/linux/man-pages/man4/random.4.html     https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/Studies/LinuxRNG/LinuxRNG_EN_V5_3.pdf
+  
+  Testes estatísticos (NIST):
+  https://csrc.nist.gov/projects/random-bit-generation/documentation-and-software
+  https://www.nist.gov/news-events/news/2022/04/decision-revise-nist-sp-800-22-rev-1a
+  
+  Mitigação (multisig e entropia extra):
+  https://coldcard.com/docs/paranoid/
+  https://coldcard.com/docs/verifying-dice-roll-math/
+  https://sparrowwallet.com/docs/best-practices.html
+  https://www.odaily.news/en/post/5212289
+  
+  ⚡Edição: editorlivre.com
+---
+Todo programador que já encostou em criptografia pelo menos uma vez na vida, cara, já ouviu a seguinte regra: nunca implemente o teu próprio gerador de número aleatório. Usa, sei lá, do sistema operacional, usa uma parada pronta. Pois é, mano. A Coin Kite, que é a empresa por trás do Code Card, que é uma das hardware wallet de Bitcoin mais respeitada do planeta, paizão, aparentemente eles não seguiram essa regra, esse princípio básico. E qual que foi o resultado disso? Um gerador com
+
+viés estatístico que deixou pelo menos 500 carteiras vulneráveis por 4 anos. E tem um detalhe pequeno, não foi gente lá de dentro que descobriu essa vulnerabilidade, não, mano. Foi um hacker, um atacante, cara, descobriu em produção, roubando gente de verdade, paizão. E no vídeo de hoje a gente não vai fazer fofoca de crime real não, cara. A gente vai fazer aqui uma espécie de code review pra gente poder entender linha por linha o que que significa um RNG quebrado e porque este mesmo erro pode ser que ele esteja escondido no seu back endá >> ele, né? Lá ele pr mano.
+
+>> Mas já se inscreve no canal. Já se inscreve no canal, deixa o like, ativa a notificação e é interessante porque se você interessa por assunto como esse, quanto mais like, inscrição, mais comentário você dá em vídeo assim, mano, mais o algoritmo do YouTube ele vai entender que você gosta desse tipo de conteúdo e vai te recomendar mais. Então você vai fortalecer o meu canal e você vai fortalecer também a sua recomendação, mano. Então, vamos lá, vamos falar sobre de fundamentação, cara. Vamos trazer fundamento aqui, porque se a gente não falar disso, o resto não vai fazer muito sentido, não. E eu vou trazer de uma
+
+forma mais didática que tanto a galera que é deve e a galera que é não deve, a galera do Vibe Code que frequenta muito este canal, que inclusive eu amo esse canal, não é contra o Vibe Code, eu amo vocês, nós somos a favor da IA e contra os deves. Então é para todo mundo entender essa parada, mano. Uma hardware wallet, cara, de Bitcoin, ela usa um padrão chamado Bip 39, que na prática funciona o aparelhinho, aquele esqueminha Illuminati, mano, ele precisa gerar um número de 128 a 256 bits aí de uma entropia bruta. Abrindo parênteses rápido, entropia é só um nomezinho bonitinho para poder falar de aleatoriedade de verdade. É basicamente uma sequência de bit ordenado por um gerador de número aleatório que é chamado de RNG. Esse número gigante que
+
+ele é gerado, mano, ele é fatiado em bloquinhos de 11 bits, mais ou menos. E cada bloco desse, ele vira uma palavra numa lista fixa de 2048 palavras. E é daí que sai aquela lá, aquelas suas 12, 24 palavras semente, tá ligado? Aquela que você anota e sei lá, guarda num papelzinho ou então naquelas plaquinhas de ferro, tá ligado? Para você [música] nunca mais perder. Agora repara só um
+
+detalhe, paizão, que pouca gente tá observando. A segurança inteira da sua chave, da sua criptografia, das suas palavras, ela depende de uma única coisa, paizão. Da entropia inicial ela ser imprevisível, mano. Se o RNG que sorteou esses bits aí, ele tiver qualquer padrão, mano, qualquer viinho, tá ligado? Quer viazinho estatístico. A
+
+semente inteira ela vai de a raça para cima, mano. E aí não adianta falar assim: "Ai, mas a criptografia que usa é >> não, mano. Não, não, não importa a criptografia que você que vem depois, tá ligado? Se a entrada de fato ela não for aleatória, mas aleatória de verdade, mano, a segurança toda daqui pra frente já era. É tipo você, sei lá, vou passar o melhor café do mundo.
+
+>> Onde tem o melhor café do mundo, papai? >> Caparaó. Cafezinho do Caparaó. você foi lá, comprou um grãozinho lá e tal, vai passar seu café. Aí a água que você vai usar, que tá esquentando lá, meu jogador, pr você poder passar seu [música] cafezinho Illuminati, é água de poço artesiano, que tem aquele gostozinho saloba, tá ligado? Água
+
+saloba. A galera que é de capital, galera do de São Paulo, provavelmente nunca deve ter bebido uma água saloba na vida. Você não sabe o que é isso? Liga pro seu primo da roça e manda um zap para ele e fala assim: "Mano, o que que é uma água saluba?" ele vai te responder, mano. Então não adianta nada
+
+você pegar o café, usar as estratégias mais iluminadas para poder passar aquele café, escaldar o filtro, sendo que a água ela vai estragar completamente o gosto. Então é basicamente isso. Estragou na entrada, estragou tudo. Tá tudo zoado, mano. Não adianta nada o que você vai fazer daqui pra frente. Agora,
+
+paizão, papel e caneta na mão, porque essa parte aqui você vai precisar, você vai gostar, você vai guardar pra sua vida. Vale para Bitcoin, vale para token de sessão, vale para qualquer sistema que você assinar. Mano, que depende de uma assinatura. Essa falha no RNG, paizão, na prática, ela pode acontecer por um desses três motivos, mano. Primeiro motivo, um gerador determinístico mal semeado. Que que é
+
+isso, Pera aí, cara. Todo gerador hoje pseudo aleatório, ele precisa de um seed inicial, de um de uma semente inicial para poder começar. Esse s geralmente ele vem de uma parada previsível, sei lá, um time stamp, o boot, o número de série lá do do seu processador ou então a parte pior de todas é tá fixo talvez no hard coded. Aí o que que acontece? Todo aparelho que usa essa forma de você gerar, mano, a criptografia deles são meia parecida, tá ligado? parece entre um e outro,
+
+mano. É basicamente você colocar lá um random. o se passar o zero como parâmetro e só colocar isso em produção. Só que quando a gente fala de hard wallet, mano, é como se você tivesse colocado isso dentro daquele modelinho seu, mano. ninguém tá vendo isso, mano. Ninguém vai debulugar aquilo lá,
+
+simplesmente ele tá lá, mano. Segundo motivo, uma entropia insuficiente na fonte física. Explicando novamente aqui esse conceito, mano, é algo que é colhido do mundo real para poder gerar uma criptografia. Por exemplo, você mexer no mouse, o barulho de uma ventoinha, alguma coisa aí do seu processador, o barulhinho do teclado, todo esse ruído, ele acaba virando insumo para você poder encher o repositório seu de aleatoriedade, mano. E a gente chama isso de pull de entropia. Só que se esse ruído, pensa
+
+comigo, paizão, porque se esse ruído que foi gerado, ele for uma parada previsível demais, mano, a caixa, tá ligado, o repositório, a o pool, a piscina, ela nunca enche, mano. E o software, geralmente ele não tá medindo a caixa, ele tá basicamente aceitando que tá tudo cheio, mano. Ele acha que ele tá tirando o número de um reservatório que tá transbordando, só que na real ele tá tirando essa essa essa aleatoriedade dentro de uma bolsa de água, mano. Terceiro motivo que, mano, pap por reto, esse aqui é o mais de todos, cara, que é o bug que encolhe o espaço de busca, só que ninguém percebe que isso tá acontecendo. Imagina só um bit que ele fica sempre travado no zero, mano, por causa, sei lá, talvez de um bug ou uma função de mistura dos bits que acaba não fazendo essa distribuição direito. Na prática,
+
+ao invés de ter, sei lá, 2 elevado a 256 combinações possíveis, ele fica, sei lá, 2 elevado a 40 combinações. Só que escrito assim 2 elevado 40, parece um número absurdo, mano. só que para um cluster lá de GPU, mano, procurando, tentando achar um padrão, mano, isso aí é balela, tá ligado? Papo de um final de semana ele quebra essa Agora, sendo sincero com você, meu jogador, a Coin Kite, ela não divulgou o motivo exato do que aconteceu. O que a gente tá sabendo aqui, mano, foi baseado em artigos que a gente tá lendo, baseado na galera dos fóruns comentando, especulando para caramba. Comunidade, mano, [música] tá
+
+loucura. E o que a gente sabe aqui é o padrão da exploração que foi usada, porque o atacante ele conseguia prever o sid de um modelo específico e era especificamente o MK3, mano. E até agora, até a gravação desse vídeo, hoje 4 de agosto, nenhum modelo pra frente ele foi afetado da mesma forma. E isso pra gente que é dev, mano, a gente já sente o cheirinho que, mano, ele tem cara daquele bug de que foi implementado dentro daquele hardware, dentro daquele firmware, tá ligado? daquele hardware lá, mano. E não é, sei lá, um um uma
+
+falha num padrão criptográfico, não é uma criptografia que agora ela tá falha, não é um computador quântico que que foi ligado secretamente, não, mano. Tudo leva a entender que o problema é esse firmer do MK3. Daí você vai falar assim: "Pô, rapazão, mas que que isso muda na minha vida? Eu que sou um dev chorume. Eu sou um dev PJ com obrigações de CLT.
+
+Sou um PJ presencial, um PJ híbrido. Então, como diz o meu amigo Charlão, calma, Calma, mano. O principal aprendizado que a gente leva pra vida é não confiar em tudo que a gente implementa. A gente precisa assumir que toda a fit que a gente tá implementando, cedo tarde, aquilo vai dar merda. Só que não precisa também ficar paranóico não, mano. Tem uns caras que ficar paranóico
+
+pr Eu acho que a gente consegue regular o nível da nossa paranoia, tá ligado? de acordo com o que a gente tá trabalhando, de acordo com a nossa entrega. Por exemplo, você tem uma fiture que você tá trabalhando, que ela envolve mais ou menos aí dados sensíveis, [música] pô, sua paranoia tem que tá alta, porque se vazar aquilo, a multinha da LGPD é absurda, mano. Dá ruim. Se você tiver trabalhando, por exemplo, num projeto que envolve dinheiro de outras pessoas, mano, sua paranoia tem que est no talo, mano. Tem
+
+que est no 12, como diz Natanzinho Lima. Agora, é um projetinho que roda no seu home laab. Eu tenho uns projetinhos que roda aqui, mano. Não tem nem acesso à internet, essa merda. Só funciona a rede local, não atrapalha a vida de ninguém, não tem dado. Aí, mano,
+
+você faz no Vibe Code mesmo. Faz no Vib Code. Não precisa ficar paranoico também não, mano. [música] Só que no mundo Bitcoin existe uma paranoia chamada Multiig. É tipo um esquema Illuminati que eles têm lá, mano. Tipo dois de
+
+três. Para poder mover qualquer coisa, você precisa, sei lá, talvez de ter duas assinaturas. E o melhor, vindo de dois dispositivos diferentes, dois fabricantes diferentes, com implementações de RNG totalmente diferente. E olha só a beleza estatística disso, meu jogador. Pro atacante ele conseguir, sei lá, explorar, bagunçar tudo que você tem, mano, ele precisa que os dois fabricantes tivessem a mesma classe de falha de entropia. Isso teria que ser ao
+
+mesmo tempo em dois aparelhos que você tá usando. Mano, a probabilidade disso acontecer, paizão, é mínima. É mínima. Não vou falar que também não vai acontecer não, mas é mínima, tá ligado? É o mesmo princípio de redundância que a gente faz hoje aí em sistema distribuído, tá ligado? É nunca confiar
+
+talvez no single point of fail, mesmo que esse ponto ele venha talvez de uma empresinha Illuminati, sei lá, não, no tá vindo da WS, não vai falhar. Tá vindo da Google, não vai, vai falhar, paizão, vai falhar. E tem um detalhe, mano, que todo dev ele deveria trazer pra própria vida, mano. A própria Code Card, ela já oferecia uma opção, mano, de injetar uma entropia extra, tipo, de forma manual, tá ligado? É literalmente o mesmo conceito de você misturar várias fontes de aleatoriedade dentro de um pool de entropia, mano. Aí eu te pergunto, sabe
+
+quantas pessoas usam essa parada? Sabe quantas pessoas, mano, testaram essa parada de fato, paizão? quase ninguém, Porque é chato, mano. Chato para caramba. Dá um baita trabalho, mano. Mas, mano, a proteção
+
+tava lá, tava documentada, tava de graça. Só que aí o ser humano, o usuário comum, ele olhou para aquela parada e falou assim: "Mano, não vou fazer essa porra". Agora para fechar, mano, eu tô vendo um monte de gente lá no ex lá reclamando para caramba, chorando para caramba, falando que, mano, o Bitcoin já não é como era antigamente, agora tá inseguro, depois de advento da IA, foi o Fable que tá fazendo isso. mano, calma, calma que não é bem assim não, porque o protocolo ainda ele tá intacto, mano. Não foi afetado em nada. O que que o que
+
+afetou mesmo foi a implementação de um fabricante no modelo dele. E eu acho que a parada não é você abandonar Harder Wallet aí por por padrão. Vou abandonar essa Acho que é só você parar de confiar numa só, mano. Multissig, fabricante diferente, entropia extra no dado, isso vai te proteger para caramba, mano. E tem que entender o seguinte, e a semente uma vez gerada de uma forma certa, tá ligado? Tua forma segura,
+
+mano. aí sim ela vai pro papel, ela vai lá pr aquelas plaquinhas de aço que aguenta fogo, aguenta uma enchente. Só que você precisa manter uma ordem, mano. Primeiro você precisa gerar uma semente que nasce boa, depois você protege ela. Não adianta nada você proteger uma semente lá que, a parada tá toda zoada, mano. Agora
+
+comenta aqui embaixo, mano. A criptografia que você gera hoje, você tem o seu próprio gerador de de coisas aleatórias ou você tá usando algum padrão, alguma coisa que já existe, mano? Ou você nunca parou para pensar nisso? Deixa o comentário aqui, mano, pra gente poder trocar essa ideia. E se esse assunto, mano, de cybersc, esse assunto de invasão, ele tá te interessando, mano, você tá gostando desse assunto pra caramba. Esse vídeo
+
+aqui, mano, é a mesma linha, cara. Os hackers eles arrumaram um esquema Illuminati para poder envenenar uns pacotes que você usa dentro do seu próprio sistema. Então, provavelmente o pacote que você instalou na semana passada pode ser que ele esteja comprometido. Só clicar aqui e assistir, paizão. Tá aqui, tá aqui bonitinho. Você
+
+ainda não se inscreveu? mano. Se inscreve no canal, deixa o like, ativa a notificação. Isso vai te ajudar e me ajudar, porque o YouTube vai começar a te entregar vídeo como esse, mano. Sinistramente. Tamos junto. Forte
+
+abraço. Até o próximo vídeo.
