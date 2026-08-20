@@ -1,0 +1,170 @@
+---
+video_title: "Nada é construído sem spec: o jeito certo de codar com IA (agent-skills, do Addy Osmani)"
+video_id: OxQS_wNhqd8
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OxQS_wNhqd8
+video_date: 2026-08-12T14:00:28+00:00
+video_description: |
+  Agent Skills é um repo open source criado por um Ex Dev do Google, o projeto aplica SDD ao seu sistema de maneira simples e guiada!
+  
+  ⭐ Pré-inscrição Formação Claude Code: https://app.horadecodar.com.br/lp/lancamento-formacao-claude-code
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  💳 Sistema de pagamentos que eu indico: https://appmax.com.br/desenvolvedores/?utm_source=hora-de-codar&utm_medium=social&utm_campaign=influencer-tech (Pix com taxa zero via API)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  LINKS
+  
+  Agent Skills: https://github.com/addyosmani/agent-skills
+  
+  TIMESTAMPS
+  
+  00:00 Como implementar SDD da maneira correta
+  00:45 Entendendo o Agent Skills
+  03:05 Instalando o Agent Skills
+  05:20 Iniciando o projeto definindo a Spec
+  08:12 Criando o plano do projeto com Agent Skills
+  09:25 Build do projeto
+  13:00 Verificando projeto criado
+  14:40 Implementando o TDD no projeto com Agent Skills
+  17:26 Review de segurança e Ship do projeto
+  22:40 Considerações finais sobre o Agent Skills
+---
+Galera, muito se fala de spec Driven Development, que é a maneira certa de criar aplicativos com Vibode. Só que chega na hora de implementar, a gente não tem uma maneira correta de fazer isso. A gente faz as specs, manda ali a ir a planejar e nem sempre o resultado é o melhor possível. O engenheiro do Google Chrome criou um framework, um set de skills que tem todos os passos do SDD, desde a etapa de planejamento até a etapa de build ship, que é quando a gente entrega o aplicativo. Nesse vídeo aqui, eu vou te mostrar como utilizar esse set de skills e também criando, né, um projeto junto com vocês, passando por cada uma das etapas e vendo exatamente como esse pacote funciona. Então chega
+
+aí que é muita prática, conteúdo, tá muito massa. Bora lá. Então, queria aqui apresentar para vocês primeiro o agent skills, que é esse repositório com essas skills de SDD. O repositório não se denomina assim, mas ele segue esse fluxo e vocês já vão entender do que eu tô falando. Então, bota aqui que o agente parou de improvisar, passou a seguir um processo. São 24 skills do ciclo, mas a
+
+gente não precisa fazer todas elas. Se tu usar as principais, algumas delas já vão ser chamadas automaticamente e tu vai ter o SDD implementado na prática. Funciona para vários agents, né? Não estáado ao cloud code, apesar de nesse vídeo eu utilizar ele. OK. Ó, foi
+
+planejado, projetado, né, pelo Osmani, que é o engenheiro do Chrome, no Google. Então, o cara tem uma experiência, né? Isso é legal quando vende pessoas que estão no mercado de desenvolvimento software. Então, o que acontece hoje é que a gente tem esse processo, né, que é o SDD para implementar aplicativos viabe code. Só que a gente não tem uma metodologia muito clara para isso. E
+
+aqui no Agent Skills, a gente tem um passo a passo, ou seja, cada uma das etapas está linkcada umas com as outras e isso faz com que tudo funcione, né? a gente tem um começo, meio e fim para criar o nosso projeto. Então aqui no Agent Skills, a gente vai ter não somente a execução do código, a gente vai ter muito teste acontecendo também para garantir que o que a gente fez tá saudável, né? Pode ir pra produção e não tem bugs. Claro que não retira a nossa responsabilidade de testar o app, mas ajuda bastante no processo. São seis
+
+fases. Essas aqui são as que eu falei para vocês, né? a gente tem mais skills que envolvem ali o processo, mas com essas aqui você já consegue ter o resultado que é planejar e criar algo, né? Colocar no ar. A gente vai ter esse que gera spec aqui, planeja baseado na spec que foi criada, build que vai construir, teste para testar, review para fazer uma revisão completa de tudo que foi feito, né? Parte de segurança,
+
+performance, tá tudo incluso aqui. E produto, chip que coloca a aplicação no ar. Essas seis fases vão chamar outras skills que estão ali interligadas e isso vai fazer o uso quase total do pacote, né? Tem algumas outras aqui que são interessantes que eu não coloquei no fluxo, mas depois você vai poder olhar o repositório e usar elas também. Então galera, esse aqui é o repositório, tá?
+
+Agent Skills. Ele tá bem atualizado, né? Isso é bem legal. A gente tem atualizações h alguns dias atrás, então é um projeto que o cara tá mantendo. Tem vários contribuidores, né? Isso é legal
+
+também. galera tá eh unindo esforços, né, paraa evolução do sistema aqui que ele criou. Então, essas são as fases, como explicado ali nos slides e é onde a gente vai percorrer aqui o vídeo de hoje. Mas tem muito mais coisa, vocês podem ver aqui, tem outros comandos e tal. É um pacote mais completo do que a gente vai ver aqui no vídeo. A ideia é
+
+testar, fazer um overview e ver se funciona, né? Como é que ele responde pra gente, tá bom? Aqui tem a maneira de instalação. Ele mostra que instalando tudo ou apenas que os individuais que tu pode fazer isso também. Ele não atrela muito o processo de SDD, como eu falei, né? Não é um framework de SDD, ele
+
+simplesmente empacotou essas skills e ela tem esse fluxo. Então a gente vai se apoiar nisso para criar o nosso projeto. Bom, galera, tô aqui com o VS Code aberto e eu começo com os passos de instalação que estão lá no repositório, né? Então a gente vai, opa, abrir o cloud code aqui, colocar plugin marketplace sets e o nome ali do repositório, eh, vocês encontram aqui, né, para cada agent, beleza? Dá para instalar skills individuais ali, como eu comentei, só que aqui fica uma integração nativa, né? Aí ele vai
+
+adicionar slash commands e vai ficar melhor de fazer. Beleza? Então ele vai colocar aqui o outro comando. Gosto de instalar a nível de projeto. Aqui ele deu um erro, falou que não tem permissões para instalar. Aí aqui, ó,
+
+ele falou que tem uma outra alternativa, né? Vamos testar de novo. Vou usar aqueles dois comandos que ele me passou ali. E agora foi, galera. Então, se der problema de vocês, como deu o meu aqui, basta seguir instruções aqui que ele vai conseguir fazer a instalação, tá bom? Aí
+
+dá um reload plugins, um reload skills e tá tudo instalado aqui, né, no cloud. Deixa eu ver aqui. E é isso mesmo. Da a gente bota spec, ó. Aí ele acha aquela agent skills ali, tá? Então a gente usa
+
+os comandos que eu mostrei para vocês no nos slides, né? Então agora o primeiro comando que a gente vai rodar é esse spec mesmo, tá? E o que que a gente vai rodar aqui? uma entrevista, né, para poder definir a spec do produto, tá? Então, já planejei alguns prompts aqui pra gente se adiantar e é basicamente esse aqui, ó. Me entreviste uma pergunta
+
+por vez para especificar um sistema chamado hora extra. O produto é um fechamento de ponto para pequenas empresas. O gestor cadastra funcionários com valor da hora, registra os turnos trabalhados de cada um e fecha o mês vendo quanto cada pessoa tem a receber com hora extra e adicional noturno, né? Então, cara, o sisteminha básico ali de controle de ponto, beleza? Aí ele vai identificar o que eu quero criar e ele vai usar aqui a skill para poder trabalhar na spec, né, com base com base nas perguntas que eu respondo. E a gente
+
+vai responder como o sistema deve tratar as regras de cálculo de hora extra adicional noturno. Eu vou aqui mais fácil CLT fixo no código. Agora como um gestor lance trabalho noturno, entrada e saída. E assim a gente vai responder todas as perguntas que ele acha ser necessário para criar o sistema. Então vou responder elas aqui e volto com a próxima fase. E galera, enquanto ele
+
+gera minha spec aqui, ó, responder mais uma pergunta, eu vou botar congelar valor ró no turno. Uma coisa muito importante é que estamos aí quase no lançamento da formação Cloud Code. Já garante a tua vaga com desconto especial e bônus de lançamento clicando aqui no link que tá no comentário fixado na descrição para tu poder ir para essa página e fazer tua pré-inscrição. Com isso, eu vou conseguir te avisar quando ela lançar, que vai ser no dia 31 de agosto, e tu vai receber tudo que eu falei, somente para quem se inscreveu. Então aqui fala um pouco mais sobre o treinamento, né? Mas a ideia é simples,
+
+tu vai dominar o cloud code e não é só colocar prompt, é entender como eu desenvolvo meus aplicativos ali com cloud code, né, as estratégias que eu uso e também entender o que tá acontecendo por trás da ferramenta para não ser só um digitador de prompt. Se tem interesse nisso, se inscreve aí que já já tá chegando. Bora continuar ali, então. Bom, galera, aí, olha só, ele me entregou a spec aqui, né? Ele fez algumas outras perguntas e ele comenta o que eu tenho que fazer depois, né?
+
+Então, ele me expôs outra questão aqui, né, que seria interessante de decidir antes do planejamento, tá? E o spec medir aqui, ó, tá toda a spec do projeto, né? tudo que ele conseguiu reunir das perguntas que ele fez para mim, mais o que ele conhece de sistemas, né, semelhante ao que eu quero criar. Então, ele já desenvolveu boa parte ali dela. Aí a ideia agora é fazer a etapa de planejamento, né? Eu preciso planejar
+
+isso com base no que foi feito a spec. Então, o próximo comando seria o plan, tá? Que faria a continuação do fluxo para poder gerar o planejamento e depois a gente fazer o build. Então a gente vai usar agent skills plan e ele sobre a dúvida dele, eu vou botar aqui sobre a sua dúvida pode manter como deduziu. Inicie o plano. Então próxima fase,
+
+criar o plano a partir da spec, né, pra gente construir o sistema. Então isso aqui vai demorar um pouco e aí a gente consegue est implementando o sistema de fato. Bom, galera, então ele me entregou agora o planejamento, tá? Tem aqui alguns arquivos plan e to dentro de da pasta tesx, tá? E ele explica aqui, né, o que ele vai fazer em cada uma das tarefas meio por cima. Aí o que que
+
+acontece? Esse é o planejamento, né, como se fosse ali o spec, né, destrinchado em tarefas de como tem que ser feito o projeto, tá? E aqui o to do em fases, como vocês estão vendo, ele tá dividindo em tarefas e fases. Bom, galera, então a próxima parte, como é o build, né? Eu perguntei aqui para ele, a próxima etapa é o build, só para ele me falar o que vai acontecer aqui. É, como
+
+eu comentei, ele vai executar em algumas fases e isso pode ficar muito particionado. Então eu vou usar aqui o build. Deixa eu achar aqui. Build, tá? E aí eu quero ver se ele vai me fazer alguma pergunta. Ó, modo
+
+padrão. Então, eu vou colocar aqui para ele fazer todas as fases. Em vez de executar no modo padrão, execute no alto. Quero todas as fases prontas, seguindo o plano. Então, encadei esse esse loop aqui. Ele vai ler e ele vai
+
+fazer todas as fases, porque senão a gente vai ter que ficar provando e rodando o comando toda hora. Eu tô fazendo assim, claro, por causa que é um vídeo, né? Então, se eu fizesse do jeito que ele quer, a gente levaria muito mais tempo. E eu recomendo pelo menos fazer em fases, né, e testar. Faz uma fase, testa, faz outra fase, testa, tá? Para
+
+poder entender como é que tá sendo o app, né? E não ficar muito torto se tu fizer tudo no final e ter que refazer bastante coisa. Ó, daí ele muda pro modo alto, que é uma flag que ele tem. E isso faz com que eu aprove, né, explicitamente todo o plano e ele vai começar a gerar o projeto de fato, tá? Então depois disso a gente vai conseguir testar e rodar as outras, os outros comandos, né, que fazem a sequência ali do SDD. Bom, galera, então enquanto ele
+
+constrói o projeto aqui, inevitavelmente a gente vai precisar também de uma plataforma de pagamento no nosso sistema. A gente tá criando um SAS ali que vai monitorar as horas extras, os expedientes dos funcionários e a gente vai querer cobrar por isso. Para vocês integrarem pagamento no sistema de vocês, eu recomendo a Appmax. Motivo número um, eles são uma infraestrutura de pagamentos. Eles têm todas as funcionalidades que vocês podem imaginar, vários meios de pagamento, né?
+
+Não só cartão de crédito e Pix. E aqui uma documentação excelente que vocês vão conseguir passar para IA e ela vai integrar praticamente sozinha para vocês, passando a chave ali da API que eles fornecem lá na plataforma. Eu vou deixar esse link aqui no comentário fixado para vocês conhecerem, tá? A documentação é essa. E aqui é bem simples. Vocês podem ir por quickstart,
+
+que seria a integração, né, para ter o pagamento quanto antes na aplicação de vocês, uma maneira muito rápida. E é isso aqui que eu falei, né? Dá o contrtrl A, contrtrl C aqui, manda para Iá e pronto, ela vai conseguir desenrolar porque tá tudo muito bem explicado. E ainda se tu precisar de outras funcionalidades mais específicas, por exemplo, pagamento parcelado. Só vir aqui, procurando no menu da esquerda e pronto, vai tá tudo bem descrito novamente. Todos os end points tem que
+
+islar, todos os parâmetros tem que ser passados, cara. muito fácil para te fazer na mão ou mandar tudo para e ainda tu vai ter uma infraestrutura com o no deles, né, essa parte de pagamentos. E uma dica muito importante que é um outro motivo, segundo motivo que eu recomendo muito eles é que tem taxa zero no Pix para integração via PI, como a gente tá fazendo aqui. Então tu já comece aí recebendo 100% teu rico dinheirinho, fechou? Então, dá uma olhadinha ali no link do comentário fixado, integra hoje mesmo, faz um teste ali, coloca ali só para brincar, eles tem o modo de setbox.
+
+Aí vocês vão ver já um aplicativo feito por vocês com pagamento, galera. Show de bola, né? Então, seguimos aqui. Bom, galera, então ele terminou aqui, tá? Aí, como esperado, esses frameworks, né, ou skills que rodam SDD, demoram mais para rodar mesmo. Foi cerca de uma hora para
+
+fazer essa versão inicial do projeto, né, vamos dizer assim, um MVP. Aí ele passou aqui que teve algumas coisas que mudaram o resultado. Interessante pra gente analisar, verificar se precisa corrigir, né? Faz sentido. E aqui, ó, temos, eu pedi para ele iniciar, né, para eu poder testar. Ele abriu aqui na
+
+porta 3.000 com esse usuário aqui. Então vamos fazer o teste. Ó, tá aqui o projeto então, né, galera? Bem simples de visual. Aqui é o simulador. Então
+
+vamos dizer aqui que eu ganho 50 a hora, eu entro às duas, saí 1:30 da manhã. Eu tenho 50 minutos de intervalo, ele faz os cálculos aqui em tempo real, como a gente pediu. Aí tem a parte do login, pegar aqui o e-mail e senha. Hora, traço extra, traço dev. Ó, entrou. Aí tem os
+
+funcionários, tem os turnos, fechamento. Então tá tudo certinho, né? Tudo que ele se comprometeu ali no plano, ele entregou. Então, show de bola, interessante. Teve um resultado redondo. Eu já trouxe aqui também outros
+
+frames de SDD, né, galera? Esses orquestradores também, né? Tipo ou Myp, Open Code SL, né? que são framers que tem a premissa, né, de ter um desenvolvimento orquestrado e muitos demoram mais, dão erros ao longo do processo e esse aqui não teve erro. Claro, estamos usando um modelo bom aqui, né? A gente tá acusando o mas
+
+enfim, né, galera, ponto para o agent skills, tá bom? O próximo passo seria fazer o teste, né? Então a gente tem aqui esse test driven development, né, que ativa com base no comando barra test. Então eu poderia pedir um teste específico, tá? Ou rodar comando para ele identificar possíveis testes, tá?
+
+Então vamos ver aqui como é que ele se sai. Lembrando que esse aqui não é o review, esse aqui é um comando que pode aumentar a base de testes. Por exemplo, aqui, deixa eu ver se eu acho, ó, tudo verde, 217 testes. Esses foram testes que ele criou pro desenvolvimento da aplicação. Isso aqui pode ser que ele aumente a cobertura com esse comando, né? Vai avaliar o projeto em busca
+
+disso. Então, são possíveis caminhos que os usuários poderiam tomar no nosso sistema. Se a gente fosse ver ali, por exemplo, colocar o nome de alguém com uma hora com valor negativo, isso é um teste que ele poderia aumentar a cobertura lá. Então, falou aqui, ó, valor inválido. Você bota um valor positivo, ele cadastra, tá? ele poderia
+
+adicionar esse teste, vamos dizer assim, de valor negativo. Não quer dizer que ele vá fazer isso, mas só para vocês terem uma ideia do que esse comando pode estar representando pro nosso projeto. Além disso, galera, uma coisa muito importante, a gente tem uma playlist de cloud code aqui no canal, ela é totalmente gratuita, tá? Tem vários vídeos para tu aprender mais sobre a ferramenta. Eu vou deixar aqui a tumbador vai deixar para mim e vou deixar o izinho para tu acessar o primeiro vídeo da playlist, que é um curso de cloud code, né? Uma hora direto
+
+ao ponto para tu entender os principais recursos da ferramenta e criar um projeto junto comigo, tá? Então dá uma olhada lá depois que vale a pena. Ó, como eu falei para vocês, no TDD ele pode fazer de fechar lacunas, né, que seria adicionar mais testes, de aguardar um teste manual. Então eu reporto um bug ou outras funcionalidades. Então vou botar aqui fechar lacunas para ver se ele encontra mais alguma oportunidade ali de colocar TDD no processo do projeto. Isso influencia em a gente
+
+colocar mais uma funcionalidade e ele vai lá e esse teste vale para essa nova funcionalidade. Então o projeto fica mais coberto, né? Tem mais cobertura de testes, consequentemente a prova de falhas. Ó, galera, aí ele termina, tá? Que acontece aqui? ele tinha encontrado
+
+alguns testes que ele poderia fazer a mais e ele fechou essa lacuna. Então ele fez alguns testes que eram necessários pra gente ter uma maior cobertura, tá? Então ele me entregou aqui e pronto. Tá aí agora esse comando, né, a gente rodaria só num próximo ciclo. Todos esses comandos são sequenciais, né?
+
+Talvez o espectro não rode mais, planeje outra coisa, né? Mas continuando, né? Agora a etapa é de revisão. Eu tenho que revisar tudo que já foi feito. Aí a gente tem esse comando de review, ó. Esse aqui, agent skills review. Então
+
+esse aqui ele vai verificar tudo o que foi feito, tá? Ele vai avaliar a parte de segurança, parte e aí ele vai me dar o diagnóstico e vamos ver como que se segue, né? Após essa etapa. É a penúltima etapa, né? A próxima seria a última que é a de chip, né, de enviar o projeto pro ar. Aí
+
+novamente aqui ele vai trazer os achados categorizados e aí a gente vai escolher o que a gente faz. O que eles indicam ali é pelo menos realizar correção dos críticos, né, os de nível crítico. Mas vamos ver o que ele traz nesse projeto aqui, tá bom? Aí, olha só, galera, ele fala assim, ó, vou revisar o como se o código fosse de outra pessoa. Isso aqui é legal, né? a gente tá fazendo com o
+
+mesmo modelo, mas eu particularmente prefiro fazer o cross check, né, entre modelos diferentes. Isso me traz mais resultados. Inclusive a gente lançou um vídeo lá pras pros membros do canal que fala justamente sobre isso, né? Esse cross review. Dei uma olhada lá depois.
+
+Eh, a gente tá postando vídeos nos membros semanalmente e tem um grupo VIP de WhatsApp somente dos membros. Então, dei uma olhada que vale a pena, tá? Só para falar esse detalhezinho para vocês aqui. Então, é como se quem fizesse uma obra também fiscalizasse ela, né? Claro, vai encontrar problemas, né? Porque são
+
+processos diferentes e tal, mas o ideal seria realmente um outro modelo. Aí aqui ele tá já mostrando algumas coisas, né? Ó, e terminou. É, foi rapidinho até. Até isso achei meio rápido, né? Porque cara,
+
+ficou uma hora desenvolvendo e que ele vai roda um review em 3 minutos, sabe? Não sei se é o o caminho mais correto, preferia um um outro modelo fazendo. Então a gente tem aqui, ó, bugs críticos, eh um required, outro required. E é isso. Aí eu posso pedir para eles corrigir tudo, né? corrir os
+
+problemas encontrados e aí o nosso projeto estaria pronto para o chip, né, que seria o último passo. Esse chip ele nada mais é do que um review, tá, que a gente acabou de fazer, só que pensando no aplicativo no ar, né, problemas que ele pode encontrar com usuários reais acessando e testando o fluxo. Então, a gente vai ter mais uma checagem, né? E eu vou mostrar para vocês aí logo em seguida depois eles corrigirem esse esse passo aqui. O legal do chip também é que são vários subens trabalhando ao mesmo tempo, né? Cada um
+
+atacando um problema diferente. Então, olha só, galera, ele entregou, tá? Ele falou que corrigiu os problemas. E vejam aqui que ele discute um pouco também sobre os problemas, né, que tinham, o que ele tinha identificado e o que realmente era. Aí aqui, por exemplo, também ele incluiu novos testes, né, que é interessante. Aí cai bastante no
+
+comando passado, né, que a gente adicionou cobertura de testes e ele falou também o que que ficou de fora, né? Então, por exemplo, fechamento mês continua lançando. Se um turno for gravado for inválido, mantive falhar alto em dado de dinheiro corrompido. É melhor que somar errado calado. Login rate limit e sem revogação de sessão no logout registrado nos limites conhecidos fora do escobo single tenant local.
+
+Então são questões aí que a gente precisa analisar para implementar, né, e melhorar o sistema, se fizer sentido pra gente, tá? Então aqui o próximo comando agora, como eu falei, seria o ship, né, que é essa skill aqui que prepara para o lançamento. Então é uma outra perspectiva de análise usando três subagents, um que vai fazer a code review, um auditor segurança e um engenheiro de testes, né? Então vão atuar em três áreas que se conversam, né, mas teoricamente são distintas. E aí eu vou ser apresentado também um relatório por eles. Vamos ver o que
+
+acontece agora. Então, olha só, galera, ele fez os achados aqui, tá? E aí ele falou em itens e estado, né? Por exemplo, cook da sessão, validação de entrada. E aí aqui ele encontrou alguns itens de tier vermelho, cinza e ele perguntou o que eu tenho que fazer, o que eu quero fazer na verdade. Então,
+
+endurecer pra produção, né? seria tipo corrigir, preparar deploy na hostia, né, que onde a gente faz os deploy aqui do canal, onde os meus projetos estão. Então isso já vem da memória do cloud, né, só um relatório, né, pra gente poder ver aqui e entender o que que tá rolando. Então vamos seguir para essa opção. Mas claro, né, a opção de corrigir é a correta, mas vamos ver aqui o que que tem pra gente poder entender mais a fundo. Bom, vamos lá então, né,
+
+galera. Ele criou aqui, ó, o tesques pré-lançamento MD, então arquivo markdown com todos os achados. E aqui agora, né, a gente tem que ler e entender o que aconteceu, ó. Bloqueios, então não tem cabeçalha de segurança. Isso é muito importante, ó. Sem rate
+
+limit. Isso aqui também acho que é importante, porque se for um ataque de brot force, pode até cair o servidor sem ref check, então sem relatório de erro. Vejo que tem vários problemas interessantes que a gente poderia corrigir para, enfim, fazer o lançamento. Então é esse o ciclo principal, né, do agent skills, tá? Como eu falei, tem mais skills que a gente pode usar, tem mais processos. Eu vou
+
+deixar o link na descrição para vocês conhecerem melhor o repositório, instalarem e testarem. Inclusive, peço que deixem os comentários aí o que vocês acharam desse plugin. Eu acho que SDD é algo que tá em alta e realmente que faz os projetos de Vibe Code funcionar muito melhor. Ele faz aí a raciocinar além do que o nosso promptia, tá galera? Bom, não esqueçam, vão integrar pagamento sistema de vocês, que já começar aquela taxa zero no Pix para dar uma fortalecida e ainda contar com outras funcionalidades que vão com certeza melhorar aí a conversão do teu checkout.
+
+Appmax, galera, link fixado, vocês conseguem testar aí e integrar de uma maneira muito simples e fácil. Documentação completa, animal e bem objetiva. Formação Cloud Code. Estamos para lançar. se pré-inscrevam, já garante o desconto, né? E aí também tem
+
+uns bônus que eu preparei especialmente para essa primeira turma que se inscreveu aqui, beleza? Se inscrevendo é basicamente a forma que eu vou usar para te avisar quando lançar no dia 31 de agosto. Beleza, galera? Bom, por hoje é isso. Vamos ficando por aqui. Espero que
+
+vocês tenham curtido aí o set de skills, vamos dizer assim, né? Esse conglomerado de skills que ajuda a gente a percorrer todo o SDD, né? são tem outros recursos, como eu falei, mas os principais são esses e eles ativam também alguns que a gente pode ativar isoladamente. Vale a pena também, galera, olhar o nosso nossa área de membros, tá? No menor tier possível. Ali tu já tem acesso a todos
+
+os vídeos, tá? Que a gente tá lançando semanalmente. E tem um um grupo no WhatsApp de membros, onde a galera tá tocando uma ideia, eu tô lá também. Então um ambiente legal pra gente falar sobre vibe code, né, que acontece aqui no canal. Beleza? Bom, vou ficando por
+
+aqui. Espero vocês no próximo vídeo também lá na formação Cloud Code.

@@ -1,0 +1,122 @@
+---
+video_title: "Esse code review GRATUITO acha mais bug que o Claude Code com 9x menos token (Open Code Review)"
+video_id: _JmVYs5929I
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_JmVYs5929I
+video_date: 2026-08-05T14:00:17+00:00
+video_description: |
+  Open Code Review é uma ferramenta da Alibaba para achar bugs em projetos criados pela IA, promete encontrar problemas gastando muito menos tokens que o Claude.
+  
+  ⭐ Pré-inscrição Formação Claude Code: https://app.horadecodar.com.br/lp/lancamento-formacao-claude-code
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  💳 Sistema de pagamentos que eu indico: https://appmax.com.br/desenvolvedores/?utm_source=hora-de-codar&utm_medium=social&utm_campaign=influencer-tech (Pix com taxa zero via API)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  
+  LINKS
+  
+  Open Code Review: https://github.com/alibaba/open-code-review
+  
+  TIMESTAMPS
+  
+  00:00 Open Code Review resolve as brechas de segurança do seu projeto
+  00:44 Como funciona o Open Code Review
+  04:00 Instalando o Open Code Review
+  07:15 Utilizando o Open Code Review em um projeto real
+  10:55 Verificando os apontamentos de problemas pelo Open Code Review
+  14:00 Corrigindo os bugs
+  15:45 Considerações finais sobre o OCR (Open Code Review)
+---
+Um dos principais problemas do Vibe Coding é a segurança do projeto. Ele poder ser hackeado, atacado, brechas de vulnerabilidade e mesmo pedindo para revisar, às vezes ela não encontra todos os problemas. E para resolver isso, eu vou te apresentar uma ferramenta chamada Open Code Review. Ela era fechada antes, foi testada em campo de guerra durante 2 anos e agora tá open source pra gente poder usar e encontrar todos os problemas. Chega aí que eu vou te mostrar como usar e também contratou os bugs, teos projetos. Bora lá. Então
+
+galera, antes de a gente usar de fato, vou apresentar para vocês o que que ela é, o que que ela resolve. Depois eu vou mostrar o repositório, a gente vai instalar juntos e vamos testar no projeto para entender todos os comandos que ela tem, tá? Então o nome do projeto é Open Code Review. E o que acontece? Eu botei aqui que ela bateu o cloud code gastando nove vezes menos token. E isso
+
+foi uma comparação direta de code review com o cloud code, né, usando o modelo tropic versus outro modelo usando Open Code Review. Então consegui encontrar mais problemas no código do que o próprio Cloud Code que desenvolveu o projeto. Isso é a informação deles, né, de quem desenvolveu o projeto. Então esse OpenC review, ele rodou por 2 anos dentro da Alibabá. Então é um projeto que era fechado e agora está disponibilizado de maneira open source pra gente usar. Então a gente hoje tem
+
+esse problema de pedir uma review pra gente, né? Eu mesmo faço isso quando eu desenvolvo uma funcionalidade, peço para ele dar uma revisada, mas a gente tem a questão de que ele quase sempre não encontra todos os problemas. E isso acontece por pular arquivo, né? por exemplo, em PR grande, por request grande, a gente tem uma funcionalidade que tem múltiplos arquivos, a gente tem a limitação do contexto e aí também o viés do modelo, né, de não entender os problemas que ele acabou de gerar. E isso acontece bastante. É rra a linha, o
+
+bug existe, mas o comentário cai três funções abaixo. Então esse também é um dos problemas, né, dele não detectar exatamente onde tá e acabar revisando tudo, refatorando demais e o open viw resolve e oscila. mudou uma palavra no prompt, mudou a qualidade. Então, a gente tem também a dependência do nosso prompt, tá perfeito para achar o problema. E isso não acontece nesse plugin que eu vou mostrar para vocês.
+
+Então, esse open review, né, ele trabalha com o versionamento do git, o teu projeto tem que tá versionado para que ele possa somente agir naquele código que tá entrando novo na produção, vamos dizer assim, né? Então, a nova funcionalidade, né? Não, a code base toda, porque senão a gente teria problemas semelhantes também com o que o cloud faz. Então ele vai ver o que que mudou. Ele vai selecionar exatamente ali onde pode ter problema, vai agrupar, vai fazer ali contextos por lote, o que também melhora ali a ação, já que ele vai trabalhar em várias frentes diferentes. E aí sim a IA entra, porque
+
+ela vai revisar somente o que está no escopo, né? Não tudo o que tá no DIF e nem toda a c base, ele vai se posicionar, mostrar onde tá o problema e por fim fazer aquela revisão que a gente vê muitos plugins novos fazendo, né? uma revisão final para entender se é realmente um problema ou foi um falso positivo. Aí aqui foi os benchmarks soltados por eles, né, em várias amostras, mostrando que o OCR, né, Open Code Review, foi mais preciso em apontar bugs, teve mais qualidade no review, gastou menos tokens e ele teve um recall menor. E o que que é isso? Eu boto aqui
+
+o recal menor é a escolha do projeto. Eles preferem falar menos e acertar mais. Porque bod que comenta bobagem ninguém lê. Então ele é menos verboso e mais propositivo, né? Atingindo os problemas reais. Foi medida em mais de
+
+200 PRs e 50 repositórios diferentes. Encontrou 1500 mais problemas, tá? Então vamos lá entender como que a gente pode instalar e usar esse cara. E galera, antes da gente instalar o Open Code Review, se inscrevam pra nossa lista de lançamento aqui da formação Cloud Code. Um mês praticamente para lançar. Lá tu
+
+vai aprender cloud code do básico avançado, criar projetos junto comigo, aprender a criar aplicações seguras, né, como a gente tá falando aqui no Open Code Review, estratégias para deixar elas blindadas e também receber múltiplos usuários sem cair. Enfim, se tu quer dominar cloud code e criação de projetos com, essa é a formação certa, link aqui na descrição, garante a tua vaga para conseguir o melhor preço também bônus de lançamento. Bora seguir então. Repositório tá aqui, galera. tá bem, né, popular, 15.000 stars
+
+atualizado recentemente. Isso é importante, né? Dois dias atrás teve atualização, ontem também bastante contribuidores. Open source é assim. E aqui vocês podem entender mais sobre ele, né? Ter mais informações do que eu
+
+expliquei ali nos slides, tá? Instalação npm install. Vamos fazer isso agora para poder fazer aí o uso dele. Bom, galera, então como precisa ter git, eu vou fazer num projeto já rodando, né? Aí a gente economiza de criar um projeto aqui e fazer uns passos desnecessários. Vamos
+
+direto ao ponto para instalar aquele comando ali, npm install. É, lembrando, né, galera, é do Alibabá Group, né, uma empresa que tá bem forte na IA, avançando bem forte, ó. instalou aqui de forma global, a gente pode utilizar comandos OCR, como ver o número da versão, por exemplo, né? Ver quais são os providers de LLM, que é o que ele tem aqui à disposição para poder rodar, né? O OCR, vai precisar conectar uma IA, porque ele também usa isso ao seu favor, né? Não é algo sem. Aí depois a gente
+
+tem o config provider, que é um comando onde a gente vai configurar um uma LLM. Para rodar aqui a revisão, recomendo fortemente que seja um modelo contrário, né, diferente do modelo que tu usou pro projeto. Então, nesse projeto aqui, eu fiz com Cloud e eu vou usar o Open AI API para usar o GPT como revisor. A gente vai escolher o modelo aqui e vai colocar a chave de API. Beleza? Bom,
+
+chave de API, bem fácil, né, galera? Tu vai entrar em platform.com e criar a tua chave. Criei a minha aqui. Tu copia, né? não vai aparecer de novo e
+
+vamos colar lá. Colou a chave, deu um enter, ele testa a conexão e pronto, provider configurado. Depois tu pode mudar o modelo se tu quiser com OCR config model, né? Pode escolher entre os modelos aqui que ele apresenta. E tu pode também testar de novo, caso tu queira garantir que tá conectado com o CR LLM test. Beleza? Eu tenho esses
+
+comandos aqui para poder ajustar qualquer coisa do CR antes de testar de fato, tá? Tem outras configurações, recomendo dar uma olhada no repositório, né? Tem outras configurações que tu pode também dar uma olhada no repositório para ver ou usar o comando OCR config para ter aqui uma lista de comandos. Beleza? Então é um client, né? Um CLI
+
+bem interessante, fácil de usar. Que que a gente faz? Então aqui o projeto tem que táar no Git, né? como eu falei para vocês. Então aqui não tem nada eh para revisar, a gente precisa fazer alguma coisa no projeto. Então vou abrir o
+
+cloud aqui. E esse projeto aqui é de um e-commerce, né? Eu já usei aqui em vários vídeos. Um para fazer comparação entre Kim, GPT e cloud, outro para testar um outro plugin, né? E aqui eu vou fazer uma funcionalidade nova nele pra gente poder testar o OCR. Então eu
+
+pedi aqui para criar uma busca de pedidos dentro do admin. Então é isso que o OCR vai revisar. é sempre a nova alteração, a nova funcionalidade que tá pendente ali para entrar no Git. A gente já vai ver como fazer isso. Vou abrir um outro terminal aqui que depois vai dar mais clareza para vocês, tá bom? Bom,
+
+galera, aí ele terminou aqui, tá? A gente volta pro outro terminal, a gente pode dar um git status aqui, tá? E isso aqui foi o que mudou, né? Então a gente tem essas duas modificações e claro, né, a cada funcionalidade pode ter mais, menos, depende do que tu fizer, tá? E aí eu posso utilizar o comando OCR, review preview. Isso aqui mostra, né, qual foi
+
+a atualização, beleza? E é o que ele vai revisar, né? Então é exatamente o que tá ali no Git para vocês entenderem a lógica, né? Bom, pra gente ter a chance de encontrar alguma coisa, eu vou aumentar mais o escopo. Vou colocar agora uma funcionalidade de cupom.
+
+Então, isso aqui vai ser acrescentado à loja também, o sistema de cupom de desconto, ele vai ter tabela e tal. Então, vai ter uma adição maior de código e a gente vai ter mais coisas a ver ali no OCR. E aí depois eu vou rodar o comando pra gente ver como que ele vai dar parecer ali, né, do Open Code Review. Ó, então ele fechou, galera, aqui, né? Adicionou a funcionalidade de cupom e rodando os mesmos comandos, a gente tem agora uma modificação muito maior e o OCR, né, verificar muito mais coisas. Bom, como é que a gente começa?
+
+Basicamente usando o comando OCR review, tá? Isso vai fazer com que ele comece a separar, né, em lotes, vamos dizer assim, e revisar os arquivos modificados à busca de bugs. Tem todo o processo aqui dele, tá verificando um a um, mas e também como eles conectam ao sistema como um todo. Ainda tem aqui algumas mensagens, se vocês acompanharem, quando o DIF, né, ou seja, a mudança passar de 50 linhas, ele ele roda uma revisão extra para garantir que esteja tudo na conformidade. Então, de vez em quando ele fala assim do trash, né, ó, 43 linhas é menor que as 50 que ele precisa. Então são dois tipos de
+
+revisão, uma com 50 menos e outra com 50 mais. Bom, galera, daí aqui ele deu o resultado final. A gente pode ver que ele achou vários problemas, ó. Ele vai, ele vai declarando em categorias, por exemplo, bug, medium, bug, high, aí coisas de manutenabilidade, né? Ele também vai declarando aqui e tudo mais.
+
+Então, a gente tem todos os bugs que ele encontrou somente, né, nessas duas funcionalidades que a gente adicionou, tá? Aí ele tem essa esse comando session list, que é onde ele grava a sessão. Então essa daqui é a sessão que ele encontrou os problemas, tá? E eu posso também utilizar o viewer, que ele vai abrir aqui em local host, tá? Uma visualização mais interessante para esses problemas encontrados. Então aqui tem a minha, o
+
+meu projeto, a minha revisão e aqui todos os apontamentos que ele fez, tá? E isso aqui deve ser enviado, né, pro agente para ele fazer a correção. A gente precisa comunicar o cloud ou quem tá fazendo o nosso projeto para que ele faça os ajustes, porque isso aqui é somente leitura, né? É somente são somente apontamentos dos problemas. Então ele fala os arquivos que ele identificou e aí agora a gente tem que pedir pro cloud corrigir. Aí como é que
+
+a gente faz isso? Nós podemos manualmente, né, identificar problema por problema, tá? Porque pode ser que problemas menores a gente não queira corrigir, da gente só passaria isso aqui pro cloud. Ou se a gente quer passar tudo, a gente pode fazer isso aqui, ó, formatar tudo num arquivo, né? Toda essa última review num arquivo, tá? Esse
+
+comando review formato Jon. E aí eu posso comunicar o cloud que esse arquivo tem os ajustes que precisam ser feitos. Ele vai entrar no arquivo e vai fazer as alterações do projeto. Simples assim. E galera, a gente tá falando tanto aqui de segurança, né? Sou obrigado a comentar
+
+com vocês também que se vocês precisam integrar com pagamentos no sistema de vocês, eu indico amax, porque pagamento também precisa de muita segurança para ser concretizado com sucesso, para não recebermos ataques, né, nos nossos sistemas que aceitam pagamentos. Então vocês precisam de uma solução que seja confiável e segura. E a Appmax é tudo isso. E a Appmax é tudo isso, tá? Vou deixar o link deles aqui no comentário fixado para que vocês possam conhecer e integrar no sistema de vocês. Tem uma
+
+grande vantagem. O Pix via API é taxa zero. Então dá para testar e verificar se vocês gostam e depois implementar nos outros meios de pagamento. Ah, não sei implementar, muito difícil, não sei o quê. Cara, eles tem uma documentação de API aqui que só tu copiar e colar no teu agente ou tu mesmo consegue fazer, não tem erro. Por exemplo, aqui no Quickst,
+
+olha só, eles explicam o fluxo certinho do que precisa ser feito. Tu pode copiar toda essa página, colocar lá no cloud, nraft, no cursor, no agente que tu usar e pronto. Eles vai pedir só as chaves de API. Aí tu tem como criar aqui. Em menos de 10 minutos tu vai ter uma integração de pagamento pronta, né? Uma outra
+
+facilidade deles é isso, essa esse início rápido, não tem tanta burocracia, tu consegue integrar de forma fácil e já sair testando pagamento teu sistema. Então, se tu precisa de uma infraestrutura de pagamento seguro bem documentada, que tem suporte, deem uma olhada aqui na Appmax e integrem já para poder testar e ver a diferença do que é uma empresa boa em sistema infraestrutura de pagamentos. Fechou, galera? Bom, vamos ver se o arquivo foi gerado lá, ó. Então, a gente tem aqui o arquivo review JSON. Aqui tem todos os
+
+achados em formato JSON, que é um tipo, né, de arquivo, vamos dizer assim, uma extensão que os agentes conseguem ler perfeitamente. E agora o que que a gente faria? A gente volta lá no cloud e coloca assim: "Eu encontrei alguns bugs no código com o open review. Tudo está catalogado no arquivo review Jon. Identifique os problemas no código e corrija.
+
+Simples assim. Vai pedir aqui para ele, ele vai fazer as alterações e a gente vai ter um projeto mais seguro. Então vamos esperar aqui e vamos ver o que acontece. Ó, galera, então ele conseguiu ler o arquivo e tá aqui implementando todos os fixs e que basta esperar, né? Ele fala que encontrou os 21 apontamentos, né? os bugs de
+
+concorrência no limite de uso, confiança de dados do cliente e aí tudo é corrigido passo a passo. E no final a gente vai ter a versão corrigida, né? O commit vai ser feito com base no que o cloud entrega da revisão do Open Code Review. Eu já vou mostrar para vocês como seria o próximo passo, ó, galera. Então ele terminou aqui, tá? Ele dá o
+
+feedback dele, tudo que tá corrigido, beleza? E aí a gente continua fora daqui, né? A gente vai lá pro terminal de novo, porque a gente tem que colocar as coisas no git. Claro, é possível pedir pro cloud colocar no git, mas só para vocês verem, né, o que aconteceu. Então a tem esse git status aqui que tem as modificações feitas pelo cloud inicialmente, depois pelo cloud de novo após o apontamento do C, tá? E aí o que
+
+a gente faz? a gente vai adicionar os arquivos git- A e vai comentar, né, o commit, por exemplo, com um fix, né, consumo atômico de cupom, validação do carrinho e erro no form. Então, a gente tem aqui as novas funcionalidades entrando após o fix. E pronto, o ciclo tá feito. Aí se reiniciaria, né? a gente faria uma nova
+
+atualização, a gente pegaria, utilizaria o e transformaria para Jon e corrigiria com cloud ou qualquer outro agente. Como eu falei, eu prefiro fazer com dois modelos, porque isso faz com que a gente tenha uma comparação ou uma verificação distinta, né, de duas e as do que o mesmo modelo que pode tá contribuindo por eh manter os problemas, né, ou não encontrar de fato. Bom, galera, mais uma forma então de vocês encontrarem problemas nos projetos de vocês, tá? Como eu falei, vou deixar aqui o link do repositório na descrição para que vocês instalem façam as próprias análises de vocês. É uma empresa grande, é uma empresa que tem IA, então eu acredito que vale o teste, tá? Aí depois comentem
+
+aí que acharam, se eu estão usando, digam aí também pra gente trocar uma ideia. Lembrando também se vocês estão para integrar pagamentos no sistema de vocês, Appmax, tá? Recomendo. Vocês vão encontrar aqui uma infraestrutura de pagamentos. bem documentada, com fácil integração e taxa zero no Pix, que dá muita diferença, principalmente para quem tá começando, né, receber ali o valor integral da compra do teu cliente.
+
+Formação Cloud Code tá para lançar, galera, esse mzinho aí para eu terminar os últimos detalhes, editar bem os vídeos e deixar tudo certinho para vocês. Inscrição na descrição aqui para garantir o melhor valor, tá bom? E é isso, vai ficando por aqui. Espero que vocês tenham curtido essa descoberta minha. Não esqueça de deixar o like, também se inscrever, isso me ajuda muito. E se tiver alguma sugestão de
+
+conteúdo também deixa aí nos comentários, galera. Tá sempre olhando, respondendo vocês e trazendo as sugestões na prática aqui como vocês gostam. Fechou? ficando por aqui e até o próximo vídeo.

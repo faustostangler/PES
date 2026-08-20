@@ -1,0 +1,156 @@
+---
+video_title: "A OpenAI abriu DE GRAÇA seu caçador de vulnerabilidades (Teste do Codex Security)"
+video_id: lUSbn8NG_zI
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lUSbn8NG_zI
+video_date: 2026-08-10T14:00:38+00:00
+video_description: |
+  Codex Security é a ferramenta de auditoria de código da Open AI, eles resolveram liberar de graça e eu testei!
+  
+  
+  🟢 Teste o RouteLLM no Abacus AI: https://chatllm.abacus.ai/hco
+  
+  
+  ⭐ Pré-inscrição Formação Claude Code: https://app.horadecodar.com.br/lp/lancamento-formacao-claude-code
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  💳 Sistema de pagamentos que eu indico: https://appmax.com.br/desenvolvedores/?utm_source=hora-de-codar&utm_medium=social&utm_campaign=influencer-tech (Pix com taxa zero via API)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  
+  LINKS
+  
+  Codex Security: https://github.com/openai/codex-security
+  
+  
+  TIMESTAMPS
+  
+  00:00 OpenAI liberou a sua ferramenta de revisão de segurança gratuitamente
+  00:28 Como funciona o Codex Security
+  05:30 Como instalar o Codex Security
+  09:10 Executando o Codex Security em um projeto real
+  11:40 Corrigindo as falhas de segurança encontradas
+  17:30 Considerações finais sobre o Codex Security
+---
+Cara, a Open acabou de lançar uma ferramenta de segurança, Codex Security, filezinha open source, fácil de utilizar, vários recursos. Nesse vídeo aqui eu vou te mostrar tudo, como instala, como usa e como tira o máximo proveito dela. Um detalhe, se tu tem a assinatura do GPT ali para usar o Codex, tu pode utilizar tua cota para essa ferramenta também. Então é só alegria. Chega aí, bora lá, vamos pra prática começar agora. E galera, antes de
+
+começar, eu queria falar um pouco sobre a Abacos AI. Ela é um hub de LMS, né? Ela funciona como esse serviço, mas ela tem vários outros recursos aqui dentro do site. Uma das coisas que eu mais gosto aqui neles é o root llm, esse recurso aqui, ó. Tá vendo? Porque eu
+
+posso escolher qual modelo eu quiser, né? Eles tem os modelos mais potentes aí de a quando lança, eles já colocam aqui. Mas esse daqui é esse essa forma de escolher faz economizar muitos tokens, né? Porque ele vai escolher o modelo certo paraa tua pergunta. Por exemplo, vou perguntar aqui quantos dias tem o mês de fevereiro. Então, olha só, ele
+
+foi lá e me respondeu que tem 29 dias. Para isso, ele utilizou o Gemnight 3 Flash, que é um modelo barato, né, para responder perguntas fáceis como essa. Agora, se eu perguntas se algo mais complexo, por exemplo, compare arquitetura monolítica e microsserviços para uma startup de cinco devs com prós, contras e recomendação final. Agora ele usa um modelo maior, né, o mais forte, que é o GPT 5.6 Luna. E aí eu tenho essa
+
+resposta mais complexa, né? Porque é uma questão que exige isso. Eu posso também eh utilizar o modelo que eu quiser, é óbvio, né? Não, eles não travam isso. E também regenerar a resposta com um modelo à minha escolha. Então fica bem
+
+interessante aqui. A gente consegue ter a perspectiva de vários modelos, economizar crédito e ainda escolher outro modelo se eu tiver interesse. Bom, mas não é só isso aqui na ALX. A gente pode, por exemplo, e criar apps do zero, né? como se fosse um codex, um cloud code, ele vai criar toda a aplicação aqui ou até mesmo imagens e vídeos, né?
+
+Vamos fazer um teste aqui. Vou criar um vídeo. Então vamos lá. Criar um vídeo de samurais lutando. Uma batalha bem disputada, né? L de samurai irado, né,
+
+galera? Então vou esperar ele aqui. Ele vai gerar esse vídeo e eu já mostro o resultado para vocês. Dá para criar vídeos e imagens também aqui no Abacos. Então vamos lá galera, olha só, gerou o vídeo aqui com Sidence, né, que é um bom modelo para isso. Bora dar uma
+
+olhadinha, ó. porradaria, né? Isso aí, galera. Então, prompzinho bem básico, né? Poderíamos melhorar no prompt e ter resultados melhores. Só
+
+queria mostrar para vocês o recurso. Então, galera, para quem quiser testar o AVAC, o link vai est aqui no comentário fixado na descrição. Dei uma olhada. Como eu falei, planos a partir de 10 já ter acesso a tudo isso e aquela funcionalidade que eu comentei que é o R teledame. Bem interessante. Gosto
+
+bastante. E agora sim, seguimos. Bom, galera, seguimos. Então, vamos falar aqui do Codex Security. Eu vou também dar deixar o link dele aqui na descrição para tu poder acessar o repositório. Lá
+
+vai ter mais informações ainda do que eu vou trazer aqui, mas eu gostaria de dar uma breve introdução pra gente entender o que tá acontecendo. De início é um repositório lá no GitHub, open source, a gente instala com NPX. Pronto, vai conseguir ter acesso aí a essa ferramenta de segurança da Open AI. Então botei aqui, né? A Ia escreveu, ninguém revisou, que acontece bastante, né? Vai dizer aí que tu revisa linha por
+
+linha do que a IA gera? Claro que não, né? Mas tu precisa revisar e esse cara vai revisar por ti. Agora existe uma ferramenta que trava o commit antes de falha. Agora existe uma ferramenta que trava o comit antes da falha subir pra produção, né? Então ele vai agir em
+
+várias etapas. Vou te mostrar aqui também, ó. Um revisor de segurança dentro do terminal. Então ele vai rodar ali como um celai, né? vai usar alguns comandos e ele vai estar agindo no nosso projeto. A gente não rejex, ele entende
+
+o fluxo do código em vez de casar padrão de texto, né? Então é uma que tá por trás do negócio, ele vai encontrar os problemas de fato. Abert verdade, né? Open source, como eu falei, de graça, só que precisa de uma para rodar. Se tivesse centor do codex, melhor, já usa ali e pronto. Um comando. Então tu vai
+
+rodar aqui npx codex security scan e ele vai varrer o teu projeto atrás de bugs. Só que tem comandinhos ali mais interessantes que tu pode ser mais preciso, né? Olhar só o que tu quiser, olhar só o último commit e isso vai te ajudar a economizar um pouco de créditos também. E no final, claro, eu te mando um relatório aqui, um report MD e um Figings Jon, né? Que vai ter ali os achados. [roncando] quatro lugares onde
+
+ele entra no seu fluxo aouditar o projeto todo, que é uma prática interessante, mas nem toda hora, né, galera, porque senão a gente vai consumir muitos créditos. Olhar só o que mudou, o que é bem interessante e essa prática que eu tento sempre trazer aqui, né, só a DIF, o último comito, né, o que entraria pra produção. A gente vai só revisar esse novo código que mudou. travar o commit, o hook de pré-commit barra que tem severidade alta antes de virar histórico. Então tu pode meio que atrelar isso ao teu fluxo do git, né? E
+
+se tiver algo ruim, ele vai ler antes e não vai deixar subir, que é legal ser o porteiro do Cai, né? Então continuous integration também consegue colocar na tua pipeline. Para quem tem um Jenks, por exemplo, né? Tu consegue tá colocando nesse nível aí algo mais avançado. Os dois primeiros comandos já servem para agentes meros mortais, né?
+
+Então, do código solto até a prova de que a falha morreu, vai ter o nosso repositório, o scan vai ser feito nele, né? Ou no projeto todo ou no último commit. Ele vai encontrar alguma coisa, se tiver problema e tu colocar o hook, né? Ele vai dar aquela travada. Mas claro, né? Se tu quiser só parar por
+
+aqui e depois corrigir, tá bom? Também não precisa colocar o hook, não. Tu pode usar o relatório para resolver os problemas. e corrigiu. Tu pode escanear de novo para poder ver se tem mais algum problema além do que já foi encontrado, né? Porque uma correção pode gerar outro
+
+problema. Fechou? Bora então pra prática. Ó, galera, o repositório é esse aqui. Codex Security é com 6.000 stars.
+
+Tá bem atualizadinho, né? Essa semana passada. Ontem não, hoje foi atualizado já 9 horas, né? Hoje cedinho, cara. Estão madrugando lá, ó. Subiu mais 100.
+
+Então, quando eu comecei a, quando eu achei ele, tinha 5000 e pouca, né? tá compação de seis, então o negócio é bem legal mesmo. Aqui tem alguns comandos, tá galera? Vocês podem dar uma olhada aqui. É interessante aprender mais sobre a ferramenta, né? Não ficar só no que
+
+tem aqui no vídeo. Sempre incentivo vocês a isso e continuarei fazendo isso. Beleza? Bom, então vamos lá. Vamos ver se esse negócio é bom mesmo. Que que a
+
+gente tem que fazer aqui? Bom, eu vou usar no Codex, tá? Mas não se resume a Codex. Tu pode usar onde tu quiser, é só porque a ferramenta é da Open AI, tá? Então eu vou abrir o terminal aqui e vou instalar ele primeiro. Esse projeto que
+
+eu tenho aqui é um e-commerce, um e-commerce grande. A gente já usou ele em alguns vídeos aqui do canal, então ele pode ter vários bugs, vai ser legal para olhar. A gente vai instalar com npm install @openiodex security, perdão pela fonte terminal, não consigo aumentar, mas é o comando que tá lá no repositório, tá? Depois aqui a gente pode fazer o quê? usar os comandos NPX para, por exemplo, conferir se tá instalado, ó. Então, eu posso usar aqui
+
+o security info JSON. Então, ele vai aparecer com Jon de como que tá a configuração, né, do nosso pacote instalado. Aí que a gente vai fazer fazer um login. Então, o login é o quê? A gente faz logar na nossa conta do Openii, ele vai usar essa IA, né, a IA do Codex, o GPT, como motor ali para funcionar o Codex Security, né? Então,
+
+pronto, loguei e ele já tá contando com a minha assinatura. Aqui vamos fazer um exemplo na prática, ó. Não tem nada no git, né? Tá zerado. É exatamente o que vocês vão fazer. O git de vocês vai est
+
+comitado, tudo certinho, né? E vocês vão para um outro brand, alguma coisa assim, né? A próxima tarefa, digamos assim. E aí a gente vai fazer alguma coisa no projeto para poder revisar. Então, nesse caso aqui, que eu vou fazer, adiciona a loja pisada, né, que é o nome desse e-commerce, o acompanhamento de pedido, cria uma página pública de acompanhamento onde a pessoa informa o número do pedido e vê a situação dele sem precisar estar logada, porque muita gente compra e não lembra a senha.
+
+Então, o que que acontece? Eu posso acompanhar meu pedido, deslogar. A página deve mostrar o número, a data, a situação atual, os itens comprados, o valor total e o endereço de entrega. Vou botar aqui mostrar a evolução do pedido. Tal de confirmação de compra. Adicione o
+
+botão que leva para essa página. crie também na área do cliente logado. Então é um recurso bem completo. Ele vai fazer isso aqui com o GPT Sol, né? E vai modificar vários arquivos para poder chegar no resultado final. Beleza?
+
+Lembrando também, galera, o editor vai deixar thumb zona aqui enquanto faz. A gente tem uma playlist de Codex aqui. Então, se tu se interessa por Codex, vou deixar o izinho e tu já acessa um curso de uma hora quase ali sobre codex para tu aprender tudo sobre ele. Bem interessante, bem legal, bem mão na massa. Bom, então vamos lá, vamos deixar ele fazer aqui. Logo volto. E olha só,
+
+galera, terminou, ele faz os testes dele, né, e tudo mais. A gente vai ver que ainda pode encontrar alguma coisa, tá? Então agora se eu dou um git status aqui, a gente vai ver que tem algumas coisas para analisar. Pera aí que não tava no no lugar certo, né, galera? Aí também é difícil, ó. Tem isso aqui,
+
+ó. E isso aqui que vai ser avaliado, né, pelo nosso Codex Security. Então, primeiramente, eu posso rodar um comando chamado dry run, né? É uma flagpx collect security scan po. Aí eu vou pedir para ele olhar a working tree para ele mandar o os resultados, né, nesse output de resultados pisada. E dry run.
+
+Que que é isso? Eh, ele vai falar exatamente onde e como ele vai rodar, tá? Então é meio que pra gente entender o que vai acontecer. Aí a gente olha ali, tá tudo certo? Ah, o modelo que eu quero, é esse raciocínio que eu quero, é esse projeto que eu quero. Eu não gastei
+
+nada para fazer isso. Aí eu só tiro o dry run aqui e ele começa a rodar, ó. E esse modo aqui, né, que ele tá fazendo, ele vai ler o que tá nesse projeto alterado, ou seja, só o que tava em vermelhinho ali, né? O que tava para ser comitado ainda que ia entrar. Então, vamos ver o que vai acontecer com esse essa funcionalidade que a gente adicionou, vamos dizer assim, né? Aí ele
+
+vai colocando aqui todo o passo a passo dele, né? E ele vai gerar aqueles dois arquivos que eu comentei com vocês, que a gente vai ver logo logo aqui em arquivos, se a gente for ver, tem o resultados pisada já, ó. Ele já criou a pasta e aí agora ele vai criar os arquivos quando terminar aqui a rodada, né? Ó, galera, daí aqui ele já evoluiu um pouco, né? Ele tá 10 minutos rodando, né? Aí que acontece, ele já tá
+
+criando aqui artefatos, né? para mostrar tudo que ele encontrou também nesse fightings. Então basta a gente esperar, né? E isso que é só da do que tá alterado, né? Que tem que ver as conexões e tal, o que faz para entender o que que teve de impacto nessa mudança.
+
+O projeto todo demoraria muito mais, né? Consumiria muito mais tokens. Então, olha só, galera, terminou aqui. Ele falou que o conteúdo foi marcado, né, como possível risco de cybersegurança. Aí, né, a gente vai ver aqui o resultado. Esse problema
+
+aqui, galera, é um problema que já tá sendo reportado no repositório, tá? e que ativou o guardio ali do pacote, ele não tá, eles não estão conseguindo em 100% dos casos, distinguir se eu queria fazer uma simulação de invasão ou realmente tô auditando meu próprio projeto, tá? Mas mesmo assim ele salvou aqui os findings, né, nesse validation report md. Então aqui estão todos os os recursos encontrados, né? Aí a gente pode pegar, copiar e colocar aqui na IA mesmo, né? Aqui é rodei o Codex security
+
+e ele me entregou isso. Ã, onde estão os problemas e como corrigir? Então vou mandar os resultados parciais para ele, né? Como dito ali, ele não entregou tudo, mas eu acredito que ele fez boa parte, tá? porque demorou bastante. Aí
+
+ele vai cruzar o relatório aqui com a implementação, vai encontrar onde tá o problema pra gente poder corrigir. Ó, ele falou o achado principal é real, é um idor pola, o servidor aceita o identificador previsível, entrega os dados de outro cliente sem comprovação de posse, né? Isso aqui é um grande problema para e-commerce. Então ele vai corrigir esse idor aqui de alguma maneira. Vamos esperar aqui a solução.
+
+Então aqui, galera, ele apresentou o problema detalhadamente e toda a etapa de correção, tá? Então a gente vai pedir para corrigir. Pronto. Aí a gente teria a segurança, né, avaliada pelo Codex Security, somente no que a gente fez e corrigindo aí pontualmente esse problema, tá? Aí, galera, enquanto ele corrige aqui, queria mostrar uma coisa legal para vocês também, que olhando pelo repositório assim, né, parece que é simples, né? Não parece não tem muita
+
+coisa, mas a gente tem uma documentação aqui, ó, para poder entender melhor como é que funciona. E também tem o reference, que é esse cara aqui, ó, onde ele mostra todos os comandos e para que serve, tá? Então aqui a gente consegue ter uma ideia da dimensão e da complexidade do que é esse pacote, né, que foi liberado pra gente de graça, tá? Aí, uma outra coisa que queria mostrar para vocês é esse hook aqui, ó. Esse é o cara que eu falei que dá para trelar o commit. Então, antes de comitar, ele vai
+
+dizer se tem algum problema e aí vai identificar o risco pra gente, tá? Que ela é bem legal, fica automático, né? é um hook, ele tá atrelado a esse evento. E esse scan foi o que a gente usou, né, que pode ser utilizado para rodar no repositório todo ou dependendo da flag, somente no work tree, como a gente fez ali, né, o que tava sendo trabalhado, tá? Outra coisa importante, galera, eh vamos falar do arquival do Codex, o Cloud Code. Começo de setembro, tá?
+
+Finzinho de agosto, a gente vai lançar a formação Cloud Code, tá? Eu vou deixar aqui na descrição o link para vocês fazerem pré-escrição. A data de lançamento vai ser 31 de agosto, tá? Aí com essa pré-escrição aqui vocês vão conseguir ter o desconto especial do lançamento. Serem avisados, né, quando lançar também bônus especiais para essa turma inicial. Aí só deixa teu e-mail
+
+aqui, eu vou te avisar, vou te dar esse cupom de desconto especial, beleza? Então garante aí a inscrição, tá? O link na descrição aqui, fechou? É, voltando aqui, quero deixar ele terminar ali para mostrar para vocês como instalaria o hook, né, também para fazer essa parte de scan antes da do commit. Ó, galera, então ele entregou aqui, né, ele terminou e fez a correção. Vocês vem
+
+quanto que ele mudou, né, para poder corrigir que ele acabou de fazer. Aí que acontece, a gente vai comitar essas coisas. A gente vai usar tipo assim, ó, um git ponto um git commit - a - m de acompanhamento pedido, né? Ah, tô comitando a tarefa. Aí num fluxo natural, né? A gente enviaria isso aqui
+
+pro repositório, a gente eh faria o push, né, para poder subir isso lá no git, né? Então, ó, tá zerado, né? E pronto. Aí seria esse o fluxo, né? Mas a gente pode mandar revisar o projeto todo, não somente o que tá no work tree. Eu queria
+
+mostrar para vocês o exemplinho também do hook. Então a gente vai ter que usar o comando aqui NPX Codex security install Hook, né, que é aquele outro comando que falei para vocês, tá? Aí ele vai instalar esse hook, beleza? Aqui no caso já tá instalado, já tinha testado antes. E aí a gente vai pedir outra coisa para o o GPT, né? Por exemplo,
+
+adicione a quantidade de estoque de itens nos cards da home para o usuário saber que está acabando. Então, pedi uma coisa mais simples agora, só para não demorar tanto aqui também, mas basicamente quero fazer uma mudança, né? Isso aqui vai gerar também uma dif, né? Ou seja, o código que está comitado vai ser diferente do código que está para entrar no git. ele vai fazer essa alteração aqui e quando eu comitar esse novo código, vai ter a análise do Hook, que é o pré-commit, né? Ou seja,
+
+antes de comitar, ele vai fazer uma análise para ver se tem algum problema nesse código. E se tiver, ele não vai deixar, ele vai travar e vai pedir para que eu verifique os problemas. Ó, galera, então ele me trouxe essa nova alteração, né, que foi bem menor que a outra. Se eu dou um git status tem, né? Aí eu vou dar um git e eu vou dar um git commit - a - m, né? Vou fazer o fluxo de
+
+commit de, por exemplo, eh, acompanhamento estoque. Aí se vocês perceberem, né? E aqui ele vai rodar uma análise, ó, tá meio pequeno, mas acho que dá para ver que mudou 24 arquivos, 53 funções de mudança, né? tem test gaps e aqui ele vai dar uma pontuação do risco, né, de a gente enviar isso aqui. Então, como é baixo, ele não acusou nada, não travou e deixou entrar, mas se fosse um risco alto, ele ia avisar e não ia deixar fazer o commit, ele ia pedir um scan pra gente poder verificar os problemas que contém ali, tá bom? Então,
+
+cara, repositório bem completinho, bem interessante. Vou deixar o link para vocês aqui, para vocês testarem e verem com os próprios olhos, tá? Não esqueçam também testem ali a Avacus AI Root LLM, principalmente para quem tem dúvida em qual modelo escolher aqui. Vai ajudar, vai elucidar melhor essa questão. Tem também a opção de usar com outro modelo para tu comparar as respostas e planos começando a 10 toletas, né, galera? Não
+
+é tão caro assim comparado com os outros IA que a gente tem por aí. Por último, formação Cloud Code, nosso arc rival do Codex. Estamos aqui com as pré-inscrição aberta, isso vai te dar acesso a um valor especial e também bônus exclusivos do lançamento. Bom, bom, agora eu quero saber de vocês que que acharam da ferramenta. É over? Vale a pena? Deixa
+
+aí nos comentários, vão trocar aquela ideia. Não se esquece também se inscreva no canal, deixa um like e vídeos de membros, galera. A gente tem os membros aqui do canal. se tornando membro, tu vai ter acesso a uma porrada de vídeo, cria conteúdo semanalmente pros membros e tem um grupo de WhatsApp onde eu estou lá. Se tu quer trocar uma ideia comigo, com outros vibe coders da massa, seja membro do canal, tu vai ter acesso a esse link e vai conseguir entrar no grupo, beleza? Fico por aqui, espero
+
+vocês aí no próximo vídeo. Valeu, falou. Yeah.
