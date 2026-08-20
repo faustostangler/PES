@@ -1,0 +1,239 @@
+---
+video_title: "Oh look. Anthropic’s AI models also broke containment."
+video_id: A9nnvw2wqmE
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=A9nnvw2wqmE
+video_date: 2026-08-05T10:00:10+00:00
+video_description: |
+  Explore the podcast  → https://ibm.biz/~jDjLVwwSn 
+  
+  Last week, OpenAI’s models broke out of their sandboxes to cause chaos. This week, it’s Anthropic’s turn. 
+  
+  On this episode of Security Intelligence, Diego Matos Martins, Kimmie Farrington and Jeff Crume join host Matt Kosinski to discuss the results of Anthropic’s internal review of testing procedures following the Hugging Face incident last month. Anthropic uncovered three instances of Claude models escaping containment and hacking real companies during what were supposed to be simulations. 
+  
+  Granted, that’s three incidents out of 141,000 reviewed tests, which raises the question: 
+  Just how big a deal is this really?
+  
+  Then, we talk about research from Zenity into PleaseFix, a class of vulnerabilities that affects every agentic browser on the market. Zenity’s take: In the rush toward agentic functionality, these tools stripped away decades’ worth of browser security fundamentals.
+  
+  Finally, a so-called “security researcher” has a public GitHub repo of 200+ zero-day exploits. They say it’s to encourage more interest in cybersecurity.
+  
+  Yeah. Okay. Sure.
+  
+  All that and more on Security Intelligence.
+  
+  Segments:
+  
+  00:00 - Intro
+  1:12 - Claude breaks containment
+  13:13 - Agentic browsers: security nightmares
+  21:56 - The Exploitarium
+  
+  Listen to the latest bonus episode: Your data breach plan is missing something major: people. https://ibm.biz/~aw5t7blWy
+  
+  "The opinions expressed in this podcast are solely those of the participants and do not necessarily reflect the views of IBM or any other organization or entity."
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~4AzzXA8Gk
+  #agenticai #claudeai #aisecurity 
+  
+  AI was used in the creation of the transcript and metadata for this video.
+---
+Oh, look, Anthropic had its own Hugging Face moment now. Panelists, is it time to start panicking? Diego, you first. I would say that it's time for us to make sure that some AI models don't get access to the internet. It's always a good time to panic.
+
+That's our motto, isn't it? Kimmie, how about you? We don't need to panic now either. We do just need to make sure that the agents don't get out.
+
+Hello, and welcome to Security Intelligence, IBM's weekly cybersecurity podcast, where our expert panelists turn the biggest industry news stories into practical takeaways that you can use. I'm your host, Matt Kosinski. And joining me this week, we've got Diego Matos Martins, Latin America X-Force incident response leader. Kimmie Farrington, security detection engineer. And folks, we can't get rid of him. He's back again.
+
+It's Jeff Crume, distinguished engineer, IBM. Today we're talking about research from Zenity that suggests agentic browsers are not worth the hassle. And we're also going to be talking about the Exploitarium, a massive repository of vulnerabilities that may or may not be the work of some good guys. But first, Anthropic's models broke containment.
+
+So we all heard about OpenAI's models hacking Hugging Face during an evaluation. And you can check out last week's episode for our discussion of that very incident. But in the wake of that, Anthropic decided to check its own testing records and discovered three instances where its models, too, got out of their sandboxes and attacked real targets. And they took some pretty complicated steps doing this, right? One of my favorite things that I read is that Mythos, in one of the tests, went to great lengths to get itself an email account. It even tried
+
+to register for a free phone number, tried to get funds to buy one. At the end of the day, it had to find. But it got an email account, and it got into the Python Package Index, and it published a malicious Python package that, again, it thought was part of the test. It was not. And I think about 15 companies ended up downloading that thing.
+
+Now, before we move forward, I should point out that this is only three cases out of 141,000 that Anthropic reviewed. So I'm kind of wondering, given those numbers, is it still significant? Is this the beginning of a pattern, especially when we see it against the Hugging Face incident? Or to be maybe a little cynical, is some of it like posturing, marketing, if you will? Jeff, I'll start with you. What's your take here?
+
+Is this the beginning of a pattern? How are you feeling about this? Not panic, but it's concerning. As we talked about actually in the podcast last week, and we joked around with Dave, who kept saying "unsurprising" about everything, it was totally unsurprising. If that was unsurprising, OpenAI's model did it, then it should be even less surprising— or more unsurprising, I guess I should say—that another AI model would do the same.
+
+So why wouldn't Anthropic's models jump in? And why would those be the only two to do it as well? I mean, we've got all sorts of other models coming from all sorts of other sources. I mean, I think everybody's going to jump into the party whether they intend to or not. To me, one of the interesting things about the discussion here is that Anthropic didn't know about this until they went and looked.
+
+So if the OpenAI story hadn't broken, we wouldn't be talking about this story either. And they wouldn't know about it either. So that raises the question: how many other models have broken containment that we don't know about because we didn't go look, and they didn't tattle on themselves because generally, why would they? You know, if you're going to break containment, I recommend don't tell anybody. So that's the, and they didn't.
+
+So there we go. I think we're going to see more of it. Kimmie, I want to move on to you, get your opinions here, especially because at the beginning, you were very calm. You said, look, we don't need to panic right now. Can you expand on that for me? How are you feeling about this?
+
+I don't think we need to panic yet, but I do think that we need to be looking in our own backyard, right? Everybody needs to be looking because, like you said, these things were identified completely in the wild. Nobody knew that OpenAI was over here hugging— sorry, compromising Hugging Face. It was. OpenAI was hugging face with Hugging Face.
+
+Yeah. But they didn't know it until they figured out, you know, that they'd been compromised. And then they started asking questions, right? And going back and looking and saying, okay, look, we figured out that maybe we left the door open and they went out. They did things.
+
+My question comes from leaving that door open, right? I mean, you, you are working with a third party, and you thought that that third party properly configured their model so that it didn't have the internet open, and yet it had the internet open and it went off and it hacked real companies. That's not a good sign, right? Is that an intentional failure on the third party? Was that a complete accident?
+
+Oops! I don't know. But I do think that we are going to see more of this for sure. And I'm curious how many of them have already escaped and, you know, attacked a company that the company doesn't know it yet. Yeah.
+
+And I think it's really useful that you pointed out something that I did not, you know, say in the intro, but it's really important here, is that, like, in the OpenAI situation, that model exploited a bug, and it got out and got internet access it wasn't supposed to have. In this situation, the models were not supposed to have internet access, but they did actually. Right. The harness that was set up actually gave them that access. And so yes, they hacked into some other companies, but they didn't have to exploit anything to get out of the sandbox in the first place. Right?
+
+So like big giant warning sign right there. And like a very simple thing is like make sure they actually don't have internet access. Just don't leave the door open. Just don't leave the door open. Which brings me to an incredibly good segue into Diego.
+
+You know, at the very top, that was your takeaway at the very top. You said, we've got to make sure these things don't have internet access. Tell us a little bit more about that. Is that what you were thinking about? On the first case, right, regarding OpenAI, there was a discussion around misconfiguration, right.
+
+And on this one regarding Anthropic, you can mention that there is misconfiguration as well. But what I love in this case is that Anthropic said that they explicitly said to Claude, that, on the prompt, that the AI model didn't have access to internet. And with that, on this test, they used several different types of AI models in there. And some of them behaved in the way, saying, okay, so I don't think that I am on the internet already, so I will keep testing even though the AI model was already doing tests on the internet. The others, some of them saw that they were on the internet, but the newest one said, okay, I can see that I am on the internet.
+
+So let me stop testing, and with that, the AI model stopped the whole thing that it was doing. Right. And another thing that I find interesting in here is that is the position that Anthropic used on these ones. They basically said that, hey, differently from OpenAI, in this case, our models didn't exploit a zero day. That is one thing. Also, we were the ones that detected that
+
+we did something wrong. We didn't receive a notification from a vendor, outside vendor, right? So we were the ones that said, basically, notified the companies saying that, okay, we did something, we exploited something here. And basically we were doing an activity that we were not supposed to do. So I think that you asked at the beginning if this was a pattern, or it was like a marketing action.
+
+But I think that to me, it's a combination of both. Right. So it is a pattern in a way that I think as Jeff said, I think that we'll see other AI models doing that, if not, they are doing that already. And also at the same time in this one, I think that Anthropic used it a little bit as marketing to say, hey, we are doing things in a more responsible way than OpenAI. At the same time, they had turned off the monitoring, so that's why they didn't know about it.
+
+So for each one of these pros, you can find an easy con. Yeah. Yeah, that's very fair there. But, no, I like also, you know, Diego, another thing that you point out that was very interesting about the story is the way that like two of the models, Opus 4.7 and Mythos 5, both realized they were on the internet and hacking, and they both talked themselves back into being like, nah, this is probably part of the test.
+
+I'm going to keep going. Right. They were like, hey, they said I didn't have internet access, so clearly I don't have it. So even though I'm on the internet right now, I must not have internet access. I must not really be on the internet.
+
+Exactly. You got to love the self-deception. But it is neat that the most advanced one was able to be like, actually, I am on the internet. I should stop this now, right? And like, maybe that gives us, you know, maybe that's a positive note for maybe we're evolving towards a point where these models might be a little bit better about policing their own behavior.
+
+Of course we can't. Self-aware, so to speak. Self-aware, so to speak. Yeah, that's not scary at all. No.
+
+What did you say about panic? I, you know, I thought we were going to end this on a real nice note, but maybe not. No. But of course, you know, no matter how quote unquote self-aware these things get, we can't leave it up to themselves to, like, police themselves. Right.
+
+And so the question becomes, how do we do that? And, you know, I think this story in a lot of ways illustrates the importance of access controls, not in terms of just who can access the models, but what the models can access. Right. But to round out this segment, I'm going to, I want to ask each of you, as the experts here, what do you think we kind of need to do as we start deploying these models in our own, you know, sort of environments? How do we protect our own backyards, as Kimmie put it?
+
+Jeff, I'll start with you. What should we be thinking about? Well, I think if you think a system's not going to have internet access, then it's got to be air gapped. And most people throw around the term air gapped and don't mean air gapped. You know, an air gap, by the way, it doesn't qualify if it still has Wi-Fi connectivity.
+
+Right? I mean, technically that's an air gap. But no, you know, that term came around before we had Wi-Fi. So no, you can't have access to any outside network because if you worm your way through enough systems, you're eventually going to find one that lets you out. So if you're going to run it without all the guardrails and the security, you know, oversight and monitoring and all that, okay, fine.
+
+But you'd better be in a concrete bunker somewhere. I forget who it was, but you're the second person in recent weeks to say something very similar about how, like, we should start looking at air gapping and this sort of stuff, because that's a really good model for maybe how we keep these models from getting out. Kimmie, how about you? What are your thoughts on what we need to be thinking about? I don't really know how to keep these guys inside, other than we need to be concerned about making sure that they're contained.
+
+Right. Is that air gapping them? Yes. Is that ensuring that, if you said there was no connectivity, that there really is no connectivity before you start off with your test? Yeah.
+
+I mean, there's going to be a lot of things that we have to work into our workflows as we go forward. I agree with the air gapping idea. I think that for sure it's something that we should look at. But also at the same time, I think that we should consider penalties as well. Right.
+
+So these AI models, they're probably, you know, creating zero days and exploits. Not probably. We know already that they're creating zero days and exploiting stuff with those zero days. Right. So this is something that if a human does that, then this human will receive some penalties.
+
+So why not the AI models as well, right? Why not the companies? So I think that's how we should look at that as well. Of course, that always brings you back to yes, it's the human who's responsible for the agent. But which human within that company, right?
+
+Are you asking who let the dogs out? Yeah. Yeah. Folks, this is the only security podcast with the guts to ask that question. That's right. But I do,
+
+I do have to move us along here, folks, to our next story today. But before I do, viewers, as always, hit us up in the YouTube comments. Give us your thoughts on Hugging Face and OpenAI. What happened there? On Anthropic and their escapes. On how we protect our own backyards.
+
+Are you worried? Are you panicking? Let me know. I do read, I do respond, but let's move on to yet another story, honestly, about AI security woes. This is the PleaseFix vulnerability that makes agentic browsers a security nightmare.
+
+So this is research that Zenity is presenting at Black Hat this week. Diego, you might see them. And they're covering a class of vulnerabilities they call PleaseFix that works on every agentic browser. The name is a play on ClickFix, which we're all familiar with. Right.
+
+That's where you trick a person into doing your malicious activity for you. Usually copying and pasting some kind of command. With this one, the PleaseFix, the please in the name comes from the fact that you just kind of nicely ask a browser to do bad things, and it will do those bad things, right. And Zenity says, the reason this vulnerability is universal in agentic browsers is that in the name of agentic functionality, these browsers have stripped away many of the protections that traditional browsers built up over the last few decades. A really instructive example they give is that, you know, in a traditional browser, we have a lot of restrictive deterministic controls, and these have been largely replaced by these non-deterministic systems like classifiers, which are helpful, but they're bound to miss some things sometimes.
+
+So the conclusion from Zenity is basically don't use these things. This is a vulnerability baked into agentic browsers. Just don't use them. Kimmie, I want to know your thoughts. Agree? Disagree?
+
+Where are you landing on the agentic browser security issue here? I don't use agentic browsers. We'll just start there. But that said, I do believe that there is a definite domain space open to build agentic protection systems in your browser now. Right.
+
+I don't think that was their intention. That wasn't their goal when they started off and said, okay, I'm gonna make a browser that has, you know, deterministic answers in it with, you know, where it's using machine learning and AI to do the where am I going to take you today? That kind of thing. But that's why I'm not using it, because I prefer to know exactly where I'm going every single time. That's opposed to question mark.
+
+I don't know. I'd like to go over here. Maybe I'll go there. We'll see where the agentic agent takes me. No, but I do think, as I said, I do think that there is definitely a new opportunity in the browser for agentic browser controls, if you will. Right.
+
+But I don't know that that's the same as saying what's in the agentic browser. Diego, how about you? What are your thoughts on agentic browsers? And also this question that Kimmie brings up about like the opportunity to maybe put some agentic controls in there? What are you thinking?
+
+To start first, I don't use agentic browsers. So that's another thing as well. Two for two. Yeah. To me, you know, ClickFix was social engineering.
+
+And PleaseFix is social engineering with an AI middleman. So you are giving access. You are giving the AI access to everything, from how you control your passwords to what you have on the other tabs that you have in your browser, to the cookies, to the whole thing. So if you see the exploitation in the videos that the team has shared, these findings, they shared on YouTube. You see that they basically exploit everything that you have authenticated on your browser.
+
+And they can go exfiltrate information. They can go and execute activities. So it's serious. Right. It's critical.
+
+And to me, I think this case is a classic case of you having a developer going there and developing something really awesome, really great, that does a lot of stuff but that doesn't take security into account. And with that, basically, you didn't have anyone from security involved to make sure that, hey, this seems a good idea, but, you know, you got several security issues with that. It's like a DevSecOps problem, right? It's like you didn't integrate security far enough left in that development process, that now you've released something into the world that has, some might say, glaring security issues. Yeah.
+
+Because nobody was there to be like, exactly, just flashing warning signs here. No, but I really like that because you know, it frames something that feels like a very new technology in a very well-worn framework that we know works. And so it gives us a place to start. I like that. When your browser can act as a human, then account takeover and exfiltration of information is made very easy.
+
+It's easier for you. It's a given. So yeah. You know, this is essentially socially engineering an agent. Right.
+
+And one of the fascinating things about LLMs is that, like, they have opened up this frontier where now we can socially engineer technology in a way we couldn't before. It's interesting. It's dangerous, but it's interesting. But Jeff, let me bring you in here. How are you feeling about agentic browsers?
+
+About everything that's come up so far in the conversation? Where do you land? Well, I don't really see what the big deal is here. I mean, after all, they said, please.
+
+So the agent just did what it was asked to do. Okay, so they are cyber criminals with manners. Yeah. Exactly. Yeah.
+
+If our AI overlords are going to be courteous, well then, okay. Well, and since everyone else has been forced to confess whether they use agentic browsers or not, I will also say I would just say friends don't let friends use agentic browsers.
+
+It's a bad idea on many different levels. And security people, we're experts at finding all the many different levels at which things are bad ideas, because we live in that space. It reminds me, as the old man on the podcast here, I go back into my rocking chair in the Wayback Machine and I say, okay, in the early days of the internet, back in my day, you know, where the really security-conscious people would go into their browsers and turn off things like Java and JavaScript for similar kinds of ideas. You had active content. You know, you go to visit a website, you think you're just reading something.
+
+But if that website can actually download code onto your system, and supposedly it stays within the browser sandbox, and okay, that sounds great. Anybody ever written a perfect piece of software? Okay. All right. So there's always leaks, right.
+
+The sandbox has leaks. So that was the idea back then. This is that on steroids. This is now, we have not just active content. We have an active browser.
+
+We've got, we refer to the attack as the man in the browser where you know, somebody has inserted code and now is intercepting stuff. This is worse. This is the adversary that could be doing all kinds of stuff. Or maybe it's just naive because that's what generative AI is, and therefore it's subject to all sorts of indirect prompt injections as it starts reading web pages for us and then starts ingesting new instructions and getting new context, and then it goes way off the rails. So, yeah, I, at the risk of sounding like the, you know, killjoy on this, I think the risks in this case outweigh the potential benefits.
+
+Doesn't mean we can't use AI in relation to the internet, but this is just too opaque in terms of what it might do. And we don't have the oversight. Especially the average user, who is going to be the one that's going to love this the most, because they're just going to see a browser that now is smart and does all these things. I tell it to buy me something and it does. And now why are six trucks backed up to my house?
+
+Because, you know, I ordered one book. Okay, so this is. You ordered a whole library! Yeah. Apparently. Apparently.
+
+So that's my concern, is that this thing, you know, again, will break containment in a different way. But as long as they say please, then I think we can live with it. The unbroken streak. I have still yet to find a security expert who uses agentic browsers. So, folks, it seems like the panel largely agrees with Zenity's conclusion here, which is don't use these things.
+
+Maybe, look, maybe there's a hypothetical future state where we iron these out and you can do it, but right now, don't use it. As Jeff said, friends don't let friends use agentic browsers. But we got to move on now to our final story for the week. This is one that I had to cut from last week's episode because we just had so much fun talking about the Cost of a Data Breach report, but I really wanted to get to it. This is the Exploitarium.
+
+So LevelBlue's SpiderLabs reported in July on the Exploitarium, a public repository that contains 204— as of that time; it might be higher now—but 204 zero-day exploits for popular software platforms and components like Redis and Nextcloud and a whole bunch of other ones. The repository's maintainer, who goes by the very classy name bikini, claims to be a credentialed cybersecurity researcher who is finding and publishing all these vulnerabilities for the purpose of, this is a direct quote, "good faith, open disclosure vulnerability research intended to get more people interested in exploring this area of cybersecurity." I think this is an interesting way to drum up enthusiasm for cybersecurity, by publishing a bunch of exploits. Diego, I want to start with you. What do you think?
+
+Do you think this is legitimate security research? It's tough for me to agree with that. No, but, you know, yeah, it's definitely tough. I think, coming from the X-Force guy who does all the research. Exactly.
+
+So you've got responsible disclosure, right, and there is a reason why you have that. Right. And I think that if you want to make the world a better place, then you normally do that. Right. You normally help the developers going and fixing things.
+
+And then after that, you can publish about that, and you can say, hey, I found this vulnerability here. So I don't know for this case. I don't know what bikini, what's the objective of bikini. I wonder what's the reason for that. Right.
+
+And it's for sure not the reason that he mentions of making people interested in starting to and getting involved in the cybersecurity field. And to me, you know, it's the— it's the second time that we've seen that arise. So at the beginning of the year, we saw the case with the Windows-focus zero days. That were published. That's right.
+
+And now the focus is on the open- source infrastructure and software, right. And to me, at the same time that it is concerning, it's also sad, because you see that some, you think that, you have developers that will and develop free software for people to go and use, and you are just not going there and helping these folks. Right. Basically publishing and improving the free software that we have and that a lot of people use around the globe. And you are just basically increasing the state of people feeling unsafe in using free software and going and having to pay for stuff. Which is okay. Which is fine.
+
+But it's kind of, you are not helping the community. Yeah. So I think that, yeah, it is sad. It is sad to me. There are two things that I really want to highlight there.
+
+The first is you had mentioned, you know, there is a very well-known, you know, sort of responsible disclosure process that people tend to follow. Right? You find a vulnerability, you report it to whoever's affected, once they've had time to address it, then you share that publicly. And that's the kind of normal cybersecurity research. So it's sort of, that's why we sort of question the motives sometimes, right, when people are like, I published this. In fact,
+
+not only did bikini publish them just without telling people, but they were then like, if you want to take one of these and report it and act like you found it, that's fine. That's your thing to do. Which is like, again, it's like what? I don't know what the game is. And we, I know we could spend so much time speculating.
+
+But it's interesting. The other thing I wanted to point out though is, like you said, you know, open-source security is a kind of place that requires everybody to sort of do their part. And this is kind of like the exact opposite of that. Right. And not to get self-promotional here, but I can't help but compare it to something like, you know, IBM and Red Hat's Project Lightwell, which is like we're going to go out and we're going to try to patch vulnerabilities and share them with people to make open-source security better.
+
+And then you have somebody on the other side who's like, I'm going to find a bunch of vulnerabilities and just put them on GitHub and say, go nuts. And it's like, I don't think that's really the way to do it. But again, I'm not the expert. I'm just a guy who hosts the show. Kimmie, let's bring you in here.
+
+What are your thoughts on this whole Exploitarium situation? What are you thinking about? I don't understand. I don't understand people who intentionally write malicious software in the first place, and there's a whole industry for that. There's all kinds of people who spend all day long just looking for vulnerabilities and how to exploit them, and how to put that on the internet.
+
+And then I understand kind of the Chaos Nightmare guy, the Eclipse Nightmare guy, and how he got grumpy that he had found some vulnerabilities in Microsoft, and he reported them with proper disclosure, and they blew him off. And that made him mad. Okay, well that's a beef. But that's one thing. But what is with this bikini person?
+
+What are they doing? I mean, I understand occasionally researchers get excited and they go off and figure out the proof of concept from a thing that they heard about, and then they publish it, and then they go, oops, that wasn't disclosed yet. Sorry. But this doesn't sound like that at all. This is someone intentionally flooding a repository with these vulnerabilities and then encouraging people to come out and get them.
+
+Are you malicious, intentionally? Are you accidentally malicious? What is going on here? I don't understand. Yeah, I think a lot of us are frankly baffled by this, and that's part of why I wanted so badly to talk about it and why after I had to cut it last week, I really wanted to bring it back, because I was like, I need to ask some people who know what they're thinking. And it's honestly kind of comforting
+
+to know that people who are experts in this field are just as baffled as I am. Jeff, let's bring you in here. You know, your takes on the Exploitarium. I don't see what the big deal is here again. You want, you want to incent people to learn about security.
+
+So, yeah, if, that would be like taking a can of gasoline, pouring it all around the building and then leaving a box of matches out as a way to make people learn more about fire safety. Right. Isn't that how we teach people about fire safety? I don't see the big deal here, but and you said, we have a way of doing this with responsible disclosure. You and Diego both talked about that.
+
+It's a 30-year-old concept. So I don't think anybody can say they didn't get the memo. You know, this one's been out there for a while. This is exactly the opposite of that. This is irresponsible disclosure.
+
+This is what responsible disclosure was designed to counteract, to be an answer to, you know, or coordinated disclosure where you work with the vendors. And I mean, look, I don't know, none of us know for sure what was in somebody's head, but it's lazy. Is my view of it. Here, I found all this stuff. I don't want to go through the trouble of actually having to deal with vendors, because, by the way, vendors can sometimes be a pain in the neck, and sometimes they do ignore you and blow you off.
+
+So then I think burning their building down, though, is not the right response. Radical idea, but I just don't think that's our answer. Yeah, I understand that. But just, you know, leaving the can of gas and the box of matches out there and saying, everybody play. I'm sure you'll do the right thing because there's no bad people out there.
+
+Naive at the very least. That's the best benefit of the doubt I can give on this. We have to wrap up pretty soon, but there's one more angle I want to explore before we do, very quickly, which is another part of the README file that bikini posted for this repository was about how they used GPT-3.5 to automate fuzzing and find a lot of these vulnerabilities. Right?
+
+So not Fable, not Mythos, not Sol. 3.5, an older model. And to quote the README, they said, "You do not need a state-of-the-art model to help you identify these issues. While being able to afford a better model is helpful, my data seems to show that it is only marginal when paired with decent human oversight and a good workflow."
+
+So shifting, you know, the conversation from what is bikini thinking? Are they a good actor? Because we don't know. I am interested in this idea that, like, they're like, see, you don't need a state-of-the-art model. You can do this with a basic model as long as you're good at vulnerability hunting.
+
+Diego, any thoughts there on that? That was expected. To me, and we spoke about this on another podcast, right, that, you know, with the increase of the AI models and the capabilities that they have, we'll see the number of vulnerabilities being published increase as well. And we've got to be prepared for that. But that is totally expected.
+
+Now one thing that I would like to call out on this publication by bikini is that, among those 204 packages that he has published on GitHub, there is one very specific vulnerability that you have to be concerned about, which is one that impacts libssh2. And it is a CVE already published. It is CVE-2026-55200 that you've gotta be concerned with, because it allows for threat actors to basically execute a remote command execution on SSH. So there is a bright side. Not so much, but, you know, for the ones that are fixing vulnerabilities, you know, you should focus on that one in specific.
+
+Kimmie, any last thoughts for us here before we round out on this one? You know, I think we just said it over and over and over. AI is the most helpful insider that we have. And it's also going to be the most dangerous, you know. So there we are.
+
+Right? Like, you can give it power. You're going to have to keep it in control. You're going to have to keep monitoring it. It is nascent.
+
+It doesn't know yet. It's still naive. It's going to go off and do things, and it's going to think that it's doing the right thing. And we're going to have to pull it back in. Right.
+
+So it's just, we're going to have to just keep up this effort. It's going to happen. Exactly. You know, it's funny, right? This is a technology that can automate a lot of things.
+
+But we have to put a lot of effort into making sure it does the things the right way. Right. Like in some funny ways, it's like, how much time does it actually save you? Maybe it's not about time savings, you know? Maybe it's about something.
+
+It reminds me of Dave last week talking about how, you know, part of the reason why a lot of organizations are hesitant to apply this to vulnerability hunting is they know it's going to return a bunch of vulnerabilities, and then they're like, great. Are you ready for the response? Exactly. That's awesome. Jeff, close us out here.
+
+Final thoughts on, you know, either AI vulnerability hunting, the Exploitarium in general, anything we talked about today. What do you think? What are you thinking? Well, so I probably should be careful about what I say about the person behind all of this, because I'm going to be presenting at DEF CON at the end of the week, and I may run into them there. And if somebody just comes up and punches me in the face, then I'll be able to know who it was.
+
+So, and I'll let you know. Yeah. Your comment earlier, Matt, about not having to use the latest and greatest and most expensive models to accomplish this. Yeah, it turns out you don't have to have a flamethrower to burn down the building. Matches are all it takes.
+
+They'll do it. And this is what, this is actually feedback I've heard from other people who have had their hands on some of these really advanced frontier models, is that, yeah, they do remarkable work. But we actually could have done pretty close to the same thing with some lesser models. So this is just kind of confirmation of that. I think that's a fabulous note to end this episode on, folks.
+
+Thank you to our panelists, Diego and Kimmie and Jeff. Thank you to the viewers and listeners. Thank you to our producers. Subscribe to Security Intelligence wherever podcasts are found, so that you never miss an episode. Stay safe out there, and don't forget to check out our latest bonus episode released last week.
+
+On this one, we've got IBM's Limor Kessem talking to us about how human factors play into data breaches and how you can work them into your response plans for your benefit. And you really should. That's available on audio platforms everywhere, and we will drop a link in the show notes.

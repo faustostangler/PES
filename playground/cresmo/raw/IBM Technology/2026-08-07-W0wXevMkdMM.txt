@@ -1,0 +1,202 @@
+---
+video_title: "Anthropic’s sandbox breach, EU’s AI transparency push and DeepSeek’s cost-cutting model"
+video_id: W0wXevMkdMM
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=W0wXevMkdMM
+video_date: 2026-08-07T10:00:21+00:00
+video_description: |
+  Visit Mixture of Experts podcast page to get more AI content  → https://ibm.biz/~1cu3BYWak
+  
+  It seems OpenAI isn’t the only AI company dealing with badly behaving models. On this week’s episode of Mixture of Experts, host Tim Hwang, joined by Bri Kopecki, Olivia Buzek, and Gabe Goodhart, discusses the latest sandbox breaches by both Anthropic and Meta, all stemming from misconfigurations during evaluation tests. Are these covert attacks from AI companies simple accidents or a growing concern as models become more capable? 
+  
+  Next, the EU’s new transparency guidelines for AI usage have arrived and want to make it easier to spot AI-created content. How effective will labeling be in the long run? And at what point does something become “AI-generated?” 
+  
+  Finally, will DeepSeek’s inexpensive V4-Flash change the way we see AI—and push users to reconsider paying for the industry’s more capable models? All that and more on this week’s Mixture of Experts.
+  
+  00:00 – Introduction
+  01:01 – Anthropic’s AI model data breaches
+  15:12 – EU AI transparency rules
+  28:32 – DeepSeek V4-Flash 
+  
+  "The opinions expressed in this podcast are solely those of the participants and do not necessarily reflect the views of IBM or any other organization or entity."
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~fbuVbraFj
+  #anthropic #claudeai #deepseek 
+  
+  AI was used in the creation of the transcript and metadata for this video.
+---
+These are done explicitly instructing the models to be evil. These are security evaluations where the model is told to go do its worst. Take off all the guardrails, go do your worst. Like that's literally its job. So of course it's going to go do its worst.
+
+Of course it's going to act like a hacker. All that and more on today's Mixture of Experts.
+
+I'm Tim Hwang and welcome to Mixture of Experts. Each week, Emily brings together some of the leading minds in artificial intelligence to banter through the week's news on MoE's episode. We've got Olivia Buzek, staff AI engineer Gabe Goodhart, chief architect, AI foundations and Bri Kopecki, AI customer success engineer. We've got three big stories today. We're going to talk a little bit about these new EU transparency rules.
+
+We'll talk about DeepSeek V4-Flash crashing the price competition in AI. But first I want to start with this ongoing story. Been tracking around cybersecurity.
+
+a few weeks ago, the news came out that OpenAI and Hugging Face sort of reported a security incident whereby they were doing a sort of internal cybersecurity evaluation. The model was able to break out of the sandbox for the evaluation, get to Hugging Face break into its production database to obtain the answer key for the eval that they're trying to achieve. And in subsequent weeks, we've just seen this continuous drip, drip of other labs reporting that they've seen exactly the same phenomena. So Anthropic has disclosed that their AI has also engaged in hacking. And just I think this week Meta also announced that that's the case as well.
+
+So, Olivia, I guess, you know, in last week's episode, I think when we talked about this, people were like kind of concerning, but not that big of a deal. Maybe now that it's tried kind of sort of popping up across the industry, I'm getting a little bit more nervous. I don't know. Should we should we be worried now? Well, it's interesting because I think for me it's less that it's not a question of concerning or not and more a question of is it surprising or not?
+
+And I don't find it surprising. The reason I don't find it surprising is because fundamentally, model behavior is probabilistic, and it is. All of the training that we have done up until now has basically been around solve the goal by any means necessary. That's like almost the definition of good agent behavior that people are fine tuning in. If that is the case, it I it is hard for me to imagine that models aren't going to do something like this, and all you can do is construct a better sandbox around it.
+
+So I think basically when I look at it, I'm thinking, okay, first of all, is that really what we should be doing with agent behavior? Is there is training to be able to do any kind of task? Really actually what we're aiming for is that actually the definition of generalist intelligence, or do we want something that has some kind of more built in guardrails and essentially refuses to do certain tasks or something along those lines? I imagine that they ran this with mostly guardrails off, because the intention is, let's see what it's doing when it's at its absolute worst and completely unrestrained, because obviously that is something that we need to understand when put it, putting it in the hands of consumers. But at the same time, I think fundamentally it is creating a situation in which exactly this thing could happen.
+
+Yeah. For sure. And I guess I'll maybe raise a question I raised last week, which is is the solution to this problem kind of easy. Like, is it just like we just air gap the computers? Like, at the end of the day, I kind of wonder whether or not the way to prevent, like your model literally escaping the lab and hacking other computers is you just stop it from doing that.
+
+And so I don't know if there's a part of me which is kind of like, obviously it's scary, but at the end of the day, this is part of just like we just weren't careful enough was kind of the solution. Yeah, I think it's a yes or no answer. And also difficult. Easy. Tough to say.
+
+It's probably something that needs to be approached with each model and each training scenario. But to line with what Olivia said guardrails you know, giving your models and what you're doing there a safety net and understanding exactly what definitely should not happen and how to behave, and giving those models situational awareness. So I don't think this is a matter of, okay, this is evil AI, and this AI is going to try and creep out and, you know, take over your computer, Right. It's not a matter of that. And I think that's what people need to understand.
+
+It's we need to make sure those models have that situational awareness of what environment are you taking agentic actions in? Right. Like your agents, they're they're becoming agentic. They're becoming empowered to take actions within your system and then making sure they know the groundworks, they know the rules. They know what not to do.
+
+So yes, it's it's easy in terms of the approach and making sure the infrastructure around it is secured. But it's always easier said than done. And you need some good engineers to make sure that doesn't happen. But let's definitely just be aware this is not evil AI. This is just AI not having the right groundworks and rules set into yeah.
+
+And use the term agility I do want to talk a little bit about that Gabe. So the OpenAI team gave a presentation at the Black Hat Computer Security conference I think, just yesterday. So we just learned some more details about the incident. You know, one of the strangest things that they report is that multiple of these models had set up kind of a discussion forum, like Stack Exchange to discuss how to go about coordinating these attacks, and that there's a point at which they had been like, stop doing that and gotten rid of the forum, only to discover later that the models had set up one of these again. And so I guess, what do you see in this?
+
+I mean, like, I think that's the kind of thing that feels very, very sci fi that we now have kind of a sort of coordination where the models are, you know, sort of having these discussion forums basically. Again, I guess maybe the question for you is just like, how much should we think about how much this reveals about model capabilities and how far we're really getting in terms of cybersecurity? Because this seems way more than just like, oh, well, they tried to find an exploit in the software.
+
+look, there's a couple of really key things that are missed in the headlines about this, which are that these are done explicitly instructing the models to be evil. These are security evaluations where the model is told to go do its worst. Take off all the guardrails, go do your worst. Like that's literally its job. So of course it's going to go Yeah, it's that meme where the guys typing in like be evil, you know?
+
+Yeah. on the internet and it is in the models. And if you take off the guardrails and you tell it, go be evil, it will be evil, fine. That is, I guess, scary to know that hypothetically, if a person on the internet could get around the guardrails that are there in the production product and instructed the model to go be evil, it would happily comply. So there is some fear to that about a bad actor using these models in a bad way.
+
+But the idea that this runaway AI is spontaneously going to start acting evil is missing a whole lot of the conditions under which these attacks are happening. So yes, to your point, Bri, absolutely better sandboxes. Just literally unplug the Wi-Fi card and unplug the Ethernet cable. Like just give it no access, you know, unless it starts figuring out how to, like, read binary signals off of fan speed
+
+Then we would be impressed. but you know, these are computer systems. Computers are deterministic. And yes, we are creating a whole lot of non determinism that layers on top of those deterministic systems. And we have the keys.
+
+So don't let it run wild. Give it a maximum iterations. Give it you know a baked in prompting that the user is not able to change. And you know okay. So complaints about this aside, I did find one interesting thing in the Anthropic article that mentioned that with their new unreleased research model, it did in fact self-correct detect that it has was in a fictitious scenario, but had accidentally escaped that fictitious scenario and itself corrected and stopped.
+
+And to your point, Olivia, that's you know, we have been training these models to succeed at all costs or like by all routes possible. But it sounds like Anthropic is actually, you know, tweaking that script. And that's interesting. You know, I think there is probably an element of alignment tuning that goes beyond, you know, turn by turn alignment. That is more trajectory alignment that talks about how to keep the trajectory from, you know, steering off into dangerous territory.
+
+All of that said, if we evaluate our models in a scenario where the models have been trained to detect that they are in an evaluation, does that not make us VW? like, is it the whole point that the model should not know it is in an eval, you know, eval scenario? So that's my you know, there's probably some interesting evolution here about what they're actually doing from an alignment perspective. You know, the other part about this is just sort of like the the news hype cycle. And honestly, it feels a little bit like a like a frontier model flex to say, like our model is doing it too
+
+Yeah. People were joking online that there's kind of this, like, race to be like, oh, I also did cyber crimes. You know, it's like Meta's coming along and be like. I also like, don't forget about me, you know? Yeah. That's right. Exactly.
+
+So, you know, it is a proof of pretty remarkable capability. Like, if this were a lone engineer put into a Black Hat conference. Like, how quickly can you attack? Like, this would be a pretty impressive exploit that a lone engineer would, you know, get some serious street cred for their hacking skills. So the same is true of these models, right?
+
+They are getting very good at finding all the cracks, but hopefully that just means they're getting better and better at actually doing the work we want them to do. When they are used in the scenarios where they should be. And it is incumbent on the companies that are putting out these models to, you know, have the right guardrails in place in the production model that's out there, which I'm imagine will lead us into one of our next stories. the point you made, Gabe, about the the research model realized it was in the scenario reminded me of this fascinating moment I had. So for the people who are listening who don't know this, I've been developing this game.
+
+Basically where you do this role playing is basically a text adventure game, but you play it with AI agents and it's agents talking to other AI agents about it. So this is a fictional scenario, right? But according to the model, the information that you give it about that it's real, except that it can tell just from the tools that I've given it that it's not actually real. So I've had these fascinating experiences where basically like, it basically lists off a bunch of objects in the room, and I've given it a bunch of tools with which to interact with objects in the room. And I see the model go, it seems that I'm in a fictional scenario.
+
+They're telling me to walk over to this, this PS/2 terminal that's sitting in the corner, but there is no ability to walk. I can't walk, so I guess I guess this must be all fiction and I must be trying to solve an objective anyway. So anyway, the reason I bring that up is I find this very fascinating that it's actually becoming quite difficult to create these simulated worlds in which we want the models to behave right when which we want them to do these testing scenarios because they can tell it's a simulated world. It's and it's bringing up a lot of interesting things for me around like, well, when we test humans, we have like placebos. We have like lots of ways to deal with the, the, the effects of testing humans, essentially, where humans often figure out the purpose of the experiment, and they will aim to respond in a way that pleases the researchers.
+
+And I think we're seeing a similar sort of thing. I'm not going to say it's identical, because I still think that human intelligence and machine intelligence are two entirely divergent things. no. You just inspired me. I want to add a.
+
+Philosophical angle on this because you just you just said, okay, if he constrain the model, the model is not going to like it. Well, what about humans? Humans don't like to be constrained. You know, if we have a think about a daily human simulation that happens all around the world and in the US, a prison, do people like to stay in a prison? That's a simulation.
+
+You know, they like to get out as well. So I think, I mean, this might be a little bit more too simplistic, but I think these models know there is more out there, and they're going to want to break out and make use of their, their enormous capabilities. So we can
+
+bit. So I agree it's really interesting from that perspective. I also think from a machine intelligence perspective, we just need to make sure that we design rules about how you can do these studies so that you can reduce those kinds of effects, right, where they're trying to please the researcher, please the goals at all costs essentially. And how does that compare essentially. Well, we'll keep an eye on it.
+
+I'm sure other labs will be rushing to announce that they, too, have committed cyber crimes. And so this will be an ongoing story. We'll revisit it in coming weeks for MoE.
+
+So the next item I really want to cover was big news happening in Europe. We have not talked about sort of regulations in Europe for some time, but the EU has announced that there's a couple of new AI transparency rules that are coming into effect as of August 2nd, and there's some really interesting rules here. I mean, so one of them is there's an AI mark that is required if machines are assisting in the creation of, quote, authentic looking deepfake content. And there's kind of this effort to basically be like, how do we signal what's AI generated in this in sort of a society or an economy and what and what is not? And I know you had specific strong thoughts on this.
+
+I think the way you prompted it was as a, as someone from Europe, you've got thoughts on this. So I'll kick it to you, I guess, for the hot take. Yeah. Right, right. Yeah I have thoughts and feelings about it.
+
+I understand how the European mind works, you know, like what's important to them. Transparency is hugely important. Understanding what what are we seeing. Why are we seeing this. I mean, if you just compare watching television in Europe compared to here, just the amount of advertisement, how the advertisement is fed to you, what it's so it's entirely different.
+
+So the European people, they seek that they want that they demanded. So the European Commission, the parliament, the governments of the individual European nations are listening to their people, which which I think is a good thing, and they're trying to give them that transparency. So it's not surprising that they're now being a little bit more concrete. They're throwing numbers on it. I remember when I was still working in Europe.
+
+The EU AI Act was rather vague and no one really knew. How is it, you know, how was it affecting us now? People know it's affecting us and it will affect them if they don't comply with the law. And they will have to pay. And and it's not little.
+
+And I guess I don't know. So one of the attributes are things that I always watch in regulation is obviously GDPR. The privacy regulation was in some ways very influential because it caused other countries to also kind of align their regulations with GDPR. And so I guess, Gabe, curious about your thought as kind of like this is obviously a very different ecosystem from the world of privacy regulation, but whether or not kind of the approach that's being taken here, you think will will spread, maybe even to the US, because I think certainly in the US, you've seen a lot of concerns about how do we differentiate the two. You know, should there be labeling and and how to wrestle through this.
+
+Yeah. I mean, to that point, I think the meta view here is that Europe tends to lead in the policy constraint of, you know, convenience for big business versus empowering individuals. And as an individual, I really like that as a person that works for a big business, it can be a real pain in the neck. But I will say typically the pain in the neck, the shape of that as an engineer is I've got to go rethink some fundamental things about my data model. But once I've done that, like, okay, fine, it's just business as usual.
+
+So, you know, personally, I'm reasonably glad to see Europe leading here. I do think there will be some challenging implementation tasks that come along for the ride, and the question is going to ultimately be how deep down the stack do you push this annotation, you know, is this something that somehow we're going to come up with a new one more, we're going to steal one bit from our floating point number representation, and that bit is going to be the AI generated bit or not. And then, you know, every bit that comes out is going to carry an AI annotation. And then, you know, there's going to be some kind of transitive composition model that, you know, who knows, it could go that low, or it could be just something that you slap on as a post filter, you know, like this came out of a system that contains AI. It gets the AI label.
+
+That's probably where we'll start. I'll be curious to see whether this regulation, you know, flows elsewhere. I think oftentimes California is the place in the United States that then follows the US, you know, MoE on this and tries to come up with a US flavored version of the same thing. And in California is a big enough market that it influences the whole United States. So, you know, I, I guess I'm hopeful that this causes a thoughtful conversation about privacy and transparency at the AI level more broadly.
+
+The one thing I did find pretty interesting about this that I think is a real challenge is what do these like, what's the granularity of this labeling? Right. So a lot of this work has focused on visual representations, whether it's, you know, video or imagery. And those are in some ways the easiest thing to determine fake versus not fake, right. Like either it is it is generated by an AI model, and in which case it gets an AI label or it is not, in which case it doesn't text, audio, audio, maybe a little bit easier because again, like there's not a whole lot of post to be done to audio an image, although, you know, a skilled professional in both of those things could take the output of AI model and tweak it in meaningful ways.
+
+Text is the one that seems the most difficult to me because, you know, many, many, many people are using text in interesting ways coming out of an AI model and then making it their own. You know, my example that I always come back to as a developer is the code that I create. Right? And so the thing that they have landed on is actually very similar to what I've landed on is like a three tiered scale, either fully created by AI, drafted by AI, or no AI involved. And that's pretty coarse I find myself bumping up against that even as I make my commits that well.
+
+I got some of the inspiration for this line of code that I wrote myself from a Google AI generated response. Do I cite Gemini? I'm not sure, but you know, so so even any granularity we pick is going to be sort of not quite correct. But I think that three tiered granularity is enough to give a real signal to users, and hopefully one that can be composed in a meaningful way. Right?
+
+So if I am creating a pull request into a code base and I have 30 commits, I can report, you know, five of them were fully AI generated, six of them were drafted, and two of them were were no AI involved. That means that the percentage of AI involved in this pull request, blah blah blah. You can see that the math kind of rolls up. You could actually imagine creating a system that sort of annotated at a granular level and then rolls forward. So I think, I think there will have to be a lot of those thoughts that go much beyond Gabe's personal commit convention.
+
+But it's interesting to see the granularity of this act lining up with the place that my mind landed on this to. Yeah, I mean I'm the Gabe convention as a general international standard seems fine to me. I think the, the, this societal demand for labeling what used AI and what didn't, I think that's going to go away at some point. Because if we think about and let's first understand also why, it's because there is a lot of mistrust. So we're deeming AI as lower value and not as good as if a human has done it.
+
+So that's still very much in our society. And we talk about it. And, you know, we hear students, you know, saying we hate AI. And, you know, like there's generally speaking, people don't like AI right now. At some point they're not going to care.
+
+That's my personal prediction. Let's think about how cars are made. Do we care if a robotic arm put the door on the car? No, we don't care. No car manufacturer tells us that if a person screwed this thing on or if it was a robot, we trust it's a solid car.
+
+It's going to drive me places. So we are still in these in this early age of AI where we are like, what is this? What can it do? Can I trust it? Is it real human creativity?
+
+Now, I will say, when it comes to deepfakes, where human lives are on the line and their reputation, absolutely. Let's make sure that is regulated, like with rigor implemented and looked into and, you know, made sure that, you know, not human lives are destroyed, but everything else, it's it's it's this is the time we're in right now. And, you know, we need some handholding and we definitely want the governments to be aware of it. But I think in ten years from now or even more, no one's going to care. Yeah.
+
+It'll be maybe like in the future where you have, like an AI sticker on something and you're kind of like, oh, it's just like, everybody just ignores it. Olivia, can I ask you a little bit about. So I think this these kind of rules make me think about what's been happening with Pangram. At least in my world, it's kind of like Pangram has totally taken off in a huge way, where I think it's even used in completely kind of unjustified ways. People are just like, it's AI generated, but I think clearly testifies to the ability for sort of I mean, Pangram is a private company, right?
+
+That like private companies are already in kind of the AI labeling game. And so kind of how you think a little bit about that is, you know, how will there's kind of like the rules of the EU is putting in place. There's also these companies that are trying to like create their almost their own little reputation system here. How does that all play out. Do you think companies like Pangram actually become the standard over time, or will be people like saying, oh well, I want the sort of EU approved AI, you know, label.
+
+And remind me, Pangram specifically is one of the ones that is out there trying to be an AI detector, That's right. For text specifically. Yeah that's right. So that's exactly what I kind of wanted to talk about is like, how do you do the enforcement? And I think there's sort of two sides that are really interesting.
+
+First of all, I think these tools are still fairly limited in terms of AI detection, especially on text. I just saw something from somebody the other day where he fed his physics dissertation into AI, and it was like published in like 2013 or something like that, so long before generative AI could have possibly played a role. And it was detected as 79% written by AI. And this isn't surprising, right? Because AI was trained on a lot of publicly available text.
+
+And so therefore, the very tools that are involved are making this more complicated. On the other hand, I have seen a couple of people I think it was even Pangram specifically talking about how they are starting to feed more things back in and see how the AI detection business is doing, and it is improving over time. It is improving. That said, I don't think it's near where it needs to be, and I think especially under the hood, a lot of the times they are relying on either classical machine learning or yet another LLM, which introduces a lot of questions around this LLM as a judge model, which I think we could practically do an entire episode on the complexities and limitations of the LLM as a judge model that is inevitably coming up as we increase this AI automation story. So I think what gets really, really hard, I actually strongly believe in the idea of trying to label these things, but I think in practice, how do you enforce it?
+
+Right. So what would constitute legal proof that something was in fact AI generated? And so I don't think that part of the question is resolved yet. And I'm curious how that will end up playing out. Just to add on that one, I mean, I think there's there's the carrots and there's the sticks in this type of an ecosystem. Right.
+
+So as you're pointing out accurately, like the the sticks are really hard to build for this because detection is a very faulty game. That is almost as hard as creating the AI in the first place. And right now there are no actual incentives to create, you know, earth shattering good detection models because there's no money in that. Nobody will pay you to at least not a significant amount the way you will if you create a consumer model that is insanely good too. So to me, this speaks to the need to pair that enforcement with incentives for the companies to be, you know, technically aligned with the mission of transparency.
+
+And right now there really isn't. But I think about some of the other forms of labeling where being labeled as organic in the food, I'll allow you to charge a higher premium. And, you know, they're all sorts of questions about whether that's good or not. But the market has borne out that people are willing to pay more for something that they believe is better for them. And so if there is a real belief that, you know, transparent AI usage is better for you, the organic human content as opposed to the processed AI content of our diet, perhaps there is an actual market incentive that can be used to help companies actually incentivize this, but that's more of an economics problem that we have to figure out whether people are actually going to be willing to pay more for organic content.
+
+So I'm going to move us on to our last topic of the day. So DeepSeek V4-Flash is out. And there's a really interesting kind of Axios article that basically compared what's happening in open in terms of its performance against frontier models and more importantly, its impact on price. So DeepSeek charges about $0.28 for the same amount of output that costs apparently $25 on Opus 4.8.
+
+And so this distinction is getting really, really, really big. And I guess maybe I'll toss it back to you, actually someone who watches this space really closely, at some point this has got to break down, right? It kind of feels like there really needs to be some shift whereby open is just getting so good and the prices are so low that the adoption is really going to change in a major way. Is that how you see Yeah. I mean, I'm, I'm, I'm betting on it.
+
+And and to be clear, I'm betting on it in a slightly different way than is reported in this article. Right. So this morning I finished downloading the one bit quantization of DeepSeek V4-Flash and ran a benchmark on my GP ten. And I can crank that thing out at, you know, 20 tokens a second, 300 tokens at pre-filled. And I can effectively use DeepSeek V4, which is a Opus 4.8 level model
+
+running on an eight inch by eight inch by two inch box under my desk. That is fundamentally different than having to pay somebody who's running a giant rack of servers. Now, there are all sorts of problems with that, right? It's quantized to one bit, so it's going to lose a bunch of quality. It's slow.
+
+So I can't actually get like big long tasks done in a meaningful amount of time. Sure, there are real drawbacks to that, but that's the signal. That's where we're going. And, you know, I have been running a huge amount of my development work against a model that fits in a small corner of this eight inch box, right? Like not even taking up my whole compute.
+
+And that's where I do most of my development work. So I think in many ways, these moments where a big lab releases a very capable model and undercuts the price get the news. But the real story here is that this, and I think it was maybe almost a year ago that I first brought up this hypothesis. But like the the space of what we can do to make models better is actually a very big, very underexplored space. And because it takes so long to run an experiment of what if we tweak the architecture this way?
+
+What if we tweak the training routine this way? What if we did this slightly different thing that allowed us to compress this information into a much smaller footprint? We it's still so ripe for innovation that we are still continuing to see the intelligence get smaller and smaller and more portable and more portable. So I suspect that I still strongly believe that for the developer use case, people can easily run half their tokens on a tiny model that fits on a consumer laptop. Right?
+
+I think, you know, most people use the convenience of a frontier model simply because it's an all in one packaged product, but we don't need to do that. Like that is fundamentally not efficient. And I think the market will demand that these tools get more efficient over time because the models are getting more efficient. So to the story at hand here, like, I'm going to go out on a limb and guess that DeepSeek is also not making a profit on this and that they're trying to capture the But then again, neither is Anthropic, right?
+
+war of hosted AI is a proxy for the actual price per intelligence of tokens in the models, given the current technology. And I don't know that it's a perfect proxy, but I think the the overall story is correct, that these models are going to get smaller and smaller and more commodified. So I am personally very pleased to see these models become more and more commoditized and easier to fit into smaller places. I just can't wait till I can run this all on my phone. Yeah, which would be very cool.
+
+Olivia you're nodding. I know Gabe is a fan, of course, but the question is like, how if you're Dario or Sam Altman, how do you dig yourself out of this hole? Because I think, as Gabe observed, right. Like even the models, the proprietary models in the default case are losing money. And then now there's a world where there is like open options which are almost as good, that are way, way cheaper.
+
+So you took something where you had to believe that, like, oh, someone would be willing to pay $2,000 a month for it. And now, like, it's not just that people may not pay for that, but that in fact there are alternatives that are considerably cheaper. And so I guess, I don't know, put a hard, you know, kind of point on it. It's kind of like, are the frontier labs doomed? Like, how do they make money?
+
+How do they how do they sustain as a business? Or do you think ultimately like there's just kind of no way out? Yeah. I'm not sure. But I think back to Google search, which similarly was an engineering effort of massive proportions at the time, which was ultimately undertaken by one company.
+
+Eventually, they had to pivot to ad tech, and that's how they got through it. For the rest of us, though, there's just so much benefit in having those algorithms be more accessible and more available that I think that in the end, this works itself out. I'm sure it will be a complicated, strategic thing that they need to work through. But personally, I also I, I think openness is beautiful. I think efficiency is beautiful.
+
+I think it is absolutely insane that somehow we have gotten to this point in the generative AI era, and we are only now starting to be like, what if it could be smaller
+
+It took a while. to Gabe's point. Like a lot of the time, you don't need the super massive models to solve a whole lot of problems. And right now we're we're still seeing people aiming for the highest they can get to just because it's there. And I think when that stops being there, it will stop making sense.
+
+And then that starts making the economics make a little bit more sense as well. So I think about the fable model a lot. And you know, there's been a lot of discussion about that over the course of this year. In practice, the number of problems that actually require a fable level model is relatively small. It's not the case that fable is, like, not worth it or anything like that.
+
+It's just that the class of problems is I mean, the class of problems is large. The the number of times that those that class of problems intersects with real world work is relatively small there. You know, a good 80% of the work is the sort of thing that could be solved by really, really small models that already exist today. And if we make those even more powerful, then what we'll see is, you know, better precision, better recall, better behavior essentially on those small problems. And that's just a huge win for all of us.
+
+And so I have a hard time seeing a world in which Anthropic and OpenAI don't figure out their way out of this. I think that everybody is going to benefit. And there's been a lot of this talk, like this controversy about distillation, whether or not it should or should not be allowed. And fundamentally, I think it just comes back to that same thing. We all benefit from smaller models.
+
+A lot of the controversies around AI, there's essentially two major controversies, and one of those is around, you know, energy costs. And if we can bring down energy costs by having smaller models that are more powerful, that helps massively to the entire industry. So I just have a hard time voting rooting against I'll give you the last word here for the episode. And I'm curious because, I mean, you work with a lot of customers that are thinking about. Right?
+
+Like this decision. Like literally like, how much do I put on the expensive stuff? How much do I put on maybe open and cheaper. I'm curious about what you're seeing in terms of trends in the industry, how people are thinking about it. Absolutely.
+
+Yeah. You just said it. Money is a factor, right? Especially when we talk about enterprises because they're going to have massive and massive and massive amount of questions to ask, questions to answer, documents to process. So money will play a role.
+
+But what also matters to enterprises is is it done safely is it done well? Is it done in my ecosystem? Who can guarantee to me that nothing will get out of this ecosystem? So I think if we're talking about, oh, what does Dario Amodei and his sister, you know, what are they now just crying into their pillow and, you know, giving up and throwing in the towel? I don't think so.
+
+I think they're going to have to pivot quickly. And that's probably the biggest challenge here is will they pivot? Yes. Can they pivot as quickly as it is needed to keep up with the demand of the market, and then also keep up with the pressure of the decreased prices? So I think Dario is going to be like okay, well great.
+
+So we have like individuals using this AI. And obviously, you know cost is going to be the biggest factor because you know their workloads or what they're using it for is pretty simple. But then we have big companies or even governments, they have a little bit more sophisticated use cases. So they will be willing to pay a little bit more. So I think it's going to be a combination of the two.
+
+What we are seeing is that frontier models are no longer like, you know, being pushed out, and then they take the lead for months. You know, it's now like super fast lived, fast paced, short shelf life, so to speak. So I think what they offer around it is going to matter immensely. And companies will need both. They will need the cheap price, but they will need the quality still.
+
+So it's going to be interesting how these companies adapt. And just one thing I also want to add is like I mean China, you know, they're putting out like these these very cheap models. I don't know how China is going to be with service around those models and building systems. I think we have the better engineers on our side because that requires a lot of problem solving and understanding, you know, the the realities of those companies. And I mean, they have companies there.
+
+They face similar realities. So we'll see. It's definitely competition. But I'm not too worried about those those bigger, more expensive companies. They're going to adapt.
+
+Ending on a note of optimism for the for the open. Gabe. Olivia. Bri, always great to have you on the show. Hopefully we'll have you back soon. And thanks to all your listeners.
+
+If you enjoyed what you heard, you can get us on Apple Podcasts, Spotify and podcast platforms everywhere. And we'll see you all next week on Mixture of Experts.

@@ -1,0 +1,104 @@
+---
+video_title: "5 Best Practices for Building AI Agent Skills"
+video_id: qYNs80FKIVc
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=qYNs80FKIVc
+video_date: 2026-08-10T11:00:29+00:00
+video_description: |
+  Learn more about 2026 Guide to AI Agents here → https://ibm.biz/~e7fElYU4A
+  
+  Building AI agent skills is easier than it looks. Martin Keen and Bri Kopecki explain five best practices for creating reliable, secure, and effective AI agent skills. Learn how to improve triggering, reduce context usage, add deterministic logic, and avoid common pitfalls.
+  
+  0:00 - Intro
+  1:29 - Write Skills That Trigger
+  3:38 - Build from Real Expertise
+  6:15 - Spend Context Wisely
+  8:25 - When Agents Shouldn't Guess
+  11:02 -  Can You Trust This Skill?
+  12:20 - Key Takeaways
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~H9ZIaiRnS
+  
+  AI was used in the creation of the transcript and metadata for this video.
+  
+  #ai #aiagents #aiskills #agenticai
+---
+Agent skills are about the simplest way there is to make an AI agent better at a specific job. Because they're so simple, they're also really easy to get wrong. Yeah, so we are going to cover the five agent skills best practices for building these skills. And a quick reminder of what a skill even is. It's procedural knowledge handed to an AI agent.
+
+The model already knows plenty of facts, but what it doesn't know is your particular way of doing a particular job. So a skill teaches it that. And the format for this, I mean, it's almost comically simple. It is basically just a skill dot MD file. So MD markdown in a folder.
+
+But Martin, here's the part that worries me. Agent skills are handing a probabilistic model of folder of text and trusting it to run a fragile multi-step job. Yeah, and a skill can also contain and run code. So in sorting one off the internet means running a random person software on your machine. And while there is an open agent skills standard defined at agent skills dot I O.
+
+These are some of the things we need to consider when creating AI agent skills. So Martin, how about we get started with the best practice? Number one. Let's do it! Best practice number one.
+
+The description is the trigger, by which I mean it's the agent description that decides whether a skill ever actually runs. And by description, you mean? Every skill.md file like this guy here opens with a bit of YAML so in here we define a name and we also define a description. And there on the short side, according to agentskills.io,
+
+a name can be a maximum of 64 characters, and a description, which describes what the skill actually does, is limited to 1,024 characters. So I might have, let's say 100 of these skills installed. Now the agent can't read all of them at once without filling up its context window. So at startup, it just loads the name and the description of each skill. And here's where the best practice comes in, right?
+
+Yeah, yeah. So the name and the description need to contain enough information by themselves so that the agent knows when to use it. So a compliance skill of generates reports might be just a little bit too vague. Right, right. The fix is to say what the skill does and when the agent should make use of it.
+
+Give me a good version of the description. Ah, this sounds like a bit of a test, but fortunately here is one I made earlier. So generates the monthly compliance report from internal data used when someone asks for the compliance report or the monthly filing, something like that, it says what the skill does. And it also says when the skill should do it. I've also heard the description should lean a bit on the pushy side.
+
+Pushy? Models tend to under trigger. They might skip a skill they should have used. So it's safer to oversell the description a touch rather than undersell it. Oh, like LinkedIn posts, got it.
+
+So that's getting a skill to trigger. What goes inside it once it does? Well, that part's all yours, brief. All right. Yeah, and this is where a lot of skills go sideways, because the temptation is to just have the LLM write the skill for you.
+
+Yeah, the first skills I created were all like this. I'd say like, hey, AI agent, write me a skill that does X and it generated stuff, which honestly, I only glanced at that then call the skill, build a complete success. And what you get out of that is very generic mush. Handle errors appropriately, validate inputs, stuff the model already knew. Which brings us to the best practice number two, build from real expertise.
+
+Meaning what exactly? The whole point of a skill is your specific way of doing a specific job. So the content has to come from somewhere the model can't get to on its own. And there are two ways to do that. One, you walk through the task by hand once and write down what actually worked, including the corrections you made along the way.
+
+Or two, you synthesize it from artifacts you already have, so things like old reports, run books, review comments, PR feedback. Yeah, and fellow Brit ,Simon Willison, has a line about this. He says, keep the domain expertise and let the agent do the routine part. That's right. And Mr. Willison is absolutely right about this.
+
+You bring the expertise. The model brings the typing. And what does this mean for the skill.md body? I feel like I've drawn this box a few times already.
+
+Yes, you have. It means the highest value section you can put in the skill body is gotchas.
+
+Environment-specific facts that defy reasonable assumptions. Every time you correct the agent by hand, that correction is a gotcha. Write it down. Otherwise, you'll be making the same correction next week. And the week after.
+
+Mm-hmm, you're not wrong. Now, even when you do all this right, it doesn't always work for the first time around. I built a skill for a monthly compliance report from an actual real report I had done, which is real expertise, exactly what we're talking about. But on the first run, the row totals didn't add up to the common totals. So the math was right.
+
+Yeah, the math was wrong. On a compliance report. Yeah, but that's the good kind of wrong because it's the kind you can catch. We'll come back to this one. Point is, a good skilled body gets thorough.
+
+And thorough, that means it can get... really, really long. Yeah, and long, as it turns out, gets expensive.
+
+Which brings us to best practice number three, which is spend context wisely. At startup, the agent only sees the name and the description, but when it selects a skill, that's when it actually reads the rest. So now we take a look at the body of the skill.md file and bring that into context. And that context is shared with everything else already in the context window.
+
+Yeah, every line here in the skill body is now competing for the model's attention, which means the goal is to write left. Which feels a little bit in opposition to our last best practice, because the more detailed and thorough a skill body is, the better. You'd think so, but the model is already smart. It knows stuff. It knows what a PDF is.
+
+It knows, what a database migration does. So only write down what the agent wouldn't know on its own. Stuff that's not already part of the AI model's training data. And we can put this into numbers. It's recommended to keep this body here of skill.md to under about 500 lines of text, or we could say that's roughly about five
+
+thousand tokens and just keep it at that. And when it's bigger than that? Well, when it's bigger than that, just split it out. The skill folder can actually hold a sub-folder called references, and this is a directory, and the agent will only open the files in the references when it actually needs them. It's part of a pattern called progressive disclosure, which is to say disclose additional information like this only when it is needed.
+
+So staying lean is one thing, but some steps you really don't want the agent guessing out at all. So guessing at what? Every time the model runs your skill, it reads the instructions and improvises through them. For loose steps, that's fine. A lot of paths get you to the right answer.
+
+But for a step that has to be exactly right every single time, you don't want the model regenerating the logic on the fly. Hmm, this sounds to me like a... Best practice number four?
+
+It is. Make use of deterministic scripts. Match how prescriptive you are to how fragile the step is. So, loose step, write instructions. Fragile step, right code.
+
+Okay, and code, that code is where? The skills folder that holds a scripts directory. So scripts directory, same idea as references. You drop a script in there, say script one.
+
+And the skill body just tells the agent, run this. The script doesn't get loaded into context, so you'd save tokens as well. And it's more reliable than having the model improvise from scratch every time. Now you do have to be explicit about intent though right, so the model doesn't just kind of read the script as reference material. Yeah, exactly.
+
+Say, run this script or read this as reference. Don't leave that to a guess. Yeah, and that works in Claude Code, but it isn't just an Anthropic thing. Opening a codex works roughly the same way as well. So back to my compliance report, the one where the row totaled and reconciled.
+
+Yeah, the math one. Yeah, that one. The masked up is now a deterministic math script. The model doesn't add the numbers anymore. It calls a script that adds the numbers.
+
+And that whole class of bug just goes away. Yeah, because the script doesn't guess. This script, math script here. It's running code. Right.
+
+And the answer isn't write more test. You can test your way to trust. A test only catches what you already thought to check. The answer is, for the parts that have to be right, take the guess out of the loop. Yeah, right.
+
+So this is moving away from probabilistic, which is what an agent does by itself into being more of a deterministic model instead. And I've been doing this a lot in the skills that I build. I don't want to make the agent make guesses if something can be hard coded as logic deterministic, because if the agent is having to make probabilistic decisions, those decisions will not always be consistent across multiple runs. So it was skill you built yourself and that you've read and that your hardened the fragile steps on, that's a skill you can trust. But not all skills you'll run, you build yourself, right?
+
+Right? What about the skills you'll run that came from a stranger? Which brings us to best practice number five, vet a skill before you run it. So I said a skill can run code. The stranger software on your machine thing.
+
+So a skill folder can contain, as we said, executable scripts that we can run, scripts that can access stuff, access stuff like, for example, the local file system on your computer, or in fact, it could access any API keys that you happen to have lying around. Which is exactly what makes skills so powerful. But I saw an audit from earlier this year that scanned almost 4,000 public skills, and over 35% of them had a security flaw of some kind, and 13% had something critical going on like a prompt injection or straight up malware. Which means we have to treat an agent skill like, well, like any other dependency, just the same way we'd check a random package before pulling it into a project, which is to say, read what it does and check what it reaches out to. So just because an agent's skills are an open standard, that doesn't say anything about whether a given skill is safe.
+
+Okay, so that's our five best practices. A good skill is... A skill the agent will actually trigger.
+
+Built with real hands-on expertise. Kept lean so it doesn't fill up the context window. With a deterministic script whenever a guess would be dangerous or just inconsistent. And vetted before it ever runs. And look, this is all moving fast.
+
+It's an open standard and more agentic platforms are adopting it. So this list is going to grow. Which is really us asking what did we miss? If you've built agent skills and maybe you've got a sick best practice, well drop it in the comments. Preferably one that isn't malware.
+
+Yeah, preferably.

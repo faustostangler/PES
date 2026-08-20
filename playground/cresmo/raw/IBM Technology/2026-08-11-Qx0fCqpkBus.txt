@@ -1,0 +1,56 @@
+---
+video_title: "What Is Context Engineering? Why It Matters for AI Agents"
+video_id: Qx0fCqpkBus
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=Qx0fCqpkBus
+video_date: 2026-08-11T11:00:03+00:00
+video_description: |
+  Learn more about Context Engineering here → https://ibm.biz/~P5lLLBd7u
+  
+  More data doesn’t always mean better AI. Anna Gutowska explains how context engineering improves LLM and AI agent performance beyond prompt engineering. Learn how structuring context reduces hallucinations and enables smarter, more reliable AI systems.
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~hrgTJ2Q3i
+  
+  AI was used in the creation of the transcript and metadata for this video.
+  
+  #contextengineering #promptengineering #aiagents #llm
+---
+We used to think building better AI systems was all about writing the perfect prompt. You may have heard of prompt engineering, for example. But as large language models and AI agents develop, we're shifting away from prompt engineering and towards something called context engineering. Let's define this term. Context engineering is the practice of deliberately structuring and optimizing the information passed to an LLM or agent to produce more accurate and relevant outputs.
+
+Let's relate this to how you and I operate. Have you ever felt overwhelmed when multitasking and gotten less done than you hope? Well, recent research suggests that you and I are only capable of holding and processing about three to five pieces of information for roughly 20 seconds at a time. This is our working memory, and the cognitive overload we can experience at times when multitasking makes sense. To reduce this, we tend to chunk information create smaller subtasks.
+
+And this is actually quite similar to how AI models process large amounts of information. In this video, we'll break down what context engineering is, what good context looks like, why it matters, and a practical example. Prompt engineering is all about asking, how do I phrase the instructions to get what I want out of this LLM? In contrast, context engineering is about focusing on the entire information environment provided to the model. So prompt engineering is actually just one piece of context engineering.
+
+And that distinction becomes really important when building AI agents because agents don't just answer one question. They reason across multiple steps. They use tools. They retrieve information. And update memory to make decisions.
+
+Just like our working memory, AI model context is finite.
+
+You might be wondering, don't models now support huge context windows? I mean, with 2 million plus tokens, do we really need to be intentional about what context we provide and how much of it? Well, the truth is more context does not actually mean better performance. In fact, performance can degrade as context grows. Researchers sometimes call this context rot.
+
+Too much irrelevant information, poorly structured or missing data leads to worse reasoning and hallucinations. Think about it like if I hand you one piece of instructions on a single page for a random task, like onboarding a new coworker, you'll probably figure it out quite easily and quickly. Now consider if instead I handed you 4,000 pages of Slack messages, emails, and random notes. You would struggle to figure out what actually matters for the task at hand and how to get started. That's why context engineering matters.
+
+The goal isn't to give the model more information, but rather the right information in the right format. Context is everything the model sees at inference time. Using an LLM as an example, context includes the system prompt, the user's query, any documents or information retrieved from an external source, like a vector database or document store, and the history of past interactions and responses between the LLM and the user. The output of any additional systems like tool outputs, APIs, or other agents. Well, that's a lot of information to provide an agent.
+
+Let's think about what good context looks like.
+
+There are a few key characteristics. First, there is relevance. Every piece of information included should help the model complete the task. Second, we have structure. Information should be organized clearly, often with labels or formatting that helps the model distinguish between different information types.
+
+Third we have timing. In agentic systems especially, context should be introduced only when needed. And fourth, there's compression. So instead of dumping raw data into the prompt, we often summarize or filter only the most useful details. This set of transformative steps helps result in usable context and this is called context processing.
+
+The next step is context management. So it's the ongoing process of maintaining the information that is included in a model's context across interactions and over time. Key ideas include deciding what to retain and what to discard, so that relevant information is maintained and unnecessary or outdated information is removed or minimized. There's also maintaining continuity across multiple interactions. In conversational systems, this means tracking relevant user inputs, system instructions, and prior responses so that the model can respond consistently and with awareness of context.
+
+We must also prioritize information. Not all pieces of information have equal importance, so context management assigns priority to certain data based on relevance, recency, or importance to the task. Next step is handling the information life cycle, which means working to update the context when new information becomes available. Invalidating outdated data and ensuring that the context reflects the most accurate and current state of knowledge. It is especially important in dynamic environments where information changes over time.
+
+Finally, it's critical to maintain consistency and coherence so that retrieved information is integrated properly and that the overall context continues to make sense. Let's look at a real-world example of context engineering in action. Imagine you're building an AI assistant for a healthcare provider that helps patients schedule appointments. Under the hood, this is a system that requires multiple data sources, constraints, and tool outputs to generate decisions. Without those elements, a simple prompt might be...
+
+Schedule an appointment for this patient. So this is our user prompt. But that leaves a lot of room for error. The model doesn't know the clinic's rules, for example. It doesn't now the doctor's availability or even the patient's medical history.
+
+Now let's layer in context engineering.
+
+Instead of just a prompt, the system provides the clinic's scheduling policies, like appointment types and durations, the doctor's real-time availability, the patient's preferences like mornings only for example, and their medical history if it's relevant for the visit, and even tool outputs like time slots that are available via a scheduling API. Now, when the model generates a response, it's not guessing, it's reasoning over a complete structured context. So instead of saying, here are some available slots, it can say, you're due for a follow-up visit and Dr. So-and-so is available at Wednesday at 10 a.m., which matches your preference for morning appointments.
+
+Would you like me to book that? Much better, right? So...
+
+Whether you're building AI agents, experimenting with workflows, or just trying to understand where the field is headed, context engineering is becoming one of the most important skills to understand. If you enjoyed this video, make sure to like and subscribe, and let me know in the comments what AI topic you want to see next. Thanks for watching!

@@ -1,0 +1,186 @@
+---
+video_title: "The OWASP LLM Top 10 has a few surprises for you"
+video_id: auS34nm9VAc
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=auS34nm9VAc
+video_date: 2026-08-12T10:00:14+00:00
+video_description: |
+  Explore the podcast → https://ibm.biz/~sjnEHEGTG
+  
+  What’s the biggest, baddest, most unruly problem in AI security? 
+  
+  Turns out that depends on whether you’re asking practitioners or looking at incident data.
+  
+  In this episode of IBM Security Intelligence, we break down the OWASP LLM Top 10 for 2026, which took the unusual step of using both community votes and incident databases to inform its rankings. There are some interesting gaps—the data says misinformation is a bigger deal than the pros think, while prompt injections happen less than the headlines might have you believe. But it’s not as simple as “numbers don’t lie and the experts are wrong.” 
+  Then, CISA's 2026 SBOM guidance asks for even more data, but does that actually mean less risk? And our panelists share highlights from Black Hat, including new details on how attackers can use misinformation to hijack agentic browsers.
+  
+  All that and more on Security Intelligence.
+  
+  00:00 - Intro
+  1:26 - OWASP LLM Top 10
+  12:55 - CISA’s SBOM guidance
+  20:05 - Black Hat 2026 highlights
+  
+  "The opinions expressed in this podcast are solely those of the participants and do not necessarily reflect the views of IBM or any other organization or entity."
+  
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~DOiRVsX0N
+  #owsap #cybersecurity #llmsecurity 
+  
+  AI was used in the creation of the transcript and metadata for this video.
+---
+The 2026 OWASP Top 10 for LLM applications is here. Panel, what stuck out to you about this edition of the list? Seth, we'll start with you. Prompt injection is still number one, which is no surprise to me, but overly permissioned agents jumping way up is something that I think is extremely important, and happy to see that it got the credit it deserves. My takeaway isn't really calling out one thing in particular.
+
+I think what it's looking at for me is how it's able to give us as defenders, a common language for AI risk, but I would warn not to treat this as another compliance checklist. Like, I'll probably get into it later, but I would say use it as a tabletop, right? If one of these attacks happened tomorrow, could you detect it? Could you contain it, and could you reconstruct what the AI actually did during the attack?
+
+Hello, and welcome to Security Intelligence, IBM's weekly cybersecurity podcast, where our expert panelists turn the biggest industry news stories into practical takeaways that you can use. I'm your host, Matt Kosinski. And joining me this week we've got Seth Glasgow, Cyber Range Executive Advisor. And we've got Ryan Anschutz, the North America Lead of X-Force Incident Response. Today, we're going to be talking about CISA's new guidance on software bills of materials and some highlights from Black Hat 2026.
+
+But first, we're going to keep talking about this top ten. So this, of course, is a list of the most critical security risks for LLM-powered apps developed by hundreds of AI security experts. Surprising probably no one, prompt injection and sensitive information disclosure were numbers one and two again this year as they were in the last release. And as Seth mentioned in the opening, excessive agency jumped to spot three, this time up three spots from last time, which suggests a kind of newfound appreciation for the ways in which failing to rein in our own models can be a big problem. But nobody's here to listen to my takeaways.
+
+They're here to listen to your takeaways. So, Seth, we'll come back to you on that agent front. Talk to me a little bit. What are you thinking about this this increased risk of agentic activity? Why are we looking at this now? What's your take here?
+
+I think it's actually a really good viewpoint from everyone to see that these agents are essentially the same as any kind of privileged account might be. They take actions, they have access to a ton of stuff. By definition, they have to have access and the ability to interact with and take a lot of different actions automatically for them to be useful. Right. So it gets us back to this sort of comprehensive fundamental problem we have with security: balancing how functional, how easy, how fast something can be done versus how secure it actually is.
+
+And so seeing that there's some recognition that it's not necessarily the agent itself, but it's what the agent can do, is something that's extremely important. Right. It's potentially more in the—seeing where the risk lies with this technology versus something underlying with it. And yeah, you know, I feel like we've been heading for this for quite some time. I mean, I believe, if I'm correct, I believe you were on the episode we did back in like February that talked about OpenClaw, which I feel like was the first big agent, you know, mess news story.
+
+And then we've seen recently these, these, these stories come out about OpenAI's agents got out of the sandbox. Anthropic's agents got out of the sandbox. This week it was Meta's turn to have agents get out of the sandbox. Everybody's getting a turn getting out of the sandbox. So it's like the agent. We are seeing for sure just how dangerous these
+
+things can be when they're not treated like an actual identity. You know what I mean? I feel like that's part of the problem here. Ryan, Let's go take a look at your take here, because I really liked it, you know, saying, look, this isn't a checklist. It's a common language.
+
+And it can be kind of a foundation for tabletop exercises. Talk to me about that. Yeah, 100%. So I love how when we structure this list, when we get this list. Actually, I think Seth and I were both on one of the last podcasts that talked about it, which is which is kind of cool to have full circle for this release, but I love to see how how risks have or have not evolved.
+
+And in this case, it's definitely not the latter, right? We are rapidly moving from AI that primarily just generates pure content to, you know, as Seth alluded to, operational agentic systems that access your data, that use various tool sets, authenticate to other systems, and actually, I guess the most important thing, are actually taking actions. So I think we look at what is that, what is that real question? The question isn't 'Can I manipulate what the AI says?' anymore.
+
+The question's becoming, 'Can I manipulate what the AI actually does?' And I think that's an important point where, you know, we see things like prompt injection or, Seth kind of alluded to it earlier, excessive agency, even though that becoming number third, I think on the list. Right. That's becoming much more consequential. Right.
+
+Well, prompt injection may be the entry point, but agency? Look out. Agency— those are the concerns around determining blast radius. Right. Which I think would arguably be the most important for defenders.
+
+You know, at least in my opinion. Right to to your point on the tabletops, what I would do is I would utilize this like a tabletop. If I was a CISO or an executive in an organization, I would look at this list and say, 'Hey, let's pick a scenario.' You know, what what would we. Would we detect it, right?
+
+What would we detect? Could we determine what the agent accessed and did? Do we have those artifacts in place? Could we even contain the threat? And then, you know, follow on activities.
+
+Right. Are we reconstructing what the attack did afterwards, or what the agent did afterwards, after that attack? So I think taking that from an IR perspective, that would be, that's really the real test, right? Not just whether you have controls. We talk about identity a lot.
+
+I think we're in an identity crisis. But whether you can actually respond when those controls actually fail. But yeah, I really like this idea of using it as the basis for like tabletop exercises, right? Because I think, especially with lists like this, there's a tendency to just look at it as the checklist, right? To be like, okay, we need to worry about this guy, this guy, this guy, this guy.
+
+Knowing about them is only half the battle, as they say, right? Can you actually deal with them? Can you detect them when they're there? So I really like that as, like a framework for making this thing more practicable. You know, another interesting thing that OWASP did this time around, though, was that in addition to a community vote, they also looked at a corpus of real world incidents and used that information with the community vote to decide where things land on the list.
+
+And it was interesting to me that there were some kind of, call them 'discrepancies,' right, between what practitioners valued or saw as most important and what the databases said was happening out there. For example, prompt injection was the top concern for practitioners, but in terms of incident numbers, it was actually very low, wasn't even in the top ten. OWASP explains it, however, as basically we're so concerned about prompt injection that we've built so many things to deal with it that those incidents don't make it to the databases, which is very, very interesting to me. Right. The other side, the other discrepancy that was really interesting to me was that practitioners aren't really concerned about misinformation, but the incident numbers suggest they really should be, because especially as we talk about agency and what agents can do, misinformation can very quickly become an agent acting incorrectly.
+
+Right. If an agent gets some misinformation from another LLM or whatever and starts acting on that, it can cause chaos. All of that to kind of step back and say, what are your takes on these kinds of differences between practitioner priorities and what the numbers say? What do you make of this? Seth, I'll start with you. Any thoughts there?
+
+I think the prompt injection one is the most glaring, right? Everyone says it's number one. We're not having issues with it. I think one, it is the defensive bias, I believe, is what the actual paper calls it. I think another thing to note is that it's an obvious location in a sense, because it is the attack surface.
+
+It's everywhere. It's anywhere you interact with it. It's anywhere any user can interact with it. And so we are going to build more defenses there because it's a very easy use case to understand. So it's easier to kind of build up and sort of prevent this because I have to be cognizant of it.
+
+I'm surrounded by it as sort of my attack surface. Misinformation, on the other hand, is a little bit harder to detect. It's a little bit harder to prevent against. You have to kind of prevent from model drift. This can happen over a much longer period of time.
+
+It might not be something as acute as you might notice with prompt injection. So it makes sense that if something is agentic and it's taking wrong information, and then it's making these mistakes sort of in perpetuity at a much higher speed than someone used to be, the combination of those becomes much more impactful, even though we don't necessarily think about it as attack surface. Right. The training data for what my agent is going to do is sort of located deep within the center of my model. In theory, it has a lot less attack surface.
+
+So as a defender, I completely understand why we don't prioritize that as much. It's a lot harder to detect as well. Perfect sense to me. Absolutely. It's not right there at the top of the attack surface, like you said, and you can't even necessarily see it all the time.
+
+Ryan, anything to add there either you know, to what Seth said or just thoughts on the discrepancies in general? Yeah, no, I completely agree with what Seth said. And to kind of take that one step further, when you look at the misinformation, I think that's a very interesting one, because I think that could be multifaceted, right? That could be misinformation that's intentional and unintentional. And I think from an attack perspective, I'm going to allude to one in my my later Black Hat, you know, kind of debrief.
+
+But there's some misinformation techniques that threat actors are using that I think can maybe make the make the waters even more muddy with these attacks and kind of how we prioritize and what we should prioritize from a boots on the ground type response. Well, interesting, too, with misinformation, as users, we're kind of conditioned at this point to expect some sort of hallucination or misinformation coming through our generative AI, right? So because of that, we might turn a little bit of a blind eye to where it's having an impact, right? If I'm expecting X percentage of the input to not be good, I am more likely to ignore signs of this type of poisoning, because I am conditioned to be used to the fact that it might not always be right, and that drift can happen much easier over time, because I'm simply not attuned for it. I'm not expecting accuracy.
+
+I didn't even think about that, but it's like a perfect storm there. You're not expecting accuracy. And then Ryan, you alluded to like these misinformation techniques. That makes me feel bad. But to last kind of question here for this segment though, folks, before we close out, I wanted to ask you about something that is right up top.
+
+It's right in the introduction to this list. But I just found it so interesting. I want to get your take on it. The project leads kind of sum up their major takeaway from the list by saying this. Stop trying to build a model that cannot be fooled.
+
+Build the system around it so that when the model is fooled, and it will be, nothing important breaks. Ryan, any thoughts on that take? You think that's the right way to approach this? Yeah. Well, I mean, I think to me what they just said was, hey, everyone needs to practice cyber resilience, right?
+
+That's what we talk about. Defense in depth. We talk about cyber resiliency. That is what they are saying, just not in those words. So that is a common theme I think that we're seeing now even in our services that we give to clients.
+
+It's just inherently built in from a resilience perspective. So completely agree with that, right? Yeah. I mean, it's really kind of what we preach at the cyber range as well is that it's not if, it's when you experience some sort of breach. And we are now being a little more honest about that in terms of how it comes into AI. There is no system
+
+that has users and is useful that is entirely secure, right? So we have to be ready. We have to be prepared to respond to that, because largely how an organization comes through a breach is about how they responded, not the fact that something happened initially. It's because they didn't respond well or were unable to recover. So we have to just sort of take table stakes as, yeah, we are going to have to respond to problems with this.
+
+So we need to be honest about it and sort of work towards that. I really like that take too, because, you know, I think sometimes there can be this thought that like if we can't secure AI or if AI has all of these flaws in it, then like, how can we possibly use it? Everything's got flaws in it if we're going to be honest with ourselves. Right? That's the whole reason cybersecurity exists as a discipline, because someone needs to be there to help deal with the flaws and respond.
+
+Folks, before we close out this segment, I just want to, you know, the viewers and and the listeners, anybody watching on YouTube. If you've got thoughts on the newest OWASP top ten for LLMs, drop them in the comments. I do read, I do respond. I'd love to hear from you. But to move us to our next topic here, we've got CISA's new SBOM guidance.
+
+So CISA, along with a handful of international partners, released new guidance called the 2026 Minimum Elements for an SBOM, replacing the 2021 standard. Now, in the words of Dark Reading's Nate Nelson, who wrote a really good kind of summary of this, and I encourage listeners to go read that, 'There's nothing revolutionary' about the changes, but there are some things worth noting. Particularly, one of the fields has changed from a depth requirement to a coverage requirement. Basically, they're asking you to record not just dependencies, but dependencies of dependencies of dependencies of dependencies. Folks aren't sure just how helpful these new guidelines really are.
+
+Speaking to Nelson at Dark Reading, OWASP founder—look, it's OWASP again— OWASP founder Jeff Williams says, quote, 'The real measure of success isn't how completely we cataloged the problem, it's how effectively we reduced the actual risk.' I want to start there, folks, with Williams's take here that that cataloging the problem isn't really the issue. It's how effectively we deal with the risk. And, Ryan, I'll start there. What do you think about that take?
+
+So I mean, I guess. Kind of rewinding. I am a fan. I will say this before I preface. I am a fan of SBOMs. Right.
+
+But to his point and what he's pointing out here, having an ingredients list doesn't automatically make a meal safe, right? It's what we do, or what our person or our organization is that is going to be consuming that, right. The improved visibility, I think, into dependencies is absolutely valuable because modern software supply chains are, probably an understatement, of being incredibly deep, right? The vulnerable component might be 3 or 4 days or layers down in something that like you've never knowingly installed and that is layers and layers deep, again. Could be days in between you knowing you even installed it.
+
+But I think we really need to move from an SBOM generalization to an operationalization. And that's again a similar theme, I think from the OWASP list. Right. We just don't want to take this at face value. We want to take it and make it something that we can operationalize within our organization.
+
+I would say that if a critical vulnerability drops on a Friday night, which naturally, don't, they always happen on a Friday? I don't want one of my team members going and searching SharePoint for a spreadsheet, right? Like to look at what the what the SBOM or could be impacted. Or if I'm, better yet, if I'm a CISO, I want to immediately know, hey, do we have that? Where the heck is it?
+
+Is it exposed? Is it exploitable? And what or where critical business systems could be impacted or affected? I think that's really where SBOM becomes more of a security capability instead of a simple checklist or a compliance artifact. I think the inventory tells me what I have, but more importantly, context tells me what I need to care about first.
+
+And I think that's ultimately where organizations should be trying to get to. Yeah, I really like that take. You're right. There is it's very, very similar to the OWASP list. And I didn't really think about that when I put these together.
+
+But like both of those are things where there's a risk where you just look at the list, you look at the SBOM, and you say, I'm done. I looked at the thing. I did the work. That's just the preparation for the work, right? Like that is not the end point.
+
+And I do think, you know, as much as we. SBOMs are extremely important to our kind of contemporary approaches to cybersecurity, but we need to remember that they are just the beginning of that approach. Seth, how about you? Anything to add there? Any thoughts here?
+
+Yeah, I actually think that's a really good way to look at it, though, in the way that Ryan was sort of talking about, sort of operationalizing these things. Right. Getting the data is great. It's great to have all of this, but for it to be functional beyond just this inventory, we have to figure out a way to make use of the data to both make real time decisions while we're trying to respond to something, but also manage our risk overall. So, for example, the changes that are forcing us to now document all of the inherited dependencies as well, that's good objectively, but there's no real guidance around that.
+
+We need to think about, well, is there a layer or a level of once you're so many steps down, should you start to consider that overall risk? Right. How do we operationalize these pieces of data so that they have sort of a use? Right. Because currently, the SBOM's great.
+
+We do want to document all of this. But without regulation forcing it, without some sort of tangible use, it becomes overhead. Right. So ideally what we need to do is find a good use case for the SBOMs so that their creation, their maintenance and participating in the process is sort of its own reward, versus having to just be forced into documenting it a minimum amount of times. Right.
+
+How do we operationalize this data so that it's not viewed as overhead, but it's actually viewed as something we can internalize and throw into a security operations workflow. That way, we're more likely to get more folks participating and better data. Just filling it out isn't enough. You actually have to make use of it to know that it was reliable in some way. Otherwise, it's just a check-the-box compliance artifact.
+
+I think you're right. The question is how do we operationalize? And so I do kind of want to throw that at both of you. Any thoughts? If somebody is listening here and they're like this is great. I agree with this.
+
+How do I start operationalizing this kind of stuff? Ryan, any thoughts there? Like where do you begin? Maybe a first step would be really connecting SBOMs to your vulnerability or exposure management program. Right. Your threat intelligence program.
+
+And I think then adding the business context. Right. Like don't just tell me that vulnerable component exists. Tell me where it is, whether it's exploitable and what should I need to prioritize first in my organization? I think that's where you can truly operationalize on the forefront of of an SBOM.
+
+Yeah, I agree. You definitely want to integrate that with your vulnerability management. Is it on the internet? What else can we do with it? I also think we could kind of look at it from an internal development perspective.
+
+Hey, when I have IT teams developing tools, developing software, do I use this as more of a risk guidance on hey, we're not we are choosing not to use this library because as we look through these documents, we can see that there are a ton of inherited things that overall increases our risk posture. Right. I think these documents can be very good at the strategic level of security planning, in terms of the types of things you want to bring into your organization and what makes sense right. Potentially, by using them at that more strategic level, we can then find where the data points really plug in at lower levels to make this a more required, not required, but more desired tool by folks to get access to this data to do something with it. I love that because you folks together kind of you hit the whole spread, right?
+
+Seth, you're talking about using it to design secure software. Ryan, you're talking about using it to inevitably catch some of the flaws that pop up in the software we design. It's like end to end, I love that. Let's move along here to our final story for this week. This is Black Hat 2026 highlights.
+
+Black Hat is, of course one of the biggest cybersecurity conferences of the year, and it just wrapped up. So we've got to talk about it. And Ryan, I know you were there. So we will start by asking you what did you see? What are your takeaways?
+
+What are you thinking about? You know it's in Las Vegas, so you're always seeing a lot, you're always learning a lot, right? I think there's always huge takeaways from Black Hat. More importantly, you know, the hacker summer camp week between Black Hat and DEF CON, I think you see a lot of interesting developments between the stuff that is acknowledged this week or disclosed this week versus what was done earlier at RSAC Conference, right, or RSAC earlier in the year. To see the advancements from that time to now, which is a very, very short time, I think is a huge takeaway.
+
+And I guess I'll dive into that a little bit. Right? You see a lot around AI agents. The talk of AI agents started late last year, earlier this year it started becoming the norm. And if you, you know, at RSA or even at Black Hat, if you're walking around, hopefully you're not playing a drinking game with your buddies in Las Vegas where every time you see AI agent, you take a shot.
+
+That would not be a good game to play because it is simply everywhere. But the takeaway from that is AI agents themselves are actually becoming the attack surface. If you really look at what we're doing, we're actually creating a new attack surface, and that is AI agents, right? We're moving beyond exploiting software vulnerabilities to actually manipulating the AI decision making. And most importantly, the authority we have actually given these systems is really what we're exploiting in what we're working with here.
+
+Right. I think a prime example of this, there was a very important briefing where, you know, my team was, some people from my team were very lucky to join this. And we talked about this where there were researchers that were involved around researching agentic browsers. And that team demonstrated how something as simple as a malicious calendar invite could actually manipulate an already authenticated agent and ultimately lead to credential theft data, exfil persistence, and even code execution on that on that user's end station. I think really what stuck with me when I heard this story, this briefing, was their concept around intent collusion.
+
+And this is where I bring it back to the very initial comment that I made about Black Hat. Intent collusion— and I know that is a super fancy word for me, but— this is this is this is why it is though, right? It is essentially persuading the agent that what the attacker wants is actually the best way to accomplish what the user wants. That's kind of a mind- blowing experience right there. Right.
+
+And I would say, you know, in past podcasts we've talked about the social engineering in AI world. Well, here you go. We are actually operationalizing it in the machine world. Right? I think that that team also had a really cool security takeaway from their research that I would argue is equally important to that vulnerability or exploit or whatever you want to call it itself.
+
+But the controls that worked were actually the ones that AI never got a deciding vote in, right. It was least privilege. It was segmentation. It was hard boundaries. All of those things that we talk about. Identity.
+
+Those are the things that I think are equally important from a defender's perspective. Right? I think from, in IR, obviously I'm biased towards IR, but that's the challenge, right? The AI the agent might be using legit creds in approved tools that you've used frequently on your machine, but it's acting completely against the user's intent without the user ever being the wiser. So, I mean, I think if you look at like, you know, we're not just hunting compromised endpoints anymore. Those days have come and gone, right?
+
+Maybe they still are around, but those are going to be the past, right? We have to understand that when a trusted autonomous system has effectively become the threat itself. Yeah, it just really it just strengthens where, you know, I say we're in an identity crisis, right? It all kind of comes back to how our identity practices are. And that's a mindset and thing I've been kind of preaching for a while.
+
+So those are just some of my key takeaways of what I saw. That's really fascinating. The intent collusion is really fascinating to me because I think you think of like a classic prompt injection where it's like, oh, you trick the AI into doing something different. But here it's you trick the AI into thinking it's doing what its user told it to do, just through what the attackers want it to do. Right?
+
+It's like a meta prompt injection in a way. And. Yeah, that that's very interesting. Very scary to me. Interesting and awesome and scary at the same time.
+
+Right. What a time to be alive. The trifecta. Like so many things in cybersecurity today are interesting, awesome and scary. Seth.
+
+Seth, I know that you weren't at Black Hat this year, but any thoughts just hearing Ryan kind of talk about his takeaways? Yeah, I mean, it kind of matches up with what we saw with the OWASP as well in terms of looking at agents as this new attack surface, this new item. Right. They have too much agency. They're going to do things.
+
+So it is that kind of a problem, and there's no real way around it. Right. I think that the write-up also sort of said that not one single control was more than 31% deployed across any organization. So we haven't even really come to a solid way to take care of these things. 80% had already been hit by an AI related security incident or something along those lines, and it just starts to think we have to relook at the way we're doing this. The AI itself, right,
+
+an LLM can't differentiate between instructions and data. It's all just trying to satisfy what its users asked it to do. And that's why it takes, when it's agentic and has the access to, it will take actions that look absolutely wild because it is attempting to satisfy that, right. It is able to get you the right answer without necessarily knowing what it was telling you. Right?
+
+It's similar to high-level Scrabble champions can win Scrabble tournaments in a language they do not speak, because they know how to get the right answer without necessarily understanding what that word is. In sort of a sense there. But when you combine the fact that the agents themselves have a lot of access, they can do a lot of things very, very quickly, meaning if I get one user's credentials and I'm sort of working through that, that takes a certain amount of time. Once I turn an agentic solution, it can operate extremely quickly. So the amount of time, dwell time it takes to effectively to exploit something shrinks as well.
+
+So the lack of controls around that are really what's kind of horrifying, and that we've been very good at implementing this stuff, but we're trying to build security back on now because we've realized, similar to a lot of what I'll call traditional cybersecurity, some of the weakest parts are the human side. What you can socially engineer. An individual with access is ten times more dangerous than anything else externally that I don't have access to. This concept that's really developed throughout this entire episode, and I love when this happens organically, is that it's like, Ryan, you put it best. We are kind of in an identity crisis moment, right when it comes to these agents.
+
+And like, how do we control them? How do we give them access controls? How do we treat them like the identities that they are, because they're not just your typical app? These things act like a weird blend between a human and a piece of software. Right?
+
+And it keeps. I have Cost of a Data Breach on the brain, because it just came out a couple of weeks ago, and it keeps making me think of this one stat that was like, frankly, horrifying to me, which was that of organizations that dealt with an AI related breach. 92% of them, 92% of them said they did not have proper access controls on their AI implementations. Right. So it goes back to what you just said, Seth, which is that, like, we've been in this rush to get these things in there, get them implemented.
+
+Maybe we weren't thinking at the time about how we do that securely. And now it's a moment of, oh boy, we've got a lot we need to secure. But folks, that does it. For this episode, I want to thank our panelists, Ryan and Seth. I want to thank the viewers and the listeners.
+
+I want to thank our producers. Subscribe to Security Intelligence wherever podcasts are found, so that you never miss an episode. Stay safe out there, and keep an eye on your agents, and especially your calendar invites.
