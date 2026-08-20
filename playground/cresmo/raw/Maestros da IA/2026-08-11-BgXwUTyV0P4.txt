@@ -1,0 +1,159 @@
+---
+video_title: "Essa NOVA técnica de prompting do Claude está impressionando todo mundo (gauntlet-loop)"
+video_id: BgXwUTyV0P4
+channel_name: "Maestros da IA"
+channel_id: UCEojuEA0eCL267t_G_cc0Fg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BgXwUTyV0P4
+video_date: 2026-08-11T21:01:06+00:00
+video_description: |
+  Torne-se um Maestro da IA 👉 https://comunidade.maestrosdaia.com/?utm_source=youtubedescription&utm_medium=youtubedescription&utm_campaign=youtubedescription&utm_content=gauntlet-loop-claude-code_raw117
+  Prompts e Recursos Grátis em Nossa Comunidade Aberta 👉 https://invitecomunidadeaberta.maestrosdaia.com
+  IA Para Empresas: Sistemas Autônomos, Agentes de IA e Automações 👉 https://implementacao.maestrosdaia.com/
+  
+  O Gauntlet Loop é a técnica que faz agentes de IA no Claude Code entregarem jogos e simuladores 3D impressionantes com um único prompt.
+  
+  Neste vídeo você entende como funciona o Gauntlet Loop: uma metodologia em que dezenas de subagentes executam o trabalho enquanto outros verificam cada parte e só aprovam quando o resultado impressiona de verdade. Mostro na prática o simulador de voo criado com um prompt, explico os loops de verificação, o graph engineering (vários loops rodando em paralelo) e a arquitetura de IA que hoje separa iniciantes de especialistas no uso do Claude Code e dos agentes de IA.
+  
+  📌 CAPÍTULOS
+  0:00 O jogo criado com um único prompt que ninguém acreditou
+  2:47 Karpathy renderizando O Senhor dos Anéis em 3D com IA
+  5:38 O que é a técnica Gauntlet Loop
+  6:36 Como funciona o loop de execução e verificação
+  9:04 Graph engineering: loops de IA rodando em paralelo
+  10:43 Os três pilares do Gauntlet Loop
+  12:31 O critério genial: impressionar o supervisor
+  15:54 Simulador de voo e duna feitos com um prompt
+  20:31 A arquitetura por trás do agente de IA
+  22:48 Verificação real: a IA testando como usuário final
+  27:37 Julgamento às cegas e o loop até o resultado excepcional
+  30:56 Iniciantes e especialistas: a distância que a IA criou
+  
+  ✨ O QUE VOCÊ VAI APRENDER
+  ✅ O que é o Gauntlet Loop e por que ele gera resultados extraordinários com um só prompt
+  ✅ Como montar loops de execução e verificação para a IA revisar o próprio trabalho
+  ✅ O poder do graph engineering: dezenas de subagentes trabalhando em paralelo
+  ✅ Por que o verificador precisa testar como usuário final (via Playwright MCP) para aprovar de verdade
+  ✅ A arquitetura de IA que hoje separa iniciantes de especialistas
+  
+  #claudecode #agentesdeia #inteligenciaartificial
+---
+Essa técnica de prompt é tão boa que muitas pessoas vem os resultados gerados por ela e não acreditam que foi gerado com prompt só. E tudo começou com esse cara aqui, Matt Schumer. E a gente consegue dar uma olhada no que ele fez com um prompt só. Dá uma olhada nisso. Isso aqui é um jogo que o cara fez com um prompt. Um prompt.
+
+Olha a qualidade desse gráfico, olha a interatividade disso, a jogabilidade. É absurdo. É absurdo. Não sei se vocês já experimentaram criar jogos com COD Code. Esse resultado aqui é muito fora da curva.
+
+Geralmente você até consegue ter um resultado funcional, mas esse nível de entrega tá muito além do que eu já tinha visto, sobretudo quando a gente considera um prompt, né? Uma coisa é você passou meses criando algo e aí você tem um resultado. Isso aqui foi feito com um prompt. É muito, muito surreal. Só para você ter uma comparação de onde a gente estava, onde a gente chegou, esse vídeo aqui foi postado em 2023 e olha o nível do jogo.
+
+Isso aqui era um jogo considerado impressionante. Esse vídeo aqui tem 500.000 visualizações. Esse era o nível do jogo, né? Aí você tem um gráfico um pouco mais legal.
+
+o passarinho aqui pulando. [risadas] E aí ele mostra como ele vai fazendo o jogo com o chat apt. E a gente tem aqui o resultado final. Esse é o jogo que era impressionante há pouco tempo atrás. Isso aqui era tão impressionante que esse vídeo literalmente tem 500.000 visualizações.
+
+Agora compara com isso. Sério, compara. a gente não precisar nem do áudio, que também é uma outra coisa à parte, né? Bem legal, mas olha isso, olha o nível de detalhes que isso tem. É, é muito muito bizarro. A primeira vez que eu vi
+
+isso, eu confesso que eu não acreditei. Eu pensei: "Esse cara pode ter feito isso, né? Não é a coisa mais impressionante do mundo, mas não foi em um prompt. Impossível ele ter feito isso com um prompt só. Ele com certeza passou pelo menos uma semana ali otimizando o jogo até que ele chegasse nesse ponto e aí ele posta para viralizar falando que foi um promp só. Eu acho que muita gente
+
+deve ter pensado a mesma coisa. Porém, poucos dias depois, Andreas de Carpat, um dos nomes mais respeitados do mundo da EA hoje, publicou isso aqui. Vou mostrar para vocês. E ele fez isso aqui com um prompt, tá bom? Ele deu o primeiro parágrafo do Senhor dos Anéis, deixou a trabalhando por duas horas e esse aqui foi o resultado.
+
+was very rich and very peculiar and had been the wonder of the for 60 years ever since hisarable disappearance and unexpected return the riches he had brought back from his travels had now become a local legend and it was popularly believed whatever the old folk might say that the hill at bag end was full of tunnel stuffed with treasure. And if that was not enough for fame, there was also his prolonged vigor to marvel at. Time wore on, but it seemed to have little effect on Mr. Bag at 90 he was much the same as at 50. At 99, they began to call him well preserved, but unchanged would have been nearer the mark.
+
+There were some that shook their heads and thought this was too much of a good thing. It seemed unfair that anyone should possess apparently perpetual youth as well as reputely inexalth
+
+and
+
+ele definiu teto de gasto com tokens em 1 milhão de tokens que dá mais ou menos uns 10. E a meta era simplesmente fazer com que o começo do Senhor, os Anéis se transformasse em uma cena tridimensional renderizada no navegador. O agente, para produzir esse resultado que você viu, trabalhou durante mais ou menos 2 horas e escreveu 5400 linhas de código aproximadamente. E ele fala uma coisa muito interessante, que ninguém em se consciência perderia tempo escrevendo algo tão específico e trabalhoso. Só que os modelos de A tem toda a paciência do mundo e desde você tem orçamento podem trabalhar por quanto tempo você quiser em tarefas extremamente específicas para coisas que não necessariamente vão gerar um resultado pra empresa ou um aprimoramento dentro de um sistema já construído, já vendido. Esse é um
+
+projeto recreativo e funciona muito bem. Obviamente não trouxe você até aqui no vídeo só para te dizer: "Olha que legal que as pessoas estão fazendo com IA. Eu quero te falar sobre uma técnica específica chamada Guntlet Loop. E essa técnica é basicamente um prompt que você insere em qualquer execução de qualquer tarefa para fazer com que os seus resultados se tornem extraordinários. Se você acompanha o canal, se você acompanha as notícias de mais recentes, você sabe que a gente entrou em um momento na história da IA, em que as pessoas que utilizam e no dia a dia e entendem sobre a tão usando em de uma forma muito diferente de quem tá começando. Isso nunca foi tão
+
+verdadeiro. Na maior parte das vezes existia um gap, existia uma distância entre um iniciante e alguém que pode se dizer um profissional ou um especialista ou alguém que realmente se dedicou a estudos da IA. Mas agora isso tá se separando ainda mais por conta de uma coisa chamada loop. E a gente já fez vídeo no canal sobre isso, você pode conferir para se aprofundar mais. Mas a lógica básica que constitui o loop é o seguinte, você tem uma tarefa sendo executada e você tem uma forma de fazer com que a IA verifique essa tarefa que foi executada. O exemplo clássico é um
+
+site. O Maia cria um site, mas ela entregando um resultado pode deixar alguns elementos que não estão alinhados com o que você deseja. Por exemplo, ela pode criar um site com vários botões que não funcionam. Ela pode criar um site com elementos sobrepostos, um site que não tá alinhado com a paleta de cores que você gostaria e que tá dentro dos critérios de aceitação de um projeto específico. Então, se você não tem uma etapa de revisão, você já está nesse momento com uma defasagem em termos de como você usa IA, sobretudo se você usa IA de uma maneira não recreativa, não experimental. Se você usa aí para vender
+
+produtos, serviços, para tocar sua empresa ou oferecendo serviço para outras empresas. Então pensa assim, antes do loop, você vai lá, pede pra gente dá enter ou a gente constrói o site, você dá uma olhada no site, revisa esse site, vê que tem um monte de errinhos, pede para ele corrigir e vai fazendo isso várias vezes até que você tem um site minimamente aceitável. Agora, com o loop, o agente ele cria tudo e ele revisa tudo. O que você tem que fazer é dar a tarefa, a meta e define os critérios que você sabe que são suficientemente válidos para que aquela tarefa seja aceita. E aí esses foram alguns exemplos, né? Todos os botões têm que
+
+funcionar muito bem, não podem ter elementos sobrepostos. E aí que ele vai fazer? Ele vai construir e vai checar, ele vai verificar. Depois ele vai iterar, né? Ele vai continuar otimizando quantas vezes for necessário. Ele pode
+
+passar por 5, 6, 10, 100 loops até que ele te entrega um resultado final. Uma outra maneira muito legal de fazer isso é pedir para o verificador ou etapa de verificação dar uma nota de 0 a 100 que aí se passar de 90 ou de 85 ou de 80 você que define, aí sim o resultado pode ser entregue, mas não antes disso. Dessa maneira você garante uma entrega muito melhor e os critérios que você vai definir dentro da etapa de verificação são fundamentais. Então, a gente já passou desse ponto em que eu escrevo para IA e ela executa. A gente tá nesse momento em que eu escrevo para IA, ela executa, ela verifica, ela melhora quantas vezes for necessário e ela me entrega o resultado. A gente fez um
+
+vídeo recente também sobre graph engineering, que para simplificar bastante é quando você tem vários loops desses rodando em paralelo. Então, vamos supor que eu queira fazer 10 sites ao invés de um. Se eu pedisse para um agente, ele normalmente vai fazer um site, depois vai fazer outro site, depois vai fazer outro e aí ele vai passar por essa etapa de verificação, otimização individualmente até ele concluir o primeiro site e a depois vai pro segundo, terceiro, quarto, até chegar no 10º. Isso vai demorar um tempão. Com a lógica do graph engineering, a gente tem a possibilidade de fazer com que esses 10 sites construídos ao mesmo tempo e que a gente possa fazer uma coisa com os 10 no final juntos. por exemplo, colocar em uma
+
+plataforma integrada já em que a gente consegue acessar todos os sites e cada um vira um botão diferente, uma aba diferente, enfim. É muito legal você poder aumentar a produtividade, né? A gente não precisa usar de uma maneira lenta, mais a gente consegue só delegar uma treva para um agente, mas se a gente consegue criar outros suagentes, múltiplos suagentes, para fazer algo com mais velocidade. Então, se você vai gastar uma quantidade parecida de tokens para executar algo, não faz sentido você não usar essa otimização de tempo. E tem várias outras vantagens que se você quiser aprofundar, você pode assistir o vídeo de graphic engineering aqui do canal, mas que tem basicamente a ver com performance, eficiência, contexto e algumas outras coisas. Então agora que
+
+eu situei você de uma maneira breve em relação a onde estamos no mundo da IA, o que as pessoas que trabalham com IA tm feito, eu quero te contar um pouco sobre o Guntlet Loop. Essa técnica tem três pilares principais. O primeiro é a tarefa, a meta, o resultado desejado, como por exemplo naquele primeiro jogo, criar um jogo de tiro. Esse pode ser o resultado desejado. A segunda etapa é a metodologia. E aqui que entra tudo que a
+
+gente tá falando de loops, de graphs, é a etapa que vai dizer o seguinte: você vai quebrar esse projeto em vários segmentos diferentes. Cada segmento vai ser executado por um subagente e um outro subagente separado desse primeiro vai ser responsável por verificar o trabalho do subagente que executa. Então, primeiro a gente vai quebrar esse projeto em muitas partes diferentes. Depois ele vai pegar cada uma dessas partes e criar um loop. Então, para cada etapa, a gente vai ter um subagente que faz e o outro que verifica. E o terceiro
+
+pilar são os critérios, os critérios de aceitação. A gente já falou aqui no canal de goal, né, de meta, de você dar um um resultado desejado e deixar o agente trabalhar. Mas aqui a gente tá vendo uma coisa diferente, tá? que a gente tá falando de critério de aceitação de cada subagente que avalia o trabalho de cada outro subagente dentro desse trabalho que pode envolver centenas de suagentes ao mesmo tempo. Então, a gente tá falando de uma camada muito mais profunda do que simplesmente escrever um prompt dizendo: "Não termine de trabalhar até que tudo esteja concluído ou até que o resultado esteja dentro dos critérios X, Y e Z". Não,
+
+cada um dos suagentes que fazem a verificação, avaliação, que julgam o trabalho dos outros, precisam atender a critérios de qualidade. E o critério do projeto original era interessantíssimo e ultra simples, assim, simples, aquelas coisas no mundo a que você fala: "Cara, como pode ser tão fácil?" E como ninguém fez isso antes, né? É muito louco isso. Às vezes a gente se depara com umas coisas assim bestas, umas coisas assim que você fala: "Cara, isso é muito simples para ser verdade e é verdade." E
+
+o critério era que cada um dos suagentes, cada um dos verificadores, dos avaliadores, ficasse impressionado com o trabalho daquele subagente que estava executando a tarefa que estava sob sua supervisão. Então, olha a simplicidade. Se a gente tem 50 suagentes executando e 50 suagentes verificando, basta esses 50 que estão verificando estarem impressionados com o trabalho daqueles que estão reportando a eles, né? Cada um desses 50 vai tá ligado a um verificador. Esse verificador pode aprovar ou não, pode ficar impressionado ou não. Só quando ele estiver
+
+impressionado, esse ponto específico foi atendido. Então, 50 vezes você precisa de um resultado impressionante, mas em partes muito fragmentadas. Isso cria um nível de detalhe, um nível de preciosismo com cada parte do projeto muito maior. E uma outra coisa importante aqui é uma comparação com algo concreto. Então, no caso do jogo de estiro era comparação com os jogos comerciais. E a gente já
+
+falou isso tantas vezes aqui no canal. Quando você tem uma etapa de verificação, o seu resultado melhora muito, independentemente do contexto. Só que olha o nível desse tipo de metodologia. A gente tá falando de tarefas paralelas, dezenas, senão centenas. E cada trabalhador, cada subagente tem um supervisor direto, olhando ali pro que ele tá fazendo, sem parar. E cada
+
+tarefa, por menor que seja, tá sendo avaliada segundo critérios. objetivos de qualidade. Nem todos são tão objetivos, na verdade, né? Eles nem precisam ser tão objetivos esses critérios. Impressionar um sobreagente é uma coisa totalmente subjetiva, mas dentro da sua subjetividade tem ali um primor desejado, tem um esforço a mais, alguns tokens que vão ser mais requisitados pela etapa de verificação para que o trabalho seja verificado de maneira diligente. Essa técnica é tão surreal
+
+que eu comecei a testar aqui para trazer um prompt refinado para vocês conseguirem aproveitar ao máximo. Só que eu não tive o resultado ideal e eu fiquei testando, testando, testando, testando e as horas foram passando, né? Agora tá mais frio, troquei de roupa até 4, cá quantas horas o dia todo, quase. Eu fiquei testando e melhorando isso. Até que eu cheguei à conclusão de que a gente tinha que criar um agente, porque o prompt em si não ia bastar, não seria suficiente, porque a gente tem limitações de harness, né? Aí se você
+
+viu os vídeos de Harness, você sabe exatamente do que eu tô falando. Então a boa notícia é que, apesar do figurino não ser o mesmo ao longo do vídeo todo, esse vídeo vai culminar na criação de um agente que você pode testar. Eu vou te mostrar exatamente o que esse agente criou em um prompt só. Esse aqui foi o resultado de um prompt. Olha que sensacional. Dá para ver até a sombra.
+
+E eu pedi uma coisa muito específica, que a areia reagisse ao avião, a espaçonave, né? Eu não pedi muitas coisas, eu pedi para que a gente tivesse um cenário de uma duna e um simulador de voo, né, o mais bem feito possível. Eh, eu queria um cenário realista, queria uma espaçonave bem feita e queria essa reação do solo, a areia subindo quando eu passo. E ele fez isso perfeitamente. Só que o que é mais insano é que isso aqui nem é a versão final. Eu tô gravando isso aqui,
+
+mas ele tá na terceira rodada e ele pode ter até oito rodadas a depender do que você pede, que é o limite do agente que a gente configurou, porque só para ter essas três rodadas aqui, a gente já levou 4 horas, é uma coisa que demora, né? Então ele demorou 4 horas para criar isso aqui. Foi um prompt, mas demorou bastante. Por quê? Porque essa lógica de criar e verificar, ela é demorada. E aí
+
+a gente tem algumas rodadas, enfim, eu vou mostrar para vocês exatamente como isso funciona, como a gente funciona e provavelmente o resultado final vai ficar ainda melhor do que isso aqui. Mas eu gostei muito, eu gostei muito. Achei que a espaço nave ficou muito bem feita e foi legal porque a gente foi vendo o agente otimizando o jogo. Então ele ainda tá otimizando um pouco a areia, o cenário e etc, mas ele foi otimizando uma série de coisas. Ahí tem uma outra coisa, seó aperto barra de espaço, tem o modo turbo aqui que é bem legal também.
+
+Sem o modo turbo ele fica assim, ó, que é bem legal. Aí com o modo turbo, ele até muda a angulação. Esse movimento de câmera é muito legal também. A possibilidade de de É muito legal. É muito legal. E aí é
+
+obviamente tridimensional, né? Eu consigo ir para cima, eu consigo ir para baixo, consigo mirar no sol. Cadê o sol? É um resultado que eu gostei muito. É perfeito. Não, não é perfeito, mas é
+
+muito bom. E a gente já tinha tentado fazer uns jogos com Fable ou com Ops, e nunca tinha chegado perto de um resultado como esse. Eh, e apesar de ter demorado, apesar de ter torrado uma boa quantidade de tokens, a gente ainda não ainda não calculou porque ainda não foi finalizado o processo, a gente vai deixar ele rodando na madrugada para ver se fica muito melhor que isso. Mas o importante aqui é entender que o resultado muda drasticamente se você usa essa estratégia. E foi interessante observar como esse agente foi criando, porque ele o tempo todo foi melhorando coisas específicas separadamente. Então,
+
+a gente via na tela aqui do computador a imagem da espaçonave, fotos de diferentes ângulos, a gente viai dunas, depois a gente via ele testando alguns movimentos e ele de fato jogando o jogo ou controlando o simulador. Ele abre o browser e ele começa a testar, né? Então a gente tem a etapa de quem executa, da do subagente que executa. E aí depois que essa etapa tá pronta, a gente tem a etapa de quem verifica, né? Então é muito louco você ver como esse gráfico vai melhorando, porque ele vai passando por etapas de revisão e vai ficando cada vez melhor. E aí eu fui
+
+entendendo como ele foi pensando, como cada suberagente foi interagindo. E é muito louco porque um dos critérios é que o verificador, o supervisor, aquele que vai avaliar o trabalho, se sinta surpreso, né, essa coisa de uau. E várias vezes o resultado estava perfeitamente funcional, mas não gerou essa surpresa no suagente que faz a verificação. E ele teve que voltar e fazer várias coisas. Inclusive algumas partes foram construídas do zero, porque ele simplesmente descartou, foi muito crítico e aí o executor decidiu refazer tudo de novo. Então é muito interessante
+
+observar o nível de dedicação que a consegue te entregar hoje com um prompt, né? A gente tá falando que isso é barato, não. A gente tá falando que isso é rápido, não. Mas olha o resultado que você consegue ter se você tem uma boa arquitetura de ar. E quando eu falo de arquitetura, é isso aqui que eu quero dizer, tá? a estrutura lógica é o fluxo,
+
+é como as pastas e arquivos se organizam para gerar um certo resultado. E basicamente você vai enviar sua mensagem e o agente ele vai entender uma série de coisas. O que você quer, qual é a sua meta, quais são os seus critérios de aceitação, o quão próximo do que você quer que o resultado seja, né? Eu quero que seja um jogo no estilo X. Eu quero que seja um aplicativo eh que tenha os padrões de qualidade Y. E obviamente quanto mais
+
+específico, mais exemplos, mais referências você enviar, melhor. O tamanho da tarefa também vai ser considerado, tá? Então, se for uma tarefa muito complexa, ele vai passar por oito rodadas. Mas isso aqui vai depender muito. Se as primeiras rodadas, mesmo numa tarefa mais simples, não forem satisfatórias, ele vai continuar rodando. Isso aqui é uma estimativa. E
+
+aqui a parte mais importante, talvez dessa etapa, ele vai quebrar em muitas partes, muitas partes diferentes. Então, nesse caso desse simulador, ele fez um agente, um subagente, simplesmente pensar no cenário, eh, e na areia, na verdade, nem no sol, nem na atmosfera. Ele focou só na areia. Ele foi gerando diferentes versões da areia até que a areia ficou realista o suficiente. Ela não foi aprovada ainda, tá? É uma uma
+
+das coisas que tá sendo aprovada. Eh, ela reprovou duas vezes, três vezes, na verdade, nas etapas de verificação. E agora ela talvez mude um pouco e fique ainda melhor. Mas a espaçonave, o verificador, o supervisor não achou que tá impressionante. Eu achei que tá impressionante, mas talvez ele queira melhorar mais ainda. E algumas outras
+
+coisas passaram. ali fez vários testes de simulação de movimento com física realista. Ele passou por uma série de etapas de obedecer com precisão os comandos, movimento de câmera, essas sutilezas assim. E ele foi aprovando várias coisas. E é muito interessante você ver o que que ele vai provando, o que que ele não vai, mas apenas se o supervisor ficar impressionado, esse agente vai permitir que aquela parte do que você tá construindo seja aprovada para não precisar ser refeita. E tem uma
+
+coisa que esse a gente tem que nenhum outro lugar eu vi isso que eu achei super importante colocar que é uma decisão de como será feita essa verificação, porque tudo bem, a gente pode ter um agente que revisa o código de um jogo, mas se ele não experimentar aquele jogo como usuário, se ele não abrir o browser ou testar os comandos e ter uma experiência minimamente parecida com a de um usuário não é tão fácil fazer isso. Para esse simulador é mais fácil porque são pouquíssimos comandos e possibilidades, então acaba sendo mais fácil, mas é um desafio, tá? Eh, mas se eu não tiver acesso a isso, se eu não der acesso ao meu agente, ao Playgright MCP, que executa essa automação de browser, que permite o agente controlar a aeronave, eu não consigo verificar direito, porque ele vai revisar o código, mas tem limitações. E a mesma lógica serve para um aplicativo. Uma coisa é ele revisar o código do aplicativo, outra coisa é ele entrar no aplicativo como se fosse o usuário final, porque ele detecta um monte de bugs, um monte de coisas que ele vai querer otimizar se ele começa a experimentar o app. De fato, nós fazemos
+
+a manutenção de vários apps e uma das coisas que mais ajuda é um daily check para reportar essa experiência. Então ele entra no aplicativo, ele testa as principais funcionalidades, ele faz o que um usuário normal faria. E aí, se tiver algum problema, esse problema ou é corrigido ou é reportado a depender do grau, nível, complexidade, gravidade. E essa etapa aqui é o grande diferencial desse agente, porque as soluções que a gente encontrou na internet não estavam cobrindo isso. Basicamente, quando o seu agente quebra em 20, 30, 50 subreagentes, 50 tarefas diferentes em partes diferentes do aplicativo, do jogo, do projeto, ele não necessariamente vai estar munido das ferramentas que ele precisa para fazer essa verificação.
+
+Então, se você não consegue, por exemplo, verificar via Playwrght MCP ou via uma extensão do browser, se o COD Code não consegue ver o que tá acontecendo ou, né, ter acesso à experiência do usuário, ele provavelmente não vai ter uma etapa de revisão tão confiável quanto poderia. Então, o agente ele vai decidir qual é a metodologia de revisão de cada etapa ideal. Então, é o melhor dos mundos. E aí ele não só vai fazer isso, ele vai instalar o que você ainda não tem para que ele seja capaz de cuidar dessa revisão por você da melhor forma possível. Vocês estão entendendo quão fácil a gente deixou para vocês? Foram
+
+algumas horas de trabalho, muitos testes, obviamente a gente não conseguiu revisar tudo com o maior rigor do mundo, né? A gente não fez eh uma avaliação técnica ultra precisa. ao longo do tempo, se as pessoas começarem a usar, gostarem, quiserem contribuir paraa melhoria desse agente, a gente vai ficar super feliz e a gente vai também, obviamente, na medida que ele for sendo útil, a gente vai otimizando e colocando as novas versões na comunidade. E ah, importante, esse agente vai estar disponível pros membros da nossa comunidade maestros da IA. É uma comunidade em que nós fazemos lives toda semana conversando com vocês. Vocês
+
+abrem uma chamada de vídeo, a gente conversa. vocês fazem perguntas, nós temos suporte técnico diário para você nunca travar em nenhuma implementação. Temos mais de 25 horas de aulas com as ferramentas já mais relevantes do mercado, uma formação completa em inteligência artificial e um curso completo de cloud code. Além de um arsenal completo com centenas de skills, centenas de recursos e agentes como esse que a gente estava falando a respeito nesse vídeo, que a gente criou exclusivamente pros membros da comunidade. A gente tem uma sessão só de aplicativos exclusivos para vocês também. Então, dá uma olhada no link na
+
+descrição. O valor é simbólico em comparação a tudo que você recebe. E além de tudo isso que eu falei, você ainda vai estar conectado com uma comunidade de mais de 1600 pessoas que usam todos os dias no seu trabalho, na sua vida pessoal, na sua empresa, na empresa que estão pensando em fundar. Inclusive, uma das coisas que mais nos deixa orgulhosos é que a gente já viu sociedades sendo fundadas a partir de membros que se conheceram na comunidade, talvez seu próximo sócio esteja lá, mas muitas parcerias também, projetos de SAS, aplicativos já foram iniciados através de pessoas que se conheceram no ambiente da comunidade. Então, dá uma olhada no link da descrição desse vídeo para entrar na comunidade maestros da EA. E aí, depois dessa instalação de
+
+tudo que é necessário, setup, pronto, o agente vai passar por essa etapa de verificação. Ele vai executar o que é necessário, ele vai fazer um julgamento às cegas, né? Isso é muito importante, essa lógica de eu não tenho contexto do que foi feito, eu não sei o que aconteceu, eu peguei o resultado pronto e eu tenho que julgar esse resultado. É como você ir num restaurante e avaliar a comida do restaurante versus você faz a sua própria comida e julga a sua própria comida. Tudo bem que para alimentação muitas pessoas acabam não gostando de comer aquilo que cozinham, mas tendencialmente a gente vai valorizar mais e ser mais ameno com as críticas em casos em que a gente conhece o contexto.
+
+E a Iá ironicamente também faz isso. Se ela sabe as razões pelas quais ela decidiu, na hora de avaliar ela vai ser tendenciosa porque ela conhece o contexto de como aquilo foi feito. E aí, se a gente tem a aprovação e tudo é concluído, todas as etapas, todas as microetapas, na verdade são aprovadas, aí a gente vai pro relatório final e a reprovação leva para o loop, né? todo esse processo volta e isso é cíclico e até o resultado ficar muito muito bom, de acordo com todos os supervisores. Muito bom, não, não é só muito muito bom, não. É excepcional, é
+
+surpreendente, é impressionante que são coisas diferentes, apesar dos subjetivos. Eh, ele precisa entender que aquilo que foi feito é uau, né? É muito legal. E aí quando ele entende que isso aconteceu, aí ele aprova aquele suagente que executou. Aí para quem já está na comunidade, nós temos aqui essa aba agentes prontos. Você vai clicar aqui e
+
+aí você vai encontrar o seu agente. É só baixar a pasta e aí quando a pasta for baixada você abre ela dentro do seu cloud code. A gente tem o tutorial em vídeo detalhado sobre como você vai fazer isso na comunidade. É super simples, mesmo que você não tenha experiência técnica alguma, tá? E para quem tem curiosidade sobre como é por dentro, né, aqui a gente tem as abas da comunidade, as pessoas que se apresentaram, eh, o suporte técnico, aqui, o chat, né, o Marcos já tá falando que tá melhorando a cada dia a automação dele e tem a formação com as ferramentas mais relevantes, eh, os princípios, os conceitos fundamentais.
+
+Aqui a gente tem o curso de COD Code completo, skills prontas, agentes prontos, arsenal. Aqui são os aplicativos, né, que vocês vão encontrar exclusivamente pros membros da comunidade. Vocês podem usar e abusar deles. Temos aqui os apps da comunidade, né? O pessoal da comunidade também cria apps. Tem vários aqui que o pessoal já
+
+criou e apresenta e compartilha. E é muito legal esse ambiente. E pro pessoal que acha que tudo precisa ser de graça, é importante vocês entenderem que quando a gente faz as lives com o pessoal da comunidade, eles se incomoda um pouco pelo fato de que a gente disponibiliza muita coisa no YouTube. E obviamente nós continuaremos trazendo conteúdo de altíssimo valor aqui pro YouTube, mas nós precisamos também valorizar as pessoas que estão na comunidade. Então, alguns recursos como esse agente vão estar disponíveis só pros membros. E se
+
+você gosta da maneira que a gente ensina, da maneira que a gente pensa Iá, vai ser um prazer receber você na comunidade maestro da IA também. O que eu quero que você leve desse vídeo é o seguinte, que a IA ela não é mais uma brincadeira. A IA não é mais simplesmente uma forma de você fazer o trabalho mais rápido. A IA hoje ela consegue entregar um resultado com tanta qualidade se você tiver os recursos necessários e construir uma arquitetura com competência que ela é capaz de fazer coisas que especialistas que passaram décadas estudando certas áreas não seriam capazes de fazer em meses e ela faz isso em horas. E uma outra coisa fundamental, a forma como as pessoas que entendem de usam IA está mudando drasticamente. Antes, um
+
+especialista em IA e um iniciante usavam um cloud, um jamin chatt mais ou menos do mesmo jeito. Claro que com um prompt ali um pouco mais sefinado, um pouco mais de detalhamento, né? entendendo melhor os resultados esperados. Mas assim, nada gritante assim que você fala: "Nossa, por isso que os resultados são drasticamente diferentes". Era mais uma questão de entender sobre a ferramenta e ter a paciência de continuar criando, desenvolvendo, construindo. Agora, a forma que os
+
+iniciantes têm usado o IA tá a anos luz de distância da forma que os especialistas estão usando. Por isso é importante que você entenda a lógica dos loops, por isso é importante que você entenda graph engineering, por isso é importante você entender essas estratégias que vão surgindo. E caso você queira se aprofundar mais em qualquer um desses temas, você pode assistir um desses vídeos que vão aparecer aqui em cima. E se você quiser receber mais recomendações de vídeos como esse no seu YouTube, você pode dar um hype, um like e se inscrever nesse canal. Um abraço e até a próxima.
+
+[música]

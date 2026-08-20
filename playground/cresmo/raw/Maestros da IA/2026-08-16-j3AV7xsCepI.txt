@@ -1,0 +1,167 @@
+---
+video_title: "O NOVO Recurso VICIANTE do Claude Code"
+video_id: j3AV7xsCepI
+channel_name: "Maestros da IA"
+channel_id: UCEojuEA0eCL267t_G_cc0Fg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=j3AV7xsCepI
+video_date: 2026-08-16T20:19:04+00:00
+video_description: |
+  Torne-se um Maestro da IA 👉 https://comunidade.maestrosdaia.com/?utm_source=youtubedescription&utm_medium=youtubedescription&utm_campaign=youtubedescription&utm_content=claude-code-sessoes-conversando
+  Prompts e Recursos Grátis em Nossa Comunidade Aberta 👉 https://invitecomunidadeaberta.maestrosdaia.com
+  IA Para Empresas: Sistemas Autônomos, Agentes de IA e Automações 👉 https://implementacao.maestrosdaia.com/
+  
+  Agora o Claude Code deixa uma sessão conversar com a outra em tempo real, e neste vídeo eu mostro o passo a passo, do básico ao loop de agentes.
+  
+  Esse é um dos recursos mais úteis já lançados no Claude Code: fazer várias sessões conversando entre si para dividir tarefas, passar contexto e montar loops de agentes com executor e supervisor. Você vai ver como renomear cada sessão, enviar mensagens de uma para a outra e criar um loop de verificação que dá nota de qualidade e devolve o trabalho até ficar bom, tudo em linguagem natural, sem nada complexo.
+  
+  📌 CAPÍTULOS
+  0:00 Novo recurso do Claude Code: sessões conversando entre si
+  1:51 Como renomear cada sessão com o comando rename
+  2:48 List agents e enviar mensagens de uma sessão para outra
+  4:00 Dividindo tarefas: uma sessão pesquisa, a outra executa
+  7:26 Passando as referências de uma sessão para a outra
+  10:10 Montando o loop de executor e supervisor com nota de qualidade
+  16:16 O que são loops e por que são a base da IA hoje
+  17:38 Subindo os critérios: avaliar o resultado por prints
+  23:46 Casos de uso: handoff de contexto entre sessões
+  25:50 Loops em paralelo e o agente da comunidade
+  28:35 Como entrar na comunidade Maestros da IA
+  
+  ✨ O QUE VOCÊ VAI APRENDER
+  ✅ Fazer duas sessões do Claude Code conversarem entre si em tempo real
+  ✅ Renomear sessões e enviar mensagens de uma para a outra
+  ✅ Montar um loop de executor e supervisor com nota de qualidade
+  ✅ Usar a lógica dos loops para melhorar seus resultados com IA
+  
+  #claudecode #agentesdeia #inteligenciaartificial
+---
+Antiop lançou nos recursos mais legais, mais divertidos e mais úteis da história do Cloud Code. Agora você consegue fazer com que uma sessão do Cloud Code converse com as outras de uma maneira super fácil, super intuitiva. E a ideia desse vídeo é te mostrar exatamente como você pode fazer isso e alguns casos de uso do mais básico até coisas um pouco mais avançadas. E a primeira coisa que você vai fazer é abrir uma sessão qualquer do cloud code. Você pode fazer isso no VS Code, que é onde eu tô agora.
+
+Você pode fazer isso no próprio desktop, cloud desktop, você faz onde você achar melhor, tá? Se você não tiver o VS Code instalado e quiser instalar, é super fácil, só entrar no site, fazer o download e você vai se deparar com uma interface como essa. E a primeira coisa que a gente vai fazer, como sempre, é criar uma nova pasta. E eu vou chamar aqui de demo chat. Você pode dar aqui o nome que você quiser, tá? passa, depois eu vou
+
+excluir. É só pra gente testar um recurso novo lançado. Então, a primeira coisa depois que a pasta já foi criada é abrir uma sessão do cloud code. E aí você pode entrar pelo terminal. Aqui eu vou usar a extensão do cloud code dentro do VS Code, tá?
+
+Então tudo até aqui para quem usa n dia o cloud Code é muito simples. Ah, a gente pode já fazer uma coisa. Dependendo da interface que você tá usando, isso aqui pode ser mais ou menos intuitivo, mas se você não tiver a opção de dividir a tela em duas, né, e você pode ir mudando entre uma e outra pr ver como funciona d na mesma, até só porque aqui para gravar o vídeo visualmente fica mais legal assim. Então, o que que a gente vai fazer? Primeiro, enviar uma mensagem em cada uma.
+
+Pronto, enviei uma mensagem em cada uma delas e agora a gente vai mudar o nome delas. Então, eu tenho esse comando aqui que é o barra rename, que é renomear. E aí eu vou escolher um novo nome. É um nome pra sessão que você tá, tá bom? Então, é como se essa sessão aqui se chamasse, por exemplo, João. Agora essa
+
+sessão se chama João, eu posso referenciá-la como João. Por exemplo, se eu quero chamar a sessão João dessa sessão aqui, é só eu falar que quero falar com a sessão João, quero enviar alguma coisa pra sessão João. E aqui eu vou chamar de Gustavo, tá? Poderiam ser nomes assim aleatórios, só para não ficar confuso aqui, poderia chamar XL10, tá? Aí virou XL10 o nome da sessão, não importa, tá? Poderia ser sessão dois,
+
+enfim, não importa. O que importa é que ela tenha um nome e que ela pode ser identificada por esse nome. E um outro comando importante pra gente usar é esse aqui, ó. List agents. E aí eu tenho aqui a sessão João iniciada. Olha aqui, que legal. E o
+
+legal é que eu posso falar com essa sessão e mandar coisas para ela. Então eu posso falar: "Envie uma mensagem para a sessão". João com um oi, [risadas] coisa idiota. Só para você ver como funciona. Então ele vai enviar essa mensagem pra sessão João. Pronto. Agora
+
+você tá vendo que a sessão João tá ali processando informações sem que a gente tenha colocado nada no input. Como? Porque essa outra sessão que agora se chama S2 enviou uma mensagem paraa sessão João. Muito simples, muito fácil, né? Tudo que você precisa para entender como essa interação funciona, você já entendeu. Agora a gente vai fazer alguns
+
+experimentos, tá? Vamos limpar isso aqui. Vamos limpar isso aqui também. barra clear, importantíssimo. E agora a gente vai dar tarefas diferentes e depois fazer com que essas tarefas se juntem. E algumas pessoas
+
+podem achar que a limpeza vai mudar o nome da sessão, mas não muda, tá? Então, se eu venho aqui, list agents, eu vou ver lá a sessão João, que ainda se chama João, né? Isso continua igual. Então, vamos limpar de novo. Nessa sessão aqui, a gente vai encontrar algumas referências de layout. A gente vai pedir
+
+para ele mesmo encontrar essas referências. Então, encontre site de tecnologia. Agora aqui a gente pode escolher uma outra coisa, que é o que a gente quer construir. Aqui são as referências que ele vai buscando e aqui a gente pode pedir para ele construir um esboço. Então, construa a primeira, o primeiro rascunho de um site sobre, vamos supor que a gente queira vender um produto que é um uma espécie de AirPods com IA. embutida. Vou falar para ele
+
+inventar esse produto. Então, enquanto essa sessão aqui tá buscando as referências de sites, eh, buscando referência de layout e tal, essa aqui tá fazendo o primeiro rascunho de um site sobre eh um produto que, né, ela tá construindo. E aí ele vai usar aqui, a gente tem um monte de coisa já configurada, né? E ele vai usar o o MCP do Higfield e tal, que nem é o jeito que eu mais queria, na verdade, que ele fizesse. Talvez eu a gente precise simplificar aqui um pouco.
+
+Ele perguntou que tipo de produto, como você quer integrar e eu vou falar para ele escolher tudo, a escolha é sua. Aí ele tá perguntando do RSF, MCP e tal. Eu não quero nada disso. Aqui a gente tem algumas coisas que ele já tem nas nossas configurações globais, né, que ele aplica para todas as sessões, mesmo que a gente esteja numa pasta vazia. E aí ele fica, né? Enfim, isso aqui é é
+
+desnecessário, mas eu vou falar para ele, eu quero um HTML eh simples, né? Uma coisa ridícula. Não quero que ele faça coisas extremamente complexas com imagens, enfim. Eu não quero nada muito complexo. Só quero mostrar aqui para vocês a [roncando] lógica por trás de duas sessões sendo orquestradas em tempo real de uma maneira bacana. Então ele vai criar aqui
+
+e aqui ele vai buscar as referências e depois que que a gente vai fazer? A gente vai juntar as duas coisas. Aqui ele queria criar um artefato. Eu quero só um HTML. Quero ver na pasta de downloads. Não quero nada em nuvem.
+
+Pronto. A primeira versão tá pronta, que é esse HTML aqui. Vamos dar uma olhada. Bom, esse aqui foi o primeiro rascunho do site, né? Instrução absolutamente simples, nada assim, a gente fez questão que ele fizesse a coisa mais inxuta possível.
+
+Por quê? Porque é só um primeiro rascunho. Depois a gente vai melhorar isso aqui com a nossa outra sessão e aí você vai ver como elas podem interagir. Então eu nem vou ficar lendo muito, mas a ideia é que seja um AirPods no qual você conversa e é uma IA, né, que tá conectada, que pode estar conectado o dia inteiro no seu ouvido e e falando com você e que não depende de uma nuvem, etc. Aqui as referências ainda vão ser finalizadas.
+
+Pronto, agora a nossa sessão dois finalizou o seu trabalho e a gente vai pedir para ela enviar as referências pra sessão um, pra sessão João. Então eu posso pedir para ele enviar toda a pesquisa pra sessão João para ela melhorar o layout do site que ela estava criando. Perceba que agora a sessão João começou a trabalhar sem que a gente fizesse nada diretamente nela, né? A gente estava em outra sessão e a gente pediu para que ela enviasse coisas pra sessão João e agora ela está trabalhando. E aí aqui ele tá pedindo autorização para aplicar as referências, né? Eu obviamente quero
+
+para ver como vai ficar. Então vou falar para ele aplicar todas as referências encontradas de layout, né? Bom, ele terminou aqui. Vamos dar uma olhada no resultado e comparar. Aí, só um detalhe, não pense que isso aqui é um vídeo sobre fazer sites, tá? Isso aqui é
+
+um jeito extremamente simples de você entender como uma sessão pode conversar com a outra e fazer algo útil. Então, uma que pesquisa, outra que de fato executa e como elas podem interagir de uma maneira fluida, te dando mais clareza, mais controle, mais produtividade. Então, não pense que o resultado vai ser como se a gente tivesse usando uma super skill de design incrível. Bom, essa aqui é a nova versão, tá? Extremamente simples, extremamente parecida com a versão anterior. Não notei uma melhoria
+
+significativa, tá? Clei uma coisinha, outra aqui, outra ali, né? É uma coisa, isso aqui tem cara de site, é de apps, né? Mas nada demais. A versão anterior é essa aqui.
+
+Não sei se perdeu ou venceu, tá? Eu acho que tá bem parecido. Talvez a segunda versão tenha sido um pouquinho melhor, mas nada demais. Agora a gente vai fazer uma coisa que talvez tenha o potencial de mudar isso. A gente não pediu o critério de qualidade, a gente não criou ou nem colocou uma skill de design interessante. A gente só pediu para ele
+
+aplicar certos padrões de sites considerados referências e ele encontrou padrões bastante simples, né? Ele não puxou nada muito complexo, muito específico, né? Foi uma coisa assim bem bem simples, só que agora a gente vai propor um desafio e aí entra a terceira camada, que é a camada em que os resultados vão começar a melhorar exponencialmente. Caso você não saiba o que são os loops, um loop é basicamente um agente executando, um outro agente revisando o trabalho e esse revisor tem a possibilidade de enviar o trabalho de volta quando o trabalho não é bom o suficiente. Então, a gente vai tornar esse agente aqui o executor das tarefas, o trabalhador e esse aqui vai ser o supervisor. A gente pode manter o
+
+contexto exatamente como está, só que a gente vai dar algumas instruções e a gente vai ver se eles conseguem trabalhar em loop em tempo real com a gente observando aqui. E aí eu vou tornar esse essa sessão um agente que tem o potencial de desempenhar o papel de um supervisor. Então essa sessão é a partir de agora um supervisor, um supervisor IA responsável por revisar e manter o os sites criados em um padrão de qualidade altíssimo, né? Então, a gente tem aqui uma forma de fazer com que essa sessão entenda o papel dela. A gente também pode subir os critérios de qualidade, né, dizendo que nada abaixo de padrões comerciais, sites que estão rodando e vendendo produtos será aceito, né?
+
+Então, posso falar que seja extremamente criterioso, né, exigente e não aceite nada. abaixo dos padrões do mercado, por exemplo. Pronto, agora ele vai entender quem ele é. E aqui a gente vai começar a construir o prompt. Ah, e para ficar ainda mais claro, a gente vai renomear agora essa sessão para supervisor. Então, aqui
+
+a gente vai falar para ele criar um loop com a sessão supervisor. Você vai enviar os resultados gerados e a sessão supervisor vai avaliar. de 0 a 100 a qualidade do website. Se a qualidade é menor que 95, então a nota de qualidade menor que 95, ela deve sugerir mudanças para você aplicar e você vai aplicar elas gerando novas versões. Comece agora. Então, o
+
+que que a gente tá fazendo, né? A gente tá criando um loop. Esse aqui é o supervisor. Esse aqui é o nosso agente que executa. E ele vai continuar gerando resultados, páginas, sites e vai enviar esses resultados para o nosso supervisor.
+
+Se a nota de qualidade for menor que 95, esse esse essa sessão aqui vai enviar essa nota de volta pra sessão que tá executando com a necessidade de melhorar e vai dar algumas sugestões, né? Então agora ela tá lendo essa página para ver se tem uma nota boa, se tem uma nota ruim, enfim. E aqui é interessante porque ele provavelmente vai ler o HTML, mas como a gente não deu instruções de checar via Playwright MCP ou tirar screenshots, né, prints, provavelmente não vai ser também uma análise incrivelmente detalhada. Mas olha que legal, ele já tá trazendo vários problemas. Problema de performance, de credibilidade, acessibilidade, vários problemas.
+
+Ele gostou da estrutura, gostou do visual, acho que não é criterioso suficiente esse nosso supervisor, mas o importante aqui é vocês entenderem também [roncando] como funciona essa lógica. E a gente tá fazendo isso numa numa pasta nova, tá? Sem nenhum harness a mais além do próprio cloud code. Então não espere grandes resultados. Se a gente quisesse fazer isso aqui da melhor maneira, a gente teria que colocar numa num repositório, num agente de design, né? e teria que especificar, por
+
+exemplo, revisão a partir de Playground Champions a gente até pode fazer isso, dependendo do resultado final, né? Eu quero que você revise tudo via Playright MCP para ver se a interatividade tá bacana pro usuário. Quero que você também revise a partir de imagens, né? Você tira screenshots e analisa os PNGs. Mas o interessante é que ele foi rejeitado e você consegue ver. Isso é
+
+muito claro, né? Isso aqui é muito claro, pô. Ele deu uma nota, ele devolveu a nota, agora ele tá trabalhando para melhorar e você consegue ver aqui na sua frente de um jeito muito simples, né? A gente não falou de nada muito complexo, de nada muito técnico, instruções em linguagem natural que fizeram com que ele simplesmente fosse executando aquilo que a gente pediu, né? Muito, muito simples assim, nada demais. Agora ele criou a
+
+nova versão. Note que eu não tô falando absolutamente nada, eles estão trabalhando só. Pronto, ele enviou a nova versão e agora ele vai avaliar a versão nova. Vamos ver o resultado, né? Pronto, ó. A sessão nova foi enviada
+
+aqui e agora ele tá tô só esperando para ver se o supervisor vai aceitar ou não o trabalho. Aí você consegue ver o que ele tá fazendo, você consegue ver as coisas que ele fez. É muito interessante porque essa ideia dos loops assim para começar, se você não tá muito inserido no mundo daá, é o grande termo da vez, tá? E e logicamente é o que sustenta todos os hypes que estão acontecendo no mundo da, né? Os grafos, os gauntlet loops. E isso
+
+ainda vai ter várias ramificações que vão mudar completamente a forma que todo mundo trabalha com IA, né? A gente já fez um vídeo só sobre como criar sistemas muito mais robustos que esses. É, mas o importante é que você entenda que essa lógica é o que tem sustentado a maior parte do desenvolvimento da forma como a gente usa a IA hoje, tá? essa lógica de um revisor e um executor e esse loop acontecendo. Claro que tem coisas infinitamente mais complexas, mas essa é a maneira mais fácil, simples e bacana de visualizar eh esse loop funcionando. Então, foi um vídeo que
+
+falou sobre um recurso novo, mas na verdade eu queria, né, só te amarrar aqui para te falar sobre loops, que é o que todo mundo tá viciado, todo mundo que trabalha com a e implementa sistema de a tá viciado em falar, em testar e etc. E a gente já pode falar um pouco sobre como você pode elevar o nível disso aqui bastante. Bom, essa é a última versão que ele criou. Extremamente simples, extremamente básica, com uma interatividade mínima super banal, mas funcional, né? Funcional. E eu já vi
+
+alguns site meio assim, mas isso aqui é uma a slop assim, né? Aquela coisa de putz, isso aqui foi feito por IA em um promptim, né? Então o que que a gente pode fazer para melhorar? E é legal até porque você consegue entender a importância da etapa de verificação, porque a metodologia de verificação aqui, isso a gente fala direto em eh a gente falou inclusive na última live da comunidade que se você não tem uma boa etapa de verificação, seus resultados sempre vão ser medíocres nos loops que você tá testando e gerando. Então, se você não consegue avaliar a qualidade do que tá sendo feito através de testes que de fato tem uma boa metodologia, esse aqui é o resultado. Ele vai ler o código, ele vai
+
+ler o HTML, tá tudo ali funcionando, tá tudo OK, beleza, né? Só que agora a gente vai subir um pouco os padrões de qualidade. E eu vou ser bem duro aqui com o nosso agente de supervisão. Eu vou falar, o resultado foi horrível, né? O resultado aprovado foi terrível. Eu
+
+preciso que você seja 100 vezes mais exigente. Eu quero que você avalie também PNG e eu quero que você precise achar um resultado impressionante antes de aprovar. De fato, acho que aqui não tá claro o suficiente, né? Eu posso falar sempre, sempre avalie o PNG ou sempre tire prints, né? Tire captura de tela e avalie o PNG. Eu quero que você
+
+sempre considere o resultado impressionante antes de aprovar. Tá meio esquisita essa frase, mas tudo bem, ele vai entender. E aí eu vou falar para esse esse essa sessão aqui rodar o loop de novo. Eu vou falar nós mudamos o supervisor. Beleza? Então vamos tentar
+
+rodar esse loop de novo. E aqui a gente poderia colocar uma skill de front design, já ficaria bem melhor que esse resultado, mas eu acho que é legal a gente olhar eles trabalhando e se otimizando. E obviamente aqui a gente tá usando modelos baratos e um nível de esforço menor. Bom, agora que a gente refinou um pouco a metodologia de verificação, a nota passou de aprovada para 28 de 100, o que é uma diferença significativa, tá? E uma coisa legal é que você pode ir brincando com níveis de esforço e modelos diferentes também. Aqui, se eu não me
+
+engano, a gente tá usando o Haiku, o executor das tarefas, que é o mais barato, mais rápido. E aqui a gente tá usando o Opus, o Opus 5, tá? Eh, então ele deu a nota 28, passou por outra execução, tal, e aí depois passou por mais uma rodada. Aqui deu 93, a gente precisa de mais de 95 paraa aprovação, mais uma rodada. E aí chegou em 96.
+
+Então, olha que legal, a gente inseriu essas duas sessões dentro de um loop, elas começaram a trabalhar, produziu um relatório para outra sessão, revisando, dando nota, retornando e tudo isso de uma maneira muito simples, muito controlável, né? Para quem já tá num nível um pouco mais avançado, a gente mexe muito hoje na IA com loops invisíveis. Você monta uma arquitetura de pastas e arquivos, você confia que aquilo vai ser feito a cada execução e tudo acontece meio que sem essa possibilidade de parar a qualquer momento sessões individuais, enviar na hora ali coisas novas de uma maneira tão clara assim, né? Mas geralmente é um processo um pouco mais por baixo das interfaces, mesmo que você consiga monitorar o subs e tal, dependendo do grau de complexidade, vai ficando uma coisa mais eh presente na construção do que na prática. Você constrói o sistema e depois você deixa ele rodando, confiando e depois que tá tudo pronto, você vai itterando, melhorando e otimizando, mas sem essa conveniência visual. Acho que acima de qualquer coisa
+
+é isso. Para quem tá começando com loops, esse jeito assim, essa metodologia, esse jeito de fazer os loops assim 100% controlado e com tudo que você já conhece do cloud code ou enfim tudo que é muito básico, é uma forma muito legal de começar a entender a lógica dos loops na prática. E esse aqui foi o resultado gerado. É um resultado impressionante, não, mas é um resultado muito superior a esse aqui, né? Olha, comparando, é um resultado muito superior. Ah, é o site dos sonhos,
+
+obviamente não, né? A gente também não definiu critérios muito estabelecidos para praticamente nada, né? A gente só eh trouxe algumas referências, a gente só a gente fez o básico, né? né? E a gente tá trabalhando também no na execução com um modelo muito eh muito simples, um modelo é que é o modelo mais barato, mais rápido e tal, até para você entender que dá para fazer isso, seguir essa mesma lógica sem gastar muitos tokens. Tem uma lista de espera, tem um
+
+fac, né? A COP melhorou significativamente, né? Antes a gente estava com um texto bem padronizado, né? A gente pode passou disso aqui, que é um AI Lop. para isso aqui que também é um ea slop um pouco mais refinado para isso aqui é um ea slop, né? No sentido de que é óbvio que isso
+
+aqui foi feito por IA, talvez, mas talvez seja um EA Slop no topo do Elope, né? O campeão da série B ali. [risadas] E tem muitos site de techio assim, né? né? Não sei se vocês já viram, mas muitos apps por aí tem sites inferiores a esse, né? Não quero dizer
+
+de maneira alguma que isso aqui é uma referência de design, tá gente? Mas eh eu achei que funciona. Eu achei que funciona. Tem uma coerência visual, explica bem, tem especificações técnicas de como funciona esse produto. E aí tem essa ideia também que é a da lista de espera e tal, de poder desenvolver isso, colocar seu e-mail. Vamos colocar o
+
+e-mail aqui para ver o que acontece. Pronto, tem aqui uma interatividade. Não sei se ele tá mandando isso para algum lugar ou não, mas é mais interessante. É mais interessante, né? Muito mais interessante, não, um pouco, mas significativamente. Significativamente.
+
+Esse é um site que eu não teria vergonha de usar para um produto, para um MVP, por exemplo. Esse aqui eu já teria bastante vergonha. E esse aqui eu certamente não seria capaz. de rodar seria assim, nem que fosse a única opção, se esse aqui fosse o único site disponível, a gente teria que adiar o lançamento do produto, porque aí você compromete radicalmente a credibilidade do que você tá oferecendo por ter um site, não vou dizer mal construído, mas que é mais um template do que um site. Bom, o que que eu quero que você leve desse vídeo?
+
+Primeiro, o recurso novo, né? Essa possibilidade de conversar é uma coisa que economiza muito tempo, assim, muito tempo. Tem vários casos de uso que a gente não mencionou, né? Mas você pode fazer o handoff de projetos que você tá construindo para outras sessões. Você pode estar esgotando ali o contexto da sua sessão e você pode transferir a parte crucial daquele conteúdo para que outra sessão continue desenvolvendo.
+
+Você também pode usar comandos específicos dentro dessa própria lógica de loops. Então, a gente já em outros vídeos falou do ultra than, do ultra code. você tem a possibilidade de usar todos esses comandos, em sessões que vão conversando tudo de uma maneira visualmente muito fácil de entender e muito controlável. Eu acho que esse é o principal benefício. Isso não vai possibilitar algo que antes não era possível, mas isso vai dar muita clareza e vai trazer pras pessoas que não têm tantas horas de cloud code assim uma possibilidade de imediatamente se beneficiar de loops de múltiplos agentes rodando de uma forma muito compreensível, muito bacana para você interagir e ter resultados cada vez melhores. E a outra coisa que eu quero
+
+que você não saia desse vídeo sem entender é que a gente tá numa era em que os loops são a base de tudo que tá sendo desenvolvido de interessante pelas pessoas que trabalham com o usuário final vai usar IA, né? Como a gente constrói esse harness, né? tudo que tá em torno do modelo de A para que os resultados sejam cada vez melhores. E recentemente a gente fez um vídeo sobre como essa lógica dos loops pode elevar seus resultados em 100 vezes. Imagina que aqui o que a gente fez talvez tenha melhorado em três, quatro vezes o resultado que a gente teria. Tem uma
+
+maneira de você fazer com que esses loops funcionem em paralelo. Então a ideia é que você quebra uma coisa complexa, uma tarefa complexa em dezenas, senão centenas de miniarefas. Cada mini tarefa é executada por uma sessão ou um suagente responsável. E depois que essa subtarefa, essa mini tarefa termina, um supervisor daquela tarefa vai avaliar e aí ele pode ter critérios específicos de avaliação que vão fazer com que o resultado fique muito bom. E para facilitar o trabalho de vocês, a gente criou um agente que a gente tá disponibilizando na nossa comunidade, Maestros da IA. é um agente
+
+que basicamente vai pegar qualquer pedido e vai aplicar essa lógica dos loops em paralelo para criar coisas incríveis para você. E vou te mostrar rapidamente o que a gente criou seguindo essa lógica, tá, dos loops que você viu nesse vídeo, mas obviamente elevando o nível de complexidade, de arquitetura e muitas vezes para ter um resultado como esse. Dá uma olhada no que se agente fez com um prompt, um prompt e gerou esse simulador de voo. com essa aeronave incrível, com modo turbo, né? A gente tem o modo turbo, a gente tem a sombra. Dá uma olhada nesse
+
+detalhe aqui. Eu tô controlando ela, mas dá uma olhada nesse detalhe. A gente consegue ver a sombra da aeronave e dependendo a gente consegue, ó, saber a posição do sol de acordo com a sombra. Então aqui tá a sombra. Se a gente vira aqui e olha para cima, a gente vê que o sol tá exatamente no ângulo que deveria estar. Olha que
+
+legal. É incrível isso. Areia não é a coisa mais realista do mundo, né? Mas olha essa espaçonave aqui, essa aeronave. Olha o modo turbo. Que legal, né? Aqui tá
+
+normal, né? Ele fica assim. Se a gente liga o modo turbo, a gente consegue fazer um dive aqui, um mergulho. Olha que legal. Isso aqui é muito legal a interação com a Duna, né? Olha isso, que interessante.
+
+Isso aqui foi com um prompt, tá? Um prompt gerou, olha o nível de detalhe dessa aeronave. Por quê? Porque a gente criou um agente baseado, obviamente, em várias coisas que outras pessoas incríveis criaram. a gente pegou isso e adaptou para trazer uma forma simples de você utilizar esse potencial do que existe de mais avançado, que tem sido desenvolvido no que diz respeito à inteligência artificial, sobretudo eh harness, né, que é justamente aquilo que tem a ver com as pastas e arquivos e instruções e protocolos e ferramentas usadas em torno do modelo de a porque agora o modelo de A não é a coisa mais importante, eles já são excepcionais. O
+
+que importa é toda essa arquitetura que você cria em torno da IA. E esse tipo de resultado foi criado com o nosso agente, que tá disponível já na comunidade Maestro da IA. Então, se você quiser entrar lá para dar uma olhada nesse agente, para experimentar, para contribuir em melhorias pra comunidade, vai ser um prazer receber você. Além desse agente, a gente tem outros agentes. A gente tem dezenas de skills, centenas de recursos cloud code para você entender melhor a respeito de como usar, de como aprimorar. seus próprios
+
+sistemas, como melhorar os seus resultados, seja num negócio que você tá pensando em criar, seja num negócio que você já tem e quer potencializar, quer escalar, quer aumentar a margem. A gente tem na comunidade mais de 1600 pessoas com quem você pode trocar, muitas pessoas que já estão construindo apps juntos, que já tão fazendo sociedades, empresas juntos. Então é um ambiente muito legal. A gente faz lives toda semana em chamada de vídeo com vocês. A gente tem suporte técnico todo dia para você nunca ficar travado em uma implementação. A gente tem muita coisa
+
+legal, 25 horas, mais de 25 horas de aulas, curso completo de cloud code, formação completa inteligência artificial para você sair do básico, se estiver no básico, até o avançado. Tem pessoas que aprenderam com a comunidade tudo que precisavam e hoje já faturam, faturam alto com empresas de criadas, com SAS criados. A gente tem muito orgulho de poder falar disso. Inclusive essas pessoas deixaram depoimentos na nossa própria página que você vai encontrar no link na descrição. Então clica no link se você quiser saber mais sobre a comunidade da Iá, entrar na comunidade, pegar esse agente aqui para você para criar coisas incríveis como essa em um único prompt. E espero que
+
+você tenha gostado desse vídeo. Se você gostou e quer receber mais recomendações de vídeos como esse, você pode dar um hype e um like nesse vídeo, além de se inscrever no canal, caso você ainda não seja inscrito. Um abraço e [música] até a próxima.
+
+เฮ
+
+[música]
