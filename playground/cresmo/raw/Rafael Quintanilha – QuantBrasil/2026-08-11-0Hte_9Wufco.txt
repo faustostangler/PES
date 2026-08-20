@@ -1,0 +1,229 @@
+---
+video_title: "Cloudflare OS na prática: agentes, MCP e apps internos com IA"
+video_id: 0Hte_9Wufco
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0Hte_9Wufco
+video_date: 2026-08-11T22:00:15+00:00
+video_description: |
+  Inscreva-se na formação de Engenharia de IA ➡️ https://programe.ai?utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  O Cloudflare OS é uma plataforma open source para criar e compartilhar apps internos com inteligência artificial. Neste vídeo, testo a proposta da Cloudflare de oferecer um ambiente colaborativo onde equipes podem usar modelos, dados e ferramentas da empresa com mais controle sobre acessos e credenciais.
+  
+  Faço a configuração local do Cloudflare OS, conecto um provedor de IA e crio diferentes apps diretamente pelo navegador. Também adiciono o Linear por MCP e construo uma ferramenta interna para acompanhar os tickets da produção do canal. Durante o teste, mostro como funcionam os workspaces, Gadgets, Blueprints, Gatekeepers, contextos compartilhados e permissões por recurso.
+  
+  A principal diferença do Cloudflare OS não é apenas permitir que pessoas sem conhecimento técnico criem apps. A plataforma tenta oferecer liberdade para o time experimentar com IA sem entregar acesso irrestrito aos sistemas da empresa. É possível testar tudo localmente sem custo e usar o ambiente colaborativo hospedado por cinco dólares.
+  
+  Capítulos
+  
+  00:00 Intro
+  02:40 O que é e como funciona o Cloudflare OS
+  10:07 Depoimentos do time do Cloudflare OS
+  11:50 Configurando o Cloudflare OS
+  15:55 Por dentro do Cloudflare OS
+  17:13 Testando o Gadget do Cloudflare OS na prática
+  20:28 Testando o Linear via MCP no Cloudflare OS
+  25:54 Deploy do Cloudflare OS na nuvem
+  28:09 Conclusão
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 Assine sua VPS na Hostgator 🔻🔻
+  https://www.hostgator.com.br/52611-13-3-12.html
+  
+  🔻🔻 Todas as IAs em um só lugar com o HostGator All Pass 🔻🔻
+  https://www.hostgator.com.br/52611-147-3-59.html
+  CUPOM: RAFAEL5
+  
+  🔻🔻 Teste seus apps com IA utilizando o CodeRabbit (14 dias grátis) 🔻🔻
+  https://coderabbit.link/rafael
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  🎮 Discord: https://discord.gg/xCAYeh8mGf
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=_GqKe-Ym-d0
+  https://www.youtube.com/watch?v=SDn0RHYkQUA
+  https://www.youtube.com/watch?v=tj2XfyAQjr8
+  https://www.youtube.com/watch?v=Ayw9qWJCv_A
+  
+  🔻🔻 Repositório do Cloudflare OS 🔻🔻
+  https://github.com/cloudflare/cloudflare-os
+  
+  #agenticai #cloudflare #mcp
+---
+A Cloudfir acabou de anunciar o Cloudfir OS, uma nova forma de criar apps internos com inteligência artificial, porém focada em segurança e colaboração. Por isso, no vídeo de hoje, eu quero te contar tudo sobre esse novo lançamento, quais são as especificações técnicas, o que que eles estão trazendo de novo pra mesa. Eu quero te contar se faz ou não sentido você utilizar isso na sua empresa ou no seu time. Vamos, claro, testá-lo na prática e responder a pergunta: será que o Cloud Flare OS é a melhor forma de utilizar IA na sua empresa? Pessoal, antes de eu te contar mais sobre o Cloudf O, é importante que a gente entenda o problema que eles estão tentando resolver, tá? É muito
+
+comum, né, no meu trabalho, seja as pessoas que eh falam comigo através da consultoria, pessoas que me enviam mensagem ou até no meu trabalho regular mesmo, existe esse problema entre você ter os dados da sua empresa, ter dados comuns, compartilhados e você colocar aplicar a IA nesses dados, certo? você conseguir recuperar aqueles dados, você conseguir notificar quando algum daqueles dados mudam, você conseguir criar apps em cima daqueles dados em vez de você criar um app genérico. Tudo isso são questões organizacionais que nós estamos vendo acontecer bastante nas empresas. Portanto, o Cloudflare OS passa a ser uma espécie de ambiente de trabalho, uma estação de trabalho, onde você colocando ali os conectores, os dados da sua empresa, você consegue num ambiente seguro deixar com que os funcionários ou as pessoas do seu time consigam trabalhar, né, livremente e sem muito risco de segurança, que a gente sabe que é um risco real de compartilhamento de credenciais, de compartilhamento de API Kys, compartilhamento de senhas, mas rodando dentro da SEN Box da Cloud Flir, você consegue garantir muito mais a segurança, né, para as pessoas poderem e experimentar livremente dentro desse ambiente controlado. Eu já vou mostrar para você tecnicamente como isso funciona, mas isso me agrada bastante porque isso é um problema que eu tenho visto recorrentemente. Agora, eu tô
+
+falando aqui de empresa, mas isso não necessariamente precisa ser para um time muito grande ou uma empresa grande, tá? Isso aqui pode ser o seu time, o a sua colaboração. Talvez você tenha algum outro dev trabalhando com você. Talvez seja aqui como nós no Quant Brasil, onde temos, né, uma operação inxuta, mas temos múltiplas pessoas trabalhando. Então não precisa ser grandes empresas para que isso faça sentido. Na verdade,
+
+qualquer colaboração onde você gostaria que aquela pessoa que tá trabalhando com você tivesse acesso aos mesmos recursos que você tem, mas de uma forma segura, pode se beneficiar dessa nova arquitetura do Cloud Flare OS. Então vamos diretamente aqui primeiro para a página do Cloudfest para nós vermos como eles estão divulgando esse novo projeto. Tá claro que eles eles estão chamando isso de operating system, né? Um operating system for your company, né? Um sistema operacional para a sua empresa. E obviamente isso aqui é um
+
+pouco, né, de uma distorção técnica, né? Obviamente não é um sistema operacional como é o Linux ou, né, o Windows ou macOS, mas é uma espécie de comparação que eles fazem para ficar mais fácil. de entender. E aí vamos ver aqui com alguns exemplos que eles dão, tá? Então eles dizem aqui, ó, dê a cada pessoa um agente e um workspace, né, um ambiente de trabalho construído de acordo com a sua empresa trabalha, o que ela sabe e os sistemas que ela depende, tá? Então
+
+essa aqui é a frase deles e basicamente a ideia que você consegue perguntar, né? Então é uma experiência tradicional de chatbot. Você tem os dados, você tem uma interface plugada ali que você consegue recuperar informações daqueles dados, você consegue construir alguma coisa. Então, a partir daqueles dados, você pode, por exemplo, eh construir um doc, uma planilha, uma apresentação, um slide, tudo isso ali integrado. Você consegue construir dados. Isso talvez
+
+seja a parte mais legal aqui e o que mais faz sentido dentro da proposta aqui do nosso canal, né? É mostrar como dentro daquele ambiente de trabalho seguro você consegue construir apps. E aí esses apps estão aqui, ó, backed by Live Data, ou seja, aqueles aqueles apps que estão consumindo dados reais da sua empresa, tá? A gente já vai mostrar isso nesse vídeo. Você pode executar, claro, agentes e workflows, schedulers, né, Chrome Jobs e coisas que você consegue automatizar, o que é sempre bem legal. E
+
+também você consegue compartilhar esses apps, né, com outras pessoas ou criar blueprints com ele, né? O que que seriam esses blueprints? Uma vez que eu criei esse app, eu posso criar um blueprint, ou seja, uma espécie de template mesmo, onde outra pessoa pode reutilizar aquele template, né, para modificar e fazer um app de outra forma. Então, a gente vai ver tudo isso aqui nesse vídeo, beleza? Ah, uma coisa muito importante dizer é que o Cloudfare OS é open source, tá?
+
+Então você consegue, né, fazer o deploy interno, conectar seus sistemas internos. Nós vamos testá-lo internamente. Depois eu vou fazer o deploy pra gente ver eh o que que muda, beleza? E claro, o Cloud Flare OS é ele executa na própria infraestrutura do Cloud Flare. Eu gosto bastante da infraestrutura do Cloud Flare. Eles são
+
+bem inovadores, eles estão sempre trazendo novidades. Eu escolhi o Cloud Flir, inclusive pro programa aí, né, que é a minha plataforma de treinamento em engenharia de ar. Então, vou te fazer dois convites. O primeiro convite para você entrar lá no site do programa aí e se inscrever na lista de espécies. Os primeiros cursos vão sair, né, em agosto ou no início de setembro. O segundo
+
+convite é para você assistir o primeiro episódio da série Criando um site do zero, que eu vou deixar aqui, onde eu explico a arquitetura do projeto do programa aí que é construído, como eu disse, em cima do Cloudf. Então, se você quiser saber um pouco mais sobre as decisões técnicas do porque eu escolhi o Cloudfir e porque eu gosto dele para algum tipo de tarefa, eu recomendo que você assista o vídeo lá, beleza? Vamos seguir vendo a parte técnica aqui antes da gente ir pra prática, tá? É importante entender o que diferencia ele de outras plataformas e outras soluções. Você poderia pensar que ele tem a parte de criação de app do Raplit. Por outro
+
+lado, ele tem a parte de compartilhamento de contexto que você consegue fazer com o Hermes. Como inclusive eu já mostrei como você pode utilizar o Herms para empresas também vou deixar o link aqui para você assistir depois e aí você pode comparar o que faz mais sentido pro seu time, pra sua empresa. Então eles dizem aqui, ó, capture como a sua empresa trabalha, né? Então, transforme a sua terminologia, processos e as melhores formas de trabalhar em um contexto compartilhado e skills que a gente podem seguir, tá? Quando uma pessoa encontra uma melhor forma de fazer alguma coisa, todo mundo se beneficia, né? Então é aquela ideia
+
+de você ter um workspace compartilhado, onde, né, você vai melhorando ali, né, dentro dos dados da sua empresa. Os agentes são isolados e os dados são privados. Então aqui a gente começa a falar mais da parte técnica, tá? Cada agente e cada app começa sem acesso a nada. O código roda numa sandbox que não consegue acessar a internet, com a exceção dos recursos que você, né, prover ali pro sistema. Eles introduzem
+
+esse conceito de gateekepers, né, ali, que são os detentores das credenciais, que garantem a política correta, eh, gravam aquilo que foi lido e fazem a mediação das ações, tá? Os MCP Server Portals trazem os servidores MCP dentro de uma política de acesso. Então, de novo, tudo aqui focado em você ter segurança. E aí, daqui eles já te mandam pro GitHub. A gente já vai fazer o setup. Mas eu queria ainda continuar um
+
+pouquinho mais aqui na parte técnica, né? Tem aqui um post deles que é um post até bem grande aqui. Eu vou pular para algumas partes mais relevantes, né? onde eles vão tentando é explicar pra gente porque que isso faz sentido. Então, de novo, isso aqui é um agente no ambiente de trabalho para todos na sua empresa, tá? Então, ele chama de agent workspace,
+
+é projetados para que cada pessoa na sua organização use, você interage com ele no navegador. Então, você não precisa ser um desenvolvedor ou saber como usar o terminal, tá? Aqui a gente já viu uma uma certa diferença com relação, por exemplo, ao Hermes, né? O Hermes, você já vai ter muito mais acesso, né? Embora o foco aqui, como nós vamos ver um pouquinho diferente, tá? Então, o
+
+workspace vai ter sessões de agentes, estados que persistem, outputs e arquivos. Por aí vai, né? Vai ficar mais fácil quando nós executarmos. O que eu queria mostrar, pessoal, é essa questão mais de segurança, tá? Por quê? Porque
+
+um problema sério, quando a gente tá compartilhando, principalmente com pessoas que não são técnicas, é como que você vai dar acesso aos dados de forma segura, né? Como que você fica seguro de deixar alguém que não é técnico usar os dados da sua empresa, né? Principalmente você que é técnico, se você for engenheiro de software como eu, você sempre vai ter essa pulga atrás da orelha assim, n, caramba, como que eu faço? Como que eu não limito a pessoa? Como eu deixo ela explorar o máximo da IA sem, né, ser reckless, sem cometer aqui erros básicos de segurança, tá?
+
+Então, na ideia aqui do Cloud FLIR, eles dizem, né, a medida que as pessoas começam a experimentar com IA no trabalho, né, dos primeiros pedidos que eles fazem é pelas API Kys, né, paraas chaves dos sistemas da empresa. Então, claro que isso faz sentido, a pessoa quer utilizar, né, se você não tiver acesso, ela não vai conseguir, né, fazer o que ela quer. Porém, né, dar as API KIS, é claro que fica perigoso, não escala e por aí vai, tá? Então, com MCPs, né, você consegue acessar esse sistema de forma muito mais fácil, né, porque o servidor pode ter a credencial e expor apenas um conjunto de ferramentas. Então, em vez de você dar, por exemplo, as as kis lá do seu banco de dados, você dá ali uma ferramenta que vai fazer o acesso, né, controlado daquilo que pode ser exposto para uma outra pessoa, tá? Então você faz isso de
+
+uma forma bem mais segura. E aí na arquitetura aqui do Cloudfir, os agentes começam sem nenhum acesso. E aí o agente pode ir pedindo para acesso a recursos específicos. Esses recursos específicos são protegidos pelos gateekepers, tá? Que são um são workers, né? Que é um
+
+serviço que está entre o Cloudfare OS e o serviço externo que você tá tentando acessar. Ele entende qual é a API daquele serviço, quais são os recursos que estão disponíveis e a operação que pode ser feita. Então, mais tecnicamente aqui, isso é um RPC, né, um remote procedure call, que é protegido ali pelo gatekeeper, que vai fazer toda a questão de autorização, né, e vai ser a a o serviço que vai estar com a credencial. Então, o seu app, né, a pessoa que está utilizando, ela não precisa ter credencial, ela só precisa ter acesso ao gatekeeper. E o gatekeeper só vai expor as coisas que são seguras, ou seja, não vai expor uma IP aqui para que possa ser feito tudo, vai expor apenas aquele conjunto de ferramentas que você quer expor. Beleza? Muito bem, pessoal. Uma
+
+última coisa, antes de nós irmos pra parte prática, eu quero passar alguns depoimentos de pessoas de lá do Cloud Fé explicando um pouco mais a diferença aqui do OS, tá? Então esse rapaz aqui, o Kenton Varda, ele começa dizendo aqui, ó, nós estamos fazendo o lançamento do Cloud FL OS, um chatbot com conectores, como cada outra empresa está fazendo. Então, obviamente aqui ele tá sendo um pouco sarcástico, dizendo que obviamente isso aqui é diferente, só que ele explica porque é diferente, tá? Ele fala: "Bom, é uma plataforma de vibe coding onde a sandbox é tão segura que você pode basicamente, né, fazer o que você quiser, né? A Ia não consegue introduzir um risco significante de segurança." E aí ele até diz, a gente
+
+acredita que o time de segurança de uma empresa pode ficar perfeitamente confortável em dar permissões para pessoas não técnicas para fazer um vibe coding, né? E dormir tranquilo de noite. Como que isso aqui é possível? Através dessa estrutura que eles chamam de gadget, tá? E aí ele exemplifica assim, ó. Se você tem um app que é o editor de
+
+documento, cada documento roda numa instância separada do app, né? Em uma sandbox separada. Daí ele chama um gadget apenas, tá? Isso significa duas coisas. A plataforma pode gerenciar todo o controle de acesso controlando quem acessa aquele gadget, né? Então não tem
+
+como o gadget acidentalmente vazar, por exemplo. E segunda coisa, como cada pessoa está rodando sua própria cópia do código, cada pessoa pode modificar a sua cópia do código e de forma livre. Então imagina que você tem um app compartilhado e aí uma determinada pessoa ali fala: "Cara, seria muito legal se tivesse isso aqui. Eu queria colocar essa nova funcionalidade". Ela pode modificar aquele gadget dentro da sua, do seu próprio ambiente, da sua própria sandbox. Ele tem uma versão
+
+específica tunada para ela. Beleza? E aí, claro, isso depois pode virar um blueprint para que outras pessoas repliquem aquilo, tá? Então, essa é mais ou menos um pouco da ideia. Maravilha.
+
+Vamos então agora parar de blá blá blá e mostrar a parte que eu sei que vocês gostam, que é a parte prática. Beleza? Então, o que que eu vou fazer aqui? Eu tô aqui no GitHub e eu vou rodar primeiro localmente, tá? Você pode depois fazer o deploy direto lá na nuvem do Cloud Flare. Eu vou fazer isso depois
+
+para vocês verem algumas limitações que existem, mas por enquanto vou focar aqui na parte local que você faz 100% gratuito, não precisa pagar nada. é totalmente open source. Beleza? Então nós vamos começar fazendo o seguinte aqui, tá? Nós vamos clonar o repositório. Então eu tô aqui, né, na
+
+minha pasta apps. Vou dar aqui um git clone. Já tem bonitinho aqui o cloud flare OS clonado. Vamos entrar lá. Então como que a gente faz a instalação? É bem
+
+simples, tá? Eles falam pra gente rodar esse comando pnpm run local. Vamos rodar aqui. Vamos deixar a instalação, né, terminar. E aí eu volto com vocês pra gente testar. Finalizado aqui, você pode
+
+iniciar através aqui do local host 8787, tá? Então, a primeira coisa que ele vai te mostrar essa tela para você fazer o login. A gente não tem, vamos criar uma conta que é local mesmo, a gente fica até no próprio local storage. Vou colocar aqui username qualquer, uma senha qualquer também, beleza? Criar essa conta local aqui. Vamos seguir.
+
+Isso aqui não é tão importante no momento. E aí agora, pessoal, começa as primeiras partes relevantes aqui da configuração, tá? Porque primeira coisa que ele vai te pedir aqui é para você selecionar o modelo, né, que você quer usar por padrão lá, né, na IA. E aí, se você clicar aqui, você vai ver que por padrão ele recomenda os modelos do Cloud Flare Workers AI e aqueles que rodam no e gateway de AI do Cloudfe. Mas você também pode selecionar aqui Antropic, Open AI. Esse seleciona o GPT 5.6 Luna,
+
+por exemplo, e ele vai te pedir para colocar o seu API token, ou seja, você vai gastar por token utilizar aqui, tá? você não vai usar a sua assinatura do Codex, por exemplo. Mas existe uma forma que eu queria mostrar para você, uma dica para você, que é usando a sua assinatura do Open Co, tá? Se você colocar a sua assinatura do Open Co, você vai conseguir utilizar e dentro do que seria o seu limite ali, os seus requisitos da assinatura. Então, vamos fazer isso aqui agora, tá? Não vai ter
+
+opção, pelo menos no momento que eu gravo esse vídeo, selecionar diretamente aqui o Open Code Goedor, só que você consegue selecionar aqui, ó, olhama. E à medida que você seleciona aqui, ele vai te pedir o model ID, o display name o API token e a API URL. Então vamos lá. Qual o URL que você vai colocar para o open go? Você vai colocar esse aqui, ó.
+
+Opencodego.aiaii/zen/go/v1. E de fato você consegue ver isso aqui, ó. Na página do go tem os end points, tá? Então, ó, open code, AI, Zo V1. E aí
+
+uns usam o chat API, outros usam os responses API, que é no caso do GPT 5.6 Luna dentro da API do Open Code Go. Ou você pode vir aqui também, ó, eles têm esse end point público onde você consegue saber aqui o ID do modelo também. Esse é o ID que você vai colocar lá, tá? Então, por exemplo, vamos colocar o Deepsic V4 flash, que é muito baratinho, virtualmente gratuito e que eu acabei de fazer um review inclusive aqui no canal. Vou deixar o link se você
+
+quiser dar uma olhada do Deepsic V4 flash, tá? Então, coloco ali deepsic V4 flash, display name, eu vou chamar aqui deepsic V4 flash para eu saber quem é e aí o API token, tá? Então a gente tem que ir lá na nossa conta do Open Code Go. Então você entrou aqui em Open Code GO API Keys. Eu já tenho até um aqui que eu vou copiar. Vou colar aqui o API
+
+token model e beleza, já tá funcionando, tá? Poderia colocar um outro modelo aqui também. Vamos aproveitar é e já colocar um um pouquinho melhor, né? por exemplo, o Kim K3, que aí a gente consegue ter um modelo um pouquinho mais barato, um modelo mais caro e aí a gente consegue, né, fazer esse jogo. E aí fiz o mesmo processo, estô aqui com Deep 5 V4 Flash e o Kim A3 utilizando a minha assinatura do Open Code Go, tá? Open Code Go,
+
+pessoal, você paga $ apenas no primeiro mês, depois e tem basicamente uso infinito. Ah, um detalhe inclusive, se você assinar o Open Code GO com o link, tá aqui na descrição, você ganha $ de desconto e eu ganho um pouquinho de uso também. Beleza? essa dica te ajudou, já aproveita e curte o vídeo aqui que eu tenho certeza que não, você não vai ver muita gente falando disso aqui, beleza? Bom, seguindo aqui, pessoal, depois que você coloca as AI keys, ele te pede para conectar com os seus serviços, tá? Eu
+
+vou fazer isso aqui depois. Is aqui é o que ele chama lá dos providers, né? São os conectores, os MCPs para você poder usar ali no seu workspace. Vamos passar aqui e beleza, estamos prontos, tá? Então, olha lá, já está rodando aqui.
+
+Oi, tudo bem? Vamos mandar o primeiro chat aqui pra gente ver que tá funcionando. E, ó, tudo ótimo com você? Então, já tá funcionando a configuração do Deepsek V4 flash foi e aí você vê que ele já cria esse untitled workspace aqui, o que talvez seja uma coisa um pouco pouco confusa, né? O chat meio que é um workspace, tá? Você pode conversar,
+
+né? E fazer diversas outras coisas aqui também. Beleza? Ele dá algumas sugestões se você vê aqui, né? Por exemplo, finds my data, write a one praded, build a team meet indeck. Então você consegue
+
+fazer várias coisas aqui. Vamos dar uma explorada, né? Então você tem aqui a parte de workspace, você tem os blueprints, ou seja, são os workspace, são os apps que você criou que podem ser reutilizados, são templates, né? Outputs, aquilo que você gerou na sua conta e aqui algumas coisas para você explorar, né? Então tem aqui workspace, docs, sliders, sheets e por aí vai.
+
+Beleza? Bem interessante, bem simples também aqui de entender. Aqui na parte de baixo a gente vai ter os gateekepers, né, que a gente viu, são aqueles que protegem o acesso entre seu workspace e os provedores de serviço. Vamos testar isso aqui depois, tá? Quando você colocar aqui, por exemplo, contex, eh, tarefas recorrentes e por aí vai. E aqui
+
+você consegue depois e colocar outros provedores, outros modelos, se você quiser. Beleza? Então, olha só, voltei para cá, ele me dá até a sugestão, ó, build a quick tool. Então vou clicar nisso aqui, vamos deixar ele trabalhar pra gente ver como que funciona essa ideia dos gadgets, tá? E aí ele até já me falou aqui, ó, que que você quer construir, né? Vamos falar aqui a
+
+calculadora, então é simple calculator. Aí tá, a gente tá vendo aqui o reason de psic V4 flash. Claro que a qualidade do app vai depender também, né, da do modelo que você tá utilizando. E aí vamos deixar ele trabalhar aqui. Vamos ver o que que vai acontecer. Uma coisa
+
+interessante aqui que ele basicamente perdeu bastante tempo pensando no que ele ia fazer, né? E aí ele chegou à conclusão, não vamos fazer aqui uma calculadora simples e aí deixa eu construir esse gadget, vou criar essa calculadora com keyboards, é suporte ao keyboard, ao teclado e até um um histórico persistente. E aí ele finalizou aqui para mim, ó, e tá pedindo para eu aceitar as mudanças. E olha só o que ele já construiu. Então deixa eu aceitar aqui o que ele fez. Beleza? Olha
+
+que legal, funcionando, né? A calculadora. Esse aqui é o nosso gadget, beleza? Então ele construiu esse app. Esse app agora existe dentro desse workspace, tá? E a gente consegue ver o
+
+código e até as conexões que ele tem acesso. No momento ele não tem nada. As informações aqui que a gente consegue ver quanto que gastou de token. Beleza? Tenho esse app construído, tá? Então se
+
+eu sair aqui, por exemplo, agora, você vai ver que em outputs agora eu tenho essa calculadora aqui. Então todo mundo pode chegar aqui e usar essa calculadora e pode pedir alguma modificação, sei lá, make this a neon themed calculator. Então quero trocar o tema, quero que ela seja um tema neon, sei lá. Eitou aqui nesse app, ele já entendeu a mudança e vai aplicá-la. Olha só, pessoal, passou um tempinho e olha que legal, ele transformou a calculadora em uma calculadora com tema neon. Então, bem
+
+legal, né? A gente consegue aqui agora modificar qualquer pessoa dentro daquele workspace consegue modificar esse app. E aí a vantagem tá vivendo na sandbox daquela pessoa, tá? Então você consegue vir aqui, pedir um incremento e por aí vai, tá? Então bem legal essa ideia, né?
+
+A gente poderia clicar aqui para compartilhar, né? compartilhar esse workspace com alguém que vive ali dentro. Eu posso criar aqui, ó, tanto o workspace inteiro com a possibilidade, né, de utilizar o chat e gerenciar o acesso e até de editar o gadget ou de apenas utilizar esse gadget sem nada, né? Ou seja, basicamente só compartilhar o app, né? Sem a funcionalidade de chat.
+
+Beleza? Bem legal isso aqui. Agora deixa eu passar para vocês a parte mais interessante aqui, que seria de você, né, ter os conectores, né, através dos gate. Bom, se você selecionar aqui, ó, o contexto, você tá adicionando o contexto ao seu sistema operacional e também aqui, ó, schedule tasks, você também consegue fazer, você vai ver que apareceu aqui do lado context skills e schedule. Então, basicamente, você consegue gerar aqui um daily brief, weekly round up. Aí aqui o C Limit, você
+
+já entende como fazer isso aqui, né? Uma vez que você conectou os seus provedores, muito fácil você fazer tarefas recorrentes aqui, o que é excelente, por exemplo, no ambiente corporativo, né? Analisa meu e-mail, analisa notas de uma reunião e por aí vai, tá? E de novo aqui nós temos também a possibilidade de você criar skills e colocar um contexto, então sei lá, brand guidelines, certo? Então você coloca aqui quais são os guias da sua empresa e descrição para que a IA saiba utilizar, né? All guidelines for the brand and the
+
+company live here. Então você consegue utilizar, né, criar isso aqui, colocar novos arquivos, imagens, tudo mais, tá? Isso aí vai ser referenciado em cada workspace. Agora, uma coisa que eu queria mostrar para vocês mais particular desse exemplo é o seguinte. Suponha que eu quero conectar aqui no Lineer, tá? Eu gosto muito de utilizar o
+
+line dos meus projetos, gestão dos meus projetos. Se eu clicar aqui para selecionar o liner, porque eu estou rodando localmente, eu vou ter esse problema aqui, ó, gatekeeper not configure, tá? Tem que ter um linear ou off client id para você poder fazer essa configuração, o que localmente é um pouco ruim, porém existe uma saída, tá? E aqui já tem diversas conectores que você vai ver aqui, mas para você testar local e particular, existe uma saída que você utilizar diretamente um MCP Server, que o próprio Liner já tem o MCP server, que você vai fazer autenticação via off. Então a segunda dica que eu queria te dar nesse vídeo aqui é justamente essa, tá? Já que localmente fica ruim de você
+
+ficar gerando um novo app no Line, um novo app no GitHub, né, no Slack, por aí vai, você pode fazer a configuração via MCP. Eu vou te mostrar aqui como, tá? Então aqui no caso em particular do Lineia, esse é o servidor, o mcp mcplinha. E aí ele já vai pedir o acesso e eu vou autorizar o acesso do meu workspace. Pronto, pessoal, autorizei o workspace do Quint Brasil e agora eu já tenho esse server conectado, né, no meu OS aqui no Cloud Flare. Então vamos começar mais
+
+uma conversa. Então deixa eu chegar aqui e eu posso aqui agora em add resource selecionar o MCP server. E aí, ó, já tem o MCPS do Lineer aqui e você já vê, ó, todas as ferramentas que estão disponíveis naquele workspace. Então, eu começo aquele workspace dando para ele o acesso, né, apenas as ferramentas que eu quero, que é excelente. Lembra que você pode compartilhar o workspace com uma pessoa? Você compartilha apenas com as
+
+ferramentas que você liberar para ela. Aqui eu posso incluir todas as ferramentas ou escolher apenas as que eu quero, sei lá, não quero permitir que a pessoa delete um comentário, por exemplo, através daqui. Poderia bloquear isso. Ou eu venho aqui e libero todas as ferramentas. adicionou aqui, então já tô com acesso ao linha. Beleza, deixa eu
+
+mandar aqui um prompt para ele. I want to create an app away to view all tickets that are named exactly so I want to see all YouTube tickets that I have in the U team em status. Então, beleza, usei o whisper flow aqui para facilitar. Ele nem pegou tudo certinho aqui, corrigiu algumas coisas, tá? Vou usar o dipsic V4 flash aqui de novo. Ou poderia até usar o
+
+química 3. Na verdade, vamos fazer o seguinte, vamos utilizar o química 3 aqui pra gente ver a diferença, tanto de inteligência quanto também de velocidade para você entender que a gente tá utilizando um outro modelo, tá? Olha só como sai bem mais lento, beleza? O os tokens aqui. Então, para dar rapidamente um pouco de contexto que eu quero construir aqui, pessoal, eu tenho lá no Liner uma forma de controlar os vídeos que saem do YouTube e aí eu crio lá um ticket chamado YouTube para cada um deles, um subticket, na verdade, tem um status de cada um deles, certo? Então eu
+
+quero poder ver aquilo diretamente no app. Em vez de eu precisar ter ali, talvez aquilo no líner, eu crio um app onde eu consiga visualizar aquilo e talvez fazer algumas outras coisas através, né, desse app. Então um exemplo de como você pode conectar contexto da tua empresa aqui dentro do sistema operacional do cloud flash. Enquanto ele vai terminando aqui, pessoal, algumas coisas interessantes que eu queria mostrar. Primeiro a diferença aqui no próprio painel do Open Cost Go. Você
+
+pode ver, olha quanto eu gastei naquela naquele DPS V4 flash e olha quanto eu gastei aqui no Kimica K3, né? Só no momento nem finalizei ainda. Kim K3, claro, muito mais caro também, um modelo muito mais capaz, tá? Eu inclusive fiz um review do Kimk3, principalmente ele no modo fast, como ele fica até bem mais interessante. Eu vou deixar o link se você quiser dar uma assistida depois.
+
+Ele vai finalizando aí o I aqui. Eu queria mostrar que você pode, ó, dentro ali do seu próprio app, você vai ver aqui o que você consegue conectar de recurso e tá aqui as conexões que esse app tem acesso e que você consegue ver que ele tem acesso ao liner através desse MCP. Se eu conectar aqui, eu poderia dar acesso para ele, por exemplo, a capacidade dele escrever e-mails, conectar no Home Assistant, qualquer outro MCP Server, Slack e etc. Tá? Uma outra coisa que talvez não seja tão clara aqui enquanto ele vai trabalhando é que dentro do workspace você pode criar vários chats, tá? Várias
+
+conversas dentro do workspace. Acaba sendo um pouco confuso porque você trabalha baseado em workspace, né? E ele nem faz um bom trabalho em dar o nome correto do workspace, né? Você fica com manto de untitled aqui. Mas se você clicar aqui, ó, é justamente o nosso app. E olha lá, pessoal, já temos o app,
+
+tá? Posso aqui, ó, aceitar as mudanças e tá aqui o app mostrando todos os tickets e o estado dele, tá? Só que como o nome do ticket é YouTube, né, eu não sei qual é o o parente, né, qual que é o o vídeo que ele pertence, tá? Então eu posso pedir esse follow up aqui. Vou trocar pro Deeps 5 V4 flash para ser mais rápido, tá? Great, this is working now,
+
+but I would like to see the parent ticket as well because else I don't know what ticket is once. They all have the same name. Por alguma razão aqui eu falei em inglês, o whisper flow traduziu para português. E aí aqui você já consegue ver um workflow bem interessante, tá? Você usa, sei lá, o modelo mais caro para fazer o bootstrap ali do app, que vai demorar um pouquinho mais, e aí você vai fazendo os pequenos ajustes ali, né, com um modelo mais baratinho, como é o caso aqui do Dipsic V4 flash, tá? Então vamos deixar ele
+
+terminar. E olha lá, pessoal, feito, ele fez as mudanças aqui, posso aceitar e ele tá dizendo aqui qual é o ticket Pie, né? Então aqui aqui BCL de PS5 V4 Flash, Luna Max Química 3, OL 5, etc. Eu posso até clicar aqui para cair no link. Ele fez até isso bem interessante, ó, no vídeo do Dipsic V4 flash. Clicar aqui,
+
+ó, caiu lá no workspace do Point Brasil com o ticket lá do Deepsic V4 flash que eu falei para vocês antes. Então, muito legal. Trouxe os dados para o meu workspace e agora eu posso criar apps e interagir com ele. Eu posso, né, conversar, tenho acesso ao linea, inclusive com a possibilidade de criar apps em cima. desse contexto. Agora,
+
+pessoal, pra gente finalizar esse vídeo, eu queria mostrar como você pode fazer o deploy do Cloudfare OS na nuvem, tá? Porque eu tô mostrando tudo aqui local, mas se você quiser realmente colaborar, você ou vai ter que fazer o deploy você mesmo. E aí aqui no próprio GitHub do Cloud Flyer, ele vai te contar como você pode fazer isso. É um pouquinho trabalhoso, mas eu pensou, então você consegue fazer isso sim. Ou você pode fazer direto aqui pela nuvem do Cloudfare, tá? Então vamos ver esse
+
+processo bem rapidinho aqui. Então tô aqui em OS.cloudflare. cloudfir./deploy.
+
+Se eu clicar aqui em sign with cloudfare, vou fazer o sign com a minha conta. Então, clicou ali para autorizar, ele vai te pedir então qual modelo você quer utilizar de IA. Só que aí o problema que eu vejo aqui é que nesse caso ele não te dá a opção de usar o olhama, né, como a gente viu ali local, tá? Então aqui você vai ter que colocar é mesmo que você coloque uma API da Opena ele ainda vai te pedir para colocar um API token do Cloud Flash. Então aqui na nuvem deles, claro, é uma forma deles ganharem dinheiro, você vai ter que criar aqui uma API aqui para isso, tá? Então eles já estão te dão até
+
+um link aqui para você clicar e gerar. Já cria o token, copia o token, colocou aqui e aí você pode seguir, beleza? E pronto, clicou aqui para começar, ele vai fazer o deploy. Só que tem um detalhe aqui, tá pessoal? Para você poder fazer o deploy, você tem que tá no plano pago do Cloud Flare OS, tá? Porque
+
+ele precisa desse dynamic workers. Só que esse plano pago, ele custa $ e pessoal, o Cloud Flare é uma das dos serviços mais baratos que você pode ter, tá? Ele realmente é muito barato. O plano free dele já é muito muito generoso, você pode utilizar bastante sem correr riscos de estourar, tá? Dependendo do seu app, se ele for pequeno, principalmente. Mas aqui para
+
+você fazer no no OS, ele vai te pedir o dynamic Works. Aí você vai ter que pagar. Então são 5, não é caro, é o preço para você utilizar ele na nuvem, tá? Tem até aqui a tabela de preços, né? Se você quiser saber, ó, dos workers, né, que são os serviços ali, serveres do Cloud Player, cara, são 100.000
+
+requisições por dia, absurdo, muita coisa, né? Ou se você pagar aqui a assinatura, aí, cara, você ganha muito mais acesso mesmo assim, basicamente ilimitado se o seu app não for muito grande, tá? Então eu considero que vale a pena se você quiser testar isso aqui, colocar, né, na sua empresa, colocar isso aqui de fato no ambiente colaborativo por bem justo pelo que o Cloudfare oferece. Mas agora eu quero saber de você, o que que você achou do Cloudf é, você acha que faz sentido pro seu caso de uso? Me conta aqui nos comentários que eu quero saber. Me conta também, aproveita, me
+
+diz se você gostou aqui do dando desse novo arranjo, desse novo cenário que eu fiz aqui. Por favor, diz que gostou, que deu um trabalho do para ajeitar aqui. Mas já agradeço imensamente a você por ter ficado comigo até agora. Já aproveita que você ficou até aqui, curte esse vídeo, compartilha ele com seu amigo e sua amiga que gosta de utilizar IA na empresa, mas talvez tenha dificuldades em implementar da melhor forma ou talvez, né, gostaria de saber como fazer isso de forma segura. Tenho certeza que esse vídeo pode ajudar. Me
+
+conta se o Cloud Flow Workers faz mais sentido pro seu caso de uso ou se é o Hermes. Gostaria de saber a opinião da comunidade. Agradeço imensamente você por estar comigo até agora e até a próxima. Yeah.
