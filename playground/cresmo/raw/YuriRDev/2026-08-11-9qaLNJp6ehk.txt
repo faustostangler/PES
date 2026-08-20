@@ -1,0 +1,79 @@
+---
+video_title: "HACKEEI MILHARES DE SITES (pelo github 😼)"
+video_id: 9qaLNJp6ehk
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=9qaLNJp6ehk
+video_date: 2026-08-11T14:00:08+00:00
+video_description: |
+  Nesse vídeo eu hackeio vários sistemas que estavam completamente expostos no GitHub...
+  
+  ---
+  Se você quer se tornar um hacker ético e conquistar certificações que abrem portas, a Solyd One tem o caminho certo pra você!
+  
+  CLIQUE e inscreva-se AGORA! 
+  👉 https://solyd.link/yuri
+  ---
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 Thumb feita por https://www.behance.net/nez6vi
+---
+GitHub é uma plataforma onde milhões de debs guardam e compartilham códigos. E nesse exato momento, enquanto eu falo, alguém acabou de publicar algo que não devia. Uma chave de pagamento, acesso de modelo de a, senha de banco de dados completamente abertos para qualquer um ver. E calma que você deve est pensando que eu vou falar de ponto esquecidas, que o pessoal deixa vazar. E é, eu vou falar disso, mas também mostrar na prática o quão perigoso isso é. Nesse
+
+vídeo eu construí um bote que encontra essa secrets e isso me deu acesso a sistemas com dados financeiros de empresas, CPF de usuários, banco de dados com milhares de pessoas e até contas do Mercado Pago. Tudo por causa de algumas secrets esquecidas no GitHub. Mas antes, se você não sabe que é uma secret, pensa assim: quando o seu sistema tem que mandar um e-mail, cobrar Pix ou chamar uma IA, ele tem que conversar com um outro sistema. E para provar que é ele que tá chamando, precisa de uma chave, no caso uma secret. Não tem login, a secret é o acesso. E aí que tá. Muita gente coloca
+
+ela no meio do código e não tem problema a princípio. Só que qualquer pessoa com código também tem acesso à Secret. Por isso, o mais comum é botar essas chaves em um arquivo separado, tipo um ponto env. Aí você configura o projeto para ignorar esse arquivo na hora de subir pro GitHub e ele fica só na sua máquina. Mas adivinha? Muita gente esquece de
+
+configurar essa parte e acaba subindo ponto wave inteiro para um repositório público ou até mesmo com secret coded. E hoje a gente vai tentar encontrar elas. Mas tem o problema. Um repositório público pode ter milhares de arquivos, 1 milhão de linha de códigos. Como é que você acha uma chave perdida no meio disso tudo? Bom, a gente tem que
+
+entender que vários serviços geram chaves em formato específico. A Dantropic começa com SK antes, a WS começa com a Kia, o Mercado Pago, app user, até mesmo o RL de banco de dados tem formato. Só que nem toda a chave tem uma cara tão óbvia assim. Vários sistemas usam tokens genéricos, que é basicamente um monte de letras e números aleatórios sem nenhum prefixo, mas por enquanto a maioria das chaves grandes a gente reconhece só de bater o olho. Então a ideia mais óbvia é usar a própria busca do GitHub. É só jogar
+
+algum prefixo de uma chave e ver o que aparece. E de fato isso funciona. Pesquisando por SK Live, que é da Stripe, aparece uma chave no meio do código de alguém. Só que fazer isso na mão não é muito eficiente, então vamos automatizar. O GitHub tem uma rota na PI deles, a search code, que busca por código. E eu chamo ela mandando os
+
+padrões de chaves que eu quero e ela me devolve os arquivos que deram mat. Aí para cada arquivo, um script entra nele e usa rejects para extrair a chave exata. E no fim pega essa chave e testa direto no provedor para ver se tá vivo, no caso, se ainda tá funcionando. E a melhor parte é que já existe um programa que faz exatamente esse fluxo. Ele chama Key Hunter. Eu peguei ele de base e fiz
+
+algumas modificações. Adicionei mais provedores, coloquei um cash, um banco de dados para salvar o que encontra e deixei executando isso por um bom tempo. E eu acho que você sabe que isso demorou. E depois de dois dias rodando, a gente conseguiu 14.000 secrets, onde 900 são válidos. Eles vão desde Mongo
+
+DB, Resend, Telegram, só que o mais importante aqui são os secrets válidos que foram testados no provedor e realmente funcionam. E dá para ver que tem muito esse mercado pago, não só credencial de teste, mas também bastante de produção. Mas tem um problema que eu não falei ainda. Assim que você pesquisar alguma coisa no GitHub, ele não sai lendo todos os repositórios do mundo naquele momento. Ele tem um índice, só que esse índice não é instantâneo. Então quando alguém cria um
+
+repositório novo ou faz um commit, demora um pouco para ser indexado. São milhões de repositórios novos todos os dias. O indexador não dá conta de tudo isso em tempo real. Então ele prioriza. E adivinha o que que não é indexado?
+
+exatamente os projetos pequenos de uma pessoa só, que são justamente os que vazam secrets. E além disso, a busca do GitHub te devolve no máximo 1000 resultados por pesquisa, mesmo que existam 50.000. E eles são ordenados por relevância, não tem como ordenar por data. Então, se eu quero achar o que acabou de vazar, que são os que têm mais chance de ter secrets ativas, a busca pelo prefixo não é a melhor forma.
+
+Então, em vez de procurar pela chave em si, vamos procurar um tipo específico de repositório. Mas como assim tipo de repositório? Quais projetos têm secrets que valem a pena? Coisas como Pix/payment, Pixcode, Postback URL são pedaços de código de integração de gatory. É bem provável que quem tem isso no código tá mexendo com sistemas de pagamento de verdade. Mas como é que eu
+
+vou achar uma secret no meio do código? Ela pode estar escrita em qualquer lugar, em um ponenv, hardcode desmaio do código ou até mesmo em um comit antigo que a pessoa achou que tinha pagado. O truffle hog é uma ferramenta feita exatamente para isso. Ela clou no repositório, passa por todos os arquivos e os históricos de comits desde o começo do projeto. E depois de algumas horinhas rodando, conseguimos 294.000 secrets em
+
+mais de 1000 repositórios. Agora sim, vamos ver o que a gente consegue fazer com tudo isso. Mas antes de continuar, se você quer se tornar um hacker ético e tem certificações que realmente abrem portas, a sua Lid One tem o caminho certo para você. São mais de 600 horas de conteúdo onde você vê desde o básico, desenvolvimento web, peste em diferentes ambientes, segurança Wi-Fi, mas exploração de A e muito mais. E ao se inscrever, você passa a fazer parte do Solid Hunter, que é o banco de talentos que conecta os hackers a vagas exclusivas e empresas do mundo inteiro.
+
+Link no primeiro comentário fixado. Indo por lá você ganha desconto para sua assinatura. Vamos começar procurando por URL de banco de dados. Filtrando por Mongo DB, já aparece vários resultados e logo o primeiro é de um repositório ativo que foi atualizado 11 horas atrás. Vamos tentar conectar no banco e eu vou usar o Mongo DB Compas para isso. E
+
+tentando conectar, foi. Tem bastante tabelas diferentes, desde templates de e-mail, pushbacks e o mais importante, os usuários. Nesse sistema tem um pouco mais de 100 usuários e por sorte a senha não tá em play text. E sabe qual é a parte mais legal? O banco de dados não foi basado no código em um ponenv, nada disso. Foi um arquivo txt que
+
+aparentemente era de teste. Pegando a próxima URL da nossa lista, a gente consegue ver que é de um repositório de três meses atrás. E se a gente tenta conectar também funciona. E dessa vez tem tabela de configuração de gatos de pagamento, transações e também a lista de usuários. São mais de 3.200 com nome,
+
+e-mail, CPF e a senha está 256. O vazamento foi um arquivo chamado appses.jonj. Lá também tinha Accessen do Facebook, Amazon S3 e até a senha do e-mail do cara tava lá. Eu até encontrei o RL do deploy, só que quando eu fui acessar já tinha saído do ar. Um outro
+
+DB que também tava aberto era de um bote do Discord que aparentemente era bem famosinho. De acordo com o sobre tinha mais de 400 bots online. A última alteração foi três meses atrás e diferente dos outros, esse aqui não encontrei nada demais. Só algumas configurações do bote que não tem problema. Mas agora prepara que esse próximo é absurdo. Uma do Postgress e um
+
+repositório ativo. A última alteração foi cinco dias atrás. E de novo, a secret não foi vazada em um ponto ENV, mas sim dentro de um Markdown em um passo a passo de correção 9 meses atrás. E nesse mesmo arquivo aparece o link do projeto. Então dessa vez a gente consegue acessar o site. Pegando as
+
+credenciais e tentando fazer o login no banco. Vocês já sabem que funciona. Tem muitas tabelas, desde sessão, jurídico, documento de contabilidade, mas o mais importante, os usuários. tem 12 cadastrados e o de D1 é o admin. Só que a senha tá em bicrypt, então não tem como saber qual é a original, mas a gente consegue sobre escrever ela. Pelo
+
+resto, a gente consegue ver que ele usa 10 rounds. Então vamos gerar uma senha de 10 rounds também. Aí é só copiar o hash resultado e sobrescrever na tabela. E se a gente tenta logar com a nova senha, a gente consegue acessar o sistema dele. Ah, mas para que acessar o site, já que você tem acesso ao banco de dados? Eu também não sei, só parece mais
+
+legal. Aparentemente é um sistema interno paraa empresa dele. Tem um dashboard com notificações de eventos, uma página de financeiro, onde a receita chega em quase R$ 100.000 R$ 1000 por mês e como lista de receitas, onde aparece o nome do responsável, valor, descrição, tudo aberto. E se você acha que é só um sistema vibe codado que não é usado para nada, eu encontrei uma página de documentos que eu claramente não posso mostrar aqui. E só para ele
+
+ficar ligado, eu troquei o resto da senha dele por um aviso. E olhando agora na edição, eu acho que o aviso que eu dei não foi muito útil, não. Bom, de banco de dados não teve mais nada interessante, mas agora você já pensou em ter infinitas? Alguns dos secrets pegos eram do Gemini e se a gente testa mandando requisição pra PI dele com prompt perguntando quais os perigos de comitar secrets em um repositório público, a gente tem uma resposta. Claro que não são todos que funcionaram.
+
+Muitos estavam inválidos ou inspirados. No final eram uns 10 válidos. E em relação ao Deepsic, a história é completamente diferente. Enquanto eu ia testando na mão, todos estavam retornando o saldo insuficiente. E sério, eram todos mesmo. Eu até fiz um
+
+script que testa todas as kis encontradas e todas elas, sem exceção, retornaram esse mesmo erro. E não é coincidência não. Nesse exato momento tem muitas pessoas rodando esses botos para tentar coletar IPI KISS e aspsi que são uma das mais procuradas. Bom, chega de a banco de dados, vamos falar do perigo real, sistema de pagamento, e vamos falar de um dos mais famosos do Brasil, o Mercado Pago. O bot pegou dezenas de credenciais de produção em vários códigos diferentes. E se a gente
+
+tenta acessar mandando requisição para page/users/mi, que diz quem sou eu, a gente encontra alguns resultados interessantes: e-mail, CPF, nome completo e endereço de vários usuários diferentes. E se até agora você não entendeu o perigo disso tudo, isso aqui não é só uns e-mails vazando, não. As pessoas podem encontrar KISS de sistemas fiscais que emitem nota fiscal, documento de várias pessoas que nunca vão saber que vazou. Tudo largado num repositório que qualquer um baixa em dois cliques. Só para deixar claro, eu não fiz absolutamente nada com nenhuma credencial que apareceu. O objetivo
+
+desse vídeo é te mostrar que esse vazamento de secrets não é só problema de empresa grande, não. Aquele app pessoal que você tá fazendo, um bote no Telegram, no Discord, qualquer coisa. Pode ter uma chave de gateway, um banco de dados com as suas informações completamente abertas que você não se preocupou. O que eu fiz aqui nesse vídeo não tem nada de especial e como eu falei, tem muita gente fazendo isso nesse exato momento. Só que diferente de mim eles não estão fazendo isso para avisar ninguém. E é isso, espero que
+
+tenham gostado do vídeo. Me segue nas outras redes sociais e não esquece de deixar o like e se inscrever no canal. Valeus.
