@@ -1,0 +1,125 @@
+---
+video_title: "Your AI Second Brain Is Slowly Rotting (Here's How to Fix It)"
+video_id: xOFkpf9KgKg
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xOFkpf9KgKg
+video_date: 2026-08-07T14:00:20+00:00
+video_description: |
+  Granola is the AI notepad for professionals in back-to-back meetings: https://www.granola.ai?via=cole-medin
+  
+  Every guide to building an AI second brain goes over the same components and stops before covering how to actually maintain your second brain and stop it from drifting over time.
+  
+  I have been running my second brain for six months now. My memory folder is 1.9 million words! What reaches the agent every session is about 10,000. Compressing it was never the hard part - keeping those 10,000 words TRUE is.
+  
+  So in this video, I cover how your second brain is probably rotting right now and the solution so you can keep your second brain sharp! We want our second brains to get smarter over time, and this is a huge part of making that possible.
+  
+  Thanks to Granola sponsoring this video!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - I just hosted the free AI-Native Transformation Workshop, showing you how to effectively adopt AI as a standard for your engineering team. Register here to get the recording:
+  https://dynamous.ai/ai-native-engineering-org
+  
+  - The second-brain-audit skill from this video (run it on your own notes):
+  https://github.com/coleam00/skills
+  
+  Build your own second brain with Claude Code:
+  https://github.com/coleam00/second-brain-starter
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Your second brain is rotting
+  2:06 What you're actually storing
+  3:10 The three places your knowledge lives
+  5:37 The biggest failure mode
+  7:12 Granola, the AI meeting assistant
+  8:29 One client, three different prices
+  10:59 The solution: every fact is either state or event
+  12:13 The second brain audit skill
+  15:12 What the solution looks like in practice
+  17:10 My first solution that failed
+  18:31 Go audit your own second brain!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+There are so many guides on the internet right now for building your own second brain. It really is one of the most popular and practical use cases for AI. And there are also open-source GitHub repos, like Hermes and Open Claw, that allow you to download a second brain and get it up and running in just a couple of hours. And no matter what you do for your second brain, it's going to end up taking a very similar shape to everyone else's second brain. Typically, you have your core behavior and memory documents.
+
+You have daily logs that you build up for everything you're doing with your second brain. And then you will usually have something like a Karpathy LLM wiki, where you're building up all of the concepts and entities for your life and business. Just as you're continuing to really build your second brain into your operations. So, very common structure here, but because every second brain is shaped very similarly, they also all have the same downfall. That's what we're going to talk about in this video.
+
+Because your second brain is probably rotting as we speak. AI brains, they decay just like human brains do. And all the guides on the internet and the second brains you can install, they don't focus on this enough. I've been building and using my second brain for over half a year now. And I'm sure you've noticed the same thing as me if you've been using your second brain for at least a couple of months. Where
+
+sometimes your second brain starts to recount information that is no longer relevant or is just straight up incorrect now. Because your life and business continues to evolve. And so sometimes your agent will fetch memories that are stale. Right? Like you have your entities or concepts or something in your daily logs that it fetches that is actually harming the agent more than helping you because it's not true anymore. That's the issue with decay.
+
+And we have to engineer a solution in our second brain so it's able to detect stale information and update it or remove it. That's what I want to cover with you here. I want to explain the problem nice and simple for you and then show you how the solution for your own second brain is actually quite easy to implement. Okay, so let's start really quickly by getting on the same page with what we're actually storing in our second brain and how we're building up the knowledge base for our agent. And so really out of everything you can bring into your knowledge base, there are infinite possibilities. You can be
+
+storing memories around the conversations themselves with your second brain, having it integrate with your email and calendar, taking the transcripts from your client calls or just calls with your team, any inbound leads that you have. Obviously, depends on the kind of business that you run, but you can imagine that for any second brain, you're going to have upwards of dozens of sources cuz you can also have information around the different projects you're working on, even integrating your second brain with your code bases. And out of all the information that you are capturing here, it's all going to be streamed into a knowledge base that typically is going to have three different components. So, I mentioned these all very briefly earlier, but let's talk about each one of these cuz it's important to understand how we're storing information in different ways because that really helps us then understand how the decay works and how we solve for it. Now, if you're doing any real work with your second brain, your knowledge base is going to become massive. That's why we
+
+need a more elegant approach to store all of our information. So, no matter where it comes from, conversations, integrations that we have for it, we need to build up a sort of knowledge graph of entities and concepts. And then typically, you'll have a few core documents that are always loaded into the context of your agent like the core memories, how you want it to behave, and who you are. And the issue that we have here is there's naturally going to be a little bit of duplicity of information. Because one, we need a more concise version in our core memory. That's what we have in
+
+our memory folder here like our memory.md, sold.md, things like that. And then we also have our knowledge graph that is trying to represent everything. So, our agent can search and find the smaller details when it actually needs that. But, because we're
+
+storing the same types of information, sometimes the agent can get confused if it pulls a document that talks about the same things that you maybe have in your memory.md, but they might not align 100%. Those contradictions are very confusing for the agent. But, at the same time, we do need to represent information in both ways. And it might also just be the case that even within the core knowledge base itself, you might have different entities or concepts that are speaking to the same thing in a different way. There's so
+
+many opportunities for mistakes here because an agent is never going to be perfect putting the right information in the right documents every single time. And even if there isn't a contradiction, you might just straight up have information in a document that's stale because maybe you changed a contract with a client change your plans for a code base and you didn't have that conversation with your second brain so it even had the opportunity to know that the information in its knowledge base was stale. And not to make things even a bit more complicated here, but we also have the third layer for our second brain, which is any kind of external information that we're pulling into our system. Because usually you're going to do some kinds of like research tasks with your second brain where you'll often build up like bundles of external information that you're pulling from the internet. And even this can also contradict with different things that you have in the rest of your knowledge base. Basically, the point here is
+
+there's just so many different ways that information can be represented in your knowledge base and needs to be. And so, that naturally leads to contradictions and stale information. Now, I've solved for this already. That's why I'm making this video in the first place. But, the biggest failure mode that I saw personally as I was building my own second brain is the information that is given to the agent right away contradicts what the agent pulls later in the conversation. Let me show you an
+
+example of this here. And so I have a nice little visualization to show what goes into the context of my agent at the start of every conversation. We have our global rules like our claw.md. We also have the behavior for the agent a document so it knows me core memories the repositories we're working on and then typically I'll do like a summary of what I've been working on with my agent for the last 24 hours. So that's all the
+
+context it has right away. Sometimes that's enough for the agent to work with but other times it realizes like okay I need to actually pull something else from the knowledge base. So it'll read the index at the top of my wiki and then figure out like oh this entity or this concept is important for what Cole's working on right now. So let me go ahead and read that. And there's one of two things that happens here. Either the
+
+agent forgot to update something in the memory.md so the information it pulls is actually more relevant but there's a contradiction there so it gets confused or it's the other way around where our core memories are fully up to date but then it pulls something from an old document outdated information and maybe decides to go with that instead of what's in the memory.md. You really don't know what the agent is going to choose which is why we can't have stale or contradictory information at all. It's just a big no-no because we can't always rely on the agent being smart enough to realize that this information is bad. The sponsor of today's video is
+
+Granola the AI notepad for people who live in back-to-back meetings and this slots in perfectly with the second brain because the whole system is only useful if we capture the knowledge and the hardest knowledge to capture is the conversations the planning calls where the decisions are made and Granola is the platform I use to catch all of that. No bot ever joins your calls. It simply transcribes your computer's audio in the background so you can be in Zoom Google Meets even in person. So I just jot down rough notes like I normally do in my meetings and then after the call, Granola enhances that into a clean summary with decisions and action items. And this is where it feeds directly into my second brain because Granola has an MCP connector. So my agents can query my
+
+meetings directly. So for example, I can ask, "What did we decide about using sub agents for research in the meeting?" This is something that I know I have answered in one of the notes in Granola. And so I'll see that it's going to call the MCP server, so it's going to query my notes and I'll come back once I have the answer. And there we go. We got the
+
+perfect answer. This shows us that Granola can turn all of our meetings into structured knowledge for us to use with our agents. Granola is free to use and new users get 100% off their first month. I'll have a link in the description. And this is what leads to the rotting of your second brain.
+
+Different files speaking to the same information in different ways. And let me show you a practical example of this now. So like I said, the second brain for this video is fictitious. I can't really show you all of the intimate documents in my own second brain. I hope you can understand. But what I built
+
+here is a real representation of the problems that I have actually encountered myself. And so this second brain is for a Dana. She runs Northpath Automation, an AI automation agency. And one of the things that she does with her second brain is she uses it to help her manage all of her different clients like Harbor Point Foods and right here we have Northwind. This is one of her automation clients. And so she sets up
+
+contracts with her second brain, sends invoices, plans out the work. And so she's having a lot of different conversations with her second brain throughout the months she's working with this client. And usually when you're working with a client, the scope of work changes. Like maybe you're charging a $4,000 a month retainer at first, but then you finish that first set of work and you build out some more things and maybe your retainer goes to $9,500 per month. And the problem here is Dana is using her second brain to work with Northwind as the contract is changing.
+
+So, in her core memory.md, something went stale and it got stuck at $4,000 per month, even though in a daily log it went up to $6,000 a month, and then she had a conversation later where she told her second brain it went up to $9,500 per month. Now, often times your agent is going to update the memory.md. It should be smart enough, but it's not a guarantee. And so now Dana is stuck with
+
+this system where the second brain is sometimes going to pull from this file or this one. You never really know. You can't trust it to have the right dollar amount for the contract with Northwind. And take a look at this. I ran it through a real test here where I have this script that asks the agent a single question, and it'll go and search through the knowledge base. So, I asked,
+
+"What do we charge Northwind Logistics?" And you can see that it it's kind of smart here. It knows that $4,000 a month is in the memory.md. That's what's loaded in right away. But then it found
+
+the daily log file that said that it's $6,000 per month. So, it seems like it realized how the information changed over time, but it totally missed the most up-to-date value that we have in one of our daily logs. This shows the core problem. It's a little bit of an engineered issue here, but this is something that legitimately happened all of the time in my second brain. Now, the crux of the problem here that I'm going to help you solve right now is that most second brains, your second brain is probably append only by default.
+
+Whenever there's new information that comes in, we're just going to tack it on to some daily log, some entity, and we're not going to look back to see if it overrides any other information we already have in our knowledge base. And that's correct part of the time. Because the main split that we have here, this is really getting into our solution now, is any piece of information that comes into our second brain from any of our sources, is either going to be a state or it's going to be an event. An event is something that happens, and that really should be a pen only because we delivered some contract or we decided to build something in a code base. Like that is just going to be added on to everything else we've already done for that client or with that code base. But if it's a state,
+
+like here is our rate, here is our road map, anything like that, we need to replace anything else in the knowledge base that is now stale. So there's this decision whenever we're ingesting information figuring out what path do we have to go down for this piece of information. And this is what's missing from most second brains. Cool. So now as promised, I'm going to show you the solution, how we can build this process without you having to change anything else in your second brain because I don't want to make this a huge chunk of work for you. I just want to show you
+
+how you can build this in. So every single time you're ingesting new things in your knowledge base, your second brain is able to pick the path here and make sure you don't have any stale information in your knowledge base. And to make this as easy as I possibly could for you, I packaged up my workflow that I went through on my own second brain in a skill. So I'll show you how to download this in just a little bit, but it is the step-by-step process to perform an audit. And so this is going to have your second brain look at its own knowledge base, identify any information that is already stale and help you correct that, and then build in the state or event for everything coming in going forward. So I'll start by
+
+showing you how to install this, then I'll explain the process more as the skill is running. And so this skill can be found within the skills GitHub repo that I published recently. This is where I put all of my core skills that I use every single day. I'm going to keep building this out as well. But anyway, it's just two commands to install this for Claude code, and then you have all the skills including the second brain audit. So yes, I am making
+
+this specific to Claude code because that is my daily driver, but you can also just manually install these skills for other coding agents if you would like. And so, it's just two commands to install everything within my Claude code. I already ran a both of them here. Don't ask me why my Claude code is black and white, by the way. I've no idea what's going on right now, but everything's still working. So, I'm just
+
+going with it today. Um so, anyway, once you have it installed, you do {slash} plugins, go over to install to see what you have already, and there we go. I have the Claude Madin skills right here. So, once you have that, then you can do {slash} second brain audit. And so, this you want to run with Claude code or whatever coding agent open in your knowledge base cuz it's going to go through all the files that we have here, and then help you build out the process of splitting into state and events as well. So, I'm going to go ahead and run
+
+this, and I'll come back once we're in the middle of the process here. So, you can see right away, just a couple of minutes of running this, it already identified that Northwind discrepancy that we have between our memory.md and our different daily log files. And so, it's figuring out all the things that we should fix now, and then helping build the process to prevent it going forward. Now, I do encourage you to be careful with this skill. You want to make sure
+
+that you're guiding what's changing in your knowledge base, so you're getting rid of the things that are actually stale and keeping the information that is relevant. And so, just use the skill as a starting point because it's going to say like, "Here's what I found that's stale, and then here's how we can build out of this process." And so, given that, let's get a bit more into how this really works. So, I let the skill run for a while, and you can see that it stopped here before it actually changed anything in my knowledge base. I built it in very deliberately cuz I don't want this to wipe stuff in your knowledge base that shouldn't have been removed.
+
+Right? Like, you're trusting me with this skill. I want to make sure that you're in the loop where you need to be. And so, I can have it convert to the file, but I'll actually just show you one example of something that's already converted with the skill, and and what it looked like before. So, this is Northwind Logistics without any kind of conversion for the state and events. And
+
+so, we have the core information on the company, the engagement, and the notes. And like these are the things that can go stale at any point. They might contradict with another document in our knowledge base or our core memory file. Now, with Harbor Point Foods, another mock client here, this is an example of a file that has been converted. So, the skill ran on this and it created the state and the log.
+
+And so, what we have right here is everything that could go stale and then all of the events that took place that are never going to go stale because it's just a record of here's what happened at this time. And you can see that everything is timestamped as well so that the agent when it reads this knows like this is an event that happened really long time ago. So, we probably shouldn't care about it. These are the things that I know are current. Now, of course, the big caveat to this entire process is you are relying on the agent properly identifying is this state that needs to maybe edit something here or is an event that we are just appending. But
+
+I would argue that this distinguishment is fairly straightforward for a large language model to make. It's going to easily identify the documents that it might need to edit and it's going to know what goes where. Even if you're using a less powerful LLM, like if you're driving your second brain with local AI, this system is going to be rock solid for you. And of course, you don't have to use the skill that I gave you. Even if you just wanted to, you know, take this idea, give it to your second brain, and tell it to implement it, it's going to be able to knock this out of the park cuz it's simple in the end. We're just splitting every single
+
+piece of information into two different possibilities here. Basically, you can think of this framework as just giving the agent a mental exercise to go through every single time something comes into your knowledge base. You're forcing structure here, which is much better than the alternative. The first solution I had for my second brain is basically I told it to write a date next to every single piece of information going into my knowledge base. And let me tell you, a request like this with no structure or mechanism, it did not work well. Only 8% of the time, at least
+
+within like a single test set that I grabbed, did it actually comply with the convention or identify any kind of stale information. So, I thought that if it dated everything and I told it to use those dates to figure out things that are stale, I thought that that would work well, but it barely ever actually worked. That's the beauty of having a framework here is it's a process we're forcing the agent to go through instead of just more at a high level saying, "Make sure nothing is stale when new information comes in." We have to teach it. Here is how you search through and build up the knowledge base so you can quickly identify these are the kinds of things that might go stale, here are the events that we just append to. And so,
+
+whether you want to use the skill or just take the ideas that I have here, I would encourage you to go through this process. I haven't had this running a super long time on my second brain cuz I figured this out more recently, but just in the last couple of weeks when I've had this, it's made a huge difference for how often my agent pulls stale information. It basically never does it anymore because I did the audit and fixed everything I already had, and now going forward, things have been very sharp. And so, if you appreciated this video, you're looking forward to more things on building second brains and using them for coding, I would really appreciate a like and a subscribe. I would encourage you to try out this skill, and I will see you in the next video.

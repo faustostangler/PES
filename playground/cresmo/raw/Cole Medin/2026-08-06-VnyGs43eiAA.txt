@@ -1,0 +1,146 @@
+---
+video_title: "The Creator of Claude Code Said to Do What Now?!"
+video_id: VnyGs43eiAA
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VnyGs43eiAA
+video_date: 2026-08-06T00:00:22+00:00
+video_description: |
+  Boris Cherny, the creator of Claude Code, says you should delete your CLAUDE.md, your skills, and your hooks every few months and see what the model does without them. Anthropic cut 80% of Claude Code's own system prompt for Opus 5 and says it got smarter.
+  
+  He's right, but only to an extent. There is a lot more nuance here than the advice suggests, and I ran my own benchmarks on a real codebase to confirm where it holds up and where it falls apart.
+  
+  Some of your AI layer genuinely has expired and you should be aggressive about cutting it. Some of it has not, and deleting that part costs you in ways that are surprisingly hard to notice.
+  
+  In this video I break down what Boris actually said, what my own testing showed, and how to tell which of your rules to delete and which are still doing real work.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  CodeRabbit - AI code review that walks you through a PR change by change:
+  https://coderabbit.link/ad-cole-medin-001
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - I just hosted the free AI-Native Transformation Workshop, showing you how to effectively adopt AI as a standard for your engineering team. Register here to get the recording:
+  https://dynamous.ai/ai-native-engineering-org
+  
+  - The skill that runs this ablation on your own repo, with any coding agent:
+  https://github.com/coleam00/skills
+  
+  - Boris Cherny: We Cut 80% of Claude Code’s Prompt (the full talk):
+  https://www.youtube.com/watch?v=qyPCVqFUyDo
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Delete Your Entire AI Layer?
+  1:16 What Boris Cherny Actually Said
+  2:48 Ablation Is an Eval, Not Just Deleting
+  3:28 The Over-Specification Mistake
+  4:21 Why Ablation Gets Expensive
+  5:16 The Unlimited Token Budget Problem
+  6:43 Sponsor: CodeRabbit
+  8:36 The AI Layer Spectrum
+  10:29 Where I Agree With Boris and Where I Don't
+  12:38 Testing Full Ablation on Archon
+  15:02 Architecture Held Up, Conventions Broke
+  17:57 The Ablation Skill (Any Coding Agent)
+  19:38 Outro
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+You and I both know that the AI space is always moving too fast because there's always that next thing you're told you should learn like loop engineering or graph engineering. And even worse than that, a lot of times you're told that what you currently have is obsolete and you should move away from it as soon as you can. So, Boris Cherny, the creator of Claude Code, he recently said some things that make it seem like we're running into this again where we're being told what we've built is obsolete. Cuz he said in an interview recently, "Every 6 months we should delete our entire AI layer. Our global rules, our skills, our hooks, everything we worked hard to build because you would be surprised what the LLM is capable of without your guidance." And so, taking
+
+this at face value, it just seems like Boris is looking down on us saying, "Your harness, your AI layer that you worked so hard to build is now obsolete because Opus 5 is just that good." And that's not exactly what he's saying. There's a lot more nuance we have to get into here. A lot of people are misinterpreting what he really is saying because they're reading this tweet and just moving on. So, that's what I want to cover with you, what Boris really means because there's a lot of truth and good suggestions with what he's talking about, but also some disagreements that I have as well. So, I want to break this
+
+down nice and simple for you because there are some actionable things that I would recommend you do right away. So, we'll cover that as well, but first let's get into what Boris is really saying here. So, let's hear it from the man himself. I'm going to play just a couple of clips from the live Y Combinator event. You might have seen this already. If you did, don't worry,
+
+I'm not going to watch the entire thing with you here, just a couple of clips to set the stage. I'll also link to this in the description. So, let's start right here with the big mic drop moment. >> 100%. Yeah, and and for people that aren't building agentic products, but you're using Claude Code, >> Here we go.
+
+>> every 6 months delete your quantum D, delete your skills, delete your hooks, see what the model does and it might surprise you. >> And actually for Opus 5, this is something we really do recommend is just try deleting all of these things because the model might really just not need all those instructions that you needed for past models. >> Wow, so just those few sentences, if you don't watch the rest of the talk, it really does seem like Opus is too good for you. Just delete all of your instructions. But then just like a minute before he says that, he says something a bit softer where they're not just deleting everything. They're doing
+
+a process called ablation. I'll let him just explain it really quick right here. >> That's right. That's right. We So, to be fair, we don't delete the entire code base, but we do delete a lot. So, every
+
+time there's a new model, we try we call in research we call this a ablation. And so, what this means is you delete the entire system prompt, and then you bring it back line by line to figure out what is the impact of each individual line. Um it's sort of like a eval, and you can kind of like evaluate it, and the ablation essentially it's a eval, but you delete things to figure out the impact. And >> we go. That's the real truth there. So,
+
+we're not just wiping everything and trusting the model entirely. We're doing it for the sake of really evaluating what we actually need in our AI layer. So, you're bringing things back as you recognize that oh, this skill or this rule actually did help the model get better results for me, even if it is the latest and greatest LLM. And so, the general premise that Boris is presenting here, it makes sense. As LLMs get better and better, there's less you need to specify as far as your rules and guardrails to make it so that it works up to your standard. And so, there might
+
+be a lot that you have in your harness that might be actually hurting the LLM more than helping because you're restricting it. There's a bit more that he has to say about that right here. Let me play this clip for you as well. >> A really common mistake that I see is people are using Claude code, they're using Claude, and they they just give it like way overly specific instructions. They're like, I want you to do this, but I want you to do it in this way, this way, this way. You must do like one,
+
+then two, then three, then four. And for modern models, that's actually really not the way to do it. You want to go a little bit higher level. You want to describe the task, you want to describe the guardrails, you want to describe like the exit criteria, and then just go with the model cook. And >> let the model cook. And so, really
+
+ablation is the process for us to figure out where we're being too specific with the modern large language model. But, we just do it backwards because we start with nothing and we add things back in as we figure out the coding agent really needs that guidance, even if it is Fable or Opus or GPT Soul, whatever the top model is. And so, it's good in theory, but there's a couple of problems that I have with this. It's very, very expensive to do this process of ablation, and there are things that it really doesn't make sense to scrap and add back in. Let's talk about this. And I'll also show you a lot
+
+of testing that I did that shows that Boris is right. His advice is solid, at least to an extent. The larger problem that I have with this is it's not always practical for us to wipe our entire AI layer and build it back up. And at the end, I'll also give you a skill that I built to guide you through the same ablation process that I went through as I was testing and auditing things on my own code bases. But, anyway, the main problem that I have with ablation, as Boris presents it, is it's extremely token heavy. It is so expensive to go
+
+through that process of wiping everything and then adding things back in one piece at a time as you are testing and working with your agent. In fact, a lot of the things that Boris talks about throughout that live event, it just makes it really obvious that he's blind to the fact that tokens are actually pretty expensive. I mean, he just makes it so obvious that he works for Anthropic give him an unlimited token budget because so many of the strategies that he talks about is just letting the agent run for a very, very long time. And let me tell you, that's just not always practical because you're at an enterprise setting where you're paying per token, or you just have subscriptions where you're already hitting rate limits all the time with Fable and Opus. And so, when he talks about running these sessions for 2 weeks to do these really incredible things, sometimes it just seems like he's in his own little bubble of having unlimited tokens, just him and Peter Steinberger.
+
+And I know I'm probably beating a dead horse here showing you a clip from the talk where he talks about how long his agents run for, but it's kind of funny just to hear him talk about this. So, he just finished sharing how he migrated an entire code base from Electron to Swift. And then she asks him, "Well, how long did it take?" Take a look at this. >> And how long did this take to run?
+
+>> It's still running. >> When did you start it? >> [laughter] >> It's been It's been a little over 2 weeks. >> over 2 weeks. >> [laughter] >> Yeah.
+
+>> It's got to be millions of tokens. >> in the audience has >> Okay, I'm going to pause it there. Yeah, it's just It's crazy. Like, we can't do that even with a max Claude subscription. Unless maybe you're using like a mixture of sauna and haiku, but he's talking about using Opus 5. Let's
+
+take a quick break for today's sponsor. And this one fits really well with this video. Because when you're coding with agents, the bottleneck stops being writing code and it becomes reviewing it. And Code Rabbit is incredibly helpful for removing that bottleneck. I use them personally all the time across all my open source projects, including my big one Arkon. And today I want to
+
+show you their new review surface called change stack. A pull request is the most classic way to make any changes to a code base. The problem is every PR is just a flat list of alphabetically organized files. There is no organization here. So, you have to go through the entire get diff to review everything. And this works fine when you
+
+have a few small scope changes, but when you're scaling the amount of work you're doing with a coding agent, pretty much no matter what, you're going to have massive pull requests. Dozens of files that are changed. You need a way to organize things better to be able to scale your review. So, what change stack does is that reorganizes the same PR into cohorts. So, we have the individual pieces of work in the change, and it even orders them into layers. So, the
+
+data models and contracts come before the code that depends on them. It's exactly how an engineer would go through a PR, and it builds that organization for us. And there are a lot of great features in here. For example, the semantic diff shows me moved code as moved, not just an addition and a removal, so I don't have to reconcile that in my head. And I can click on any one of the functions here to also see the definition and then where it is referenced in my code base. And going to
+
+my actual Arkon PR, we can see CodeRabbit running in the wild, giving the full walk-through as it's reviewing the changes. And sure enough, it found real issues with this PR, and also giving suggestions for each of these things. And I can also reply to CodeRabbit to have a conversation to clarify anything I need. CodeRabbit is free for open source, which is how I've been using it, and ChangeStack is free during launch. I'll have a link to them in the description. And so, the point
+
+is, yes, your AI layer is probably too bloated. You're probably being too specific on certain things for LLMs these days. But, it's not realistic to just prune everything. I don't think you should. It's going to take you so much time. It's going to be so expensive. And
+
+there's so many things in our AI layer where even if it is a little too bloated, it really doesn't hurt the performance of your coding agents. Let's talk about the spectrum now. And this is really the core of where I disagree with Boris. So, when we think about our AI layer, there are really three components of it that contribute to the context for our agent. We have our rules, like our global rules and other context that we have the agent read or that we inject.
+
+We have our skills, our workflows, and then we have our sub-agents, the workers that we delegate to. And out of everything that we have here, it's really only the rules that we should be cutting hard, because this is the context, especially your global rules. It's the context that's loaded in at the start of every single conversation. So, we have the largest risk there of over specifying things and restricting the LLM because it always has to follow those guidelines. And Anthropic talks about this a lot in the Claude code documentation. And this is good advice
+
+no matter the coding agent you're using. So, they have this section talking about the common failure patterns to avoid for your rules. And one of the big ones right here, the over specified claude.md. If your global rules are too long, Claude ignores half of it because important rules get lost in the noise.
+
+It can actually hurt performance. And then when they're covering memory, writing effective instructions, they say to actually target under 200 lines per claude.md file. Your global rules need to be concise because the spectrum that we have here goes from what is dumped in the agent every single time versus what are the things that are more context-efficient, not always taking up that mental bandwidth of your agent. And so, this spectrum actually kind of also speaks to how much I agree with Boris on certain things, right? Like with the
+
+rules here, there is a lot of pruning pressure. It's important to keep this lean. I agree with Boris that you do pretty frequently want to test out a very shrunken version of your rules. But then as you go up the spectrum here into skills and other kinds of on-demand context your agent is only sometimes reading, it gets a lot less important for you to go through the process of trying to make things more concise. And if you're focusing primarily on just your global rules, that also makes things a lot less of a pain for you and a lot less expensive to go through this ablation process. And so, like I said,
+
+Boris's ideas here are sound. I just don't think they apply to as much as he's really saying. Like subagents, skills, other kinds of on-demand context you might have as markdown or confluence pages. Like these are the things that I don't touch very often. I make it work initially and then I'm sticking with that through all the new model releases.
+
+But then yes, I'll concede to him that for the global rules, like definitely you want to be picky here. And yes, in a perfect world where you have unlimited time and budget, like it seemed Boris has, of course it makes sense to go through the ablation process for everything in your AI layer because each large language model interprets your instructions even just a little bit differently. So, there's always going to be room to optimize and even build things from the ground up if you really want to. It's just in the real world, there has to be a line that we draw for where does it make sense for our time and tokens, what should we ablate? And so, that's my argument that we want to stick more to this side of things. And
+
+if you really want to push it to skills or sub agents, maybe do that once in a while, like, you know, every year for example. I just wouldn't recommend doing it every single time an LLM releases and doing it every 6 months like Boris said just seems a little aggressive to me. And maybe you actually like that idea quite a bit. I'd be curious, let me know in the comments if you think like, "Okay, I actually do want to go through and wipe everything every half year." If you want to spend the time to do that, let me know. I'd be curious as to your
+
+reasoning why. And then as promised, of course I also want to show you my own testing that I did on one of my code bases. And this is important because it shows us the kinds of rules we really need no matter what versus other rules we really can get rid of as LLMs get more capable. And so, the stripped bare, the ablated AI layer, it did hold up for some things. Boris is right to some extent. But, then there are some kinds
+
+of rules where when I took them away, my performance degraded quickly. So, if you've seen my content before, then it probably comes as no surprise that I wanted to test out on Arkon, my open source harness builder. I'll link to a video right here where I cover it. Not really the point of this video. I just wanted to pick a pretty complicated code base. Arkon at this point is a very
+
+evolved and mature application. And so, I kind of hate to admit this on camera, but the global rule file that we have right now, arc law.md2 work on arcan is a thousand lines long. And yeah, like the anthropic said in their docs, you should generally keep it to around 200 lines or less. Like this is definitely too long. But I got to say we have tried
+
+to prune this in the past. Back when we were using, I don't know, like opus 4.5, opus 4.7, and we did get worse results when we took out different conventions that we have in here. And so we have tried our best to prune it before, but now that we have fable 5 and opus 5 and you know, GPT 5.6 soul, we have that
+
+next generation of models where I I know now that like we don't need rules that are this long. And so I did a test where I took the claw.md file and I actually turned it into this. Like this is full ablation here, just giving it a couple of commands, a little bit of a context on what arcan is, and that is it. And so I compared arcan side by side working on a bunch of different GitHub issues. One
+
+using our really bloated current rules and another using the rules that we have here. And then I also have a skill that just teaches generally how to use arcan, like how to run commands and things like that. And so I also ablated this. And so we have a really long skill. This one's like 350 lines long, and I actually tried removing it entirely. So now the
+
+model to understand how to use arcan has to base it on just understanding the code base itself. And so I thought, I really did think that Claude code was going to bomb on this version of the AI layer. But going back to our diagram here, we can see that for a certain kind of development, actually half of the testing that I did, both of the layers performed equally. So this was crazy to me. Basically the two layers that we have here is how much was the coding agent able to make the hard architectural calls in our code base.
+
+And then the other category is how much is it able to follow the conventions that are very specific to our project. And so the important thing here is of course our full AI layer it held up for both. The quality was the baseline here with our full layer. Now when we had it stripped bare where is like the you know 20 line Claude.md and no R con skill at all for the hard architectural calls it held up. It was able to architect new
+
+features in our code base just as well as when we had the full Claude.md. Where it really didn't perform well though is just complying with the conventions that we have in our code base. Like this is how we like to register our tests. That's something it failed at. This is
+
+how we want to write our functions like the style and how we import things. That's where it broke. And so what this really teaches us here is that as the large language model gets better and better and better we don't have to guide it to work well as a software engineer. Like a lot of times the rules that we used to have for the LLMs were more to fix the gaps that we had in them versus actually teaching them something for our own code base. But when it comes to the rules for like here's how we like to work those still matter. You can't fully ablate your AI
+
+layer because there's a lot in the AI layer that really just teaches your agent how to customize things for you. So you don't have to teach it how to do a good job in general but you do have to teach it how to do a good job by your specific standards. And so my final recommendation here is yes you should go through the process of ablation. I just don't think you have to go through everything like Boris says. Start for sure with your rules because you're going to have all the low hanging fruit there so you're not wasting all your time and tokens. And you can identify
+
+the things where you're more just trying to teach general practices to the LLM to fill in gaps versus really teaching how to work on your code base specifically. Those are the things that you should remove and you'll probably never have to bring back. Now, of course, even things that are specific to you, sometimes your coding agent is able to identify those things as it's operating in the code base. So, there's still more that you can test with the ablation process. I'm just trying to speak more to, you know, what's the low-hanging fruit? What are
+
+the things that you should sometimes try to do? And then maybe the other things that you should do very rarely if at all. So, think about it this way, rules that fix reasoning have decayed because LLMs have gotten good enough at reasoning, but rules that direct attention and customize things, those are just as important. All right, so the last thing that I have for you here is a Claude skill that I've built to guide you through the same ablation process that I went through myself after I saw Boris's talk. Now, I could dedicate an entire video to covering this skill and maybe I will in the near future. And so,
+
+I'm not going to go through everything here cuz it would take a while, but basically when you invoke this skill, and you can do it for really any coding agent, it's going to first identify your AI layer, so figure out like here are your skills and hooks and rules and sub-agents, and then it's going to identify tasks that it can create to run against your code base and test it both with the full AI layer and without. So, it's going to run those tests the exact same tasks side by side and then essentially just grade things at the end. So, evaluate and give you a report of you know, how much is your AI layer and each part of it really helping you in your day-to-day work. And I didn't like test this for hundreds and hundreds of hours or anything obviously. So, I'm not sure like how well this will generalize to every single code base, but I just wanted to try to put together some resource for you so you can immediately apply what we've been covering in this video here. Because
+
+like I said, going through some form of ablation is definitely important to do once in a while. The question is more like how much of your AI layer do you a blade and how much time do you really dedicate to it? And so I hope this skill will just help you get started with it. So feel free to install this. There's actually a new skills repo that I've just put out on GitHub and so I have installation instructions here for you how you can bring in the entire plugin and then this ablation skill is just one of them that we have here. So of course
+
+I will have a link to this in the description. And that's everything that I have for you. What Boris is saying, the right interpretation of it and what I really think about the strategies here. Definitely worth paying attention to and doing to an extent. And so if you appreciated this video, you're looking forward to more things on agentic engineering and skills, I would really appreciate a like and a subscribe. And
+
+with that, I will see you in the next video.
