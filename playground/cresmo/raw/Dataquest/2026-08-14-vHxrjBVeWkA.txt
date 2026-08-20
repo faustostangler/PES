@@ -1,0 +1,304 @@
+---
+video_title: "Deploy an AI Prompt Optimizer with Python, FastAPI & Docker [Full Walkthrough]"
+video_id: vHxrjBVeWkA
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vHxrjBVeWkA
+video_date: 2026-08-14T11:28:03+00:00
+video_description: |
+  Deploy an AI prompt optimizer to the cloud in Python using Docker, FastAPI, and the OpenAI API. This intermediate-friendly project walkthrough takes an existing FastAPI app from your local machine to a live, public URL — the deployment workflow AI engineers use every day.
+  
+  Follow along with Dataquest's Director of Curriculum, Anna Strahl, joined by CTO Anna Pershyna for a working engineer's perspective on production deployment.
+  
+  Complete the project here: https://app.dataquest.io/c/196/m/1059/guided-project%3A-deploy-a-containerized-ai-service/
+  
+  What you'll learn:
+  - How to prepare a FastAPI app for deployment (Dockerfile shell form, graceful database handling)
+  - How to expose your local service publicly with an ngrok tunnel before going live
+  - How to deploy a Docker container to Render and Railway straight from a GitHub repo
+  - How to manage secrets with environment variables and shut services down to avoid surprise API charges
+  
+  Key skills covered: cloud deployment, Docker, FastAPI, environment variable management, ngrok, Render and Railway
+  
+  New to FastAPI? Build the skills you need with our FastAPI Apps course: https://www.dataquest.io/course/building-ai-apps-with-fastapi-2/
+  
+  0:00:00 Introduction
+  0:03:07 The AI Prompt Optimizer Project
+  0:06:23 Why Deployment Matters (expert insight)
+  0:10:22 Running Locally with Docker Compose
+  0:18:40 Two Changes to Deploy
+  0:25:35 Exposing Your App with ngrok
+  0:28:24 How Tunnels & Webhooks Work (expert insight)
+  0:33:40 Deploying to Render
+  0:43:29 Deploying to Railway
+  0:46:58 Calling the Live API
+  0:50:42 Securing a Public AI Service (expert insight)
+  1:00:04 Cleanup & Cost Control
+  1:02:47 Next Steps
+---
+Bem-vindo ao Laboratório de Projetos Dataquest. Meu nome é Anna e minha co-apresentadora também se chama Anna. E hoje vamos implantar um serviço de IA conteinerizado na internet em geral e ver o que isso envolve. É muito? É um pouco? E depois, o que
+
+você pode fazer com isso? Então, vamos começar com algumas apresentações, porque se você já participou de um webinar antes, vai notar que o formato é um pouco diferente, já que temos dois co-apresentadores. Bem, meu nome é Anna e comecei minha carreira como professora de matemática, função que exerci por 8 anos, antes de fazer a transição para analista de dados, aprendendo tudo sozinha. E então trabalhei no currículo da Dataquest como aluna e depois consegui trabalhar aqui e conciliar os dois mundos. Pude trabalhar com dados e pude ensinar, o que me deixa muito feliz. Então, Anna, e você?
+
+Então, meu nome também é Anna. Como você já deve ter imaginado, sou o CTO da Dataquest. Trabalho na área de tecnologia há cerca de 15 anos, atuando em engenharia, produto e liderança técnica. E na Dataquest, eu diria que uma grande parte do meu trabalho é descobrir como podemos melhorar a experiência de aprendizagem. Construir o que é certo para os nossos alunos e garantir que a nossa plataforma apoia aquilo que estamos a tentar ensinar.
+
+Maravilhoso. E agora, para que todos possam se apresentar , quero garantir que estejam preparados com as habilidades necessárias para aproveitar ao máximo este webinar. O ideal é que você tenha algum conhecimento básico de Python e domine o assunto para este projeto específico. Além disso, alguma familiaridade com Docker e Docker Compose, bem como com Fast APIs, são vantagens. Mas, se essas coisas forem novas ou relativamente novas para você, não tem problema.
+
+Eles não são estritamente necessários para o que estamos discutindo hoje. E como somos completamente novos em PaaS ou PAAS, especialmente as ferramentas Render e Railway, que são as duas que vamos demonstrar hoje. Hum, esse é um bom lugar para estar. Tudo bem. Então, nossa pauta de hoje. Vamos
+
+falar sobre o projeto. E então vamos marcar algumas caixas para implantar nossa aplicação. Primeiro, vamos deixá-lo pronto para implantação. Em seguida, vamos testá-lo com um túnel ngrok. Em seguida, vamos implantar no Render, implantar no Railway, usar nosso serviço para que possamos realmente ver qual é o objetivo de todo esse trabalho e, por fim, vamos limpar nossas implantações, pois não queremos deixar rastros soltos aleatoriamente na internet para qualquer pessoa encontrar. E vamos terminar com uma sessão de perguntas e respostas.
+
+Tudo bem. Resumo do nosso projeto. Portanto, hoje não vamos escrever código do zero. Em vez disso, vamos usar o código já existente que foi escrito ao longo do nosso curso de API de engenharia de IA. Portanto, se o código que estamos discutindo hoje lhe parece interessante e empolgante, recomendo fortemente que você confira o restante do curso.
+
+E o que o código faz é ser uma API que funciona com a OpenAI, a API da OpenAI, e recebe uma solicitação que você gostaria de fazer a um LLM e a otimiza. Melhora um pouco o enunciado para que você possa obter um resultado melhor do LLM que deseja orientar. E para criar a API, usamos uma biblioteca chamada Fast API. E tem uma única função. A função recebe a solicitação que enviamos e pede para reescrevê-la, retornando uma versão melhorada.
+
+Agora, como temos pessoas que são, em geral, menos familiarizadas com APIs, vou explicar o que significa " endpoints". Qualquer URL que você acesse quando houver uma barra (/) e, em seguida, algo que o leve a uma página separada, isso será um endpoint. E teremos dois pontos finais. Temos um endpoint de saúde que usaremos bastante hoje para testes. E isso nos dá uma verificação de status.
+
+Essa é a nossa URL fazendo exatamente o que queremos que ela faça. E temos nosso endpoint otimizado, que é o responsável pela otimização das solicitações. Em seguida, nosso código também registra os resultados em um banco de dados Postgres. Não vamos nos aprofundar muito nisso hoje, mas saiba que, se você revisar este curso, terá a oportunidade de aprender um pouco mais sobre como construir essas conexões de banco de dados . E então tudo isso é empacotado em um Dockerfile e utiliza o Docker Compose para ajudar na coordenação com o banco de dados Postgres.
+
+Mas eis o problema. Todo esse código, da forma como existe atualmente, só funciona em uma máquina local. E isso não é muito útil se você quiser compartilhar seu otimizador de prompts com o mundo em geral. Então hoje vamos fazer isso. Vamos compartilhar isso com o mundo todo.
+
+Hoje temos um recurso maravilhoso em Anna P, pois ela é uma engenheira profissional. Então, vou contar com ela, conversar com ela, para que todos possamos aprender muito sobre alguém com experiência prática e vivencial. Então, minha primeira pergunta para você, Anna, é: por que essa ideia de implantação é essa de que vamos implantar algo na internet? Por que isso é considerado uma habilidade essencial para um engenheiro? Bem, historicamente, as pessoas argumentavam e diziam que não era algo que um engenheiro devesse saber, pois se tratava de uma especialização específica.
+
+Você talvez se lembre de todos os administradores de sistemas, engenheiros de operações, administradores de banco de dados e assim por diante. Era uma área de engenharia muito complexa que envolvia tópicos como redes, sistemas operacionais, planejamento de capacidade e backups. Mas a tecnologia evoluiu. Existem muitas ferramentas novas que tornam as coisas mais fáceis e agradáveis ​​de compreender. Isso foi muito antes do Docker e do Docker Compose, que aprimoraram a tecnologia e forneceram algo como uma espécie de linguagem de programação, uma forma de dar instruções. Portanto,
+
+atualmente, boa parte da responsabilidade de disponibilizar conteúdo na rede está se tornando cada vez mais tarefa de engenheiros, especialistas em dados e outros profissionais da área. E isso é importante porque, sem isso, não conseguimos entender adequadamente por que algo não está funcionando corretamente. Por que não conseguimos acessar este serviço? Por que algo funciona perfeitamente em nossa máquina local, mas, de alguma forma, estamos recebendo um erro muito estranho e incompreensível nos registros da nuvem em que estamos implantados? Sim, porque essa é a essência da questão. Não quero
+
+tomar muito tempo entrando em detalhes históricos sobre isso. Sim, essa foi uma boa visão geral e uma pequena espiada nos bastidores da Data Quest por um minuto. Você fala sobre coisas que funcionam em máquinas locais, mas não funcionam em outros lugares. Bem, eu trabalho em um computador com Windows e você trabalha com Linux, e às vezes algumas coisas não funcionam no meu computador, mas funcionam em um computador com Linux. Portanto, temos que tratá-los de forma um pouco especial.
+
+[risos] Além disso, eu trabalho em Mac, mas o Linux é um sistema operacional especial, adorado por profissionais simplesmente porque é um pouco mais fácil de usar . Normalmente, você encontrará muitas peculiaridades tanto nos sistemas Mac quanto nos sistemas Windows. Sim, e o sistema operacional é uma mudança ou uma diferença entre as máquinas. Você também pode ter diferentes versões de pacotes Python, e como cada máquina pode ser muito diferente, ferramentas como Docker e Docker Compose são um bom ponto de partida para uniformizar tudo. Mas, para o nosso otimizador de prompts, colocá-lo na internet nos permite não precisar padronizar o código para os usuários finais; tudo o que eles precisam é de uma URL para usá-lo. Isso
+
+elimina muitas dores de cabeça na hora de depurar o código, certo? Sim, eu diria até que os usuários finais tecnicamente poderiam executar isso se compartilhássemos o projeto inteiro. Eles podem executar o mesmo comando `docker compose up` e deixá-lo funcionando localmente. Mas isso exigiria que eles tivessem algum conhecimento técnico para saber que precisam ter o Docker Compose instalado e que devem executá-lo. E isso torna este serviço compartilhável com qualquer pessoa.
+
+Podemos pensar nisso como um potencial empregador que, ao analisar seu portfólio, não terá dificuldade alguma em acessá-lo sem precisar gastar um segundo sequer com qualquer tipo de configuração.
+
+Tudo bem. Bem, dito tudo isso, vamos mergulhar no código. Então, pessoal que está participando deste webinar, se vocês puderem dar um joinha se o tamanho da fonte da minha janela de codificação estiver bom para vocês. Tentei ampliar o suficiente. Provavelmente consigo dar mais um zoom sem que fique muito confuso, mas me avise se precisar de mais alguma coisa. Muito
+
+bem, estou vendo alguns polegares para cima flutuando. Muito obrigado. Então, como você pode ver, estamos no VS Code e já temos vários arquivos abertos no nosso painel do explorador. E vamos abordar a maioria deles muito brevemente. Faremos uma demonstração.
+
+Neste momento, você pode ver que estamos em um Dockerfile. E como muitas pessoas disseram que eram iniciantes no Docker, observe que este arquivo não possui uma extensão de ponto no final. Não existe ".py", nem ".uh CSV". Não existe nada parecido. É assim que
+
+um Dockerfile é escrito. E é assim que um Dockerfile se parece, com algo parecido com essas palavras de comando. E tudo isso já havia sido escrito no curso anteriormente. E vamos alterar apenas uma linha de código e explicaremos o porquê. Mas vamos nos familiarizar rapidamente com o restante dos nossos arquivos. O arquivo
+
+main.py é o arquivo principal onde os endpoints da API rápida são configurados. Como mencionei anteriormente, temos um ponto final de saúde. E veja só, o ponto final de saúde é muito, muito simples. Tudo o que faz é retornar que o status está correto. E
+
+veremos essas palavras várias vezes hoje. E isso nos ajudará a confirmar quando as coisas estiverem funcionando como deveriam. Agora, nosso ponto final otimizado é um pouco mais complexo. Hum, e você pode ver que é uma solicitação de postagem. Então, é por isso que usar um endpoint de saúde é interessante, porque podemos digitá-lo na nossa URL e ver alguma informação.
+
+Já com uma requisição POST, não podemos realmente fazer isso. Temos alguns outros arquivos para discutirmos hoje. compose.yaml. Eu digo YAML, não sei se "y a m l" é como algumas pessoas escrevem.
+
+Isso nos ajudará a pegar nosso otimizador e conectá-lo ao nosso banco de dados. Mas, como mencionei, não vamos dedicar muito tempo à conexão com o banco de dados hoje. Então, da mesma forma, não precisamos nos preocupar com o arquivo database.py. Então, os dois principais que abordaremos são o nosso Dockerfile e o main.py.
+
+Tudo bem. Então, vamos começar logo e falar um pouco sobre como trabalhar com o Docker . E você precisará ter o Docker Desktop instalado em sua máquina. Então, eu tenho o Docker Desktop em execução. Você pode ver que eu o coloquei na minha janela aqui. E
+
+na nossa linha de comando, vamos digitar docker compose up build. Vou pressionar Enter. E isso vai mostrar muita coisa aqui. Anna, existe algo em particular que você procura quando um comando docker compose está sendo executado? Depende muito do que exatamente estamos construindo. A
+
+primeira dica é que não precisamos digitar `build` se soubermos que não temos um contêiner ou que não houve alterações. O Docker irá detectar isso para nós e, se não houver nenhuma imagem, ele a criará automaticamente. Oh. Mas geralmente, sim , estamos analisando diferentes tipos de mensagens de erro. Estamos verificando se a instalação do pacote está ocorrendo conforme o planejado.
+
+Estamos verificando se a cópia dos arquivos foi bem-sucedida. E é basicamente isso. Geralmente, o processo é feito passo a passo. Então, você pode ver que talvez consiga percorrer o arquivo Docker que estamos vendo acima e podemos consultar todos esses números 15 e outros semelhantes. Não, não podemos facilmente porque temos linhas vazias.
+
+Mas, basicamente, se você remover todas as linhas em branco e deixar apenas os comentários, você consegue, mais ou menos, relacionar em qual etapa o docker compose está instalado pelo número, porque todas elas são numeradas dentro dos estágios. E, no entanto, sem complicar demais. Basicamente é isso. Estamos aguardando que entre em funcionamento. E então, ficamos felizes em analisar os registros.
+
+Aqui, por exemplo, podemos ver que um dos contêineres foi recriado, o que significa que ele já existia anteriormente e o Docker não estava fazendo muita coisa. A imagem foi restaurada a partir da versão anterior. É muito provável que tenha sido um problema no banco de dados, já que estamos usando a imagem padrão. No caso de logs de banco de dados, se estivermos executando o serviço localmente, uma peculiaridade do Postgres é que, às vezes, ele pode não iniciar porque detecta que não há espaço suficiente na máquina. E às vezes o problema pode não ser a falta de espaço no seu computador, mas sim a falta de espaço nas configurações que você definiu para a instalação do Docker Desktop.
+
+Hum. Mas aqui podemos ver que o sistema de banco de dados está pronto. Está tudo ótimo. E nossa FastAPI foi iniciada com sucesso. E está em execução, aguardando solicitações da web.
+
+Ótimo. Então, isso significa que está em execução no momento. Portanto, mesmo tendo usado o comando de compilação aqui, o Docker Compose está em execução. Está cumprindo sua função. Sim . Como usamos o Docker Compose, `up`
+
+e `build` são apenas parâmetros extras que adicionamos ao comando. Dizer: "Ei, Docker Compose, por favor, reconstrua isto também antes de iniciar." Tudo bem. E uma coisa que eu notei quando era mais novo no uso do terminal, é que não estamos vendo o símbolo inicial usual que indica "Ok, vá em frente e digite um comando". E o motivo é que isso ainda está em funcionamento. Então, se
+
+quisermos digitar qualquer outra coisa, na verdade vamos usar outro terminal. Então, eu vou... Ops, com licença. Vou
+
+fazer isso agora mesmo porque vou apresentar nosso endpoint. Um segundo, estou tentando administrar algumas janelas do Zoom simultaneamente. Tudo bem. Então, vou clicar no botão de mais, e você pode ver na lateral, à direita, que teremos um novo terminal bash, mas o antigo ainda estará em execução. Ainda está funcionando.
+
+Então, essa é uma forma de executar várias coisas ao mesmo tempo. E vamos usar um comando curl. E o comando curl irá navegar até a URL da nossa máquina, acessando o endpoint de saúde, pois tudo isso está conectado ao nosso arquivo main.py. Portanto, se tudo estiver funcionando como deveria, devemos ver o status "ok" ao navegar até este ponto de extremidade.
+
+E podemos ver, sim, estamos vendo o status corretamente. Então, sabemos que nosso comando `docker compose up` está funcionando porque, quando o executamos, vemos isso. Excelente. Então, vamos fazer algumas alterações agora porque precisamos preparar nossa aplicação para ser implantada na internet. E para fazer isso, vou encerrar o programa pressionando Ctrl+C.
+
+Isso leva um minuto no meu computador.
+
+Pronto. Então, podemos ver que está parando, parando, parando, parando, e finalmente voltamos a um terminal de entrada de comando normal aqui embaixo. E o que eu acho muito interessante nisso é que todo esse código é escrito em [linguagem de programação/linguagem de programação], e para passar de um aplicativo local para a internet, basicamente só precisamos alterar duas linhas de código. É muito simples. É uma loucura. A primeira é
+
+esta linha de código. Onde precisaremos mudar do que é chamado de forma exata ou forma exata para forma de shell. Agora você sabe por que é necessário fazer essa mudança?
+
+Eu diria que existem muitas maneiras de alcançar o que queremos fazer.
+
+Em alguns casos, podemos usar não apenas um comando, mas sim um ponto de entrada. Isso tornará nosso Dockerfile um pouco mais idiomático, mas talvez um pouco mais complexo. Essa seria a nossa maneira de dizer que este contêiner é este comando. Se usarmos o seu programa. Outra opção seria não mudar do formato exato para o formato de shell, mas usar um script de shell para iniciar o programa.
+
+Mas [limpa a garganta] isso exigiria que criássemos um arquivo totalmente novo e escrevêssemos esse novo arquivo em linguagem batch. Queremos manter as coisas simples. Assim, no caso do shell, usamos esse recurso quando queremos expandir variáveis ​​de ambiente, usar operadores do shell ou executar vários comandos do shell simultaneamente. Eu diria que, de modo geral, este formato atual é um pouco mais padronizado na indústria do que o anterior. Mas estamos usando isso para simplificar nossa configuração e para não precisar editar o arquivo YAML do Docker Compose.
+
+Porque queremos usar a porta e mapeá-la para o número correspondente. Sim, acho que no projeto guiado, a explicação que damos é que, ao prepararmos isso para implantação no Render e no Railway, essas duas ferramentas em particular podem estar procurando por portas diferentes. Certo. Isso ocorre porque o Render e o Railway não estão analisando o Docker Compose, mas sim o Dockerfile em si. Certo.
+
+Então, outra maneira de contornar isso, desculpe, também podemos usar a porta de ambiente e fornecer essas informações separadamente do comando para executá-lo. Mas essa é uma maneira muito fácil de manter tudo simples, fácil de ler e fácil de entender. Sim, isso significa que o porto pode ser flexível. Pode ser variável em vez de ser fixado em 8.000, certo?
+
+Então. Exatamente. Então, vou excluir nossa linha de formulário antiga e salvar para que o ponto branco desapareça. E como fizemos uma alteração, em instantes terei que reconstruir a pilha de composição. Então, mencionei que havia duas linhas de código que precisávamos atualizar.
+
+Essa era a linha do Dockerfile que precisávamos atualizar, e a outra linha está, na verdade, no nosso arquivo main.py. Neste momento, existe uma importação do nosso arquivo Python de banco de dados que importa a inicialização do banco de dados. Mas, como vamos trabalhar com as ferramentas de plataforma como serviço, Render e Railway, e elas podem lidar com conexões de banco de dados de maneira um pouco diferente, queremos ser cuidadosos na forma como abordamos nosso banco de dados. E, para sermos elegantes, vamos usar algumas exceções.
+
+Então, vou envolver a função init_db em um bloco try-except. Assim . Então, vamos tentar inicializar o banco de dados e torcer para que ele faça o que queremos. Mas, se não funcionar, não queremos que todo o programa profissional fracasse, porque, especialmente nesta fase inicial de implantação, o que mais queremos é que o programa seja implementado. Podemos ajustar o banco de dados posteriormente, se necessário.
+
+Portanto, se isso não funcionar, teremos uma exceção e registraremos um aviso informando que o banco de dados está indisponível, continuando sem ele. E acho que provavelmente veremos esse aviso em ação. Se seguirmos os mesmos passos dos meus testes do início da semana. Muito bem, vou executar novamente o comando `docker compose up build`. Digitar.
+
+Ah, mas esqueci de salvar. Vou ter que fazer isso de novo. Não tem problema .
+
+Certo, vou ter que usar Ctrl+ C e reconstruir tudo porque esqueci de salvar o arquivo principal. Arquivo pi. Só quero garantir que tudo esteja 100% pronto para começar.
+
+Pronto. Parando e executando mais uma vez a compilação . Fantástico. E mais uma vez, vamos executar nosso comando curl apenas para garantir que nosso endpoint de saúde esteja online. E podemos ver que o status está normal. Portanto,
+
+sabemos que tudo continua funcionando como desejamos. Agora, estamos nos preparando para pegar nosso aplicativo local e colocá-lo na internet. E vamos dar um passo intermediário usando uma ferramenta chamada ngrok. Essa é a letra N. Eu só vou tentar entender o N com um N assim.
+
+Uma ferramenta que era nova para mim. E você precisará baixar o ngrok e criar uma conta, entre outras coisas. E você precisará adicionar seu token de autenticação. Agora, vou verificar rapidamente se está configurado corretamente na minha máquina.
+
+OK. E você pode ver que tenho uma configuração válida armazenada na minha máquina, então está tudo pronto. Se você estiver acompanhando de casa, precisará seguir alguns passos. Acesse ngrok. Vamos fazer login, nos cadastrar e baixar as ferramentas necessárias.
+
+E então, você estará pronto para o "I met" assim que tiver essa saída de um comando. Vamos ver o que é ngrok ngrok. Então, vou abrir um novo terminal só para manter tudo organizado. E usando o comando ngrok http 8000 você pode ver um monte de coisas aqui. E você pode ver o status da sessão. Você
+
+pode ver a conta, ela está em " Minha conta" gratuitamente. E nós vamos ter aqui uma espécie de porta de encaminhamento. Então, vou seguir o nosso link. E abra isso.
+
+OK. Agora, o texto está bem pequeno no canto superior esquerdo. E, na verdade, vou ampliar isso por um instante. Então, como você pode ver, isto é um URL. Estou usando o Google Chrome neste momento.
+
+E não encontramos nenhum detalhe. À primeira vista, a reação instintiva pode ser: "Espere, não é isso que queremos". Mas está faltando alguma coisa. Não encontramos o ponto final. Então, vou acessar o endpoint de saúde.
+
+E, relembrando o código do nosso arquivo main.py, vemos que o status está correto. Então, agora estamos praticamente dentro de um túnel. Então, Anna, você pode explicar o que está acontecendo aqui? O que é ngrok? Por que essa é uma etapa intermediária interessante
+
+para entrar na internet? Antes disso, eu diria que a etapa anterior foi exatamente o que queríamos ver. Este aqui? Não, o único detalhe que não foi encontrado. Vamos fazer um teste.
+
+Ah. Vamos substituir "casa" por qualquer tipo de palavra sem sentido. Qualquer tipo de palavra sem sentido? Qualquer tipo de balbucio. Tudo bem.
+
+E estamos vendo o mesmo [limpa a garganta] detalhe que não foi encontrado. Por que? Porque o nosso servidor web de API rápida está online e em funcionamento. Ele processa nossa solicitação e diz: "Não consigo associar essa string a nada que tenhamos no arquivo main.py."
+
+E é por isso que responde de forma muito elegante com um erro padrão 404 (detalhes não encontrados) . Então, se tivéssemos, por exemplo, um texto sem sentido em vez de "casa" aqui, ele responderia com o status "ok". Certo. OK. OK.
+
+Então, minha pergunta é: o ngrok não é o nosso objetivo final neste webinar. Vamos para a Render e a Railway. Então, por que é uma boa etapa intermediária? É um grande passo ver que suas solicitações web estão funcionando bem e sendo processadas corretamente. É muito legal poder configurar e executar em segundos e compartilhar com alguém se você quiser uma demonstração rápida, mas não quiser se preocupar em implantar algo em algum lugar.
+
+Então, no desenvolvimento real de aplicações de IA e qualquer tipo de aplicação, essa é uma ferramenta que você precisaria usar com muita frequência, pois ela existe há décadas, bem, mais de uma década com certeza, com um único propósito: conectar sua aplicação local a serviços de terceiros usando webhooks. E um webhook é essencialmente uma forma de um serviço de terceiros se comunicar com seu aplicativo e informar que algo foi feito. Por exemplo, podemos falar de uma loja online. Ao comprar algo, se você não estiver inserindo os dados do seu cartão , mas usando o PayPal ou outro serviço que o redirecione para a página do seu banco, como a loja saberá que você de fato pagou e que precisa processar seu pedido? por meio de um webhook, porque seu banco, PayPal ou algo semelhante envia uma solicitação para aquela loja e diz: "Ei, este usuário específico pagou este valor nesta solicitação específica . Está tudo certo. Você pode
+
+prosseguir." E se você estiver trabalhando localmente e quiser desenvolver algo, precisará fornecer um URL público para essa loja. E implantar sua aplicação não é prático porque você não pode trabalhar nela em tempo real. Isso exigiria que você implantasse algo, testasse, verificasse os registros, trabalhasse localmente novamente e reimplantasse. É uma enorme perda de tempo.
+
+Essa é a ideia principal. Portanto, o ngrok pode ajudar nesse tipo de iteração rápida. O ngrok essencialmente fornece um túnel direto para sua máquina. Tudo bem. Bem , se eu estivesse... talvez não neste
+
+endpoint específico, mas se eu compartilhasse isso com pessoas fora do meu computador, qualquer um poderia acessar. Todos, mesmo que você passe isso para um chat, podem abrir e visitar, e funcionaria. Bem, vamos tentar isso. Vou te direcionar para o nosso endpoint de saúde para que você possa ver a mensagem de status "OK". E, caso não esteja claro, eu não escolhi este URL.
+
+Isso foi gerado aleatoriamente pelo ngrok quando eu criei. Mas sim, parece que sim. Muito mais fofo agora. Soa muito mais fofo porque antes eram apenas cinco caracteres gerados aleatoriamente, como personagens. Foi muito difícil de memorizar.
+
+Enquanto palavras aleatórias são mais fáceis de lembrar, sim. Muito bem, essa foi nossa primeira experiência. E Mustafa diz: "Legal, funciona." Sim, não é incrível? Com basicamente uma linha de código e algumas alterações nos nossos arquivos, qualquer pessoa pode acessar isso, certo?
+
+Muito bem, então o que vamos fazer agora é sair do ambiente do VS Code na maior parte do tempo e falar sobre como dar o próximo passo, porque já vimos o ngrok, já vimos o túnel, mas ele ainda é um pouco instável. Então agora vamos falar sobre PaaS ou plataforma como serviço, porque se eu desativar meu contêiner aqui, posso demonstrar isso. Então, mais uma vez, estou pressionando Ctrl+C para que o contêiner seja interrompido. E acredito que, se eu atualizar esta página, agora estamos recebendo um erro do ngrok. E você também pode conferir isso clicando novamente no link ou atualizando a página, caso já tenha clicado.
+
+Você será redirecionado para uma página como esta, porque o Docker Compose não está mais em execução, certo? Então, como conseguimos criar algo que persiste? E é aí que vamos falar sobre Render e Railway. Portanto, no caso do Render, você também precisará criar uma conta. O Render tem um plano gratuito muito bom, que é o que estou usando hoje.
+
+E a versão gratuita é completamente gratuita em troca de uma quantidade considerável de trabalho. A única desvantagem do Render que encontrei é que, no plano gratuito, os aplicativos podem ser encerrados se não estiverem em uso e levam um minuto para reiniciar. Portanto, se você não quiser esse tempo de inicialização, terá que pagar por ele. Mas é assim que o Render fica depois que você se inscreve. E vamos criar um novo projeto. Na verdade, é uma medida provisória rápida.
+
+Render e Railway são os mais fáceis de usar se estiverem integrados ao GitHub. Portanto, todo o código de que estávamos falando está, na verdade, em um repositório do GitHub. E esse é um trabalho que eu tive que configurar antes de começar a renderizar. Mas, depois de ter seu repositório no GitHub funcionando, criar um serviço web é muito simples . Então, se clicarmos em "Criar serviço web", eis o porquê de ser tão simples: você pode ver que ele está conectado a um repositório do GitHub.
+
+Ou podemos instruí-lo a se conectar a esse repositório do GitHub. E depois tem todo o código no back- end. Podemos dar um nome a isso. Basta chamar de demonstração, algo assim. E para o idioma, veja aqui onde está escrito Docker.
+
+Lembra quando estávamos falando sobre o nosso Dockerfile no VS Code? Então, é nisso que o Render se baseia . Está lendo aquele Dockerfile. E temos mais um pouco de configuração aqui. Você pode ver o tipo de instância para projetos de hobby; o nível gratuito é muito bom, mas informa que será desativado após um período de inatividade.
+
+Bem, não vou demonstrar isso ao vivo de forma direta devido à seção de variáveis ​​de ambiente. Como estamos, na verdade, consultando a API OpenAI para otimizar nosso prompt, isso envolve uma chave de API que tem um custo associado. E [bufa] claro, eu poderia atualizar minha chave depois do webinar. Apenas para seguir algumas boas práticas de segurança, não vou fazer isso, e em vez disso, já configurei um projeto seguindo etapas semelhantes. Ah, claro, Anna. Considerando
+
+as melhores práticas de segurança, vamos voltar rapidamente ao VS Code por um instante. Claro. Não vamos abri-lo, mas existe um arquivo .env que também possui a mesma chave OpenAI. E se você abrir a pasta Git Ignorado, poderá ver que temos um arquivo .env
+
+incluído nessa pasta. É uma prática de segurança extremamente importante garantir que, ao preparar seu repositório, você não esteja enviando dados confidenciais para ele. E é por isso que você tem um exemplo de arquivo .env que mostra a todos que usam seu repositório qual seria o formato desse arquivo .env.
+
+Sim, um ponto muito importante. Ah, fico feliz que você tenha mencionado isso, porque sim, eu disse que vamos colocar isso no GitHub. Note que mesmo no VS Code, o arquivo .M fica meio acinzentado, e o motivo disso é que ele está especificado no arquivo git.gitignore ou git.gitignore para não ser
+
+incluído no repositório. Assim, suas chaves de API privadas permanecem privadas. Bem, o modo como o Render funciona com chaves de API é que ele não lê nativamente o arquivo .M. E, em vez disso, você especifica isso no " Deixe-me ver onde está".
+
+Você especifica isso no próprio serviço. Agora, podemos analisar alguns desses pontos. Então, como você pode ver, já temos o nome do serviço web. Temos a versão gratuita ou a instância gratuita. Está lendo do mesmo repositório.
+
+Bem, precisei especificar um diretório raiz para o meu repositório porque, se olharmos rapidamente para o VS Code, veremos que tudo está dentro dessa pasta . Então, eu precisei especificar que era ali que o Render deveria procurar, pois tudo estava dentro daquele subdiretório. E especifique também qual é o caminho do Dockerfile. Certo, o que estou tentando encontrar aqui são as variáveis ​​de ambiente. Gerenciar o ambiente.
+
+À esquerda. Obrigado. Obrigado. [Suspira] Muito bem, aqui estamos. Então, antes deste webinar, configurei as variáveis ​​de ambiente e vocês podem ver que defini a chave como minha chave da API OpenAI e o valor está criptografado aqui para privacidade.
+
+Mas o Render consegue ler isso, entende o que esse valor significa e pode usá-lo nos arquivos que precisam dele. Parece também que poderemos carregar nosso arquivo .env diretamente para arquivos secretos. [bufa] Sim. Hum, eu não explorei isso porque, na época em que elaborei este projeto, essa ferramenta era um pouco instável. Não sei se houve alguma
+
+melhora. Hum, mas um bom próximo passo para este projeto poderia ser experimentar isso. Sim, imagino que seja muito provável que seja confiável, mas eles estão colocando isso em "Segredos ETC" e depois em "Nome do arquivo". Portanto, seriam necessárias algumas modificações adicionais em nossos projetos, como obter variáveis ​​de ambiente a partir dessa chave e talvez acabar criando um script shell para obter todos os dados antes de iniciar o aplicativo. Sim, então são duas maneiras diferentes de chegar à mesma conclusão.
+
+Você diria que é uma questão de preferência pessoal ou que uma prática é melhor que a outra? É uma questão de preferência totalmente pessoal, basicamente. Normalmente, você simplesmente se adapta ao que cada provedor lhe oferece para controlar. Sim, faz sentido. O mais incrível é que, depois de tudo isso configurado, você pode implantar.
+
+E então você tem um URL. Esta é a versão gratuita. Como você pode ver, eu ainda não acessei este endpoint ou este URL hoje, então está demorando um pouco para carregar. Mas aí eu posso compartilhar esse link no chat.
+
+E assim que o aplicativo estiver online, poderemos ver as mesmas coisas que vimos no túnel ngrok, mas com a diferença de que, lembre-se, não temos o Docker Compose instalado no momento. Portanto, isso está sendo executado de forma completamente independente da nossa máquina. Então, se atingirmos esse ponto final de saúde, agora veremos a mensagem de status "ok". Portanto, esta é oficialmente uma forma pública e em funcionamento de acessar nosso otimizador, nosso aplicativo de otimização de prompts . E é assim que se usa o Render.
+
+Terminamos. Uh com- concluído. [risos] [suspiros] Bem, considerando o nosso tempo, acho que vou tomar a decisão de não demonstrar o Railway na íntegra, porque quero mostrar o "e daí?". Por que estamos criando uma URL que qualquer um pode acessar?
+
+E Railway, esta é uma demonstração rápida de como é o Railway. Fluxo de trabalho muito semelhante, embora eu admita que o Railway tenha uma opção gratuita menos flexível. Você só tem um período de teste gratuito de 30 dias no Railway, e depois disso eles meio que te obrigam a pagar. Mas se você quiser experimentar para ganhar experiência, basta clicar em "Novo" e conectar-se ao seu repositório do GitHub. Eu já configurei o meu aqui.
+
+E então, a construção está
+
+demorando um pouco mais do que eu imaginava. Certo, e está falhando, e há alguns motivos para isso. E podemos ver que existem alguns registros que irão ajudá-lo a depurar o problema. O motivo da falha é o mesmo pelo qual precisei especificar o subdiretório no Render: ele está procurando no nível do repositório principal e nós tivemos que especificar um subdiretório aqui. Portanto, ainda é preciso fazer alguns ajustes no Railway.
+
+Acesse as configurações e altere tudo isso. Mas o que eu gostaria de fazer muito rapidamente é compartilhar o link com vocês. Este endpoint foi configurado com sucesso. Mas com o Railway, a maior diferença que encontrei foi que você precisa criar seu domínio manualmente. E na seção de rede das configurações, você pode gerar um domínio.
+
+E agora, se eu copiar isso para você no chat, você poderá acessar. Da mesma forma que Renderizar. Embora, por algum motivo, eles não incluam automaticamente a seção HTTP P S, você precisa dela. E então, mais uma vez, podemos acessar nosso ponto final de saúde.
+
+Sim, eu não sei por que isso não está incluído nativamente. Pronto. Geralmente, você não precisa disso para navegadores, porque se você simplesmente copiar e colar essa sequência de caracteres, o navegador reconhecerá que se trata de um site válido. Não sei por que meu computador está apresentando problemas hoje. primeiro.
+
+Sim, parece que agora as coisas se resolveram. E voltando ao nosso endpoint de saúde, podemos ver que o status está normal. Portanto, se você quiser usar esse link, poderá fazê-lo . Mas e daí? Então, o que eu quero fazer agora é mostrar um arquivo de demonstração rápido.
+
+E esse arquivo de demonstração foi originalmente retirado da nossa lição sobre API rápida. E você pode ver que está usando a biblioteca requests para enviar uma solicitação ao endpoint optimize. Mas esta versão utilizava apenas o URL local. E então, um pequeno teste rápido onde nossa proposta inicial é escrever sobre cachorros, e depois dizemos qual é o objetivo. Mas vamos modificar isso para que não aponte para uma máquina local, mas sim para nossos domínios de renderização e de infraestrutura . Então,
+
+vamos lá e colocamos isso aqui. Agora, vou precisar atualizar meu aplicativo Railway, pois isso foi durante meus testes de ontem. Insira aqui o nosso novo URL. Substitua isso aqui. Assim, o código era idêntico ao código da API rápida, exceto que agora o estávamos apontando para uma URL que qualquer pessoa podia acessar. Então,
+
+se você escrevesse esse código na sua máquina agora mesmo, você poderia realmente pingar os URLs que eu criei com Render e Railway. Portanto, isto é acessível a qualquer pessoa. Basicamente, o que estou fazendo é enviar as solicitações e depois imprimir as respostas. Vamos então ver o resultado deste código. Oh.
+
+E então vou digitar `python demo.py` para executar o arquivo. Ah, estou no diretório errado. Será que sou mesmo ? Sim eu sou.
+
+Ok, vamos tentar novamente. python demo.py E isso vai levar um minuto porque está acessando esses URLs, consultando a API OpenAI, obtendo as informações da API OpenAI e, em seguida, nos enviando-as de volta. E podemos ver aqui que, no Render, tivemos uma resposta positiva e podemos ver que nossa proposta original era escrever sobre cachorros e, em seguida, nossa proposta otimizada é escrever uma interação envolvente para uma postagem de blog sobre cachorros que capture a atenção do leitor, inclua fatos interessantes, emoções, etc. E também podemos ver o que o LLM fez para otimizar isso. Diz o seguinte: especifiquei o
+
+tipo de conteúdo e adicionei elementos para torná-lo atraente. E então recebemos outra resposta do nosso URL da ferrovia. Novamente, foi uma resposta bem-sucedida e, bem, uma solicitação otimizada ligeiramente diferente, simplesmente porque era outra chamada para o LLM e os LLMs são, você sabe, propensos a variações. E assim, esse foi o processo completo para tornar algo que estava em uma máquina local acessível ao mundo todo.
+
+Agora, Anna, já que você é nossa especialista em engenharia, se quiséssemos colocar isso ao vivo amanhã de verdade e gritar aos quatro ventos, compartilhar com o mundo, postar no Reddit, postar no Stack Overflow, sei lá, seja lá o que for . Qual seria a primeira coisa que você faria para reforçar a segurança, já que o mundo é um lugar enorme e, se algo é acessível publicamente, a segurança precisa ser uma preocupação, certo? Sim, quer dizer, tudo depende, né? Estamos usando um modelo pago ou estamos tendo sorte e temos um modelo gratuito auto-hospedado que não nos custa nada? Ou estamos usando algum serviço que oferece um plano gratuito e não nos importamos de continuar usando apenas esse plano?
+
+Se tivermos um plano gratuito, então não nos importamos muito se, de repente, nossa conta aumentar para um valor que não podemos mais pagar. Então, a segurança se resumiria principalmente a ficar dentro dos limites do plano gratuito, certo? Afinal, a instância que estamos obtendo requer apenas 0,1 CPU e 512 megabytes. É muito pequeno. Isso significa que esse tipo de servidor não suporta tantas pessoas ao mesmo tempo.
+
+Hum. [limpa a garganta] Então, nós iríamos introduzir alguns limites de taxa. E isso se aplica mesmo nos casos em que estamos pagando os preços da OpenAI. Assim, temos controle sobre exatamente o que estamos chamando, quais modelos estamos chamando e quais são as solicitações que estamos fazendo. Portanto, preferimos garantir que, por exemplo, as solicitações que enviamos não incluam e não tenham a chance de acionar nenhum tipo de chamada de ferramenta da OpenAI que possa nos custar mais dinheiro.
+
+Ou, às vezes, um comando pode acionar uma pesquisa na web para o OpenAI, e a pesquisa na web é construída separadamente. Então, teríamos que modificar as configurações da nossa conta OpenAI para desativar isso. Ou então, vamos aprimorar nosso endpoint otimizado e adicionar uma verificação rápida para garantir que ninguém esteja tentando abusar dele de alguma forma, como gastar tokens em excesso ou usá-lo com muita frequência. Neste momento, não nos importa se o banco de dados está em execução ou não. O que não é bom. Por que? Porque
+
+não sabemos como está sendo usado. Idealmente, em produção, garantiríamos que sim, estamos registrando todas essas solicitações e verificando periodicamente como tudo está funcionando. Se formos ainda mais longe, escreveremos um script automatizado que fará isso por nós, pois temos essa máquina funcionando 24 horas por dia, 7 dias por semana, o que significa que o script também pode ser executado de tempos em tempos. [limpa a garganta] E o script nos enviaria uma mensagem quando detectasse que, por exemplo, alguém está usando este endpoint, digamos, 100 vezes por minuto. E então teríamos a opção de simplesmente desligá-lo e reagir de acordo.
+
+Agora, se formos colocar em produção um aplicativo real que tenha uma finalidade concreta, então nos preocuparíamos com a escalabilidade, o que significa, essencialmente, se tivermos um pico de uso, se conseguiremos suportar todos que acessarem nosso serviço? E a plataforma como serviço oferece algum suporte para o aumento automatizado de recursos. Duvido que façam isso na versão gratuita. E aí você começa a ter essa espécie de avaliação sobre se faz sentido continuar pagando um valor premium por uma plataforma como serviço para não precisar configurar a infraestrutura por conta própria, ou se é melhor configurar uma instância pequena semelhante usando um provedor de nuvem como a AWS ou o Google Cloud e executá-la com maior controle, mas sempre exigindo um pouco mais de conhecimento. Mas, novamente, o que fizemos aqui, ao revisar todo esse conhecimento sobre Docker Compose, informações sobre o ambiente e até mesmo informações sobre redes, é que já estamos 85% prontos para fazer isso sem plataforma como serviço e usando um provedor de nuvem.
+
+Então, pelo que entendi, a plataforma como serviço (PaaS), os serviços de renderização e as ferrovias do mundo são uma espécie de meio-termo para disponibilizar conteúdo na web, mas de forma limitada em termos de escalabilidade. Então, provavelmente é bom para projetos de portfólio, bom para pequenas demonstrações, talvez startups muito pequenas possam começar com esse tipo de coisa, mas para qualquer coisa em escala, você sugeriria que a AWS ou o Google Cloud seriam mais adequados. Eu sugeriria AWS e Google Cloud apenas para experiência de aprendizado e, se você não precisar aprender ambos, pode escolher apenas um, e então é muito fácil migrar para essa escala. E sim, em uma escala muito grande, plataforma como serviço não faz sentido. No entanto, existem startups que nem são tão pequenas assim e que conseguem usar isso com sucesso simplesmente porque não têm especialistas, e para elas é mais barato pagar por essa hospedagem ou por esses recursos do que por um engenheiro gerenciando e executando essa infraestrutura .
+
+Faz sentido. É mais ou menos isso. Uma escolha entre uma coisa ou outra. E eu diria que, atualmente, eles exigem um pouco mais de conhecimento e experiência em comparação com o início das plataformas como serviço. Talvez você já tenha ouvido falar do Heroku.
+
+Onde você simplesmente executa o comando `git push Heroku main` e ele está funcionando dessa forma . Você não entende absolutamente nada de infraestrutura. Você nem sequer conhece o Docker. Então, considerando o tipo de conhecimento necessário para usar o Railway ou o Render, sim, eu recomendaria pelo menos dar uma olhada na AWS ou no Google Cloud. Sim, essa é a minha experiência pessoal de iniciante com essas ferramentas, sabe, de acesso público a elas. Descobri
+
+que o Render e o Railway eram muito mais fáceis de começar a usar, porque, pelo menos na minha experiência, o AWS envolve muitos cliques e navegação, enquanto o Render tem uma interface um pouco mais direta. Mas acho que para os nossos telespectadores, para o nosso público, vale a pena experimentar ambas as opções. Experimente ambos. Quero dizer, ambos são usados ​​no mundo real e irão aprimorar sua capacidade de falar sobre eles em entrevistas e conversas profissionais. Sim, e indo direto ao ponto, você não precisa ficar clicando e navegando por todo esse processo para fazer tudo certo.
+
+Uma plataforma básica de execução pode ser apenas uma máquina virtual onde você repete literalmente os mesmos passos que executaria localmente. Execute o comando ` docker compose up` e ele estará funcionando 24 horas por dia, 7 dias por semana.
+
+Tudo bem. Fazendo uma pequena pausa porque, olhando para o nosso tempo, já o ultrapassamos. Bem, nós experimentamos um novo formato com este webinar e acho que o nosso horário precisa [risos] refletir isso. Mas, se precisar se ausentar, quero respeitar seu tempo e agradecer por ter participado conosco. Estou muito feliz por todos vocês estarem conosco hoje. Vamos
+
+dedicar mais alguns minutos para finalizar e responder a quaisquer perguntas que ainda possam ter ficado. Temos pelo menos um ponto importante a reconhecer em relação à nossa plataforma como serviço. URLs neste momento. Sim , sim, sim. Então vamos a isso. Então, uma
+
+coisa a observar é que eu mostrei isso muito brevemente em nosso código e estava falando sobre se isso não vai lhe custar nada e você tem a possibilidade de deixar esses URLs ativos, ótimo. Mas o meu otimizador específico é baseado no GPT-4O Mini, que não é um modelo gratuito. E como não é um modelo gratuito, basicamente qualquer pessoa que tenha acesso aos URLs pode debitar da minha conta da OpenAI. Por isso, quero ter o máximo cuidado para não deixar isso exposto ao mundo inteiro para sempre. Então, vou desativar o serviço e fazer uma limpeza geral. Então, no Render, o que isso
+
+significa é que vou suspender o serviço. E, frequentemente, com essas plataformas como serviço ou AWS, GCP, ou qualquer outra, sempre que você quer fazer algo que altere permanentemente a experiência do usuário, eles te obrigam a digitar algo.
+
+Eles fazem com que pareça muito real, reproduzindo a sintaxe dos serviços web do Linux . [risos] E agora isto está suspenso. Se acessarmos a URL de renderização e a executarmos novamente. Podemos ver que o serviço foi suspenso pelo proprietário. Isso significa que não haverá cobranças fantasmas na minha conta OpenAI. Bem, para ferrovias, o
+
+fluxo de trabalho é um pouco diferente, onde você não pode suspender, mas pode excluir o serviço acessando a seção de perigo. Basta excluir o serviço. Mas se você não quiser excluir tudo, descobri que você pode simplesmente remover a rede pública. Então, vou apagar o meu URL. E agora não há nenhuma maneira de o público acessar esse serviço. Da
+
+mesma forma, se acessarmos o meu link da ferrovia aqui e atualizarmos a página. Podemos ver que não foi mais encontrado. Portanto, é muito importante limpar isso. E agora, gostaria de deixar vocês com algumas sugestões para os próximos passos. Anna falou sobre algumas coisas que faria para deixar isso pronto para o público a longo prazo.
+
+Algumas coisas que você poderia fazer para transformar isso em uma peça para o seu portfólio. Bem, falamos brevemente sobre a conexão com o banco de dados , mas não nos aprofundamos muito porque pode ser um pouco mais complexo, mas vamos adicionar esse banco de dados. As conexões pós-grama estão lá. Eles só precisam ser conectados. E possivelmente será necessário realizar alguns procedimentos de resolução de problemas.
+
+Outra coisa que você poderia fazer é adicionar um endpoint de histórico. Então, temos nosso endpoint de saúde e temos nosso endpoint otimizado. Você poderia adicionar outra solicitação FastAPI uh get com um endpoint de histórico que mostre os registros do que foi otimizado recentemente. É bem provável que você queira analisar isso com algum tipo de segurança. Você pode configurar implantações automáticas e adicionar autenticação, pois, se estiver usando um modelo LLM pago, adicionar autenticação à sua API garante que apenas usuários verificados possam usá- la.
+
+Muito bem, podemos ficar mais alguns minutos para quaisquer perguntas. Neste momento , a caixa de perguntas e respostas está vazia. Portanto, se você tiver alguma pergunta para mim ou para Anna P, fique à vontade para perguntar. E enquanto você digita suas perguntas, aqui vai mais um convite à ação. Por favor, responda à pesquisa de feedback que nosso colega está compartilhando no chat, especialmente porque este foi um formato novo para o nosso webinar, no qual tivemos nossos co-apresentadores.
+
+Então, nos diga o que achou, o que podemos fazer para melhorar e sugira tópicos que gostaria de ver em futuros Project Labs, porque eu sempre leio tudo e tento ajustar ao que as pessoas querem. Tudo bem. Enquanto as pessoas digitam perguntas e preenchem questionários de feedback, Annie Anna, alguma última palavra que você queira compartilhar sobre os próximos passos, ou alguma consideração? Quer dizer, a autenticação pode ser um assunto bastante complexo para se explorar, porque podemos fazer isso de muitas maneiras diferentes. Você pode usar autenticação básica, por exemplo, se não quiser que outras pessoas vejam o histórico do seu endpoint porque não quer que elas saibam como sua plataforma é usada. Então, você configuraria
+
+uma autenticação para você, onde você teria as credenciais de usuário administrador. Da mesma forma que na etapa anterior, para a autenticação, digamos que você pode adicionar não apenas chaves de API, mas também um formulário de login onde os usuários criarão uma conta e a associarão aos seus endereços de e-mail ou algo semelhante. A implantação automática é provavelmente o aspecto mais desafiador de todas as quatro próximas etapas. Porque isso depende muito do tipo de ferramentas que você vai usar para isso. O passo mais fácil provavelmente seria explorar as ações do GitHub.
+
+Ou algum outro serviço de terceiros que possa configurar isso de uma maneira um pouco mais amigável. Vale a pena também verificar se o Railway ou o Render têm integração com pull requests, pois algumas dessas plataformas fornecem uma pré-visualização da sua configuração com base nas alterações que você está fazendo no pull request. Isso pode ser muito conveniente. Sim, eu sei que quando estava explorando o Render, havia opções para fazer coisas como implantação automática em commits e coisas do tipo. Portanto, acredito que existam maneiras muito tranquilas de fazer isso acontecer. Bem, pelo que
+
+vi no chat, Frank respondeu com um erro 404 (página não encontrada), o que é esperado neste momento, já que desativei os URLs públicos. Portanto, se você quiser acessar os recursos de otimização agora, precisará implantar seu próprio URL e configurá-lo dessa forma, o que eu recomendo fortemente que você faça através dos links do curso e do projeto que meu colega compartilhou no chat. Muito bem, acho que é tudo por hoje. Então, Anip, muito obrigado por participar. Sua experiência é sempre muito esclarecedora e sei que aprendo muito com você.
+
+Espero que o nosso público também tenha gostado. Obrigado por me receberem. Claro, claro. E a todos os nossos espectadores que ficaram um pouco mais de tempo conosco hoje, muito obrigado, e teremos outro webinar em algumas semanas. Portanto, fiquem ligados. Fiquem atentos aos seus e-mails e
+
+esperamos ver todos vocês na próxima vez. Tchau, pessoal.
