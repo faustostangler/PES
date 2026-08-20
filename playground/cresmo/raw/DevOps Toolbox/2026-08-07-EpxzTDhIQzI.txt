@@ -1,0 +1,104 @@
+---
+video_title: "I Found The END GAME of Homelab Tunnels"
+video_id: EpxzTDhIQzI
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EpxzTDhIQzI
+video_date: 2026-08-07T15:30:35+00:00
+video_description: |
+  Neon is the backend for apps and agents: https://get.neon.com/FOx477z
+  ---
+  
+  I've probably tried close to 5 different options for access to my homelab services. Whether public or private, SaaS or self-hosted, everything ended up falling short. 
+  Pangolin is different.
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Quando se trata de acesso privado, queremos tudo, certo? Utilize ferramentas de código aberto em vez de pagar assinaturas mensais. Eles podem ficar em casa conosco, com acesso remoto, mas também queremos que seja seguro. Além de seguro, precisa ser simples e sem complicações. Então, você pode usar o Tailscale do seu jeito ou criar um túnel do Cloudflare, mas alguns de nós também queremos hospedar os servidores intermediários , certo? Já fiz isso com o
+
+Headscale, a alternativa ao Tailscale, e depois com o NetBird, que prometia ser meu proxy, firewall e DNS. Mas, independentemente do que eu tentasse, sempre acabava em desvantagem. A falta de funcionalidades, a instabilidade e a falta de suporte para dispositivos móveis sempre acabavam estragando minha experiência. Até que encontrei outra coisa. Uma solução que responde a todas as perguntas acima, mas que, na verdade, cumpre o que promete em todas as frentes. Isso permite que
+
+você acesse recursos privados por meio de um DNS privado, mesmo que esteja no meio do mar. Não quer ter que abrir um aplicativo toda vez que acessar o recurso? Você pode configurá-lo como público e obter um servidor externo para protegê-lo, tudo gerenciado para você. Ainda não está convencido? Na semana passada, a Brave perguntou: "Qual é o melhor motivo para usar uma VPN?" E isso foi retuitado com
+
+um comentário engraçado que ofendeu muitas pessoas, sem contexto algum. Não pretendo entrar nesse debate de forma alguma. Fiquem à vontade para comentar , mas o importante é que, seja qual for a sua escolha, a Pangolin tem o que você precisa. É seguro, protegido por um túnel, controlado e até escrito numa linguagem que fará metade de vocês fechar a aba agora mesmo, enquanto a outra metade acaba de se conectar. Ah, sim. E é de
+
+código aberto, em todas as suas camadas, incluindo a opção SaaS. Totalmente aberto, sem portões. No mínimo, isso já é um motivo suficiente para demonstrarmos nosso apreço por este projeto. Vamos lá. O
+
+pangolim é um mamífero coberto de escamas que pode atingir 1 m de comprimento. Espera, o quê? Era isso que eu estava procurando. A plataforma de acesso remoto completa. Não é algo que você já não tenha visto antes, mas garanto um nível de serviço diferente, não apenas, mas especialmente para vocês, que hospedam seus próprios servidores. Ele oferece acesso de confiança zero
+
+baseado em WireGuard, algo que você já deve ter ouvido falar. Você obtém uma interface de usuário limpa, sobre a qual falaremos mais adiante, mas acho que o ponto de partida mais interessante é este diagrama de aparência terrível da arquitetura do sistema deles. Mas antes de prosseguirmos, alguns de vocês devem estar pensando em Headscale, NetBird, Cloudflare, Tailscale, TwinGate e assim por diante. A melhor maneira que já ouvi alguém expressar isso foi esta. O Pangolin é basicamente um sistema de túneis Cloudflare com TwinGate integrado, mas hospedado em servidor próprio. Ele oferece
+
+túneis de saída, eliminando a necessidade de encaminhamento de portas no roteador doméstico; um VPS público como ponto de entrada, o que facilita tudo; um proxy reverso, algo que até a NetBird prometia muito, mas ainda estava em seus estágios iniciais; certificados SSL; usuários, funções, permissões e, o melhor de tudo, autenticação para todos os aplicativos, independentemente do serviço. Há mais, mas isso já é suficiente para despertar o interesse de qualquer pessoa. Voltando à arquitetura, esta é a cena. Um usuário no navegador se conecta ao servidor Pangolin que executa o encaminhamento de solicitações de tráfego. A caixa maior na parte superior é o VPS público. A caixa inferior representa seu
+
+laboratório doméstico ou outro local privado. Quando alguém visita, por exemplo, dazzle.example.com, o Traffic recebe a solicitação, encerra o SSL, examina o nome do host e determina a qual recurso do Pangolin a solicitação pertence. Badger, mostrado dentro do Traffic, é um middleware desenvolvido pela equipe do Pangolin e atua como uma integração entre o Traffic e o sistema do Pangolin, uma espécie de intermediário . Gerbil, por outro lado, Deus
+
+abençoe esses nomes, Gerbil é como um portal para o WireGuard na parte de VPS . Assim como o Badger, ele foi desenvolvido pela mesma equipe e é de código aberto. Este é o seu facilitador do WireGuard. O Pangolin, por sua vez, é o principal responsável pela gestão e identidade visual, e veremos isso em ação através da sua interface de usuário daqui a pouco. Agora, essa é a parte legal. Veja como Gerbil leva a algo
+
+chamado Newt? Bem, além de ser mais um animal, um tipo de salamandra que eu nunca vi, e sim, você adivinhou, ele também está no GitHub. Este é o lado privado do túnel Pangolin WireGuard . A grande vantagem aqui, simbolizada pela seta bidirecional, é que o Newt inicia a conexão, de forma que você não precisa abrir nenhuma porta no seu roteador doméstico. Só para deixar claro, isso deve resolver o problema para as pessoas que estão por trás do CGNAT. Newt mantém o websocket
+
+aberto e Pangolin estabelece o túnel WireGuard através dessa conexão. Em seguida, os usuários externos se conectam ao VPS, que possui um IP público real. Então, para todos vocês, espectadores justificadamente irritados que não puderam usar o Headscale por esse motivo, esta é para vocês. O Pangolin é uma ótima maneira de acessar seu banco de dados com segurança, mas existe uma maneira ainda melhor. Neon é um backend para aplicativos e agentes. Crie o projeto, obtenha uma
+
+string de conexão e seu aplicativo usará os drivers e o ORM que você já conhece. Não preciso escolher um tamanho primeiro nem passar uma semana afinando um baixo que quase não é usado. Ele se adapta à carga de trabalho e, em seguida, pode voltar a zero quando ocioso. Essa é uma maneira sensata de administrar algo que fica tranquilo na maior parte do dia, mas que pode ter um pico repentino de tráfego mais tarde. Para mim, o recurso matador é o ramificação do banco de dados . Posso criar uma cópia isolada
+
+para testar uma migração, uma atualização ou simplesmente uma experiência arriscada. Se eu explodir, ótimo. É para isso que serve . A produção permanece intocada e, quando termino, simplesmente excluo a branch. Sem arquivos de snapshot manuais, sem bancos de dados de teste aleatórios chegando à produção, e todos nós já passamos por isso. O Neon oferece autenticação,
+
+armazenamento, funções e gateway de IA, caso você queira o backend completo. Mas eu gosto de poder usar apenas a parte do Postgres hoje e já me livrar disso. Link abaixo, agora de volta ao Pangolin. Ok, chega de teoria, espero que você esteja convencido(a) da importância de um VPS remoto. Como de costume, tudo começa com o curl e, em seguida, executamos a instalação com sudo. Você será guiado por
+
+uma série de perguntas em um assistente de instalação e, acredite, você pode usar a versão empresarial gratuitamente se for um usuário individual ou mesmo uma empresa com faturamento inferior a 100 mil dólares por ano. O que você realmente precisa, no entanto, é de um bom domínio para o seu VPS, para que você possa controlar o seu e-mail e, posteriormente, passar pelos desafios de certificação por meio do tráfego . Depois disso, basta seguir as instruções deles. Não sei bem como é possível criar túneis de conexão sem o Gerbil, ou por que isso sequer é uma opção, mas é claro que eu queria. Ah, e você pode escolher entre Docker ou Podman. Interessante.
+
+Enquanto a instalação está em andamento, vou concluir rapidamente meu tweet furioso sobre como a AWS tornou minha vida um inferno ao tentar lançar um VPS acessível publicamente na minha nova conta. Enfim, em alguns minutos , devemos estar prontos. Se você preparou seu domínio e o apontou para seu VPS, perfeito. Caso contrário, essa seria a hora. Um rápido comando `docker ps` mostrará que tanto o Traffic quanto o Gerbil e o Pangolin estão rodando no VPS. Os registros podem sugerir
+
+um problema com a geração do certificado, e isso foi culpa minha por ter registrado o domínio um pouco tarde demais. Assim que o domínio estiver configurado, basta reiniciar o tráfego rapidamente e pronto. O conjunto de ferramentas Pangolin DevOps está online, como o próprio nome indica. E pronto. Configuração inicial do Pangolin: defina o que for necessário até chegar aqui, ao painel de criação do site. Você
+
+verá que o Nginx é a maneira recomendada de começar, embora um WireGuard básico também seja opcional, mas naturalmente exigiria um NAT para funcionar. Meu cluster K3s em casa adoraria ter Nginx. A documentação oferece todas as configurações necessárias. Na parte inferior do painel de criação do site, você encontrará a combinação de ID e segredo para registrar o Nginx no Pangolin. E pronto. O Nginx do K3s está
+
+online. Hora de criar um serviço em túnel. O Dozzle, meu excelente serviço de registro de logs e tema de um ótimo vídeo no canal que você pode querer assistir mais tarde, aparece como meu registro de logs na lista de serviços do K3. Vou começar adicionando um recurso. Agora, você pode notar algo interessante. Os recursos podem ser
+
+privados ou públicos. Isso pode ser um pouco confuso, pois público não significa necessariamente aberto a todos. Significa que o recurso possui um acesso pela internet através do seu VPS Pangolin. E embora possa parecer arriscado, na verdade é muito incrível. Você obtém acesso direto ao seu recurso, sem necessidade de VPN ou qualquer outra conexão, mantendo a autenticação em primeiro lugar.
+
+Se você busca algo que permita acesso pelo navegador, ou se deseja que outras pessoas, como membros da família, acessem o Jellyfin, ou se você mesmo pode acessá-lo aleatoriamente de outras máquinas, opte pela versão pública. Eu ainda daria outro nome para isso no Pangolin, talvez algo como acesso global seguro. Enfim, o aspecto privado é, bem, o que você esperaria. Acesso privado através de um túnel. Portanto, não seria um service.mydomain.com,
+
+mas sim um nome de host privado. Mas isso é realmente incrível. Nunca funcionou para mim com outros sistemas. Vou mostrar tudo na prática em vez de descrever, mas é importante dizer que esta é a opção mais segura, com menor superfície de ataque, por assim dizer. Assim, seu cluster Kubernetes, logs, SSH, câmeras, bancos de dados, tudo isso passaria por um recurso privado. Vamos começar pelo
+
+primeiro. Vou criar uma opção pública e atribuir a ela o subdomínio que eu quiser, como por exemplo, "logs". Como temos o Newton em nosso cluster, podemos configurá-lo literalmente através do nome de serviço interno, usando logview.infra, que é o namespace do cluster ao qual ele pertence, e depois svc.cluster, que são sufixos de serviço padrão do Kubernetes . Crie-o, acesse
+
+logs.devopstoolbox.online no navegador e pronto, o Dozzle estará aqui. Bem, eu não gosto muito da ideia de deixar meus registros de navegação expostos publicamente para todos verem. Bem, não precisa se preocupar. Só estou conectado
+
+porque o navegador tem um cookie da minha autenticação Pangolin. A partir de outro navegador, acessarei o mesmo caminho e a autenticação será exigida pelo Pangolin antes que eu possa prosseguir. Autenticar, e lá vamos nós de novo. Se você acessar a aba de autenticação do serviço, podemos fazer várias coisas. Além de ativar e desativar a autenticação por completo, podemos adicionar outros métodos, como definir um código PIN ou uma senha. Não é a opção mais segura
+
+, mas, de novo, se for o Jellyfin que sua mãe está usando na TV, talvez seja melhor facilitar as coisas. Na próxima vez que formos lá, todas as opções predefinidas serão apresentadas. Digite e está tudo certo. Mas eu não gosto disso para os meus registros. Além disso, você provavelmente já percebeu que também não há autenticação multifator (MFA) aqui.
+
+Bem, felizmente, com a Pangolin não poderia ser mais fácil. Basta ligá-lo e definir sua senha de uso único com seu aplicativo favorito. A minha já está configurada, então na próxima vez que eu tentar fazer login, serei solicitado a fornecer um código de autenticação de dois fatores e funcionará perfeitamente. Só isso já muda tudo para mim. Ter a opção " Desativar com MFA" ativada para todos os serviços auto-hospedados facilita muito a minha vida . E isso antes mesmo de falarmos sobre
+
+túneis. Aquelas que estão em funcionamento são exibidas no painel de controle, na lista de acesso público baseado na web. Não tenho certeza do que há de errado com esse estado de saúde desconhecido. Teremos que resolver isso mais tarde. Agora, outro serviço ao qual eu gostaria de ter acesso é o meu sistema de CFTV residencial. E embora eu
+
+possa configurar outro serviço público, não tenho certeza se essa é a melhor maneira de fazer isso. Então, desative o serviço de CFTV, depois exclua-o completamente e vamos criar um recurso privado. Como seria de esperar, os recursos privados exigem que os usuários se conectem ao cliente Pangolin antes que qualquer tráfego possa fluir. Portanto, se escolhermos HTTP, teremos que usar um proxy reverso, assim como antes. Vamos usar a opção de host desta vez. Em vez de colocar o
+
+serviço atrás de um proxy reverso Pangolin, o cliente roteia o tráfego através do túnel privado para o Nute, que o encaminha diretamente para o destino no host. Não existe URL pública nem ponto de entrada acessível pela internet. Somente clientes Pangolin autenticados com permissão para acessar este recurso podem fazê- lo. E como estamos prestes a configurar um alias, o Pangolin também resolve esse nome de host privado para nós. Antes de experimentar o Pangolin, eu já havia feito isso com o AdGuard, um DNS auto-hospedado, o que criou uma nova série de problemas porque você precisa configurar um novo servidor DNS em todos os lugares.
+
+Então, eu criei minha própria solução com domínios públicos que resolvem para um endereço privado, o que funciona, mas se você conferir os comentários do vídeo, a maioria das pessoas odiou a ideia, e, francamente, eu não ligo. Sinceramente, eu entendo o porquê. Então, dê uma olhada no apelido da rede. frigate.internal é o que esperamos servir. Vamos ver se
+
+funciona conforme anunciado. Vamos salvar e agora está listado no painel e deve ser acessível diretamente através da sua porta . E para isso, meus amigos, vamos usar o celular, porque qual é o sentido de ter um túnel se não vamos acessar os serviços em movimento? Procure o aplicativo Pangolin na App Store, da Apple ou do Android, baixe e abra o aplicativo. Em uma interface muito mais amigável do que as alternativas, sugere o uso da nuvem ou da opção de hospedagem própria, e não assume simplesmente a primeira. Vou fornecer o
+
+endereço do meu VPS Pangolin, autenticar e pronto. Uma coisa importante é garantir que o seu aplicativo móvel tenha aliases habilitados, para que ele sobrescreva o DNS e utilize o alias de serviço que configuramos anteriormente. Acesse frigate.internal e sua porta, e veja só, temos a tela de login. E há algumas imagens de câmeras com linha do tempo da fragata, disponibilizadas por meio de um nome DNS local. Perfeito. Se
+
+encerrarmos a conexão com o Pangolin e voltarmos, atualizando rapidamente a página, o problema não será resolvido. Estamos bem. Há muitas coisas que você pode fazer com o sistema depois de configurar seus serviços. O primeiro ponto são os alertas, e aqui está o primeiro motivo pelo qual me arrependi de não ter usado a versão empresarial, embora pudesse obtê-la gratuitamente. Agora, se passarmos para a área de análise de dados, veja só isso. Já estou sendo
+
+bombardeado com pedidos. Acabamos de instalar isso há apenas 10 minutos e já está sendo detectado por scanners aleatórios. Além disso, você tem o gerenciamento de usuários e funções, o que permite definir e limitar o acesso, além de criar um provedor de identidade para autenticação SSO. De todas as funcionalidades que mais gosto é esta: a possibilidade de criar um link compartilhável para processos privados. Dá uma olhada nisso. Escolha um
+
+recurso; naturalmente, seriam apenas os públicos. Escolha um prazo de validade e outras configurações, se desejar, o que gerará um URL ou um código QR para compartilhar. Desde que seja válido, deve funcionar. Seu serviço pode ser acessado de qualquer lugar e você pode até limitar o uso de tokens. Copie o link e acesse um navegador sem autenticação, como o Chrome no meu caso, e lá estará o Dazzle. Não é
+
+necessária autenticação. Por fim, para configurar o programa também no meu computador, o Pangolin está disponível em todas as plataformas, incluindo macOS. Vou baixar o arquivo DMG, executá-lo e aprovar as configurações de privacidade necessárias, o que fará com que um pequeno pangolim apareça na sua barra de status. Faça login e, de forma semelhante à nossa configuração móvel, utilize nosso plano de controle auto-hospedado . Momento da verdade. Acesse o diretório
+
+interno do Traefik e a porta. Pronto, resolvido e concluído. Eu sempre gosto de terminar esses vídeos com uma opinião pessoal. A maioria das ferramentas que menciono aqui são muito úteis para mim e para outras pessoas, mas nem todas, provavelmente nem a maioria, permanecem comigo. Não é esse o caso aqui. O pangolim
+
+provou ser algo realmente incrível. É um proxy reverso, um servidor DNS, que cria um túnel, mas também permite expor o acesso com autenticação que pode ser facilmente integrada com MFA (autenticação multifator). É de código aberto, não apenas uma afirmação, mas em sua essência. Isso é coisa séria, você já viu, funciona mesmo. Já tentei todas as opções imagináveis ​​e acredito sinceramente que esta é a melhor, pelo menos até que alguém apresente outras provas. O pangolim e
+
+sua família de criaturinhas me marcaram, e como ele usa o Traefik como proxy, recomendo muito que você explore mais a fundo o que pode fazer com o Traefik neste vídeo a seguir. Obrigado por assistir. Te vejo na próxima .
