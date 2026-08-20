@@ -1,0 +1,365 @@
+---
+video_title: "Qwen3.8 27B: o novo REI dos modelos locais para CÓDIGO"
+video_id: zJ-TaC1FN-U
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zJ-TaC1FN-U
+video_date: 2026-08-14T23:44:12+00:00
+video_description: |
+  Qwen3.8-27B da Alibaba é multimodal e chegou para ser o novo rei da IA local. 
+  
+  Neste vídeo eu coloco o Qwen 3.8-27B para criar um site, um Flappy Bird, um Bomberman, um clone de Doom e também testo a capacidade de visão enviando um vídeo de um jogo para descobrir se o modelo consegue entender o gameplay e recriar.
+  
+  _______
+  
+  👉 Curso de IA para Devs - Aprenda a extrair o máximo de qualquer modelo de IA (inclusive os baratos que ninguém te ensinou a usar direito): https://aiprogbr.com/?sck=ytaiqwen3827b
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ OpenCode Go - https://opencode.ai/go?ref=AJ45M6N28N
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaCube 2: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr_50 para receber um desconto de $50.00
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⏵ ZimaBlade: https://shop.zimaspace.com/products/zimablade-single-board-server-for-cyber-native?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen3827b
+  
+  _______
+  
+  0:00 Intro
+  1:08 Quantizações
+  2:54 Benchmarks
+  7:13 Site
+  9:19 Flappy Bird
+  10:38 Bomberman
+  18:35 Doom
+  28:04 Jogo a partir de vídeo
+  36:33 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ TTS Studio: https://apps.apple.com/ca/app/ai-voice-generator-tts-studio/id6761985975
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Ei, o que você tá fazendo aí? >> Pô, o pessoal toda hora fala que eu não sei jogar Bomberman, que eu não sei jogar Bomberman, eu tô aqui treinando, pô. Ah!
+
+Talvez eles tenham razão.
+
+>> [música]
+
+[música] >> É isso, ele chegou, Queen Zito 3.8, versão de 27 bilhões de parâmetros. Seja muito bem-vindo, tá? Vamos fazer muitas coisas boas juntos. E para começar, vamos fazer uns joguinhos! Vai lá. É
+
+isso, ele, o mais aguardado, 3.8 de 27 bilhões de parâmetros. Esse modelo a gente consegue rodar localmente. Se você tiver uma placa de 24 GB, 32 GB, você consegue rodar a versão Q4 dele. Senão, você vai precisar rodar uma versão um pouco mais quantizada. Vamos
+
+lá pra tela pra gente dar uma olhada. A versão que a gente vai rodar hoje e que provavelmente eu vou indicar pra você rodar também, é a versão da Ansloth, o GGML, que tem diversas quantizações. Então, a gente tem desde 2 bits, eu não vou testar essa versão de 2 bits agora, mas eu tenho algumas placas aqui onde a gente poderia brincar com ela. Se você tiver interesse, me avisa que a gente pode rodar ela na Arc B50 ou na RTX 5060 Ti. Então, 2 bits vai caber nessas placas de 16 GB, mas 3 bits cabe também e provavelmente seria o tamanho ideal, trazendo o máximo de qualidade, mas ainda cabendo na VRAM. Se a gente tem
+
+uma placa de 24 GB, aí já dá pra gente pra Q4. Eu tenho uma placa aqui de 32 GB, RTX 5090 e Arc B70 também, mas a gente vai na Q4 também, porque eu quero deixar um espacinho pra caber cache, tentar conseguir o máximo de velocidade e eu acredito que Q4 a gente já vai conseguir uma qualidade muito boa. Mas em 32 GB daria para a gente ir até o Q6 ali no limite, Q8 já ficaria muito apertado, não dá, precisaria de mais. Sem quantização conseguiria rodar aqui no meu Mac, mas como é um modelo denso, ele acabaria ficando muito lento. Ele vai ser melhor em placas de vídeo e não em memória unificada. Memória unificada
+
+vai ser bem melhor para modelos Mixture of Experts e nessa família agora com entre 3.8 a gente ainda não tem nenhum. Acho que a gente não vai ter, provavelmente vamos ter nos próximos. Mas não é para ficar triste não, porque que bom que a gente tem o Qwen de 27B e cara, ele é um monstro. Vamos dar uma olhada aqui nos benchmarks, mas antes disso vamos ver alguns dados importantes aqui. A gente vai ter uma janela de
+
+contexto para esse modelo de 262.000 tokens, tá? Mas você pode estender para 1 milhão de tokens. O padrão é 262, mas dá para estender para 1 milhão. A propósito, no card oficial da Alibaba eles falaram que eles vão liberar também uma API, uma chave de API para esse modelo, que inclusive talvez seja interessante a gente ver o preço, né?
+
+Então já já a gente vê uma Vamos ver antes o nosso benchmark aqui, tá? Que tá na página oficial. Vamos lá, Terminal Bench 73 pontos. E a comparação aqui para a gente vai ser o Qwen 3.6 de 27 bilhões de parâmetros, que foi o último modelo que saiu da família Qwen. Quer
+
+dizer, aberto, né? Porque a gente teve o Qwen 3.7 antes do Qwen 3.8, mas ele não teve nenhuma versão com pesos abertos. Então a gente pode comparar aqui com o Qwen 3.6 27B, mas também com Qwen 3.7
+
+Plus, que seria ali equivalente ao modelo de 397 bilhões de parâmetros. Então ele bate não só o Qwen 3.6 27B por muita diferença, como ele também bate o Qwen 3.7 Plus. E a propósito, em alguns casos, como no SWAG Bench Pro, ele vai bater até o Opus 4.6.
+
+E o Opus 4.6 é brabo demais, tá? A gente tem um nível de Opus 4.6 rodando na nossa máquina sem internet, a hora que a gente quiser, sem limite de tokens. Imagina isso. Imagina tu rodar um Opus
+
+sem limite de token, tá? Não é o Opus 5, não é a versão mais nova, é o 4.6, mas ainda assim, cara, muito bom. Deep SWE, esse daqui é o que a gente quer ver, né? Deep SWE. Eu vou te falar, eu fiz um
+
+vídeo aqui no canal criando um aplicativo do zero até o cliente, digamos assim, pra minha filha. A gente fez o vídeo aqui, eu vou deixar aqui no card, e eu fiz ele com Qwen 3.6. Pra você ter uma ideia, o Qwen 3.6, 27B, que foi o que eu usei naquele vídeo, ele faz 13 pontos no Deep SWE. O 3.8, esse novo,
+
+faz 42. Tem noção dessa diferença de 13 pra 42? E aquele modelo já era bom. Eu tô com expectativa muito alta. Então, com certeza nas próximas semanas a gente vai ter mais um vídeo naquele estilo, só que com Qwen 3.8. E a propósito, eu faço
+
+muito vídeo de joguinho aqui, às vezes o pessoal pede outros tipos de vídeo. Toda vez que eu trouxer um outro tipo de vídeo, se você curtir aquele estilo, deixa o hype, deixa o like, deixa um comentário falando: "Ó, gostei desse estilo, faz mais desse". Porque esse feedback é muito importante pra eu decidir que tipo de conteúdo que eu trago aqui. A base são os joguinhos, eu vou continuar fazendo os joguinhos, mas de vez em quando eu vou tentando outros conteúdos, mas pra esses conteúdos se tornarem fixos aqui no canal, depende muito de vocês. O YouTube, ele tem uma métrica, né? A gente chama de 10 de 10,
+
+é o vídeo que foi muito mal, ele tá na décima posição entre os 10 primeiros. Então, se eu deixo de fazer um vídeo de joguinho pra fazer um outro estilo e ele vai 10 de 10, quer dizer que vocês não querem ver esse tipo de vídeo. Então, quando você deixa seu hype, você sinaliza pro YouTube: "Ó, eu gosto muito disso aqui". Mostra pra outras pessoas, pra esse criador saber que a gente quer esse vídeo, sim. Aproveita já deixando nesse vídeo aqui, né? Por que não? Tá
+
+aqui, ó, Qwen SWE bench, também, ó, veio muito mais forte, inclusive, muito mais forte do que o Opus, mas esse daqui é um bench do Qwen. Então, também não vamos, né, ficar maluco aqui, pô. Não tem como, né? Pode não ter problema nenhum, pode não ter treinado pra esse bench, pode. Ah, também não vamos dar uma de maluco, também, né? Aí, meu Deus,
+
+muito melhor do Opus, porque o no Co Work Bench, ele foi muito melhor. Não dá também, né? Mas é importante, é importante. Mais ou menos, não sei. Esse vai ser um modelo também muito bom para outras tarefas que não só código. Estou aqui no Co Work
+
+Bench, por exemplo, ele faz 70 pontos, enquanto o Opus faz 68. Aí a gente pode até dar mais uma confiadinha. Desconfiando, né? Porque benchmark não quer dizer tudo, mas também não é como se fosse descartável. General também, ó, em vários, cara, aqui não. Aqui ele foi
+
+bem pior do que o Opus. Tudo, olha que absurdo, né? Mas em todos os outros ele foi melhor, inclusive que o Opus, inclusive no Live Code Bench aqui. Cara, muito, muito, muito legal. E aqui embaixo temos mais um benchmark, porque esse modelo é um modelo com capacidade de visão. Ele consegue dessa vez ver
+
+imagens e vídeos também. E isso é sempre muito legal. De acordo com o pessoal do Opus, ele consegue ver um vídeo que tem até horas, tá? Então não é só um videozinho de 2 minutos, não. Dá para ver vídeos maiores aqui. E daria para
+
+você fazer, sei lá, uma busca num vídeo de vigilância, você gravou alguma coisa ali na câmera de vigilância e você tá procurando para saber quando é que aconteceu, você manda ali o Quen, procura aí para mim quando o carro vermelho passou, sei lá, algo do tipo. Maneiro, é um bom uso. Então aqui mais uma vez, né, dando uma surra nos irmãos menores. Quer dizer, esse daqui não é um irmão menor, né? Só um irmão mais velho, mas o Quen tá, tá dando uma surra aqui, cara. Tá, mas a gente não tá aqui para
+
+falar de benchmark, a gente tá aqui para botar a mão na massa, fazer coisa, fazer joguinho. Antes de fazer joguinho, vamos começar com o seguinte. Eu baixei duas versões aqui, eu baixei o Quen 3.8.27b MLX para rodar aqui no meu Mac. E eu
+
+baixei a versão Q4GGUEF, que eu falei para vocês, que a gente vai rodar na 5090. Essa versão ela baixou primeiro, tá? Então eu fiz um pequeno teste aqui para a gente ver como que ele saía. Ele pensou por 11 minutos, então esse é um modelo que pensa bastante, tá? E ele entregou um resultado para a gente. O
+
+meu prompt foi: "Crie uma página web sobre um laboratório científico. Na hero coloque um microscópio feito em Three.js. Esse daqui foi o resultado dele, tá? E ele me entregou aqui uma média de 25 tokens por segundo. Não se
+
+desespere, a gente vai ver algo ligeiramente melhor do que isso aqui. E aqui eu rodei sem MTP, sem nada. Mas o que a gente quer ver aqui é o resultado. E esse aqui foi o nosso resultado, tá? Tem uma pequena melhoria para fazer aqui, botou como se fosse ao vivo. Mas
+
+olha só, a gente tem de fato um microscópio feito em Three.js. Então ele fez isso aqui na mão, cara. Achei que ficou muito legal. Tem três lentes. Eu não sei nada de microscópio,
+
+tá? Mas a lâmina tá aqui, tem três lentes. Legal demais. Deixa eu fazer um reload aqui na página, porque ele tem um efeitinho. Olha isso aqui, tá?
+
+Tá meio zoado? Tá. Precisa melhorar, mas a ideia é muito legal. Aqui o restante da página. Então olha, acertou todas as imagens, tá? Muitas vezes os modelos locais,
+
+principalmente pequenos, eles erram quando eles vão puxar essas imagens, né? Porque eles têm que trazer isso do treinamento deles, da memória deles. E cara, ele não ter errado nenhuma imagem é um excelente sinal. Show de bola, mas vamos agora para o llama.cpp.
+
+Tô rodando aqui no llama.cpp agora na 5090 e todos os nossos testes a partir de agora vão ser feitos aqui. Aqui a gente já tá rodando com MTP. Vamos dar uma olhadinha na velocidade? Primeiro vou dar um oi.
+
+E a gente vê que para o oi a velocidade é boa, né? Tá 75 tokens por segundo. Eu conseguiria usar 75 tokens por segundo muito, muito, muito tranquilamente. Mas deixa eu te mostrar o que que acontece quando a gente pede para ele criar um código. Vamos começar com básico, Flappy Birdzinho. Cria um clone do Flappy Bird
+
+com HTML. Aí ele começa, ó, já estamos em 90 tokens por segundo. Quando ele começa na área do código, olha só, 120 tokens por segundo, 125 tokens por segundo, 130 tokens por segundo. Cara, tá monstro isso daqui com o MTP na 5090. Obviamente a 5090 é um monstro por si só, né? São 1700 GB por segundo de
+
+largura de banda. Mas ver esse modelo rodar aqui ó, a 130 tokens por segundo é excelente. Dessa vez aqui, eu achei que ele pensou muito, muito, muito pouco, mesmo a gente estando com ele aqui no reasoning max. Só que, vamos ver esse resultado. Eu rodei esse prompt um pouco antes, exatamente para eu ver essa velocidade, mas vamos ver esse resultado primeiro, qualquer coisa eu mostro o do outro também. Então olha só, só de
+
+sacanagem ele errou tudo. Mas antes, quando ele pensou mais, o resultado foi esse aqui ó. Cara, esse Flappy Bird aqui tá muito maneiro.
+
+Pum! Novo recorde, show de bola, seis pontos. Então beleza, agora vamos criar um na hora e o próximo que a gente vai criar é claro que é ele, aquele que eu tô treinando aqui para trazer um excelente gameplay para vocês, Bomberman. Então vamos lá, crie um clone do jogo Bomberman usando apenas HTML, CSS e JavaScript. Todos os personagens, itens e inimigos devem ter o máximo de detalhes sem usar nenhum asset externo, tá? Esse é o nosso prompt, prompt
+
+simples, porque a gente quer ver como que o modelo vai se virar. Olha, já começou aqui pensando para a gente e eu quero que ele pense bastante aqui ó, pode pensar à vontade porque eu quero esse jogo impecável aqui na minha mesa. Ó, tu não me vem de preguiça não, tá? Pode pensar, pode pensar, faz um bom jogo para a gente, tá? Surpreende a galera. Eu estou levando fé em você não,
+
+tô levando fé não, tô falando "Ah, eu prefiro Deep Psyche". É, você viu, né? Toda vez que eu falo sobre Deep Psyche aqui a galera curte, eles curtem muito Deep Psyche. Você vai ter que conquistar eles, não tem essa de falar bonito, né? De tentar ganhar na lábia, não, é aqui ó, no código. Então manda ver aí para a
+
+gente. Ó, nessa geração aqui ele tá um pouco mais lento, ele tá ali com 53 tokens por segundo, mas eu acredito que ele chegar na hora do código ali ele vai dar uma acelerada. Eu ainda tô experimentando aqui com as configurações do MTP, talvez tenha um espaço para melhora aqui, mas esse é só o nosso primeiro teste desse modelo, porque provavelmente a gente vai falar sobre ele por um tempo. Tem tanta coisa que eu quero fazer com ele, tantos testes, quero rodar na Arc B70, tá, para a gente ver que tipo de velocidade que a gente consegue. Arc B70 é hoje a placa mais barata com 32 GB de VRAM que a gente vai achar. É uma placa que é um pouco
+
+difícil de achar no Brasil, mas eu já comecei a ver algumas unidades no Mercado Livre, por exemplo, e ela custa, sei lá, quatro, cinco vezes menos do que uma RTX 5090. Então mesmo que ela seja um pouco mais lenta, a diferença de preço faz muita diferença aqui. Ó, já começou a acelerar, tá vendo? 75 tokens por segundo, 76, 78. Show de bola.
+
+Muitas vezes quando a gente tá usando MTP, a gente pode ter essa variação. É como se fosse um modelo menorzinho prevendo vários tokens de uma vez ou simplesmente criando vários tokens numa velocidade muito maior do que o modelo grande conseguiria gerar e aí o modelo grande ele só vai ali avaliando, ó, aceito ou não aceito. Então às vezes a gente vai ter uma sequência de tokens que o modelo não vai aceitar e a gente vai perder velocidade, mas quando ele começa a aceitar um atrás do outro, a velocidade vai lá em cima. Começou a escrever aqui o nosso código, Bomberman Clone 100% procedural, tá gerando aqui em torno de 86 tokens por segundo, aumentando um pouquinho agora que tá na parte do código. Já tá rodando aqui, ó, há 16 minutos. Então pensou bastante. Ó,
+
+ele tá criando cada paradinha, tá vendo? Show de bola, acabou aqui, ó, 18 minutos no total. O reasoning dele, ó, foi bolado. Olha esse reason. Cara, pensou bastante. Tô com a expectativa alta
+
+aqui. Ele fez cinco fases, então, vamos ver. Ah, detalhe, a gente não tá usando ele de forma agêntica aqui, não tá usando ele com Open Code, nada do tipo. Então, vamos dar um descontinho qualquer coisa, tá? Já tô arrumando desculpa aqui para você, você também, hein? Vamos lá,
+
+vamos lá. O nome do nosso jogo então é Bombermania, tá? Tudo que a gente vai ver aqui foi feito procedural. >> [risadas] >> Já tô gostando. Ah, que isso, cara?
+
+Pareço um pinguim? Pareço. Olha essa bombinha. Eita! Toma! Caramba, a explosão tá tá longa.
+
+Olha só, esse daqui tá melhor do que aquele último que a gente viu do The Psyke, porque ó, eu consigo ficar na meiota aqui, ó. Eu não preciso ficar exatamente no meio de um quadradinho do grid. Aqui ele já me dá um uns macetinhos. A bomba não, a bomba ela fica no no no meinho do grid, como deveria ser, de fato. Ih, tá travado aqui, ó. Ah, não.
+
+Ah. Aqui isso trouxe um problema pra gente, tá vendo? A cabeça tá batendo no sprite ali, então tem que tá muito certinho aqui pra conseguir entrar, que vai ser um problema principalmente por conta do jogador que está aqui jogando. Show de bola. Então pra essa fase aqui a gente simplesmente precisou matar todos os inimigos. Perfeito, vamos pra próxima
+
+então. E tem um spikezinho ali, ó, brabo. Vem, toma. Eita. Eu esqueci que eu acho que eu tô com uma Ah!
+
+Eu acho que eu tô com alcance muito elevado. E aí eu fiquei no no meio do caminho ali.
+
+Cara, tá muito bonitinho isso aqui. Que que é aquilo ali? Lá em cima é um têniszinho do de andar mais rápido? É, ó. Ó lá.
+
+Agora eu tô mais rápido. Vem vocês aqui. Você que tá aí parado no cantinho de bobeira. >> Ué. >> Hum, esse lance dele não tá centralizado certinho no quadrado, é legal, mas traz um um bugzinho, hum, caramba, que mole que eu dei.
+
+Ah, boa. É, e caramba, cospe fogo, traz um bugzinho, porque às vezes a explosão, ela passa do lado do inimigo, mas acaba que o sprite não entende que bateu. >> [música] >> Fala aí, Jonas. >> Quer que eu passe dessa fase para você? >> Não, não, tá tranquilo.
+
+>> É que esse aí eu já zerei todos. >> Ah, tô ligado, mas pode deixar, vou conseguir. Calma, vou tentar mais uma. Tentar mais uma vez aqui, ó. Pô, mas eu começo de novo lá da primeira fase. Ele
+
+fez cinco fases, tá? Eita, quase que eu >> [grito] >> Já ia falar, quase que eu me ferro. E aí eu me ferrei. Deixa eu ver o seguinte, eu quero testar uma paradinha aqui, ó. Eu acho que no original, a gente consegue explodir a bomba ali, entendeu?
+
+Se fosse original, a gente teria perdido aquele item, porque ele teria simplesmente explodido.
+
+Eu quero destruir todos os Quero destruir todas as pecinhas. Eu consigo passar por dentro da bomba? Não consigo não. Tá certo, porque isso é um poder também, né? Eu tô estudando esse jogo, pô.
+
+Hum, quase. Cara, o efeito do foguinho tá muito maneiro. Ó o efeito do foguinho, tá muito maneiro, cara.
+
+>> Boa.
+
+Ah, não consegui pegar. Achei que ia pegar aquele troço ali. Nem mal também, podia ter pego antes. E a fase mudou, hein? Não tá mais igual tava antes, não.
+
+Caramba, quase me ferrei, hein? Se eu não tivesse aquele recuo ali, eu tinha tomado na cachola. Aqui eu me ferrei.
+
+Bem, cheguei na terceira fase de novo. Excelente, resultado. Cara, gostei muito, muito, muito. Com o Cointeus.8, 27 bilhões de parâmetros só, tá rodando localmente. Isso aqui é bizarro. Mas
+
+isso levanta pra gente uma outra questão. Será que esse modelo faz um bom Doom? Crie um clone do jogo Doom usando apenas HTML, CSS, JavaScript. Na verdade, use Three.js também.
+
+Crie quatro armas diferentes e três tipos de inimigos diferentes também. Coloque um minimap na interface do jogo. Vamos embora criar o nosso Doomzinho. Vou deixar ele pensando um pouco aqui, daqui a pouco eu volto, então. Mas já tá terminando aqui, daqui a pouquinho a gente vai ter o nosso Doomzinho rodando aqui localmente, quer dizer, feito pelo Cointeus rodando localmente.
+
+Acabou. O que que foi implementado aqui então? Quatro armas, pistolas, espingarda, metralhadora e lança foguetes. Três inimigos, zumbi, imp e demônio. Tem um mini map lá também. Show
+
+de bola. Existem cinco ondas de inimigos. Sistema de munição com recarga, medkits, caixa de munição, blá blá blá blá blá. A gente teve aqui o final, 96 tokens por segundo, 69.000 tokens gerados. Levou 12 minutos aqui
+
+criando. Uou! >> [grito] >> Ó o mapa lá em cima que ué, parece que todos os inimigos estão aqui, por perto, mas eu não tô vendo nenhum. Cara, olha isso. Cadê o som? Tem som?
+
+Não tô ouvindo som. Tem som, mas não tem som do tiro, tá vendo? Tem som da troca de arma. Esse tiro tem som. Cara!
+
+Tá, pistola. Como é que eu recarrego? Eu não vi. Deixa eu voltar aqui. Pera aí, deixa eu deixa eu reiniciar aqui. Recarregar é o R, tá.
+
+Caramba, consigo trocar arma passando o dedo na rodinha. Ah, ele. >> [risadas] >> Vamos embora. Ué. Só tem que que que que eu tô perdido aqui? Que que tá havendo?
+
+Ué, que que aconteceu aqui? Ah, não, não acredito. Tô preso numa sala maluca?
+
+Ah não, pera aí, agora. Não tô preso aqui, né? Achei que tinha saído. Pô, cara. Tem alguma coisa errada que não tá certa. Pô, mas tá tudo tão legalzinho
+
+aqui, tão tão bonitinho. Olha isso, cara. Olha isso. Vou tentar pedir para ele ajustar, vamos ver se vai levar mais um tempão ou se ele vai fazer rápido. Ó, processamento de prompt, tá aqui a 2.500
+
+tokens por segundo, o que é excelente na verdade. A gente já tem quase 70.000 tokens na janela de contexto e ele tá lendo aqui tudo de novo. Vamos lá, ele terminou aqui nova versão para a gente. E cadê?
+
+Cadê? E a arma tá mudando sozinho aqui.
+
+Agora sim, agora a gente tem um labirinto. E a gente tem inimigos. Ah, olhei, agora sim. Cadê? Deixa eu pegar a pistolinha, pronto, a arma agora parou de mudar sozinho, show de bola.
+
+Toma, toma, toma. A gente tem barulho, mas só quando acerta. E é diferente o barulho de quando acerta com as outras armas? Aquele mapa lá me parece que tá errado, né? O mapa tá lá em cima, mas não tá funcionando não.
+
+Toma. Tem mais um inimigo.
+
+Vou usar bazuca nele. O problema é que como o mapa não tá funcionando, eu não sei onde é que tá esse inimigo. Entrar aqui, vamos ver se ele tá aqui. Não. Tô perdidasso aqui. Cadê meu mapinha?
+
+Tô andando em círculo, não tô não? Acho que eu já vim aqui. Deixa eu pegar essa munição aqui que aí eu vou saber se eu já vim aqui ou não, da próxima vez. Acho que eu não passei aqui não. Caramba, toma.
+
+Tomei, tomei dano, né? Porque, pô, me explodi também. Toma.
+
+Alguém tá atirando, mas eu não sei de onde. E ali? Ah! >> [grito] >> Olé! Olé!
+
+Opa, já tem uma faquinha, né? Mas também não ia, imagina, eu não consigo acertar os cara de arma, de faquinha é acerto. Pô, aí o Jones ia ter que me salvar aqui. O Jonas, Jonas, não é Jones? Jonas, não sei quem é.
+
+Ah! Cadê? Qual arma tem aqui que eu não uso? Já usei todas, né? Metralhadora, espingarda, pistola e lança foguete.
+
+Falta mais um inimigo. Esse, esse último sempre se esconde, né? Eu preciso acertar ele pra vir a próxima onda, eu conseguir ver o outro estilo de inimigo que a gente tem também. Eu acho que esses itens eles estão dropando aí de tempos em tempos. Beleza.
+
+Agora onda três. Quem mais vai chegar aqui pra gente? Pra gente brincar. Opa! Já tem um atirador aí.
+
+Toma, toma, toma, toma. Metralhadora. Como é que eu recarrego mesmo? É o R? Toma, recarreguei.
+
+Aqui vai de bazucão então. Toma bazucão! Toma um bazucão. E acabou meu bazucão? Não.
+
+Toma. Vou tirar ele ó, na parede. >> [grito] >> É o brabo, o brabo chegou.
+
+Boa. Ah! Tem mais um aqui. Faltam dois. Um.
+
+Falta mais um. Tá aqui. Terceira onda limpa. Agora acabou. Não quarta onda? Mas não tem mais nenhum
+
+outro tipo de inimigo, eu acho. Cadê? Eu esqueci aqui. Eu queria recarregar. Apertei o botão errado.
+
+>> [música] >> Pô, esse aqui é brabo demais, hein? Precisa de duas bazucada.
+
+Os caras Os caras aqui só na Só na maciota, cara. Os caras sem fazer nenhum barulho. Aí não, né? Toma. Que que tem aqui?
+
+Toma. Agora eu vou te acertar de espingarda só, hein? Toma. Espingarda boazinha. Mais ou menos, né?
+
+Oi, falta um. Vem. Toma bazuca. São cinco ondas? Quantas ondas são?
+
+Vou zerar isso aqui, hein? Isso aqui já zerei todos.
+
+Ah! O cara vem sem fazer barulho, pô. Ai, quebra. Esse aqui acho que vou perder. Essa onda tá muito frenética.
+
+Morri. >> [risadas] >> Desesperei, me desesperei, me desesperei. Ai, não. >> [aplausos] >> Fala tu. Fala tu, me fala aqui nos comentários.
+
+Dunzinho. Mandou bem ou não mandou? O Quinzito é brabo. Ei, não vai testar minha capacidade de visão não? O cara falou, né? Vamos testar, vamos testar. Ele
+
+falou que ele consegue enxergar de tudo. Então, vamos botar o que para ele ver aqui, ó? Vamos passar, ó, esse videozinho aqui para ele, tá? Que é aquele joguinho fake de anúncio que alguém foi lá e fez, né? Então, vamos pedir para ele criar esse jogo para a gente. Recrie esse jogo com
+
+HTML, CSS e JavaScript. Será que ele consegue fazer sem Three.js? Vamos ver. Primeira coisa que eu quero saber aqui se ele vai conseguir enxergar esse vídeo ou não. Eu tô achando que ele vai ter
+
+dificuldade, principalmente porque esse vídeo tem quase 100 MB. Aqui acho que deu problema, tá vendo? Payload too large. Vou criar aqui um novo, vou tentar agora com um arquivinho um pouco menor. Ó, novo arquivo 25 MB, show de bola.
+
+Recrie esse jogo com HTML, CSS e JS. Quero saber aqui o tempo de processamento, vamos ver se ele vai conseguir processar, né? Tá processando aqui, ó, 1.800 tokens por segundo, tá indo até bem. Ali vai uns 20 segundinhos, tá bom. Ó, consegui
+
+identificar o jogo, tá? Consegui identificar o jogo porque eu falei nada no meu prompt, ele já tá sabendo exatamente o que que é. E aí ele vai criar pra gente, então. Eu não falei pra ele não usar nenhum asset externo, tô esperando que ele faça isso. Ele já tá falando aqui, inclusive, ó, de desenhar, né, com canvas shapes.
+
+Então, perfeito. Vamos embora, vamos deixar ele trabalhar aqui, daqui a pouco a gente vê. Show de bola, acabou aqui, ó, levou 7 minutos só. Foi de boa, 28.000 tokens.
+
+Hahaha. Cara, a tela tá muito parecida com aquela lá. Só pra gente ter uma ideia, isso aqui é o vídeo, tá? Então, tem todos esses elementos ali embaixo. Tá vendo?
+
+Tudo bem. Vamos jogar agora. Será que vai funcionar? Ah, mas não Cadê? Mas que que eu faço aqui?
+
+Esses troços tinham que sair da tela. Ah, tem um bonequinho aqui embaixo, ó. Cara, tá funcionando. Tá funcionando. Tá funcionando.
+
+Eu vou Ah, eu vou clicando aqui, ó, e ele vai se mexendo, mas os tiros tão sempre saindo do meio, parece. Os tiros são tão sempre indo pro meio.
+
+>> [risadas]
+
+>> É questão de ajuste aqui, tá? Mas a gente tem um jogo funcional, que loucura. Remove ads. Anúncios removidos. Deixa eu clicar aqui upgrade.
+
+E. Achei que tinha feito algum upgrade aqui.
+
+Eu não tenho moeda.
+
+Eu vou pegando moeda aqui e vou fazendo upgrade. Cara. Ó, agora eu tô, tô no upgrade bolado aqui, ó. Agora sim.
+
+E aí vem aqui, ó. Tô passando de fase, ó. Pô, o único problema é esse troço aqui, né, que tinha que sair. Mas, ó, tem um bonequinho aqui atrás, tá vendo? Dá pra ver.
+
+Cara, lembrando, isso daqui é um modelo local, tá? Modelo rodando localmente. E. Lançou o anúncio. >> [grito] [aplausos] >> Cara.
+
+Bizarro, bizarro demais. Vou pedir pra ele tirar esses cards aqui quando o jogo começar, só pra gente conseguir ver melhor, mas acho um grande sucesso esse jogo aqui com um prompt. A gente tem praticamente todos os elementos. Muito legal. Já fez os ajustes aqui pra gente. Então, con- continua começando
+
+aqui, né, com a tela inicial. Toque pra começar. Ah, agora sim. O bonequinho. [risadas] Pô, mas agora a gente não comprou nada, né?
+
+E aí eu vou, eu vou ficar, vou ficar mercê aqui. Isso aqui não vai ter como ganhar, não.
+
+Será que aqui eu vou conseguir pe- Ah, pera aí, pera aí. Ah, não, olha só. Aqui, desse lado, que que é isso aqui? Ih, tô recrutando os soldados aqui. Vou esperar mais um pouquinho, vou recrutar mais um.
+
+Pera aí. Quatro, três, dois, um. Recrutei, pronto. Agora somos três, aí sim. Se eu vier aqui, ó, era pra eu conseguir atirar nesse troço aqui, né?
+
+Mas aí eu não tô conseguindo. Agora sim! >> [risadas] >> Aí, ó, vou ver um anúnciozinho aqui, ó. Anúncio. Ah, não consigo sair da tela de anúncio. Fiquei preso no anúncio, aí
+
+não. Esse dev é muito ganancioso, aí não, pô. Vou voltar aqui, pegar aqui mais umzinho, vou comprar umas parada. Quanto é que eu tenho aqui, ó? Deixa eu pegar aqui uns dinheiro. Deixa eu pegar aqui,
+
+ó, trezentão. Anúncio de novo? Esse app tem muito anúncio, pô. Esse joguinho tem muito anúncio. >> [risadas] >> Desbalanceado, desbalanceado.
+
+Cadê? Que que eu vou pegar aqui? Deixa eu ver se eu consigo comprar alguma coisa. Não consigo comprar é nada. Consigo recrutar mais um. Dessa vez eu
+
+não vou cair no golpe dos anúncios, não. Que eu tô tô sem grana, né? Remove ads. Pause. Não pausa por que pausa? Eu não
+
+tô Não tem nada pra pausar ainda. Agora o pause aqui, ó. Pause funciona, bom. Cadê? Eu queria atirar aqui nesse nesse pneus.
+
+Isso [risadas] aqui são os pneus.
+
+Pronto, passamos da primeira onda. Próxima. Ah, agora eu posso recrutar mais um, então. Show de bola, [risadas] aí sim! Agora eu tenho uma grana ali, eu posso comprar as paradas também.
+
+Se a gente conseguir vencer essa essa onda aqui, acho que não vai acho que não vai dar.
+
+Opa, acho que vai dar, acho que vai dar, acho que vai dar. dados. Deu. Uh, agora eu consigo comprar umas paradinhas. Que que eu vou fazer aqui, ó?
+
+Pegar aqui, ó. Aqui. Ah, dá para aumentar bem. Aqui também. Achou de bola, tá bom. Que que é esse
+
+upgrade aqui? Pegar um desse aqui, que eu ganho mais moeda. Próximo vou ganhar mais moeda. Ah, agora zerei. Zerei esse jogo, hein?
+
+Que é isso? Eu não não achei que eu ia tá me divertindo com esse joguinho, não. Vou recrutar mais um aqui, ó. E agora vou pegar mais esse negócio aqui de dobrar, não, triplicar agora. Triplicar as moedas.
+
+Vou pegar um desse, um desse, um desse. Ah, consigo botar aqui, ó, no máximo, não? Consigo? Já tô no máximo aqui, tá? E recruto mais um. Não dá, não dá mais para recrutar.
+
+Tem muita gente já. Agora não tem nem chance para eles, tá vendo? Cara, ele mandou muito bem aqui.
+
+Mais um? Não dá. Fazer só upgrade aqui de moeda, que agora vou ganhar um monte de moeda para nada, porque não tem muito mais o que fazer, né? Não consigo fazer upgrade de nada. Tem esse negocinho aqui, que eu não sei que que é.
+
+Ah, é minha patente? Minha patente, né? Meu level. [risadas] Ah, meu level tá aqui. É, tô na patente cinco, né? Indo para o
+
+level seis, faz sentido. Então aqui tá tudo no máximo. E basicamente o jogo agora é só isso aqui. Mas eu achei que ficou muito bom.
+
+>> [aplausos] >> Cara, ficou muito legal, muito legal. >> É, tu mandou muito bem, cara. Pô, parabéns, hein? Esse foi só o nosso primeiro contato com o Qwen 3.8 de 27 bilhões de parâmetros. Eu pretendo fazer
+
+mais vídeos aqui, provavelmente um monte, mas um deles vai ser criando outros jogos de forma agêntica, ou seja, usando o nosso Open Code. E aí eu quero a sugestão de você, quais jogos a gente deve trazer para esse novo vídeo. Deixa aqui embaixo nos comentários. Com certeza a gente vai fazer o nosso briga de rua, né? O nosso Street of Rage nesse modelo aqui. Eu
+
+acho que ele vai surpreender todo mundo, inclusive a mim. Mas é isso aí, que que você achou do Qwen 3.8 27 bilhões de parâmetros. Se você quiser ver poder do Qwen 3.8 Max, que é o irmão maior dele, né? 2.4 trilhões de
+
+parâmetros, dá uma olhada nesse vídeo aqui. Se você gostou do Bomberman que esse modelo fez, dá uma olhada no que o Deep Seek V4 Pro fez aqui com a gente, ó. O link vai tá aqui. E se você tiver interesse em desenvolver suas técnicas de usar inteligência artificial para criar código de uma forma que você entenda basicamente tudo que acontece ali, desde como o modelo funciona até skills, MCP e tudo que você precisa para criar de forma agêntica, dá uma olhada lá no meu curso IA para Devs. Tá, o link vai tá aqui.
+
+Vai tapar a cabeça do Qwen. Você pode usar o QR Code ou clicar direto no link. Dá uma olhada lá no que que é o curso. Se for interessante para você, se inscreve e a gente se vê lá. E é isso aí, daqui a pouquinho vou começar a preparar para o próximo vídeo. Vou
+
+ficando por aqui. Até o próximo vídeo, valeu.
