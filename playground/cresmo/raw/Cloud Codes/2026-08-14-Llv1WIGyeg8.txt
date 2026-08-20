@@ -1,0 +1,149 @@
+---
+video_title: "DeepSeek Strikes Again: 1,114% API Price Hike, Open Harness & Updates"
+video_id: Llv1WIGyeg8
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Llv1WIGyeg8
+video_date: 2026-08-14T12:00:01+00:00
+video_description: |
+  Why did DeepSeek raise API prices by up to 1,114% while open-sourcing its internal agent harness under MIT on the exact same afternoon? Meet the 8-trillion token demand surge, the hidden benchmark footnote, and the architecture behind DeepSeek-V4-Pro-0813
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, pricing math, and open-source infrastructure behind DeepSeek's August 13 release spree. We analyze the 1.6-trillion parameter DeepSeek-V4-Pro-0813 model (49B active params, DSpark speculative decoding, and native OpenAI Responses API integration for Codex), examine the demand event that processed 8 trillion tokens in a single day on OpenCode, and dissect the peak/off-peak pricing structure where cached input rates jumped 12x.
+  
+  Furthermore, we expose the footnote on DeepSeek's model card proving its +49.9 point benchmark jump on DeepSWE was produced by evaluating inside the new DeepSeek Harness v0.1 (npx @deepseek-ai/dsh web), explore how ex-Jane Street lead Cui Tianyi built the framework on top of Cordis, and evaluate Artificial Analysis index scores ranking V4 Pro against Claude Opus 5 and GLM-5.2.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • DeepSeek Harness Official Repository: https://github.com/deepseek-ai/deepseek-harness
+  • DeepSeek-V4-Pro-0813 HuggingFace Model Card: https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813
+  • Cordis Meta-Framework Repository: https://github.com/cordiverse/cordis
+  • DeepSeek API Pricing & Documentation: https://api-docs.deepseek.com/
+  • Artificial Analysis DeepSeek V4 Pro Index: https://artificialanalysis.ai/models/deepseek-v4-pro
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - 3 Announcements in 90 Minutes (Model, Harness & Price List)
+  1:12 - DeepSeek V4 Pro 0813: 1.6T Parameters & DSpark Speculative Decoding
+  3:09 - Reasoning Effort Dials & Native OpenAI Responses API (Codex)
+  4:26 - The Benchmark Jump: DeepSWE Up +49.9 Points
+  4:49 - The Footnote: Why the Harness Moved the Benchmark Scores
+  5:51 - DeepSeek Harness v0.1: Everything is a Plugin (dsh web)
+  6:55 - Cordis, Shigma & Cui Tianyi (The Jane Street Engine)
+  8:50 - The Demand Surge: 8 Trillion Tokens in One Day
+  10:03 - The 1,114% Price Increase & Cache Discount Collapse
+  11:24 - Final Verdict: Is DeepSeek Still the Cheapest Model?
+  
+  #deepseek #ai #systemdesign #cloudcodes #machinelearning #dsh #opencode #codex #softwareengineering #open-source
+  
+  
+  
+  
+  
+  User Queries:
+  deepseek v4 pro 0813 build benchmarks
+  deepseek harness v0 1 npx deepseek ai dsh web
+  why deepseek raised api prices peak off peak
+  deepseek 8 trillion tokens open code demand surge
+  deepseek footnote harness minimal mode terminal bench
+  cordis framework shigma cui tianyi jane street deepseek
+  dspark speculative decoding deepseek v4 pro
+  artificial analysis deepseek v4 pro 0813 index score
+  deepseek vs claude fable 5 output token price
+  cloud codes deepseek strikes again breakdown
+---
+Thursday morning, 11:31 coordinated universal time, DeepSeek posts a new flagship model. About 90 minutes later, it posts a coding agent, open-sourced, MIT license, the whole thing, free. And in between those two, it posts a new price list. That price list is the part people screenshotted. One cell on it goes up by more than 1,100% and the new rates go live on Sunday afternoon. By
+
+Friday morning, that free coding agent has passed 55,000 stars on GitHub in one night. That repository was 14 hours old. No launch campaign, no wait list, no keynote, 14 hours. So, here's the question the whole day turns on. Why raise your prices and give away your tools on the same afternoon? Both of
+
+those turn out to be the same move, and that move is written down in one footnote on one page. One sentence under the benchmark table on the model card explaining how those headline scores were measured. Read that sentence and the model, the harness, and the price rise stop being three separate stories. They collapse into one. And the piece that most of the coverage got backwards is the model itself. Start
+
+there because V4 Pro did not get a new brain on Thursday. It got a new mouth and a new pair of hands. Start with what shipped. DeepSeek V4 Pro finally left preview nearly 4 months after the April version. It is live in the app and on the web behind a setting called expert mode, and it sits on the API under exactly the same model name it had the day before.
+
+Nothing you already wrote has to change. It did not arrive the way launches usually arrive. The model showed up on OpenRouter on Wednesday before DeepSeek published anything about it. Simon Willison, writing that day, said he had to link to OpenRouter because DeepSeek had no obvious announcement page for their new model. The words came after the weights. And the weights are right
+
+there. The August 13th build sits on Hugging Face under an MIT license, not gated, 92 files, 892 GB of 8-bit weights. Underneath is the same shape as April, 1.6 trillion parameters, 49 billion switched on per token, 384 routed experts, six firing at a time, a mixture of experts model with a million token context window, trained on more than 32 trillion tokens. Hold on to that 892 GB figure because it matters later. The model DeepSeek is
+
+about to charge nearly $4 a million output tokens for is one you are free to download and run yourself today for nothing. So, what changed between April and August? The model card answers in one line, and the line is unusually blunt. The August build is, in DeepSeek's own words, built on the preview model structure with a D-Spark speculative decoding module attached. Same architecture, same parameter count.
+
+A serving optimization bolted on, plus a lot of post-training aimed squarely at agents. D-Spark is worth a moment because DeepSeek open-sourced it back in June. Speculative decoding means a fast draft process guesses the next several tokens, and the big model checks them in one pass. DeepSeek's own measurements put it between 57% faster per user on V4 Pro against their previous baseline. That speed now ships inside the checkpoint. Therefore, the
+
+second change makes sense. The reasoning effort parameter now has three settings instead of a switch: low, high, and max. DeepSeek's guidance is specific. Low for simple tasks, high for daily agent workflows, max for the hard ones. Max will happily admit 384,000 tokens of output, which at the new peak rate is a decision with a price tag. The
+
+third change is the one that reaches furthest. V4 Pro now speaks the OpenAI Responses API natively with what DeepSeek calls one-click Codex setup. So, you can point OpenAI's own coding agent at a Chinese open weights model by editing a single config line. That is distribution dressed as a compatibility note. There There also a small strange detail, and Simon Willison is the one who caught it.
+
+He ran the same drawing prompt at all three reasoning levels and got very different results from each. He says he has not noticed that kind of difference from any other model. The effort dial is not a slider on the same answer. It appears to change what the model decides to do. But the strangest part of the launch was where the numbers came from. According
+
+to Willison, the benchmark table was released into the official DeepSeek WeChat group, copied and pasted into a Reddit post, which was then deleted, and finally surfaced as an ASCII art table on Hacker News. A trillion-dollar industry, and the scores traveled by group chat. They are on the official model card now, and they are extraordinary. On Terminal Bench 2.1, the August build scores 87.9, up from
+
+72.1. On Cyber Gym, 83.3, up from 52.7. And on
+
+Deep SFE, a coding agent benchmark, it goes from 12.8 to 62.7. That is a jump of 49.9 points, 49 points on the same architecture. So, what
+
+actually moved? The answer is note one, printed directly under that table, and here's what it says. For the code agent tasks among the public benchmarks above, DeepSeek V4 Pro is evaluated with the minimal mode of DeepSeek harness as the agent framework, using the max reasoning effort level. That one footnote reframes the entire week. So, what exactly were you buying? The scores were produced by
+
+a harness, and the harness was open-sourced 90 minutes after the model was announced, which means anyone can reproduce the setup. Now, look at what minimal mode actually is, from DeepSeek's own documentation. Bash and a file editor. That is the entire tool set. A mode that exists, in their words, for benchmarking. So, the number is a
+
+pair. It is not this model scores 87.9. It is this model, inside this harness, in this mode, at this effort level, scores 87.9.
+
+Swap any one of those four, and the number moves. That is not a criticism of DeepSeek. DeepSeek is the one who wrote it down, which brings us to the giveaway. DeepSeek Harness version 0.1 developer preview MIT licensed written in TypeScript. You install it by typing
+
+NPX at deepseek AI/dshweb. It opens a browser interface on your own machine. The repository landed with more than 12,000 commits already in its history, which tells you this was not built last month. The design has one idea repeated everywhere. Everything is a plugin. Models are plugins, tools are
+
+plugins, skills, sessions, sandboxes, file systems, the agent loop itself, the scheduler, and the interface are all plugins. You can pull any one out and drop a different one in without touching the source. The second idea is that every run is traceable. Everything the model sees goes into an append-only event log. The system prompt, the reasoning, every tool call, every result, every context injection tagged by source. Resume, fork, search, and
+
+replay all read from that same stream. So, you can rewind an agent run to any step and branch a different decision out of it. And underneath all of it sits a project few people outside its own community had heard of, Cordis, a meta-framework for spatiotemporal composability. 4 years old, 1,829 stars. And on the day the Harness shipped, a paper formalizing it went up alongside. Plugins you can remove and
+
+have every side effect they caused reverted. Hot reloading with proofs. Here is the part that explains the timing. Cordis has one dominant contributor, a developer who goes by Sigma with 537 commits to it. His GitHub profile lists his company as DeepSeek, and the Harness team is led by Q E T N E, who spent nearly 9 years at Jane Street in Hong Kong and joined DeepSeek in March, 5 months before this launch.
+
+He is also the repository's top committer with more than 5,000 commits to his name. So, the shape of it becomes clear. DeepSeek did not grab an open-source framework in a hurry. The developer who spent 4 years building the exact abstraction an agent runtime needs now works there, and the runtime was built on top of that work in public with a paper. And DeepSeek is explicit about why the architecture is open.
+
+You can plug in any component you choose, including models from other companies, and it draws the contrast deliberately. American rivals, it argues, hardcode their products. So, the harness that produced DeepSeek's own benchmark numbers will run a competitor's model just as happily. Two details before we leave the repo. There is no issues tab, discussions only, on a project with 55,000 stars and no public bug tracker, which is a choice. And the
+
+weights ship without a standard chat template, so you get a folder of Python encoding scripts instead. This is a developer preview in the literal sense, but the harness is free, free MIT, and it runs against a rival's model as happily as its own. Therefore, the money has to come from somewhere else, and on Thursday DeepSeek said exactly where. The same afternoon it gave away the wrapper, it repriced the thing inside it. Now, the pricing move did not come out of nowhere. On the 1st
+
+of August, one single tool, OpenCode, put roughly 8 trillion tokens through DeepSeek V4 flash in one day. 5 trillion of those were free trials. 3 trillion were paid. 8 trillion tokens in a day through one tool. And for the week before that, V4 flash was the single most used model on OpenRouter on Earth at 7.22 trillion tokens. Chinese models
+
+took the top four slots on that board. DeepSeek had won the price war so completely that the prize was a queue because the compute underneath is finite. Analysts put DeepSeek's fleet at roughly 20,000 H100 equivalent GPUs, most of which arrived in the previous couple of months. That is a serious cluster. It is not a cluster that absorbs 8 trillion tokens a day at 14 cents a million, while 5/8 of them are free trials. So, watch the clock. On the
+
+30th of July, OpenAI cut its cheaper models prices by up to 80%. On the 31st, DeepSeek shipped V4 Flash at 14 cents in and 28 cents out, undercutting it. On the 4th of August, the service started degrading. On the 6th, DeepSeek warned that a significant increase was coming with no numbers. On the 13th, the numbers arrived. And they are steep, but
+
+not uniformly steep, which is the part the headlines flattened. The smallest rise on the table is about 52%. V4 Pro fresh input off-peak. The largest is 1,114%. V4 Pro cached input at peak. Output
+
+tokens land in between at roughly 4 and 1/2 times the old rate. The change that actually hurts is the one the headline skipped. Under the old prices, reading a token from cache cost 1/120th of reading it fresh. Under the new prices, it costs exactly 1/30th. The cache discount did not disappear. It shrank by a factor of
+
+four. If your agent replays a long context every turn, that single line is your bill. Then there is the shape of the day. Peak hours are 1:00 to 4:00 and 6:00 to 10:00 coordinated universal time, and off-peak is half price. Convert that to Beijing time, and the pattern is obvious, 9:00 to 12:00 and 2:00 to 6:00, Chinese office hours. 7
+
+hours out of 24 cost double, and the discount is a request to run your batch jobs while Hangzhou sleeps. DeepSeek's stated reason is to allocate resources more reasonably, which is corporate for we are out of GPUs. But there is a second reason on the record. The company is in talks at a valuation near $71 billion and preparing paperwork for a mainland listing. Loss leader pricing is a growth story and a hard thing to put in a prospectus. So, the question that
+
+actually matters, is DeepSeek still the cheap option? Yes. At peak, a A output tokens from V4 Pro cost $3.96. Claude Fable 5 is 50. GPT 5.6 Sol is 30.
+
+Kimmy K3 is 15. Gemini 3.1 Pro is 12. Off-peak DeepSeek is 198. It is still by a distance the cheapest serious model you can rent, but the gap moved and the direction is what counts. Before
+
+Thursday, DeepSeek output was 57 times cheaper than Fable 5. After Sunday, at peak, it is 12 and 1/2 times cheaper. An artificial analysis, the only independent measurement published on this build, now calls it somewhat expensive when compared to other open weight models of similar size. That sentence about DeepSeek would have been unthinkable in April. So, here is where I land. The harness is the win and it is
+
+not close. DeepSeek gave away the layer every other lab keeps welded shut under MIT in TypeScript with an install command you can type from memory and it will run a rival's model as happily as its own. The model is very good and it is not frontier. 53 on the independent index against Claude Opus 5's 63 and on terminal bench, the road DeepSeek led its own announcement with, it comes third behind Kimmy K3 and Fable 5. DeepSeek published the two numbers that beat it. So, the villain in this story
+
+was not a company. It is the habit of reading a score as a property of a model when the model card says plainly that it is a property of a pair. And DeepSeek deserves the credit the coverage did not give them because naming your harness in a footnote and then shipping that harness is more disclosure than this industry usually manages. It landed on the same day as the bill, so it got buried under the invoice, which leaves the question worth sitting with. Look at whatever agent you are running right now. How much of what
+
+it does is the model you pay for and how much is the harness you got for free?

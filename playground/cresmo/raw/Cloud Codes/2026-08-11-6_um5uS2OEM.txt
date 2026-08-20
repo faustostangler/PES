@@ -1,0 +1,162 @@
+---
+video_title: "Best Local Coding Model Right Now? Meta Muse Glimmer Changes Everything"
+video_id: 6_um5uS2OEM
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6_um5uS2OEM
+video_date: 2026-08-11T16:00:06+00:00
+video_description: |
+  Can a 30-billion parameter model running on a single 24GB VRAM GPU outperform cloud coding agents? Meta just released Muse Glimmer under Apache 2.0—their first open-weights release in 16 months—engineered specifically for multi-step tool-calling loops.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, memory optimizations, and benchmark performance of Meta Muse Glimmer 30B. We examine its 52-layer dense transformer design (utilizing 39 sliding-window layers and 16:1 Grouped-Query Attention to fit 130k context inside 19.3GB VRAM), analyze Alexandr Wang's Superintelligence Labs distillation pipeline from Muse Spark, and evaluate DFlash block-diffusion speculative decoding delivering 233 tokens per second on RTX GPUs.
+  
+  Furthermore, we audit independent benchmarks from Artificial Analysis and Terminal-Bench, compare Glimmer's MCP Atlas tool-calling win (75.5% vs 62.5%) against Qwen 3.6 27B, analyze its 82% hallucination rate on single-shot retrieval, and provide the exact hardware guide for running Unsloth 4-bit and 2-bit quants locally.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Meta Muse Glimmer 30B Base Model: https://huggingface.co/meta-models/Muse-Glimmer-30B
+  • Meta Muse Glimmer Official GGUFs & DFlash: https://huggingface.co/meta-models/Muse-Glimmer-30B-GGUF
+  • Unsloth Muse Glimmer 30B GGUF Quants: https://huggingface.co/unsloth/Muse-Glimmer-30B-GGUF
+  • SGLang Day-Zero Inference Engine: https://github.com/sgl-project/sglang
+  • PyTorch ExecuTorch Framework: https://github.com/pytorch/executorch
+  • Artificial Analysis LLM Leaderboard: https://artificialanalysis.ai/
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - Meta Muse Glimmer 30B: The 24GB VRAM Local AI
+  1:23 - Why Meta Spent $140 Billion Before Releasing Open Weights
+  5:12 - Distillation Architecture: How Muse Spark Trained Glimmer
+  5:53 - Memory Trick: 39 Sliding Window Layers + 16:1 GQA
+  8:23 - DFlash Speculative Decoding: 3.1x Speedup on RTX GPUs
+  10:04 - Benchmarks: Meta Muse Glimmer 30B vs Qwen 3.6 27B
+  11:12 - Independent Testing: Artificial Analysis & Terminal-Bench
+  12:26 - The Tool Calling Win: Why Glimmer Beats Qwen on Agents
+  14:29 - Final Verdict: Smartest Model vs Most Obedient Agent
+  
+  #meta #museglimmer #localai #qwen #systemdesign #cloudcodes #machinelearning #gpus #vram #open-source
+  
+  
+  User Queries:
+  meta muse glimmer 30b local setup 24gb vram
+  muse glimmer vs qwen 3 6 27b coding benchmark
+  meta muse glimmer apache 2 0 open weights
+  dflash block diffusion speculative decoding sglang
+  alexandr wang meta superintelligence labs muse glimmer
+  unsloth muse glimmer 30b 4bit 2bit gguf quants
+  muse glimmer 128k context sliding window gqa memory
+  artificial analysis muse glimmer intelligence index
+  meta muse spark distillation open source model
+  cloud codes meta muse glimmer breakdown
+---
+30 billion parameters, a file that fits on a thumb drive, and an agent loop that finishes the job with a network cable unplugged. That is Muse Glimmer, and on the 10th of August, Meta put its weights on Hugging Face for anyone to download and keep. Apache 2.0. No usage tier, no acceptable use annex, no 700 million user clause, just the weights. Meta's
+
+Chief AI Officer, Alexander Wang, says it runs on 24 GB of VRAM without losing agentic reliability. 24 GB is a used RTX 3090, around $1,200 second hand this month. On Meta's own table, it beats Qwen 3.6 27B at tool calling, 75.5 against 62.5. 12 hours in, a developer
+
+on X had it one shotting three JS tasks. Qwen 3.6 could not finish at the same quant. Unsloth squeezed it to two bits and watched it make over 100 tool calls inside 14 GB of RAM. The Hacker News thread passed 1,000 points and nearly 600 comments the same day. But, Artificial Analysis ran it
+
+through their own harness, and Glimmer came out below Qwen 3.6 27B, 35 to 38. On Terminal Bench 2.1, Qwen scored 61 and Glimmer 52, nine points the wrong way. So, is this the best local coding model right now, or the best funded one?
+
+The architecture answers it, and so does the money. To understand why Meta gave this away, start with what it cost them to stop giving things away. Llama 4 landed on the 5th of April 2025. Scout and Maverick shipped, Behemoth never did, and the reception was bad enough that Meta rebuilt the entire operation around it. Two months later, Meta paid $14.3 billion for
+
+49% of Scale AI, a data labeling company. The point of the deal was one man. Alexander Wang, 28 years old, became Meta's first Chief AI Officer and took over the new Super Intelligence Labs. Then came the poaching. Sam Altman said on the record that Meta was dangling $100 million signing bonuses.
+
+Wired reported offers of up to $300 million over 4 years made more than 10 separate times. One package to the researcher Andrew Tulloch was reported at $1.5 billion. He turned it down. Money buys people, but capability needs concrete. Prometheus, a 1 gigawatt AI
+
+data center, comes online this year. Hyperion is designed to scale to 5 gigawatts across several phases. At an estimated $30 billion per gigawatt, that is a bill with no ceiling in sight. On the 29th of July, Meta reported second quarter revenue of $60.8 billion, up 28%. Earnings missed badly. Capital
+
+spending guidance for this year went up again to between 135 and 145 billion dollars. The stock fell nearly 8% after hours. One line explains the reaction better than the headline does. Free cash flow for the quarter came in at $784 million, down from 8 and 1/2 billion a year earlier. Meta is converting almost every dollar it earns into GPUs and buildings.
+
+A company spending at that rate starts protecting what it builds. In July 2025, Zuckerberg had already written that super intelligence raises new safety concerns and that Meta would be careful about what it chose to open source. 8 months later, that sentence had teeth. On the 8th of April 2026, Meta shipped Muse Spark, closed weights, API only, the first proprietary frontier model in the company's history. The Llama line stopped there and Scout and Maverick, by then a year old, were the newest open weights Meta had.
+
+3 months after that, Zuckerberg posted on X for the first time since July 2023, waking up the dormant Fink account to announce Muse Spark 1.1 and Meta's first paid developer API. He did it on X rather than on Facebook or Instagram. On the 5th of August this year, the pace jumped again. Muse Spark 1.2 arrived
+
+with a million token context window alongside Musecode, a terminal coding agent with persistent background agent and an append-only event log. So, a crashed run replays exactly. Meta priced Spark 1.2 at $1.25 per million input tokens and $4.25 per million out. Then,
+
+it published a second price. 10 cents in, 20 cents out on a contributor tier. 12 times cheaper on input on the condition that Meta may train on whatever you send it. How cheap does a model have to be before you hand it your code base? That is the trade being offered across the industry now. Your
+
+work in exchange for a discount on the model that learns from it. Hold on to that because it is what a free download is actually competing against. Then, on the 10th of August, Zuckerberg published a 6 and 1/2 thousand word essay called The Future Is For Everyone. His line, "Everyone will have an exceptionally capable personal agent that understands you, your goals, and everything you care about working 24 hours a day on your behalf." In the same essay, he wrote that open source is a positive and important force for empowering people and that Meta would resume releasing some open source models soon. He was not describing a
+
+future release. One went up that day. Muse Glimmer, free Apache 2.0, waits on Hugging Face. It was the first open weight model out of Meta in 16 months, which answers the question this whole act has been building toward. What do you give away
+
+after spending $140 billion on the thing you are keeping? You give away the distillate. Distillation, in plain terms, the enormous closed model is the teacher and a small open model is trained to reproduce the teacher's output distribution rather than to learn from raw text alone. Glimmer's teacher is Musepark, the model Meta will not hand you. Meta ran it in three stages.
+
+Logit distillation from Spark during pre-training, mid-training on longer context, agent-heavy data with reasoning traces in in then post-training that mixes supervised fine-tuning on policy distillation and reinforcement learning across coding and agentic work. What came out is a dense causal transformer. 29.6 billion parameters, 52 layers, hidden dimension 6,656, head dimension 128, dense, not mixture of experts, so every parameter fires on every token. The layer stack is where the local hardware thinking shows. Three sliding window
+
+layers, then one global layer repeated 13 times. 39 of the 52 layers only ever look at a 2,048 token window. The [snorts] local layers carry rotary position embeddings with data set at 500,000. The global layers carry no positional encoding at all. Attention stays stable through query key normalization and an extra scaling term on the queries, then grouped query attention at 16:1.
+
+32 query heads sharing two key-value heads, which cuts the key-value cache by a factor of 16. Stack that on top of the sliding windows and the memory that normally explodes with context length barely moves at all. Here is what that buys. Measured by a developer posting as A Lock on a single RTX 4090. 130,000 tokens of context in 19.34 GB of VRAM
+
+with no key-value cache quantization at all and 4.5 GB still free on the card. Only 13 of the 52 layers keep a full-length cache. The other 39 keep 2,048 tokens each. Long context on a consumer card stops being an argument about memory and becomes an argument about patience. The tokenizer runs
+
+202,048 entries. 200,000 learned merges plus 2,048 special tokens and that second block is where the tool call and agent scaffolding lives. Vision is not bolted on afterwards. A perception encoder of roughly 1.8 billion parameters, a 50-layer vision transformer, feeds the same stack. A pixel shuffle step cuts
+
+image tokens by four and a single image can spend up to 4,096 of them. That matters more than it sounds for agent work. A model that can read a screenshot can drive a screen, click targets, error dialogues, a mock-up you want turned into a page without a separate vision pipeline holding another copy of anything in memory. Two more numbers shape how you use it day-to-day. The context is 128,000 tokens, which is what Meta validated, and the knowledge cut-off is the 4th of January 2026. So,
+
+any library newer than that has to be explained to it. There is also a reasoning dial, low, medium, high, and extra high. And both Meta and Unsloth tell you to run agent work at the top two settings. The last piece is what makes it feel fast. Speculative decoding pairs a small drafter with the big model. The drafter guesses ahead. The
+
+big model checks all the guesses in one parallel pass and keeps whatever the drafter got right. Meta's drafter, De Flash, is not auto regressive at all. It is a block diffusion model out of an ICML 2026 paper. Five layers and it proposes an entire 16 token block in one forward pass. One anchor token plus 15 mask positions filled in parallel. On an
+
+RTX 5090, that takes greedy decoding from 74.9 tokens a second to 233.4, 3.1 times. On an M5 Max, 26.6 to 50.2.
+
+On an M4 Max, 23.7 to 37.8. The serving stacks caught up the same day. SG Lang shipped day zero support and measured 1,452 tokens a second of total output on a 5090 with 236 per user. Executor
+
+exports straight out of the GGUF file onto Apple Silicon and Ollama had it running that morning. And the weights come pre-cut for the hardware. Full precision is 55.7 GB on disk. Unsloth's 4-bit build is 15.9 and wants about 17
+
+in memory. The two-bit build is 10.7. Meta's own dynamic quant targets 32 GB of VRAM at 2/10 of a percent degradation, and its smaller build targets 24 GB at 1%. None of that is a shrink rate applied after the fact. The
+
+window pattern, the head ratio, the drafter, the quant targets, this model was designed backwards from a 24 GB card, which raises the obvious test. Does designing for the card cost you the intelligence? The model to test that against is Qwen 3.6 27B. Alibaba shipped it on the 22nd of April 2026, also Apache 2.0, also dense, 27 billion
+
+parameters, and it has been the default single GPU coding model ever since. Meta's comparison table puts Glimmer ahead on the agentic rows. MCP Atlas, 75.5 to 62.5.
+
+Deep search QA, 74.6 to 71.1. SWE bench pro, 51.2 to 50.2. The same
+
+table, one row down, hands Qwen the coding win. SW bench verified, Qwen 77.2, Glimmer 76.0. Close, but the wrong way round for a model being sold on coding agents. On OS
+
+world verified, it is not close at all. Qwen 75.6, Glimmer 65.9. Nearly 10 points on the benchmark that measures driving a desktop. Meta
+
+publishing rows it loses is worth noticing, and it is more than most vendors do. What Meta does not publish is any comparison against a frontier cloud model, and every number on that page came out of Meta's own harness. So, the useful evidence is the independent kind. On the 10th of August 2026, Artificial Analysis ran everything through their own stack. Their intelligence index put Qwen 3.6 27B at
+
+38, Kimmy K 2.5 at 36, Glimmer at 35, and Gemma 431B at 30. Then their agentic measure, which scores models as Elo inside a real agent harness. Qwen 3.6 27B sits at 11:41. Glimmer sits at 9:53.
+
+The human baseline in that test is a thousand, so Glimmer is still below a person doing the same knowledge work. Terminal bench lands the same way independently, 61 to 52. A commenter called Kimaros flagged that exact gap on Hacker News within hours of the launch, and it has not been disputed since. The hardest number for Meta is knowledge. On the hallucination test artificial analysis runs, Glimmer makes things up at an 82% rate for an index of minus 33. Qwen 3.6 27B sits at 49% on
+
+the same test, the same day, on the same harness. That is a real concession, and it changes how you are supposed to use the thing. A model inventing facts at that rate is not something you ask. It is something you point at tools and files that can tell it when it is wrong. Because there is one row where Glimmer wins on the independent board as well as on Meta's. Tool use on the banking agent
+
+test, Glimmer 24%, Gemini 3.5 flashlight 18, Qwen 3.6 27B 17. Two harnesses, two different owners, one shape. Glimmer is not the smarter model in its class. It
+
+is the more reliable one inside a tool loop, which is what Meta trained it for. Sequential tool calls, failure recovery, long horizon execution. The hands-on reports agree with that row rather than with the index. A developer posting as AJ ran three JS tasks through it on a 3090 and got them one shot, including tasks Qwen 3.6 27B at the same four-bit quant could not finish. Better quant for quant was the
+
+call. And Unsloth's own two-bit build made more than a hundred tool calls inside 14 gigabytes of RAM. That is the quant maker's number on the quant maker's build, so weigh it accordingly. The offline half is not a footnote either. A local agent keeps working when the API down, it does not meter you per token, and the code it reads stays on the machine. For anyone under a compliance
+
+rule, that is the entire argument. There is a cost to owning it though. No server-side patch, no moderation layer between the model and your shell, no availability guarantee. A model that hallucinates at 82% holding tool permissions on your file system is a design problem you have just taken ownership of. And not every reading of the launch was a generous one. A
+
+commenter called pload_p put the timing plainly. Glimmer barely edges out Qwen 3.6 27B outside tool calling, and Alibaba's next 27 billion is already coming. Shipping now is easier than shipping later. Both readings can be true, and the reason they can is that the launch day leaderboard is a bad instrument. It
+
+measures a model on the one day its own team tuned to scaffold at the exact moment the vendor most wants a number. The better question is not which model is smarter. It is which model is steadier when it has to call a tool, read back, and try again after the first attempt fails. So, the verdict. If you have a 24 GB card and you want an agent running on it all day, reading files, calling tools, driving a browser, recovering when something breaks, Muse Glimmer is the one to install this week, not the smartest 30 billion parameters you can download, the most obedient one. In an
+
+agent loop, that is the trade worth making. Three receipts, 24% on the banking tool test against Qwen's 17, measured by someone other than Meta. 75.5 on MCP Atlas against 62.5, and 130,000 tokens of context inside 19 GB of VRAM on a single consumer card. For
+
+the other kind of work, the answer flips. If you want the strongest single shot coder that still fits on one GPU, Qwen 3.6 27B keeps that title. Better on SWE bench verified, better on terminal bench, and it makes things up on 49% of that test against Glimmer's 82. The license is the part that will outlive every number in this video. Apache 2.0
+
+carries no user cap and no acceptable use annex, which the Llama license did. Google has shipped Gemma 4 under Apache 2.0 since April. Meta arriving late still counts because Meta arriving at all was in doubt. It counts because American open weights had gone thin. At
+
+least eight Chinese labs shipped more competitive open models in 2026 than the rest of the world combined. And by May, Chinese open weights were carrying roughly 61% of the tokens flowing through open router. Glimmer is Meta's first open release in 16 months, which leaves the one question that download does not answer. Zuckerberg and Wang both said the weights for Muse bark 1.2 are coming soon. An actual American
+
+frontier model in public. My bet is a dated one. If those weights are not up by the 31st of December, this was a launch week gesture. So, which is it? Was Glimmer a gift or the free sample stapled to a price list?

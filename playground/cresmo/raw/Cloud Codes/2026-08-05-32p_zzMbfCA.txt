@@ -1,0 +1,127 @@
+---
+video_title: "Run a Kimi K3 on 8GB RAM (No GPU)"
+video_id: 32p_zzMbfCA
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=32p_zzMbfCA
+video_date: 2026-08-05T09:00:16+00:00
+video_description: |
+  Is it physically possible to run a 2.78-trillion parameter frontier AI model on a CPU with only 8.24 GB of RAM and zero GPU VRAM? Meet the 6,000-line pure C engine that streams Moonshot's Kimi K3 directly off an NVMe drive with a 176KB compiled binary.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture and memory mechanics behind Fareed Khan's pure C engine, Marco Bambini's WASTE, and the Rust deltafin project. We examine how Kimi K3's Mixture-of-Experts (MoE) design keeps 96.3% of its weights inactive (only 104B active parameters per token), how Kimi Delta Attention maintains a fixed 626MB recurrent state, and how NVMe Direct I/O streams 109 GB of dense trunk weights off disk without blowing past an 8.24 GB system RAM limit.
+  
+  Furthermore, we dissect the brutal memory-for-speed tradeoff: why running in 8 GB RAM yields a slow 32.69 seconds per token, how scaling up to 29 GB RAM (WASTE) speeds execution up by 16x to 0.50 tokens/sec, and why trading memory capacity for storage bandwidth proves that local hardware limits are loading assumptions rather than laws of physics.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  •Fareed Khan C Engine: https://github.com/FareedKhan-dev/kimi-k3-in-c
+  •WASTE Engine (SQLite Cloud): https://github.com/sqliteai/waste
+  •Deltafin Engine (Rust Port): https://github.com/gavamedia/deltafin
+  •Moonshot AI Kimi K3 Model Card: https://huggingface.co/moonshotai/Kimi-K3
+  •Andrej Karpathy llama2.c Reference: https://github.com/karpathy/llama2.c
+  
+  ⏱️ Video Chapters:
+  0:00 - The 2.78 Trillion Parameter Laptop Breakthrough
+  1:04 - What is Kimi K3? (Arena #1 Frontend Model)
+  2:35 - The 3.7% Active Parameter Trick (MoE Sparsity)
+  3:21 - The 4 Reductions: MXFP4, Delta Attention & Latent KV
+  4:22 - NVMe Streaming & Direct I/O (Bypassing System Memory)
+  5:23 - The Catch: 32.69 Seconds Per Token!
+  7:08 - Comparing the 3 Engines: C, Rust (deltafin) & WASTE
+  8:46 - The Memory Dial: 8GB vs 29GB vs 2,300GB Benchmarks
+  9:34 - The Karpathy C Analogy: Why This Explains LLMs
+  10:43 - Final Verdict: An Assumption, Not a Law of Physics
+  
+  #kimik3 #cprogramming #localai #cpu #systemdesign #ai #cloudcodes
+  
+  User Queries:
+  fareed khan kimi k3 pure c engine github
+  run kimi k3 2.8 trillion parameter on 8gb ram cpu
+  kimi k3 mxfp4 nvme direct io streaming
+  waste vs deltafin vs pure c kimi k3 benchmark
+  how to run large moe models without gpu
+  kimi delta attention recurrent state memory overhead
+  32 seconds per token kimi k3 cpu offload
+  pure c llm inference karpathy llama c
+  memory wall vs bandwidth wall local ai
+  cloud codes kimi k3 8gb ram breakdown
+---
+On the 27th of July, a Chinese lab called Moonshot uploaded a file to Hugging Face. The file was 1 and 1/2 terabytes. Inside it sat 2.78 trillion parameters. Not a demo, not an API key.
+
+The weights themselves published under Moonshot's own license for anyone to download. No fee, no waiting list, nothing to sign, assuming you happen to own a rack of Blackwell GPUs. Within 9 hours, somebody had it running on one machine at home. Written in Rust from scratch. A day later, a second engine did it in 29 GB of RAM. That one hit the
+
+Hacker News front page. Then, on the 1st of August, a researcher in Karachi got it down to 8.24. 8 GB of RAM, one CPU, no GPU, no deep learning framework, not even a BLAS library. About 6,000 lines of C compiling to a binary of 176 KB.
+
+Roughly 1,400 stars in under 3 days from one person in 27 commits. There is a catch here. It is an enormous catch, and it is the most interesting part of the story. Start with why anyone bothered. Kimiko 3 is not a curiosity. It
+
+currently sits first in the front-end code arena at 1679, ahead of Claude Fable 5. On one independent index, it ranks fourth out of 189 models, though the source of each number matters. Moonshot's own model card reports 88.3 on Terminal Bench 2.1. An independent
+
+run by Valves scores the same model at 80.9. Both can be true. Different harnesses give different results, but only one of those numbers was chosen by the people selling the model. It reads a million tokens of context, and it was quantization aware trained from the supervised stage onward. So, the 4-bit
+
+weights it ships with are the weights it learned with, not a compression applied afterwards. And Moonshot gave it away. Nearly a million downloads in the first week. The catch was not the license. Giving it away also makes commercial sense. One engineer ran the numbers and
+
+put the marginal cost of serving K3 on rented B300S at about a dollar 37 per million tokens against roughly $15 a million charged for output through the API. The catch was the loading. A single node of eight Nvidia B300S gives you 2,300 GB of high bandwidth memory. The weights alone take about 196 per GPU. Rented, that node runs around $60 an hour. Therefore, the interesting
+
+question is not whether the model is good. It is arithmetic. How do you get 1 and 1/2 terabytes of weights through 8 GB of RAM and still get the right answer out? The answer starts with a fact about how K3 is built. It is a mixture of experts and in each layer it carries 896 of them. But a router picks 16. For any
+
+single token, 16 experts fire and the other 880 do nothing at all. Counted in parameters, 104 billion are active for a given token out of 2.78 trillion. That is 3.7%, which means that at any instant more than 96% of that 1 and 1/2 terabyte file is asleep. That gap is the crack
+
+the whole story goes through, but asleep is not the same as gone. The router only tells you which experts it wants once you are already computing the layer. So all of them have to stay reachable, fast, right now. Sparsity alone gets you nothing. It took four separate reductions. The first is format. The
+
+routed experts ship in MXFP4. Four-bit nibbles sharing one eight-bit exponent across every 32 weights. That is a hair over half a byte per parameter and the engine multiplies straight from the packed nibbles without ever unpacking them. The second is the attention. 69 of the 93 layers use Kimmy Delta attention, which keeps a recurrent state of a fixed size, 9 and 1/4 MB per layer, 626 MB in total. And that number
+
+does not move. In the author's words, it is the same whether you feed it 10 tokens or a million. The usual reason long context eats your memory simply is not there. The third is the other 24 layers, which cache a single 576-dimensional latent per position instead of separate keys and values for every head. That is 53 times less cache, about 2 and 1/3 megabytes per position. The fourth is
+
+the part that sounds like cheating and is not. The dense trunk, 109 gigabytes of it does not fully load. It streams off the NVMe with direct IO, pinning the first N layers and rotating the rest through one slot, which gives a hit rate you can predict exactly, N over 93. Add the four together. In BF16, holding this model would want 5 and 1/2 terabytes of RAM. He runs it in 8.24 gigabytes. That
+
+is a factor of 675, but that number only counts if the output is right, and a handwritten engine is where silent corruption hides. So, he checked. The tokenizer matches Python's tick token on 45 cases out of 45. The 4-bit multiply was verified exact against the released checkpoint bytes, and the detail that turns a stun into a result is this. The output is byte identical at every budget. 8 gigabytes, 32, 95, 224.
+
+Same tokens, same bytes. The memory budget changes the speed and nothing else. One writer summed it up better than the read me did. The memory limit we had all taken for granted was not a property of the model. It was a property of how we were loading it. Which brings
+
+us to the catch. You cannot delete work, you can only move it somewhere else, and he moved it onto the disk. 32.69 seconds per token. Read the units in the right order. Seconds per token, not tokens per
+
+second. A 500-word answer is roughly 650 tokens. At that rate, you are waiting nearly 6 hours for it, and the benchmark host was not a laptop. It was a dual socket epic with 124 cores and a 3.2 TB NVMe. Laptop is the name of a memory
+
+budget, not a measurement on a laptop. Before any of that, there is the first token, about 167 seconds of loading pin trunk layers before a single character appears. And during generation, the processor is mostly idle. Disk IO accounts for somewhere between 41 and 71% of wall clock time. The CPU is not the bottleneck. It is waiting. You also
+
+need 1.7 TB of free NVMe just to hold the thing, the checkpoint plus a repacked trunk. 93% of it stays on the disk out of RAM entirely. So, the engineering that matters here is storage engineering. Direct IO reads cold at 3.2
+
+GB a second, where buffered reads manage 2.3, and during inference, it sustains 5 to 6. Therefore, the accurate description is not that the memory wall came down. The memory wall was traded for a bandwidth wall, and bandwidth is a wall you can buy your way through, which memory capacity at these sizes is not. That trade is exactly what the argument on Hacker News was about. One commenter
+
+put the case for the prosecution. By the time your tokens arrive 30 hours later, you might want your laptop back. But, the reason to take this seriously is that it is not one person's hobby. In the week after those weights landed, at least three independent teams built the same idea from scratch. 8 and 1/2 hours after the upload, a project called Deltafin appeared, written in Rust, running the full model on a single device with an OpenAI-compatible server bolted on. 665 stars. 28 hours after,
+
+WASTE arrived from the team behind E. coli cloud. The name is an acronym, Weight-Aware Streaming Tensor Engine. Same core move, hold the trunk in memory, stream the experts off NVMe. But, WASTE spends its memory differently. Experts get 3-bit residual
+
+vector quantization, while the more sensitive shared weights stay at four or eight. and the matrix multiplies run directly against the codebooks. A look-ahead router guesses which experts the next layer will want and starts reading them early. The result is a different point on the same curve. 29 GB as the hard floor, 64 recommended, and about half a token per second on a MacBook Pro. Every cold token drags
+
+roughly 17 GB of experts off the disk. And it stays faithful doing it. Waste's final logits agree with the reference to within about 3 millionths. Though Bambini's own run came in slower than his read me's range at roughly a third of a token per second. Streaming speed depends on what the cache happens to be holding. That project drew 338 points
+
+and 166 comments in a day. The defense, from a commenter called ruler88, was one sentence. "This is not about practicality today. It is a line drawn around what is possible. And the C implementation is the one climbing fastest. 842 stars on the 3rd of August,
+
+a little over 1,400 by the 4th. Around 480 a day with no front page thread carrying it. Line the numbers up and the shape is obvious. 8 GB buys you a token every 32 seconds. 29 GB buys you half a token a second. 16 times faster for 3
+
+and 1/2 times the memory. 128 GB gets you to 20 seconds a token. 2,300 gets you tens of tokens a second. So, memory was never a wall with the model on one side and you on the other. It is a dial.
+
+Every notch you decline to buy you pay for in time, and the exchange rate is brutal at the bottom. Which leaves the question of what any of this is for, and both authors answer it the same way. Bambini's own assessment of Waste is that at its current speed it is a technical result, not a general-purpose interactive deployment. The C engine's read me is blunter. Slow in answering correctly in 8.24 GB. That is a familiar
+
+kind of useless. Back in 2023, Andre Karpathy published Llama 2 inference in one file of pure C. It was not built to serve traffic. It was built to make the architecture legible. It has just under 20,000 stars, and it taught a generation how a transformer actually works. The
+
+comparison the C engine invites is with Llama CPP, 122,000 stars, 400 megabytes of repository, and the tool people actually run. This is seven source files and 176 kilobytes. Those are not competitors. One is infrastructure, the other is an explanation you can compile. And the explanation came from one person. Farid Khan works out of Karachi.
+
+His profile says he does research on AI and is looking for a PhD place or a job. 27 commits pushed inside a 2-hour window on a Saturday, and he has not touched the repository since. One caveat, since it gets repeated wrongly, these weights are not MIT licensed. They ship under Moon shots own Kimik3 license. Open weights and open source are not the same thing, and the difference sits in a document most people downloading a terabyte and a half will not read. He
+
+did not make a 2.78 trillion parameter model practical. Nobody has. What he did was make its shape visible, proving that the thing standing between a frontier model and ordinary hardware was an assumption about loading, not a law of physics. That is the useful part.
+
+Someone draws the line, someone else moves

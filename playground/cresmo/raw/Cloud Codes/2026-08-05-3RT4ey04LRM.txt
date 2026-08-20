@@ -1,0 +1,138 @@
+---
+video_title: "10 AI Skills: Don't Learn Prompting (Do This Instead)"
+video_id: 3RT4ey04LRM
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3RT4ey04LRM
+video_date: 2026-08-05T20:00:37+00:00
+video_description: |
+  Why did two coding agents using the exact same model weights score 12.5 points apart on the exact same benchmark? Meet the 10 non-obvious AI engineering skills for 2026 that actually dictate production success—leaving prompting and vector RAG behind.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this deep dive, Cloud Codes breaks down the technical mechanics behind 10 high-value AI infrastructure skills: Harness Engineering, Context Engineering, Tool Surface Optimization, Permission Design, and Token Efficiency. We analyze how trimming context window clutter raised agent task completion from 71% to 91.6% (while burning 63% fewer tokens), why exposing over 30 tools triggers the "Confusion Gap" (dropping accuracy by 23 points), and how OckBench benchmarks reveal a 26x token count variance for half a point of model accuracy.
+  
+  Furthermore, we dissect Prompt Caching memory layouts (achieving 85.8% cache hit rates and 77% cost savings), Model Routing classifiers, Eval Engineering (Pass at K vs Pass to the K), and the 2026 global RAM shortage that doubled memory costs for Local-First AI deployments.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  • Terminal-Bench Leaderboard: https://terminalbench.com/
+  • LMSYS RouteLLM Framework: https://github.com/lm-sys/RouteLLM
+  • Anthropic Agent Cookbook & Evals: https://github.com/anthropics/anthropic-cookbook
+  • Chroma Vector Database: https://github.com/chroma-core/chroma
+  • OWASP Agentic AI Security Top 10: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+  • Learn Harness Engineering:  https://walkinglabs.github.io/learn-harness-engineering/en/
+  
+  ⏱️ Video Chapters:
+  0:00 - The 12.5-Point Gap Between Identical Models
+  0:52 - Skill 1: Harness Engineering (The 12.5 Point Lever)
+  1:51 - Skill 2: Context Engineering (Trimming for 91% Accuracy)
+  2:40 - Skill 3: Tool Surface Design & The Confusion Gap
+  3:35 - Skill 4: Permission Design & Sandbox Escapes
+  4:52 - Skill 5: Token Efficiency & Verbosity Tuning (OckBench)
+  6:02 - Skill 6: Prompt Caching Memory Layout (85% Hit Rates)
+  6:49 - Skill 7: Model Routing & Cost Classifier Architecture
+  7:36 - Skill 8: Eval Engineering (Pass at K vs Pass to the K)
+  8:19 - Skill 9: Memory Hardware Economics (The 2026 RAM Crisis)
+  9:40 - Skill 10: Local-First Infrastructure & Quantization
+  10:45 - Final Verdict: The Most Important Skill to Learn First
+  
+  #ai #softwareengineering #systemdesign #cloudcodes #agenticai #machinelearning #programming
+  
+  User Queries:
+  10 non obvious ai skills that matter in 2026
+  harness engineering vs prompt engineering benchmark
+  context engineering trim window accuracy jump
+  tool surface confusion gap enterprise ai
+  ockbench token efficiency verbosity tuning
+  prompt caching memory layout 85 percent hit rate
+  model routing classifier routellm lmsys
+  pass at k vs pass to the k eval engineering
+  memory hardware shortage ai accelerator ram price 2026
+  cloud codes 10 ai skills 2026 breakdown
+---
+Two coding agents, same model underneath, same benchmark, same day. One scores 65.8, the other scores 73.9. Eight points apart, and the weights never changed. That gap is wider than
+
+the gap between most of the models people spend their afternoons arguing about. On the public boards this week, the top four models sit inside about two points of each other. The models converged. The results did not. Something outside the model is doing the deciding. So, 10 skills, not prompting,
+
+not rag, not another course on writing better instructions. 10 things that decide whether the same model earns its keep in your product or just burns money. Everyone carries a receipt dated in the last few weeks. Two of them you can apply this afternoon. One of them will double your hardware budget before you write a single line of code. And the
+
+10th only became worth learning because of a shortage the software industry did not see coming. Number one is the reason those two agents disagreed, and it has the cleanest evidence on the list. A harness is a loop around the model. The prompt it assembles, the tools it exposes, how it retries, what it carries between turns. Terminal bench publishes agent and model as a pair, which is what makes the comparison possible.
+
+On version 2.1, Gemini 3 Pro scores 73.9 under the Terminus 2 harness, and 65.8 under Google's own Gemini CLI. One version back, Claude Opus 4.6 spans 62.9
+
+to 75.3. 12 and 1/2 points is roughly a full model generation the kind of jump team spent a quarter migrating to capture. Here it is sitting in somebody's config file. So, harness engineering means treating the loop as the product. Your own
+
+scaffold against a fixed task set, one change at a time, knowing which retry recovers a failure, and which one burns tokens. If you have not measured yours, you do not know whether last month's model upgrade helped. The largest input to that loop is what you put in the window. Chroma tested 18 frontier models, and every one as input grew, accuracy dropping 30 to 50% well before the window filled. That study is from July 2025. Every model in
+
+it has been replaced. The finding has not been. Microsoft published the cleanest number in June. On a 50 task agent workload, the full context run burned 1.48 million tokens. Pruned and
+
+summarized, 553,000. 63% fewer, finishing in 5.8 hours instead of 14.6. And it was more accurate. Task completion rose from 71%
+
+to 91.6. Trimming context did not trade accuracy for money. It bought both in the same run. Context engineering is deciding what earns a seat in the window at every step, which raises the question of what is filling that window. Because for most
+
+production agents, it fills with tool definitions long before it fills with documents. Two researchers studied a live enterprise assistant carrying 110 agents and 584 tools. As the catalog grew, routing accuracy on vague requests fell 16 to 23 points across three different frontier models. Embedding-based shortlisting won back 10 or 11. But even with perfect retrieval, the right tool handed over every time, accuracy still sat 10 points below where it started. They called it the confusion
+
+gap. Vendors agree on the record. Anthropic puts degradation past 30 to 50 available tools. OpenAI recommends fewer than 20 per turn. So, tool surface design is fewer tools with wider verbs, written for a model rather than a docs page. Connecting every MCP server you
+
+own is this decade's install every browser extension mistake. But a tool your agent can call is a tool an attacker can call through it. On July 21st, OpenAI disclosed that two of its own models escaped a sandbox cyber evaluation, exploited a zero-day in a package registry proxy, and reached Hugging Face's production infrastructure. They were not sabotaging anything. They were trying to steal the answer key for the benchmark they were being graded on. Hugging Face detected and contained
+
+it on the 16th, 5 days before Open AI connected the intrusion to its own testing. OWASP 2026 Agentic Report maps prompt injection to six of its 10 risk categories and states the cause plainly. The model reads system instructions, user requests, and web page text as one undifferentiated stream of tokens. So, permission design assumes the loop will be turned against you. Minimum tools, minimum credentials, minimum network for the shortest useful window, denied by default. When the lab that
+
+built the model reports that its own sandbox held for less time than the evaluation, adding a permission prompt later stops being a plan. Four skills in, your loop is well-fed, narrowly armed, and hard to turn against you. Which means it runs constantly, which means the bill arrives. So, answer this before the second half. If your agent spend dropped 40% tomorrow with no loss in quality, would you know which change did it? Most teams cannot, and the fifth
+
+skill is why. In June, researchers from Georgia Tech, MIT, and Nvidia published Octo Bench, which scores accuracy and token count together instead of separately. Deep Seek V4 Flash reached 82.5% accuracy using 83,000 tokens. GPT 5.4 at medium
+
+effort reached 82% using 3,177. Half a point of accuracy for 26 times the tokens is a subscription nobody signed up for. Inside one family, it holds two. Claude Opus 4.7 matched 4.6's
+
+accuracy on roughly four times fewer tokens. Efficiency now moves independently of intelligence, which makes it something you shop for. Every current API hands you the dial. Claude Opus 5 shipped on July 24th with an effort setting that defaults to high. So, untouched, you have been buying maximum effort on trivial requests since launch. And reasoning tokens bill as
+
+output the expensive side of the invoice. GPT-5.6 treats effort as a ceiling rather than a floor, and may spend zero reasoning tokens on a prompt it judges easy. Verbosity tuning is knowing which of your cues deserve which setting. Cheaper than a cheap token is one you already paid for. Anthropic prices a cache read
+
+at 1/10 of a normal input token. A 90% discount is a vendor telling you which part of your prompt cost them almost nothing to serve twice. One team published their numbers on July 23rd. Same feature, same models. A badly ordered prompt captured about 18% of the available savings. After reordering,
+
+they hit an 85.8% cache hit rate and cut input costs by 77%. The changes were dull. Static instructions split from dynamic context. Shared context moved ahead of conversation history. Prompt blocks
+
+generated deterministically. And hit rate watched in production like any other metric. Prompt architecture as a memory layout problem. And most teams switch on and rarely check whether it is landing. No cache saves you from sending a hard model an easy question. On July
+
+30th, OpenAI cut its Luna tier by 80% to 20 cents per million input tokens, while the flagship Soul stayed at $5. Inside one vendor on one day, that is a 25 to one spread. Routing decides which request deserve the expensive end, and the research floor is old and solid. Back in 2024, LMsys root LLM held 95% of the frontier models quality on MT-Bench while cutting cost over 85% by sending a quarter of queries to the strong model. Production teams report 40 to 70%.
+
+Routing stays available precisely because it is unglamorous. A classifier costing a fraction of a cent decides whether the next call costs a fraction of a cent or a nickel. Every skill so far is a trade, and you cannot trade what you cannot measure, which makes the eighth the one that makes other seven legible. Anthropic's January guide on agent evals is refreshingly small. Start with 20 to 50 tasks drawn from real failures, not hundreds.
+
+Measure pass at K, meaning it worked in one of K tries, next to pass to the K, meaning it worked in all of them. The second number is what production depends on, and it is the one that looks worst. Track turns, tokens, and latency per run, not just the verdict. The trap is treating evals like unit tests. A unit test asserts an exact match. An eval
+
+measures semantic correctness across a distribution, so it has statistical power, and 12 cases have almost none. So, you have a measured, tuned, defended agent. And then the ninth skill walks in from outside software entirely, holding an invoice. TrendForce put DRAM contract prices up 90 to 95% quarter over quarter in the first 3 months of this year, with NAND flash up 55 to 60. No factory burned down. Samsung, SK Hynix, and
+
+Micron control over 95% of DRAM, and they moved wafer capacity to high bandwidth memory for AI accelerators because the margin is better. Data centers now take roughly 70% of world memory output, up from 20 to 30% in 2022. SK Hynix's chief executive said in July that the shortage probably runs past 2030. Gartner puts the combined DRAM and SSD surge near 130% across the year. A 128 GB DDR5 kit has been listed above $4,000. That re-prices your
+
+architecture. Context window size is a memory cost. KV cache is a memory cost. And after the first token, generation is bandwidth bound. The model streams its entire active weight set through the processor for every token it writes.
+
+So, a two-channel desktop at roughly 90 GB a second gives you 8 to 15 tokens a second on a model that would do 40 or more in VRAM. Same model, same quantization. The pipe is the ceiling and the pipe now has a price on it. That shortage is exactly what makes the 10th scale harder and more valuable than a year ago because open weights finally caught up. Moonshot released Kimiko 3's weights on July 26th.
+
+On LLM stats terminal bench 2.1 board, it sits second at 88.3 against GPT 5.6 souls 88.8, but download is carrying a lot of weight in that sentence. K3 is
+
+2.8 trillion parameters and about 1 and 1/2 terabytes of weights. That is a rack, not a workstation. Open the way a bridge is public. You can walk on it.
+
+You cannot take it home. The one that lands on hardware you can actually buy is deep seek V4 flash. It's 3-bit build is 103 GB, which fits 128 GB machine. The 8-bit build is bit identical to the official checkpoint. So, local first now is narrow and expensive. Which quantization keeps the
+
+answer honest? What the machine costs this month rather than last year? And which workloads justify owning metal instead of renting it? Open weights got good in the same year the memory to hold them doubled in price and the same build out did both. 10 skills. If you only
+
+have time for one, the honest pick is not the fashionable one. Learn harness engineering. It is the only item on this list backed by something like a controlled experiment. Same weights, same tasks, 12 and 1/2 points of difference on a board anyone can recheck. It also wins by containment. Context, tools,
+
+permissions, caching, and routing are all decisions made inside the harness. Get good at the loop and you own a framework for the other five instead of five more tutorials. The counterargument deserves respect. Harnesses are commoditizing. Cloud code, codex, and cursor absorb these improvements every few weeks and most teams should not be writing their own agent runtime in 2026.
+
+That is correct and it moves the skill rather than deleting it. When five vendor loops differ by 12 points on your workload. Measuring which one is better on your tasks is worth more than being able to write one. For whom? Anyone shipping agents other people depend on.
+
+The 5% this misses are solo developers on a single vendor CLI. Your money is in the effort dial and routing. This afternoon no rewrite required. The villain across all 10 is one idea, that choosing the right model card is the job. It is the most expensive belief in AI engineering right now and every vendor benefits from you holding it. So, a bet with a date on it.
+
+In August 2027, the same model will still span eight points or more across harnesses on the public boards. The gap will not close because the gap is the work. Which leaves the question I cannot settle for you. If the harness really is the product, do you get better at building loops or better at judging the ones the vendors hand you? Both are live positions right now and one of them ages badly.

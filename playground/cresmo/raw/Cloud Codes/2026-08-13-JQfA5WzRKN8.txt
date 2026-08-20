@@ -1,0 +1,222 @@
+---
+video_title: "Best Local AI Models for Every VRAM Tier (4GB to 32GB+)"
+video_id: JQfA5WzRKN8
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JQfA5WzRKN8
+video_date: 2026-08-13T16:00:31+00:00
+video_description: |
+  With 16GB VRAM officially taking the #1 spot on the Steam Hardware Survey, which local AI models should you actually run on 4GB, 6GB, 8GB, 16GB, 24GB, and 32GB+ GPUs? Meet the definitive 2026 local LLM tier list and the 22.2-point harness discovery that changes everything.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the memory arithmetic, quantization math (Q4_K_M at 4.8 bits/weight), and benchmark rankings across every consumer VRAM budget. We analyze Microsoft's Phi-4 mini for 4GB cards, explain why 6GB users must stop running 2023 7B models (as Mistral Small 4 exploded to a 119B MoE), review Qwen 3.5 9B's 81.7 GPQA Diamond score beating 120B models on 8GB cards, and contrast Qwen 3.6 35B MoE (100 tok/s) vs Qwen 3.6 27B Dense on 16GB and 24GB VRAM GPUs.
+  
+  Furthermore, we dissect Qwen 3 Coder Next (80B MoE) for 32GB+ workstations streaming idle experts from RAM, audit the Artificial Analysis Index v4.1 local-vs-cloud performance gap, and reveal independent research proving identical weights jump 22.2 points on SWE-bench Verified (from 67.8% to 90.0%) purely by upgrading the agent harness wrapper.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  Microsoft Phi-4 Mini:
+  https://huggingface.co/microsoft/Phi-4-mini-instruct
+  Google Gemma 4 E4B:
+  https://huggingface.co/google/gemma-4-e4b-it
+  Qwen 3.5 9B:
+  https://huggingface.co/Qwen/Qwen3.5-9B
+  Qwen 3.6 27B:
+  https://huggingface.co/Qwen/Qwen3.6-27B
+  Qwen 3 Coder Next 80B:
+  https://huggingface.co/Qwen/Qwen3-Coder-Next
+  Ollama:
+  https://github.com/ollama/ollama
+  LM Studio:
+  https://lmstudio.ai/
+  Artificial Analysis:
+  https://artificialanalysis.ai/
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The Steam Hardware Shift: 16GB VRAM Takes #1
+  1:07 - The Quantization Math: Q4_K_M Arithmetic
+  3:21 - 4GB VRAM Tier: Microsoft Phi-4 Mini (3.8B)
+  5:25 - 6GB VRAM Tier: Why You Must Stop Using 2023 7B Models
+  7:23 - 8GB VRAM Tier: Qwen 3.5 9B (Beating 120B Models)
+  10:41 - 16GB VRAM Tier: Qwen 3.6 35B MoE (100 tok/s)
+  12:08 - 24GB VRAM Tier: Qwen 3.6 27B Dense (Single RTX 3090/4090)
+  13:40 - 32GB+ Workstation Tier: Qwen 3 Coder Next (80B MoE)
+  15:03 - Artificial Analysis Index v4.1: Local vs Frontier Gap
+  17:32 - The 22.2 Point Discovery: Why Harness Beats VRAM Tier
+  18:52 - Final Summary: The Complete Local AI Buying Ladder
+  
+  #localai #ollama #lmstudio #qwen #gpus #vram #systemdesign #cloudcodes #machinelearning #softwareengineering
+  
+  
+  
+  
+  
+  
+  
+  
+  User Queries:
+  best local ai models for 8gb vram 2026
+  best local llm for 16gb vram qwen 3.6 35b moe
+  phi 4 mini vs gemma 4 e4b 4gb vram local ai
+  qwen 3.5 9b gpqa diamond score vs gpt oss 120b
+  qwen 3.6 27b dense vs 35b moe speed benchmark
+  qwen 3 coder next 80b moe workstation requirements
+  q4_k_m quantization memory calculation 4.8 bits per weight
+  artificial analysis intelligence index v4.1 local llm
+  swebench verified 90 percent harness mrguo6221
+  cloud codes best local ai models vram breakdown
+---
+Last month, something shifted in the Steam Hardware Survey that changes what you can run on your own machine. 16 GB of video memory became the most common graphics card configuration that people actually own. First time in the history of that survey. 8 GB had held the top spot, and last month it finally lost it. 25.9%
+
+against 25.3 for 8 GB. A rounding error almost, but that number is a budget. Whatever fits inside it is the AI you can run on your own machine offline for free. So, this is a tier list. 4 GB, 6,
+
+8, 16, 24, and the best model that fits each one. Before we start, two of the tiers you will see repeated in guide after guide are wrong now for two different reasons. One is wrong because the models moved past it. The other is wrong because a company kept a name and changed the thing underneath it. There is also a model waiting at the end of this list that beats everything else on it and fits on none of these cards.
+
+And nearly every tier list leaves out the same number, the one that actually decides whether your model fits. Start with the machinery underneath all of it because every number after this depends on how that works. Two pieces of software do almost all the work here. Ollama is the runtime. It downloads a model and serves it. Today, it sits at
+
+178,000 stars on GitHub. LM Studio is the other door. A desktop application with an actual interface for people who would rather not live in a terminal. It ships two engines side by side. llama.cpp,
+
+which runs the GGUF files the community shares, and Apple's MLX, which runs natively on M-series Macs. The MLX path is worth knowing if you are on a Mac. The guides put it 30 to 50% faster than llama.cpp on Apple Silicon, and one measurement claims more than double. Both tools pull their weights from the same place, Hugging Face.
+
+Ollama is on version 0.32 as of July, and it has grown past being a runtime. It will serve cloud models, run web search, and speak the same API as the big labs. Roughly 42% of developers now run at least some model workload on their own hardware. A llama's own library curates a couple of hundred models. Behind it, hugging face holds
+
+something like 135,000 GGML files, which is the format all of this runs on. That is the supply side. The demand side is your card. And the thing that decides whether supply meets demand is quantization. A model is trained in 16-bit numbers. Storing it
+
+that way costs 2 GB of memory for every billion parameters, which prices almost all of us out immediately. Quantization rounds those numbers down to fewer bits. The setting you will see everywhere is Q4KM, and the K matters. It is a mixed precision scheme averaging about 4.8 bits per weight while keeping the attention and embedding layers at higher precision because those are the ones that break. The cost is real, but small.
+
+The community guides put Q4KM at roughly 3 to 5% below full precision with a perplexity gap against 8-bit of about 5 hundredths of a point. That is under the level where you would notice it in conversation. So, here is the arithmetic the tier list skip. 4.8 bits a weight works out to about 0.6 GB for every
+
+billion parameters. Then add 1 to 2 GB on top for the KV cache and the runtime. A 7-billion model is under 4 GB of weights and 5 to 6 GB in practice, which brings us to the tightest tier that still works, 4 GB. Old laptop territory and entry-level card from a few years back, and the received wisdom for years was that 4 GB meant no. It does not mean no. Microsoft's Phi-4 mini is 3.8
+
+billion parameters, and at Q4KM, it lands around 2 and 1/2 GB. The download is about 2.2. MIT license and 128,000 tokens of context. It leaves headroom on a 4 GB card, which almost nothing else does, and it is better than it has any right to be at that size. The Phi line
+
+is trained on synthetic data built to be reasoning dense rather than merely large, and it holds up on structured output and tool calls, which is most of what a small local model actually gets asked to do. It also scores six on the artificial analysis intelligence index six. I am going to leave that number sitting there without a scale for a while because the scale is the entire point of this video and it does not land yet. What I will say now is that 4 GB buys a competent small assistant. Summarizing, rewriting, pulling fields out of documents, simple classification, work where the answer is already inside the text you handed it. What it does not
+
+buy is anything that has to hold a plan in its head. Multi-step agent work, debugging across files, long reasoning chains. A 3.8 billion parameter model loses the thread and it loses it confidently, which is worse. Match the model to the job and this tier is fine.
+
+Ask it to be a co-worker and it will disappoint you. Phi 4 mini is not the only option at this size, and the rest of the shelf is newer. Google shipped Gemma 4 in April under Apache 2.0, and the small end of that family, the E2B and the E4B, is built for exactly this tier, with the E4B at around 5 GB at 4 bits. The pick depends on the job. Phi 4 mini if you want
+
+structure and tool calls in the smallest possible footprint. Gemma 4 E4B if you want multimodal. That family added native audio in its 12B this June. Qwen 3.5's 4B if you want the same family as the 8 GB pick, one size down.
+
+But all three live under the same constraint, and it is not intelligence, it is room. Two more gigabytes ought to change the picture completely, and this is where the standard advice starts to come apart. Search for the best model for 6 GB and you get the same two answers you would have got years ago. Mistral 7B from 2023 and Qwen 2.57B from 2024. Both still work. Both are also
+
+tight. A 7 billion model at 4 bits is around 4 GB of weights, and once you add the cache, you are at 5 to 6 on a 6 GB card. It fits sometimes, depending on the model and how much context you ask for, which is a strange place for a tier to be. The recommended model for a card is one that might not load. And those two names are not still the answer because they are the best. They are
+
+still the answer because the guides recommending them stopped being updated. Look at what happened to one of those names while those guides sat still. Mistral still ships a model called small. Mistral small 4, released in March this year, Apache 2.0 256,000 tokens of context. Mistral small 4 is
+
+119 billion parameters, 6 and 1/2 billion active because it is a mixture of experts, but 119 billion total, and in full precision, it is about 238 GB on disk. The word small survived. The thing underneath it went from 7 billion to 119 billion in under 3 years. Nothing about that name tells you what card it needs, and what it needs is a server. So, the current answer at 6 GB is not a 7B from 2023. It is whatever the newest small
+
+families put in that bracket. Gemma 4's E4B at around 5 GB, QN 3.5's 4B at about 2 and 1/2 GB of weights, both from this year, both leaving room for context. And that is what the 6 GB tier is really teaching. Model names stop describing model sizes. The only number that still
+
+means what it says is the one printed on your own card. For a quarter of you, that number is eight. 8 GB is where this gets interesting, and it is where most people watching are. A quarter of the Steam survey, 25.3%, is sitting on exactly this much video memory. It is the single most common
+
+serious tier. The answer here is Quinn 3.5, the 9B. At Q4KM, it is about 5 and 1/2 GB of weights, which leaves roughly 2 and 1/2 GB of headroom on an 8 GB card. That headroom is the entire reason it is the pick because headroom is context.
+
+Loaded at 8,000 tokens, it uses about 7 GB in total and it still runs. On an 8 GB card, the guides measure it at around 38 tokens a second. On a 4090, about 92. It is downloaded 12.4 million times a month from Hugging Face. Apache 2.0.
+
+262,000 tokens of context natively, extensible past a million, and it carries a vision encoder, so it reads images. And then there is the row on its model card that made me read it twice. On GPQA Diamond, a graduate-level science benchmark, the 9B scores 81.7. GPTOS 120B, a model 13 times its size, scores 80.1. It wins on MMLU Pro as well, 82.5
+
+to 80.8. On MMLU Redux, the two are level, 91.1 against 91. A 9 billion parameter model you can run on a mid-range gaming card beating a 120 billion parameter model on graduate science questions. The rest of that card
+
+is the part that actually matters for daily use. 66.1 on function calling, 79.1 on multi-turn tool use, 91.5 on instruction following, 55.2 on long
+
+document reasoning. Those are the rows that decide whether a local model is useful or merely impressive. By the way, that is what MMLU looks like in 2026. The original is saturated. Models pin the top of it, so the cards report MMLU Pro and MMLU Redux instead, which are the harder rebuilds. Same idea, more
+
+headroom. But I want to finish that model card properly because the same table has a row where the 9B loses. On HMMT, a competition math benchmark, it scores 83.2 and the 120B scores 90. Same table, same evaluation run, opposite result. And notice which benchmarks are
+
+not on that card at all. Human Eval, the coding test the older guide still list. MTBench, the conversational one. Not reported, not on the QN cards, not on the Gemma cards, not on any 2026 model card pulled for this video. They saturated and the field moved on. What
+
+replaced them is what you will see for the rest of this video. SWE Bench Verified, which asks a model to close real GitHub issues. Terminal Bench, which asks it to finish work in a shell. Live Code Bench, tests where the model has to do a job, not answer a question. So, the 8 GB verdict is a strong yes with a caveat attached. QN 3.59 B is the
+
+best thing I found that fits in this much memory, and it will still lose rows to models 13 times its size. Both of those are true at the same time. Which sets up the question I could not stop turning over while putting the next tier together. If a 9 B can be 120 B, and it does, then what is the parameter count actually buying anyone anymore? 16 GB and 24 GB usually get grouped together in these lists, and I am going to split them apart because the model these lists name for both of them only actually fits one. And it is worth
+
+saying how small that top tier is. 24 GB is 5.4% of the Steam survey. 12 GB is 12.9. Just over half of PC gamers are
+
+on 10 GB or more, which is the line this whole video sits on. The model is Qwen 3.6, the 27 B, released in April. It is dense. All 27 billion parameters fire on every token. No expert routing. Apache
+
+2.0. 262,000 context. 6 and 1/2 million downloads a month. At Q4KM, it is about 17 GB, which is more than 16. Add the cash, and you
+
+are at 18 or 19. And a 16 GB card cannot hold it without dropping to a smaller quant that costs you the quality you came for. So, 16 GB gets a different answer and a better one. Qwen 3.6 also ships a mixture of experts version, the 35B A3B. At the UDQ3KM quant, it is
+
+about 16.6 GB and only 3 billion parameters are active per token, which makes it fast. On the same 3090, the measurement I found puts the mixture of experts version at about 100 tokens a second and the dense 27B at about 25. Roughly four times the speed on the same card from routing rather than raw size. 24 GB is where the dense 27B belongs and it earns it. On SWE-Bench verified,
+
+Qwen's own numbers put it at 77.2. The model it beats there is Qwen 3.5's flagship, 397 billion parameters at 76.2, about 15 times the parameters, beaten by the smaller model on the benchmark that matters most for agents by the same company in the same year.
+
+And the 27B is the one that fits on a card you can buy in a shop. It is not a single-row fluke either. SWE-Bench Pro, 53.5 against 50.9. Terminal Bench 2.0,
+
+59.3 against 52.5. Skills Bench, 48.2 against 30. Four
+
+benchmarks, four wins for the smaller model. The general knowledge rows are just as strong. 86.2 on MMLU Pro, 87.8 on GPQA Diamond, 94.1 on this year's
+
+AIME Math. 83.9 on Live Code Bench. On paper, on a single graphics card, that is a serious machine. One caveat on all of those, and it matters. They are Qwen's numbers,
+
+measured with Qwen's own agent scaffold. A vendor-reported score is a claim until somebody else reproduces it on a named harness. That distinction turns into the end of this video. For now, the 24 GB answer is the dense 27B at Q4KM. 17 GB, 35 to 55 tokens a second on a 4090. It
+
+is the strongest model that fits one consumer card outright. And that phrase, fits one consumer card, is carrying a lot of weight because the best local coding model in this entire video does not fit one. It does not fit two of most of them. Qwen1.5 27B Next arrived in early February. 80 billion total
+
+parameters, 3 billion active. 512 experts, 10 firing at a time. 262,000 tokens of context. Apache 2.0. Half a
+
+million downloads a month. 70.6 on SWE-Bench Verified. 44.3 on SWE-Bench Pro. 36.2 on Terminal Bench.
+
+Those are serious agentic coding numbers from an open weights model you're allowed to use commercially for nothing. At 4 bits, it needs about 46 GB. Unsloth, who make the quants, say you want more than 45 GB of combined memory to run it. And more than 30 even for the aggressive 2-bit versions. 24 GB is not close. There is a way in, and it is the
+
+reason the architecture matters. Only 3 billion parameters are active per token, so llama.cpp can pin the routing and the dense layers to your GPU and stream the idle experts from system RAM. Slower, but it runs. So, the practical shape is a large card with a lot of system RAM behind it. And the two have to add up
+
+past 45 GB, which is a workstation, not a gaming PC. The ladder we have been climbing has a ceiling, and the best thing on the shelf is sitting above it, which is the right moment to answer the question I left hanging back at 4 GB. 5.4 mini score 6. Six on the Artificial Analysis Intelligence Index, which is a composite of nine hard evaluations, graduate science, agentic terminal work, long context retrieval, and six more.
+
+Here is that same ruler applied to everything else. Qwen 3.6 27B, the 24 GB pick, the one that beat a 397 billion parameter model, scores 38. It is the highest scoring small open model there is. Small meaning it fits on a card.
+
+Behind it, a model called Muse glimmer at 35. The 35B A3B at 32. And the best tiny model under 4 billion parameters, something called G9 V3, scores 16. That is the local shelf top to bottom. Now, the other end, Kimmy K3, which is open weights too, but needs a data center to hold it, scores 57 and ranks third in the world. Claude Opus 5 scores 63. GPT
+
+5.6 Sol, 59. Claude Fable 5, 60. And those nine evaluations are chosen to be exactly the things a shrunk model struggles with. Humanities last exam, GPQA Diamond, Syco, Terminal Bench 2.1,
+
+long context retrieval, a benchmark for knowing what you do not know. It is a deliberately unkind test, which is what makes it useful. So, the gap is 25 index points between the best model you can fit on a consumer graphics card and the best model that exists. Not 25%, 25 points on a composite where the leader scores 63. And from 54 Mini 6, that gap is 57. That is the catch, stated as a
+
+number instead of a mood. Local AI in 2026 is properly useful, and it is not frontier. Anyone telling you a 27 billion parameter model on your desk equals Opus 5 is selling you something, and the index says so plainly. There is a trap inside those numbers worth naming. Artificial Analysis rebased this index in June to version 4.1. Scores
+
+from before that rebase sit on a different scale, and aggregator sites are still republishing the old ones. You will see 52.83 quoted for that same 27B. Same model, different ruler, and the two do not compare. Which is a general rule for every benchmark number in this video. Two scores from different
+
+benchmark versions are not a comparison, they are a category error. Terminal bench 2.0 and 2.1 are not the same test either. Which brings me to the result that changed how I would answer this entire question.
+
+In May, an independent researcher in G non, posting as M Erju O 6221, took Qwen 3.6 27B the official FP8 weights. No fine-tuning, no distillation, nothing modified. And those same weights went through SWE bench verified three separate ways. Under mini SWE agent, a simple scaffold, 67.8%.
+
+Under Qwen's own scaffold, the number printed on the model card, 77.2. Wrapped in an engineered agent stack, 90%. 88 if you throw out every retry. 22.2 points of movement on identical
+
+weights. The model did not change. Only the loop around it did, and swapping out just the command line tool, holding everything else steady, was worth about two and a half points on its own. Full disclosure on that result because it has earned it. It ran on 12 graphics cards across two workstations. The 90%
+
+figure includes retries, and part of the tool chain is closed source. The predictions files and the harness reports are public. Take the 88. But the shape survives every one of those caveats, and it reorders the whole video. 22 points of SWE bench from the harness alone on weights that stayed byte identical. That is a bigger swing
+
+than most of the upgrades in this tier list will buy you. So, how to choose? Start with the number on your card because that part still holds. 4 GB, 54 mini, or Gemma 4's E4B if you want images and audio. 6 GB, the same shelf, one quant more comfortable. Do not force
+
+a 7B from 2023 that barely loads. 8 GB, Qwen 3.59B at Q4KM, 5 and 1/2 gigabytes, and spend the headroom on context rather than on a bigger model. That is the highest value pick in this entire video for the largest number of people. 16 gigabytes, the 35B a 3B mixture of experts, not the dense 27B it fits, and it is about four times faster on the same card. 24 gigabytes, the dense 27B
+
+at Q4KM, and enjoy it because it is the best thing that fits a single card. 32 gigabytes and up, or a Mac with a lot of unified memory, QN 3 coder next, and you get a gentic coding at 70.6 on SWE bench verified for the price of the electricity. That is the whole ladder, and it is worth knowing what you are turning down. Mistral will rent you that 119 billion parameter small for 15 cents per million tokens in, 60 cents out. For light use,
+
+that is a very small bill, and 119 billion parameters is more than anything on this ladder can physically hold. You are not buying capability by going local. You are buying custody, which is why the case for doing any of this is strongest where the frontier gap never sends you a bill. Private text, offline drafting, summarizing, classification, anything under an NDA. For that work, 8 gigabytes wins outright, and I would take it at twice the setup effort. The
+
+setup is one evening. The privacy is permanent. But, here is where I come down, and it is not where I expected to. The tier list is real, and I stand by every pick in it. It is also the smaller lever. If you already hold a card in
+
+these tiers, the next hour is worth more spent on what you wrap the model in than on climbing one rung. The harness beats the tier, which leaves one thing open, and it is yours rather than mine. If the same weights can move 22 points on the scaffold alone, then how much of your current result was ever the model? Run what you already have through a second harness this week, and find out.

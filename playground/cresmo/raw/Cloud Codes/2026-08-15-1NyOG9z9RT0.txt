@@ -1,0 +1,192 @@
+---
+video_title: "DeepSeek Harness Architecture: Insane Software Engineering Behind It"
+video_id: 1NyOG9z9RT0
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1NyOG9z9RT0
+video_date: 2026-08-15T12:00:40+00:00
+video_description: |
+  Why did 72,000 developers star DeepSeek Harness in less than 24 hours, and what is the single golden engineering rule that makes it 120x cheaper to run long-context agent sessions? Meet the append-only event-sourced architecture behind npx @deepseek-ai/dsh web.
+  
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, compiler architecture, and plugin mechanics of DeepSeek Harness v0.1 (deepseek-ai/deepseek-harness). We examine the golden rule (model-visible ⟺ durably referenced), explaining why modifying past conversation turns invalidates prefix caching and multiplies token costs by 120x, how DeepSeek solved context compaction by moving summary instructions to the very end of prompts, and how an independent invariant checker continuously reconstructs every request byte-for-byte to prevent cache corruption.
+  
+  Furthermore, we dissect the Cordis meta-framework (built over 4 years by Shigma and Cui Tianyi), explore the 4 default presets (including Code Mode worker-thread isolation and the Minimal RL training runtime), analyze native subagent integration running Claude Code and OpenAI Codex inside DeepSeek Harness, and inspect the .agents/notes directory containing 683 AI-written design records across 63 days of development.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • DeepSeek Harness Official Repository: https://github.com/deepseek-ai/deepseek-harness
+  • Cordis Meta-Framework Repository: https://github.com/cordiverse/cordis
+  • Cordis Spatiotemporal Paper Repository: https://github.com/cordiverse/paper
+  • DeepSeek Official API Pricing & Documentation: https://api-docs.deepseek.com/
+  • Terminal-Bench 2.1 Agentic Coding Leaderboard: https://terminalbench.com/
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The Golden Rule: Never Edit Past History
+  1:16 - What is a Harness? (Function With No Memory)
+  2:18 - The 120x Cache Discount: Why Modifying History Costs a Fortune
+  4:01 - The Append-Only Event Log Architecture
+  6:11 - The Invariant Module: Disbelieving the Agent Loop
+  6:48 - Fixing Compaction: Moving Summarizer Prompts to the End
+  8:41 - "Everything Is a Plugin": Cordis, Shigma & The 88-Page Paper
+  11:49 - The 4 Presets: Code Mode, Minimal RL & Creation Mode
+  15:08 - Spawning Claude Code & Codex Inside DeepSeek Harness
+  16:03 - Inside .agents/notes: 683 Agent-Written Design Memos
+  18:44 - Final Verdict: The Harness IS the Product
+  
+  #deepseek #deepseekharness #aiagents #claudecode #codex #systemdesign #cloudcodes #typescript #softwareengineering #open-source
+  
+  
+  
+  
+  
+  User Queries:
+  deepseek harness architecture explained npx deepseek ai dsh web
+  why deepseek harness uses append only session event log
+  deepseek harness 120x prefix cache stability rule
+  cordis meta framework spatiotemporal composability shigma cui tianyi
+  deepseek harness code mode programmatic tool calling worker thread
+  deepseek harness minimal preset rl training runtime
+  spawn claude code and codex inside deepseek harness
+  deepseek agents notes directory 683 markdown memos
+  deepseek harness compaction prefix cache reuse fix
+  cloud codes deepseek harness engineering breakdown
+---
+There is one rule buried in this codebase, and almost every other choice in it bends around that rule. The rule is simple. Once something has been sent to the model, you do not go back and change it. A wrong file path sitting in the history, you leave it there and append a new line saying it was wrong. That sounds like bookkeeping. On Deep
+
+Seek's own price list, obeying it is worth 120 times. The code base is Deep Seek Harness. It went up yesterday under an MIT license at version 0.1. By this morning, it had 72,000 stars, which averages out to about one every second, day and night. On the surface, it is a
+
+web app you start with a single command with a coding agent inside it. Underneath it is four different agents sharing a framework that grew out of a chatbot project. It can also start Claude code inside itself and Codex alongside it through their own official kits. The top contributor, TNE Qui, has more than 5,000 commits in a repository that is one day old. It shipped with an 88-page research paper, which is not a thing agent frameworks do, and a folder of memos, 683 of them, written across 63 days. Every decision, every alternative
+
+that lost, and even the proposals the team turned down. Most of those memos were written by the agents that built it. But, the rule about history comes first. Start with the word harness because it is carrying a lot of weight here. A harness is the code wrapped around a language model that turns it into an agent. The model itself does one
+
+thing. Text goes in, text comes out, and the moment the call ends, it remembers nothing. So, everything you picture when you picture an agent lives in the harness, not the model. The loop that takes another step, the tools it may touch, the permission checks, the shell, the sandbox, the summarizing when a conversation runs long. Ordinary software wrapped around a function with no memory, which leads somewhere people rarely picture properly. Because the
+
+model forgets, every step resends the whole conversation from the top. System prompt, tool definitions, every message, every tool result, all of it again on step one and on step 40. A serious coding session can push past 100,000 tokens through that pipe on one step, then do it again 11 seconds later. Priced naively, an hour of agent work would cost more than the engineer it is helping. The thing that rescues it is a trick every major provider now runs called prefix caching. Picture the model
+
+reading your conversation the way a person reads a book. Page one forward because what page 400 means depends on everything before it. There is no skipping to the good part. The order is the meaning. Prefix caching lets it keep a bookmark. If the first 200 pages of
+
+this request are word-for-word identical to the last one, the provider does not read them again. It restores the state it already computed and starts at the bookmark. Word-for-word is the whole condition and that is where harnesses live or die. Change one character on page three and every page after it means something slightly different. The bookmark is worthless. The book gets
+
+read again. DeepSeek publishes exactly what that cost, which is unusual and useful. On their pro model right now, a cached input token runs about a third of a cent per million. The same token uncached runs 43 and 1/2 cents per million. 120 times for identical text on the identical model in two neighboring columns of one table. Not a discount, a
+
+different order of magnitude decided entirely by whether your harness disturbs something it had already sent. So, the real design question for a harness is not which tools to offer or how to word the prompt. It is this, can you run a 200-step session without ever going back and editing what you already sent? For most harnesses, the answer is no because agents edit their history constantly. Summaries replace old turns when the context fills. Bulky tool output gets
+
+trimmed to make room. A file gets reread and the fresh copy swapped in over the stale one. Every one of those is a sensible thing to do. Every one reaches backwards into the transcript. Every one throws the bookmark away at exactly the moment the conversation is longest and rereading it costs the most. So, the
+
+sensible choices and the cheap ones point in opposite directions. Deep Seek's answer sits in a memo dated the 5th of July, and it reads less like a guideline than like a shape the code base is built into. So, breaking the rule stops being something you avoid and becomes something you cannot express. A session in their design is not a list of messages. It is an append-only log of typed events. A user message is an event. An
+
+assistant reply is an event. A tool result is an event. The log only grows at one end. The message history handed to the model is not stored anywhere. It is derived from that log freshly on every step by folding one pure function over the events in order. There is no
+
+message array to reach into because there is no message array. The principle is one line. Model visible means durably referenced. If something can reach the model, it must be reconstructible from the log alone. Anything else is a second source of truth, and two sources drift.
+
+The test they set themselves is harsh. Hand somebody the log, the files it points at, and the pinned version of the code, and they should rebuild every request the loop ever made, byte for byte, not equivalently, identically. Then comes a sentence that tells you this team understood their own design better than most write-ups of it did. Cache stability, they write, is corollary number one, not the headline. They did not set out to build a cache optimizer. They built a log you cannot
+
+edit, and a projection that is a pure function of it, and prefix stability falls out the other side. In their words, stability is emergent, not managed. So, what happens when something does have to change? You append. Trim a bulky tool result, and that trim is itself a new logged event carrying the shorter value under the same call. The
+
+correction goes on the end. The history in front of it is untouched, and they close the door in code, not in prose. The derived messages are deep frozen. If a plugin reaches through a projection to mutate logged history, it does not corrupt anything. It throws. Their note
+
+is blunt about it. A request the log does not explain cannot be constructed by accident. Not by the loop, not by any listener a third-party plugs in later. They even record the alternative they turned down. Compare consecutive requests and warn on divergence.
+
+Rejected because a warning arrives after the bad request has shipped. A rule you can only check by reading the code decays the first week somebody is in a hurry. So, they wrote a module whose entire job is to disbelieve the agent loop. On every request, it builds a completely fresh session, re-plays the log from the beginning, derives the messages again from scratch, and compares its answer against what the loop is about to send. Their stated reason for the duplication is one clause. So, the live cache cannot vouch
+
+for itself. On top of that, there is a paid test run against the real service with a real key that fails unless the second request in a conversation comes back reporting cached input tokens. The bill is the assertion. Cold cache. Red test. Which
+
+brings us to the case that should break this design if anything does. Compaction. The moment a conversation grows past what the model can hold and the harness has to summarize the old part so the work can continue. Summarizing means a second call to the model. And the first version of their summarizer did the obvious thing. It
+
+sent a fresh system prompt saying in effect, you are a summarizer. Followed by the conversation to condense. Reasonable and close to the most expensive move available. The system prompt sits at the very front of the request, which is exactly where the cache starts keying. One differing first token invalidates the entire prefix behind it. So, the summarizing
+
+call shared nothing with the warm request that triggered it. Their own write-up says what that cost. Every compaction paid full processing price for the whole re-played history twice. Once for the request that tripped the limit and again for the summary at the exact moment the history was longest. The fix is one of those changes that reads like nothing and turns out to be the whole idea.
+
+They took the instruction off the front of the request and moved it to the back. The summarizing call now replays the previous request word for word. Same system prompt, same tool definitions, same history, then a pens one extra user message at the very end. It opens, you are now acting as a compaction engine. Condense the conversation above. Because
+
+that call is a strict extension of what the provider had already cached, the bookmark survives. The provider reads a new instruction and nothing else. The summary comes back, lands in the log as a new event, and the conversation continues on a prefix that was never disturbed. And there is a detail in that memo that shows how carefully it was thought through. The summarizer will never call a tool. It has no use for the
+
+tool definitions at all. They send them anyway because removing them would shorten the token sequence and knock every following token out of alignment with the cached copy. The rule is not send the model what it needs. The rule is do not disturb the bites that came before. All of which raises a fair question. Why would a team building a
+
+coding agent care this much about the shape of a log? The answer is the second half of the read me. Their tagline is everything is a plug-in. Most projects use that phrase loosely and usually mean you can add a tool. Here it is close to literal.
+
+The model adapter is a plug-in. The tool registry is a plug-in. So is the file stem, the sandbox, the shell, the language server, the web search, the permission system, the persistence layer, the summarizer, the scheduler, the web server, and the browser interface you are looking at. And so is the agent loop itself. The thing most frameworks treat as the fixed center of the universe is here a row in a configuration file swappable without touching the source, which is only safe if unloading a component leaves nothing behind. The exact property the whole log
+
+design protects. Holding it together is a framework called Cordis, and this is where the story turns strange. Cordis is not a Deep Seek invention. Its repository was created in May of 2022, more than 4 years ago, and it has about 2 and 1/2 thousand stars. It came out of Koishi, a cross-platform chatbot framework going since 2019, built largely for the Chinese bot development community, not a lab project, a hobby ecosystem where people install and remove modules at runtime all day and expect nothing to leak. Its
+
+dominant author goes by the handle Sigma. On the Cordis repository, Sigma has 537 commits. The next contributor down has seven. By any reasonable measure, this is one person's framework, and it is now the spine of a Frontier Labs agent stack. Sigma's GitHub profile lists their employer as Deep Seek, and on the 13th of August, 2 hours before the Harness repository went public, that same account pushed an 88-page paper to a brand new repo. It is titled A
+
+Programming Paradigm for Spatio-Temporal Composability. A real paper with a calculus and a metatheory arguing about something surprisingly practical for a document with that title. It splits composability into two dimensions. Temporal composability is whether you can remove a component and completely undo every side effect it ever had. Spatial composability is whether components can declare what they depend on and react properly when it changes. Their formal
+
+machinery is a pair of ideas, revertible effects, where every change carries its own inverse and the runtime tracks that inverse, and reactive co-effects, where each change to the surroundings notifies whoever declared they cared. Which sounds academic right up to the moment you find it enforced as a coding rule. Their contributor guide says, "Registrations are effects. Every contribution goes through an effect call, and every register function hands back the thing that undoes it. Nothing gets installed without a way to uninstall it." Deep Seek did not depend
+
+on Cordis from a package registry, either. They copied the source into the repository, renamed it into their own namespace, pinned the exact upstream commits, and kept a log of every change they made to it. That log runs to 18 numbered entries. One is three reentrant disposal gaps they found and closed in the life cycle code. Exactly the class of bug you only meet when you are unloading plugins under load in production on purpose.
+
+So, if every capability is a swappable row, a set of rows is a whole agent. DeepSeek ships four of them called presets, and the names in the shipped configuration files are still written in Chinese. Standard mode, programmatic tool calling, minimal mode, and creation mode. Four different animals wearing the same skin. Standard is the one you would expect, a full coding agent with file editing, shell, file, and web search skills, plan mode, goals, sub agents, and workflows. That one is the baseline.
+
+The second is where it stops being ordinary. In a normal harness, the model gets its tools as function schemas, picks one, and round trips. Read a file, round trip, read another, round trip. Every intermediate result lands back in the context whether it matters or not, and multi-step work becomes slow and expensive. Programmatic tool calling replaces that outright. Instead of a
+
+tool list, the model gets a generated TypeScript interface over the tools, plus one transport called run code. It writes a program. The program loops, branches, filters, runs four reads at once, and only what it prints or returns comes back into the conversation. The model curates its own context instead of drowning in it. The reasoning is borrowed openly from Cloudflare, and it is a good argument. Models have read
+
+millions of lines of real code, and comparatively few contrived tool calling traces, so ask them for the thing they have actually seen. The program runs in a fresh node worker thread, one per call, with a completely empty environment, a heap cap, a wall clock cap, and hard termination. Their own note is careful about what that is, containment, not a security boundary with authority comparable to the bash tool. The third preset is where careful reader set up. Minimal mode gives the model exactly two tools. A persistent shell
+
+whose working directory and environment survive between turns and a string replacement editor. That is the entire action space. Its system prompt is one sentence. You are a helpful software engineer assistant. No harness identity, no tool guidance, no runtime context, no summarizing at all. Everything the other
+
+presets add has been deliberately stripped out and their notes are explicit that a session on it will not replace earlier history. Their memo say what it is for in their own vocabulary. They call it the Claude S VUE compatible reinforcement learning contract. They describe the persistent shell as the one used by their RL harness and they log an earlier version as a defect because its services did not match the intended training runtime. Which is worth saying plainly, reinforcement learning is post-training. The minimal
+
+preset is a training environment shipped to you unchanged as an option in a drop-down beside the coding agent you are going to use anyway. That closes a loop most labs keep private. The harness produces the trajectories. The trajectories feed post-training. The trained model goes back to work inside the same harness. DeepSeek
+
+open-sourced a piece of that loop with the notes describing why each service in it belongs there. The fourth preset takes the idea to its conclusion. Creation mode tells the model it can read and modify the harness it is running on and hands it a tool that evaluates model-written JavaScript against the live runtime. The documentation does not soften this. Treat a session on this preset, it says, as shell access.
+
+Its stated purpose is that a person can ask an agent to write another agent and the preset that agent writes becomes something other sessions can mount. And then there is the feature that stopped people mid-scroll on launch day. The sub-agent registry accepts back-ends and two of the shipped back-ends are Claude Code and Codex. Not reimplementations, not scraped protocols. The Claude Code back-end calls Anthropic's own agent kit at a pinned version, resolves the real Claude binary already installed on your machine, and hands the kit that exact path. The Codex
+
+back end starts OpenAI's own app server over standard input and speaks its protocol. So, a DeepSeek agent running a DeepSeek model can hand a self-contained task to Claude code, which works in the same directory, returns one answer, and gets torn down, process tree and all, with the teardown proven before the call resolves. The rejected alternative section explains why they refused the shortcuts, talking to the model directly or handwriting the command line protocol would bypass each product's official integration surface and prove nothing about approvals, tools, or cleanup, which brings us back to those memos, because how this codebase was built is the strangest part of it. There is a folder called {dot} agents notes. Inside are 683 English documents, plus a Chinese translation of every one, section for section. They are not
+
+comments. They are design records, and the rule around them is a hard requirement. Every non-trivial change must add or update at least one note in the same pull request. Only a purely mechanical edit is exempt. Each note sits in a folder that encodes its status. Proposed for work argued before
+
+it is built. Implemented for decisions that shipped. Rejected for proposals turned down. Archived for shipped decisions whose reasoning has stopped being useful. This morning, 505 implemented, 142 archived, 25 still proposed, and 11 rejected. And every
+
+note is required to carry a section headed alternatives considered, listing each option that lost and why it lost. Their reason for making that mandatory is the most useful line in the repository. A decision recorded without what it beat invites re-litigation, the failure these notes exist to prevent. Anyone can read code and see what it does. What the code refused to do is the expensive knowledge, and it evaporates the moment the person who decided it moves teams.
+
+So, they made it a gate. A script validates the header block, cross-checks the status line against the folder the file sits in, and rejects proposal language inside a note claiming to describe shipped reality. The archived ones are sealed outright. Frozen content, hashed, tracked in an append-only manifest with an explicit instruction that they must not be treated as authority for current behavior. Written by people who have lost time to a confidently stale design document. There is also a folder of
+
+postmortems written when a bug reached somewhere it should not have, and the interesting part was the process gap rather than the fix. Four are public. One is about the agent building this thing, and is the best short story in the repository. A web agent was asked to change the interface it was itself running inside. It edited the source, started a development server on a different port, got a successful response back, and declared the job done. The page was
+
+blank. The boot data the real host injects was missing. The user was on a different port entirely. So, the agent started a second replacement server on a third port, and validated that one instead. While the user's real page had already picked up the change on its own.
+
+Three servers, one user, and the agent checking the only one nobody was looking at. But, the reason that write-up exists in this detail is the point. Every step is traced by sequence number through the persistent event log of that session. The same append-only log the cache rule exists to protect. The design that keeps the bill down is the design that made the incident readable. So, where does
+
+all of that leave the rest of us? The claim I would make from this release is the one this channel keeps circling. The harness is the product. Look at the public terminal bench board for the current version. The same weights, Fable 5, score 83.8%
+
+under Claude code, and 80.4 under the Terminus 2 harness. Same model, same tasks, different wrapper. Three and a half points decided by software with no weights in it at all. And that is the gap between two harnesses that are both good. Between a good one and a careless
+
+one, it is far wider. So, a lab publishing its harness under an MIT license is giving away something much closer to the product than the announcement suggests. And DeepSeek picked a very specific week to do it. On the 16th of August, 3 days after the harness went free, DeepSeek's own pricing page introduces peak and off-peak billing. On the pro model, uncached input goes from 43 and 1/2 cents to $1.32 at peak. Output goes from
+
+87 cents to $3.96. The harness gets cheaper and the tokens get dearer in the same week, which is not a contradiction, it is a business model. And the append-only design is what makes it survivable. A harness that keeps your cash warm keeps most of your traffic in the column that costs 1/20th of the other one. So, the verdict with
+
+the concession attached first. If you need an agent that works this afternoon, this is not it. Version 0.1 developer preview and the readme itself promises compatibility-breaking changes in capital letters. The minimal preset does not even run on Windows, and there is a bigger hole. The public terminal bench
+
+board carries no DeepSeek row at all. Every performance number circulating around this launch is the vendor's own until somebody neutral reproduces it on a named harness, which means the scoreboard here is worth nothing and the architecture is worth a great deal. So, take the architecture. If you are building agents on top of any model, read the reconstructible request note before you write another line of your own loop. It is one file, it is written in plain English, and it will change what you do with your history for the price of 10 minutes. And here is the bet
+
+with a deadline so you can hold me to it. By this time next year, at least two of the major harnesses, Claude Code, Codex, Cursor's command line, Gemini's, Aider, the LangChain stack, will publicly document an append-only or prefix-preserving history model. If none of them has, this video overrode one repository's discipline as an industry direction, and I will say so on camera, which leaves the uncomfortable question, and it is the one that has been sitting under this whole story. If the environment a lab trains its models inside is now the same environment it hands to you for free, who is being optimized for? The model is learning your harness.
+
+Is your harness learning anything back?

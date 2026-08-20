@@ -1,0 +1,131 @@
+---
+video_title: "Pi Agent + Llama.cpp is Insane (Local AI Agent Setup on a Budget GPU)"
+video_id: Nm4r-6XqEcM
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Nm4r-6XqEcM
+video_date: 2026-08-05T12:04:42+00:00
+video_description: |
+  Are you buying expensive GPUs based entirely on tokens-per-second benchmarks, only to find your local AI coding agents stalling out? Discover why prompt processing (prefill) is the true bottleneck for AI coding agents, and how you can build a blazing-fast local development stack on a $330 RTX 3060 (12GB) using llama.cpp and the Pi coding agent harness.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this architectural deep dive, we break down the reality of the 2026 DRAM and GDDR7 memory shortage, why Nvidia revived the 2021 RTX 3060, and how you can use --n-cpu-moe and Grouped Query Attention (GQA) to run massive 35-Billion parameter Mixture of Experts (MoE) models on a strict 12GB budget. We also expose the most common outdated llama.cpp flags crashing your local setups, why Pi outright refuses to support MCP (Model Context Protocol) to save your context window, and the hidden electricity costs that prove running local AI is about privacy—not saving money.
+  
+  If you found this technical deep-dive into AI infrastructure, local inference hardware, and software engineering architecture helpful, drop a like and subscribe for more content on system design!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The VRAM Trap: Prefill vs Generation Speed
+  01:01 - The 2026 Memory Crisis & The Return of the RTX 3060
+  02:33 - Running Qwen 3.6 35B MoE on a 12GB GPU
+  04:25 - The Outdated Llama.cpp Flags Crashing Your Agent
+  05:36 - Why Pi is the Best Local Coding Harness (No MCP)
+  07:29 - The Raspberry Pi 5 PCI-e Detour
+  08:27 - The 3 Walls: SWE-Bench, Broken Tool Pipes & Electricity
+  10:07 - Final Verdict: How to Configure Your Local AI Agent
+  
+  🔗 Resources Mentioned:
+  Llama.cpp (Inference Engine): https://github.com/ggerganov/llama.cpp
+  Pi Agent Repo: https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent
+  Pi Agent Official Site: https://pi.dev
+  Qwen 3.6 (Alibaba): https://huggingface.co/Qwen/Qwen3.6-27B
+  SWE-bench Leaderboard: https://www.swebench.com/
+  
+  #localllm #llamacpp #rtx3060 #machinelearning #artificialintelligence #systemdesign #softwareengineering #codingagents #qwen #gpu
+  
+  User Queries:
+  build local ai coding agent rtx 3060 12gb
+  llama cpp n cpu moe offload mixture of experts
+  prefill vs generation speed local llm prompt processing
+  pi coding agent vs claude code benchmark
+  how to run qwen 3.6 35b on 12gb vram gpu
+  out of memory kv cache grouped query attention
+  model context protocol mcp context window bloat
+  raspberry pi 5 local ai inference pcie bandwidth
+  local llm electricity cost vs github copilot pro
+  outdated llama cpp flags draft max flash attn
+---
+Every local AI benchmark measures the same thing, tokens per second. So, you buy the card, load the model, watch it stream 40 tokens a second, and you think you're set. Then you point a coding agent at it, and the thing crawls. Generation wasn't your bottleneck. A coding agent barely writes anything. It
+
+reads. Every turn it rereads your conversation, your files, its own tool output. That's prefill. And on your card, prefill and generation are two different machines. One thing first, because the title fools people. The pie
+
+in this build isn't a Raspberry Pi. It's a coding agent MIT licensed 78,000 stars. So, here's the whole box. One RTX 3060 12 GB $330 llama.cpp underneath, Pi on top, and no API key anywhere. Three things break
+
+before you get there, and I hit all three. The model doesn't fit, your flags are wrong, and the agent eats your context before you type a word. The target is one number, 1,142 tokens a second of prefill on that shipped in 2021. Start with the card, because budget GPU means something different than it did a year ago. GDDR6 memory went from about $2.50 a gigabyte to
+
+roughly $7.50. Same chips, same fabs, three times the price, because AI data centers bought the capacity out from under us. TrendForce put first quarter 2026 DRAM contract prices up 90 to 95% against the quarter before. 95. Nvidia
+
+raised its kit prices in May, then again on July 25th, and that second one finally reached the cheap cards. And the fix everyone was waiting for is gone. The RTX 50 super refresh, the one with 18 and 24 GB, got delayed indefinitely back in January. Board partners have the cards sitting there. GDDR7 pricing is holding them. The target's now early
+
+2027. So, Nvidia did something strange instead. It restarted a chip from February 2021. The RTX 3060 12 GB went back into production on Samsung 8 nm in March because it runs GDDR6 and doesn't compete for TSMC capacity. $330, 12 GB, 2750 a GB, which is the best number on the board right now. Nvidia's
+
+current budget card ships 8 GB and physically cannot load a 14 billion parameter model at all. And it's quick where it counts, on Llama. CPP's own CUDA benchmark at 3060 does 2137 tokens a second of prefill against 75 of generation, 28 times. Same card, same model, same run. Now the model, and here's where it stops making sense. The
+
+one I want is Qwen 3, 635B 83B. At Q4, the file on disk is 22.1 GB. The card holds 12. It runs anyway, and it runs fast. A 3B is the whole trick, 35
+
+billion parameters total, 3 billion active per token. It's a mixture of experts. So, for any given token, most of that file is dead weight sitting there doing nothing at all. llama.cpp has a flag for exactly that, --n-cpu-mo, added in pull request 15077 back in August 2025.
+
+It keeps the expert feedforward weights of the first n layers in system RAM and leaves attention on the GPU. Attention is the part that needs bandwidth. The experts just need to exist somewhere. Somebody measured it on exactly this card in May, 33 to 36 tokens a second, 64,000 tokens of context, and about 7 GB of VRAM actually in use. You can push it further.
+
+Cerebras published a pruning method called REAP, router weighted expert activation pruning. It ranks every expert by how often the router actually reaches for it, then deletes the bottom slice in one shot. No retraining. On Qwen 3 coder, they cut half the experts and kept in their own numbers near baselining quality on code generation and tool calling. The paper went to ICLR 2026. What you download is a 25 billion
+
+version of a 30 billion model. And then a thing I had backwards for months. The KV cache. I assumed a bigger model meant a bigger cache. Work it out from the config files and the 30 billion mixture of experts wants 96 megabytes per thousand tokens. The 8 billion dense
+
+model wants 144. Bigger model, smaller cache. It's grouped query attention. The 30 billion model shares one key value head across eight attention heads. The 8 billion one shares across four. Architecture beat
+
+parameter count. Right flags. And I have to warn you about this part because I lost an evening to it. Most llama CPP tutorials older than about six months are wrong now. And some of them fail in ways that look exactly like broken hardware.
+
+Draft max is the loudest one. It isn't deprecated, it's gone. And the binary throws an error naming its replacement. Speculative decoding moved to draft spec type. And draft NTP is the one you want on these models. Draft NGL 99 is in most
+
+guides you'll find and it does nothing now. The default is already auto. Draft flash attention stopped being a switch and became three states, on, off, and auto. And auto is what you get. And my favorite, draft tool call parser. Half
+
+the local agent posts tell you to set it. Grab the llama.cpp source and it isn't there. It was never there. That's a VLLM flag. Copy paste it across a
+
+hundred blog posts by people who didn't run the command. What you actually run is shorter than all of them. Point llama server at a hugging face repo with draft HF. Give it a context size. Leave ginger on. And quantize the KV cache to Q8, so
+
+64,000 tokens cost you one and a half gigabytes instead of three. Now the agent. Pi was written by Mario Zechner. An Austrian developer and he opened his announcement post by explaining why. Claude code, in in words, had turned into a spaceship with 80% of functionality he had no use for.
+
+But, the line that matters for this video is the next one. He'd been self-hosting, and he says most harnesses handle it badly because they sit on libraries like the Vercel AI SDK, which don't play nice with self-hosted models, specifically on tool calling. So, he wrote his own model layer. He named it something ungoogleable so that, in his words, there'd never be any users. It's at 78 and 1/2 thousand stars and 5.8 million NPM installs a month,
+
+and he now works at Armin Ronacher's company. Pi ships four tools: read, write, edit, bash. That's the entire default set. Grep and find exist and are switched off. His conclusion after building the thing, these four tools are all you need for an effective coding agent, which is how the system prompt gets where it gets. Prompt and tool
+
+definitions together, under 1,000 tokens. I pulled the current source to check it, and the prompt text itself is about 1,800 characters before the tool schemas, and Pi refuses MCP. The readme says Pi does not and will not support it, and Zeckner shows the arithmetic behind that. Playwright MCP is 21 tools and 13,700 tokens. Chrome dev tools is 18,000, 7 to 9% of your window, gone before you say hello. Wiring it up used
+
+to be a config file scavenger hunt. Now it's built in. Start Llama server in router mode with no model at all. Then inside Pi type {slash} login llama.cpp {slash} llama to pull a GGUF {slash} model to pick it, and it does work. Six
+
+days ago, KD Nuggets ran a 9 billion parameter coder at Q6 on a 16 GB card, 81.7 tokens a second, and drove Pi through a complete browser game and a Python tool that wrote its own tests. Quick detour because a chunk of you clicked on the other Pi, the Raspberry one. That build is real, it just took 2 years of kernel work to become real, and almost none of that happened at Raspberry Pi. Jeff Geerling has been hammering on it since 2024. The blocker was arm 64 cash
+
+coherency down in the graphics memory manager. In September, a GitHub user called Yang Haku fixed it in 15 lines. By November, it was one RPI update command. Then the result that made me sit up. Once the weights are in VRAM, the Pi's single lane of PCIE barely matters. QN330B on a
+
+Pi with a 4090 came in under 5% slower than a full desktop. On a 13 billion model against a 3060, the Pi actually won. Two catches, and both of them land on this video. Prefill is a part that's host sensitive, so a coding agent is the worst possible case for it. And the Pi 5 16 GB has gone from $120 to 305 in 18 months. Same memory crisis. So, the
+
+walls. Wall one is the ceiling, and you should hear the real number for it. The best open model under 40 billion parameters scores 77.2 on SWE bench verified. Claude Opus 5 scores 96. 19
+
+points, and it gets worse exactly where you live. On terminal bench 2.0, which is long horizon terminal work, the 35 billion model gets 51.5 against Opus's 59.3.
+
+Local models close single file issues. They lose the long jobs. One person ran the comparison properly. Tolga Eren, back in May, same 14 file merge request. Local Quinn against Claude code, three times slower overall. Nine times slower
+
+writing to disk. And his verdict review it produced, it read like AI slop and missed four things Claude caught. One line of his stuck with me though. He used less context to do the same job. Lighter system prompt, fewer tool schemas. That's the whole argument for a
+
+small harness, and it only shows up when the model is small. Wall two is the plumbing, and Armin Ronacher wrote the best description of it. Most local stacks don't stream tool parameters, so you sit there watching nothing happen for minutes. His line, a dead connection is a weird connection. You can't tell if it died or if it's thinking." He wrote
+
+the other sentence I keep coming back to as well. "A lot of local model work optimizes for making models runnable, and that is not the same thing as making them feel finished." He co-owns Pi. He's describing his own field. Wall three is the money, and it doesn't work the way you want it to. 100 watts running all
+
+day cost $13.45 a month at the US average rate. Co-pilot Pro is 10. The card alone takes 16 months to break even, and that's before the rest of the machine. So, why would you? Rennaker
+
+again, and this is the real answer. Engineers need hammers, and a hammer locked behind a subscription in a data center in another country does not qualify. That's it. That's the argument. If you build it, you pick a lane. Ornith
+
+1.09b, MIT, 5.6 GB at Q4, 69.4 on SW bench verified, and it sits entirely inside the card with room left for context. Or the 35 billion mixture of experts offloaded for four more points and 32 GB of system RAM. The whole recipe then, a
+
+$330 3060 llama server with NCP MO and a Q8KV cache. Pi on top with four tools and no MCP. And you tune for prefill, not for tokens per second, because prefill is what an agent spends its life doing. The verdict I'll stand behind. Today, this loses to a subscription on the hard jobs, and it wins on everything you'd never send to somebody else's computer.
+
+That's a real answer, and it gets better every quarter on hardware you already paid for. 1,142 tokens a second of prefill on a five-year-old card. Go build it, and tell me what your prompt processing number comes out at, because that's the one worth comparing.

@@ -1,0 +1,146 @@
+---
+video_title: "CUDA vs ROCm: Why ROCm Sucks at Every Step"
+video_id: 3UiR9X2wVVs
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3UiR9X2wVVs
+video_date: 2026-08-05T17:49:41+00:00
+video_description: |
+  Why does AMD’s flagship MI355X carry 288GB of VRAM and match Nvidia’s B200 on paper, only to lose by 33% on real benchmarks? Meet the honest, technical comparison between CUDA 13 and ROCm 7.14—without fanboy bias.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this deep dive, Cloud Codes breaks down the 5 technical pain points of running local AI models and LLM inference on AMD hardware versus Nvidia. We examine ROCm 7.14's restrictive GPU support list (dropping RDNA2 RX 6000 cards), analyze the HSA_OVERRIDE_GFX_VERSION override hack that breaks on Ollama, dissect Ubuntu 26.04 installation failures, and explain the ROCm versioning discontinuity where version 7.9.0 predated 7.2.0.
+  
+  Furthermore, we dissect vLLM Pull Request 35850—which fixed AITER kernel padding and FP8 KV cache fallbacks to make the MI355X 12x faster overnight—and evaluate SemiAnalysis benchmarks proving AMD delivers tokens 40% cheaper on GLM-5 ($0.22/M vs $0.30/M on B200).
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  0:00 - Spec Sheet vs Benchmark Reality (MI355X vs B200)
+  1:01 - Step 1: GPU Support Lists & The HSA_OVERRIDE Hack
+  3:31 - Step 2: Linux Distro Install Nightmares (Ubuntu 26.04)
+  4:53 - Step 3: Windows Support Gap (PyTorch Version Pins)
+  6:11 - Step 4: FlashAttention Forks & Versioning Discontinuity
+  8:42 - Step 5: How One Pull Request Made AMD 12x Faster
+  10:51 - Where AMD Wins: 40% Cheaper Tokens on GLM-5
+  11:48 - Datacenter Economics: $75.2B vs $6.7B Revenue
+  12:47 - Final Verdict: When to Buy Nvidia vs AMD
+  
+  🔗 Repositories & Sources Mentioned:
+  • SemiAnalysis InferenceX GPU Benchmarks: https://inferencex.semianalysis.com/
+  • vLLM Pull Request #35850 (AMD AITER Kernel Fix): https://github.com/vllm-project/vllm/pull/35850
+  • Ollama Issue #12111 (HSA Override Bug): https://github.com/ollama/ollama/issues/12111
+  • AMD ROCm Documentation & Support List: https://rocm.docs.amd.com/
+  • PyTorch Windows ROCm Installation Guide: https://pytorch.org/
+  
+  #cuda #rocm #amd #nvidia #gpu #systemdesign #cloudcodes #vllm #machinelearning
+  
+  User Queries:
+  cuda vs rocm honest developer pain points 2026
+  amd mi355x vs nvidia b200 semianalysis benchmark
+  rocm 7 14 gpu support list rx 6000 dropped
+  hsa override gfx version 10 3 0 ollama error
+  vllm pr 35850 aiter kernel 12x speedup amd
+  glm 5 fp8 semianalysis cost per million tokens amd b200
+  pytorch windows rocm 7 2 1 setup guide
+  flashattention 2 rocm composable kernel vs fa3
+  amd datacenter revenue 6 7b vs nvidia 75 2b
+  cloud codes cuda vs rocm breakdown
+---
+AMD's MI 355X ships with 288 GB of memory. Nvidia's B200 ships with 192. Same memory bandwidth, about 8 TB a second. Matching FP8 compute. On the spec sheet, AMD wins that fight. On the
+
+benchmark, it loses by a third. Semi analysis ran Kimmy K25 on both in March 2026. AMD peaked at 67% of the B200. None of that missing third is silicon. All of it is software, and the software has a name, ROCm, AMD's answer to CUDA, 10 years younger and the 10-year show.
+
+There are five steps between buying an AMD card and serving your first token. ROCm bills you at all five. I pulled the receipt for each one. Step one cost you a weekend. Step four reads like a joke AMD wrote about itself. Step five is
+
+where one pull request made the same GPU 12 times faster. Stay to the end because there is one number where AMD beats Nvidia outright. No fanboy filter in either direction. Step one. You go to buy a card and ROCm turns out to have strong opinions about which cards exist.
+
+AMD publishes a support list, and on ROCm 7.14, that list holds 13 Radeon cards. 13. Six of them are RDNA 4, the RX 9000 and 70 family and the 9000 and 60 family under it. Seven are RDNA 3, topped by the 7900 XTX and running down through the 7800 XT. Good cards, all of
+
+them, but look at what is not on that page. The entire RX 6000 generation is absent. No 6800 XT, no 6900 XT. Those cards are everywhere on the used market, they carry 16 GB, and they are the obvious budget pick for someone getting into local models. Not one of them is listed. Now the fair version, because
+
+Nvidia does this too. CUDA 13 dropped Maxwell, Pascal, and Volta. If you are sitting on a GTX 1080, the newest toolkit will not compile for it either. Nvidia deprecates old silicon, and the AI press barely covered it. But, CUDA 13 still covers everything from Turing forward, which means every GeForce card since 2018, well over 100 models, laptops included, plus every data center part from the T4 up. 13 against that is
+
+not a rounding error. It decides what you can even buy used, which is where most people getting into this actually shop. So, people do the obvious thing when a list is too short. They lie to the driver. The lie has a name, HSA_override_gfx_version.
+
+You set it to 10.3 .0, and ROCm stops asking what your card is and believes it is a GX 1030, the architecture ID of a supported card. GX 1031 to GX 1030 works. GX 1032 to GX 1030 works. Your
+
+6750 XT runs. Sort of. That variable is not a support policy. It is a bypass, and it breaks the way bypasses break. When ROCm 6.4.3 landed, the same
+
+override that had worked for a year started throwing segmentation faults on those chips the moment a prompt arrived. All of my issue 12111, filed August 2025, still collecting comments this week. And if you are on Windows, the override does nothing whatsoever. Somebody opened a feature request on AMD's own build repo asking for a Windows equivalent, and it sat for 7 months before being closed. On Linux, you can at least lie. On Windows, you
+
+cannot. So, say you did it properly and bought a card on the list. Step two, install the stack. ROCm 7.14 supports Ubuntu 24.04
+
+and 22.04 for rail builds, SUSE 15, Debian 12 and 13, Rocky and Oracle Linux. That reads generous, and then you get to the footnote. The newest Radeon and Pro cards narrow that whole list down to four distributions, not a subset with a warning. A subset, full stop. So, the
+
+card you bought because it was the only new one on the support list is also the card with the fewest operating systems. Then Ubuntu 26.04 shipped, and AMD GPU install stopped being able to build its kernel module against it. ROCm issue 6193, opened on the 29th of April, still open when it was last touched on the 22nd of July. 3 months on an install failure for the current Ubuntu LTS. The reporter
+
+worked out the fix himself and put it in the issue. AMD GPU install with the no DKMS flag installs fine. So, the software works. The installer is what does not. He had to find that himself because the docs he was following did not mention it. On the Nvidia side, this
+
+step is a package manager call and a reboot on whatever kernel you happen to be running on more or less whatever distribution you like. That is the whole comparison. One of these is a step, the other is an afternoon. Step three is the one desktop users walk straight into, and it is also the one AMD has moved fastest on. You are on Windows. Until
+
+recently, the answer was just no, run WSL, or dual boot. That has really changed, and it deserves credit before the criticism. AMD ships PyTorch on Windows now, built on ROCm 7.2.1 components, and updated in January.
+
+Native, no virtual machine, no Linux underneath. For a lot of people, that is the difference between trying local AI on an AMD card and not bothering. Then you read the compatibility page, Windows 11 only. PyTorch 2.9 only. Python 3.12
+
+only. Eight GPUs on the list across four architectures, and FP8 works on RDNA 4 alone. Each of those is a version pinned, and a version pinned is a thing that expires on you. And then AMD prints the sentence themselves right under the table. PyTorch on Windows includes ROCm 5.2.1 components. However, the entire
+
+ROCm stack is not yet supported on Windows. Their words on their own docs today. Compare that fairly. CUDA has shipped its complete stack on Windows for about 18 years, compiler, libraries, profiler, debugger, on any supported card in any Python you like. AMD is shipping one framework in preview. That
+
+is the gap, stated plainly. Step four. The card works, the driver loaded, Python starts. So, what actually breaks now? Mostly not PyTorch. PyTorch on ROCm
+
+is fine, genuinely fine, and it is the single biggest thing AMD got right because it is the layer most people actually type against. The byte is the layer above it. Flash Attention 3 was written for Hopper using instructions that only exist on Nvidia's data center silicon. So, ROCm does not get it. AMD maintains a fork that gives you Flash Attention 2 on either a composable kernel back end or a Triton one. Which
+
+is fine until the model you want ships with a config expecting the newer path, and now you are reading kernel source at 11:00 at night to work out which back end your sequence length lands on. TensorRT-LLM has no ROCm equivalent at all. You use vLLM or SGLang instead. Both of those support ROCm properly, which matters more than any of the complaining so far, and it points at the real shape of this, which is not the shape people expect. You rarely hit a wall on ROCm. You hit a fork. There is
+
+usually a path, a different fork, a different back end, a different container tag, an undocumented flag. Each one is passable in an hour, and each one becomes a thing you personally maintain forever. 10 of those forks is a full-time job. That is what Nvidia has actually been selling for 20 years, not a compiler, the absence of that person from your payroll. Which brings me to the part one had to read three times. No
+
+benchmark, no bug report, just AMD's own releases page on GitHub. The newest ROCm release is 7.14.0 point published on the 16th of July. The release directly before it is 7.2.4
+
+from the 29th of May. There is no 7.3, no 7.4, nothing through 7.13 anywhere in the production line. Those numbers went
+
+to tech previews on a separate track and 7.9.0 shipped in October 2025 months before 7.1.1 and 7.2.0
+
+came out. The bigger number is the older release. AMD has a phrase for this in their own release notes. They call it the versioning discontinuity that began with the 7.9.0 preview. It is written
+
+down on the release page as a known condition of the product. Hand it two ROCm versions, you cannot say which is newer. CUDA goes 13.0, then 13.1, then 13.2, then 13.3, boring. 20 years of
+
+boring. Boring is not a personality flaw in infrastructure. It is the entire feature and it is the one thing you cannot put in a keynote. Step five. Everything is installed, everything imports, the GPU is finally serving tokens. And this is where ROCm stops
+
+being annoying and starts being expensive because this is where you find out what fraction of your hardware you actually bought. On the 1st of March 2026, an MI355X serving Kimmy K2 5 in MXFP4 on vLLM 0.16 delivered 6.6 tokens per second per user at match concurrency on an 8,000 token workload. That is a number you would send the card back over. On the 26th of
+
+March, the same GPU, the same model, the same workload delivered 78.9. 25 days apart. No new silicon, no new model, no new driver, nothing physical on that machine changed at all. What changed was one pull request into vLLM number 35850.
+
+It fixed how AMD's 8-year kernels, AMD's own hand-tuned attention library were being dispatched. It padded eight attention heads up to 16, so the fast kernel would accept the shape and relax an assertion that had been refusing the job outright. It also made the FP8 key value cache path fall back from the generic Triton kernel to the hand-tuned one. Read that list again, a shape check and a fallback rule. That is what stood between this GPU and 12 times its measured speed. Peak throughput on that
+
+card went from 348 tokens a second per GPU to 2,687. 7.7 times out of a dispatch fix. The capability was sitting in the silicon the whole time. The code in front of it was refusing to reach it. Semi Analysis
+
+wrote the sentence I would put on the box. Their words, "The MI300X on CDNA4 is competitive with B200 at the tensor core level, but AMD's ROCm and VLLM path does not always expose that capability." That is the whole video in one line. And notice who fixed it, not a hobbyist on a forum. Engineers paid to stare at kernel dispatch for a living, working against a benchmark harness built specifically to catch this. If you
+
+are Meta, you have those people. If you have one 7900 XTX, you wait for someone else's pull request. So, after five steps of that, is any of it worth living with? Here is the number I promised you, and it is the reason this is not a hit piece. In May, Semi Analysis ran GLM-5 on both platforms on SG Lang V0 12 with FP8 key value cache with multi-token prediction on both sides. Same framework
+
+version, same recipe, feature match stacks. Not a rigged comparison in either direction. At 18 tokens per second per user, a real interactivity target, roughly reading speed, a B200 costs 30 cents per million tokens. The MI300X costs 22. 40% cheaper on the half of the stack AMD is supposed to be bad at. The
+
+caveats are real and I am not burying them. AMD still has not shipped disaggregated serving for GLM 5. FP4 does not have parity with the FP8 path and at rack scale against a GB200 and VL72, the same analyst put AMD nearly five times behind. But AMD moved ROCm to a rigid six-week release cycle this summer announced at their advancing AI event. Eight or nine feature releases a year instead of roughly four and 7.14
+
+was the first production release built on their new automated build system. The money explains why they finally bothered. AMD reported data center revenue of $6.7 billion last quarter up 107% year-over-year on total revenue of $11.5 billion, a company record and an excellent quarter by any normal standard. Nvidia's most recent data
+
+center quarter was $75.2 billion, not total revenue, data center alone up 92% on cards carrying less memory than AMD's, 11 times the number on hardware that loses the spec sheet comparison. 11 to 1 is not a hardware ratio. No engineering team is 11 times better than AMD's. That ratio is what a decade of somebody else's install experience is worth compounded and it is the most expensive lesson in this industry right now. So the verdict and I am not
+
+splitting this one down the middle. If your time costs more than your hardware, buy Nvidia. That is most people watching this. It is not close and no amount of memory on the AMD card changes the arithmetic. If you serve one known model at scale and you can find one engineer who owns the stack end-to-end, take the AMD card and bank the 40%. That sentence
+
+was false 18 months ago. The 22 cent number is why it is true now. On a single desktop card, the answer stays harsh. ROCm still costs more hours than the price gap saves you and the used 6800 XT that would have made the deal work is not even on the list. This is the same pattern this channel keeps walking into. Identical silicon, 12
+
+times the output, decided entirely by the layer wrapped around it. The harness is the product. It was true for coding agents, and it is true for GPUs. Which leaves the thing I keep circling back to. AMD can ship a release every six weeks, close every feature gap on that list, and still lose this because CUDA's product was never the feature list. It
+
+was never needing an engineer on day one. So, the question I would actually argue about is this one. Not whether ROCm on paper, but whether day one ever gets boring, and whether AMD keeps funding boring after the benchmark headlines move on. Which way would you

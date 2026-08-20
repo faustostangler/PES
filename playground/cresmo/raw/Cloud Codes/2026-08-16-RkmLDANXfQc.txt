@@ -1,0 +1,167 @@
+---
+video_title: "Qwen 3.8 27B Teardown: They Deleted 75% of the Attention"
+video_id: RkmLDANXfQc
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=RkmLDANXfQc
+video_date: 2026-08-16T09:01:10+00:00
+video_description: |
+  Why did Alibaba build a 27-billion parameter model where 48 of its 64 layers run Gated DeltaNet linear attention instead of traditional transformer attention? Meet Qwen 3.8 27B and the 3:1 architectural ratio replacing transformers.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, linear algebra, and KV cache memory arithmetic behind Qwen 3.8 27B Dense. We examine its 64-layer hybrid layout (48 Gated DeltaNet layers and 16 Gated Attention layers), analyze how updating a running state matrix instead of storing an expanding KV cache shoebox cuts 1M token context memory from 244 GB down to 61 GB, and review its Apache 2.0 open weights.
+  
+  Furthermore, we audit company-reported benchmarks showing Qwen 3.8 27B beating Claude Opus 4.6 Max on SWE-bench Pro (61.7 vs 53.4) and OSWorld (84.3 vs 72.7), expose the 9-point loss on Humanity's Last Exam (HLE), dissect the model card's Claude Code harness footnote, analyze Simon Willison's 17GB GGUF local run on an M5 Max MacBook Pro, and evaluate why linear attention hybrids represent the future of local LLM serving.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Qwen 3.8 27B Official Base Model: https://huggingface.co/Qwen/Qwen3.8-27B-Instruct
+  • Unsloth Qwen 3.8 27B GGUF Quants: https://huggingface.co/unsloth/Qwen3.8-27B-Instruct-GGUF
+  • Gated Delta Networks Architecture Paper: https://arxiv.org/abs/2412.06464
+  • SGLang Day-Zero Inference Engine: https://github.com/sgl-project/sglang
+  • Hacker News Qwen 3.8 27B Discussion Thread: https://news.ycombinator.com/item?id=49294997
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 75% Non-Transformer Architecture
+  1:01 - The Memory Wall: Why Attention KV Caches Explode
+  1:43 - The 61GB vs 244GB KV Cache Arithmetic
+  3:07 - What Is Gated DeltaNet? (Shoebox vs Running Balance)
+  4:44 - The 3:1 Ratio: Interleaving Linear Attention & Full Attention
+  5:20 - Benchmarks: Qwen 27B vs Claude Opus 4.6 Max
+  6:41 - Where Qwen Loses: Terminal-Bench & HLE Reasoning
+  8:31 - Dense 27B Footprint & MTP Speculative Decoding
+  9:47 - The Footnote: Who Ran These Benchmarks?
+  11:19 - Local Developer Testing: Simon Willison's 17GB GGUF Run
+  12:45 - The Architecture Shift: Qwen 3.8 & Nemotron 3.5
+  13:47 - Final Verdict: Why the Architecture Won
+  
+  #qwen #qwen38 #gateddeltanet #localai #systemdesign #cloudcodes #machinelearning #transformers #python #softwareengineering
+  
+  
+  
+  
+  
+  
+  
+  User Queries:
+  qwen 3 8 27b architecture gated deltanet linear attention
+  why 75 percent of qwen 3 8 27b is not a transformer
+  qwen 3 8 27b 1m context kv cache 61gb vs 244gb
+  gated deltanet vs mamba 2 state space models
+  simon willison qwen 3 8 27b lm studio m5 max benchmark
+  qwen 3 8 27b swebench pro osworld vs claude opus
+  yarn factor 4 0 context extension qwen 3 8
+  multi token prediction mtp head qwen 3 8 27b
+  qwen 3 8 27b apache 2 0 open weights
+  cloud codes qwen 3 8 27b efficiency breakdown
+---
+Yesterday, Alibaba put a model on Hugging Face that fits on one graphics card and beats Claude Opus 4.6 on a coding benchmark. That headline is the least interesting thing about it. Here is the interesting thing. One line from the model card, 16 times over, three gated Delta net blocks, and then one attention block. Read that ratio again.
+
+Three out of every four layers in this model are not doing attention at all. 48 of its 64 layers run a completely different mechanism. Only 16 of them are the thing you would call a transformer. So, the model being written up as an open Opus is about 75% not a transformer. And that swap is the whole reason it fits on hardware you can buy.
+
+Here is what the next 15 minutes gets you. First, the memory wall that attention runs into with the actual arithmetic. Second, what Alibaba put in place of three quarters of it and what that trade cost them in capability. Third, the part the coverage skipped, who actually ran the benchmarks that beat Opus. That last one has a short answer. The people who ran the numbers
+
+are the people selling the model. Start with the wall because everything else in this design is a response to it. Attention has one property that decides what a model can run on. It remembers by storing. Every token you feed it, every layer writes down a key and a value, and it keeps them for as long as the conversation lasts. That store is the KV
+
+cache. The cache grows in two directions at once. It grows with how much context you give the model, and it grows with how many layers do attention. Double your context, double the cache, double your attention layers, double it again. At the context lengths people actually want now, that stops being a footnote in a config file and becomes the thing that decides whether the model runs at all.
+
+And this release lets you check the numbers yourself because its card publishes the shape of every layer. Its attention layers use four key value heads at 256 dimensions each. A key and a value at two bytes a piece works out to 4 kilobytes per token per attention layer. There are 16 of those layers, so 64 kilobytes of cash for every single token that goes in. Run that out to the native context window, which is 262,000 tokens, and you get 16 GB of cash, not weights, cash. Sitting on top of the
+
+50-something GB the weights already want at full precision. Push it to the full million tokens the card advertises, and the cash lands around 61 GB. At that point, the memory holding the conversation is larger than the memory holding the model. And that million is not native, which the card is clear about. Native is the 262,000.
+
+The million comes from yarn at a factor of four, stretching the position encodings past what the model was trained on with the quality caveats that always come attached to extrapolation. Now, do the version where nothing was replaced. If all 64 layers carried that same cash instead of 16, you multiply by four. 64 GB at native context, 244 GB at a million tokens. 244 GB is not a consumer number, and barely a prosumer one. That is rack territory. So, the
+
+hybrid here is not a tuning pass on top of a working model. It decides whether this thing exists on your desk at all. Which raises the obvious question, if those 48 layers are not storing keys and values, what are they doing instead? Gated DeltaNet is linear attention, and the idea underneath it is older and simpler than the name. Instead of keeping every key and value and comparing against all of them, you keep one running state, and you update that state as each token arrives. The
+
+everyday version, attention keeps every receipt in a shoebox and rereads the whole box on every purchase. Linear attention keeps a running balance. It updates one number and throws the receipt away. And the running balance is a fixed size. 1,000 tokens or a million tokens, the state it carries is exactly the same. That is the property that
+
+breaks the growth curve because there is nothing left in those layers that scales with context. The delta part is how it writes. Rather than dumping the new token on top of what it already holds, it writes the difference between what its memory predicted and what actually arrived. That correction rule is what the gated delta networks paper added to Mamba-2, and it is why this family retrieves better than plain linear attention. The gated part is how it forgets. An
+
+exponential gate decays what is already in the state, so old information fades instead of piling up until the memory saturates and stops telling you anything useful. So far this sounds free, and it is not. There is a real cost, and it is the same cost a running balance has in your own accounts. A balance cannot tell you what the third receipt said. Linear attention compresses. It squeezes an
+
+unbounded history into a fixed state, and compression throws things away. Pulling one specific token back out of a long context exactly is the thing full attention is best at, and the thing a running state is worst at. So the ratio is a compromise, and you can read the compromise straight off the card. It is three to one, not 64 to zero. Every fourth layer, the model gets real attention back and can look at everything again. Three layers of cheap
+
+compression, then one layer that sees the whole context, 16 times stacked. The linear layers carry the conversation cheaply, and the attention layers are where anything that needs exact recall gets to happen. And that ratio is a bet with a number attached. Alibaba is claiming that precise recall is worth one layer in four, and not one in one. The benchmark table is where you find out whether the bet paid on SWE-Bench Pro, which is real bug fixing inside real repositories, this model scores 61.7.
+
+Opus 4.6 Max in the same table scores 53.4. That is a 27 billion parameter open model, eight points ahead of a frontier model on the benchmark that most closely resembles a job. On OS World Verified, which is driving an actual desktop and clicking actual buttons, it scores 84.3
+
+against Opus at 72.7, 11 and 1/2 points on the task where the model has to see the screen and act on it. On Android world, it is 81.9 against 62. On IFBench, which measures whether a model does the thing you asked instead of the thing it prefers, 79.5
+
+against 62.5, 17 points of instruction following. On Live Code Bench version 6, it is 90.3 against 88.8, which is close but still ahead. If you stopped reading
+
+the table there, you would come away thinking the Frontier had been matched by a file you can download. It is also worth putting the previous generation next to it because that column is in the same table and it isolates what changed. Q and 3.6, the 27 billion model from earlier this year, scored 63.9 on OS world. This one scores 84.3. On Deep
+
+SWE, it went from 13.3 to 42.2. So, do not stop reading the table at the wins. The losses are printed in the same rows and they are the part that tells you what the architecture actually bought.
+
+Terminal Bench 2.1, 73 against Opus at 78.2. It loses by five points on long horizon terminal work. GPQA Diamond, graduate level science questions, 89.2 against
+
+91.3. It loses by two. And on Humanity Last Exam, the hardest reasoning set on the card, 30.8 against 40. It loses by more than nine points,
+
+which in that range is not close. Line the wins up next to the losses and the shape is clean. Agentic work, tool use, driving a screen, following instructions, it wins, sometimes by a lot. Hard closed book reasoning, it loses and the harder the reasoning, the wider the gap. That is what a 27 billion parameter model looks like when it has been trained extremely hard on agent traces. It has learned the skill of
+
+operating. It has less room inside it for the knowledge, and the deepest reasoning benchmarks are the ones asking for the knowledge. There is a second capability in here that the architecture story tends to bury, and the table treats it as a first-class citizen. This model is natively vision-language. It reads images and video, and it was benchmarked on them in the same release.
+
+On Math Vision, with no code interpreter on either side, it scores 90 against Opus at 65.5. On ERQA, 65.5 against 40.8. On a set
+
+called Baby Vision, 65.7 against 12.6. Those are not small margins, they are different leagues, and that is not a side quest. It is the same story.
+
+Driving a desktop means looking at the desktop. The OS world and Android world numbers sit downstream of the vision numbers, which is why a model built for agents was built to see. There is one more spec worth sitting on, because it runs against where the rest of the industry went. This model is dense. All 27 billion of its parameters fire on every single token. No mixture of
+
+experts, no routing, nothing switched off. Compare that to what Nvidia shipped 3 days earlier. Nematron 3.5 Lightning is 30 billion parameters total, with 3 billion active, which is the opposite trade. Keep the model big, keep the compute small. Alibaba went the other
+
+way and kept the model small, so all of it can run. Dense is why the local story works. Predictable memory, no routing surprises, one file. Quantized to 4 bits, it lands around 17 GB, which is a single consumer card, and that is what put this model in front of people who do not have a rack. It also ships with a multi-token prediction head, which is a speculative decoding trick. The model
+
+guesses several tokens ahead and verifies them together, so you get more tokens per pass when the guesses hold. Handy, given what the throughput reports look like, which we will get to. And the license is Apache 2, which is the part that makes all of this portable. One caution, because the naming invites the mistake, the 2.4 trillion parameter Qwen 3.8 released earlier this month is a
+
+different model on a different custom license. The Apache grant is on this one. Which brings us to the question I have been holding since the benchmark table. Who ran those numbers? Alibaba did. Every column of them, including the
+
+columns with their competitors names on top. The card is upfront about it in one footnote in small type. Except for Opus 4.6 Max, which uses the officially reported score. All models are evaluated with the Claude code harness at temperature one, top P 0.95,
+
+and a 256,000 token context window. Sit with what that sentence contains. Alibaba ran their competitors models. They ran them inside a harness their competitor built. And then they published the table where their own model wins. That is not fraud, and it is
+
+not unusual. Every lab that publishes a comparison table does some version of it, because no rival lab is going to run your evaluations for you on launch day. But it is also not independent, and a table can be meticulously accurate and still be a vendor's table. And then there is one row that states it outright. The benchmark called Qwen WebBench, where this model scores 79 and Opus scores 63.8. That is a benchmark with
+
+the vendor's name in it, reported by the vendor in the vendor's own comparison table. Nothing about that is concealed. It is right there in the model card, spelled out. It is just that a lot of the coverage reprinted the score and skipped the name. So the honest reading of the whole table is this. It is a
+
+claim with arithmetic attached from an interested party. It is a good reason to go and try the model. It is not yet a measurement that anyone outside Alibaba has confirmed. Which is why the third-party reads are worth more here than usual, and there were a lot of them fast. The Hacker News thread went past a thousand points with 651 comments inside its first day. Simon
+
+Willison ran it locally through a 17 GB quantized file on a MacBook, and his verdict was, "Absolutely the best Pelican I have seen from a model that runs on my laptop." Which is a joke about his own drawing test, and also a real result on real consumer hardware. But, read further into his own numbers, and the second half of the story shows up. 22,276 reasoning tokens to produce 3,223 tokens of output over 21 minutes. It gets there. It takes its time getting
+
+there. A commenter called C May found the same thing from the other end. It was one of only two local models to get through their private test, and it burned five times the tokens of the model that came second. Several people in that thread used the word overthinking. And the memory story has a wrinkle, too. That same commenter
+
+measured 32,000 tokens of context costing 2 and 1/2 GB, and called the efficiency worse than rivals. The design that saves you enormous memory at a million tokens does not obviously save you much at 32,000, because at short context the fixed cost dominate. Put all of that together, and you get the actual picture, which is more useful than either the launch post or the backlash. It is real, it runs locally, it is properly strong at agent work, it is scored by its own maker, and it thinks slowly. Now, step back from this one model, because the architecture is the story, and Alibaba is not the only lab telling it. 3 days before this
+
+release, Nvidia shipped Nematron 3.5 Lightning, interleaved Mamba two layers, and mixture of experts layers with select attention layers kept in the stack. Different lab, different linear mechanism, same structural decision. Both of them keep attention as a minority ingredient rather than the main one. Neither of them threw it away, and that restraint is the part worth noticing, because the pure linear models the field tried for years were the ones that could not recall. For most of the
+
+last decade, the alternatives to attention lived in papers. State space models, linear attention, recurrent hybrids, perpetually a year away from mattering. As of this month, they are inside two of the open models people are downloading right now. And both labs got there for the same reason, which is the reason this video started with the cash. Attention is the part of the transformer that does not scale with context. So,
+
+the field is not replacing the transformer. It is routing around the one component that stops it from growing. So, here is where I land. The winner in this release is the architecture, not the model. If you need long context on hardware you own, this is the design that got you there. And
+
+the arithmetic is the receipt. 61 GB of cash at a million tokens, where the same model built entirely out of attention layers would have wanted 244. If you need the last few points of hard reasoning, Opus still has them, and you can read that in Alibaba own table, 40 against 30.8 on Humanity's Last Exam. The gap the hybrid cost you is small and real, and it sits exactly where you would predict. The deepest recall, not
+
+the daily work. And treat every number in that table as company reported until somebody outside the company runs it again. That is the correct default for any launch day table, whoever publishes it. And it applies to the Frontier Labs own tables just as hard. Which leaves the thing I cannot stop turning over.
+
+Replacing 3/4 of the attention in a 27 billion parameter model cost about two points of graduate level science and nine points of the hardest reasoning set on the card. That is the price at 27 billion. What is the price at 200 billion? Nobody has published that table yet. And when somebody does, the first question to ask will not be what the score was. It will be who ran it.

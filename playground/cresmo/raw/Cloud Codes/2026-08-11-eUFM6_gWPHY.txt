@@ -1,0 +1,134 @@
+---
+video_title: "Podman vs Docker: Why Enterprise Tech is Quietly Dit..."
+video_id: eUFM6_gWPHY
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eUFM6_gWPHY
+video_date: 2026-08-11T12:00:05+00:00
+video_description: |
+  Why are enterprise finance departments quietly canceling $57,000 Docker Desktop subscriptions and replacing them with Podman and Apple's new native container engine? Meet the OCI standards shift replacing the root daemon.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, security mechanics, and licensing math comparing Podman 6.0 against Docker Desktop Business ($24/user/month). We examine why Podman's daemonless, rootless-by-default architecture (forking containers directly from user shells) satisfies strict enterprise security reviews, how Red Hat's Quadlet compiles systemd unit files into production container services, and why Kubernetes deleted dockershim in favor of native containerd.
+  
+  Furthermore, we dissect Apple's Swift-based Container v1.0 release (surpassing 48,000 GitHub stars), analyze Podman 6.0's breaking changes dropping Intel Macs and cgroups v1, review Docker's pivot toward AI agent sandboxes, and evaluate the exact 250-seat threshold where switching from Docker Desktop saves tens of thousands of dollars a year.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Podman Official Repository & Engine: https://github.com/containers/podman
+  • Apple Swift Container CLI Repository: https://github.com/apple/container
+  • CNCF Podman Project Landscape: https://www.cncf.io/projects/podman/
+  • Red Hat Enterprise Linux & Podman: https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux
+  • Docker Official Desktop Business Pricing: https://www.docker.com/pricing/
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The $57,600 Invoice: Why Enterprises Are Canceling Docker
+  1:01 - The 4 Parts of Docker: OCI, runC & containerd
+  1:50 - Why Kubernetes Removed Dockershim & Docker Engine
+  2:55 - Daemonless & Rootless: Podman's Security Architecture
+  3:44 - Quadlet: Turning Systemd Files into Managed Containers
+  4:44 - The $24/Seat Price Increase & Docker Hub Mirroring
+  5:44 - CNCF Acceptance & Red Hat's Enterprise Podman Support
+  7:05 - Apple Container v1.0 (48k Stars) & Podman 6.0 Breaking Changes
+  8:41 - Docker's Pivot: Sandboxes, AI Agents & Hardened Images
+  10:00 - Final Verdict: When to Switch to Podman vs Keep Docker
+  
+  #podman #docker #kubernetes #devops #systemdesign #cloudcodes #containers #linux #apple #redhat
+  
+  
+  
+  
+  
+  
+  User Queries:
+  podman vs docker desktop enterprise migration 2026
+  why enterprise companies are switching from docker desktop to podman
+  podman daemonless rootless container architecture
+  podman quadlet systemd container management
+  apple container v1 0 swift linux container macos
+  podman 6 0 breaking changes intel mac cgroups v1 dropped
+  kubernetes dockershim removal containerd cri o
+  red hat podman desktop enterprise support pricing
+  docker desktop business pricing 24 per user per month
+  cloud codes podman vs docker breakdown
+---
+Somewhere in a finance department right now, a line item is getting deleted. Docker Desktop, 200 seats. There is no press release for canceling a subscription, so this migration has no announcement to point at. But the trail is public, and it runs through Red Hat, through Kubernetes, and as of June, through Apple. Start with a number. Docker Business costs $24 per
+
+user per month. Above 250 employees or 10 million in revenue, that price stops being optional. 200 developers, 12 months, $57,600 before a single add-on. That is a rounding error for a bank. It is also the easiest rounding error in the building to delete, because the replacement is not a startup. It ships
+
+inside the operating system that bank already pays for. Now the part that should not fit. Docker usage is not falling. It is the highest it has ever been measured. Stack Overflow asked 24,000 developers last year. 71% of them
+
+use Docker. 11% use Podman. So who is ditching what, exactly? The answer is that Docker is four products wearing one name, and only one of them has a price tag. The image format, the engine, the registry, and the app on your laptop.
+
+Three of those four, Docker gave away on purpose. In June 2015, it donated its runtime, runC, to a new body called the Open Container Initiative, sitting under the Linux Foundation alongside CoreOS and most of the industry. Two years later, the engine followed. Containerd went to the Cloud Native Computing Foundation in March 2017, and graduated in February 2019. In foundation language, graduated means this is infrastructure now, not a product. Those
+
+donations were not charity, they were how Docker won. An open format becomes the format the whole industry ships, but an open format is also a format anyone else can implement, and implementations arrived. In December 2020, Kubernetes started removing Docker from itself. The Docker shim was a bridge, written so Kubernetes could talk to Docker engine before a runtime interface existed. Version 1.24 deleted it in May 2022.
+
+Nothing broke. Your images kept running because the images were not Docker inks to keep. They were OCI. What Kubernetes dropped was an adapter and most teams did not notice the adapter was gone. Red Hat had gone further earlier. Rail 8
+
+shipped in 2019 with a Docker package simply absent, not deprecated, not discouraged, gone. Its replacement was a tool Red Hat's own container team had started 2 years before called Podman. So, by 2022, three of the four Dockers were commodity. The piece still carrying an invoice was the app on the laptop and that is the piece enterprise procurement started deleting. The registry is the other thing with a price on it. Pull an
+
+image without logging in and Docker Hub gives you 100 pulls every 6 hours per address, which a shared build runner burns through before lunch. Teams did not argue with that. They configured a mirror. Podman's pitch is one sentence. There is no demon. Docker runs a
+
+background service as root and every container on the machine belongs to it. You type a command, the client asks that service, the service does the work. Podman forks the container straight out of your own shell process, hands it to an OCI runtime, and exits. No service. No root own socket sitting there waiting to get mounted into something by accident. Rootless mode is a
+
+consequence. Your account gets a mapped range of user IDs, so root inside the container is an unprivileged nobody outside it. An escape lands as that nobody, not as the machine's administrator. For a security team that is not a feature, it is an answer. In finance, healthcare, and government, somebody has to write down why the container runtime needs a root demon on a developer laptop. Rootless by
+
+default answers that in one line. Then there is systemd. Podman's quadlet turns a small declarative text file into a real managed service. Auto start, restart on crash, journaled logs, running as an ordinary user on a rail server that reads less like an integration and more like the way the box already runs the rest of its services. Compatibility is deliberately boring. Podman speaks
+
+Docker's command line. It emits Kubernetes YAML directly and a package called Podman Docker makes a Docker command run Podman instead. Most Docker files move across untouched. Now the part that cuts the other way because most comparisons skip it. On a Mac or a Windows laptop, Podman also runs a Linux virtual machine. So does Docker Desktop.
+
+So does Apple's new tool. The daemonless argument is a Linux server argument. On your laptop it is mostly a question of who owns the VM. Docker shipped rootless mode years ago, too. It is documented, it works, and it is not what most teams switch on. So if the laptop technology
+
+is close to a wash, what is actually on that invoice? In September 2024, Docker answered by raising prices. Pro went from $5 a month to 9. Team went from 9 to 15. Business stayed at 24 effective that December because the tier enterprises actually buy did not need to move. The same
+
+announcement put pull and storage limits on Docker Hub. Five months later Docker reversed itself in public and the wording is worth reading. The changes scheduled for April 1st were not enforced. The old limits stand and any future enforcement gets six months of notice. That is a company reading a room and it deserves credit for reading it.
+
+It is also a company that spent one announcement teaching every platform team on Earth to configure a registry mirror. Those mirrors did not get removed afterwards. None of this is sudden. It is just slow. Back in 2023, Datadog measured Docker running in 65% of container organizations, down from 88 a year earlier as clusters moved to containerd. The runtime decision got
+
+made upstream years before anyone opened a spreadsheet. While that that happening, the alternative stopped being a Red Hat project. In January 2025, Podman and Podman Desktop were both accepted into the Cloud Native Computing Foundation. Foundation ownership matters for one unglamorous reason. A vendor can change its license and send you an invoice. A foundation cannot. Every
+
+enterprise that lived through August 2021 knows exactly what that sentence is worth. And to be fair to the $24, it does not buy a logo. It buys single sign-on SCM provisioning, hardened Docker Desktop, enhanced container isolation, and settings you can enforce centrally on every machine. That is a real list, and the community Podman Desktop does not have it, which is exactly the gap Red Hat walked into. In February this year, it started selling a supported build of Podman Desktop with its own engineers behind it. Vendors do not staff a support
+
+contract for software with no users. They staff one when customers keep calling to ask who to page at 2:00 in the morning. Red Hat's own announcement said as much, 3 million downloads on the community project, and customers asking for a version somebody would stand behind. The man whose team built the thing underneath is Dan Walsh, a senior distinguished engineer at Red Hat, who has led its container engineering group since 2013 after 30 years in security. Podman is what the SE Linux people built once they got to design the container tool themselves. Then came June and two
+
+releases 15 days apart that between them describe the entire market. On the 9th, Apple shipped container version 1.0, Linux containers on Mac OS written in Swift, each one in its own lightweight virtual machine with no Docker Desktop underneath. It has 48,000 stars on GitHub. Podman, after 8 years, has 32,000. Stars measure
+
+attention, not installs, and Apple's tool only runs on Apple silicon with the current Mac OS. But a 14-month-old project out-starring the incumbent challenger tells you where the attention went. And attention is the thing that arrives before procurement does. On the 24th, Podman shipped 6.0 and it is not a gentle release. Gone Cgroups version 1,
+
+CNI networking, IP tables, the slirp4netns network stack, the Bolt database, Windows 10, and Intel Macs. Podman desktop now ships two different engines, Podman 5 to Intel Mac users and Podman 6 to the rest because the engine will not build for that hardware anymore. If you are still on an Intel MacBook, this migration is not for you yet. Buried in those same release notes is a line that matters most. Podman's import path moved to a foundation owned organization.
+
+The project changed address from Red Hat's GitHub account to the CNCF's in the middle of a major version bump, and Podman is not spotless either. 6.0 shipped carrying a fix for a flaw where a malicious image with malformed environment entries could leak the host's own variables into the container, wildcards included. Rootless is a smaller blast radius. It is not no blast radius. So, what is Docker doing while
+
+its challenger amputates its own legacy? Open Docker's site today. The products menu leads with sandboxes for coding agents, AI governance, an assistant called Gordon, a local model runner, and an MCP toolkit. Docker desktop is listed third under application development. Its own documentation lists the MCP toolkit and the model runner before the engine.
+
+In December, Docker made its hardened image catalog free. A paid product turned into a giveaway with a claimed 95% cut in vulnerabilities against ordinary community images. That is a company with 20 million developers and 20 billion pulls a month deciding the container is the distribution channel, not the product. The chief executive since February 2025 is Don Johnson who founded Oracle Cloud Infrastructure. That is not a hire you make to sell a desktop app. Podman desktop already sees
+
+is this ends. It ships an extension that detects a running Docker engine and lists your Docker containers inside its own window and another that does the same for Apple's containers. Three engines, one client, nothing to migrate before you look, which reframes the whole comparison. The client on your laptop stopped being a loyalty test and became a viewer. And a viewer that can see all three engines is a very hard thing to sell a seat license for.
+
+So, here is the call and it is not a shrug. If your organization sits above that threshold, Podman wins. It wins on the invoice and on the security review, not on speed. Three receipts, $24 a seat, every seat forever. An Enterprise Linux that has shipped no Docker package since 2019 and still does not. And Red
+
+Hat in February choosing to sell support for the free competitor. For the other side, the individual developer and the shop under 250 people, Docker Desktop is still the right install and I would take it at twice the price. Compose, the extension ecosystem, and one company to call are worth real money when there are 11 of you. The 5% where this call breaks is specific. Intel Macs, which Podman 6 abandoned outright. Teams whose entire
+
+build is composed plugins. And any org that actually needs that business feature list because single sign-on and enforced settings are not decoration. The villain here was not Docker the company. It is the older idea that a name can charge rent on a standard it gave away. And Docker gave that standard away so completely that it has had to go find a different business. Which, to be
+
+clear, it is now doing in public. A bet with a date on it. By the time Podman 7 ships, the argument will not be Podman against Docker Desktop. It will be whether any vendor still owns the container client on your laptop or whether the operating system does. My money is on the operating system. Docker
+
+gave away the format and kept the store. Red Hat gave away the engine and sells the phone number. Apple gave away neither and put it in the OS. Three business models, one commodity underneath. Which of them is still standing when the client on the laptop stops mattering at all?

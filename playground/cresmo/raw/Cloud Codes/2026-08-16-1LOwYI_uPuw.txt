@@ -1,0 +1,183 @@
+---
+video_title: "Inside X's (Twitter) Algorithm: Insane Software Engineering Behind It"
+video_id: 1LOwYI_uPuw
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1LOwYI_uPuw
+video_date: 2026-08-16T20:00:34+00:00
+video_description: |
+  When X open-sourced its For You recommendation repository (xai-org/x-algorithm), rumors claimed one report cancels out 468 likes. What does the Rust source code actually say, and how do X's 13 Phoenix prediction heads score your feed?
+  
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, Rust source code, and mathematical scoring pipeline behind X's open-source algorithm repository. We examine why ranking_scorer.rs multiplies predicted probabilities rather than raw action counts (debunking the 468-like report myth), review the exact published weight table (where copying a link carries 20.0 weight—40x a like—and muting at -58.8 hurts more than blocking at -31.2), and dissect Nikita Bier's bidirectional-follow boost diff that multiplies mutual reply weights by 20x.
+  
+  Furthermore, we analyze candidate retrieval across Thunder, Phoenix vectors, and SimClusters, explore the 17 pre-scoring filters, audit the 26 out-of-network visibility rules that enforce recommendation suppression, inspect the Under the Hood account diagnostic export tool, examine the 665 hardcoded Brazilian election filter IDs, and evaluate the critical caveat of why no trained model weights were shipped in the repository.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • X Recommendation Algorithm Repository: https://github.com/xai-org/x-algorithm
+  • Aug 14 Rebuttal Commit Diff (c65aa17): https://github.com/xai-org/x-algorithm/commit/c65aa179db7bdd61e2c2821eac87f208a105c053
+  • @XOpenSource Official Announcement: https://x.com/XOpenSource
+  • X Under the Hood Transparency Tool: https://x.com/i/under_the_hood
+  • TechCrunch X Algorithm Coverage: https://techcrunch.com/
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The -234.0 Number That Broke the Internet
+  1:21 - How Phoenix Predicts Your Behavior (13 Heads)
+  2:11 - The Math Fix: Why 1 Report Does NOT Equal 468 Likes
+  4:17 - The Exact Weight Table: Likes, Reposts, Replies & Copy Link
+  5:50 - Negative Weights: Why Muting Hurts More Than Blocking
+  6:48 - The Bidirectional Mutual Boost (Nikita Bier Diff)
+  8:29 - Retrieval Pipeline: Thunder, Phoenix & SimClusters
+  9:02 - Out-of-Network Penalties & The Cold-Start Escalator
+  11:43 - Visibility Filtering: 28 Home Rules vs 26 Shadowban Rules
+  13:30 - Under the Hood Tool & The 665 Hardcoded Brazilian Election IDs
+  15:45 - The Missing Piece: Why No Model Weights Were Shipped
+  17:50 - Final Verdict: Is X's Algorithm Really Transparent?
+  
+  #x #twitter #algorithm #rust #systemdesign #cloudcodes #softwareengineering #machinelearning #open-source #devops
+  
+  
+  
+  
+  
+  
+  User Queries:
+  x algorithm open source repository xai org x algorithm
+  x algorithm report weight 234 vs favorite weight 0 5 math
+  ranking scorer rs x algorithm weight table values
+  nikita bier bidirectional follow boost diff x algorithm
+  x algorithm phoenix 13 prediction heads
+  under the hood x com under the hood account diagnostic
+  brazil 2026 election filter rs 665 user ids x algorithm
+  simclusters thunder phoenix retrieval pipeline x algorithm
+  why x algorithm repo has no trained model weights
+  cloud codes x algorithm breakdown
+---
+There is a file X published this week with one number in it that broke containment minus 234. Four lines above it sits another number, 0.5. That one is a like. The big negative one is a report. Divide the
+
+second into the first and you get 468. Within hours, that was the headline. A report cost you 468 likes. It traveled everywhere because it sounds like a receipt. That reading is wrong and the fix matters more than the number. What
+
+you are looking at is the ratio of two constants in a config file. We know it is wrong because X said so in code. About 27 and 1/2 hours later, they pushed a commit to argue back. 29 new lines of comments added to the ranking file aimed at whoever reads it next. Their wording, so that language models or people reading it are more likely to understand it correctly. That is where
+
+we are. A platform shipping code comments to correct a screenshot going around the internet. Behind the argument is a thing people actually wanted, the numbers. All of them in one public repository. 2016 files, the Apache license, 30,000 stars in two days, written mostly in Rust, and one file in there lists 665 accounts by name hardcoded that the feed will not recommend. Over the next 20 minutes,
+
+what the numbers say, what they do not say, and what is still being held back. Start with the misreading because the correction is the fastest way into how any of this works. The weights in that file do not multiply your likes. They multiply a prediction that a model has already made. The shape of it is this.
+
+A model called Phoenix reads a post and reads your recent behavior, then predicts how likely you are to do each thing to it. Like, reply, repost, quote, share into a direct message, follow the author, mute them, report them. 13 predictions, each a probability. The score multiplies each prediction by its weight and adds them up. That sum is the post score and the arithmetic is one line of rust sitting underneath everything else on your screen. So,
+
+minus 234 is not what a report cost. It is what the chance of a report cost, and that chance, X says in the new comment, is more than a thousand times smaller than the chance of a like, which turns the number inside out. The weight is not large because reports are devastating. It is large because reports are rare, and a rare event with a small weight would round away to nothing. Treat it as a unit conversion. Report probabilities
+
+arrive in a tiny unit, and the weight scales them up so they can be compared against likes at all. The ratio is a calibration, not an exchange rate. That distinction matters beyond pedantry, and X spells out why in the same comment block. Readers had concluded that a coordinated block and report campaign could bury an account. The answer in the code has two halves.
+
+The model predicts how likely you personally are to report the post, so a brigade mostly moves recommendations for people who resemble the brigade. Recommendations are personal, not global. The second half is stranger and more specific. For an action to count in ranking, it has to happen on a post that was served in the home timeline. Open a link from a group chat and hit report, and the ranking system does not see it.
+
+You can argue with all of that, and researchers do. What you cannot say is that the explanation was withheld because it sits in the file that holds the number in plain English with the wrong reading quoted back in quotation marks. The commit itself is worth looking at as an object. 21 files changed. 29 lines added to the scorer, 62 to the params file, 15 to the readme, plus one brand new filter we will come back to. For scale, the release the day
+
+before was the real event. In January, this repository held 79 files. By the middle of May, 216. On the 13th of August, it jumped to 2,015 in one push, roughly nine times the files and 13 times the code. And one line in it will date this era better than any launch video. We have added
+
+comments to the code they wrote so that language models or people reading it are more likely to understand it correctly. Language models first because the way most people are going to read a Rust code base this size is by pasting it into a chatbot and asking what it means. So, read the table properly, not as an exchange rate, but as a statement of what X wants its model to chase written in the only language a ranking system understands. A like is 0.5.
+
+It is the cheapest positive signal in the entire file and it is the one most creators optimize for hardest. A repost is one, twice a like, which is lower than most people would guess given that the whole culture of the platform treats the repost as the trophy. A reply is five. A quote post is five. Sending a post to someone in a direct message is five and following the author off the back of a post is four. Then copying the link. The
+
+plainest, least visible thing you can do with a post is weighted at 20, 40 times a like. Read the positives in order and a pattern falls out of them. The cheap actions are the public ones. The expensive actions are the ones that cost you something private. A reply you have to write, a share you have to justify, a link you paste into a group chat with your actual friends.
+
+The rest of the positive side is small change. Clicking into the post, 0.4. Opening a link, 0.2. Expanding a photo
+
+or opening a video, 500ths each. Total time carries 4000ths per unit. Small, but it is the only weight that scales with how long you stay. Meanwhile, the plain binary dwell flag is set to zero in the published defaults and so is a profile click. Bookmarks are the interesting absence. Phoenix does
+
+predict a bookmark probability and it sits right there in the list of prediction heads, but the published score carries no bookmark weight. So, that prediction stays out of the sum entirely. Then the axis flips and the file gets blunt. Not interested, minus 43.2. Block the
+
+author, minus 31.2. Mute them, -58.8, report, -234. The ordering there is worth a second look.
+
+Muting somebody is weighted heavier than blocking them, which is not most people's intuition. Blocking feels like the louder act. Muting is the quieter one, and in this file, it is the more expensive one. One last negative, the smallest number in the table, not dwelled, -200s. The price of a post you scrolled straight past without stopping. Put the whole
+
+thing on one axis and the argument writes itself. Engagement is cheap, trust is expensive. The signals that move the feed hardest are the ones a reply guy account cannot manufacture. Three years ago, there was a version of this that did not include any of it. The 2023 repository shipped the pipeline and left the constants out, which is why it collected 73,000 stars and settled almost nothing. That is the difference
+
+this release actually makes, and it puts a question to anyone who posts for a living. Now that the price list is public, does knowing it change what you write? Hold that question because there is a better way to answer it than guessing. One of these weights moved in public this summer, and the repository now ships the whole story of how. On the 13th of July, a post went out from Nikita Bier's account. "We are rolling
+
+out a small tweak to boost visibility of your post to your mutuals," it said, "people who you follow back." The reason given was almost domestic. This data was missing from the algorithm, and it made your friends appear less in your replies. So, the reply section felt more like a battleground with people you do not recognize. That post did 9.7 million
+
+views, and 3 weeks later, the code behind it landed with its own explainer document, showing what the change looked like as a diff. Here is the timeline it gives you. On the 10th of July, an experiment started. A small percentage of users were randomly assigned a boost value of 5, 10, 15, or 20. Everybody else sat at zero, which is no boost at all. On the 13th, results came back
+
+strong and the value of 20 went out to many users. Then on the 24th, after more results and after complaints that the World Cup was passing people by, they moved it down to 15. Note what the boost actually attaches to because this is where most coverage compressed it. It applies to original post only from an author you mutually follow, not to their replies, not to their reposts, and it does not boost the post directly. It raises the weight on the predicted probability that you will reply to it from 5 to 20, which puts a mutual's original post at 20 times the weight of a repost. The
+
+document opens by saying why it exists. Going forward, future algorithm updates will be published to this repository and you should be able to understand what changed by checking the diffs. That is a testable promise and we will test it at the end. None of that happens in a vacuum. A score only matters once there is something to score and before anything is ranked, the feed has to go and find candidate posts. They come from
+
+three places. Thunder holds recent posts from the accounts you follow in memory as they are published. Phoenix retrieval embeds you and every post as vectors and returns the nearest ones. And Sim clusters groups accounts by who engages with what, then pulls candidates out of your cluster. In network from Thunder, out of network from the other two, and both get ranked by the same model. There
+
+is no separate algorithm for strangers, but there is a discount for them. If you do not follow the author, the final score is multiplied by 0.75. If the post was pulled in because it matches a topic you follow, it is multiplied by a half. Turn that around and you get the real number. A
+
+stranger's post has to score about a third higher than a friend's post to sit in the same slot. That single constant is the entire in-network versus out-of-network argument settled in one line. A second adjustment handles repetition. Every post after an author's first in the same feed is multiplied by a half, decaying down to a floor of a quarter. Post five times in an hour and the fifth one is competing at a quarter of its own score. The third adjustment
+
+is the one most coverage miss completely. There is a cold start boost written into the timeline for authors who have almost no audience yet. The published conditions: fewer than a thousand impressions on the post, fewer than a thousand followers on the account, and the post under 24 hours old. Clear all three, and it gets lifted towards slots 15 and 16 of your feed. So, there is a hardcoded new account escalator in the timeline, and its address is roughly the 15th post you scroll past. There is a switch beside it
+
+for a bandit sampler to choose which cold start post get promoted, currently turned off. Before any of this, 17 filters run. Duplicates across sources, posts older than 48 hours, your own posts, accounts you block or mute, muted keywords, posts you have already been shown, checked twice against two separate records of impressions. That 48-hour cutoff is worth sitting with. Whatever else the For You feed is, it has a hard expiry date, and a post that has not found its audience inside two days is not going to. What survives goes
+
+to Phoenix, and one design note explains more about your feed than any weight does. During inference, candidate posts cannot attend to each other, only to you. There is a second design note worth having. Both retrieval and ranking look up their embeddings through hash functions rather than a fixed vocabulary, which means there is no dictionary to maintain, and a post published 1 second ago is representable immediately. Nothing has to warm up.
+
+Every post is scored in isolation against your history, which is what makes the score consistent and cacheable. It also means your timeline is not a contest between posts. It is a thousand separate verdicts about you, sorted. After scoring, another service reorders the top of the feed to cut similarity between neighbors, trading a little score for variety. Then a blender interleaves the things the model did not rank at all, adds, who to follow, prompts. So, by the time a
+
+post reaches your eyes, it has been retrieved, filtered, predicted, weighted, discounted, diversified, reordered, and interleaved with advertising. The weights the whole argument was about are one step out of eight, but ranking only decides the order. Something else decides whether a post is allowed to appear at all, and that part of the code base is what people have been demanding since 2018. It is called visibility filtering, and for every post and every viewer, it returns one of three answers: allow, interstitial, meaning shown behind a warning you can tap through, or drop. The rules are listed in evaluation order in a single registry file, and 28 of them run for the home timeline.
+
+Suspended authors, deactivated authors, protected accounts, people you block, people you mute, posts with legal takedowns against them. The first rule that answers drop ends the evaluation. Those rules read labels, and the labels come from a separate machine running offline. One system scores an account on how often people block or report its posts relative to how often they favorite them. Another runs pagerank over the follow graph and turns the result into a score per account.
+
+The rules themselves are written in a small language, and the repository ships its compiler and its runtime. A rule reads, "On this event, if these conditions hold, apply this label." 20 of those rule files are published along with 53 helper definitions. Some rules are held back. Then comes the part that is the actual answer to the shadow ban question. If the post is a
+
+recommendation from an account you do not follow, 26 additional rules switch on, and those rules can only drop. Same post, two viewers, two outcomes. Your followers see it. A stranger does not. 54 rules instead of 28, and the extra 26 exist purely to remove things from the feeds of people who have not opted in by following you. Among them is a label
+
+called do not amplify. That exact phrase is what the 2023 argument was about, and here it is in a list with a note saying it is being retired in favor of a narrower malicious link label, which brings us to the half of this release that may matter more than the code. X paired it with a tool called under the hood. It reports the visibility limiting labels sitting on your own account and your own posts over the past month as a file you can download. 18 post labels, 12 account labels, each with a plain description of what it means and what it does to you. Not adjectives. Sentences
+
+like post hidden from recommendations to non-followers or post discoverability is restricted to the author's profile. That is a platform naming the consequence in the same words it uses internally. The catch is the rollout. A pilot group only, accounts at least a year old, at least 10 posts in the last month, and aggregate figures rather than a verdict on each post. Keith Coleman, who runs product at X, called it the kind of thing that people will be fairly shocked that we are releasing. And X's own
+
+suggested next step is to paste the downloaded file into a language model and ask it what happened to your account. Which brings back that file with 665 accounts hardcoded into On the 14th of August, X added a filter for the Brazilian general election. Every account registered as a candidate with Brazil's electoral court, listed by numeric identifier with the username written next to it in a comment. It removes their posts from for you, along with reposts of them, quotes of them, and replies whose thread contains one. Unless you follow the account, in which case nothing changes for you at all. X's
+
+Brazil account posted the reason an hour and 47 minutes before the code landed. A resolution of the electoral court in force from the 16th of August. The accounts are not suspended and the posts stay on their profiles. In their words, this is not a sanction and not a change to X's rules. Whatever you make of the policy, look at what open sourcing did to it. A country-specific suppression
+
+list applied to named politicians is now a file with a diff and a timestamp on it. X makes that argument itself in the read me in one sentence. A benefit of open source is that you can see that changes like this exist and exactly how they work. The framing they gave it on the day was the same. The code and the tool are two puzzle pieces that neatly fit together, the announcement said, so that people can answer for themselves whether a platform is limiting their reach. The account that posted it had
+
+existed for six days. So the case for is strong. Now the case against, which has been on the record since February and has not been answered. After the first release in January, researchers went through it and were unimpressed. John Thickstun, a computer science professor at Cornell, said these releases give you a pretense that they are being transparent for releasing code. Ruggero Lazarini, a
+
+doctoral researcher at Graz, put the problem in one sentence. "We have the code to run the algorithm," he said, "but we do not have the model that you need to run the algorithm." That complaint is still live in August. Search the whole repository for a trained checkpoint and there is nothing to find. 2,000 files, no model weights of any kind. The quick start says it
+
+outright, "This is not a production quality model or a production scale setup. Production data, checkpoints, orchestration, and scale are not included. So you can train a tiny model on synthetic data for six steps and watch the machinery turn over. You cannot reproduce what ranked your timeline this morning and no outside researcher can audit it." Two more things are held back on purpose and X names them both. The prompt files for
+
+its content classifiers and some of the labeling rules withheld to reduce the risk of people gaming the system. There is a subtler caveat and it is the one to carry out of here. The read me explains that cron jobs write live production values into these files. The repository is a mirror of a running configuration service, not its source of truth, which means every number in this video is a snapshot with a shelf life and the accurate way to read the file is, "This is what production said the last time the job ran." X also states an aim, rather than a rule, that any experiment touching 10% or more of traffic should be visible here. Then there are the
+
+promises. In January, the plan was open source within a week with updates every 4 weeks. After the first push on the 20th of January, the repository did not move again for 116 days. In July, the promise got bigger. Once the security review is done, Elon Musk wrote, "The entire code base of X will be open source with no exceptions." What shipped
+
+in August is the 4U feed and the systems that filter it. That is a great deal of code. It is not the code base. Here is where it lands. X wins this one and it is not close. For the 95% of people
+
+whose real question is whether a platform is throttling them and why. Meta, TikTok, and YouTube publish explainers and system cards. No equivalent turned up for any of them. A constant you can read. A rule list you can follow in order. A report about your
+
+own account you can download. The 5% this fails are the researchers and they are right to keep pushing because a system outside parties cannot reproduce is a system you are trusting rather than checking. And the villain in this story is neither X nor the press. It is a number that traveled without its footnote. 468 was correct arithmetic on two real constants and it still describes something that does not exist.
+
+Which is the old warning credited to the economist Charles Goodhart. Once a measure becomes a target, it stops being a good measure. Publishing the price list is a real advance and it is also the thing most likely to change what the price is measure. So, here is a bet with a date on it. 6 months from now, in February, this repository will still ship no production model and the entire code base, with no exceptions, will still not be open. If that turns out
+
+wrong, it gets its own video. But the question the file leaves you with is not whether X is telling the truth. It is what any of us do with a price list. When the cheap signals are the ones most people chase and the expensive ones are the private ones, does publishing the numbers make the feed more honest or just make the gaming better informed?

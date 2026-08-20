@@ -1,0 +1,154 @@
+---
+video_title: "A 9B Model Just Outperformed 397B One at Repairing Agents (Harness R1)"
+video_id: mYx3r8YA-HY
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=mYx3r8YA-HY
+video_date: 2026-08-09T09:26:42+00:00
+video_description: |
+  When two models from the exact same AI lab were tasked with automatically diagnosing and repairing broken AI agents, why did a tiny 9-billion parameter model beat a massive 397-billion parameter frontier model? Meet the Shanghai Jiao Tong & Xiaohongshu research paper proving why outcome-graded specialists beat plausibility-prompted generalists.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, reinforcement learning loops, and middleware hook architecture behind automated agent harness repair. We examine how the 9B model was trained on 1,500 failure packets to edit 4 plain Python hooks (episode start notes, pre-decision hints, pre-action guardrails, and post-feedback recovery rules) on frozen target agents—raising task success from 45.8% to 53.6% while beating its own GPT-5.5 teacher.
+  
+  Furthermore, we analyze why massive 397B models made unseen agents worse (-4.3 points) by optimizing for plausible-sounding prompts rather than verified execution, review case studies across web shopping, household robotics, and database schema repairs, and demonstrate why pre-action guardrails account for over 80% of total agent performance gains across 20 unseen model families.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  1. arxiv.org
+  https://arxiv.org/abs/2608.02276
+  2. github.com
+  https://github.com/DeepExperience/Harness-R1
+  3. huggingface.co
+  https://huggingface.co/ShaoShuai0605/Harness-R1
+  4. lilianweng.github.io
+  https://lilianweng.github.io
+  5. martinfowler.com
+  https://martinfowler.com/articles/harness-engineering.html
+  6.tbench.ai
+  https://tbench.ai
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 9B vs 397B Model Experiment
+  1:04 - Agent = Model + Harness (The Wrapper Equation)
+  2:21 - The 4 Middleware Hooks: Start, Hint, Guardrail & Recovery
+  3:16 - The Rerun Reward Loop: How the 9B Model Was Trained
+  5:02 - Plausibility vs Outcome: Why 397B Models Fail
+  5:13 - Case Studies: Web Shopping, Household Robots & Database Repairs
+  7:32 - Generalization Test: 20 Unseen Agents Improved by 7+ Points
+  8:59 - The Harmful Patch Warning: When Prompts Break Agents
+  9:45 - Ablation Study: Why Guardrails Drive 80% of Performance
+  11:28 - Final Verdict: Outcome-Graded Specialists vs Scaling
+  
+  #ai #aiagents #machinelearning #systemdesign #cloudcodes #python #softwareengineering #programming
+  
+  
+  User Queries:
+  9b model outperforms 397b model agent repair shanghai jiao tong
+  automated agent harness repair python hooks
+  agent equals model plus harness birgitta bockeler
+  pre action guardrails post feedback recovery agentic ai
+  why small specialized models beat large generalist models
+  failure packet compression reinforcement learning agent repair
+  gpt 5.5 vs 9b specialized model benchmark
+  terminal bench 2.1 gemini 3 pro harness comparison
+  xiaohongshu agent harness repair research paper
+  cloud codes 9b vs 397b model breakdown
+---
+Two models were handed the same broken AI agent and asked to repair it. One of them had 9 billion parameters, the other had 397 billion, 44 times the size, same lab, same model family. The small one won. 53.6% task success against 45.8.
+
+That is a paper posted on August 3rd, 2026 out of Shanghai Jiao Tong University and Xiao Hong Shu. And the reason the small model won has almost nothing to do with the small model being smart. It comes down to one difference in how the two were used. Once you see it, you start seeing it everywhere. The big models were shown the broken agent and asked in a prompt what they would change about it. The 9 billion model was
+
+trained on that job under one rule. A fix only counts if it actually works, not if it reads well, not if it runs, only if the agent scores higher when you run the same tasks again. So, the real headline is a trained specialist beating prompted generalists narrower than it first sounds. It is also the more useful claim, and it is this channel in one sentence. Let me walk you [clears throat] through the paper. Everything turns on one word,
+
+harness. It sounds like jargon, so here's the plain version. Your agent is a language model with a pile of ordinary code wrapped around it. That code decides what the model sees, which tools it can reach, whether its next move is allowed, and what happens when the run goes sideways. Birgitta Buckler wrote it as an equation in April 2026. Agent
+
+equals model plus harness. Lillian Wang, writing in July 2026, describes the harness as the system that decides how the model thinks and plans, calls tools and acts, manages context, and evaluates its own results. Her line is the one to keep. The layer between the raw model and the real world seems to be as important as the model's raw intelligence. You can measure that. On
+
+the Terminal Bench 2.1 board read this week, Gemini 3 Pro scores 73.9 under one agent wrapper and 65.8 under another. Identical weights, identical tasks, eight points of difference produced entirely by the code around the model.
+
+So, the wrapper moves the number, which sets up the question this paper goes after. If the wrapper matters that much, who writes the wrapper? Right now, a person does. Somebody watches the agent fail, guesses at the cause, edits the middleware by hand, and ships. The paper turns that job into something a model can be trained to do. The editor
+
+gets exactly four places it is allowed to touch, and the model weights are not one of them. Four moments in the life of a single attempt at a task. One, episode start. Before the agent takes its first look, the patch drops in a note about how this kind of task usually goes wrong. Two, before each decision, a short state-aware hint slides into the context. You are holding the mug. You
+
+have not heated it yet. Three, before the action fires, the agent has proposed a move, and the patch can veto it, rewrite it, or bounce it back and demand another. That is the guardrail, and hold on to it, because it turns out to be where most of the gain lives. Four, after feedback lands, the patch reads what the environment returned and injects a recovery instruction when the run starts going in circles. That is the whole surface. Four
+
+hooks in plain Python, screen before installation, so a patch cannot import anything, touch the disk, or read the answers. Those four hooks are the what. The loop that decides what goes in them is the actual idea, and it runs in four steps. Take a batch of tasks, 10 of them, in their runs. Turn the agent loose on them with no help at all. Throw
+
+away everything except the failures, and compress those failures into what the authors call a failure packet. The goal, the moves that were made, what came back, and where it died. That packet is all the editor reads. It writes one patch for the whole batch of 10. It does not play the game. It does not answer a
+
+single task. It writes code, and hands the code over. Then, the same frozen agent reruns the same 10 tasks with the patch installed, including the tasks it already passed. A fix that breaks something that was working gets caught in the same rerun. The reward is one number, how far the average score moved.
+
+Up and the editor is reinforced. Down and it is punished. Broken, inert, or unfinished and the reward is exactly zero. A well-formed patch earns nothing on its own. Before any of that, they had to teach it the format. So, GPT-5.5
+
+wrote candidate patches and only the ones that ran and did not make things worse were kept. That left 877 examples. Tiny. Then reinforcement learning on about 1,500 failure packets on eight H800 cards in a single machine. One node. That is the entire compute story
+
+against a benchmark pool of 17,800 tasks. And here is the detail I keep coming back to. As a harness editor, GPT-5.5, the teacher, scored 47.9.
+
+The student it taught finished at 53.6. The student beat its own teacher at the teacher's job because the student was told thousands of times whether the patch worked. Would you rather have an editor that sounds right or one that has been graded on results? The paper puts the gap in its own words. Frontier
+
+models optimize for plausibility. They emit valid, reasonable-looking edits and because they do not rerun the target, they cannot tell whether the edit helped. Which stays abstract until you read what a patch actually did. Start with the shopping one. The agent is told to buy a hairpiece, black, brown, under $40. It searches, finds the right
+
+product, and clicks buy now without selecting the color. Partial credit, not 0.667. It found the thing and fumbled the last click. The patch the editor wrote is one rule.
+
+If the pending action is buy now and a required option is still unselected, block it and say why. That is the entire intervention. No rewriting of how the agent searches, no bigger brain bolted on the front. rerun. The agent proposes the same premature purchase, gets stopped, picks black brown, buys, and scores a clean 1.0. Across the 10 tasks,
+
+full successes went from two to five, and the two tasks that already worked stayed working. The household robot case is bigger because it uses all four hooks at once. The agent has to put a hot mug in a cabinet, and it keeps skipping the heating step or walking to the wrong shelf. So, the patch tracks the stage, hints the next unresolved step, and blocks a placement at the wrong destination. 56 hints and guards fired across that batch. One success in 10 became six in
+
+10. It also broke one task that had been passing, and the paper says so out loud. Six rescued, one regressed, one trajectory still circling between two hints. That is what an actual result looks like. Zoom out to the full benchmark, and the same shape holds. On
+
+the household suite, the cleaning tasks, the ones where the agent has to wash an object before putting it down, went from 16.9% to 58.4. The database case is the one I would show a skeptic because the entire failure is a capital letter. The task, change a race length in a table called race schedule. The stored value reads
+
+three, capital H hours. The agent writes four, lower case H hours. The grader wants an exact match, so the task is marked wrong. Right in meaning, failed on convention. GLM 5.2 saw the same
+
+evidence, and wrote a patch full of sensible advice about quoting identifiers and verifying rights. Its guided run made the same lower case mistake. Sensible advice, no change in outcome. The trained editor's patch made the agent inspect the row first, copy the convention it found there, write four capital H hours, and verify before committing. Four out of 10 became six out of 10, so it fixes the 10 tasks it was shown. The obvious objection is that
+
+it has memorized those 10, and the authors go after that objection twice. First, they handed the trained editor 20 target models it had not seen in training, Lama, Gemma, and Quen from 1 billion parameters up to 70, and let it write a fresh patch for each one from that model's own failures. Every one of them improved. Average gain, 7.06 points. 56 of 63 model benchmark pairs
+
+went up, four were flat, three slipped slightly. The biggest movers were the small models. A 4 billion Quen gained 12.3. Then the test that settles the argument. Show every editor the same 10
+
+failures. Each writes one patch. Apply that patch to the 1,270 tasks it was not shown, and repeat the whole thing on three different random draws of those 10 failures. The trained 9 billion editor improved those unseen tasks by 8.9 points, and it stayed positive on all three draws. Nine
+
+patches out of nine installed a real intervention. The 397 billion model, same evidence, same protocol, came out at minus 4.3 points. It made the agent worse than doing nothing. DeepSeek V4 Pro landed at minus not point four, with only six of its nine patches doing anything at all, and both frontier editors swung hard between draws. The paper's reading,
+
+"Turning a handful of failures into a broadly useful edit is a capability that scale alone does not confer." There is a worked example of it going wrong. Gemini 3. Five flash was given the full failure evidence and all four hooks on the household tasks, and its patches pushed success down from 41.6% to 35.4.
+
+Of 39 valid patches, 21 made things worse, and 12 helped. The worst single one took a batch from seven out of 10 to zero. It forced actions from a guest stage, so on two object tasks, the agent put the first object down before collecting the second, overriding moves it had been getting right unaided. And this is the part worth sitting with. That patch compiled. It parsed. It installed. It
+
+ran, and a careful reader would have called the diagnosis reasonable. Plausible and harmful are not opposites, which is exactly why the reward here is a rerun and not a review. That failure points at where the value really sits, and the authors measured it directly. They switched off one hook at a time, kept the same patches and the same frozen agent, and reran everything. Removing the pre-action guard cost 3.9
+
+points. Removing post-feedback recovery cost 3.3. The two context hooks, the opening note and the pre-decision hint, cost under a point each. So, the gain is concentrated in stopping bad moves and recovering from them, not in writing better instructions. Which of the two
+
+dominates flips by environment? The guard matters most in the shop, recovery matters most in the house. That also explains why the handwritten strategies underperform here. Self-refined, applied uniformly, lowered reward on all three benchmarks. About 2 and 1/2 points of average success gone. React managed 3.2
+
+up. One fixed rule cannot know which environment it is in. Some caveats, because they matter. Three benchmarks, web shopping, a text household simulator, and a database. 1,300 test tasks, no coding agent, nothing resembling a production stack, and a repo sitting at 30 stars. And one
+
+row beats the trained editor outright. Plain reflection scores 55.8 against its 53.6. The paper flags why. That number is
+
+cumulative over two attempts per task, so it measures something else. But the row is printed, unhidden, at the top of the same table. The other thing the authors were careful about, they fine-tuned the agent itself, which lifted it to 59.2 on its own. Then trained a fresh editor for that better agent, it went to 64.2, another five
+
+points. So, harness work does not evaporate the moment your model improves. The two climb alongside each other, and the authors say the next step is to alternate them. Here's where I land. The winner is the outcome-graded specialist for anybody shipping agent who can afford to rerun their own tasks. The
+
+receipts, 53.6 against 45.8 from a model 44 times smaller. Plus 8.9 on unseen tasks where the big model went to minus 4.3 and 20 out of 20
+
+unseen agents improved. The concession is real. If your tasks cannot be rerun cheaply, one-shot work, live systems, anything where a failed attempt costs money, none of this reaches you and a frontier model prompted once is still what you have. For the rest of it, this channel's standing position picks up a receipt. The harness is the product. What you
+
+build around the model beats raw scale and somebody has now trained the thing that does the building, which leaves the question the authors end on themselves. If the harness can be trained against the agent and the agent retrained against the harness, where does that loop stop? They ran it once and got five points. It has not been run twice. Would you let it run on your stack?

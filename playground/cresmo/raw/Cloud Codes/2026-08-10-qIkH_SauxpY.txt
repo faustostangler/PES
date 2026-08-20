@@ -1,0 +1,113 @@
+---
+video_title: "This 2.6B Model Runs Agents on Phones (LFM2.5 Explained)"
+video_id: qIkH_SauxpY
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qIkH_SauxpY
+video_date: 2026-08-10T12:00:17+00:00
+video_description: |
+  Can a 2.6-billion parameter AI model execute multi-step tool-calling agents locally on a smartphone in airplane mode? Meet Liquid AI’s LFM 2.5, the hybrid neural network replacing heavy transformer attention with CPU-friendly short convolutions.
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, benchmark data, and local deployment mechanics of Liquid AI's LFM 2.5 (2.6B). We examine its non-standard 30-layer backbone (using only 8 attention layers and 22 gated short convolution layers to eliminate KV cache CPU misses), analyze independent real-world benchmarks on Snapdragon 8 Elite and Apple M5 Pro chips, and evaluate how a 2.5GB memory footprint delivers 30 to 220 tokens per second with zero GPU dependency.
+  
+  Furthermore, we investigate the real cause behind early tool-calling bug reports (uncovering broken GGUF chat templates in llama.cpp), audit the severe quality cliff on 4-bit Q4_K_M builds versus 8-bit Q8_0, review the $10M revenue clause in the LFM Open License, and provide the exact decision matrix for when to deploy edge agents offline versus choosing Gemma 4 or Qwen 3.5.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Liquid AI LFM 2.5 Model Collection: https://huggingface.co/LiquidAI/LFM2.5-2.6B
+  • Liquid Neural Networks LFM Technical Report (arXiv): https://arxiv.org/abs/2511.23404
+  • llama.cpp Official Repository: https://github.com/ggerganov/llama.cpp
+  • OpenCode Open Source AI Coding Agent: https://github.com/anomalyco/opencode
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - Offline AI Agents Running on Airplane Mode
+  0:17 - What is LFM 2.5? (2.6B Parameters & 128k Context)
+  1:07 - Architecture Deep-Dive: 8 Attention Layers + 22 Convolutions
+  1:50 - Independent Benchmarks: Phone & M5 Max Real-World Speed
+  2:55 - The Tool-Calling Failures: Testing LFM 2.5 in OpenCode
+  4:02 - Uncovering the Bug: Broken Chat Templates in llama.cpp
+  5:10 - The Quantization Trap: Why You Must Avoid 4-Bit (Q4_K_M)
+  6:13 - Licensing Watch: The $10 Million Revenue Clause
+  6:45 - Final Verdict: Is LFM 2.5 Ready for Offline Edge Agents?
+  
+  #liquidai #lfm25 #localai #mobileai #systemdesign #cloudcodes #aiagents #machinelearning #edgecomputing
+  
+  
+  
+  User Queries:
+  liquid ai lfm 2 5 2 6b model phone benchmark
+  lfm 2 5 short convolution gated attention architecture
+  run tool calling ai agents offline airplane mode
+  lfm 2 5 q4_k_m vs q8_0 quantization kl divergence
+  llama cpp liquid ai chat template tool call bug
+  lfm 2 5 vs qwen 3 5 vs gemma 4 2b tool use
+  snapdragon 8 elite local llm tokens per second
+  liquid neural networks mit ramin hasani
+  lfm open license 10 million dollar commercial limit
+  cloud codes lfm 2 5 breakdown
+---
+This is an AI agent calling tools on a phone in airplane mode. No server, no API key, no account, nothing leaves the device, and the marginal cost of every run after the first one is zero. The model driving it is 2.6 billion parameters. It fits in less memory than a browser tab. Liquid AI shipped it on
+
+the 4th of August. LFM 2.5 2.6B weights public the same day. 128,000 tokens of context, tool calling, multi-step agent workflows. All of it inside 2 and 1/2 GB
+
+of memory running on nothing but a CPU. 30 tokens a second on a phone. 220 on an M5 Max laptop. No GPU anywhere. And on tool use it beats a Quoin model 3 and 1/2 times its size on every board but one. 85,000 people pulled it down in its
+
+first week, so the pitch obviously landed. Here's the problem with everything I just said. All of those numbers came from Liquid AI, measured by Liquid, published by Liquid, charted by Liquid, which is normal and which is not proof. So, I went looking for people outside the company who had run it. Some had. What they found is stranger than a
+
+scandal. Start with why a model this small is fast on a CPU because that part is real engineering. Of its 30 layers, only eight are attention. The other 22 are gated short convolutions. Attention rereads and rewrites a growing key-value cache on every token, and on a CPU that means cache misses. A convolution just
+
+mixes neighboring positions, which is what a CPU is built for. That trade has a paper behind it. Liquid published the LFM 2 technical report in November 2025. Out of the Liquid neural network work Ramin Hassani started at MIT. On a Samsung Galaxy S25, they measured two to three times the throughput of a comparable transformer. That paper
+
+covers the previous generation, but the backbone is the same one. So, the speed has a mechanism. What it does not have, a weekend, is one independent measurement. Bench LM tracks the model, labels every figure provided exact, and refuses to rank it. Developers Digest calls a table vendor claims rather than independent measurements, and the community Apple Silicon board, 227 data points deep, does not list it. Then
+
+somebody went and did it. A developer posting as trickbomi ran it on a OnePlus 13, Snapdragon 8 Elite, pure CPU, no GPU, and no neural engine through an inference engine he wrote himself that is 450 kilobytes end to end. He got 17 tokens a second, 17 not 30. But read the setup before you call that a gap. Different phone, different engine, and a 4-bit build we are going to spend real time on shortly. He says he is pushing
+
+for 30. A second tester, Venelin Valkov, ran it in llama.cpp at 8-bit on an M5 Pro and got around 90 tokens a second in 4 gigabytes. Lower than the headline, but the headline chip was an M5 Max, a bigger part. So the claim stands unrefuted and unconfirmed at once, which matters less than the claim the whole model rests on. So Valkov went at that
+
+one. He put it inside open code, real coding agent, real repository, against Quinn 3.5. His verdict was blunt. It vastly underperformed on tool calling, and it kept losing track of which directory it was in. Guido Imperiale ran
+
+a different test. He gave it web search and web fetch, and asked whether there were transport strikes tomorrow. The harness did not pass it today's date. It did not call a date tool. It did not ask. It decided the date was March, its
+
+own training cutoff, and answered with full confidence. A third tester watched it pull data through an MCP tool in a broken format, then present that broken data as fact with no flag and no hedge. They pointed out that Gemini 4 did not do that on the same job. Three testers, three failures. That looks like a verdict until you read the rest of the thread. Under Valkov's own post, a user
+
+called Zinzei reported no problems with tool calls at all. Another runs Liquid's bigger model inside Claude code and calls it excellent at tool calling. Same weights, opposite verdicts. So, which of them was testing the model and which was testing the plumbing? Because the plumbing is where these failures live and it is documented in public with issue numbers attached. In June, a
+
+developer swept 33 of Liquid's own GGUF repositories and found 21 of the 24 tool capable chat templates dropped the tool call instead of rendering it back into the conversation. That is not subtle. The model calls a tool, the result comes back, and the template throws away the record that a call was ever made, so the model calls it again. On the 8 billion sibling, that loop ran away until it overflowed the context window. In llama.cpp, the parser that reads
+
+Liquid's tool syntax was matching on tags, this generation stopped emitting, so a perfectly formatted call came back as a 500 error, and the model writes Python, capital T true, where JSON needs lowercase true, which killed tool execution inside VS Code chat with no error message. Both were fixed on the 5th of June in a pull request opened and merged the same day by Tarik Dağkıran, who works at Liquid AI. Which tells you the real shape of this. These problems are older than the model. They belong to the whole family, and this release ships into the same runtimes, inheriting the fixes and the leftovers. Which brings us to the file
+
+you actually download because that is plumbing, too, and few people check it. Guido Imperiale ran perplexity and KL divergence sweeps across four different people's builds of this model crossed with six levels of key value cash compression and published a lot. His headline is one lined, do not use the four-bit KM built, not on this model. Liquid's own four-bit and two community builds of the same quant all behave abnormally. The quality does not slope down, it falls off a cliff, which is exactly what the one plus test was running. A tester who compared eight-bit
+
+against four-bit on real work called the four-bit significantly worse, And one of the quant authors in the report agreed. The good news, the top of the range is cheap. Eight-bit sits 4,000 of a KL divergence point from full precision and still fits in 8 GB Raspberry Pi. And here is the arithmetic missing from the launch post. The 8-bit weights are 2.87
+
+GB. The headline says under 2 and 1/2. Both are true and together they tell you the advertised footprint is not the version you should be running. One more thing before the verdict and it is the one people skim. This is not an open-source model. The LFM open license
+
+is Apache 2.0 with a single clause bolted on. Your commercial rights end the day your company passes $10 million a year in revenue. Past that line, you call Liquid AI and buy a license. Nonprofits and researchers are exempt and you can keep your fine-tunes closed.
+
+But the two models it benchmarks itself against carry no such clause. Google moved Gemma 4 to plain Apache 2 in April and Qwen has been Apache the whole time. So here is where I land and I am not going to hedge it. If you are building a narrow, offline, well-defined agent loop, a phone, a robot, a vehicle, a kiosk with no reliable connection, this is the model I would put on the device today. I would take it at twice the memory. Not because
+
+it is clever, it is not. Liquid's own model card says do not use it for agentic coding or knowledge-heavy work. On Tau 3 banking, the hardest agentic benchmark there is, it scores 5.7. For scale, the leader on that domain sits at 33 and frontier models with enormous reasoning budgets reach about 25%. I
+
+would take it because of what the receipts say. Each failure in this video traced back to a template, a parser, a quantization, or a harness. Not one traced to the weights. Fix those four and the same model goes from useless to quote no problems with tool calls. The defect was in how it shipped, not in what it is.
+
+And the concession is real, so I will say it properly. If you are past 10 million in revenue or you want zero license risk, take Gemma 4E, 4B, or Qwen 3.5 under Apache 2. In a real harness, one of them beat this thing at tool calling. That is a loss, not a footnote. This channel has argued
+
+for months that the harness is the product. This is the sharpest version of it I have found because it runs the other way round from the usual example. The vendor's numbers held up and the shipping stack was the defect. A chat template bug is a capability bug. So, let me put a date on it. By the 4th of
+
+February, 6 months from release, either an independent board publishes a measured CPU number for this model or you treat 220 as marketing until somebody does, which leaves the one question I cannot answer for you. When the next 2 billion parameter model tells you it runs agents on your phone, what is the first thing you check?

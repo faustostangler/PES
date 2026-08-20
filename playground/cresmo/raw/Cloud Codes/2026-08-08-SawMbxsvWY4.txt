@@ -1,0 +1,120 @@
+---
+video_title: "The Search Engine Hiding Inside SQLite (Goodbye Elasticsearch)"
+video_id: SawMbxsvWY4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SawMbxsvWY4
+video_date: 2026-08-08T12:00:25+00:00
+video_description: |
+  Why are developers paying thousands for Elasticsearch JVM clusters when a full-text BM25 search engine has been compiled inside SQLite for 10 years? Meet SQLite FTS5 and the in-database Tantivy search revolution.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, BM25 ranking mechanics, and cost benchmarks behind SQLite FTS5 and in-database search. We examine how two lines of SQL build a full-text index and execute BM25 queries directly inside your app process, explore the University of Washington's GovScape project (indexing 71 million federal PDF pages on a single AWS instance for $29.79), and analyze why deleting network hops and JSON serialization makes local SQLite search feel 100x faster.
+  
+  Furthermore, we dissect the head-to-head benchmark where Apache Lucene beat FTS5 by 38x on raw loaded throughput (418 vs 11 queries/sec), audit FTS5's limitations (fixed BM25 constants, lack of CJK tokenization, no faceting), and evaluate the rise of Tantivy in Rust—showing how Turso and ParadeDB are embedding Lucene-class search directly inside database B-trees.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • SQLite FTS5 Official Documentation: https://www.sqlite.org/fts5.html
+  • GovScape Federal PDF Search Project Paper: https://arxiv.org/abs/2406.01234
+  • Tantivy Rust Full-Text Search Engine: https://github.com/quickwit-oss/tantivy
+  • ParadeDB (Tantivy Search inside Postgres): https://github.com/ParadeDB/paradedb
+  • Turso Database Repository: https://github.com/tursodatabase/turso
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - 2 Lines of SQL: The FTS5 Search Engine
+  0:33 - FTS5 Has Been Hiding in SQLite for 10 Years
+  1:16 - The 100x Speedup Myth: Network Distance vs Raw Search
+  2:04 - GovScape Benchmark: 71 Million Federal Pages for $29
+  3:00 - Lucene vs FTS5 Head-to-Head: The 38x Throughput Gap
+  5:03 - FTS5 Limitations: CJK Tokenization, Stemming & Fixed BM25
+  6:11 - The Tantivy Upgrade: In-Database Lucene (Turso & ParadeDB)
+  7:15 - Final Verdict: When to Delete Your Search Cluster
+  
+  #sqlite #fts5 #elasticsearch #database #systemdesign #cloudcodes #search #backend
+  
+  
+  User Queries:
+  sqlite fts5 full text search tutorial bm25
+  replace elasticsearch with sqlite fts5
+  govscape university of washington sqlite 71m pages
+  apache lucene vs sqlite fts5 benchmark queries per second
+  tantivy rust search engine turso sqlite B tree
+  paradedb tantivy postgres in database search
+  sqlite fts5 external content tables memory reduction
+  why sqlite search feels 100x faster network distance
+  sqlite fts5 chinese japanese korean custom tokenizer rust
+  cloud codes sqlite fts5 elasticsearch breakdown
+---
+Two lines of SQL and a working search engine. No server, no cluster, no monthly invoice. Watch this. Line one, create virtual table docs using FTS5. That statement just built a full text search index. Line two, select star from
+
+docs where docs match. Order by BM25 of docs. Ranked results best first. That is BM25. The 1994 ranking function this channel watched beat open AI's embeddings on exact terms. No plugin, no
+
+install. It compiled into the SQL Lite file already sitting on the machine in front of you. SQL Lite shipped it in version 3.9 on the 14th of October 2015. It has been in there 10 years. 10 years
+
+in which the default answer to search state a JVM cluster minimum 4 GB of RAM. Elastic's own serverless rate card starts at 9 cents per search unit hour before ingest and storage. So here's the question this video answers. If a real search engine ships in the file, why rent one? The internet already has an answer, and it is loud. It arrives as a
+
+migration post with a big number on it. I went hunting for the receipt underneath those posts. One of them is public, documented, and running. It indexes 71 million pages, and the people who built it have already replaced the piece we came for. Start with the loud version because you have seen it.
+
+November 12th, 2025, I replaced elastic search with SQL light and search got a 100 times faster. Free text over titles and bodies ranked by BM25 nudge toward newer posts. Read the whole thing and there is not one number in it. No before and after latency, no document count, no dollar figure. The claim is singledigit milliseconds and a smaller bill. And the
+
+evidence is the author saying so. That is the shape of most of this genre and it is why the argument keeps losing to whoever signs the invoice. But one line in that post is the sharpest thing written about search architecture all year. Explaining why the old setup was slow, the author writes, "That is not a cluster problem. That is a distance problem. Hold on to that sentence. It
+
+does more work than the headline does." Therefore, the question becomes whether anybody has run this at a scale that settles it. Somebody has. The University of Washington announced Govscape in June 2026. a project led by Benjamin Charles Germaine Lee and it puts 10 million federal government PDFs behind one search box, 71 million pages of them.
+
+The keyword index over the whole corpus was built on a single AWS M5 instance in 38.79 hours for $29.79. That is 2.4 million pages indexed per dollar of compute. and the engine doing
+
+that work. In the paper's own words, we use the FTS5 extension of SQL Lite to perform exact text search over the full data set. One file, one machine, $30. The federal PDF archive searchable by term. So, it is settled. Before you go
+
+and delete a cluster though, answer one thing for yourself. What is your application's actual search rate? Searches per second, not page views. Have you ever measured it? Ask. because
+
+the same team asked. Section five of that paper is a benchmark. 500,000 pages out of their own corpus loaded into four different search engines, then hit with 10,000 real queries pulled from their own search logs. Apache Lucen, the engine inside Elastic Search, returned 418 queries a second from a 2.8 GB index. SQL Lite FTS5 same pages same
+
+queries built in the same 10 minutes returned 11 queries a second from 14 GB almost 40 times the throughput on an index five times smaller the paper summary is one sentence across all metrics Apache Lucen was the most efficient index and then in the revision published in May 2026 a footnote turns up beside that $29 figure this keyword index building cost reflects an earlier build using SQL light FTS S5. Given our results, building our current Lucine keyword index is cheaper. That is an architecture decision on the record. The strongest public receipt for SQL light full text search at scale is a receipt its own authors have stopped using. They measured it, moved the keyword index to lucine, and printed the footnote instead of deleting the number, which looks like the end of the video. It is not. And the
+
+reason sits inside the benchmark. 11 queries a second is throughput on a loaded machine, not the weight one user feels. Multiply it out. 11 a second is 950,000 searches a day from one process on one box with no replicas. Most applications paying an elastic shirt build this month have not come near that number and have not measured it either.
+
+So which side of it are you on? Because that is the whole decision and the migration posts are no help at all in making it. It also explains the 100 times faster claim because that was not FTS5 outrunning Lucine. On raw search, Lucine wins by 38 times. What those teams deleted was the roundtrip, the network hop, the JSON, the connection pool, and the pipeline holding two data stores in sync. A query that leaves your
+
+process pays milliseconds before the search engine reads a single bite. An index in the same file pays none of it. Singledigit medians come out of geometry, not out of a faster ranking algorithm. One thing that benchmark leaves open, and it matters. The paper publishes no FTS5 configuration. 14
+
+gigabytes for 500,000 pages says the text was stored inside the index, which is the default. External content tables move it out and the index shrinks, but defaults are what most people ship. Where FTS5 does break has little to do with scale. The BM25 constants are hardcoded in the SQL light source K1 at 1.2, B at 75. You can weight columns
+
+above others. You cannot tune the ranking function and there is no hook to try. The default tokenizer cannot segment Chinese, Japanese or Korean. Signal hit that wall and wrote its own FTS5 tokenizer in Rust. Then released it under the AGPL. So message search would
+
+work in those languages. Stemming is English only and there is no typo tolerance and no faceting. One more detail shows how buried this feature is. Node's own built-in SQL light module does not compile FTS5 at all. Python ships it. Bun ships it. Cloudflare's D1
+
+ships it. nodes does not. Therefore, the team building SQL Lite successor did the obvious thing. On the 27th of January 2026, Terso's Preston Thorp published a post arguing FTS5 is full of caveats and shortcomings and shipped a replacement built on Tanty, a lucine class search library written in Rust. The interesting part is where the index lives. Tanty
+
+normally writes a directory full of segment files. Terso writes those segments into the database's own B tree. So the search index sits in the same file as the data updated inside the same transaction as the row it indexes. It shipped experimental in March 2026 and the July release still calls it experimental 4 months later with automatic segment merging switched off. You run optimize index by hand. That is
+
+a vendor being straight about maturity and it belongs in your decision. But watch the pattern rather than the product. Parade DB put Tantiv inside Postgress. Terso put Tantivy inside SQL Lite. Data Dog bought Quickwit, the company behind Tantvy in January 2025.
+
+Three independent bets, one shape. Take Lucine and move it inside the database. So the verdict, and I am not splitting it down the middle, cancel the search subscription. For something like 95% of applications, English text, a few million documents, search traffic in the single digits per second. FTS5 is enough. It is already installed. and
+
+BM25 is one function call. The 5% is real. So here it is by name. Heavy Chinese, Japanese or Korean without a custom tokenizer, typo tolerance, faceted aggregations, and sustained high concurrency search. If that is you, the move is tante inside your database where terso and parade DB both went rather than a cluster. And the concession I
+
+will keep. FTS5 lost to lucine on every axis that team measured and I would still ship it. 38 times slower on one box beats infinitely faster on a cluster somebody has to babysit. Elastic circ was not the villain here. The villain is assuming search has to live somewhere else. So a bet with a date on it. By
+
+December 2027, a loosening class index ships in the box for SQL light and for Postgress. If FTS5 is still the only option in either one, I got that wrong and I will say so. Which leaves the question the GVscape team raised without meaning to. They moved keyword search to loosen and kept SQL light for everything else. So when a loosen class index fits inside your database file, what exactly is a search cluster still

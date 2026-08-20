@@ -1,0 +1,113 @@
+---
+video_title: "Go + HTMX replaces React: In Enterprise Scalability Performance Tests"
+video_id: jQh4RiFlEZk
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jQh4RiFlEZk
+video_date: 2026-08-11T09:00:39+00:00
+video_description: |
+  Does Go + HTMX actually scale better than React in large enterprise environments, or is the "67% less code" benchmark just a famous talk meme? Meet the real 2026 scalability benchmarks, the TechEmpower archival, and the CDN traffic data settling the debate.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, garbage collection performance, and enterprise scalability metrics comparing Go and HTMX against React. We analyze Carson Gross's admission on hypermedia team limits, contrast "wide" enterprise admin apps against "deep" client-side apps, and review the death of the TechEmpower Framework Benchmarks alongside the newly launched 64-core HTTP Arena results.
+  
+  Furthermore, we dissect Go 1.26's new "Green Tea" vector-accelerated SIMD garbage collector, review Drupal 11.3's enterprise migration adopting HTMX into core (slashing browser JS by 71%), and expose the 740:1 NPM vs 4:1 CDN download discrepancy that proves HTMX's true browser footprint in production.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Carson Gross Essay ("Does Hypermedia Scale?"): https://htmx.org/essays/does-hypermedia-scale/
+  • TechEmpower Framework Benchmarks Archive: https://github.com/TechEmpower/FrameworkBenchmarks
+  • Drupal Core HTMX Integration Issue: https://www.drupal.org/project/drupal/issues/3421118
+  • Contexte Case Study Essay (React to HTMX): https://htmx.org/essays/a-real-world-react-to-htmx-port/
+  • Official Go Release Notes & Garbage Collector: https://go.dev/doc/devel/release
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 67% Less Code Meme (The Contexte Origin)
+  1:12 - Carson Gross: "Does Hypermedia Scale to 100 Developers?"
+  1:55 - Wide vs Deep Apps: Where HTMX Beats React
+  2:27 - The Death of TechEmpower Benchmarks (Archived 2026)
+  3:46 - HTTP Arena: 64-Core Benchmark Reality
+  4:42 - Go 1.26 "Green Tea" Garbage Collector Upgrade
+  5:17 - The Enterprise Proof: Drupal 11.3 Adopts HTMX
+  6:18 - The Download Discrepancy: 740:1 NPM vs 4:1 CDN Hits
+  7:00 - Final Verdict: What Go + HTMX Actually Beats
+  
+  #golang #htmx #react #webdevelopment #systemdesign #cloudcodes #softwareengineering #programming #benchmarks #backend
+  
+  
+  
+  
+  
+  User Queries:
+  go htmx vs react enterprise scalability performance benchmark
+  carson gross does hypermedia scale essay
+  techempower benchmarks archived 2026 http arena
+  go 1 26 green tea garbage collector vector instructions
+  drupal 11 3 htmx core integration jquery replacement
+  htmx vs react cdnjs vs npm download metrics
+  wide vs deep web applications hypermedia fit
+  contexte 67 percent less code django htmx case study
+  full stack go htmx memory overhead
+  cloud codes go htmx react breakdown
+---
+Every argument that Go and HTMX beat React ends in the same place. One slide, 67% less code, 96% fewer JavaScript dependencies, build times down 88%. Same product, same team. Those numbers are real. They were published on HTMX's own site and they have been quoted ever since. The talk they came from did
+
+400,000 views. One reaction video to it added 300,000 more. What gets left out is the room they came from. a conference stage in Porto September 2022. The team was four people. The product was a
+
+French political news service. The backend was Django, not Go. And the essay that made those numbers famous carried a warning of its own. Further down the same page, their words, we would not expect every web application to see these sorts of numbers. That is the publisher in writing. So the
+
+enterprise question was not answered by that talk. It was borrowed from it then repeated for almost four years. which leaves the harder version of it. In 2026, what do the scalability tests actually say? The real answer starts with the creator of HTMX himself who put in writing that he could not answer it and it ends somewhere unexpected inside a 25-year-old content management system written in PHP. In November 2023, Carson
+
+Gross published an essay called Does Hyperdia Scale? It is the closest thing this movement has to an official answer, and most of it reads as a confident yes. His own line is that these applications can certainly scale into the tens of developers. Then comes the paragraph the quote tweets leave out. Can these applications scale to teams of a 100red or more? This we cannot answer because
+
+we have not seen this scenario one sentence later. At this point we are speculating. That is the author of htmx on his own site. That admission is nearly three years old now and it outranks any chart because the strongest advocate Hyperdia has would not claim it worked at the scale the word enterprise actually means. He volunteered that before anyone pushed him. But Gross gave
+
+a sharper test than any benchmark in a reply on Hacker News. He split software into two shapes. Wide applications have many screens that are each fairly simple. Deep applications have a handful of screens where every keystroke has to land instantly. Hyperdia wins the wide ones because a round trip is cheap when a screen changes once. It loses the deep
+
+ones because that round trip can be 150 milliseconds on a phone and no spinner hides it. And enterprise software is overwhelmingly wide. Admin consoles, back offices, configuration screens, reporting. So who was keeping score? For 13 years, one project did the tech and power framework benchmarks ran hundreds of server frameworks on identical hardware and published the table the whole industry argued over. Look at the
+
+round dates and you can watch the pulse slow. Round 21 in July 2022. Round 22 in October 2023. Then 16 months of nothing before round 23 arrived in February 2025. That round shipped with new fiber optic networking and 40 GB cards under a banner reading benchmarking at the speed of light. It was the last one. 13 months
+
+later, the repository was archived. The notice is dated the 24th of March 2026. It thanks the community and it says the repository, the history and the past results remain as a snapshot. A snapshot is not a scoreboard. Here is where this got strange. Round 23 is still online.
+
+But Click Fortunes, the one test that measures a server rendering an HTML page, and on the 10th of August this year, the results did not load. A red box read, "No benchmark data available." With the filter bar above it still loading. One developer's postmortem was bluntter than the goodbye. his read, "Frameworks had been allowed low-level tricks until the results measured sockets more than real implementations, and the underlying test platform had barely changed in years. Benchmark
+
+worship had eaten its own scoreboard. There is a live board again, and it is worth knowing about. HTTP Arena started in March 2026, 3 weeks before that archive, and it runs 65 frameworks on one 64 core machine in the open. Its first round is still labeled alpha and still running. So the ranks are provisional and composite there is a normalized score rather than a throughput figure but it is running now which is more than the old board can say and on the plain HTTP table it does not say what the memes say. The best go
+
+entry on that board sits 34th out of 65. Four JavaScript and TypeScript entries rank above it. A C implementation leads the table outright and two PHP servers finish inside the top five. That is not a verdict on Go, and pretending otherwise would repeat the exact mistake this video is about. Only a handful of Go implementations have been submitted at all, while C and Rust brought over a dozen between them. Absence is not
+
+defeat, it is absence. But Go did get faster at exactly the thing a server rendered stack leans on. Version 1.26, released in February, turned on a new garbage collector called Green Tea by default after a release running it as an experiment. The release notes claim 10 to 40% less collection overhead on programs that lean on the collector with roughly another 10 on recent Intel and AMD chips because it can now scan small objects with vector instructions. So the
+
+teams of a 100 questions sat open for nearly 3 years which makes the interesting part who finally supplied an instance of it because it was not a go shop and it was not a benchmark. Drupal is 25 years old. It runs government portals, universities, and newsrooms, and it has thousands of contributors, which is precisely the scenario that SA said had not been observed. In December 2025, version 11.3 shipped HTMX inside core, not as a plug-in. as the successor
+
+to a homegrown Ajax layer built on jQuery with the project claiming up to 71% less JavaScript for browser to server interaction and its streaming renderer moved across too. Up to is carrying weight in that sentence. And the same release let Drupal serve a quarter to a third more requests on the same database load which had nothing to do with HTMX at all. Two wins in one announcement is not one win counted twice. Even so, this is the receipt that did not exist when the question was asked. thousands of contributors, an
+
+enterprise content platform, a hypermedia layer in core, and the jump to HTMX4 already sitting in review. The release that throws out the old request object in favor of the browser fetch API. One more pair of numbers because it explains why this argument never resolves. Last week, React was pulled from the package registry 163 million times. HTMX 219,740 to1. Now look at the public CDN that
+
+serves those files straight to browsers. Over the last 30 days, it served React 258 million times and HTMX 68 million. That is under 4:1. Same two libraries, two correct measurements, two ratios roughly 200 times apart. One counts build servers installing a package over a week. The other counts browsers
+
+fetching a file over a month. Pick whichever flatters your side and you can argue this forever, which is roughly what has been happening. So here is the verdict and it is not the one the title promises. Go and htmx win the tests they are usually shown winning and this month a JavaScript runtime outranks Go on the one live board that is running. The tests were never the argument. What they
+
+beat React at is the thing neither scoreboard ever measured. 255 dependencies became nine. That is a smaller attack surface, fewer upgrade weekends, and a build step you can delete. And I would take that trade at twice the latency. The exception is real though. When context needed a
+
+collaborative editor, they wrote it in view and kept hmx for everything else. Which leaves the question worth arguing about. If this industry could not keep one honest scoreboard alive past 2025, what exactly have we been proving to each other?

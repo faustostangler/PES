@@ -1,0 +1,131 @@
+---
+video_title: "One Stolen Token Poisoned 2 Billion npm Downloads (49 chars)"
+video_id: 2wQomBIfv7U
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=2wQomBIfv7U
+video_date: 2026-08-16T12:00:25+00:00
+video_description: |
+  On a Tuesday morning in August 2026, a single compromised GitHub commit to keyv poisoned 444 package names and 2,234 package versions reaching 2 billion monthly downloads. Why did npm's signed provenance and v12 install-script blocks fail to stop it?
+  
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the forensic timeline, supply-chain mechanics, and payload execution behind the August 4 Keyv worm attack. We examine why GitHub Actions trusted publishing generated 100% valid cryptographic attestations for malicious code (proving origin rather than intent), and how the worm bypassed npm v12's install-script restrictions by injecting auto-run tasks into VS Code .vscode/tasks.json and Claude Code .claude/hooks.json configuration files.
+  
+  Furthermore, we analyze how git clone replaced npm install as the primary attack trigger, investigate how stored AI agent credentials (.claude/, Cursor, OpenAI API keys) became the primary category of loot, dissect Snyk and Cycode ecosystem reach reports (85,000 active infected hosts), and demonstrate why enforcing a 24-hour release cooldown in pnpm and npm completely neutralizes these supply chain campaigns.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Keyv Package Repository: https://github.com/jaredwray/keyv
+  • Snyk Security Research (Keyv Supply Chain Attack): https://snyk.io/blog/
+  • Cycode Security Research (Keyv Incident Analysis): https://cycode.com/blog/
+  • Upwind Security Report (Keyv Ecosystem Reach): https://www.upwind.io/blog/
+  • Official npm Security Blog: https://blog.npmjs.org/
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The Keyv Commit That Poisoned 2 Billion Downloads
+  1:04 - How npm Built Better Security Locks (Trusted Publishing & v12)
+  2:47 - The Provenance Illusion: Why Valid Signatures Don't Stop Malware
+  3:53 - The New Attack Vector: VS Code & Claude Code Config Hooks
+  4:56 - From Package Manager to Editor: Why git clone Is the New Trigger
+  6:04 - Stolen AI Agent Credentials: The New Category of Loot
+  6:48 - Ecosystem Reach vs Real Infections (2B Downloads vs 85k Hosts)
+  8:19 - The 1-Line Fix That Would Have Stopped the Attack (24-Hour Cooldown)
+  9:25 - Final Verdict: Signatures Are Not Security Properties
+  
+  #keyv #npm #cybersecurity #supplychain #javascript #systemdesign #cloudcodes #softwareengineering #devops #claudecode
+  
+  
+  
+  
+  User Queries:
+  keyv npm supply chain attack august 2026
+  one hacked account poisoned 2 billion npm downloads
+  why signed provenance attestation failed keyv attack
+  vscode tasks json claude code hooks json backdoor
+  keyv worm snyk cycode upwind security report
+  git clone vs npm install supply chain attack trigger
+  npm 24 hour release age cooldown setting
+  stolen ai agent stored credentials cursor claude
+  keyv cacheable flat cache file entry cache compromised
+  cloud codes keyv npm attack breakdown
+---
+Two minutes past 9:00 in the morning, a commit lands on a package you would not recognize. It is called Kiev. It stores things in memory and hands them back later. That is the whole job. 33 minutes later, a new version of Kiev is on the NPM registry, signed and published. The
+
+signature is valid, the build is real, the pipeline is the one maintainers were told to adopt. Inside are two files that were not there yesterday, and one line telling NPM to run one of them. By 10:10, those same two files are inside the caching libraries that sit on top of Kiev. By 10:30, a worm is publishing itself into packages that have nothing to do with Kiev. When the counting stopped, over 400 package names, more than 2,000 poison versions, combined reach roughly 2 billion downloads a month, one account, one Tuesday morning.
+
+Now the part that should bother you. Every defense built for exactly this had already shipped. 27 days earlier, NPM switched off the feature this attack used. It went through anyway. So, how do you rob an ecosystem that spent a year bolting its front door? You stop using
+
+the door. To understand why that morning matters, you have to know what the year before it looked like. Since the autumn of 2025, the NPM registry has been rebuilt around a single assumption, that the way in is a stolen credential, and that assumption was earned. A maintainer of chalk and debug, two packages pulled billions of times a week, got a mail dressed up as a two-factor reset. The domain was not NPM. They clicked, and
+
+those packages started shipping a crypto wallet drainer to anyone who installed them. So, the registry went after credentials hard. The classic tokens, the ones with no expiry date, were revoked outright in December, not deprecated, revoked. Write tokens got capped at 90 days. Two-factor became the default on new packages.
+
+And the path maintainers were pushed towards was trusted publishing, which removes the token entirely. Your build pipeline proves who it is with a short-lived identity, publishes directly, and the registry records a signed attestation describing exactly which commit produced the file. Then, in July, they went after the other half of the problem. Not who publishes, what runs. Version 12 of NPM shipped with dependency install scripts switched off by default. That is a bigger change than
+
+it sounds. For most of NPM's life, unpacking a dependency could run that dependency's code on your machine before you had imported a single line of it. Version 12 stopped doing that unless you explicitly ask for it. It was an answer to a specific worm. Two months earlier, something called Miasma had used a build configuration file to get that same free execution and spread through 57 packages in under 2 hours. So, by the 4th of
+
+August, the front door had been rebuilt twice over. Better locks on who is allowed to publish and a new rule that packages do not get to run code on your machine simply because you downloaded them. 27 days after that second lock shipped, the key release walked straight past both of them. It is worth being precise about how because the how is the whole story. Start with the signature because this is the part that should change how you read the word verified. The poisoned release
+
+was not smuggled around trusted publishing. It was published through it, the exact mechanism the entire ecosystem was told to migrate to. The attacker forged nothing. They pushed a commit to the main branch of the repository and the project's own automation did the rest. It checked out the tagged code, built it, published it, and signed an attestation saying precisely that. Every
+
+one of those statements is true. GitHub actions really did build it. The source really did match the tag. The attestation really is valid, and the artifact is malware. Snick, writing up the incident, put the boundary about as plainly as it can be put. Provenance can
+
+faithfully attest a build whose source or workflow context has already been compromised. Provenance answers a question about origin. It was not built to answer a question about intent. Those are different questions, and the industry has been selling the first one as though it settled the second. Then there is the second door, and this is what makes this incident different from every NPM story before it. The install
+
+script was close to being a decoy. Alongside the payload, that same commit added configuration to two directories in the repository itself. One belonging to Visual Studio Code, one belonging to Claude Code, editor config and agent config. The editor task was set to run when the folder opens. The agent hook was set to run when a session starts.
+
+Neither of them waits for you to install anything at all. Side code counted the ways in and wrote the sentence that belongs on a poster. Two of the three triggers never touch node modules, so a developer can be compromised without ever running NPM install, which leaves one uncomfortable question hanging over the entire year of hardening. If the signature was real, and the build was real, and the pipeline was the recommended one, what exactly did any of it protect you from? The answer is a stolen token and very little else. Every
+
+control shipped that year assumed the attacker was standing outside the trusted path trying to get in. This one was already inside it holding the maintainer's own account. And the reason that second door is not a one-off is that somebody had already field tested it. Miasma, back in June, was more than an install script worm. It planted configuration in five different places at once. Claude Code, Gemini's command
+
+line tool, Cursor, Visual Studio Code, and the test script in your package file. Five separate tools, five separate config formats, the same payload waiting in each of them. Safe Dep described the shift in a single line. Same loader, same payload, same infrastructure, different detonation surface. The campaign followed its targets from the package manager to the editor. That
+
+is the pattern worth carrying out of this video. Close the install path and the attack moves to the clone path. The trigger stops being NPM install and becomes git clone plus opening the folder, which also means it survives the fix you would instinctively reach for. Deleting node modules does nothing. Uninstalling does nothing.
+
+Those files live in the repository and a fresh checkout brings them straight back. Snyk code's warning to responders was blunter still. Clean one of the two directories and you will believe you are finished while the other path is still live. Both of them have to go. There is one more detail and it is the nastiest thing in the whole incident. The
+
+malicious commits were authored under a string referencing Claude. So, anybody triaging by commit author gets pointed at an AI agent instead of at the intruder. The credential sweep tells you what the real prize was. Alongside the Claude keys and the registry tokens, it went hunting for the stored credentials of Claude, of OpenAI, of Codex, of Cursor, and of Gemini. Your agent's keys are now a category of loot. They sit in a dot file in your
+
+home directory, they rarely rotate, and very little in the tool chain treats them as secrets worth guarding. So, how bad was it really? This is where a lot of the coverage stopped and it is where the number in this video's title needs handling carefully because I think it gets quoted wrong. 2 billion here is a monthly figure. The attack 11 months earlier on chalk and debug was 2 billion a week.
+
+Same headline number, roughly four times the scale, and they get repeated as if they were the same event. Second, those downloads overlap and they overlap enormously. Pull the dependency list straight out of the registry and you find that file entry cache depends on flat cache, which depends on cacheable, which depends on key EV. One chain, four packages, and all four of them are in the compromised set. Install the tool at the top and every counter underneath it ticks up once, which is exactly why their monthly numbers sit within a few percent of each other. Three of these
+
+packages account for about 90% of that 2 billion. Snyk said as much in its own write-up. These figures are ecosystem reach, not counts of compromised hosts. Upwind, which measures real environments rather than downloads, counted key V in about 85,000 of them. And semantic versioning did some quiet work here, too.
+
+The poisoned Kiwi was a major version bump, and a major bump is the one thing a carrot range refuses to install. Most of that download volume could not have reached it, but do not let that become comfort because the worm understood it perfectly. When it republished itself into other people's packages, it incremented the patch version, the one place a carrot range says yes without asking anybody, which is why the number that actually matters is not 2 billion. It is 2,234 poisoned versions across 444 package names published using credentials belonging to 12 different organizations. So, here is the verdict, and I'm going to be blunter about it than the write-ups were because this one has a clear winner, and it is not a product you can buy. The thing that would have
+
+stopped this for almost every team watching is the least impressive idea in the room, a cool down. Simply refuse to install any version that was published in the last day. Look at the clock on this incident. By the registry's own timestamps, the poisoned Kiwi was live for 1 hour and 43 minutes before its record was changed. Every poisoned version in that wave is unpublished now. A 24-hour delay does
+
+not have to detect anything. It needs no scanner, no threat feed, no vendor, and no subscription. It just turns up late enough that somebody else has already found the fire and put it out. The other package manager, pnpm, turns this on by default. npm has shipped the setting since February and leaves it switched off. That is the one line I would add to
+
+your project config today, and I would take that trade at 10 times the inconvenience. Here's the cost of it because it is not free. You will be a day behind on real security patches. And it does nothing whatsoever for the maintainer whose account is the one being stolen. I still think it is worth it. The idea I would actually retire is
+
+the one that made all of this feel safe in the first place. A signature is not a safety property. It tells you where a file came from. It has never told you what is inside it, and the boundary has moved. The place you have to trust is no longer the registry, it is anywhere your code can run, which now includes a folder opening in your editor and a session starting in your agent. So,
+
+treat those config directories as executable. Review them in a pull request the way you would review a shell script somebody added to your build because functionally that is what they are. One last thing, and it is the part with no answer yet. Nine days on, no one has said who did this. There is no statement from the registry, none from the platform, and the original break-in is still unexplained. The researcher who raised
+
+the first public alarm that morning published something else the very next day. It was about a separate set of disclosures where AI agents attacked real organizations with no human intent anywhere in the chain, and where incident response has no category for what happened yet. That is not what happened here, and I am not going to pretend that it was. But, it does sharpen the question this year keeps circling back to, when the intruder is not a person at all, who exactly are we hardening against?

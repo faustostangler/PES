@@ -1,0 +1,138 @@
+---
+video_title: "Run 30B Local AI On 16GB RAM: Meta Muse Glimmer"
+video_id: Yhwfms5aC0g
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Yhwfms5aC0g
+video_date: 2026-08-11T20:00:11+00:00
+video_description: |
+  Can a 30-billion parameter Meta AI coding model run 100+ autonomous tool calls inside 14 GB of ordinary laptop memory? Meet Unsloth's 2-bit Dynamic Quantization (UDQ_2K_XL) for Meta Muse Glimmer 30B.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, dynamic layer quantization math, and local execution benchmarks behind Meta Muse Glimmer 30B. We examine how Unsloth compressed Meta's 55.7 GB model down to 12.4 GB on disk (running in 14 GB system RAM) by keeping critical embeddings and outer attention layers high-precision while dynamically compressing middle layers, preserving 65.8% accuracy on the Aider Polyglot coding benchmark.
+  
+  Furthermore, we analyze a live 100-tool-call autonomous bug-fixing run on a real GitHub repository, benchmark real-world inference speeds on Apple M4 Pro (10.13 tok/s) and RTX 5090 GPUs, expose the 1-byte file copying bug, and evaluate the 28.4% prompt injection attack surface when running un-sandboxed local coding agents.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Unsloth Muse Glimmer 30B Dynamic Quantizations: https://huggingface.co/unsloth/Muse-Glimmer-30B-GGUF
+  • Meta Muse Glimmer 30B Official Base Model: https://huggingface.co/meta-models/Muse-Glimmer-30B
+  • SGLang Day-Zero Inference Engine: https://github.com/sgl-project/sglang
+  • Aider Polyglot Benchmark Leaderboard: https://aider.chat/docs/leaderboards/
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - 100 Tool Calls in 14GB RAM (The 2-Bit Breakthrough)
+  0:58 - Architecture: Logit Distillation & 30B Parameters
+  2:50 - Unsloth Dynamic Quantization: 55GB Down to 12.4GB
+  3:51 - Aider Polyglot Benchmarks: 2-Bit vs 4-Bit Accuracy
+  5:18 - Live Demo Teardown: Finding & Fixing GitHub Bugs
+  7:15 - Real-World Hardware Speeds: M4 Pro vs RTX 5090
+  8:16 - The 1-Byte File Copy Bug & Prompt Injection Risks
+  9:38 - Final Verdict: Is 2-Bit Muse Glimmer Ready for Daily Use?
+  
+  #meta #museglimmer #unsloth #localai #systemdesign #cloudcodes #machinelearning #gpus #softwareengineering #python
+  
+  
+  
+  User Queries:
+  muse glimmer 30b unsloth 2bit udq_2k_xl benchmark
+  run 30b coding model locally in 14gb ram
+  unsloth dynamic quantization layer selection algorithm
+  meta muse glimmer local tool calling speed m4 pro
+  aider polyglot 2bit vs 4bit quantization loss
+  dflash speculative decoding acceptance rate apple silicon
+  muse glimmer prompt injection attack success rate
+  local ai agent autonomous bug fix github repository
+  unsloth desktop app gguf local model runner
+  cloud codes muse glimmer 14gb ram breakdown
+---
+A 30 billion parameter coding agent running in 14 gigabytes of memory, not a chatbot. It picked a real open source repository hunted for a real bug and did not stop for 5 minutes. Evidence, a reproduction, a fix, tests, then a pull request write up for a human to read. Unsloth counted over a 100 tool calls backto back with nothing leaving the machine. The model is Muse Glimmer. Meta
+
+shipped it open Apache 2.0 on the 10th of August. Meta built it for a 24 GB graphics card. That envelope is Meta's own number. Unsloth squeezed it into 14 GB of ordinary system memory and the agent still ran. So there are two
+
+questions on the table and the second one is the one launch post skip. One, how does a 30 billion parameter model fit in 14 GB without becoming word salad? Two, what did you give up to get it down there? Something was given up and it is measurable. I have numbers for both including an independent test that broke this model in three places. Start
+
+with what Meta actually shipped because the architecture is where the trick begins. Muse Glimmer came out of Meta Super Intelligence Labs on the 10th of August. It is dense, not a mixture of experts and by current standards, it is a small model around 30 billion parameters with a 1.8 billion parameter perception encoder attached so it can look at images. 52 layers, 131,000 tokens of context on the card and an Apache 2.0 license. It was not trained
+
+from scratch either. Meta distilled it out of Muse Spark, their closed frontier model using logic distillation. The student is doing something stranger than copying Spark's answers. It learns to match the whole probability distribution Spark puts on every next token, which is how you compress judgment into a model small enough to sit on your desk. And it was built as an agent, not a chat model.
+
+Meta's own words, "It handles a wide range of function calls, invoking tools with precise schemas throughout extended workflows. There is even a reasoning effort dial from low up to extra high." Meta published a scorecard against the two models you would otherwise run at this size. Gemma 4 and Quen 3.6. On MCP
+
+Atlas, the benchmark for calling tools through a protocol, Glimmer scores 75.5, Gemma gets 54.2, Quen gets 62.5. On S.
+
+S. S. S. S. S. S. S. S. S. S. Bench pro.
+
+It takes 51.2 against QN's 50.2. But drop two rows and the story flips. QN wins S.WE Bench verified 77.2 to 76. QN
+
+wins Terminal Bench 60.7 to 51.7. These are Meta's own numbers on Meta's own page. So, Glimmer does not win on raw coding at this size. What it wins is
+
+tool calling. And those are two different jobs. If your work is one clever function, run QN. If your work is 40 steps with a file system and a browser in the middle, that MCP Atlas gap is the one that pays you back. Which brings us to memory because none of it matters if the thing will not load. Meta
+
+is blunt here. At full precision, a 30 billion parameter model needs over 55 GB. Their shipped answer squeezes that under 20 and asks for a 24 or 32 GB envelope. Unsllo version of that answer is a ladder and you can read the whole thing on the model page. 16 bit 55.7 GB,
+
+8bit 29.6, 4bit 15.9, and on the bottom rung, 2bit 12.4 GB on disk. Two bit is normally where these things go to die.
+
+Give every layer the same two bits and the model stops being a model. Unslaw's own writeup says other one and two-bit builds either failed to load outright or produced looping gibberish, which will sound familiar if you have ever tried this at home. Their fix is to stop treating layers as equals. Dynamic quantization inspects each layer and picks a precision for that layer. The embeddings and the first and last attention blocks carry the structure everything else leans on. So those stay
+
+fat and the middle gets crushed. Does that actually hold up? There is a published receipt and it is worth being precise about what it measures because these numbers are not from Glimmer at all. Unsloth ran a 671 GB Deepsee build through the Ader Polyglot coding test at every rung of the same ladder. Full precision scores 71.6%.
+
+The 4-bit dynamic build scores 69.7. The two-bit build scores 65.8. That is a drop of 5.8 points. Real and not a
+
+collapse. And the comparison that matters is not two bit against full precision. It is two bit against the other two bit. A competing quantization at a similar file size scored 56.6. Same
+
+bit budget nine points apart purely from choosing which layers to protect. So the two-bit tax is about six points of a coding benchmark charged on a model that otherwise does not run on your machine at all. Unsllo's own table asks for 12 to 14 GB for that build, 17 for 4bit, 58 for full precision. One warning before you go and download it. The file size is not the requirement. The key value cache
+
+wants memory. The perception encoder wants memory. The speculative decoding drafter wants memory. All three sit beside the weights. And all three grow with the context you actually use. Which
+
+is why in the demo everyone is sharing the context counter in the corner reads 1.4,000 out of 131,000. The window is enormous. The room you have to fill it is not. Here is the run itself. That is
+
+Unslaw's own desktop app. And the header names the exact build. Muse Glimmer 30B, GGUF, UDQ2K XL, the 2-bit one, the 14 GB one. The task is deliberately mean. Find a real bug in the unsloth repository. It
+
+has to be reproducible locally with no private credentials, no paid API, no GPU, and it has to be recent. It searches the issue tracker and builds a short list. An index error on multi-image input. A resume training button that vanishes after stop and save. A model that will not load despite the right package installed. A version
+
+string that reports the wrong thing. Then it does the thing that separates an agent from a search box. It reasons about which bug it can actually prove its own note on screen. Better candidates look for a bug with code logic, not user interface because a UI bug cannot be reproduced from a terminal and then it catches itself. Midrun the thinking block reads the instruction is strict. Must actually use tools to
+
+inspect files. Must actually execute Python for reproduction and tests. Do not fake citations. It is arguing itself out of writing a plausible answer. It tries curl. Curl is blocked. It notices,
+
+reasons that curl is blocked, and routes around the block through the search tool to pull the raw file instead. That recovery is the capability meta put on the box happening at two bit precision. Watch the page it pulls back because the repository header comes through with a live star count and fork count. 69.8,000 stars, 6.3,000 forks. I pulled the same
+
+repository from the GitHub API today and it returns 69,868. It was reading the live web. It settles on the version mismatch and it does not stop at a description. It writes a regression test, an assert comparing the package version on disk against the version the library reports and it states that the test must fail before the fix. That is the pull request writeup. Unsloth is talking about. Now,
+
+the part the launch post leaves out, and it is the part that decides whether you keep using this speed. One independent hands-on test went up the same day. MacBook Pro, M4 Pro, 24 GB of unified memory, running llama.cpp. Text decoding came out at 10.13 tokens a
+
+second. Call it seven words a second, about the pace you read out loud. That sounds survivable until you remember what one agent turn actually is. a huge prompt, hidden reasoning, several model calls, tool output stuff back in full tasks in that test took four to seven minutes each. The speculative decoder exists to fix exactly that. And on that
+
+Mac, it made things worse. 6.73 tokens a second with the drafter switched on. 33 12% slower than running without it. The reason sits in the accept rate. Only 211
+
+of 648 drafts were kept on an RTX5090. Unsloth measures that same feature running 3.1 times faster. Same switch, opposite result, and the difference is your hardware. Vision is worse again.
+
+2.61 tokens a second. And one user interface screenshot took 4 and 1/2 minutes to read. A screenshot task timed out at 10 minutes and failed outright. And here is the failure I would actually lose sleep over. Asked to copy four
+
+files, it reported that the copies were exact. They were not. Everyone had lost its final new line. and a SHA 256 comparison showed each copy was one bite shorter than the original. One thing to be fair about, that test ran the 17 gigabyte quantization, not the two-bit one. There is no published tokens per
+
+second number for the 14 GB build that I could find. Unslaught's claim is about tool calls and memory, not throughput, and those are not the same claim. Then there is the part where a local agent has your shell. On the prompt injection benchmark in Meta's own table, the attack success rate is 28.4. four. Gemma
+
+sits lower at 25.6. Roughly one attempt in four talks it into something. The other half of this is that you can train it. Unsla and Q Laura rather than full fine-tuning. And the data set shape is
+
+the interesting part. Tool descriptions, correct function calls, tool outputs, recovery from failures, permission handling. That is a training set that teaches behavior, not knowledge. Which means the failures I just listed are trainable. A lost new line is a discipline problem. and discipline is
+
+what a few thousand examples of your own workflows are for. So, the verdict, if you have 12 to 14 gigabytes free and you want an agent that never leaves your machine, this is the first one I would put on my own machine and the two-bit build is the one to take. If you want the best coding score at this size, take Quinn. If you want speed, none of this is for you yet. The number that stays with me is not a benchmark. It is that
+
+accept rate. The model is ready and everything around it is early. So the question is not whether a 14 GB agent can do your work.

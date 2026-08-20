@@ -1,0 +1,182 @@
+---
+video_title: "Run Qwen 3.8 27B Locally: Opus 4.6 max Performance on Your GPU?"
+video_id: fkEfPLu4UyI
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=fkEfPLu4UyI
+video_date: 2026-08-15T16:30:09+00:00
+video_description: |
+  Alibaba just released Qwen 3.8 27B under Apache 2.0 scoring 61.7 on SWE-bench Pro and 84.3 on OSWorld to beat Claude Opus 4.6 Max on local coding tasks. Meet the 2026 local hardware guide, quantization breakdown, and Multi-Token Prediction setup.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, quantization math, and local execution benchmarks for Qwen 3.8 27B Dense. We analyze how this 27-billion parameter model beats Claude Opus 4.6 Max across SWE-bench Pro (+8.3 pts), OSWorld computer use (+11.6 pts), and LiveCodeBench v6 (+1.5 pts), examine the 24GB VRAM target (running Q6_K at 22.88 GB), and expose the 73MB VRAM trap that crashes standard 4-bit quants on 16GB GPUs without IQ4_XS and KV cache quantization (cache-type-k: q8_0).
+  
+  Furthermore, we dissect the 8GB VRAM 1-bit quantization myth (showing why NVMe disk paging locks speed to 0.3 tok/s), demonstrate how baked-in Multi-Token Prediction (MTP) heads double generation speed to 65+ tok/s on single GPUs, and review optimal runtime backends for Apple MLX, Vulkan, and NVFP4 Blackwell hardware.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Qwen 3.8 27B Instruct Official Model: https://huggingface.co/Qwen/Qwen3.8-27B-Instruct
+  • Unsloth Qwen 3.8 27B GGUF Quants: https://huggingface.co/unsloth/Qwen3.8-27B-Instruct-GGUF
+  • Bartowski Qwen 3.8 27B GGUF Quants: https://huggingface.co/bartowski/Qwen3.8-27B-Instruct-GGUF
+  • llama.cpp Official Repository: https://github.com/ggerganov/llama.cpp
+  • SGLang Day-Zero Inference Engine: https://github.com/sgl-project/sglang
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - Opus at Home: The Qwen 3.8 27B Release
+  1:20 - Benchmarks: Qwen 27B vs Claude Opus 4.6 Max
+  3:25 - Quantization Math: 4-Bit vs 1-Bit Quality Loss
+  4:10 - 24GB VRAM Tier: Q6_K Build (RTX 3090 / 4090 / 5090)
+  5:10 - 16GB VRAM Tier: The 73MB VRAM Trap & IQ4_XS Solution
+  6:46 - 12GB VRAM Tier & The 8GB 1-Bit Impossible Trap
+  9:39 - NVMe Disk Paging Math (Why 0.3 tok/s Fails)
+  11:01 - Multi-Token Prediction (MTP): Doubling Token Speeds
+  12:48 - Hardware Optimization: NVFP4, Apple MLX & Vulkan
+  14:45 - Final Verdict: Hardware Setup for Local Opus Performance
+  
+  #qwen #qwen38 #localai #claude #vram #systemdesign #cloudcodes #machinelearning #gpus #open-source
+  
+  
+  
+  
+  User Queries:
+  qwen 3 8 27b local setup vram requirements
+  qwen 3 8 27b vs claude opus 4 6 max benchmark
+  qwen 3 8 27b 16gb vram iq4_xs quant setup
+  multi token prediction mtp head llama cpp qwen 3 8
+  unsloth qwen 3 8 27b udq4 dynamic quantization
+  why 1bit quants fail on 8gb vram cards nvme paging
+  qwen 3 8 27b swebench pro osworld scores
+  qwen 3 8 27b vision projector mmproj file setup
+  sglang qwen 3 8 27b nvfp4 blackwell 200 tok s
+  cloud codes qwen 3 8 27b breakdown
+---
+3 in the afternoon UTC on the 14th of August. Alibaba's QN team pushed a folder of files onto huggingface. 11 minutes later, someone on Hacker News wrote the sentence that put this video on your screen. 27 billion dense parameters at Opus 4.6 level. Opus at
+
+home. That thread finished its first day past 1,000 points and 600 comments. Because if that sentence holds up, the machine already sitting on your desk just changed job description. So, this video does one job. It works out what that sentence actually cost you, measured in gigabytes. The
+
+model is QN 3.8 27B, Apache 2.0. The weights are on your drive, and they are yours. Dense, not a mixture of experts, native vision built in. 262,000
+
+tokens of context, stretchable to a million. And a model card claiming it beats a frontier commercial model on four separate benchmarks. It also loses on three of them. We are saying those out loud because the losses are what make the wins believable. Then we walk down the hardware ladder together. 24
+
+gigabytes, 17, 16, 12, 8. One of those rungs is a trap. It is the one most people are standing on, and the whole thing turns on 73 megabytes. And at the bottom, the number that decides your speed turns out not to be the number printed on the box. Start with what QN published. SWE-Bench Pro is the agentic
+
+coding test that has been breaking models all year. Real repositories, real failing tests, and an agent that has to actually fix them. QN 3.8 27B scores 61.7. Opus 4.6 max in the column
+
+immediately beside it scores 53.4. 8.3 percentage points in favor of the model you can download for nothing. Remember that number, because we have not yet asked the obvious question about who ran the test. OS World Verified is
+
+computer use. A model driving an actual desktop and clicking actual menus. 84.3 against 72.7.
+
+11 and 1/2 points. If bench asks whether a model does what the instruction said rather than what it felt like doing. 79.5 against 62.5.
+
+17 points. Live code bench version 6 competitive programming. 90.3 against 88.8. That gap is a point and a half.
+
+Close, but the right side of the line. Two more before the losses because they are the two the coverage skipped. Driving an Android phone. 81.9 against 62. Multimodal software engineering.
+
+Reading a screenshot of a broken UI and fixing the code behind it. 38.6 against 27.1. Now the losses which are the more interesting half. Terminal bench 2.1.
+
+The long terminal sessions where an agent has to keep its head for an hour. 73 against Opus at 78.2. GPQA Diamond. Graduate level science.
+
+89.2 against 91.3 which is tight. And HLE. The hardest multidisciplinary exam anyone has assembled. 30.8 against 40.
+
+That gap is 9.2 points and it is not close. On the deepest reasoning we know how to measure, a 27 billion parameter model is still a 27 billion parameter model. So the shape of it is this. On the work a coding agent does all day, the downloadable model is ahead. On the
+
+work a research assistant does, it gives ground. The question is which one your Tuesday looks like. Which changes the question. It stops being how good is it and becomes what does it cost to have it in the room. The official weights ship at BF16 which is 54.66 gigabytes on
+
+disk. That does not go onto a gaming card. So the local answer is a quantized build. Quantization rewrites every weight at lower precision. The file shrinks, the model becomes slightly less exact, and there is now a table telling you exactly how much less exact. Atomic
+
+chat published theirs, measured against the full model. Their 4-bit build picks the same next token as the original 95.59% of the time. Their 1-bit build, 76.34.
+
+So, 4-bit is a rounding error, and 1-bit is a different model wearing the same name. Keep both numbers in your pocket. We need them shortly. Top rung, 24 GB, a 3090, a 4090, a 5090, a 7900 XTX 6-bit, the file called Q6_K, 22.88 GB. That is the best quality
+
+anyone runs at home. And after you load the vision file alongside it, you still have around 2 GB free for context. Nothing to think about. One rung down, and this is the number for the thumbnail. 17 GB. Standard 4-bit is
+
+17.11. Unsloth's dynamic 4-bit is 17.92. Unsloth's own guidance says plan for 17 to 19 GB of combined memory for the 4-bit build. Qwen's documentation points
+
+at the same tier. This is the recommended way to run this model. And this part is worth being precise about. That is the whole model. All 27 billion parameters, the full 262,000 tokens of context, the vision. 4-bit is
+
+the same model stored coarser, not a smaller one. Then comes the rung that eats people, 16 GB. A 4060 Ti, a 5060 Ti, a 5070 Ti, a 9070 XT, the most common card in the room. Look at the two numbers again. Standard 4-bit is 17.11 GB. A 16 GB card actually
+
+holds 17.18. It fits by 73 MB. And the reason that is a trap rather than a win is that 73 MB is not headroom. The key-value cache lives in VRAM beside the weights. And one user
+
+measured 32,000 tokens of context costing 2 and 1/2 GB of it. Unsloth's dynamic 4-bit does not even reach the trap. At 17.92 GB, it is about 700 MB larger than the card before the cache shows up at all. So, if 73 MB decides whether a model loads on the card you already own, what exactly were you buying when you bought it? The 16 GB answer is to step down one
+
+notch and buy the space back. IQ4_XS at 15.71 GB or the 3-bit dynamic build at 11.91. Then shrink the cache itself. Cache type
+
+K at 8-bit, cache type V at 4-bit. Two flags on the llama.cpp command line that have the thing competing with your weights. Here is a real launch day command from a user on a 4090. IQ4_NL weights. The vision file
+
+attached, both cache types quantized, flash attention on, 170,000 tokens of context, and speculative decoding enabled. 70 to 80 tokens a second. 12 GB next. A 3060 or a 3080. The 3-bit dynamic build at 11.91 leaves
+
+you under a gigabyte of room. It loads, and context is where you pay for it. Atomic chat's own guidance for a 12 GB card is a 2-bit build, and their table prices that add about eight points of token agreement against 4-bit. On a 12 GB laptop card, a launch day tester measured three to four and a half tokens a second, which is reading speed for a slow reader. Which brings us to the rung the comments keep asking about. 8 GB.
+
+The answer is no, and it is worth a few minutes because this is where the internet is most confidently wrong. The claim doing the rounds is that a 1-bit build exists that gets a 27B model onto an 8 GB card. So, here are the actual floors, read straight off the file listings the day after release, from the five publishers whose quants most people download. Unsloth's smallest file is 9.01 GB. Bartowski's smallest is 9.39.
+
+Mr. Aidermacher stops at 10.86. LM Studio's community build does not go below 16.81.
+
+And the llama.cpp project's own repository stops at 18.97, which is larger than the card most of the people asking this question own. Four of those five do not go below two-bit at all. There is no AWQ build and no GPTQ build.
+
+And most of the one-bit files people link to belong to a different model entirely. Qwen shipped two things in August 2026. This 27B under Apache 2.0 and a 2.4 trillion parameter mixture of experts under a custom license with revenue thresholds in it. The extreme
+
+one-bit quants are for the big one. Now, one publisher does have a real one-bit build of the 27B. Atomic Chat, who make a local chat client and also quantize their own files, ship a one-bit build at 8.5 GB. In the units a graphics card actually uses, that is 7.91 GB, which
+
+clears an 8-GB card by 92 MB. 92 MB for the cache, the compute buffers, and whatever your desktop is already holding. It does not run. And at 76% token agreement, you would not want it to. The one-bit build exists and it still does not save you. Which is when
+
+people reach for the SSD and llama.cpp will let you try. Note that this is not the same thing as swap. On one documented rig, letting Linux swap handle it came in at about a third of a token a second, and it grinds the drive doing it. What llama.cpp does instead is
+
+memory map the model file. The operating system pages weights in from the drive as they are needed, read-only, with nothing written back, so the drive is only ever being read. Two things kill it, though. Passing no map switches the whole mechanism off. And mlock cannot make an oversized model fit because all it does is pin pages that already fit it. But the real
+
+obstacle is architectural and it is the one thing about this model that everything else follows from. It is dense. Every one of those 27 billion weights gets read for every single token. A mixture of experts reads a few percent of itself per token, which is the entire reason the CPU offload flags people paste from guides exist. On a dense model, there is nothing to skip.
+
+So those flags have nothing to do. Do the arithmetic yourself. 17 GB of weights read once per token. A fast Gen 4 drive sustains around 5 GB a second. That is 0.3 tokens a second as a ceiling
+
+if it is truly paging. Back in January 2025, someone ran a 671 billion parameter mixture of experts off an NVMe drive and got 1 to 2.4. There is no published measurement of a dense 27B running off a disk, so treat that 0.3 as a bound rather than a result. The rule
+
+underneath it is simple. Once the majority of your weights are coming off the drive, you are under a token a second and it stops being a tool and becomes a batch job. For reference, a laptop CPU running this model out of ordinary system RAM with no disk paging at all was clocked at not 0.94 tokens a second. That is the fast version of too slow. So VRAM decides whether the model
+
+runs. It does not decide how fast it runs and that caught a lot of people out this week. QN trained this checkpoint with a multi-token prediction head baked into it. It is a small extra layer whose job is to guess the next few tokens before the main model gets there. The main model then checks all the guesses in one pass. The correct ones
+
+are kept effectively for free. The wrong ones get thrown away. Same weights, same output, far fewer round trips. llama.cpp merged support for it in May 2026 and Ollama now ships MTP tags at exactly the same file size as the plain ones. 18 GB
+
+either way. The head is already inside the checkpoint, so it costs nothing to carry. The gains are large. On the previous generation of this model, a single 5090 went from 38 tokens a second to 65, and a Strix Halo desktop went from 7.4 to 18.1. On this one, on day one, a Strix
+
+Halo owner reported roughly nine tokens a second without it, and about 18 with. A second Strix Halo report put 5-bit at 10 and 1/2 fresh, dropping to 9.4 once 32,000 tokens of context were loaded. And on the EskiLang team's own launch post, a single 5090 running the NVFP4 build with speculation cleared 200 tokens a second. There is a catch, and it is specific to this architecture. QN3.8 uses hybrid
+
+attention, and an openlama.cpp issue from May 2026 measured draft acceptance on hybrid attention models at 35 to 37% on long tasks against a 70 to 90% baseline. 2/3 of the speculative work thrown away, which means the same head that doubles your speed on a short prompt can be doing close to nothing on a long one. Measure it at the context length you actually work at, rather than at the one in the headline, because those are rarely the same number. Then four more things that cost people an evening.
+
+Vision is a separate file. The main GGUF has no eyes at all. The projector is a 931-MB download you pass in alongside the model, and skip it, and what you have downloaded is a text-only model. NVFP4, the fastest format on the list, is Blackwell only. RTX 50 series, DGX Spark, B200 and up. On anything older,
+
+it is not slower, it simply does not apply to you. On AMD, the back end with no marketing behind it is the quick one. Community measurements through 2026 put llama.cpp's Vulcan path roughly 30 to 40% ahead of Rock M on token generation. Though on workstation cards, that result flips the other way. So, measure your
+
+own card rather than believing either camp. And on a Mac, use MLX rather than the generic runner because what decides Apple Silicon is memory bandwidth. An older chip with a 400 GB per second bus beats a newer one with 273, which is the opposite of how the model numbers are ordered in the shop. Which is the right moment to say where all these speed numbers came from because that matters more than the numbers do. Every tokens per second figure in this video is a user self-report from the first 2 days. Different quants,
+
+different context lengths, different flags, different rooms. Treat them as a range, not a specification. And every benchmark number came off QN's own model card, including the Opus column beside it. QN ran both sides of that table. One of the benchmarks in it is called QN Sebi bench. It is their in-house harness,
+
+average over three runs with an 8-hour timeout. The competitor scored 63.8 on it. QN scored 79. That is normal industry practice, and the problem with it has nothing to do with dishonesty.
+
+The problem is that as of this recording, nothing outside QN has reproduced those headline scores on a named third-party harness. So, the shape of the claim is solid, and the exact decimals are provisional. Here is the call anyway because knowing which part is provisional is enough to decide. If your local work is coding an agent's driving software, this is the model and the buy is a 24 GB card running the dynamic 4-bit build with multi-token prediction switched on. 24 GB is not a magic number.
+
+It is the smallest card where the quant stops being a decision you keep revisiting. Full quality at 6-bit, room for the key value cache, room for the vision file, and both Unsloth and QN pointing at that tier in their own documentation. And the sharper version, which is the actual lesson, a 16 GB card properly tuned, IQ4_XS with a quantized cache and MTP on will beat a 24GB card running defaults. Buy VRAM for the quant, buy speed from the runtime. The 5% this is wrong for. If
+
+your day is deep research reasoning, Opus is nine points ahead on HLE and five ahead on long terminal sessions. And the subscription keeps that job. I would still take the local one at twice the card price because the losses land on test you do not run and the wins land on the ones you run before lunch. And the thing worth being annoyed at is not a company. It is the habit of shopping for the number on the box, the same habit that made VRAM the only spec anyone quotes and left multi-token prediction, which is free, already in the file and roughly doubles your throughput sitting in a footnote. So
+
+here is the question to leave with. If 27 billion parameters on one consumer card really is at this level and the file is Apache licensed and already sitting on your drive, what exactly are you still renting an API for?

@@ -1,0 +1,145 @@
+---
+video_title: "China's New AI Broke the Bug Bounty (2,436 Findings)"
+video_id: T3Lth8nrT_I
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=T3Lth8nrT_I
+video_date: 2026-08-15T09:00:35+00:00
+video_description: |
+  A 45-year-old security flaw written into open-source code in 1981 was just discovered by China's new GLM-5.3 model. Meet the 753-billion parameter model from Z.AI that scanned 269 major software projects, uncovered 2,436 zero-day vulnerabilities, and forced a 2-week safety embargo before releasing its weights.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, post-training RL mechanics, and cybersecurity benchmarks behind Z.AI's GLM-5.3. We analyze why scaling post-training alone boosted Terminal Bench v3 scores from 4.6 to 28.3 on identical 753B parameter weights, explore how defense-focused training accidentally created multi-stage exploit chain reasoning, and audit its 84.5% score on CyberGym alongside a 54.4% score on ExploitBench.
+  Furthermore, we dissect GLM-5.3's public disclosure ledger spanning Linux kernel, WebKit, FreeBSD, and Suricata, expose the 38x throughput gap between vendor claims and independent benchmarks, review JFrog's report on AI-hallucinated CVE advisories, and evaluate why automated vulnerability discovery will overwhelm open-source maintainers.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Z.AI Official Platform & GLM Models: https://z.ai/
+  • CyberGym Security Benchmark Leaderboard: https://cybergym.github.io/
+  • JFrog Research on AI-Generated CVE Advisories: https://jfrog.com/blog/
+  • National Vulnerability Database (NVD): https://nvd.nist.gov/
+  • Terminal Bench 3.0 Leaderboard: https://terminalbench.com/
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 1981 Open Source Bug (Older Than Windows)
+  1:08 - The 2026 Model Blitz: 4 Frontier Launches in 3 Days
+  2:18 - Scaling Post-Training: How 753B Weights Jumped 6x
+  3:33 - Weaponized Reasoning: How Defense Training Created Exploits
+  5:05 - The Public Disclosure Ledger: 2,436 Vulnerabilities Found
+  6:19 - Independent Audits: CyberGym & The Hallucination Rate
+  8:26 - AI-Generated CVE Slop & The NVD Backlog Crisis
+  9:55 - Final Verdict: Defender Breakthrough or Maintainer Crisis?
+  
+  #glm53 #cybersecurity #ai #systemdesign #cloudcodes #machinelearning #linux #softwareengineering #python #devops
+  
+  
+  
+  
+  User Queries:
+  glm 5 3 china ai 45 year old bug 1981
+  z ai glm 5 3 vulnerability discovery 2436 findings
+  glm 5 3 cybergym exploitbench score
+  why z ai is delaying glm 5 3 open weights two weeks
+  scaling post training terminal bench v3 glm 5 3
+  glm 5 3 vs opus 4 8 coding output tokens
+  jfrog ai generated cve advisories nvd backlog
+  glm 5 3 linux kernel webkit freebsd vulnerabilities
+  defense only cyber model weaponized exploit chain
+  cloud codes glm 5 3 breakdown
+---
+In 1981, somebody wrote a bug into open source code. It went uncaught. It is still in there. Windows did not exist yet. Windows 1.0 was 4 years away. The
+
+flaw was already in the source. It got found this week. Not by a person reading code, by a model pointed at real software told to go looking. The model is GLM 5.3 from a Chinese lab called Z.ai.
+
+It shipped this morning in Beijing and the 45-year-old flaw is not the headline. It is one row in a ledger holding 2,000 more. 2,436 findings, 269 open source projects, one model. The average one sat inside ship software for 26.6 years before anybody went and looked. So, the oldest
+
+reassurance in software, this code is battle-tested. It survived decades was not a test. That code survived because looking was expensive, so hardly anyone looked. Those are different sentences. And before you go download it, you cannot. The weights are not out. Z.ai is
+
+holding them for 2 weeks. A safety review from the lab whose entire pitch is that it publishes the weights. That is the strange part. It also landed inside the busiest week this industry has had. Four frontier models in 3 days from four different labs on two continents. None of them coordinated
+
+that. It happened because none of them can afford to go second. Wednesday, Grok 4.6 from the company that now calls itself SpaceX AI. Five points of intelligence index gained in about a month at the same price it charged before. The same day, DeepSeek pushes a
+
+major upgrade with no blog post and no change log. The weights for that one just appeared on Hugging Face under an MIT license and developers noticed before the company said a word. Thursday, Google ships Gemini 3.7 flash 3 weeks after 3.6 at half the price of what it replaces. And Alibaba finishes
+
+open waiting Qwen 3.8, 2.4 trillion parameters, the first flagship tier model in that family ever allowed out of the building. Four launches, three days, and then Z.ai goes last. Going last
+
+means you need something the other three did not have. And what Z.ai brought is strange enough to slow down for. GLM 5.3 is not a new model at all. Same base as
+
+GLM 5.2. Same 753 billion parameters. The first line of the launch post reads, "Scaling post training is all we did." No fresh pre-training run, no new brain.
+
+They just kept teaching the one they already had. Pre-training is the expensive half, the one that costs a data center and 3 months. Post-training is practice afterwards in environments the lab built. Z.ai only touched the second half. And on Terminal Bench 3,
+
+the score went from 4.6 to 28.3. Identical weights underneath. Six times the result out of practice alone. On
+
+their in-house coding benchmark, it gains 50% and it scores higher than Opus 4.8 while spending roughly 40% of the output tokens to get there. Here is the figure the launch post does not put in bold. Count it off their own published table. 16 benchmarks. GLM 5.3
+
+beats every other open weight model on 11 of them and beats the closed models on three. Three out of 16. Excellent and not the frontier. But the coding scores are not why people are arguing about this release. The argument is about a training decision that went somewhere the lab did not intend. Into the
+
+post-training mix, Z.ai added vulnerability discovery data and environments. The goal was narrow and defensive. Get better at spotting flaws in source code. What came out was not that.
+
+Their own words, "It began to reason across multiple stages of exploitation, forming coherent plans for complete exploitation chains. They taught it to find the hole. It worked out the rest of the way through the wall by itself. That is the uncomfortable thing underneath this whole story. Locating a vulnerability and weaponizing it are not two separate skills a lab can hand out one at a time. From inside the model,
+
+they are one continuous piece of reasoning. So, what is a defense-only cyber model, exactly? Every lab shipping one is betting there is a line in there that training can find. Z.ai's own results are evidence against that bet, and they publish the evidence themselves. The benchmarks say it in a
+
+different register. On Cyber Gym, which hands a model source code and asks it to prove a vulnerability is real by building input that actually triggers it, the score climbs from 77.2 to 84.5. On Exploit Bench, which asks it to reason past detection into what the flaw lets you do, it more than doubles, 24.4
+
+to 54.4. Detection improves, exploitation improves more. The further up the attack chain a test sits, the bigger the jump. That is also the shape of a gap, and Z.ai says so plainly. 54
+
+against 78 for Anthropic's strongest cyber model. Their own summary is the most candid line in the post. Capability is growing fastest exactly where we are furthest behind. Benchmarks are a laboratory, though. The real test was pointing it at production code bases alongside security teams in China. And after expert review and
+
+deduplication, 2,436 findings survived. 1,097 rated critical or high. And the projects are not obscure. The Linux kernel, WebKit, the engine inside Safari, FreeBSD, GStreamer, which decodes video on a large fraction of the machines in your house, Suricata, an intrusion detection system, software whose entire job is catching attacks. Then they did the thing that makes this checkable instead of merely impressive.
+
+They published it. A public disclosure ledger with the affected project, the severity, the CVE number where one exists, and how many years the flaw had been alive before anyone noticed. That last column is why this video exists. 45 years of impact. Oldest defect introduced in 1981, 4 years before Windows 1.0 shipped in November of 1985.
+
+Average age at discovery, 26.6 years. Of those 2,436 findings, 53 are public today. The other 2,383 sit under embargo with maintainers waiting on a fix. 98% of this is still sealed. Now the part where you should
+
+get spectacle because almost every figure I have quoted came from the company selling the model. And when I went and checked the independent version, it did not match. Z.ai claims the best result on CyberGym ahead of Anthropic at 83.8 and OpenAI at 83.6.
+
+Read that carefully. Those are Z.ai running somebody else's model in Z.ai's own harness and reporting the score. The public CyberGym board read today disagrees on both counts. OpenAI is not
+
+trailing, it is tied at 84.5 and a security model from Sakana sits above both of them at 86.9. That crown was taken back in July. Then there is the figure the coverage skipped entirely. When Dawn Song's team
+
+at Berkeley built CyberGym and published it, the strongest agent in the world cleared about 20% of the tasks. 20. That was the state of the art. 20% to 87 in about 14 months on a benchmark where every score is submitted by the vendor being measured. Both of those readings are true at the same time and you have to hold both to think clearly here.
+
+CyberGym's own leaderboard prints the caveat in small type. "Agent runs are stochastic and modest score differences may not reflect meaningful capability gaps." Which turns a 0.7 point lead into a press release. The villain is not a lab. It is benchmark worship. It matters
+
+because finding bugs stopped being the bottleneck. An independent researcher ran Deep Six new model against a set of known vulnerabilities. Given three attempts at each, it rediscovered 87.5% the best of anything he tested, and only 65.6% of what it reported was real. The
+
+OpenAI model found fewer and was correct 86.4% of the time. Recall went up, precision went down, and only one of those two numbers makes a headline. The day before this launch, Anthropic published something similar from the other direction. 45 agents on 15 open-source projects sharing a forum.
+
+Together they found 266 vulnerabilities. One agent working alone found 21. Read the footnote though. The swarm burned four times the tokens, and inside the core directories both approaches performed about the same per token spent. Scale bought coverage. It did not
+
+buy insight. That distinction is going to matter enormously because we already know what unlimited volume produces. Two weeks ago a brand new account filed 55 vulnerability advisories in a matter of days. Researchers at JFrog checked them one at a time. 54 were fabricated.
+
+Functions that did not exist in the version cited, patches with no matching code change, proof of concept code that ran cleanly and crashed nothing. Six of the fakes targeted one database engine rated between 7.5 and 9.8, and one of those briefly carried a perfect 10 from a major Linux vendor before it got walked back. It all went into the National Vulnerability Database anyway. A
+
+government team reviewed and enriched them, and the severity was official before a single human being compiled the code. Affec Burger, the JFrog researcher who took it apart, put the problem in one sentence. Generative AI has lowered the effort required to produce a plausible-looking advisory to close to zero, while the effort required to verify one is unchanged, and verification was already collapsing before a model touched it. In 2025, the American Vulnerability Database enriched nearly 42,000 records, 45% more than any year before it, and it still fell further behind. So in April it stopped pretending. Every backlogged
+
+entry published before March got moved into a category called not scheduled, roughly 29,000 of them. In plain English, those will not be assessed, and the institution said so in public. That is the world GLM 5.3 is walking into. So, here is where I land.
+
+The model is real and very good. The benchmark crown is marketing, and neither of those is the story. Old code was not battle-tested. It was unexamined. Examining it just got cheap.
+
+A clear win for defenders who have maintainers, a security budget, and somebody to triage. If you are two people volunteering on a library that half to internet imports, it is an invoice arriving whether you asked for it or not. I would still take this trade at twice the price because the asymmetry is the whole game. In 2 weeks, the file that lets a bank audit its own stack is the file that lets somebody point it at yours. Your license does not decide which one you are. Your head count does.
+
+So, when finding a bug costs nothing and proving one still costs a human an afternoon, who do you think ends up doing the checking?

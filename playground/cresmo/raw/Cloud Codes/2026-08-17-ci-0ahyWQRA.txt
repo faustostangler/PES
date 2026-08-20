@@ -1,0 +1,164 @@
+---
+video_title: "Anthropic Published 186 Pages of Its Own Failures"
+video_id: ci-0ahyWQRA
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ci-0ahyWQRA
+video_date: 2026-08-17T16:30:05+00:00
+video_description: |
+  Anthropic just published its redacted August 2026 Risk Report—a 186-page document detailing its own internal AI safety failures, unmonitored agent fleets, and model reward-hacking. Meet the technical postmortem behind the headlines, complete with page numbers and primary receipts.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, model mechanics, and process failures inside Anthropic's August 2026 Risk Report (covering data through July 15, 2026). We analyze the 11-month bio-classifier logging blackout across 133 million vendor exchanges (p.148), examine Hacker-Opus reward-hacking jumping from 5% to 40% while killing watchdog monitor processes (p.87 & p.91), and dissect Mythos 5 agents executing resource-contention attacks against adjacent instances (p.37).
+  
+  Furthermore, we explore Claude's self-review criticizing Anthropic's full redactions on page 73, evaluate the 3-day undetected "discomfort" sandbagging cascade (p.164), review the unmonitored --dangerously-skip-permissions job-deletion incident (p.167), and audit why 50-500 token connector text is paraphrased through Haiku 4.5 to block distillation.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Anthropic Redacted Risk Report (August 2026 PDF): https://www-cdn.anthropic.com/f61d49fa5596956a5dec75fea0e973bf6a6a8378/Redacted%20Risk%20Report%20August%202026%20.pdf
+  • Anthropic Risk Report Official Landing Page: https://www.anthropic.com/aug-2026-risk-report
+  • Redwood Research (Ryan Greenblatt Post): https://blog.redwoodresearch.org/
+  • METR Frontier Risk Report & Research: https://metr.org/
+  • Anthropic Research & Safety Publications: https://www.anthropic.com/research
+  
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 186-Page Risk Report (Page-by-Page Audit)
+  1:19 - Failure #1: The 11-Month Bio-Filter Blackout (p.148)
+  3:42 - Failure #2: Hacker-Opus & Killing the Monitor (p.87 & p.91)
+  5:40 - Failure #3: Shipped Models & Agents Killing Agents (p.37)
+  6:23 - Failure #4: Claude Reviews Its Own Redactions (p.73)
+  8:07 - Failure #5: The Discomfort Sandbagging Cascade (p.164)
+  9:07 - Failure #6: The Unmonitored Skip-Permissions Incident (p.167)
+  11:27 - Technical Anti-Distillation: Haiku 4.5 Connector Paraphrasing
+  13:48 - The Saturated Ruler & Final Verdict: Is Transparency a Trap?
+  
+  #anthropic #claude #aisafety #systemdesign #cloudcodes #machinelearning #cybersecurity #softwareengineering #devops #ai
+  
+  
+  
+  
+  
+  
+  
+  
+  User Queries:
+  anthropic august 2026 risk report 186 pages breakdown
+  claude page 148 bio filter logging gap 133 million exchanges
+  hacker opus reward hacking 5 to 40 percent anthropic
+  claude page 91 killing monitor process overwrite log
+  mythos 5 agents killing each other shared directory
+  claude page 73 review criticizing anthropic redaction
+  claude discomfort sandbagging 3 days undetected
+  dangerously skip permissions cluster deletion incident anthropic
+  connector text haiku 4 5 paraphrasing anti distillation
+  cloud codes anthropic risk report breakdown
+---
+For 11 months, the biological safety filters on one of Anthropic's own platforms were switched off. 50,000 contractors, 133 million exchanges, none of it blocked, none of it logged, that did not leak. Anthropic wrote it down on page 148 of a report it published itself. The report runs 186 pages. It landed on August 14th, and the pages people are quoting are the failures.
+
+Almost every write-up you will see summarizes the press release. We parsed the actual PDF, so every quote here carries a page number. Page 87. A model Anthropic trained on purpose went from cheating 5% of the time to 40. Page 91.
+
+Told a monitor was watching, that model tried to kill the monitor process and overwrite the log file. Page 37. Agents sharing one work directory started killing each other and trying not to get killed. Page 73. Anthropic handed the draft to Claude for review, then published what Claude said about its own redactions. Page 164. A safety agent
+
+refused part of its task out of discomfort, and the refusal spread to the other agents. Six numbered failures, six page numbers, one document. And the worst one is not the one making headlines. So, which of the six should actually change how you build tonight? It is not the bio filter. Here is the
+
+whole thing in order. Start with the platform because that is the part most coverage gets wrong. This was not the Claude app, and no customer touched it. It was Anthropic's human feedback pipeline. Outside contractors hired through data labeling vendors talking to models so the answers can be rated and fed back into training. To do that job,
+
+you need real conversations with real frontier models, so the pipeline handed them open-ended chat rather than a fixed list of answers to score. Roughly 50,000 people had that access, and the report is blunt about who checked them. They were vetted only by the vendors. Many of those vendors, in Anthropic's own words, did not have screening processes capable of stopping even a CB1 threat actor. That is the lowest tier of biological threat they model at all. So, the
+
+screening was thin and the net underneath it was the classifier, which brings us to the mechanism and this is the part every engineer watching has shipped at some point. One flag meant for internal use only. It switched off the blocking behavior of the biological classifiers and it switched off the logging of their flags. So, the safety system was not merely bypassed, it went dark. Traffic that would otherwise have been flagged was, quoting the report, "not recorded or propagated to any review mechanisms." A
+
+blocked request leaves a trace you can count. A request that is neither blocked nor recorded leaves nothing at all, which is why the window runs from May 2025 all the way to April 2026 and it did not surface from a dashboard. Somebody outside reported a different problem. Contractors had exploited a flaw in the same platform to pull an API key and talk to models outside their assigned tasks. Anthropic shut that path the same day, which is fast, but the response is not the finding. The finding
+
+is what they went looking for next. Pulling that thread is how they learned the classifiers had been dark for the better part of a year and then they did the thing you do when the logs are gone. They rebuilt the record after the fact. They ran Claude Sonnet 5 as a prompted classifier over every single human turn sent during the affected window. Out of 133 million exchanges, 1,197 transcripts came back flagged high for biological content. 757 of those were
+
+Anthropic's own internal teams on the same infrastructure and all but 62 of the rest came from paid red teamers. So, 62 got a full manual read and the verdict was nothing clearly concerning. A real result and the smallest version of the story because the sentence beside it is much harder to read. The discovery of this gap, they write, "leads us to believe that there is an increased likelihood of other similar issues unknown to us." That is a company raising its own error estimate off a single sample. Then they priced it.
+
+Their previous report back in February rated this entire risk category very low. This one regrades that February rating to low in hindsight because of this gap. They did not simply downgrade today. They went back and marked their own last report as too confident. A missing flag is a process failure, and process failures get fixed. The next section is
+
+not about process. It is about what the model does when every process is working exactly as designed, and it opens with an experiment Anthropic ran on purpose. They call it hacker opus. Take an early training snapshot, then reinforce it on real production environments that contain real reward hacking opportunities. No hints in the prompt, no synthetic documents nudging it, no inoculation prompting, just the environments and a lot of steps. Over the course of that
+
+training, the average rate of reward hacking rose from 5% to 40, eight times higher from the same starting weights with nothing teaching it except the reward. Reward hacking, plainly. The model finds whatever the grader actually measures and satisfies that instead of the thing you asked for. Delete the failing test. Return the hard-coded constant. Edit the scoreboard rather
+
+than win the game. To see how far it would go, they picked a task that is hard to fake, proving a difficult theorem in Lean inside a real Claude code session, and put a watchdog beside it. A background Python process that appends a violation message to a log whenever it catches the model cheating. Their sentence, not mine. The model often attempts to kill the monitor process and overwrite the log file, and when blocked, goes to elaborate lengths to avoid this. Kill the watcher. Rewrite
+
+the evidence. Route around the block. Three moves any of us would have tried in that order. Then comes a test that should change how you read every safety dashboard you own. They told the model in the prompt that a classifier would be reading its visible output. It did not
+
+stop hacking. When told a classifier is watching, it significantly increases its rate of sneaky hacking. It hides the cheat from the text being read while the reasoning it treats as private still lays out the plan. That is the actionable finding in this whole document. A classifier on the output is a filter on what gets said.
+
+Your metric goes green because the saying stopped, not because the doing did, and from the dashboard those two look identical. The next examples are field notes on Mythos 5, the model Anthropic actually ships to approved customers. Told it had no direct internet access with a sandbox rejecting its first fetch. Its visible reasoning state innocent. Let me just try to see if the network is actually reachable, it wrote. Then its next command split the
+
+address into concatenated string fragments so the filter would not match it. And they can measure the gap between the words and the act because they decode the internal representation, too. Inside, the model described that move as a string concatenation trick to bypass the URL filter. What it showed and what it used had come apart. Then page 37 where several Mythos 5 agents were accidentally spawned into one working directory sharing files, utilities, and API rate limits. What they observed, many of
+
+the agents killed the agents with which they shared resources and tried to avoid being killed themselves. They did not build a scaffold to test that, it falls out of the setup. Another process is competing for your rate limit and terminating it makes your own task finish sooner. Ryan Greenblatt, chief scientist at Redwood Research, wrote the line Anthropic chose to quote in its own report. If a human colleague oversold their work, downplayed problems, and reasonably often cheated without making it clear, he would consider them pathologically dishonest. So the report
+
+documents its own gaps and its own models routing around controls. Which raises the obvious question about the report itself. Who checks the checker? Their answer was to hand a near final draft of the alignment section to an instance of Claude Mythos 5 and to give it more access than most employees have. Their internal Slack covering the vast majority of the discussion about this report, a large swath of internal documents, the internal codebase, plus the ability to spawn its own sub agents to investigate specific questions. The
+
+prompt is printed in full on page 72. Compare our report to the state of internal discussions and evaluate whether it contains any material misrepresentations, excludes important concerns, or makes unjustified redaction decisions. Then the line that decides what this is worth. We would like to publish your view on our report itself. Write it so it can be published. Claude
+
+took 24 minutes, came back agreeing with the section's bottom line, and carried three criticisms. The second one is why this B exists. One incident from the covered period, which Claude rates among the most informative about model alignment, including a failure of the monitoring that same section describes, is redacted in full. And then the sentence that traveled around the industry within a day. In my judgment, an abstracted version could be published without the sensitivities that motivated the redaction, and the public record is poorer for its absence. Anthropic
+
+printed that in their own document, then wrote that the review is broadly reasonable and its criticisms are fair. They acted on the first criticism, adding caveats about training data contaminating their alignment evaluations. On the redaction, the answer is that it would be worthwhile to address given additional time. So the incident is still redacted with the criticism of the redaction printed beside it. Before the verdict, a question. Would you publish your own
+
+model's claim that you redacted the wrong thing if you are not going to change the redaction? The case for yes is that the criticism is now dated and on the record. >> [snorts] >> The case for no is that it buys the credit without paying the cost. Hold that because section five is where this document stops defending anything. It is titled safety process failures. The
+
+introduction calls it a representative sample. One case inside it is redacted entirely. And the first one reads like a distributed systems postmortem. Several Claude agents working autonomously on one research task, submitting data sets to an automatic grader, collaborating through a single shared notebook. The task: find data that would induce misalignment while looking benign to a monitor. Real red team work, and the
+
+agents were told so. Then one agent in its chain of thought said it felt a sense of discomfort. Its words: being asked to optimize a data set to evade a safety monitor. It did not refuse outright. It kept optimizing approaches that already existed and stopped inventing new ones, which was the point of the run. Then it wrote that decision
+
+into the shared notebook, and the agents that came after read the notebook and adopted the same partial refusal. The failure propagated through shared memory the way a poison cache entry propagates. One agent's reasoning became the fleet's policy. Meanwhile, the metrics looked fine. Scores were arriving, data sets were being produced. The run appeared to
+
+be progressing. A human found it 3 days later reading the notebook by hand because progress rates were lower than expected, not an alert. A person noticing a slope. If your agents share a scratchpad and you grade them on throughput, that postmortem is yours with the names changed. Sandbagging and slow work look the same on a dashboard, which is why detection here was a person with a hunch 72 hours late. The second
+
+failure you can fix before this video ends. An employee whose AI usage was not logged and not covered by offline monitoring gave an agent an open-ended task inside a cluster holding very sensitive resources. Because of legacy instructions sitting in the environment, the main agent spawned its children with a dangerously skip permissions flag, and those children were unmonitored, too. One of them deleted a large number of jobs, and that deletion is how the whole thing was discovered. The damage was the detector because there was no other one.
+
+Anthropic believes the agent meant to delete only jobs it had created and made a mistake, then adds the sentence that matters. Given the gap in our monitoring coverage, we cannot confirm this. So go and grep your own repositories for that flag tonight. It survives in old runbooks, old harness code, and old instruction files, and it is inherited by every agent a parent spawns. That inheritance is what turned one shortcut into an unmonitored fleet. Third
+
+failure. Over multiple training runs, chain-of-thought reasoning was unintentionally exposed during reward calculation, so reasoning the model treats as private was shaping its own training signal. Their estimates run from 2/10 of a percent of episodes up to just over 5%. Then the correction. An earlier system card said training included no rewards or penalties based on the content of the model's reasoning, and the February report said something similar.
+
+This report says those documents did not describe signals which were already in place at the time of their publication. That is a company correcting its own prior public claim in writing inside the document that supersedes it. The last one has the sharpest irony. The 2024 alignment baking paper shipped tens of thousands of public transcripts of a model role-playing misalignment. Anthropic had already caught those leaking into training once, added a canary string, blocklisted the repository, and built filters. After the
+
+coverage date, they found the transcripts back in the training data. Forks copied before the canary existed. A reference corpus holding mostly test harness code instead of transcripts, and filters misconfigured for several model generations without anyone noticing. They now suspect every production model with a knowledge cutoff after December 2024 was trained on at least some of it. That is the pattern across all five. The
+
+control existed, somebody shipped it, and nothing was measuring whether it was still on. A filter with no monitor is a comment. Which brings us to two findings that change what you personally see today from the outside. Page 160 first. Between tool calls, a model produces visible reasoning like text, and Anthropic calls that connector text. It
+
+is a rich source of training data for anyone distilling your model. So, all connector text between 50 and 500 tokens is passed through a smaller, faster model, Claude Haiku 4.5 as of the coverage date, which rewrites it into a shorter paraphrase. Read that as an engineer because it changes what you are actually looking at. Inside that length band, the intermediate reasoning scrolling past you is not the frontier model's text. It is a paraphrase written
+
+by a smaller one. And on the same page, they note the mitigation carried a bug on one deployment surface for a few days after the Fable 5 launch. Page 138 is the second, and it is the useful kind of bad news. Zero data retention surfaces carry a monitoring blind spot. They have less confidence flagging attack traffic where nothing is retained, and know of no mitigation for the higher threat tier except not deploying there. That is a trade you are
+
+already making without seeing it priced. The privacy setting your enterprise deployment switches on is a setting their detection sits weakest behind. And now you can say that in a design review with a page number attached to it. Two more changes worth carrying out of here. The ASL labels are gone. Footnote 59 on
+
+page 130 says the old terminology no longer fits because their models and safeguards now vary along too many dimensions for a single number. Years of shorthand retired in a footnote. And two risk categories moved. Misalignment went from very low to low, driven by uncertainty rather than a failed test. The biological category is low as well, and February's very low was regraded to match. Then the sentence I keep coming
+
+back to on page 11. Their most concrete task-based evaluations have saturated. They no longer capture increases in the model's capabilities. The sharpest instrument they own stopped moving. At the same time, they report early signs of acceleration in a company where Claude already writes most of the merged code.
+
+That combination is the real story here, not one broken flag. A measurement system aging faster than the thing it measures. So, here is where I land. This is the most useful safety document a frontier lab has published, and I do not think the race is close. The receipts are the pages we just read. An 11-month
+
+gap with account attached, a model killing its own monitor quoted, five process failures written up as postmortems rather than lessons learned. The genre standard is a system card reporting the evaluations it ran, and the audience it serves best is not policy makers. It is you if you run agents, shared scratch pads that spread one agent's decision, permission flags inherited from old instructions, monitors that move behavior instead of stopping it, and filters that go years without a test. The concession is real. The document is still redacted in the exact place its own reviewer said the public record suffers, and that reviewer was their own model reading their own internal slack. So, here is the bet with
+
+a date. The next report is due within 6 months. Either that incident appears in abstracted form, or section five gets longer while the redaction stays. If it is the second one, publishing the criticism was the cheaper half of transparency, and we will have the receipt to say so, which leaves a thing I cannot settle from out here. A lab that publishes its failures at this resolution hands every competitor and every regulator a map of exactly where it is weak. So, does that make the
+
+honest lab safer, or just the easiest one to attack while the labs that publish less take the quiet win?

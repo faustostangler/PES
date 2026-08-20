@@ -1,0 +1,157 @@
+---
+video_title: "GLM-5.3: Is it Really Better than Fable 5?"
+video_id: dmEVBrpkGSw
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=dmEVBrpkGSw
+video_date: 2026-08-15T20:00:31+00:00
+video_description: |
+  When Z.ai published a 16-benchmark scorecard comparing GLM-5.3 against Claude Fable 5, why did the model lose 9 rows while scoring #1 on CyberGym and discovering 2,436 real zero-day vulnerabilities? Meet GLM-5.3 and the hidden Mythos 5 comparison asterisk.
+  
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, post-training RL mechanics, and cybersecurity benchmarks of Z.ai's GLM-5.3. We examine its 753-billion parameter MoE base (256 routed experts, 8 active per token, and IndexShare 1M context compression), analyze why post-training environment synthesis alone boosted Terminal Bench 3.0 scores 6x (from 4.6 to 28.3), and evaluate its #1 CyberGym score of 84.5.
+  
+  Furthermore, we dissect the gap between finding vulnerabilities (84.5) and weaponizing them (54.4 vs 78.0 on ExploitBench), expose why the comparison column actually represents Anthropic's restricted Mythos 5 model, review the public disclosure ledger across Linux, WebKit, and FreeBSD, analyze Joshua Saxe's "cloud panopticon" essay, and audit the 2-week safety embargo before open weights land.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Z.ai Official GLM-5.3 Announcement: https://z.ai/
+  • CyberGym Security Benchmark Leaderboard: https://cybergym.github.io/
+  • Anthropic Mythos 5 & Fable 5 Announcement: https://www.anthropic.com/news/
+  • Joshua Saxe AI Security & Panopticon Essay: https://joshuasaxe181906.substack.com/
+  • Hacker News GLM-5.3 Discussion Thread: https://news.ycombinator.com/item?id=49294997
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 16-Benchmark Scorecard: 6 Wins & 9 Losses
+  1:08 - Architecture Deep-Dive: 753B Parameters & 1M IndexShare
+  3:08 - Post-Training Game Changer: Terminal Bench 3.0 Jumps 6x
+  4:23 - Finding vs Weaponizing: CyberGym 84.5 vs ExploitBench 54.4
+  5:42 - The 2,436 Vulnerabilities: 45-Year-Old Bugs in Linux & WebKit
+  6:17 - The Asterisk: Why "Fable 5 Fallback" Is Actually Mythos 5
+  8:15 - Vendor Benchmark Fallacies & The Hacker News Reaction
+  10:47 - Joshua Saxe & The Cloud Panopticon Trap
+  11:32 - Final Verdict: Defender Breakthrough or Maintainer Crisis?
+  
+  #glm5.3 #fable5 #cybersecurity #ai #systemdesign #cloudcodes #machinelearning #linux #softwareengineering #python #devops
+  
+  
+  
+  
+  
+  
+  User Queries:
+  glm 5 3 vs fable 5 benchmark comparison
+  z ai glm 5 3 753b parameter moe architecture
+  why fable 5 fallback column is mythos 5
+  glm 5 3 cybergym 84 5 vs exploitbench 54 4
+  glm 5 3 2436 vulnerabilities 269 projects
+  z ai post training environment synthesis slime framework
+  joshua saxe cloud panopticon open weights cybersecurity
+  terminal bench 3 0 glm 5 2 to 5 3 score jump
+  glm 5 3 open weights two week embargo release
+  cloud codes glm 5 3 vs fable 5 breakdown
+---
+ZI put its brand new open model in a table next to Claude Fable 5 and then published every single row it lost. 16 benchmarks. GLM 5.3 wins six of them. It loses nine. One row has no comparison
+
+data at all. Six wins, nine losses. On its own, that is just an unusually candid scorecard. It is not the story here. The story is where those nine losses sit because they are not scattered. They cluster and they cluster
+
+tightly. ZI pitched this model on cyber defense and at finding software flaws, it is measurably state of the art. 84.5 on Cyber Gym, the best score on that benchmark ahead of every closed model in the table. Then you drop one row to the benchmark that asks whether it can actually use the flaw it just found.
+
+54.4 against 78. Nearly 24 points, one row below a first place finish. Same weight, same day, same test harness. Near parity at finding and just under 70% of the score at exploiting. That gap
+
+between finding a flaw and weaponizing it is the margin the whole security industry is standing on. So, how did a model with zero new parameters get here and who is really sitting in that comparison column? Start with the part of this release worth pausing on because it explains everything after it. The base model did not change, not one weight of it. GLM 5.3 is the same
+
+network ZI shipped as 5.2 and the company says so in the first line of its own post. So, it helps to know what that network is and you can read it straight off the config file that ships with the weights. 753 billion parameters in total with about 40 billion switched on for any single token. That gap is the whole point of a mixture of experts. Inside
+
+every layer sit 256 expert blocks and a router picks eight of them per token plus one shared expert on top. Picture a library with 256 specialist wings where each question sends a librarian into eight. The rest stay dark costing nothing. 78 layers deep, the first three ordinary and the expert machinery running in each one after that. Now, the harder half, and it is the half that makes long agent work possible. This
+
+thing takes a context window of 1 million tokens. Ordinary attention cannot do that. Every token comparing itself to every other token is a cost that grows with the square, so a million tokens means a million times a million comparisons. No lab runs that, so the model does not. It runs a second, much smaller network first, called an indexer. 32 small heads whose only job
+
+is to score how relevant each past token is right now. It keeps the top 2048 and ignores the rest for that step. Attention does not see a million tokens. It sees 2000 chosen fresh for every query, which leaves one problem. Scoring a million tokens is itself expensive, and doing it in all 78 layers would eat the saving you just made.
+
+Their answer sits in the config file, and I like how blunt it is. One layer in every four computes the real index. The next three reuse it. They call that index share. So, the machine is sparse twice over. Sparse experts, so most
+
+weights stay asleep. Sparse attention, so most of the context stays unread. And for this release, none of it moved, which is what makes the coding jump so hard to explain away. On terminal bench 3.0, the older model scored 4.6. This
+
+one scores 28.3. Six times the score from a network that is byte for byte identical. So, where did that come from? Not from data in the way you are picturing. It came from environments. An
+
+environment is a whole fake job, a repository, a shell, the tools, and a test at the end that either passes or does not. The model works inside it, and the result is the reward. ZI describes the ones they built as tasks that represent several days of work for an experienced engineer. Compute clusters, storage systems, internal documentation, old experiment results. Diagnose the bottleneck, implement the fix, run the experiment, prove the speed up, and keep it correct. You cannot hand build
+
+thousands of those, so they wrote pipelines that generate the environments automatically, then had a second agent attempt each one purely to prove it was solvable. And this is the detail I keep thinking about. The graders are written without ever seeing the solution. Then the model tries to cheat them, and each shortcut it finds gets patched. That is the real engineering story here. The
+
+bottleneck stopped being the model and became the world you put the model inside. They open-sourced the trainer that runs it and made long horizon more than 2.3 times faster, which brings us back to that cluster of losses because the same post training is what produced the cyber ability and ZI is careful to say they did not fully aim for it. They fed it vulnerability data expecting better bug spotting. It also began planning complete exploitation chains.
+
+Watch the three cyber benchmarks in order because they are a ladder. Cyber gym hands the model source code and asks it to find a flaw and trigger it. 77.2 up to 84.5. Exploit bench climbs a rung.
+
+Reason about a real vulnerability then actually exploit it. 24.4 up to 54.4, more than double. Exploit gym is the top rung and it simply counts how many exploitation tasks can you finish inside a fixed time budget? 29 up
+
+to 105. Read that as a win and it is a real one. Every cyber number at least doubled in one release from a model whose base weights were untouched. Then put the close column back beside it and the shape changes completely. 83.8, 78,
+
+181. On the finding row, GLM wins by 7/10 of a point. On the exploiting row, it loses by nearly 24. On the counting row, it finishes a little over half as many tasks and ZI writes that pattern down themselves in a sentence most companies would have cut. Capability, they say, is growing fastest exactly where we are furthest behind. This is
+
+not only a benchmark story. They ran the model at real code alongside security teams in China. And after expert review and deduplication, it had surfaced 2,436 real vulnerabilities across 269 projects, 1,097 rated medium to high. The oldest flaw it found was introduced in 1981. On average, these bugs had been sitting in the code for just under 27 years before anything noticed them. So, answer
+
+this one before the next part. Does a model that finds flaws brilliantly but cannot weaponize them make you safer? Or does it just get to the dangerous part faster? Because now we should talk about that comparison column, and this is the part most write-ups of the launch went straight past. Look at the header.
+
+It does not say Fable 5, it says Fable 5 with fallback. Those two words in brackets are doing an enormous amount of work. Here's what fallback means, from Anthropic on their own support page. Fable 5 runs a classifier on every request. Offensive cyber work gets redirected to an older model, Opus 4.8. And Anthropic
+
+tells users in writing to expect high fallback rates on exactly that category. So, a column labeled Fable 5 with fallback ought to be weaker on cyber, not stronger. The table refutes itself. Opus 4.8 has its own column right there.
+
+On the exploiting row, Opus scores 40. The fallback column scores 78. A column that hands its cyber work to Opus cannot beat Opus by 38 points. Whatever is sitting in that column, it is not Fable 5 falling back to Opus. And CI answers it themselves, further down the same page in plain prose. For
+
+those three cyber rows, three separate times, they do not write Fable, they write Mythos 5. Mythos 5 is the same underlying model as Fable 5 with the cyber safeguards lifted. It is not a product you subscribe to. Anthropic launched it in June inside a program it runs with the US government, and wider access is still being rolled out to vetted partners. So, the cyber half of this comparison is not a chat model against an open model.
+
+It is an open model you will be able to download against one that only ships inside a government program. That does not make a single one of these numbers wrong. It makes the sentence people wrote about them wrong. Beats Fable 5 on cyber is not what this table says. And on the coding half, Z AI conceded it in prose. On their own in-house benchmark,
+
+at maximum effort, GLM 5.3 reaches 34 and 1/2%. Fable 5 reaches 39 and 1/2. They wrote that comparison into their own launch post. Then there is a second asterisk sitting in the footnotes. Read
+
+them and one name keeps appearing, Claude code, Anthropic tooling running every model in the table. That matters more than it sounds because a benchmark score is not a model on its own. It is a model plus its scaffolding. The exploit gym footnote is the sharpest example. It names the three models Z AI actually ran. Its own, Kimmy K3, and Qwen 3.8.
+
+Where the closed numbers came from, the post does not say. Almost every row in this table is a vendor measuring itself. Two rows are not. Frontier City was scored by an outside firm called Proximo, and one row was handed to Artificial Analysis. The two independent readings split one each. GLM
+
+takes the Artificial Analysis row and drops the Proximo one by 10 points, which makes the next fact the important one. Search for this model on Artificial Analysis today and it is not there. No entry. No independent number for it exists at all. That is timing rather than evasion. The weights do not ship
+
+for about two more weeks, and until they do, no outside team can run its own test. For scale, here's where the open field stands today by that same firm. Kimmy K3 at 60, Qwen 3.8 at 58, Deep Seek V4 Pro and GLM 5.2 tied at 53. And
+
+credit where it is owed, Z AI printed the losing rows, named the harness build, and left a sentence about being furthest behind in the post. Most launches ship four charts and a slogan. So, what happened when developers got hold of it? Within a day, the announcement sat near the top of Hacker News with 1,063 points and over 500 comments. And the reports are more interesting than the score. One
+
+developer posted raw usage from a day of parallel agent sessions. 58 million tokens with almost 98% of them served from cash. Another said it was the first time a GLM model could write a substantive plan for a complex pull request. Another subscriber said it was the first model that would run a full security review of their own systems end-to-end with a second GLM agent playing the adversary. Anecdote, not a benchmark, but nobody was posting that about an open model in June. With the closed
+
+models demoted to reviewing it. Then the other half of the same comment. Still not confident, they wrote, about entrusting it with the implementation. Planning, yes. Doing, not yet. It also
+
+reportedly turned up a serious flaw in Cursor, the code editor, within hours of launch. That one is a press report rather than a published advisory, so hold it loosely. But the sharpest read on any of this predates the model by 7 weeks, and it comes from the researcher credited with flagging that Cursor finding. Joshua Sacks co-founded a security company and previously led AI security work at Meta. He was writing about the previous version 5.2.
+
+Attackers using a hosted frontier model, he wrote, pay a price. Their usage is logged. If they are caught, their targets and intentions get exposed. He called it the cost of hiding in a panopticon. An open model deletes that cost.
+
+You can run it privately on eight accelerators in a warehouse with no logging and no reviewer watching. That is what shipping weights actually changes. And his conclusion was not to lock the models down. It was that defenders should be racing to adopt them. So, here is my verdict, and it is deliberately split because the table is.
+
+GLM 5.3 is the best open vulnerability scanner anyone has released. That part is real, and in a fortnight it will be free to run on hardware you control. If you review your own code for security, this is the most useful open model you can point at a repository today. It is also not the best open cyber model, and it is not beating Fable 5. Its own vendor put the receipts for
+
+both of those in the post. The thing I would actually is the shape, not the ranking. Finding flaws is close to solved, and it got there fast. Exploiting them is not, and that lag is doing real work. Every safety argument for open weights right now depends on that lag holding. Z A I just shipped a
+
+release where the exploiting number more than doubled in a month. So, the question is not whether this model beats that one, it is what we do in the year those two curves finally meet. Which side gets there first, and are we ready either way?

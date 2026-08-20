@@ -1,0 +1,111 @@
+---
+video_title: "Stop Using Postgres: SQLite Is All You Need"
+video_id: OfUI2GDd6Dc
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OfUI2GDd6Dc
+video_date: 2026-08-06T13:44:39+00:00
+video_description: |
+  Are you paying $475 a month for an AWS RDS Postgres cluster just to serve a web app running on a single server? Meet the 2026 architecture shift proving why in-process SQLite is faster, cheaper, and now capable of row-level concurrent writes.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this deep dive, Cloud Codes breaks down the technical benchmarks and system design mechanics comparing PostgreSQL 16 against SQLite in Write-Ahead Log (WAL) mode. We analyze why skipping network socket serialization drops query latency from hundreds of microseconds to tens of microseconds, review real-world Django benchmarks showing lower p99 latency on SQLite (8.2s vs 14s on Postgres), and examine Expensify's 4 million query-per-second production architecture.
+  
+  Furthermore, we dissect how the 3 historical walls against SQLite were recently demolished: Turso's Rust-based MVCC engine delivering row-level concurrent writes, Litestream LTX real-time WAL replication to S3, and Cloudflare Durable Objects sharding millions of micro-databases per tenant.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  • SQLite Official Mirror: https://github.com/sqlite/sqlite
+  • Turso Database & libSQL Engine (Rust SQLite Rewrite): https://github.com/tursodatabase/turso
+  • Litestream Real-Time Streaming Replication: https://github.com/benbjohnson/litestream
+  • Cloudflare Durable Objects SQLite Docs: https://developers.cloudflare.com/durable-objects/
+  • Forward Email Benchmark Suite: https://github.com/forwardemail/forwardemail.net
+  
+  ⏱️ Video Chapters:
+  0:00 - The Postgres Reflex (Why We Over-engineer)
+  0:32 - Socket Latency vs In-Process Memory Calls
+  1:24 - AWS RDS Pricing ($475/mo) vs $0 SQLite
+  1:59 - Real Benchmarks: Django + SQLite vs Postgres 16
+  3:47 - Wall #1: Concurrent Writers & WAL Mode
+  5:13 - Turso's MVCC Breakthrough (Row-Level Concurrent Writes)
+  6:26 - Wall #2: Multi-Server Backups (Litestream & Durable Objects)
+  7:57 - Wall #3: What Postgres Can Do That SQLite Can't (pgvector, PostGIS)
+  8:47 - The 4-Question Decision Matrix: When to Switch
+  9:19 - Turso's Postgres-on-Rust Footnote
+  
+  #sqlite #postgres #database #systemdesign #cloudcodes #backend #softwareengineering
+  
+  User Queries:
+  stop using postgres sqlite is all you need 2026
+  sqlite wal mode vs postgresql 16 django benchmark
+  turso mvcc row level concurrent writes libsql
+  litestream ltx real time wal replication s3
+  cloudflare durable objects sqlite micro database sharding
+  expensify 4 million queries per second sqlite architecture
+  postgres socket latency vs sqlite in process function call
+  aws rds postgresql pricing vs zero cost sqlite
+  turso postgres compatible database rust core
+  cloud codes sqlite vs postgres breakdown
+---
+You just put Postgres behind an app that runs on a single box and serves a few hundred people a day. That was a reflex, not a decision. I want to make the case for the boring alternative and say exactly where it breaks. Three walls push a real application off SQLite, a second app server, concurrent writers, and one Postgres feature you cannot fake. Clear all three and the file sitting on your own disk beats the database on your network, not by a small margin either. And two days ago, the
+
+tallest of those three walls got a lot shorter. That is where this video ends up. So, start with the reflex itself. Postgres is a separate server process and your application reaches it through a socket. Every query is a round trip.
+
+Serialize the statement, cross into the kernel, wait on the wire, then parse whatever comes back. SQLite is a library. That same query is a function call running inside your own process. There is no wire to wait on. On a lookup by primary key, that gap is tens of microseconds against a few hundred microseconds. Same query, same data.
+
+Which reads like a rounding error right up until you count how many queries one page render actually fires off. 40 small queries and the wire tax alone is most of your latency budget before your own code has done anything. And this is not a fringe bet. There are more than 4 billion smartphones in service, each carrying hundreds of SQLite files, which puts the count somewhere past a trillion live databases. It shipped a new release on the 24th of July. The reflex also
+
+arrives with a bill. An entry-level managed Postgres on Amazon RDS runs about $15 a month right now, which is the number people quote when they tell you it is cheap. Move to a production-size instance and you're at roughly 143 a month. Add multi-availability zone, a read replica, and 200 GB of storage and you are pushing 475 every month forever. SQLite bills you nothing because it is a file and the driver already ships inside the language you are writing in. So, the only
+
+question that matters is whether it actually holds up under load. Somebody ran that test properly. In May, a team at Intuit Inc. put their Django application on Postgres 16 and on SQLite 3.46. Same Ubuntu machine, one virtual
+
+CPU, 8 GB of memory, 10 virtual users ramping in through Locust. On a populated database, the aggregate median response came out at 640 ms for Postgres and 500 for SQLite. Across about 30 endpoints, throughput was 4.1 requests a second against 5.1. Now, the other half
+
+of that result. On a freshly initialized empty schema, Postgres won, 24 ms against 31. Postgres pulls ahead on simple bounded lookups, and SQLite pulls ahead as the queries get nested and the data gets real. But, the tail is where it gets rude. 99th percentile latency was 14 seconds on Postgres and 8.2
+
+seconds on SQLite. Same hardware, same application, stock configuration on both sides. Their own conclusion, quoting it directly. SQLite in write-ahead log mode at default configuration competes seriously with Postgres 16 and beats it outright on most read patterns. One benchmark is one benchmark, so take a production number instead. The SQLite
+
+website serves 4 to 500,000 HTTP requests a day, and 15 to 20% of those hit the database. The database behind the SQLite website is, of course, SQLite. On the right side, Forward Email published their whole benchmark suite, about 10 and 1/2 thousand inserts a second on node 20 and closer to node 9,000 on node 22. Same code, slower runtime, and they can point at the run that proves it. And the ceiling sits far above that. Back in 2018, Expensify
+
+pushed 4 million queries a second through SQLite on one server. Read-only, fully cached in a terabyte of memory on 10 billion rows, but still one machine. So, if the numbers are that comfortable, why does the single writer complaint follow SQLite around like a bad review? Because it is true and the project says so itself on its own website. Straight out of the SQLite documentation, SQLite supports an unlimited number of simultaneous readers, but it will only allow one writer at any instant in time.
+
+In practice, that is the error you have already met. Database is locked. Two processes reach for the right lock at once, the second one gets refused and your webhook handler throws a 500. Write-ahead log mode changes the shape of that. Readers stop blocking writers and writers stop blocking readers, so the only thing still serialized is one writer against another writer. Then you
+
+set a busy timeout and the loser waits its turn instead of failing outright. A write transaction takes milliseconds, so a queue of them drains far faster than the horror stories suggest, but queuing is not concurrency and the SQLite docs draw that line themselves. Their decision checklist reads, is the data separated from the application by a network? Choose client-server. Many concurrent writers? Choose
+
+client-server. Big data? Choose client-server. The upstream fix is a mode called begin concurrent. It defers the lock until commit time, so several writers can run optimistically and the catch is that it detects conflicts one page at a time. Two completely unrelated
+
+rows that happen to live on the same page will collide anyway and one of those transactions rolls back for a reason no human would call a conflict, which is the exact problem Turso set out to kill. Turso is a from-scratch rewrite of eSQLite in Rust, close to 24,000 stars, already carrying production traffic for Turso Cloud. The Kin Assistant and Spice AI. It has not shipped a 1.0 and they say so on the readme. Underneath their version of
+
+begin concurrent sits multi-version concurrency control. For scale, plain SQLite does about 150,000 rows a second in that test. Add 1 millisecond of compute per transaction across eight threads and Turso ran write transactions four times faster. And on the 3rd of August, two days before I recorded this, Turso opened concurrent rights to everybody on their cloud. Conflict detection moved down to the row level, so unrelated rows sharing a page stopped fighting. It is an early preview, and it
+
+has real edges. You switch it on in the dashboard, you create a Turso native database rather than a plain SQLite one, and you still write retry logic because a real conflict is still a conflict. So, wall one did not disappear. It got low enough to step over. If your writers touch different rows, the single loudest reason teams reach for Postgres has stopped applying to them, and it stopped applying this week rather than someday, which leaves the wall I think is actually harder. Wall two is harder
+
+because it is physics. Your database is a file on one machine, and a second app server cannot reach it. Putting it on a network file system is how people corrupt these things. The answer most teams land on is Lightstream, written by Ben Johnson at Fly. He describes it as the missing backup and restore system for SQLite. A sidecar process next to
+
+your unmodified application, intercepting write-ahead log checkpoints, and streaming them to object storage in real time. Version 0.5 rebuilt the storage format underneath it. LTX files hold ordered ranges of pages and compact in tiers. 30-second windows fold into 5-minute windows, and those fold into hourly ones, which means restoring your database pulls about a dozen files instead of replaying every write you have ever made since the day you deployed. Be clear-eyed about what
+
+that buys though. It is asynchronous replication, so what you have is a recovery point objective, not a guarantee, and live read replicas are still under construction. Cloudflare went the other direction entirely. Every durable object gets its own SQLite database sitting in the same thread as the code that uses it, and that went generally available last year. An empty one costs about 12 kilobytes, and it caps out at 10 gigabytes with no storage limit across your account. So, you stop
+
+running one enormous database and start running a million small ones. That reframes wall two rather than knocking it down. You are not scaling one SQLite file across a fleet. You are handing every tenant a file of their own, and the sharding problem you would have solved in Postgres never gets created. Wall three is the one I would not argue with. Sometimes you need a thing
+
+Postgres has, and SQLite does not pretend to compete. The extension ecosystem is past a thousand add-ons, and none of it has an equivalent anywhere else. PostGIS carries two decades of geospatial PG vector adds a vector type and three index families. So, approximate nearest neighbor search runs against your existing tables inside your existing transaction. SQLite has no users, no roles, and no row level security because the operating system already owns that file. Five storage
+
+classes against Postgres arrays, ranges, binary JSON, and types you define yourself. If your access model lives inside the database, you need the database that has one. A single file can technically hold 281 terabytes, but the documentation tells you to leave long before that, and the documentation is right. So, here's the rule I would actually hand you, and it is four questions long. One deployable unit, writers that touch different rows, data comfortably under a few hundred gigabytes, and no extension you cannot live without. Four yeses, and you use
+
+SQLite and skip the instance entirely. Miss on any one of those four, and the network database is the correct call. The wall is doing its job, and paying for Postgres at that point is engineering rather than habit. I am not telling you Postgres is bad, I am telling you that you picked it before you knew which side of the wall you were on. There is a footnote to all this that I enjoy far too much.
+
+On the 29th of July, The Register reported that Turso, having finished rewriting SQLite, is now building a Postgres compatible database on the same Rust core. One engine underneath, many front ends on top. They call it the LLVM of databases. Glauber Costa, their chief executive, put it plainly to the register, "I do not think there is anything fundamentally wrong with Postgres. If there was, we would not rewrite it. The people rebuilding SQLite
+
+are not fighting Postgres. They are fighting the default."

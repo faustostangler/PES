@@ -1,0 +1,112 @@
+---
+video_title: "11 Lines of Code Broke the Internet (left-pad)"
+video_id: HT78ca5owcY
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HT78ca5owcY
+video_date: 2026-08-12T16:05:10+00:00
+video_description: |
+  On a Tuesday in March 2016, a developer deleted 11 lines of JavaScript called left-pad—instantly crashing Babel, React, Netflix, and Facebook. 10 years later, why is npm install still the single most dangerous command on your developer machine?
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the technical history, dependency graphs, and supply chain security mechanics behind the infamous left-pad incident. We examine Azer Koculu's trademark dispute with Kik, why Babel's indirect dependency on an 11-line string padding function halted global software builds in minutes, and how npm founder Isaac Schlueter executed the emergency "un-unpublish" to restore version 0.0.3.
+  Furthermore, we dissect why deleting code was the least dangerous attack vector, analyze how malicious lifecycle install scripts (preinstall and postinstall) spawned self-propagating worms like Shai-Hulud and Keyv (compromising 400+ packages in August 2026), explore npm v12's decision to disable install scripts by default, and evaluate how AI coding agents are creating new supply chain persistence backdoors.
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Original left-pad Repository Archive: https://github.com/stevemao/left-pad
+  • Official npm Postmortem (un-unpublishing left-pad): https://blog.npmjs.org/
+  • Russ Cox Research Essay ("Our Software Dependency Problem"): https://research.swtch.com/deps
+  • JFrog Security Research (npm Supply Chain Attacks): https://jfrog.com/blog/
+  • Keyv Package Repository: https://github.com/jkgdrive/keyv
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The Day 11 Lines of Code Took Down the Web
+  1:13 - The Kik Trademark Dispute & Azer Koculu's Unpublish
+  2:03 - Why 11 Lines Broke Babel, React, and Netflix
+  2:27 - npm's Un-Unpublishing & The 72-Hour Rule
+  3:07 - The Real Threat: npm install Runs Code
+  4:13 - The Shai-Hulud Worm & npm v12 Script Ban
+  5:18 - The August 2026 Keyv Attack & AI Agent Persistence
+  6:18 - AI Hallucinated CVEs & Package Slop
+  7:21 - Final Verdict: How to Secure Your Dependencies
+  
+  #javascript #npm #leftpad #cybersecurity #systemdesign #cloudcodes #softwareengineering #webdevelopment #devops #programming
+  
+  
+  
+  
+  User Queries:
+  left pad 11 lines of code broke the internet 2016
+  azer koculu kik trademark npm unpublish left pad
+  why left pad broke babel react netflix
+  npm v12 disable lifecycle install scripts ignore scripts
+  shai hulud npm supply chain worm jfrog
+  keyv package supply chain attack august 2026
+  russ cox research trusting dependencies google go
+  ai coding agent config file persistence backdoor
+  jfrog hallucinated cve vulnerability advisories
+  cloud codes left pad supply chain breakdown
+---
+On a Tuesday in March 2016, a developer in Istanbul typed one command and 11 lines of code vanished. Not a framework, not a database. 11 lines that add characters to the front of a string until it is long enough. Within minutes, Babel stopped building, then React, then Ember, then thousands of projects whose maintainers had not heard of it. NPM watched hundreds of failed installs pile up every minute, and the number climbed with no explanation in sight. Facebook,
+
+Netflix, Spotify, and PayPal all shipped software that somewhere underneath needed those 11 lines. The package was called left-pad. Its author had unpublished it along with 272 others he wrote. 2 and 1/2 hours later, NPM did something without precedent. It put a package back over its owner's objection.
+
+7 days later, NPM changed the rules so a repeat was impossible. The fix worked. It is still working today. In 10 years, no deletion has taken JavaScript down again. That hole is closed, and it has stayed closed. But last week, a worm
+
+walked through more than 400 NPM packages that get 2 billion installs a month. Same registry, same trust. So what did left-pad actually break if the thing they fixed was not the hole? Rewind 11 days. On the 11th of March, a messaging company called Kik emailed a developer about a small NPM package that shared its name and asked him to hand it over. They owned the trademark. He said
+
+no, and it escalated from there. So Kik went to NPM, the company that runs the registry every JavaScript project installs from. On the 18th of March, NPM's founder Isaac Schlueter made the call. The name would go to Kik because people searching for Kik wanted the messenger. 4 days later, Azer Koçulu did the one thing the system still let him do. He ran unpublish on everything he
+
+owned. 273 packages left the registry in a single command. He wrote that NPM was someone's private land where corporate is more powerful than the people, and that he did open source because it gives power to the people. Whatever you make of that, it was not about the code, and the code was nothing. Left pad takes a string and sticks characters on the front until it reaches the length you asked for. 11 lines, no dependencies. A
+
+junior developer writes it in a minute, but Babel depended on a package called line numbers, and line numbers depended on left pad. Babel compiles most of the JavaScript on the internet. So, the moment left pad stopped resolving, every build that walked through Babel walked into a hole. NPM's chief technology officer, Laurie Voss, put the decision in one sentence. "I cannot see hundreds of builds failing every second and not fix it." So, they
+
+broke their own rule and restored version 0.0.3 against the wishes of its author. They called it un-unpublishing, and NPM's own postmortem is still the best account of it. A week later, the policy changed.
+
+Today, you get 72 hours to unpublish, and after that, only if nothing in the registry depends on you, your downloads are under 300 a week, and you are the sole maintainer. That fix has held for a decade, which is why most retellings of left pad end right here, with a tidy lesson about not depending on tiny packages. Except, the lesson is wrong. Deleting left pad was the least dangerous thing its author could have done. If your build ran one line of code you had not approved, would you notice?
+
+Answer that before you open your lock file, because when you type npm install, you are not downloading files, you are running code. A package can declare install scripts, and those scripts execute on your machine before your own code runs with whatever access you had. You do not read them. At scale, you cannot. Take the project this video was rendered in. 19 dependencies in the
+
+manifest, 227 packages actually installed, roughly 12 times more strangers than anybody picked. Russ Cox, who runs the Go language at Google, wrote the sentence that explains the next decade back in 2019. "We are trusting more code with less justification for doing so. His example was left-pad and the habit did not go anywhere. Left-pad still carries a deprecation notice from 2018 and last month it was downloaded 5.6 million
+
+times. More than twice the traffic it had the month it broke the internet. There is also a package called is-odd, a million downloads this week. So, the attacker stopped deleting and started publishing. September 2025, someone fished the maintainer of chalk.
+
+16 minutes after taking the account, 18 packages with 2.6 billion weekly downloads between them were rewriting crypto wallet transactions in the browser. Then, the payload learned to copy itself. A worm called stole a maintainer's tokens, published itself into that maintainer's packages, and repeated. Its second wave backdoored 796 of them. JFrog counted 177,000
+
+new malicious packages in a year. Every one of those campaigns used the same door. Code that runs at install time. NPM had left it open since before left-pad and closed it on the 8th of July this year. Version 12 ships with install scripts off by default.
+
+You approve them once and the approval lands in a file a reviewer can read. Line those two dates up. The bug that made headlines was fixed in 7 days. The bug that made a decade of breaches took 10 years and 3 months. Watch what a platform makes convenient, not what its security page says it believes. 27 days
+
+later, a worm walked through the front of it anyway. The 4th of August, 2026. Another Tuesday. A maintainer's GitHub account was taken and a poisoned release went out through a caching library called Keev. More than 400 package names, over 2,000 poison versions. Keev
+
+alone is downloaded 156 million times a week. It stole cloud keys, registry tokens, database strings, and private keys. Then, republished itself with the tokens it had just taken. And it carried a signature that verified the release was built by the real workflow on the real repository with NPM's trusted publishing. The attestation proved where the code was built. It was never
+
+designed to prove the source was clean, and the source was already poisoned. And then it went somewhere NPM does not reach. It wrote its persistence into the configuration files that coding agents read on startup, not the package, not the install script. The agents' own settings in files that auto run, that scanners were not reading, and that turning install scripts off does not cover, which is where AI actually changes this, and not the way people usually say it. Last month, JFrog examined 55 security advisories filed by one account. 54 were fabricated. One
+
+fake is equal light flaw got a maximum severity score from Red Hat before anyone checked whether the function it blamed existed. Affect burger, the researcher who found it, named the asymmetry. Generative AI has lowered the effort to produce a plausible-looking advisory to close to zero, while the effort to verify one is unchanged. The backlog of unreviewed vulnerabilities went from 17,000 to 27,000 in a year. The same asymmetry hits packages, though not the way you would guess. Models
+
+invent fewer fake package names than they used to. A study across 16 models put the rate near 20%. The same test on five frontier models this year put it between four and six, better and not zero. Andrew Nesbit named the part that actually changed. Agents resolve packages programmatically without a human glancing at the name to notice something is off. The last person
+
+reading the name is what gets removed. So, here is where I land. The villain is not a developer with a grudge or a company with a trademark. It is install-time convenience. The idea that a default which saves you 10 seconds is a neutral engineering choice. For
+
+roughly 95% of teams, the fix is unglamorous and fits on one line. Run NPM CI with install scripts off, keep the lock file pinned, and wait a day before taking a brand new version. The rest are packages that actually compile something. Approve those once in a file somebody reviews and the concession is real. Small modules are why JavaScript shipped faster than any ecosystem in history and I would still take a registry over vendoring every utility by hand. The argument is not against
+
+dependencies. It is against dependencies that execute, which leaves the question the last two weeks raised. That worm's persistence did not need NPM at all. It went into the file your coding agent reads before you type anything. So when an agent installs a package for you, who approved it and what would approved even mean if the name was read by no

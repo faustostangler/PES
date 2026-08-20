@@ -1,0 +1,157 @@
+---
+video_title: "Nemotron 3.5 Lightning Is NOT a Transformer (Mamba + MoE Explained)"
+video_id: vc8HlG1pQw4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vc8HlG1pQw4
+video_date: 2026-08-13T09:00:16+00:00
+video_description: |
+  Why did NVIDIA build a 31.5-billion parameter model where 46 of its 52 layers run Mamba-2 State Space architecture and Mixture-of-Experts instead of transformer attention? Meet Nemotron 3.5 Lightning and the hybrid ratio replacing pure transformers.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, state-space math, and KV cache memory savings behind NVIDIA Nemotron 3.5 Lightning. We examine its 52-layer hybrid layout (23 Mamba-2 SSM layers, 23 128-expert MoE layers, and 6 sparse attention layers spaced every 7 layers), analyze how pre-training in 4-bit NVFP4 over 20+ trillion tokens slashes 1M token context KV cache memory from 52 GB down to 46 MB, and review distillation from the 550B Nemotron 3 Ultra teacher.
+  
+  Furthermore, we dissect real-world benchmarks on local DGX Spark workstations (72-108 tok/s in Ollama), audit GDPval Elo agentic scores (832 Elo beating 120B models), analyze LangChain's NeMo Switchyard router deployment cutting multi-turn agentic costs by 74% alongside Claude Opus 4.8, and evaluate why hybrid SSM ratios have won the post-transformer architecture war.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • NVIDIA Nemotron 3.5 Lightning on Hugging Face: https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4
+  • NVIDIA Megatron-LM Repository: https://github.com/NVIDIA/Megatron-LM
+  • Mamba-2 State Space Architecture Paper: https://arxiv.org/abs/2405.21060
+  • NVIDIA NeMo Switchyard Agent Router: https://github.com/NVIDIA/NeMo
+  • Artificial Analysis Intelligence Index: https://artificialanalysis.ai/
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - 88% Not a Transformer: Nemotron 3.5 Lightning
+  1:11 - Distilled from 550B Nemotron 3 Ultra
+  1:38 - The KV Cache Explosion Problem (52GB vs 46MB)
+  2:42 - Mamba-2 State Space Models & Fixed Memory Boxes
+  4:43 - The 23 Mamba + 23 MoE + 6 Attention Recipe
+  6:10 - Benchmarks: GDPval Elo 832 vs SWE-bench
+  9:28 - Pre-trained NVFP4 4-Bit Quantization & Ollama Speeds
+  12:13 - NeMo Switchyard Router: 74% Cost Reduction
+  14:09 - Final Verdict: The Ratio Won the Architecture War
+  
+  #nvidia #nemotron #mamba2 #transformers #systemdesign #cloudcodes #machinelearning #ai #gpus #deeplearning
+  
+  
+  
+  
+  
+  
+  User Queries: 
+  nvidia nemotron 3 5 lightning mamba 2 moe architecture
+  why 88 percent of nemotron 3 5 lightning is not a transformer
+  nvfp4 4 bit quantization pre training 20 trillion tokens
+  nemotron 3 5 lightning vs qwen 3 6 35b benchmarks
+  nemo switchyard router langchain 74 percent cost reduction
+  mamba 2 state space model kv cache 46mb vs 52gb
+  nemotron 3 5 lightning dgx spark ollama tokens per second
+  23 mamba 23 moe 6 attention layer layout spacing
+  nemotron 3 ultra 550b logit distillation pipeline
+  cloud codes nemotron 3 5 lightning breakdown
+---
+On the 11th of August, Nvidia published a config file. 52 layers, six of them are attention. The other 46 are something else entirely, and that ratio is the whole story. The model is Nemotron 3.5 lightning.
+
+About 31 and 1/2 billion parameters sitting on disk. Nvidia rounds that to 30. 3 and 1/2 billion of them wake up for any given token. It runs on one H100. It also runs on a desktop machine at 4-bit today. So, it is not, in the
+
+strict sense, a transformer. By its own layer count, it is 88% not a transformer. The 12% that still is, that is the part the replace attention camp expected to disappear. Because for nearly 3 years, the pitch was that state space models would replace attention outright. That is not what shipped. What
+
+shipped is a compromise, written down as a fixed recipe. 23 Mamba 2 layers, 23 mixture of experts layers, six attention layers, deliberately in that order. Every number here comes from the published config, the model card, or a test somebody else ran. I will name each. So, here is the question underneath all of it. If six layers of
+
+attention are enough, what were the other 46 doing? Nvidia's launch post, written by Chris Alexiuk and Chintan Patel, does not lead with any of that. It leads with agents and cost, but the architecture is the reason the cost moved, and it is the reason this model exists at this size at all. Because lightning was not trained from scratch to be clever. It is distilled down from Nemotron 3 ultra, a 550 billion parameter model, then tuned with reinforcement learning across coding, tool use, and multi-turn work. Attention
+
+has a running cost the spec sheets leave out, and it has nothing to do with how smart the model is. When a transformer reads a token, it computes two vectors for it, a key and a value, and it keeps them. Not for that step, for the rest of the conversation. That store is the key-value cache. It grows with every single token in every single attention layer, and nothing in it ever gets thrown away. And you can compute exactly
+
+what it costs here, because Nvidia published the shape. Two key value heads, head dimension 128, 16-bit numbers. That works out to 1 kilobyte per token per attention layer, which sounds like nothing right up until you multiply it by both of the numbers that matter. If all 52 layers were attention, a million tokens of context would need 52 GB of memory just to remember what it already read. 52 GB before a single new word gets generated. And that is per
+
+conversation, not per server. 10 users holding long context means 10 of those side by side on the same card. None of that memory is doing new work. It is what remembering costs. Therefore, the interesting question stopped being how to make attention faster, and became whether you need to keep all of it at all. In December 2023, Albert Gu at
+
+Carnegie Mellon and Tri Dao at Princeton published an answer, and it came out of control theory. Their idea, called Mamba, replaces the growing list with one fixed box of numbers, rewritten as each token arrives. The box stays exactly the same size. Token one and token one million update exactly the same amount of memory. That is the whole trick, and the name for it is a state space model. Think of the difference
+
+this way. Attention keeps the full transcript and can quote any line back on demand. Mamba keeps running notes, and has to decide what is worth writing down. In this model, you can size those notes exactly. 64 heads, head dimension 64, state dimension 128, across 23 Mamba layers, 46 MB constant. Not 46 at short
+
+context and more later. 46 at one token, and 46 at a million. So, on one side of this model, memory climbs toward GB, and on the other it is a flat line you could fit on a phone, which raises the obvious question. If the box stays fixed, why did every lab not simply switch in 2024? Because Nvidia's own researchers went and checked and then published the catch. This is a 2024 paper and the date
+
+matters. They trained 8 billion parameter Mamba, Mamba 2, and Transformer models on identical data up to 3 and 1/2 trillion tokens. Same recipe, different architectures, a fair comparison. Pure state space models matched or beat Transformers on plenty of tasks, but they fell behind on copying, on in-context learning, and on long-context reasoning, which follows directly from the running notes. If a detail did not make it into the notes, you cannot quote it back. Compression is the feature and
+
+the flaw at once. And their fix was almost rude in its simplicity. Put a little attention back, roughly 8% of layers spread evenly through the stack. That hybrid then beat the pure Transformer on all 12 standard tasks they ran. Therefore, what Nvidia shipped this month is that 2024 result grown up.
+
+44% Mamba, 44% experts, 11 and 1/2% attention. The feed-forward layers got swapped out for sparse experts, and the attention fraction went slightly up, not down. They kept more of it than their own rule of thumb called for. You can read the placement straight out of the file. Attention sits at layers 5, 12, 19, 26, 33, and 42. Roughly one every
+
+seven. Sebastian Raschka counted the same split independently for the previous model in this family, which is how you know the spacing is deliberate. So, picture it as a relay. Mamba layers compress everything they see into that fixed box cheaply for six layers at a stretch. Then one attention layer looks back at the real tokens and pulls out the exact detail the compression blurred. Then it hands back. And there
+
+is a second kind of sparsity stacked on top of that one. Each mixture layer holds 128 experts, and exactly six of them fire per token, plus one shared expert that fires on every token. That shared expert is where the general purpose knowledge lives. So, the six specialists do not each have to relearn it. Sparse in depth from Mamba, sparse in width from the experts. 30 billion
+
+parameters on disk, 3 and 1/2 billion doing work, which brings back the question from the top, sharper now. If six layers of attention can hold a million tokens together, what exactly were the other 46 layers doing in every model you have used until now? The obvious way to answer that is to look at what it scores. Artificial Analysis, who benchmark models independently, put Lightning at 24 on their intelligence index, a composite of nine evaluations spanning agentic work, coding, science, and general knowledge. 24 is the same score as OpenAI's GPTOs 120B, a model with roughly four times the total parameters. That is the
+
+headline Nvidia wants you to take away. But, Qwen 3.6 35B scores 32. Meta's Muse Glimmer scores 35. Claude Opus 5 sits at 63. So, Lightning
+
+loses to models in its own size class, and it is not close. That looks like a bad model, and it is worth spelling out why it is not. Nvidia's own model card publishes the detail, with the caveat printed right on it, that these are their harness and may differ from other vendors' self-reported figures. SWE bench verified, Lightning 51.56, Qwen 70.12, Terminal Bench 2.1, 24.58
+
+against 44.38. Those are not rounding errors, they are a different tier. On coding and terminal work, the bigger, longer thinking model is simply better, and no architecture argument changes it. But, look at what sits next to those rows. On Pinch Bench
+
+and Agentic Suite, Lightning reaches 85.37 against Qwen's 88.07, nearly level at a fraction of the active parameters. And on GDP Eval, an economically grounded agentic test, Lightning's Elo of 832 beats Nemotron 3 Super's 746, a model from its own family at about four times the size. On long context reasoning, it scores 52 against its predecessors 32, which is the number to watch because long context is precisely where the Mamba half was supposed to hurt it. It did not. So, it
+
+loses badly on hard reasoning and beats much larger models on agentic work. That is not a contradiction. It is a design choice, and the mechanism is worth spelling out because this is the question people keep asking about this model. A composite intelligence score rewards two things Lightning deliberately did not buy. The first is raw knowledge capacity, and that scales with total parameters, not active ones.
+
+30 billion cannot hold what 120 billion holds. You can see it directly in the rows. On the knowledge benchmark, it scores 17 and 1/2. On the hardest reasoning set, 11.7.
+
+Those are the scores of a small model because it is one. The second thing is thinking time. Reasoning models climb these indexes by generating more internal tokens per question. Artificial analysis found Lightning used about the same number of output tokens per task as its predecessor while gaining nine points. So, it did not get smarter by thinking longer. It got smarter per
+
+token. That is a different axis, and the index does not have a column for it. Artificial analysis said it plainly. It sits behind the most intelligent small models in its class, but it is built for a different point on the frontier, and that different point is measurable. Across the same index, Lightning finishes a task in about half a minute.
+
+Quinn 3.6 35B takes about 3 and 1/2. GPT OS 120B, about 3.4. Same evaluations, same answers being graded, seven times the wall clock. That gap is what the 24
+
+bought. Whether it was worth buying depends entirely on what your agent does all day. Therefore, the claim Nvidia leads with is speed, up to four times the output of similar size models. That is a vendor number, so it deserves an audit, and part of it is the quantization. This part is unusual.
+
+Nvidia did not just release 4-bit weights alongside the 16-bit ones. They pre-trained the model in 4-bit across more than 20 trillion tokens using a format called NVFP4. NVFP4 splits a tensor into blocks of 16 values, gives each block its own 8-bit scale, then applies a second scale across the whole tensor. Small blocks mean the scale tracks local detail instead of averaging it away. That works out to about 4 and 1/2 bits per value, roughly 3 and 1/2 times smaller than 16-bit. An artificial analysis measured
+
+the 4-bit version at 24 as well. Same score, a quarter of the memory, which is why this fits on a desk. Through a Llama, it is a 25 GB download, sitting at 26 GB of memory with a quarter of a million tokens of context loaded. So, Sayon Pithack, who runs Cube Simplify, pulled it onto a DGX Spark the hour it landed and measured it himself rather than quoting the charts. The first thing he hit was mundane. A Llama refused to
+
+download with an HTTP 412 because support for the architecture landed in a version released hours after the weights did. Once running, he measured about 72 tokens a second on prose, 84 to 87 on JSON and summaries. Through vLLM with the 4-bit weights and the Deep Spark drafter, 108. Prefill roughly doubled, too, to around 5,400 tokens a second. Then he did the thing vendors do not do.
+
+He ran a rival on the identical box, same runtime, same prompt, Qwen 3.5 35B managed 78 tokens a second, slightly ahead of Lightning. His conclusion, in his words, "The four times figure comes from hosted endpoints running the full draft model stack, and you do not see it through a Llama today. Against its own big brother, Nemotron-3 Super, it is a real three and a bit times," which is the accurate version of the claim and still a a number. But he also found the one that matters more for an agent. Same prompt, same correct tool
+
+call, both models right. Lightning got there in 485 tokens in 6 seconds. Q1 took 1,953 tokens and 26 seconds. He is careful to say one prompt is not a benchmark, and he is right. But, it points the same way as the index timing from a completely different measurement.
+
+And you can control that dial directly. Reasoning switches off per request or gets capped with a token budget, which is the actual product idea. Not a smarter model, but a model whose cost per step you set. Because an agent makes thousands of cheap calls and a handful of hard ones, and until now you paid frontier prices for all of them. So, Nvidia shipped a second thing the same day. Nemo Switchyard, an open-source
+
+router that sends each step to whichever model should handle it. Plans go up to the frontier model, execution comes down to lightning. The interesting part is that somebody outside Nvidia measured it. LangChain ran 145 multi-turn agent tasks through it, routing between lightning and Claude Opus 4.8, and published the receipts. Here is the
+
+split that matters. Lightning handled 93% of the calls for 10.4% of the spend. Opus handled 7% of the calls and carried 68% of the bill. Per call, Opus cost about 87 times more. Total cost fell 74%
+
+and accuracy fell six points from 86 to 80. Ramp reported a similar shape on their own internal benchmark. 58% cheaper, 33% faster. But, LangChain also published a part of marketing page cuts. Routing scored 2.3 points above simply
+
+using the cheap model for everything, and their own runs vary by 2.7 points. So, on their workload, they could not prove the router beat just using lightning for the lot, and they said so in writing. Their framing is the one to keep. Routing is the cost of not having to guess which requests are hard. Step
+
+back, because this is bigger than one model. Every serious lab shipped this same compromise this year and every one of them picked a different fraction. QN keeps one attention layer in four. Kimmy linear roughly the same. Ling 2.5 keeps
+
+one in eight. Nvidia keeps one in nine here and one in 11 on their larger model. Same idea, five different answers. Meanwhile, Mamba 3 landed at ICLR this year from Gu and Dao again, matching Mamba 2's quality at about half the state size. And one line to keep two things apart because they get blurred constantly. World models like Nvidia's
+
+own Cosmos are a separate research lane about predicting physical reality. Different bet, different scoreboard, not something you route agent traffic through. So, the verdict. The transformer versus Mamba argument is over and neither side won it. The ratio won and it is no longer a research position. It is a manufacturing decision
+
+at the company that sells the GPUs, which is what actually changed this month. For the 95% of you running agents that make many cheap calls, this is the better buy at 5 cents in and 20 cents out per million tokens. For the 5% doing one hard problem at a time, that index score is telling you the truth. I would still take Qwen 3.6 35B for a coding agent because 70 against 51 on SWE-Bench is the entire job. And the villain here
+
+is not a company, it is a habit. One composite number priced this model as mediocre while the thing it is good at has no column on that scoreboard. Which leaves the open question, four labs, four different fractions, and as Sebastian Raschka points out, without matched ablations, no lab can prove the ratio is the thing that did it. So, if that one number is the whole ballgame, why is every lab still guessing at it?

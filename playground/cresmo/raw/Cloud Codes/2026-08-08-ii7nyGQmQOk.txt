@@ -1,0 +1,125 @@
+---
+video_title: "Rewrites Are a Trap: Why Facebook Never Rewrote Its PHP"
+video_id: ii7nyGQmQOk
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ii7nyGQmQOk
+video_date: 2026-08-08T17:00:09+00:00
+video_description: |
+  When Facebook ran 30,000 servers on interpreted PHP in 2009, why did they refuse to rewrite the codebase? Meet the 10-year evolutionary architecture strategy that deleted PHP without a single migration project and why software rewrites from scratch remain the ultimate strategic trap.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, compiler mechanics, and software engineering history behind Facebook's web tier scaling. We examine Haiping Zhao's HipHop compiler (converting PHP to C++ to cut CPU burn by 50%), HHVM JIT compilation, and the gradual rollout of the Hack programming language, explaining how Joel Spolsky's famous Netscape lesson ("Things You Should Never Do") guided Facebook's refusal to throw away decade-tested production code.
+  
+  Furthermore, we dissect the 2026 counter-example: Jarred Sumner's 11-day AI-driven Bun rewrite from Zig to Rust using Claude Fable 5. We evaluate the $165,000 API bill, review how safe Rust eliminated 7GB memory leaks, and analyze why earning back accumulated production trust after an AI rewrite takes longer than the code conversion itself.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  This Is Our First Episode Of Tech Achieves. I Hope You Guys Enjoyed it,  Let Me Know What You Think In Comments. 
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • HHVM & Hack Language Repository: https://github.com/facebook/hhvm
+  • Bun JavaScript Runtime Repository: https://github.com/oven-sh/bun
+  • Joel Spolsky Essay ("Things You Should Never Do"): https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/
+  • Facebook Engineering Archives: https://engineering.fb.com/
+  • PHP Official Core Project: https://www.php.net/
+  
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 30,000 PHP Server Scaling Crisis
+  1:13 - Joel Spolsky's Netscape Rule: Why Rewrites Fail
+  2:22 - Step 1: HipHop for PHP (Compiling PHP to C++)
+  4:13 - Step 2: HHVM (JIT Compiler Beats Transpilation)
+  4:59 - Step 3: Hack Language (Gradual Typing in Production)
+  5:57 - How Facebook Deleted PHP Without a Migration Project
+  6:53 - The 2026 Counter-Example: Bun's 11-Day AI Rust Rewrite
+  7:48 - The Hidden Invoice: $165k API Cost & 2,400 Open PRs
+  8:51 - Final Verdict: Evolutionary Refactoring vs AI Rewrites
+  
+  #softwareengineering #systemdesign #facebook #php #rust #cloudcodes #bun #programming #architecture
+  
+  
+  
+  User Queries:
+  why facebook never rewrote php hhvm hiphop
+  joel spolsky things you should never do rewrite
+  bun zig to rust rewrite claude fable 5 jarred sumner
+  hiphop for php hphpc c++ transpiler history
+  hhvm jit compiler vs php 8 performance
+  hack programming language gradual typing facebook
+  software engineering rewrites from scratch vs refactoring
+  netscape version 6 rewrite failure case study
+  ai code migration Claude fable 1 million lines
+  cloud codes software rewrites breakdown
+---
+In 2009, Facebook was running more than 30,000 servers and the code on its web tier was PHP, all of it. Every profile, every wall post, every photo tag interpreted one request at a time. PHP is cheap to write and expensive to run and at that size the expense has one name, CPU. CPU means machines and machines were the fastest growing line on the company's budget. So, the engineers looked at it and reached the conclusion you would reach, rewrite it in a compiled language. Facebook refused
+
+and then spent nine years getting off PHP without ever running a rewrite project. February 2010, they shipped a compiler that turned their own PHP into C++. Web tier CPU fell about half. That compiler then made their own engineers slower, so they threw it out and built a virtual machine instead. In 2014, they changed the language underneath the code file by file until the PHP was gone. By 2019, their runtime
+
+dropped PHP support outright. There was no migration project because there was nothing left to migrate. Which raises the question this whole story turns on and it is a 2026 question, not a history lesson. In May, an AI ported a million lines of bun from zig to rust in 11 days. Does that make the old advice wrong? Go back to the refusal because
+
+the reasoning is the part worth stealing. Facebook's problem was not that PHP was a bad language. Their problem was that a lot of their engineers knew PHP. The site shipped changes every day and both of those facts were the business. Their own announcement says it plainly. The
+
+common suggestion was to rewrite the site in another language and given the complexity and the speed of development of the site, that would take some time. Some time is carrying enormous weight in that sentence and they knew it. Netscape had already run that experiment. In April 2000, Joel Spolsky wrote it up in an essay called things you should never do and called rewriting the code from scratch the single worst strategic mistake that any software company can make. Netscape shipped version four.
+
+Then there was no version five at all, and their market share fell the whole way down. Spolsky's argument was not that new code is worse code, it is that old code has been used. Bugs were found in it, and those bugs were fixed. Every one of those fixes is knowledge, and it survives as a weird-looking line that a new team would delete on site. Throw the code away, and you throw away the fixes, and you get to rediscover all of them in production in front of your users. So,
+
+Facebook took the third option, the one people forget exist. Keep the code, change what runs it. HipHop for PHP was a source transformer. It read their PHP, emitted highly optimized C++, and handed that to g++ to compile. It started as one engineer's hackathon idea.
+
+HipHop Zhao spent eight months getting a demonstration to work, then two more engineers and another 10 months of coding finished it. HipHop itself came out to over 300,000 lines with more than 5,000 unit tests. Six months of production testing later, it was serving 90% of Facebook's web traffic on roughly half the CPU. Same traffic, half the burn, and the people writing the site did not change a single habit. Zhao put the mechanism in one sentence at Stanford that May. Dynamic
+
+symbol lookups get replaced with static binding, and weakly typed symbols get inferred into stronger types. Two to three times faster on the site, he said. At 30,000 servers, having the web tier CPU stops being a benchmark number. It becomes a difference between buying machines this quarter and buying them next year, which is a sentence a finance team understands and a rewrite proposal has no answer to. But a compiler that halves your server bill charges rent, and Facebook paid it for three years in the currency that actually hurts. Compiling the whole site
+
+produced one binary well over a gigabyte with no incremental build. Change one line, rebuild everything. So, they could not develop on it. They built a second engine, an interpreter called HPHP I, purely so engineers would not sit waiting on the compiler. Now the same team maintains two implementations of one language on different syntax trees and the two have to agree. They did not
+
+always agree. You wrote your code against one engine and shipped it on another. And HPAPI was slower than the plain PHP engine it replaced. So answer this before the next part. Would you take 50% off your server bill for that?
+
+Facebook took the deal then spent three years buying its way back out. In December 2011 they announced HHVM, a just-in-time compiler for PHP. Same idea a modern JavaScript engine uses. Compile the hot paths while the code runs and use one engine in development and production. It was a race against their own product.
+
+In the fourth quarter of 2012 HHVM matched the C++ compiler on speed. In the first quarter of 2013 facebook.com stopped using HipHop. By that December the virtual machine was about 15% faster and the compiler was retired. Notice what did not happen in that paragraph.
+
+The site never stopped. No team was pulled onto a two-year port. The PHP files sat exactly where they were while the thing executing them was swapped out underneath twice. The runtime was solved. The language was not. Millions
+
+of lines of dynamically typed PHP where a type error still meant a page breaking in front of a user. So in March 2014 Facebook released Hack, PHP with a real type system running on HHVM. Hack is gradually typed and that phrase is the entire strategy. Typed code and untyped code call each other freely which meant most existing PHP files were already valid Hack files. You annotate one file, the checker starts helping in that file and 10,000 others keep working. They
+
+also made the checker fast because a slow checker is one people turn off. It typically runs in under 200 milliseconds and rarely takes more than a second on a code base that size in your editor while you type. Within a year they had moved nearly the entire PHP code base to Hack through organic adoption plus refactoring tools they wrote themselves. There was no migration team. There were tools and a type checker that made the converted file the nicer place to be.
+
+Then in September 2018, the HHVM team posted the sentence that closes the loop. Version 3.30 would be the last release series where HHVM aims to support PHP. 4.0 shipped on the 11th of February 2019 and put it flatly, "With this release, we no longer aim to be compatible with PHP." Read the decade
+
+backwards and there is no rewrite in it. A compiler, then a virtual machine, then a type system, then a language. Four tools whose only job was to let the code that already existed keep running. PHP fell off the end of that ladder and PHP did not die on the way. It is still the server-side language on around 70% of the sites where anyone can identify one. And in 2020, PHP 8 shipped
+
+a just-in-time compiler of its own from its own core team. Which brings the question back because 2026 handed that whole argument its strongest counterexample and I am not going to pretend it away. On the 14th of May, a pull request titled rewrite bun in rust merged into main. Over a million lines added. All 1,448 zig files ported. Start to finish, 11
+
+days. Jarred Sumner drove it with Claude Fabre 5. About 50 dynamic workflows, up to 64 instances running at once, an implementer, two adversarial reviewers, and a fixer on each change, and nearly 7,000 commits. The bill at API pricing was about $165,000 and the goal was not speed. Sumner stated reason is memory safety. Use
+
+after free, double free, forgot to free in an error path. In safe rust, those stop being bugs and start being compiler errors. The results back him up. Binary shrank about 20% throughput came out a few percent faster and one instrumented leak that grew to nearly 7 GB over 2,000 builds came down to about 600 MB. So, the Spolsky argument is finished.
+
+Except, look at what happened after the merge instead of at the merge. Bun's last release tag is the 12th of May 2026. 11 weeks later, on the 27th of July, developer Tom Lockwood counted the bot's open pull requests. 2,475, up from 1,277 18 days before. Still no release tag.
+
+The Rust build is still canary, not the shipped default, though Claude code has run on it since June. Lockwood also argues the real bill is closer to $800,000 once you count the Anthropic engineers attached, and that is one person's estimate, not a published figure. None of that makes the rewrite a failure. The memory bugs it was built to kill really are compiler errors now, and Sam Yer published his regressions instead of burying them. What it does is make the invoice legible. 11 days bought
+
+the typing. What is still running 11 weeks later is the other half of the bill, earning back the accumulated trust that the old code had already paid for. Which is exactly the asset Spolsky said a rewrite throws in the bin. So, here is where I land, and who it is for. If your code base makes money today, Facebook's path wins, and it is not close. You do not rewrite. You replace
+
+one layer at a time underneath code that keeps shipping. Run time first, then types, then the language. Bun earned its exception, and the conditions are specific. A language independent test suite that could referee the port. One maintainer holding the whole design in his head, and memory safety as the goal, rather than taste. If you have all
+
+three, take the deal. Most teams reaching for Rust this year have one of those at best. And watch the actions, not the announcement. The receipt for a rewrite is a release tag, not a merge commit. So, a bet with a date on it. If
+
+the Rust build is not Bun's default binary on every supported platform by the end of 2026, then the 11 days were the cheap part and I will come back and say so. Which leaves the thing this story started with. Facebook never rewrote PHP and Facebook does not run PHP. So, did they escape PHP or did PHP escape them? If a rewrite has ever eaten a year of your life, I want to hear which side you land on.

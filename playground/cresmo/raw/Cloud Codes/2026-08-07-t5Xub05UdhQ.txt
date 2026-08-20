@@ -1,0 +1,138 @@
+---
+video_title: "Go + Templ + HTMX: Build Full-Stack Apps With Zero React"
+video_id: t5Xub05UdhQ
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=t5Xub05UdhQ
+video_date: 2026-08-07T09:00:22+00:00
+video_description: |
+  Tired of massive 600KB JavaScript bundles, complex hydration bugs, and runtime template crashes? Meet the Go + Templ + HTMX stack: a strongly typed, single-binary architecture that renders full-stack web applications with zero client-authored JavaScript.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture and type-checking mechanics behind Go, Templ, and HTMX. We examine how Adrian Hesketh's templ component compiler turns HTML markup into strongly typed Go functions (rendering 5.5x faster than standard html/template while allocating 73% less memory), how Go 1.22 pattern routing handles REST endpoints in plain code, and how templ.Fragment renders partial HTML updates over the wire.
+  
+  Furthermore, we demonstrate how renaming a struct field turns a silent white-screen production bug into an instant Go build failure, explore single-binary deployments using go:embed (shipping 15MB executables with zero node_modules), analyze HTMX 4's 12.9KB gzipped footprint, and audit the exact architectural boundaries where hypermedia stacks break down.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Templ Official Component Compiler: https://github.com/a-h/templ
+  • HTMX Official Library & Repository: https://github.com/bigskysoftware/htmx
+  • Templ Official Guide & Documentation: https://templ.guide/
+  • Gomponents (Pure Go HTML Components): https://github.com/maragudk/gomponents
+  • Official Go Documentation: https://go.dev/doc/
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The Blank Cell Bug (Why html/template Fails)
+  1:06 - What is Templ? (Strongly Typed HTML in Go)
+  2:20 - Templ Benchmarks: 5.5x Faster Than html/template
+  3:15 - HTMX Demystified: HTML Over the Wire
+  4:38 - Payload Size: 12.9KB HTMX vs 646KB JavaScript
+  5:08 - Live Code: Building a Full CRUD Task App in Go
+  6:33 - Single Binary Deployment (go:embed & No node_modules)
+  6:49 - The Compiler Test: Breaking the App on Purpose
+  8:26 - The HTMX 4 Beta & Drupal Core Adoption
+  9:30 - Where This Stack Breaks (And When to Avoid It)
+  
+  #golang #htmx #webdevelopment #backend #systemdesign #cloudcodes #programming #html
+  
+  
+  
+  
+  
+  
+  User Queries:
+  go templ htmx stack full tutorial 2026
+  templ type safe html component compiler go
+  go 1 22 router htmx crud application
+  htmx 4 beta vs react bundle size benchmark
+  go embed single binary web deployment templ
+  templ vs html template performance benchmark
+  htmx fragment rendering go templ
+  zero javascript full stack web dev golang
+  gomponents vs templ type safe html
+  cloud codes go templ htmx breakdown
+---
+Here's a Go struct with a field called title and a template that prints it. Watch what one rename does. Change title to text. It still compiles, the server boots, and the page renders nothing where the task name was. No error, no stack trace, no failing test. Just a
+
+blank cell in production found by a user days later. That blank cell is why this video exists. Go is obsessive about types right up until it starts writing HTML. It's built-in templates are strings. The compiler never reads them.
+
+It hands them to the runtime and hopes. One tool closes that hole. It's called Temple and it turns your HTML into Go functions the compiler checks. Pair it with HTMX and the browser never downloads a JavaScript bundle you wrote. Not a small one. None. So, we're going
+
+to build a real CRUD app on this stack front to back and then break it on purpose. We rename one field, run the build, and watch a template bug become a compiler error instead of a white screen. Then the part the tutorial skip, where this stack costs more than it saves in the HTMX maintainers' own words. One number to carry in. The median mobile page last year shipped 646 kilobytes of JavaScript. So, what is
+
+Temple? It's a small language that compiles into Go. Closer to a compiler front end than a template engine. Adrian Hesketh tagged its first release in May 2021 after working through Go's existing options and finding none that were both strongly typed and decent in an editor. His complaint was specific and if you've written HTML/template, you've felt all three. Calling your own functions from a
+
+template is awkward. The editor support is thin and templates crash at runtime because they aren't strongly typed. His stated priorities, in his order, simplicity, developer experience, performance. A Temple component reads like a Go function that happens to return markup. Parameters are real Go types with real names. Interpolation is
+
+curly braces. Composition is an at sign calling another component the same way JSX calls a child. Then you run Temple generate and it writes a plain go file next to yours. Your component becomes a function that streams bytes into an IO bin write. There's no virtual DOM, no reconciliation step, no runtime template parser. The component tree is a call
+
+tree, which is the entire trick. Once the HTML is go, the go compiler is your template checker. A missing field stops being a blank cell and becomes a build failure with a file name and a line number. It's also faster because the reflection is gone. In the community go template benchmark, refreshed this February, Temple renders a simple page in 0.76 microseconds
+
+against HTML templates 4.23. That's about five and a half times quicker and it allocates 182 bytes instead of 673. Escaping comes with it and it's stricter than you'd expect. Text nodes are escaped, class names get sanitized, and you cannot interpolate a variable inside a script or style tag at all. Temple refuses to compile it rather
+
+than trust you with it. Adoption is real but small. 5,481 packages import Temple and it sits near 10 and a half thousand GitHub stars. Five years in, it's still version 0.3, which is the first thing to weigh. There
+
+is still no version 1.0 and the API moves. If a new language in your build is a deal breaker, components does a similar job in plain go function calls. So, the server renders safely now. But a page that only renders is a brochure.
+
+Something has to happen when the user clicks. That's the second half of the stack and it's HTMX. HTMX starts from one observation about HTML. It already knows how to make requests, it's just crippled. Only links and forms can issue them. Only get and
+
+post are available and the response can only replace the entire page. HTMX deletes all three limits using attributes you put in the markup. Any element can issue a request, any HTTP method, and the response replaces whichever part of the page you point at. So, a delete button becomes HX-delete with a URL, HX target naming the row, and HX swap saying outer HTML. That's the whole client for that feature. No
+
+fetch call, no state store, no event listener, no component to re-render. And the response comes back as HTML, not JSON. The server sends the piece of the page that changed already rendered, and HTMX drops it exactly where you told it to. Temple has a matching feature built for this. Wrap a section in Temple fragment, and a handler can render only that section. The full template still
+
+executes, but only the fragment reaches the browser. Which means one handler, one component tree, two response shapes, the whole page on first load, a fragment on every click after. That seam is where most stacks would need a second code base and a serialization format between them. Now, the size, measured rather than quoted, I pulled HTMX 2.0.10 off the CDN this
+
+morning. 51 KB minified, 16.6 zipped. Against that median mobile page is 646. It's about 1/40th.
+
+For contrast, I measured React's last official browser build, the UMD one, which React 19 stopped shipping. React plus React DOM came to 47 KB zipped, roughly three times HTMX's 16.6, before you write a single component of your own. Enough theory, let's build it. A task board. Create, list, toggle,
+
+delete. Four files. File one is the model. A task struct with an ID, a title, and a done flag. File two is storage, which for the demo is a slice behind a mutex. Swap in Postgres later,
+
+and nothing above it changes. File three is the components. A task row takes a task and returns a table row. A task list takes a slice and loops with an ordinary go for statement, not a template directive shaped like a for statement, an actual one, with a type checker watching it. The create form is a plain form element carrying HX post to /tasks, HX target pointing at the list body and HX swap set to be four end.
+
+Submit it and the new row appears at the bottom. There is no JavaScript anywhere on that page. File four is the server and it's smaller than you'd think. Since Go 1.22, the standard library router takes method and path patterns directly.
+
+So, post/tasks and delete/tasks/id are two lines. No framework required. The create handler parses the form, appends the task, and renders exactly one component, task row, straight into the response writer. About six lines, that's the entire create path, database to pixel. Toggle is the same shape. HX
+
+patch on the checkbox. The handler flips the boolean, re-renders that single row, HTMX swaps it in place. Delete returns an empty body and the row disappears. Then Go build one binary. Embed your CSS and the HTMX file with go:embed and that binary is the entire deployment, around 10 to 20 megabytes to copy onto a box with no to keep alive.
+
+Now the part I promised. Go back to the task struct and rename title to text. It's the kind of rename you'd do without thinking on a Friday afternoon. Run temple generate, then Go build. It fails, t.title undefined. Type task has
+
+no field or method title and it points at the file and the line that came from your HTML. That's a thesis in one error message. The bug never reached a browser, a test, or a user. It reached the compiler, which is the cheapest place on earth for a bug to land. Compare the JSX path.
+
+Rename the field and the JSX still parses, the bundler still builds. The page renders the literal word undefined or one level deeper, throws cannot read properties of undefined at a user at runtime. TypeScript catches a lot of that and I want to be fair. In a well-typed code base, it catches most of it, but it checks against the shape you promised the server would send. Temple checks against the struct the server actually has. It deletes the promise.
+
+One trap worth naming before you adopt this. Generated go can go stale. You edit a temple file, forget to regenerate, and build yesterday's HTML without noticing. Temple shipped a check flag in May 2026 for exactly that. Run it in CI and a stale commit fails the pipeline. So, let's audit the title
+
+because zero JavaScript deserves scrutiny. HTMX is JavaScript. 16.6 kilobytes of it running in your user's browser doing what a framework does. It just isn't code you wrote or maintain.
+
+The accurate version of the claim is narrower and still worth a lot. No bundle you author, no client build step, no node underscore modules, no hydration pass, and exactly one language in the repository. It's also shrinking. I measured the HTMX 4 beta from July. 36 kilobytes minified, 12.9 gzipped, about
+
+a fifth lighter than version 2's 16.6. While it replaces XML iteration with fetch and folds the DOM merging extension into the core. Carson grows sick of version 3 entirely. Years earlier he'd flatly ruled it out.
+
+Asked about it later, his published answer was one word, oops. The substance is that fetch brings streaming responses straight into the DOM, and HTMX 2 stays supported in perpetuity, rolled out over years. And this isn't a hobby stack. Drupal added HTMX to its core in May 2025, chosen partly because it ships zero dependencies and a real security policy, and has been converting its ancient Ajax API ever since. As of late July, the Drupal 12 branch is running the HTMX 4 beta. And yet, the reality
+
+check. NPM counted 840,000 HTMX downloads last month against 681 million for React. Script tags on a CDN don't touch NPM, so that's an undercount, but nothing undercounts by 800 times. So, where does this stack break? HTMX publishes the answer itself, which I respect. Hypermedia fits text and image
+
+interfaces, forms saved to a database, and updates inside well-defined blocks. It does not fit spreadsheets, offline apps, or screens where a dozen widgets depend on each other. Then add the costs that don't make it into the blog posts. Every interaction is a round trip, so your network latency is now your interaction design. You end up with far more endpoints than a JSON API needs, and your front end and back end become properly coupled. One template edit can
+
+break a page. So, the verdict is a lane, not a doctrine. If your app is forms over data, internal tools, admin panels, dashboards, most of what CRUD actually means, this stack hands you type-checked HTML, one deployable binary, and a front end you can hold in your head. If your app is Google Docs, it doesn't, and that's a scope, not a flaw. Pick the lane first, then pick the tools.

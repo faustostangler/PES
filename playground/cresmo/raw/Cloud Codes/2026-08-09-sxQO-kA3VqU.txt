@@ -1,0 +1,141 @@
+---
+video_title: "The AI Problem Nobody Has Been Able to Fix (Context Rot)"
+video_id: sxQO-kA3VqU
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=sxQO-kA3VqU
+video_date: 2026-08-09T19:30:01+00:00
+video_description: |
+  Why do 1-million-token context windows degrade by 30% to 50% long before they even fill up, and why are AI models fundamentally incapable of reading long documents evenly? Meet Context Rot, the U-shaped attention curve, and the 2026 breakthrough solving it: Recursive Language Models.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the computer architecture, attention geometry, and empirical benchmarks behind Context Rot. We analyze Chroma's 18-frontier-model audit (proving accuracy drops sharply at 50,000 tokens), review NoLiMa's shortcut-free recall benchmark where GPT-4o accuracy dropped from 99.3% to 69.7% at 32k context, and dissect the mathematical geometry ("Lost in the Middle at Birth") proving causal masking creates permanent dead zones in the middle of long prompts.
+  
+  Furthermore, we expose the vendor pricing cliffs where OpenAI and Google double per-token pricing above 200k tokens for degraded quality, and analyze MIT researcher Alex Zhang's Recursive Language Models (RLMs)—showing how Python code slicing and recursive sub-calls allowed GPT-5 mini to beat plain GPT-5 by 30+ points on the 132k-token OOLONG benchmark.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Recursive Language Models (RLMs) Repository: https://github.com/alexzhang13/rlm
+  • Chroma Context Window Degradation Study: https://github.com/chroma-core/chroma
+  • NoLiMa Shortcut-Free Long Context Benchmark: https://arxiv.org/abs/2502.05135
+  • NVIDIA RULER Benchmark Suite: https://github.com/NVIDIA/RULER
+  • Stanford Lost in the Middle Paper: https://arxiv.org/abs/2307.03172
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 40-Page Document Failure (Context Rot)
+  0:39 - Chroma Benchmark: 18 Frontier Models Tested
+  2:57 - Needle in a Haystack vs NoLiMa Shortcut-Free Recall
+  4:50 - Lost in the Middle: The U-Shaped Attention Curve
+  5:36 - Causal Masking Geometry: Why the U-Shape Is Built-In
+  6:46 - Vendor Pricing Cliffs: Double Price for Worse Quality
+  8:32 - Managing Context: Compaction, Notes & RAG
+  9:57 - Paradigm of 2026: Recursive Language Models (Alex Zhang, MIT)
+  11:36 - Final Verdict: Effective Window vs Advertised Window
+  
+  #ai #contextwindow #machinelearning #systemdesign #cloudcodes #openai #anthropic #python #softwareengineering
+  
+  
+  User Queries:
+  context rot 18 frontier models chroma benchmark
+  why 1 million token context windows degrade in accuracy
+  nolima shortcut free long context recall benchmark
+  lost in the middle at birth causal masking geometry
+  nvidia ruler benchmark practical context length
+  recursive language models alex zhang mit oolong benchmark
+  vendor long context pricing cliffs openai google
+  emnlp 2025 context length tax perfect retrieval
+  prime intellect recursive language models paradigm 2026
+  cloud codes context rot breakdown
+---
+Open a brand new chat and ask one sharp question. You get a sharp answer back. That part works beautifully. Now paste in 40 pages of documents first, then ask that exact same question. Something changes. It starts skipping things. It
+
+contradicts an instruction you handed it four paragraphs earlier. You handed the model more to work with and it got measurably worse at working. That is the whole problem. Most people blame themselves for that. Bad prompt, wrong wording, try again in the morning. The
+
+prompt is rarely the problem. This effect is documented. It has a name and it dates to 2023. Researchers call it context rot. The uncomfortable part is not that it happens, it is who it happens to. In July 2025, a researcher
+
+named Kelly Hong and her team at Chroma ran 18 frontier models through it. The 2025 lineup, GPT-4.1, Claude 4, Gemini 2.5, Quinn 3, all 18 degraded as the input grew and not at the edge of the window. Degradation started long before the window was anywhere close to full. So, what is
+
+actually breaking underneath? Why three years of research has managed it rather than cured it? And what the people who build on this do instead? First, the thing people loosely call memory. When you paste a PDF into ChatGPT or Claude, it lands in the context window. Think of
+
+that window as the model's entire working desk. Your instructions, your files, the conversation so far, all visible at once while it answers, which makes one assumption feel obvious. Bigger desk, better answers. Handing everything and it will connect everything. That assumption is exactly what the Chroma team went after and the curve ran the other way. Across those 18
+
+models, accuracy fell as input grew by 30 to 50% at the far end. The detail that matters is where it starts falling. A model sold with a 200,000 token window was already slipping at around 50,000. Then they made the task easier. Simple retrieval, one fact, nothing clever. It
+
+still fell. So they made it trivial. Hand the model a list of repeated words and ask it to copy the list back. Not reason about it, copy it. At short lengths, clean. Longer, and models began
+
+dropping words, inventing extras, and putting the odd one out in the wrong position. Copying a list is the least intelligent thing you can ask a language model to do, and length broke that, too. Two other findings from that report stuck with me. A single plausible wrong answer planted in the document measurably hurt accuracy, and four of them compounded it with Claude models tending to abstain while GPT models answered confidently and wrongly. The second one is strange. Models scored
+
+better on a shuffled haystack than on the same sentences in their logical order. Coherent structure hurt them. The report does not claim to know why, and I have not found anyone who does. Hong's team is careful about what all of this proves. They observed the effect and state plainly that they do not explain the mechanism, and they warn that real work with synthesis and multi-step reasoning should be worse than their controlled tests. That's its badly next
+
+to what you hear at launch. A million tokens of context is standard now. Open AI, Anthropic, Google, and xAI all ship it, and Meta's Llama 4 Scout advertises 10 million. And the claim gets proven with a test called needle in a haystack. Greg Kamradt popularized it in late 2023, first on GPT-4 and then on Claude 2.1. Hide one sentence inside a huge
+
+document, ask the model to find it, and chart how often it does. It is a real pressure test, and it is also mostly a vocabulary match. The hidden sentence usually shares words with the question, so a model can pattern match its way there without understanding a line of the document around it. Kamradt said as much himself in 2024, arguing the field had to move from recall to reasoning. Which is the gap that matters, because nobody uses AI the first way. You do not paste a
+
+contract to find a sentence you already wrote. You paste it to get an answer that is not written anywhere in it. So, in February 2025, Ali Modarresi and his co-authors published the version with the shortcut taken out. It is called No Lima. Same haystack, but the needle is rewritten to share almost no vocabulary with the question. So, the
+
+model has to make the connection itself. 13 models, each advertising at least 128,000 tokens. At 32,000, a quarter of the way in, 11 of the 13 scored below half of their own short context baseline. In that 2025 test, GPT-4 O fell from 99.3% to 69.7.
+
+And that was near the top of the group. Same haystack, same length, take away the matching words, and the score collapses. Nvidia's ruler benchmark found the same shape from another angle. Test models at the length printed on the box, and almost none hold their own quality bar all the way there. The community benchmark for deep comprehension puts the practical band at roughly 16 to 64,000 tokens. There is a
+
+second failure stacked on top of that one, and this is the one you can feel directly in your own chats. In July 2023, Nelson Liu and his colleagues at Stanford published a paper called Lost in the Middle. They took a long input, moved the answer around inside it, and watched accuracy move with it. Best when the answer sat at the start. Nearly as good at the very end. Worst when it sat
+
+in the middle. Plot that, and you get a U. In plain terms, the model reads the top of your document, remembers the bottom, and thins out through everything in between. Which is almost word for word the complaint people have about feeding it long PDFs. That paper is 3 years old, and every model in it has been retired since. The shape it found
+
+has not been retired. Windows grew from 4,000 tokens to a million, and the U did not flatten out. So, why can an engineer not simply patch it? A preprint from March 2026 makes a sharp claim about that. It is called Lost in the Middle at Birth, and it measured the U shape in untrained models. Step zero, before any
+
+training with the position encoding switched off, the curve was already there. The argument is geometric. Causal masking, the rule that each token only sees what came before it, piles influence at the start of the prompt. The residual connection anchors the final token. And between those two, the author derives a dead zone that shrinks factorially with the depth of the network. It is one preprint from one
+
+author with no venue yet, so hold it loosely. But if it survives review, the U is not a habit the model picked up from its training data. It is the shape of the building it lives in. And one result closes off the easy fix. A paper at EMNLP last October handed models perfect retrieval, the right passage already located, nothing left to search for, and performance still fell between 14 and 85% as the context around it grew.
+
+Length itself is the tax, and the model pays it even when it has already been shown the answer. Better search does not rescue you. It only decides how much you are carrying when the bill arrived, which brings us to the half of the title that actually matters. Not why this is hard, why the labs are not racing to solve it. Start with the mechanism, which Anthropic put in its own engineering post. A transformer lets
+
+every token attend to every other token, so N tokens produce N squared pairwise relationships. Their words, as context length increases, a model's ability to capture those relationships get stretched thin. They call it an attention budget, and it is finite by construction. You do not get to make it infinite while staying inside the architecture that made these models work in the first place. Then look at what the vendors do, rather than what they announce. A pricing page tells you more
+
+than a launch post does. Google's own page lists Gemini 3.1 Pro at $2 per million input tokens up to 200,000 tokens, and $4 above it. Output goes from 12 to 18. OpenAI draws the same line at 272,000.
+
+Its GPT 5.6 flagship is $5 in and 30 out beneath that line, 10 and 45 above it. One extra token roughly doubles what you pay for the input. Read those as admissions. The long window is the headline feature and the premium tier at the same time.
+
+And the cliff sits almost exactly where the research says the quality has already gone. You are paying double for the part that works worst. Credit where it is owed though. Anthropic charges flat and its documentation states that a 900,000 token request bills at the same per token rate as a 9,000 token one. That removes the surcharge. It does not
+
+remove the rot. And the incentive underneath does not move either. A context window is a number you can print on a launch slide. Effective context is a number that needs a benchmark the lab does not control and every independent benchmark that exists keeps coming back with a smaller answer. So, the people who build on this stopped arguing about window size and started managing the budget instead. Anthropic's own
+
+recommendation is three moves and you have almost certainly used the first one without knowing its name, compaction. When a conversation gets near the limit, summarize it and reopen a fresh window holding only the summary. That is exactly what the compact step in Claude code is doing when a long session starts to drift. Then structured note-taking where the agent writes its state to a file outside the window and reads it back when it needs it. So, the window stays small and the memory lives on disk. And sub-agents. Instead of one
+
+agent carrying a whole project in its head, specialists each get a clean window and hand back only the result. RAG is the older version of that same instinct. Retrieve the handful of passages that matter, put those in the window, and leave the rest on disk. It gets declared dead every time a bigger window ships and it has not died. Its job changed. It is now one of several
+
+ways to keep the context small on purpose. And there is evidence the managing works. A benchmark published in February grew the environment around an agent step-by-step and watched its success rate fall. Then showed that proper context management recovered a substantial part of it. A June paper found something sadder inside long searches. Models give up early. The
+
+authors call it premature termination. Under a lot of context, the model concludes or guesses well before it has actually used the window it was handed. Which sets up the most interesting answer of 2026 and it inverts the problem instead of fighting it. Six weeks into his first year of graduate school at MIT, a 24-year-old named Alex Jiang wrote a blog post proposing recursive language models. Scientific American profiled him for it in June.
+
+His description of the bug is the clearest I have read. A model can do task A. It can also do task B. Give it A and B at the same time and it does both worse than it did either one alone. So, the fix he proposes is to stop giving it both. In a recursive language model,
+
+your million-token document never enters the model's context at all. It sits in a Python environment as a variable. The model writes code to slice it up and spawns copies of itself to read the slices. Each copy seeing a small clean window. The parent reads the answers, not the document. In the
+
+paper's own tests, on the O long benchmark at 132,000 tokens, that setup running the cheaper GPT-5 mini beat plain GPT-5 by more than 30 points, roughly double the correct answers at a comparable cost per query. And Jiang's headline claim is the one to sit with. Recursive models do not degrade at 10 million tokens and beyond because no single call ever sees 10 million tokens. The paper hit arXiv on the last day of 2025. The library sits at 5,300 stars and Prime Intellect built its own version and called it the paradigm of 2026. Then March brought the
+
+reproduction, which complicates the picture. Researchers rebuilt it and pushed the recursion one level deeper and depth two made the models overthink. Worse answers on simple retrieval and one task that runs in 3 and 1/2 seconds at depth one took 344 at depth two. So, here is where I land, and I am not going to sit on the fence about it. Stop buying context size and start engineering context. For most teams
+
+building on these models, a small curated window beats a big one you emptied a folder into. Three receipts. Quality falls before the window fills. 11 of 13 models have by 32,000 tokens, and two of the three largest labs price the far end of their own window as a premium. The villain here is an idea rather than a company selling the advertised window instead of the effective one. The concession is real,
+
+though. If your job is one document under about 30,000 tokens answered once, the big window is the cheap and correct tool, and you should not build a retrieval pipeline to read one PDF. The 5% case is the thing that runs for hours, and that is where the engineering earns its keep. Which leaves a question I cannot answer. If that U-shape really is there at initialization, then compaction, re- trieval, and recursion are all scaffolding around a model that cannot read evenly, and we are getting better at hiding the limit rather than removing it. Does the next architecture
+
+take the rot out, or do we just keep building smarter walls around it? Recursive language models are the strongest bet on the table right now, and they have earned a video of their own. That is the next

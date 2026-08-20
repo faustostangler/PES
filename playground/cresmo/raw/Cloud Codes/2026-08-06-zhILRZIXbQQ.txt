@@ -1,0 +1,127 @@
+---
+video_title: "Turso + LibSQL: The $0 Edge Database Killing Enterprise Postgres Bills"
+video_id: zhILRZIXbQQ
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zhILRZIXbQQ
+video_date: 2026-08-06T19:30:00+00:00
+video_description: |
+  First they rewrote SQLite from scratch in Rust, ported Doom to its bytecode VM, and dropped connection latencies from 23ms to 40 microseconds. Now Turso is building a Postgres frontend on top of that same Rust core.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, compiler architecture, and VDBE bytecode mechanics behind Turso Database (Limbo). We analyze how ScyllaDB co-founders Glauber Costa and Pekka Enberg created a pluggable database engine, compiled C source code into SQLite bytecode opcodes, and mapped PostgreSQL's official libpg_query parser onto the exact same Rust storage layer.
+  
+  Furthermore, we dissect the 41 supported vs 345 unsupported Postgres features, examine row-level concurrent writes (BEGIN CONCURRENT), review Quint formal specification reliability testing, compare Turso against Michael Malis's pgrust project, and evaluate whether one shared engine can become the true "LLVM of databases".
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • Turso Database Repository (Rust Limbo Rewrite): https://github.com/tursodatabase/turso
+  • libSQL Engine Repository (C Fork): https://github.com/tursodatabase/libsql
+  • pgrust Project (AI-Transpiled Rust Postgres): https://github.com/mjmalis/pgrust
+  • ScyllaDB High-Performance Database: https://github.com/scylladb/scylladb
+  • Quint Formal Specification Language: https://github.com/informalsystems/quint
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The "LLVM of Databases" Claim
+  1:06 - Clearing Up Turso: libSQL C Fork vs Limbo Rust Rewrite
+  2:36 - How They Rewrote SQLite in Rust (Connection Speed & MVCC)
+  4:07 - Fuzzing with Edgar Allan Poe: Quint Specs & Bug Hunting
+  4:33 - VDBE Bytecode Architecture: Running Doom Inside SQLite
+  5:22 - The Pluggable Frontend: How Postgres Compiles to VDBE
+  6:38 - The Scorecard: 41 Supported Features vs 345 Missing
+  7:55 - pgrust vs Turso: The Two Rust Postgres Approaches
+  9:13 - Final Verdict: Can a Rust Core Replace Enterprise Postgres?
+  
+  #turso #sqlite #postgres #rust #database #systemdesign #cloudcodes #backend #softwareengineering
+  
+  
+  
+  User Queries:
+  turso database limbo rust rewrite sqlite postgres
+  turso postgres frontend pgmicro tursopg
+  sqlite vdbe bytecode virtual machine doom port
+  glauber costa pekka enberg turso scylladb
+  libsql vs turso limbo cleanroom rust rewrite
+  pgrust vs turso postgresql in rust
+  turso begin concurrent mvcc row level writes
+  quint formal specification antithesis fuzzing sqlite bugs
+  llvm of databases pluggable database core
+  cloud codes turso postgres breakdown
+---
+One line described this project on GitHub, a SQL database in Rust compatible with SQLite. That was the pitch. In the middle of July that line changed. It now reads, "Now also speaking Postgres, the LLVM of databases, same repository, same engine." 23,000 stars and one extra front end bolted onto the front. Behind
+
+it are Glauber Costa and Pekka Enberg, Linux kernel people who went on to build Cilla DB together. They already pulled this off once. They rewrote SQLite from scratch in Rust and the thing actually works. Postgres is a heavier target. Just under 56% of developers reported using it last year. Rewriting that
+
+should take a decade. Their claim is that most of the work was finished before they started because the hard part, they argue, was the machine underneath the SQLite, not the SQLite itself, and they own that machine. Here is the scoreboard though. Their Postgres front end lists 41 features as fully supported. 345 are marked not supported.
+
+I counted both out of their own file this morning. So, this sits somewhere between a compiler breakthrough and a very early demo and I want to pin down where. That starts with a mess they made themselves because three separate products answer to the name Turso. The oldest is lib SQLite. SQLite is open source, but it will not take outside patches. So, in 2022 this team forked
+
+it. Open source and open contributions, in their words. 17,000 stars, written in C, embedded replicas and a network server on top, and it runs in production today. The second is Turso database, a clean room rewrite of SQLite in Rust rather than a fork of it, announced in December 2024 under the codename limbo. 23,700 stars as of this morning. The third is
+
+Turso cloud, the managed service you actually pay for. Their own docs say lib SQL has powered it for years and that the Rust engine only arrived on the platform this April in a private beta. One fork, one rewrite, one cloud, all wearing the same word. Their CTO ended up posting a public thread just to explain the difference and said outright that AI agents keep getting it wrong, too. Their own guidance is split down the middle. New project, take the
+
+rewrite. Mission-critical system that has to work tonight, take the fork. The rewrite dropped its beta warning on the 13th of July and it still has not shipped a 1.0. Hold on to that because the Postgres work is happening in the rewrite, not in the fork that runs the paying customers.
+
+So, the question is what the rewrite did to earn that kind of ambition. It went public on the 10th of December, 2024. A thousand stars and 30 contributors before a single article was written about it. Six weeks later, Costa published a post titled "We Will Rewrite SQLite and We Are Going All In." 8,000 stars landed in 1 week and the contributor count doubled. The first
+
+alpha shipped in July 2025 and it was blunt about the holes. Indexes, triggers, views, and vacuum were all still listed as a work in progress. The beta warning came off on the 13th of July this year, 19 months after that first announcement. The readme still tells you to keep your own backups until 1.0.
+
+What they built in that window goes past SQLite. Begin concurrent gives you multiple writers instead of one write lock with conflicts detected per row rather than per page and their own measurement puts it at up to four times faster on writes. Materialized views update themselves live, which Postgres itself still does not do. Async input and output on io_uring. Change data capture, vector search, full-text search on Tantivy, encryption at rest. Every one of those is missing
+
+from plain SQLite. The number I keep coming back to is connection time. Opening a SQLite connection against a 10,000 table schema took 23 milliseconds. Theirs takes 40 microseconds, no matter how big the schema is. That is a factor of 575.
+
+None of that matters if the thing corrupts your data. So, they came at reliability sideways. Deterministic simulation testing, antithesis fuzzing, and a formal specification written in Quint that found more than 10 bugs in SQLite itself. A query rewrite that dropped rows, check constraints that could be bypassed. My favorite piece of that program is the strangest. They
+
+pointed coding agents at the engine in a loop, checking every answer against real SQLite. One run went an hour finding nothing. So, they told the agent to think and act like Edgar Allan Poe. Three new bugs in the next 5 minutes. So, they had a serious database. That
+
+still does not explain Postgres. The thing that opened that door was a property of SQLite that most people who use it every day rarely have to think about. SQLite does not interpret your query. It compiles it into a bytecode language of its own called the VDBE and then runs the bytecode. The instructions are database shaped, things like seek in a B-tree, and the language is not documented or exposed. It is an
+
+implementation detail. Turso copied that design, and then somebody asked the question a compiler person would ask. If this really is a virtual machine, what else can it execute? They answered it in July with a Doom port. C source through LLVM into VDBE bytecode using a compiler they wrote for the occasion. The whole
+
+64 MB address space lives in one blob column. So, pointers are byte offsets into a database value. Each frame comes back through the same upcode a select uses to return a row. The input handler is a where clause. It runs over 60 frames a second in a browser tab. It is a stunt and it is
+
+also the argument. If that bytecode can express a first-person shooter, expressing another database stops sounding impossible. So, they made the front end pluggable. Parse Postgres into a shared syntax tree, compile that tree to the same bytecode, run it on the same storage and the same B-trees. The reason to bother is architectural, not linguistic. Postgres forks a separate
+
+operating system process for every connection, 5 to 10 megabytes each, which is why so many teams run a pooler in front of it. That made sense in the 1990s. It is expensive to rent in 2026. It started as a side experiment called PG Micro, sitting in Costas own personal GitHub account. It is now merged into the main tree, MIT licensed, and an official entry front end from day one.
+
+Go and look at the repository and the post rest directory is right there. A parser built on libpq query, which is the real post rest grammar. So effectively all post rest syntax parses, a catalog layer, a wire protocol server, a psql style shell called terso pg, and its own conformance and regression test directories. That means your existing tools connect. Not a translation shim in front of SQLite, which is how the earlier attempts at this worked. The
+
+post rest grammar goes in the front and the same engine executes it. Now the awkward half. Select, joins, set operations, recursive common table expressions, upsert, sequences, returning clauses, array operators, and enough catalog emulation for a client to introspect the schema. 41 features tested, working. Against that, 345 entries marked not supported. No
+
+procedural language, so no plpgsql and no stored functions, no triggers, no explained, no extensions at all, no replication, no partitioning, no row level security. It also has no authentication and no encryption on the wire. Their compatibility file says it trust every connection that arrives and speaks plain text only. Whatever this is right now, it is not something you point at the public internet. And there's a third category that worries me more than the missing one. Their own document
+
+flags statements that parse, run, return a result, and give you the wrong answer. Distinct on collapses into a plain distinct. Temp is thrown away, so your temporary table is permanent. Partition by is thrown away, too. They published that list themselves, which is more than most projects at this stage manage, and they are explicit that 100% is not the goal. Compatible enough is the phrase.
+
+Costa told The Register there is nothing fundamentally wrong with Postgres, and if there were, they would not be rewriting it. 1 week before all of this, a different Postgres in Rust turned up. P Grust from Michael Malice, public on the 9th of July. Machine translate the C source, then send coding agents through it crate by crate. It passes all 46,066 tests in the Postgres 18.3 regression
+
+suite. Two teams, 1 week apart, aiming at the same target from opposite directions. Turso answered that in their own FAQ, and I think this is the line the whole project rests on. A database is not the place to move fast and break things. Their timeline is deliberately unglamorous. A useful subset of Postgres
+
+in a couple of months, full coverage whenever. Both founders are around 44, and they wrote that they have at least 20 more years and are not in a hurry. The whole company has raised $7 million in one seed round, and that is it. The sharpest objection came from a reader on The Register, and it lands. Put every database on one shared engine, and a bug in that engine takes all of them down at the same time. And on Hacker News,
+
+someone answered the slogan directly. If you want the LLVM of databases, Apache Datafusion already has a claim on that title. Ask Costa where this ends, and he will tell you MySQL works the same way. So does Redis. One core, one bytecode, and as many frontends as people care to write. That is what LLVM of databases
+
+actually means. So let me correct the framing this video was nearly built on. Nothing here is coming for an enterprise Postgres bill. A database with no authentication and no wire encryption cannot take that job, and it is not trying to. The territory it is actually fighting for is where SQLite already lives. A file, a phone, a browser tab,
+
+one database per user or per agent. Cloudflare D1 caps a paid database at 10 GB and a free one at 500 MB. Turso's free tier is 100 databases, 5 GB, and 500 million rows read a month. So, the claim to test is not Postgres in Rust. It is one engine, many front ends, and the only evidence that settles it is whether the second front end costs less to build than the first one did. That is
+
+measurable in public in a directory called Postgres. I would watch that directory.

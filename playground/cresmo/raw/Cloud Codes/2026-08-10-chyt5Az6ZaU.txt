@@ -1,0 +1,125 @@
+---
+video_title: "Kafka vs NATS : Why an 18MB Binary Beats an $11B Stack"
+video_id: chyt5Az6ZaU
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=chyt5Az6ZaU
+video_date: 2026-08-10T16:39:04+00:00
+video_description: |
+  Why is Apache Kafka a 141MB Java distribution with 108 JAR files and an $11 billion enterprise ecosystem, while NATS handles millions of messages a second from a single 18MB Go binary? Meet the architectural trade-offs between log-based systems of record and low-latency message streaming.
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, binary footprints, and latency benchmarks comparing NATS Server 2.14 against Apache Kafka 4.3.1. We examine why NATS bundles JetStream persistence, KV storage, MQTT, WebSockets, and edge routing into one 18.1MB static Go executable (holding under 20MB idle RAM), compared to Kafka's 108 JAR dependencies (including RocksDB 72.7MB alone for Kafka Streams) and mandatory Java runtime overhead.
+  
+  Furthermore, we analyze why IBM paid $11 Billion for Confluent, review Kafka 4.0's ZooKeeper removal and KRaft quorums, explore Derek Collison's 2010 NATS origin story ("Not Another TIBCO Server"), dissect sub-millisecond p99 latency benchmarks, audit the 2025 BSL trademark dispute settlement with the CNCF, and evaluate the exact architectural limits (tiered storage, schema registries, and message ordering) where Kafka is still mandatory.
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • NATS Server Official Repository: https://github.com/nats-io/nats-server
+  • Apache Kafka Official Repository: https://github.com/apache/kafka
+  • NATS Official Documentation & Architecture: https://docs.nats.io/
+  • CNCF NATS Project Landscape: https://www.cncf.io/projects/nats/
+  • IBM Confluent Acquisition Announcement: https://www.ibm.com/news
+  
+  
+  
+  ⏱️ Video Chapters:
+  00:00 - Introduction: NATS vs. Kafka size comparison
+  01:05 - Inside the 18MB NATS binary
+  01:48 - Inside the 141MB Kafka distribution
+  02:59 - Production deployment differences
+  03:28 - Why Kafka is heavy (and why it matters)
+  04:44 - Kafka's recent upgrades and lighter architecture
+  05:22 - The origin story and design philosophy of NATS
+  06:35 - NATS architecture, routing, and latency
+  07:00 - The memory debate: Understanding the benchmarks
+  07:27 - Where NATS falls short (JetStream and storage limitations)
+  07:56 - The NATS licensing drama (BSL, CNCF, and Apache 2.0)
+  08:40 - NATS today: Continued updates, adoption, and AI agents
+  09:33 - Conclusion: When to choose which platform
+  
+  #nats #kafka #golang #java #systemdesign #cloudcodes #backend #microservices #devops #architecture
+  
+  
+  
+  
+  
+  
+  
+  
+  User Queries:
+  nats vs kafka performance benchmark 2026
+  nats jetstream 18mb single binary architecture
+  why apache kafka is 141mb 108 jar files
+  derek collison nats origin not another tibco server
+  ibm confluent acquisition 11 billion dollars
+  nats vs kafka latency p99 sub millisecond
+  kafka 4 0 zookeeper removal kraft quorum
+  nats cncf graduation synadia bsl license settlement
+  nats jetstream missing tiered storage vs kafka s3
+  cloud codes nats vs kafka breakdown
+---
+Two programs that do the same job. I downloaded both of them this morning, so every number here is measured. This one is a single file, 18 megabytes. Unpack the archive and there is nothing else inside it. This one is 141 megabytes spread across 108 separate JAR files. It
+
+also still will not start because the Java runtime it depends on is not in that download at all. The small one is NATS. The big one is Apache Kafka, and Kafka is the one most of the industry actually runs. And in March this year, IBM finished buying Confluent, the company built on Kafka for 11 billion dollars. So, the real question is not which file is smaller. It is what the other 120
+
+megabytes buy. Sometimes they buy durability you actually need. Sometimes they buy a runtime you inherited in 2011. NATS exists because one engineer got tired of that ceremony and wrote a replacement over a weekend. That was October 2010. 15 years on, the weekend
+
+project moves millions of messages a second. So, let us open both boxes, count what is inside, and then find what Kafka still does that this one cannot. Start with the small one. NATS server 2.14.4,
+
+released on the 30th of July. The Linux build downloads as a 6.9 megabyte archive. Unpack it and you get three files, a license, a read me, and one executable. That executable is 18.1
+
+megabytes and it is the entire product. It is the broker, it is the persistence layer, it is the key-value store, the object store, the MQTT gateway, the websocket gateway, and the edge node you push out to a factory floor. There are no plugins to install and no sidecar to run beside it. Point it at a config file or do not point it anywhere at all. It starts on a port with defaults and the thing listening on that port already speaks every one of those protocols.
+
+Now, open the other box, Kafka 4.3.1, the current release out on the 25th of June. Unpacked, it is 141 megabytes on disk and 137 of those megabytes live in a single directory called libs, 108 jar files. The largest one on its own is RocksDB at 72.7 megabytes. That is four
+
+times the size of the entire NATS binary, and it is in there to hold state for Kafka streams, which plenty of installations leave switched off. Alongside the jars sit 79 shell scripts and 16 configuration files, because a distribution this shape needs a separate launcher for every job it can be asked to do. And none of it runs without Java, which is not in the box. The current long-term timer and runtime is another 49.7 megabytes compressed, installed separately, tuned separately, and patched on somebody else's schedule.
+
+So, the tally before anyone has configured a single thing: 18 megabytes on one side, around 190 on the other in 108 pieces plus a runtime you fetch yourself. The container images tell the same story: 6 and 1/2 MiB against 228. But, that is one broker, and one broker is a laptop demo. Every production guide converges on the same shape: three brokers at minimum, plus three Kraft controllers, because the metadata quorum has to survive a node dying, and a heap that starts at 6 GB and climbs from there. NATS wants three nodes, too.
+
+The difference is that all three are the same binary you already downloaded. There is no controller role and no second process type. Three copies of one file find each other, elect a leader, and get on with it, which makes it sound like Kafka is heavy by accident. It is not. Kafka is heavy because of what it was built to survive, and that deserves saying out loud before anyone goes and rips it out of a system that works. Its
+
+founding achievement was sustained volume on ordinary disks. One broker moves somewhere between 100 megabytes and a gigabyte a second, depending on hardware, and it gets there by batching hard, which is also exactly why its per message latency is higher. That is a trade, not a bug. It also treats the log as a system of record rather than as a pipe between two services. Since tiered storage went generally available, old segments move off to S3 or Google Cloud Storage, and the cluster keeps a pointer, so retention stops being bounded by the disks you bought. And wrapped around it
+
+is the part that only surfaces when a team tries to leave. Connect with its wall of ready-made source and sync plugins, streams, the schema registry, MirrorMaker copying topics between regions. That ecosystem is why roughly 80% of the Fortune 100 run Kafka somewhere, and why Confluent had 6 and 1/2 thousand enterprise customers on its books, including about 40% of the Fortune 500. It is also why IBM paid $31 a share in cash. The deal closed on the 17th of March this year. Confluent's last day of
+
+trading was the day before, and the enterprise value came out around $11 billion. So, this is not a stagnant incumbent coasting on installed base. Kafka has been answering the two-heavy complaint itself. Version 4, back in March 2025, deleted ZooKeeper outright. No migration path back, no compatibility mode. The dependency is simply gone.
+
+4.3, in May, landed 25 improvement proposals and over 600 commits. Share groups, so Kafka can finally behave like a queue instead of a log you pull. Broker coordinating, per partition size metrics, more tiered storage repair. So, the incumbent is getting lighter and more capable at the same time. With $11
+
+billion of new owner standing behind the road map. Which means the interesting question is not whether Kafka is bloated, it is what an 18 megabyte binary is actually for. And that starts with the fact that NATS was not designed as a smaller Kafka. Derek Collison wrote the first version in Ruby in October 2010 over a weekend while he was architecting Cloud Foundry at VMware. He was not guessing at the problem.
+
+He had spent years on TIBCO Rendezvous, one of the enterprise message buses that defined the whole category, and he was watching RabbitMQ fall over underneath the control plane he was trying to ship. So, he wrote something with almost nothing in it. Subject-based routing, distributed queuing, a circuit breaker for request-reply, protection against a consumer too slow to keep up. That was the entire feature list, and most of it is still the core today. The name tells you the mood he was in. Officially, it
+
+stands for Neural Autonomous Transport System. Collison has said what he actually meant driving home from VMware that Friday was not another Tipco server. The Ruby version became a Go version 2 years later. The NATS server repository was created on the 29th of October, 2012, and the design principles came through the rewrite intact. Go is also the reason the answer is one file.
+
+It links everything static and hands you an executable. Everything is location-independent, many-to-many by default, and asynchronous down at the protocol level. You publish to a subject, not to a numbered partition on a broker you had to name in advance. That shape is why the latency numbers land where they do. Inside a data center, NATS is sub-millisecond, and roughly 1 to 5 milliseconds at the 99th percentile once you replicate three ways, against 5 to 10 for a Kafka someone has tuned. The memory story
+
+rhymes. The project claims a server typically holds under 20 MB of RAM, and one independent container benchmark measured 6 MB idle for NATS against 327 for Kafka on the same machine. Handle that one carefully, though. The same benchmark reports Kafka managing 1,400 messages a second, which is a client configuration artifact rather than Kafka. Take the idle memory column and leave the throughput column where it is, because here is where the small binary loses, and it is worth being blunt about that. JetStream has no
+
+tiered storage. Nothing offloads to object storage, so retention is bounded by the disks in your cluster, and treating it as the permanent source of truth is swimming upstream. The tooling for reprocessing history in bulk is thinner. Strict ordering means you embed partition logic in your own subject names, and one very hot stream eventually meets the acknowledgement path and stops going any faster, however much hardware you feed it. So, is this a real platform or a very good weekend project that got lucky? Last year, that
+
+question came close to answering itself the wrong way round. In 2025, Synadia, the company Collison founded around NATS, moved future server releases off Apache 2 and onto the business source license and asked for the trademark it had donated to the foundation in 2018 back. The Cloud Native Computing Foundation filed a petition with the US Patent and Trademark Office to stop it. For a few weeks, it looked like one of the most widely deployed pieces of infrastructure in the foundation was about to walk out of the door. They settled on the 1st of May. Synadia assigned both trademark
+
+registrations to the Linux Foundation, the server code went back to Apache 2, and any future proprietary fork has to ship under a different name entirely. 9 months after that settlement, on the 17th of February this year, NATS applied to graduate from the foundation it had nearly left. Almost 8 years after it arrived as an incubating project, that application is still sitting open. The code kept moving through all of it. 2.14
+
+shipped at the end of April with a fast batch ingest mode that roughly doubles published throughput, and both the 2.12 and 2.14 lines took patch releases on the 30th of July. 193 people have contributed to the server, and the official container image has been pulled 244 million times. Around 2,000 companies are documented running it.
+
+Mastercard, AT&T, Rivian, Walmart, Tinder, and the newest thing built on top is a protocol for AI agents, published in May, where an agent registers itself as an ordinary NATS service, and any caller can discover it and stream from it. So, no, 18 MB is not replacing Kafka. If your log is a system of record, Kafka earns its mass and the ecosystem is the actual product. But that is now a claim you should have to prove, and 18 megabytes is a very cheap way to find out you never needed the other 170.

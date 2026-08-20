@@ -1,0 +1,145 @@
+---
+video_title: "Stop Scaling Postgres: The $22 Fix for Connection Crashes"
+video_id: eIABrB2QT2M
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eIABrB2QT2M
+video_date: 2026-08-14T09:00:06+00:00
+video_description: |
+  Why does adding a Postgres read replica double your cloud bill while doing zero to fix "FATAL: sorry, too many clients already" errors? Meet connection poolers, process-per-connection architecture, and the $22/month fix saving database infrastructure.
+  
+  
+  
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  
+  
+  In this deep dive, Cloud Codes breaks down the system design, process memory limits, and query benchmarks behind PostgreSQL connection management. We examine why Postgres forks a full OS process for every single client connection (allocating 9.5MB RAM per socket in AWS RDS & Neon formulas), how serverless Lambda concurrency spikes detonate connection limits, and why read replicas inherit primary max_connections ceilings without adding write capacity.
+  
+  Furthermore, we dissect PgBouncer and RDS Proxy transaction pooling (scaling 10,000 client sockets on 20 database processes), review Supabase's 1-million connection stress test, analyze pg_stat_activity idle vs active query diagnostics, bust the transaction-mode prepared statement myth, and evaluate the Postgres 18 Async I/O engine alongside Andres Freund's threaded architecture roadmap for Postgres 20.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  
+  
+  🔗 Repositories & Sources Mentioned:
+  • PgBouncer Official Connection Pooler Repository: https://github.com/pgbouncer/pgbouncer
+  • Supabase Supavisor Connection Pooler: https://github.com/supabase/supavisor
+  • Crunchy Data Postgres Connection Tuning Guide: https://www.crunchydata.com/blog
+  • Andres Freund Postgres Connection Scalability Research: https://andres-freund.de/
+  • PostgreSQL Official Documentation: https://www.postgresql.org/docs/
+  
+  
+  
+  ⏱️ Video Chapters:
+  0:00 - The 3 AM Postgres Connection Crash
+  1:14 - Process-per-Connection: Why Postgres Forks OS Processes
+  2:17 - The 9.5MB Memory Formula (AWS RDS & Neon Defaults)
+  4:05 - Serverless Detonation: Lambda Concurrency vs Postgres Sockets
+  5:16 - The Read Replica Scam: Why Replicas Double Your Bill
+  6:39 - Diagnosing the Doorway Problem: pg_stat_activity Analysis
+  7:13 - Connection Poolers (PgBouncer): 10,000 Clients on 20 Processes
+  8:19 - Transaction Mode Caveats & The Prepared Statement Myth
+  9:14 - Postgres 18 Async I/O, Postgres 19 Beta & Threaded Postgres 20
+  11:18 - Final Verdict: $22/mo Pooler vs $475/mo Replica
+  
+  #postgres #postgresql #database #systemdesign #cloudcodes #backend #aws #devops #softwareengineering #sql
+  
+  
+  
+  
+  
+  
+  
+  User Queries:
+  stop adding postgres read replicas add a pooler instead
+  postgres fatal sorry too many clients already pgbouncer
+  why postgres forks process per connection memory overhead
+  aws rds rds proxy pgbouncer cost comparison
+  serverless aws lambda postgres connection pooler
+  pg_stat_activity idle in transaction connection diagnostic
+  pgbouncer transaction mode prepared statements fixed 2025
+  supabase 1 million connection stress test supavisor
+  postgres 18 async io vs postgres 20 threaded architecture
+  cloud codes postgres connection pooler breakdown
+---
+3 in the morning, your checkout page is throwing 500s and your dashboard is solid green. CPU 8%, memory comfortable, disk bored. Nothing you are monitoring says anything is wrong. Then you open the Postgres log itself. One line repeated 40,000 times over the last 9 minutes. Fatal. Sorry, too many clients
+
+already. That is the entire error and it is also the entire diagnosis. Your database is not short of CPU and not short of memory. It has run out of something else entirely. It has run out of places to put a connection. By
+
+default, Postgres ships with exactly 100 of them. So you do what the console's blue button suggests and what the internet suggests. You add a read replica. Your bill doubles overnight. The error keeps firing. Because the new
+
+replica has the same 100 slots. The replica is doing precisely what the manual says a standby does. That line is in the docs. People skip it. The fix you actually needed is a single threaded C program and the managed version of it runs about $22 a month. So, where does
+
+that 100 come from? Why does serverless walk straight into it and which metric tells you which fix you need? Because Postgres just shipped the biggest rewrite of its IO engine in years and it did not touch this at all. Open the Postgres manual at chapter one and it tells you in a single sentence. To handle multiple concurrent connections, quote, it starts forks a new process for each connection, not a thread, not a coroutine, an operating system process.
+
+So when your app opens the supervisor process a whole new copy of the database server just for you. It's own memory space, it's own file handles, it's own everything. It lives until you disconnect. Here is the analogy that fits. Most databases are a call center.
+
+One floor, one pool of agents, whoever is free takes your call. Postgres builds you a private office the moment you dial and keeps it standing until you hang up. Which sounds absurd until you ask why. If your query hits a bug and seg faults, it takes down your office. One process dies. The other sessions on that machine
+
+carry on as if nothing happened. That is the trade Postgres made, an expensive front door in exchange for a crash that cannot spread. It has been a good trade for most of this database's life and a large part of why it has a reputation for not losing your data. The design is not wrong. The problem is what happens when you multiply it. Every office costs
+
+memory and the number people quote is 5 to 10 megabytes per connection. That figure is doing a lot of work because it is really two numbers. Andres Freund, a Postgres committer, measured it properly. An idle back end shows about 17 megabytes, which is misleading because most of that is shared. The true incremental cost is closer to 7 and 1/2 and with huge pages on, 1.3. So, the
+
+floor is small, but look at what the company selling you Postgres actually budget for. Amazon's RDS sets your connection limit by taking your instance memory and dividing it by 9,531,000 bytes. That is 9 and 1/2 megabytes per connection, hard coded into a formula. Neon, a completely different company, gives a 4 gigabyte instance 419 connections, divided out, 9 and 1/2 megabytes. Two independent vendors landing on the same budget within a fraction of a percent. Neither published
+
+a blog post saying the process model does not scale. They wrote it into a default. Watch what infrastructure companies configure, not what they announce. One thing to be precise about, 100 is a default, not a law. You can raise it at the cost of a restart and on managed Postgres, you often cannot touch it. Supabase gives its small tier 90
+
+connections and caps its largest tiers at 500, however big the machine gets. For most of the time this design has existed, 100 was plenty because of an assumption that went unstated. Connections are long-lived. You ran a fixed fleet of app servers, each one opening a pool at boot and holding it for weeks. 20 servers, 20 connections each, 400 in total, and that was your entire company. The front door was slow,
+
+but you walk through it once. Then the execution model change underneath it, and the assumption went unexamined. Serverless functions do not boot once and live for weeks. They boot on a request, do one thing, and die. And every execution environment that wakes up opens its own connection, not a shared pool, its own. Postgres has no
+
+idea these are the same application, so it forks a fresh process for each one, then tears it down again seconds later. The most expensive thing your database does on repeat once per request. Here is the collision in one line of arithmetic. Your Lambda concurrency is 3,000. Your max connections is 500. 2,500 requests
+
+get that 3:00 in the morning error in the same second, and it does not arrive gradually. A traffic spike does not add connections, it detonates them. Hundreds open in seconds, each forking a process, each asking the kernel for memory on a machine that was idle a moment earlier. This is a design built for long-lived server processes meeting an execution model built on the opposite assumption. Neither side is wrong. They were built
+
+for different decades. Web servers hit this exact wall first. Apache forked a process per request until the traffic made it untenable, and Nginx won by refusing to give a connection its own thread. Postgres is Apache in this story. The event loop has not been merged yet, so your site is down, and the graph everyone is staring at says database. The instinct is to scale the
+
+database, and to most teams scaling a database means one thing, add a replica. Receipt one. On RDS, a read replica is built as a standard database instance at the same rate as its instance class. Same size as the primary means your database bill just went to 200%. There is no copy discount. Receipt two. And
+
+this is the one that stings. A hot standby must run with max connections set at or above the primary's value, so the replica does not hand you an independent pool of slots. It inherits the ceiling and it is obliged to match it. You paid for a second machine and bought the same limit twice. Receipt three. Your rights still go to one
+
+place. If the connections drowning you are rights or transactions that touch a right, the replica cannot take a single one of them. Now, in fairness, a read replica is a good product and there is a version of the story where it is exactly right. Heavy reads, slow queries, a primary pinned at 100% CPU, buy the replica. It is the correct tool sold as the answer to a question it does not answer, which gives you the split and it takes 10 seconds to check. Pegged CPU,
+
+slow queries, high load, you have a work problem and a replica moves work. Idle CPU, connections refused, you have a doorway problem and a replica gives you a second doorway exactly as narrow as the first. One query settles it. Select count, state from pg_stat_activity group by state. Here is a real example from Crunchy Data's own guide. Seven active,
+
+69 idle, 26 idle in transaction, 11 idle and aborted. Seven sessions were doing work, 106 were holding a forked operating system process open in order to do nothing at all. That database was never busy. It was occupied. So, before you buy the second machine, answer this first. Is your CPU pegged or is it
+
+bored? Both fixes cost real money and only one of them is aimed at the thing that is actually failing. What a pooler does is almost embarrassingly simple, which is part of why it gets skipped. It sits in front of Postgres and speaks the same wire protocol on both sides. Your app thinks it is talking to Postgres.
+
+Postgres thinks it is talking to one very well-behaved client. In between, it does the thing your database cannot. It hands one real connection to whoever needs it right now and takes it straight back the moment they are done. 10,000 clients, 20 actual processes, the weight difference is the whole argument. A Postgres backend is a forked process with a 9 and 1/2 MB budget attached. A
+
+client inside PG bouncer is about 2 KB, roughly 4,000 times lighter for the part of a connection that spends most of its life doing nothing. The production numbers back that up. Supabase's small instance, 90 direct connections, 400 through the pooler on identical hardware. At the top of their range, 500 direct against 12,000 pooled, same machine. Supabase benchmarks its own pooler holding just over a million simultaneous client connections against a pool of 400 connections to the actual database. 2 and 1/2 thousand clients
+
+riding on each Postgres process. But, a pooler is not free, and anybody selling it to you as free has not operated one. Transaction mode is where the savings come from, and transaction mode means a client does not get the same back-end twice in a row. So, anything that lives in a session breaks. S E and reset, unavailable. Listen, unavailable.
+
+Cursors held across transactions, session-level advisory locks, ASCO-level prepare and deallocate, unavailable. PG bouncer prints them in a table, so you cannot claim you were not told. There is one item on that list the internet is still wrong about. Half the post you will read say transaction pooling breaks prepared statements. That stopped being true in October 2023, and in January 2025 it became the default.
+
+So, the most repeated objection to pooling has been fixed for nearly 3 years, and is still being copied into new architecture decisions. The real bill, meanwhile, is small. Amazon's managed proxy runs about $22 a month against a second instance at full price, which brings us to the strangest part of the story. On the 25th of September, 2025, Postgres 18 shipped an asynchronous IO subsystem, the biggest change to how Postgres reads from disk in years. Sequential scans, bitmap heap scans, and vacuum can now queue their reads instead of waiting on each one in turn. Independent benchmarks put cold
+
+sequential reads two to three times faster on fast local disks. Though there is a caveat worth keeping. Planet Scale tested 17 against 18 and found the fancy option is not automatically the winner. On network attached storage, the plain default beat it. There is no single best setting. Now search those same release
+
+notes for the word pooler. It is not there. Search for a change to max connections. There is not one. The engine got dramatically faster at reading and the front door did not move a millimeter. Postgres 19 is already in
+
+beta with the second beta landing in July and general availability expected this September or October. Planned advice, native repack, parallel auto vacuum, property graph queries, no built-in pooler. To be fair, they fixed the worst version of this once. Throwing snapshot rework in Postgres 14 took a server carrying 10,000 idle connections from 370,000 transactions a second up to 1.1 million. The idle penalty was
+
+essentially erased, but that fixed how snapshots are computed. It did not touch the process. His own conclusion, in his own words, "These improvements do not address all connection scalability issues in Postgres. The real fix is threads instead of processes and that work targets Postgres 20 at the earliest." There is one more door out of this room and it deserves naming. A
+
+meaningful share of the applications reaching for a pooler or a replica are not large. They are one modestly sized box away from needing neither. Lightstream streams is SQLite's changes to object storage continuously and in October 2025, it added point-in-time recovery from about a dozen files. For an app that fits on one machine, the connection ceiling stops existing because there are no connections. The scaling conversation usually starts one step later than it should. So, the
+
+verdict. If your log says too many clients already while your CPU sits under 30%, the pooler wins and it is not close. $22 a month against a doubled instance bill for a failure the replica cannot fix because it inherits the ceiling you are trying to escape. The case it does not win pegged CPU and slow reads. That is a work problem. The
+
+replica is the right by and a pooler on its own makes it worse by letting more work through the door. Know which one you have before you spend. I would still take the pooler at three times the price but read the feature table before you flip the mode. And a bet you can hold me to. Postgres 19 goes generally available this autumn with no built-in pooler and 20 will not ship one either because the people who could build it are building threads instead which leaves the question I actually want answered. The
+
+major managed providers all ship a pooler in front of Postgres as standard now. So at what point does the patch stop being a work around and start being the missing feature?

@@ -1,0 +1,134 @@
+---
+video_title: "Rust Is Eating C & C++: Why Google, Microsoft Switched"
+video_id: 9b86BUxdm54
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9b86BUxdm54
+video_date: 2026-08-06T09:00:17+00:00
+video_description: |
+  In January 2026, the US federal memory safety deadline passed with zero enforcement—and yet Rust entered the TIOBE Top 10 anyway. Why are Google, Microsoft, Cloudflare, and Debian abandoning C and C++ without any law forcing them to?
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this deep dive, Cloud Codes breaks down the technical forces behind the Rust systems engineering revolution. We analyze why 70% of Microsoft and Chromium CVEs stem from memory bugs, how Cloudflare Pingora replaced NGINX to cut CPU usage by 70% across a trillion daily requests, and how Discord eliminated Go garbage collection latency spikes by rewriting read-state services in Rust.
+  
+  Furthermore, we dissect Google Android's 1,000x vulnerability density drop (reducing memory bugs from 76% down to under 20%), review Microsoft's Windows kernel Rust integration (DirectWrite Core shaping glyphs 15% faster), explore Vite 8 Rolldown and Turbopack taking over front-end build pipelines, and evaluate DARPA's TRACTOR AI C-to-Rust auto-translation benchmark.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  • Cloudflare Pingora Proxy Engine: https://github.com/cloudflare/pingora
+  • Vite Rolldown Bundler: https://github.com/rolldown/rolldown
+  • Next.js Turbopack Engine: https://github.com/vercel/turbo
+  • Rust for Linux Kernel Project: https://github.com/Rust-for-Linux/linux
+  • Google Security Memory Safety Blog: https://security.googleblog.com/
+  
+  ⏱️ Video Chapters:
+  0:00 - The Government Deadline That Failed
+  0:44 - The 70% Memory Bug Problem (Microsoft & Chromium)
+  3:03 - Force #1: Cloudflare Pingora (Trillion Requests / Day)
+  4:09 - Force #2: Discord's GC Latency Spikes (Go to Rust)
+  5:06 - Google Android: How Memory Bugs Dropped 1,000x
+  6:23 - Windows Kernel Rust: DirectWrite & Graphics Drivers
+  7:15 - Rust Eats JavaScript Tooling (Turbopack, Rolldown, SWC)
+  8:41 - Force #3: Linux Kernel & Debian APT Build Dependency
+  9:44 - C++26 Memory Safety Delay & Bjarne Stroustrup's Warning
+  10:21 - DARPA TRACTOR: AI C-to-Rust Translation Benchmark
+  12:11 - Final Verdict: Is Rust Really Eating Everything?
+  
+  #rust #cplusplus #programming #systemdesign #cloudcodes #linux #softwareengineering 
+  
+  User Queries:
+  rust is eating everything memory safety revolution 2026
+  cloudflare pingora vs nginx performance benchmark
+  discord go to rust rewrite garbage collection latency
+  google android memory safety bug drop rust
+  microsoft windows kernel directwrite rust
+  vite 8 rolldown vs rollup swc oxlint
+  debian apt build requirement rust compiler
+  darpa tractor c to rust ai translation benchmark
+  c++26 memory safety profiles delayed bjarne stroustrup
+  cloud codes rust memory safety breakdown
+---
+A US federal document put a hard deadline on two programming languages, C and C++. January 1st, 2026. Ship them past that date with no published memory safety plan and you are officially a national security risk. That date passed 7 months ago. Nothing was enforced. No
+
+registry, no penalty, no list of who complied. And Rust is winning anyway. In July, it entered the TIOBE top 10 for the first time in its history. Number 10, up from 18th a year ago. Eight places in 12 months with no law pushing it there. So, the deadline is not the
+
+reason. Three other forces are moving C code to Rust and not one of them is a government. I will name all three. The third is why the word requirement now fits and it reached you through a package manager. Start with the number the whole argument stands on.
+
+Around 70% of the bugs Microsoft patches each year are memory bugs. Microsoft security engineers published that in 2019, measured across every CVE going back to 2006. Chromium came out near 70 as well. Same bug family, different code base, same share of the total. These are not crashes. A use after free is a
+
+foothold. One bug family is 70% of the way in, which is why in December 2023, eight agencies across five countries published a joint paper asking software vendors for memory safe road maps. CISA, the NSA, and the FBI alongside Australia, Canada, the UK, and New Zealand. 10 months later, CISA and the FBI attached the deadline. Publish that road map by January 1st or be listed under product security bad practices. It reads like a mandate, but
+
+the same document says the guidance is non-binding and imposes no requirement to do so. So, there is no enforcement arm behind it, no compliance report, and no way to count who actually published one. I went looking for that number and it does not exist. Then, 3 weeks after the deadline passed, the pressure moved the other way. On January 23rd this year, the White House issued memo M-26-05.
+
+It rescinded the secure software attestation rules and called them unproven and burdensome. The form vendors had to sign became optional. In the same month, the deadline expired. There is one piece of binding law in this story, and it is European. The Cyber Resilience Act has been in force since December 2024. Its reporting
+
+obligations start on September 11th this year, about 5 weeks from now. But, read the text and you will not find a programming language anywhere in it. The act mandates outcomes: secure by design, a software bill of materials, a vulnerability handling process. The full weight of it lands in December 2027. The agencies kept publishing anyway, and their own numbers complicate the story.
+
+Microsoft memory bugs fell from nearly 70% of its CVEs in 2016 to about 50% by 2023. Half the patches, still one bug family, 7 years on. And when Project Zero counted the zero-days actually fired at people in 2021, 58 of them, 67% were memory safety bugs. In one Mozilla audit, it was 32 of the 34 worst bugs. This is the class attackers reach for.
+
+So, force number one set the direction and then let go of the wheel. The second force has no memo behind it at all. It is a bill, and the clearest version of it sits in front of about a fifth of the internet. Cloudflare front door used to be Nginx, written in C, one worker process per core, each with its own private pool of connections. In 2022, they replaced it with Pingora, their own proxy, written in Rust, serving over a trillion requests a day. Same traffic, 70% less
+
+CPU, and 67% less memory. Median time to first byte dropped 5 milliseconds, and the 95th percentile dropped 80. A third of the hardware doing more work. The number I keep coming back to is connection reuse. For one large customer, it went from 87% to 99.92.
+
+160 times fewer new connections to the origin, or as Cloudflare put it, 434 years of handshake time saved every day. They open-sourced Pingora in 2024, and by then it had handled close to a quadrillion requests, which is the point. That was not a rewrite for safety. It was a rewrite that paid for itself in machines. Discord hit the same wall from a completely different direction. Their problem was not memory
+
+safety at all. It was the garbage collector. Go forces a collection every 2 minutes whether the heap needs one or not. On their read state service that meant a latency spike every 2 minutes forever. They tuned the Go version hard and the spikes stayed because the floor was in the runtime and not in their code. So, in 2019 they rewrote the
+
+service in Rust. The sawtooth flattened. Latency, CPU, and memory all improved at once, which almost never happens in a rewrite. They pushed the cache ceiling to 8 million entries and average response times fell to microseconds. AWS later measured that class of result at 100 times better tail latency. It kept
+
+happening elsewhere. Dropbox rewrote the sync engine running on hundreds of millions of devices in Rust. Figma rewrote its multiplayer server and serialization got more than 10 times faster. Meta made Rust one of four supported server languages back in 2022. But the most convincing number in this whole story is not a benchmark at all.
+
+It is Google counting its own vulnerabilities. In 2019, 76% of Android security bugs were memory safety bugs. By 2024, 24%. Last year it fell below 20% for the first time. And here's the part that makes it repeatable for you.
+
+Google did not go back and rewrite the old C code. They wrote the new code in Rust and left the old code alone. Because old code stops producing new bugs as it ages, the bugs are born in the new code. Change the language you write new code in and the curve bends without anybody touching the old system. There are about 5 million lines of Rust in Android now. The measured memory
+
+safety vulnerability density is 0.2 per million lines against roughly 1,000 per million for the C and C++. 1,000 times fewer. Google also reports that Rust changes get rolled back about four times less often and spend 25% less time in code review, which is the part engineering managers actually feel and the reason this argument stopped being about safety and started being about throughput. Rust is not magic though and Google is careful about that. In August
+
+last year, Android patched a buffer overflow inside an unsafe Rust block in an image decoder. It was caught before any public release, but it existed. Unsafe blocks are where the guarantee stops. Microsoft went further than most people realize. There is Rust in the Windows kernel today. The graphics
+
+region code is 36,000 lines of it shipping since a 2023 insider build with a file name ending in RS. Their text engine, DirectWrite Core, is 152,000 lines of Rust replacing 96,000 lines of C++, and it shapes glyphs 5 to 15% faster. More lines, less C, and quicker on screen. Then in December last year, a Microsoft distinguished engineer said out loud that his goal was to remove every line of C and C++ from Microsoft by 2030, around a billion lines with AI agents doing the migration. He walked it back the next day. Windows is not being rewritten in
+
+Rust, he said. It is a research effort on migration tooling. I think the correction is more useful than the headline because it names the real bottleneck, not the will, the tooling, which brings me to the half of this story that has nothing to do with security. Rust also ate JavaScript build tooling, not the language, the tools underneath it. If you ship JavaScript for a living, you are already running Rust, probably without picking it.
+
+Next.js 16 ships Turbo pack, written in Rust as the default bundler for both development and production. Two to five times faster production builds and up to 10 times faster refresh while you are typing. In March, Vite 8 replaced both of its bundlers with Rollup. Also, Rust, esbuild, and Rollup, two of the most depended on tools in front end, retired in a single release. Vite is what most
+
+new JavaScript projects start from. The migrations came with real numbers. Linear build time went from 46 seconds to 6. Beehive down 64%, Ramp 57, Mercedes-Benz.io 38. Teams do not swap a build system for
+
+ideology. They swap it for that, and the adoption is measurable because NPM counts downloads. Last week, Rollup did 87 million against Rollup 124 million. The Rust replacement is already at 70% of the tool it replaced 3 months after version 1.0. SWC does 40 million
+
+downloads a week, Oxlint 14 million, Biome 12. ESLint still does 155 million, so this is a migration in progress, not a finished one. The speed claims come from the projects themselves. Oxlint says 50 to 100 times faster than ESLint. Force three is the one that turns a preference into a requirement, and it has nothing to do with speed or with law. Last December, the Linux kernel
+
+formally ended what it had been calling the Rust experiment. The patch subject line was exactly that, conclude the Rust experiment. Miguel Ojeda sent it after the maintainer summit decided Rust is staying. Android binder driver, 6,000 lines of C at the heart of every Android app message, landed as Rust in kernel 6.18. But, the moment it stopped being
+
+optional was Debian. From May this year, APT, the tool that installs software on most Linux servers on Earth, requires a Rust compiler to build, not to run Rust software, to build the package manager itself. Package parsing and signature verification moved into Rust, and any architecture without a working Rust toolchain gets sunset. That is a build dependency, not a recommendation, and you inherit it whether or not you have an opinion about the language. So, that is the shape of the whole thing.
+
+The requirement did not arrive from CISA with a deadline attached to it. It arrived through your kernel, your package manager, and your bundler one dependency at a time. Now the part the headline skips. C++ was supposed to answer this itself. In March, the committee finished C++ 26 and the memory safety profiles did not make it in. They
+
+slipped to 2029. The rival proposal, safe C++, which borrowed the Rust borrow checker outright, was abandoned the year before. The study group voted 19 to 9 for profiles instead, and the author of the losing paper said profiles will not ever work. Bjarne Stroustrup, who created the language, called the government pressure a credible threat and warned that without an answer C++ faces a painful decline. That is the creator of C++ saying it, not a Rust fan.
+
+Meanwhile, DARPA is trying to skip the argument entirely with a program called Tractor, translating all C to Rust automatically using AI. Six university and industry teams with MIT Lincoln Laboratory scoring them every 6 months. The first public scorecard landed in February. 150 test each. The best team got 98.7%
+
+functionally correct. The worst got 48. Average failure rate across all six teams, 17.8%. And that was the easy battery. It
+
+deliberately excluded dynamic memory allocation and complex pointer aliasing, which is exactly where C hurts. Speed held within 2 to 5% of the original. Safety did not. Unsafe operations per test varied by a factor of nine between teams. So automatic translation is real and nowhere close to done. That is why this
+
+is a 10-year arc rather than a switch. The sizes say the same thing. Rust is 1.34% of the TIOBE index. C++ is 9.12. C
+
+is 10.86 and rising. GitHub Octoverse report does not mention Rust at all. It's fastest growing languages list names Java, C#, PHP, and C++. Whichever chart you pick tells a different story, which is a good reason to distrust the takeover framing. What is actually
+
+happening is narrower and more durable. New systems code at the layer where a memory bug becomes a breach is being written in Rust. Almost half of organizations now use it in some non-trivial way, up from 39% 2 years ago. 85% of them say it paid off, and the top complaint has not moved in 10 annual surveys, compile times. Rust is not the only language aiming at this either. Mojo reached its 1.0 beta in
+
+May, pitching Python syntax with systems performance on a $250 million round. Its compiler is still closed. Rust has shipped every 6 weeks for 11 years. So, is Rust eating everything? No. It is
+
+eating the part where a bug costs the most, and it got there without the mandate that was supposed to push it. If you write C or C++ today, the useful question is not whether you switch. It is which of your dependencies makes that choice for you first, and how much notice
