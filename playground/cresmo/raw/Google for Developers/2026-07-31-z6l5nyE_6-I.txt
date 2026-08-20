@@ -1,0 +1,62 @@
+---
+video_title: "Voice Agent observability with LangSmith"
+video_id: z6l5nyE_6-I
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=z6l5nyE_6-I
+video_date: 2026-07-31T16:22:34+00:00
+video_description: |
+  Caroline di Vittorio, Engineer at LangChain, builds a voice agent with the Google ADK and the Gemini Live model, then sets up tracing in LangSmith to see exactly what the agent is doing under the hood. Gemini Live is Google's native audio model. It's speech-to-speech, taking audio directly as input and producing audio as output without transcribing to text, which keeps latency low and makes the agent's voice sound natural and emotive.
+  
+  What's covered: building a terminal-based weather assistant with two tools, defining the LangSmith Google ADK plugin, registering it on the runner, recording user and agent audio so the trace captures only what the user actually heard, and reading the full trace in LangSmith, including audio playback, transcripts, tool calls, interruption events, and token-level cost breakdowns.
+  
+  Get started with the Gemini Live API. Grab an API key in Google AI Studio and start building.
+  
+  Resources:
+  Gemini Live API docs → https://goo.gle/4hDlQYv
+  Google ADK docs → https://goo.gle/3U4sjlq 
+  LangSmith docs → https://goo.gle/3Tt9CI4  
+  
+  What are you building with Gemini Live? Drop it in the comments.
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: 
+  Products Mentioned:  Google AI, ADK,
+---
+Hello How are we today. Good thank you. What's the weather in San Francisco.
+
+It's currently 85 degrees Fahrenheit and sunny there. Anything else you'd like to know. Today, we're going to take a voice agent built using the Google ADK and the Gemini Live model and trace it to lamb-smith to see exactly what's happening under the hood of this voice agent. Gemini app live is Google's native audio model. It's speech to speech, which means it takes audio directly as input and produces audio directly as output without ever transcribing that audio to text.
+
+This means voice agents built with Gemini Live are low latency, meaning there's very little lag between when the user is done speaking and when the agent responds. And it also enables the agent's voice to sound a lot more natural and a lot more emotive. When you're working on building a great voice agent, using the Google ADK and the Gemini Live model is the first step to building that agent. But to take that agent to production safely, you need visibility into what your agent is doing, and the ability to test its behavior in a number of different scenarios that it might encounter with real end users. And that's where blanc-smith comes in.
+
+Blanc-smith is a platform built by LangChain for AI agent observability and evaluations. So today, we're going to walk through how to set up tracing billings-smith for a voice agent that's built on the Google ADK using the Gemini Live model. The agent that we're tracing today is a very simple weather assistant that you can run from the terminal. The agent has access to two tools, one to get the time and one to get the weather. This means that we can ask the agent for the weather in any city, and the agent is able to do the lookup and respond to us with a full weather update for the city that we requested.
+
+We've also given this agent a prompt in a real voice agent. This prompt would be much longer, with complex instructions for how the agent should behave in a number of different situations. Here it's only a few sentences long, because we just want to set the tone for the agent and make it aware of its capabilities. The rest of the code is just plumbing to get the agent working. So for example, here we're just taking the user's audio and sending it to the model for processing.
+
+And in this code here we're setting up some configurations for our voice agent. So for example, we are enabling input and output audio transcription as well as setting some sensitivity thresholds for our voice activity detection. The rest of the code in this event loop here is for updating the UI in the terminal, so that we can follow along as we're talking to the agent. Now let's set up tracing to set up our tracing. We're going to use the native Smith aidc tracing integration that was released by.
+
+In the Details of the integration are in the docs under trace voice AI frameworks Gemini Live. The docs walk through the steps required to set up the tracing to Smith, and those are the same steps that we're going to follow now. The Smith tracing integration is a plugin to the SDK. So the first thing that we need to do is define the plugin.
+
+This links with Google ADK plugin class is imported directly from the SDK. On it, we're setting some configurations like a project name to trace to some tags, some metadata, as well as a lambda for pulling the thread ID. Then we need to register the plugin on the runner and we need to do that here. The plugin handles the bulk of the tracing, but the one thing that we still need to set up is capturing the conversation audio. Making sure that we record the conversation audio is important because at the end of the day, the source of truth for the voice agent's interaction with your customer is that audio recording.
+
+And so the trace would be incomplete without it. The plugin here has two functions for us to use to record the conversation audio record user audio and record agent audio, both of which take a chunk of audio and append it to the recording that we're tracing on the user's audio side. That's easy to do when we receive an audio chunk from our user. We're also going to trace it. And so we can do that here.
+
+The tricky part is recording the agent's audio because we want to record only what the user heard, not what the agent generated. So for example, if the agent generated a very lengthy response, but the user interrupted the agent before the agent was done speaking, we want to cut that audio to whatever the agent said before it stopped talking. Getting that set up correctly is going to depend a lot on where your input and output audio are streaming from, and how you're integrating with those speakers. In my demo, I have a set play callback function on this audio out class, and so this is the right place for me to record the agent audio. So let me add it here.
+
+And with that, we're done. Let's run our agent to take a look at a trace.
+
+Hey there. How are you today. Good Thank you. What's the weather in San Francisco.
+
+It's currently 85 degrees Fahrenheit and sunny there. Anything else you'd like to know. Yes what's the weather in Los Angeles.
+
+It's about 86. Tokyo in Tokyo, it's sunny and 83 degrees. Anything else I can help you. Check like, maybe the time somewhere. No that's it.
+
+All right. Sounds good. Have a great day. This is what the trace looks for the conversation I just had with the voice agent. You can see all of the details of the conversation, as well as all of the implementation details of the voice agent.
+
+So first off, you have the audio right here above the trace. You can see when I spoke highlighted in blue. And when the agent spoke highlighted in orange. You can see the transcript of the conversation here on the right. This is based on the input and output transcriptions that Gemini Live provides us and that we enabled in our code.
+
+If you remember back to the configurations that I was showing. You can see every tool call, including the arguments, the result, and how long it took. You can see all the different events like turn completed, as well as the interruption event from when I interrupted the agent's response. And lastly, you can also see all of the costs breakdown under usage metadata. You can see all of the tokens that were used, including the special audio tokens, both for input and for output.
+
+And this is great to give you visibility and accountability into the costs of your agent. Tracing is the first step to taking your agent into production. From these traces that your agent is sending to lindsmith, you can now do everything you'd normally do with text traces, run evals, add traces to data sets, annotation queues, build dashboards, share traces, debug, and much more.
