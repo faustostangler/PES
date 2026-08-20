@@ -1,0 +1,147 @@
+---
+video_title: "This Database Handles 630 Billion Rows a Year"
+video_id: 3hgRw7E4vQA
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=3hgRw7E4vQA
+video_date: 2026-08-13T13:02:59+00:00
+video_description: |
+  Get started with TimescaleDB from TigerData for free: https://tsdb.co/twt-evc-demo
+  
+  Your Postgres table handles millions of rows just fine — until it doesn't. At hundreds of millions of rows, your index stops fitting in memory, inserts slow down, and every dashboard query becomes a full table scan. I built a real EV charging network with hundreds of virtual chargers generating 630 billion rows of data per year to show you exactly how this problem gets solved at scale.
+  
+  Want to LEARN how to build useful AI agents that actually get things done? Go here: https://aiagentbuilders.co/yt
+  
+  How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-aug26
+  
+  🎞 Video Resources 🎞
+  TigerData: https://tsdb.co/twt-evc-demo
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:35 | The Invisible System
+  01:48 | Where It Breaks
+  04:02 | Tiger Data/TimescaleDB
+  05:10 | Building the Network
+  06:20 | Database Schema
+  08:21 | Speed/Size Comparison
+  
+  Hashtags
+  #TimescaleDB #TigerData #ScaleWithAI
+  
+  UAE Media License Number: 3635141
+---
+Here's a problem every developer eventually hits. Your app collects timestamp data, and Postgres handles it fine until the table hits a few hundred million rows and then everything falls apart. Now, in this video, I'm going to show you how massive real world systems handle this exact problem. Using the most extreme example that I could find, which is an EV charging network. Now this generates over 630 billion rows of data per year.
+
+And I actually built my own charging network with hundreds of virtual chargers to show you exactly how this works and how you can use these same tricks in your own projects to speed up your database. Okay, so the US just crossed 250,000 public charging ports, and every single one of those ports is basically a computer with a network connection that never stops talking. Now, all of these chargers speak a protocol called OCP. That's the open ChargePoint protocol. And if you look at what's actually flowing over the connection there, there's four types of data.
+
+actually flowing over the connection there, there's four types of data. So think voltage current power energy. Now every charger sends a reading about 15 to 30s from every plug around the clock. Now this is pretty heavy. This stream just never stops.
+
+It's always sending data. Now second we have charging sessions. Now that's when you actually plug in a car. So when a car plugs in, you know a new session starts. Now when you unplug it, the session dies.
+
+And that meter reading from that session is going to decide what you get built. So this is effectively the billing data. Now this is also the money right. Because we're charging the customers this amount. So you cannot lose this information or you cannot get it wrong.
+
+Now third status updates. So available charging faulted. This is how the network finds out that a charger in a parking garage just died, for example. Right. And then fourth we have the boring configuration data.
+
+So a model firmware. How many plugs are there? You get the idea. Now think about scaling all of this up. A network with 10,000 chargers that sending readings Now first you have meter values.
+
+A network with 10,000 chargers that sending readings every 30s generates about 20,000 rows of data per second. Okay. So that's roughly 630 billion rows per year. And what makes that genuinely hard is that the readings and the billing data are completely different types of data.
+
+a customer disputes a bill, you need both of them in a single query. So the question becomes, how do you actually store 630 billion rows of data? Now option one is to use plain Postgres. So you have one big table and then you have an index on the timestamp. And this works great at first, which is kind of what makes this dangerous.
+
+And this works great at first, which is kind of what makes this dangerous. Because as the table grows into the hundreds of millions of rows, the index is going to stop fitting inside memory. The inserts are going to start slowing down, and every dashboard query is going to turn into a scan across the entire table. That's literally the size of a hard drive. So at this kind of scale, this is going to actually happen in weeks, not in years.
+
+Now option two is what most teams usually do. So they split up the data. They put the readings in a specialized time series database, maybe something like InfluxDB, and they keep the billing data instead of Postgres. Now sounds pretty reasonable. You have two tools that are each doing what they're good at.
+
+But here's the query that really kills this setup. Somebody disputes a $40 charge, for example. Now, to answer that dispute, you need their billing record and you need the actual electricity readings from that charging session. Now that's a join between two different tables. But the billing record is inside something like Postgres.
+
+And your readings are in another database. And you can't do an efficient join across two different databases. So now you're effectively writing a bunch of code that's going to query both sides, match things up, try to match the timestamps, Now, option three is to throw all of this inside of something like MongoDB. and you maintain that code forever, which is quite annoying.
+
+Now it has time series collections, but there's no real compression and no way to skip data by time. Now, what that means is that your storage bill is just growing forever. And just by the way, this is not just an EV charger problem, right? IoT sensors, server logs, financial data, user analytics. Right?
+
+Anything with a timestamp that's going to keep growing will eventually hit this same wall. Now this video is sponsored by Tiger Data. And that's because they built timescale DB, which is the standard open source solution to this exact same problem. And the important thing to understand is that timescale DB is not a new database
+
+that you have to learn. It's actually just an extension for Postgres. So you use the same SQL, same drivers, same tools that you already use and you just enable it with literally one line. So what it does is it changes how your data gets stored under the hood, specifically for time series data like this. And real companies run exactly this workflow with timescale DB.
+
+For example, one energy company compressed 15TB of data down to just one and cut their database bill from $9,000 per month just to. For now, another one replaced four separate databases with it and got about 350 times faster queries. Now, everything that I'm about to show you here in this demo that we're going to go into runs on Tiger Cloud, which is their managed platform. into runs on Tiger Cloud, which is their managed platform. Now they have a free trial, there's no credit card Now they have a free trial, there's no credit card and you can get a database running in about 30s.
+
+I'll leave a link to it in the description in case you want to check it out. But of course, let's get into the demo and I want to show you how this actually works. So you can see how you manage such massive amounts of data. Okay. So what I'm going to do now is show you all of this in action.
+
+So I've spun up a free service on Tiger Cloud, and I've written a simulator that acts like a real charging network. Now there's 500 virtual chargers, 875 plugs. I have them spread across many different cities. We have some that are fast chargers, some that are slow chargers, and virtual cars will actually plug in, unplug, start a session. You know, stop a session. You get the idea.
+
+What I'm doing here is every second of real world time is simulating or is 30s of simulated time. And you'll see that we have like the network power. We have all the different chargers available here. I can click into them so I can see what's going on. If a charger chargers available, if the Chargers fault it, I can press it and we can see what happened.
+
+And we get all of the logs and the data. Now it's streaming all of this information at once. And if I go here we can see we have a 1247 rows being added every single second to our time scale database. So it's continually growing in size while the simulation is running. Again, this is meant to kind of give you a sense of what would happen if we had even 10,000 chargers, but we have much more data streaming into this database.
+
+So right now I've got 23 million rows, and I want to show you what this simulation looks like and how we can handle this amount of data. So let's have a quick look at the database schema and the different tables that I created here. There's three main ones I want to go over now. Table one is meter values. And this is the table that gets absolutely hammered with data.
+
+Because every reading from every charger is landing inside of this table. So there's hundreds of rows literally every single second forever. And what you can notice here is that this is just a normal, regular Postgres table. The only thing that's special about it, it's just a few lines that I added underneath. So there's this line right here Create hyper table.
+
+Now what that line does is it tells time scale DB to automatically split this table into smaller pieces behind the scenes. Specifically, it does one piece per day. Now they call these chunks. And the reason this matters is pretty simple. When a query asks for yesterday's data.
+
+Postgres now only has to look inside yesterday's chunk instead of digging through the entire table. Now, you don't need to manage any of this yourself. You literally just write this one line that I showed you here, and it's going to happen automatically, specifically for the time series data. Now table two is the charging sessions. And this is the one that includes all of the billing data.
+
+So it's one row per charging session. So who charged when they started when they stopped, how much energy they used and then what they're actually going to get billed for. And look this is a completely standard normal Postgres table. It has the primary key. We have the foreign key references. Nothing special right.
+
+And that's intentional because billing data isn't a huge amount of data that just keeps coming. It's normal relational data. And we can keep that under control. Now the point is that both of these pieces of data can live in the exact same database. And in this schema I can join this data together.
+
+And then table three is the status events table. Now this is effectively the health data. So every time a charger changes state available you know faulted charging whatever a new entry will land here. Now we also have a hyper table because this can be more data than the billing one. Right. We can have a lot of information here.
+
+Same thing. It's just one line which makes it very fast for us to query. There's a few other queries and tables I have in here, but generally speaking, these are the three main tables that we need to be aware of. So if I go back to the simulation here, you could see it's still running. We're still collecting data.
+
+And this again is kind of a visual of what this would actually look like. Cars coming in, cars coming out. Session is finished. We're tracking all of the information. We're doing all of the sensor readings, and it's all at the exact same time being added to our database at this point, 1100 rows, 1200 rows per second continuously being filled up and added to the DB, which is going to get very large, very fast, that we have all the metrics here like I showed you.
+
+And if you want to see like a random bill, for example from user, we can run a query and it will pull it up. So you can see, for example random customer when they plugged in, how long they were there, the charger they use and then how much they were billed for. And it gives us the full sensor readings. Now at this point, if you're still watching the obvious question becomes okay, is using something like timescale DB actually better than Postgres? And if so, how much better is it?
+
+And I want to show you some real demos here so you can see exactly what the speed difference is by literally just enabling this one feature with timescale DB. So in order to do this, what I'm going to do is take the exact same data that I currently have. So I'm just going to pause the simulation, and I'm going to pipe all of that into a plain Postgres database that doesn't have time scale DB enabled. So it just doesn't have that one line that you saw when I was, you know, defining the schema. So I'll press this button will build out that database which is going to take a few minutes.
+
+And then I'm going to run the same queries, the same joins, everything on this different type of data. And
+
+Because you'll see with timescale DB it's a lot less. Okay. So the plain Postgres database finished building and we can see right away that the sizes look like this. And I'm going to explain why. So in plain Postgres 2.35GB in timescale
+
+DB 3.47, the reason why time scale DB is currently bigger is because I haven't yet compressed the table. Now in timescale db, it has a native feature that allows me to compress any of the time series data, and it will make it significantly smaller. You can see we have eight chunks already created, because we have eight days of data that have been filled up here, and it will automatically make a new chunk each day, but we haven't compressed anything. Whereas with plain Postgres this is a fresh table
+
+And we can verify the same thing from the Tiger Cloud dashboard here. Okay. So what I'm going to do now is I'm going to compress the hyper table. And I'm going to show you how much space we actually save when this compression is enabled. So let's press the button.
+
+It's going to compress our hyper tables. Now just so you're aware you can actually automatically compress the tables if you want. So for example you can add a compression policy and you can define how you want to actually compress the tables. I didn't do that because it was going to mess up how I was filling this in in this simulation. But now with the manual compression, you'll see in a minute how much space we're going to save. Okay.
+
+So it just finished the compression. It just did the first six chunks because of how I have it set up right now. But you can see we effectively went to about 30% of the original size with 3.46 is 1.23.
+
+Now I'm just by running that compression, if we compress the other two chunks, then we're going to get another, you know, 25% benefit and be under one gigabyte in terms of total size. So that's the first advantage is the amount of space this actually takes up when the compression is enabled. Okay. Now the next comparison I would argue matters a lot more. And that's actually querying the database.
+
+So what I'm going to do is just run a few queries here and show you how it compares when we do it in the timescale DB enabled database versus plain Postgres. So what this is going to do is go through all of the readings, work out the average
+
+power for every charger and then show me the top ten power readings. So it has to look through pretty much the entire table. And this is the query that every operations dashboard is going to run. So you'll see that when I run this it's going to take a while because it needs to go on both the Postgres one, the normal one and time scale DB. And you can see when we have a look here, this is the speed difference that we get.
+
+So notice this is the query that was ran right. It's running every power reading in the table and getting them as an average per charger. In plain Postgres it took nearly 17 seconds which was stalling our result here in timescale DB it took 5.4 seconds. And using the continuous aggregate, which is something that I've set up in the database as well, we got about 1.7 seconds, so it's significantly faster,
+
+ten times faster using that aggregate inside of timescale DB. And if I open this up you can see the aggregate looks something like this. We're effectively what we can do is create a materialized view that continues to get updated. So that's even faster for us to pull that data from by using the time scale data. Now the idea with the continuous aggregate is the timescale.
+
+DB just keeps a small summary table that has the hourly totals per charger, and then it updates that summary automatically as the new data is streaming in. So your dashboard never actually needs to look at all of the 24 million raw rows of data at once. It just reads the summary table, which is what makes it really fast. And the thing is, the summary table really is barely growing, which is why all of this is going to stay extremely fast, even when you get into billions of different rows. Now, the plain Postgres version here just continues to get slower and slower over time.
+
+Because no compression is occurring, it needs to read the entire database every single time. Now we can do the same thing here with a one day aggregate, and you'll see we get very similar results. Now you can see we get a very similar performance here. Postgres 5.3 seconds, timescale DB 1.9 seconds.
+
+And we get the same answer from both using a query like this okay. Now the next comparison that I want to move over to is the billing dispute that I kind of started this video with. So imagine a customer calls and said this bill is wrong. You know, I didn't use this much power or whatever. Now, to settle that, you need two things.
+
+You need the bill which lives in the sessions table, and you need what the meter actually recorded when that car was plugged in, which is in the readings table, which is buried in about 24 million rows of data. If you remember earlier when I was mentioning the split setup where we had two separate databases and how you would have to stitch a bunch of code together in order to actually pull that data. Now here, what we can do is just run one single SQL query, and we'll be able to get all of the information for the bill. So for example, if I pull just a random bill here, we'll have a look at it and you'll see that it will join the info together. Okay. So quite quickly we get the response here.
+
+We have the session data. So the customer the charger when it was plugged in. And then we get all of the sensor reading data which is showing up right here that this shows exactly all of the sensor reading data. You can see we have 56 power readings, one for every 30s during this 28 minutes, which gives us those 56 readings. We can check them, verify them, sum up all of the amount of power that we use, and we get the kilowatt hours right here to verify that the bill and the readings actually match.
+
+Now, just to be fair here, if you want to do simple stuff like you just want to look up one Chargers last reading, if you have a good index, plain Postgres will be very fast as well okay. And the insert speed is going to be very similar. Now at 20 million rows right. Like Postgres can still survive. We can still get the information.
+
+But remember that we're talking about legitimate networks that could have billions in the case of EV charging networks, 630 billion rows right now, that's 35,000 times more than what I just showed you are approximately. And at that scale, the storage difference that I'm talking about, you read speed, right. The continuous aggregate, all of those aren't things that are just nice to have. They're literally the difference between a database that works and one that's going to fall over every few weeks when the data completely fills up. Now, just two quick things worth knowing.
+
+Everything you just saw is running on the smallest instance that Tiger Cloud offers. You can see I just have two gigabytes of memory, right? And it's using the smallest instance. It's also streaming from my machine over the public internet. If you want, you can also have all of the old data automatically move over to cheap S3 buckets instead of staying all on this device.
+
+And it can still be queryable based on how Tiger data sets this up. Now Tiger also has an MCP connector, and this means that you can hook this database up, swing a cloud code or cursor, and have I manage it automatically so it can create services, run queries, all of that kind of stuff. And that's actually how I spun up this full project. The I just had cloud code using the service for me, automatically adding the data. You get the idea.
+
+Okay, so my honest take after building all of this here is that if you're going to be working with time series data, enabling something like timescale DB is really just a no brainer. It's literally just a few lines that you change inside of your SQL when you're going to configure this. It's open source. You can use it existing with Postgres, so you don't really need to change anything. And of course, if you want all of this handled for you, you could do it inside of something like Tiger Cloud, which I'll leave a link to in the description.
+
+Anyways, guys, that's all I have for this video. If you enjoyed make sure leave a like. Subscribe to the channel and I will see you in the next one.
