@@ -1,0 +1,802 @@
+---
+video_title: "50 Million HTTP Requests/Month ($15 Budget) [First 2 Hours]"
+video_id: wL3maSWEoh8
+channel_name: "Cododev"
+channel_id: UCEygwyqjUUMj6TOnxMsDjjQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=wL3maSWEoh8
+video_date: 2026-08-14T18:56:03+00:00
+video_description: |
+  A completely new style of education while dealing with real projects with real users: Let's go ahead and take on a challenge of handling 50 million real HTTP requests per month on a $15 budget. This will be a very extreme environment, and we have around 50,000 lines of source code, 5 SQL databases, Redis, 175 HTTP routes, compression, encryption, and so much more. Many don't think this will be possible, but this challenge will significantly expand your creativity, ability to innovate and your problem-solving skills. We will deal with many different programming languages and technologies throughout this journey, including Rust, C, Java, Go, Swift, Node.js, AWS, Google Cloud, Cloudflare, NGINX, Redis, Postgres, Docker and more!
+  
+  Full Course: https://cododev.ca/udcc
+  All Resources: https://github.com/Cododev-Technology/weer/blob/master/docs/udcc/RESOURCES.md
+  
+  Vox Application: https://apps.apple.com/app/vox-transcribe/id6785103852
+  Cpeak Framework: https://github.com/Cododev-Technology/cpeak
+  
+  ----------------------------
+  Chapters:
+  ----------------------------
+  Introduction 00:00
+  Introduction to Weer 11:09
+  Deploying Weer With Docker 22:28
+  SSH Seamlessly 35:14
+  Cleaning Up Docker Files 43:59
+  Deploying Weer Natively – Installation Step 56:36
+  Deploying Weer Natively – Running Everything 1:09:02
+  Backup & Break 1:22:04
+  Handling Our Secrets 1:36:26
+  Setting Up the Rest of Our Secrets 1:53:30
+  Introduction to Pagser 2:00:22
+  Deploying Pagser 2:12:02
+  
+  
+  www.cododev.ca
+  
+  --------------------------------------
+  3HCNETH2XCVPOXHK
+  RME4UURLCD2ZOAZK
+  IEAI7FVZSW1K6T64
+---
+Let's go ahead and handle 50 million real HTTP requests per month. And our budget is only $15 a month. These are real-world requests. Some of them are very complicated doing tens of thousands of operations each. And most importantly, we have real business logic with real users. It's
+
+going to be a wild run. And here are some stats to give you some context. We're going to have 50 environment variables with about 175 HTTP routes. So, you're not going to see me spinning up a machine running a hello world application on it and show you the number of requests. This is going to be on a magnitude thousands of times greater than that. There's going to be websockets
+
+and realtime chat, lots of serverside rendering. We'll be logging every request coming into the application. So the route, the response time that it took and more. We're going to take security very importantly. So there will be encryption all around, not only just from the proxies over to the clients, but also from our origin server to our proxies. We'll have compression. We'll
+
+have a full-fledged authentication system with password reset, registration, verifying email, and more. So we're going to be also handling sending professional emails. We'll have NGINX running on top. We're going to have Docker, Redis, and we'll use Redis primarily for streaming. We're going to have five SQL databases and we'll have a lot of file uploads, media processing, and also storage.
+
+We will also achieve the famous 99.9999999% durability for our database and media storage. We can also do that for our logs if you'd like. Now, not that the number of lines of code matters, but again, just to give you some context, I have prepared around 50,000 lines of code for this project that we're going to go over. Now, we'll also take egress very importantly because it's usually going to be a big part of your bill. It's a quick cash grab for some of these big tech companies. So, we're going to be
+
+pushing back against this by a lot. We're going to have five main projects that we're going to deploy here in this project. We have this Java application. It's a pretty simple landing page. We have this newsletter functionality and contact us. We also have a rust project and we have both
+
+a web application and an iOS application for it. So I've also gone ahead and created an iOS application and published it on the app store and you can also go ahead and download that. So one solid backend that powers two different frontends. There's also going to be two nodejs projects and these can be fullblown SaaS products. One of them is this Pagser application which is a content sharing platform.
+
+You can go ahead and start your blog on it. There's a complicated comments functionality in place. We have a lot of media uploading here. We are handling profile pictures, page photos, attach files, and so much more. We have a lot of serverside rendering right here for handling our public pages because SEO here is very important. And there's a lot more going on here that we'll
+
+get into. There's also this other project which is our URL shortener app. Now, it might seem very simple, but our goal here is to be one of the best URL shortener applications on the internet. And whenever your goal becomes being the best, you're going to soon face a lot of challenges that you have not anticipated before. Anything that you want to do, no matter how simple it is, if your goal is being the best, it'll turn into a massive challenge. And best is a subjective term,
+
+but what I mean by that here is that if you take some random people and you show them some of the best URL shortener applications that we have available right now, a good portion of them should pick our application to be the best one and prefer to use that one over the other ones. And they should have no clue who the heck we are. Now, of course, we can't please everyone, but if we can see that a good portion of them are going to prefer this one, we're going to say that we have achieved our objective. I've actually done this test a few times and some people started to prefer this one and it was very exciting. Hopefully one day I can share that result with you. There's
+
+still a lot more that I need to do but that'll also give us a lot of opportunity to learn about UX and user behavior. Now we also have a nextjs project right here. This one is like Facebook marketplace where we can go ahead and create a new ad and talk to different people. So there is this chatting functionality, notifications and more. We have massive front ends here for these projects. We have lots of React code, code splitting, many different pages, lots of CSS,
+
+dark theme, and of course, responsive design, and so much more. And most importantly, the part that I'm mostly excited about is that we have real business logic with real users. This changes everything. We are no longer in an educational environment. We are now in the real world. and
+
+you're going to see how things will start to be so much different when that's the case. Now, if you're seeing this and you're wondering, gee, how is this even possible? A simple RDS instance from Amazon that's just for one database is going to cost us $15 a month. And now you're telling me that we're going to have all of this on that budget. Well, if that's what you're thinking, oh boy, do I have so many surprises for you. There's going to be a lot more going on than
+
+what I'm showing you right now. We're going to for example deal with Terraform, Cloudflare, AWS, Google Cloud. We'll see C, Swift, Python, Go, many different languages. Actually, I will also demonstrate a few important concepts with my own home lab to show you how you can get creative and save thousands of dollars a year in cloud costs without sacrificing availability, performance, or security. I'm not a fan of cloud only approaches, especially now that we have AI. A hybrid cloud
+
+plus on premise is going to give you the maximum power for innovation and cutting cost. We'll see that later on. Let me also clarify what I mean by 50 million requests per month. Now, if you do the math, that's going to be a steady 20 requests per second, but we shouldn't provision for just that. If our goal is 50 million per month, we should also take into account that we're going to have daily peaks as well. And that's usually around 3 to five times your normal load. So, we also need
+
+to make sure that we can easily handle 60 requests per second and don't end up with a crazy CPU usage or our RAM getting filled up or anything like that. Now, we also would take it a step further and say that we're going to provision for also these 10x rare spikes. So maybe it's right before Thanksgiving or something that we haven't anticipated and we're going to get a huge volume of requests coming into the application. So in that case that'll be around 200 requests per second. Now we will also say that we're going to have an estimated revenue of around $300,000 per year. If you're handling this amount of requests, again you can go ahead and do some math. For
+
+example, see how many daily users you've got. I spent a couple hours on it and I came up with this number, but it can also be as high as a couple million dollars. So, this is a pretty conservative estimate if you are handling this many requests per month, but we're going to go with this and we're going to say that our challenge is to handle all of it with just 15 bucks per month and that's in USD. This is going to be a very extreme environment that we're putting ourselves onto, but that's going to help us expand our creativity and improve our thinking process by a lot. This will then show you exactly what to do later on if you want to add on to this cost to maybe reduce down your down times from maybe five hours a year over to just maybe one hour a year or something like that. That's as far as I want to get into it. There's a lot here to unpack. So, you'll know that
+
+by the time that you finish the course. I'm super excited to show you this project. This has been the biggest project I have ever worked on in my life. Not only I spent months and months working on it full-time, but I also spent years prior to that designing and planning it to make sure that we have a completely new style of education for the age of AI. And I firmly believe that this is how education should be now that we have AI at this scale. And yeah, everybody says that it's
+
+not financially worth it to put this much effort into an educational project, which I agree. And despite doing this project putting me in a bad financial position since I poured a lot into it, I still kept fighting for it to make this dream come true because creating this project was a lot more of a spiritual experience for me than just doing it for money. And there are two reasons for that. One, again, it's that due to AI, I saw that a vast majority of the educational content that we have right now is totally outdated. And even the new ones coming out, they're not really taking into account how powerful some of these Claude and OpenAI models are getting and they will get in like 5 to 10 years. So I went all in to make sure that we have this completely new style
+
+of education especially for DevOps engineering. Another reason is that I saw the potential that this project has for saving millions of dollars of waste from the world or at least keep that money in small businesses as opposed to having this massive transfer of wealth from small businesses over to a few big tech giants. I want to see small businesses doing better instead of having a few tech giants controlling everything. That's going to be a lot better for the overall economy. You have to understand that these big cloud providers have dedicated billions of dollars to marketing. They have marketing on some crazy scale. I'm talking scale of Coca-Cola, Apple,
+
+and even more. They have extremely high profit margins and clearly what they have been doing has been working out, but actually mostly in their best interest and not in yours. and they have shifted the public opinion about themselves so much that you even see that in a vast majority of educational content and also in the AI outputs. So, we'll be pushing back against that a lot here. Amazon is definitely not going to be happy with me doing this project, but I don't care about adding to their crazy profit margins. My main goal here is to save you and your company time and money. So
+
+no matter how much you invest going through this, say you spend 40 hours and 30 bucks, my promise to you is that you will get back that time and money by many times over over the course of the next few months of your career. I'm pretty sure it will be the case for a vast majority of people going through this, but not for everyone. So I apologize in advance if you are going to be one of those few that will not see that benefit. Okay, super excited to get into it. Let's get started.
+
+[music]
+
+In this lecture, we're going to have an introduction to the first application that we're going to deploy in this section. So, this is a URL shortener application and you can go there by going into weer.pro Pro and then right here go to the GitHub repository. The link is here in the footer. Now, there's actually a lot more going on here than what meets the eye and we're going to get into them in just a bit. So, here's the source code and I have also added in a setup file which
+
+you can check out by here. Now, we have three different ways to set this up. One is either using Docker or we can do it natively for production or natively for development. We're going to see these first two here in this section. But for development, it's also pretty similar. So if
+
+you want to see how that's done, just take a look at that. Now, let's talk about the stack behind this project and then we're going to get into cloning it and deploying it. Let me just use this application pretty quick. So you can just put a link right here and then shorten it and that's it, right? And you can also change your type. So if you want maybe a six character code instead of a
+
+digit code to get a permanent link, you can switch to that. If you want a very short code that's only two characters, you can switch to ultra code. But here you have to be logged in. All right. And we've got a couple different types here. So we have a lot of routing done behind the scenes for
+
+it for handling these different types. And you can also log in here with Google or hopefully by the time that you're going to be watching this with email and password too. But right now that feature is still in development. Now the technologies used behind this project are as follows. So we have NodeJS for the server and we also have another NodeJS process that's our janitor. So we
+
+have two processes here running on the back end to handle different operations. Janitor as of now is going to handle the views. More on that later. But by the time that you're going to be watching this, maybe this janitor is going to be written in Rust or C++ because our goal is to be able to handle about a million reads per second. And for that, we have to rewrite some of the portions of the program from Node to a native language like Rust or C. Now for databases, we have Redis and we
+
+also have postgres. In Redis, we're using Redis streaming. So now, let me just show you this view logic pretty quick. If we want to handle about a million reads per second. So a read here by that I mean whenever somebody goes to a shortened link and then get redirected to the actual link.
+
+All right. So you might be thinking oh there's no write operations here. We're not writing to the database. We are just reading from the database. But if you think about it here we have a view logic. So we're going to need to save these views somewhere and they're being saved to postgres.
+
+So we do have a wright operation for each view. And the job of this janitor and Redis streaming here is to eliminate this process. So what's happening here is that upon each view the server is just going to push something here to Redis and Redis here is in memory and our memory our RAM is way faster than our disk. So we're not being bottlenecked here by the disk or the database. So that stuff is just being pushed here and then as time goes by this janitor application is going to read the views from Redis and then in batches write them to postgres. So this is a common setup
+
+that you're going to see a lot in distributed systems. You have something like Rabbit MQ or Kafka or Redis streaming in this case where you would just stream data over to them. For example, maybe seeing the clicks on the screen. trying to write all of them to database is going to be in a lot of cases extremely slow and it would cost a lot of money. But just offloading them to these different solutions is going to speed things up a lot and save us a lot of money. We're
+
+going to see that more later on so that this is going to make a lot more sense to you. Actually, we can run our application with both Redis enabled or disabled. So, we're going to do that and then do some benchmarks to see how much benefit we're getting here out of Redis. All right. So that's for the backend structure. Now on the front end side we have a React project. We
+
+also have a SASS project. Now SASS is like something on top of CSS so that you can now write CSS in different files. It adds on some functionality to CSS itself. But ultimately it's going to spit out a single CSS file. All right. But we do need to compile that. It has its own dependencies. It
+
+is its own separate project. Now, we also have a reusable folder that is like a mini framework that we're building here for the front-end site. Now, let me show you that here in code. So, feel free to clone this one on your machine. We're going to clone it in just a bit on our server, but let me I have already cloned it and it's here opened up. Now, if you go into the packages,
+
+you can see all these different ones that we've got. So, the server and then the React files here inside of web. Now this is a mono repo meaning that each one of these packages that you see here is a separate project of its own. So another approach of structuring this code would be to have each one of them pushed into its own GitHub repository. Okay. Well, that's not something that
+
+we're doing here because we want to keep things clean all in one GitHub repository. So that's what we're doing here. But if you take a look, each one has its own set of dependencies. All right. Right. So, we're installing React here for the reusable one. And then we're installing it again
+
+here for the React project itself. All right. Now, if you don't know what a package.json is, this is where we define our dependencies for that project. So, this is kind of like cargo in Rust or the Maven file in Java or the condo files in Python and so forth. All right. So,
+
+pretty straightforward. Now, a benefit of yarn workspaces here is also that it's going to put all these packages installed inside of a single node modules. All right? So, we're not going to end up with them getting duplicated all around. We're installing React only once and we're also sticking to the same versioning with all of them. Now, we also have another package called common
+
+and this is where we're going to share logic between the front end and also the back end. Right? Right now it doesn't have a lot of stuff inside but if you take a look here for example we have our API types. So here in the URL for example so this is how we're going to return the data here to the front end. So now if I for example change something. So let me just show you that
+
+here pretty quick. Now right now a lot of them are empty because they're still being actively developed. But to show you one example. So here if I go into the server code and then source and then I want to just take a look at this logic here. So the URL one and if I scroll right here. So here we
+
+have the API type and it's being used right here. So this is where we're returning some JSON from the back end over to the front end. Okay. Now in most cases the back end is being done by one team and the front end is being done by another team. So you want to enforce some sort of a structure so that both would adhere to the same language. So if one day maybe a backend developer decides
+
+to change the format of this from this maybe to this, you're going to see that we're going to immediately get a compiled error that this is not what the front end accepts. Right? So this is one of the goals of the common right here to make sure that we're not going to end up with these inconsistencies and this would actually result in a lot of bug fixes at compile time. And yeah, that's pretty much it here for common. We also have all of our link types right here. So this
+
+model right here that I opened up and I showed you different links, each one has its own type. Each one has its own unique way of being represented inside of our database. So we're giving them different names. And this is our single source of truth that both the front end and also the back end utilize. All right. So that's the purpose of the common. Now the entire front end sounds
+
+a little bit too much work, but ultimately all we want is an HTML, CSS, and JavaScript file, and that's it. If we're doing code splitting, we can maybe end up with multiple JavaScript files. Or if we maybe have a dark theme, you can imagine that maybe we have a separate CSS file for the dark theme and another one for the normal theme. All right, but at the end of the day, we would just end up with these different files that our backend is then going to serve to the client. And by the way, the entire project here is written in Typescript, apart from the SASS files, of course. And if you don't know what TypeScript is, it's just a programming language on top of
+
+JavaScript that would make us write a little bit safer JavaScript code. All right, so we're going to add on types and all that stuff. And then we need to compile the TypeScript to JavaScript because browsers do not understand TypeScript. So that's something that we got to handle here with this project as well. Now again, all the front-end code here. So this reusable right here. So you can
+
+see here that we got like a mini framework. So we have like a drop- down thing that we can keep reusing all around our React project. We have the modals and stuff like that. All right. So all this reusable common and then the React and also the styles right here. They would all end up
+
+getting compiled into those three files. So HTML, JavaScript and also CSS and they will all be put here inside of the server and this public one. All right. So here you can see that we have the scripts and none of them is actually here getting pushed to GitHub. So we have to manually build them before we do the production deployment. All right. Same here with the styles. You can
+
+see the coloring here that they're here with this gray out color because they're not being pushed. Now we're going to see the exact same structure later on with Java, Rust, and so forth. Right? So none of this stuff is related to Node.js. This is just common backend structuring. Now,
+
+one more point. The backend is being powered by Cpeak. So, it's another framework that we're also building ourselves. So, that's something else that we got to take care of as well. And it's a common thing you would see in some companies. You would see them sometimes develop their own frameworks
+
+and then share that code with all their projects. Now, this is not inside of our codebase. It's a separate package that has been deployed into NPM. All right. So, we need to download it as a separate dependency to power this project. So, in the real world, you sometimes would actually
+
+end up doing that with Java. Maybe you want to create your own package and then push it and then download it later on for your projects. Now, you might be a little intimidated at this point that there seems to be a lot going on here with all these packages and the front end. And maybe you're wondering, oh, the deployment here is going to be a massive pain. But actually, not at all.
+
+It's very straightforward here to deploy this. I have taken the time to make sure that this process is going to be as simple as possible. So you clone one command and there you go. You have everything set up and this is what you should also be wanting to do in your own projects to make sure that the job of your developers is going to be as simple as possible, right? You want to make life easier for your team and not make it a massive pain to go over everything and set things up. All right, so
+
+that's about a quick introduction to this project. And in the next one, we're going to go ahead and deploy this first using Docker and then later on we're going to do the deployment natively as well.
+
+All right, let's now go ahead and deploy our project. So I'm going to go ahead and launch a new instance. Now, for the name, because this is a machine that we're going to stick with to deploy all our projects into, let's give it a decent name. All right, I'm going to go with Sky, but you can choose whatever you want. And we want to have something to easily identify this machine with. All right. And also make sure to type something clean like that because
+
+what I want to do later on is that whenever we are inside of our terminal, we should be able to just type sky and then SSH into that machine automatically. So now we don't need to worry about the PEM file, the username or anything else like that. All right. Now just like before, I'll go here with Ubuntu and the same machine that we had before. So I'll change here to ARM. And
+
+then we had T4G.small. We have 2 gigs of RAM and two CPU cores. Now the key pair because I have changed my region. I'm going to go ahead and create a new one. I'm going to call it UDCC. So,
+
+I'm going to use this key for pretty much anything that I can here inside of this course. So, I'm going to go ahead and create this one. And just like before, I'm going to go ahead and create an allow all security group and add that right here. But we will very shortly change this one. Now, for the storage, I'm going to go with 25 gigs. I did a bit of math, and this should be
+
+enough. Again, we're going to have five databases on this. We're going to be saving a lot of logs, and there's going to be a lot going on on this. So, we want to have a fair bit amount of storage here for this one. And that's why I'm going to choose this.
+
+All right, let's go ahead and see if we can SSH into it. Now, what I'm going to do first is to move the key that I downloaded from my downloads. So, udcc.pm. And I want to move it here into my SSH folder. Okay. And now, let me SSH into that. So, -i ~/.ssh/udcc.pm and then the username is
+
+ubuntu@. Let's now go ahead and copy paste the DNS or the IP address but the public one. Now actually I just forgot about one more point and that's the permission on this key. So let's do that as well. You can always find what that number is by right clicking clicking on connect and then SSH client and there it is chmod 400. So let me do that here. chmod 400.
+
+And now I want to go ahead and run that SSH again.
+
+Now let's go ahead and deploy the project and see how easy it's going to be. Now here I want to go back to the GitHub repository and let's click on here and copy the HTTPS link and then clone it. So git clone. Now we need to grab a specific branch called udcc. And the reason that we're going to do this is that this project is not being built for this course and it's a production project. So
+
+as time goes by, there's going to be a lot going on there and sometimes maybe something is going to happen that would break this setup. So I just want to make sure that there's a separate branch for this one. So I'm always going to keep that updated to make sure that the instructions in this video would work properly with that branch. So if I'm ever going to change that, I will also change this video on this course. All right, that is now cloned. Now before we proceed, let's also install
+
+Docker. Now to do that, just Google install Docker and then here from the official website, just scroll down until you find the version, which is Ubuntu in our case. So I'll click on it, and then there should be some sort of commands right here that would tell us how to install it. There it is. So we need to ultimately do apt install docker and also some more things right here. We also
+
+need docker compose. Now before we do this we also need to make sure that our package manager of Linux is updated. So there's a lot of code here that looks a little bit too much but don't be scared by this one. Just copy it and paste that right over here. All it's going to do is tell our operating system where to look to download Docker and that's it.
+
+All right, that's it. And now we can go ahead and download Docker itself. So I'll copy this one, paste that command in. And now it's going to download a few megabytes of data.
+
+All right, we should now have Docker installed and also Docker Compose. So, we need both here to make sure that we can set this project up. All right, now let's go to the project directory. Now, here's the beauty of Docker. You just clone and then you run one command and that's it. You get the project
+
+deployed. So, let's go ahead and do that. Now, the one command that I have prepared for you is a bash file. So, we can just say docker-run.sh. Now, it's going to ask you a few questions. And also,
+
+if you don't have the environment variables, it's just going to tell you to copy that over. So, just copy the env.example here over to .env. Now, if you go ahead and take a look inside of that .env file,
+
+which is inside of the server, and then here's the .env.example. Here we have some configurations and also our secret. For example, the port number, the Google client ID and secret.
+
+You have to put these two if you want to use the Google OAuth to sign in and sign up, but you don't need to do that here. It's optional, but you're just not going to be able to sign in with that. And also here we have the Redis URL and also some stuff here related to postgres. Now, the only thing that you need to probably change here is maybe set Redis to true and change the cookie key. So, let's do that as well here. And I'm going to go ahead and vim this one. I think
+
+we need to install Vim. Nope, we don't need to. So let's come down here and for the key here you just want to have some random string and that's it. Make sure that it's at least 32 characters. And then I'm also going to change Redis here to true. You can set it to false if you don't want to.
+
+And I think that should be pretty much it. Now I'm going to hit the escape key and then save and exit. Now let's run that docker run one more time. All right, cool. So now it's going to prompt us for a few questions. First is the database setup. You want to say yes here because it's going to
+
+create all the tables and add on some data into them. And then it's going to ask you if you want to run it with PM2 or a single process. I'm just going to say node itself. Right? So I'm just going to hit enter with the default one. And also here just a default answer. And that's it. Now if you
+
+get this error that it cannot connect, you can try to run it with sudo. So sudo and then docker run.sh and then all the default answers and it should work. Or you can add Ubuntu to the docker group. It's two simple commands. Maybe we can do that later on but for now this is good enough.
+
+So let's wait for it to finish. And this is you can see here is going to run yarn install which is going to install all the dependencies that this project needs to run. And it's also going to set up Redis postgres and both the janitor process and also the server process. So Docker here is going to do a lot. Now if you go back right here to the code, let me show you what's going on here. So this is an SH file which there's a lot of code here, but honestly it's all simple
+
+stuff. Nothing too complicated. So basically all the questions that it asked. For example, here's that check that if there's no .env, it's going to prompt you to copy that and that's it. But
+
+here in the docker compose, you can see that we have Redis, we have postgres, and we also have one for the server application and then one more here for the janitor. So this has four separate services here inside of docker. Now it's going to build these projects. So it's going to build React and then build the SASS files to get a CSS file which is happening right now. And it would also build the reusable and common ones. It's also now building the server to compile from TypeScript
+
+to JavaScript. So that now NodeJS can run it. Again, there's a lot going on here. So this would actually probably take a few minutes to complete. So just sit back and let it finish. Actually, my
+
+bad. Did I answer that correctly or not? So let me go back here. Seed the database? I think that yeah the default here is actually no. So that's why we did not see the seeding. So we're seeing a lot of
+
+errors here. That database Weer does not exist. So here I need to put in Y. And then the rest we can go with default. Now we don't need to rebuild the image. So let me go with no. And this should
+
+now seed the database. All right. So there you go. Creating the tables and whatnot. All right. So now
+
+at the end it's going to tell you that the server is on port 2080 and also connected to Redis postgres and also we have this view consumer group created. This is that Redis streaming in place which is going to handle the views. So now these logs are coming in from janitor process. So janitor itself is also connecting to Redis and postgres and these logs are for the server itself. Right? So server is also connecting to both Redis and postgres. That's why you will get
+
+them twice. Now we can exit out of this. There's no need to keep that open. Now let's go ahead and make sure that this is working fine. So I want to go ahead and copy the DNS of the Sky server.
+
+Copy that. Paste and go to port 2080. Just say continue to sites. And there you go. We now have the project set up. Let's just make sure that it works fine. So I'm going to copy that. Paste that
+
+over. Click on shorten. Now, this link that you're going to get here is not okay, but we're going to fix this up when we're going to put the domain on top of this one so that we're going to get a nice domain here with the actual code. But yeah, it works fine. And you can also check maybe different functionalities. And there you go. Now, login. If you do want to log in, you're going to have to
+
+put in a good code for the Google client ID and secret, which is free to get from Google Cloud. And I'll see if I can add in some instructions to show you how to do that, but we don't need to do that for now. All right. So, that's the beauty of Docker. And you might be wondering, does it now sacrifice our performance? And the answer is not really. And we're going to do some benchmarks
+
+later on with Docker and without Docker to see how much of a difference we're going to see. It's not going to sacrifice performance by that much. If you do a Docker ps, all right, I can't type here because apparently my connection was cut off. So let me try to SSH one more time into that. And now here if you do a docker ps well again we have to do sudo docker ps to see the images that we have built. Now let me just fix this pretty quick because it's kind of annoying. Now
+
+errors like these are where AI would shine. Just dump the error right there and it's going to tell you exactly what to do. All right. So I'm actually going to maybe let you handle this yourself. But again, all you have to do is do something like this. Sudo user
+
+mod and then add to group docker and then this current user. Right? So if you echo that user, this is the Ubuntu one. Yeah, I got just cut off again because my connection is not stable. I need to change my connection in just a bit. All right,
+
+so we just added that in. And then you have to do new group Docker. And now Docker would work just fine without the sudo command. We'll get into that in the Unix stuff, but for now, this is good enough for our use cases. We just want to make sure that it would work fine. [music]
+
+In this video, we're going to see how easily we can connect to our machine so that we can just open up a new terminal tab and type out Sky and get into our remote machine, plus more. So, we're going to also talk about how to easily upload and download data from your server to your local machine and vice versa. If you are dealing with multiple computers, maybe you've got a desktop machine and two laptops and you're not doing this thing that I'm going to show you here in this video, you have no idea how much time you're wasting. So, this is not even related much to the server stuff, but it would actually end up saving us a lot of time down the line. So, let's go ahead and do that. First, we need to open up our SSH config file. So, I'm going to go ahead
+
+and do this actually with Visual Studio Code. So, I'll run code and then in my SSH config. If you do not have this file, just go ahead and create it. By default, you do not need to put anything in there. You can see I've got a lot of stuff here. But in your case, this file might be empty. Now,
+
+what we want to do here is add on a host and then call it sky and then enter and type host name with capital N. And here put in the IP address of your server. Right? So, I'm going to go ahead and do that. So I'll do the public DNS in this case or you can do the public IP version 4. So I'll paste
+
+that and then I'm going to specify the identity file. So this is the PEM file that we've got. So here in my case it's in ~/.ssh and then udcc.pem. And then we need one more and that is the user
+
+which is Ubuntu. All right. With this in place, you should now be able to just type SSH sky and then SSH into your machine. Right? So that's it. Just a simple modification here in that file and
+
+then you have access to it throughout all your device. But we want more. We also want to be able to just say sky and not SSH sky and get us there as well. And also we want to maybe put in an upload functionality so that we can say sky upload and then specify a path to a file right here. and then it should upload that to this server. Now, we can do that with the power of bash scripting. So,
+
+I want you to go ahead and open up your bash rc file if you are on Linux or your zshrc file if you are using zsh on Linux or if you're on Mac OS. I want to go ahead and use vim for it. In my case, it's called zshrc. All right? Or in your case, it could be called bashrc. So, in that case, you have
+
+to do this bash rc. All right. So, just see which one you've got and go with that. All right. So, here what I'm going to do is just add on a section here at the top. I don't want to confuse you with
+
+all the stuff that I've got in my file. So, let me just add it here at the very beginning. Now, attached to this lecture, you're going to find this code. So, just download it, copy it, and paste it right here. So, I want to paste that. This is just a bash function. So,
+
+it's called sky. And this is a basic if else block. So we're saying that if the first argument here is upload, go ahead and use the SCP command which is a file sharing protocol built on top of SSH. So we still need to specify our identity file. And with this we can upload files to our machine or download files from our machine. Now if we do not specify any arguments whatsoever,
+
+we're just going to run SSH sky. All right. Now in Python or other languages, you would probably specify them right here. So arg1 and arg2. But here in bash, you just have to say dollar sign and that value. Now this three right here just means that if there's nothing specified,
+
+just default to the home. All right, or default to my downloads. Let's use this. And it's going to make a lot more sense. Now I'm going to go ahead and exit out of this. And after you do that,
+
+make sure to also source your file. So source zshrc. And now we can just do sky and do this SSH. Now if I want to upload something maybe let's create a file here and call it test.txt.
+
+I'll go ahead and put some data inside. So I'll say this is a file from my local machine and then I can do sky upload the test.txt txt and it's going to upload it now over to that server. Right? So, if I now go back to my machine here, if I do an ls, you can see that that text.txt is right here. Now, let's create a file right here. I'll call
+
+it maybe test2.txt and then vim this one. Just say this is a file created on the remote machine.
+
+Now to download something we can do sky download and then specify a path from our remote machine. So let me grab the path again. So I'll go back here to the machine. You can see how easy it is to SSH and then exit. And then here I'll grab the pwd. I'll copy this one. go back to
+
+my local machine and then do sky download and then put that path right here and then /test2.txt. All right, that's now downloaded and I can go ahead and cat it. It's being put automatically in my downloads and then test2.txt and we get here that this is a file created on the remote machine and now I have it locally. Now we can also optionally pass in another argument
+
+which is going to be the destination. So if you don't want to put it in your downloads and somewhere else, just put that right here as well. So this is like the copy command. You put in the source and then the destination. So the sky download and sky upload work in the exact same way. Always, first the source, second the destination, but the destination is optional.
+
+All right. So how cool this is. This is going to save us so much time. But wait, there is more. There is more. And that is with the Visual Studio Code right here. So if you want to
+
+connect to the remote machine and open up maybe a project here inside of the Visual Studio Code, this is how easy that really is. So just click on this remote icon and then click on connect to host and there you go. Sky. You don't need to now specify the host name or the PEM file or anything like that. It just works. And then here you can go ahead and open a folder. So, I'm going to go
+
+ahead and open up the Weer project or you can open up the home directory to maybe edit whatever you want or even the root and then I'll click on okay. It will now actually take a little bit amount of time and then download Visual Studio Code Remote on your server and then set this up. All right. But now here you can see here down in the bottom that it's sshing into Sky. Oops, we have a weird error here. I'll try to maybe troubleshoot that warning later on. But yeah,
+
+there you go. Here, if I maybe change the readme file and just add in some gibberish right here, I can save. And then back right here, I'm going to go ahead and SSH. And then here inside of that folder, if I cat in the readme file, you can see that it starts with that gibberish. All right. So, pretty cool. You can now open up all the for example NGINX
+
+configurations we're going to be dealing with later on like this which is going to make life a lot easier. I still recommend though that you stick with vim if you can for the first few hours of your work. It's a pain that you have to go through only once and it's really going to pay off later on. Now you can do this with any other machine that you've got. For example, in my case, I've got my MacBook here connected to my network and it's not a remote machine from Amazon, but at any point that I want, I can just say MacBook. And now I want to be connected to my MacBook.
+
+All right. So, I don't need to even touch my MacBook. It's sitting inside of another room. So, if I do a device right here, I'm now inside of my MacBook. And if I now exit out and then do a device right here, you're going to see that I'm now on my Mac Studio. All right. Now,
+
+with this in place, you should have no problems whatsoever connecting to your machine at any given point that you want and also upload files back and forth or open things up in your Visual Studio Code locally. All right, I'll see you in the next one.
+
+In this video, we're going to go ahead and clean up everything that Docker created on our machine. And hopefully, we can also take this as a chance to learn a bit more about Docker. All right, I'm going to SSH back into my Ubuntu machine. And let's do a disk free command. And you should have access to it if you have updated your bash rc file with those functions and aliases that I gave you. Now here you can see that we're using 6 GB out of the 24 that we've got. But actually a
+
+lot of it here is because of Docker. If you start a big Docker process, I mean spinning up multiple containers, building a few images with volumes in place, that would end up taking usually a few gigabytes of data. Now, Docker has a few things you need to know about. One is the containers, which you can take a look here by running docker ps. Let me just zoom out a bit here. Right. I want
+
+to zoom in in just a bit. But here you can see that we have created so far four containers. You can think of a container kind of like a virtual machine but much lighter. So they are actually Unix processes running on our operating system but they have lots of added functionalities to make them sort of act like a virtual machine but it's not an actual virtual machine because it is sharing the underlying operating system. To be more precise, the core of the operating system is being shared between these containers and our own operating system. So that core is called the
+
+kernel. So that's why starting new containers and stopping them here in Docker is way way faster than starting and stopping virtual machines. All right? But the containers themselves don't actually consume a lot of storage. Docker images are what actually consume a lot of storage. So let
+
+me zoom in again. And if I run it, you can see that we've got three images right here. We've got the postgres one, Redis one, and here on the disk usage, you can see that for example, the server one, so this Weer one that we have built is about 1 GB in size, right? So all the dependencies that we installed, they are all here inside of this image. Again, the containers are like building these images. So we can think of the images sort of like an application that you
+
+have sitting on your disk. and then a container like the process when you start that application. All right. So when you start a new application, it doesn't consume a lot of storage unless you use it to write some data. But what actually consumes a lot of storage is the application itself sitting on your disk. So these images here are just like that sort of like blueprints for these containers
+
+right here. Now the third thing that Docker usually saves on your disk is the volumes. And you can take a look at them by running docker volume and then ls. All right, these two here are for our application. One of them is for the postgres data and the other one is for our app logs. Now
+
+let me go back here into the code to show you. So here the docker compose this is where we are defining how our containers and images should look like. And here if you scroll down you're going to see these volumes are defined right here at the bottom. If you don't define a volume, what's going to happen is that the data right here, for example, the postgres data or your app logs would be saved there inside of the container itself. And in the world of Docker, you're going to spin up these containers and delete them all the time. So you don't want
+
+to do that. You don't want all your postgres data to just vanish when you start a new container. All right? So that's why we're going to do volumes. And volumes are just going to save that piece of data on the disk of your own machine. And Docker is smart enough to know how to map that portion of
+
+your disk to its own container. Now, it looks kind of weird right here, but this is just an automatic thing to let Docker know, okay, you go ahead and handle that yourself. So, if you take a look at the place where it is defined. So, here we're saying that whatever we have inside of this folder should end up being as a volume, right? So, I don't want all that logs here to just vanish whenever I start a new container. Now, if you take a look right here at that folder,
+
+so packages and then server. So, let me go right here. Packages, server, and then logs. Well, these are our logs. So, if I take a look right here, well, here that's a big one about 1 GB. So, maybe
+
+let me try to maybe see if I can find something a little smaller. Okay, I should not have opened this up. It's now hanging. So, let me try again. All right, there we go. So here, for example,
+
+we're logging every single request coming in and the status code and how long it took us to handle the request and also the time that we got the request. So these are our server logs. Sometimes you want to save them on your disk, sometimes you want to push them to another service, maybe AWS CloudWatch, but in our case in this section, we're just going to be saving our logs here inside of our disk. Okay. Now with Docker because we have a container so you can think of it like its own machine. We don't want to be saving them inside of the container so that whenever
+
+we start a new one and stop that all of them are gone. All right, I mentioned all of that so that you would know here how to clean up everything that we've got. Right, so we've got containers which consume only a fair bit amount of storage. There's another command called docker system df and this one is going to tell us the total storage used. Right? So the images here are
+
+the big ones about 3 GB in size. The containers are only about 2 megabytes which is pretty much nothing. And the local volumes here are about 50 megabytes. Now, if we go ahead and add on millions of records to our database, which is something that we're going to do later on, you're going to see that the size of this one is going to jump up significantly. Now, here we also have about 1.5 GB in caches. Docker is amazing at caching. That's why if you run the docker
+
+run command, let me first cd into the project and then docker run.sh. If you run it the first time, you will probably see that it's going to take a few minutes. But if you run it the second time, you'll see that it would only take a few seconds. That's because Docker is incredible at caching.
+
+And you can see that it's using a lot of caching right here. Now, I'm going to go ahead and run this one more time. I do not want to seed the database. I just want to run it the normal way. And I'm not going to rebuild the image. All right, there you go. You saw how quickly it was.
+
+took only about I would say 15 seconds. Now here I have added some text so that you can know how to deal with that. For example, if you want to get a shell access, here's what you would do. So let me type in Ctrl C and then get a shell inside. So now we are inside of the Docker container.
+
+We're no longer inside of our virtual machine itself. Okay. So to take a look at that volume, for example, the logs that we had, we need to go to packages and then server and then logs. So right now we have logs for two dates and by the way they are not saved here inside of the actual application code. So if you exit out of the shell and then you navigate into packages server logs of the virtual machines folder, you're not going to see these logs. All right, but Docker is going
+
+to in a smart way sort of map them to the disk of your own machine so that they're not going to get eliminated every time you stop this container. Now let me exit out of this shell. Another command that we have right here. Well, we don't need to take a look at the environment variables, but what I do want to show you here is this command docker compose node down and remove all volumes. So, this is going to nuke everything that docker has created here for this project. So,
+
+containers, images, and volumes. So, let's go ahead and run this one. So, I'll do a disk free again used about 6 GB and then I'm going to go ahead and copy paste this one. Now again in a lot of cases you do not want to say the --volumes because you do want to keep that data in place. All right let's go ahead and run this. This is now also going to stop the application. So you no
+
+longer would be able to do a refresh right here. Maybe still works right now but in just a bit it's going to stop working after this command is done. All right. So it's now stopping the actual server. All right. containers are now removed and now it's removing the images. Okay, so now
+
+everything is cleaned up. So if I do a refresh, it no longer works. The containers are now down. Let's do another disk free right here. And you can see that we're now using 4.7. So we freed
+
+up about 1.3 GB of data. And if you do docker ps, there should be no containers left. And if you do docker volume ls, there should also be no more volumes left. Now let's do docker system df.
+
+Now here you can see that it still says that there are some images right here but you're not going to see anything right here after nuking everything that we've got. Now even docker images -a is not returning anything. So I'm guessing that most of them are just caches left. And this is also a common thing that you're going to see sometimes with Docker that even after deleting all your images and containers that you have running, you'd still end up with maybe some dangling images here and there. Now to remove the remaining gigabytes right here, we can do docker system prune -a. Now
+
+you don't want to be doing this if you're using docker for some other cases because this would now as you see right here remove everything else, right? So all the caches and also any images that is not being used by any containers. Sometimes you might have an image sitting there that you have maybe built from before but it's not in use at this moment and in that case all of them will be removed. But on this machine we don't want that. So let's go ahead and remove everything.
+
+And this is something that we're going to do a few times because we're going to be doing a lot of benchmarking and we want to make sure even after handling millions of requests, we want to just completely get rid of everything and free up our storage. And this is one of the great things here about Docker that you can constantly do this operation with just two commands right here. So that docker compose nuke everything and then here this docker system prune all. Now let me do that system df. And now here everything is a perfect zero. And then if I do a disk free, we're
+
+now only using 3 GB. Remember before we were using about 6 GB. Okay. So now this is just like as if we didn't even run Docker in the first place. So we just cloned our Weer project and that's it. We're
+
+now at that state. If you want to spin everything up again, we have to do this docker run.sh. But I'm not going to do it. All right. So that's it about using Docker for this application. Hopefully
+
+you're starting to understand how incredible Docker can be. I realize we still haven't gotten into Docker by that much, but I just wanted to sort of give you a sneak peek into this incredible technology, but that does not mean that you now need to shove Docker down every single solution that you've got. I've seen many teams do that, and in a lot of cases, it's really not a good idea. Docker is supposed to make everything a lot easier and simpler, not the other way around. So using Docker for maybe development and then for production and then for the build step might be a bit of an overkill. In some cases you just want to do things natively and then have Docker sort of
+
+like how we have it right here so that everyone can just clone your big repository, run one command and get everything going or maybe do some testing, add on a lot of data there and then with one command completely get rid of everything and it's not going to mess with your original machine. All right. Okay, now that we have Docker cleaned up, in the next video, we're going to run our application natively, which would then also help you solidify some of the knowledge that you've learned so far with Docker. Again, we're not going to be using Docker a lot here throughout the rest of the course. We're going to primarily deal with running things natively because if you learn how to do that, then switching over to Docker is going to be a lot easier because we need to learn a lot of Unix concepts, a lot of operating system concepts, most of which are the exact same things here in Docker. All right, that's it about this video and I'll see you in the next one.
+
+In this lecture, we're going to go ahead and deploy our project natively. To do that, here's what we have to install. We need to install Node.js and yarn. And I'll do that with nvm. We
+
+also need to install postgres, Redis and PM2. Again, all of these were installed automatically by Docker. But now that we want to run it natively, we have to take care of each one of them manually. Now, don't be afraid of the installation processes. They're actually a lot simpler than what you might expect. You just need to run a few commands and that's it. So,
+
+let's go ahead and start here with nvm, node, and yarn. Now, for each one of them, I'm going to use the official instructions for that technology. So for Node.js, I'm go to Google install Node.js and then here's the official page. Now here I'm going to go with the LTS version. Make sure that you always
+
+go with LTS. This is not anything specific to Node.js. LTS means long-term support. Now, when you download a long-term support version, that is going to be supported for many years.
+
+If you download a current version, in a lot of cases, that'll be supported by just a few months. So here I'll switch to LTS and then here I'll change to Linux. Now for this you can actually choose whichever you want. You can even run it in Docker but I'm going to go ahead and do it with nvm and we also want yarn. All right. So there you go. That's all you have to do. So I'm going to go
+
+ahead and copy paste these. Now we can download all these commands that I'm going to run here from the resource section of this video. I'll make sure to keep that updated as time goes by. Okay. I'm going to go ahead and do this. Then do that. Now, at this point, we should have nvm installed.
+
+NVM is a package manager for node. So, it would allow us to install a different versions of Node and easily switch back and forth. This is like SDK man with Java. So, I can just go ahead now and say nvm install 24 to install NodeJS version 24. Now I'll then go ahead and run the core pack one to get yarn set up. And now we should have both node installed and also yarn installed. Well,
+
+actually it's going to prompt you to download yarn. So just go ahead and say yes. And there we go. We also have NPM installed. All right, that's one down. Let's now move on to install postgres.
+
+I'll do the same. So install postgres. I'll go to the official website and then select Linux and then Ubuntu if I can find that. There it is. And there we go. Now just one point. Sometimes you see
+
+that we use a simple command like sudo apt install something. But sometimes we have to go through a few more commands like here with node or with docker. You might be thinking why not just do sudo apt install nodejs and well that's valid. you can do so as well. The problem is that many packages here with sudo apt are not the latest versions. Now to see that you can run apt cache
+
+policy and then NodeJS. Now here we can see that if you do now sudo apt install NodeJS, it's going to install version 22. But the latest version as we saw the latest LTS version is 24. So we're one version behind right here. Now if I go back here to the versions of Node.js. So here we can see that version 22 is one version prior to version 24. So this
+
+is how Ubuntu works. The version that I am on right now. If I do cat and then etc OS-release here we can see that I am on Ubuntu version 26 the LTS version. So Ubuntu version 26 came with all of these major packages predefined. So, this version is going to stick with node version 22 for a foreseeable future. Now, does that mean that sudo apt install is a security hazard because
+
+we're using very old versions? And well, the answer is not really. In some cases, it could be, but in a lot of cases, that is not the case. Now, despite being behind by usually one LTS version, it keeps that version updated as much as possible. So, let's take a look at the Node.js version again. So apt cache policy NodeJS again it's version 22.22.1. Now let's go here to
+
+the Node.js GitHub page and let's take a look at all the releases. So here we can scroll down and find the release section and then the tags. So the latest one here is 26 which was released 4 hours ago but the version 24 here was released about two weeks ago. All right. So this is the
+
+one that we installed here with NVM. So if I do node -v it's the latest version available to me right now. But with sudo apt it's going to install version 22. Now you might be thinking that that was released years ago but that's not the case. So if you scroll down here for a bit and find that version 22, you can see that it was actually released on March 24th, which is just about 2 months ago. Now the exact version that we had here was 22.22.1, which is
+
+this one. Still was released on March 5th. So the LTS versions are like these. They will be updated for a foreseeable future even though a new major version comes out. All right. So with sudo apt,
+
+you're going to usually grab the previous one. That's why in some cases you're going to see that we're going to run a few commands and then do sudo app install. That's because we're going to say point it to another direction so that we're going to grab the latest version. All right, let's now go ahead and do the postgres one. So I just need to do this. So sudo apt install
+
+postgres again. Before I do that, let's do that apt cache again. So policy and then postgres SQL. So we're going to install version 18. So let's do the same thing here again. So I'll go to the
+
+postgres GitHub page and then go here to releases and then tags right here. So latest version here is 18.4. So this way we're going to actually install the latest version which is great. So, this is something that you always need to keep an eye out on. If you're going to use AI to install
+
+these tools, that's great, but just make sure that your AI is going to grab the latest versions. In a lot of cases, if your AI does not have access to the internet, it's going to download one of the old versions, and that could be indeed a security hazard. Being updated is one of the most important things you can do to keep your machine safe from hackers because hackers find a lot of vulnerabilities in these old versions and by the time that you're going to download them, they're very well out in the open. So, you do not want to risk that and make sure to always go with the latest versions possible. All right, so let's go back and install postgres.
+
+Now let's see if it's running or not and if not we're going to start it. So we have to do sudo systemctl. We'll talk more about systemcttl later on. And then status postgres and it says that it's active. Now because we want to connect to this database from our applications, let's just go ahead and give this also a password. So I'm going to go to the postgres REPL.
+
+So I can do so by saying sudo -u postgres which is the default user that postgres application comes pre-installed with and then psql. Now right here we can run SQL code. So I'm going to say alter user and then postgres. So we're changing this postgres user to give it a password and then password and then I'll go with password1234. Okay. All right. So we also now have the latest version of postgres installed.
+
+Now next up we have Redis to install. Again I'll do the exact same thing that I did here. So install Redis then the official website right here. And then I'll select Linux right here. And then here's the installation for Ubuntu. Now again,
+
+this is more like Docker. So before we do sudo apt install redis, we just need to point it in the right direction. Now to show you why, let me also grab the GitHub page of the Redis repository right here. And then I'll go here to the tags. Here are the releases. I'll just select tags.
+
+So the latest version is 8.8.0. Now let's see which one sudo is going to install. If I just do sudo apt install Redis. So what I could do is say again apt cache policy and then
+
+Redis or redis-server. Now here this is not actually version five. This is version 8.0.5. And
+
+this one was released if you take a look right here a while ago. So if you can just find that here it was released on November 2025 which is about 7 months ago. Now 7 months is a long time sometimes and a lot of security issues could have been found in that time. All right. So that's why we don't want to do that and just not say sudo apt install and before do this. Okay. So I'm going to go ahead and do that. I'll copy everything here. And actually,
+
+you know what? We didn't sudo apt update. So, let me do that and then run that again. So, I'll now do apt-cache redis-server. Still the same thing, but sometimes if you haven't run sudo apt updates in a long time, you may see some outdated results right here. But in our case, we've already been updated. All right. So,
+
+let's now go ahead and do that. So, just one copy, paste, and there you go.
+
+Now let's use sudo systemctl again and then status redis-server and see that it's now running. Now we can also do redis-cli and now here we are inside of Redis. So I can set a key name Joe and then get name and I'll get that value. And let's just also make sure that we are on the right version. So redis-cli -v and we are on version 8.8.0 which again going back right here is indeed the latest version that was
+
+just released last week. All right, what else? So now we just need to install PM2. This one's the easiest one because we have NPM installed. We can just say npm install -g pm2.
+
+pm2 is a nodejs application that we're going to use to run some of our processes. With this, we can run a process. So that process will become the child process of this PM2 application. And then PM2 can maybe restart it if the memory usage gets to a point and some more functionalities that we're going to explore in just a bit. All right. And now we have everything installed on this machine. That was not that bad.
+
+Now we can use the same postgres here for the other four applications that we're going to deploy in just a bit. And we also have Redis that we can use with many different applications. All right. Next up, we're going to now set our application up with these tools and get it running.
+
+[music] All right, let's now go ahead and get our project running. If I do a disk free right now, we installed postgres, Redis, PM2, and Yarn. You can see that they only consumed a few hundred megabytes. So, we still have a huge amount of storage here. All right, let's go to Weer. Now,
+
+to get everything set up, you can take a look at the setup file. And here for natively and then for production you can see what we have to do. So prerequisites we have node postgres redis yarn pm2 all installed and well I'm going to talk about the environment variables in just a bit but we already have the .env so we should be okay for just a bit so we don't need to do this step and then we just need to say yarn setup and then yarn start and that's it. Now yarn setup will install all the dependencies. It'll build all the packages and also set up the database. So it's going to
+
+create the Weer database and then create all the tables, add in some data and then yarn start is going to launch the application with PM2. If you want to take a look at each exact command, you can go right here. So let me pull up the code again. Go into each package. For example, here server and then open up the package JSON. And here are all the scripts. So server right here is
+
+just going to run the seed.ts file that we've got inside of the database folder. All right. And then here, for example, if we go to React package JSON yarn build here is going to run Webpack to compile everything into a single app.js file. Before we run this, let's make sure that our .env file is set
+
+up properly. So I'll vim that file, file. So packages and then server and then .env. Now looks okay but we just need to put in the postgres password that we specified which was password1234.
+
+Okay, let's now do yarn setup. Now if you look here at the top, this is the actual command that's going to be run when we do yarn setup. So it's going to do yarn install and then yarn build which itself will then go into each package and do a yarn build. And then we're going to seed the database. So this is not going to run the application. It's just going to build and set
+
+up the database. This would probably take a few minutes. So just let this finish. [music]
+
+All right. Okay. Now at this point you can see that the database was seeded. So now we have our tables created. So we're first dropping them if they exist and then creating them. And also we're
+
+going to flush Redis. Okay. So now if I go back to my Redis CLI get all the keys, we're not going to see anything. So that name Joe that we set is now totally cleared. All right. So now the project
+
+is set up properly. Before we run it, let's do one more disk-free. So, we're now at about 5 GB. Still a bit lower than Docker, but you can see that with Docker, it wasn't also that bad. With Docker, we were at 6 GB of usage. All right, let's now do yarn start to start the application. All right,
+
+it now looks okay, but we still need to take a look at our logs because it's not going to show the errors here. PM2, it's just going to run the application in the background and that's it. To see the logs, we have to say PM2 logs. All right. So here if you look you can see that our project is now running on port 2080 and we have also connected to Redis and postgres successfully.
+
+So that's all that we need to know. Now let's go back right here and do a refresh. And now we should have the project set up properly. So let's shorten a link. And there you go.
+
+Now I want to go ahead and talk a bit here about the janitor process that's running in the background. So we're running two instances of our server. That's why we get two and then one instance of our janitor. This is something you usually see happen with node and bun. But with other languages like java and rust, you do not see this pattern. We're not going to
+
+run them in cluster mode because they're going to handle multi-threading automatically. For example, in Java Spring Boot with no virtual threads whatsoever, it's going to spawn a new thread per request. So that itself will handle everything on its own and utilize all the CPU cores. But here in node, all the requests will end up in a single thread and then get distributed to maybe some of the other threads. All right, so in short, we just need to run the node application in cluster mode to be able to utilize as much CPU as we possibly could. Now I'm going to go ahead and
+
+connect to Redis here from my local machine just to show you this Redis streaming in action. So there is an application called Redis Insight that you can download from the official Redis website. Now here I'm going to go ahead and click on add a new connection. So I'm going to click on connect existing database. Now I'm going to connect here to our Sky server. So here in the connection
+
+settings, switch here to security and select use SSH tunnel. Now here we have to put in the stuff related to Sky. So let me grab what I need and put that right here. So here I'm going to open up that SSH and then config. So here's the host name for Sky. I'll put that right here. And then user
+
+is Ubuntu. I'll put that right here as well. I need to blur my screen here for the private key. Now here, all I've done was that I just ran this. I'm not going to write it here because you need to keep your private key secure at all times. And I'm recording this video, so I'm not going to do
+
+that. Now here, if I click on test connection, it should tell me that connection is successful. So I'll go ahead and click on add Redis database. So now we're sshing into that machine and then connecting to its Redis. We can do the same here with postgres, with MongoDB if we want to install that and anything else that we'd like. So here we have some sort of a GUI for what we have inside
+
+of our Redis data. Again, Redis is sitting inside of our memory. Okay. So now here we've got some views. This is the views stream that we have. And if you want to take a look at the code,
+
+again, don't worry if you don't know much about Redis. You need to get comfortable with this stuff anyways. So let's go ahead and take a look at that concept pretty quickly here. Now to see all the routes we can go here to this file router.ts and then here we have every single route that this application has. Now this function here url.redirect this is where we are handling the
+
+views right? So if you go into weer.pro/355 this function is going to kick in and in this function this is where we have to handle the views. So let me command-click on it to go into the definition of this function which is right here. And then if I scroll down here we have the views logic all the way at the end. So here we're saying if we have Redis enabled
+
+remember you can also run this application without Redis. It's just going to call this function and push something to the views. All right to this views stream in Redis. So, we're just going to save the data, the views data, which we're saving the user agents, the link type, and some other data here. And that's it. If we do not have Redis enabled, it's going
+
+to do a database insert into the views table. Now, let's go here into this push view. And here, if you take a look, I'm going to scroll down a bit. All we're doing here is that we're running a Redis command called xadd. So, we're grabbing all the fields and then we're pushing them all here to this views stream key which is weer stream views, right? Let's just go ahead and see if we can get this going. So, I'm going to go back right here.
+
+Now, this domain here is not okay. So, I need to manually go there and then go to code 355. So, I'll paste that right here. And then 355. This is going to now do a redirect here to the real link. But let's go ahead and take a look and see what we have right here. I'm going to click
+
+on refresh. And now here we can see that we have this data. All right. So this view was immediately added here to the memory of the server which saves my user agent. the link type which was digit via QR which indicates whether or not I visited that link via the QR code or by just putting a code and any other data here that you can imagine. Now let me do that a few times here.
+
+So 355 and then I'm just going to open this up a few times to get a few more views. And now if I refresh all this data is again added right here. And then what we have is another process this janitor process and its code is right here. So this will run in a separate process and then right here it's going to drain that views meaning that it's going to read from that views table and then write the data here into the postgres database. So here we can see that we have insert into views and it's going to do them in batches and then it's going to do something like acknowledge.
+
+So it's going to tell Redis that I have read this data. So you are free now to go ahead and delete that if you need more storage and Redis will automatically do that if it does reach this max length which should be right here. So this max length which we're defining here as 100,000. So if we end up with 100,000 records in our views stream inside of Redis, Redis is then going to truncate it. All right, so it's very smart about that. Now let's take a look at our database. Now
+
+for that I'm also going to use the pgAdmin or you can use data grip or any other application that you'd like. So I'll open up pgAdmin. You can of course also do this here in the console. So here we can just say postgres and then connect to excuse me we should say L to list all databases and then \c weer to connect to that database and then here we have all the tables. If I now do a select all from views you're going to see that all that data that was saved to Redis is now also put right here inside of the database. And we can also look at it here with pgAdmin. I'm going to
+
+click on add new server. And then for the name I'm going to say sky database. Here I'll go to connection. Host should be local host because remember we are first sshing into that machine and then connecting to the postgres. Username postgres and then password is password1234.
+
+And then here in the SSH tunnel, I'm going to specify the host username and also the identity file, meaning the PEM file. So, let me grab this again. Now, let's click on save. All right, there we have our database. So I'll go here to databases and just double click and then here we can go into schemas and then the tables and here we have the views. So
+
+let's take a look inside and see what we have. I can right-click and then click on there should be an option. There we go. Query tool and then I can also do a select all from views right here and just click on this button or press F5 to run it. And here we get a much cleaner way to take a look at our data. Right? So you might have maybe thinking we're running our
+
+database like that we would probably lose out on being able to connect to it here with these applications. But not at all. we can do an SSH tunnel and then connect to those applications that we have running. So you can do this with again MongoDB with MySQL or anything else that you've got running. All right, and that's it about running our application natively.
+
+Let's talk about what you can do if you want to take a break from the course for a few days or weeks and you want to minimize your cost. Right now, this machine that we have set up is going to cost you around $15 per month plus tax. Please always make sure to calculate it yourself right here using this one. So select your region right here and then shared instance Linux constant usage and then T4G.small and then right now we are on on demand pricing. We'll change that later on. And
+
+then scroll down here to the EBS storage and we have GB3. Everything here can be left as blank. And then here storage amount is 25. All right. Now if you go ahead and stop this machine. So click on
+
+instance state and then stop. That's going to stop the counter here for the actual instance cost. So you're not going to be charged here for this one anymore. So your cost would reduce down here by $12, but you still will be charged here for the storage. Again, just to remind you here, you're getting charged by the minute. So each minute that you have this machine running,
+
+it's going to cost you a little bit amount of money. Okay. Now, that's the same idea here with this EBS storage. So, if you go ahead and stop this machine and just let it go, that'll cost you around $2 per month. Okay. Now, if you want to reduce it down even more, what you could do is
+
+take a snapshot and then terminate this machine. Let's go ahead and see how that would work. So if you maybe want to experiment something here and then maybe you were going to mess up and you want to have a backup to fall back onto, what you can do is use Amazon images. We have a concept in computing that you can take a snapshot of your disk at any given point of time that you'd like and then you can revert back into that and get everything back into that state. So you can do that with your Windows machine, Mac OS, and anything else that you've got. If you're also
+
+running some virtual machines locally, you can also do that. You can take a snapshot and then at any point you want you can go back into that. Now here in Amazon that concept here is called an AMI and also here the snapshot. So let's just do it and that's the best way here to demonstrate that. So to take that snapshot that image just go here to actions and then image and templates and then create an image. All right. And then here you can give it a name with any description that you
+
+want. So maybe sky image. And then here at this point say that right now you want to take a break maybe from the course. So just say something like after setting up Weer natively, right? Or anything else that you'd like. And here that 25 GB in size, right? And then you'll go ahead
+
+and click on create image. This will also reboot the instance. Now, after you create the image, you're going to see two things appearing right here on this sidebar. You're going to see an AMI first. So, here I have this one. Now, the AMIs by themselves, AMI here stands for Amazon machine
+
+image. This is just some metadata. All right, this is not going to cost you any money whatsoever. But the actual thing that's going to cost you money is the snapshot that's created from your disk after you create this image. All right. So each AMI here corresponds to a particular snapshot.
+
+Okay. And to see that here just scroll down and find the snapshots. All right. Not the volumes the volumes here. This is our actual storage being used by our sky machine. So the GB3 which has
+
+25 GB of data. So this is our storage. But here the snapshots. Whenever you take an image, a new snapshot is then created right here. And here, if you take a look at the full snapshot size, you're going to be now charged for this. So, let's do some more calculations here. Say that
+
+your snapshot size is going to be maybe 12 GB like I had. So here back here in this section Amazon elastic block store just put in the snapshot amount that is here in our case 12 GB and then here if you take a look the monthly cost of each snapshot. So in our case maybe you just going to take it once. You can also set it up so that it's going to maybe take it daily or something like that but you don't need to. So you just take it once, you take a look at that value, put it in, and you're going to see that it's only going to cost you now about 60 cents per month. All right?
+
+So now, if I keep that snapshot in place, and then terminate my machine, it's only going to cost me about close to a dollar. All right? If I just go ahead and stop the machine, it would then cost me about $2 per month. All right, let me now show you this concept in action. So back right here, let's see if we have the application running at this point. Let me go ahead and start it. So now
+
+we have the application running. Everything works as expected. But say that you want to go ahead and experiment or just make some modifications that you're not sure of. In my case, I'm just going to totally remove the project. So rm -rf the folder. We'll take a moment here. And then that's totally
+
+removed. So we shouldn't be able to do a refresh right here. So we can see that it's hanging now because there's no more files on our disk to send back to the client. So now our application is broken. Okay. So now what I could do is that I could revert back into that original state that
+
+I had before. Okay. But you know what? Let me try something a little more crazy. Now please do not do this on your own. But because I have a snapshot in place and I'm recording a video,
+
+I'm going to go ahead and do this. This is going to remove as many things as it could possibly remove from my operating system. Now, here we have a guard, but let me pass this on to just really do this. So, this is going to sort of totally decimate this operating system. And I'm not even going to be able to boot into that and SSH into that afterwards. All right. Now, again,
+
+do not do this, please, because if you're still a beginner, you may not know. Maybe you are going to run this on your own machine and that's going to mess everything up. So, just watch me do this. So, it's going to just remove a lot of things. Maybe here are some things that it cannot remove at one point. Maybe I'm going to get disconnected. And actually, maybe it kind of worked. I don't know
+
+what happened here. Still, we have a lot of kernel files in place, but again, our machine is sort of damaged. So, we no longer have access to this disk free, and many of the commands will not be found anymore. I'm not even sure if we can SSH back into it. Maybe we can, maybe we can't. Well,
+
+yeah, we can't. Right. So, our machine is now totally damaged. something like that might happen to you, but we don't need to worry about it because we just have created an image. So, let's go ahead and revert back into that and make sure that everything would now start working as expected. So, let's try to launch a new one. So, now here when you're trying to launch the machine,
+
+I'll call it again sky. Here, just select my AMIs and then find your image. All right. So, I have created two sky and sky image. These names are immutable. So, whatever name you put in,
+
+you can't change it. And I I should have named both, you know, sky image one, sky image 2, but that's okay. And then here, we're going to need to change three things. One is our instance type. So, I'll select back that T4G small. And then the key pair so that we can log back in. And then here
+
+that security group that I had before, there's no need to configure the storage. This is going to be the default one from before. Okay. And now I'm going to go ahead and launch this one. And we can also go ahead and terminate the one that we had from before. You
+
+can see that the health check here is not passing. So we don't need this anymore. But let me just keep it here for just a second. So this is the damaged one. And now because we have a new machine, I'm also going to update the SSH config file so that I can log back into it and utilize that sky command. So I'll copy the DNS here on my local machine.
+
+I'll go to SSH and then config. And then right here, I'm just going to go ahead and replace the host name. Now, just a vim tip. I'm hitting D and then W to delete from my cursor until the end of the word. All right. So, now that that's deleted, I'm going to go into insert mode,
+
+paste that over, and then write and exit. All right. So, now let's see if we can SSH into that. It might take us a minute because we just launched this machine and I'm not sure if it's running right now, but yeah, there we go. All right. So now I have logged in and
+
+you can see that we have the project. So I can go ahead and do yarn start. No need to install the dependencies again. We have all of them right in place. And now if I go back right here into the host name and then 2080, we should now have the application working. And now I can go ahead and terminate the old one. we no longer need it.
+
+Now, if you want to reduce down your cost even more, what you could do is to archive this snapshot. Now, I want to give you a few links here. Now, if you find the AWS EBS pricing page, so it should be the first link that's going to pop up. And then if you scroll down here in the snapshot cost, you can see that the standard one which we have right now is 5 cents per gigabyte per month. So that 12 gig, multiply that by 5 cents, that's going to be 60 cents per month. Now, if you archive it, it's going to save you even more money.
+
+So say maybe you want to take a one-year break from the course or whatever you're working on, you just want to save that and you want to come back into it maybe one year later. So we can select that and then here in actions archiving and then click on archive snapshot. Well, I can't do it here because it's used by this AMI. So let me go ahead and delete this one. So here I select it actions and then there should be an option that says dregister. Right there we
+
+go. Now I'm not going to delete this associated snapshot. I'll just keep it right here because I want to archive it maybe. So dregister. Let me remove the other AMI as well because I just want to clean up here and then create another image in just a bit. So not disable but dregister.
+
+And then right here I'll go ahead and archive this. And now I want to be charged only about whatever that number was, right? and about a penny per gigabyte. Now, please always check these prices by going to these links. I don't know, maybe you're going to be watching this in a few years, and these numbers will most definitely change as time goes by. All right. Now,
+
+one point about archiving. When you're going to retrieve the data, you're going to get charged 3 cents per gigabyte. So, keep that in mind, too. Now, I just want to mention one final point here about snapshots. And if you notice right here, I have taken two snapshots at the exact same time.
+
+And when I took these snapshots, I had about 5 GB of my storage used. All right, so right now I have only about 5 GB used. So you might be wondering why in one of them we're going to be charged only for 12 and then in the other one we're getting charged for 25. Now this can come out as a surprise for a lot of people. Now, if you go right here to this link, which I'll put in the resource section of this video, it's going to tell you that the snapshot includes all the data blocks that you have written into. So, it's not the actual disk usage. It's whatever you have
+
+written and then even delete it. So, in my case, what I have done was that I took this image and then I wrote a massive file to my desk. I wish I would record that, but I didn't get that chance. But that's okay. So you can imagine me going ahead and creating a very large file here and keep adding more and more data to it until I run out of storage. So here the 25 GB will be completely
+
+filled up. All right. And then I deleted that file. All right. So then I went back into 5 GB of used and at that point I took another snapshot. So I created another AMI and that one which is this
+
+snapshot right here as you can see right now has its full snapshot size as 25 GB. So something to keep in mind a lot of people have some surprises here with this one. Here for example I have found someone right here that experienced that exact same problem and they were not expecting it. So they saw that their bill rapidly increased. Okay, if you read this that's the exact same issue that I just talked about. So if you have maybe five terabytes of storage, but you're only using one
+
+terabyte, if you take that snapshot, you're going to see that probably only about a terabyte is going to be here for your full snapshot size. But if you do some massive file uploads or if your memory does a lot of swapping, so you write a lot to your disk and then remove that data and then you take another snapshot, you'll probably see that this is going to jump up significantly. So this is going to take a snapshot of all the blocks of your storage that have been written into. So if you write into something and then immediately delete it, that will also end up here in that snapshot. Okay? So just please keep that in mind. All right, that's it about this video
+
+and in the next video we're going to get back to our main discussion of deploying our applications.
+
+In this video, we're going to talk about a problem that we have right now with our setup that's not going to allow us to achieve 99.999% availability. And that is the way that we're handling our secrets. Now, if we want to have a very, very high availability, what we want to be able to do is go ahead and terminate this machine. And then we want to have it respawn itself back and set everything up automatically. So we shouldn't even need to SSH back into the
+
+machine and run yarn start or anything like that. So we should just terminate and then have it start again and have our application working again. Now that's something that we will be accomplishing by the end of this course. But let's think about one hurdle that we must overcome right now to do that. Well, if you think about it, if you want to automate the whole process, how are we going to handle the .env file? So, if you recall when we cloned the repository,
+
+we needed to also create the .env file. So, we needed to do that and then fill that in with our values. Now, how are we going to automate this process? Well, if you say, okay, we can just create this value and then read them from our local machine. I mean, that's going to be a pain. Then you're
+
+going to have to keep another file on your own repo or somewhere else that you need to back up and then write a messy script or something to keep sending that data over right here whenever you have an automatic termination or something. So, that could get really, really messy. Now, we're going to talk about a much cleaner way to do that, and that is to have a vault where we're going to keep all of our secrets in and then read from that vault at any point that we want from our servers. All right. So now we no longer need to handle the .env files at all. So let's go ahead
+
+and see what we can do to accomplish that. Now speaking of that termination, please make sure to turn on the termination protection. So select that, go to actions, and then instance settings and then change termination protection and just enable this one. The reason that I'm telling you to do that is it's very easy to just select and then click on terminate instead of maybe stop or reboot. Okay, it happens to everyone. And with this protection in place, if you want to do that,
+
+it's just going to prompt you. All right, so if I now click on it, click on that, I'm going to get an error instead. So if I really want to terminate, I need to go ahead and disable this and then do that again. So just something to have to keep things safe. All right, let's now talk about that vault thing where we're going to use to save all of our secrets into. Now,
+
+we have a native solution here in Amazon and that is called parameter store. All right, so I'll go right here and as always before you use a cloud service, just Google its pricing. So here I'm going to Google AWS parameter store pricing. All right. And then here we have system manager pricing because that's part of this one. So this service right here is part of the systems manager.
+
+And then if you scroll to the parameter store section, it's going to say that the standard ones are free. All right. And that's what we're going to use here. So you can have all your environment variables here inside of this one. And it's not going to charge you anything extra. Okay? Which
+
+is pretty cool. So let's go ahead and create a parameter here. And here's how we can maybe divide the parameters because remember we're going to have five applications. So I'll say maybe the name of the application and then prod because we might have different stages maybe a development stage or a testing stage or a build stage and then the name of the parameter. So let's go with random.
+
+And then we're going to add in the actual ones. For now we just want to test it and see how we can read these values. All right. Now here you choose your tier and the standard one here is totally free and you can save up to 10,000 ones and the size of which can go as high as 4 kilobytes which is plenty for for our use case. It's way more than enough. Now we're not going to use
+
+the advanced one. Now here you can say string or you can do secure string. In this case the data is going to be encrypted for now. Let's try here string. We're going to try maybe secure string for our passwords and some other data. And then here, let me just put in some data. I'll put in
+
+just about every single special character and then with some spacing and maybe tabs and whatnot. And then yeah, that should be pretty good. So let's say that maybe this is our very complicated password that we want to use for something. Okay, I do not need a tag here. And that's it. Let's go ahead and create this one. And let's now talk about how we're going to read this value.
+
+Now I want to first use my local machine to read that and then we're going to move to our remote machine. So hopefully you have access to the AWS CLI. So if you run this, you should get a version back. If you don't have it, just Google install AWS CLI tool for your operating system and then get it going. Now, when you install this one, you have to do AWS login and then it's going to open up a new browser tab and prompt you to log in with your IAM user or even your root account. All right.
+
+And with this tool, you can interact with all the AWS services and it's way more powerful than just doing things from the graphical interface right here. So, the console right here. All right. Now I have already logged in but the command that we can run to read that value is this. So SSM which stands for systems manager and then get parameter and then --name the name that we had. So the application name our stage and then the name which is random. Now I'm also going to
+
+specify my region here. You don't need to specify your region if it's the default one that you're using. But because I am using multiple regions, I need to do that. So, us-east-1. And here you can see that we get a JSON response back. And here inside of the value one, this is exactly what
+
+I put. Okay. All right. So, there you go. This is what we can do now inside of our remote machine.
+
+We can run this for all of our secrets, read the values, and then pass them to our application. And this is going to be much simpler to deal with than just about every other solution. So if you want to manually create that .env file and fill it in, you can imagine that that's just not good. This one you're automating it. You have all your values here saved to the cloud. So you don't need
+
+to worry about it if you move from one machine to another one or backing them up randomly. Now what if I try to run this command on this remote machine? All right. So now here I am on the Sky machine and if I paste that command in, we're going to have two problems because we do not have AWS installed and also we need to handle the login part. So let's do it one step at a time.
+
+Let's first go ahead and install the AWS CLI. Now it's going to prompt you for this but again as always whenever you want to install something just go to the official page. So install AWS CLI and then go to the official page here. So official documentation from Amazon itself and then just find the Linux section and just scroll down right here. Again remember always check your CPU architecture. We are on Linux ARM and not this one. So I'll switch to that and then copy
+
+then dump that over. Hopefully you're now starting to feel a lot more confident with installing on your Linux machine. You can see that it's really straightforward. You just copy paste commands and you get it going. It's not as hard as it sounds. All right. So now that I have this installed,
+
+if I run back that command, it's going to now tell me that I don't have any valid credentials. So now I'm going to introduce you to IAM roles. Now a role is like a key card and you create that. You give that to a specific service and then you tell it what it can access. All right? So I can maybe tell
+
+my EC2 machine that I want it to be able to access the parameter store so that I can read these values or I want my machine to be able to upload to a specific storage and anything else that you can possibly imagine. Now we can keep giving examples here but honestly that would just end up confusing us even more. So let's just see this in action and see the problem that it's going to solve. Well the problem again is this one that we have right now. So let's go ahead and see how we can get this going securely. Right. So here back in the console I'll go ahead and search for IAM
+
+and then here let's select the roles. All right. And then create role. Now before we create this let me again show you here in the instances. So essentially what we're going to end up doing is right here in security, we're going to go ahead and click on modify roll and then attach that one to it. So the new role that we're going to create which is going to be like our key card. We're
+
+going to attach it to this machine so that this machine can access different services that we have on AWS and we have a lot of them. Okay. All right. Here we can define a role so that role can apply maybe to a specific account. In our example, we want it to apply to a specific service like an EC2 machine or a Lambda or an RDS database or anything else. So, I'll select that. Here for services,
+
+I'm going to select EC2, which hopefully should be self-explanatory at this point. And then here, you can see that it says allows EC2 to call services on your behalf. And that's exactly what we want. Now here we can specify what this machine should be able to do. For example, there's the admin access. And you might be tempted to go ahead and select this one and say that okay,
+
+I don't need to worry about specifying policies and this is now like my root account. It can access everything and that's what I want. Now there's a big problem with that. And the problem is if you have a machine that's public facing, you do have a public IP address and everybody can send data to you. The problem is you're going to constantly get attacked. Okay? Hackers will always
+
+try to hack you and you want to make sure that if you do get hacked, the damage is going to be as minimal as possible. If you give that machine admin access and then one day you get hacked, the damage could be catastrophic. that hacker can go ahead and maybe launch some powerful machines and start doing crypto mining and then they can maybe disable all your alerts and before you know it, you'll end up with a $60,000 bill at the end of the month. All right, so you don't want to end up in that position. Now, you might be thinking that, hey, nobody's attacking me, but actually you might not be expecting that, but it's happening way more than you realize.
+
+Here's one of my public facing servers, for example. And if you take a look at the logs, you can see that a lot is happening. I'm getting attacked dozens and dozens of times per hour, right? So, this is not just something that happens once in a blue moon. It's something that happens constantly, right? So, here we can see that somebody's trying to access, you know,
+
+the GitHub file or, I don't know, the .env files like this. Or if I scroll up, somebody here is trying to access the AWS config file or the credentials. And these are happening a lot and a lot. I'm blurring out some personal information that could leak out. But you can see that it's
+
+it's a lot. And I'm still here in the same hour. All right. So, you get the point. This is a very important issue. And you just need to be prepared that in case you do get hacked, the damage is not
+
+going to be as big as it could be. That is kind of unsettling to take a look at here for me. So, I need to maybe set up some stronger security around this machine. Maybe start blocking some IP addresses and do some bot blocking and stuff like that. Well, I'll get into that later on. So,
+
+the point that I'm trying to make is doing this admin access here for that machine is a horrible idea. You want to make sure to give as less access as possible. So, right now what we want to access is well this one the parameters that we've got. So let's go ahead and we can maybe search for parameter store. So here we want this one which is going to allow us to get a parameter by path. So
+
+let's add this in. And now here we are prompted to create the role. And for the role name let's give it sky-role. Right? So this is going to be the role that we're going to use for that main server that we've got. And we can change this to allows Sky to call services on our behalf.
+
+And then I want to go ahead and create this role. So that is created. So let's go back right here to that setting. So instances and then modify role. And then I want to go ahead and refresh this and then find that role. There we go. Sky role and then update IAM role. Okay. So with that in place,
+
+let's go ahead and run that command once again. Now we just need to change this command a bit here because this is this is accessing a little too much. But what we could do is to say get parameters by path. All right, still the same thing. It will work in the exact same way that we want. And then instead of name, we're going to give it the path and then the actual path. So this
+
+way, this is going to make our job even easier. So now you can see that we're going to get everything here. So whatever we put later on in that weer /prod, we're going to get all of them here in this array and then we can loop through and read every single value. Okay, now look how clean that looks. You just add on a role like that and that's it. And if later on we want to maybe send an email
+
+from this machine, maybe our application wants to send an email upon forgot password request, we can go ahead and add a new permission to this role and it will just magically work. All right, there's no need to manage another secret or access keys. It's just really like a key card. You give that to this machine and it can now go ahead and access different things. I also encourage you to just take a look at this policy statements for a bit. Sometimes you do need to
+
+modify them manually, but as time goes by, you're going to get a lot more comfortable with these, right? So, we have these statements. This is just an ID, so like a name doesn't matter. But effect here is allow. You can also say that we want to disallow so that it's not going to be able to do a particular thing. And then the action is the system managers get parameters by path. Okay. And
+
+also all resources. So, you have a lot of control over it. For example, you can say that I only want it to be able to access parameters that start with maybe weer/prod. And then if later on I have maybe something like app2/prod I don't want this machine to be able to access those secrets. All right, so you can also specify that right here in resources. Right now we're saying everything. All right,
+
+which is good enough for this machine. But yeah, there you go. Also an introduction to IAM roles. All right. Now, with this set up, our env.sh file, if you go ahead and take a look at that. So,
+
+let me cat it. You can see right here in this bash file that if we don't have the .env file sitting on our project, it is going to then branch out to this block. So, it's going to now read the values from the Amazon Web Services. All right. So, here we have that exact same command that I
+
+showed you with that path. And then once it grabs everything, it is going to do a bit of processing on it and then pass everything as environment variables to our application. All right, so this is how we can now solve this issue and totally get rid of our .env file in production. So now all that's left for us to do is add on every single value here to this parameter store and that's it, which is something that we're going to do later on. But before we do that,
+
+I just want to take a moment here and clarify what's going on here and talk a bit about Unix. Right? So in the next lecture, we're going to have a Unix concept to discuss environment variables, child processes, parent process, parent ID, and stuff like that to make sure that you're going to really understand what's going on right here in this file. So I'll see you in the next one.
+
+All right, let's go ahead and set up the rest of our secrets. So, I'm going to go ahead and click on create parameter and also open up the .env.example file and just set everything that I've got. So we need port 2080. So here I'll say weer/prod/port
+
+and then value 2080. No need to encrypt this one. This is not sensitive information. And then I'll create another one. This one is our domain. Now the domain we're going to come back to it
+
+in just a bit. But right now we're just going to set the local host one. Then Google client ID. That's going to be quite a lot of copy pasting but actually you can set it from the terminal too and that's going to be a lot easier and then Google client secret. Now this one is a secret data. Therefore I'm going to click on secure string. So we're going to encrypt
+
+this one. And the encryption key is going to be here inside of my AWS account. Now, so this is the key ID that we have right here from the KMS service. Okay, which is right here. Now, this is a dummy value right now, but you can imagine that in the future, we're going to come back and change it. Cookie key also, let's also set the cookie key as a secure string with the exact same
+
+key. And then make sure that there's at least 32 characters right here. That's more than enough. Redis URL. I want actually fast forward.
+
+And then our database data. Now I'll set the DB password as a secure string. And then we chose password1234 for that database. And the final one which is our DB port. Okay. So it looks pretty good now. And we can also get rid of the random one. We no longer need it.
+
+So that's now deleted. And let's just do a double check. So I want to go ahead and run this command. So here in sky I'll paste that in. And there we go. So now we just need
+
+to set all of them as environment variable and run the application which is exactly what the env.sh file right here does as we explained in the previous lecture. Okay, let's now go ahead and run the application. And before I do that, we can go ahead now and safely remove the .env file. So in packages and then server and then env. All right, with that deleted,
+
+I'll do yarn start. And if you take a look here at the log, you're going to see that the env.sh outputed that we're now running in production. So the environment variables are now going to be read from the Amazon systems manager, right? So from the parameter store and now we should have the application work in the exact same way as before. So let's just double check.
+
+And there we go. Now just think about this setup for a second. So if I now go ahead and totally remove this application. So, rm -rf the project. And let me also clean up the PM2 stuff.
+
+Now, here's how easy it is to set the project up. So, all I need to do is clone this. So, I'll just copy the repo. git clone the branch udcc. I'll go inside of the folder, do a yarn setup. [music]
+
+Notice here that for seeding our database, we're also going to run the env.sh. So the variables are going to be read from the Amazon parameter store. The setup is complete. So now I just have to do yarn start again. Reading the variables one more time. And now the application should
+
+be working just as expected, which is pretty cool, right? We no longer need to worry about creating that annoying .env file and filling it in. And if in the future we want to scale up and maybe add five more EC2 machines to run our application, you can imagine that it's all now going to be an automatic process. All we have to do is attach this sky-role that we created here in IAM to all of our new machines. And that's it. they can now read our secrets safely. Now, I just
+
+want to point out a minor thing about handling your secrets with environment variables. Again, as you should know from the Unix video, the environment variables get passed automatically to the child processes spawned from that process. All right. So now, if maybe inside of our project, maybe in the future we want to do some heavy media operations. So we're going to spawn maybe ffmpeg or any other process that's actually very very common. So maybe you're writing your application
+
+in Python and at one point you need to switch to native language like maybe C for maximum performance. So you can do that and that's going to be another process that you're going to now spawn from your Python code and then communicate with. So this idea of spawning processes is very common and whenever you do that all your environment variables get passed automatically to that. So, if you're going to spawn something here from your application that you don't trust, maybe it has access to the internet and can freely upload data, you never know, maybe it's going to read your secrets and then upload all of them as well. So, what you want to do is that in those cases, just overwrite all the environment variables before spawning that application if you don't trust it. So, just something to keep in mind
+
+for security reasons. All right, and that's it about handling our secrets here in this section.
+
+[music] All right. Now, let's move on to the next application that we're going to work on here in this section. And this is the biggest project that we're going to deploy in this course. Now, this is the Pagser project. And you can check it out by going into Pagser.com. Now,
+
+this project has been worked on for years. It can be actually a SaaS product on its own and it's an application where everyone can start a blog on and other people can interact with the content. So in short a content sharing application. Now I want to go ahead and do a demo right here first. I have the application running locally. So let me access it here on
+
+the local host and then 3080 because I have added lots of data here on the local host database. So let's try that one. Now, this application has a complete login and register functionality, which we'll look at in a bit. For now, let me just go ahead and log in as a test user. And here you can see that we've got a library thing. So, here I can see my subscriptions. If
+
+there's somebody here, I can go ahead and take a look at their profile, take a look at their latest content that they have published. Now, this is all dummy data right here. None of it is real. And then here we have history. We have a history of our reads, the comments that we have written. And we can also go ahead and take a look at the comments. Then we have read later
+
+here with these buttons here where we can go ahead and sort, filter and edit like this. Now I started to build this application myself when I was in high school. That was I think 7 8 years ago, a long time ago. And at the time there was no AI. So I took a lot of time here to implement every single styling here with pure CSS and React. It was a lot of work. But I was also
+
+having a blast with it. It was really cool. So at the time when I was a junior developer, I was implementing all these features and I was kind of sort of proud of them at the time. Right now it's not impressive anymore because you know with AI you can easily get everything done but still it's a really big project with more than 20,000 lines of code. And we also have quite a lot of media processing here that we're going to talk about. So let me continue on here with the
+
+tour of the application. We also have collections here. It's a collection of pages for example. And now this part here is still in development. But here you can also see the pages you have published or the ones that you're working on. And there's also a profile section. So you can have a name,
+
+headline, biography. Now again, lots of dummy data right here. And also you can go ahead and upload a picture. So maybe this one. And we also have a cropping functionality in place. So,
+
+we need to handle the cropping and also resizing the image on the back end, which we're going to get into in a bit. So, everybody can upload a picture or maybe cancel and upload again. And just pay attention here. If I really zoom in here, you can see that now I'm only putting the head here in the frame. So, none of the lake here is shown. And I can go ahead and
+
+upload it. It would take a moment and then say that the photo was uploaded successfully. And it would also reflect here on my profile and in different places as well. Now we can also go ahead and create a page here a private or a public one. Private one should be called probably unlisted but here you can go ahead and fill the data in. And then here we have a very powerful
+
+rich text editor and this is TinyMCE. So this is something that we're also hosting ourselves. So all the JavaScript and CSS files for this and we can also upload images here directly in the page body. So, by clicking right here and then upload. And let me maybe select this one and then save. And now we have this one. Let me see if I can add in just a little bit more text
+
+right here. And maybe change this one here to a heading. And then some more text in this one. We can maybe put it here in the center and bolden it. And maybe add on a link. You know what? This
+
+is good enough. So, let me go next. We can also upload a page thumbnail and also attach files. And then at the end, we can choose if we want to disable comments or not. We can see there's a screen flash, but that's just a loading thing. So, if I change here to slow internet, if I do that
+
+again. So, this is that flash that just appeared. And then here we can add on some tags. So, maybe one, two, then three. And we need five. So, more yet one more. Yeah, it's duplicated. So, one
+
+more. All right. And then we can publish this and then view the page. All right. So, you can sort of see that it could be a full-fledged blogging application with lots of functionalities in place.
+
+I mean, personally, I still have plans on starting my blog on this platform. So, I've been testing it a bit here. For example, I created a page here with a bit more real content with a real image and then you can, you know, take a look right here. Like or dislike and then subscribe to authors and stuff like that. So here, upload a page thumbnail. This is another place where we have
+
+a file uploading thing in place. And also for the attach files. So here you can go ahead and attach any files that you'd like a movie file or anything that you can zip and then you can put that right here. We also have a very complicated comment functionality in place. Let me see if I can find a page here with lots of comments. Now this one comments disabled. All right, there we go. Here
+
+we have close to 300 comments. So here we can see that you can view replies. You can reply to people like this and say maybe hi there. And you can see the my comments appeared right here. All powered here by React and Redux. And yeah, so we have a lot of pages here. And our React code is massive.
+
+We have code splitting here. I can save pages, add to collections or create a new collection, maybe new collection, then add it there. And you can see that it did appear right here. Now, we don't have notifications yet. So, we do not have websockets in this project. But in one of
+
+the future projects that we're going to deploy, we will have websockets with a chatting feature in place. All right. But for this one, we do not have that. Now, the structure of this project is very similar to the Weer project. So, if you go ahead and open up the code, which we'll do in a bit, you're going to see that it's very similar. So, here we have the architecture. We still have the
+
+application powered by Cpeak. Backend is in nodejs and we have postgres right here. We still have the common folder and react SASS and reusable ones. But this time around we have lots of CSS, lots of JavaScript. We also have a dark theme right here. So we have a separate CSS file here for this
+
+setup. So we have multiple one of these and also we have many different HTML files because we're also doing server side rendering for the public pages. So you can imagine that these pages here, we do not want to render them with JavaScript and they need to be rendered on the back end and then sent across here for maximum optimization for search engines. So we have server side rendering right here for public pages and we also have that one here for public profile. All right.
+
+So this data right here should also be server side rendered. Now all these serverside rendering here and file uploads are also here being handled by Cpeak. It's a zero dependency framework. So node can handle all of them with ease. Now a few things that are different from the Weer project.
+
+Well here we have an email functionality in place. So users can go ahead and request to change their password. So let me log out here and then try to log in. So if right here I'm trying to maybe log in and then I don't remember my password. I can go ahead and click on forgot password and then send an email. Okay. And now if I go ahead and pull up my email, well actually this
+
+is not a real email. So let me see if I can change this one to something that I've got. Hopefully we do have an account with that email. Okay, there we go. So let me check. All right,
+
+fantastic. All right, so here I have just pulled up my email and you can see here that I got this email from no-reply@pagser.com. So we're going to see exactly how to set it up for cheap. So, you're not going to need to pay anything extra actually to set this up and you're only going to pay very very little for every thousands of emails that you're going to send. More on that later. So,
+
+we have this in place and here we can see that I get this nice email that I can click on this reset password and then be prompted here to create a new password. Now, we also have the same functionality here for register. So, let me see if I can actually create a new account here.
+
+Now, here we're prompted to put in the code that the application sent to our email. So, let me go ahead and check that again. And here's the new email that I've got. So, it's going to send us a code that we need to then put in right there. So, 33849.
+
+All right. So, here I have just registered a new account. So we also have this authentication in place with password hashing forgot password verifying emails and all that stuff which we need to handle as well. Now another difference here between Pagser and Weer is that here we have media processing. So as I showed you before when we upload an image we want to crop the image and we also want to resize it and also well we need to have file storage. So,
+
+we need to save these images and attach files somewhere safe and that somewhere is not going to be our own machine because that's not safe and you don't want to save your files there. SSDs actually do have failover rates of about 1% per year. So, something might happen to your server, maybe something within your control or outside of your control. And when that thing happens, maybe your SSD just gets totally blown up. All right, so this instance that we have here, maybe one day it just automatically gets terminated. Okay, now that's very rare,
+
+but it's something that could happen maybe once in a lifetime or maybe who knows once every decade because as I mentioned storage devices actually do have failover rates and that's something you need to keep an eye out on. So we don't want that. We want our data to be extremely durable. So we're going to talk about how we're going to achieve that. So we need to save three separate copies of our file in three separate locations in the world. And well that's going to be automatically
+
+handled for us, but we'll get into that later on. And that way our data is going to be safe even when disaster happens. Okay, one final point for this video. This is a quick road map of what we're going to do. We may do them in order or not. But to get this project set up, we need to clone and
+
+of course do yarn setup and add our secrets here to the parameter store. set AWS SES up, which is something that we're going to use to handle the emails, and then do this Amazon S3 thing for handling our file uploads, and then also update our sky-role to allow our machine to access the file storage thing and also to be able to send emails. Okay, so that's it about a quick overview of the project. And in the next one, we're going to go ahead and get this thing deployed. [music]
+
+Let's now go ahead and deploy the Pagser project. Now go ahead and open up the GitHub page of this project. I'll put this link in the resource section of this video. And before we clone it on our server, let's set up our environment variables. Now here just make sure to switch the branch to udcc just like the Weer project because this project is being built for production and not for this course. So just switch to that branch and then here I'll go to packages and then server and
+
+here just like before we have the .env.example file. So let's go ahead and put all that information in parameter store right here in Amazon. So, what I'm going to do here is to go ahead and set all the variables with my command line, and I want to finalize that command that I need to run here with AI. All right. So, hopefully this would be a good idea to show you this one as well. Now,
+
+I'm not going to be using a cloud-based AI because if you do that, you're trusting that AI company with your secrets, which I do not recommend. So, I'm going to use local AI to do that. Here, for example, you can use the LM Studio with a model like Gemma 4, which is very capable, and you can also run it on your phone. This has gotten as capable as the original GPT3 that came out a few years ago. So, it's wild that now we have the same performance, but here locally. Now,
+
+I'm going to use actually my own tool called Vox to do this operation. But before I do that, let me first show you how each command is going to look like. So we have to run AWS SSM again systems manager and then put-parameter and then I'll specify my region but you don't need to do this if you are just using a single region. Now the name we're going to prefix it with pagser/prod and then for example a testing name and then --value for example my value and then type which can be either string or secure string and if I run this it's going to put that parameter right there it's going to tell me that tier is standard version one and if I do a refresh right here you can see that we have that item right here with value my value Okay. So now I can use this to prepare a prompt here. I'll paste that command right here and say sample command to set a parameter.
+
+And now let's go ahead and grab all the variables from the .env.example. I'll copy all of them. Paste right here. Let's make
+
+sure that we have the correct stuff. So here we need to have some random stuff.
+
+and make sure that you'll put in at least 32 characters. If I select it right here at the bottom, you can see that it says 49 selected. Now, the same here for cookie secret. Just some random characters right here. DB password is password1234. This is the correct region for my case.
+
+And now the S3 bucket. So, let's go ahead and create a bucket first. Well, S3 is storage in the cloud. It's really that simple. So, you can create folders and then upload files into and then read those values. So, let's go ahead and create a bucket here. And here we need to give it a bucket
+
+name. It has to be unique across all accounts in Amazon. So, I'll give it a name like this. So, Pagser dash something random. And I'm pretty sure it's not taken. Now, we'll leave everything here
+
+as default. Now, we don't want to block public access. This now means that whatever file we upload to this bucket or you can think of it like a folder. Everyone else on the internet would be able to have access to which is something that we want for our application for profile pictures for page photos. All of that info is public. So we want to be able to do that and get a URL for each photo.
+
+Now we're going to talk more about some of these in the future, but that's good enough for now. So let's create this bucket. Now, it's just a warning for you that if you block all public access, everyone will be able to read your data, which is something that we want. Okay? But if you are saving sensitive information like personal user info, that is something that you should not do and you should block all public access. All right, let's create this bucket. And here's
+
+the bucket name. So, I'm going to copy this. I'll paste that bucket name right here. Now, we want to be able to send emails for registration and some other stuff. So, I'll keep this here as false.
+
+All right, with everything in place, I can now go ahead and use local AI to go ahead and tell it to give me a big command that I can just paste over to my terminal and get everything set here into Amazon SSM. Now, I'll use my Vox application right here, and I want to switch here to AI mode. If I do that, I can also go ahead and copy a text. And then it's going to tell me here at the bottom that the text was copied for context. So that's how I'm going to prepare this one right here. Now let me cancel it and do it again because I've been talking to
+
+it right now that's not related to this. Now I'm going to pull that up again and do the operation. Here I am in my terminal application. I've got 12 environment variables that I want to set in the SSM from Amazon web services. So go ahead and give me 12 SSM put parameter commands like the sample one and make sure that the secrets and the DB password are going to be secure string and the rest can be kept here as string. Now it's going to use the Gemma 4 model to do this operation.
+
+So the actual transcription from my voice over to text is done using whisper. So still an open-source AI model. And then the actual thinking process, so the AI work is done here by Gemma 4, which is also an open-source one made by Google. Okay, let's see how good of a job it did. So I'm going to select everyone. Unfortunately, right now it's not really good at outputting multiple lines.
+
+I need to change something in the application which I will later on. But right now, what I want to do is just manually fix that. All right. So, I'll come here at the beginning. I'll hit enter.
+
+And there you go. Looks pretty good. And now I'm going to hit command and then my right arrow key to go at the end and I'll add in two and percent signs and then a backslash. So, this is what we can do here in Unix to indicate multiple commands. And with this, we can say go to next line. Now,
+
+it looks like it did a pretty good job, right? So, if I check the port is okay, domain is okay, secrets, okay, and they're also secure string, so it identified them correctly, and everything else here looks great. Now, I spent a few weeks here creating this tiny application right here. I developed it in native Swift. The reason that I did was that I wanted to have this AI at my cursor with my voice and I was pretty dissatisfied with everything else that we've got available. A lot of
+
+them were subscriptionbased trying to shove a lot of ads or their subscriptions down your throat. A lot of the other ones were cloud-based and imagine that having a company seeing every single thing that you're typing which is absurd. Or even the ones that were in like that. I thought that their UX was pretty bad. So, I went on this journey to create this tool for myself and my friends, and I genuinely now believe that this is the best one that's available. It has no subscriptions.
+
+It's not cloud-based unless, of course, you go ahead and add on your Claude or OpenAI token over to the application. And that will be just here for the AI mode. And still, even in that case, the transcriptions will be done on device with whisper. So, no subscription, no cloud, no popups, no extra junk, none of that stuff. and it just works. I've also just published it on the Mac App
+
+Store. Was kind of a pain here to get it approved by Apple, but hey, it's done. If you've got an Apple Silicon Mac, you can go ahead and check it out right now. Okay. So, with this in place, I'm going to go ahead and now copy this and then dump it over to my terminal. All right. So,
+
+now it's going to add each one of them. You can see that it's going to run them one at a time, and it would take just a minute. still way faster than trying to do that in the graphical interface. So in the actual console. Okay, let me just double check that it's working fine. So my parameters,
+
+I'll do refresh. And now we have every single last one of them. So for example, here's the region US East one. Our cookie secret, which is a secure string, so it's encrypted on disk. And here's the decrypted value. And everything else here
+
+looks good enough. Okay, let's now go ahead and clone the project. So here I'll go to the server and then git clone the branch udcc. And then let's go ahead and copy the URL here. Now, we have some junk left over here from where we installed the AWS tool. So, we can go ahead
+
+and get rid of these. So, let me remove the CLI right here. And then that folder, too. And now I'll go here into Pagser and do yarn setup. Okay, this is going to take a minute just like before, but actually this is going to take longer than the Weer project because this is a massive project, right? Building the React here would take an eternity. And I want to talk about a problem
+
+while this is happening. So let me create a new shell and go back to that machine and then let's run CPU usage. Okay. So I just want you to pay attention right here to our idle CPU. Okay. Right now it's half idle and this build is still undergoing. But if you look right here, it's
+
+actually consuming a lot of CPU. In production, we're going to be doing a lot of deployments, maybe multiple times in a single day. And this is a bit of a problem here. We don't want all of our CPU to be burnt here for building the project. And I'll talk about a solution later on with CI/CDs and building on another machine and then pushing right here. Docker here can help us a
+
+lot by building the image and then just pulling the image here on this machine. So this process will then become an almost instant process but we'll get into that later on. And here we can see that also the Pagser database was created and all the tables here were created. Okay. Now the seeding that happens here has nothing to do with the Weer one. So this database reset that
+
+we're doing here is not going to mess with our Weer database. So these two applications have two separate postgres databases. Okay. And if we now go into postgres and then take a look at our databases. You can see here that we have Pagser and we also have Weer. Okay. Now let's do yarn start.
+
+And then I want to just go ahead and take a look at my Oops. What is this my value? Okay. I need to take a look at that. It's it's not okay. But let me take a look at the logs. All
+
+right. So the application is still working fine. It shouldn't be called my value. So, I don't know what went wrong. I think it's the value that we actually set right here in the parameter store.
+
+So, we set this one. I'm not even sure if I'm reading this. Maybe PM2 is doing it automatically, but let's go ahead and delete this. And then I want to go ahead and do it again. So, I want to delete my value and then start the project again.
+
+Okay, there we go. So now it's called Pagser. And then let's take a look at the PM2 logs Pagser. And there we go. We also have now two instances of this project running. Now let's
+
+go ahead and view this project. So I'll copy my DNS and then I'll go here to 3080. And there we go. So we should now be able to log in right here. But one thing that still does not work is the email sending. So if you try to click on forgot password or register, you're not going to
+
+be able to proceed because we still have not set up a way to send emails. Now we should have some users here. So let me go ahead and connect to the database here. Then select all from users. So we have Okay. Gosh, should have done it here with pgAdmin because these hashed
+
+passwords are crazy. But it doesn't matter. Here is one email. So, I'm going to go ahead and log in with this. And these three users we have right here all have password string.
+
+And now we can also log in. Okay. All right. Let's take a break now and then we're going to talk about how we're going to handle sending emails and also media storage and processing. [music]
