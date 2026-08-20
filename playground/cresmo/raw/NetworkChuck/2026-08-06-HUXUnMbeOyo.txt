@@ -1,0 +1,798 @@
+---
+video_title: "OSPF From Zero: Let's Build the Internet (Well...Almost) | Summer of CCNA"
+video_id: HUXUnMbeOyo
+channel_name: "NetworkChuck"
+channel_id: UC9x0AN7BWHpCDHSm9NiJFJQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=HUXUnMbeOyo
+video_date: 2026-08-06T22:45:57+00:00
+video_description: |
+  Join us for our 90 minute Sumer of CCNA session, today at 5PM ET!
+  
+  If you haven't signed up for the Summer of CCNA, please visit this page here and let's get started! https://academy.networkchuck.com/course/premium-summer-of-ccna
+---
+[música]
+
+Calor.
+
+Aquecer.
+
+Quero que a
+
+música fique mais baixa.
+
+Olá. Boa tarde, boa noite, bom dia. Acho que conseguimos localizar todos os diferentes fusos horários. Bem-vindos a mais um relatório diário da série "Verão da CCNA". Meu nome é Zach. Eu não sou o
+
+Chuck da Network. Eu também não sou o Jeremy, mas serei seu anfitrião hoje, guiando você por esta lição. Vamos conversar sobre OPF com o Jeremy. Se você nunca participou de um evento como este, seja bem-vindo(a) e considere se juntar a nós no Discord, onde toda a comunicação divertida e emocionante acontece e onde realizamos nossos sorteios. Então, se você quiser participar dos sorteios que faremos hoje, escaneie este código QR para entrar no nosso servidor do Discord e participar . Caso você não esteja familiarizado com
+
+o que fazemos aqui, estamos realizando o programa de verão da CCNA e, duas vezes por mês, fazemos transmissões ao vivo abertas ao público. Eles estão abertos ao mundo inteiro, então todos vocês podem ter uma ideia do que estamos fazendo, o que estamos aprontando e todas essas coisas divertidas. Nós iniciamos essas transmissões cerca de 10 minutos mais cedo para que todos possam se acomodar e fazer login. Peguem seus cadernos, caneta e papel, se tiverem. Você pode usar o Notion, o Obsidian, o OneOte ou até mesmo o Bloco de Notas, se preferir . Bem, de qualquer forma, sejam
+
+todos bem-vindos. Espero que você esteja tendo um dia fantástico. Claro, se você não sabe o que é o verão do CCNA, dê uma olhada aqui. Aí está a ligação com o verão do CCNA . Como se chamam essas coisas ? Notas. Olá, arma de caminhão. Como
+
+você está hoje? Olá a todos vocês no chat. Obrigado a todos por estarem aqui conosco. Como costumamos começar cedo, se vocês tiverem alguma dúvida sobre qualquer coisa que estejamos fazendo aqui na Network Chuck Academy, podem perguntar no chat. Ou, se você tiver dúvidas gerais sobre o assunto, como por exemplo, perguntas sobre carreira em TI , talvez eu possa respondê- las. Talvez eu possa te ajudar.
+
+Mas enfim, vamos começar em cerca de sete minutos. Jeremy se juntará a nós para que possamos percorrer o OPF do início ao fim. Amigo, 2 pontos, esta é a sua pergunta. Por que não ganho nenhum dos sorteios? Porque você tem um azar terrível, meu amigo. Desculpe. Desculpe. Não posso
+
+te ajudar nisso. Talvez na próxima vez. Como faço para conseguir uma camiseta da Run CMD? Você pode acessar o site runcmd.store e lá você encontrará um boné, uma camiseta ou qualquer outra coisa que desejar da loja de comandos runcmd.
+
+Mark, é a sua primeira vez aqui? Bem-vindo. Obrigado por estarem aqui conosco. Olá da Indonésia. Isso é fantástico.
+
+Bem-vindo. Obrigado por estar aqui. Minions, como faço para encontrar meu primeiro emprego ou estágio? Estágios. Essa é boa . Se você estiver na faculdade, tudo será
+
+muito mais fácil para você. Mas a melhor dica profissional que posso dar a quem procura um estágio é começar a procurar por volta de abril, maio, março, até mesmo em distritos escolares da sua região. Então, se você acessar k12jobspot.com, eu colocarei o link no chat. Isso vai mostrar anúncios de emprego específicos para distritos escolares , mas muitas vezes eles também publicam estágios, porque no verão as escolas estão mais movimentadas. Caso você não saiba, especialmente
+
+nos Estados Unidos da América, as escolas geralmente não têm alunos durante o verão, e é nessa época que os departamentos de TI realizam a maior parte do seu trabalho . Por isso, eles costumam contratar estagiários durante esse período. Hum, espectro global, você tem 14 anos. A certificação CCNA é uma boa opção para você? Sim, se você quiser encarar isso aos 14 anos, com certeza pode. Vou adicionar o Micah
+
+ao chat. Olá, Micah. Você precisa trocar seu microfone. Consigo ouvir muito ruído de fundo. Oh, tudo bem. Vou ver se consigo acabar com isso
+
+aqui. Espere um segundo. Provavelmente o ar condicionado. Ah, provavelmente é isso mesmo. Você precisa do ar condicionado.
+
+Vou me esforçar ao máximo por vocês, porque amo muito vocês. Bem, em um ambiente externo simples, você está tendo dificuldades para reter todos os comandos CCNA devido ao trabalho em um ambiente corporativo onde você gerencia tudo usando DNA para as estruturas SDA e ACI. Você deveria pular a CCNA e ir direto para a Encore? Não. [suspiro] Sim. Concordo com você
+
+, não sei se eu deixaria de lado a CCNA, porque você vai aprender muitos comandos que precisará e utilizará o tempo todo. Sim . Sim. Sim. Então, o que eu ia dizer sobre isso é que, curiosamente, com o Encore, porque estou analisando-o, ele não é muito focado em comandos.
+
+É mais focado em conceitos, e você precisa realmente entender os produtos e conhecer soluções como SD-WAN, soluções de acesso SD e todas essas coisas diferentes . VTEPs, VNIs, e essa rede, e todas as outras coisas, é realmente muito legal, mas a grande maioria do Encore não lida com comandos. Quer dizer, você precisa conhecê-los, mas não, se você vai aprender os comandos, o CCNA é definitivamente a melhor maneira de adquirir essa memória muscular. Absolutamente. E sejam bem-vindos à transmissão.
+
+Então, sejam todos bem-vindos. Como vocês sabem, e como mencionei há alguns minutos , começamos isso alguns minutos antes para que todos possam entrar, se preparar e se acomodar. Hoje, estamos acompanhados por Micah. Micah faz parte da equipe da Network Chuck Academy. Ambos fazemos parte da equipe da Network Chuck Academy.
+
+Então, caso vocês não saibam, isso é meio que separado do próprio Network Chuck . Então, estamos em uma equipe completamente diferente da dele, mas no fim das contas fazemos parte da mesma organização , só que ajudamos a dar suporte à academia. Então, o curso intensivo de CCNA que estamos realizando agora é algo que ambos apoiamos, e é sobre isso que estamos trabalhando hoje: material do curso intensivo de CCNA, onde falaremos sobre OSPF. Então, esse é o tema de hoje que Jeremy, nosso querido amigo e instrutor, nosso líder destemido, abordará, nos ensinando OPF desde o básico. Esse foi um dos tópicos que abordamos durante nossa jornada de verão com a certificação CCNA, e muitos alunos disseram: "Gostaríamos de obter mais informações sobre isso. Gostaríamos de nos aprofundar um
+
+pouco mais ou simplesmente revisar e garantir que entendemos essas informações." Então, hoje, Jeremy preparou um laboratório inteiro para abordar esse assunto. Portanto, todos vocês são mais do que bem-vindos para acompanhar. Se você ainda não se inscreveu para o curso de CCNA de verão, pode fazê-lo agora mesmo. Ah, ainda é possível se inscrever.
+
+Você pode se cadastrar gratuitamente. Você pode se inscrever como membro premium. Mas devo avisar que vou contar um segredinho, um segredinho bem pequenininho. Deixa eu me livrar desse aqui. Deixe-me exibir a imagem na tela.
+
+Isso será mais fácil. Vai demorar um segundo para carregar. Eu adoro usar isso. Pronto. Pronto. Aqui está o nosso
+
+segredinho para vocês. Então, eu adorei. Fiquem atentos às nossas redes sociais, pois em breve faremos um anúncio mais oficial para que todos possam se inscrever. Mas vamos fazer o curso de outono na CCNA. Então, assim como fizemos com o CCNA no verão, vamos tentar novamente e ajudar você a obter a certificação CCNA. Esse é o objetivo principal deste
+
+programa. Sim . Sim. É uma ótima maneira de entrar no mercado . Se nada mais, tente iniciar uma conversa nas suas entrevistas de emprego . Sabe,
+
+pratique um pouco. Arromba as portas. Sinceramente, o que eu gosto é que , mesmo você ainda não tendo feito a certificação CCNA, eu continuo te incentivando. O que você vai fazer depois de receber o seu? [risos] Ah, a mesma coisa que estou fazendo agora.
+
+OK. Então, é isso. Veja bem, uma das coisas mais legais do CCNA, pelo menos para mim, é que você não precisa usá-lo apenas como engenheiro de redes. Bem, e meio que o meu sonho dentro dos sonhos sempre foi ser o cara sentado no teclado digitando em uma linha de comando e, sabe, fazendo todo o trabalho de engenharia de redes. Mas na verdade, isso me abriu as portas para estar aqui com vocês hoje e mostrar como fazer a certificação CCNA, mas há muito mais para aprender e isso é apenas o ponto de partida. Quer
+
+dizer, é exatamente isso. Hum, compre ou não compre. Quero dizer, aprendam essas coisas porque são muito valiosas. Muito valioso. Portanto, ainda não temos o material para a nova certificação CCNA. Não sei por que minha câmera
+
+ficou tão embaçada. Não, não vamos falar sobre a nova versão. Vai ser basicamente o mesmo material da versão antiga. Na verdade, estamos condensando um pouco parte do programa de verão da CCNA . Mas, mesmo assim, você ainda terá uma experiência muito semelhante. Então, se você conhece
+
+alguém que perdeu essa oportunidade, definitivamente avise essa pessoa, porque sim, com certeza. Quem, nesse chat, conhece alguém que pensa: "Puxa, eu devia ter começado em maio, quando eles começaram, mas não comecei e agora me sinto muito atrasado." Então, essa pessoa, cujo nome não posso mencionar , disse: "Espere, haverá outra. Várias pessoas perderam a do verão . Isso é fantástico."
+
+Sim, é verdade. Estou muito animado com isso. Então, se vocês estiverem interessados, fiquem ligados porque, mais uma vez, anunciaremos mais informações sobre isso. Claro, se você ainda não se juntou a nós no Discord, por favor, faça isso também. E antes de começarmos, antes que Jeremy chegue , tenho certeza de que ele já está preparando tudo.
+
+Gostaria de agradecer especialmente aos nossos parceiros e amigos da Skillbit. Então, se você não conhece o SkillBit, eles oferecem laboratórios virtuais online e simulados, ou melhor, laboratórios de prática para o exame CRA . Mas nós fizemos uma parceria com a Skillbit para que eles pudessem nos oferecer seu ambiente virtual. Portanto, utilizamos o Skillbit em todos os nossos laboratórios virtuais durante sua jornada de preparação para a CCNA neste verão e também para a nova jornada que está por vir. Acredito que também utilizaremos o Skillbit.
+
+Eles têm sido muito confiáveis ​​para nós em termos de conectividade e funcionamento de tudo. Se eu achasse que algo não estava funcionando corretamente, era algo que talvez tivéssemos feito de errado ou algo assim. Mas a Skillbit tem sido excelente, tanto no apoio que nos deu quanto no apoio a vocês ao longo dessa jornada. Então, se você ainda não fez isso, por favor, por favor, visite o Skillbit, diga que nós o indicamos, cumprimente-os e siga-os nas redes sociais. E Jeremy, você está conosco?
+
+Acho que ele está tentando ser. Ele está conosco em espírito. Ele quebrou. Sim, talvez. O problema é que o vídeo do Jeremy não é suportado pelo Skill Bit e isso fica evidente imediatamente. Sim
+
+. Sim. Então, bem, [risos] o engraçado é que... Então, é
+
+engraçado. Sem graça. Ontem, eu explodi completamente. Vamos ver se isso funciona. Não. Ah, eu queimei minha câmera e
+
+depois disso tudo voltou a funcionar. Então, eu nem sequer pensei duas vezes sobre isso. E agora decidiu parar de funcionar novamente. Então, por favor, aguarde. Estamos realizando alguns pequenos ajustes para solucionar o problema.
+
+Você precisa desconectar e conectar o cabo USB umas sete vezes, e depois virá-lo umas quatro vezes para ter certeza de que é o cabo certo. É isso aí , questão binária, você precisa acertar três vezes. Sim . Principalmente os cabos USB-C, sabe, como esses. Você tem que girar isso umas sete vezes só para acertar .
+
+Eu sei que você vai dizer coisas horríveis quando eu disser isso, mas a Apple estava certa com aquele cabo Lightning. Não. [risos] USBC. Bom, tudo bem. Agora, se ao menos tivessem aumentado a velocidade daquele dispositivo para algo além de USB 2.0. Quer dizer,
+
+vamos lá. Sim . Então, sim, estamos esperando. Acho que vou ter que sair da transmissão rapidinho e voltar. Só me dê dois segundos. E o
+
+Zach pode ser extremamente divertido. Ah, eu sou sempre extremamente divertido. Você pode contar comigo para assuntos relacionados à Alemanha. E aí, pessoal! Se vocês ainda não entraram no nosso Discord, a gente gosta de jogar um joguinho divertido de vez em quando, em que eu peço para vocês postarem um GIF no chat do Discord que nos dê uma ideia de onde vocês estão participando.
+
+Então, serei o primeiro a entrar no Discord. Então, isso é como um jogo divertido que a gente joga. Você coloca um GIF ali. Imaginamos de onde você é. Então, eu coloquei um GIF ali. Tente adivinhar de onde eu sou
+
+com base naquele GIF que está ali, ou GIF, dependendo do que você quiser, sabe, o que quer que seja. Para mim, sempre será GIF. Não é um arquivo gráfico? Portanto, a resposta seria sim. GIF gráfico. Não sei. Quer dizer,
+
+eu nunca conseguiria me acostumar a chamar isso de GIF. Desculpe. Não é manteiga de amendoim. Não, não é. E com certeza não é manteiga de amendoim Jify, porque isso não existe .
+
+É emocionante. [risos] Ah, temos gente do mundo todo. Parece que temos aqui alguém da Terra Média. Isso é incrível. Não. Sim, estou com muita inveja. Eu adoraria
+
+ir à Holanda e visitar o país . Eles ainda têm um monte de coisas do Hobbit montadas, não é? Ah, tenho certeza que alguém no chat poderá responder a isso. Ei, ei, olha quem está aqui. Olha só isso.
+
+Modo Jeremy global. Espere, espere, espere. Este era o Jeremy há apenas um segundo. Sim, [risos] aí está. Agora sim, nós entendemos. Não, o
+
+engraçado é que tenho muitos dispositivos de vídeo conectados a este computador. Eu cliquei em selecionar a câmera e ela literalmente preencheu toda a janela com todas as câmeras que eu tenho, então estava tudo lá. Eu simplesmente não conseguia ver para selecionar, porque, sei lá. Qualquer que seja. Agora entendemos. Estamos prontos para arrasar!
+
+Vai ser um dia divertido. Vai ser um dia incrivelmente divertido. Estou muito animado com isso. Então, vou fazer com que você seja expulso . Sejam todos bem-vindos a mais um check-in diário para o verão do CCNA. Se esta é a sua primeira vez
+
+conosco, realizamos esses encontros duas vezes por mês com todos os participantes. Abrimos nossas transmissões ao vivo ao público para que todos possam participar. Mas durante todo o verão do CCNA, nós entramos em contato diariamente com Jeremy, Chuck, eu, Micah, e com todos os nossos alunos, apenas para termos, você sabe, uma questão de responsabilidade, e para ajudar a esclarecer dúvidas que os alunos possam ter para abordar os tópicos com mais profundidade. E é daí que surge o tópico de hoje: nossos alunos do curso CCNA de verão disseram: "Ei, nós realmente queremos aprender mais sobre OPF. Achamos que precisamos de mais material sobre isso." E o Jeremy disse:
+
+"Deixa comigo. Eu cuido disso. Nós vamos dar conta de tudo. Então, toda essa sessão de hoje é sobre OPF e é um tópico que eu acho que muitos dos nossos alunos estão animados para acompanhar. Se vocês quiserem participar do programa, certifiquem-se de clicar no código QR.
+
+Vou pegar o link e colocar no chat também. Mas eu já mostrei essa imagem antes, Jeremy, e não sei se você quer comentar . Vou colocar na tela. Preparado? Estou pronto.
+
+Ah, sim. Sim. Sim. Isso está acontecendo. Então, nós nos reunimos com vários alunos do nosso programa de verão de CCNA ontem. Passamos por isso e eles disseram que
+
+essa foi, honestamente, a coisa mais legal que já fizemos para o CCNA. E eu nem vou entrar em detalhes sobre toda a conversa que tivemos. Conversamos por uma hora e dissemos: o que podemos fazer para melhorar?" Saímos de lá com seis coisas, e eu disse: "Vamos fazer isso". Então, estamos entrando no ritmo do outono. Estamos
+
+entrando no ritmo do outono com o CCNA. Começa em 14 de setembro e, em resumo, estamos fazendo uma versão condensada do que estamos fazendo aqui, porque esta será a última vez que teremos a última edição antes que o CCNA passe por uma reformulação completa da Cisco. Alguns de vocês sabem que o CCNA está programado para ser refeito com IA integrada . Então, eu recomendo fortemente que vocês busquem o CCNA e o obtenham antes que essa reformulação aconteça. E então vocês o terão. E para
+
+responder a todas as perguntas, não, ninguém diz: "Ah, você buscou, é só ter um CCNA". É isso, você obtém essa credencial. Então, não esperem. Vocês não precisam esperar. E eu acho que...
+
+Isso é algo com que muitas pessoas têm dificuldade, especialmente quando veem coisas como: "Ah, vai sair uma nova certificação CCNA ." "Eu deveria esperar pela nova versão." Não. Por que você esperaria? Você tem até o dia anterior ao lançamento da nova CCNA para obter a certificação. E
+
+mesmo que tecnicamente seja a versão mais antiga , ela ainda é válida por três anos a partir da data da prova. Portanto, ainda é relevante. E ninguém, nenhum empregador, vai olhar para a sua CCNA e dizer: "Bem, esta é, sabe, seis versões atrás." "Isso não importa para nós agora." Não, eles estão olhando para isso e dizendo: "Ah, você tem a CCNA." É
+
+isso. Você marca a caixa." Não importa. O que sim, a queda do CCNA. Oh, não.
+
+Não é esse o jeito. Mas, então, estamos indo atrás disso e, sim, estamos literalmente reconstruindo o programa desta vez. Porque eu coloquei seis prioridades da nossa chamada de feedback que eu disse que faríamos isso melhor da próxima vez, porque sempre podemos melhorar. E será incrível. Então, mais sobre isso depois porque... Ok. Então, eu tenho que
+
+ir. Eu tenho que ir. Vamos ficar sem tempo aqui. Sim. Sim. Então, então, isso vai ser uma
+
+aventura. Uma das coisas sobre as quais estávamos falando em nossa conversa, vou compartilhar minha tela rapidinho. E vou compartilhar meu monitor principal agora. Então, se eu estou olhando para cá, pessoal, estou olhando para vocês olhando para cá. Na verdade, estou olhando exatamente para o que vocês verão agora. Então, um dos feedbacks
+
+que recebemos... Ontem, os alunos disseram que as transmissões ao vivo foram incríveis, mas na verdade gostamos quando as coisas dão errado [risos], quando as coisas não saem como planejado, sabe? E eu pensei: "Ok, interessante, mas é isso mesmo, tem acontecido [risos] não vou dizer isso de propósito, mas tanta coisa deu errado nas transmissões ao vivo porque elas são ao vivo, literalmente, às vezes o laboratório não está configurado corretamente. E aí entramos no
+
+modo de solução de problemas." Como instrutor, sabe, apresentar é uma daquelas situações em que todos nós pensamos: "Ok, mas é uma aventura de aprendizado para todos nós." Então, o que eu decidi fazer para este OPF, e eu literalmente fiz isso há uma hora porque pensei: "Vou fazer isso." Vivemos na era da IA. Então, eu desenhei, eu construí esta topologia. Isso é no Cisco
+
+Modeling Labs, que, aliás, você pode obter e implantar gratuitamente. Você baixa o VMware Workstation e tudo mais . Você tem até cinco nós na versão gratuita. Então, eu construí essa topologia aqui. Coloquei todos os endereços IP, tudo isso, tirei um snapshot e joguei no Claude.
+
+E então, alimentei o que eu vou chamar de mentalidade do Academy Lab, o que significa que não é passo a passo. Você não vai ver os comandos em [ __ ], tipo "digite isso, faça isso". Eu quero que seja exatamente como é no mundo real quando você está fazendo isso. E o Claude disse: "Entendi". E gerou o que vou mostrar aqui. O Hard Hat Lab,
+
+o uplink Zion. E, resumindo, eu nem tinha... então rolei a página para baixo só para ter certeza de que não estava confuso e pensei: " Isso é realmente muito bom".
+
+Então, esta será uma configuração completa de ponta a ponta do OPF em um ambiente de rede de médio a grande porte. E vamos fazer isso em termos de um cenário, onde é exatamente como você... Não chegue a um emprego e alguém diga: "Ok, gostaria que você configurasse o OPF." Por favor, use o número de identificação do processo
+
+um e certifique-se de que isso não seja real, que você [risos] você entende, tipo, ok, estamos dentro. Quer dizer, é claro que usei os personagens de Matrix e Claude percebeu isso. Eu fiquei tipo " bom trabalho, Claude", e depois pensei " certo, estamos construindo Zion, a última cidade humana", como se você já tivesse visto Matrix. Jeremy, vamos compartilhar esse documento que você tem aí? Sim . Oh sim.
+
+Se você compartilhar comigo, eu farei o upload agora mesmo. Na verdade, deixe-me, hum, deixe-me [limpa a garganta] dizer isso agora porque eu sei que algumas pessoas vão querer isso e, então, deixe-me, deixe-me fazer isso. Ah, isso vai facilitar bastante. Ah, bom . E eu enviarei isso para você assim que eu lançar toda a nossa empresa no espaço da internet. Ah,
+
+Zack está aqui. Pronto, aí está. Pois é, eu nem imaginava que tudo isso tinha se encaixado agora. Então, é o seguinte: vamos fazer o seguinte. Claude também disse que se você tentar fazer isso em uma transmissão ao vivo de 90 minutos, você é louco.
+
+Dizia literalmente isso [risos] e dizia que você precisaria de pelo menos três sessões de 90 minutos. Eu estava tipo aqui. Não, Claude, você está louco. É isso que estou dizendo. Então, eis o que temos. Então, antes de mais nada, fora
+
+do ambiente de laboratório, quero apresentar a vocês a topologia. Então, em primeiro lugar, este é um diagrama de rede típico que você veria. Bem, no contexto do OPF (Optical Provider Field), a área zero é sempre a primeira área que você vai criar. É conhecida como a região da coluna vertebral, mas chegaremos lá. Esse é o laboratório. Hum, eu só queria mostrar para vocês como
+
+nós temos esses roteadores. Bem, eu também os numerei porque às vezes é mais fácil se referir a eles por número. Então, temos Trinity, Neo, Roteador 2, Roteador 3, etc., etc., etc. Mas estes são,
+
+na verdade, escritórios. Portanto, este poderia ser um roteador que alimenta um centro de dados. E aqui estão as VLANs do centro de dados que contém todos os servidores do Morpheus. Ou então, aqui eu tenho biscoitos fresquinhos, porque, se você já viu Matrix, sabe que o Oráculo adora biscoitos fresquinhos. Bring traz os biscoitos frescos. Então, ela tem uma
+
+loja de biscoitos e tem todas essas pequenas VLANs aqui, que são o Oracle, certo? Estes são escritórios. Isso poderia ser um link de uplink para... isso poderia
+
+ser a sede, onde todos os... Zion... você sabe... isso poderia ser o escritório
+
+um, isso poderia ser o escritório dois... todos estão se conectando de volta à espinha dorsal, que é Zion. Estou apenas dando a vocês uma visão geral do que temos aqui. Então, com esse
+
+contexto, vamos dar uma olhada no laboratório. Primeiro, a primeira fase: colocar o Morpheus online para o novo operador... nada disso está executando um protocolo de roteamento ainda.
+
+Temos nos virado com rotas estáticas e está uma bagunça. Quero que todos os dispositivos neste diagrama, incluindo os loopbacks de todos , consigam se comunicar com todos os outros dispositivos. Não se preocupe em dividir as coisas em áreas ainda. Não estamos preparados para essa conversa. Isso é legal. Hum, vamos fazer
+
+tudo funcionar em conjunto e garantiremos que eu consiga diferenciar meus dispositivos dos de todos os outros por algo mais do que mera sorte. Então, vamos lá. Requisito um: adicionar os endereços IP de loopback com base nos números dos roteadores. Tipo, o roteador um é 1111 e assim por diante. Cada roteador na topologia deve ser capaz de alcançar a interface de todos os outros roteadores, incluindo o loopax, usando um único protocolo de roteamento dinâmico.
+
+E o segundo requisito é que a identidade de cada roteador na rede seja algo que você escolheu propositalmente, e não algo que o roteador tenha escolhido por acaso. Ok, até aqui tudo bem . Estou vendo o Micah acenar com a cabeça ali . Sim. Então, então, vamos lá. Então,
+
+eu estava apenas conferindo uma peça na minha cabeça aqui. Eu pensei: "Ok, então estamos definindo o ID do roteador." Tipo, beleza, legal. Vamos fazê-lo. Sim, agora sim, eu vi uma pergunta.
+
+Alguém perguntou: "Onde está Chuck?" Chuck está na Defcon. Então, ele está fora. E [risos] o mais importante, é que a Pink Calico também está dizendo que não existe colher. Não há colher.
+
+Absolutamente não. Dito isso, vamos organizar tudo isso. Agora, sei que tenho aqui uma formação em múltiplas áreas, que, aliás, é um primeiro passo rumo ao CCNP. Na CCNA, você só precisa de OPF de área única , mas vamos... vamos... vamos com calma
+
+, certo? Então, primeiro vamos configurar o OPF de área única. Morpheus disse para fazer isso em tudo. Então, vamos lá. Vou entrar em Morpheus. Em
+
+primeiro lugar, o tamanho da fonte. Tudo bem para vocês verem isso, Zach? Consigo ver perfeitamente bem. Sim, deve ficar tudo bem. Poderia ser um pouco maior, mas está bom. Muito
+
+bem, aqui está. Pronto. Muito bem, então vou executar um breve comando "show ip interface brief". Meu comando favorito em toda a Cisco. Existe Morfeu. Bem
+
+, agora vou voltar ao diagrama. Eu sempre vou ficar oscilando entre o passado e o presente. Morpheus está sentado aqui. Uma conexão até o link WAN 192168 e uma conexão aqui embaixo até o link 168.2, certo? Hum, e também vemos
+
+vários loops de retorno por lá . Ok, então vamos começar configurando o endereço IP de loopback . Então, vamos fazer um loopback de interface e você pode criar 2 bilhões de loopbacks (2 bill147,483,647) . Vamos escolher zero. Vamos usar [risos] o endereço IP básico 1.1.1.1 porque é esse e vamos usar...
+
+algumas pessoas chamam isso de máscara de host 255 255 255 255. O motivo de fazer isso no OPF é porque quando você entra no roteador OPF1, que é o ID do processo, certo? Bem, ele vai escolher um endereço IP aleatoriamente para ser o ID do roteador. É como se fosse o nome de OPF. Então, vou fazer exatamente o que Morpheus nos mandou fazer. Dizia que a
+
+identidade de identificação de cada roteador na rede deveria ser algo escolhido por você , e não algo que o roteador escolhesse por acaso. Então, no OPF, digitaremos o ID do roteador e você digitará 1.1.1.1.1.
+
+Se você não fizer isso, ele escolherá o endereço IP mais alto do seu roteador como o ID do roteador. Agora, eu vou começar dizendo que o endereço IP de loopback mais alto, ou seja, loopbacks são como o seu... bem, você sabe, o endereço IP de loopback é como o seu... bem, você sabe, o endereço IP de loopback é como o endereço IP de loopback
+
+, certo? Isso sempre prevalece. É a carta na manga. Então o loop será o nível alto. Então, este seria o ID do roteador se eu não tivesse digitado aquele comando. Certo? Então, consegui o
+
+novo ID do roteador. Diz que entrará em vigor imediatamente. Isso é ótimo. Aliás, isso irá redefinir todos os seus relacionamentos OPF, caso o OPF esteja em execução. Então você não quer fazer isso. OK. Então,
+
+estamos colocando o roteador OPF em funcionamento. Vou executar um breve comando "show ip interface brief". Vamos fazer isso de forma eficiente. Vou usar a rede 172.16.0.0
+
+Z com uma máscara curinga de 00255255, que indica que qualquer rede que comece com 172.16 executará OPF, e então precisamos digitar em qual área estamos inserindo a rede. Área zero. Digitar. Boom. Agora está em execução
+
+para o loopax. OK. Na verdade, precisamos fazer a rede 172 ou não, 1.1.1.1
+
+0000 área zero. Aliás, essa é uma das maneiras de ativar o OPF. Bem, eu sei que quando eu disse que ia construir esse laboratório, as pessoas pediram: " Você pode mostrar as duas maneiras de ativar o OPF?" Bem, neste momento, nenhum relacionamento OPF será formado porque tudo o que fiz foi ativá-lo para os loops. Faz sentido, não é? Então, olhando para este
+
+diagrama, eu diria que quero começar a formar relacionamentos aqui e aqui. Agora, vou ligá-lo ali, mas não se formarão relacionamentos porque nem Neo nem Oh, eu o aumentei um pouco. Espere . Nem vou precisar diminuir o tamanho. Pronto . Nem a Trinity vai conseguir...
+
+eles ainda não estão executando o OPF, certo? Então, deixe-me mostrar o outro caminho. Então, essa é uma maneira de ativar o OPF no roteador, certo? Está funcionando para essas interfaces. Vou sair novamente para a Ethernet0.
+
+E esta é a outra maneira. Posso digitar em ipospf. Hum, e então digitamos o ID do processo. Bem, você pode digitar várias coisas, mas eu vou dizer ID do processo 1, área zero. Certo.
+
+Saia novamente. Isso ativou o OPF para a Ethernet 0. Agora vou digitar interface Ethernet 01. Pressione a seta para cima e depois Enter. Lá. Esses agora estão executando OPF.
+
+E lembre-se, é a mesma função do comando de rede que usamos. Bem, na minha opinião, é um pouco mais fácil analisar interface por interface. Muito bem, o Morpheus está executando o OPF. Vou fazer um show ipospf e consigo ver um monte de informações. Diz que sou OPF1 com o ID de roteador 1111. Esse é o nome dele, certo?
+
+Hora de início, tempo decorrido, blá blá blá . Uma grande quantidade de informações sobre OPF. Podemos simplesmente dizer que está em execução, mas neste momento está inativo porque não tem vizinhos. Precisa de alguns amigos. Então, vamos analisar o roteador Neo. Neo primeiro. Então, temos
+
+Ethernet 01 e Ethernet 0. Vamos lá . Então, Neo, pule para lá . Seguiremos exatamente o que Morpheus nos ensinou a fazer. Hum, dizia que precisávamos de uma interface de loopback. Então, a interface
+
+loopback zero com o endereço IP 2.2.2.2 2555255255255 representa novamente a rota do host. Agora, deixe- me também mencionar isto. Você não precisa ter
+
+esse endereço IP de loopback para usá-lo como ID do roteador. Eu poderia simplesmente voltar aqui e digitar router OPF1 e o ID do roteador uh 2.2.2.2 e mesmo sem o loopback ainda funcionaria. Esse ainda seria
+
+o nome. A vantagem de ter um loopback, e a razão pela qual fazemos isso, é para que você possa realmente pingar o dispositivo. Consigo pingar o roteador pelo ID do roteador se ele estiver conectado a um endereço IP real. Legal. Então, deixe- me fazer isso. Eu vou... eu vou...
+
+configurar. Espere um segundo. Eu disse Neo. Como estou em Trinity? Será que estou perdendo o controle? Neo
+
+desapareceu? Acho que devo ter clicado na coisa errada. Espere. Vamos colocar o loop errado de volta aqui. As pessoas disseram que querem solucionar o problema.
+
+Pronto. Ah, tudo bem. Então, temos o Trinity atuando como roteador 2. Isso não é bom. Então, vamos clicar na seta para cima e digitar o ID do roteador 3.33.3.
+
+Saia novamente. Loopback de interface zero. Uh, nenhum endereço IP e endereço IP 3333. 255 255255.0.
+
+OK. Então, primeiro vamos configurar o Trinity, e é assim que se parece. Então, eu quero configurar o Trinity e o Zach, Micah, agora é com vocês. Assim que eu terminar aqui, vou respirar fundo. Eu devia ter pegado água. Hum, tudo
+
+bem. E fiquem à vontade para fazer qualquer pergunta que vocês tiverem. Então, por favor, se você está assistindo, você deve estar pensando: "Ok, isso é o básico do OPF." Então, por favor, façam perguntas sobre o básico, porque se vocês não entenderem isso, quando chegarmos a tópicos mais avançados, ficará mais difícil. Certo, então Ethernet 01. Então, vamos
+
+clicar aqui para executar o comando `trinity show ip interface brief`. Hum, e nós temos esses dois. Então vamos... vamos sair
+
+do modo de loopback. Vou usar a interface Ethernet zero zero e vamos usar o método mais fácil, uh, IPOPF, ID do processo 1, área zero. Hum, e depois iremos para Ethernet01 e faremos a mesma coisa. E, novamente, isso substitui o comando de rede. Não preciso usar o comando de rede se fizer isso. E
+
+pronto, Trinity ganhou um vizinho. Olá, Morpheus. Vou voltar e digitar "show ipospf neighbor". Boom. Vemos a Trindade. O ID do vizinho é 111.
+
+Esse é o nome do roteador para o OPF. E você pode ver aqui, se eu rolar a página para baixo, que é a Trinity falando com Morpheus. E você pode ver ali mesmo que o endereço IP real do Morpheus é 192.1682.2 . Certo. Então, voltarei
+
+aqui para verificar. Sim, esse é o endereço IP do Morpheus. E por último, mas não menos importante, vou executar o comando "show ip route" e rolar um pouco para baixo. E eu consigo ver bem ali. Eu só... eu só vejo
+
+o "O", ele se destaca para mim ali . Esses são todos os loops de retorno vindos de Morpheus. Eu também consigo ver a conexão WAN novamente. O link WAN que está bem aqui, o 192168.1, está apontando para ele. Isso também está sendo
+
+aprendido porque Trinity não está relacionado a isso. Então, aprendeu isso com Morpheus, que lhe contou. Agora temos dois roteadores configurados para OPF. Vou respirar fundo. Micah, quais são as nossas perguntas?
+
+Bem, uh, acabamos de pegar um aqui , uh, rapaz, para onde foi? Ei, estou atrasado para a aula. O que eu perdi? Bem, posso responder a essa pergunta muito rapidamente. [Risos] Vamos fazer uma análise profunda sobre OPF aqui, então preparem-se . Hum, vejamos aqui. O que mais
+
+temos preparado? OK. Hum, aqui está um comentário. Gostei deste comentário para começar. É quebrando coisas sem querer que a gente aprende, e era exatamente isso que estávamos aprendendo aqui. Então, vamos continuar a partir
+
+daqui. Zack, você tinha um? Sim. Da nossa querida amiga Marlene. Tudo bem.
+
+Ter um loopback mantendo o processo OPF sempre ativo na internet significa que ele será desativado? Sim. Então, então, em primeiro lugar, ótima pergunta. As interfaces de loopback não ficam inativas. Então, essa é a boa notícia. Enquanto o roteador estiver
+
+funcionando, você terá esse endereço IP e ele estará acessível desde que o roteador tenha conectividade. Bem, dito isso, a interface de loopback que adicionei não é necessária para o funcionamento do OPF. Tipo, a gente podia deletar toda a interface. Aliás, vamos, vamos, vamos fazer isso. Vou ver se conseguimos quebrá-lo sem querer. Acho que não.
+
+IPOPF e Trinity, como você pode ver, é 3333. Vou até Morpheus. Vou fazer um show ipospf uh vizinho. E é tipo, ah, eu vejo a Trinity ali. E eu posso entrar no Trinity e posso ir, uh, sem interface, loop de retorno zero.
+
+Boom. Sumiu. Um comando para exibir brevemente a interface IP . Não existe 3333. E com certeza , provavelmente foi assim que eu matei o Neo: eu cliquei no X. Volto aqui para...
+
+Morpheus. Pressione a seta para cima. Ainda tenho um vizinho. Ainda consigo pingar 1921682.1.
+
+Eu simplesmente não consigo usar o ping pelo ID do vizinho porque esse ID de vizinho não existe, certo? Então, se eu tentasse pingar o endereço 3333, não chegaria a lugar nenhum. Então, quando eu entrar no Trinity aqui, no modo de configuração global , eu simplesmente colocarei esse cara de volta e apertarei a seta para cima algumas vezes. Bem por aí. E nós temos isso. Uh,
+
+vamos fazer uma [bufa] seção de showrun OPF. E acho que ainda tenho isso... Eu não incluí isso no processo de roteamento OPF. Então, quero
+
+acrescentar: assista a isto. Vou indo, e terminarei minha declaração enquanto falo. Interface loopback zero e eu farei área IPOPF ou área de ID de processo zero. Pressione Enter. Agora, esse endereço IP será anunciado ao Morpheus. E agora eu devo
+
+conseguir executar o comando "show ip route". Ah, e adicionarei o OPF depois disso. E ali mesmo ele vê 3.33.3. Então, se antes não conseguia
+
+pingar a porta 3333, espero que esteja me acompanhando . Estou me movendo rapidamente. Ah, porque eu preciso provar que Claude está errado. Nós vamos conseguir. Ah, agora não posso. Sucesso,
+
+uh, pingando ping Trinity. Então, espero que isso ajude a esclarecer um pouco sobre esses loops. Outras perguntas? Bem, aqui está uma solução para isso. E então, para que serve exatamente o endereço de loopback?
+
+Quer dizer, se precisarmos delas ou não , se não precisarmos, podemos usá-las. Afinal, para que os usamos ? Bem, neste caso, estamos usando isso apenas para poder pingar o dispositivo. Então, se eu disser tipo, ok, consigo entrar em contato com a Trinity? Também é útil porque, por exemplo, se eu estiver no Oracle e quiser acessar o Trinity via TN net, qual seria o endereço IP do Trinity? É... é...
+
+20.20.20.2 ou é 192.1682? Qual deles eu uso para acessar via
+
+rede, o SSH2? Certo? Ao atribuir um único endereço IP como este loopback, você cria uma espécie de endereço IP universal, tipo, "Eu sei que sempre posso acessar Trinity no endereço 3333. Certo?" Estou lhe dando apenas um exemplo.
+
+Existem literalmente centenas de exemplos de por que você usaria um loopback. Hum, mas isso é apenas uma das opções para este contexto. Não. Sim. Dessa vez é você, Jeremy.
+
+Pensei que fosse eu. Oh meu Deus. [risos] Geralmente é o Chuck. Eu sei. Eu sei. Sabe quando
+
+seu laptop acaba tomando o lugar do seu celular? É o meu laptop que está tocando. Obrigado, Apple. Sim. [risos] Aqui está uma de Streeten. Então, eles
+
+dizem isso. Eu entendo que as áreas precisam estar conectadas à Área Zero, mas no diagrama de rede que ele mostra, aparecem Morpheus e a Área 51. Então, Trinity e Neo não deveriam ser ABRs (Áreas de Referência de Rede) para a Área Zero propriamente dita? Eles estão um pouco perdidos em relação ao que está acontecendo . E você tem toda a razão. Um reto.
+
+Sim. Bem, o motivo pelo qual estou colocando o Morpheus na área zero agora é porque, em primeiro lugar, a área zero é a área principal, que é o escopo do CCNA. Mas Morpheus nos disse explicitamente que não podemos desobedecer ordens. Ele disse para não nos preocuparmos em dividir as coisas em áreas ainda. Não estamos preparados para essa conversa. Isso vem depois, segundo
+
+Morpheus. Então, o que vocês estão vendo aqui é uma área múltipla, mas estou fazendo tudo na área zero apenas para começar. Bom. Vou interromper as perguntas por um segundo porque agora vou falar rápido. Só vou terminar de preparar o resto para a área zero. Veja-me partir.
+
+Então, vou para Neo. Vamos lá. Um dos meus filhos se chama Neo. É Neemias. Bem, eu tenho personagens de Matrix na minha casa. Uh, interface de modo de configuração global,
+
+loopback zero. Endereço IP 222255 255. Uhhuh. Bom. Saída. E nós vamos usar o
+
+roteador OPF1 com ID 222. Certo. Vamos levar o Neo até lá . E nós vamos... vamos fazer
+
+networking. Bem, vou fazer isso pela interface um pouco mais rápido. IPOPF 1 área zero. Vou clicar na seta para cima. Acesse aqui. Loop de interface de retorno zero e vá para
+
+lá. Boom. Agora temos três interfaces, todas configuradas para a área zero do OPF. E deveríamos conseguir ver o comando "show ip OPF neighbor". E agora temos dois vizinhos. Eba! Temos o
+
+roteador Morpheus número um bem aqui. E ele é atualmente um roteador designado. Falaremos sobre isso daqui a pouco. E então vejo a vizinha Trinity ali, 3333. Vamos descer.
+
+Por que? Porque Neo está passando por essa transição e formando uma relação de vizinhança com Trinity. Trata-se de uma única rede plana que interliga os dois. Então vamos falar com o agente Smith. Vamos fazer uma breve apresentação da interface IP. Uau!
+
+Eu tinha me esquecido de que adicionei loops de retorno ao Agente Smith que acho que não usei neste laboratório. Bom, então ele terá loops que ficarão simplesmente parados ali. Não os utilizaremos. Hum, mas vamos entrar na interface de loopback zero, se eu estiver escrevendo certo. E vamos usar o endereço IP 4444 porque, se não me engano, o agente Smith indicou o roteador número quatro. Então é
+
+isso. E então vamos ativar o OPF. Vamos usar o roteador OPF1. ID do roteador 444. Rede Uh.
+
+Desta vez, usaremos o comando de rede. Mais uma vez, só quero garantir que vocês saibam que podem escolher qualquer um dos caminhos nessa questão. 20.20.20.
+
+Ah, são três. Hum, e nós vamos usar 00 como as áreas de máscara curinga. Veja como você está mirando com muita precisão. [risos] Eu vi isso. Sim. Uma das coisas que eu adoro
+
+no processo OPF é que, quando você começa a explorar as variáveis ​​inesperadas, como, por exemplo, você pode fazer coisas realmente não convencionais com ele. Hum, não sei se Jeremy, você já fez algo parecido com usar um curinga de 0.0.255.0, tipo, deixar o terceiro octeto como ele é, do jeito que você quiser?
+
+Sim. E faremos isso no Oracle. Então, vamos lá, temos o agente Smith em execução e vamos pular aqui para o Oracle, o pequeno roteador stub no final, 1921683, é ele, e temos alguns loopbacks. Vou mover isso para lá, no Oracle. Então vamos lá, sim, para a loja, hum, mostrar interface IP breve e o Oracle é o roteador cinco. Então, vamos fazer a seguinte configuração:
+
+interface loopback zero endereço IP 5555. Pronto . Ops. Digitar. Vamos usar o roteador OPF1, com ID 5555.
+
+E faremos exatamente o que você disse, Micah. Vou usar a rede 1921683.0. E é aí que faremos uma máscara curinga para essa área zero, que será esse cara. E vamos lá, vamos fazer essa . Vou usar um comando de rede e
+
+incluir todos os três endereços de loopback aqui, digitando `network 172.16.0.0` com uma máscara curinga de 00255255. Agora, quero fazer uma pausa por um minuto, porque sei que muitas pessoas terão perguntas sobre isso. Se você ainda
+
+não se acostumou com isso, lembre-se de que essa máscara curinga tem um significado identificador. Isso é significativo. Vou correr e agora e deixe-me [risos] deixe-me também fazer muito no comando de rede. Lembre-se que o comando de rede é um desses comandos combinados. Faz duas coisas ao mesmo tempo. Primeiro, ele envia mensagens de saudação e
+
+tenta estabelecer relações de vizinhança em qualquer interface que comece com 172.16. Em primeiro lugar, e em segundo lugar, na verdade, anuncia essas redes. Então, ele diz: "Ok, vou anunciar qualquer interface que comece com 17216". Mas esse não é o anúncio que está sendo enviado. Este é o ponto mais importante
+
+e a prova vai te pegar desprevenido neste assunto. Todo mundo vai tentar, e isso é muito enganoso. Você fica tipo, "Ah, tá". Então, o Oráculo ali está conectado ao Agente Smith, e se você assistiu à parte dois e à parte três, descobre que eles estão conectados. O Oracle está anunciando, na verdade, a interface 172.16
+
+22 23 24. Não está anunciando a interface 1721600. Esse é apenas o comando que estamos usando para identificar quais interfaces ele deve anunciar e por quais interfaces ele deve enviar mensagens de saudação. Certo. Sim. É por isso que
+
+sempre sorrio quando penso em OPF, porque foi exatamente isso que me convenceu. Eu pensei: " Sim, finalmente entendi!", porque você... quer dizer, foi como se
+
+descobrir esse pequeno detalhe tivesse feito com que esse se tornasse meu protocolo dinâmico favorito de todos os tempos. Eu amo isso. Incrível. Tudo bem. Agora, agora já deveríamos ter terminado, Claude, você não está certo. Eu vou terminar isso. Uh nós
+
+[risos] temos nós temos nós temos uh Sião online. O texto afirma que cada roteador possui uma visão completa da rede, sem deixar nada inacessível, e você pode explicar por que cada roteador se identifica da maneira que o faz. Meu roteador se identifica como 5555. Então, execute o comando "show ip route". [bufa] Ah, e claro, temos... Ok, olha só
+
+isso. Olha só isso. Ah, então este é o Oráculo. É como se estivesse vendo uma rede, duas redes, três redes e cinco redes. Uh [gemido] onde está o quatro?
+
+Nós nos esquecemos do agente Smith. Um momento . Boa pergunta. Exibir breve descrição da interface IP. Recuperamos o circuito. Espere. Exibir seção de execução
+
+OPF. Nossa Senhora! Que bom que verificamos isso. Hum, não tínhamos incluído esse loopback. Assim, não conseguimos vê-lo quando fomos ao Oráculo. Note que está faltando
+
+na tabela de roteamento. Solução de problemas ali mesmo . Então, vamos acessar a interface. Vou retornar o loop de interface para zero. O que você teve que fazer antes de entrar no modo de interface, Jeremy?
+
+[risos] Tive que entrar no modo de configuração global . Obrigado [bufa]. Ah, e se você é novo por aqui, obrigado. Ah, explicaremos isso mais tarde. IPOPF uh ID do processo 1 área zero. Bom. OK.
+
+Bom. Então, isso agora deve ser incluído. E agora, se eu voltar ao Oracle, uh, vamos fazer de novo, uh, show ip route. Pressione a tecla Enter. Pronto. Sim, querida. Quatro redes estão
+
+aparecendo. Temos 1 2 3 4 5. Isso me indica que todos os loops de retorno estão presentes. Ao pressionar a barra de espaço, consigo visualizar todas essas redes OPF. Você está sentindo isso agora? Neste momento, por exemplo,
+
+consigo ver toda a rede. A OPF construiu esta rede. Temos um OPF de área única. Hum, posso acessar o Oracle. Posso executar o comando "show ip opp neighbor" porque seu vizinho é o agente Smith. É isso. Podemos ver que se trata de um
+
+roteador designado. Podemos ver o endereço IP do agente Smith ali mesmo. E eu deveria conseguir enviar um ping até Morpheus. Pressione a tecla Enter. Boom. Olha só isso. Na verdade, deixe-me fazer
+
+isso. Vou fazer uma pesquisa de domínio sem IP para garantir que não faremos nenhuma pesquisa de DNS. E vou fazer um rastreamento de rota até Morpheus. Aliás, as pesquisas de domínio acabam por tornar todo o processo mais lento, porque estão tentando resolver o DNS. Então, vou fazer um rastreamento de rota.
+
+E veja só. Estou acompanhando a série Agent Smith até 2020/2022. Vamos ver. Isso é Trinity. Então, quando o Oráculo envia um sinal para Morpheus, ele passa pelo Agente Smith, através do interruptor, até chegar à Trindade. Isso é
+
+202022. E então tenho certeza que, à medida que avançamos com isso novamente... Aliás, esses não são meus filhos.
+
+Acho que esses são os filhos do Zach. Ou esses são os filhos de Micah. Um daqueles garotos. Eles podem ser meus filhos. Você [risos] pode ouvir 1921682.2.
+
+Podemos pousar aqui. Está tudo bem , meu filho. Sim, eu falo alto o suficiente e tenho crianças ao meu redor o tempo todo. Então todo mundo fica tipo, " Esse garoto é bom?" Certo. Então, nós
+
+temos conectividade. Concluímos a primeira fase, implementando o sistema OPF (Optical Provider File) de área única online da Zion em todos os locais. Bom. Vou fazer uma pausa aqui por um segundo e responder a quaisquer perguntas que vocês tenham. Micah, Zach, me liguem. Te
+
+atingir. Sim, tivemos um aqui mais cedo. Era sobre quantos nós havia em um CML (leucemia mieloide crônica). Sim, a resposta para a pergunta "quantos nós você pode ter gratuitamente?" é cinco. Apenas
+
+alguns. Se você quiser ter mais do que isso, precisa desligar os outros e então poderá tê- los todos na topologia desejada, mas apenas cinco ativos por vez. Aliás, você pode fazer magia estranha com esses cinco. O que eu quero dizer é que eles permitem que você tenha switches não gerenciáveis, como o que eu tenho nessa foto, gratuitamente. Portanto, essas transações não afetam sua conta. E o que eu
+
+às vezes faço é pensar: preciso de anfitriões. Bem, cada host Ubuntu que você arrasta para lá viola seus cinco limites. Então, o que eu fiz, na verdade um truque que aprendi com Wendell Odum, é pegar um roteador e conectar interfaces por toda a topologia. Então você pega um roteador e o interliga por toda a sua rede, usando esse roteador como host para todos os seus dispositivos. Isso é genial. Isso é genial.
+
+É barato. É isso mesmo. É muito mais barato [risos] do que pagar por uma licença. É isso que você ganha. O que mais? E se...? Sim
+
+. E se um roteador não autorizado entrar no domínio OPF? Boa pergunta. E agora, eles seriam capazes de tomar Sião. Eles poderiam simplesmente se conectar ao Zion, envenenar a tabela de roteamento e fazer tudo mais, porque a autenticação OPF é uma boa prática. Ainda não implementamos isso,
+
+mas você pode adicionar uma chave pré-compartilhada, basicamente, a cada conexão ali. Para que você possa estabelecer relações de vizinhança, é necessário ter a chave certa . Ok, vamos às melhores práticas. É uma boa prática configurar o RID (Router ID), o ID do roteador e o loopback com o mesmo número? Ou você prefere misturar e combinar?
+
+Configuração de melhores práticas. Sim. Oh sim. Quer dizer, se você quer segurança no emprego ou gosta de bagunça na documentação, use um ID de roteador diferente do seu loopback. [risos] Mas se você quer sanidade, faça essas coisas. Eu ia dizer que a questão da
+
+segurança no emprego parece indicar que, se você escolhesse um loopback diferente e um ID de roteador diferente, você não conseguiria um emprego tão cedo, porque alguém que estivesse trabalhando lado a lado na sala ao lado provavelmente pensaria: "Não entendo o que está acontecendo aqui, isso está me atrasando". E sim. Desculpe, Jack, mas você sabe que é melhor ir embora. Exatamente. Não, se eles fossem bons, eles consertariam.
+
+[risos] Dê a volta. Muito bem, vamos voltar ao laboratório. É que eu... eu só estou
+
+tentando incluir tudo e provar que Claude está errado. Na segunda fase, a rede cresce. Bem, Morpheus, algumas semanas depois, o comando aprovou o projeto da área. Verde somos nós. Sião agora funciona por conta própria. Azul representa
+
+a espinha dorsal, vermelho representa o povo da Oracle. Combine com o diagrama. Não quero mais ouvir que os padrões de tráfego local de Zion estão aparecendo nas tabelas de backbone . E que o posto avançado dos Oráculos precisa do mesmo tratamento da parte dela. Então, agora vamos abordar o OPF multiárea. Aliás, o que fizemos
+
+é praticamente o que você precisa para a CCNA. Estou falando sério. É isso. Assim como a conectividade básica com OPF. Mas se você entrar no mundo real, vai precisar disso um pouco mais e vai aprender muito mais ao longo do caminho . Então, o que
+
+Morpheus está nos dizendo agora é para revisarmos e configurarmos o projeto de múltiplas áreas . Na verdade, não vai ser preciso muito. Então, vamos dividir em áreas com os roteadores corretos fazendo a ponte entre elas. E diz: "A acessibilidade que existia no final da primeira fase ainda deve existir. Crescer não significa perder o que já funcionava." Obrigado. Tudo bem. Então,
+
+deixe-me mostrar como quebrar coisas. Vou começar com Morpheus, que está inteiramente na Área 51, certo? Hum, vou ali falar com Morpheus. Entre no modo privilegiado. Faremos uma apresentação. Vamos analisar a seção OPF para que
+
+eu possa dar uma olhada. Bom. E vamos também executar o comando "show run interface Ethernet 0 and 01". Ótimo. Só estou tentando descobrir onde vou ter que consertar isso . Então, vamos começar
+
+corrigindo as interfaces. E é aqui que a rede cai. Vou entrar no modo de configuração global. Configuração global. Ethernet zero. Não vou participar do
+
+IPOPF1. Obrigado. Área zero. Hum, aperte a seta para cima e mude para "Ah, não é isso". Ah, área IPOPF 55. Aliás, Ctrl+A
+
+move o cursor para o início da linha. Pressione Ctrl+E até o final da linha. Muito mais rápido. Interface Ethernet 01. Hum, observe que estamos recebendo erros. Isso é
+
+bom. Hum, não vou usar a área zero e vamos usar a área 55. Observe que os vizinhos estão diminuindo, porque para formar uma vizinhança, é preciso estar na mesma área. E agora estamos recebendo pacotes inválidos. Aliás, aqui está a solução para o seu problema.
+
+Não há formação de relacionamento entre vizinhos. Isso ocorre porque há uma incompatibilidade no ID da área. Bem, Jeremy, também estamos com um problema de incompatibilidade de ID de área aqui. Todos comentaram isso no chat. Eles dizem: "Ah, tem que ser 51, não 55."
+
+Ah, será que eu gostei mesmo disso? Você acabou de me ajudar e me poupou muito tempo. Então, eu [risos] vou dar uma volta. Deixa eu fazer um roteador OPF1. Vamos consertar isso da maneira correta aqui embaixo . Nossa, são muitas! E aliás,
+
+você jamais configuraria uma rede tão rápido no mundo real. Só para você saber. Ah, vamos fazer uma cópia, não. Vamos fazer um controle de colagem. Por algum motivo, simplesmente não funciona usar o comando controlV em C no emulador. Então, deixe-me
+
+apenas ir sem rede 1721600 0. Provavelmente apenas uh 00255 255 área zero. Certo, removi todos esses. Agora, vou pressionar a seta para cima algumas vezes e faremos isso corretamente. Vamos falar da Rede 51. Área 51. O
+
+Dave ganha uma camiseta por isso. Certo. O que? Certo. Ainda estamos fazendo isso? Sim, tudo
+
+bem. Essa é a regra. Se alguém encontrar um erro meu, ganha uma camiseta grátis. Então, Dave, parabéns. A camiseta do verão da CCNAA está chegando para você. O
+
+Zach vai me passar todos os detalhes sobre isso. E agora preciso ir consertar as interfaces. Cara, agora estou nervoso. Eu penso: isso vai me custar caro. Ah, veja, isso torna tudo divertido para todos.
+
+Eu ia dizer que, no mundo real, quando você está configurando uma rede e trabalha para uma empresa, se houver um erro de configuração, isso vai lhe custar caro. OK. OK. Então, então agora [risos] você pode ver que estou digitando a coisa errada. A regra "mais ou menos" é tipo, eu tenho que entender completamente, tipo, eu perco um erro de digitação, não fica tipo, eu...
+
+Sim. Você tem razão. Não dá para mudar as regras enquanto elas estão sendo implementadas . Vocês estão soando como meus filhos agora. Parece a voz do meu irmão mais velho quando eu jogava Banco Imobiliário com ele quando era criança. [risos]
+
+Venha cá. Ir. Não. Não. Mostrar ipossp.
+
+Não tenho vizinhos porque temos essa área sem nenhuma semelhança entre os tipos de construção. Nós não vamos a lugar nenhum. OK. Agora vamos até o Neo e vamos iniciar nosso primeiro ABR. Ah, aliás, estamos chamando isso de roteador de borda de área. Na verdade, acho que
+
+essa é a primeira vez que usamos essa afirmação no curso CCNA. Trata-se de um roteador com mais de uma interface. Bem, quando há interfaces em mais de uma área, isso é chamado de roteador de borda de área. Por que é especial? Porque este é um dos dois roteadores que podem realizar sumarização, o que fará parte deste laboratório. Sim,
+
+vai. Vou levar isso para lá. Então, nós ainda não estamos fazendo isso. Neste momento, estamos apenas configurando isso como um ABR. Então, vamos entrar. Vamos fazer um... uh...
+
+provavelmente já deveríamos ter perdido um vizinho a essa altura. Sim, então. Morpheus se foi. Perceber. E em vez disso, tem dois outros vizinhos. Então, vou
+
+para... hum... oh, não vamos mostrar a
+
+seção OPF, apenas veja isso. Ok, então aqui está tudo organizado nas interfaces. Então vamos acessar a interface Ethernet 01. Vamos corrigir isso. E nós faremos o IPOSPF na Área 51. Entrar. Então, é isso que você
+
+vê, Neo, bem aqui. Vou mover isso um pouco mais para baixo. Uh, Neo está reconfigurando essa interface para estar na Área 51. Vamos executar o comando "show run interface E01". E eu sei que alguns de vocês estão pensando: "Espere um segundo. [risos] Agora todo mundo está querendo
+
+a camiseta grátis. Imagino que você não tenha tirado a antiga antes." Bem, este é um daqueles comandos em que você pode digitar por cima do anterior. Assim, a Área 51 substitui a Área Zero. Então, vamos executar o comando "show ipospf neighbor". E agora,
+
+uhuu, nosso vizinho voltou! Ali está Morpheus. Hum, agora está na Área 51. E se eu fosse executar o comando "show ipospf interface", digamos, Ethernet 01, você pode ver ali mesmo que agora está rodando na Área 51. Ótimo. Bem, ainda precisamos
+
+consertar o Trinity lá embaixo, porque o Trinity tem o Ethernet01. Então, vamos dar uma olhada nisso. Ah, e vamos entrar na interface de execução do programa E01. Bom. Isso deve ser fácil de resolver. Eu faço
+
+Ipospf? Não. Uh, interface 01. Área 51 do IPOPF1. Então, novamente, apenas sobrescrevendo essa configuração.
+
+Observe que agora restabelecemos a conexão com Morpheus. Ele passou de estar carregando para estar totalmente carregado. E agora temos OPF interáreas. Como sabemos? Veja isto. Vou falar
+
+com o agente Smith. Pressione a tecla Enter algumas vezes e execute o comando "show ip route". Assistir. Observe o que acontece. Observe aqui mesmo.
+
+Sim, agora tenho rotas inter-áreas. Então , deixe-me pegar minha caneta. Hum, este é o endereço IP de loopback do Morpheus, que é visto como uma rota fora da área. Agora, depois disso, você fica pensando: "E aí, o que aconteceu?" Nada. Temos mais áreas. Agora temos a
+
+capacidade de resumir, mas não estamos resumindo. Bem, como eu disse, isso virá depois. Isso é parte disso, mas agora todas essas rotas que vieram da Área 51 são vistas como interáreas e podemos fazer coisas diferentes com elas, mas elas ainda funcionam da mesma forma, certo? Então, o que isso significa para nossas métricas, nossos custos, tudo isso? Porque, quero dizer, isso vai desempenhar um papel, não é?
+
+Na verdade, não até chegarmos à sumarização, e falaremos sobre isso um pouco mais tarde, porque agora tudo vai permanecer como está. Agora, eu sei que algumas pessoas podem estar olhando e pensando: " Por que você tem dois endereços IP aí?" Lembre-se, estamos analisando a situação da perspectiva do Agente Smith. Como o Agente Smith consegue
+
+um Morpheus? Isso é carga. Então, um pacote aqui, um pacote ali, porque existem dois caminhos de custo igual até a rede Morpheus 1111. Certo? Então é isso que vemos quando olhamos para a tabela de roteamento, e vemos dois caminhos diferentes ali. Esse é o
+
+caminho um. Esse é o segundo caminho. Legal. Vamos lá, vamos lá, vamos pegar aquela última área. Vamos configurar a loja de biscoitos.
+
+Biscoitos fresquinhos no Oracle. Então, o Agente Smith e a Oracle precisam entrar na Área 22. Portanto, estamos acompanhando o Agente Smith neste momento . Vamos executar o comando "show run interface infinite01". Não, não é aí que está. Exibir
+
+seção de execução OPF. É aí que está. Vou acessar o modo de configuração global do roteador OPF1. E vamos fazer isso. Vou digitar "não, uh, rede 1921683.1
+
+000000 área zero" e depois pressionar a seta para cima e mudar para a área 22. Ótimo. Agora vou acessar o Oracle, que vai passar por uma completa, digamos, limpeza de configuração. Vou executar um show run section OPF porque todas as interfaces estão na área zero agora e todas essas interfaces precisam ir para a área 22. É aqui que Jeremy pensa, cara, eu deveria ter usado o comando interface neste caso [risos] . Então, não, não, não, rede
+
+555500 Z. Eu sei copiar e colar, mas clicar com o botão direito vai ser tão rápido para mim quanto fazer desta forma. Uh, rede e vamos fazer a área 22 lá. Pronto. Perdemos nosso vizinho porque temos uma incompatibilidade de áreas. Vamos lá,
+
+vamos fazer o vizinho voltar a funcionar . Vamos usar a rede 182168 3.0000 255 área zero. E eu vou apertar Ctrl+A e digitar o "não" que eu esqueci. E então eu clicarei na seta para cima. Remova o número. Adicione
+
+o 22 no final. Aliás, outra forma de fazer isso é copiar tudo para o bloco de notas, fazer as alterações necessárias e depois colar de volta. Hum, se eu tivesse muito mais do que isso, provavelmente faria assim. Hum, sem rede 17216 0 205 área zero e então controle A e coloque isso na área 22. Ótimo. Agora temos o OPF multiárea
+
+completamente configurado. E como sabemos disso? Você sabe quando todas as interfaces de todos os roteadores estão localizadas na área mostrada no diagrama e nada que pudesse ser alcançado na fase um perdeu essa capacidade. Então vamos para o outro lado do mundo, de volta a Morpheus, e devemos ver as rotas dos Oráculos, que agora são rotas internas. Exibir rota IP. Vou digitar OPF para
+
+filtrar a tabela de roteamento e exibir apenas as rotas OPF. E, com certeza, vejam só quanta coisa boa entre as áreas. Então você tem os loopbacks da área zero. Bem, quero dizer, se você pensar bem, tudo da perspectiva do Morpheus está fora de sua área, porque ele sabe que essas não são rotas OPF. Tudo isso é roteamento interno. Então, temos agora uma
+
+pergunta interessante para você. E se, digamos, Morpheus estivesse configurando um roteador? Ele está configurando um desses roteadores de borda de área e, portanto, o tráfego que ele está enviando do teclado é destinado a esse roteador de borda de área. O endereço de loopback, ou seja, isso necessariamente seria uma área fora da área naquele ponto? Sim .
+
+OK. Sim . Então você está dizendo quando... então
+
+deixe-me ver se estou ouvindo direito. Esses endereços IP de loopback que você mencionou estão fora da área de atuação do Morpheus? Certo. Certo. Porque, tipo, se o tráfego for destinado ao próprio roteador de borda dessa área , ele terá uma interface na área do Morpheus.
+
+Sim. Então, está tudo fora de área? Lembre-se do inter. Você levantou um ponto que considero válido. Deixe-me ter certeza de que estou ouvindo corretamente o que você está dizendo sobre isso. Então, esses lugares estão
+
+fora da área de atuação de Morpheus? Não. Todas essas são da Área 51. Mas lembre-se, do ponto de vista do Morpheus, essas não são rotas OPF . São rotas interligadas.
+
+Conectado, conectado. Portanto, tudo isso está na área dele, mas o sistema nem sequer reconhece isso como uma rota OPF porque possui uma interface conectada. Assim que você chegar aqui, hum, então não há roteadores nessas áreas. As interfaces do Neo não estão em uma área. As interfaces de Neo estão localizadas em áreas específicas, certo? Neo está meio dividido. Ele tem uma
+
+linha traçada bem no meio do seu corpo, e metade deles está na Área 51 e a outra metade aqui. Então, quando adicionamos essa interface à Área Zero da perspectiva de Morpheus , se você observar os olhinhos aqui, ele agora vê isso como uma rota entre áreas, porque está fora da área dele. Isso ajuda? Era isso que você estava perguntando, Micah? Era exatamente isso que eu queria. Sim
+
+. Entendi. E pronto. Que bom que você perguntou isso, porque muita gente fica confusa com esse assunto. Então, deixe-me fazer...
+
+vou garantir que não haja nenhuma consulta de domínio IP, porque as consultas de DNS são terríveis. E eu farei um rastreamento de rota . Vamos rastrear a rota até o Oracle. Ah, que ótimo! Podemos até observar o balanceamento de carga acontecendo, pois, lembre-se, cada pacote é enviado três vezes. Então, foi como se tivesse enviado
+
+um para lá, um para lá e um para lá. Então, está fazendo balanceamento de carga para os três pacotes que foram enviados entre os dois. Então, a ficha cai para quem quer que seja. Acho que esse é o agente Smith. Então, a notícia chegou ao oráculo, bem ali do outro lado.
+
+Portanto, temos conectividade total. Boom. Segunda fase concluída. Antes de passarmos para a fase três, hum, vamos...
+
+eu nem li essa parte ainda. Então, vamos lá, vamos responder às perguntas que vocês tiverem. até agora . Então, antes de começarmos rapidamente com as perguntas, gostaria de fazer um breve intervalo para aqueles que ainda não se inscreveram para o curso de CCNA de verão. Aqui está um código QR na tela. Mas também,
+
+teremos o fim da certificação CCNA se aproximando. Portanto, fiquem atentos para mais novidades. Anunciaremos isso nas redes sociais. E se você ainda não se juntou a nós no Discord, junte-se a nós, porque é lá que a diversão acontece. Acabamos de fazer um sorteio em que oferecemos um voucher para o curso de outono da CCNA. E eu
+
+sei que já me pediram outro. Daqui a alguns minutos, faremos outro sorteio no Discord. Então, por favor, considere juntar-se a nós por lá. E, por fim, um agradecimento especial aos nossos parceiros da Skillbit, que nos ajudam a hospedar todos os nossos laboratórios virtuais oferecidos durante o curso CCNA de verão. Eles têm sido parceiros fantásticos, pois são muito confiáveis. Eles sempre estiveram acessíveis
+
+e têm sido muito bons para os alunos. Acho que eles gostaram muito. Então, definitivamente, dêem uma força para a Skillbit também. Sim. Obrigado.
+
+Eu gostei do comentário do Putty. Claude não tem a menor chance. Isso mesmo. Fase por fase. Estou provando que Claude estava errado.
+
+Embora eu só tenha meia hora restante. Tenho mais três objetivos. Então, mas eles não são tão grandes, eu acho. Ah, e também, o Chuck estará na Defcon enquanto estiver lá. Nós invadimos o canal dele no YouTube . É por isso que ele não está aqui
+
+conosco hoje. Acabei de ver um comentário sobre isso, alguém dizendo que a senha dele devia ser muito fácil de adivinhar. Algo como um, dois, três, quatro, cinco, seis. E eu pensei: "É, giz clássico." Sim, nós conseguimos.
+
+Mas, ei , qual é a sua pergunta, Micah? Ah , ok. Bem, eu gostei deste imediatamente. Hum, o OPF precisa ser configurado para o HSRP? Não. Ah, são dois conceitos completamente diferentes
+
+. OPF é o protocolo de roteamento da rede? HSRP, você pode pensar nisso como uma espécie de gateway padrão redundante. Então, se você estiver executando o HSRP e quiser adicionar o OPF por cima, não precisa se preocupar com essa interação, porque o OPF informará a todos os roteadores sobre todas as interfaces necessárias caso alguma delas falhe. Bem, eu sei que é uma pergunta bem simples , mas poderíamos nos aprofundar bastante nisso, mas a resposta curta é não.
+
+Tudo bem. Hum, uma não tão séria e outras que são sérias. Era o Jeremy Ross? [risos] Nós simplesmente tivemos que fazer isso. OK. E
+
+então esta, esta continua aparecendo repetidamente aqui. O CML é melhor que o Packet Tracer para a certificação CCNA? Bem, eu fiz um comentário lá dizendo que é muito pesado em comparação com o Packet Tracer, mas é muito melhor que o Packet Tracer. Vou apenas dizer... Vou te dar
+
+a resposta definitiva. Sim. OK. Deixe-me dizer uma coisa: se você só tem um laptop pequeno que mal consegue inicializar, use o Packet Tracer. Porque você pode usar isso em qualquer lugar.
+
+Mas o Cisco Modeling Labs é o verdadeiro IOS. Está executando imagens do IOS. Então, você não vai... Eu vou entrar... Não
+
+vou começar um discurso inflamado ou um púlpito, mas acho que a coisa mais frustrante quando você está estudando é quando está construindo um laboratório no PacketRacer. E, mais uma vez, o PacketRacer é ótimo. Você pode fazer testes em laboratório, mas quando se depara com um bug de software e não sabe o que está fazendo, e passa horas tentando resolver isso, e então faz algo como "deixa eu só reiniciar o Packet Tracer" e tudo começa a funcionar, você pensa "chega, cansei disso, cansei da Cisco, cansei da tecnologia, vou ser pintor", sabe? Ou algo assim. A gente já passou por isso antes, e antes do CML... quer dizer, não conte para
+
+ninguém sobre piratear imagens do iOS de sites muito suspeitos e carregá- las em máquinas virtuais no Google Cloud e tudo mais. Sim, é um pacote CML realmente ótimo. Então, hum, ok, estávamos falando sobre este aqui. Então, gostaria de reiterar...
+
+Certo, última pergunta e voltaremos à discussão . Para a certificação CCNA, precisaremos configurar ABRs? Eu não acho. Hum, eu já conversei com Eric Pope. Ele fez o exame na Cisco, no Cisco Live. Ele
+
+disse que eles não tinham OSBF multiárea. Então, acho que você está seguro. Mas agora você sabe como fazer caso se depare com essa situação. Provavelmente você precisará saber o que é um ABR. Talvez seja melhor não configurar .
+
+OK. Obrigado, Russ. Obrigado, Russ. Vamos fazê-lo . Certo. Prove isso. O agente Smith
+
+solicitou uma reunião para aprovação final. Antes de mais nada, gostaria de dizer que esta migração está consolidada. Preciso de respostas. Nós três, eu, Neo e Trinity, sentamos no mesmo segmento através do interruptor um. Sim, Agente Smith, você está correto. Então, estamos
+
+falando da espinha dorsal aqui. Estão todos ali. Bem, diz que alguém está encarregado desse segmento, independentemente de termos votado nele ou não. Quero saber quem e porquê. Eu também quero provas, não palpites, de que algo em Zion ainda consegue alcançar algo na minha área de posto avançado . Gostaria de entender por que minha rota,
+
+dentro da minha área, aparece diferente na tabela do que uma rota em Zion. OK. Resumindo, os requisitos fora do contexto do agente Smith são: identificar qual roteador está atuando como o dispositivo designado no segmento do switch um e ser capaz de justificar por que esse roteador não é um dos outros dois. OK. Portanto, o que está sendo abordado aqui é o conceito de OPF DR e BDR. Portanto, sempre que você tiver
+
+um segmento compartilhado, essencialmente em todos os segmentos Ethernet, relações de vizinhança se formarão. Bem, isso poderia ser... quero dizer, eu tenho três, mas você poderia ter centenas de roteadores em uma rede principal, todos conectados a esse switch, certo? Bem, o problema é que
+
+quando se formam relações de vizinhança entre todos esses roteadores diferentes e algo acontece, digamos que a rede caia, você inicia uma tempestade de fogos de artifício. É tipo, ah, caiu, caiu, caiu. Eles começam a contar uns para os outros e é tipo, nossa, isso é loucura. Então, em vez disso, eles criaram esse conceito de DR e BDR. Bem, basicamente são o rei e a rainha da emissora. Bem,
+
+este é o que mantém todos os relacionamentos de vizinhança e a tabela de roteamento. Será o roteador maior, mais poderoso e mais conectado que temos. Então, neste diagrama, a primeira coisa que diz é: qual deles? Vamos ao agente Smith e vamos fazer isso da maneira mais rápida. Na verdade, existem algumas maneiras: você pode usar o comando " show ipospf interface" e vamos ver que o agente Smith tem a interface Ethernet zero conectada à rede principal. Então vou
+
+digitar isso. E0. Ah, bem ali, consigo ver o tipo de transmissão de rede, e vi bem no topo. Droga estatal. Hum, isso significa DR outro. Ou você é
+
+um DR, um BDR ou um DR "outro", o que significa que você não é nenhum dos dois. Que é o que o Agente Smith é agora. Então o Agente Smith pergunta: "Ei, quem são o DR e o BDR?" A maneira mais rápida de descobrir é fazer um show ipospf uh neighbor. [risos] Isso é [bufa] muito engraçado. Zach, eu preciso
+
+mostrar essa. Ah, meu Deus. Eu preferiria ser um BDR. Ah, algumas coisinhas que eu quero que vocês percebam aqui. Hum, observe que temos os vizinhos 2222 e 333.
+
+Hum, lembre-se que os numeramos. Então, Neo é 2222, Trinity é 3333. E você pode ver que NEO é o BDR, certo? Trinity é o DR da rede. Agora, onde surge muita confusão quando as pessoas estão aprendendo esse conceito pela primeira vez, é que elas ficam tipo, hã, o quê, o quê, como é que se tem um BDR? Lembrei-me que cada
+
+segmento de rede tem seu próprio DR e BDR. Então, voltando a este diagrama, bem aqui, este é um segmento, certo? Um conjunto de dispositivos conectados a esse switch. Este é um segmento, segmento, segmento, certo? Então haverá um DR e um BDR aqui. Estou apenas identificando, não
+
+sei qual é qual. Haverá um DR e um BDR aqui. Haverá um DR e um BDR aqui. Cada segmento terá seu próprio DR, R e BDR. Bem, então, esse é o rei e a rainha desse segmento específico. Nesse caso, eles
+
+realmente não precisam ter um, mas esse é o conceito. Então, agora vou responder à pergunta do Trickle. Você pode exibir isso na tela? "Então, Trickle perguntou: 'Os segmentos são a mesma coisa que as áreas?'" Ótima pergunta. E não,
+
+não são. Um segmento é uma rede Ethernet, como... e este é um pequeno diagrama porque estou usando a versão gratuita, mas eu poderia ter outro roteador aqui, outro roteador aqui, outro roteador aqui... que estão conectados. Então, este
+
+é um segmento, este é um segmento, este é um segmento. Essencialmente, qualquer rede LAN conectando dois roteadores OPF é considerada um segmento, e uma área pode conter vários segmentos. Agora, vou adicionar uma coisa aqui rapidinho. Jeremy, seria possível disponibilizar o arquivo YAML deste laboratório para todos? Ah, claro, com certeza. Com certeza. Hum,
+
+vamos providenciar isso. Provavelmente colocaremos isso no chat depois da transmissão. Então, muito obrigado. Desculpe interromper. Sem problemas. Sim, isso vai te poupar muito
+
+tempo na construção disso. Bem, normalmente, no mundo real, conexões ponto a ponto não costumam ser feitas via Ethernet. Às vezes você consegue, mas será como uma conexão serial ou discada, se você for bem antigo, conexão frame relay, e coisas do tipo. Portanto, quando você tem uma rede ponto a ponto que não é Ethernet, ela não fará uma eleição de DR e BDR . Vai simplesmente dizer: "Ah, vamos apenas enviar pacotes de um lado para o outro entre eles." Que estou começando a me interessar por coisas do CCNP.
+
+Então, por enquanto, os segmentos... Então, neste caso, a área corresponde ao segmento, mas isso ocorre apenas porque tenho uma rede pequena. Bem, então, é... não nos diz no
+
+laboratório qual deles devemos usar para produzir o DRBDR. Só queremos ter certeza de quem é e garantir que isso não mude. Por padrão, o roteador com o endereço IP ou ID de roteador mais alto se tornará o DR ou BDR. Bem, vou anular isso e nomear o agente Smith como médico residente. Hum, veja só isso.
+
+Então, vou executar o comando "show ipospf interface Ethernet0". E você pode ver agora que é o Dr. Hum, e o que eu vou fazer é entrar e mudar a prioridade dele. O endereço IP mais alto só é usado para eleger um DR e um BDR se as prioridades estiverem empatadas. E a prioridade de todos é a caixa. Então,
+
+vou acessar a interface Ethernet 0. É um comando de interface. IPOPF uh ID do processo um. Não, na verdade não há ID de processo. Prioridade, e eu colocarei 100. Eu poderia colocar dois,
+
+contanto que um seja maior que o outro. É, vai ganhar. Então, prioridade 100. Voltarei aqui e executarei o comando "show ipospf um interface Ethernet 0/z". E você verá o que está quebrado. Isso é para
+
+fins de solução de problemas? Ganhamos uma camiseta grátis? Não. Mesmo que diga prioridade 100, a única vez que ocorre outra eleição de DR e BDR é se você reiniciar o processo OPF. Essa é uma tarefa importante para você assimilar. Vou
+
+digitar clear ipf [limpa a garganta] processo ou você pode reiniciar os roteadores. É simplesmente menos tempo. Um clear redefine todas as relações de vizinhança. E agora, quando eu executo o comando "show ipospf interface". Oh não.
+
+Espere. Acho que preciso me livrar dos outros caras. Não há camisetas. Espere . [risos] Neo Neo e Trinity. Espere. Vamos
+
+para a Neo Trinity. Limpar o processo IP OSBF porque não acho que seja preventivo. Eles não vão desistir a menos que alguém que eles não gostem vá tirá-la de mim, mesmo que eu esteja morta e sem vida. Mostrar sem deixar rastros. Do que estou falando? Concluir o
+
+processo IPOPF na Trinity. Sim. OK. Agora, vamos dar uma olhada no agente Smith. Os vizinhos estão se reformando. Mostrar ipospf.
+
+Vizinho. Pronto, aí está
+
+. Estamos construindo relacionamentos com os vizinhos. E agora você pode ver, pelo menos dessa perspectiva, que Neo é o irmão. Você é o irmão. Parece um insulto. Interface Uh,
+
+e vou executar o comando "show ip OPF interface Ethernet zero". E agora, agora, agora vemos o que esse cara se tornou e eu apertei a tecla Enter. Este agente Smith tornou-se a prioridade 100 do DR. Se eu for até o Neo e executar o comando "show ipospf interface Ethernet0". Bem , esse cara, você é o irmão. Muito
+
+engraçado. É isso aí , Zach. Precisamos comprar alguns adesivos. Tipo, você é o irmão. Lá. Dá para fazer tantas camisetas
+
+[risos] com isso. Hum, bom. [limpa a garganta] Irmão. Então, agora sabemos que isso prova, Agente Smith. Você é o DR e sempre será, porque sua prioridade está definida em um nível suficientemente alto. Ok, agora
+
+vamos lá... eu não quero que o Claude ganhe aqui. Quarta fase: reduzir o tamanho da mesa. É aqui que a coisa esfria.
+
+Morpheus ficou levemente irritado. Eu instalei mais três sistemas em Sião. Certo, espere um pouco . Vamos garantir que estamos vendo a imagem corretamente. Morfeu está aqui em Sião. Esses são os
+
+três sistemas dele. Instalei mais três sistemas. Reutilização de água da rede elétrica de Zion, recuperação de água, recuperação de água recuperada, controle de eclusa de aeródromo. Os três estão todos no mesmo bloco, do meu lado da tela. O comando me informa que todos os outros roteadores da rede agora estão carregando as três entradas como entidades separadas e eles querem que isso seja removido. Eles deveriam enxergar Zion como uma
+
+linha na tabela, a tabela de roteamento, e não como três. Mas ainda preciso que cada um desses sistemas seja acessível individualmente de dentro de Sião. Portanto, atendendo a esse requisito, vamos reduzir a área de abrangência de Zion fora da Área 51 a uma única entrada resumida que represente o bloco completo desses três sistemas. Um SL16. OK. Então, deixe-
+
+me traduzir isso para uma linguagem simples, sem jargões de Morpheus. Então, resumindo, deixa eu pegar minha caneta aqui. Temos três, vamos chamá-las de VLANs. Tenho aqui interfaces de loopback conectadas a três redes diferentes. A rede elétrica, a eclusa, o controle e a recuperação da água . Sim. Então,
+
+agora haverá três entradas na tabela de roteamento de todos. Quanto maior for a sua tabela de roteamento, mais lento será o seu roteador. Então, o que vamos fazer é resumir isso. E o único lugar onde você pode fazer isso no OPF é no roteador de borda da área . Acabei de ter uma ideia que vai ser muito legal. Então, é assim que se faz
+
+. Então, temos 1727. Então, deixe-me mostrar algumas coisas para vocês. Primeiramente, quero mostrar a vocês o Oráculo. Ah, vamos lá. Ah, preciso
+
+aumentar isso. Vou executar o comando " show ip route" e vamos incluir o endereço 172.17. Hum, isso não funcionou como eu pensava. Exibir rota IP. Vamos fazer o OPF. Ih,
+
+17216. É isso mesmo? Puxa, meu diagrama está errado. Ninguém percebeu isso. Eu percebi isso. Esse
+
+era eu. Eu percebi isso. Veja, Jeremy ganhou uma camisa. Sim, Jeremy ganha uma camisa. Finalmente consegui uma camisa. Eu ganho uma
+
+camiseta de verão da CCNA. Ok, espere um segundo. Então, o que é Oracle? Hum, espere um pouco . Vamos executar um breve comando "show ip interface brief".
+
+Ah, não. Será que eu... Acho que dupliquei. Ah, espere um
+
+segundo. Acho que foi isso que eu fiz. Fiz isso no diagrama, mas esqueci de alterar no roteador. Porque foi a última coisa em que pensei. Então espere um pouco, vamos resolver isso. Podemos resolver isso.
+
+Exibir breve descrição da interface IP. Sim, foi isso que eu fiz há 10 anos. Endereço IP 172710.1. Uhum. Uhum. Uhum.
+
+Ah, e agora vamos apenas clicar na seta para cima. 11 e 12. Pronto . E agora vamos fazer um show. Espero não ter mostrado a seção de execução do OPF.
+
+Talvez eu também precise corrigir um comando OPF. Roteador OPF1. Nossa, ninguém percebeu isso. Eu estava, eu estava, eu estava me movendo rápido demais. Não, não. Eu sei. Neste momento,
+
+provavelmente há umas cinco pessoas que pensam: "Eu sabia que aquilo estava errado". Então, sim, 172600 255 255 área 51. E vamos pressionar a seta para cima e inserir 17 ali. Pronto . Salvar configuração. Tudo bem. Agora, vamos analisar
+
+o Oráculo. É por isso que esse comando não funcionou. Vou executar o comando " show ip route" e "include". Pronto. 17217, só para constar, isso é um "include", é como o comando GP no Linux, só que filtra exatamente para isso, para que eu não precise rolar a página inteira. Então, eu vejo
+
+as três redes individuais. Agora vou falar com o Neo e faremos um resumo das rotas. Uh, Neo é o ABR. Ah, não é assim que eu vou para Neo. Eu vou ao Neo assim . Neo é o ABR
+
+e... o que foi que eu fiz? O que Q faz?
+
+Micah, se eu digitar Q no Neo. Ah, é exatamente isso que faz. Não tem. Veja, é por isso que eu digito "sem pesquisa de domínio IP", está tentando. Pronto.
+
+Está tentando resolver Q através do servidor DNS. Então, eu não digitei isso no Y. Ok, pronto. É como voltar ao mundo real. É aí que você praticamente tem insuficiência cardíaca e morre. Então, vou entrar no
+
+modo de configuração global do roteador OPF1 e vamos configurar a área. Então, isso vai te deixar confuso por um instante, mas depois fará sentido. Vamos para a Área 51, certo? Porque é lá que essas rotas se encontram. E vou definir um intervalo.
+
+Então, vou digitar o intervalo 172.17.0.0 com uma máscara de sub-rede de 255.255.0.0.
+
+O que estou dizendo é que quero substituir essas três rotas que saem da Área 51 por apenas este resumo. Agora, se você está pensando, pode estar pensando: "Bem, você vai pegar o bloco inteiro de 17217. Você não pode usar isso em nenhum outro lugar na rede, certo?" Isso mesmo. É um resumo preguiçoso. Ao utilizar um
+
+sistema de sub-redes mais sofisticado, você consegue obter resultados mais específicos. Mas, por enquanto, isso é tudo o que Morphe disse. Morpheus me disse para fazer isso. E então eu vou clicar no ponto de interrogação. E você pode ver que, por padrão, está definido se você deseja anunciar este intervalo ou não anunciar este intervalo. Você realmente
+
+pode fazer isso. E você pode até definir custos especiais para isso. Mas vou pressionar a tecla Enter. Bem, aqui está o que eu queria mostrar para vocês, algo que me veio à mente enquanto eu fazia isso. Neo está agora resumindo essas redes enquanto se dirige ao Agente Smith e ao Oráculo. Certo?
+
+Mas veja só isso. Vou até o Oráculo. Não está lá. Vou por aqui. Traga-a para cima e pressione a seta para cima. E
+
+eu executarei o mesmo comando show ip route. Olha só isso. Agora temos 17216 ou 172170.0.016.
+
+Existe a rota resumida, mas ainda vemos as rotas mais específicas. Por que? Qual era o objetivo disso? Por que ainda vemos essas coisas? Deixe-me mostrar-lhe a imagem do diagrama.
+
+Algum palpite?
+
+Neo está resumindo 172.17.0.016. zero16.
+
+Trindade não é. Então, a Trinity está seguindo essas rotas específicas e enviando os dados por aqui. Agora, você pode estar pensando: "Ah, bem, isso não é grande coisa." Bem, o que vai acontecer é o seguinte: o Agente Smith vai ficar com eles. E a regra número um do roteamento é: especificidade é tudo.
+
+Especificidade é uma palavra divertida de se dizer. Isso significa que essas serão as rotas mais específicas. Esta é mais abrangente. Então, se eu fosse olhar a tabela de roteamento do agente Smith agora, ela estaria usando apenas estes. Ignoraria completamente . Portanto, esse caminho através do NEO para
+
+chegar a essas redes nunca mais será usado, porque essa é uma rede mais ampla, e a especificidade prevalece. Então sempre irá nessa direção, certo? Então, agora vamos dar um jeito na Trinity e fazer com que ela também resuma as coisas. Nossa, cara. Nove minutos. Nós conseguimos. Vou entrar no
+
+modo de configuração global. Roteador OPF1 área 51 intervalo 17217.0.0 com máscara de sub-rede uh 2552500 0. Boom. Assim, sem mais nem menos. Bem, agora
+
+implementamos dois ABRs com sumarização de rotas. E agora posso ir até o Oracle e executar o comando "show ip route". Hum, nós reduzimos a tabela de roteamento exatamente como o agente Smith estava gritando. Agora temos uma única rota em vez de várias rotas mais específicas. Eu sei que parece simples, mas essa é a vantagem que você obtém ao usar OPF em múltiplas áreas. E isso está
+
+reduzindo o tamanho da tabela. Então, cara, eu não acredito que fiz isso. Hum, o que foi que eu fiz? O posto avançado não precisa saber de tudo. Assim, o oráculo observa o painel de status do agente Smith se encher de rotas. Ela
+
+diz: "Meu equipamento é mais antigo do que o de qualquer outra pessoa na rede. De qualquer forma, só tem uma saída, através do Agente Smith." Certo? Então, quem fala agora é o Oráculo . Ela disse algo como: "Olha, eu só tenho um caminho de saída. Por que eu preciso de todas
+
+essas rotas na minha tabela de roteamento ? Para mim, é simplista. Você está pensando nisso. Eu não preciso ver o formato da rede de Zion ou a espinha dorsal, eu só tenho uma decisão a tomar. Enviar para Smith." Então, todas as
+
+rotas que você está inundando aqui que não são minhas são apenas coisas para meu hardware armazenar e nunca usar. Então reduza as informações de roteamento na área 22 [limpa a garganta] para receber e armazenar o mínimo absoluto, usando o fato de que a área 22 tem apenas uma entrada ou saída. OK. Bem, nós vamos para a fase cinco para que eu possa [risos] Claude te amaldiçoar. Não estava tudo bem.
+
+Claude disse que seriam três sessões. Se eu tivesse mais 15 minutos, eu conseguiria fazer isso. Mas nós vamos, nós vamos, nós vamos direto para o nível cinco, porque já ultrapassamos o CCNA de qualquer forma. Mas o que estamos discutindo é que todo mundo está dizendo que a IA é muito mais inteligente do que você, Jeremy. Recebemos biscoitos fresquinhos. [risos]
+
+Só tem uma saída, né? Então, por que você precisa de uma tabela de roteamento com todas as rotas de todas as áreas OPF quando você só tem uma? Então, quando você começar a estudar os tópicos do CCNP, verá que essas são todas as áreas que você precisa saber. São três áreas, mas todas são consideradas áreas padrão. Bem, esta é uma área de suporte, então é um pouco específica, mas também existem dois tipos diferentes de áreas, e não estou brincando. Você tem
+
+áreas com resíduos e áreas totalmente sem resíduos. Conceito genial. Então, as áreas de stub filtram automaticamente tudo o que está fora do sistema OPF. Então, uma das coisas que você pode fazer é pegar rotas externas. Digamos que você tenha rotas BGP, uma rota padrão ou EIGP, sabe, algo assim.
+
+E você pode enviar essas rotas para o sistema. Essas são conhecidas como rotas externas. Aliás, isso faz com que esse roteador seja chamado de ASBR, roteador de limite de sistema autônomo, mas você não precisa saber disso. Ah, mas aquilo é um toco, uma área totalmente pequena, e você sabe, alguém da Califórnia diria: "Ok, era só um toco." E se filtrarmos mais, ficará totalmente truncado. Sim.
+
+Atarracado, cara. [bufa] Ah, e então a área totalmente bloqueada diz que eu vou filtrar qualquer rota de fora da área e substituí-la pela rota padrão . Sim. Então, é isso que fazemos. E iremos falar com o agente Smith, porque todas as áreas precisam concordar que esta é uma subárea completa. Então, vou entrar
+
+no modo Agente Smith, que expirou. Hum, vou executar o comando "show run section OPF global configuration mode router OPF1". E eu vou pegar esse cara e digitar área 22. E você pode ver todas as coisas diferentes que podemos digitar. Você pode ver que uma delas é "stub stub". E então você pode adicionar mais um
+
+comando a isso. Sem resumo, que é uma área totalmente incompleta. É porque os ABRs estão enviando rotas resumidas. Estamos dizendo que nem sequer queremos rotas resumidas. Portanto, esta será uma área totalmente curta.
+
+Isso vai prejudicar a relação de vizinhança com o Oráculo, porque eles terão que concordar que estão em uma área incipiente. Então, vou acessar o Oracle e vou para o modo de configuração global do roteador OPF1 área 22 stub. Sem resumo. A relação de vizinhança deve ser... Sim, é isso aí
+
+. Deveria haver uma reforma. Pronto. Carregando completamente. E agora veja só. Vou digitar "show ip
+
+route".
+
+Todas as rotas OPF desapareceram, restando apenas uma. É uma rota padrão, uma rota inter-áreas, e praticamente tudo o que eu não sei sobre ela, estou enviando para o agente Smith. É uma área bem pequena, cara. [bufa] Hum, e esse é o sistema operacional. Ah, sabe de uma coisa?
+
+Nós podemos fazer isso, com certeza. Eu tenho... Eu tenho...
+
+Espera, tem mais. Só podemos fazer a fase seis, certo? Então, [aplausos] nós podemos fazer isso. Nós podemos fazer isso. Nós podemos fazer isso. OK. Então, é melhor
+
+controlar as próprias escolhas do que as probabilidades. Vamos lá . Sião tem duas saídas. Onde fica Sião? Espere. Sião está aqui. Então,
+
+Morpheus tem duas saídas, certo? Um através de Neo, um através de Trinity. Duas saídas. Ah, através de cada um de vocês, até Neo e Trinity. Analisamos o hardware em ambos os links. A Trindade é
+
+o melhor caminho. Queremos que a ligação da Trindade seja usada para tudo que sair de Sião em direção à espinha dorsal quando ela estiver saudável. Ponto final. O link de Neo existe pelo menos para o dia em que Trinity não existe. Assim, Neo se torna o reserva. Não queremos descobrir
+
+durante uma interrupção que a rede nunca o tratou como um backup. OK. OK. Então, blá blá blá blá. OK.
+
+Então, se simplesmente eliminarmos o resumo que fizemos no Trinity anteriormente, o Trinity passará a rotear todo esse tráfego de acordo com a lei da especificidade. Isso funcionaria. Talvez não seja a melhor ideia, mas ainda assim vai funcionar. Funcionaria. Uma maneira é remover o resumo do Trinity. Então todo mundo usa
+
+Trinity, ninguém usa Neo. Mas o conceito é o custo do OPF (Fluxo de Partículas Ópticas). Então, dê uma olhada, vá até o Neo e... nós nem sequer falamos sobre
+
+largura de banda em nada disso. É tudo Ethernet, certo? Então, se eu executar um comando `show ipspf interface ethernet0`, que é a conexão do Neo com o backbone, certo? Todo mundo está vendo isso. Estou olhando para essa interface, bem no topo da saída, e vejo que o custo é 10, certo? É um custo muito baixo. Então, o que
+
+eu posso fazer é alterar o custo desse link para algo maior que 10, porque todos estão com custo 10. Nesse ponto, todas as rotas que chegam ao Morpheus vindas do Neo... vamos dar uma olhada rápida no Morpheus. Vou executar um comando `
+
+show ip route` no Morpheus e você pode ver que praticamente tudo está balanceado por carga, certo? Você pode ver o caminho para 17216, eu tenho um aqui e outro ali, bem ali. Está havendo balanceamento de carga entre os dois. Então, se eu for para TR, ir para Neo e entrar na interface Ethernet zero e alterar o custo, digitando `ipspf cost`, e vamos colocar em vez de 10, vamos colocar em 500 [risos]. Vamos lá, sucesso!
+
+Agora, todas as rotas que chegam por Neo, ou seja, todas vindas do Agente Smith, o Oráculo, e passando por Neo até Morpheus, não são mais tão desejáveis ​​quanto as rotas vindas de Trinity. Portanto, neste ponto, estamos em Morpheus e todas estavam com balanceamento de carga. Agora, depois de digitar esse comando, vou pressionar a seta para cima e executar o comando " show ip route". Boom. Olha só tudo isso.
+
+Aqui está. A rota para Neo desapareceu. Em vez de ter duas rotas para cada uma que faz balanceamento de carga, é como se a Trinity fosse minha namorada. Agora, se eu entrar, sim. Para Trinity e, uh, uh, vamos lá, eu ia reiniciá-la, mas isso é muito devastador. Vamos entrar na porta
+
+Ethernet 01 e desligá-la. Feche a interface. Sim. Portanto, não possui mais nenhuma ligação com Morpheus. Boom. Isso vai fazer com que o vizinho perca o contato
+
+. Então, vocês estão todos vendo esse resultado agora, certo? Então, o vizinho acabou de desmaiar. Pressione a seta para cima. Ah, ainda não perdeu a essência.
+
+Sim, ele ainda vê a Trinity. Bem, para economizar tempo, vamos mais rápido aqui. Nós vamos simplesmente eliminar a rota do lado de Morpheus. Hum, não me lembro qual interface é qual. Ethernet 0.
+
+Ah, aí está. Só precisei esperar um pouquinho. Agora, Trinity está fora de combate. Agora, se eu executar o comando "show ip route", todos esses tráfegos estão passando pelo Neo. É o que eu sei, estamos passando por tudo isso muito rápido, mas 192168 1 ou 2.1 antes de agora é
+
+1.1, que está subindo aqui através de Neo, esse é o caminho que está seguindo. Claude, eu só estou um minuto atrasado. Eu ia dizer que por estar um minuto atrasado, Claude basicamente levou uma surra aqui hoje. Eu estou e provavelmente vou perder a voz com tudo isso. Ótimo [bufa]
+
+você tem um cara como eu te atrasando um pouco também, onde eu fico tipo, ei, sabe, outra maneira de fazermos isso. Provavelmente não é a melhor opção, mas, quer dizer, o resultado é praticamente o mesmo. Então, ótimo. Então, isso foi tudo sobre OPF em uma única sessão. E agora você já viu o suficiente de OPF para estar preparado não apenas para o CCNA, mas também para a maior parte do CCNP. E no CCNP,
+
+você vai aprender sobre ASBRs, rotas externas e tudo mais, mas... Uau, obrigado. Veja só, ele prendeu na quina do meu corredor. Os comentários são do
+
+tipo: "Uhuu!" Todo mundo vai... [risos] nada de camisetas para ninguém. Assim, de repente, me
+
+transformei no Scrooge. Sem camisetas, né? Na verdade, houve, houve... houve um cara que
+
+realmente percebeu o erro. Hum, era o Dave? Não consigo. Era o Dave. Sim, era o Dave. Sim.
+
+Tudo bem. Dave arranja um professor. Simplesmente incrível. Você arrasou, Jeremy. Bom trabalho.
+
+Ótimo trabalho. Claude não chega aos seus pés. Veja, a IA não tem nada a ver com isso. E a parte divertida de fazer isso é que tudo foi feito de uma maneira muito não convencional, sem etapas definidas. Eu pedi para o Claw tornar tudo o mais realista possível. É claro que isso trouxe à tona o
+
+cenário de Matrix. Mas é exatamente assim que as coisas são no mundo real. E agora você entendeu. Você tem tudo isso sob controle . Vamos guardar isso para sempre na gravação. Vamos te dar
+
+o laboratório. Vou te dar, eu tenho que exportar o con. Na verdade, vou reiniciar todos esses roteadores porque acho que só salvei o Morpheus. Então, vou limpar a configuração dele, mas vou reiniciar todos os outros para que vocês tenham um sistema limpo e possam mexer nas configurações deles também. Atualize também esses endereços de loopback, certo?
+
+Oh sim. Sim. Obrigado. Quando o Jeremy tiver todo o arquivo pronto e organizado, é só me enviar . Vou colocar no Discord para todos e depois o Micah, provavelmente, vai sincronizar para adicionar também ao LMS, então teremos os dois. Então, tenha
+
+paciência. Vamos te enviar o arquivo o mais rápido possível [risos]. Sim, isso é bom. Bem, esse foi o tópico mais solicitado em todos os cursos CCNA que já fizemos. Pensei que seria subnetting. Era
+
+OPF. Então, espero que esse cara realmente ajude vocês no futuro. Hum, e estou muito feliz que todos vocês tenham comparecido também, porque isso... Oh,
+
+[risos] eu cliquei no errado. Ah, sim , Claude é um brinquedo. Isso mesmo . Ah, não, a que estava logo acima era a Luna dizendo: "Que bom que apareci para isso." Fico feliz que você também tenha aparecido. Bem, porque isto correu
+
+muito bem e acho que você conseguiu encapsular um monte de boas práticas de OPF. Então, dito isso, hum, acho que terminamos por aqui . Bem, vamos encerrar por aqui, Zach. Incrível. Tudo bem. Obrigado a todos
+
+por participarem de mais um encontro de acompanhamento do CCNA de verão. Se ainda não o fez, pode inscrever-se no curso CCNA de verão aqui. Mas se você nos segue nas redes sociais, fique ligado porque vamos anunciar o início da certificação CCNA em setembro. Então, se vocês estiverem interessados ​​em nos acompanhar, assim como estamos fazendo hoje, e aprender com o mestre que acabou de dominar o Claude hoje. Fantástico.
+
+Três sessões. Todos vocês podem se inscrever para o curso CCNA de verão ou para o curso CCNA de outono e aprenderão com um dos melhores. Absolutamente. Junte-se a nós no Discord, caso ainda não o tenha feito . Hoje fizemos alguns sorteios.
+
+Parabéns a todos os vencedores. E, claro, não se esqueçam de dar um alô para o nosso parceiro Skilbit. Dê um grito pra eles, sabe? Diga: "Olá, seguimos vocês da Network Chuck Academy. Eles nos ajudam a hospedar todos os nossos laboratórios práticos e virtuais que oferecemos como parte do curso de verão da CCNA." Foi fantástico
+
+trabalhar com eles. Então, isso é tudo que temos por hoje. Faremos outra sessão como esta daqui a duas semanas. Acredito que esta seja a última sessão para todos . Certo.
+
+Sim. Sim, será. O programa de verão da CCNA termina em 28 de agosto. Então, vocês nos verão mais uma vez e, em setembro, talvez nos vejam novamente. Portanto, muito obrigado a todos por se juntarem a nós hoje. Esperamos que tenha gostado
+
+da sessão. Se tiver algum comentário, dúvida ou sugestão, entre em contato conosco. Teremos prazer em ajudar e esperamos vê-lo novamente na próxima vez. Cuidem-se todos e até logo. Tchau, pessoal.
+
+[música]
