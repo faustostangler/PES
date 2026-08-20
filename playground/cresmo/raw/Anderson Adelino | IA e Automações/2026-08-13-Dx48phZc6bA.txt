@@ -1,0 +1,219 @@
+---
+video_title: "Como Usar o Claude Code GRÁTIS com OmniRoute (Passo a Passo)"
+video_id: Dx48phZc6bA
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Dx48phZc6bA
+video_date: 2026-08-13T15:00:24+00:00
+video_description: |
+  👉 Se você quer aprender Claude Code do Zero, esse é o caminho: https://claude.zenithonacademy.com.br?src=Dx48phZc6bA
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  Repositório: https://github.com/diegosouzapw/OmniRoute#-documentation
+  
+  Settings.local.json:
+  
+  {
+    "env": {
+      "ANTHROPIC_BASE_URL": "http://localhost:20128",
+      "ANTHROPIC_AUTH_TOKEN": "Seu token",
+      "ANTHROPIC_MODEL": "combo/nome-do-combo"
+    }
+  }
+  
+  Achei uma ferramenta que conecta o Claude Code a mais de 200 modelos de IA gratuitos... e você nunca mais precisa se preocupar com token acabando.
+  
+  O OmniRoute faz o roteamento automático entre centenas de provedores gratuitos (Groq, OpenRouter, Ollama e outros). Na prática, o Claude Code continua sendo o "chassi", só que o "motor" passa a ser um modelo gratuito, e quando um provedor acaba o limite, ele já troca para o próximo sozinho. O próprio projeto promete algo em torno de 1,5 bilhão de tokens gratuitos por mês.
+  
+  Nesse vídeo eu instalo o OmniRoute do zero, conecto os provedores, crio um combo de modelos gratuitos e configuro o Claude Code pra usar esse combo via settings.local.json. No final, testo tudo na prática pedindo pro Claude Code (rodando em cima de modelo gratuito) criar um site institucional usando a skill frontend design... e o resultado saiu sem gastar um centavo.
+  
+  ⏱️ Timestamps
+  0:00 A ferramenta com 50 mil estrelas
+  0:36 O que é o OmniRoute
+  1:29 O que é o roteamento
+  2:49 Chassi x motor: a analogia
+  4:56 Instalando o OmniRoute
+  8:02 Conectando Groq, OpenRouter e Ollama
+  11:22 Criando o combo de modelos gratuitos
+  15:05 Configurando o Claude Code
+  18:08 Economizando tokens com compressão
+  20:07 Teste real: site institucional grátis
+  
+  📧 Parcerias e serviços: contato@zenithonacademy.com.br
+---
+Encontrei uma ferramenta chamada OmniRoute que já está com quase 50 mil estrelas no GitHub. E que promete fazer com que o Claude Code possa se conectar com mais de 200 modelos gratuitos. E fazer um roteamento entre eles. Ou seja, você vai ter aí praticamente tokens infinitos gratuitos. Sem se preocupar com os tokens da sua assinatura.
+
+Então, nesse vídeo, eu vou estar mostrando para você como funciona essa espécie de roteamento. Vou estar instalando, configurando junto com vocês. No final, eu vou estar criando também um site com essa estrutura para você ver se realmente funciona. Então, vamos para o vídeo. Esse é o repositório do OmniRouter, que foi criado por Diego Souza, brasileiro.
+
+O projeto já conta com quase 50 mil estrelas. Eu desço bem aqui na parte do progresso; observe que ele teve um salto gigantesco a partir de julho, a partir do mês passado. Então, vou estar deixando aqui o repositório, aqui na descrição, para vocês darem uma olhada. Porque tem bastante coisa aqui; ele não tem só o roteamento, ele tem compressões. Ele tem questões de MCP, tem bastante coisa no projeto.
+
+A gente vai estar focando aqui no roteamento de LLMs gratuitos para usar dentro do Claude Code. Mas caso você queira algo mais completo, veja aí o repositório. Se tiver alguma ideia de algum vídeo que eu possa estar trazendo sobre o OmniRouter, também pode deixar nos comentários. Então, assim, a principal funcionalidade aqui do OmniRouter é justamente esse roteamento de modelos de linguagem. No caso desse vídeo aqui, a gente vai estar focando nos modelos de linguagem gratuitos, certo?
+
+Então, tudo vai se originar aqui da sua CLI, seja você usar Claude Code, Cursor, ChatGPT, Antigravity, não importa. No meu caso aqui, eu vou estar usando o Claude Code, e a partir da mensagem que eu envio para o Claude Code. O que vai estar acontecendo? Um roteamento, podendo ser aleatório, podendo ter algumas regras específicas; vocês vão entender. É um roteamento para vários provedores diferentes: Cloud, ChatGPT, Gemini, e entre outros mais de 200 provedores; são mais de 290 provedores diferentes. Isso com um único endpoint; então, você não precisa ficar passando de forma individual para cada modelo desses aqui; automaticamente, você já tem esse roteamento aqui.
+
+E você pode estar se perguntando: mas como é feito isso? Como é possível eu usar o Claude Code, mas usar os modelos de linguagem de outras empresas? É porque existe uma diferença entre o modelo de linguagem e o harness. E uma analogia que eu gosto muito é a analogia do chassi e do motor. O harness é basicamente o chassi.
+
+Ele é a estrutura. É onde vão os modelos. Então, o Claude Code. Ele é um harness. O Claude Code.
+
+Ele tem uma estrutura ali por trás. Só que ele é um harness. Os modelos são. Haiku, Sonnet, Opus. Que são os modelos que a gente utiliza.
+
+Para a gente poder estar. Fazendo as nossas coisas. E é justamente por esses modelos aqui que a gente paga. A gente paga pelos motores de fábrica. Colocou aqui.
+
+Modelos de fábrica. Só que você pode estar fazendo o que? Você pode estar deixando esses motores de fábrica aqui de lado. E você pode estar usando motores alternativos; você pode estar usando motores de modelos de linguagem diferentes. Ou mais baratos, ou realmente gratuitos.
+
+Sendo que, para você fazer isso, você teria que estar apontando individualmente para cada um. Então, sempre que acabar os tokens de um, você teria que reconfigurar para outro. Com o OmniRouter, isso não precisa ser feito. Porque você vai ter acesso já a praticamente todos os modelos gratuitos. E ele já fica fazendo o roteamento automaticamente.
+
+Quando um vai acabando, você vai passando para outro. Então, você tem aí, entre aspas, tokens infinitos. Inclusive, eles até falam aqui no repositório. Que com o OmniRouter você consegue aproximadamente 1,51 bilhão de tokens gratuitos por mês. Isso aqui é muita coisa.
+
+Então, reforçando aqui a analogia. O chassi; a gente vai manter usando o Claude Code. No caso de vocês, você usa, por exemplo, o GitHub Copilot; o chassi é o GitHub Copilot, né? E os modelos são o ChatGPT 5.6, enfim.
+
+Então, aqui, a gente vai estar mantendo o mesmo chassi que a gente utiliza aqui predominantemente aqui no canal, né? Que é o Claude Code. Só que o motor vai ser diferente nesse caso aqui, tá? E vamos buscar motores gratuitos. Aqui na documentação, tu consegue já olhar algum desses modelos gratuitos que tu pode estar conectando.
+
+É o OpenRot; eu já falei bastante aqui no canal sobre o OpenRot; ele tem modelos gratuitos lá também, tá? Mas vocês vão entender melhor quando a gente for para a parte. Então, vamos fazer a instalação dele. Para fazer a instalação, você vem aqui na seção Quick Start. E aqui ele vai te mostrar quatro passos para você fazer a instalação.
+
+Então, primeiro de tudo, você precisa instalar ele. Você instala aqui pelo terminal; você roda esse comando para fazer a instalação. E depois você roda o OmniRot para poder ligar o servidor na sua máquina. 76 Então, você abre aqui o Prompt de Comando. E aí você cola esse comando aqui.
+
+NPM install -g OmniRot. Aperta Enter e ele vai fazer a instalação. Eu já tenho ele instalado aqui. Mas você faz isso. Quando ele finalizar tudo.
+
+Agora a gente vai ligar o servidor. Que é só você dar aqui um OmniRot. Então, feito isso aqui. Ele já vai estar ligando o servidor. Então, a gente aguarda aqui no momento que ele estiver ligado.
+
+Você vai acessar via localhost. Só aguardar que ele terminar de ligar. Então, pessoal, voltando aqui. Até deu uma parada aqui para comer alguma coisa. Mas quando ele liga.
+
+Ele fica assim, no terminal. OmniRot is running. E aqui fica a URL: localhost. E aqui a porta: 20128. Então, você acessa isso aqui.
+
+Consegue acessar o OmniRot. E você precisa deixar isso aqui ligado, tá? Se você fechar o. terminal ou apertar Ctrl+C, ele vai parar. Ele fica na sua máquina, beleza, acessando.
+
+aqui o site, você vai dar de cara com isso aqui. Vai utilizar aqui, então, esse aqui é o OmniRot. Tá, então ele vai pedir para fazer o login. É o caso aqui: a senha padrão é "change me", como tá no. seu localhost. Não tem problema, mas se você hospedar, por exemplo, em um local, aí é interessante.
+
+que tu mude a sua senha, tá? Então, eu coloco aqui: "change me". Continuar. E no momento que você acessa. você vai dedicar aqui com esse painel, certo? Tava dando uma olhada aqui nele também. Então, tá.
+
+Aqui, mas vou explicar para vocês aqui com calma. Aqui no canto, fica o idioma. Coloquei aqui PT-BR. Quiser mudar para claro, né? Se tu for do time claro, né? Se quiser deixar escuro, eu prefiro escuro.
+
+Então, vou deixar aqui no escuro mesmo. Mas enfim, não vou enrolar com essa questão não. Você vai observar que. aqui tem muitas funcionalidades, tem muita coisa. Olha só: é a parte de análise também, monitoramento.
+
+Tem bastante coisa aqui. Não vai ter como ver tudo, tá? Se não, vai ficar extenso demais. Mas eu vou te. mostrar aqui o principal. Então, vem aqui. Você já observa que ele tem que: no início rápido, então ele diz.
+
+aqui: a primeira coisa que tem que fazer é criar uma chave de API, tá? Então, vamos fazer isso. Você pode, tá, clicando aqui. Esse atalho ele vai aqui para esse endpoint e vem direto aqui para gerenciador. de gerenciador de API. E aqui vai ficar as suas chaves, tá? Vou, tá, excluindo essa chave aqui.
+
+No caso você, e você vai ficar assim. Então, você vai fazer o que: clica aqui, crie sua primeira chave. Vou colocar aqui Claude Code mesmo. Não vou mexer em nada aqui, tá? Eu vou clicar aqui em criar.
+
+chave de API. E pronto! Aí, você vem aqui e copia essa chave de API. Você já vai entender onde. vocês vão estar colocando ela. Deixa ela aqui, salva ela. Você pode, tá, recriando outras aqui também.
+
+Beleza! Ok, chave criada com sucesso! O próximo passo sugerido aqui é você conectar os seus provedores. Como é que você faz isso? Você vem aqui, OmniRot, e vem aqui em Provedores.
+
+E o que são esses provedores? São as empresas que fornecem os modelos de linguagem, tá? E você vai observar aqui que tem muitas, cara. Olha a quantidade de provedores que a gente tem aqui. Aqui, você pode estar fazendo algumas filtragens, tá?
+
+E, como o nosso caso aqui é plano gratuito, Então, vamos estar focando no plano gratuito. Então, eu vou vir aqui, no plano gratuito. Então, filtrei; a gente tem 126 provedores de planos gratuitos. Você pode também estar fazendo filtragens, por exemplo, música, vídeo, coisas do gênero, tá? Só que, no meu caso, aqui vai ser questão de textual mesmo, que a gente vai trabalhar no Claude Code, focando em código, tá?
+
+Então, a gente tem esses provedores aqui. Tem alguns que eu conheço, tem alguns que eu não conheço. Realmente, tem muitos provedores aqui, certo? A gente tem aqui os mais conhecidos, né? A gente tem aqui o MCP, a gente tem o GitHub Copilot, o ChatGPT, o Gemini.
+
+Nós temos o vibecoding, temos o Cursor, o Windsurf, o Antigravity. Temos aqui também o Groq. Tem o Groq também, ó. Groq. Então, a gente tem aqui modelos bem conhecidos, tá?
+
+Então, você pode ir testando aí esses provedores aqui. Vamos estar configurando agora o Groq, o OpenHouter e o Olhama, beleza? Vamos estar configurando esses três aí. Então, deixa eu filtrar aqui novamente por plano gratuito. Vamos procurar aqui, ó, Groq, beleza?
+
+E aqui a gente precisa de uma chave API. Então, vou clicar aqui em adicionar conexão. Eu posso estar adicionando várias contas também, tá? No meu caso, aqui vou fazer apenas uma conta para cada provedor. E aqui eu vou colocar a chave da API.
+
+Já até deixei separado aqui, ó. Groq, OpenHouter e o Olhama, tá? Começando pelo Groq. Vou dar aqui um start. Fiz aqui o login.
+
+Vim aqui em API Keys. E vou estar criando aqui uma chave API focada só no OpenHouter, né? Vou até chamar aqui, ó. De OpenHouter. Sem inspiração.
+
+E vamos estar criando aqui a nossa primeira chave API. Vou copiar. E aqui é só colar a chave da API aqui. Verificar para ver se está tudo funcionando. Válido, perfeito.
+
+E eu vou dar a seleção aqui ao modelo. Essa opção aqui é de importar apenas modelos gratuitos. E vou clicar aqui em salvar. E pronto, ele importou 3 modelos. Perfeito.
+
+O próximo agora vai ser o OpenHouter. OpenHouter, enviando aqui em API Keys. Vou criar aqui uma nova. Mesma coisa, o OpenHouter. Sem inspiração, vamos criar.
+
+Copiar, esse aqui é o OpenHouter. Para a face da minha vida. Adicionar conexão. Colar a chave da API. Verificar, tudo certo.
+
+Importar apenas modelos gratuitos. Salvar, e aqui ele importou 19 modelos. Agora vamos para o Olhama. Vou vir aqui em configurações. Venho aqui em keys.
+
+Adicionar API Key. E vou botar OpenHouter. Gerar API Key, copiar. Olhama Cloud. Adicionar conexão.
+
+Colei aqui, verificar, funcionando. Também, importar apenas modelos gratuitos. E salvar. Mais 7 modelos conectados. Então, o que a gente fez até agora.
+
+Agora, foi conectar. A chave API de 3 provedores, certo? E a gente filtrou aqui, para ele puxar apenas os modelos gratuitos. Então, agora a gente já tem aqui no Cloud Code a conexão com 3 provedores. E voltando aqui para o passo a passo recomendado, ele já mostra aqui o apontar seu cliente, porém.
+
+Então, antes de a gente chegar aqui em apontar seu cliente, eu quero adicionar um passo antes disso, que é criar um combo. E o que seria esse combo? O combo é como se fosse um grupo que eu estou criando, personalizado, onde eu consigo especificar nesse grupo quais modelos eu quero que participem desse grupo. E o que seria esse combo? O combo é como se fosse um grupo que eu estou criando, personalizado, onde eu consigo especificar nesse grupo quais modelos eu quero que participem desse grupo.
+
+E o que seria esse combo? O combo é como se fosse um grupo que eu estou criando, personalizado, onde eu consigo especificar nesse grupo quais modelos eu quero que participem desse grupo. E eu consigo definir, inclusive, como esse roteamento é feito. Existem mais de 10 tipos de roteamentos que a gente pode estar fazendo. Eu vou estar mostrando eles aqui. Então, você consegue, até mesmo, a forma que ele vai definir qual o melhor modelo.
+
+Você consegue configurar. Então, vamos fazer isso antes de a gente fazer a configuração lá no Claude Code. Então, para fazer isso, eu venho aqui em Omniproxy e venho aqui em Combos. E aqui em Combo, eu venho aqui em Criar Combo. E a gente tem aqui um passo a passo.
+
+Primeiro de tudo, colocar um nome. Vou chamar aqui de "modelos gratuitos". Por exemplo, né? Daí, aqui eu posso estar selecionando algum template específico. No meu caso, aqui eu vou estar mantendo aqui em "Free Stack".
+
+Ou seja, eu vou estar fazendo apenas o roteamento entre modelos gratuitos. Vindo aqui em "Próximo", aqui já vai aparecer para mim alguns modelos já padrão. Só que, vindo aqui em "Browse Catalog", ele já vai mostrar para mim os modelos que eu já configurei. Está vendo? Ele vai mostrar aqui os modelos do Lhama, do Groq, do OpenRouter e do OpenCode.
+
+Eu vou clicar aqui em "Selecionar Tudo". E feito. Pronto, agora, quando eu descer aqui, olha só a quantidade que tem aqui de modelos. Temos aqui já 47 modelos diferentes. Perfeito.
+
+Próximo. Agora, vem a estratégia de roteamento. Como que a gente vai fazer isso? Então, é o seguinte: existem vários tipos aqui, como vocês estão vendo. Certo? Por exemplo, por prioridade, ele vai estar seguindo exatamente essa ordem que a gente colocou aqui, tá vendo?
+
+Do um até o último. Então, aqui você consegue controlar qual você quer primeiro. Ah, você pode aleatoriamente. Você pode pegar aqui o que foi menos usado. Eu tenho várias formas aqui.
+
+Para o nosso tipo de roteamento relacionado a modelos gratuitos e focado em codificação, que a gente vai usar no Claude Code, o que eu acho interessante aqui seria que ou o Red Room, o que é esse cara aqui? Ele vai estar apenas usando provedores que estão com mais limites com mais limites de tokens então, aquele que estiver mais cheio ele vai estar usando ele, então ele sempre vai pegando o que está mais cheio, de limites gratuitos naquele momento, então é uma opção legal mas eu gosto de estar usando o Auto Combo o Auto Combo ele tem ali uma inteligência ele vai de acordo com o que eu estou pedindo naquele momento e com outras variáveis, como o que está com menor latência o que está com melhor custo benefício, ele tem vários parâmetros que ele leva em consideração para poder definir qual é o melhor modelo naquele momento. Então, eu tenho essa camada de inteligência ali também para fazer essa recomendação. Ele até fala aqui, deixa o motor equilibrar vários fatores, monitorar, beleza? Posso estar clicando aqui em "Aplicar Recomendações" também, e beleza.
+
+Feito isso, próximo. Aqui eu nem vou mexer nisso, tá? Vou para o próximo e criar combo. E pronto, a partir daqui eu já criei aqui um combo, que é o combo de modelos gratuitos. Eu posso estar clicando aqui em "Testar Agora" Vou fazer um teste aqui para ver se ele está funcionando Então, olha só, ele funcionou O fallback funcionou, ele usou o Lhama 3 Deu erro nesses outros aqui que eram padrões Mas é porque esses outros aqui a gente não fez configuração nenhuma Que é justamente esses caras aqui A gente acabou não fazendo ele Vou até apagar aqui para não ficar passando por eles E tudo mais, beleza Então, é isso, está funcionando o nosso combo Show, beleza Agora a gente vai para a etapa de fazer a configuração lá no VS Code Para permitir que o Claude Code use esse combo Vindo para o VS Code, eu gosto de usar o VS Code, tá?
+
+E eu uso a extensão do Claude Code aqui dentro Eu gosto da organização que tem aqui as partes e tudo mais, tá? E o que a gente vai fazer aqui? Você vai abrir aí uma parte sua, né? Que vai ser o seu projeto. Eu gosto de trabalhar da forma por projeto.
+
+Dentro dessa parte aqui do seu projeto. Vai criar uma parte chamada .cloud. E dentro da parte da .cloud.
+
+Você vai criar um arquivo chamado settings.local.json, tá? Só vem aqui em criar, aí você coloca settings.local.json.
+
+E ele vai ter o arquivo aqui, beleza? Dentro desse arquivo, você vai estar passando isso aqui. Eu vou deixar na descrição isso aqui, tá? Escopio e cola, que é a URL. Então, é como se eu estivesse mudando a URL aqui, base da Anthropic, o AlphaToken e o modelo que vai ser utilizado, certo?
+
+Então, por padrão, vai ser o localhost. 2128, tá? Aqui o token é aquele token. Que a gente gerou, que no meu caso aqui. Eu não salvei, então vou regenerar aqui.
+
+Beleza, copiei aqui. Coloquei aqui, show. E aqui. O Anthropic Model. E o que é esse cara aqui? É o seu.
+
+Combo. Então, você pode colocar aqui assim, ó. Combo, barra, e o nome do seu combo. Que eu acho que é modelos traço. Gratuitos. Deixa eu só.
+
+Confirmar se é isso mesmo. É isso mesmo, ó, modelos gratuitos. Posso estar até copiando aqui, Ctrl+S. E beleza, Ctrl+S pra salvar, né. Eu vou abrir aqui uma nova seção.
+
+Pra carregar, deixar outra. Tem que ser uma nova seção pra poder fazer esse carregamento. Vindo aqui, ó, na hora de trocar. Modelo, olha só o que aparece aqui embaixo. Apareceu aqui, além dos.
+
+Modelos do cloud, né, que vão. Dar erro se eu tentar falar com eles agora. Tá, mas é só apagar aqui o arquivo settings. Que volta, ou abrir uma nova pasta. Mas enfim, eu vou vir aqui, ó, como modelos.
+
+E aqui dentro eu vou estar. Mandando um oi. E se tudo estiver funcionando, ele vai me responder. Claro, não vai ser com a mesma velocidade. Do Claude Code, até que foi rápido.
+
+Enfim, não vai ser com a mesma velocidade. Do Claude Code, mas. Nesse caso aqui mostrou que foi até que rápido. E beleza, ele respondeu. Como é que eu sei que foi os modelos gratuitos que responderam.
+
+E não o Claude Code. Vindo aqui, a gente pode. Fazer aqui uma análise. Que aqui seria inclusive. O quarto passo sugerido.
+
+Você pode vir aqui. Em Analytics. Clique aqui em "uso" e, no caso de vocês que já tiverem, é uma vontade aqui, então significa. Que significa que você conseguiu utilizar outro local que eu posso analisar também, são os logs. Você vem aqui em "montamento", clica em "logs" e aqui estão os logs, e esse aqui justamente a chamada que a gente fez lá no Claude Code. Se eu clicar aqui, a gente pode ter mais detalhes sobre isso. E observe aqui a resposta, está vendo justamente a resposta que foi mandada lá.
+
+Então, está funcionando. Então, ele usou o Claude Code com o modelo Minimax M3. Então, ele usou ele para poder fazer aquela resposta. Existe uma outra coisa também muito interessante aqui no projeto. É que ele promete economizar bastante tokens.
+
+Porque ele usa vários tipos de compressões. Para reduzir os gastos com tokens. Eu acredito que o mais famoso aqui é o Caveman. O pessoal já falou bastante sobre o Caveman. Sendo que a gente pode estar configurando.
+
+A gente pode estar configurando aqui. Mais de um compressor. Ele até dá uma recomendação aqui. De conectar o RTK e o Caveman. E ele fica fazendo essa variação aqui.
+
+E isso é de forma natural. E a forma de configurar isso aqui é muito simples. Também lá dentro do painel. Então, vindo aqui no painel, vindo aqui em Omniproxy, eu consigo vir aqui na seção de compressão, certo? Se eu vir aqui em "compression settings", eu posso estar simplesmente ligando-o; ele fica desligado por padrão, tá?
+
+Então eu ligo-o e aqui eu seleciono os modelos que eu quero, certo? Seguindo aquele padrão de recomendação lá da documentação, eu ligo o RTK, coloco aqui no padrão. Eu ligo o Caveman e coloco aqui no completo, tá? Se quiser mais ainda, pode botar no ultra, por exemplo. E feito isso, já tá ativo, tá?
+
+Se eu vir aqui em Caveman, eu posso estar fazendo configurações mais avançadas aqui sobre ele, né? Observe que ele já mostra aqui, ó, que ele já tem uma economia de 2% já de tokens que a gente fez aqui. Bem pouco uso que fizemos, ó, no RTK; ele mostra aqui a economia média de 2%. Então ele já fez aqui as economias e tu consegue monitorar tudo aqui. Pausa rápida! Se esse vídeo está te ajudando, então preste atenção.
+
+Tudo que eu mostro no meu canal sobre Claude Code, eu ensino bem mastigado no meu treinamento "Operação Claude Code". São vários módulos, já são mais de 60 aulas, do zero até você botar uma automação rodando na nuvem 24 horas por dia. Além de framework PAF, skills, MCP, rotinas, até mesmo construção de site. O curso não é só teoria; ele é realmente "mão na massa", você vai começar do zero e já vai sair de lá com automações prontas. O link do curso está fixado aqui no primeiro comentário e também está na descrição.
+
+Enfim, bora de volta para o vídeo. Bora testar ele agora aqui na prática, né? Vamos ver se realmente esse roteamento serve para a gente fazer alguma coisa. Um exemplo que é rápido de mostrar aqui é fazer uma página de vendas, né? Ou um site institucional.
+
+Então, eu vou fazer o seguinte: eu vou pedir aqui para ele criar um site institucional de uma clínica fictícia, uma clínica odontológica fictícia. Eu vou pedir para que ele use também a skill "frontend design", ou seja, uma skill do Claude Code, que é para vocês perceberem que realmente isso é possível, e como poderoso isso é. Você pode estar usando também skills do Claude Code, por mais que o modelo de linguagem não seja do Claude mesmo. Beleza? Então, vamos dar aqui a instrução para ele.
+
+Eu quero que você construa um site em HTML, um site institucional para uma clínica odontológica. Eu quero que esse site tenha o fundo branco, passe uma imagem de empresa premium, algo clean, minimalista, e eu quero que a clínica seja algo fictício que você crie para demonstração. Cara, eu estou dando aqui um prompt bem genérico, tá? Dá para a gente testar isso aqui, e vou falar aqui para ele explicitamente para usar a skill "front-end design". Então, garantindo que a gente está usando aqui realmente o modelo, como modelos gratuitos, tá?
+
+E bora dar aqui o comando. E olha só, ele já está aqui chamando a skill "front-end design" Então ele realmente detectou e deu certo Ele conseguiu chamar a skill Essa skill está instalada de maneira global Então em todos os projetos ela funciona E vamos aguardar Vamos aguardar para ver Vamos ver aqui em quanto tempo mais ou menos ele finaliza isso Quando ele finalizar, eu volto E pronto, ele terminou aqui de fazer Demorou em torno de 3, 4 minutos E vamos ver como é que ficou isso aqui Eu nem sei quais foram os modelos que ele escolheu Depois ele vai dar uma olhadinha Mas vamos ver o resultado primeiro Então tá aqui o resultado Perceba que tá um pouco desalinhado Essa questão do título Mas ele manteve de fato O minimalismo que eu quis Me referir Bem minimalista mesmo Aqui os tratamentos A parte do catálogo Aqui os profissionais Então aqui ele colocou Uma espécie de placeholder. Para colocar aqui por cima as imagens. E aqui a agenda. Aqui embaixo o rodapé.
+
+O que eu ajeitaria aqui seria. A centralização aqui desse título. Removerei também essas travessões. Aqui, né? O mais é isso, cara, é levar em consideração também.
+
+Que eu mandei algo totalmente genérico. Mas cara, ele mandou um site. E não foi um site genérico. Ele usou ali um skill de Frontier Design. Um skill da própria Antropic.
+
+Ele conseguiu gerar. E, cara, tá aqui. Vamos dar uma olhada lá no OmniHot e qual foi o modelo que ele utilizou. Então olha só. Ele usou o Minimax.
+
+Minimax M3 para todas as requisições necessárias, tá? Aqui necessárias, tá? Então quem fez ali aquele site foi praticamente. O Minimax. Vamos supor que no meio da conversa, eu queria que ele fizesse.
+
+As pesquisas, eu quero que ele melhore. Tais coisas, cara, que acabou ali. Os meus limites. Ou no Minimax ou no próprio OmniHot. Acabou ali o limite.
+
+Acabou ali o limite. Ele vai já redirecionar ali para, por exemplo. O OpenRouter e vai dar conta. Eu ainda nem vou perceber que acabou os limites. Então essa é a sacada. E não gastei um centavo para gerar aquele site.
+
+Se você está nessa pegada de aprender novas ferramentas para integrar com o Claude Code. Deixar mais poderoso, tem uma ferramenta muito boa chamada Graphi, que eu recomendo que vocês aprendam. E eu fiz um vídeo aqui também no YouTube sobre essa ferramenta. Então vou estar deixando aqui, só você clicar e assistir.
