@@ -1,0 +1,73 @@
+---
+video_title: "Como 1.000 Requests Usam 20 Conexões | Connection Pooling"
+video_id: aqmt_3UWItA
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=aqmt_3UWItA
+video_date: 2026-07-13T13:00:12+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? Tudor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e mexe respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. É um
+
+fato muito triste que para nós programadores as palavras em inglês pull e pull são muito parecidas. Por favor, não confunda essas palavras nesse contexto. Uma poll é tipo uma, digamos assim, pesquisa. Quando você tá fazendo polling, eu tô, por exemplo, tentando o mesmo recurso algumas vezes para ver quanto que ele tá disponível. E uma pool, uma piscina, né? É, é uma pool,
+
+né? É um grupo grande. Hoje a gente vai falar de connection pooling, um grupo grande de conexões, uma pool de conexões. Perdão ser pedante pelo inglês, eu odeio fazer isso, mas é necessário caso a gente queira ser corretamente interpretado, corretamente compreendido. Bom, questão de hoje super simples. Quando você tem um servidor, o
+
+seu servidor está necessariamente rodando código se for para ele fazer alguma coisa e ele provavelmente está se conectando com algum banco de dados. Essa conexão aqui com o banco de dados tem um detalhezinho, porque pensa comigo o seguinte, se cada cliente que faz um request para você, você abre uma nova conexão com o banco de dados, certo? Se eu tiver 50 clientes, eu vou ter 50 conexões. Existe um limite físico aqui do quantas conexões a gente consegue manter. Então, existe uma estratégia aqui que vai existir um pool de conexões, uma, digamos assim, uma piscina de 20 conexões entre o servidor e o banco de dados. e aquelas que
+
+estiverem disponíveis vão ser utilizadas. A solução que isso vem para resolver é a gente conseguir utilizar eficientemente os nossos recursos e aumentar a quantidade de clientes que eu consigo servir. Porque se eu preciso de uma conexão por cliente, o número máximo de clientes que eu vou conseguir servir é um número máximo de conexões que o banco de dados aceita. Assim, a gente pode ter 1000 clientes fazendo requisições e esses 1000 clientes estão compartilhando 20 conexões com o banco de dados. Galego, isso causa algum problema de conflito? Algum cliente
+
+consegue acessar o dado de outro cliente? Não, não causa problema de conflito, tá? Tá tudo devidamente abstraído e devidamente isolado. Criar uma conexão é um pouco caro a nível computacional, porque envolve alguns passos. Você pode estar pensando, né, pô, mas eu posso criar uma conexão para cada usuário, né? Não, não vai ser tão
+
+custoso assim. Você tem o handshake da network, você tem autenticação, você tem processos de ambos lados, tanto do banco de dados quanto do servidor, você tem o TLS, se isso tiver habilitado, é todo um overhead aqui adicional, né? A solução aqui, ela é relativamente simples para um problema relativamente simples que existe muito frequentemente nas empresas. Imagina o seguinte problema, tá? Você tem aqui uma rota no seu backend, vamos supor que isso aqui é um Express ou algo do tipo, Rono, qualquer que seja o seu framework de backend.
+
+Essa rota aqui, esse código vai ser, né? Toda essa parte aqui do código vai ser invocada uma vez por requisição, por request do seu usuário. Ou seja, a cada usuário que acessar essa rota aqui do get users, a gente vai fazer um client. Que é na prática instanciar uma conexão nova, e a gente vai fazer um client. Que é na prática encerrar essa conexão. Esse
+
+é o jeito errado, né? É o jeito que seria uma conexão por usuário. Vai funcionar até certo ponto, tá? Não tô dizendo que isso aqui não vai funcionar, isso aqui vai funcionar. Vai funcionar perfeitamente bem até o momento que você tiver, tipo assim, 20, 30 usuários simultâneos, aí vai começar a falhar um pouco. 20, 30 usuários simultâneos é
+
+bastante coisa até, tá? Então, possivelmente não é impossível que na empresa que você trabalha, em algumas partes da aplicação, isso aqui tá acontecendo e nunca existiu nenhum problema, tá? É perfeitamente possível. Agora, qual que é a maneira de você fazer isso de um jeito melhor? usando uma pool, uma pool no próprio na própria lib, a própria libress te fornece uma pool e aí você consegue usar essa pool, setar um número máximo de conexões. Você
+
+consegue até combinar isso com o seu banco de dados, né? O seu banco provavelmente tem um número de conexões máximo que ele aceita. Ou então supondo que um banco aceite 250 conexões, mas essa parte específica da aplicação, eu quero que tenha apenas 10, entendeu? Para eu reservar outras partes para outra outras partes da aplicação, outros servidores ou o que quer que seja, tá? Essa pool aqui, como ela está instanciada fora da rota e claro, isso aqui é no JS, né? Depende do seu
+
+contexto, depende da sua linguagem. Você precisa entender como é que a sua linguagem lida com essas coisas, mas no Node js todo o arquivo aqui na prática ele é um singleton. Então essa p aqui essa pool é iniciada instanciada uma única vez, porque eu como alguém que trabalha com Node sei que esse arquivo é um singleton, tá? Você tem que saber isso na sua linguagem também. Essa rota aqui embaixo, ela pode ser chamada quantas vezes ela quiser, por quantos usuários ela quiser, porque como a Pool não tá sendo instanciada aqui dentro, não existe um problema. Essa PL tá sendo
+
+reutilizada por diversos clientes que fazem diversos requests, tá bom? Essa é a solução dentro de um ambiente de servidor, você reutilizar uma pool. Existe um problema também que eu quero te chamar a atenção, que é o seguinte problema. Eu já vi isso algumas vezes e vai ser muito óbvio se você tiver esse problema, porque rapidamente vai estourar a sua aplicação, que é que cada request inicia, né, cria uma conexão aqui, dá um pull aqui, pone, mas ele esquece de dar o release. Ao esquecer de dar o release, a gente não larga essa conexão, a gente não libera essa conexão, né? Uma pool que tinha 10
+
+conexões, agora tem nove. No próximo request vai ter oito, no próximo sete, no próximo seis, vai dar problema alguma hora. Então, né, se você tiver utilizando dessa maneira aqui, lembrar de dar o client.release e lembrar de sempre dar o client.release. Por isso
+
+existe o finally aqui. Mesmo caso haja um erro, mesmo se houver um erro, a gente sempre quer executar a linha de código do client.rrelease para sempre liberar isso aqui, tá? Mesmo se houverem erros. Se você não tiver o finally ou algo similar na sua linguagem, pode ser que isso daqui, essa linha aqui, dê um erro e esse erro faça com que o fluxo da aplicação vá de uma maneira diferente a não executar esse release e não libera as conexões, tá? Já vi isso aqui
+
+acontecendo em produção. Pois bem, existe a última questão aqui a ser compreendida, que ela é uma questão bem complexa. Como ela é uma questão bem complexa, eu não vou conseguir abordar com tanta profundidade no vídeo, que é a seguinte questão: quando você tá lidando com o ambiente serviless, esse ambiente serviless não tem, eu não consigo criar uma pool necessariamente dentro do meu negócio, porque toda vez que uma requisição chegar, eu vou estar instanciando um novo lambda. Se 20 requests forem feitos, eu vou estar instanciando 20 lâdas. Qual que é o problema? Num servidor eu consigo ter
+
+uma P aqui e essa p aqui vai tá na memória compartilhada, tá? Ela vai est na memória ali do meu programa. Lambdas não tem memória compartilhada por padrão. Cada lambda é autossuficiente. Ele instancia quando a requisição chega, ele morre quando a requisição sai. Isso
+
+cria um problema. a gente não consegue da maneira normal como as coisas são feitas ter uma pool aqui, ter uma connection pool que vai lidar com isso daqui. Ou seja, pra servessa, pra servess e essa solução vai depender exatamente de como você tá criando esse servless, tá? Como eu falei de lambda, a gente vai estar aqui uma das soluções da WS. Uma das soluções da WS é o RDS proxy. Esse RDS proxy serve como um
+
+proxy, né? como se fosse um servidor intermediário que consegue manter estado, consegue manter dentro dele uma pool. Então esse servidor intermediário tem uma pool com o nosso banco de dados e cada lambda aí faz um request pro servidor intermediário, que é onde fica a pool. Se você tiver num ambiente servess dentro da WS, essa é uma das soluções mais utilizadas, tá? Ninguém te fala isso quando você vai migrar para serv, mas enfim, é a gambiarra que você precisa fazer. Agora, por exemplo, se
+
+você tiver numa plataforma, pô, mais e é no code, não, não sei, não, mentira, sei lá, se você estiver na Versel, que a Versel é difícil de explicar, mas se você está na Versel, você vai entender, é que a Versel tenta fazer tudo de maneira automática, né? Então a Versel, por exemplo, tem na documentação dela a especificação de utilizar isso aqui, ó, attach database pool. E o attach database pool vem aqui da Versel Functions. Isso aqui você tem que ler a documentação da Versel para conseguir utilizar isso aqui, porque a Versel ama fazer um lockin. É, na verdade todas as plataformas amam te botar num lockin.
+
+Enfim, esse aqui é o lockin da Versel. Essa aqui é a solução da Versel para esse problema, tá? Mas você tá entendendo que se você tiver no ambiente de servess, essa solução vai ser altamente dependente de qual ambiente você tá e de como esse ambiente tá configurado, tá? Então eu não consigo te dar a solução exata aqui. Agora outros pontos a se levantar. A sua ORM
+
+provavelmente vai ter algo parecido com aquilo que eu te mostrei, tá? Eu te mostrei o código direto do PGES para atingir isso daqui, mas você provavelmente nem tá importando as libs do PG, você tá utilizando o PGES via uma ORM. Então, a ORM também tem isso nativamente, muitas vezes pesquisa na sua própria ORM, eu não consigo mostrar todas aqui, mas a ORM geralmente tem uma solução própria para isso. E a recomendação aí na documentação da ORM para ver como isso funciona. Outra solução aqui, você pode utilizar também em servess.
+
+Eu só tô falando isso daqui, eu só dei ênfase nisso daqui pro final, porque isso aqui apareceu na pesquisa para esse vídeo, mas é algo que eu nunca utilizei. Então eu preciso citar, eu preciso citar o disclaimer que eu nunca vi isso aqui sendo utilizado, mas o PG Bouncer aparentemente tá, também funciona como um proxy aqui em que a sua aplicação pode fazer os requests para o PG Bouncer e o PG Bouncer pode fazer o PL. O PL, meu Deus, eu tô só porque eu falei as duas palavras, eu tô trocando elas o dia inteiro. Pull, a piscina de conexões com o banco de dados. Bom, citei por último e dei o disclaimer que eu nunca utilizei isso, tá? Então, uso com cautela. Tudo o
+
+resto eu já vi na prática de uma maneira ou de outra. Por hoje era isso. Lembra-se da palavra pullina. Poul é pesquisa polling, né? Quando você tá fazendo polling, você tá fazendo muitos requests um atrás do outro para ver se o serviço tá disponível. Então, pesquisa,
+
+ah, você tá fazendo trabalho de um um batedor, um cartógrafo, sei lá. A gente quer que é isso aqui, ó. A gente quer uma piscina de conexões. Piscina. Pisina.

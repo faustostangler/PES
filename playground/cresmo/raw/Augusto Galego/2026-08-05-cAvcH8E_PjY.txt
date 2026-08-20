@@ -1,0 +1,77 @@
+---
+video_title: "Backpressure na Prática"
+video_id: cAvcH8E_PjY
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cAvcH8E_PjY
+video_date: 2026-08-05T13:00:26+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Se você tá querendo hospedar o seu site ou seu SAS numa VPS ou hospedar um N8N ou OpenCla, eu tô recomendando a Host Gator, que é patrocinadora aqui do canal. Fala de coisa boa hoje. Dor nas costas, back pressure, se traduzido no sentido literal, né? Back, costas ou parte de trás, pressure, pressão. Pressão na parte de trás. Comentei pr
+
+ajudar no engajamento. Qual que é a ideia? Porque que todo dev precisa entender isso daqui, tá? Em diversos tipos de sistemas distribuídos, vai existir uma relação que a gente chama de produtor e consumidor. Essa relação de produtor e consumidor pode se dar de diversas maneiras. A gente consegue
+
+imaginar uns exemplos clássicos aqui. Vamos supor que você tenha um web crawler que vai navegando diversas páginas na web, pega essas páginas, salva essas páginas. O ato de salvar essas páginas é o ato de produzir. E você tem uma ligação com o consumidor e o consumidor vai, por exemplo, analisar os dados dessas páginas, certo? Tratar essas páginas, lidar com essas páginas.
+
+Ou então podemos imaginar um exemplo que um usuário está subindo um vídeo, o usuário tá produzindo um vídeo, a gente tem uma peça do nosso sistema que armazena esse vídeo em algum lugar e outra peça do nosso sistema que vai comprimir esse vídeo, por exemplo, tá? Back pressure é o problema que ocorre quando o nosso produtor produz numa velocidade que o consumidor não consegue consumir. Então vamos imaginar o seguinte. Vamos imaginar que o nosso produtor tá navegando a internet e ele tá encontrando 100 sites por segundo. Não vai por minuto, 100 sites por minuto. E ele tá mandando a informação
+
+de 100 sites por minuto pro nosso consumidor analisar, indexar e salvar. Porém, o nosso consumidor tem uma velocidade de conseguir armazenar, indexar ali apenas 10 sites por minuto. O que que vai acontecer? Ao longo de 10 minutos, vai existir um descasamento aqui de 900 sites, de 900 páginas. Geralmente a gente conecta um produtor num consumidor através de uma fila. Se a
+
+gente não tiver uma fila, imaginando que a fila que não exista, a gente simplesmente mande direto do produtor pro consumidor, isso vai rapidamente sobrecarregar o consumidor. Então a gente adiciona uma fila aqui pra gente ter um determinado buffer, pra gente ter uma uma azeitada aqui no sistema e a gente conseguir lidar com esse fluxo de uma maneira mais contínua, uma maneira melhor. Mas a fila também existe um limite físico, né? um um limite de bits e bytes e megabytes do quanto ela consegue armazenar dentro dela. 900 sites, 900 itens dentro de uma fila é plausível, mas conforme o tempo vai passando, essa fila vai crescendo e a gente vai tendo outros problemas também.
+
+Esses sites vão ficando muito antigos, né? Imagina, o produtor produz em um mês, o que o consumidor demora 10 meses para armazenar. Em 10 meses, de repente, o site já mudou. Esse job que eu criei aqui na fila, essa informação que eu passei de um lado para outro, ela pode já até est antiga. Eventualmente, dado tempo o suficiente, essa fila vai crescer tanto que o uso de memória dela vai ficar tão grande que ela vai crashar, vai quebrar o nosso sistema. Se
+
+você adicionar mais capacidade na fila ou adicionar mais filas, a gente tá apenas jogando o problema pra frente, empurrando o problema pra frente. Então, a gente tem um problema aqui que pode ser definido por um produtor que é muito mais rápido que um consumidor. Daqui a pouco a gente vai ver um pouquinho de código aqui, tá? Só para exemplificar de uma maneira um pouquinho mais técnica, mas mais importante que o código é você entender essa explicação aqui. Primeira coisa do back pressure é entender aonde está o gargalo, porque pode ser que o consumidor consiga consumir apenas 10 porque o gargalo está no banco de dados e ele consegue armazenar apenas 10 sites devido a uma limitação de velocidade do banco de dados. Então de nada adianta eu
+
+aumentar a velocidade do meu consumidor, eu jogar mais hardware aqui, se o problema não tá aqui, tá? Em back pressure é muito importante entender qual que é o gargalo de verdade. Existem aqui algumas técnicas que vão ajudar a gente a lidar com back pressure. Por exemplo, eu falei que alguns jobs podem ficar muito antigos, né? Podem estar aqui há muito tempo. A gente pode podar
+
+stale jobs, que a gente chama, né? Conforme a gente vai adicionando coisas nessa fila, a gente pode ter algum tipo de checagem, alguma regra que vai varrer essa fila e vai remover tudo aquilo que não faz mais sentido, tudo aquilo que é antigo ou tudo aquilo que tem um erro ou tudo aquilo que a gente pode cortar. Isso é uma boa prática que vai ajudar a reduzir um pouco esse problema, mas não é uma solução perfeita. Dentro de uma fila, a gente consegue também priorizar as coisas mais importantes. Isso também é possível, também é parte de uma solução. Outra coisa para se ter em
+
+mente, antes da gente pensar em jogar mais hardware nesse problema, é a gente entender que às vezes dá de fazer as coisas em batches, né? Às vezes, ao invés de processar um site de cada vez, a gente consegue, com o mesmo hardware, processar 10 sites de uma única vez e quando for inserir no banco de dados, fazer um batch insert. E fazer as coisas em batchs, fazer as coisas em grupos grandes com menos requisições, pode aliviar um pouco os gargalos do nosso sistema, de modo que a gente consegue aumentar a nossa vazão, mesmo sem aumentar a capacidade do nosso hardware. Então, essas são coisas que a gente precisa ter em mente, porque elas são mais fáceis e mais baratas do que simplesmente jogar mais hardware. Agora vamos começar a pensar então nas soluções mais de verdade agora que eu coloquei esses pontos interessantes aqui. Primeira delas, é interessante que
+
+a gente faça com que a nossa fila seja o que a gente chama de bounded. Ela é uma fila limitada, ela é uma fila com fronteiras, ela não pode crescer infinitamente. Esse limite máximo de tamanho de fila pode causar problemas. Pode causar problemas, certo? Dependendo de como a gente codar o nosso produtor, a gente vai estar jogando problema aqui pro produtor. Então vamos estar trocando
+
+um problema pelo outro, mas pelo menos o nosso sistema não vai estourar. O pior que pode acontecer é a gente perder alguns sites aqui que o produtor não conseguiu enviar pra fila e deu algum bug ali porque o nosso retry não tava bem feito ou coisa nesse sentido. Ou então pode também estourar a memória do produtor se ele ficar tentando retry para sempre, né? Mas enfim, considerada uma boa prática, é ter uma fila que é bounded. Outra prática razoável é aquilo que a gente chama de admission control, que é simplesmente controlar se a gente vai jogar novos jobs aqui ou não, certo?
+
+Eu ter algum tipo de controle e existem várias maneiras de implementar isso. Você pode implementar no próprio produtor, você pode fazer algo parecido com middleware, mas esse admission control vai falar: "Cara, tem muita coisa na fila, vamos rejeitar esse job, não vai entrar". Também é possível a gente fazer um rate limit. Se eu sei que o meu consumidor consegue apenas 10 por minuto, eu vou botar um rate limite no meu produtor. Eu vou falar: "Cara, você só pode produzir 10 sites por minuto.
+
+Você só pode produzir na mesma medida que a gente consome, porque não faz sentido você ir mais rápido que isso. Vai est só queimando recurso computacional sem benefício nenhum pra gente. Vai tá só botando pressão no nosso sistema que a gente não consegue ele dar. Então, rate limit limita aqui o produtor. Claro. Aí a gente vai pro
+
+óbvio. Você pode jogar mais consumidores aqui. Você pode pegar esses consumidores aqui e ao invés de rodar em um único servidor, rodar em 2, 3, 4, 5, fazer um cluster aqui, paralelizar massivamente esse trabalho, você consegue também paralelizar a fila para lidar com aquele truput, aquela vazão mais alta, tá perfeitamente fazível. É possível se utilizar disso daqui, né, das informações que a gente tem fila e do consumidor para fazer um setup de auto scaling. Esse setup é um pouquinho chato, ele é difícil de ser configurado, tá, nesse contexto aqui. Pelo menos eu
+
+acho um pouco difícil, mas ele é perfeitamente fazível. Você consegue ter um auto scaling baseado aqui no tamanho da fila. E aí, cara, é monitorar, ter alertas, ter esse tipo de coisa pra gente garantir que a fila tem um número razoável de coisas dentro dela. Um ponto a se tomar cuidado é que aqui, ó, entre o produtor e a fila, utilizar retri, se a gente ficar retentando muitas vezes, se a gente tiver uma política de retry que tenta muitas vezes, pode colocar mais pressão ainda no sistema. Então, toma cuidado com retri, tá? Não tô
+
+falando que não é para utilizar, com certeza é para utilizar, mas toma cuidado. E agora a gente vai ver um exemplozinho aqui super simples, tá? super simplificado porque é o que cabe num vídeo dessas coisas aqui. Temos aqui um único arquivo de JavaScript em que a gente vai ter uma fila que pro nosso propósito é apenas uma lista, né, um arrayzinho aqui de JavaScript. E a gente vai ter uma função que produz, uma função que consome, mas a função que consome ela tem um slip, então ela vai ser mais lenta do que a que produz.
+
+Basicamente essa é a demo. Você sabe exatamente o que vai acontecer, né? Quando eu rodar aqui, a gente vai ter aqui, olha só, o nosso número de jobs aceitados, o nosso número de jobs processados. Deixa eu parar de rodar pra gente conseguir ler isso daqui. Por exemplo, jobs aceitos 922, jobs processados 123, tem um lag de 799, uma fila que tem, né, 798, no caso aqui, jobs na fila. E conforme o tempo vai
+
+passando, o nosso job mais antigo, ele vai envelhecendo cada vez mais. A gente tem um lag muito grande, né? a gente tem um job antigo que vai demorando muito mais para ser processado. Como que você lida com alternativa a isso? Esse aqui é um código mais complexo que lida com isso, tá? A gente vai tá utilizando uma
+
+fila no Redes, que eu tô rodando aqui dentro do meu Docker, tá? Então eu subi um heads no Docker, eu vou jogar jobs nesse heads aqui e a gente vai estar utilizando uma técnica aqui, ó, em que eu tenho o low watermark e o high watermark. Que que são essas coisas? O meu produtor vai checar o número de jobs que tem nesse RS. Se o número de jobs for maior do que 100, ele vai parar, ele vai pausar e ele não vai fazer mais nada. Vai só ficar checando volta e meia
+
+até o número de jobs estiver abaixo de 30. Quando tiver abaixo de 30, ele começa a produzir de novo. Rodando esse código aqui, qual o resultado que a gente vai ter, né? A gente vai ter uma kill size que vai crescendo aqui. Ela chegou em 93, mas ela parou. Ela parou e
+
+ela vai reduzindo, né? até que 30 mais ou menos. Depois ela começa a crescer de novo, o produtor começa a produzir e ele para. Então ele vai para, vai para, vai para para dar um tempo pro nosso consumidor lidar com isso. Então você tem um lag que nunca chega a ficar tão grande assim, tá? Essa aqui é uma
+
+demozinho super simples, tá? Eu logicamente não codei isso daqui tudo na mão, eu codei com, mas é só para demonstrar um pouco uma das técnicas de como se faz. Claro, na vida real você não vai fazer tudo isso num index.js, JS não faz nem sentido. Provavelmente as coisas não vão rodar nem no mesmo servidor. É apenas uma demo para ver
+
+como é que funciona. E aqui, ó, tá a função responsável por checar se o tamanho da fila é maior do que o High Waterm, né? Ele busca o tamanho da fila através desse Get Kill Steros. E o Get Kill Steros vai buscar aqui da nossa kill, que é, né, uma killzinha aqui iniciada. Se você clicar aqui, ó, você vai ver que é uma kill do Redges. É
+
+isso, uma fila do Rises. A gente tá utilizando bull MQ aqui, bull message kill, né? fila de mensagens rodando essa libzinha com o Reds aqui. Se você gostou desse vídeo, quiser aprender mais sobre system design comigo, e isso que a gente viu é uma aula de system design, tá? A gente tem um curso completo de system design que eu te ensino vários conceitos de system design focado em te ajudar a passar entrevistas. A gente teve vários
+
+alunos aqui, como você pode ver, né, falando que ajudou a passar em processo seletivo de sistema design, que eh tiveram aulas que foram exatamente o que foi perguntado na entrevista. Eu, pessoalmente, já passei e trabalhei em cinco empresas que fizeram entrevistas de system design. E se você comprar e achar que não entregou o que você tava procurando ou por qualquer outro motivo você quiser seu dinheiro de volta, você tem um mês inteiro para pedir o seu dinheiro de volta, tá? A gente dá o reembolso tranquilamente, sem problema nenhum. Só quero que você fique com o curso se você gostar e se você achar que te agregou. Até mais.

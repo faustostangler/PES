@@ -1,0 +1,99 @@
+---
+video_title: "Como Escalar um Sistema para 1 Milhão de Usuários (Aula Grátis)"
+video_id: KSO-CNWhWsU
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KSO-CNWhWsU
+video_date: 2026-08-06T13:00:35+00:00
+video_description: |
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Esse vídeo que você tá vendo agora é uma das aulas do nosso curso de sistema design que eu decidi liberar gratuitamente aqui no YouTube. Se você assistir e gostar, o link pro curso vai tá na descrição, tá? Eu passei mais de um ano montando as aulas aqui, gravando esse curso, tem mais de 90 aulas, a gente acabou de lançar ele, ainda estão surgindo algumas aulas novas para complementar o curso e tirar algumas dúvidas dos dos alunos. E se você comprar o curso, você vai ter pelo menos um mês que você pode assistir o curso inteiro e pedir o reembolso, caso não seja para você, caso você não tenha gostado, tá bom? A gente não fica enchendo muito saco, é só você pedir o reembolso e o dinheiro volta para você.
+
+Então, espero que você goste da aula que você vai assistir agora. >> Essa vai ser uma aula pra gente fazer um desenho aqui para escalar para 1 milhão de usuários. É uma aula baseada no livro System Design Interview, aquele livro famoso do do Alex Sh do Bite Bite Go. E a ideia aqui é a gente tentar fazer um apanhado de de técnicas que a gente utiliza numa entrevista do system design justamente para escalar um serviço, né? Você vai poder usar isso como base para construir vários serviços. Qual que é a
+
+ideia aqui, né? Então, a gente vai começar com o exemplo mais simples de um serviço, de um servidor aqui que funciona e a gente vai escalando isso para mais eh ter mais escalabilidade, para atender mais pessoas conforme a demanda for surgindo, né? Então, a primeira coisa que a gente vai desenhar aqui é a o a coisa mais simples possível, né? A aplicação mais simples possível é você tem um simples usuário aqui, né? O seu usuário ele vai fazer requisições, os cirquests aqui desenhados por essas setas. Essas
+
+requisições vão chegar aqui num num servidor, né? A gente pode imaginar, na verdade, que o seu usuário ele vai ter aqui, por exemplo, um aplicativo mobile, né, um celular ou então um browser, tá? Esses aqui estão representados na na sucessão do usuário e a partir desse browser ou desse aplicativo mobile, ele vai fazer requests para o nosso servidor, para o nosso backend. E o nosso backend, então, a gente representa aqui como sendo um servidor, um web server, assim, web server. Nesse web server, nesse servidor, a gente roda a nossa aplicação e responde os as requisições do usuário. Isso daqui é o
+
+mínimo necessário para você ter um serviço na na web que funciona, mas esse mínimo necessário às vezes funciona, tá? Às vezes é o suficiente. Bom, para que o nosso aplicativo tenha algum tipo de de durabilidade, algum tipo de persistência, né, quase todas as aplicações vão precisar de um banco de dados. Então, a gente precisa desenhar esse banco de dados. Esse banco de dados vai ter então uma conexão com o nosso servidor. Aqui qual o banco de dados que
+
+vai ser, né? A escolha específica de qual que é necessário, né? Qual o banco de dados que a gente precisa que isto aqui seja, não é tão importante assim, tá? Qualquer um banco de dados vai servir. O que que é importante a gente saber? Precisamos definir se é um banco
+
+de dados SQL ou no SQL. Por padrão, é SQL, tá? Por padrão, isso aqui vai ser o nosso banco de dados SQL tradicional. Quando que você vai optar por usar no SQL? Quando a gente depende de latência super baixa, geralmente é uma boa opção.
+
+Quando a gente tem um esquema, né, eh, flexível, por exemplo, eu tenho ali um, ah, eu vou guardar logs, eu vou guardar Jason, eu vou guardar coisas que mudam muito e que não tem um esquema normalzinho, eh, SQL, né? Quando eu tenho um true putut muito alto, que que significa isso? Bom, se eu tô guardando, por exemplo, se eu tô armazenando todos os requests que a gente recebe, isso é um true putut muito alto. São muitos dados sendo transacionados por um período de tempo curto, tá? é uma uma quantidade grande por um espaço de tempo não tão grande assim, quantidades enormes de dados, né, eh, etc. Essas são
+
+boas pedidas para você utilizar no SQL, tá? A maioria das aplicações a gente costuma convencionar que é mais adequado começar com SQL, tá? Mas se você souber argumentar o por que a aplicação específica que você tá desenvolvendo é melhor com no SQL, você pode argumentar isso, não tem problema nenhum. Muito bem. Eh, temos o nosso banco de dados, né? Por que que a gente precisa de um
+
+banco de dados? Primeiro, para armazenar grandes quantidades de dados, né? Não faz tanto sentido a gente ter isso dentro do servidor. Segundo, o nosso servidor pode cair, ele pode resetar por algum motivo e aí a gente perderia toda a informação. É melhor ter essa informação persistida ali num banco de dados, né? Faz sentido em quase todos os
+
+casos a gente ter um banco de dados. Conforme o nosso servidor vai recebendo mais requests, né? A gente consegue aumentar o tamanho dessa máquina, a gente consegue fazer com que essa máquina seja maior. Agora, não é uma forma que vai escalar muito bem. você nunca vai ver uma aplicação, tipo, uma Netflix, rodando em um único servidor.
+
+Isso não escala tão bem, porque existe um limite físico, né, do do tamanho que a nossa máquina consegue atingir. Existe também o problema que a gente tem que sempre ter em mente numa entrevista de system design, que é o single point of failure, né? A gente já falou disso aqui durante esse curso. E o single point of failure também, né? É abriviado aqui pra SPOF. É, não é interessante a gente ter
+
+pontos únicos que caso eles falhem, a nossa aplicação vai cair. Então, a gente pode observar aqui, né? Bom, o nosso servidor é um single point of failure. Se o servidor cair, a nossa aplicação cai. O nosso banco de dados também é um é um spoff que a gente vai corrigir depois, né? Primeiro vamos corrigir o do
+
+servidor. Como que a gente resolve esse problema, né? Bom, os nossos dados já estão sendo persistidos no banco de dados e não no servidor. Então, não tem problema eu ter mais que um servidor, porque eles vão guardar e vão puxar os dados do mesmo banco de dados. A gente consegue fazer uma aplicação distribuída, então, em diferentes servidores, né? Eu vou diminuir um pouco
+
+aqui o tamanho. Web server. Web server. Eu tenho aqui dois servidores diferentes, tá? Agora, o que que é interessante saber desses dois servidores aqui? A gente pode imaginar
+
+eles aqui, né, sendo um cluster de servidores. Então, a gente tem um pequeno cluster aqui, tá? Que bom, o meu usuário precisa saber para qual servidor ele vai fazer esses requests. E geralmente, né, eu preciso de alguém que vai dizer qual request vai para onde. Solução para isso geralmente é o nosso load balancer, né? Essa aula pode ser um
+
+pouco repetitiva, mas é para frisar bem os conceitos e como que a gente utiliza eles num entrevista, tá? load balancer, então ele vai poder direcionar os requests pro servidor que ele quiser. E aí a gente pode discutir, né, diferentes técnicas de redirecionamento. Aqui a gente falou um pouco disso durante a nossa aula de load balancer, mas enfim, o importante aqui é saber que o load balancer vai ser então uma das peças que pode ser capaz de redirecionar esse tráfego para diferentes servidores. Então isso aqui foi uma solução para conforme a nossa aplicação crescer, né, a gente deixar ela mais robusta, né, menos propensa a cair se um dos servidores cair e também dá mais vazão para um número alto de usuários. Agora a
+
+gente precisa também em algum momento escalar o nosso banco de dados, né? Se antes o nosso gargalo poderia ser o servidor, bom agora a gente pode botar quantos servidores a gente quiser nesse cluster, tá? Os servidores não são mais o gargalo. O gargalo agora e o single point of failure agora é o nosso banco de dados. Eu vou escrever aqui, ó, DB pra gente lembrar database. Como que a
+
+gente faz com que esse banco de dados dê mais vazão e a gente faz com que esse banco de dados seja menos propenso a falhas. Uma das maneiras é fazer uma replicação, né? Então, a gente pode ter algumas réplicas do banco de dados. O problema de réplicas é que se eu escrever num banco de dados e escrever em outro banco de dados simultaneamente, eu posso ter um problema de inconsistência, tá? Eu posso ter algum tipo de race condition. Então, a
+
+primeira forma com que a gente escala o banco de dados geralmente é ter um pra escrita, né, para writes e outras réplicas apenas para reads. Até porque na maioria das aplicações é mais comum existir mais leituras do que do que escritas. Então, a gente escreve em um banco, a gente replica essa escrita em outros bancos e a gente lê desses outros bancos que são réplicas. Você pode estar se perguntando: "Pô, mas aí o nosso WR não é um single point of failure? O que que acontece se um dos nossos bancos de dados for corrompido ou cair ou houver algum problema com ele?" Aí a gente vai
+
+promover, né, um dos outros bancos de dados pro banco de dados de escrita. Então, se esse aqui era um de leitura, como todos eles compartilham dos mesmos dados, a gente pode simplesmente promover ele para um banco de dados de escrita, tá? Muito bem. A gente tem então que o nosso serviço tá escalando de maneira bem legal agora, tá? Temos alguns bancos de dados, temos alguns eh servidores aqui, um cluster de servidores. Como que a gente pode
+
+melhorar isso aqui, né? Como que a gente pode melhorar a velocidade desse serviço aqui, fazendo que ele seja ainda mais rápido? Geralmente vai existir uma certa, ainda vai existir, né, uma certa lentidão em banco de dados. Banco de dados costumam demorar um pouquinho mesmo por causa da da network e tal, das buscas ali. Uma solução decente para melhorar um pouco a velocidade é a gente ter uma cash, né? Então, a gente pode
+
+ter aqui uma única cash e os servidores podem consultar essa cash antes de consultar o banco de dados. E se o banco de dados eh se a cash não tiver informação que precisa, a gente consulta então o banco de dados. O importante a perceber aqui é que a nossa cash ela pode ser um spoff, né? Ela pode ser um ponto único de falha. Então é necessário a gente ter uma boa política de invalidação de cash, né, de inspirar ali o que tá em cash. É necessário a gente
+
+pensar nisso quando a gente escreve a nossa aplicação, né, que a Cash pode ser que ela só caia, tá? Pode ser que ela não exista e a nossa aplicação precisa estar apta a lidar com o fato de que a Cash às vezes não responde. Ponto. Algo que vai causar possível lentidão no nosso serviço é se a gente for um tipo de serviço que lida com arquivos muito grandes, estáticos, tá? esses arquivos muito grandes, estáticos, podem eh ser um gargalo muito grande em todos esses essas rotas aqui de de network, tá? Em
+
+toda essa rede aqui, dependendo de como a gente armazena eles. Então, para dar ainda mais vazão, para dar ainda mais escalabilidade pro nosso serviço, a gente pode manter arquivos estáticos numa CDN. O que que é um arquivo estático? Um filme, uma foto, é um uma logo do nosso site, uma página HTML, tá? É algo que não vai mudar, então, né? Não
+
+é a informação que a gente atualiza no banco de dados, tá? É tipo um filme que não muda é muito, muda é muito infrequentemente, né? Quando que vai ter uma atualização do do filme, às vezes nunca. E aí o seu usuário pode requisitar essa informação direto da CDN, aliviando a carga no nosso do nosso serviço e dando a impressão também de que é mais rápido. Se a nossa página inicial do site tá numa CDN, o usuário recebe a primeira página muito mais rápido do que se ela tiver no nosso servidor. Pois bem, a gente falou em
+
+alguma das aulas passadas que é interessante que essa parte aqui, ó, do do backend, do cluster aqui não mantenha estado, tá? É importante que ela seja sem estado. E por que que ela tem que ser sem estado, né, pô? Porque se eu manter o estado de do login de um usuário dentro desse servidor aqui e sem querer o request do usuário cair no outro servidor, aí ele vai estar deslogado, não vai ser uma experiência muito boa. Então, né, muita gente deixa o login em cash, às vezes é apropriado, tá? Dependendo de como for ali a cash.
+
+Mas supondo que que não exista essa opção, coisas como sessões e coisas dessa natureza, tá? A gente chama de sticky sessions, né? Sessões persistentes, pode ser interessante a gente utilizar um no SQL para isso, tá? eh de repente preferências do usuário, esse tipo de coisa, que não pode ser armazenado necessariamente no servidor e às vezes a gente acessa ela tão frequentemente que vai pode ficar meio lento acessar num banco de dados tradicional, a gente pode ter um no SQL de auxílio aqui para alguns tipos de informações. Esse no SQL não pode tá e ele não pode tá dentro de nenhum desses servidores, né? Porque logicamente esses
+
+servidores aqui podem cair, os web servers podem ser desativados ali, né? para aumentar um pouco mais ainda a nossa escalabilidade, né? Se a nossa aplicação for uma aplicação que lida com computações muito pesadas, tipo, a nossa aplicação faz processamento de de vídeo, processamento de imagem, esse tipo de coisa, coisas que podem ser feitas de maneira síncrona, gerar PDFs e tal, a gente pode ter aqui uma fila e aí, né, a nossa aplicação vai criar os jobs nessa fila, vai fazer um, a gente chama de pub subs, né, publisher subscriber, a aplicação publica é trabalhos que para serem executados. Esses trabalhos para serem executados vão aqui, tá, para para uma fila e eles vão ser puxados dessa fila, né, pelo subscriber. Alguém vai subscrever, alguém vai ouvir essa fila, tá atenta à fila e processar esses itens na fila em sequência. O que que vai
+
+processar, né? Geralmente a gente chama aquilo que vai processar de um worker, tá? Esses workers, né, esses trabalhadores aqui, vão ser trades que vão rodar em alguma outra máquina, num lambida, algo nesse sentido, tá? esses workers vão estar processando essa informação e aí fazendo algo com essa informação, né? Dependendo do que que for essa essa tarefa a ser processada.
+
+Isso aqui nos ajuda a dar vazão para aquelas requisições que são muito pesadas, aliviando um pouco a carga aqui dos nossos servidores web para que eles consigam servir o nosso usuário, responder ao nosso usuário de maneira bem rápida e efetiva. É comum também a gente representar aqui no nosso system design, tá? Tooling. É, às vezes a gente fala de de tooling, né? E aqui a gente pode desenhar só de maneira até simplória que a gente vai ter alguns serviços rodando que são tooling. O que
+
+que é tooling, né? É login, né? Certos? Serviços de login, serviços de observabilidade, serviço de métrica, serviço de monitoramento, esse tipo de coisa, né? Esse tipo de tooling aqui a gente pode representar. Não, não se
+
+costuma falar tanto disso assim, né? Mas, pô, você pode imaginar aí que você tá rodando algo fora do seu servidor para fazer ali, manter ali o monitoramento, né? ver ali, fazer os healthcks, ver como é que estão as coisas. Isso é bem comum você ter esse tipo de serviço, né, para ver ali os logs de erros também e tal. E aí uma das últimas etapas, caso necessária aí uma diversificação global, vamos colocar assim, seria que toda essa parte aqui de cluster, de cash e tudo isso daqui, tá?
+
+Tirando a única exceção sendo essas e o no scale aqui de stick sessions e tal, né? Esse no SQL aqui, ele vai ser compartilhado, mas a gente poderia com que tudo isso daqui ficasse numa região, num data center. Então a gente pode ter no exemplo da Amazon, tá? A gente tem um data center nos Estados Unidos, o US East One. A gente pode ter com que tudo isso aqui fica nesse um data center e a gente também pode ter outro data center aqui, tá? Tá ficando bem grande aqui no
+
+desenho, mas enfim. A gente poderia ter, por exemplo, US eh, West ou na Europa, por exemplo, EU Central 1. Aí manter esses dois eh diferentes data centers, assim, né? E quem vai ser responsável por rotear esse tráfego, a gente consegue um load balancer que faz eh roteamento baseado em geolocalização, isso daí possível, ou algumas outras formas de fazer esse roteamento, tá? Isto aqui vai adicionar outras complexidades, mas eh chegando aqui, a gente chegou numa situação em que a gente conseguiu escalar o nosso serviço para milhões de usuários, tá? Muito
+
+provavelmente, mesmo sem usar múltiplos data centers, a gente já teria chegado no milhão de usuários ali sendo servidos. E isso daqui é o assim um ferramental um pouco básico, tá? Mas também completo do de como você pode construir aqui o design de um sistema para escalar para muitos e muitos usuários. Isso aqui é o básico que você vai acabar usando numa entrevista e muitas das vezes a sua aplicação vai se parecer algo dessa maneira aqui, tá? Pelo menos de um, observando ela de um nível alto, tá? Vai ser algo assim. Se
+
+você é júnior, pleno ou sênior, gostou desse vídeo, quer aprender mais comigo sobre system design, o link pro curso vai est na descrição, tá? Só lembrando que você tem um mês inteiro para pedir reembolso, caso você compre, por acaso não era aquilo que você esperava. Eu passei mais de um ano trabalhando nisso, tá? Deu bastante trabalho montar esse curso. Tem várias aulas, são mais de 90 aulas. A gente explica tudo de maneira
+
+bem didática para quem até quem é júnior consegue entender com bastante facilidade, tá? Se você ainda não conseguiu o seu primeiro emprego, esse não é o curso para você, tá? Não é o momento, é preciso ser um pouquinho mais avançado. Se você tem, digamos assim, uns seis meses de experiência na área, já pode ser para você o curso. Especialmente se você tá se preparando para bigtechs, para grandes empresas ou para empresas na gringa, né? Entrevistas
+
+de System Design são super comuns.

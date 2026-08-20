@@ -1,0 +1,100 @@
+---
+video_title: "Como Usar Subagents no Claude Code"
+video_id: LlijA6WDy9o
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=LlijA6WDy9o
+video_date: 2026-08-16T09:56:03+00:00
+video_description: |
+  🟢 Vem pra AUVP, a melhor escola de investimentos do Brasil: https://sard.ink/AUVPGalego67
+  
+  🎁 Quando se matricular, fala que veio do meu canal pra garantir seu presente personalizado em casa!
+  -----------------------------------------------
+  
+  LINK DA LISTA DE ESPERA Workshop Dev com IA: https://hub.la/g/3JgdzLKrQq0nP1iQBRwJ
+  
+  💼 Curso de System Design (com desconto): https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Hoje, guia prático de sub agents. Eu vou te ensinar como configurar e como spawnar subagentes no cloud code. Isso é traduzível para quase todas as outras, quase todas as outras harness tem algo parecido com isso daqui. Vou te explicar como configura que dá para fazer isso aqui de maneira automática. Dá para você só deixar o cloud Code fazer por você, quando que faz sentido utilizar e quando que não faz sentido utilizar. E qual que
+
+é a minha recomendação? O que que eu acho sobre isso aqui? Antes disso, vou te falar do patrocínio de hoje, que é a OVP, a maior e melhor escola de investimentos do Brasil. AVP vai te transformar em um investidor em oito semanas, né? O que que significa ser um investidor? Que que você vai saber? Você
+
+vai conseguir analisar sua vida financeira como um todo, vem qual patamar que você tá, qual situação que você tá, quais os próximos passos que você pode tomar para te levar de onde você tá agora pro momento em que você tenha uma carteira, uma construção de patrimônio, um planejamento financeiro que vai ser adequado pro seu estilo de vida, para como você vê sua vida no futuro. Então você vai ter mais de 120 aulas, elas são muito boas, elas tm uma qualidade altíssima. Nessas aulas você vai aprender tudo que você precisa aprender sobre investimentos para investir de repente no Brasil, em renda fixa, criar, você vai entender como é que o FGC funciona, você vai entender quais os riscos de qual investimento, como ver se algo tem um risco adequado para você. Você vai aprender a investir também no Brasil e fora. Então, se você quiser investir na Petrobras, na Nvidia ou no Alibaba, você vai conseguir. Vai
+
+aprender também a tirar o seu dinheiro do Brasil. Se você quiser investir em ETFs irlandeses, por exemplo, ou ETFs americanos ali cotados em dólar, também é possível investir em ouro, se você quiser, Bitcoin, se você quiser. Além de todo esse aprendizado, que é o mais importante de fato, você vai ter aqui, né, sujeito à aprovação, cartão de crédito, que vai te dar acesso a sala VIP e cashback na fatura. Vai ter acesso a uma a comunidade da UVP e a um ferramental interessante da UVP também, que você pode juntar seus gastos ali no Open Finance. Você vai ter a plataforma de investimentos, que é que eu uso também para investir no Brasil, tá? Tudo
+
+isso começa aqui na escola, começa aqui no link na descrição clicando em faça sua análise de perfil, vai lá, vale muito a pena, diz para eles que você veio aqui do canal e você vai ganhar um presentinho. Bom, que que são saber agentes aqui no Cloud Code, né, ou nas harness em geral. Digamos que que assim, você vai ter o seu main agent, né? Eu iniciei uma sessão aqui no Cloud Code e tô tô aqui, tô aqui na minha sessão. Iniciei aqui a sessãozinha, estou aqui.
+
+Podemos imaginar esse main Agent como uma instância aqui. Essa instância do main Agent vai ter ali a sua conversa, vai ter ali as suas skills, vai ter ali os seus MCPs, plugins, etc., né? Todo esse tipo de coisa. Agora existe como você delegar algumas coisas para outra instância, para outro agente. Esse outro
+
+agente a gente vai chamar de subagent. Esse outro agente ele pode herdar a conversa. algumas skills, MCPs, plugins, ou ele pode não herdar, dependendo de como a gente configurar ele. E aí você acaba conseguindo delegar algumas tarefas do main agent para subent e depois elas voltam pro main agent ele revisar ou validar que tá terminado, etc. Então você consegue rodar, eu já rodei em paralelo até, acho que o número máximo foi 14 subagents e lidou tranquilamente, tá? Não, se você
+
+conseguir separar as tarefas em pedaços que são paralelizáveis, não tem problema você spawnar vários subagents. Agora, um subagent não é uma duplicação da sua conversa no mei agent. Tem como, tem como você pegar isso aqui, você falar: "Cara, eu quero duplicar e eu quero ter dois main agents eu quero fazer um fork do meu main main. Tá difícil de falar essa palavra hoje. O fork ele vai, cara, clonar tudo. Vai clonar todo o contexto,
+
+vai clonar toda a conversa, vai clonar tudo que você tinha no seu agent aqui. Você vai est clonado aqui no fork. Então, olha só, você tem aqui no barra fork, ele spawna um background agent que herda todo toda a conversa, né? Assim que o fork funciona. Você tem também a parte de sub agents, que não é o fork. E
+
+nota que o agent aqui foi removido, a gente vai falar como invocar esse agente, mas enfim, o barra agents do cloud code foi removido. Então, beleza, como que você vai invocar esse subagent? Existem três principais maneiras de se invocar um subagent, de fazer o cloud code invocar uma instância nova. Aqui a primeira delas é pedindo é linguagem natural. Abre aqui o cloud code e fala: "Inicie um novo subent que vai trocar a paleta de cores para pastel. Dá um enter
+
+aqui. Ele vai de fato inicializar esse sub agent aqui, tá? Ó, ele carregou a skill front change design, rodou uns shell commands aqui. Imagino que ele esteja preparando a tarefa que ele vai passar para esse sub agent. E pronto, ele criou aqui, ó. Aqui embaixo você
+
+pode ver, tem o General Purpose, um agente de propósito genérico que tá realizando ali minha tarefa e ele tá fazendo isso em background. Enquanto isso, eu posso pedir outras coisas pro meu main agent. Deixa eu cancelar tudo aqui. A segunda maneira de você fazer isso é você explicitamente mencionar o agent. Como que você explicitamente menciona o agent? Você tem que ter
+
+criado esse esse agente em algum lugar ou pedido pro Cloud Code criar esse agente. A gente já vai ver como se cria, tá? Mas aqui, ó, você dá o ar@zinho. Dentro do arozinho você vai ter o nome do seu agente. Então, o nome do meu agente é esse daqui, ó. é o code
+
+reviewer. Então eu dou um @codeviewer. O cloud vai ter esse esse formatozinho aqui que é @ aspas code reviewer agent, mas quando você começar a digitar ele aparece ali e aí você passa o prompt para essa agente noo é um code reviewer. Eu vou pedir então para consertar esse p request aqui, ó. Então vou pegar esse p request, vou copiar o link, vou passar pro meu code reviewer agent e ele vai pedir permissões aqui, né? Eu vou, vai,
+
+vai, pode aceitar tudo. Ele vai instanciar esse Code reviewer agent aqui, porque eu explicitamente pedi por isso, né? E pronto, ele inicializou o agent aqui, ó. Iniciou o code reviewer em background e aqui eu consigo, ah, enfim, se eu quiser, eu consigo entrar aqui no subente ver o que que o meu sub a gente tá fazendo ou voltar aqui pra main, né? Escolher o que fazer. A
+
+terceira maneira de fazer isso daqui é eu sair completamente do cloud code e aí eu dou um cloud ifen ifen agent e aí o nome do meu agent code reviewer e aí ele já começa o cloud code especificamente nesse agente aqui. Aí vai rodar a sessão inteira, né, dentro desse desse agente com o contexto desse agente da da maneira com que é para esse agente rodar. OK? Você entendeu como é que se instancia, mas você não entendeu direito, né? Aqui, ó, pela se é a terceira maneira, mas você não entendeu exatamente o que que isso daqui faz, né?
+
+qual que é o propósito de um subgente, além de paralelizar o trabalho, né? Como é que configura, o que que a gente faz com isso daqui? Primeira coisa é que o Cloud Code ele tem já pré-instalado o General Purpose Agent, um subagente de propósito geral, propósito genérico, tem as especificações aqui, tá? E se você pedir por um suagente, provavelmente o COD Code vai instanciar esse agente e esse agente ele vai herdar o o mesmo modelo que é o modelo da conversa. Então, se você tiver conversando com o Fable, o sub a gente vai ser instanciado no Fable e ele é geralmente utilizado para delegar alguma tarefa e depois, né, voltar para mim. Então, como a gente
+
+falou aqui, se você tiver alterando várias coisas em paralelo, né, fazendo várias tarefas em paralelo, é possível que o próprio cloud decida instanciar subagentes. Ou então você pode também pedir para fazer isso. Se você tem uma tarefa, você quebrou essa tarefa em 10 subtarefas, você pode pedir, cara, para cada subtarefa, roda um sub agent e depois analisa o output do sub agent para ver se tá correto. E eu, na minha visão, acho que o agente de general purpose de propósito geral do cloud code funciona bem. Agora você pode também configurar os seus próprios sub agents.
+
+Então na pasta poncloud, aqui ó, na pasta.cloud ou dentro do seu projeto ou na global, depende se você quer configurar o saber agente para o projeto ou para que fique global. Você pode criar manualmente um arquivo ou logicamente pedir pro cloud criar esse arquivo. Ambas maneiras funcionam. Aqui em agents, ó, você vai ter o MD explicando como é que funciona o seu agent. Por que que isso daqui pode ser
+
+legal? Primeiro ele tem aqui o system prompt, né, aqui embaixo, que vai explicar o que que o agent faz. Sinceramente acho isso daqui uma parte até não tão relevante assim. Eu acho que essas configurações aqui de cima são bem mais legais. Então, ó, você vai ter o nome do subent, a descrição do subent, mas [limpando a garganta] aqui embaixo você tem as coisas mais interessantes.
+
+Então você pode definir quais tools, né, quais ferramentas esse CB a gente tem acesso por padrão, mas as outras coisas são bem mais interessantes. Você tem a parte do modelo e a parte do modelo é legal porque na minha visão é para isso quase que se configura um subagent. É para você ter um main agent que vai rodar em algum modelo inteligente como Fable ou OP ou sei lá, né? Ah, Antrop tá lançando tanto modelo que quando esse vídeo sair pode ser que tenha um modelo novo já. Mas enfim, atualmente a gente tá com o Fable 5 e o Opus 5. É, me avisa
+
+aí se Anropic já lançou um novo e se mudou alguma coisa na sua vida. Não vai mudar nada. Mas beleza, você pode ter o seu main aqui com opus. E aí, cara, o seu main quebrou em várias tarefinhas super simples. Ele, pô, pegou os arquivos ali e falou qual o entry point de cada tarefa, como é que se valida que cada tarefa tá feita. E aí você pode
+
+delegar pro seet, tá? Então você pode ter um agent mais completo, mais complexo, mais caro, mais lento e um subagent rapidinho, simpleszinho, que vai economizar seus token ali. Então para mim uma das grandes vantagens de ter um subagent é você criar um subagent que vai utilizar um modelo diferente do seu main agent. Você pode configurar também o modo de permissão, permissione. Permission mode é isso daqui, ó, na própria documentação. A gente tem aqui
+
+os modelos de permissão, né? Você tem o default, o accept edits, que autoace aceita edição de arquivos, o auto, o donk, que ele vai automaticamente negar as permissões que não são explicitamente permitidas, o bypass permissions, que ele simplesmente aceita tudo, né? Ele pula as permissões ali, ou plan. Para um sub, agent, eu gosto de accept edits. Se tiver rodando dentro de uma VM ou de um dev container, aí você pode rodar um bypass permission que acho que tá tá tranquilo, tá? Mas só se você tiver
+
+rodando num VM ou num dev contaêiner que se você rodar em paralelo 1 milhão de agentes, alguma hora vai dar ruim, tá? E também tem a questão de isolation. Você pode definir para um subagente rodar de maneira isolada numa workree para não entrar em conflito. Isso daqui é legal também, tá? Então se você tiver a work tree aqui pode ser algo interessante.
+
+Max turns é o número máximo de round trips de uma tool call. É, honestamente, não acho que você precisa ter isso daqui. Skills são quais skills vão ser injetadas como contexto aqui para dentro? De maneira geral, o que que vai acontecer? O seu agente, ele não vai ter no contexto dele todas as skills que você tem, tá? Mas ele pode descobrir
+
+essas skills utilizando a ferramenta de skills. Então, se você não tiver nada aqui, é provável que o subagente vá descobrir por conta própria quais skills você tem e vai utilizar aquelas skills. Se você quiser explicitamente já préjetar algumas para ele usar, você pode explicitamente já préitar algumas para ele usar. Se você quiser proibir que ele tenha acesso às suas skills, você consegue aqui, ó, com disallow tools, você pode botar quais ferramentas não são permitidas e você pode negar a ferramenta de skill. e o subagente não vai conseguir utilizar suas skills. Eu não sei porque que você
+
+faria isso, mas você pode fazer isso. Pessoalmente, que que eu faria? Esse aqui é um subagent de code reviewer. Eu pré-carregaria as skills que tem relação com revisão de código ou com padrões da minha codebase específico e nenhuma outra. memory diz respeito à memória do suaggente. Essa memória do subgente. Se
+
+a gente quiser permitir uma memória persistente no subgente, existem três tipos de memória persistente aqui. A memória a nível de user, que o suagente vai lembrar de coisas em todos os seus projetos de usuário. A memória de projeto, que o suagente vai lembrar de aprendizados pertinentes a esse projeto que foram sendo salvos ali na memória automática, na auto memory, né? Isso só faz sentido se sua automoryver ligada. Ou memória local. memória local, não vai
+
+entrar nocionamento de de Git, etc., né? Você pode ter uma memória que é compartilhada pra equipe inteira, que vai entrar ali no Git, que aí o Cloud Code de todo mundo vai ter acesso à mesma memória, ou então você pode ter uma memória local só para você, só para como você usa, tá? Por último, background true. Se é para rodar uma gente em background ou não, para mim faz sentido. Acho que sim. Dito tudo isso
+
+daqui, qual que é a minha opinião? Agora é a parte mais opinativa e mais pessoal do vídeo. Eu não abusaria de subagens. Eu acredito que a gente fazer muito trabalho em paralelo faça com que a gente preste menos atenção no nosso trabalho. Então não é algo que eu acho que você vai estar o tempo todo rodando 20 CBets em paralelo. Eu acho que a
+
+velocidade que as IAS fazem código já é muito rápida e a gente muitas vezes não precisa paralelizar tanto assim. Então, tendo em vista que eu não acho que o paralelismo massivo é onde tá o ganho do subagent, eu acho que o ganho do subagent tá em iniciar um pedaço de tarefa sem ter todo o contexto da história, né, com um contexto ali reduzido, uma tarefa bem definida, que a gente vai ter um modelo já pré-definido que pode ser um modelo menorzinho, e essa tarefa vai ser vai viver ali, é, vai ter uma vida curta, um ciclo de vida curto. Eu acho que a vantagem do subente acaba sendo mais o isolamento do que o paralelismo massivo. Eu acho que é interessante você conhecer essas configurações que eu te mostrei, mas acho que você não precisa pirar muito nisso. Nos meus testes, cara, se você configurar tudo aqui com maior cuidado, fazer tudo certinho, ou então se você não configurar absolutamente nada e só pedir pro cloud Code, o resultado final, na minha visão, é bem parecido, tá?
+
+Então, quando que eu acho útil utilizar um saber, gente? Peguei uma tarefa muito grande, quebrei em tarefas pequenas. Essa tarefa pequena tem entry points, tem critério de aceitação, tem quais arquivos, provavelmente tá o problema. Ela é bem definida, ela não é muito grande. Eu acho que é legal delegar isso para saber agents. De repente, um code
+
+review também é um caso legal de delegar para um sub agent, porque você vai ter alguém que não tem o contexto de escrever o código revisando, né? Fora esses casos de uso, acho que eu não usaria e abusaria tanto assim, não. É uma ferramenta muito legal, tem muito hype em cima disso, mas eu acho que a gente tente complicar algo que é bastante simples, honestamente. Não acho causa ganhos expressivos em é performance ou velocidade ou qualquer outra coisa. Acho que é mais uma questão de se organizar um pouco melhor. Se você
+
+quiser aprender mais comigo, temos diversos cursos aqui no canal. O link para esses cursos vai est na descrição, se quiser conferir aqui o sitezinho com os cursos, né? A gente tá também preparando um workshop, um guia bootcamp, não sei. Estamos preparando uma série de conteúdos de IA. Se você tiver interesse em entrar na lista de espera, a gente tem uma lista de espera pro nosso conteúdo de A, que eu não sei exatamente qual formato que vai ter. Ele
+
+tá sendo produzido ainda, então não sei como é que vai ficar no final, mas enfim. Se tiver interesse, tem uma lista de espera para isso aqui embaixo. E aí quando ficar pronto, eu vou te mandar um e-mail explicando o que que é. Tem eu e mais um sócio. A gente tá trabalhando em juntar todo o nosso conhecimento de A em algo legal. É isso.
