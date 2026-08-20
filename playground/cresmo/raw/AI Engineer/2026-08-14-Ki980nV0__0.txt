@@ -1,0 +1,134 @@
+---
+video_title: "Computer-use models will agentify the web, not APIs — Dhruv Batra, Yutori"
+video_id: Ki980nV0__0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Ki980nV0__0
+video_date: 2026-08-14T14:00:06+00:00
+video_description: |
+  To learn what a US school district is buying, you file a Freedom of Information Act request. Someone scans the email you sent, puts the scan on Google Drive, and attaches the relevant PDFs. Dhruv Batra's question is whether anyone seriously expects that office to publish an MCP server. He grants the popular claim that agents will drive most of the action on the web, then rejects its usual next step, that the web will meet them with APIs. The head of the distribution might. The long tail, some 200 million active sites where infrastructure changes over decades, will not.
+  
+  Reading the HTML instead does not save you, because much of what you see was never written down anywhere. A basketball score is missing from the page that first loads and arrives later as JSON. A product page contains no text reading sold out, only a quantity of zero and a script that grays the option out. State is calculated and rendered rather than stored, which makes the browser closer to a game engine than a document and makes pixels the source of truth. He calls this the bitter lesson for web agents: scaffolding built per site does not generalize, and the general solution is the one the web was actually built for. Their Navigator model runs screenshot in and clicks out, now writes JavaScript when that is quicker, and checks the result on screen. It misses 8 of 300 trajectories on a benchmark he thinks should be retired.
+  
+  Speaker info:
+  - https://x.com/DhruvBatra_
+  - https://www.linkedin.com/in/dhruv-batra-dbatra/
+  - https://dhruvbatra.com
+  
+  Timestamps:
+  0:00 - The argument, and the part of it that is wrong
+  3:23 - Restaurant menus on easy, medium, and hard mode
+  5:31 - School district procurement, up to a FOIA request
+  7:38 - 200 million active sites that change slowly
+  8:42 - Why reading the HTML does not rescue it
+  10:14 - Sold out is not text, it is a rendered zero
+  11:33 - The browser is a rendering engine, pixels are the truth
+  12:53 - Navigator, and writing JavaScript when that is faster
+  15:51 - Are computer use models actually good enough
+  17:20 - Latency and cost per task
+  18:28 - Another layer of mess that we will call an API
+---
+Um, welcome. Let's get started. So, my name is Dadra. I want to talk to you about an argument. There's an argument online that says, roughly speaking, AI agents will be the drivers of actions on the web, not humans. that there will be
+
+more agents clicking buttons, reading things, buying things for us than human eyeballs on the web. Um, you drive one step deeper into the argument and you ask how will this happen? Because today the web is extremely hostile to automated traffic and the answer usually is the web will be identified. um you drive one step deeper into what does that mean and how will that happen and the answer usually is with APIs that agents will call via some set of protocols and the set of protocols grows over time. I mean it was initially supposed to be MCP servers then web MCP and for payments there are 20 different competing protocols and you know every single company wants to introduce their own protocol along the way but okay there will be APIs is the is the argument. My claim today and argument
+
+and what I hope to convince you today is that this last bit is wrong. I think the first two I generally agree with. This last bit that suddenly the web will provide you APIs for accessing things is is just delusional. And my claim is computer use agents and computer use models will identify the web not APIs and more specifically the long tail of the web. Um the head of the distribution the most popular website perhaps will give you the API but the long tail will not. Um and the story
+
+starts uh usually with these sorts of use cases. I I agree that they also frustrate me when people show a use case of find me business class flights from Miami to Palma de Mayorca for August and somehow they expect that behind the scenes it'll be a computer use agent clicking buttons on flights.google.com. I find this example, this is my own example. I I'm not dunking on anybody
+
+else. I find this example bizarre. Why would you possibly do it this way? Aren't you aware that there are already aggregators? You send them a variable, they will send you a JSON. Your LLMs can
+
+do tool calling. Why would you click buttons? The purpose of those clicking buttons is to generate this behind the scenes. So, we're on the same page there. The next step usually is, okay, let's roll this out to some other case.
+
+Um, I want to know does my favorite restaurant or does this restaurant have gluten-free items on the restaurant's menu? And so I assume that there's going to be a similar endpoint somewhere for that restaurant website or via an aggregator. Oops. Um that accepts a query that I can filter through where I can ask for give me your menu items that are gluten-free. Um I want to for those of you who can already see I want to rid you of the delusion that such an endpoint exists.
+
+Uh, and I want to show you just for the sake of, you know, being on the same page. What do restaurant pages look like? Um, there are three that are on the screen. This is the first one. This is what we imagine a prototypical. This
+
+is easy mode. You go to a web page. There's no API, but at least it's text. It's in German. Sure, a different part of the world. Models can speak
+
+languages. I see text and I see pricings. Maybe this is easily scrapable. Okay, this is easy mode. The medium mode is a a a page like this where of course the thing that you're looking for is slightly hidden away. You press the menu
+
+button, it actually takes you to a PDF. Okay, fine. If your agent has to do this, it needs a PDF reader mode. Fine. Like, you know, I can highlight these.
+
+Okay, so this is at least text. No problem. Like, you know, I will dump this into chat GPT or whatever and it'll do it. Here's the hard mode. This is what a hard mode website for a restaurant looks like, where there's just pictures of the people who created the restaurant, um, of where they're located, of menu items, and you're like, where is the menu? Uh, does anybody speak Spanish?
+
+No estraa. See? Okay, let's let's check. That's our menu. Um, you click there. Oh
+
+my god, these are What am I staring at? Okay. Uh, you click on it. Oh, it's a gallery of of individual. What is this?
+
+This is a This is a pixelated. This is There's no text here. I am looking at JPEGs embedded in a gallery which contain the PDF items. You download this and you put it into chat GPT and it's having it's struggling doing OCR on this thing. Okay, so this is what the web looks like. You're telling me this will
+
+give you an API endpoint that you can pass glutenfree items and it'll tell you what that is. That's an example number one. Let's take a look at another examples. Uh this is much more, you know, enterprise focused. Um um I am a business. I want to sell to
+
+a school district. There's about 15 to 20,000 school districts in the US. And I want to ask the question, is this school district where I give you, you know, my district.gov, is this school district procuring a laptop right now? Right?
+
+It's a simple question. And I want a similar endpoint. I want to say RFP status open and topic laptop. and you think this will exist. Uh let me tell you what these websites look like.
+
+Again, um this is what easy mode looks like. This is, you know, Ithaca public schools. Um okay, there's some portal. Um maybe there's, you know, uh some, you know, enrollment is maybe the wrong place to go. This is what slightly harder mode looks like. Um this is a
+
+different public school. You look at the menu under finance there's purchasing under purchasing there's certain solicitations. Um scanned PDF again. Okay. Very nice.
+
+Uh so no text in here but this is how they tell you about what they have have purchased. Um, and for ultimate boss level, I want to show you a different school district where in order to find information, you have to file a request for access of in information under Freedom of Information Act. And then what they do is they scan your email that you sent to them and they will scan that email, put it on a Google Drive and then attach PDFs associated with your request. These are the people you're telling me will give you an MCP server. The the amount of delusion here is off the chart. like
+
+if there was ever a time to to say go touch grass like I think this is it. Okay. Uh so this is what
+
+my claim here is that the web we forget is massive. It is extremely big. The the number of websites out there uh somewhat you know the active websites are somewhere 200 million. the total number of websites are sitting in a in a billion infrastructure changes very slowly. Um you can imagine as an engineer you know getting unfettered access to software systems and letting your favorite coding agent rip and generate an API endpoint even if that technological problem is solved which I agree seems like on a horizon it should eventually be solved you're not going to get unfettered access to these institutions and these institutions change very slowly there are still places that are faxing each other you're you're not going to be able to suddenly change this overnight.
+
+Okay, so at this point of time you might be thinking fine, I'm stuck with the infra as it is. Um, so there's not going to be APIs available, but I have coding agents. Why don't I just throw them at the HTML? There is, after all, if the browser is doing it, it's a piece of code. My coding agent should be able to do it as well. Fair fair point. I, you
+
+know, I also thought this way two years ago. Let me tell you what what the web actually looks like. Um, if I ask you the question, what was the final score of this game between Minnesota Timberwolves and the Brooklyn Nets? Here's what the web page looks like. This is a modern website. You
+
+know, it's nba.com. You and I can see the score 125 versus 109. Okay. Uh, behind the scenes, when you actually load the page and read it, this is what initially gets loaded.
+
+There's an empty placeholder initially and you wait a few hundred milliseconds to a few seconds depending on your network connection and your browser makes an asynchronous call later to fetch the information. So the browser makes a call to an endpoint uh that it's extracting that information from that endpoint responds with the JSON that contains the answer. If you just read the HTML when you load it, the answer is not in the HTML and so your your chatbot doesn't have access to that either. So, okay, you go fine. These are just details. I just have to add some weights
+
+and sleeps and sure. Okay, fair enough. I will take you to another example. Um, I ask you the question on a product web page, is the 25mm Osmium cube in stock or out of stock? You're on a on this product website. Um, you scroll down,
+
+there is a drop-down. Uh, that dropdown is telling you and I as humans, you know, three things are sold out, one thing is in stock, even though it doesn't actually say in stock, like there's no text there that says in stock, but you understand that grayed out means sold out. And you know, sometimes the sold out won't actually be there as a text. Sometimes it'll just be uncclickable grayed out. Okay, surely this information must be in the code somewhere. You go and read the HTML and
+
+it turns out there is an option selector. It actually doesn't say any of the things that I'm seeing on screen. It doesn't say sold out. It doesn't say available. So what's going on? Uh turns
+
+out behind the scenes uh the browser makes a call gets a JSON object which is the variable which is product count that contains a variable called quantity. That quantity is you know 10 sometimes zero sometimes. That's just you know how many things can the back end support. Right now, some of those quantities are zero and there's a different rendering script that anytime there's zero grays it out and makes it uncclickable. Fundamentally, what is happening here is this information that you are seeing on screen is not written somewhere as pure text. It is calculated. It is rendered.
+
+Um, and for people who work in the browser industry, they understand this. But you know often people who are coming from an AI background like me uh we didn't always understand this. The browser is a rendering engine. You are seeing pixels on screen. It's think of it as a game engine. Um and you're
+
+asking can I not read the source code of the game and predict exactly what the pixels are going to be? Well yes eventually. But right now you're asking for an exact inversion of that process. Fundamentally the web was built for human eyes. Pixels are the source of the truth because the consumers of the websites are humans. That is what it was
+
+built for. And so there is a implication here that we have to we have to grapple with which is machines will need vision to operate those things because the web world was built for for human consumption. Um in a way this is the bitter lesson uh for web agents that the more you end up writing scaffolds around existing websites the it doesn't actually generalize to the long tail of the web. The thing that generalizes is the thing that it was designed for which is the most general solution just pixels in. This is what um you know we and some others in the in the area have been working on. Um we have a model called
+
+navigator. Um the first version of the model went out in November last year. The first version acted purely like a human screenshot in button clicks and scrolls out. Um I will tell you in a second that is not where you should settle on but it is a general solution. It lets you do things like this. Um I
+
+give you an e-commerce website and I tell you there is this discount code. Please go. The discount code is applicable under certain constraints. Maybe it's only on a product. It's only on a certain set of dates. Maybe it's
+
+only um with this minimum cart threshold. I describe that in natural language and I tell you tell me if this discount code is valid or not. There is no API for this. The reason the way to do it is just like a human can. You go to that website, you find the product that is described, you add it to cart, you apply the discount code and you check whether the claim of 22% off was met or not. And that is you know
+
+screenshot in button click out. This trajectory took you know 20 30 40 steps depending on the sophistication of the task. If you can do it on your browser uh this model can accomplish it in principle. In practice of course there are accuracy gaps and so on. But in principle this task is solvable whereas in a lot of earlier cases even in principle that task may not be solvable.
+
+So my claim is the web was built for human eyes. Machines will need vision. But of course they do not need to be limited to human ways. Just because for the long tail you need to have a capability does not mean that is the only way you should do it. Um here is an example showing that the next version of the model that we trained can also write JavaScript on demand. So this is a
+
+Chrome extension. On the right you see an action that says execute js value default text select. On the left, you saw that the model filled out multiple form fields simultaneously. The reason why it could do that is because it wrote a little bit of a function. It can read the code when necessary. It can write
+
+code when necessary because the browser after all is an engine that can execute code, but it has a sort of formal verification system built in. It it is seeing the screenshot that is the source of the truth. So, it knows whether it succeeded or not. So click buttons when you have to, write code when you have to and look at the result uh through pixels because that is the that is the source of of truth. And of course because these things are are machines you can string them into multi- aent systems. So you can have an
+
+orchestrator that is launching multiple navigators in parallel each with a cloud sandbox instance. They are clicking buttons on multiple websites. So you can accomplish things that would be superhuman because no human would be able to paralyze over that many instances. Um around here usually you know in this flow of an argument is when people start asking are computer use models actually good enough uh for these tasks. Um there's actually a perception online uh that um it's not clear whether progress on computer use has been fast and there are questions about why has progress been slow. That's not the reality I'm
+
+seeing and that's not the reality that the numbers back up. Um this is a popular benchmark um online mind to web no benchmark is perfect. The point isn't uh that this is the the right solution but on the x-axis are are release times of different models on the y-axis is performance which is human eval on on this. So a human went in looked at the trajectory decided whether it was correct or not and basically this particular version of the benchmark is saturated. The the last the model that we just released navigator N 1.5 is
+
+sitting at 97% human eval eight trajectories out of 300 are incorrect at this point of time you should just retire the benchmark build something harder. There's about you know 30 to 50 steps of interaction that are happening. The next step is to go for something larger. So at least in numbers what I'm seeing we're seeing steady progress in computer use agents becoming being able to do more and more things and this is the model that I showed pixels in button clicks and code out around this time usually is when people start asking questions okay so they're getting better but aren't these things slow because after all you're looking at a screen you're you're clicking a button there are lots of buttons to click and you know these things are expensive if you're running them for hundreds of of things. Um that claim I think is largely true. There is some truth to it. Um but
+
+I think people forget how how much you can optimize these things out. Um so this is our results compared to the Frontier models. Opus 4.7, GBD 5.5 on a couple of browser use benchmarks. Um
+
+we're slightly better, but I think that's within statistical uh noise in terms of accuracy. That improvement I wouldn't beat the drum on. What I would emphasize is latency per step and cost per task. In terms of latency, this is a smaller footprint model. That's why it's a lot faster than some of the trillion parameter plus models. And there are
+
+corresponding cost savings. So if you have something like on these data sets something like 20 30 steps of interaction, you're looking at 80 cents per task versus $230. And that makes a big difference. And so the models are getting cheaper uh in that sense and you can launch them at at scale. Um so hopefully at a at a high level I've sort of convinced you that there is something off with this argument. You
+
+know this is where where what my goal was. This is where I started. AI agents are going to be the drive primary drivers of action. um that seems sort of an uncontestable statement because you know the underlying intelligence of the models is becoming larger and larger. Um there is a certain gain of productivity and efficiency and you know just ease of life that you get. So makes sense. But I
+
+think this hypothesis that suddenly overnight 30 years of infrastructure that was built layer upon layer for human consumption will in what two five 10 years be reinvented is I think a fantasy. Um but but this is ultimately what you want right? Ultimately you want an endpoint that um you know some higher level entity can go to and I say I want you to do X. There is some task maybe I give you uh that task description natural language maybe I have some programmatic description with parameters and there's you know some endpoint I should be able to do it. So how will the web be identified? My answer is just
+
+extrapolate this trend. This is where we stand today. Accuracies are getting higher, benchmarks are falling, latencies are getting smaller, costs are falling. And that trend I think will continue. And the way we will identify the web and in in in some sense this is depressing but this is true. We will
+
+just pile on another layer of mess on top of the mess that the web is which is which is to say you know you will issue a task behind the scenes. There will be hundreds of browsers that are pretending uh and clicking buttons just like humans would. Um and they will give you a result in a structured format. It will cost less than a penny. It will run in your browser. Sometimes it will, you
+
+know, run in less than 100 milliseconds. And at some point you will say, "Yeah, that's an API. Like why do I care?" And that's how we'll we'll identify the web. So thank you.

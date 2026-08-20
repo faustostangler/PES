@@ -1,0 +1,123 @@
+---
+video_title: "Bringing agents onto the world wide web — Paul Klein IV, Browserbase"
+video_id: GqoNrUz8hEU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GqoNrUz8hEU
+video_date: 2026-08-14T15:00:31+00:00
+video_description: |
+  When OpenClaw shipped, people started buying Mac minis to run it from home, SSHing in and clearing captchas off a residential IP. Paul Klein IV points out he has yet to see a SOC 2 compliant Mac Mini setup at scale, and that this felt like a reasonable answer is itself the problem. His argument is that browser agents are no longer held back by the models. The capability is already there and the engineering around it is missing, which makes the overhang something any team can close rather than wait on a lab for.
+  
+  That engineering has three parts. The most reliable browser agents in production are multimodal and write code alongside clicking, often intercepting network requests and replaying them rather than driving pixels. They carry a real harness, with skills and memory so a site is not rediscovered every run, and with page context compressed rather than dumped whole into the model. And they sit on infrastructure that renders a page identically every time, since a layout that comes back mobile on one run and desktop on the next produces results the agent cannot account for. He then turns to what the web owes agents: accessibility trees, Chrome's new Web MCP, and two unsolved problems, how an agent logs in on your behalf and who certifies that an agent can be trusted. The payoff is not in San Francisco. It is the logistics company in Singapore, the bank in South Africa, and the lumber factory in Mexico, all running on PHP forms with people clicking buttons every day.
+  
+  Speaker info:
+  - https://x.com/pk_iv
+  - https://www.linkedin.com/in/paulkleiniv/
+  - https://github.com/browserbase/stagehand
+  
+  Timestamps:
+  0:00 - Why web agents have not happened yet, and is it the models
+  3:17 - The missing piece is the harness
+  4:32 - Harnesses that beat the baseline model
+  6:01 - The capabilities overhang in computer use
+  7:05 - Multimodal agents, skills, and token efficiency
+  9:09 - Infrastructure, and the SOC 2 Mac Mini problem
+  10:24 - What the web owes agents: accessibility and Web MCP
+  11:40 - Authentication, trust, and who issues the certificate
+  14:07 - What a real platform has to provide
+  15:45 - The real economy runs on PHP forms
+---
+[music]
+
+>> Hello. Very sleepy crowd in the computer use room. Have we all given up at this point? Like, what's going on? Uh thank you for coming in to my talk. My name is
+
+Paul Klein. I'm the founder of Browserbase, and I'm going to talk about bringing agents onto the World Wide Web. If you're in this audience in this track, you've done computer use, you tried operator when it came out, and you're probably like, "Why isn't this happening yet? This this seems obvious." Well, we'll address some of the high-level needs of computer use to really serve what I think is the largest category of AI agents, the agents that actually go out and do work on your behalf in the real world. We'll
+
+talk through some of the technical stuff, but really trying to focus on there's a huge model capabilities overhang in this category specifically, and you all here can hopefully solve it. So, thank you for coming. Well, of course, as we all know, the web wasn't built for agents. It was built for people, and that becomes very challenging as we're building systems to try and interact with it and automate it. So, when we're thinking about building agents that interact with people for systems, we have to really wonder, "Why wasn't it, you know, why was it built for us? And and why is it
+
+struggle?" When you've done any sort of automation in the past, you've run into so many roadblocks. You know, the pages change, the web was built in a very context inefficient way. It's a lot of text, a lot of tokens. And when you're running any sort of browser agent or web agent right now, you get a broken browser that doesn't spin up. You know, you have
+
+pages that don't work. You have blockers or other sort of problems that really limit you. And I actually started my career doing web automation, maintaining these scripts every single day. It was very painful. So, in my world, agents have made a huge advancement and allowed me to write durable web automation scripts, but we still haven't gone to agents yet.
+
+And the question I want to ask is why? We we're sitting here in this room we're thinking computer use we saw a year ago has progress stalled? Like why why are web agents and browser extensions not as big as it could be? And I think it's really a comes down to a few things. You know, until recently the the bottom neck was the models. The models one year
+
+ago really weren't good at long context horizon tasks. But that's clearly been you know, solved in a major way. Models can do more and more complex tasks than ever and of course in AI you always have to update your priors. It's clear to me that anything I believe 6 months ago I have to revisit every single week because these models are progressing at an insanely fast pace. So I don't think it's the models.
+
+And especially models are now much better at using interfaces. You know, we've seen this kind of capabilities improvement in computer use models. In the last year a lot of investment was made in RL environments for coding. And in the last 6 months months just as much investment has been made in RL environments for computer use. And computer use models are getting better and you can see this in the evals. When
+
+you train things on human trajectories in RL environments that model our real world, the real web, you can make better models. So the models are getting there, I promise. But the kind of so okay, so the models are good. Why why do agents still struggle to use the web? What are the what are the problems here? If if it's a
+
+model problem, Docus says if the models were good enough diffusion would just happen. Uh there's still a lot of work to be done here. And and to me it's it's no longer just the models. I'd argue that agents are missing the right harness and tools. And if you aren't familiar with an agent harness, if you haven't been on Twitter in the last few weeks, it's the it's the scaffolding and systems around your model that enable it to actually interact with the world. Uh a lot of
+
+talks and talk about harness engineering we're going to spend a lot of time on today, but I really think you can invest a lot in a harness and get a lot more out of the models and extract that overhang out of the models. You know, Karpathy actually tweeted this back in November 2023 and I thought it was just so forward-looking that this what he described, these systems around an LLM, it's the harness. It's It's the the tools that it can access. And if you fast-forward 3 years later, a lot of what we're doing every single day is building towards this. A code interpreter for the LLM, audio and video input like screenshots, a browser, and other LLMs as subagents. All of these
+
+principles have held true. So, if you're ever wondering what should I build next, just go look at Karpathy's old talks. He's a pretty good predictor of the future. And you know, applying this to coding, we know that harnesses work really, really well with coding. Uh on the the graphic on the right, you can see Factory when it compared to Claude Code using the same model but using their kind of custom uh harness. And it turns
+
+out when you build a harness optimized for the domain that your agent is operating in, it can actually achieve, you know, above model results in that domain. Harness engineering is a real thing. And I'd say Cursor actually started this. Cursor was the first one that was doing a model engineering or harness engineering on top of the original LLMs. And a lot of what we've done at Browserbase with browser models has been, you know, harness engineering.
+
+But and I think that like building a good harness is an engineering problem. You don't have to be a lab to build a good harness. And And a lot of us in the room maybe aren't working at labs. Your company can make a great harness for your domain and actually improve model results. You don't just have to wait for the models to catch up. And once again,
+
+I believe the models are quite capable now. And And if you look at this, you can see that it's not just Cursor, it's not just Factory. You know, many, many different types of companies are building coding harnesses on top of models and over performing on the models' capabilities. Now, it's not clear yet if custom harnesses are going to beat out durable, you know, RL'd models. Uh but we're not going to debate that today. We know that
+
+adding a harness on a model improves results, whether or not, you know, Claude Code will be the best harness ever or not. I think that's a different conversation. But you should still have some sort of harness on your model and measure the performance versus baseline model. And what I really want to get back to is that there is a massive capabilities overhang in computer use. The models are good enough, but we haven't done the engineering work to solve it. And I love
+
+this great Brokman tweet where he says, "Whenever I don't use Codex for a task, I I ask myself why?" And it feels like the task is an outside of the capabilities of the model. The overhang is there. The actual work we can do is missing. And when you look at the amount of like task completion you can get with coding, it's so much higher than COA because we haven't actually really pushed the models far enough and given it the right tools. So, to me
+
+not only is this important because I think that non-coding is a much bigger opportunity than it is coding. If you look at this in recent slide, there's so many use cases that are in the non-coding domain that can benefit from computer use. It's a problem worth investing in, and the wrong answer is to sit around and just wait for the models to get better. You can actually solve this today. Solving overhang is an engineering problem, and this is the work that we can do within our companies and within our agents, especially within the computer use domain, to build reliable web agents.
+
+And when I think about browser agents that work, it it really comes down to three different types of things. They're multimodal, they're harness engineered, and they have reliable infrastructure. And I'll go through each of these three. First, they're multimodal. You no longer have to use a single model to actually interact with the task. And we see this
+
+with coding agents all the time. Sometimes you'll use a smarter model for a more complex page. Sometimes a a dumber model for a simpler page. And maybe you're using a combination of coding and computer use to actually power your agent. This is a really important insight. It turns out
+
+automating the web isn't always just clicking the button on the screen. It might be intercepting the network requests and writing a coding agent or having coding write a script to actually replay those network requests. The most reliable browser agents that we see in production right now are often writing code alongside using the browser to actually automate a task. If you've done any sort of personal automation work in your life, you might see Cloud code output a script more often than using, you know, Cloud in Chrome because that's a very context-efficient way to automate a repeatable task. There's also harness engineering. It
+
+turns out that sure we can, you know, write scripts and use models, but doing these things repeatedly, you want to benefit from things like memory and skills. We launched something if we so-called browser.sh, which actually publishes skills for websites. So, before your agent even goes to the website, it can observe what types of tasks it can do. WebMCP is very useful for this. It's part of pulling in
+
+existing knowledge to optimize a website. Your agent doesn't have to discover something in the first place if it's done it before. It can use its memory and its skills to actually make it better. And you should think about trying to build in skills to your agents. If your agent is using CLIs to control websites like the Playwright CLI, you could actually give it skills and context to be more effective there.
+
+And this results in much more optimized token usage. As if you're throwing everything on the page to a model, you're going to get sub-par results and it's going to cost you a lot. The right harness should not only present the right tools, but present an optimized amount of tokens that are compressed to get exactly the right repeatable result every single time. And finally, the infrastructure here is extremely important because when you're running browser agents in production, you want an environment that's going to work everywhere, every time. And I think a lot of work still needs to be done here. This is a lot of what our company
+
+does because computer use environments are pretty complex to scale up. You know, it's funny when Open Cloud came out, everyone started buying Mac minis, which to me feels like an infrastructure problem, right? You're running Open Cloud on a Mac mini in your house because that's the best way to run Mac OS that you can SSH into and then end up like solving the CAPTCHAs cuz of your home IP address. That is not something you can do when you're building thousands of agents for customers in production. I've yet to see a SOC 2 compliant Mac mini setup at scale, but please tell me afterwards if you found one. I'm very curious about it. The
+
+infrastructure problem that needs to be solved here is also an engineering problem. And most importantly, the consistency in this infrastructure is important. When your agent is running across a website multiple times, you want it to see the same inputs and outputs, the same page layout, the same size. If your infrastructure renders a page in a mobile layout one time and then like in a desktop layout the second time, it's going to have inconsistent results. Consistency in the infrastructure is the nice base layer on top of your harness and on top of your models to actually get good results with this.
+
+I also think we have to improve the web itself. So, there's a whole other side of this problem that's very interesting, which is like, how are we going to make it so the web works well with agents? And I think this is arguably the harder challenge because we're not just engineering on our own systems anymore. We have to be evangelists to the web and to the broader world that, "Hey, you want agents to come to your website." So, accessibility is the first thing I want to talk about. There's been a lot
+
+of really cool stuff here. Now, when you look at what best-in-class browser agents are doing, they're not just consuming the raw DOM and HTML of the page anymore. They're looking at sub, you know, subsections of that like the accessibility tree, the area tags. These are labeled components of a page that can help show your agent where it needs to click and why. Chrome just added WebMCP, which I think is really, really cool. Websites can now
+
+publish MCP servers within their page that your agent can take advantage of without pre-installing the actual MCP. It can now issue tool calls to a website like submit the registration form in a way that's not only context context context-efficient, but is website approved and blessed. More and more work can go into accessibility and we've seen things like LLMs.text, skills.md, agents.md all being published
+
+alongside our websites. We need to see more of that to build the agent-first web. I think authentication is actually an even bigger problem here, too, because once your agent can actually go to a website, how can it log in on your behalf? There's been a lot of different paradigms here. Maybe you're just giving your agent your password, but doing that securely can be very challenging. Maybe
+
+you're creating a service account for your agent where it has some limited access and you constantly have to give it new permissions. You know, authentication for agents is the next thing to be solved once you solve the harnessing capability problems, and doing that securely where you can have a human loop approve certain actions on a website is going to be a major challenge for unlocking computers for the enterprise. The biggest gate to building agents that actually can work in prod is going to be the systems it has access to. And authentication is something that needs to be solved in our industry to make this possible. I've seen a lot of really cool stuff come out. WorkOS just
+
+launched OffMD, which is a new way for your agent that goes to a website to find how to sign up on that website and get its own accounts. And if you're building software now, you should think about what is my agent-first sign up and login flow look like because agents are going to be using your software whether you like it or not. It's best to let them use it securely. Finally, I want to talk about trust. The web was built to stop bad bots, but now there's good agents and bad bots.
+
+How do we delineate between the two? And the CAPTCHA has been the tool in our tool chest for a very long time, but as we all know, CAPTCHAs are not as effective as we think against agents. And trying to identify these good agents is very important. There's been a lot of cool frameworks and work done on things like web bot off and in more authenticated ways to say this is my agent, it's coming from me, and you can follow me along on the web, but I still don't think we've solved the issue yet. And a big unlock to agents accessing the web alongside authentication is actually how can we trust these agents? And I think
+
+there needs to be almost like a Verisign moment for web agents where who can be the certificate issuer in saying my agent is trusted in this agent vendor is trusted? Nobody's come out and done that yet. I think those are really really big opportunities. So, building reliable browser agents is is not a model problem. It's an engineering problem that all of us can solve, but doing that engineering is is a full-time job. And if you are working
+
+in the space, I'd love to meet you. But if you aren't and you just want to build something that works, I might feel ideas. You really don't have to reinvent the wheel here. There's been a lot of stuff happening and it's a consortium of companies that are continuing to push the world forward on what's possible when you want to automate the web. And I think there's like a few things here that are really important for a great solution, right? It has to be a
+
+scalable platform that serves your infrastructure needs. You know, you can want to run run one agent, but also thousands of agents. And And the challenge is that those different levels of scale is very very important. You want browser agents that are model agnostic. As a developer, I don't want to be locked into a single model provider. As models continually change
+
+and get better, I want to be able to move my agent around. That's why you need model agnostic infrastructure. You need somebody to solve agent identity. Somebody who's going to go out and negotiate with the, you know, anti-bot providers of the world and say, "We are the platform for trusted agents and we are the ones that can help broker the access for your agents as you use the web." And finally, you need observability. When you're building
+
+these agents that go to any website in the world, you need to see where they're going and why and how that you can make sure that it's improving every iteration. Every agent you run should get better every single time. You need screen recordings, logs, network activity. And you need to feed that back into your agent so it can self-improve. We published something called Auto Browse earlier this year. That's a
+
+really interesting way to see how is my agent able to improve itself over multiple loops. And the the feed-in of data to that from observability is extremely important to make your agents get better over time. And And that's, you know, what we're building here at BrowserBase. You know, we power browser agents, web data extraction, and really all these use cases across the entire web to make your agents work well. And what I've been extremely surprised by in building this company is the plethora of use cases. Of
+
+course, there are the, you know, large AI native companies that use companies like BrowserBase to power the browser agents, but there's also all these little companies across the world that can benefit from automation. And my core belief with this company is that solving computer use accelerates the diffusion of AI to the real economy. And as much as I love our bubble here in San Francisco, the real economy is companies like the logistics company in Singapore, the bank in South Africa, or the lumber factory in Mexico. These people are built on PHP websites with forums and human beings clicking buttons every single day. That's a huge opportunity for you to go solve to build browser agents for them, and hopefully you can use the right infrastructure to power those things.
+
+And and that's why we built BrowserBase agents, by the way. This is our new product we launched yesterday, because we want to give everyone a battery-included agent and harness for everything they need to automate the web. The goal here is that you shouldn't reinvent the wheel. You shouldn't have to figure all this out and optimize it. You should benefit from the platform scale that we've seen millions and millions of sessions every single month, and understand how we've solved the edge cases for you, so you don't have to solve them on your own.
+
+I have a quick little demo here. The way it works is instead of having to pull our tools together, you can actually put in a prompt, and we will stand up the harness, the runtime, the sandbox, the code execution, the fetch, the search tools, and the models to actually accomplish a task for you. And what's beautiful is as this agent is running, it's looking at its steps, and it's remembering what it can do, and learning from it, so it can do them again in the future. The future for you is not having to reinvent the wheel every single time. It's actually being able to use an agent that's purpose-built for browsing the web, and pull it in as a sub-agent of your larger agentic system.
+
+This is not the main thing you should be focusing your time on. You should be focusing your time on actually solving customer problems, not trying to rebuild the best in class browser agents. The optimization feature is quite cool. It's going to look back and actually understand, hey, how can I do this better after looking back at this this is this data feedback loop that I've talked about before. And I think it's what makes agents really, really special.
+
+I kind of want to end with this last note. You know, based on the attendance in the room, I do think a lot of people have stepped back from computers because they've had so much challenges over the past year making browser agents work in production, but I can tell you first hand from our customers we see it working. And actually, I think 1 year from now this room is going to be overfilled with people because the models are getting better, the techniques are getting better, and the tools are getting better. It's just on us to build better things. Thank you all for having me today. I really appreciate
+
+it. >> [applause]
+
+[music]

@@ -1,0 +1,177 @@
+---
+video_title: "LLM Knowledge Bases: a practical guide — Ben Holmes, Warp"
+video_id: I3bpdgFJCUY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=I3bpdgFJCUY
+video_date: 2026-08-12T17:00:22+00:00
+video_description: |
+  Talking runs about 200 words a minute and typing does not, which is why Ben Holmes starts a knowledge base with voice dictation rather than with organization. The pipeline only works if there is enough raw material, so the capture step is deliberately sloppy: ramble into your phone after a podcast or a meeting, skip the formatting, and let agents impose structure afterward. He points at Handy and Voice Ink as local, on device options, so none of it needs a subscription.
+  
+  Structure then arrives in passes. An enrich note skill stamps each file with a timestamp so later runs know what has been processed, assigns tags from a fixed reference list instead of inventing new ones, since as he puts it Claude loves to get creative, researches the source on the web, and adds backlinks found by key term search. On top of that pile, a wiki generated from a Karpathy gist produces browsable entries for the people, concepts, organizations, and sources buried in your own notes. Then the whole thing runs on a schedule in a cloud sandbox: the Obsidian headless CLI syncs the markdown down, the agent enriches whatever is not yet stamped, and it syncs back, so you wake up to a refreshed wiki he describes as the daily paper except it is yours. The closing trick is a graph view of every note, built in HTML and Tailwind purely by asking an agent for it, which turns out to be a decent map of where your own thinking has gaps.
+  
+  Speaker info:
+  - https://x.com/bholmesdev
+  - https://bholmes.dev
+  - https://linkedin.com/in/bholmesdev
+  
+  Timestamps:
+  0:00 - The disorganized notes folder problem
+  1:30 - Where we are going: raw notes to a browsable wiki
+  2:46 - Getting raw thoughts down is the hard part
+  3:25 - Why dictation beats typing
+  4:02 - Local voice tools that need no subscription
+  5:17 - Be scrappy, you need volume
+  5:53 - What an enriched note looks like
+  6:32 - The enrich note skill
+  7:11 - Tagging from a fixed list, not inventing new ones
+  7:49 - Running the skill
+  9:07 - Following your own rabbit holes
+  9:45 - Generating a wiki over the notes
+  11:40 - The Karpathy gist behind the idea
+  12:54 - Wikis for work: people, meetings, sources
+  13:31 - Making it run without you
+  14:10 - Local automations against cloud ones
+  15:29 - Syncing markdown into a sandbox and back
+  16:45 - Waking up to a fresh wiki
+  18:01 - Visualizing the whole notebook
+  18:39 - A graph view built by asking for it
+  19:17 - Finding the gaps in your own thinking
+  20:30 - Tools mentioned
+---
+[music]
+
+All right. Are we ready to go? Okay, we're ready to go. Are y'all ready to go? >> We ready? All right. Let's do this
+
+thing. Uh, all right. Well, hello everyone. I'm Ben Holmes, developer relations lead at Warp. Uh, you might have heard of Warp as a terminal that's really nice to use for you and your coding agents. You may have also heard
+
+of it as a cloud platform that helps you build out software factories. If you haven't, we have a booth in the expo. You can go talk to us about it. Uh, but today I'm actually going to be talking about something called LLM knowledge bases. Uh, maybe a show of hands. How
+
+many people have an Apple Notes folder that's a complete disorganized mess that you don't know what to do with? Okay, a lot of people. Uh, and how many of y'all have used Obsidian before? Maybe. And how many of you use it now regularly?
+
+It's a little less people. That's all right. Uh, I'm actually not going to be showing youall too much on there, but if you're an Obsidian head, this talk is definitely going to be for you. Uh, so we're going to be talking about the ways that you can organize all of your sort of raw thoughts and notes that you're taking both between you and your LLMs into something that you can actually navigate and make sense of and even remember and discover ideas you might have forgotten about. Um, so our goal is to go from head over to this guy, uh, jumbled mess of scattered thoughts like this all the way to something that's nice, organized, and viewable like this. But I'm getting
+
+ahead of myself. Uh, our goal is to initially start with just a raw folder of all of your thoughts. We're going to be tracking our notes as markdown for this example. And I'll be showing you the app that I actually built myself called Hubble that'll let you navigate and write notes easily inside of there. Uh, but you can use any Markdown viewer, Warp, Obsidian, whatever you like. Uh
+
+then we'll talk about how you might turn that raw set of thoughts into something that's a bit more organized and interconnected. So enriching notes to connect related backlinks and tagging things based on categories so that you can find them or so agents can find them. Then we'll go a little bit further into wikis actually generating uh something that you can click around around areas of research that you have personal interest etc. uh that qualify the people concepts and sources that all of your notes contain. Then finally, we'll talk a bit about visualizations like that fancy graph view I was showing you. It's very easy to do these days now
+
+that agents can access your machine and use HTML. Um, so the first thing I wanted to talk about is how you get raw thoughts down actually. Uh, because it is pretty easy now to whip out Apple Notes and write something. Uh, but I would argue it should be even easier uh to get everything down. So, something that I'm going to show you here, uh, maybe another show of hands. How many
+
+people use Whisper Flow or something like that? Okay, that's not enough hands. It's honestly not enough hands. Uh, because you may not be aware, but voice dictation, even though it is pretty awkward to talk into your computer with a bunch of co-workers around, it is the fastest way to get your thoughts onto paper. It's going to be like 200 words per minute, I believe, is the average. Unless you're an
+
+absolute Olympic typist, it will be faster than any other method that you have. So, I suggest getting some sort of voice input tool uh just to get down context. There are a number of these. And by the way, for the people who aren't paying for Whisper Flow subscriptions, you're in luck. You don't have to pay anymore for this kind of stuff. There are local models that can
+
+do this. So, a bit of a side tangent on tool chains that you should probably check out. Uh I love highlighting this one. It's called Handy. Uh it's an open- source tool for voice dictation that just uses a local model, stays on device, very easy to use. Uh there's
+
+another one called Voice Inc. which is very similar. Uh this one I believe is like a $20 lifetime fee just to get updates in the app. Might as well do it just to support the developer. That's the one that I use. And it gives you a
+
+hot key uh as well as a mobile app. So if you wanted to get something down, you can just hold either the option key or the function key on your computer and it'll start writing down everything that you're saying and it will turn it into a formatted um set of sentences, paragraphs, etc. on the other side. Cut off a little at the end there, but you can see the punctuations are coming in. Great. And this whole uh set here with
+
+all these paragraph breaks, this was just one long transcription I wrote down after listening to a podcast. This was uh just me listening to the Acquired podcast about the founding of Walt Disney. Uh little bit offbeat for me. Uh but I thought it was an interesting read just about uh how these sorts of businesses are founded. Uh so I decided to take out a voice dictation app and write it down. And that's what I've been
+
+doing for all of my notes at this point. Either come to my computer or on my phone, I just kind of type into it to get all the raw data. And the reason I'm suggesting you do this is if you want to get to a point where you can actually have LMS generate wiks, visualizations, etc., you need a lot of raw data. You need a lot of raw materials. So don't
+
+worry if you're being a little bit scrappy, a little bit rambly. You're not formatting things with perfect bullet points. That's fine. The goal should just be get down as many thoughts in the moment as possible. Maybe it's a meeting transcript, maybe it's research notes after you've read an important passage.
+
+Whatever it is, just being able to get your idea down on the paper uh makes it very effective for LMS to go access it later. Um, so now let's talk a little bit about turning those raw materials into something more useful. Uh, this is another note that I took about the founding of Ferrari. I went down a little rabbit hole when I started listening to this guy. Uh, and this is what you can get to if you just ask an LLM to do a little bit of recon for you.
+
+So, you'll notice that in the center is the same note, same sort of style of like a voice dictation transcript, but we've got some more details now. We can see the tags that are for the topic. So, we can see this was a podcast. It's related to these focus areas. You can also see the source. It was able to pull
+
+down the URL and find it. It also wrote down when it was enriched. We'll talk about why I do that in a second. And at the bottom, it also finds some back links of those. This is related to that other podcast you were listening to.
+
+Let's go ahead and link them together. And that web gets tighter and tighter the more things that you get down. Uh, and the way that you can get from this to something like this is through an agent skill as you might expect. So, I have a skill for that right over here. And it's just called enrich note. Enrich
+
+note. So right here it's just showing how you might instruct an agent to take one of those note files and turn into something that's more useful. So here it's just saying let's go ahead and enrich that note. Put a little time stamp on there so if we ask the agent to do another pass it remembers that some other agent did it in the past. Uh have it generate some tags. I actually put
+
+all of my tags into this little uh reference folder over here. That way the agent isn't inventing new tags every time it goes through and tries to add more detail. This gives it a concrete list of things to look through. I actually instruct the agent to be reluctant to add new tags because Claude loves to get creative. Uh so just telling it please don't do that. Uh use
+
+the instructions, but if you really find a pattern, go ahead and add something to this list. You can go ahead and do that. Uh also telling it to go research the source with web tools. At this point, all the agents have web search. If not, exa is a great little tool that you can add into your harness to go find that for you. And the last one's those
+
+related notes. to find back links, use some file calls, find related notes using key term search, and put them into the bottom. So then we have that interconnected web. Uh, and to run this skill, you can of course do it manually with whatever harness. Uh, I'm going to be using warp just to show you here because totally unbiased. I'm a really
+
+big fan of warp. Can you believe it? Uh, but it also does give you access to any model including OpenWeight. So if you've ever been wanting to experiment with like GLM 5.2, too, just very good at this sort of task. You certainly can. In
+
+fact, I'll let's go ahead and flip over to that just to try it. And I'll go ahead and call this skill by hopping into our little note here. I might go ahead and call enrich note. And then I'll pull in this note from earlier. Grab that file path and just tell it to go ahead and add more detail to this guy. And I can show you a completed run
+
+of this, too. Uh right over here we can see uh this was well we'll talk about this in a moment but asking it to do it on a sort of automation across all of your notes. Uh it go ahead and it will go ahead and find any notes that weren't enriched in the past. So remember that at the top here we gave it a little timestamp every time it gets enriched. So the next time we ask an agent to do it, it was look for anything that's not tagged yet. It'll go through run that
+
+whole flow across all those notes. It'll make some modifications to the files and then on the other side you get a more organized notebook than you had before. It's very easy to do. We'll let this guy cook in the background while I talk a little bit about wikis. So the next step after we've gone ahead and combined everything into related ideas. You might
+
+be fine with this actually. I'll show you how useful this is just on its own. So this is like a total uh mind dump of everything in here. Like this was me reading The Left Hand of Darkness, which is a very good book, by the way. And you can see I was just taking spare notes across different chapters whenever I found something interesting. And it was
+
+able to combine all those related notes, so I can just click through and find them. Uh so I'm not hunting around where did I save in my Apple Notes the last time I wrote about this like two weeks ago. It's able to find it by related um topics. So if you're someone that likes following Wikipedia rabbit holes, it kind of invents a Wikipedia rabbit hole of your own thoughts. It's kind of fun.
+
+Uh, but if we want to make this a little bit more browsable, we might tell it to generate a wiki on top of this. So, take that set of raw ingredients and cook it together into something a little bit more u hardy. I don't know, it's a weird metaphor. Uh, let's go ahead into these wikis. So, these are a couple that I generated around topics that I'm interested in. Uh, one of them is
+
+probably predictable. You know, latest in AI news. anytime I listen to podcast or uh read a research document about the like system cards of the latest models for example uh I want to have a wiki that actually pulls all of that in and groups them by related topics. So this wiki that you're seeing right here uh if we click into it'll give you a set of people, places, and things basically. So we get all of our sources. So these are
+
+some of the topics that we're most interested in. Uh we can see a few in here, some of them expected, some of them not. We see like a Ralph loop rabbit hole for example. We some see a number of concepts that are pulled out of all of these ideas. Uh and then down here we see some people all the people you might expect some maybe not like this is something that I pulled together from a intersection with AI and music.
+
+Adam Neely is actually a jazz musician that's been talking about how AI has affected the music industry. So I wrote that down. Found it was a little bit interesting. Pulled it into our latest AI wiki so that we can find it easily. Also organizations. You would expect all
+
+of these I assume. This one more music related. Uh this one the thing you should go try after this talk etc. Uh and all of that is generated programmatically. I didn't write any of this because all I have time to do is generate the raw ingredients not connecting it all together myself. Uh so
+
+to have to have an agent generate this this is actually uh gist from Andre Carpathy. This is where the LLM knowledgebased idea kind of came together. You can find this really easily now if you just search his name and then wiki. It's kind of uh uh got a lot of usage. So this is the simple principle of it. We want to take a raw
+
+directory which is where we're taking all of our spare Apple notes from earlier and we want to combine it into whatever focus area that we care about. So, we grab the raw sources, we create a wiki, and uh really you can tweak this to taste as much as you want. He even calls this an idea. So, what I did to generate that latest AI wiki was just describing these are the things that I care about. They're in this raw folder.
+
+Here's the rest of his gist. Go ahead and generate a wiki for me. And on the other side, you end up with something very organized like this. Uh I was able to do this for another topic, too, that's a little offbeat. Uh, this one was uh because I was listening to the Bible in a year podcast. This is
+
+something I wanted to study recently, totally outside of my wheelhouse with a number of characters that I forget the name of. If anyone's read religious texts, you know that all the names sound very similar and can be hard to pronounce. Uh, so having something that can pull together all the people with references to what each of them did is very useful. So I can click through here and it generated sort of an entry for who that character is. You can imagine this is also useful in the workspace. If
+
+you take a lot of meeting notes and you want to have a people section of all the people they met with, interested clients if you're in customer success, it can generate all of those for you. And then it can create back links over to any related meetings you've had with them. Maybe the source links. So going back to our raw notes, if you want to go to the raw materials, you could click through and find those. Uh really all we're trying to do is make sense of all these notes that we take every day and make us something a little bit more browsable, a little bit more readable.
+
+Um so the next thing I want to talk about beyond that is uh it's really nice that you can ask an agent to generate these on demand, but as we can see with our little agent running in the background, it can take time uh for an agent to go generate these things. So ideally we have a flow that will sort of do this in the background for us. maybe while we sleep, maybe on an automated schedule or something like that. Uh so that's kind of the next thing to talk about, which is taking these skills that enrich the notes, generate wikis, update them for you over time, and turn them into something that runs on a cadence, maybe daily, maybe weekly. U and there's a little platform over here. There's a
+
+number of ones that do it. By the way, if you've played with like Codex app, they have an automations tool that spins up tasks to run on your machine every day, but it means your laptop has to be cracked open when it runs because it's a local automation. If you want something that runs in the cloud, uh I will shout out that we do have something called oz.dev. If you go search for that in your web browser, it'll help you set up with automated schedules. Uh as well as
+
+like other triggers like maybe a Slack message, iMessage, whatever you want to set up. Uh these I set up on schedules. So this was one that I set up with the uh wiki skill that I showed you a little bit earlier and I encoded it into this set of instructions right here. Uh so the way this guy works and I'll just go ahead and whiteboard this for you live and show you how it works is uh we create an automation that takes our folder of markdown syncs it into a box maybe like a cloud sandbox powered by Docker if you need it uh otherwise you don't and then sync it back up when the agent's done. Uh so the way that I've set it up is using uh the Obsidian headless CLI. So Obsidian has a really
+
+nice tool that lets you take a bunch of markdown on your computer and sync it somewhere else and then pull it back down. You could also just do like a git clone too if you want to be a little bit less creative, put all of your notes in a GitHub folder so that way a cloud agent could pull it down and do it for you. I prefer using Obsidian CLI for this just because it avoids having to like push and pull your notes. No one has time for that. I just want it to sync in the background. That's what this
+
+does. Uh so it's a tool that you can install into a cloud sandbox. It'll sync down that folder of markdown. Uh you can run a process inside of it. Maybe you have like your enriched note skill that I was showing you earlier. Just instruct
+
+the agent run enriched note uh across end notes that are uh not enriched yet and then let it do all of its tool calls and code diffs and then by the time it's done it'll sync it back up. That's really the flow. It's super simple. Uh, and that's what we've instructed this cloud runner to do. So, if you're unfamiliar with Oz, no problem. Uh, all
+
+this is is a cloud sandbox that'll stand up every day and it'll instruct the agent to do this. So, this is the prompt and the prompt is I gave you the Obsidian CLI in your environment. Use that, pull down that wiki, go ahead and update it, and I put in some special instructions for my own setup, and then sync it back up. So that way when I come back to my computer in the morning, I wake up to a perfectly fresh wiki that I can review. It's like the daily paper, but it's your own, which is so exciting.
+
+Uh, we see another schedule that set up over here for the enrich note phase, generating those back links, making it easier for you to navigate around everything. I made that a skill. Again, we tell it to sync everything down. We tell it to run in rich note, and then we push it back up. So by the time I go on my computer, there everything is. Uh,
+
+and I can show you one of these runs. You can actually view it in your browser. Uh so over here, this is where it was running in rich node across all of our nodes from earlier. And we can see that same thing I was showing you, but this was from the cloud. So while I was sleeping, it looked at all the notes that I took throughout the day. And it
+
+tied them all together in something that was easy to browse. Uh which is super clean, super easy to use. Uh we can also take a look back if we want to at that run from earlier just to see if it did its job. Yeah, look at that. Um, so this was that note earlier that was just a jumbled mess. Now we're seeing here's
+
+the podcast. I did some web search. I found it. So if you want to go listen to it again, there it is. We have a heading now. And we have some related notes. The
+
+Ferrari um podcast. We have some notes from some other founder podcast. There we go. Don't have to do any work anymore. All you have to do is voice dictate in your phone. And all this
+
+stuff comes out on the other side. The last thing I want to talk about uh just to expand your mind a bit beyond the markdown doing something a little bit more exciting is turning all of your thoughts into visualizations, graph views, charts, whatever you want to do. Uh and that's something that I've set up inside of this uh notes app I've been showing you this whole time. You can also look at HTML pages inside of here. So I told it because I wanted to like, hey, I want to take all these markdown files and I want you to just build with HTML and Tailwind some sort of graph view. So instead of me clicking
+
+around a wiki and following a bunch of links, I want to see a bird's eye view of everything that we're writing down here. Figure out common patterns and common areas of interest. And we can look at them right here. And this is not a tool that you have to install. By the way, I told an agent, build this for me.
+
+So you can do that now. Um, so we see some stuff in the center that's very stray thoughts. I'm a scattered person. It makes sense. Uh, we have some books.
+
+Clearly, I need to read more. We have some interest in like startup founding here. We have AI and engineering. Of course, we have faith in scripture because I was reading Bible in a year. As I mentioned earlier, we see all of that grouped up inside of here. And I
+
+also told it, let's make these nodes something clickable. So now I can see whatever note that was. I can see how it's connected to something else. So we can see this is connected to a number of ideas. You just kind of walk around the graph. It's useful just to get an idea
+
+of what you're actually interested in and where you have gaps in your thinking, but it's also useful if you want to drill down. And also just to show you this is something that you control. It's like can can you put it in space? I don't know. Let's put in space.
+
+How about that? Now it's in space. Uh so it looks a little bit more like a star constellation. So we can click in there. We can sort of look around. See how
+
+everything is connected. It's really nice. You could also connect into like a burndown chart. If you're trying to build up a habit tracker of how often you're writing notes on certain things, you can invent one of those. This is kind of like a GitHub chart. Clearly, I
+
+don't have a super consistent habit, but it's building and we can track it inside of here. Uh, whatever you want to put together, you can just ask an agent to do it. Um, and that's really that's really the end of the talk. That's everything I wanted to share with y'all. If I have any sort of parting gifts or things to check out, I'll first call out like if you want that automation platform oz.dev. Uh it's built by warp,
+
+warp.dev/os, however you want to look it up. Uh this is the tool that you can use to set up schedules to update notes in the background. And if you want to try that little notes app I was showing you, hub.md, it's free and open source. We're
+
+open to contributions. There's a lot of things missing as you can imagine. Uh so if you're looking for an Apple notes that's agent accessible, here you go. This is what you can go try out. I hope to see you in the issue logs. Uh, with
+
+that, it's been great chatting with y'all. I will u Oh, I'm supposed to plug myself, aren't I? Let me plug myself. There we go. If you need to follow me, there I am. I'm a developer relations at
+
+Warp. You can find the whole team uh both at the booth and also on Twitter and everywhere else. Uh, and also our side event which we have tonight. Um, so yeah, with that, I'll let y'all go. Hope you enjoy the rest of the conference.
+
+Thank you so much. [applause]
+
+>> [music]

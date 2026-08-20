@@ -1,0 +1,110 @@
+---
+video_title: "How Web Data Infrastructure Powers the Next Generation of AI — Patricija Žemaitytė, Oxylabs"
+video_id: 1UmZHb_E_SM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1UmZHb_E_SM
+video_date: 2026-08-14T17:00:37+00:00
+video_description: |
+  Minutes into a call to demo a search API rebuilt to answer in under a second, the system got blocked, badly, in front of the client. Patricija Žemaitytė treats that as the useful distinction: something that works in development, something that passes tests, and something that survives reality are three different systems. The rebuild had no trick to it. Browsers are slow, expensive, and incompatible with low latency, and they were unavoidable, so the team went hunting for time across layouts, parsers, sessions, and proxies until the seconds were gone. It averages 550 milliseconds now, against a 4 second baseline.
+  
+  Two other stories run the same way. A video API request arrived with a two week deadline and a floor of 5 petabytes a month, then kept moving. The transcripts the client asked for turned out to be subtitles, then came search, then metadata, until a one off feature request had quietly become a product suite. The punchline she offers is that the client has since collected 30 petabytes and has not paid yet. Scaling the unblocker from 10,000 to 60,000 requests per second hit a wall around 20,000 in load testing, where the real difficulty was not generating synthetic traffic but knowing whether the number meant anything, since telemetry at that volume becomes part of the load it measures. Project 60 is already Project 150. Her argument throughout is that this is not a build once business, it is an adapt forever one.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/patricijazemaityte
+  - https://oxylabs.io/press-area/from-web-to-artificial-intelligence
+  
+  Timestamps:
+  0:00 - Infrastructure, not models, as the starting point
+  2:23 - A video API with a two week deadline
+  4:08 - Transcripts, subtitles, search, metadata
+  5:51 - Thirty petabytes later, still unpaid
+  7:25 - A subsecond request, built and then shelved
+  8:42 - The rebuild, and getting blocked live on the call
+  10:53 - Hunting for time, second by second
+  12:26 - Scaling the unblocker to 60,000 per second
+  14:09 - Load testing, and the wall at 20,000
+  15:31 - Project 60 becomes Project 150
+---
+[music]
+
+>> Okay, hello everyone. So, mostly I talk today starts with models. This one starts somewhere less glamorous with infrastructure that decides whether those models get fresh, usable, real-time data at all. So, I work at Oxylabs and Oxylabs was established in 2015 and describes itself as a web intelligence platform and a premium proxy provider. In simple terms, we built infrastructure that allows companies to extract public web data at scale.
+
+And as we all know, public web data theoretically is available for everyone. But when you But in practice, if you want to connect your AI models, agents, databases, you need infrastructure layer. Uh so, this is what we do and this is where what matters now more than ever. Uh because the industry is shifting away from static knowledge and training itself still matters, of course. But training alone is no longer enough and to stay useful models needs to get access to fresh information, live search, real external data.
+
+And without that, even the smartest model is limited by what it knows. And this is where my story begins. So, my name is Patricia and as I mentioned, I worked as uh in Oxylabs as a product manager now. But I started actually closer to engineering. I was leading teams dealing with service, core services. But the first squad that
+
+actually taught me one thing was what we called UX. Uh and what is UX? UX is usually means user experience. That is completely correct. But for us, that often meant closer to this, that client needs something really unusual. There is no
+
+ready-to-made product. The timeline is extremely painful, and somehow we need to build everything fast and make it work beautiful. So, the lesson that I learned with that team, that innovation never comes as a neat road map. It comes as a pressure, as a deadline, and sometimes, and quite often, as a trip report from San Francisco. And this is how the first story started.
+
+One day, our sales team came back from San Francisco and said, "There is a demand for video API for AI training." Um there is one question that you actually really scared to ask the sales team. What's the deadline? Two weeks. What's the What's the scale?
+
+At least 5 petabytes per month. At that point, we have never built nothing like that, and it seems a lot. And actually, this is also a moment when the feature stops sounding less as a product feature. It sounds like infrastructure, because what client actually is asking to build is not just to download some videos. They are asking for a pipeline, collection, transfer, storage, delivery.
+
+And do it with enough reliability that would be compatible with AI training workloads. So, that story actually aged surprisingly well, because the market has moved exactly into that direction. And AI infrastructure is becoming increasingly more multimodal. It's no longer about the text, and companies now need pipelines for video, metadata, transcripts, subtitles, and another structural context around the content itself. So, what with that? So, in two weeks, we
+
+had to build a new dedicated scraper with a brand new logic, new storage integrations, and with delivery flow of something that we actually never built before. And we actually made it, and somehow we made it even on time. But, this is not where the actually story ended. That was only the version one. So, client asked, "Great that you have a downloader, but what about transcripts?"
+
+So, we built a transcript support. Uh client tested out, and we see that all of the requests are failing. Then we start talking with the client, and we see that there is nothing that we did something wrong. That client actually didn't need a transcript, they needed the subtitles. So, we adapt again. We build a subtitle
+
+support. Um then another request comes. "We are struggling to find videos in languages that we actually need. Can you build a search that we could gather those ideas?" So, we do it again. "What about
+
+metadata?" Of course, we do it once again. And this is the part of the story that I really loved, because once it started as a one product feature request, it actually became um became the whole product suite, because we started thinking that we're building just a downloader. Then we realized that we're building a transcript support, subtitle support, uh adding metadata, channel information, and ended up building our own internal library that glues everything together. And after enough iterations, uh as a one as I mentioned that started as a one-off time request, uh it became the product family.
+
+And in roughly 3 months, we actually ended up having the whole video API suite that supported downloaders, transcripts, subtitles, channel information. And yeah, after all of this, the final twist came. So, it's 2026. Client already gathered 30 petabytes of data, and we're still waiting for a payment. So, yes, the first lesson is really technical, but also very human.
+
+Uh that innovation is actually a repeated adaptation under high pressure. Because once you learn that the client actually doesn't buy the first product iteration, they buy your ability to adapt. The next question becomes, can you actually make it under extreme latency constraints, too? And this is a part where I tell you a little about SERP data. And search data has always mattered.
+
+But the AI changed the role it plays. Um before, SERP was often used for analytics, SEO, monitoring, market intelligence. But now, it's a huge part of AI systems. It feeds retrieval pipelines. It grounds uh it powers assistance. It grounds answers. It helps
+
+agents interact with live information instead of stale training memory. And that shift is not hypothetical. Google's grounding documentation explicitly positions Google Search as a way to connect models to current public knowledge. In simple terms, the model layer is increasingly expected to work with live retrieval layer around it. And that's why the next request mattered so much.
+
+So, back in 2024, client came and asked for SERP delivery with sub- sub-second SERP delivery. At that time, our traditional regular search scraper was around 4 seconds average latency. So, the gap was huge, but we still decided to go for it just to see if it's possible and we actually did it. But, the story doesn't have happy ending here because client did it not did not test it out. And to be honest, the market wasn't ready for that. So, we
+
+just put it on a shelf. But, what became clay clear later on that was never about making uh the old scraper faster because the regular scraper, what he does here is built to retrieve as much information as possible. So, we're talking ads, widgets, rich results, AI-generated results, different layouts. And when we think about fast search API, it takes a different approach. It focuses on the things that actually matters only for AI systems. So, it's
+
+mostly organic results, top stories, news, and it cuts away all the heavy layout. So, even this small scope, it's already something to start thinking about lower latency. So, fast forward, it's 2025. Another client comes in and their request was simple: zero data retention, sub-second latency, and 2 weeks. For us, that meant to support different geolocation and query parameters, to have a system that is capable to deliver results under 800 milliseconds, and to have a solution that is ready uh to be tested out in less than 2 weeks.
+
+So, when your baseline is at 4 seconds, we are not talking about optimization. We are talking about redesign. Uh so, we started from the scratch. And actually, the first version worked. In less than 2 weeks, we got around 650 milliseconds P90. So, that alone would be a great
+
+story, but the real story happened on the next call. So, we're sitting on a call with the client getting ready to test it out our new product. And while we were on the call, we got blocked. And we got blocked really bad. And to to be honest, this is really honest moment about when you think about infrastructure and systems, because this is a kind reminder that there is a difference between system that works in development, system that works in a test, and system that actually survives reality.
+
+So, we had to start over, because nothing worked. And at this second iteration was the hardest one, because we actually had to rely a lot on browsers. And don't get me wrong, browsers are amazing. They are extremely useful, but browsers also are slow, expensive, complex, and deeply incompatible with dreams about low latency. So, there is So, we had a contradiction.
+
+The reality and the client wanted sub-second, the reality needed browsers, and browsers really wanted us to give us 4 seconds. So, at this point, there is no magic trick. You just go hunting for a time. So, you you review everything, layouts, parsers, sessions, proxies, every place when you can cut off a second, a two, a three, or four. And this is how systems becomes fast, not by giant breakthroughs as we thought at first, but by small decision that adds up.
+
+And that work paid off and actually evolved into something new. So, today we have fast search API that delivers results and fresh data directly into AI workflows with 550 milliseconds average latency. And our scale move from 400 million daily requests to almost 6 billion daily requests. Uh so, that number matters. Because going from 400 million daily requests to 6 billion daily requests is not just a change, not just a growth.
+
+It's a change in operating model. It changes how you think about costs, observability, and failure of domains. So, the lesson of this part uh that in AI era, speed is not just performance. Speed actually defines what product can exist. Because in 4 seconds, you have a slow pipeline. In sub-second
+
+delivery, you have something that can sit and interact in your AI workflows. So, when a speed becomes product, what's next? Next is then scale actually becomes the real test. So, the first story was about mm adapting product scope. The second was adapting architecture for latency.
+
+The third one is going to be adapting systems for scale. And the scale is where infrastructure becomes really humbling. At one point, another demand has forced us to scale our web and blocker quite aggressively. Uh I added just slides just to see how it works. Uh it's simple terms, it's similar to scraper, but it has proxy integration.
+
+So, we were working our way around 10,000 requests per second. Demand has forced us to scale to 60,000 requests per second and in less than 2 months. So, now that number alone sounds impressive, but it might be also misleading misleading if if you are thinking about as as a simple HTTP request. In our world, that means the end-to-end scraping job. Part uh it it will be routing, rendering, proxy handling, browsers execution, parsing, retries, normalization, and delivery itself.
+
+So, when you kind of scale to that workload, even adding up additional 2,000 servers doesn't solve the problem. You need an architecture. You need a central components that actually are reliable. You need observability that still tells you the truth. And you need testing that resembles ev- uh reality enough to matter.
+
+And this is where our main bottleneck showed up, not in dramatic outage, in load testing. Uh the hardest part was not generating synthetic traffic. Synthetic traffic is relatively easy comparing to reality. Uh but the hardest part, organic data testing. That means processing traffic that behave enough like real client usage to tell us something useful.
+
+And during one of those load tests, we hit the wall around 20,000 requests per second. At that point, there is no question if the system is actually working. It is working. The question becomes, do we actually know that it can go further? And that uncertainty was the real bottleneck. So, uh so are all the pain
+
+points, metrics, logs, and generating and processing everything at scale. So, everybody loves observability in theory, but observability at scale becomes a true work because collecting logs is hard, processing logs is harder. Um and same applies to metrics. Uh they're essential, but when you scale up to that kind of a load, the telemetry itself becomes a part of the load and a part of the complexity. So, what we did?
+
+We scaled gradually. And eventually, we had to accept one unavoidable truth that the real testing is going to be with production traffic. And thankfully, that part actually went completely fine. Uh but the story doesn't end up here uh because the drama is still happening right now. Uh internally, we call this project 60 because we had to scale up to 60,000 requests per second. Now,
+
+it's already becoming project 150. So, while we were scaling our infrastructure to 60,000 requests per second, now we are talking and seeing results and scale up to about to about 1 100,000 requests per second. So, the lesson from this part is also simple that the scale is never a finish line. Well, at least not for us. And probably when you reach one target number, the next one will appear.
+
+So, anyways, what does Oxylabs do in this whole thing? The I guess the stories make one thing quite clear that we are not just a proxy provider. Proxies are essential, they are important, but the hardest part and the larger job is building the infrastructure layer that allows companies to extract public web data up and and operate it at scale. That means reaching the open web, collecting data reliably, dealing with antibot systems, handling browsers when they are needed, instruction and delivering data, and doing in that manner that AI companies can actually plug into their systems. And this is exactly why it matters because the best thing we can offer is not just data access, it is this.
+
+That you build the intelligence and we take the messy maintenance underneath because the messy part is is is real. The targets change, layouts change, detection changes, market itself changes, client needs changes. So, this is not a build-once business. This is an adapt-forever business. And honestly, that may be the most useful definition of innovation that I know.
+
+That innovation is the ability to keep adapting fast enough that a changing requirements becomes a new infrastructure. So, if I need you to leave with one thought today, I will probably get back where it started. That the next generation of AI will not be powered by better models. It will be powered by better infrastructure around it. Infrastructure that can connect models to reality, infrastructure that can push the web data directly into your pipelines, databases, agents, AI tools, infrastructure that can scale from 400 million daily requests to 6 billion daily requests.
+
+Because this is really the story. Not just scale, not just scraping, not just speed, adaptation. Adapting products, adapting architecture, adapting systems. And doing it fast enough that the AI companies and you can keep on building while the maintenance burden stays with us. So, and this is what it actually means for me in AI world. It means that the
+
+model is not alone anymore. It already has bridge to it. Thank you.
+
+>> [music]

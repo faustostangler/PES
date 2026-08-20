@@ -1,0 +1,123 @@
+---
+video_title: "Scaling Compute on Context — Jack Morris, Engram"
+video_id: WiqDvX6isc4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WiqDvX6isc4
+video_date: 2026-08-12T15:30:14+00:00
+video_description: |
+  Train a model directly on ten thousand financial reports and you can drive the loss to 0.00001. It knows the documents perfectly. Then you generate from it and it collapses. Jack Morris uses that failure to set up the real problem. The three axes that powered the entire deep learning revolution, more data, more compute, bigger models, all run on public data. Models are superb on Wikipedia, arXiv, and GitHub, and know nothing about your emails, your meetings, or your company. Against your own corpus the data axis is fixed and training from scratch is off the table, which leaves compute as the only axis you can still push, and that is what he means by scaling compute on context.
+  
+  The rest is a tour of what people try and exactly where each one stops. KV compaction only reaches what already fits in context and skips the gradients entirely. On policy distillation works, but raises the question of what you distill, since raw documents will not do, which is the gap self study in the cartridges paper is aimed at. Continued pretraining on synthetic data conditioned on your corpus is promising, but it overwrites some of the pretraining and assumes you have a base model rather than the post trained one most people actually start from. Every approach shares a ceiling: you define a dataset, you train, and unless the model is underparameterized it eventually absorbs everything you made. A synthetic data wall, with none of pretraining's scaling behavior. The property he wants is the one that made AlphaGo work, where getting better makes the training questions harder, so that adding compute keeps buying depth instead of flattening out.
+  
+  Speaker info:
+  - https://x.com/jxmnop
+  - https://jxmo.io
+  - https://substack.com/@jxmnop
+  
+  Timestamps:
+  0:00 - Scaling compute on context, and Engram
+  1:28 - Terence Tao on breadth against depth
+  2:43 - What models cannot know after training
+  3:22 - Long tail skills and AMD kernels
+  3:59 - Why a model knows nothing about you
+  4:37 - The many names for this problem
+  5:14 - Three axes of scaling
+  5:52 - Even post training data is public by definition
+  6:30 - Applying scale to your data
+  7:45 - Why compute is the only axis left
+  8:21 - The data budget is less fixed than it looks
+  9:40 - Stating the problem properly
+  10:55 - Just train on it, and why that fails
+  11:34 - Perfect loss, collapsed generation
+  12:13 - Making the model think the data is in context
+  12:52 - KV compaction
+  13:31 - On policy distillation and what to distill
+  14:46 - Simulating pretraining with synthetic data
+  16:00 - Unsupervised RL environments
+  16:38 - The synthetic data wall
+  17:54 - Self improvement, and what AlphaGo had
+  18:33 - The curve they are chasing
+---
+[music]
+
+>> All right. Hi, everybody. Uh my name's Jack. I'm here to talk about scaling compute on context and also our startup N gram, which launched last week. Um more This isn't going to be like a super detail-oriented talk where I go through a lot of experiments we've been running or talk too much about what our models do. I just want to frame like the
+
+high-level problem of what we call scaling compute on context. People have many names for this. It's maybe like a a sub problem of continual learning or maybe even just the the answer that we see to the problem. Um I guess a little bit about myself at first. I'm Jack. I'm a researcher. I'm
+
+uh part of the startup N gram. You can see me on the left in this picture. We just launched last week with this picture on Twitter. So, if you want to look us up and see more about what we do afterwards, please feel free. I'm also happy to talk after the uh talk concludes. Um so, I'm going to
+
+start with this question about breadth versus depth. This is Terence Tao. He's likely the world's most famous mathematician. And he's also a really heavy user of AI, even like an advocate for AI in math. And one of the things that you'll hear him talk about is how AI knows like every single public mathematical topic and it can uh make connections between things that you wouldn't expect and help sort of like uh bridge gaps in the literature that in in a way that no human even can know because it's read so much. But it maybe
+
+lacks the depth that you would look for from like, for example, a graduate student who spent 5 years practicing in in one area that gets this like almost like subconscious intuition for for the problem space. And so I think I think about what we're doing which is like training your data into models at at a high level as just sort of like learning facts and skills like traditional AI, but at a low level it's it's about depth and like the thing that we're after like this idea of scaling compute on context is the pursuit of depth in in AI. Um I can give you some examples of why I think our approach is important. It's related to like continual learning in general like as other people propose it. So like one thing that models don't have is knowledge of what happens after they're trained. So even
+
+you know Fable whatever five that's coming out today was probably pre-trained with a cutoff I would guess at least a month ago and has no idea if Mexico won their game last night. Actually I don't know I meant to check before the talk, but uh it's nothing to do with my pre-training cutoff because I'm a human I'm capable of acquiring new information. Uh another thing that models are bad at is just sort of like hard difficult long-tail skill and knowledge acquisition that doesn't appear a lot in the training data. So like models still are quite bad at writing AMD kernels. There are not that many good kernels written on AMD GPUs that are public. And
+
+they're intended to acquire this knowledge through pre-training, but they don't because it doesn't occur very often. Um and then I think maybe the most pressing case for you is like why can't I have a model like ChatGPT that knows all of my emails or knows the way that I like to write things or knows like you know where my family and I like to vacation every year and all these little details of your life. And there's a pretty basic reason for this which is that ChatGPT and models like it are trained on public data. So um they don't know things like about your partnership with another uh company like SunTrust Bank. Uh they don't know really anything about you unless you happen to be famous enough to appear in the pre-training data. So, I I feel this is
+
+not just like a intellectual or like academic problem. It's like the core problem with the current paradigm in AI that models cannot acquire new knowledge after training in in a personalized way. So, by definition, models have to be trained on data that's sort of open to the public and they can't learn the depth of like the things that you know. So, just going back to Terrence Tao again, like how do we change this? How do we teach new things to models in a way that lets them acquire uh this kind of expertise or like really deep skill set that we're looking for.
+
+And I'll say there's a lot of names for this. Like people call it um sleep time compute, continual learning, neural memory, write time compute, note taking, dreaming, studying, machine studying. In classical AI, maybe it's called amortized inference. And I think um I'm calling it scaling compute on context. And it's almost all describing the same thing, which is like something people really want. But I think the reason why
+
+it doesn't have like even a set agreed upon name is because the paradigm is like very early and hasn't been solidified the way, for example, pre-training or or post-training have. Um so, maybe I'll take a second and and talk about scaling. Um there's basically three axes that we use to scale AI models. We can train them on more data. We can train them for longer or add compute. Or we can make
+
+the models themselves bigger, like give them more capacity to acquire new information. And this is like the main driver of progress from the last really the entirety of the deep learning revolution comes from these three axes of scaling. And the the results are extremely compelling. Um but they're still limited to like these public data sources. Models are really good at Wikipedia. They know everything
+
+about Reddit, papers on archive, code on GitHub. And now they have this new layer of post training data that's like experts that are hired through data acquisition companies like Scale AI, Surge AI, and Mercor. But, they're still by definition creating publicly available data because it's something that the model could tell to a user. So, scaling is basically only used on on public data, and yet it's so powerful. So, I think I'm trying to go a bit faster, so I'm not going to dwell on this, but this is the plot from Meter about how um models get better, you know, every month and can complete tasks that take a longer time.
+
+And this is purely an artifact of scaling. Um I think the core question that I want to talk to you about today is how do we apply scale to your data? Um I think like scale is clearly the thing that drives progress, you know, it's not necessarily new algorithms or like great new ideas. I think maybe there's an element of data that's important, but really the thing that makes like, you know, the new the new generation of models like Fable and GBT, whatever that's coming out next month, so good is that they they basically scale along all three axes. I'm sure they have new data, they're certainly training for longer, and they make the models bigger. And
+
+this is how models keep getting better and will continue to get better. But, I think the missing element is that this is always on public data. So, models are getting better at, you know, coding in the way that is public on GitHub, they're getting better at doing math in ways that are written in public textbooks, but they're not getting more knowledge of you or your life or your work. And that's what we're trying to change here. So, if we approach the problem from first principles, um I think the core limitation is that you have a fixed data budget. So, like say I want to scale
+
+in some fashion to train a model that knows the data from Ngram better, like our our company. Um we can't create new data. So, like the kind of data scaling axis is out the window. Um I think we also probably agree that we can't train a model from scratch on our data. So, we probably want to start from a pre-trained model. Or maybe
+
+another way to look at it as is there's a ton of information about the outside world that is useful for understanding what happens within our company or like your own context of choice. So, you very likely want to start from a pre-trained model. Um, this leaves us with essentially one axis of scaling, which is compute. And this brings us to the title of the talk today, which is scaling compute on context. Um, just like a small tangent while I have you is that I think one thing that's been beneficial for us to realize is that the amount of data isn't really fixed. There are a lot of ways that you
+
+can get more data afterwards. Like maybe in the pure like math problem that that I'll propose, it's you know, you have this fixed data set and you want to train it into a model. But really if you're like studying a textbook or trying to learn a new language, uh, it's not really like you're limited to the the words of the textbook itself. There's like a lot of stuff you can do. Like you can find other textbooks, you can go on the internet and search for related things. You can even be
+
+proactive and talk to speakers of the language or people who know the thing that you're trying to learn. So, in practice I think the data access is very interesting and not actually fixed. But from like a core idealistic standpoint, the way we think about things is more or less how do you scale more compute given the same data? Um, and for the for the math heads in the room, I'm I'm not going to write any equations, but I think you can think of this as like a a box that you're dropped into and all you have is this one pre-trained model. Maybe it's I don't know, GLM 5.2. Maybe you somehow hacked
+
+into Anthropic and stole the weights of of Claude and now you're trying to do it that way, but you have the pre-trained model and then you have this unstructured data set D. So, maybe this is like all the emails you've ever written. It's all the transcripts from every meeting your company's ever had. It's some very large unstructured corpus. And the question is like, how do we create a better theta that knows D?
+
+And I'm going to walk through like a few ideas that you could try or that people have tried and point to some links and you can also ask me questions at the end. So, core question is something like how to produce a new model, like call it theta the star, that knows D. And I think the definition of know, like this is a very load-bearing term in this in this question and maybe that's where people get the leeway to propose new ideas. But, this is essentially what what you want to do. This is what every continual learning like startup is trying to do. This is
+
+more or less what we're doing at Engram. So, I'll start with a very simple idea, which is, okay, maybe you can just train the model on the data. Like you can use next token prediction and train it like an LLM. And I think you'll find unless you have a D that's so wide it can sort of simulate the effect of pre-training, which no one has, then this doesn't work very well. Um I'll walk through an example real quick.
+
+Say we have this set of like 10K financial reports. You want the model to like know these. You want it to be in the weights. You want the model to answer questions about them. You want the model to be able to create new ones. You want all these
+
+behaviors to be like encoded into theta. Um and then you just train theta on the context that you have. You can get to a loss of like 0.0001. Um and you can end up with a model that knows the data perfectly well.
+
+And then when you generate from it, it basically collapses. So, this strategy, this kind of naive idea of, oh, take the the context that you have and train on it indefinitely. I I one, it's clearly bounded because there's some information in that just gets perfectly transferred into the model and then you no longer learn. So, this is like not an indefinite axis of scaling, but two, it just frankly doesn't work. Like, just doing this kind of next token prediction on the data you have doesn't produce a model that has interesting generalization properties like normal models. Like, it can't answer any
+
+question unless the question is perfectly encoded in the data with its answer, which is like never the case in in practice. Um so, let's think about another idea since this is not quite as easy as we thought. What if we try to kind of trick the model to think the data is in context? Because we know models are really good when you paste stuff into context. Like, in-context learning is is magical. Um
+
+one idea is you can do like compaction, which is similar to the way that, you know, Claude code or Codex or open code, what have you, does compaction. You take this really long context, which is D, and then you try to compress it into some set of KVs that can represent the data to the model in like a very succinct way. And there's like some interesting approaches to do this. You can do it in like a learned way. This is a very cute paper that has like a kind of greedy algorithm for approximating KV compaction. So, basically, if your data
+
+is small enough to fit into context, there are some interesting ways to like compress it to something very small and like pretend like your model knows this. I think there's like multiple problems with this. The main one being it only applies to things that are in context, but it also misses, I think, some of the magic that you can get from from taking gradients. So, there's like an alternate way of doing it, which is you can train the model to think the data is in context. And there's some interesting approaches here. Like, I think Ronak was talking
+
+about on-policy distillation. This is a powerful tool for doing kind of knowledge transfer where you have text and you show it to the model and then you make the model think that the text is in context. That's more or less the trick of on policy distillation. The on policy part just means you kind of update the model throughout training. Um it works. It's it's a pretty good
+
+algorithm. I think there are also some core problems with it, like maybe the main one being like what data do you actually do this with? You can't really distill the raw documents, so techniques like self-study from the cartridges paper on on the left here try to generate like question and answer pairs conditioned on D and then train the model to behave as if it is seeing D in context when it's answering questions. I think this is like close to the behavior you want, but also has some properties that are not necessarily appealing that I'll get to you in a few slides. Um I think there's one more idea that I think is interesting or maybe maybe two.
+
+Um I think a lot of the magic in deep learning or in like LLMs, like the reason why you know, GPT-5 is so amazing is basically because of pre-training. I think there was like a lot of caveats to this statement, but pre-training is amazing for knowledge acquisition. Like I can ask Claude what uh I don't know, result I got in in a paper that I've written and it actually knows this, which is incredible. And you could argue maybe they do some one of these synthetic data tricks, but it more or less is knowledge that's acquired through pre-training. And so one way to teach data to a model is to simulate pre-training in some way. And these are
+
+like three pretty interesting approaches to do that, to like craft synthetic data conditioned on D and then train data for longer on the synthetic data as if you're continuing pre-training. I think there are caveats to this approach, like you sort of overwrite some of the pre-training. I think it's difficult to scale, but I think this is like pretty promising. Maybe like one blocker is you then have to post-train the model after doing this. So, a lot of people don't actually start with good pre-trained base models. They have
+
+post-trained models, which makes this hard. But, I I do like this line of work, and these papers are interesting resources if you're interested in learning more. I need to go faster. There's one more Uh let's skip Andre. There's one more interesting idea, which is you can craft unsupervised reinforcement learning environments and do RL. It's It's pretty
+
+similar to the previous suggestion, except instead of doing some type of distillation, you're just using like RL loss like GRPO or whatever. Um I think all of these are are promising, but also missing maybe some core component. Uh the thing that we're really after is like to give the model more knowledge of D, or to get better depth of your domain. We want to be able to add compute arbitrarily in a way that makes the model better. So, I think none of the approaches I proposed do this.
+
+Um basically for classical machine learning reasons, which is that whatever you do, you have to define the data set, and then you train on the data set, and eventually things saturate. So, even if it's like really hard, unless your model is under parameterized, eventually it will learn all the data. And this doesn't give the property the beautiful scaling properties that we see out of pre-training. It's kind of like a data wall in in the synthetic sense, where when you create synthetic data from D and and train on it, you eventually hit this upper bound where like you've learned all of the synthetic data. And then you have to do it again. And so, I
+
+think a lot of the missing components here are are how do you do it again? Like what's this second stage of of training look like? Like so, you can do almost any of the techniques I just mentioned. You could do, you know, the attention matching, or some type of self-study thing, or some continued pre-training. But, eventually you will fit the data and you'll know some about D, but you won't know everything and you'll no longer have this property where you can add compute and give the model more depth. So, I think a lot of the exciting
+
+work here comes from like this idea of like self-improvement. Um it's a bit overworked as well, but I think this is actually the magic behind a lot of successful RL systems like AlphaGo is that AlphaGo makes its own training questions harder by getting better through training. And so, I think one thing that everyone is looking for is a technique that can make models better, which makes them train themselves better. Or like this is maybe a long way of saying self-improvement. Like you sort of generate data and then the model gets a bit better and then you generate better data um recursively. And I think this is
+
+something that we're working on a lot at Ngram is like how do you make like when we started the company, we we generated curves that look just like this blue curve where no matter sort of how much data we generate or how much we train, we kind of do plateau because there's this almost like natural upper bound to how much you can learn in one go from D. But, I think it turns out that there are more sophisticated things you can do that make the training gradually harder that make the model better over time. So, this is the kind of like platonic graph we're looking for when we talk about scaling compute on context. It's like your emails, for example, the model is just generating a better and better internal model of who you are and what you do and what your goals are, what your value function looks like, and it can help you more and more. Um okay, so I think I'll wrap up here. I
+
+have 1 minute left. That's like a summary of maybe what we think about when we think about doing research at Ngram. It's a little bit abstract, but hopefully that gives you an idea of like what the core research problems are. If you're interested, you feel free to um talk to me after. You can message me online, or even just apply. Just go to
+
+ngr.am.com and we have job postings for various like engineering and research roles. Um, yeah, thank you so much. >> [applause]
+
+[music]

@@ -1,0 +1,148 @@
+---
+video_title: "Adaption Labs: Gradient-Free Continual Learning — Sara Hooker, Adaption"
+video_id: XEd_SRVHBgU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XEd_SRVHBgU
+video_date: 2026-08-12T16:30:19+00:00
+video_description: |
+  Fewer than five thousand people in the world know how to train a frontier model at scale, by Sara Hooker's estimate, and that knowledge travels like an apprenticeship rather than a literature. Modern computer science is 77 years old, two generations, and in that time the route to contributing at the frontier narrowed into one funnel: the right PhD, the right industry lab, the right problem at the right moment. She calls it the unreasonably narrow path, and notes it got compounded in this field by compute, so that a handful of labs build what everyone else uses and whole regions of the world appear nowhere on the map of where breakthroughs happen.
+  
+  Her case that the funnel is about to widen rests on two things. AutoScientist automates the training of models, optimizing the whole loop together from data through alignment and evolving itself per domain, and it beats research staff partly because people carry priors about particular architectures while the search ranges across sizes and across dense and mixture of experts designs. It only started paying off once they controlled data quality alongside the model rather than leaving that to the agent. One nice piece of honesty: the win rates all sit just above 60% because the budget was set to stop there, and lifting that ceiling let them keep climbing. The second reason is her slow death of scaling argument, that pretraining size is no longer the most rewarding axis. That matters for access, because pretraining compute has to be colocated and enormous while the compute that now pays off is distributable. If no lab is going to quadruple model size again on this architecture, recipes and algorithms start to matter more than hoarded GPUs.
+  
+  Speaker info:
+  - https://x.com/sarahookr
+  - https://www.linkedin.com/in/sararosehooker/
+  - https://www.sarahooker.me/
+  
+  Timestamps:
+  0:00 - Seventy seven years of computer science
+  1:15 - From gentleman scientists to professional labs
+  1:56 - The unreasonably narrow path
+  3:13 - GPU poor and GPU rich
+  3:52 - Where breakthroughs come from, and where they do not
+  4:30 - Why we are ripe for a revolution
+  5:08 - AutoScientist
+  5:47 - Why it beats research staff
+  6:24 - It only worked once they controlled the data
+  7:02 - The 60% that was a budget stop
+  7:41 - Where the demand is: medical, legal, science, code
+  8:59 - Languages from day one, and non verifiable tasks
+  10:16 - The compute problem that would undo all this
+  10:53 - The slow death of scaling
+  11:31 - Smaller models overtaking larger ones
+  12:09 - A broader action space, and why that opens the field
+  12:47 - Q&A begins
+  14:06 - Fewer than five thousand people
+  14:43 - Why the cost of asking shapes what gets asked
+  15:57 - Q&A: the safety objection to open frontier AI
+  17:10 - Q&A: parametric against nonparametric storage
+  18:28 - Q&A: are large models still needed for distillation
+  19:04 - Why this architecture has hit its size ceiling
+---
+[music]
+
+>> Amazing. Um it is Oh, sorry. Pardon me. Um it is so lovely to be here. So, I wanted to share today uh some thoughts that I have around who gets to be at the frontier of discovery.
+
+So, modern computer science as a field has only existed for the last 77 years. It's kind of bizarre when you think about it. So, World War II, uh all the transistor technology that was developed for radio, we finally had our first versions of the computer. But, when you think about it, that's only two generations of people working on these tools. However, within that time, even for computer science, who and what and what topics we work on has dramatically changed. And I think it's an interesting
+
+setting because actually, if you look back across science as a whole, how we do discovery has been markedly different uh at different points in time. So, when we started, the whole idea of a researcher was what we call like a gentleman scientist, typically someone with adequate wealth to dabble in a discovery. And these were all individuals, independent researchers. Uh when we uh see like the first associations emerge with the Royal Society in the 1600s, the idea of being a scientist as a full-time job was very special. And these became the predominant spaces for discovery. Why am I talking about this?
+
+Because to be honest, like the professionalization of science uh led to what I would call, and you know, my good friend Rosanne Liu calls, the unreasonably narrow path. So, I'm an AI researcher. Uh this is Yans' actual career. Uh and it's interesting, if you were to be an AI researcher at the forefront, you basically had to follow this exact narrow path. You had to get into the right PhD program. You
+
+had to then go to the right industry lab. You had to do sufficiently interesting work, and then finally you got to contribute to the frontier. This was my story, too. So, a lot of my work has been on efficiency at scale. Uh I did my PhD and worked at DeepMind and a lot of different frontier labs, but this was in many ways um a very aggressively filtered system. If you did
+
+not make it or you were not curious about the right problem at the right time, you didn't have um a place to play at a frontier lab. And this is like the standard successful scientist. Like you have a famous advisor, hopefully. Uh you hopefully get one or two important internships. And what's interesting about this is computer science was really about representing the world, and it was like all the tools that do that. But the
+
+reason why most people got into computer science is the question at the end of it. Like if you can represent the world, what questions can you answer? So, today I'm going to talk about what I think is like one of the most profound and interesting topics, which is like why this is so important when computer science at this is changing. So, I'll also speak to this. It was double compounded in computer science because of the need for compute.
+
+So, this resulted in jokes. Um it's fun that Merve was here. This is her tweet about GPU poor versus GPU rich. Uh it led to barriers of entry on who can contribute frontier AI. So, I put here company A, company B, company C. But to
+
+be honest, if we pulled, I think there would be significant majority votes about who those companies are. But basically a handful of frontier labs have been able to build the technology we use. Um it's also determined who gets to participate in breakthroughs and who doesn't. So, uh this is a map of like what Stanford calls uh where statistically or significant breakthroughs have come through come from, and you can see the whole sections of the world are completely left out. And so for me, uh this is a very important question worth answering. Who
+
+gets to shape the frontier? Who gets to answer the questions at the end of the pursuit? We've seen that the shift has dramatically changed from academia to industry. And it's also meant that we ship the same model to everyone. Uh why that's particularly interesting is that most people intuitively understand that you shouldn't ship the same model to billions of people. And they also
+
+understand that it's not a particularly good use of compute, right? You're spending the same amount of compute on everything. And some problems are hard and some are very easy. So where does that leave us? What's my talk for today? Um I would like to say
+
+that we are ripe for a revolution. And we are ripe for a revolution in who gets to participate at the frontier of AI. Uh I'll tell you two reasons why I'm bullish on this. Um I'll definitely cover one, and then I'll actually see interest and timing cuz I want to leave plenty of time for questions. I think that's you know, unless you have a few questions and a bit of banter, these things can be kind of boring. So we'll
+
+see, but I'll cover one definitely that I'm actively thinking about. And this is what if we could allow anyone to build the same frontier intelligence um as that in labs. And I've been in a few labs. I've done my tour of duty. And this is the core question I care about now is like how do you build intelligence that continuously adapts and that builders everywhere can have more control.
+
+So instead of taking years of training to learn how to build the tools, scientists just skipped the questions. So a few weeks ago we released Auto Scientist. And Auto Scientist is really about how do you automate the training of models itself. Um I'll share a few things that are really interesting about this is that one it's um co-optimizes the entire loop. So it's like from data to alignment uh and it it chooses and self-evolves based upon the domain and the type of data.
+
+Um what's interesting as well is that it actually outperforms research staff. And mainly because like a lot of our research staff has experience with certain model types, and we're testing it across many different model architectures, different different size models, um as well as like dense and mixture of experts. And that search space is a lot broader. And so, exploiting it using like how do you how do you self-improve from experience and scale is very effective. Um I think this is very interesting.
+
+This only worked when we co-optimized the data. Uh so, there's a lot of auto research projects right now, which basically treat data as like um the agent is it decides whether to create data or not or what to do. Frankly, we did not get the returns for like how much you can squeeze out of performance until you control for data quality. So, we actually co-optimized based on all the adaptation we did with the data exactly what we would do with the model. And that was super interesting. It speaks to like the need
+
+to control the entire flow. Um What's fun about this is like really what auto scientists do and it's a combines all the knowledge it gained from the adaptive data component with also the knowledge of the domain and also the ability to self-improve for a domain and to learn from other components of that domain. Um What What is a cheeky fact and this is quite fun. You'll notice all these percentages for win rates are like 60 plus. Um that's because we put the budget stopping it stopping it above 60.
+
+So, like once it was above 60, the our our genetic flow could exit. But we since like removed that barrier and like you can see it just go up over time, which is super fascinating. Um and then I think what's interesting is like it changes a lot of the hyperparameters. Typically, that humans are much more wary about changing all at once. And so, you get massive exploitation of the search space. I see
+
+this is crucial for like how do you reduce the amount of compute you use for customization because you train with much more predictability. But also, how do you um leverage like your domain knowledge to really unlock how you build frontier AI. Um and this was fun. We we did uh we announced a beta like 4 weeks ago. The excitement is most acute for like medical and sciences. And that's
+
+largely I think and legal and and code as well. But these are like domains where typically current models fall short. And also domains where um in many ways like the degree of last mile customization is really acute. Um and this is the core point. I you know, I think this is fun. I think I might even
+
+have time to cover The other point I wanted to make about why now is very important for like changing who shapes. But this really the main factor that this does is it increases your innovation cycle. Like and it also increases the likelihood that when you train and spend compute you'll succeed. And those combined factors are super interesting. Like one thing that we're doing next is extending that. So even your test time compute
+
+should be adaptive based on your task. Um So this kind of brings me back to where I started. And like kind of the grumpy statement I said, which is like you know, we have this rarefied super narrow compounding issue of barriers to entry. One is like that you need to do this um very narrow funnel of who gets to build frontier AI. And the other is that um typically compute and cost really dominate. Um we want to change that.
+
+Like we decided okay, we're going to cover languages from day one, 242 languages. And also like a big interest for us is actually non-verifiable tasks. I think this is super interesting because um this is really the bulk of like everyday tasks that people do. And um it's really where the meat of like what is interesting for progress is going to be over the next year. Um and this leads me into our mandate.
+
+We care deeply about how do you accelerate learning in a way that models should be able to um learn from their environment. So right now we've moved from a era of like the the model is monolithic. You know, when I was at um different parts of my research career, basically a whole team would be around building a model. You give it to someone else to serve, and like you have someone else do the front end. And actually now, like the most important intelligence is a model who interacts. And so, this idea
+
+of how efficiently are you going to interact, how will you continuously learn from the environment, is pretty core. And um I think about it a lot. So, um let's see. I think I do have time, right? How are we doing for time? Oh, I
+
+do. I have plenty. This is lovely. So, we'll have time for questions, and I'll share a little bit about what I think um the next uh component is. I think core to this, so if we just did auto scientist, but it still took enormous compute to do frontier AI trainings, I think we'd be in a bit of a pickle, right? Like I'd be
+
+saying, "Oh great, you can use this agent, but don't worry, just bring your uh 10,000 GPUs with you." But, I think there's another trend, which I think makes this very important timing, and rooms like this probably much more optimistic than like have been in a few years ago about who can build frontier AI. Um and one of that is like the rules of like where you get rate of return for computer are totally changing. So, um I wrote a very paper about this called So Death of Scaling. Um but empirically, we do now know that um pre-training size in particular is not your most lucrative axis of scale. And what does this mean?
+
+Like if pre-training scale isn't going to dominate performance, it actually really greatly changes who can create the best recipes for innovation, because pre-training compute typically has to be co-located. Um it has to be uh in many ways large volume to accommodate for redundancy. Inference compute and other places where you actually apply compute, typically you can have much more like distributed. It's also much more higher return given the amount of flops. And so, it's interesting when we talk about what is the state of pre-training compute, we know it's not giving the same returns largely because our architecture is saturated. So, um we see
+
+much smaller models outperforming much larger ones. Uh this is like the Open LLM leaderboard, and this is like the daily submission of like the best small model under 13B versus all the larger models. Um and you can see over time that ratio totally flips. Um and also there's kind of the grumpy assessment that most recent models that have severely um played with just increasing model size haven't provided the same stepwise change um as their predecessors. And a lot of that is because where the most returns for performance are now are on a broader action space.
+
+Um and this is really what I was getting at when we move from an algorithm to we are expanding optimization space in new places. And what's the fun about that is that these are new places where um the barriers to entry are much more nimble, and where recipe and algorithm and research matters again. Um and things like how do you automate that discovery? Um and so this is what I'll state, and I think then we should open up for questions. Um and I would encourage good grumpy questions or fun positions. Let's
+
+make the use of the time. I know I was told earlier that almost no talks have time for questions. I find that so disappointing, so um so we'll need some brave people to start the conversation. Um but I will say this means we're better off, and I would say it's a very good time to be like working on intelligence because instead of just a handful of people getting to getting to create it, it's much more now about the question you want to answer at the end of the day. The reason why people did a computer science PhD was to learn the tools to get to the question, and now you can just get to the question, which is super meaningful. Um
+
+okay, let me open up. Where should we start? We um have an abundance. I hear there's no microphone. So, if you want to ask a question, you want to make a statement, I will indulge a statement if it's interesting.
+
+And yeah, go for it. Just raise your hand and I'll I'll repeat it afterwards. Let me just get to the end of this in case people want to reach me afterwards. Nice. Yes, go ahead.
+
+Gentleman in the fourth row. Go for it. >> You mentioned uh you know uh AI from here will be more democratized. Can you point to like how? >> So, I think how it's twofold. One is
+
+there's very few people who know how to train frontier models. I would say realistically probably less than 5,000 in the world at scale. I think that type of knowledge, that's a very exploitable search space. And actually as humans, all those configurations, we're not particularly good at. It's kind of like secret knowledge we pass as if, you know, we're apprentices.
+
+So, that's one. Like once you automate a lot of that knowledge, you just accelerate innovation cycles. Which means that you can explore and do more questions. Typically, what people I think often miss is that the cost of asking something informs what is asked. And if you make it cheaper to ask something, you change like the volume of things that are asked, which is super interesting. The other reason though, I
+
+do think it's very much a facet of like the changing nature of compute. So, agentic compute, post-training compute matters a significant amount for performance. That does not require the same type of um I dare I say hoarding of GPUs. >> [laughter] >> But like I think it it's very different compute purchasing dynamics. And again, it means that the person with the best idea has a higher chance of winning.
+
+Which is fun. Nice. What else? Who wants to go? I see Yeah, we can go up here and then I saw a hand back there. Okay, yes, I do see
+
+you. The glare is high, but you go first and then we'll come up here. >> So, Frontier Labs care a lot about safety. So, one of the challenges in safety
+
+>> Yeah, so the question I'll just repeat it so cuz I think there's probably people who want to know who are in the room. So the question was one of the I guess the counterpoints on some Frontier Labs about not enabling Frontier AI but outside is that is a safety question. So I think it would be I definitely am not one of those people who who says that open source doesn't carry any risk. So when you make a tool more readily available, there's a profile of risk associated with it. Um Auto Scientists is to be fair like it's about enabling people to customize their models. You
+
+can think of that as like a slightly different question from whether those are open source. It's giving people way more control. Whether that's local or private or within that company, it's about like how do they own their own intelligence? Um what do I think broadly about the impact of open source on safety? You can do so much the dynamic has often conflated like that real risk of like wider access with slight sense that that it it it restrains who can actually participate and I think that's a delicate balance. And I think you have
+
+to acknowledge risk by also navigating that and acknowledging that it limits who can participate. Yeah, so nuanced answer. So I I guess I should be more bombastic on that one but I I guess I have been in this discussion a few times and I find the binary views on other sides I feel like they miss a lot. But anyways, okay, go ahead.
+
+Oh, I think for for automating and speeding up learning, one of the core questions is how do you balance what you store in the parametric space and the non-parametric space? And actually, one of the most interesting things, I mentioned that this only work because we co-optimized data and model, um it will only work to do like an AutoScientist for harnesses if you also co-optimize it with a model. And so, it's interesting, it's actually a long horizon problem, and that's super fascinating to think about where you're optimizing the choices for each and co-training, which is cool. Nice. Uh I think we have time for maybe two more and then we can I'll pass on to the next speaker. Nice, go
+
+ahead. >> I have a question. We talked a little bit about this actually working on the post-training side of the models is actually cheaper than doing pre-training with public data. But like still, especially talking like really large models, like reinforcement learning, even fine-tuning is still pretty like GPU-intensive, so like you talked a little bit about like smaller models. But I still think that most like frontier smaller models still rely on like the bigger models to distill knowledge like downwards, not necessarily to be trained. So, how do
+
+you see this like like for the future, how to work like with these smaller models, how they can be start working without it being trained without depending on these larger models? >> Yeah, actually that's an excellent point. I think the question amounts to two points. One, are larger models necessary for distillation benefits? And then second, so frontier models are still pretty large.
+
+Um so, I think for the second one, frontier models are still pretty large, yes. I don't think I'm arguing that you um I I My argument is slightly different, and my argument is in no frontier AI lab is going to four exercise their model again for pre-training. So, it's almost like we know we're at an opposite for this architecture. If someone comes out with a new architecture, that's totally different, you can the architecture determines your ceiling, and I'm saying we are probably at the ceiling of size, which means that that's fine because it means okay, it's what you innovate within that. Um so, so size does matter. I I that's that's a
+
+very good point to bring up. Meaning I'm not advocating everyone use a 0.8B, but I am saying that we now have a more equal feeling for playing field at the the top. Second point is interesting, distillation like the impact certainly. So data quality in general means you use capacity a lot more. So you what you will see in
+
+pre-training is instead of the size people are just moving post-training further back, which is very fascinating and a bigger lever. So I agree distillation is helpful. It's just that again we've hit the ceiling and so it's almost like no one is going to supersize their model or if they do it's not clear it's beneficial except for small size of the distribution, which is very much the long tail and that's kind of interesting like where that trade-off is where worth that much pre-training compute. So very good question. One more and then I think we are done. Yes, go
+
+ahead.
+
+Yeah, it's actually in beta. So you can I shared here. You can try it in beta. So we actually are offering the GPUs for free. Okay, oh that's a nice question.
+
+>> [laughter] >> I promise I don't know this gentleman. But yes, I think actually we're trying to remove the compute hurdle and I think it's quite cool to see. So feel free to take a look at the beta. Nice, lovely. Thank you so much. Really nice. Thank
+
+you.

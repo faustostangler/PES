@@ -1,0 +1,110 @@
+---
+video_title: "Lessons from Studying Every Memory System — Shlok Khemani, Independent"
+video_id: 5ZGyKWjQDr0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5ZGyKWjQDr0
+video_date: 2026-08-12T18:30:06+00:00
+video_description: |
+  A profile ChatGPT keeps on Shlok Khemani says he travelled to Turkey in 2025. He never has. The memory came from conversations where he was choosing between Turkey and Thailand, he went to Thailand, and the profile kept both with overlapping dates. What bothers him is not the mistake but the incuriosity: nothing notices the conflict, and the evidence to settle it was sitting in his email as flight and hotel bookings. He calls that a product problem, not a technology one.
+  
+  The rest is a year of reverse engineering how consumer memory systems are built, all of it his reading from the outside rather than anything documented. By his account ChatGPT went from a user managed list of facts to a running profile rebuilt in the background, roughly 4,000 tokens of dense keyword clues he could only inspect by jailbreaking his way to it. Claude started opposite, with no profile and two retrieval tools over past conversations, then added one about a quarter the size, in full sentences, refreshed daily and visible in settings. His frame for the difference is that memory is a function of compute: a profile costs to maintain and costs again in every context window it enters, so a large profile updated rarely and a small one updated daily are two answers to one budget question.
+  
+  Speaker info:
+  - https://x.com/shloked
+  - https://www.linkedin.com/in/shlokkhemani/
+  - https://shloked.com
+  
+  Timestamps:
+  0:00 - What memory means here: consumer personalization
+  2:09 - ChatGPT memory v1, a list of facts
+  4:08 - The running profile arrives
+  6:04 - The trip that never happened
+  6:45 - A profile you cannot look at
+  7:23 - Claude's first version, tools instead of a profile
+  8:03 - Publishing that they were opposites
+  9:18 - Three years of convergence
+  11:14 - There is no single way to do memory
+  12:30 - Memory is a function of compute
+  13:47 - Continual learning is already here
+  15:39 - The context problem no architecture solves
+  17:34 - Products that each know you separately
+---
+Okay. Uh, hi everyone. I'm Schllo and I've spent the past year studying different memory systems. Now before I get started, one thing I've realized speaking to people over the last two days is that memory is a very overloaded term now. It can mean a lot of different things. So when I talk
+
+about memory today, it is going to be in the context of personalization, especially for consumer AI applications. Now a little bit about me. My claim to fame, the reason I get to speak to you here is that I've spent the past year trying to reverse engineer how products like ChatGpt, Claude, Gemini, and Poke implement their memory systems. And I've then worked with multiple teams across different domains in helping them design their memory. I'm going to break the talk down into two parts. Uh first, we're going to look
+
+at how memory has evolved over the past 3 years. especially in the context of chat, GPT, and Claude. And then in part two, I'm going to discuss some of the lessons I've learned, maybe a rant, and uh where I think all of this is going. To kick things off, we go back to ancient times, uh which in our industry is 2023. This is, uh, Chat GPT just after the launch of GPD4.
+
+Now you could have back and forth conversations within a single thread and context was maintained inside that thread but as soon as you started a new conversation nothing was carried over. Now for early adopters this wasn't a problem. GPT4 was such an amazing model that if we ever had the need to carry context we would do so by hand. But as chat GPT started becoming more popular, as regular people started using it for things like learning, cooking, uh as a companion, the need for some sort of memory system became really apparent. So in February of 2024, we got Chad GPT memory v1.
+
+And what you could do is you could ask Chad GPT to remember things about you. So you could say things like, "Hey, remember that I'm vegetarian." And Chad GPD would extract what it thought was a fact, which is that the user is vegetarian, store it in a list of memories, and this list was then added to the context window for every single conversation. You could also then go into settings and view this list of memories. And if you thought that something didn't apply anymore, you could delete a memory.
+
+Now, as the first serious memory implementation within our industry, I think this was a really decent effort, but there were also some fundamental flaws with it. The biggest one was that as a user, because you could see every time a memory was created, it felt like you were responsible for both creating memories while you were just trying to have a conversation. So, the burden of memory management fell to the user. Also, if you notice this list of memories here, these held true at the time they were being created, but that doesn't necessarily hold true over time. For example, it says that Schllo is going to Bengaluru. Now, I obviously I'm an SF
+
+right now. I am not going to Bengaluru, but this fact, this memory is still added to my context window today. So, staleness was another huge problem with this version of chat GPT's memory. A little more than a year later, April of 2025, Chad GPT released V2 of its memory. And this was a little more sophisticated.
+
+The most important addition was this thing called user knowledge memories. Uh I'm just going to call it a running profile for the rest of this talk. And what a running profile really is is that every few days, Chad GPD looks at all the conversations you've had with it. It extracts anything it thinks is important for it to know about you and it updates this profile that it maintains on you. Now this updation process is also what a bunch of folks called dream now called dreaming. Uh how many of you all were
+
+there for Lance Martin's talk yesterday? Okay, not many but he did a great talk on this. So every few days, Chat GP looks at the new conversations you're having, uh, updates your profile, and then this updated profile is added to the context window for every single new conversation. These are two excerpts from my running profile. I want you to notice a few things. First, these are extremely dense
+
+memories. So ChatG tries to pack in as much context as it can within every single memory. What's what's essentially happening here is that they're trying to put in keywords almost like clues and because LLM especially the frontier models today are so good at inferring context from limited information. When you're having a conversation, it connects these clues to what you're talking about. Also, these are just two of 16 different sections in my profile. Other sections
+
+include my personal life, things I'm working on. Uh in total, my profile is almost 4,000 tokens long. And because these updates are happening happening asynchronously, they're happening in the background. This new version does away with the flaw we discussed in V1, which is the burden of user management was taken up. The burden of memory management was taken away from the user.
+
+But I want you to notice the highlighted memory. This is about places I traveled to in 2025. But if you pay attention, it says Thailand and Turkey, but the dates are overlapping. And that's because the source of this memory was conversations I was having with Chad GPT deciding between where to go among these two places. Now I did end up going to Thailand. I've never been to Turkey, but
+
+Chad GPT still says that I've been to Turkey in 2025. So the stainless problem with V2 didn't completely go away. Another very important thing is that if you go to your settings, chat GPT doesn't let you view this raw profile. So you could view your memories from v1 your raw profile is not visible to you. Now you may ask sllo how did you see your profile then that's because this prompt works really well if you want to jailbreak chat gpt uh and view your raw profile you might have to attempt a few times try different thinking modes but pro enough and you shall receive.
+
+August of 2025 uh claude released its first version of memory. This surprised me a bit because if you compare chat GPT and claude, they are very similar applications, right? So you have a chat box, you have back and forth conversations, you have a list of previous conversations, you can start a new conversation. My assumption going into study claude was that the memory systems would also be similarly designed. Not the case at least for V1. So in V1
+
+of Claude, you had no user profile. You had no list of facts. Instead, the model was given two tools. It was given a tool to search over previous conversations by keyword or topic and it was given another tool to search over conversations by time period. So queries like what did we discuss last week or what did we discuss at the start of November of 2025.
+
+So in van every single context every single conversation starts fresh with no context on the user and when the model thinks that it needs to retrieve something it can do so on demand. Uh on September 11 of last year, I released a blog post saying Claude's memory architecture is the opposite of chat GPTs. This hit the hacker news front page. Finally, on that very day, Claude released V2 of its memory and uh they added a running profile similar to chat GPT, but with a few differences. First, Claude made this profile visible to users. So you could go to settings
+
+and you could view your raw profile. Second, this profile was a,000 tokens. So it was much smaller than chat GPT's 4,000 tokens. And also if you notice, these are complete sentences rather than a dense keyword approach of chat GPT. So less dense and smaller.
+
+Claude's profile updates every 24 hours. For chat GPT, it's every few days. And Claude also let you let the user make explicit edits to this profile. So you could request for an edit and that edit would lead to a reynthesis of the profile. It gave you an interface to manage previous edits and you could delete the things that no longer held true. And
+
+this is how Claude's memory works even today. So it hasn't changed since September of last year. We have seen two updates within chat GPT's memory this year though. The first was it added a tool to look over past conversations like we just saw with Claude. uh so the model can retrieve summarized context based on queries it makes and then a month ago uh start of June chat GPT finally made user profile visible to them somewhat so what you can see is a LLM generated summary of your profile which is weird because your profile is already an LLM generated summary of your conversations uh it's all a bit confusing I've written about it but it is visible in some sense.
+
+You could also request explicit edits to your profile. And with this update, Chad GPT deprecated B1 the fact list from its memory system. So what we've seen here is a convergence after 3 years of each of these products evolving independently where they both now have a running profile. This profile is visible and editable again somewhat uh and the model has tools to look over past conversations. Okay. So what can we learn from this
+
+evolution and where are things going? I think the biggest lesson for me is that there is no single way to do memory. It wasn't too long ago that everyone including me assumed that rag was the way to go go about memory where you would take conversations you would chunk them uh create embeddings put them in a vector store and then as user queries came in do some sort of semantic search but as we saw neither chat gi nor claude really do this instead they both evolved independently using different approaches and while the general architectures have converged the spec specific implementation details are still very different. And then if you look at Gemini, it also has a running profile, but each memory comes with detailed timing logs. So when was it created, when was it last updated? And then if you look at agents
+
+like cloud code, openclaw, Hermes, they have completely different memory systems, right? With markdown files, heartbeat, knowledge bases, skills. The point being that there is no one way to do memory. The implications of this is that memory cannot be outsourced. If you're a serious team, you do not outsource memory. It is something that
+
+you build alongside your product. Your memory system evolves with your product and it cannot be thought of uh as an afterthought. And there is plenty of evidence for this. So if you look at all of the top consumer products today across different categories, each of these has some form of memory. Yet none of them outsource it. All of
+
+them build memory inhouse. Lesson two, memory is a function of compute. What does that mean? Let's look at the costs associated with a running profile. So there are two types of costs. There is a cost to maintain a
+
+profile. Now that depends on how frequently you update it and how much compute you apply to each update. And then because these profiles are part of the context window for every single conversation, there's a cost of serving which is the longer the profile the more it costs to serve. Now thought experiment. If you were to design the ideal memory system with no restraints, what would you do?
+
+You might want to update um your profile every hour or maybe after every conversation. uh you might want to task Fable with a bunch of Opus sub agents for the update itself. Uh and why stop at 4,000 tokens? Why not make it 400,000 tokens? Store every single thing you would want about the user.
+
+Unfortunately, we live we live in a GPU constrainted world and trade-offs have to be made and you can see that happening here. So, chat GPT the profile length is 4,000 tokens. It updates every few days. So they have a higher serving cost for a lower update cost and for claude it's a thousand tokens updates every 24 hours. So they make the exact opposite tradeoff and this is what I mean by memory is a function of compute.
+
+You have to really think about how much compute you want to put into memory. Third we had a bunch of talks about continual learning today. I'm not an expert here but what I would say is that continual learning is already here. Going back to running profiles, what exactly is happening here? Your running profile starts with something that the model knows about you. This is then
+
+applied to every single conversation. Each of these conversations bring in new information. This new information is then synthesized through the streaming process back into the profile and then this profile dictates for the conversations. And this loop keeps repeating itself again and again and again. And what you have is a continual learning process. Now
+
+obviously this learning loop is happening outside the weights and a big question particularly for consumer AI is will this process ever make its way into the weights. Now at an obviously updating weights um training models is an expensive process. uh continuous learning does make sense at an enterprise level because the costs of these models are amotized across different employees different customers but that's not the case and at an individual level right so big big open questions that I don't know don't yet know the answers to which is will each of us get our own self learning model what data do we need to kick the CL process off and how do we generate it and finally who's going to pay for this How about the economics for this work? Uh Guan recently wrote an essay called Guardian Angels where he explores this topic in beautiful detail. And if you're interested in what the future for one model a person looks like, I would recommend reading this.
+
+Finally, uh my rant is that we have a massive context problem. You could have the best memory architecture in the world. You could pour infinite amounts of compute into it. You could have continuous learning working at an individual level where the every single data point you bring up is somehow perfectly integrated into the model weights. Yet your memory system is capped by how much context it can gather about you.
+
+Let's go back to the example we discussed earlier. which was the conflict between where I traveled to uh in the summer of 2025. These are the two source conversations. Again, I was trying to use chat GPT to decide between which of these two countries to go to. Now, the decision to go to Thailand was actually made in a conversation I had with my partner in person and chat GPT could couldn't reason over this or couldn't listen to this. But there were
+
+also traces of this conversation in my emails because I I had flight and hotel bookings for Thailand. But because even if chat GPD is connected to my email, it doesn't reason over my email and it doesn't update my profile over my email, it couldn't resolve this conflict. And I think that's okay. Uh it's understandable. But what really bothers me is that chat GPD today doesn't realize that there is a conflict. It's not curious
+
+about trying to fill in gaps in the information it knows about me. And this is particularly interesting and also infuriating because the tech it's not a technology problem. It's a product problem. There is no fundamental reason from an LLM level that these things can't be solved. Uh it's just that a products today are not designed to help us with this.
+
+So my personal stack today is a bunch of chat bots, assistants, vertical specific applications, agents, and even hardware devices. Each of these products is trying to build its own memory of me. None of these memories are shared with each other. So I have to rebuild context within every single product from scratch. Every time when something in my life changes, I have to individually update all of them.
+
+And then I have a bunch of very rich existing context sources, right? my email, calendar, uh, photos. None of these products are able to reason over my existing very rich context sources. So for me, none of this feels like 2026. And what I keep asking myself every day is when will personal AI feel like personal AI?
+
+All of that frustration aside, I still think we're very early. Memory for AI is just a three-year-old field. Memory is also foundational to how humans interact with AI. And because I hope to be talking to AIS all my life, and I know that's going to be the case for every single one of us here today, memory is something that's going to be important for the rest of human history. And uh there's so much left to build.
+
+That's it from me. Uh thank you so much. You can find my website. You can find me on Twitter. Have a great rest of the conference. [applause]
+
+>> [music]

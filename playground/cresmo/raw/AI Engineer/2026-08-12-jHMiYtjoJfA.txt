@@ -1,0 +1,132 @@
+---
+video_title: "Designing Agents (The Floor Is the Frontier) — Ben Hylak, Raindrop"
+video_id: jHMiYtjoJfA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jHMiYtjoJfA
+video_date: 2026-08-12T18:00:34+00:00
+video_description: |
+  Build the thousand example eval suite everyone tells you to build, switch harnesses, and 80% of it stops meaning anything. Ben Hylak's complaint is that eval advice is still written for the chatbot era, back when you knew the answer to nearly every question a user would ask. His reframing is that the useful question is not what issues your agent has, since it will have effectively infinite issues, but which ones matter. That turns on the gap between your ceiling, the most impressive thing your agent can do, and your floor, the worst. The floor is what breaks trust: recommending a competitor, deleting data, sending slop to a customer because the agent happened to have email access.
+  
+  The practical core is two numbers per issue, when it started and what share of users it hits. Learning that something began yesterday is what makes you ask what changed. Learning it hit three users rather than a hundred thousand is what tells you whether to care at all. From there he offers three findings from running this at Raindrop. Clustering traces is not issue detection, because boundaries drift, you do not control them, and what counts as one issue is specific to your product, so a cluster called price issues quietly merges a wrong quote with a wrong refund that have nothing in common. Code mode scales to traces, meaning you write classifiers and run them in a sandbox at production volume. And agents are poor at finding anomalies while being good at investigating them, so surface something deterministic like a keyword spike first and hand them that. Underneath all of it is the argument that evals now belong in your repo as tests rather than in a prompt playground, because the harness is the product.
+  
+  Speaker info:
+  - https://x.com/benhylak
+  - https://www.linkedin.com/in/benhylak/
+  
+  Timestamps:
+  0:00 - Raising the floor, and how little continual learning is real
+  2:07 - What agents looked like a year ago
+  3:23 - Why agent creativity cuts both ways
+  4:01 - Eval advice stuck in the chatbot era
+  4:38 - Switch harnesses and 80% of your evals break
+  5:16 - Safety without theater
+  5:57 - What Raindrop sees in production
+  7:12 - The real question: how do you make it better
+  8:26 - Benchmark maxer or floor raiser
+  9:05 - Why labs and companies have different jobs
+  9:42 - How much responsibility sits with the user
+  10:56 - Ceiling against floor, and which breaks trust
+  11:35 - Offline evals should look like tests
+  12:52 - Keep evals as code
+  13:30 - Two things you must know about every issue
+  14:45 - How many users do you actually have
+  16:02 - Lesson one: clusters are not issues
+  17:17 - Why cluster boundaries fail you
+  18:35 - Lesson two: code mode scales to traces
+  19:14 - Lesson three: agents cannot spot anomalies
+---
+[music]
+
+>> Uh thank you all for coming, first of all. And um I want to talk today about uh raising the floor. So, it's this kind of a term we use a lot. Um mainly I want to talk about very, very practical, like what do I actually see, what do we actually see working in the real world, um how do people how are people making their agents better? So, the first thing I want to say is like um I could just I could just say a bunch of stuff. Like I think, you know,
+
+um the title of this track is like continual learning. I think it's like notable that in the real world, there's really not that much continual learning, right? Uh if you look at like the labs, if you look at like products that are in the real world, you really don't see a lot of continual learning. So, um I think it's very easy to like I could, you know, spend 20 minutes just talking about like, "Hey, here's a bunch of frameworks. Here's a bunch of like really nice terms." But what I'd rather
+
+do is actually turn this a little bit into a dialogue. Um this is not just because I procrastinated making a bunch of slides and because Fable was delayed and I was counting on that to make the slides, but also because like the reality is that um there aren't really good standards for these things, right? Like there there's not some one-size-fits-all uh solution. And so, I'm going to I do have slides, believe it or not, but what we're also going to do is sort of like I'd like to hear from you guys, people actually building agents. Like where where have the, you know, Twitter, you know, eval discourse, where has that failed you, right? Where
+
+where is it not working? What are the things you're actually hitting in real life? I'd like to talk about that. So, please like right now start thinking about your questions, start thinking about the annoying parts of your flow um when you're building agents. And I'd like to keep a lot of time for Q&A.
+
+Um so, the reality is like a year ago, agents barely existed. Like I remember being at like a speaker dinner here like a year ago and we're like, yeah, do you think like agents will like, you know, what you know, will they like keep getting better? Will they not? Um, and I think the crazy thing is like, you know, we're at we were at this point in time a year ago where everything was like a chatbot mostly, right? Um, I think people here, people in this room probably, you know, were a little further ahead. Um,
+
+it was it was a lot simpler then. Uh, if you remember Evals, the Eval discourse for like a year or two ago, it would be like, oh, what is the, you know, capital of the United States? And you're like, yeah, and you want to make sure that it returns Washington, D.C. and um, that was an easier time, right? It was like
+
+chatbots were so much more limited in their sort of flexibility that it was kind of easy to like uh, to do a bunch of like, you know, fact-checking things. Like you knew the answer to most questions your users would ask almost is is another way of saying that. At least like a like 80% of them or 90% of them. Um, but yeah, we have agents being deployed in finance, healthcare, defense. And um, I was actually really against the word. One of my like worst takes is
+
+like uh, early agents. I was like, ah, I hate the word agent. Um, I think there were a lot of people that felt the same. It was like, come on, it's an LLM, it's a whatever. But I I actually think it's it's valuable because I think we're seeing that agents are this like almost self-aware entity, right? They kind of
+
+like run around their environment, they have these tools they're using. Um, when they hit, you know, roadblocks, they start getting really creative, right? And that's what makes agents really powerful, but like that's also what makes them like catastrophic oh, well, I'll just, you know, I'll just like uh, decompile this and I'll just, you know, like do this thing that you had no idea that you could have never imagined. Um, sometimes those solutions are are helpful, right? Sometimes they're they're actually pretty harmful. Um, but
+
+yeah, what's very certain is we've come a very long way from like next token prediction. Like if you think about chatbots, it was literally just like, oh, it was like you know it's going to what is the next likely word? It was very easy to reason about. Um and I think the thing that you know on the evaluation front, I think the reality is like most of the things you'd read uh online about evals um are really still like stuck in this chatbot era. It's very like well like come up with your like 1,000, you know, eval data set and it's like the reality is like nobody's doing that. Um very few people
+
+anyway, sorry if you are. Um and uh you know, I think what teams have seen over and over again is like yeah, you can do that uh but those evals like break as soon as you have a new model, as soon as you like switch harnesses, like you have a bunch of like tools that you're like oh yeah, I'm going to make sure that I'm going to write an eval where it has to like call this tool if I ask it this question and it's like oh then you switch to like Claude code CLI and now 80% of your evals suck and it's like okay, you can keep doing that but the reality is like the one thing I could promise you is that things are going to keep changing. Like we're not done and so I'd be very careful about you know, uh investing you know, months in some sort of eval set that's going to you know, slow you down, right? I think the whole thing here is like you want more safety but you you don't want theater and I think that again, I think the evals as has been sort of uh prescribed by uh what I call like big eval. Um I I think that there's this reality where it's kind of like oh you should really should eval but then like do you actually delay, you know, uh including a new you know, upgrading to the new model on your product in your products? Do you actually delay it 2
+
+weeks to update your evals or not, right? I I think most people would say no. Um so uh I'm the CTO and co-founder of this company called Raindrop. Um very quickly is like we find critical issues in production agents, we verify those fixes actually work without unexpected side effects, and we also simulate changes before they land in production um based on past behavior. Uh we're used by the best AI companies in the world and Fortune 100s, a lot of logos I'm not allowed to put on here yet.
+
+Um but companies like Vercel, Speak, Framer, um and uh I think what it means is we get this like amazing peak into like again, what is actually working in the real world. I think one of our like tenants as a company is that things are changing constantly and we have to change what we're doing constantly. And so I think uh if we we try to be very very honest with our both ourselves and our customers like what works and what does not work. We try not to sell things that don't work. Um just again, two two things. We have
+
+this like uh open-source tool that like thousands of people use, maybe you use it yourself. It's called Workshop. Um so that's made by us. It's like an open-source tracing tool. It's really really cool if you're trying to experiment with like self-healing loops.
+
+I think it's the best way to do that because if there's anything it can't do, uh your agent can just like add it, which is pretty cool. Um and so highly highly recommend it. Like again, I know thousands of people use it like people I anyway, I bump into people all the time that use it. Raindrop is like our kind of hosted offering that does issue detection. Think of it like Sentry, but detects issues for agents. Sorry.
+
+Um and we also make howtoeval.com. And so I think it's one of the most popular resources on how to evaluate AI agents. It is again, the link is literally in the name. It's how to eval.com.
+
+Um and I it's it's uh uh our attempt at a very very no-bullshit guide at at what actually works. And I'll be talking a little bit about it today. Um I think the like root question that we're trying to figure out today together is how do you make your your agent better, right? It's not even like what issues does your agent have? Uh it is actually how to make your agent better because your agent will have issues that potentially you can't solve or not exactly worth solving, right? Like
+
+um I think that we saw this uh over and over again where it's like um you know, you can imagine that um th- there are some things that you're like better off waiting for like, you know, we know Fable exists now. Maybe Fable, you know, like should you train your own like Fable level model? It's like probably not, right? Um, and there'll be benefits uh when you can just incorporate that into your product. Um, and so there's this actual balance, like how do how do I actually make my agent better uh with the tools that I have?
+
+When the way that we start thinking about it with customers is something like this, which is like, are you a benchmark maxer or a floor raiser? Um, I think that one of the problems when we talk about evaluating agents is that the terms are really confused. Like you hear OpenAI has a new like, you know, uh eval benchmark. And um, you know, they have evals, they run evals. And then you hear like, oh, well, companies have evals.
+
+There's like online evals. And like, it it like the word eval is like uh more or less a meaningless word. It literally is just like you're evaluating something, right? It's like a test in some cases. It's a So, it's a little confusing. Um,
+
+I think it's helpful like I think what it means is that like uh companies start borrowing like the language that like labs are using and like even copying similar benchmarks, but they're doing completely different things, right? Like they have completely different tools at their disposal. Like what companies are, you know, like the companies that are downstream of models, uh they just have very, very different responsibilities than labs. Um, like labs are trying to make these super general purpose things. When they fail, at least on like an API level, my my say if they get something wrong, it's like it it's just different. Um,
+
+companies are trying to like imbue all this like company specific uh domain knowledge. Like, oh, here's the shape of the data and here's what all this data means and here's like how to access it. Um, and so it's very, very different. Um, we have this like funny quiz on on the how to eval site. And um, it's interesting, right? Like it's kind
+
+of like one one of the questions we we think about is like, oh, are your engineers like or sorry, are your users like domain experts in the thing they're doing? It's again, is it almost like replacing someone or is it augmenting them? Because if you think about like co-pilot, you know, auto-complete style or cursor what I you know, tab complete now. Uh if it gets something wrong like you can just delete it, right? Even like Claude code CLI or like codex if you're an engineer, it's like it does do things wrong all the time.
+
+Um but then when you think about products like Devin, it's actually gets more interesting, right? Like the if if something messes up on on the Claude code side, it could be that like you don't have something installed correctly on your computer. There's a lot more like user error. There's a lot you leave a lot more up to the the users to get correctly. Um and I think when you start thinking about things like AI doctors, for example, it's like uh is a very very different shape of responsibility as far as like how much responsibility a user has in actually getting things correctly. Um so,
+
+anyways, it's kind of funny. Um just kind of breaking this down. So, we think about the ceiling as like what is the best thing like craziest capability, emergent capability that your your product or agent is capable of. Like things that people would just not expect that it could do. And then the floor is like what is the worst thing your agent can do? Like
+
+recommend a competitor or like delete a bunch of data or like accidentally send a you know, AI slop email to a customer because it like technically had access to like your email or something. Um and again, I think that like the floor is very interesting because I think that that is the thing that like breaks user trust. This is the thing that like the reason why people uh like if you think about the worst things that could start happening in society, whether that's and and things we've already seen um whether that's the uh you know, like 400 kind of psychophancy um or uh things in that vein, a lot of it is more on like the floor side rather than the capability side. Um and anyways, I could talk about that for a long time. Um I'll kind of skip this.
+
+So, the talk obviously is going to be about floor raising. And um the first thing that we're going to talk about is like offline evals. Again, we keep it very simple. Um I think that like we said before, things have changed a lot sort of since this chatbot era. The sort of like, "Oh, you just uh you know, like look at, you know, string contains, you know, on the uh uh on like the text output or something." Or even
+
+like the style of eval tools that have like a prompt playground, like this sort of thing. Like I actually don't know many companies that use some sort of like managed prompt like in the cloud anymore. There's like one or two I can think of. Um and the reality is just like the prompt is actually like the whole thing now. It's like all the code.
+
+It's all It's your whole harness. It's like everything you're connect like It's not just like some string where you tell your the agent what to do. Um and so what I think that means is the evals themselves actually should look a lot more like code. In other words, like a lot more like tests. Whether that's unit tests, whether that's end-to-end tests.
+
+Um they should look a lot more like tests. Um uh Century has this uh a really cool package called like Vitest evals. It's literally just like Vitest with like some syntactic sugar on top. Um OpenAI calls this like macro evals. And um again, I don't think it really matters what you call it, but like essentially run tests on your agent uh locally uh is is is the advice. And keep these
+
+evals as code. Um and again, as much as possible, like the I I don't see a lot of companies using the sort of like prompt playground stuff anymore because of how the shape of agents has really changed. Uh When when we think about raising the floor, we think about really like three things. One is that like discovering all these like unknown issues that you have in your app, like things you're just like not seeing. That's one.
+
+Two is that for each issue, you really need to know two things. You need to know when it actually started, and you need to know how many people it affects. It sounds like obvious, but I promise you that like in the day-to-day of actually like having an agent, uh you're going to get like, you know, you already get thousands of people like, "Oh, I saw this weird thing. I saw this weird thing." So, again, the first thing is like, "Is this new?" Cuz if it's not
+
+new, like I probably like I'm going to care about it less. If I if if if I tell you like, "Hey, look, this issue started yesterday." or this issue started like three or four days ago, suddenly like your mind starts turning and you're like, "Oh, what did I do? Like, what what what what changed, right? Did we change model? Did we change you know, so
+
+something else um downstream?" And again, the second one is like percent of users. Like, if I'm uh knowing that it happened to three users versus 100,000 users just is uh critical. Because again, I think agents will have an infinite number of problems. That's sort of like the the great and terrible thing about them.
+
+It's like by they're like these little stochastic, you know, crazy things exploring everywhere. And so, you just uh in order to even start making things better, you you really need to need to know these two things. When it started and percent of users. Um and I think also another question we get a lot is like around like, "Oh, like I, you know, what should I be doing?" And like, the first question I always ask people is like, "How many users do you have?" Like, we have customers with
+
+millions of users and we have customers with like five. And the real And like, to be clear, like uh customers with five users like especially if let's say it's like an internal um app in an enterprise context where it's like, you know, giving like very critical information. Like, it could be very very important to get well uh or sorry, to get correctly, but it does mean you just like should be have to have a radically different uh approach. Like, so for example, on the like, you know, uh let's say like 10, 20, 100 million, you know, messages a day side of things, like experiments become extremely valuable. Uh if you have a free tier, you can like uh run experiments on a very small sample of your free tier. Um and that
+
+can just be extremely extremely useful. Um obviously, if you have five or 10 users, like uh, I would not recommend, you know, experiments or AB tests, etc. Um, so, uh, this is one of those things that, like, uh, uh, really, really depends on the person. Um, what I want to talk about now, before we get into Q&A, are like three very, very, very, very tactical lessons on the sort of like issue, uh, discovery and analysis side. These are like three things that I I've never heard anyone talk about, like, three things that we've sort of just discovered from first principles as we do stuff at Raindrop. So, any
+
+competitors in the audience, please pay attention. This is very important. >> [snorts] >> Um, the first one is that clusters are not issues. So, um, the sort of like naive approach that we've seen either customers or also, sometimes competitors, uh, take is like, well, you just take all the traces and you just cluster it, right? And you get these like clusters.
+
+It could be like useful from like an analysis, uh, you know, like, how we do things like error analysis, like, the the the this, you know, finding these clusters of things. It could be useful to see like, well, what's going on in your data, right? Going from like a bunch of logs to like something. Um, the problem is that, like, and and again, I I have here, it's useful for one-off analysis, but it just doesn't really scale well. Um, and there's like a very good reason why we also, you know, if you think about like normal telemetry, we we we try to think a lot about like normal telemetry, what are the analogies? There's a reason why you
+
+don't sort of like take all of your, you know, normal logs and just like start clustering it, right? Because when you're building software, you you need to know like when something started, um, you need to know how much it's grown. Um, those things really matter. So, again, with clusters, it's very, very hard to reliably, uh, track over time. Um, like uh, like again, it's like called like temporal clustering and there's like research in this, but like, it's pretty hard, um, to do reliably.
+
+You also just like don't have control of boundaries. Um and this also changes a lot depending on your product. Like um what you consider to be like, you know, the same issue or not um is actually very, very unique to every company. And so you sort of will get these like kind of weird clusters. Like, you know, you can imagine each of these is like, "Oh, wrong price quoted and wrong wrong refund calculated." Are like actually
+
+like you'll get a cluster like, you know, uh you know, price issues or something. And it's like, yeah, sort of. But like actually these could have like extremely different root causes, right? So so price issues is or like, you know, uh issues calculating is like, you know, as a cluster it's not really that useful. Um and it also again doesn't doesn't really tell you the things that, you know, we talked about needing.
+
+Um So uh yes. Uh Last one here is going to be uh code mode actually really scales. Like you've heard about code mode in the context of MCPs. Um I highly recommend just uh trying to apply this to traces. Like you can just write uh these classifiers and you can write them and you can run them in a sandbox and you can run them at production scale. Um we have a you know,
+
+feature that makes this easier, but like you can do this. So I highly recommend it. Last lesson here is that agents are very, very bad at anomaly detection. So don't ask your agent to find anomalies. Uh ask it to investigate anomalies you've already found. So uh what I mean
+
+is like pull out as many deterministic things as you can like keyword frequency, right? So if you see a spike in like a keyword it doesn't necessarily mean that there's an issue, but it does mean that you can uh it's like something more tangible tractable that you can have an agent actually investigate. Um And I'm going to skip through the rest because we're tight on time. And I lied to you uh which is that we're not going to have enough time for Q&A because I only have a minute left. But, what I'd love if you could do is, uh, find me after. Um, I'll be around for
+
+the next hour and, uh, let's just talk. It's probably a better format than standing up here and it'll be hard to hear your questions anyway. So, uh, yeah, thank you guys so much.

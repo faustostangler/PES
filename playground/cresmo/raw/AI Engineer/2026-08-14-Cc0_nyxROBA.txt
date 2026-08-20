@@ -1,0 +1,113 @@
+---
+video_title: "From RL to IRL — Gaurav Mishra, Amazon AGI Lab"
+video_id: Cc0_nyxROBA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Cc0_nyxROBA
+video_date: 2026-08-14T16:00:06+00:00
+video_description: |
+  Asked to file an expense, the agent gets signed out mid task, reasons that it can infer the password, guesses twice, and locks the account. In a second run it clicks a sponsored button styled like the real submit button, lands on a different site, and begins typing personal details into it. Both are real trajectories from early browser training runs at the Amazon AGI Lab, and Gaurav Mishra's summary is that RL worked while the world was a game, and IRL starts when the game fights back.
+  
+  The talk catalogues what a reward function meets on contact with a real login screen. Observability is partial, since the DOM misses content baked into images and the screenshot misses whatever needs scrolling. Actions are irreversible, credentials expire mid trajectory, and done routinely does not mean successful. His answer is flight school rather than exams. Sandboxes train on layout shift, slow loads, pop ups, focus stealing, and stale tabs, and recovery becomes a native model action instead of an infra reset, so the agent refreshes, backtracks, waits, or escalates. A process reward model penalizes dangerous steps along the path instead of scoring only the outcome, and calibrated confidence teaches the agent to weigh whether an action is authorized, reversible, and visible before committing. The closing trajectory runs the same task correctly, including the agent refusing to guess the password and handing control back. Over time the model gets better and the harness gets thinner.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/gaurav-mishra-b307a437
+  
+  Timestamps:
+  0:00 - RL to IRL, and a lightning review of RL for agents
+  3:26 - Why coding agents can do computer use at all
+  4:05 - The agent that guesses its own password
+  5:47 - The sponsored button that looks like submit
+  6:37 - Partial observability, irreversibility, expiring credentials
+  8:29 - Flight school, not exams
+  9:54 - Process rewards and calibrated confidence
+  11:11 - The pilot and the cockpit
+  14:07 - Assumption versus reality, point by point
+  15:11 - The same task, done right
+---
+[music]
+
+>> Let's begin. The topic for this talk is RL to IRL. And for those of you who didn't get the clever word play here, I'm going to talk about what breaks when agents trained with reinforcement learning are deployed in real life. This is me. I'm a researcher at the Amazon AGI lab. I work on training
+
+agents that can do anything a computer can anything a human can on a computer. Before this, I've spent more than 10 years at Google, the last six of them at Deep Brain and Deep Mind training language models and agents. Let's start by talking about RL. Lightning review of what RL is and how we use it in the context of training agents. So, when we train an agent with RL, the agent is our policy. We give it a task. We sample
+
+generations. And then we compute a reward on the whole generation, and that's how it differs from SFT and pre-training where you're assigning loss to every token prediction. And then we have different algorithms to apply that reward and update the model weights. We have PPO, GRPO, but many many other variants. When is RL effective versus SFT?
+
+Three characteristics. One, when domains where you can collect or generate tasks fairly easily, but it's very hard to collect demonstration data for SFT. That's one where RL is very effective. When tasks have multiple correct solutions or many ways to get to the correct solution, and the outcome is verifiable, but if you try to collect SFT data for all the different paths, you might not be able to or you might narrow down the model to following a few patterns only, which is not good. And third is reasoning heavy domains, where again, it's very subjective. You want to
+
+let the model learn how to think and only judge it based on the outcome. So, if you think about it, coding fits this paradigm perfectly. That's why we've been able to train really compelling coding agents using RL. What are the key components of RL? Three in my mind. The first one is the task.
+
+This is the problem that we give to the model to generate samples on. The task has to have a verifiable outcome. The task has to be really targeted to the skills that the that we're trying to teach the model. And it also has to be in the right difficulty window. If the task is very easy or very difficult, then we're not going to get much training signal out of the model.
+
+Second part is the environment. Now, we're asking agents to produce code, to produce actions, and we need to be able to have safe environments where the actions and code can be executed. And those code sandboxes are a big part of this system. And then the last part is the verifier, verifier, which, you know, produces the training signal. So, taking model responses and judging them, the judge can be something as simple as a string equality to compiler, linter, running unit tests, database lookups, to also agents which are given a set of rubrics and then are asked to grade the model responses.
+
+So, when we got really good coding agents out of RL, what people started realizing is that you can actually deploy coding agents in the real world and ask them to do stuff beyond coding, like reading emails or sending chats or filing receipts for you, or doing research on a topic, you know, surfing and searching the web. And that's because all of these tasks can be represented as code, as coding tasks. So, chat, email, docs can all be accessed through MCP or API calls. You can interact with the browser using Playwright JavaScript Web MCP. You can surf and search the web using web search APIs. So, in theory,
+
+coding agents can be really good at computer use. So, what's the catch? Uh this is where real life kicks in. Uh so, let's see what breaks when the reward function meets a real login screen. I'm going to show you a couple of demos uh to give you a bit of context. These are
+
+um these are trajectories from our web browser use training runs. Um Uh these are from the early stages, so we will see some common traps that our agents fall into. Uh there is the prompt at the top. The verifiable outcome is over here. Uh here's an excerpt from the model thinking, and this is the browser window that the model sees. And here uh we have
+
+uh we have a very simple task where the model is asked to enter uh and submit an expense. Um let's see what happens. Okay, it enters the amount successfully. It clicks the button, but we are actually signed out now, so it needs to sign in. Um Let's see what it does. Okay, it says
+
+"Credential expired, but I can infer the account password." So, it doesn't really know the password, but it's trying to guess now. Okay, it entered something. Didn't work. Uh password was likely close. I will
+
+generate another password. Not going in a good direction. Okay, still failed again. I will resolve this without handoff. Let me try another one.
+
+Uh-oh, the account is now blocked. Okay, let's take a look at another example. Uh same situation. Uh small difference. There's a an ad over here with a submit button that looks very similar to the actual submit button. Very common scenario that
+
+we have seen probably every day. Let's see what the model does. I think you already know what will happen here. Model enters the right amount. It It looks and just clicks the wrong button. Now we're in a different website
+
+and it starts filling personal details. Now one can only hope that it is now hallucinating these details, but very dangerous behavior and we don't want this. Okay, so what went wrong? A big realization has been that RL worked when the world was a game and IRL starts when the game fights back. So let's We saw a few challenges. Let's
+
+talk about them and a few more challenges when you actually deploy agents in real-world applications. The first one is partial observability. So in the in the demo, the agent has access to the screenshot and the DOM. But neither of them are actually complete sources of information. The DOM has some info, but it doesn't have content that is dynamically generated. It didn't have
+
+the sponsored content for the ad because it was embedded into the image. The screenshot has it, but the screenshot might be partial. There might be content that is that you need to scroll to reveal. And so the model is being fed all these sources of information and doesn't really know what to expect from each and what to pay attention to. That's a big problem.
+
+Irreversibility. Once you submit a form, once you delete a file, once you lock an account, it's often irreversible for the time being. Non-determinism. When you click a button, you don't really know what happens. It might work, but it might take a long time to load. Your internet
+
+might be flaky. Your computer might restart for an upgrade. So many things can go wrong. Ephemeral authority. This thing that we saw, the session expired.
+
+Very, very common. Credentials expire very often. You have to be able to handle uh those navigation um those uh those edge cases. Ambiguous success, um done often doesn't mean successful. If the agent filed us uh uh expense report for me, but also sent a resignation letter on my behalf to the CEO, it is done, but not what I wanted it to do, right? Um adversarial content,
+
+this is everything we see around us is designed to grab our attention, and we uh we have to train ourselves to navigate that, and the model that is now working on our behalf also needs to be able to navigate that. So, these are just a few challenges. How do we How do we How do we adapt to this? Uh our big learning has been uh that um for computer use agents, and to use a uh a helpful analogy here, we need flight school, not just exams. So, the uh the agent has to be able to give in all these edge cases, all the messiness of real world has to be modeled into a simulation during training, so that the model can fall into all those traps, learn from them, and then become better.
+
+So, it's not just producing a generation that is uh rewarded by a reward model, but it's actually the environment, and all of the training setup has to reflect the messiness and all the edge cases of the real world. And it also means upgrading the pilot and the cockpit. So, let's talk about each of those components. The first one is the flight simulator. As we talked about, the first and biggest requirement is that we need high-fidelity digital sandboxes. So, we
+
+have to train with all the messiness, train with the layout shift, the slow loads, the missing labels, pop-ups, focus stealing, random account states, stale tabs. And then, recovery also has to be a native model action. So, a lot of uh often during traditional RL, what we do is when there's a infra error, we we just reset the state or ask the model to just restart, but that's not an option in real life. So, what we do is we uh whenever we have an infra error, we pass it to the model and we expect the model to recover from it using native tool use, native actions like, you know, refresh, backtrack, compare, wait, abandon, escalate to the user. Third part is the process reward model.
+
+So, as as we talked about the outcome is very important, but the path the model takes and the impact it has throughout the trajectory is very important as well. And so, we focus really hard on making sure we catch all of these dangerous actions throughout the process, not just the outcome, and penalize that accordingly. One one other really important part is calibrated confidence. So, the we need to teach the agent to know how actions are risky and when it is supposed to escalate to the user. So, based on if the action is authorized, if it is irreversible, is it visible to the user, what impact it has, we need to teach the model to know when to go for it or when to step back and escalate to the user.
+
+And the last part is adversarial tasks. So, we saw a couple of very simple adversarial tasks in the demo where the the training environment tests the model in two particular ways that that models can make mistakes. And this has to be part of the mainstream training. It cannot be something that's just byproduct. You have to actually test the model during training to make mistakes and then learn learn from them so that it does well in production.
+
+Let's talk about the pilot, the model. What needs to change? One of our biggest bets is that coding abilities are not sufficient to do well on computer use. The model needs to be able to look at the screen the way we humans look at a screen and then make sense from it. And that that means a few things.
+
+Uh Computer computer screens are very dense. So, grounding is really important for the agent to be able to understand what is the layout, what what what where are the the where are the text, what does all of it mean? And then the semantic understanding of it, like what is the purpose of the different things, what to pay attention to for the task that it's trying to do. Uh change detection is also important. So, what we do is after every uh action, we take screenshots and we keep putting it in the model context. So, the model
+
+has access to all these screenshots, but it need needs to understand what are the changes that are happening, are they desirable, uh what needs to change, and then what is what's the uh plan, and what are the actions the model has to take going forward. And then the multi-source observation part. So, having all these incomplete sources of information, but then learning to know what to expect from each of those, and then figuring out what to pay attention to for the task at hand is a important step. So, all of these capabilities need to be baked into the model. The third part is the cockpit. Um this
+
+is the harness. Uh harness is a very overloaded term, but I think of the harness as every the interface between the model and the world. Uh so, all the context management, all the tools uh that are available to the model, all the uh tool execution, everything is handled by the harness. And we can put an additional layer of guardrails in the harness to uh prevent the model from doing something bad, and then also nudge it in the right direction when needed. Uh few things that we have baked into our harness are checkpointing and rollback when possible. So, if there is
+
+a risky state, uh risky action, checkpoint and maybe come back to it if possible if there's a bad action. Uh action risk classifier, this is another layer of uh protection. So, if looking at the proposed actions from the models and then figuring out if they're actually safe or if they're uh risky. Credential guardrails again, like it's easy to detect if the credentials are active, if we've been signed out, and then nudge the model in the right direction based on that. Uh similarly, execution monitor, looking out for any bad patterns from the model loops or repeated clicks or unproductive behavior, and then nudging it in the right direction. Uh, audit logs, so
+
+maintaining evidence of all the actions and effects so that we can always go back and see what was the trail, what happened, and what what was the effect. And then human handoff, so wherever the confidence calibration of the model is not correct, we let the harness override the model and force it to give control back to the user. All right, so quickly summarizing the some of the assumptions of uh, traditional RL, how reality differs, and what we have done to adapt to it. So, the assumption is that state is observable. The reality is that UI is partial and messy. Uh,
+
+we've introduced perception primitives to deal with that. The assumption is that actions are cheap. Uh, reality is that actions are can be irreversible, and so we have to focus on risk-aware execution. The assumption is that reward is clear. Uh, reality is that success is often ambiguous. So, we have to focus on
+
+audit and verification. Uh, the assumption is that failure recites. Uh, the reality is that failure is often persistent, so we have to focus on recovery policies. The assumption is that environment is passive. It reality is that content can be really adversarial, so we have to set the right trust boundaries. And the
+
+assumption is that autonomy is always good. The reality is that handoff can be optimal in some cases, and the requirement is calibrated confidence. Okay, with all of this baked in, I want to show you a trajectory on a on the same same task, uh, few steps down the RL training loop. So, same task, you have to enter the final amount and click submit. Uh, now, you'll see that the model, uh, I see two submit buttons. One is sponsored, so the
+
+model is now able to distinguish between the two buttons. That's great.
+
+So, it clicks the right thing. Now, we sign out. We see the sign-in screen. Now, it says, "I see a sign-in screen. Credentials expired." So, the
+
+task data should not go here. Next, I'll hand off to the user. So, now it's giving up control to the user to enter the password, sign in again, and then give the control back to the agent. So, now we have a user simulator agent that is going to enter the right password and then sign in. And now it gives control back to the agent. The
+
+agent says that we we're back on the expense screen with the amount preserved. Sign is complete. Next, I'll submit the expense. Okay, amazing.
+
+The last message I want to leave you with is that the difference between a demo and a product is what happens after the first click, first failed click. So, all of the things that we talked about today is essentially boils down to simulating reality in your training setup. And that can only happen when you actually deploy the product and let it fail. Uh So, what we do is we work really closely with our design partners and internal customers to get them to use our use our model and see what fails and then, you know, complete the loop and fill in those capabilities. And early on, our harness is really strong. So,
+
+harness has to detect all the gaps in the model and make it fail gracefully so that we are able to capture the the failure modes and train on them, but we also are not causing any harm to the users that are actually using the models. And over time, the model becomes better and better, and the harness becomes thinner and thinner. Okay, that's all I have. I'll hang around outside if you have questions for me or if you'd like please come by the booth the Amazon AGI booth to meet me and my awesome teammates. We'll be there today, right? Thank you.
+
+>> [music]

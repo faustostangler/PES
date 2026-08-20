@@ -1,0 +1,142 @@
+---
+video_title: "The Dark Arts of Web Automation: Teaching Agents to Use Websites Like Humans — Corey Gallon, Rexmore"
+video_id: 26RtyAm9y_Q
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=26RtyAm9y_Q
+video_date: 2026-08-14T15:30:00+00:00
+video_description: |
+  Preparing this talk got Corey Gallon a warning from OpenAI that his account faced a ban for cyber abuse with a web browser. The offending work was an agent clearing Cloudflare Turnstile, two image captchas, and finally reCAPTCHA v2 with no human in the loop. His premise fits on one slide: a browser driven through the Chrome DevTools Protocol is just a meat bag with a mouse, because the agent's clicks and keystrokes travel the same path inside Chrome that yours do. Chrome stamps every event as trusted or untrusted, which is why a synthetic JavaScript click that works fine in Outlook gets silently dropped by Amazon's add to cart button.
+  
+  The method is a loop of sense, act, verify, climbed up a three rung ladder only as high as the page forces. A synthetic click first, then a real CDP input event, then a human mouse path with jitter and a deliberate overshoot. He argues for a CLI over an MCP server on speed rather than capability, citing a study where both cleared tasks about 83% of the time while MCP took 71 round trips and eight minutes against seven turns and under a minute. That gap decides the last fight, because reCAPTCHA rounds expire on a clock. His solution splits the work: deterministic code drives the whole challenge and rearms itself, and the agent is called in only to look at the grid and name the tiles. Everything demonstrated runs on infrastructure and accounts he owns.
+  
+  Speaker info:
+  - https://x.com/coreygallon
+  - https://www.linkedin.com/in/coreygallon
+  - https://gallon.me
+  - https://github.com/captivus/chrome-agent
+  
+  Timestamps:
+  0:00 - Threatened with a ban for preparing this talk
+  1:50 - The premise: a CDP browser is a meat bag with a mouse
+  2:43 - Why a CLI beats an MCP server
+  4:06 - The DevTools Protocol and the agent's digital senses
+  5:47 - The loop: sense, act, verify
+  6:38 - The three rung ladder
+  8:27 - Rung one: batch emails, and the web UI as a permissionless API
+  10:44 - Rung two: trusted clicks and the add to cart button
+  12:51 - Rung three: Cloudflare Turnstile
+  14:26 - Image captchas, drag puzzles, and human motion
+  16:36 - Final boss: reCAPTCHA v2, solver and operator
+  19:47 - The methodology is the takeaway
+---
+All right. The dark arts of web automation. That sounds ominous, right? It sounds like something I'm going to teach you that you're going to need a lawyer for. Uh well, actually we'll come back to the lawyer in a minute, but a little bit of background.
+
+As I was preparing for this talk, OpenAI threatened to ban my account. Just for the work that I was doing in preparing for the talk.
+
+So, I checked my inbox a few days ago and got this. And that's a real shocker, right? So, what does one do to earn the ban hammer for cyber abuse with a web browser? Well, this. I was doing this.
+
+So, what you see here is every one of these is being solved by an AI agent with no human in the loop. And in 15 minutes or so, you'll understand exactly how this is possible. I want my agents to be able to use the web exactly the way that I do. I want them to book the things, to send the emails, to fill in the forms so that I don't have to. But the moment that something isn't a person starts clicking into a page, web pages often fight back.
+
+So, this talk is about winning that fight. And it starts with one slightly unconventional idea. And here it is. This is the premise of the whole talk on one slide. A CDP browser is just like a meat bag with a mouse.
+
+No joke. Well, that at least as far as Google and CloudFlare and the rest can tell. No joke, if you have a browser an agent driver browser using the Chrome DevTools protocol, your agent's clicks and keystrokes travel the exact same path inside Chrome that yours do. And that's the big idea. The rest of the talk is about how to pull it off, and that comes down to three things.
+
+To you need a a CLI, not an MCP, the Chrome DevTools protocol, which is where a tool that I wrote called Chrome Agent comes into play, and then a loop run on a ladder. So, let's start with the one that picks a fight. The first thing is to give your agent a CLI and not an MCP server. And by CLI I mean shell-based tools. Before you in the back knuckle up on this one, there are some specific reasons as to why this is necessary.
+
+First of all, it's worth noting that capability is a wash. So, in a recent study by the guys at Arise AI, both a CLI and an MCP given the same task achieve those tasks successfully roughly 83% of the time. However, a CLI beats MCP in reuse, in speed, and in cost. So, let's take reuse first. A CLI sequence can be programmed. You
+
+write it once and you run it a thousand times without a model in the loop. Whereas MCP hits the model on every single turn. The CLI is faster for a similar reason because there's not a model in the middle of every step. So, in that same study that I mentioned before, MCP took 71 round trips and 8 minutes for the same task that took a CLI only seven turns and in under 1 minute. So, hold on to speed because that actually comes back at the end.
+
+Lastly, token cost. Anthropic themselves reported that the CLI can be as much as 75 times cheaper in terms of token cost. So, what is it that we're actually running on the command line? We drive the browser in the Chrome DevTools protocol. And that's the second thing that your agent needs to appear human.
+
+You already know this protocol, even if you don't know its name. That panel that pops up when you hit F12, that drives the browser using exactly this protocol. Your agents can speak it, too. They can use the Chrome Agent tool. And Chrome Agent also makes it really easy for your agents to write code to replay CDP interactions.
+
+The surface area of CDP is enormous, and it changes really frequently. So, as of now, it's 57 domains, and within those, there are hundreds and hundreds of methods and events. So, I've kind of bucketed all of the domains into eight buckets to make it a little easier to keep it in your head. But, no worries, you don't actually need all 57 domains. In order to interact with a browser in the way that a human does, you need a small subset of these.
+
+And the best way to think about that small subset is in terms of the digital senses that they give your agent. So, you see the page, you may read its structure from the DOM. You may read its semantics from the accessibility tree, or just take a screenshot if you need the pixels. You hear the page, so that may be network traffic to and from. Uh or the console or logs. And then you
+
+operate the page with clicks and with keystrokes and with navigation. The third and final thing that you need for your agent to appear human is what I like to call a loop on a ladder. So, here's the loop. Sense, act, verify, and you repeat that until the page gives in. So, in sensing, we perceive the page through one or more channels. The DOM,
+
+the accessibility tree, a screenshot as I just mentioned. And then you act. You do one thing. You click something. You type something.
+
+You take a You select something. And then you verify. And now this is sensing again, but it's sensing through a different channel than the interaction. So, for example, if you've clicked something, don't ask the click if it was successful. Check the network or check the screen.
+
+So, you sense where you are. You make one move. You confirm that it landed. And then you iterate again. And when the loop won't close, so you sense, act, verify, and the page still won't do what it is you're trying to do, that's the page fighting back.
+
+And so, that's telling you to climb the ladder. The meatbag ladder, that is. This is a ladder of techniques that are increasingly more human as you climb it. It has three rungs. And you climb only as high as the page forces you. Or said
+
+differently, you you climb to the lowest ladder that the lowest rung, sorry, that actually works. So, on rung one, you don't act human at all. If you can just use the API that's exposed within the page, then then issue a synthetic JavaScript click, then do that. It's easy. It's free. It's instant. And
+
+it's the right default. You climb to rung two when faking it stops working. So, when you need to use a real click, for example, using the CDP input domain. Now, this is agent input that the page cannot tell apart from your own. You climb to rung three when you need human input and human behavior.
+
+So, this is a real mouse path, maybe with a little dwell and some jitter, or vision to actually see and interpret things. So, you start cheap, you climb one rung at a time, only when the page makes you, climb the ladder, loop on each rung, and then write down the path that worked. And that's how you arrive at fully automated AI agent-driven browsing. First, you explore, you run the loop by hand, you climb rungs until you the thing actually works, and then you automate. You write the solution down so you never have to figure it out again.
+
+And you write it down as code or as an agent skill or very often as both. So, let me show you how this all comes together, but first of all, with a word from my attorney. So, I mentioned that the lawyer would be back, and everything you're about to see is in fact real agent browser use in the wild. It's taken from real experience. However, upon the advice of counsel, everything that you're seeing is running only on infrastructure that I own and accounts that I operate.
+
+Right now, so who's ready to see the agents get busy with the browser? All right. So, here's a simple one, everyday use case we'll start with. Let's send a batch of personalized emails, each one different, from your Outlook web client. We've got some lovely pseudo code on the right side, oh sorry, left side, it's inverted, left side of the the the slide, that makes it really simple for you to see how it all kind of works in code.
+
+Outlook's compose box has nothing for us to defeat. So, this is rung one of the meat bag ladder. You don't act human at all. A synthetic click opens the compose window, we fill this in programmatically, and another synthetic click sends it. And then you let that rip, right? So,
+
+the reason this is going so smoothly is it's executing a program. So, you capture the sequence once and then loop it, whether it's 20 emails or 200. And from from just that one command. So, you solve it once and reuse it forever. The agent is riffing on content to personalize here as we go.
+
+But, it's running a program to drive all of the interactions. Now, you may ask, why would we drive the web UI at all? Like, why not just use the API? And in corporate environments, the API for an Office 365 tenant requires an app registration, and it also requires admin approval, which as an employee you can't often get. And so, in this pattern or sorry, whereas the the web login you have is all you need to be able to do exactly what you see on the screen here now. And so, in this pattern, the web UI
+
+itself kind of becomes a universal API, right? Like a permissionless API. Which is really neat. So, that's run one, but what happens when the page starts fighting back? So, let's say that you're browsing on your favorite online mega store. And
+
+we'll just call them Demazon. So, they're a crafty bunch over there at Demazon, and they have no love for your bots at all. Now, if you take that same JavaScript click that just worked in Outlook, and you point it at, say, the add to cart button, you get nothing. Literally nothing. There's there's no failure, there's no error, just nothing happens, and the page is ignoring it. And the
+
+reason for that is the page is checking, was this click from a human source? Chrome stamps every single event with just that answer, whether it's trusted or untrusted. So, the JavaScript click that we fired previously is stamped untrusted. And in this case, the page just quietly drops that input. But that's no worries. We'll just climb
+
+the meat bag ladder. So, we move to rung two and we click using Chrome's input domain. And that uses the exact same input path that your actual mouse uses. And now it's stamped trusted and the page can't tell the difference between your mouse and our agent and bam, the items drop straight into the cart. So, we've got quite the inside view of damazon.com here. So, if you look at
+
+this lower panel, you can imagine that this is what the page's logs look like. Every one of the untrusted clicks fails, but the trusted ones go through. No worries. Now, as a heads-up going forward, when you see this mouse cursor moving here, that is added programmatically just so that you can visually see the mouse inputs that the agent is giving to the browser using Chrome agent and CDP. It's not actually moving my mouse here.
+
+All right. Rung two is where the real meat bag inputs begin, but that's not enough to replace you in the browser. So, we climb to the top of the meat bag ladder, rung three. And this is the narrow frontier where pages are actively hunting for bots. There are a variety of techniques that we're going to deploy here, though. So,
+
+let's talk through a few of them. I'm sure this guy looks familiar, right? This is Cloudflare Turnstile. It looks deceptively simple, but it is the hardest target that we've hit yet. And it's because that little checkbox can't be easily reached through typical web automation programming.
+
+Because these cheeky guys have hidden this thing through three isolated boundaries. First, it's encapsulated beneath a closed shadow root. And then, the whole widget itself lives in a cross-origin iframe, which in it then also has another shadow root. So, to every cheap trick that's that checkbox is unclickable. There's no element to grab.
+
+So, what do we do? Well, we just stop trying to grab it, right? We ask the browser where it is that the iframe sits on the screen. We do a little bit of math to figure out where the checkbox is. Then, we fire a trusted click right at that position on the glass.
+
+And then, Chrome does the rest for us, right? A real click lands right in the checkbox, and we're off and running. There's no human in the loop. This is all agent. So, that's level one cleared.
+
+And the trick here was really just kind of figuring out how to interact with it. But, all the next levels now make you prove that you can actually see. So, this is MT capture. You remember this guy? And they these guys are And like it, they're they're still around.
+
+Um your agent's actually going to read this guy. And so, what the agent does is simulate what you would do. It takes a screenshot of the challenge, looks at it, and then uses its own vision capability to pick the characters out of the noise. Then, it types the answer back using real trusted keystrokes routed into the widget's cross-origin iframe one character at a time. And these are the same keyboard inputs that you would send.
+
+And then, the server agrees. The text is verified, and the token is issued. And there's one more level before the final boss, and this one is won or lost based on how it is that you move like a meatbag. So, this is by Lemon. Uh it's a a jigsaw puzzle where you spot where the piece belongs and then you drag it in to fill the gap. And there's
+
+an entire class of CAPTCHAs just like this. Now this one's trixy in different ways. There's no shadow root, there's no cross-origin iframe. The piece is sitting right there in the page. The hard part here is the drag itself. So
+
+when you drop the puzzle piece, these types of CAPTCHAs sample the mouse movement into a trail of points the whole way. And so that includes jitter and changing speeds and all of that. So but it's not just solving the puzzle, but it's solving it with moves like Jagger. So the agent drags the exact same way that a hand would drag, right? If you kind of watch him move, it eases in gently, there's like a slight curve, it actually deliberately overshoots the puzzle piece and then eases it right back in.
+
+Just like a meatbag with a mouse. And it's using vision to identify the gap and then human-like motion to cross it. So that's Turnstile, that's MTCaptcha, and that's Lemon. Three gates built to keep agents out, and we just beat each one of them, which leaves only one boss standing. And here he is, the final boss of the internet.
+
+reCAPTCHA v2. It's that little checkbox and then the blurry grid with like fuzzy pictures of crosswalks or traffic lights in it. We've all squinted at these ones. But we've got the whole kit now on how to beat this guy, too. The digital senses, the loop to deploy them in, the meatbag ladder, everything that you need to take down this cheeky bastard.
+
+So let's go. This is the whole machine and it comes in two halves. On one side we have the solver. This is pure code, no agent, no model. It does everything programmatically. It does the
+
+trusted click in the checkbox. It pierces into the challenge iframe. And then every round, it screenshots the grid. And if for some reason a round expires, it just re-arms itself and goes again. All of that, that bit there is deterministic, it's fast, and it's free.
+
+But there's one step in the loop that the code can't do. And that's look at that grid of fuzzy tiles and figure out what it is that's in it. Is this a bus, for example? That's vision and thinking, and that needs eyes and a brain. And so that's the only thing that we give the agent as a job. We call that
+
+bit the operator. The solver taps the agent on the shoulder, and the agent takes one look at the grid, picks the tiles with whatever the thing is that we're looking for in them, hands that answer back to the solver, and then just hangs out waiting until the next lap. And this is really the entire talk running as one system. Code does the deterministic driving, and the agent does the only bits that require eyes and a brain. All right, let's just see it go.
+
+There it is. So, while this is playing, by the way, kind of have a look. Like, some of these are really hard. It's like, the the agent was able to spot bicycles in some of these tiles that I didn't see. But ultimately, it's solved, it's verified by the server, and it's fast.
+
+And fast is the whole game here. Because this big bad boss is on a clock. Every round expires, and one challenge can be multiple rounds back-to-back. An agent that round-trips a model on every click and on every look burns that clock and loses. The challenge expires well before it ever finishes. The only thing that I've
+
+found that defeats this whole mess is exactly what you're looking at here. Deterministic code running at machine speed with one quick AI look per round. So, remember when I told you to hold on to speed, this is exactly why. And this is also why this had to be a CLI running the CDP and not a model sitting in the middle of every single interaction. By the way, in case you're wondering, this wasn't a fluke.
+
+It's a repeatable reliable solution now for solving this and and other forms of CAPTCHAs. But, here's what I want you to really walk out of here with. The big takeaway is the methodology that enabled this. The CAPTCHAs themselves were just tricksy little tests that demonstrate the methodology. This came down to careful, disciplined engineering, and the engineering enabled the agent to do something that it could not do at all off the shelf.
+
+And the method is simple. Give your agent a CLI so that you can program it. Drive a whole browser through CDP using its digital senses. Run it as a loop on the meatbag ladder and climb only as high as the page forces you to. And then explore until you solve it and write the solution down.
+
+That's what makes this durable and useful. You figure it out once and you do it forever. Which brings us all the way back to the good folks at OpenAI. After a quiet word, they kindly rescinded the threat. So, I've still got access to Codex, which is nice.
+
+So, you too can use Chrome Agent. It's installable in the Python ecosystem. That's the tool that I wrote that I do all of this with and I use it all day, every day. Or frankly, build your own, right? Like I'm not here shilling a product. We live in the age of unbounded
+
+personalized software. Please, however, do follow me on X. I'd love to chat to you and learn how it is that you're automating the web with AI. And if you'd like to chat more about it, I'll pop out there into the huddle space and we can have a chat now. But, happy hacking.

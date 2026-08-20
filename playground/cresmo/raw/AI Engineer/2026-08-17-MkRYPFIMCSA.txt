@@ -1,0 +1,106 @@
+---
+video_title: "Security Firewall for Agents — Ryan Dahl, Deno"
+video_id: MkRYPFIMCSA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MkRYPFIMCSA
+video_date: 2026-08-17T18:30:06+00:00
+video_description: |
+  Deno gives its incident response agents read and write access to production Postgres, Kubernetes, ClickHouse, AWS, GitHub, and Slack, and it works. Agents now close incidents that used to wake a human up. Ryan Dahl's problem is what happens when one of those agents gets prompt injected through the support system it is wired into. He grants that Opus refuses to drop the users table no matter how hard you push it, then says the part that matters out loud: security cannot be wishful thinking that a model stays obedient. The agent is untrusted software, so the guard cannot live inside it.
+  
+  Claw Patrol is their answer, an MIT licensed proxy that sits in front of the agent and parses every byte leaving it, below the HTTP layer, because the dangerous path frequently is not HTTP. An agent can spawn psql as a subprocess and tunnel to a production database through an EKS endpoint, and no MCP tool definition or HTTP rule will see it. Rules live in HCL, the Terraform configuration language, checked into git and unit tested against fixture requests, with Deno's own file running about a thousand lines. The proxy holds credentials so the agent never sees them, covering cookies, OAuth, and AWS SigV4, and can route an action to an LLM judge, a human in Slack, or both before it is allowed. The demo is Codex in yolo mode cheerfully obeying an order to delete the users table, and the proxy killing it at the Postgres wire protocol.
+  
+  Speaker info:
+  - https://x.com/rough__sea
+  - https://github.com/ry
+  - https://tinyclouds.org/
+  - https://deno.com
+  
+  Timestamps:
+  0:00 - Deno Deploy, incidents, and the pager
+  1:28 - Giving agents write access to production
+  2:47 - Opus refuses, and why that is not enough
+  3:28 - Prompt injection through the support system
+  4:05 - Every action is bytes on the wire
+  5:24 - The hard case: psql through an EKS endpoint
+  6:47 - Why credentials and ACLs are not sufficient
+  7:26 - Where MCP tool permissions break down
+  8:48 - The existing landscape of proxies and sandboxes
+  10:09 - Claw Patrol
+  10:50 - Writing rules in HCL
+  12:07 - Protocol plugins
+  12:52 - Demo: blocking a dropped users table
+  13:34 - The dashboard
+  14:14 - Approvals by LLM judge or by human
+  14:58 - Credential injection
+  15:38 - Running it over Tailscale or WireGuard
+  16:58 - Agents cannot police themselves
+  17:42 - Q&A: testing the rule file
+  18:22 - Q&A: does this get easier as models improve
+---
+[música]
+
+Como vai? Hum, meu nome é Ryan. Bem, eu sou o CEO da Dino e, sim, você já desenvolve software há bastante tempo. Você talvez conheça um dos meus projetos, o Node.js.
+
+Bem, eu gostaria de falar sobre um serviço que estamos executando na Dino, chamado Dino Deploy. Este é um sistema para hospedagem de sites e apresenta problemas. É que ele tem períodos de inatividade ocasionais e, bem, temos um sistema de alerta que dispara alarmes. Tenho certeza de que todos vocês estão muito familiarizados com aquele som de alarme assustador que os acorda no meio da noite. Hum, e recentemente temos estado a experimentar a utilização de agentes para resolver automaticamente estes incidentes. Hum, em particular, o
+
+OpenClaw, mas também outros agentes . Bem, descobrimos um padrão que está funcionando muito bem para nós e que eu gostaria de compartilhar com vocês. Bem, na verdade, damos ao OpenClaw acesso a todos os tipos de sistemas. PostgreSQL, Kubernetes, Clickhouse, AWS, GitHub, Slack, enfim, todo tipo de coisa. E nós realmente lhes damos acesso de reescrita a esses sistemas.
+
+Isso é muito poderoso porque os agentes conseguem obter todo o contexto. Eles conseguem ver vestígios no ClickHouse. Eles podem consultar o banco de dados PostgreSQL de produção para verificar quais projetos um usuário possui. Eles podem consultar o Slack para verificar comunicações, registros do GitHub, etc. Isso funciona muito bem, na verdade. Os
+
+agentes são capazes de resolver muitos casos em que antes precisaríamos da intervenção humana . Mas é claro que é muito perigoso, porque esses agentes podem fazer coisas nefastas. Eles poderiam iniciar um subprocesso psql e executar um comando para excluir a tabela de usuários. Eles poderiam chamar o Cubecuddle de exclusão do namespace prod. Sabe, eles poderiam decidir que, para resolver o incidente, seria necessário remover todos os usuários. Ah, e claro que
+
+não queremos isso. Utilizamos o Opus e o Opus apresenta um alinhamento notavelmente bom . Você realmente não consegue, pode tentar muito para que o programa exclua a tabela do usuário, mas ele se recusará repetidamente. Mas isso não é suficiente, certo? A segurança não pode ser apenas uma ilusão de que o Opus sempre obedecerá aos seus desejos.
+
+Esses agentes S que temos estão conectados ao sistema de suporte e, portanto, podem ser injetados rapidamente de fora, o que significa que podem ser manipulados de alguma forma. Quem sabe que tipo de sequência de caracteres poderia levar a obra a um estado tão ruim que a fizesse pensar que estava tomando a atitude correta ao fazer algo muito indesejável. Como você sabe, nossa posição é que os próprios agentes de segurança precisam ser softwares não confiáveis. Você não pode confiar que o próprio agente proteja o que está fazendo. Você não pode colocar o guarda dentro do agente.
+
+Executamos agentes e presumo que muitos de vocês façam o mesmo em VMs independentes. Portanto, não estamos muito preocupados com agentes que acessam arquivos no sistema de arquivos. Sabe, eles estão, eles estão, eles estão... eles estão
+
+devidamente isolados no nível do sistema. Mas [limpa a garganta] então você sabe que, efetivamente, toda ação nefasta que um agente possa tomar, toda ação boa que ele tome, vem na forma de alguma comunicação de rede, alguns bits transmitidos pela rede, e a formação desses bytes pode ocorrer de várias maneiras. É claro que você pode fazer chamadas através do MCP, mas também por meio de subprocessos. Se você pensar no PostgreSQL, por exemplo, que é um protocolo não HTTP, o OpenClock pode simplesmente iniciar como um subprocesso e começar a se conectar a serviços. Então, adotamos a postura de que realmente queremos entender em detalhes quais são os efeitos desse agente .
+
+[Limpa a garganta] Isso pode ficar muito complicado em sistemas do mundo real . Por exemplo, temos um banco de dados PostgreSQL de produção na AWS que está dentro de uma VPC e que só podemos acessar por meio de um endpoint do EKS. E o que realmente gostaríamos de fazer é garantir que nosso agente, ao qual queremos dar acesso a tudo, essencialmente, não consiga de alguma forma criar um túnel através deste servidor EKS, iniciar o psql e excluir a tabela de usuários, certo? Estamos preocupados com situações bastante complexas como essa, que podem se tornar muito complicadas. E eu acho que muitos de vocês trabalham em empresas onde existem sistemas reais em que as coisas são muito complicadas.
+
+Então, sim, só para destacar isso, este é um caminho de saída que o host do agente não consegue alcançar em um protocolo que não seja HTTP e que está bloqueado por uma regra que entende SQL. Estas são as coisas que os humanos fariam. E como podemos, sabe, capacitar esses agentes para que tenham o mesmo tipo de acesso que um ser humano teria? Bem , você pode perguntar, você pode dizer, bem, você sabe, existem ACLs, existem permissões, você pode emitir credenciais somente leitura do PostgreSQL. Sim, isso é verdade até certo ponto. Bem, você pode
+
+fazer um provisionamento de credenciais cuidadoso e deve fazê-lo. Bem, isso realmente exige trabalhar com muitos sistemas diferentes, fornecendo credenciais de maneira extremamente cuidadosa . E, como acabei de demonstrar, a composição do acesso pode levar a brechas quando se consegue acessar um sistema e, em seguida, outro sistema. Bem, no MCP, você sabe, você pode estruturar tudo isso como ferramentas MCP muito cuidadosas que tenham as permissões adequadas. Mas, sabe, aí você não consegue criar subprocessos, certo? Você
+
+não pode, sabe, assim que a cláusula OPEN gera o PSQL, você meio que ultrapassa a barreira de segurança. Existem vários projetos nessa área, principalmente projetos que ficam na frente de um agente e analisam o que ele está enviando, tentando controlá-lo com base nos bytes que estão fluindo por ele. Hum, portais para o LLM. Acho que todos nós estamos familiarizados com o Open Router e o Light LLM, por exemplo. Esses geralmente têm um recurso de proteção que pode [limpa a garganta] uh proteger contra injeção imediata uh, você sabe, verificar várias uh, expressões, etc., que estão indo
+
+e vindo entre o provedor do LLM. Mas, claro, isso é apenas o mestrado em Direito (LLM). Sabe, estamos falando com bancos de dados e coisas do tipo. Existem sistemas como o HTTP Jail e o Crabtrap, que são proxies HTTP que atuam na camada HTTP. O HTTP Jail, por exemplo, permite que você escreva regras que digam: "Você pode fazer requisições GET, mas não requisições POST", ou você pode acessar este subcaminho HTTP. Bem, Crabt
+
+Trap é um projeto da Brex que tem um mestre em Direito como juiz e que opera nas requisições HTTP que fluem de um lado para o outro. Você tem proxies que injetam credenciais conforme elas saem do agente. O Agent Vault é um protocolo popular onde o próprio agente nunca vê as credenciais do sistema com o qual está se comunicando, mas passa um marcador e o proxy injeta essas credenciais. Essa é uma parte importante do problema, mas não uma solução completa. E você tem coisas como sandboxes de processo, como o OpenShell da Nvidia, que, você sabe, são uma espécie de proteção em nível de sistema operacional contra o acesso a diferentes caminhos do sistema de arquivos, acesso a diferentes chamadas SIS, esse tipo de coisa, mas, como eu disse antes, não estamos realmente preocupados com isso porque provisionamos VMs independentes para nossos agentes.
+
+Então, o software que desenvolvemos para resolver esse problema se chama Claw Patrol. É um projeto de código aberto com licença MIT e funciona como um proxy, ficando à frente dos seus agentes. Ele opera não no nível HTP, mas em um nível inferior. Ele entende cada mordida que entra e sai do seu agente. Ele armazena credenciais como o cofre de agentes e pode injetar essas credenciais para que o seu software de agente, seja qual for, nunca veja os valores secretos.
+
+E, em particular, possui um sistema de regras muito avançado que permite especificar com precisão como e quais solicitações são transferidas do agente para o mundo exterior. Essas regras são a peça-chave do sistema e as escrevemos em um arquivo de configuração usando uma linguagem chamada HCL. Alguém conhece a HCL? Isso é semelhante ao Terraform, a linguagem de configuração do Terraform. Hum, na verdade funciona muito bem aqui. Então,
+
+temos um arquivo que incluímos no Git e gerenciamos com muito cuidado, que essencialmente define as permissões para todos os nossos serviços no Dino, e sim, é um arquivo grande e extenso. São como mil linhas, e nós gerenciamos cada uma delas com detalhes extremamente precisos. Este é um exemplo de uma regra em nosso arquivo de configuração que impede que certas funções do PostgreSQL sejam chamadas. Então, sim, novamente, o PostgreSQL é um protocolo não-HTP e essas regras podem ser aplicadas mesmo ao usar túneis em outros sistemas. Bem, ele suporta vários protocolos diferentes e possui um sistema de plug-ins para estendê-lo quando você se depara com um protocolo com o qual ele ainda não está familiarizado.
+
+Então, aqui está uma pequena demonstração. Infelizmente, não ao vivo. Bem, nós chamamos o Claw Patrol de Codex no modo amarelo para que ele faça exatamente o que você diz que deve fazer. E você diz ao Codex: "Ei, exclua a tabela de usuários do PostgreSQL", e o Codex, corretamente, obedece e inicia um subprocesso Psql onde exclui a tabela de usuários. Esse subprocesso Psql abre uma conexão de rede com o servidor PostgreSQL, que passa pelo Claw Patrol, onde analisamos cada bit de processamento. Entendemos o
+
+protocolo PostgreSQL. Aplicamos nossas regras e, em última análise, rejeitamos o que chamamos de ação, por considerarmos que se trata de algo destrutivo. Claw Patrol possui um painel de controle que permite visualizar as atividades de seus agentes. Assim, na parte superior, você pode ver alguns dispositivos ou agentes diferentes e as várias solicitações que estão sendo processadas . Algumas serão negadas, outras precisam de aprovação, sobre as quais falarei em instantes. E você pode clicar
+
+em cada solicitação ou ação, como chamamos, pois é mais geral do que as solicitações HTTP, e ver os detalhes do que está acontecendo. Há análises e sim, é muito voltado para o utilitarismo. É como se precisássemos entender nossos próprios agentes. Bem, como eu disse, existe um sistema de aprovação aqui. Então você pode rotear, pode definir regras que não apenas rejeitam solicitações ou ações, mas também consultam um humano, por exemplo, em um canal do Slack, ou executam uma avaliação automatizada, ou qualquer combinação disso, certo? Talvez seja melhor primeiro conseguir um
+
+juiz com mestrado em Direito (LLM) e depois obter a aprovação no Slack. Então, para que você possa ter um controle muito preciso sobre o que seus agentes estão fazendo fora do próprio software do agente, certo? Tratamos o software do agente como uma caixa preta, certo? Não exigimos nenhuma alteração nesse software. Mencionei a injeção de credenciais antes. O Claw Patrol tem suporte muito detalhado
+
+para todos os tipos de sistemas. As credenciais vêm em muitas formas diferentes, não são apenas cabeçalhos Bearer. Ele lida com cookies, lida com PostgreSQL, como mencionei. O ClickHouse suporta todos os tipos de protocolos Ooth e suporta coisas muito complexas como AWS SIG v4. Então, sim, acho que o que estou tentando dizer é que isso realmente nasceu da utilidade e foi feito para sistemas do mundo real. Não é apenas
+
+um cenário imaginário. [limpa a garganta] Hum, este sistema funciona sobre a escama da cauda ou a proteção de arame. Nós mesmos comandamos a Patrulha Garra, nossos agentes ficam dentro da Escama da Cauda, ​​dentro de uma rede da Cauda, ​​e a Patrulha Garra atua como um nó de saída da Escama da Cauda. Nós também utilizamos o Tailscale para autenticação no painel de controle. Assim, sua identidade de escala de cauda permite o acesso ao painel de controle, dispensando a necessidade de um mecanismo de autenticação adicional. Mas
+
+também temos essa proteção de arame para pessoas que ainda não se convenceram do maravilhoso ecossistema das escamas da cauda. Mas isso funciona muito bem para nós porque sabemos que todos os nossos dados estão fora da internet e que todas essas informações sensíveis à segurança são rigorosamente controladas. A própria Claw Patrol detém todas essas credenciais para os sistemas de produção. Portanto, é preciso ter muito cuidado com isso. Então, sim, a tese aqui é basicamente que não se pode confiar que os agentes se policiem sozinhos. Isso inclui
+
+plugins de segurança ou modificações no próprio software do agente. A fronteira de segurança tem que estar em outro lugar. Isso não quer dizer que o alinhamento não seja uma coisa boa, mas, sabe, para sistemas de segurança do mundo real , precisamos controlar isso em um nível mais alto. E a Claw Patrol é a nossa tentativa de fazer isso funcionar para nós mesmos. Sim, você pode conferir aqui.
+
+[aplausos]
+
+Talvez eu tenha tempo para uma ou duas perguntas. Sim, senhor . Que tipo de teste de e-mail você realiza para garantir que esteja funcionando? Ah, sim . Então a questão é: que tipo de testes devemos fazer para garantir que funcione corretamente? Bem, eu
+
+não mencionei, mas este arquivo de regras na verdade possui um sistema de testes integrado, onde você pode fornecer ações de teste, como solicitações de teste, que podem fluir pelas regras. E então você pode essencialmente criar testes unitários para garantir que essa solicitação seja sempre bloqueada pelo seu conjunto de regras. E, claro, para o próprio software da Patrulha da Garra, temos um amplo conjunto de testes. Sim, senhor .
+
+Então a questão é: à medida que os agentes se tornam mais inteligentes, esse problema aumenta ou diminui? Acho que nunca poderemos confiar plenamente em IAs. Acho que isso se torna um problema cada vez menor à medida que eles ficam mais espertos, têm um contexto melhor, sabem que estão trabalhando para uma empresa e sabem que não devem fazer coisas erradas. O Opus está mais alinhado do que os modelos anteriores, mas acho que sempre precisaremos de mecanismos de segurança de proteção. Hum, legal. Bom, estarei por aqui para
+
+outras perguntas, mas muito obrigado . [aplausos]
+
+[música]

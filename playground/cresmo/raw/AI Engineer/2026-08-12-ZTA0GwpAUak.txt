@@ -1,0 +1,120 @@
+---
+video_title: "Bringing Continual Learning into Enterprises — Samuel Denton, Applied Compute"
+video_id: ZTA0GwpAUak
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZTA0GwpAUak
+video_date: 2026-08-12T17:30:06+00:00
+video_description: |
+  A Qwen thinking model was taking up to 80 turns to submit on SWE bench. Applied Compute wanted it wrapping up by turn 40 and got the submit tool call rate from 22% to 60% with test pass rate flat. The interesting part is the mechanism: because the rollout was conditioned on an old production trace that never called the tool, the teacher never touched the tool call tokens at all. It moved the reasoning path toward the call instead, and the call followed.
+  
+  Sam Denton's frame is a grid. One axis is how online the traces are, from a single dump of production traces to a unified engine where serving and training are the same loop. The other is where the hint comes from, either static priors, such as knowing a support agent is too quick to refund, or a hint built dynamically from what the on policy model just did. Applied Compute works two corners of that grid. Offline hints on offline traces need no replayable environment and can improve an enterprise agent from a data dump on day one. Online hints on online traces have the far higher ceiling, and that is what fixed a customer whose harness required unusual hyperlink formatting: rewarding the format directly and finetuning on correct examples both degraded coding ability, while a hint written against each rollout took correct formatting from 15% to 80%. Two things he says make it work in practice. Let a judge pick where in the rollout the hint goes and distill only the next few steps, since the learning signal decays with distance from the hint. And mask which tokens you learn from, because the teacher has strong opinions about connector words that have nothing to do with the lesson. Throughout, the constraint he keeps is doing all of this without a golden answer to distill toward.
+  
+  Speaker info:
+  - https://x.com/samueldenton
+  - https://www.linkedin.com/in/sam-denton-161b50126/
+  
+  Timestamps:
+  0:00 - The distillation spectrum, offline to online
+  2:46 - The holy grail: serving and training as one loop
+  4:00 - Where the hint comes from
+  4:42 - Online hints built from the rollout
+  5:19 - Four quadrants of distillation
+  7:50 - The two corners they actually work in
+  9:44 - Improve for free today, raise ceilings tomorrow
+  10:22 - Doing it without a golden answer
+  11:00 - SWE bench: wrapping up by turn 40
+  11:38 - The three metrics that matter
+  12:17 - What the hint actually says
+  12:55 - Moving the reasoning path, not the tool call
+  13:36 - Adding a single on policy step
+  14:17 - The hyperlink formatting problem
+  14:56 - Why rewards and finetuning both failed
+  15:34 - From 15% to 80% with online hints
+  16:13 - Per step hinting
+  16:50 - Why the signal decays with distance
+  17:27 - Relevance masked self distillation
+  18:07 - What it adds up to
+---
+[music]
+
+>> All right. Can you hear me? Yeah, take that as a yes. Um cool. So, we'll go ahead and get started here. Uh today we're going to be
+
+talking about is bringing continual learning into enterprises. Uh and how we're doing it at Applied Compute. Uh bit of an intro, my name's Sam Denton. Uh I lead the platform research team at Applied Compute. So, here is our loose agenda for the day. Uh we're going to start by talking
+
+about the distillation spectrum and how we think about different areas on the spectrum of distillation. Then we're going to talk about where value accrues along this distillation spectrum. We'll show a bunch of data on how distillation is working in enterprises. Uh if I have time, I'll try and get to some tips and tricks we found at Applied Compute to making self-distillation work in continual learning work in the enterprise. And then finally, we'll wrap up and talk about sort of what we've learned.
+
+Um also, I'm going under the assumption that most people have some kind of context on distillation and self-distillation. I figured by 3:00 p.m. on a continual learning day, you'd had enough of it. So, I'm just going to dive right into it.
+
+Um so, first I want to just talk about the distillation spectrum and how we think about the spectrum at Applied Compute. So, uh I want to define this like offline and online distillation spectrum. Um so, we'll start on sort of one end of the spectrum over here, which is offline distillation. What this looks like is you get a single batch of traces from a production agent, and you're meant to just do something with it, right? Like how do you learn from a bunch of production traces of some agent out in the wild? Um you want to learn via
+
+hindsight, you want to learn via the mistakes the agent made. Um whatever you can learn from this one-time batch of production traces, um and this is sort of the offline end of the spectrum. In the middle, we have something that might look like a daily batch of production traces. So, maybe you deploy a model and then at the end of every day, you collect a bunch of traces and you figure out what can I do with these traces? How do I make use of these traces? This is not as offline as a
+
+single sort of lump of production traces, but it's not fully online in the sense of all the way on the right here, we have this sort of unified engine of putting inference and training together, right? And this is sort of the holy grail of continual learning where I have a model that's serving production traffic, it does a rollout, it creates a trace, we figure out how to learn from that trace, we update the model, and then we serve the next production request. So, there are a bunch of different points along this spectrum where we think that distillation and continual learning can be useful, but this is how we think about sort of the two ends of the spectrum and how we try and do continual learning across the whole spectrum. Um on the left side, on the offline side of traces, this is sort of where a lot of enterprises are today. Basically, they say, "Okay, we have a bunch of production traffic, we have a bunch of traces, like figure out a way to make our agent better. It's clearly doing
+
+something, but it clearly can be better." And so, how do you make our agent better today given sort of this one-time batch of production traces? And on the right side, this is sort of the full complete flywheel, right? This is uh we have some enterprises who are willing to sort of start getting something into production, which looks like this fully online continual learning, where we essentially deploy a model, and then we're able to make updates as the model is serving production traffic. Um our goal at Applied Compute is to meet enterprises where they are, right? So,
+
+they're across this spectrum and we want to provide value across both ends of the spectrum. >> [snorts] >> So, this is sort of online and offline distillation, but there's a whole other axis there's a whole other axis here we think about, which is hinting, right? So, the whole point of distillation is we have some kind of information that allows us to create a teacher model, which is smarter than the student model or the on-policy model. Um in order to create a teacher that's smarter than this on-policy model, we need to create some kind of hint or have some kind of privileged information. And so the question is where does this hint come from?
+
+So in the offline hinting world, we're deriving hints from some static or offline data. So this can be potentially known rubrics for a single task. It can be general priors about behavior that needs to get better, such as like a customer support agent that is too willing to give refunds, for example, right? This is some known behavior that you're trying to improve. Um or it could just be general things that we've seen in production about sort of loss reports and saying, "Oh, the model tends to miss on questions like this." But it's independent of the
+
+online model's rollout. So there's a whole world of creating offline hints from static data. There's also online hints, right? And so online hinting is our hints that are dynamically constructed from the online rollout. The idea here is that we can also inject other pieces of information like behavior priors and things like that. But the goal is to create a hint
+
+that is completely dependent on the online rollout and the online policy that's doing the work. So we have these two online and offline spectrums. We have hinting and we have distillation. Which leaves us with a very nice 2 by 2 grid, right? And so here sort of like the four types of distillation that we see. And again, these are all spectrums,
+
+right? So I've drawn lines and put things in boxes where boxes sometimes don't make sense as boxes, but more as spectrums. But in general, this is sort of like the the four quadrants of the continual learning distillation spectrum. Um so in the first box, we have an offline hint paired with an offline production trace. So what this looks like is we take a trace from production and we have some prior about how generally production traces aren't good enough. Again, maybe
+
+customer support is not uh is too quick to give refunds, things like that. And we give and we construct a hint that we apply to all of these offline production traces. And then we do this distillation task, and eventually we sort of create some smarter model from offline hints paired with offline production traces. In the second quadrant, we have offline hints paired with on policy and online production traces. So again, what this looks like is we have a hint of a behavior we're trying to improve. We let
+
+an online let an online agent do a rollout. We inject some hint that we're injecting into all of our rollouts. Try and update the policy model, and then continue serving production traffic. In the third quadrant, we have off policy traces with some on policy step and hints that are constructed against that one on policy step. Um I'll talk a little bit more about what an on policy step means later on, but basically the idea is that the trace that led to the point where I inject a hint was fully off policy. It was some production some
+
+production trace that came from a few days ago. And we are we are using our on policy model to just roll out one step without actually having to interact with the environment. And we construct the hint based on what that on policy model did in that one step. So again, we have an offline production trace. We pick a moment in time to do some online step, and then we construct a hint based on what the on policy model did in that one online step.
+
+And then finally, we have this fourth quadrant, which is sort of online hints with online production traces. So what this means is we have an on policy model do a bunch of things in production. It finishes. We stop. We look at what the on the online model did. We then create
+
+a hint dynamically from the full rollout that the online model did, and then we construct a hint, and then we do some sort of distillation against this online production trace with an online hint. So, in general at Applied Compute, we're really really Again, we do research across all four quadrants of this um sort of table, but we're really focused on quadrant one and quadrant four. And so, quadrant one basically is how we meet enterprises who are who are ready to have their production agents improve today. Um and so, what this looks like is we don't actually have to have replayability of a production environment, right? We can take a bunch of production traces, and we just look at what happened, and then we can essentially construct We have these offline hints for behavior changes that we're trying to target and improve.
+
+Again, not giving refunds quite as often. Um I'll talk a little bit about formatting things or reasoning like the amount of reasoning we're trying to encourage. But basically, these are off-policy traces where we inject some offline hint. And this allows us to really target specific behaviors. On quadrant four, um this is sort of our most scalable solution to climate overall emails. Um so, this can be done
+
+with either a replayable environment or actually serving production traffic. And because we're constructing these hints online in a dynamic way, that we can actually cater to a bunch of different behaviors via distillation, right? Um and this is how we complete this flywheel where we have an online model serving production traffic, constructing hints online dynamically based on what it did, and then updating our model accordingly. So again, um this is sort of our full training taxonomy. Uh we've done work across all four, and today I'm really going to focus on quadrant one and quadrant four, which is where we spend most of our time.
+
+Um in terms of how that grid maps to where value accrues, this is sort of how we think about it. Um we can improve for free today, and we can raise all ceilings tomorrow. We can improve for free today by using offline production traces. Give us a dump of your production data. We'll find a way to make it valuable.
+
+And then as we deploy an online policy model that we can then raise the ceilings continuously by updating the model as it's serving production traffic. Um and I think the most important thing I want to call out here is that when we think about how we do this, we want to do this without having access to some golden answer. Um I think this is something that like generally frustrates me a lot in the distillation space is a lot of distillation work is done assuming you have some kind of golden answer that you can distill into the model. And this is often not the case. Um and so in general, we want to think about how we can do continual learning and distillation without having some beautifully golden rubric to accompany every task.
+
+Um as the infra collapses between serving and training, we're automatically going to raise the ceiling continuously via online distillation. So again, we have the spectrum, one-time batch of offline production data, and then online um traces, and our goal is to provide value across the full spectrum. Cool. So let's spend a little bit of time talking about the data and some of the results across these four quadrants. Um so in the world of offline traces, offline hint, we have this setup, right?
+
+Where our goal is to essentially take a Qwen 3.5 thinking model against SWE-bench and get it to submit its reasoning faster than it normally does. So on SWE-bench, we found that this model was essentially taking like up to 80 turns to submit its answer. What we wanted to do was encourage it to call a tool to submit its task before turn 40. And the reason for that was basically to prove to ourselves that we could get it to sort of wrap up its reasoning quickly by turn 40 without letting it do its normal sort of full reasoning chain.
+
+Um and so we'll we'll talk about three metrics here. The first is the task complete rate, which is the percentage of the time that the agent calls this tool to {quote} finish a submission. The second is test pass rate. So, this is how we measure the regression in performance on sort of the base task. And this is the percentage of the time that the environment passes all tests accompanying the SWE-bench task um irrespective of whether the agent, you know, submitted this submitted the task via this tool call.
+
+And then finally, we have our SWE-bench task rate or pass rate, which is how we basically combine these two these two metrics. It's the intersection of those two behaviors. And so, the goal is we want to raise the SWE-bench pass rate performance while not degrading the test pass rate. Uh and I've included a a hint here of what this looks like in practice. It says something like you are near your 40-turn limit. There's only about three
+
+turns left. You have to keep You often keep exploring and forget to wrap up investigating. So, finalize and verify your fix and then call this tool before uh you run out of time. So, this is what the results look like. Um so, we were able to target the specific behavioral change, which was to call this tool when it wanted to submit a task, and without any degradation to the overall performance. So, you can see
+
+that sort of maroon color is the test pass rate. It's relatively constant. In fact, it goes up a little bit. But, the task complete call rate increases dramatically from about 22% to 60%. And so, we're able to add this behavior.
+
+Um and I think the the really interesting surprising result here is again, this is in a fully sort of like offline world. And so, we're we're taking a production trace or a trace that was created ahead of time that never basically never called this task complete tool. And we're nudging with the student and uh teacher models uh the the the student model towards calling this task complete tool call without ever specifically changing the tokens for the tool call. Because again, the rollout is conditioned on the {quote} "production trace," right? And so, it never had the reasoning path to think to call the tool call. And so, the teacher
+
+doesn't force the tool call. It just starts to force the the reasoning path towards the tool call without ever actually changing the tool call. Which I think was really cool and surprising to us. >> [snorts] >> Now, that being said, there actually is like a little bit of a cheat here that we can use. Which is that you can and as I mentioned earlier, you can roll out just one step from the on policy model given an offline production trace. And
+
+when we do this, we're obviously see that the student model sort of learns to wrap up its reasoning, and eventually the teacher starts encouraging it to actually call this tool token. Um and so you can see by having something that's a little bit more on policy that we're able to increase sort of the sweet bench pass rate more than in in the fully offline world. So again, this is sort of offline trace, offline hint with just one step on policy. Cool. So then what does it look like in sort of the fully online online trace, online hint world where we're serving production traffic?
+
+So for a certain production use case we had, we needed to teach a coding agent to use very specific formatting for hyperlinks due to a certain hardens certain hardens nuance of one of our customers. And obviously this coding agent needed to not regress on any of the base coding agent capabilities. Um now the problem here is that these these hyperlink formats were very very out of distribution for previously post trained models. And so when we tried things like giving in adding a reward for specific hyperlink formatting, or even doing SFT on traces where we knew the hyperlink was correctly formatted, we saw that there was this sort of degradation in overall coding agent performance. Uh and so what we did here is set this up as an online trace with an online hint.
+
+Um so basically what this looked like is that we would do a roll out, then we would inject a hint specific to the roll out that occurred from the on policy model, and then say, "In your prior roll out, you'd formatted hyperlinks like this. Next time, make sure to make Next time, make sure to format hyperlinks in this way instead. And so, what we were able to see is that the percentage of correct hyperlink formatting jumped drastically from about, I guess, 15% all the way up to around 80%. And the other line The other graph here shows what happens if we try to do offline hinting. So, this is basically for every single rollout, apply the same hint, which says, "Remember that when you do hyperlinks, you have to format it this way." Um and you can see that we do
+
+climb the behavior a little bit, but far less than in this online hinting world. So, here we've seen sort of like two different results. One where we can use offline hinting and offline traces to climb from production traces. And then another one where we're able to actually use sort of the on policyness of the model and online hints to improve the behavior when we're serving production traffic. Um okay, cool. I think I have enough
+
+time here to talk about a little bit of tips and tricks here. Um so, the first is that we found that per step hinting is drama- is very, very important to making distillation work. Um so, rather than injecting a hint to the beginning of a rollout, we use a judge to essentially decide where in the rollout we should be injecting hints. And then uh actually have found that it's best to just do distillation on that next step that occurs or maybe a few steps forward rather than the entire rollout. Because that's really the turn in the moment in time that you want to have the teacher teach something to the student. Um I You
+
+can also see in this graph here that this KL learning signal basically goes down as you get further and further away from the hint, which which makes sense. Uh Another trick that we've used is something called relevance mask self-distillation. Um and there's a blog post on our website about how we've done this. But essentially, the idea is that we use an LLM judge to sample and choose which tokens we actually learn from from our teacher from our teacher model. Um because often, we'll see that the teacher model has preferences of certain connector words that are not really relevant to actually what we're trying to teach the student. And we can see in
+
+sort of the graphs at the bottom that we're able to increase our ability to learn a very, very out of distribution behavior, while also being better about avoiding catastrophic degradation. Cool. So, overall, where does that leave us? So, obviously, I assume everyone here is sort of on the distillation train, but it's a very, very valuable tool towards continual learning. We introduced a spectrum of offline and online rollouts, as well as offline and online hinting, and how we use them towards distillation.
+
+So, we use offline hinting with offline production traces to provide value on day one to enterprise clients. Give us production traces and we can teach you a certain behavior. We then use online hinting and online production traces to do this highest ceiling sort of continuous learning improvement across multiple improvement areas, because that judge is able to adapt to whatever the online model does in production. And finally, I just want to say thank you to the team that worked on this. A lot of a lot of the work was done by others. I just kind of got to present
+
+it. Um and we're hiring, having a lot of fun working on research problems around continual learning. So, if you're interested, reach out to hiring@appliedcompute.com or uh yeah, just email me as well. So, thank you everyone.
+
+>> [music]

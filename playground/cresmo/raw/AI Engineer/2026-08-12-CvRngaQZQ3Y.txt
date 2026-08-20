@@ -1,0 +1,116 @@
+---
+video_title: "Improving Agents is a Data Mining Problem — Vivek Trivedy, LangChain"
+video_id: CvRngaQZQ3Y
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CvRngaQZQ3Y
+video_date: 2026-08-12T19:00:01+00:00
+video_description: |
+  Does your agent get dumber after the first compaction? After the second? You cannot read that off the code, only off the traces, and there are far too many to read yourself. So LangChain points agents at the traces of other agents and asks exactly that, alongside questions like where users got upset and what a different model would have done at the same step. Vivek Trivedy's argument is that observability and continual learning are the same problem in different clothing, because an agent acting in an environment produces the only real record of what happened, and that record is the substrate everything else is built on.
+  
+  The economics fall out of reading it. Working with Harvey on a legal benchmark, they found an open model could match their frontier model's trace judging at one to two orders of magnitude lower cost, arrived at through harness engineering that the traces themselves pointed to. His rule for when to stop tuning prompts and start finetuning is speed of feedback: harness engineering answers in about two minutes, so you exhaust that ceiling first, finetune to break through it, then return to harness engineering. He also argues that dense feedback is what agents lack most, since a benchmark returning only pass or fail gives an agent nothing to act on, while traces already hold the fine grained signal. The claim worth arguing with is that you can describe an agent's behavior just by showing the evals it was measured against, because those are what it hill climbs.
+  
+  Speaker info:
+  - https://x.com/Vtrivedy10
+  - https://www.linkedin.com/in/vivek-trivedy-433509134/
+  - https://www.vtrivedy.com/
+  
+  Timestamps:
+  0:00 - My agent made mistakes, now what
+  1:28 - Ship it, collect traces, mine them
+  2:44 - Observability and continual learning are the same problem
+  4:00 - Why agents are harder to reason about than code
+  4:36 - Trading determinism for autonomy
+  5:15 - Sending agents to read other agents' traces
+  6:29 - Today's data is the least we will ever have
+  7:09 - When a trace no longer fits in context
+  7:48 - Not reaching for a frontier model every time
+  8:24 - Matching frontier trace judging with an open model
+  9:02 - Where harness engineering stops paying
+  9:40 - Finetuning on a narrow vertical
+  10:17 - Trading token costs for hardware costs
+  11:34 - Distillation from your own good traces
+  12:10 - Evals as a description of behavior
+  12:48 - What scikit learn has to do with any of this
+  13:28 - Model, harness, task fit
+  14:07 - Finding fit functions and finding data
+  15:24 - Why dense feedback matters
+  16:01 - Harness engineer, finetune, harness engineer again
+  17:22 - Updating agent state across three axes
+  18:39 - Sleep time compute and memory that is not append only
+  19:17 - Takeaways
+---
+[music]
+
+>> Hey everyone. I'm Vic and I lead applied research at LangChain and I'm going to talk about something that I think is sexy, which is data mining, but it's not as sexy as LLM, so we're going to try to like make it sexy together. And the problem that we're going to talk about today is how do we continuously improve agents, but how do we do that via data? So, to start, I'm going to tell a little story that I think maybe a lot of us have felt before. Like, I ran my agent, it did a bunch of things, it made some mistakes.
+
+Now, I ask someone like, what do I actually do about that? Like, I have all this data, made some mistakes, what now? Basically, what we're going to do today is we're going to motivate a recipe for what we should do to continuously improve agents over time, and then I'm going to talk from some lived experience and like some stuff that we help customers do to run this over large-scale trace data. So, the first step in building a successful agent is shipping it. So, if you put it out into the real world, then it can operate in environments and then you can get feedback from what it's doing.
+
+The second step is collect a ton of traces. So, agents operate in the environment every single time they operate, they do tool calls, they have output messages, they call APIs, they use CLIs. All of that generates data and we want to store all of that so we can like do stuff with it. The next thing is the data mining in this talk, which is once we have tons of trace data, maybe gigabytes, maybe terabytes, depending on like how many agents you're shipping, we're going to do data mining over that. And I promise I will tell you exactly what data mining we're going do, uh but we're going to do some over it.
+
+And then the fun part, which is I collected that data, I read it, I curated it, and now we actually need to run the experiments in a data-driven way to see, "Hey, is this new prompt, or is this new tool, or is this new orchestration, or is this new loop, is it actually improving things based on the previous traces that I've seen?" And this is maybe a bit of a hot take, but continual learning is super hot right now. I'm talking about it, this whole room is going to hear about it for the next like 5-6 hours. Um but there's a very tight coupling between what observability is and what continual learning is. And the main reason for that is that agents that operate in environments, they produce trace data, and what continual learning for agents and continual learning for humans basically is is I do a bunch of stuff in the world, I think about what I did, and then I need to update my definition, like my knowledge, stuff I write down, in order to respond to the feedback from the environment. And if you're continual
+
+learning company, you need traces, and if you have traces, then you can try to do continual learning over your agents. I had to put in a meme because if you look at your data, then you can be like Will Hunting if anyone's seen the movie, where like everything is super super easy, and you can like improve over time, and I promised Emma I would put this in there, so putting it in there. Cool. So, why am I talking a bunch about traces anyway? So, I'm sure a ton of us were software engineers before, we're software engineers now, and on the left we have a code block, and we can sort of like read the code, and in my head, I can almost reason over what this code does. I can
+
+see the functions, I can see like how they call each other. I can roughly understand the logic in Python. Um that doesn't exactly exist in agent world because agents have prompts, they have tools, they have skills, they have hooks, they have middlewares, some agents call other agents and I orchestrate them in swarms. It's really really hard for humans to reason about how certain prompts that they change are actually going to affect agent behavior at scale. And this also varies between the different domains that you're doing it on. So, a prompt change and you're
+
+using for the medical domain is going to be like completely different than a prompt change that you want to do for the law domain. And in general, over the last four years since the ChatGPT moment, we've started trading determinism for autonomy. And in that shift, sort of what we need to do is create tools and create systems to still understand agents when they're autonomously operating in environments. So, I talked about traces. Um why like why should you read them? And
+
+at LangChain, what do we actually do when we're reading traces? So, we centralize a bunch of our data, so we put everything in a tracing project and this is usually either like per agent or like centralized across all of our agents. And then what we do is we send agents to read traces from other agents, right? And then we look for a bunch of different things. And we might ask for, "Hey, like find a bunch of like good and bad interactions where like users got upset or like users are like really happy."
+
+Um another question I might ask is uh this is a technical question like "Agents now run for millions of tokens. Does the agent get really dumb after the first compaction? After the second compaction? Does it never get dumb?" Like how do we actually answer these questions? We need
+
+to do it by actually looking at the traces. And then the the other thing is like if I look at the traces, then I can try to prove some counterfactuals, which is "Hey, like I ran GPT 5.5 for this and I heard like GLM is really good. What happens if I run GLM 5.2 for this task and how do I compare them? Metrics,
+
+awesome. The The trace level captures the actual like behavior that users see. So, that's also like very helpful for seeing behavior like fine grain scales. And the way that we sort of think about the data that's being generated by agents is that the data that we see today is going to be the smallest that humans have ever seen in their entire lives because we're in this massive exponential shift to our agents are doing more and more work in the economy. And what that means is like the amount of data that humans have produced in our entire lifetime will soon be eclipsed by agents running on like year scales and then 6-month scales and 3-month scales and then maybe every day, right? Um and
+
+to understand a ton of that data, roughly what we need to do is contend with a couple problems. There's more, but these are the two that I'm going to focus on. So, one, uh reading traces at scale is super expensive, uh especially if you have millions of traces and if you have millions of tokens per trace, right? Um think of it as like an input token cost. You can like literally multiply the input token cost uh times the number of traces times like how big each trace is on average, right? Um the the other
+
+thing is [clears throat] if I have a super long interaction with a coding agent like Cloud Code or Codex or like deep agents, um I can't even read that trace with another agent because that that context like doesn't fit in memory, right? So, it's like we we need to develop systems so I can sort of treat that context as like an external object and then I can sort of query into it, right? So, we we need to build agents to efficiently mine data from other agents and it's it's no longer as simple as just like feeding the data into context and there's like tricks that we'll sort of talk about uh to to do that well. Great. So, one of the things that I think is really really cool in the last 6 months is that open models have basically hit an inflection point in intelligence that we at LangChain don't reach for the frontier models for every single use case. We're quite conscious
+
+about what is the minimum level of intelligence that I need to do any given task. And like practically speaking, honestly, yes, we start with Opus, we start with 55 because we just want to know if the task is even possible. But then once we reach that sort of like waterline, then we like look back at those traces and we see, "Hey, can we use an open model to do the same thing?" So, this is a bunch of work that we did with Harvey and then their lab legal benchmark. Basically, what we're looking at is can I match the trace judging capability of Opus with an open cheaper model? And
+
+the answer is roughly yes at like an order or like two orders of magnitude cheaper. And like the way we do that is we try a bunch of models, we do a bunch of like harness engineering, and the harness engineering is informed by a bunch of the traces that we read. So, it's like, "Hey, like Opus reasons about things in this way. Maybe that's because of the prompt. Maybe Opus is just smarter, which it is, than a bunch of the open models, but that might mean I need to give it a little bit more guidance so it can reach the sort of same intelligence level at like a much much lower cost."
+
+And the the other thing that we sort of look at is like harness engineering is amazing. You get instant feedback and you can sort of like run on your evals, but eventually what we find is you hit a threshold of intelligence where it's like "If I keep tweaking this prompt, I'm not going to get too much more out of it." And once we reach that point, we sort of look at, "Okay, can I actually like fine-tune the model on my domain-specific task?" And can I like make it better on those tasks? And what we find is if we take like base models and we tune them on like very specific vertical tasks, which is what a lot of our customers do, they don't really care about the entire variance of tasks. like
+
+they care about what their customers care about. So, if we focus on that narrow set of tasks, then we can fine-tune base models to sort of like reach and then also go beyond frontier performance. And I think one sort of like small thing I'll mention as a lot of people are getting into fine-tuning is that another sort of like economic decision is that you can move from token costs to hardware costs. And this is like can be a really big change, right? Cuz like you're very used to hey, like a million tokens cost this much, not as much like this cluster sort of costs this much. But for like very high
+
+inference workloads, we find it to be way cheaper just to like run a cluster and I get like unlimited inference on that cluster. I don't have to worry about tokens, but I can just do the calculation of like, hey, um this will end up being cheaper and then I can spin it down when I don't need it. Cool. And I said all of this um so we obviously like built a product to do that. Uh I won't shill it too much, but it's LangSplat engine. Uh basically,
+
+this product is trying to automate this loop for you, which is if you have any volume of trace data and you're looking for something that trace data or you want to generate e-vals from that trace data or you want to like generate feedback for like humans to read from that trace data, it will go read all of it, it'll like find issues, it'll agentically search over it, and they can like prepare data sets for you to do something after. And a bit of a leader, um what that something basically is is the outputs of this trace mining exercise. So, there's like three things that I mentioned here uh which we see a bunch and we kind of put into the product. So, one is distillation and fine-tuning, which is let's say I'm running GLM 5.2.
+
+It's doing great, but I think that I can run this task like way cheaper with like a 9B or 13B model. Then what I'll do is like I'll take the good traces and the good examples from the GLM 5.2 runs, I'll prepare them in a data set, and then I'll try to fine-tune a small model on that data set to like mimic behavior, essentially, right? And this is like distillation, SFT. The The other one is generating evals and environments. So,
+
+maybe another slightly hot take, I think you can basically define agent behavior by showing the evals that you ran on it, right? Like, if someone showed me all the things that they're trying to test their agent on, I think I would have a rough idea about how that agent is going to behave because it literally like hill climbs those evals, and you you alter the behavior of the agent to make the evals pass, right? Like, the purpose of evals is roughly to try to make them pass, right? So, I update my agent so that they essentially pass. And then the the other thing is um like humans are still in the loop. Like, I need to know
+
+that customers are happy. I also want to know what my agents are doing. I just don't have the bandwidth to read a bunch of traces. So, preparing content for humans is still like really, really valuable today, especially in like high-trust domains like legal and medical. Like, some human needs to review this, um but they can't read it all, so we try to make it easy for them to process all that data.
+
+Great. This is um maybe a bit of a throwback. Like, how many people here know what like scikit-learn is? Uh maybe put your uh psych This crowd is just awesome. Um cool. So, uh when I was like
+
+first doing my PhD, uh my PhD was like kind of trying to do this, but like add new algorithms to scikit-learn. And like, what scikit-learn basically is uh an abstract level, it's a bunch of helpers to fit learning systems to data, right? And like, classical machine learning, I had like a data set, I tried to fit it to it, but I think the same principles that we use in modern in I got I call it classical machine learning, it's like 6 years ago. Um that we do in classical machine learning uh definitely still apply to this agent-first world. Um, the way that they apply is what I like to call model harness task fit. So, we
+
+still have this sort of like fit function that I'm going to try to like take my data, take a harness, take a model, and I'm going to try to fit it all together to make sure that all of my tasks pass, right? The algorithms look slightly different, uh but the overall process of machine learning doesn't really look that different, and we'll talk about maybe roughly what our job becomes in this data-first, agent-first, fit-first world. So, a couple of our main jobs now are find good fit functions. So, these are like auto research. This is tons of great work that's being done in RL on different methods like OPD, OPSD, trySFT.
+
+And also find good data, right? So, if you put those two things together, then that is basically the applied or just overall research question that every team has to make their agents better. I like some some examples that we've seen that are like very popular that we're pretty bullish on are just generally auto research. So, if you have some sort of score that you can make number go up, uh agents are pretty good at making that number go up. They might cheat a little bit and you need to like check them on some stuff. Um, but this sort of like
+
+general feedback loop of do something, read the results, read the traces, and then do an update ends up being pretty useful. And then I talked about like model fine-tuning a bunch as well. Um, so we we just like went and did this. Uh this was I think even before the term auto research came out, but a lot of people were doing it, which is hey, like terminal benches like really hard. Uh what would happen if an agent just like read its traces, uh proposed experiments, and then tried to do fixes?
+
+Um, I think one like really key thing here is uh giving agents dense feedback signals. So, like terminal bench, the output is just a number, right? Like, did you pass or did you not pass? Uh that's like kind of helpful, but if I give you like a super random task, like you just did a bunch of stuff, and then I just said like you failed or you passed, uh if you failed, like you wouldn't really have a good signal to figure out what you should do next, right? So, densifying feedback is uh really good way to improve agents, and like traces are the substrate that hold that feedback. And
+
+then agents are very good at like reading those uh those traces and then figuring out like what to do next. Um and then this sort of question always comes up, which is when should I like harness Enge? When should I fine-tune? Uh should I do more harness Enge after it? I'm like pretty bullish on the idea of if you need to do something for improving your agent, the best thing that you can do is collect feedback as quickly as possible, like either from humans labeling or just letting the agents run. So, like harness
+
+engineering gives you feedback in maybe 2 minutes. Um once you sort of saturate the harness engineering ceiling, right? Then you can maybe try to do like fine-tuning after that, but we find a lot of teams are happy with harness engineering and uh it solves their customer use case, so like we always sort of sort of recommend it. And then we have this like sort of sandwich, which is like try harness engineering, try to do fine-tuning to sort of like break through that ceiling, and then do more harness engineering again if you need to. And then I'll sort of end on the the idea generally of continual learning is that there's an agent taking actions in the environment, and then it needs to use that information, sorry guys, needs to use that information to update information about itself, right? So,
+
+it's like I did a bunch of these tasks, and like I need to update my prompts to make sure I do them more efficiently. Or users are users keep asking to search for these types of things, I should maybe tell like tell my creator that like they're they're doing this sort of stuff, right? It's like taking action in the environment kind of like humans do and updating ourselves. What that looks like today, slightly unclear, but we think that you're going to have to do it across all three axes, which is one, collect a bunch of training data, which is like observational data from agents taking actions. The The other one is like harness updates generally, like you know, the the Codex harness and the Cloud Code harness and like our harness and everyone's harness, like they look a certain way because like models are are trained in them and they look a certain way because of the tasks that they do in the real world and we think like evolving those over time is going to be super important in in order to make them work. And
+
+the the last thing is like memory. So, uh we humans are like really good at like remembering stuff over time, but we are not append-only logs of information. And if agents are going to be working with us over like year, 5-year, decade, lifetime time scales, we cannot just append everything to like a really big file and then search over it. There's a ton of stuff that needs to happen with like updating those files over time and then just making memory like really efficient. But, we think a lot of that actually comes from this idea of scaling sleep time compute and and dreaming generally. So, it's like read all of the
+
+traces over the entire agent life cycle and then like do [music] things to update agent state. Awesome. So, like quick quick takeaways, uh mining traces gives you signals to hill climb on. Uh I would say like if you have an agent, just turn on tracing and point an agent at it and that's like the easiest thing that you can do to see like to basically understand what your agents are doing. Uh we're very excited about open models.
+
+We want to help you fine-tune open models. Um we provide them as a service as well. So, if you're interested in that, would would love to chat how you can use open models to make everything smarter and cheaper. Um, continual learning is about operating environments and then integrating that data back into agent state. And then finally, I think this is so cool that like we have systems that's going to pre- that are going to produce more data than we ever have before.
+
+Uh, we need to all come up with like interesting research directions to learn how to like manage that at scale and like make all of our agents better. And with that, thank you. Thank you all for coming. >> [applause]
+
+[music]
