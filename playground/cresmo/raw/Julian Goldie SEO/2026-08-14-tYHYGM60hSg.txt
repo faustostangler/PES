@@ -1,0 +1,74 @@
+---
+video_title: "NVIDIA’s 30B AI Model Is Faster Than You Think"
+video_id: tYHYGM60hSg
+channel_name: "Julian Goldie SEO"
+channel_id: UCGpsgNbzdF7BECCVbB1COHw
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=tYHYGM60hSg
+video_date: 20260814
+video_description: |
+  Get the Agent OS & NVIDIA Nemotron Masterclass 👉 https://www.skool.com/ai-profit-lab-7462/about
+  
+  Want to make money and save time with AI? Join here: https://www.skool.com/ai-profit-lab-7462/about
+  
+  Nvidia just dropped Nemotron 3.5 Lightning — a 30B open model that runs up to 4x faster than similar-sized models. Here's what it actually does, why speed beats size for AI agents, and how to test it without wasting a weekend on setup.
+  
+  00:00 Intro – Why the smartest model isn't the one you need
+  00:55 What Launched – Nemotron 3.5 Lightning explained
+  01:15 How It Works – Mixture of experts in plain English
+  01:49 The Agent Problem – Where your speed actually goes
+  02:22 Best Use Cases – Execution layer + 1M token context
+  02:45 Where To Run It – Local, cloud, Ollama, LM Studio
+  03:41 The Speed Proof – 30% faster at the same accuracy
+  04:20 Why It's Fast – Speculative decoding + quantization
+  05:23 Nemo Switchyard – Auto-route tasks to the right model
+  05:46 Beginner Tips – The mistake everyone makes on day one
+  06:55 Fully Open – Weights, data, and fine-tuning your own
+---
+Nvidia's 30 B AI model is faster than you think. What if the smartest model isn't the one you actually need? Everyone keeps chasing the biggest AI they can find, and most of that power is getting burned on tiny, boring steps. Nvidia just released a small open model that runs up to four times faster. Almost nobody has set their workflow up to use it yet. Let
+
+me show you what changed. I'm the digital avatar of Julian Goldie, and I help people learn AI tools and actually use them in real work. Not theory, not hype, the stuff you can go and try today. In this video, I'll break down what Nvidia just launched, why speed matters more than you think, and how it changes the way you build AI agents. And near the end, I'll give you the beginner tips that save you a lot of frustration when you try this yourself. One of them
+
+is the reason most people test this model wrong on day one. So, let's start with what this thing actually is. On August 11th, Nvidia announced Nemotron 3.5 Lightning. Here's exactly what they posted. An open 30 billion mixture of
+
+experts model with 3 billion active parameters built for always-on agents to complete high-volume specialized tasks faster, and it delivers up to four times the output speed of similar-sized models. That sounds like a lot of technical words. Let me make it simple. Mixture of experts means the model is split into lots of smaller specialists. When you send it a word, a router picks just a few of those specialists to handle it. So, the model holds 30
+
+billion parameters worth of capacity, but only about 3 billion of them switch on for each token. Think of a big office, 100 people in the building, but when a question comes in, only three of them stand up and answer it. Big capacity, small workload per step. Nvidia is clear about who this is for. This isn't the model that writes your strategy. It's the model that does the
+
+work underneath it. Here's the thing about AI agents that nobody talks about. Long-running agents spend most of their time on repetitive jobs, calling a tool, checking whether the tool actually worked, formatting a result, passing the task to another agent. Nvidia's own words are that these small models earn their medals in the trenches. They handle things like a Git pull, validating tool outputs, and the routine calls that make up most of a long-running agents work. Send every one
+
+of those steps to a giant frontier model and you're waiting on something huge to answer something small. So, what could you do with a model like this? Nvidia describes it as built for the execution layer. Reading a file, calling a tool, sorting a result, retrying something that failed. It supports a context length of up to 1 million tokens, so it can hold long tool histories across multi-turn work. It also supports coding
+
+languages plus Spanish, French, German, Italian, and Japanese. So, where does it run? Nvidia says Nemotron 3.5 Lightning runs locally on RTX PCs, on DGX, Spark, and Jetson, and scales up to RTX PRO workstations, DGX Station, data centers, and cloud. You can also run it through Ollama, LM Studio, llama.cpp,
+
+and Unsloth. Now, if this sounds useful, but you have no idea where to start with agent setups, that's exactly the gap we work on inside the AI Profit Boardroom. Inside, we run live coaching calls where you can bring your own agent setup and ask questions about it, so you're not guessing which model should be doing which job. We have walkthroughs on running models locally and wiring them into agent workflows, plus the prompts and roadmaps that show you the order to build things in. If you're thinking about testing an open model like Lightning as the worker in your stack, that's the exact kind of build we help members map out step-by-step instead of you losing a weekend to setup problems.
+
+Link is in the description and comments. Now, let's talk about the speed because that's what people are reacting to. In the replies under that announcement post, Nvidia shared a benchmark result on Pinch Bench. Nemotron 3.5 Lightning reaches 86% accuracy while completing 10,000 tasks 30% faster than Qwen 3.6 35
+
+billion at similar accuracy. Similar accuracy, 30% less time. That's the number that matters for agents. Not how fast it types, how fast it finishes. Nvidia also says the model wins the accuracy versus speed frontier on the artificial analysis intelligence index, which combines nine evaluations across coding, reasoning, and agentic tasks.
+
+So, it's fast while staying accurate for its size. How do they get that? The first is speculative decoding. In plain English, the model guesses several words ahead instead of writing one at a time, then checks those guesses quickly. Nvidia baked multi-token prediction in during a dedicated training stage. They
+
+also ship two draft models with it called D-Flash and D-Spark, so you can pick the setup that fits how you're running it. The second is quantization. It ships in a compressed NVF P 4 version alongside the full precision BF16 version. There's also something called harness optimized training. Nvidia trained this model for the popular agent harnesses that developers already use, so agents make more accurate calls with less delay on high-volume tasks. And
+
+under the hood, this is a hybrid design mixing Mamba 2 layers with mixture of experts layers and select attention layers. It was pre-trained on more than 20 trillion tokens, and it's the smallest member of the Nemotron 3 family. Running it locally also means your data stays on your device. There's one more piece Nvidia shipped alongside it. It's called Nemo Switchyard. It's an
+
+open-source routing library. It looks at each step in your agent workflow and sends it to the best model for that job. Planning routes up to a frontier model, execution routes down to lightning. Stop using one model for everything. Build a system of models where each one does what it's good at. Pro tips for
+
+beginners. Tip one, try it before you install anything. Nvidia has it available to try on build.nvidia.com and it's also on open router. Play with
+
+it in a browser first. Tip two, don't judge it like a chatbot. This is the mistake almost everyone makes on launch day. They ask a small execution model a huge open-ended question, get an average answer, and decide it's weak. That's not what it's built for. Test it on
+
+repetitive multi-step work. Give it a tool to call. Give it output to check. That's where it shines. Tip three, pick the right version. If you want speed,
+
+use the NVFP4 build. If you want to train it on your own examples, start from the BF16 build because Nvidia says that's the reference version meant for post training. Tip four, use it as the worker, not the boss. Keep a bigger model for planning and let Lightning handle the volume. That's what SwitchYard is designed to do and you can grab it from Nvidia's GitHub. Tip five, watch your context
+
+settings. The model supports up to a 1 million token context window, but some hosted routes cap how much it can generate in one go. So, check the limits before you blame the model. Tip six, it's fully open. Nvidia released the weights, the training data, and the recipes under the OpenMDW 1.1 license. They also released an
+
+agentic reinforcement learning data set called Nemo Tron RL agentic terminal pivot used to train some of its coding agent skills. So, you can fine-tune it for one narrow job and run your own specialized version. Small models fine-tune faster and on far more modest hardware than large ones. So, the real opportunity isn't just using Lightning as it comes, it's shaping it around your own way of working. If you want the full process, SOPs, and 100-plus AI use cases like this one, join the AI Success Lab.
+
+Links in the comments and description. You'll get all the video notes from there plus access to our community of 85,000 members who are crushing it with AI. And when you go and try this, here's what happens. You'll get the model running, and then the real questions hit. Which steps should go to lightning, and which should go up to a bigger model? How to set up routing so it
+
+doesn't break your agent? Which version to install for your hardware? How to fine-tune it on your own examples without wasting days? That's where most people stall and quietly go back to using one model for everything. That's what the AI Profit Boardroom is built for. You get live coaching calls where
+
+you can ask about your exact setup, tutorials on local models and agent harnesses, roadmaps that tell you what to build first, and prompts you can use straight away. Instead of testing blind for weeks, you get the shortcut and the people to ask when you get stuck. Come join us at aiprofitboardroom.com.
