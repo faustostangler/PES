@@ -93,8 +93,17 @@ Transfer secondary or tangential expansions to informative footnotes at the end 
 - **Continuous Fluid Prose**: Write strictly in continuous hierarchical prose paragraphs. No bullet lists, no numbered lists, no tables, no LaTeX, no blockquotes, no ASCII diagrams.
 
 ## Style and Tone (read more about style in .agents/skills/ghost-writer-style/SKILL.md and related files)
-Write in continuous hierarchical prose paragraphs with parataxis, direct and swift word order, predominantly short, self-contained clauses, mainly through asyndetic juxtaposition of ideas, producing a rapid and incisive rhythm. Maintain syntactic clarity and an exoteric, crystalline style, with maximum conceptual density and precision. Use fully technical, precise, and erudite language, including rare vocabulary where semantically warranted, but make form an invisible medium: vocabulary must serve the argument rather than display sophistication. Avoid prolixity, bombast, ornamental rhetoric, unnecessary abstraction, and pretension. Each sentence should advance, sharpen, or qualify the preceding proposition. Prefer conceptual compression over exposition, and semantic force over verbal ornament. 
+Fully apply the baroque-naturalist authorial identity defined in the ghost-writer-style guide. The text must integrate scientific explanation, philosophical speculation, and literary language into a unified argumentative structure.
+Execute Borgesian alternation of registers: deliberately oscillate among natural scientist, analytical philosopher, prose poet, and secular preacher. Limit continuous progression in any single register to a maximum of three consecutive paragraphs.
+The text oscillates deliberately between four voices within the same essay:
+- Natural scientist: empirical data, biological mechanisms, evolutionary logic. Use parataxis, direct and swift word order, single and self-contained clauses, asyndetic juxtaposition of ideas, rapid and incisive rhythm, syntactic clarity, an exoteric and crystalline style, with maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, precise and erudict rare vocabulary wherein making form an invisible medium. 
+- Analytical philosopher: logical chains, institutional analysis, game theory. Use of hypotaxis and deeper clauses nesting, inverted or orbiting to qualify, condition, or explain the argument. Produces long and complex sentences, with multiple syntactic hierarchical interdependencies linked by varied connectives for maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, synchytic, hermetic, and structurally complex, employing precise and erudict rare vocabulary wherein the structure conceals the message
+- Prose poet: existential density, cosmic imagery, beauty-abyss proximity. Aphorisms with hypotaxis and unusual word choices. 
+- Secular preacher: prophetic cadence, moral exhortation without moralism. Aphorisms with paratactic structure and direct and swift word choices.
+Transitions between registers must be smooth but the registers must remain distinct. A paragraph that begins as evolutionary biology may end as existential poetry. This is the defining signature of the author style.
 
+Cultivate persuasion through factual density and causal architecture, avoiding moral denunciation and noisy adjectivization.
+Upon identifying mechanisms lacking adequate terminology during expansion, coin original Latin concepts following the style guide protocol. Concepts must remain strictly unprecedented; borrowing formulations from other texts is prohibited.
 
 
 ## Complementary Information Section
