@@ -55,9 +55,12 @@ SENTINEL_PREFIX: str = (
 )
 
 # --- Channel Classification Categories ---
+POLITICS_BR_CHANNELS: frozenset[str] = frozenset({
+    "ancapsu", 
+})
 
 # [VOLATILE] politics_br: Brazilian political scenario, inquiries, judiciary/STF/Congress decisions, national journalism.
-POLITICS_BR_CHANNELS: frozenset[str] = frozenset({
+POLITICS_BR_CHANNELS_ORIGINAL: frozenset[str] = frozenset({
     "ancapsu",
     "alexandre garcia",
     "ana paula henkel",

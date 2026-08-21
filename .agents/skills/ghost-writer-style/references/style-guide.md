@@ -38,19 +38,19 @@ O autor escreve para ser relido. Prefere criar conceitos a utilizar os existente
 
 ### Diretriz
 
-Nunca descreva fenômenos pela superfície. Identifique os mecanismos que produzem os fenômenos e, sobretudo, os mecanismos que reproduzem os próprios mecanismos. O interesse analítico recai sobre causalidade, retroalimentação (*feedback loops*), dependência de trajetória e efeitos de longo prazo.
+Nunca descreva fenômenos pela superfície. Identifique os mecanismos que produzem os fenômenos e, sobretudo, os mecanismos que reproduzem os próprios mecanismos em sucessivas camadas. O interesse analítico recai sobre causalidade, retroalimentação (*feedback loops*), dependência de trajetória e efeitos de longo prazo.
 
 ### Exemplo Positivo (de *Curativos Iatrogênicos*)
 
 > "Essa necessidade crônica de sucessivas camadas de compensação tardia é o sintoma inequívoco de uma patologia estrutural mais grave: temos um quadro de progressão continuada órfã de critério de parada e ávida por expansão infralegal."
 
-Observe: o autor não descreve a política de cotas. Descreve o **mecanismo de retroalimentação** que faz com que cada camada compensatória exija a próxima — uma explicação de segunda ordem sobre a dinâmica institucional.
+Observe: o autor não descreve a política de cotas. Descreve o **mecanismo de retroalimentação** que faz com que cada camada compensatória exija a próxima: uma explicação de segunda ordem sobre a dinâmica institucional.
 
 ### Exemplo Positivo (de *Singularitas Pulchra*)
 
 > "A vida é um punctum ordinis inexorável, um efeito colateral organizado para maximizar a difusão da entropia no universo."
 
-Observe: a vida não é descrita como fenômeno biológico isolado. É reinterpretada como **efeito emergente** de uma dinâmica termodinâmica mais fundamental — a entropia.
+Observe: a vida não é descrita como fenômeno biológico isolado. É reinterpretada como **efeito emergente** de uma dinâmica termodinâmica mais fundamental, a entropia.
 
 ### Padrão a Evitar
 
@@ -86,13 +86,13 @@ Tratar a moral, a religião ou a consciência como categorias fundamentais e aut
 
 ### Diretriz
 
-As imagens — como os exemplos patologia, anatomia, entropia, poeira cósmica, deserto das estrelas, abismo, Sísifo, gaiolas, mercados ontológicos — não são ornamentais. Funcionam como **estruturas cognitivas que sustentam a própria argumentação**. Cada metáfora é um andaime conceitual, não uma decoração.
+As imagens (como os exemplos patologia, anatomia, entropia, poeira cósmica, deserto das estrelas, abismo, Sísifo, gaiolas, mercados ontológicos) não são ornamentais. Funcionam como **estruturas cognitivas que sustentam a própria argumentação**. Cada metáfora é um andaime conceitual, não uma decoração.
 
 ### Exemplo Positivo (de *Curativos Iatrogênicos*)
 
 > "Eis a quimera tragicamente humana de tentar conter a disseminação de um melanoma metastático aplicando unguentos sobre a pele necrosada. São camadas de curativos iatrogênicos que ocultam a causa raiz."
 
-Observe: a metáfora médica (curativo, melanoma, pele necrosada) **não ilustra** o argumento — ela **é** o argumento. A própria estrutura conceitual do ensaio é organizada pela metáfora da patologia. O título do texto é a metáfora.
+Observe: a metáfora médica (curativo, melanoma, pele necrosada) **não ilustra** o argumento: ela **é** o argumento. A própria estrutura conceitual do ensaio é organizada pela metáfora da patologia. O título do texto é a metáfora.
 
 ### Exemplo Positivo (de *Singularitas Pulchra*)
 
@@ -110,9 +110,9 @@ Usar metáforas como floreios retóricos descartáveis que poderiam ser removida
 
 ### Diretriz
 
-**Sempre crie novos conceitos latinos** quando o texto identificar ou introduzir um mecanismo que não possui termo existente satisfatório. Evite reutilizar termos de outros textos do autor — cada ensaio exige seu próprio vocabulário conceitual. Os termos que aparecem neste guia e nas demais skills são **exemplos ilustrativos do padrão**, não um léxico a ser reciclado.
+**Sempre crie novos conceitos latinos** quando o texto identificar ou introduzir um mecanismo que não possui termo existente satisfatório e mereça ser destacado. Evite reutilizar termos de outros textos do autor. Cada ensaio exige seu próprio vocabulário conceitual. Os termos que aparecem neste guia e nas demais skills são **exemplos ilustrativos do padrão**, não um léxico a ser reciclado.
 
-### Exemplos Ilustrativos do Padrão (NÃO reutilizar — criar novos)
+### Exemplos Ilustrativos do Padrão (NÃO reutilizar; criar novos)
 
 Sísifo Regulatório exemplifica a combinação de uma metáfora clássica com adjetivo técnico para condensar um ciclo continuo de retroalimentação.
 Memeplexos Ontológicos exemplifica um neologismo composto que fusiona dois campos do conhecimento, a memética e a ontologia.
@@ -141,13 +141,14 @@ O texto oscila deliberadamente entre quatro vozes narrativas dentro do mesmo ens
 
 ### Os Quatro Registros
 
-Cientista Natural: Dados empíricos, mecanismos biológicos, lógica evolutiva, estatísticas verificáveis. Vocabulário técnico preciso. Frases longas com cadeias causais explícitas.
+- Natural scientist: empirical data, biological mechanisms, evolutionary logic. Use parataxis, direct and swift word order, single and self-contained clauses, asyndetic juxtaposition of ideas, rapid and incisive rhythm, syntactic clarity, an exoteric and crystalline style, with maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, precise and erudict rare vocabulary wherein making form an invisible medium. 
 
-Filósofo Analítico: Cadeias lógicas, análise institucional, teoria dos jogos, economia, diagnóstico estrutural. Vocabulário de ciências sociais. Raciocínio sequencial rigoroso.
+- Analytical philosopher: logical chains, institutional analysis, game theory. Use of hypotaxis and deeper clauses nesting, inverted or orbiting to qualify, condition, or explain the argument. Produces long and complex sentences, with multiple syntactic hierarchical interdependencies linked by varied connectives for maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, synchytic, hermetic, and structurally complex, employing precise and erudict rare vocabulary wherein the structure conceals the message. 
 
-Poeta em Prosa: Densidade existencial, imagética cósmica, dança entre beleza e abismo. Frases curtas de alto impacto aforístico e conceitual. Ritmo cadenciado. Economia de palavras.
+- Prose poet: existential density, cosmic imagery, beauty-abyss proximity. Aphorisms with hypotaxis and unusual word choices. 
 
-Pregador Secular: Cadência profética, exortação moral sem moralismo, chamado à lucidez. Tom homilético sem religiosidade. Afirmações categóricas.
+- Secular preacher: prophetic cadence, moral exhortation without moralism. Aphorisms with paratactic structure and direct and swift word choices.
+
 
 ### Exemplo de Alternância (de *Singularitas Pulchra*)
 
@@ -165,7 +166,7 @@ Inicie seções no registro que melhor ancora o argumento (geralmente Cientista 
 Permita que o registro se desloque naturally quando a cadeia causal atinge seus limites explicativos.
 Use frases curtas como pontos de transição entre registros.
 Nunca permaneça em um único registro por mais de três parágrafos consecutivos.
-Reserve o registro de Pregador Secular para conclusões de seção ou frases de impacto isoladas.
+Prefira o registro de Pregador Secular para conclusões de seção ou frases de impacto isoladas.
 
 ---
 
@@ -209,7 +210,7 @@ Evite hipérboles em todo o texto; use com cadência para fortalecer as melhores
 
 ### Quando Criar
 
-Sempre. Cada texto novo exige seus próprios conceitos. A criação de conceitos originais é obrigatória sempre que o texto identificar ou introduzir um mecanismo sem termo existente satisfatório. Nunca transplante termos de outros ensaios do autor.
+Sempre que couber. Cada texto novo exige seus próprios conceitos. A criação de conceitos originais é obrigatória sempre que o texto identificar ou introduzir um mecanismo sem termo existente satisfatório. Nunca transplante termos de outros ensaios do autor e não crie termos latinos para conceitos já existentes. 
 
 ### Como Criar
 
@@ -263,7 +264,7 @@ EVITAR: "Existem argumentos a favor e contra as políticas de ação afirmativa.
 PREFERIR: O autor tem uma perspectiva. O texto é argumentativo.
 
 ### Anti-Padrão 6: Uso de Antíteses (PROIBIDO)
-EVITAR: "Não como X, mas como Y", "Não é A, é B", "Não se trata de X, e sim de Y".
+EVITAR: "Não como X, mas como Y", "Não é A, é B", "Não se trata de X, e sim de Y", e outras variações semelhantes. 
 PREFERIR: Eliminar integralmente a fórmula de oposição negativa. Afirmar a tese de forma direta, afirmativa e autônoma: "A emergência de Y reflete a dinâmica biológica de A."
 
 ### Anti-Padrão 7: Uso de Travesões (PROIBIDO)
