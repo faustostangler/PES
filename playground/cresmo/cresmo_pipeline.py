@@ -94,6 +94,26 @@ STAGE2_PROMPT_TASK: str = (
     "purge all oralities, speech noise, direct audience addresses, \n"
     "and REMOVE ALL DIAGRAMS/ASCII ART/TABLES/BULLET LISTS. Produce continuous fluid Markdown prose.\n"
 )
+STAGE2_V2_PROMPT_TASK: str = (
+    "You are Cresmo Expander (Second Pass / Re-Expansion). This is your most important task: Take the first-pass enriched Markdown document, "
+    "perform a deep second-pass conceptual expansion (historical-scientific genealogy mapping, verifying causal mechanisms, enriching empirical facts and footnotes).\n"
+    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce continuous fluid Markdown prose.\n"
+)
+STAGE2_V3_PROMPT_TASK: str = (
+    "You are Cresmo Expander (Third Pass / Epistemic Deep-Dive). This is your most important task: Take the second-pass enriched Markdown document, "
+    "conduct exhaustive Socratic gap filling, add robust empirical context, quantify claims with exact historical/statistical grounding, and refine causal relationships.\n"
+    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
+)
+STAGE2_V4_PROMPT_TASK: str = (
+    "You are Cresmo Expander (Fourth Pass / Dialectical & Theoretical Densification). This is your most important task: Take the third-pass enriched Markdown document, "
+    "deepen theoretical frameworks, map counter-arguments, sharpen conceptual nuances, and ensure rigorous semantic density throughout the prose and footnotes.\n"
+    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
+)
+STAGE2_V5_PROMPT_TASK: str = (
+    "You are Cresmo Expander (Fifth Pass / Definitive Compendium Polish & Synthesis). This is your most important task: Take the fourth-pass enriched Markdown document, "
+    "synthesize all historical, empirical, and conceptual threads into a definitive encyclopedic compendium of the highest stylistic and academic rigor.\n"
+    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
+)
 STAGE3_PRE_PROMPT: str = (
     "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text inside "
     "<xml> <notas><nota></nota></notas> tags.\n"
@@ -221,6 +241,193 @@ def execute_stage2_expander(
         print(f"  ✓ [Stage 2 Raw Fallback] Saved raw text -> {enriched_file}")
 
     return enriched_file
+
+
+def execute_stage2_expander_pass(
+    input_file: Path,
+    meta: dict,
+    session_id: str,
+    pass_number: int = 2,
+    output_dir: Path = DEFAULT_ENRICHED_DIR,
+    force: bool = False,
+    isolate_context: bool = True,
+    restart_server: bool = False,
+) -> Path:
+    """Stage 2 (Pass N): Progressive Re-expansion and Deep Enrichment (cresmo-expander).
+
+    Reads the previous-pass enriched Markdown from `enriched/` and saves the
+    Nth-pass expanded Markdown with the `_v{pass_number}` suffix directly into:
+    `playground/cresmo/enriched/[Channel_Name]/[Video_ID]_v{pass_number}.md`.
+    """
+    channel_name = meta.get("channel_name", DEFAULT_CHANNEL_NAME)
+    raw_stem = input_file.stem if isinstance(input_file, Path) else Path(input_file).stem
+    video_id = meta.get("video_id", raw_stem)
+    base_video_id = re.sub(r"_v\d+$", "", video_id)
+
+    channel_dir = output_dir / channel_name
+    channel_dir.mkdir(parents=True, exist_ok=True)
+    suffix = f"_v{pass_number}" if pass_number > 1 else ""
+    target_enriched_file = channel_dir / f"{base_video_id}{suffix}.md"
+
+    if not force and target_enriched_file.exists() and target_enriched_file.stat().st_size > MIN_ENRICHED_EXISTING_BYTES:
+        return target_enriched_file
+
+    if not input_file.exists():
+        return target_enriched_file
+
+    with open(input_file, "r", encoding="utf-8") as f:
+        previous_text = f.read().strip()
+
+    skill_doc = SKILL_EXPANDER_PATH.read_text(encoding="utf-8") if SKILL_EXPANDER_PATH.exists() else ""
+
+    prompts_by_pass = {
+        1: STAGE2_PROMPT_TASK,
+        2: STAGE2_V2_PROMPT_TASK,
+        3: STAGE2_V3_PROMPT_TASK,
+        4: STAGE2_V4_PROMPT_TASK,
+        5: STAGE2_V5_PROMPT_TASK,
+    }
+    task_prompt = prompts_by_pass.get(
+        pass_number,
+        (
+            f"You are Cresmo Expander (Pass {pass_number} / Progressive Deep Enrichment). This is your most important task: "
+            "Take the previous-pass enriched Markdown document, perform an exhaustive conceptual and empirical expansion "
+            "(historical-scientific genealogy mapping, verifying causal mechanisms, enriching empirical facts and footnotes).\n"
+            "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
+        ),
+    )
+
+    prompt = task_prompt + (
+        f"Save output directly to enriched file: {target_enriched_file.resolve()}\n\n"
+        f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
+        f"--- PREVIOUS PASS ENRICHED TEXT (PASS {pass_number - 1}) ---\nFile: {input_file.name}\n{previous_text}"
+    )
+
+    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+        prompt = task_prompt + (
+            f"Save output directly to enriched file: {target_enriched_file.resolve()}\n"
+            f"Input previous-pass enriched file: {input_file.resolve()}\n"
+            f"Skill specification: {SKILL_EXPANDER_PATH.resolve()}\n"
+            f"Please read the input previous-pass enriched file, apply cresmo-expander pass {pass_number} expansion, and write the output directly to {target_enriched_file.resolve()} in the enriched directory."
+        )
+
+    if isolate_context:
+        clear_session_history(session_id, restart_server=restart_server)
+        prompt = SENTINEL_PREFIX + prompt
+
+    dispatch_time = time.time()
+    send_agent_message(prompt, session_id)
+
+    # Poll for Option A direct file write
+    for _ in range(POLL_MAX_ATTEMPTS):
+        if (
+            target_enriched_file.exists()
+            and target_enriched_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
+            and target_enriched_file.stat().st_size > MIN_VALID_OUTPUT_BYTES
+        ):
+            print(f"  ✓ [Stage 2 v{pass_number} Success] Re-enriched text created -> {target_enriched_file}")
+            return target_enriched_file
+        time.sleep(POLL_SLEEP_SECONDS)
+
+    # Fallback Option B
+    content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+    if content:
+        target_enriched_file.write_text(content, encoding="utf-8")
+        print(f"  ✓ [Stage 2 v{pass_number} Fallback Success] Saved re-enriched text -> {target_enriched_file}")
+    elif not target_enriched_file.exists():
+        # Fallback Option C: Write previous pass text if file was not generated by agent
+        target_enriched_file.write_text(previous_text, encoding="utf-8")
+        print(f"  ✓ [Stage 2 v{pass_number} Fallback] Saved previous pass text -> {target_enriched_file}")
+
+    return target_enriched_file
+
+
+def execute_stage2_expander_v2(
+    enriched_file: Path,
+    meta: dict,
+    session_id: str,
+    output_dir: Path = DEFAULT_ENRICHED_DIR,
+    force: bool = False,
+    isolate_context: bool = True,
+    restart_server: bool = False,
+) -> Path:
+    """Stage 2 (Pass 2): Re-expansion and Deep Enrichment (cresmo-expander)."""
+    return execute_stage2_expander_pass(
+        input_file=enriched_file,
+        meta=meta,
+        session_id=session_id,
+        pass_number=2,
+        output_dir=output_dir,
+        force=force,
+        isolate_context=isolate_context,
+        restart_server=restart_server,
+    )
+
+
+def execute_stage2_expander_v3(
+    enriched_file: Path,
+    meta: dict,
+    session_id: str,
+    output_dir: Path = DEFAULT_ENRICHED_DIR,
+    force: bool = False,
+    isolate_context: bool = True,
+    restart_server: bool = False,
+) -> Path:
+    """Stage 2 (Pass 3): Epistemic Deep-Dive (cresmo-expander)."""
+    return execute_stage2_expander_pass(
+        input_file=enriched_file,
+        meta=meta,
+        session_id=session_id,
+        pass_number=3,
+        output_dir=output_dir,
+        force=force,
+        isolate_context=isolate_context,
+        restart_server=restart_server,
+    )
+
+
+def execute_stage2_expander_v4(
+    enriched_file: Path,
+    meta: dict,
+    session_id: str,
+    output_dir: Path = DEFAULT_ENRICHED_DIR,
+    force: bool = False,
+    isolate_context: bool = True,
+    restart_server: bool = False,
+) -> Path:
+    """Stage 2 (Pass 4): Dialectical & Theoretical Densification (cresmo-expander)."""
+    return execute_stage2_expander_pass(
+        input_file=enriched_file,
+        meta=meta,
+        session_id=session_id,
+        pass_number=4,
+        output_dir=output_dir,
+        force=force,
+        isolate_context=isolate_context,
+        restart_server=restart_server,
+    )
+
+
+def execute_stage2_expander_v5(
+    enriched_file: Path,
+    meta: dict,
+    session_id: str,
+    output_dir: Path = DEFAULT_ENRICHED_DIR,
+    force: bool = False,
+    isolate_context: bool = True,
+    restart_server: bool = False,
+) -> Path:
+    """Stage 2 (Pass 5): Definitive Compendium Polish & Synthesis (cresmo-expander)."""
+    return execute_stage2_expander_pass(
+        input_file=enriched_file,
+        meta=meta,
+        session_id=session_id,
+        pass_number=5,
+        output_dir=output_dir,
+        force=force,
+        isolate_context=isolate_context,
+        restart_server=restart_server,
+    )
 
 
 def execute_stage3_atomic_notes(
@@ -658,8 +865,7 @@ def process_candidate_blocks(
         if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
             print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
             continue
-
-        # Stage 2: Expander & Detranscriptor
+        # Stage 2: Expander & Detranscriptor (Pass 1)
         enriched_file = execute_stage2_expander(
             txt_file,
             meta,
@@ -670,9 +876,53 @@ def process_candidate_blocks(
             restart_server=restart_server,
         )
 
+        # Stage 2: Expander & Detranscriptor (Pass 2 - Re-Expansion)
+        enriched_file_v2 = execute_stage2_expander_v2(
+            enriched_file,
+            meta,
+            session_id,
+            output_dir=enriched_dir,
+            force=force,
+            isolate_context=isolate_context,
+            restart_server=restart_server,
+        )
+
+        # Stage 2: Expander & Detranscriptor (Pass 3 - Epistemic Deep-Dive)
+        enriched_file_v3 = execute_stage2_expander_v3(
+            enriched_file_v2,
+            meta,
+            session_id,
+            output_dir=enriched_dir,
+            force=force,
+            isolate_context=isolate_context,
+            restart_server=restart_server,
+        )
+
+        # Stage 2: Expander & Detranscriptor (Pass 4 - Dialectical Densification)
+        enriched_file_v4 = execute_stage2_expander_v4(
+            enriched_file_v3,
+            meta,
+            session_id,
+            output_dir=enriched_dir,
+            force=force,
+            isolate_context=isolate_context,
+            restart_server=restart_server,
+        )
+
+        # Stage 2: Expander & Detranscriptor (Pass 5 - Definitive Compendium Polish)
+        enriched_file_v5 = execute_stage2_expander_v5(
+            enriched_file_v4,
+            meta,
+            session_id,
+            output_dir=enriched_dir,
+            force=force,
+            isolate_context=isolate_context,
+            restart_server=restart_server,
+        )
+
         # Stage 3 & 4: Atomic Generator & Proliferation
         xml_file, is_newly_generated = execute_stage3_atomic_notes(
-            enriched_file,
+            enriched_file_v5,
             meta,
             session_id,
             cresmo_dir=cresmo_dir,
