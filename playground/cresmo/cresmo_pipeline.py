@@ -683,7 +683,8 @@ def process_candidate_blocks(
         if is_newly_generated:
             parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
         else:
-            print(f"  ℹ [Stage 4 Skip] XML already exists/cached ({xml_file.name}) -> skipping file proliferation to protect vault")
+            pass
+            # print(f"  ℹ [Stage 4 Skip] XML already exists/cached ({xml_file.name}) -> skipping file proliferation to protect vault")
 
         # Stage 5 & 6: MOC Manager & Graph Reconciliation
         execute_stage56_moc_manager(

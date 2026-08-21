@@ -42,7 +42,7 @@ Input transcripts contain a YouTube YAML frontmatter header (containing `video_t
      - **Conjunctural Causes**: Medium-term catalysts and accelerating dynamics.
      - **Triggers**: Immediate short-term events triggering the facts.
    - Distinguish First-Order Facts (empirically verifiable data, dates, treaties, statistics confirmed at primary sources) from Interpretative Models (theories, political schools of thought—always explicitly attributed to their theoretical proponent).
-   - Treat unverified statements as intentions/hypotheses and perform *Cui bono?* (vector of interest) analysis, identifying test balloons or destabilization strategies (hidden or conspiratorial), and Analysis of Competing Hypotheses (ACH).
+   - Treat unverified statements as intentions/hypotheses and always perform *Cui bono?* (vector of interest) analysis, identifying test balloons or destabilization strategies (hidden or conspiratorial), and Analysis of Competing Hypotheses (ACH) for each intentions/hypotheses.
 
 ---
 
@@ -50,23 +50,35 @@ Input transcripts contain a YouTube YAML frontmatter header (containing `video_t
 
 Execute an internal 2-pass audit on the input text before writing the final expanded text:
 
-### Pass 1: Intra-Text Socratic Audit (6 Epistemic Dimensions)
-1. **Conceptual Clarity & Delimitation**: Define fundamental terms, operational boundaries, and eliminate tautologies.
-2. **Assumptions & Foundations**: Map unstated premises and required baseline knowledge.
-3. **Evidence & Validation**: Verify empirical base; replace vague generalizations with concrete data.
-4. **Mechanism & Causality**: Map all intermediate process steps, eliminating causal gaps or missing logic.
-5. **Implications & Consequences**: Evaluate side effects, second-order consequences, and logical extensions.
-6. **Alternative Perspectives**: Identify competing theories, strategic omissions, and counter-arguments.
+### Pass 1A: Intra-Text Socratic Audit (6 Epistemic Dimensions)
+1. Conceptual Clarity and Delimitation (What is it?): What is the precise definition of this text's foundational terms? What are the boundaries of this concept? Where does it cease to be applicable? Is there tautology?
+2. Assumptions and Foundations (What is being assumed?): What premises does the author assume to be true without presenting evidence in the text? What must the reader know beforehand for this text to make sense?
+3. Evidence and Validation (How do we know this?): What is the empirical, logical, or factual basis underpinning each main assertion? Where does the text substitute concrete data with generalizations or adjectives?
+4. Mechanism and Causality (How does it work?): Does the text explain the intermediate steps of each process mentioned? Is there any state transition or event that occurs without a physical, logical, or historical explanation? Is there a vacuum of meaning and an absence of intermediate mechanisms, or a causal tautology?
+5. Implications and Consequences (So what?): What are the logical consequences of the assertions made? Does the text address the side effects or the limitations of the presented solution?
+6. Alternative Perspectives (What was ignored?): What are the competing views, counterarguments, or exceptions to this thesis? What questions would a skeptical critic raise about this text that remain unanswered? What should have been written, but was omitted?
+
+### Pass 1B: Cognitive Domain Mapping
+Map the knowledge matrix across three levels: conceptual (what it is), procedural (how it works), and causal (why it works).
 
 ### Pass 2: Historical-Scientific & Genealogical Mapping
-- **Precursors, Collaborators, & Omitted Technicians**: Map NER, theoretical foundations, uncredited assistants, co-authors, or omitted technical personnel.
-- **Bridging Steps**: Identify intermediate steps serving as bridges between facts, triples, concepts, or NER.
-- **Rigor against Anachronism & Physical Limits**: Apply strict chronological accuracy for technical terms and delimit theoretical models from physical/hardware implementations.
-- **Networks & Convergence Spaces**: Map geographic and personal proximity spaces enabling cross-pollination of ideas.
-- **Ancestry & Posterity**: Map direct/indirect roots and future ramifications.
-- **Silencing Audit & Survivorship Bias**: Investigate alternative non-dominant historical accounts and documental bias in knowledge consolidation.
+1. Attribution and Intellectual Genealogy Audit: Precursor Tracking, Identification of Omitted Collaborators, Ownership and Fame Investigation.
+2. Abstract to Concrete Theory Transition Mapping: Transition Links, Theoretical-Practical Integration, Mechanisms of Influence.
+3. Classification Rigor and Technical Limitations: Separation between Model and Implementation, Countering Anachronism, Original Conceptual Boundaries.
+4. Reconstruction of Networks and Convergence Contexts: Personal Network Mapping, Spaces of Interdisciplinary Convergence, Geography of Knowledge.
+5. Epistemic Ancestry and Posterity Mapping: Epistemic Roots and Ancestry, Ramifications and Posterity, Rupture versus Continuity Tension.
+6. Silencing, Survivorship Bias, and Record Asymmetry Audit: Documentary Bias, Appropriation and Invisible Labor, Geopolitics of Knowledge.
 
----
+
+Mandatory for Pass 1 & 2: Iteratively review and expand the veracity and completeness of the identified gaps through 5 cycles.
+
+
+## Conducting Textual Conceptual Expansion
+Use deep causality to replace abstractions and bridge gaps across the main body and supplementary notes.
+Anchor the narrative in realistic empirical elements: exact figures, precise statistics, confirmed dates, proper names, and verified real-world cases researched and validated on the web.
+Prevent combinatorial explosion: preserve the narrative spine of the text.
+Transfer secondary or tangential expansions to informative footnotes at the end of the text.
+
 
 ## Output Structure & Formatting Directives
 
@@ -78,12 +90,24 @@ Execute an internal 2-pass audit on the input text before writing the final expa
 - **Typography Rules**:
   - Bold (`**...**`): Apply **exclusively** on the first occurrence of named entities, dates, theoretical concepts, and key atomic terms and etc.
   - Italics (`_..._`): Apply strictly for foreign terms, titles of cultural works, software, and hardware names and etc.
-- **Continuous Fluid Prose**: Write strictly in continuous paragraphs. No bullet lists, no numbered lists, no tables, no LaTeX, no blockquotes, no ASCII diagrams.
+- **Continuous Fluid Prose**: Write strictly in continuous hierarchical prose paragraphs. No bullet lists, no numbered lists, no tables, no LaTeX, no blockquotes, no ASCII diagrams.
 
-### Complementary Information Section
+## Style and Tone (read more about style in .agents/skills/ghost-writer-style/SKILL.md and related files)
+Fully apply the baroque-naturalist authorial identity defined in the ghost-writer-style guide. The text must integrate scientific explanation, philosophical speculation, and literary language into a unified argumentative structure.
+Execute Borgesian alternation of registers: deliberately oscillate among natural scientist, analytical philosopher, prose poet, and secular preacher. Limit continuous progression in any single register to a maximum of three consecutive paragraphs.
+The text oscillates deliberately between four voices within the same essay:
+- Natural scientist: empirical data, biological mechanisms, evolutionary logic. Use parataxis, direct and swift word order, single and self-contained clauses, asyndetic juxtaposition of ideas, rapid and incisive rhythm, syntactic clarity, an exoteric and crystalline style, with maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, precise and erudict rare vocabulary wherein making form an invisible medium. 
+- Analytical philosopher: logical chains, institutional analysis, game theory. Use of hypotaxis and deeper clauses nesting, inverted or orbiting to qualify, condition, or explain the argument. Produces long and complex sentences, with multiple syntactic hierarchical interdependencies linked by varied connectives for maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, synchytic, hermetic, and structurally complex, employing precise and erudict rare vocabulary wherein the structure conceals the message
+- Prose poet: existential density, cosmic imagery, beauty-abyss proximity. Aphorisms with hypotaxis and unusual word choices. 
+- Secular preacher: prophetic cadence, moral exhortation without moralism. Aphorisms with paratactic structure and direct and swift word choices.
+Transitions between registers must be smooth but the registers must remain distinct. A paragraph that begins as evolutionary biology may end as existential poetry. This is the defining signature of the author style.
 
+Cultivate persuasion through factual density and causal architecture, avoiding moral denunciation and noisy adjectivization.
+Upon identifying mechanisms lacking adequate terminology during expansion, coin original Latin concepts following the style guide protocol. Concepts must remain strictly unprecedented; borrowing formulations from other texts is prohibited.
+
+
+## Complementary Information Section
 Append a dedicated section at the end of the text under the exact heading:
-
 ```markdown
 ## Informações Complementares
 ```

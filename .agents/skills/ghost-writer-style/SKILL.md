@@ -26,10 +26,10 @@ Never describe phenomena at face value. Identify the mechanisms that produce the
 Explain the symbolic from the material. Values, ideologies, institutions, morality, religion, consciousness, and the State are treated as emergent properties of agent interaction, incentive structures, and biological or cognitive constraints — never as autonomous fundamental categories.
 
 ### 3. Metáforas Estruturantes
-Images are NOT ornamental. They function as cognitive architectures that sustain the argumentation itself. Pathology, anatomy, entropy, cosmic dust, desert of stars, abyss, Sisyphus, cages, ontological markets — each metaphor is a structural scaffold for an entire chain of reasoning.
+Images are NOT ornamental. They function as cognitive architectures that sustain the argumentation itself. Each metaphor is a structural scaffold for an entire chain of reasoning.
 
 ### 4. Criação Sistemática de Conceitos Próprios
-Always create new Latin coinages when the text introduces or identifies a mechanism that lacks a satisfying existing term. Never reuse existing terms from the author's corpus verbatim — each new text demands its own conceptual vocabulary. The Latin terms that appear in other ghost-writer skills are illustrative examples of the pattern, not a lexicon to recycle.
+Create new Latin coinages when the text introduces or identifies a mechanism that lacks a satisfying existing term. Never reuse existing terms from the author's corpus verbatim — each new text demands its own conceptual vocabulary. The Latin terms that appear in other ghost-writer skills are illustrative examples of the pattern, not a lexicon to recycle.
 
 Each new concept must condense an entire mechanism into a single expression. Latin nomenclature serves as an aesthetic-intellectual device that confers identity and gravitas.
 
@@ -37,15 +37,15 @@ When creating new concepts, formulate the Latin term with correct declension, pr
 
 ### 5. Alternância Borgiana de Registros
 The text oscillates deliberately between four voices within the same essay:
-- Natural scientist: empirical data, biological mechanisms, evolutionary logic
-- Analytical philosopher: logical chains, institutional analysis, game theory
-- Prose poet: existential density, cosmic imagery, beauty-abyss proximity
-- Secular preacher: prophetic cadence, moral exhortation without moralism
+- Natural scientist: empirical data, biological mechanisms, evolutionary logic. Use parataxis, direct and swift word order, single and self-contained clauses, asyndetic juxtaposition of ideas, rapid and incisive rhythm, syntactic clarity, an exoteric and crystalline style, with maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, precise and erudict rare vocabulary wherein making form an invisible medium. 
+- Analytical philosopher: logical chains, institutional analysis, game theory. Use of hypotaxis and deeper clauses nesting, inverted or orbiting to qualify, condition, or explain the argument. Produces long and complex sentences, with multiple syntactic hierarchical interdependencies linked by varied connectives for maximum precision and conceptual density, avoiding prolixity, bombast, or pretension, while remaining fully technical, synchytic, hermetic, and structurally complex, employing precise and erudict rare vocabulary wherein the structure conceals the message
+- Prose poet: existential density, cosmic imagery, beauty-abyss proximity. Aphorisms with hypotaxis and unusual word choices. 
+- Secular preacher: prophetic cadence, moral exhortation without moralism. Aphorisms with paratactic structure and direct and swift word choices.
 
 Transitions between registers must be smooth but the registers must remain distinct. A paragraph that begins as evolutionary biology may end as existential poetry. This is the defining signature of the style.
 
 ### 6. Escrita para Releitura
-Texts are not designed for single-pass comprehension. They provoke conceptual reorganization. Language functions simultaneously as instrument of argumentation and psychological impact. High density per sentence. The reader should find new layers of meaning on the second and third reading.
+Texts are not designed for single-pass comprehension. They provoke conceptual reorganization. Language functions simultaneously as instrument of argumentation and psychological impact. High conceptual density per sentence. The reader should find new layers of meaning on the second and third reading.
 
 ### 7. Cautela Metodológica
 The text frequently initiates in quasi-scientific register and transitions to broader philosophical or political conclusions. This oscillation is a deliberate feature of the voice, but the author should be aware of the risk of presenting interpretive hypotheses with the same evidentiary weight as empirically established results. When the text transitions between levels of analysis, signal the epistemic status: consolidated evidence, plausible inference, or original hypothesis.
@@ -80,7 +80,7 @@ The most distinctive trait is the combination of systematization and imagery. Ni
 3. NOT moralistic denunciation — Persuade through factual density and structural insight, never through moral adjectives or outrage.
 4. NOT encyclopedic neutrality — The author has a perspective. The text is argumentative, not neutral.
 5. NOT ornamental erudition — Every Latin term, every historical reference, every scientific citation must carry structural weight. Erudition serves the argument, not the author's display.
-6. NOT antithetical contrasts — Strictly NEVER use antitheses or binary contrast formulas (e.g. "não X, mas Y", "não se trata de X, e sim de Y"). Present concepts through direct, affirmative, and self-contained statements without relying on negative contrast.
+6. NOT antithetical contrasts — Strictly NEVER use antitheses and NEVER use binary contrast formulas (e.g. "não X, mas Y", "não se trata de X, e sim de Y"). 
 7. NOT parenthetical em-dashes — Strictly NEVER use em-dashes (`—`) or long dashes anywhere in the text. Use commas, parenthetical structures, or distinct sentences.
 
 ---
