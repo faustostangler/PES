@@ -14,6 +14,7 @@ Directory Topology:
 """
 
 import argparse
+import datetime
 import json
 from pathlib import Path
 import re
@@ -43,6 +44,7 @@ from cresmo_shared import (
     parse_merged_transcriptions,
     resolve_active_session,
     save_processed_cresmo_log,
+    scan_session_for_quota_refresh,
     send_agent_message,
 )
 
@@ -52,9 +54,10 @@ POLL_MAX_ATTEMPTS: int = 1000
 POLL_SLEEP_SECONDS: float = 1.0
 POLL_DISPATCH_TIME_BUFFER: float = 1.0
 
+
 # --- Payload & File Size Thresholds ---
-DEFAULT_STAGE2_PASSES: int = 5
-PROMPT_MAX_BYTES_INLINE: int = 40_000
+DEFAULT_STAGE2_PASSES: int = 3
+PROMPT_MAX_BYTES_INLINE: int = 120_000
 MIN_ENRICHED_EXISTING_BYTES: int = 500
 MIN_VALID_OUTPUT_BYTES: int = 300
 MIN_RECONCILIATION_LOG_BYTES: int = 200
@@ -93,27 +96,15 @@ YAML_KEY_PATTERN: re.Pattern[str] = re.compile(r"^[a-zA-Z0-9_-]+:")
 STAGE2_PROMPT_TASK: str = (
     "You are Cresmo Expander. This is your most important task: Clean the transcript, "
     "purge all oralities, speech noise, direct audience addresses, \n"
-    "and REMOVE ALL DIAGRAMS/ASCII ART/TABLES/BULLET LISTS. Produce continuous fluid Markdown prose.\n"
+    "and REMOVE ALL DIAGRAMS/ASCII ART/TABLES/BULLET LISTS/YAML. Produce continuous fluid Markdown prose.\n"
 )
 STAGE2_V2_PROMPT_TASK: str = (
-    "You are Cresmo Expander (Second Pass / Re-Expansion). This is your most important task: Take the first-pass enriched Markdown document, "
-    "perform a deep second-pass conceptual expansion (historical-scientific genealogy mapping, verifying causal mechanisms, enriching empirical facts and footnotes).\n"
-    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce continuous fluid Markdown prose.\n"
-)
-STAGE2_V3_PROMPT_TASK: str = (
-    "You are Cresmo Expander (Third Pass / Epistemic Deep-Dive). This is your most important task: Take the second-pass enriched Markdown document, "
-    "conduct exhaustive Socratic gap filling, add robust empirical context, quantify claims with exact historical/statistical grounding, and refine causal relationships.\n"
-    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
-)
-STAGE2_V4_PROMPT_TASK: str = (
-    "You are Cresmo Expander (Fourth Pass / Dialectical & Theoretical Densification). This is your most important task: Take the third-pass enriched Markdown document, "
-    "deepen theoretical frameworks, map counter-arguments, sharpen conceptual nuances, and ensure rigorous semantic density throughout the prose and footnotes.\n"
-    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
-)
-STAGE2_V5_PROMPT_TASK: str = (
-    "You are Cresmo Expander (Fifth Pass / Definitive Compendium Polish & Synthesis). This is your most important task: Take the fourth-pass enriched Markdown document, "
-    "synthesize all historical, empirical, and conceptual threads into a definitive encyclopedic compendium of the highest stylistic and academic rigor.\n"
-    "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
+    "You are Cresmo Expander (Re-Expansion, Epistemic, Dialectical & Theoretical Densification and Definitive Compendium Polish & Synthesis). \n"
+    "This is your most important task: Take the previous-pass enriched Markdown document. \n"
+    "Purge any remaining oralities, bullet lists, tables, diagrams and YAML metadata. Produce continuous fluid Markdown prose.\n"
+    "Perform exhaustive Socratic gap filling, add robust empirical context, quantify claims with exact historical/statistical grounding, and refine causal relationships (historical-scientific genealogy mapping, verifying causal mechanisms, enriching empirical facts and footnotes).\n"
+    "Deepen theoretical frameworks, map counter-arguments, sharpen conceptual nuances, and ensure rigorous semantic density throughout the prose and footnotes.\n"
+    "Synthesize all historical, empirical, and conceptual threads into a definitive encyclopedic compendium of the highest stylistic and academic rigor.\n"
 )
 STAGE3_PRE_PROMPT: str = (
     "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text inside "
@@ -164,6 +155,78 @@ def fetch_trajectory_response(
 
 
 # ==============================================================================
+# QUOTA & STRUCTURAL VALIDATORS
+# ==============================================================================
+
+def _is_quota_reached(session_id: str) -> bool:
+    """Check if the agent session hit a baseline quota wall and block until refresh.
+
+    Returns True if quota was exhausted (caller should re-dispatch), False otherwise.
+    """
+    quota_refresh = scan_session_for_quota_refresh(session_id)
+    if not quota_refresh:
+        return False
+    _wait_for_quota_refresh(quota_refresh)
+    clear_session_history(session_id)
+    return True
+
+
+def is_valid_enriched_markdown(file_path: Path, min_bytes: int = MIN_VALID_OUTPUT_BYTES) -> bool:
+    """Validate that the enriched markdown document meets cresmo-expander structural standards.
+
+    Checks that the file exists, has a minimum byte size, contains markdown section headers,
+    and includes the mandatory closing complementary information section without premature truncation.
+    """
+    if not file_path.exists():
+        return False
+    try:
+        if file_path.stat().st_size < min_bytes:
+            return False
+        content = file_path.read_text(encoding="utf-8").strip()
+        if len(content) < min_bytes:
+            return False
+        # Must contain major section header (# or ##)
+        has_header = TAG_MARKDOWN_H2 in content or "\n# " in content or content.startswith("# ")
+        # Must contain the mandatory complementary info section
+        has_complementary = (
+            TAG_COMPLEMENTARY_INFO in content
+            or "Informações Complementares" in content
+            or "Informacoes Complementares" in content
+            or "Complementary Information" in content
+        )
+        return bool(has_header and has_complementary)
+    except Exception:
+        return False
+
+
+def is_valid_atomic_xml(file_path: Path, min_bytes: int = MIN_VALID_OUTPUT_BYTES) -> bool:
+    """Validate that atomic XML contains properly delimited note tags."""
+    if not file_path.exists():
+        return False
+    try:
+        if file_path.stat().st_size < min_bytes:
+            return False
+        content = file_path.read_text(encoding="utf-8").strip()
+        has_xml_tags = (TAG_XML_OPEN in content and TAG_XML_CLOSE in content) or (
+            "<notas>" in content and "</notas>" in content
+        )
+        has_nota = "<nota>" in content and "</nota>" in content
+        return bool((has_xml_tags or has_nota) and len(content) >= min_bytes)
+    except Exception:
+        return False
+
+
+def is_valid_reconciliation_log(file_path: Path, min_bytes: int = MIN_RECONCILIATION_LOG_BYTES) -> bool:
+    """Validate that reconciliation log file is generated and non-empty."""
+    if not file_path.exists():
+        return False
+    try:
+        return file_path.stat().st_size >= min_bytes
+    except Exception:
+        return False
+
+
+# ==============================================================================
 # PIPELINE STAGES
 # ==============================================================================
 
@@ -192,7 +255,7 @@ def execute_stage2_expander(
     channel_dir.mkdir(parents=True, exist_ok=True)
     enriched_file = channel_dir / f"{video_id}.md"
 
-    if not force and enriched_file.exists() and enriched_file.stat().st_size > MIN_ENRICHED_EXISTING_BYTES:
+    if not force and is_valid_enriched_markdown(enriched_file, MIN_ENRICHED_EXISTING_BYTES):
         return enriched_file
 
     with open(txt_file, "r", encoding="utf-8") as f:
@@ -200,32 +263,27 @@ def execute_stage2_expander(
 
     skill_doc = SKILL_EXPANDER_PATH.read_text(encoding="utf-8") if SKILL_EXPANDER_PATH.exists() else ""
 
-    prompts_by_pass = {
-        1: STAGE2_PROMPT_TASK,
-        2: STAGE2_V2_PROMPT_TASK,
-        3: STAGE2_V3_PROMPT_TASK,
-        4: STAGE2_V4_PROMPT_TASK,
-        5: STAGE2_V5_PROMPT_TASK,
-    }
-
     current_text = raw_text
 
     for pass_num in range(1, total_passes + 1):
-        task_prompt = prompts_by_pass.get(
-            pass_num,
-            (
-                f"You are Cresmo Expander (Pass {pass_num} / Progressive Deep Enrichment). This is your most important task: "
-                "Take the previous-pass enriched Markdown document, perform an exhaustive conceptual and empirical expansion "
-                "(historical-scientific genealogy mapping, verifying causal mechanisms, enriching empirical facts and footnotes).\n"
-                "Purge any remaining oralities, bullet lists, tables, and diagrams. Produce dense, continuous fluid Markdown prose.\n"
-            ),
-        )
+        task_prompt = STAGE2_PROMPT_TASK if pass_num == 1 else STAGE2_V2_PROMPT_TASK
 
         pass_label = f"Pass {pass_num}/{total_passes}" if total_passes > 1 else "Pass 1"
         if pass_num == 1:
-            header_context = f"--- RAW TRANSCRIPT METADATA & TEXT ---\nFile: {txt_file.name}\n{current_text}"
+            header_context = (
+                f"--- ORIGINAL RAW TRANSCRIPT METADATA & TEXT (GROUND TRUTH) ---\n"
+                f"File: {txt_file.name}\n"
+                f"{raw_text}"
+            )
         else:
-            header_context = f"--- PREVIOUS PASS ENRICHED TEXT (PASS {pass_num - 1}) ---\nFile: {enriched_file.name}\n{current_text}"
+            header_context = (
+                f"--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\n"
+                f"File: {txt_file.name}\n"
+                f"{raw_text}\n\n"
+                f"--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS {pass_num - 1} TO ENRICH & DEEPEN) ---\n"
+                f"File: {enriched_file.name}\n"
+                f"{current_text}"
+            )
 
         prompt = task_prompt + (
             f"Save output directly to enriched file: {enriched_file.resolve()}\n\n"
@@ -237,12 +295,15 @@ def execute_stage2_expander(
             if pass_num == 1:
                 input_desc = f"Input raw transcript file: {txt_file.resolve()}\n"
             else:
-                input_desc = f"Input previous-pass text is in: {enriched_file.resolve()}\n"
+                input_desc = (
+                    f"Input raw transcript reference: {txt_file.resolve()}\n"
+                    f"Input previous-pass enriched text to expand: {enriched_file.resolve()}\n"
+                )
             prompt = task_prompt + (
                 f"Save output directly to enriched file: {enriched_file.resolve()}\n"
                 f"{input_desc}"
                 f"Skill specification: {SKILL_EXPANDER_PATH.resolve()}\n"
-                f"Please read the input text, run cresmo-expander {pass_label}, and write the output directly to {enriched_file.resolve()} in the enriched directory (never in raw)."
+                f"Please read the input text(s), run cresmo-expander {pass_label}, and write the output directly to {enriched_file.resolve()} in the enriched directory (never in raw)."
             )
 
         if isolate_context:
@@ -258,20 +319,24 @@ def execute_stage2_expander(
             if (
                 enriched_file.exists()
                 and enriched_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
-                and enriched_file.stat().st_size > MIN_VALID_OUTPUT_BYTES
+                and is_valid_enriched_markdown(enriched_file, MIN_VALID_OUTPUT_BYTES)
             ):
                 print(f"  ✓ [Stage 2 {pass_label} Success] Enriched text updated -> {enriched_file}")
                 pass_completed = True
                 break
+            if _is_quota_reached(session_id):
+                dispatch_time = time.time()
+                send_agent_message(prompt, session_id)
             time.sleep(POLL_SLEEP_SECONDS)
 
         if not pass_completed:
             # Fallback Option B
             content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
-            if content:
+            if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
                 enriched_file.write_text(content, encoding="utf-8")
                 print(f"  ✓ [Stage 2 {pass_label} Fallback Success] Saved enriched text -> {enriched_file}")
-            elif not enriched_file.exists():
+                pass_completed = True
+            elif pass_num == 1 and not enriched_file.exists():
                 # Fallback Option C: Write current text if file was not generated by agent
                 enriched_file.write_text(current_text, encoding="utf-8")
                 print(f"  ✓ [Stage 2 {pass_label} Fallback] Saved current text -> {enriched_file}")
@@ -296,7 +361,7 @@ def execute_stage3_atomic_notes(
     video_id = meta.get("video_id", enriched_file.stem)
     xml_output_file = enriched_file.parent / f"{video_id}.xml"
 
-    if not force and xml_output_file.exists() and xml_output_file.stat().st_size > MIN_VALID_OUTPUT_BYTES:
+    if not force and is_valid_atomic_xml(xml_output_file, MIN_VALID_OUTPUT_BYTES):
         return xml_output_file, False
 
     if not enriched_file.exists():
@@ -325,17 +390,22 @@ def execute_stage3_atomic_notes(
         clear_session_history(session_id, restart_server=restart_server)
         prompt = SENTINEL_PREFIX + prompt
 
+
     dispatch_time = time.time()
     send_agent_message(prompt, session_id)
 
+    # Poll for Option A direct file write
     for _ in range(POLL_MAX_ATTEMPTS):
         if (
             xml_output_file.exists()
             and xml_output_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
-            and xml_output_file.stat().st_size > MIN_VALID_OUTPUT_BYTES
+            and is_valid_atomic_xml(xml_output_file, MIN_VALID_OUTPUT_BYTES)
         ):
             print(f"  ✓ [Stage 3 Success] Atomic XML generated -> {xml_output_file}")
             return xml_output_file, True
+        if _is_quota_reached(session_id):
+            dispatch_time = time.time()
+            send_agent_message(prompt, session_id)
         time.sleep(POLL_SLEEP_SECONDS)
 
     content = fetch_trajectory_response(session_id, TAG_XML_OPEN, TAG_XML_CLOSE)
@@ -614,7 +684,7 @@ def execute_stage56_moc_manager(
     index_file = cresmo_wiki_dir / INDEX_JSON_FILENAME
 
     # Skip if reconciliation log already exists — stages 5 & 6 are complete for this video.
-    if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
+    if not force and is_valid_reconciliation_log(reconciliation_log, MIN_RECONCILIATION_LOG_BYTES):
         return reconciliation_log
 
     skill_doc = SKILL_MOC_MANAGER_PATH.read_text(encoding="utf-8") if SKILL_MOC_MANAGER_PATH.exists() else ""
@@ -637,17 +707,22 @@ def execute_stage56_moc_manager(
         clear_session_history(session_id, restart_server=restart_server)
         prompt = SENTINEL_PREFIX + prompt
 
+
     dispatch_time = time.time()
     send_agent_message(prompt, session_id)
 
+    # Poll for reconciliation log file write
     for _ in range(POLL_MAX_ATTEMPTS):
         if (
             reconciliation_log.exists()
             and reconciliation_log.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
-            and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES
+            and is_valid_reconciliation_log(reconciliation_log, MIN_RECONCILIATION_LOG_BYTES)
         ):
             print(f"  ✓ [Stage 5/6 Success] MOC reconciliation complete -> {reconciliation_log}")
             return reconciliation_log
+        if _is_quota_reached(session_id):
+            dispatch_time = time.time()
+            send_agent_message(prompt, session_id)
         time.sleep(POLL_SLEEP_SECONDS)
 
     # Fallback report generation if agent log write pending
@@ -673,6 +748,36 @@ def format_duration(seconds: float | int) -> str:
         return f"{m:02d}m{s:02d}s"
     else:
         return f"{s:02d}s"
+
+
+def _wait_for_quota_refresh(refresh_time: datetime.datetime) -> None:
+    """Block pipeline execution until the API baseline quota refresh time.
+
+    Adds a 30-second safety buffer beyond the declared refresh deadline to
+    account for clock skew between local time and the Antigravity API server.
+    Prints a progress heartbeat every 60 seconds so the terminal does not appear
+    frozen during long waits.
+
+    Args:
+        refresh_time: The datetime at which the Antigravity quota is expected
+            to refresh, as parsed from the rate-limit message.
+    """
+    now = datetime.datetime.now()
+    # Add 30-second safety buffer beyond the declared refresh deadline
+    safety_buffer = 30
+    wait_seconds = max(0.0, (refresh_time - now).total_seconds() + safety_buffer)
+    print(f"\n⏸  [QUOTA PAUSE] Baseline quota exhausted.")
+    print(f"    Current time:     {now.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"    Refresh at:       {refresh_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+    remaining = wait_seconds
+    while remaining > 0:
+        print(f"\r    Quota resume in:  {format_duration(remaining)}...    ", end="", flush=True)
+        interval = min(1.0, remaining)
+        time.sleep(interval)
+        remaining -= interval
+
+    print(f"  ✓ [QUOTA RESUME] Quota refreshed at {datetime.datetime.now().strftime('%H:%M:%S')} — resuming pipeline.\n")
 
 
 def process_candidate_blocks(
