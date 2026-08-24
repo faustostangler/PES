@@ -93,7 +93,8 @@ def gerar_dataframe_longo(f_fundamental=440.0):
     return pd.DataFrame(registros)
 
 if __name__ == '__main__':
-    f0 = float(input('Digite a frequência fundamental para Dó (padrão 440): ') or 440.0)
+    # f0 = float(input('Digite a frequência fundamental para Dó (padrão 440): ') or 440.0)
+    f0 = 440.0
     df_longo = gerar_dataframe_longo(f0)
     
     pd.set_option('display.max_columns', None)
