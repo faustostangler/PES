@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Shared helper utilities and path configurations for Cresmo Pipeline scripts."""
 
+import datetime
 import json
 import os
 from pathlib import Path
@@ -364,6 +365,78 @@ TRANSCRIPTION_SPLIT_REGEX: re.Pattern[str] = re.compile(r"^---$", flags=re.MULTI
 PID_REGEX: re.Pattern[str] = re.compile(r"^\S+\s+(\d+)")
 TOKEN_REGEX: re.Pattern[str] = re.compile(r"--csrf_token\s+([a-f0-9\-]+)")
 PORT_REGEX: re.Pattern[str] = re.compile(r"127\.0\.0\.1:(\d+)")
+
+# Detects Antigravity baseline quota messages, e.g.:
+# "Your plan's baseline quota will refresh on 8/21/2026, 7:31:36 AM."
+QUOTA_REFRESH_PATTERN: re.Pattern[str] = re.compile(
+    r"Your plan's baseline quota will refresh on\s+(\d{1,2}/\d{1,2}/\d{4}),?\s+(\d{1,2}:\d{2}:\d{2}\s+[AP]M)",
+    re.IGNORECASE,
+)
+
+
+# --- Quota Detection Helpers ---
+
+def parse_quota_refresh_time(text: str) -> datetime.datetime | None:
+    """Extract the quota refresh datetime from an Antigravity API rate-limit message.
+
+    Parses strings of the form:
+        'Your plan's baseline quota will refresh on M/D/YYYY, H:MM:SS AM/PM.'
+
+    Args:
+        text: Raw string that may contain an Antigravity quota exhaustion message.
+
+    Returns:
+        Parsed datetime.datetime for the refresh deadline, or None if not found.
+    """
+    match = QUOTA_REFRESH_PATTERN.search(text)
+    if not match:
+        return None
+    try:
+        return datetime.datetime.strptime(
+            f"{match.group(1)} {match.group(2)}", "%m/%d/%Y %I:%M:%S %p"
+        )
+    except ValueError:
+        return None
+
+
+def scan_session_for_quota_refresh(
+    session_id: str, brain_dir: Path | None = None
+) -> datetime.datetime | None:
+    """Scan the active session transcript for a baseline quota refresh message.
+
+    Reads the session's transcript.jsonl in reverse to find the most recent
+    Antigravity API quota exhaustion message. Only returns a deadline that is
+    still in the future (i.e., the quota has not yet refreshed).
+
+    Args:
+        session_id: Target Antigravity conversation identifier.
+        brain_dir: Optional custom path to brain root directory (defaults to BRAIN_DIR).
+
+    Returns:
+        datetime.datetime of the upcoming quota refresh, or None if not detected.
+    """
+    target_brain_dir = brain_dir if brain_dir is not None else BRAIN_DIR
+    log_path = (
+        target_brain_dir / session_id / ".system_generated" / "logs" / "transcript.jsonl"
+    )
+    if not log_path.exists():
+        return None
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        # Scan only the last 200 entries for performance; quota messages are always recent
+        for line in reversed(lines[-200:]):
+            try:
+                entry = json.loads(line.strip())
+                content = str(entry.get("content") or "")
+                parsed = parse_quota_refresh_time(content)
+                if parsed and parsed > datetime.datetime.now():
+                    return parsed
+            except Exception:
+                continue
+    except Exception:
+        pass
+    return None
 
 
 # --- File & Data Helpers ---

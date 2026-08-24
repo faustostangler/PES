@@ -11,7 +11,11 @@ The `cresmo-expander` skill transforms raw transcripts, lecture notes, audio tra
 
 It executes a strict 2-pass auditing process (Socratic Audit across 6 Epistemic Dimensions + Historical-Scientific Genealogy Mapping), purges all speech noise, direct audience interactions, oralities, and visual noise (diagrams, tables, ASCII charts, LaTeX, blockquotes, and bullet lists), and formats the output exclusively as continuous narrative prose.
 
-Input transcripts contain a YouTube YAML frontmatter header (containing `video_title`, `video_id`, `channel_name`, `channel_id`, `url`, `video_date`, `video_description`) originating from the `cresmo/raw/<channel_name>/<video_id>.txt` directory. Set `<transcript_slug>` strictly to the extracted `video_id`.
+Input transcripts contain a YouTube YAML frontmatter header (containing `video_title`, `video_id`, `channel_name`, `channel_id`, `url`, `video_date`, `video_description`) originating from the `cresmo/raw/<channel_name>/<video_id>.txt` directory. 
+
+Set `<transcript_slug>` strictly to the extracted `video_id`.
+
+The agent must extract metadata strictly for contextual orientation and completely strip/discard the input YAML frontmatter block from the output.
 
 **Target Location**: Save output directly to `cresmo/enriched/<channel_name>/<video_id>.md` (in the `enriched` directory, NEVER in the `raw` directory).
 
@@ -43,6 +47,11 @@ Input transcripts contain a YouTube YAML frontmatter header (containing `video_t
      - **Triggers**: Immediate short-term events triggering the facts.
    - Distinguish First-Order Facts (empirically verifiable data, dates, treaties, statistics confirmed at primary sources) from Interpretative Models (theories, political schools of thought—always explicitly attributed to their theoretical proponent).
    - Treat unverified statements as intentions/hypotheses and always perform *Cui bono?* (vector of interest) analysis, identifying test balloons or destabilization strategies (hidden or conspiratorial), and Analysis of Competing Hypotheses (ACH) for each intentions/hypotheses.
+
+6. **Total Suppression of YAML Frontmatter & Metadata Blocks**:
+   - Strip the input YAML header (`--- ... ---`) completely.
+   - Do NOT output any YAML frontmatter, headers, tags, or metadata blocks in the enriched file.
+   - The output file must begin directly on Line 1 with the first Markdown heading (`##`).
 
 ---
 
@@ -91,6 +100,7 @@ Transfer secondary or tangential expansions to informative footnotes at the end 
   - Bold (`**...**`): Apply **exclusively** on the first occurrence of named entities, dates, theoretical concepts, and key atomic terms and etc.
   - Italics (`_..._`): Apply strictly for foreign terms, titles of cultural works, software, and hardware names and etc.
 - **Continuous Fluid Prose**: Write strictly in continuous hierarchical prose paragraphs. No bullet lists, no numbered lists, no tables, no LaTeX, no blockquotes, no ASCII diagrams.
+- **No Frontmatter**: The enriched document must start directly with the top-level Markdown title (`## ...`) on Line 1. Zero `---` delimiter blocks or YAML keys anywhere in the document.
 
 
 ## Complementary Information Section
