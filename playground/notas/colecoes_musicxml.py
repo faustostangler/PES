@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Generate 8 analytical MusicXML collections from the harmonic matrix.
+"""Generate analytical MusicXML collections from the harmonic matrix.
 
 Output directory: PES / playground / notas / partituras /
 
 Collections
 -----------
+0. 0_testes: Lote de testes (t1, modos, tipos de acorde, notas do grau, graus).
 1. 1_escalas_completas: Escala nota por nota.
 2. 2_campos_harmonicos_das_escalas: Os acordes que pertencem à escala.
 3. 3_acordes: Procurar onde aparece um determinado acorde.
@@ -17,10 +18,12 @@ Collections
 
 from __future__ import annotations
 
+import subprocess
 import unicodedata
 from itertools import combinations
 from pathlib import Path
 
+import numpy as np
 from music21 import (
     chord as m21chord,
     clef,
@@ -32,7 +35,7 @@ from music21 import (
     tempo,
 )
 
-from notas import gerar_dataframe_longo
+from notas import gerar_dataframe_longo, gerar_frequencias_pitagoricas
 
 # ---------------------------------------------------------------------------
 # Directory defaults
@@ -66,7 +69,7 @@ SUFIXOS_ACORDE: dict[str, str] = {
     "Sétima Diminuta": "dim7",
 }
 
-GRAUS_ORDEM = ["I", "II", "III", "IV", "V", "VI", "VII"]
+GRAUS_ORDEM = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 
 MODOS_BRILHO = [
     "Lídio",
@@ -85,6 +88,23 @@ NOME_NOTA_PARA_MIDI: dict[str, int] = {
     "Fá": 5, "Fa#": 6, "Sol": 7, "Láb": 8, "Lá": 9,
     "Sib": 10, "Si": 11,
 }
+
+PC_PARA_NOTA: dict[str, str] = {
+    "C": "Dó", "B#": "Dó",
+    "D-": "Réb", "Db": "Réb", "C#": "Réb",
+    "D": "Ré",
+    "E-": "Mib", "Eb": "Mib", "D#": "Mib",
+    "E": "Mi", "F-": "Mi",
+    "F": "Fá", "E#": "Fá",
+    "F#": "Fa#", "Gb": "Fa#",
+    "G": "Sol",
+    "A-": "Láb", "Ab": "Láb", "G#": "Láb",
+    "A": "Lá",
+    "B-": "Sib", "Bb": "Sib", "A#": "Sib",
+    "B": "Si", "C-": "Si",
+}
+
+_FREQS_DEFAULT: dict[str, float] = gerar_frequencias_pitagoricas(440.0)
 
 
 # ---------------------------------------------------------------------------
@@ -145,6 +165,11 @@ def _freq_str(hz: float) -> str:
 # Didactic annotations per collection
 # ---------------------------------------------------------------------------
 OBSERVACOES: dict[int, str] = {
+    0: (
+        "0. Lote de testes: para a primeira tônica fundamental (t1), percorre cada modo, "
+        "cada tipo de acorde único, cada nota do grau e cada grau, gerando a partitura "
+        "com a realização harmônica e notas do acorde correspondente."
+    ),
     1: (
         "1. Escalas completas: o que você encontra na tabela são escalas nota por nota. "
         "Esta partitura apresenta a escala diatônica ou sintética correspondente ao modo "
@@ -296,9 +321,137 @@ def _init_part(part: stream.Part) -> None:
     part.insert(0, tempo.MetronomeMark(text="Moderato", number=BPM))
 
 
-def _write(score: stream.Score, path: Path) -> None:
+# ---------------------------------------------------------------------------
+# Audio Synthesis (Frequências Pitagóricas Exatas + Timbre Físico)
+# ---------------------------------------------------------------------------
+def _obter_frequencia_pitagorica(
+    pitch_obj,
+    freqs: dict[str, float] | None = None,
+) -> float:
+    """Calcula a frequência pitagórica exata em Hz a partir de um objeto Pitch do music21."""
+    if freqs is None:
+        freqs = _FREQS_DEFAULT
+    nome = PC_PARA_NOTA.get(pitch_obj.name, "Dó")
+    octave = pitch_obj.octave if pitch_obj.octave is not None else 4
+    f_base = freqs.get(nome, 440.0)
+    return f_base * (2.0 ** (octave - 4))
+
+
+def renderizar_audio_score(
+    score: stream.Score,
+    instrumento: str = "teclado",
+    sample_rate: int = 44100,
+    bpm: int = BPM,
+    freqs: dict[str, float] | None = None,
+) -> np.ndarray:
+    """Sintetiza o áudio da partitura usando frequências pitagóricas e perfis timbrísticos físicos."""
+    if freqs is None:
+        freqs = _FREQS_DEFAULT
+
+    sec_per_ql = 60.0 / bpm
+    notes = list(score.flatten().notes)
+    if not notes:
+        return np.zeros(int(sample_rate * 1.0), dtype=np.float32)
+
+    total_ql = max(el.offset + el.quarterLength for el in notes) + 0.5
+    total_samples = int(total_ql * sec_per_ql * sample_rate) + sample_rate
+    audio = np.zeros(total_samples, dtype=np.float32)
+
+    for el in notes:
+        start_time = el.offset * sec_per_ql
+        dur_time = el.quarterLength * sec_per_ql
+        start_idx = int(start_time * sample_rate)
+        ring_dur = max(dur_time, 1.2 if instrumento == "teclado" else 0.8)
+        n_samples = int(ring_dur * sample_rate)
+
+        t = np.linspace(0, ring_dur, n_samples, endpoint=False, dtype=np.float32)
+        pitches = el.pitches if el.isChord else [el.pitch]
+        note_signal = np.zeros(n_samples, dtype=np.float32)
+
+        for p in pitches:
+            f0 = _obter_frequencia_pitagorica(p, freqs)
+            if instrumento == "teclado":
+                # Teclado (Piano): harmônicos com inharmonicidade e decaimento acústico dual
+                amps = [1.0, 0.55, 0.30, 0.15, 0.08, 0.04, 0.02, 0.01]
+                for k, amp in enumerate(amps, start=1):
+                    fk = k * f0 * np.sqrt(1.0 + 0.00015 * (k**2))
+                    if fk >= sample_rate / 2:
+                        break
+                    decay = np.exp(-t * (1.8 + 0.25 * k + 0.001 * f0))
+                    note_signal += amp * np.sin(2 * np.pi * fk * t) * decay
+                attack_len = int(0.005 * sample_rate)
+                if attack_len > 0 and n_samples >= attack_len:
+                    note_signal[:attack_len] *= np.linspace(0, 1, attack_len, dtype=np.float32)
+            else:
+                # Violão (Acoustic Guitar / Pluck): ataque percussivo e amortecimento rápido de harmônicos
+                amps = [1.0, 0.85, 0.65, 0.45, 0.30, 0.20, 0.12, 0.06]
+                for k, amp in enumerate(amps, start=1):
+                    fk = k * f0
+                    if fk >= sample_rate / 2:
+                        break
+                    decay = np.exp(-t * (2.8 + 0.7 * (k**1.4) + 0.002 * f0))
+                    note_signal += amp * np.sin(2 * np.pi * fk * t) * decay
+                attack_len = int(0.002 * sample_rate)
+                if attack_len > 0 and n_samples >= attack_len:
+                    note_signal[:attack_len] *= np.linspace(0, 1, attack_len, dtype=np.float32)
+
+        end_idx = min(start_idx + n_samples, total_samples)
+        usable_samples = end_idx - start_idx
+        audio[start_idx:end_idx] += note_signal[:usable_samples]
+
+    max_val = np.max(np.abs(audio))
+    if max_val > 0:
+        audio = (audio / max_val) * 0.92
+    return audio
+
+
+def salvar_audio_mp3(
+    audio: np.ndarray,
+    caminho_mp3: Path,
+    sample_rate: int = 44100,
+) -> None:
+    """Codifica e salva o buffer de áudio em formato MP3 via FFmpeg."""
+    caminho_mp3.parent.mkdir(parents=True, exist_ok=True)
+    audio_int16 = (audio * 32767).astype(np.int16)
+    cmd = [
+        "ffmpeg", "-y",
+        "-f", "s16le",
+        "-ar", str(sample_rate),
+        "-ac", "1",
+        "-i", "pipe:0",
+        "-codec:a", "libmp3lame",
+        "-b:a", "192k",
+        str(caminho_mp3),
+    ]
+    p = subprocess.Popen(
+        cmd,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    p.communicate(input=audio_int16.tobytes())
+
+
+def _write(
+    score: stream.Score,
+    path: Path,
+    gerar_audio: bool = True,
+    freqs: dict[str, float] | None = None,
+) -> None:
+    """Salva a partitura em MusicXML e gera os arquivos de áudio MP3 (teclado e violão)."""
     path.parent.mkdir(parents=True, exist_ok=True)
     score.write("musicxml", fp=str(path))
+
+    if gerar_audio:
+        # 1. MP3 do Teclado (Piano)
+        mp3_teclado = path.with_name(f"{path.stem}_teclado.mp3")
+        audio_teclado = renderizar_audio_score(score, instrumento="teclado", freqs=freqs)
+        salvar_audio_mp3(audio_teclado, mp3_teclado)
+
+        # 2. MP3 do Violão (Acoustic Guitar)
+        mp3_violao = path.with_name(f"{path.stem}_violao.mp3")
+        audio_violao = renderizar_audio_score(score, instrumento="violao", freqs=freqs)
+        salvar_audio_mp3(audio_violao, mp3_violao)
 
 
 # ---------------------------------------------------------------------------
@@ -372,6 +525,62 @@ def _vl_distance(chord_a: list[str], chord_b: list[str]) -> int:
     while len(pcs_b) < len(pcs_a):
         pcs_b.append(pcs_b[-1] if pcs_b else 0)
     return sum(min(abs(a - b), 12 - abs(a - b)) for a, b in zip(pcs_a, pcs_b))
+
+
+# ===================================================================
+# Collection 0: 0_testes (Lote de Testes)
+# ===================================================================
+def colecao_0(df, base: Path) -> int:
+    """partituras/0_testes/[Tônica]/[Modo]/[Tipo de Acorde]/[Grau]_[Nota do Grau].musicxml
+
+    Lote de testes para a primeira tônica (t1): para cada modo, cada tipo de acorde único,
+    cada nota do grau e cada grau, gera a partitura de todos os acordes.
+    """
+    root = base / "0_testes"
+    count = 0
+
+    tonicas = df["Tônica Fundamental"].unique()
+    if len(tonicas) == 0:
+        return 0
+    t1 = tonicas[0]
+    sub_t1 = df[df["Tônica Fundamental"] == t1]
+
+    for modo in sub_t1["Modo"].unique():
+        sub_modo = sub_t1[sub_t1["Modo"] == modo]
+        for tipo_acorde in sub_modo["Tipo de Acorde"].unique():
+            sub_acorde = sub_modo[sub_modo["Tipo de Acorde"] == tipo_acorde]
+            for grau in GRAUS_ORDEM:
+                sub_grau = sub_acorde[sub_acorde["Grau"] == grau]
+                if sub_grau.empty:
+                    continue
+                for _, row in sub_grau.iterrows():
+                    nota_grau = row["Nota do Grau"]
+                    freq_grau = row["Frequência do Grau (Hz)"]
+                    notas_ac = row["Notas do Acorde"].split()
+                    cifra = _cifra(nota_grau, tipo_acorde)
+
+                    titulo = f"Teste {t1} {modo} — Grau {grau} ({nota_grau}) — {cifra}"
+                    score = _new_score(titulo)
+                    part = stream.Part()
+                    part.partName = titulo
+                    _init_part(part)
+                    _add_observacao(part, OBSERVACOES[0])
+
+                    pitches = _ascending_pitches(notas_ac)
+                    _add_pair_measures(
+                        part,
+                        pitches,
+                        pitches,
+                        label_above=f"{grau}: {cifra}",
+                        lyric_text=f"{row['Notas do Acorde']} ({freq_grau}Hz)",
+                    )
+
+                    score.append(part)
+                    fname = f"{grau}_{_san(nota_grau)}.musicxml"
+                    fp = root / _san(t1) / _san(modo) / _san(tipo_acorde) / fname
+                    _write(score, fp)
+                    count += 1
+    return count
 
 
 # ===================================================================
@@ -767,9 +976,15 @@ def colecao_8(df, base: Path) -> int:
 # ===================================================================
 # Main
 # ===================================================================
-def gerar_todas_colecoes(f_fundamental: float = 440.0,
-                         diretorio_saida: Path | str | None = None) -> None:
-    """Generate all 8 collections under the target directory."""
+def gerar_todas_colecoes(
+    f_fundamental: float = 440.0,
+    diretorio_saida: Path | str | None = None,
+    gerar_audio: bool = True,
+) -> None:
+    """Generate all analytical collections (MusicXML + MP3 teclado e violão) under the target directory."""
+    global _FREQS_DEFAULT
+    _FREQS_DEFAULT = gerar_frequencias_pitagoricas(f_fundamental)
+
     if diretorio_saida is None:
         base = DEFAULT_PARTITURAS_DIR
     else:
@@ -781,6 +996,7 @@ def gerar_todas_colecoes(f_fundamental: float = 440.0,
     print(f"  {len(df)} rows in relational matrix.\n")
 
     colecoes = [
+        ("0. lote de testes (t1)", colecao_0),
         ("1. escalas completas", colecao_1),
         ("2. campos harmônicos das escalas", colecao_2),
         ("3. Acordes", colecao_3),
@@ -794,7 +1010,7 @@ def gerar_todas_colecoes(f_fundamental: float = 440.0,
     for label, fn in colecoes:
         print(f"▶ {label} …", end=" ", flush=True)
         n = fn(df, base)
-        print(f"{n} files ✓")
+        print(f"{n} files ✓ (MusicXML + MP3 Teclado & Violão)")
 
     print("\nDone — all collections saved under", base)
 
