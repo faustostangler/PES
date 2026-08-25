@@ -17,6 +17,7 @@ Collections
 """
 
 import gc
+import re
 import subprocess
 import unicodedata
 from itertools import combinations
@@ -42,7 +43,7 @@ from notas import gerar_dataframe_longo, gerar_frequencias_pitagoricas
 DEFAULT_PARTITURAS_DIR = Path(__file__).resolve().parent / "partituras"
 
 # ---------------------------------------------------------------------------
-# Mappings (shared with partitura_musicxml.py)
+# Mappings & Ordered Prefixes (Para Ordenação Alfabética Correta)
 # ---------------------------------------------------------------------------
 NOTA_PARA_PC: dict[str, str] = {
     "Dó": "C", "Réb": "D-", "Ré": "D", "Mib": "E-", "Mi": "E",
@@ -63,24 +64,101 @@ SUFIXOS_ACORDE: dict[str, str] = {
     "Aumentada": "aug",
     "Suspensão por Quarta": "sus4",
     "Suspensão por Segunda": "sus2",
-    "Sétima Maior": "maj7",
-    "Sétima Menor": "7",
-    "Sétima Diminuta": "dim7",
+    "Dominante Suspenso": "7sus4",
+    "Aumentada com Sétima Maior": "maj7(#5)",
+    "Aumentada com Sétima Menor": "7(#5)",
+    "Maior com Sétima Maior": "maj7",
+    "Dominante (Sétima Menor)": "7",
+    "Dominante com Quinta Diminuta": "7(b5)",
+    "Menor com Sétima Maior": "m(maj7)",
+    "Menor com Sétima": "m7",
+    "Meio-Diminuta (Menor com Sétima e Quinta Diminuta)": "m7(b5)",
+    "Diminuta Completa (Sétima Diminuta)": "dim7",
+    "Maior com Sexta": "6",
+    "Menor com Sexta": "m6",
+    "Maior com Nona": "maj9",
+    "Dominante com Nona": "9",
+    "Menor com Nona": "m9",
+    "Dominante com Nona Aumentada": "7(#9)",
+    "Dominante com Nona Menor": "7(b9)",
+    "Maior com Décima Primeira": "maj11",
+    "Maior com Décima Terceira": "maj13",
+    "Dominante com Décima Primeira Aumentada": "7(#11)",
+    "Dominante com Décima Primeira": "11",
+    "Dominante com Décima Terceira": "13",
+    "Dominante com Décima Terceira Menor": "7(b13)",
+    "Menor com Décima Primeira": "m11",
+    "Menor com Décima Terceira": "m13",
 }
 
-GRAUS_ORDEM = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
+GRAUS_ORDEM: list[str] = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 
-MODOS_BRILHO = [
-    "Lídio",
-    "Jônio / Maior",
-    "Mixolídio",
-    "Dórico",
-    "Eólio / Menor Natural",
-    "Frígio",
-    "Lócrio",
-    "Menor Harmônica",
-    "Menor Melódica (asc.)",
+GRAUS_PREFIXO: dict[str, str] = {
+    "I": "01_I", "II": "02_II", "III": "03_III", "IV": "04_IV",
+    "V": "05_V", "VI": "06_VI", "VII": "07_VII", "VIII": "08_VIII",
+    "IX": "09_IX", "X": "10_X", "XI": "11_XI", "XII": "12_XII",
+}
+
+TONICAS_ORDEM: list[str] = [
+    "01 Dó", "02 Réb", "03 Ré", "04 Mib", "05 Mi", "06 Fá",
+    "07 Fa#", "08 Sol", "09 Láb", "10 Lá", "11 Sib", "12 Si",
 ]
+MAPA_TONICAS_PREFIXO: dict[str, str] = {
+    t.split(" ", 1)[1]: t for t in TONICAS_ORDEM
+}
+
+MODOS_BRILHO: list[str] = [
+    "01 Jônio / Maior",
+    "02 Dórico",
+    "03 Frígio",
+    "04 Lídio",
+    "05 Mixolídio",
+    "06 Eólio / Menor Natural",
+    "07 Lócrio",
+    "08 Menor Harmônica",
+    "09 Pentatônica Maior",
+    "10 Pentatônica Menor",
+]
+MAPA_MODOS_PREFIXO: dict[str, str] = {
+    m.split(" ", 1)[1]: m for m in MODOS_BRILHO
+}
+
+ACORDES_ORDEM: list[str] = [
+    "01 Suspensão por Quarta",
+    "02 Aumentada",
+    "03 Acorde Maior",
+    "04 Acorde Menor",
+    "05 Diminuta",
+    "06 Suspensão por Segunda",
+    "07 Dominante Suspenso",
+    "08 Aumentada com Sétima Maior",
+    "09 Aumentada com Sétima Menor",
+    "10 Maior com Sétima Maior",
+    "11 Dominante (Sétima Menor)",
+    "12 Dominante com Quinta Diminuta",
+    "13 Menor com Sétima Maior",
+    "14 Menor com Sétima",
+    "15 Meio-Diminuta (Menor com Sétima e Quinta Diminuta)",
+    "16 Diminuta Completa (Sétima Diminuta)",
+    "17 Maior com Sexta",
+    "18 Menor com Sexta",
+    "19 Maior com Nona",
+    "20 Dominante com Nona",
+    "21 Menor com Nona",
+    "22 Dominante com Nona Aumentada",
+    "23 Dominante com Nona Menor",
+    "24 Maior com Décima Primeira",
+    "25 Maior com Décima Terceira",
+    "26 Dominante com Décima Primeira Aumentada",
+    "27 Dominante com Décima Primeira",
+    "28 Dominante com Décima Terceira",
+    "29 Dominante com Décima Terceira Menor",
+    "30 Menor com Décima Primeira",
+    "31 Menor com Décima Terceira",
+]
+MAPA_ACORDES_PREFIXO: dict[str, str] = {
+    a.split(" ", 1)[1]: a for a in ACORDES_ORDEM
+}
 
 NOME_NOTA_PARA_MIDI: dict[str, int] = {
     "Dó": 0, "Réb": 1, "Ré": 2, "Mib": 3, "Mi": 4,
@@ -109,6 +187,26 @@ _FREQS_DEFAULT: dict[str, float] = gerar_frequencias_pitagoricas(440.0)
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+def _prefixo_modo(modo: str) -> str:
+    """Retorna o nome do modo com prefixo numérico de ordenação."""
+    return MAPA_MODOS_PREFIXO.get(modo, modo)
+
+
+def _prefixo_tonica(tonica: str) -> str:
+    """Retorna o nome da tônica com prefixo numérico de ordenação."""
+    return MAPA_TONICAS_PREFIXO.get(tonica, tonica)
+
+
+def _prefixo_acorde(tipo_acorde: str) -> str:
+    """Retorna o tipo de acorde com prefixo numérico de ordenação."""
+    return MAPA_ACORDES_PREFIXO.get(tipo_acorde, tipo_acorde)
+
+
+def _prefixo_grau(grau: str) -> str:
+    """Retorna o grau com prefixo numérico de ordenação."""
+    return GRAUS_PREFIXO.get(grau, grau)
+
+
 def _san(nome: str) -> str:
     """Filesystem-safe name: strip accents, replace specials."""
     nfkd = unicodedata.normalize("NFKD", nome)
@@ -125,7 +223,9 @@ def _san(nome: str) -> str:
 
 
 def _cifra(nota_grau: str, tipo_acorde: str) -> str:
-    return f"{CIFRAS.get(nota_grau, nota_grau)}{SUFIXOS_ACORDE.get(tipo_acorde, '')}"
+    nome_limpo = re.sub(r"^\d+\s*", "", tipo_acorde)
+    sufixo = SUFIXOS_ACORDE.get(nome_limpo, SUFIXOS_ACORDE.get(tipo_acorde, ""))
+    return f"{CIFRAS.get(nota_grau, nota_grau)}{sufixo}"
 
 
 def _ascending_pitches(nomes: list[str], start_octave: int = 4) -> list[str]:
@@ -540,11 +640,11 @@ def _vl_distance(chord_a: list[str], chord_b: list[str]) -> int:
 # Collection 0: 0_testes (Lote de Testes)
 # ===================================================================
 def colecao_0(df, base: Path) -> int:
-    """partituras/0_testes/[Tônica] - [Modo] - [Tipo de Acorde] - [Grau]_[Nota do Grau].musicxml
+    """partituras/0_testes/[Tônica]/[Modo]/[Tipo de Acorde]/[Tônica] - [Modo] - [Tipo de Acorde] - [Grau]_[Nota do Grau].musicxml
 
     Lote de testes para a primeira tônica (t1): para cada modo, cada tipo de acorde único,
-    cada nota do grau e cada grau, gera a partitura com nome completo.
-    Exemplo: 0_testes/Do - Jonio_-_Maior - Acorde_Maior - I_Do.musicxml
+    cada nota do grau e cada grau, gera a partitura em pastas com o nome completo do arquivo.
+    Exemplo: 0_testes/Do/Jonio_-_Maior/Acorde_Maior/Do - Jonio_-_Maior - Acorde_Maior - I_Do.musicxml
     """
     root = base / "0_testes"
     count = 0
@@ -587,7 +687,7 @@ def colecao_0(df, base: Path) -> int:
 
                     score.append(part)
                     fname = f"{_san(t1)} - {_san(modo)} - {_san(tipo_acorde)} - {grau}_{_san(nota_grau)}.musicxml"
-                    fp = root / fname
+                    fp = root / _san(t1) / _san(modo) / _san(tipo_acorde) / fname
                     _write(score, fp)
                     count += 1
                     if count % 100 == 0:
