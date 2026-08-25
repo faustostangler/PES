@@ -16,8 +16,7 @@ Collections
 8. 8_frequencias_musicais: Transformar notas musicais em frequências (acústica, afinação, série harmônica).
 """
 
-from __future__ import annotations
-
+import gc
 import subprocess
 import unicodedata
 from itertools import combinations
@@ -348,13 +347,16 @@ def renderizar_audio_score(
     if freqs is None:
         freqs = _FREQS_DEFAULT
 
-    sec_per_ql = 60.0 / bpm
+    sec_per_ql = 60.0 / bpm  # 1 tempo musical (semínima) = 60/BPM segundos
     notes = list(score.flatten().notes)
     if not notes:
-        return np.zeros(int(sample_rate * 1.0), dtype=np.float32)
+        return np.zeros(int(round(sec_per_ql * sample_rate)), dtype=np.float32)
 
-    total_ql = max(el.offset + el.quarterLength for el in notes) + 0.5
-    total_samples = int(total_ql * sec_per_ql * sample_rate) + sample_rate
+    # Fecha no compasso inteiro (4 tempos por compasso em 4/4) + 1 tempo de silêncio (60/BPM s)
+    max_offset_ql = max(el.offset + el.quarterLength for el in notes)
+    compassos = int(np.ceil(max_offset_ql / 4.0))
+    total_ql = (compassos * 4.0) + 1.0  # Múltiplo exato de tempos (60/BPM)
+    total_samples = int(round(total_ql * sec_per_ql * sample_rate))
     audio = np.zeros(total_samples, dtype=np.float32)
 
     for el in notes:
@@ -399,6 +401,11 @@ def renderizar_audio_score(
         usable_samples = end_idx - start_idx
         audio[start_idx:end_idx] += note_signal[:usable_samples]
 
+    # Suave fade-out de 15ms no final do buffer para evitar artefatos digitais
+    fade_len = int(0.015 * sample_rate)
+    if fade_len > 0 and len(audio) >= fade_len:
+        audio[-fade_len:] *= np.linspace(1.0, 0.0, fade_len, dtype=np.float32)
+
     max_val = np.max(np.abs(audio))
     if max_val > 0:
         audio = (audio / max_val) * 0.92
@@ -430,6 +437,8 @@ def salvar_audio_mp3(
         stderr=subprocess.DEVNULL,
     )
     p.communicate(input=audio_int16.tobytes())
+    p.wait()
+    del audio_int16
 
 
 def _write(
@@ -531,10 +540,11 @@ def _vl_distance(chord_a: list[str], chord_b: list[str]) -> int:
 # Collection 0: 0_testes (Lote de Testes)
 # ===================================================================
 def colecao_0(df, base: Path) -> int:
-    """partituras/0_testes/[Tônica]/[Modo]/[Tipo de Acorde]/[Grau]_[Nota do Grau].musicxml
+    """partituras/0_testes/[Tônica] - [Modo] - [Tipo de Acorde] - [Grau]_[Nota do Grau].musicxml
 
     Lote de testes para a primeira tônica (t1): para cada modo, cada tipo de acorde único,
-    cada nota do grau e cada grau, gera a partitura de todos os acordes.
+    cada nota do grau e cada grau, gera a partitura com nome completo.
+    Exemplo: 0_testes/Do - Jonio_-_Maior - Acorde_Maior - I_Do.musicxml
     """
     root = base / "0_testes"
     count = 0
@@ -576,10 +586,12 @@ def colecao_0(df, base: Path) -> int:
                     )
 
                     score.append(part)
-                    fname = f"{grau}_{_san(nota_grau)}.musicxml"
-                    fp = root / _san(t1) / _san(modo) / _san(tipo_acorde) / fname
+                    fname = f"{_san(t1)} - {_san(modo)} - {_san(tipo_acorde)} - {grau}_{_san(nota_grau)}.musicxml"
+                    fp = root / fname
                     _write(score, fp)
                     count += 1
+                    if count % 100 == 0:
+                        gc.collect()
     return count
 
 
