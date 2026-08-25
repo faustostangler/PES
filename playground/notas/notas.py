@@ -34,16 +34,16 @@ def gerar_dataframe_longo(f_fundamental=440.0):
     
     formulas_modais = {
         # Modos da Escala Maior (Diatônicos)
-        'Jônio / Maior': [2, 2, 1, 2, 2, 2, 1],
-        'Dórico': [2, 1, 2, 2, 2, 1, 2],
-        'Frígio': [1, 2, 2, 2, 1, 2, 2],
-        'Lídio': [2, 2, 2, 1, 2, 2, 1],
-        'Mixolídio': [2, 2, 1, 2, 2, 1, 2],
-        'Eólio / Menor Natural': [2, 1, 2, 2, 1, 2, 2],
-        'Lócrio': [1, 2, 2, 1, 2, 2, 2],
+        '01 Jônio / Maior': [2, 2, 1, 2, 2, 2, 1],
+        '02 Dórico': [2, 1, 2, 2, 2, 1, 2],
+        '03 Frígio': [1, 2, 2, 2, 1, 2, 2],
+        '04 Lídio': [2, 2, 2, 1, 2, 2, 1],
+        '05 Mixolídio': [2, 2, 1, 2, 2, 1, 2],
+        '06 Eólio / Menor Natural': [2, 1, 2, 2, 1, 2, 2],
+        '07 Lócrio': [1, 2, 2, 1, 2, 2, 2],
 
         # Modos da Escala Menor Harmônica
-        'Menor Harmônica': [2, 1, 2, 2, 1, 3, 1],
+        '08 Menor Harmônica': [2, 1, 2, 2, 1, 3, 1],
         # 'Lócrio 6M / Lócrio 13': [1, 2, 2, 1, 3, 1, 2],
         # 'Jônio #5': [2, 2, 1, 3, 1, 2, 1],
         # 'Dórico #4 / Dórico #11': [1, 2, 3, 1, 2, 1, 2],
@@ -66,8 +66,8 @@ def gerar_dataframe_longo(f_fundamental=440.0):
         # 'Dominante Diminuta (Semitom-Tom)': [1, 2, 1, 2, 1, 2, 1, 2],
 
         # Escalas Pentatônicas e Blues
-        'Pentatônica Maior': [2, 2, 3, 2, 3],
-        'Pentatônica Menor': [3, 2, 2, 3, 2],
+        '09 Pentatônica Maior': [2, 2, 3, 2, 3],
+        '10 Pentatônica Menor': [3, 2, 2, 3, 2],
         # 'Blues': [3, 2, 1, 1, 3, 2],
 
         # # Escalas Bebop
@@ -78,46 +78,46 @@ def gerar_dataframe_longo(f_fundamental=440.0):
 
     formulas_acordes = {
         # Tríades Fundamentais
-        'Suspensão por Quarta': [2.5, 3.5],
-        'Aumentada': [2.0, 4.0],
-        'Acorde Maior': [2.0, 3.5],
-        'Acorde Menor': [1.5, 3.5],
-        'Diminuta': [1.5, 3.0],
-        'Suspensão por Segunda': [1.0, 3.5],
+        '01 Suspensão por Quarta': [2.5, 3.5],
+        '02 Aumentada': [2.0, 4.0],
+        '03 Acorde Maior': [2.0, 3.5],
+        '04 Acorde Menor': [1.5, 3.5],
+        '05 Diminuta': [1.5, 3.0],
+        '06 Suspensão por Segunda': [1.0, 3.5],
 
         # Tétrades Fundamentais
-        'Dominante Suspenso': [2.5, 3.5, 5.0],
-        'Aumentada com Sétima Maior': [2.0, 4.0, 5.5],
-        'Aumentada com Sétima Menor': [2.0, 4.0, 5.0],
-        'Maior com Sétima Maior': [2.0, 3.5, 5.5],
-        'Dominante (Sétima Menor)': [2.0, 3.5, 5.0],
-        'Dominante com Quinta Diminuta': [2.0, 3.0, 5.0],
-        'Menor com Sétima Maior': [1.5, 3.5, 5.5],
-        'Menor com Sétima': [1.5, 3.5, 5.0],
-        'Meio-Diminuta (Menor com Sétima e Quinta Diminuta)': [1.5, 3.0, 5.0],
-        'Diminuta Completa (Sétima Diminuta)': [1.5, 3.0, 4.5],
+        '07 Dominante Suspenso': [2.5, 3.5, 5.0],
+        '08 Aumentada com Sétima Maior': [2.0, 4.0, 5.5],
+        '09 Aumentada com Sétima Menor': [2.0, 4.0, 5.0],
+        '10 Maior com Sétima Maior': [2.0, 3.5, 5.5],
+        '11 Dominante (Sétima Menor)': [2.0, 3.5, 5.0],
+        '12 Dominante com Quinta Diminuta': [2.0, 3.0, 5.0],
+        '13 Menor com Sétima Maior': [1.5, 3.5, 5.5],
+        '14 Menor com Sétima': [1.5, 3.5, 5.0],
+        '15 Meio-Diminuta (Menor com Sétima e Quinta Diminuta)': [1.5, 3.0, 5.0],
+        '16 Diminuta Completa (Sétima Diminuta)': [1.5, 3.0, 4.5],
 
         # Acordes com Sexta
-        'Maior com Sexta': [2.0, 3.5, 4.5],
-        'Menor com Sexta': [1.5, 3.5, 4.5],
+        '17 Maior com Sexta': [2.0, 3.5, 4.5],
+        '18 Menor com Sexta': [1.5, 3.5, 4.5],
 
         # Acordes Estendidos (Extensões Diatônicas)
-        'Maior com Nona': [2.0, 3.5, 5.5, 7.0],
-        'Dominante com Nona': [2.0, 3.5, 5.0, 7.0],
-        'Menor com Nona': [1.5, 3.5, 5.0, 7.0],
+        '19 Maior com Nona': [2.0, 3.5, 5.5, 7.0],
+        '20 Dominante com Nona': [2.0, 3.5, 5.0, 7.0],
+        '21 Menor com Nona': [1.5, 3.5, 5.0, 7.0],
 
         # Acordes Dominantes Alterados
-        'Dominante com Nona Aumentada': [2.0, 3.5, 5.0, 7.5],
-        'Dominante com Nona Menor': [2.0, 3.5, 5.0, 6.5],
+        '22 Dominante com Nona Aumentada': [2.0, 3.5, 5.0, 7.5],
+        '23 Dominante com Nona Menor': [2.0, 3.5, 5.0, 6.5],
 
-        'Maior com Décima Primeira': [2.0, 3.5, 5.5, 7.0, 8.5],
-        'Maior com Décima Terceira': [2.0, 3.5, 5.5, 7.0, 8.5, 10.5],
-        'Dominante com Décima Primeira Aumentada': [2.0, 3.5, 5.0, 7.0, 9.0],
-        'Dominante com Décima Primeira': [2.0, 3.5, 5.0, 7.0, 8.5],
-        'Dominante com Décima Terceira': [2.0, 3.5, 5.0, 7.0, 8.5, 10.5],
-        'Dominante com Décima Terceira Menor': [2.0, 3.5, 5.0, 7.0, 10.0],
-        'Menor com Décima Primeira': [1.5, 3.5, 5.0, 7.0, 8.5],
-        'Menor com Décima Terceira': [1.5, 3.5, 5.0, 7.0, 8.5, 10.5],
+        '24 Maior com Décima Primeira': [2.0, 3.5, 5.5, 7.0, 8.5],
+        '25 Maior com Décima Terceira': [2.0, 3.5, 5.5, 7.0, 8.5, 10.5],
+        '26 Dominante com Décima Primeira Aumentada': [2.0, 3.5, 5.0, 7.0, 9.0],
+        '27 Dominante com Décima Primeira': [2.0, 3.5, 5.0, 7.0, 8.5],
+        '28 Dominante com Décima Terceira': [2.0, 3.5, 5.0, 7.0, 8.5, 10.5],
+        '29 Dominante com Décima Terceira Menor': [2.0, 3.5, 5.0, 7.0, 10.0],
+        '30 Menor com Décima Primeira': [1.5, 3.5, 5.0, 7.0, 8.5],
+        '31 Menor com Décima Terceira': [1.5, 3.5, 5.0, 7.0, 8.5, 10.5],
     }
 
     
