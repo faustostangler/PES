@@ -46,15 +46,15 @@ def gerar_dataframe_longo(f_fundamental=440.0):
     }
 
     formulas_acordes = {
-    'Acorde Maior': [2.0, 3.5],
-    'Acorde Menor': [1.5, 3.5],
-    'Diminuta': [1.5, 3.0],
-    'Aumentada': [2.0, 4.0],
-    'Suspensão por Quarta': [2.5, 3.5],
-    'Suspensão por Segunda': [1.0, 3.5],
-    'Sétima Maior': [2.0, 3.5, 5.5],
-    'Sétima Menor': [2.0, 3.5, 5.0],
-    'Sétima Diminuta': [2.0, 3.5, 4.5]
+        'Acorde Maior': [2.0, 3.5],
+        'Acorde Menor': [1.5, 3.5],
+        'Diminuta': [1.5, 3.0],
+        'Aumentada': [2.0, 4.0],
+        'Suspensão por Quarta': [2.5, 3.5],
+        'Suspensão por Segunda': [1.0, 3.5],
+        'Sétima Maior': [2.0, 3.5, 5.5],
+        'Sétima Menor': [2.0, 3.5, 5.0],
+        'Sétima Diminuta': [2.0, 3.5, 4.5]
     }
     
     graus_rotulos = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']
