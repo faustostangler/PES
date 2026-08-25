@@ -16,6 +16,8 @@ CRESMO_ROOT = ISB_ROOT.parent / "cresmo"
 CRESMO_RAW_DIR = CRESMO_ROOT / "raw"
 ISB_RAW_DIR = ISB_ROOT / "raw"
 ENRICHED_DIR = ISB_ROOT / "enriched"
+NOTAS_DIR = ISB_ROOT.parent / "notas"
+NOTAS_PARTITURAS_DIR = NOTAS_DIR / "partituras"
 LOCK_FILE = REPO_ROOT / ".git" / "index.lock"
 
 MAX_FILES_PER_COMMIT = 100
@@ -257,9 +259,80 @@ def step2_commit_enriched_channels() -> None:
     print(f"Step 2 Complete: Created {total_commits} enriched commits.")
 
 
-def step3_commit_code_and_skills() -> None:
+def step3_commit_partituras() -> None:
+    """Finds and commits all music score files in chunks per category/subfolder."""
+    print("\n--- STEP 3: Staging & Committing Music Scores (Partituras) ---")
+    if not NOTAS_PARTITURAS_DIR.exists():
+        print(f"Directory {NOTAS_PARTITURAS_DIR} does not exist. Skipping.")
+        return
+
+    uncommitted_set = get_uncommitted_files_set()
+    partituras_rel = str(NOTAS_PARTITURAS_DIR.relative_to(REPO_ROOT))
+
+    subdirs_on_disk = [d for d in NOTAS_PARTITURAS_DIR.iterdir() if d.is_dir()]
+    uncommitted_partituras = [f for f in uncommitted_set if f.startswith(partituras_rel + "/")]
+
+    if not uncommitted_partituras and not any(subdirs_on_disk):
+        print("No changes found in partituras.")
+        return
+
+    category_names = set()
+    for d in subdirs_on_disk:
+        category_names.add(d.name)
+    for f in uncommitted_partituras:
+        rel_after_partituras = f[len(partituras_rel) + 1 :]
+        cat_name = rel_after_partituras.split("/")[0]
+        if cat_name:
+            category_names.add(cat_name)
+
+    total_commits = 0
+    for idx, cat_name in enumerate(sorted(category_names), 1):
+        clear_lock()
+        cat_rel = f"{partituras_rel}/{cat_name}"
+        disk_cat_dir = NOTAS_PARTITURAS_DIR / cat_name
+
+        disk_files = []
+        if disk_cat_dir.exists() and disk_cat_dir.is_dir():
+            disk_files = [str(f.relative_to(REPO_ROOT)) for f in disk_cat_dir.rglob("*") if f.is_file()]
+
+        uncommitted_cat = [f for f in uncommitted_set if f == cat_rel or f.startswith(cat_rel + "/")]
+        combined_paths = [REPO_ROOT / p for p in sorted(set(disk_files + uncommitted_cat))]
+
+        if not combined_paths:
+            continue
+
+        prefix = f"sync(partituras): '{cat_name}'"
+        c_count, f_count, b_count = stage_and_commit_file_list(
+            combined_paths,
+            commit_prefix=prefix,
+            max_per_commit=MAX_FILES_PER_COMMIT,
+            uncommitted_set=uncommitted_set,
+        )
+        if c_count > 0:
+            print(
+                f"  [{idx}/{len(category_names)}] Category '{cat_name}': "
+                f"{f_count} committed changes ({format_bytes(b_count)}) -> {c_count} commits."
+            )
+            total_commits += c_count
+
+    root_files = sorted([f for f in NOTAS_PARTITURAS_DIR.glob("*") if f.is_file()])
+    root_uncommitted = [f for f in uncommitted_partituras if "/" not in f[len(partituras_rel) + 1 :]]
+    all_root = [REPO_ROOT / p for p in sorted(set([str(f.relative_to(REPO_ROOT)) for f in root_files] + root_uncommitted))]
+    if all_root:
+        c_count, f_count, b_count = stage_and_commit_file_list(
+            all_root,
+            commit_prefix="sync(partituras): root files",
+            max_per_commit=MAX_FILES_PER_COMMIT,
+            uncommitted_set=uncommitted_set,
+        )
+        total_commits += c_count
+
+    print(f"Step 3 Complete: Created {total_commits} partituras commits.")
+
+
+def step4_commit_code_and_skills() -> None:
     """Stages and commits any remaining project code, agent skills, cresmo, configs, and file deletions."""
-    print("\n--- STEP 3: Staging Remaining Code, Skills & Deletions ---")
+    print("\n--- STEP 4: Staging Remaining Code, Skills & Deletions ---")
     clear_lock()
 
     targets = [
@@ -285,16 +358,16 @@ def step3_commit_code_and_skills() -> None:
         if res.returncode == 0:
             print(f"  Committed {len(staged)} remaining changes (including file deletions).")
         else:
-            print(f"  Commit error in step 3: {res.stderr.strip()}")
+            print(f"  Commit error in step 4: {res.stderr.strip()}")
     else:
         print("  No unstaged code/skills/deletion changes found.")
 
-    print("Step 3 Complete.")
+    print("Step 4 Complete.")
 
 
-def step4_push_to_remote(batch_size: int = 1) -> None:
+def step5_push_to_remote(batch_size: int = 1) -> None:
     """Pushes unpushed local commits to GitHub in small chunks."""
-    print("\n--- STEP 4: Pushing Commits to GitHub Remote ---")
+    print("\n--- STEP 5: Pushing Commits to GitHub Remote ---")
     clear_lock()
 
     res = run_git(["git", "log", "--reverse", "--format=%H", "origin/main..HEAD"])
@@ -329,12 +402,12 @@ def step4_push_to_remote(batch_size: int = 1) -> None:
             print(f"  ✗ Failed pushing batch {batch_num}. Stopping.")
             break
 
-    print("Step 4 Complete.")
+    print("Step 5 Complete.")
 
 
-def step5_verify() -> None:
+def step6_verify() -> None:
     """Verifies final sync state between local and remote."""
-    print("\n--- STEP 5: Verification ---")
+    print("\n--- STEP 6: Verification ---")
     res = run_git(["git", "rev-list", "--count", "origin/main..HEAD"])
     count = res.stdout.strip()
     print(f"Commits ahead of origin/main: {count}")
@@ -348,6 +421,7 @@ if __name__ == "__main__":
     clear_lock()
     step1_commit_raw_channels()
     step2_commit_enriched_channels()
-    step3_commit_code_and_skills()
-    step4_push_to_remote(batch_size=1)
-    step5_verify()
+    step3_commit_partituras()
+    step4_commit_code_and_skills()
+    step5_push_to_remote(batch_size=1)
+    step6_verify()
