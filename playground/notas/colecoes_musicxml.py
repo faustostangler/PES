@@ -124,9 +124,9 @@ MAPA_MODOS_PREFIXO: dict[str, str] = {
 }
 
 ACORDES_ORDEM: list[str] = [
-    "01 Suspensão por Quarta",
+    "01 Acorde Maior",
     "02 Aumentada",
-    "03 Acorde Maior",
+    "03 Suspensão por Quarta",
     "04 Acorde Menor",
     "05 Diminuta",
     "06 Suspensão por Segunda",
@@ -450,12 +450,12 @@ def renderizar_audio_score(
     sec_per_ql = 60.0 / bpm  # 1 tempo musical (semínima) = 60/BPM segundos
     notes = list(score.flatten().notes)
     if not notes:
-        return np.zeros(int(round(sec_per_ql * sample_rate)), dtype=np.float32)
+        return np.zeros(int(round(2.0 * sec_per_ql * sample_rate)), dtype=np.float32)
 
-    # Fecha no compasso inteiro (4 tempos por compasso em 4/4) + 1 tempo de silêncio (60/BPM s)
+    # Fecha no compasso inteiro (4 tempos por compasso em 4/4) + 2 tempos de silêncio (2 * 60/BPM s) para total de batidas ser PAR
     max_offset_ql = max(el.offset + el.quarterLength for el in notes)
     compassos = int(np.ceil(max_offset_ql / 4.0))
-    total_ql = (compassos * 4.0) + 1.0  # Múltiplo exato de tempos (60/BPM)
+    total_ql = (compassos * 4.0) + 2.0  # Múltiplo exato de tempos pares (4 * n + 2)
     total_samples = int(round(total_ql * sec_per_ql * sample_rate))
     audio = np.zeros(total_samples, dtype=np.float32)
 
@@ -530,14 +530,13 @@ def salvar_audio_mp3(
         "-b:a", "192k",
         str(caminho_mp3),
     ]
-    p = subprocess.Popen(
+    with subprocess.Popen(
         cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
-    )
-    p.communicate(input=audio_int16.tobytes())
-    p.wait()
+    ) as p:
+        p.communicate(input=audio_int16.tobytes())
     del audio_int16
 
 
@@ -556,11 +555,13 @@ def _write(
         mp3_teclado = path.with_name(f"{path.stem}_teclado.mp3")
         audio_teclado = renderizar_audio_score(score, instrumento="teclado", freqs=freqs)
         salvar_audio_mp3(audio_teclado, mp3_teclado)
+        del audio_teclado
 
         # 2. MP3 do Violão (Acoustic Guitar)
         mp3_violao = path.with_name(f"{path.stem}_violao.mp3")
         audio_violao = renderizar_audio_score(score, instrumento="violao", freqs=freqs)
         salvar_audio_mp3(audio_violao, mp3_violao)
+        del audio_violao
 
 
 # ---------------------------------------------------------------------------
@@ -640,11 +641,11 @@ def _vl_distance(chord_a: list[str], chord_b: list[str]) -> int:
 # Collection 0: 0_testes (Lote de Testes)
 # ===================================================================
 def colecao_0(df, base: Path) -> int:
-    """partituras/0_testes/[Tônica]/[Modo]/[Tipo de Acorde]/[Tônica] - [Modo] - [Tipo de Acorde] - [Grau]_[Nota do Grau].musicxml
+    """partituras/0_testes/[Tônica]/[Modo]/[Tipo de Acorde]/[Tônica] - [Modo] - [Nota do Grau] - [Grau] - [Tipo de Acorde].musicxml
 
     Lote de testes para a primeira tônica (t1): para cada modo, cada tipo de acorde único,
     cada nota do grau e cada grau, gera a partitura em pastas com o nome completo do arquivo.
-    Exemplo: 0_testes/Do/Jonio_-_Maior/Acorde_Maior/Do - Jonio_-_Maior - Acorde_Maior - I_Do.musicxml
+    Exemplo: 0_testes/Do/01_Jonio_-_Maior/01_Acorde_Maior/Do - 01_Jonio_-_Maior - Do - I - 01_Acorde_Maior.musicxml
     """
     root = base / "0_testes"
     count = 0
@@ -686,7 +687,8 @@ def colecao_0(df, base: Path) -> int:
                     )
 
                     score.append(part)
-                    fname = f"{_san(t1)} - {_san(modo)} - {_san(tipo_acorde)} - {grau}_{_san(nota_grau)}.musicxml"
+                    notas_str = "-".join(_san(n) for n in notas_ac)
+                    fname = f"{_san(t1)}-{_san(modo)}-{_san(nota_grau)}-{grau}-{_san(tipo_acorde)}-{notas_str}.musicxml"
                     fp = root / _san(t1) / _san(modo) / _san(tipo_acorde) / fname
                     _write(score, fp)
                     count += 1
@@ -699,10 +701,11 @@ def colecao_0(df, base: Path) -> int:
 # Collection 1: 1_escalas_completas
 # ===================================================================
 def colecao_1(df, base: Path) -> int:
-    """partituras/1_escalas_completas/[Tônica]/[Modo].musicxml"""
+    """partituras/1_escalas_completas/[Tônica]/[Modo]/[Tônica]-[Modo]-Escala_Completa-[Notas].musicxml"""
     root = base / "1_escalas_completas"
     count = 0
     for tonica in df["Tônica Fundamental"].unique():
+        t_pref = _prefixo_tonica(tonica)
         for modo in df["Modo"].unique():
             sub = df[(df["Tônica Fundamental"] == tonica) & (df["Modo"] == modo)]
             if sub.empty:
@@ -713,7 +716,8 @@ def colecao_1(df, base: Path) -> int:
             scale_notes = list(graus["Nota do Grau"])
             scale_pitches = _ascending_pitches(scale_notes)
 
-            titulo = f"Escala {tonica} {modo}"
+            m_pref = _prefixo_modo(modo)
+            titulo = f"Escala {t_pref} {m_pref}"
             score = _new_score(titulo)
             part = stream.Part()
             part.partName = titulo
@@ -729,9 +733,13 @@ def colecao_1(df, base: Path) -> int:
                                    lyric_text=f"{nota} ({freq}Hz)")
 
             score.append(part)
-            fp = root / _san(tonica) / f"{_san(modo)}.musicxml"
+            notas_str = "-".join(_san(n) for n in scale_notes)
+            fname = f"{_san(t_pref)}-{_san(m_pref)}-Escala_Completa-{notas_str}.musicxml"
+            fp = root / _san(t_pref) / _san(m_pref) / fname
             _write(score, fp)
             count += 1
+            if count % 50 == 0:
+                gc.collect()
     return count
 
 
@@ -744,20 +752,23 @@ def _acorde_diatonico(notas_acorde: list[str], notas_escala: set[str]) -> bool:
 
 
 def colecao_2(df, base: Path) -> int:
-    """partituras/2_campos_harmonicos_das_escalas/[Tônica]/[Modo].musicxml"""
+    """partituras/2_campos_harmonicos_das_escalas/[Tônica]/[Modo]/[Tônica]-[Modo]-Campo_Harmonico-[Notas].musicxml"""
     root = base / "2_campos_harmonicos_das_escalas"
     count = 0
 
     for tonica in df["Tônica Fundamental"].unique():
+        t_pref = _prefixo_tonica(tonica)
         for modo in df["Modo"].unique():
             sub = df[(df["Tônica Fundamental"] == tonica) & (df["Modo"] == modo)]
             if sub.empty:
                 continue
 
             graus_uniq = sub.drop_duplicates(subset=["Grau"]).set_index("Grau").reindex(GRAUS_ORDEM)
-            notas_escala = set(graus_uniq["Nota do Grau"].dropna())
+            scale_notes = list(graus_uniq["Nota do Grau"].dropna())
+            notas_escala = set(scale_notes)
 
-            titulo = f"Campo Harmônico {tonica} {modo}"
+            m_pref = _prefixo_modo(modo)
+            titulo = f"Campo Harmônico {t_pref} {m_pref}"
             score = _new_score(titulo)
             part = stream.Part()
             part.partName = titulo
@@ -780,9 +791,13 @@ def colecao_2(df, base: Path) -> int:
                         break
 
             score.append(part)
-            fp = root / _san(tonica) / f"{_san(modo)}.musicxml"
+            notas_str = "-".join(_san(n) for n in scale_notes)
+            fname = f"{_san(t_pref)}-{_san(m_pref)}-Campo_Harmonico-{notas_str}.musicxml"
+            fp = root / _san(t_pref) / _san(m_pref) / fname
             _write(score, fp)
             count += 1
+            if count % 50 == 0:
+                gc.collect()
     return count
 
 
@@ -790,13 +805,16 @@ def colecao_2(df, base: Path) -> int:
 # Collection 3: 3_acordes
 # ===================================================================
 def colecao_3(df, base: Path) -> int:
-    """partituras/3_acordes/[Tipo de Acorde]/[Tônica]/[Modo].musicxml"""
+    """partituras/3_acordes/[Tipo de Acorde]/[Tônica]/[Modo]/[Tônica]-[Modo]-[Tipo de Acorde].musicxml"""
     root = base / "3_acordes"
     count = 0
 
     for tipo_acorde in df["Tipo de Acorde"].unique():
+        a_pref = _prefixo_acorde(tipo_acorde)
         for tonica in df["Tônica Fundamental"].unique():
+            t_pref = _prefixo_tonica(tonica)
             for modo in df["Modo"].unique():
+                m_pref = _prefixo_modo(modo)
                 sub = df[
                     (df["Tipo de Acorde"] == tipo_acorde)
                     & (df["Tônica Fundamental"] == tonica)
@@ -805,7 +823,7 @@ def colecao_3(df, base: Path) -> int:
                 if sub.empty:
                     continue
 
-                titulo = f"{tipo_acorde} — {tonica} {modo}"
+                titulo = f"{a_pref} — {t_pref} {m_pref}"
                 score = _new_score(titulo)
                 part = stream.Part()
                 part.partName = titulo
@@ -828,10 +846,12 @@ def colecao_3(df, base: Path) -> int:
                                        lyric_text=row["Notas do Acorde"])
 
                 score.append(part)
-                fname = f"{_san(modo)}.musicxml"
-                fp = root / _san(tipo_acorde) / _san(tonica) / fname
+                fname = f"{_san(t_pref)}-{_san(m_pref)}-{_san(a_pref)}.musicxml"
+                fp = root / _san(a_pref) / _san(t_pref) / _san(m_pref) / fname
                 _write(score, fp)
                 count += 1
+                if count % 50 == 0:
+                    gc.collect()
     return count
 
 
@@ -839,11 +859,12 @@ def colecao_3(df, base: Path) -> int:
 # Collection 4: 4_transposicao_cromatica
 # ===================================================================
 def colecao_4(df, base: Path) -> int:
-    """partituras/4_transposicao_cromatica/[Tipo de Acorde]/[Nota do Grau]_[Freq].musicxml"""
+    """partituras/4_transposicao_cromatica/[Tipo de Acorde]/[Nota do Grau]/[Nota do Grau]-[Tipo de Acorde]-[Freq]-[Notas].musicxml"""
     root = base / "4_transposicao_cromatica"
     count = 0
 
     for tipo_acorde in df["Tipo de Acorde"].unique():
+        a_pref = _prefixo_acorde(tipo_acorde)
         sub = df[df["Tipo de Acorde"] == tipo_acorde]
         combos = sub.drop_duplicates(subset=["Nota do Grau", "Frequência do Grau (Hz)"])
         combos = combos.sort_values("Frequência do Grau (Hz)")
@@ -854,7 +875,7 @@ def colecao_4(df, base: Path) -> int:
             notas_ac = row["Notas do Acorde"].split()
             cifra = _cifra(nota_grau, tipo_acorde)
 
-            titulo = f"{tipo_acorde} — {nota_grau} ({freq} Hz)"
+            titulo = f"{a_pref} — {nota_grau} ({freq} Hz)"
             score = _new_score(titulo)
             part = stream.Part()
             part.partName = titulo
@@ -867,10 +888,13 @@ def colecao_4(df, base: Path) -> int:
                                lyric_text=f"{nota_grau} {freq}Hz")
 
             score.append(part)
-            fname = f"{_san(nota_grau)}_{_freq_str(freq)}.musicxml"
-            fp = root / _san(tipo_acorde) / fname
+            notas_str = "-".join(_san(n) for n in notas_ac)
+            fname = f"{_san(nota_grau)}-{_san(a_pref)}-{_freq_str(freq)}Hz-{notas_str}.musicxml"
+            fp = root / _san(a_pref) / _san(nota_grau) / fname
             _write(score, fp)
             count += 1
+            if count % 50 == 0:
+                gc.collect()
     return count
 
 
@@ -878,19 +902,20 @@ def colecao_4(df, base: Path) -> int:
 # Collection 5: 5_identidade_modal
 # ===================================================================
 def colecao_5(df, base: Path) -> int:
-    """partituras/5_identidade_modal/[Tônica]/Grau_[Grau]/[Modo]_[Nota do Grau].musicxml"""
+    """partituras/5_identidade_modal/[Tônica]/Grau_[Grau]/[Modo]/[Tônica]-[Modo]-[Nota do Grau]-[Grau].musicxml"""
     root = base / "5_identidade_modal"
     count = 0
 
     for tonica in df["Tônica Fundamental"].unique():
+        t_pref = _prefixo_tonica(tonica)
         for grau in GRAUS_ORDEM:
+            g_pref = _prefixo_grau(grau)
             sub = df[(df["Tônica Fundamental"] == tonica) & (df["Grau"] == grau)]
             if sub.empty:
                 continue
 
-            modos_presentes = [m for m in MODOS_BRILHO if m in sub["Modo"].values]
-
-            for modo in modos_presentes:
+            for modo in sub["Modo"].unique():
+                m_pref = _prefixo_modo(modo)
                 row_set = sub[sub["Modo"] == modo]
                 if row_set.empty:
                     continue
@@ -898,7 +923,7 @@ def colecao_5(df, base: Path) -> int:
                 nota_grau = first["Nota do Grau"]
                 freq = first["Frequência do Grau (Hz)"]
 
-                titulo = f"{tonica} — Grau {grau} — {modo} ({nota_grau})"
+                titulo = f"{t_pref} — Grau {grau} — {m_pref} ({nota_grau})"
                 score = _new_score(titulo)
                 part = stream.Part()
                 part.partName = titulo
@@ -907,7 +932,7 @@ def colecao_5(df, base: Path) -> int:
 
                 pitch = _single_pitch(nota_grau)
                 _add_pair_measures(part, pitch, pitch,
-                                   label_above=f"{modo}",
+                                   label_above=f"{m_pref}",
                                    lyric_text=f"{nota_grau} ({freq}Hz)")
 
                 base_chord = None
@@ -922,10 +947,12 @@ def colecao_5(df, base: Path) -> int:
                                        lyric_text=row["Notas do Acorde"])
 
                 score.append(part)
-                fname = f"{_san(modo)}_{_san(nota_grau)}.musicxml"
-                fp = root / _san(tonica) / f"Grau_{grau}" / fname
+                fname = f"{_san(t_pref)}-{_san(m_pref)}-{_san(nota_grau)}-{g_pref}.musicxml"
+                fp = root / _san(t_pref) / f"Grau_{g_pref}" / _san(m_pref) / fname
                 _write(score, fp)
                 count += 1
+                if count % 50 == 0:
+                    gc.collect()
     return count
 
 
@@ -938,7 +965,9 @@ def colecao_6(df, base: Path) -> int:
     count = 0
 
     for modo in df["Modo"].unique():
+        m_pref = _prefixo_modo(modo)
         for tonica in df["Tônica Fundamental"].unique():
+            t_pref = _prefixo_tonica(tonica)
             sub = df[(df["Modo"] == modo) & (df["Tônica Fundamental"] == tonica)]
             if sub.empty:
                 continue
@@ -965,7 +994,7 @@ def colecao_6(df, base: Path) -> int:
                 if best_pair is None:
                     continue
                 ra, rb = best_pair
-                titulo = (f"Condução {modo} {tonica}: "
+                titulo = (f"Condução {m_pref} {t_pref}: "
                           f"{grau_a}→{grau_b} (dist={best_dist}st)")
                 score = _new_score(titulo)
                 part = stream.Part()
@@ -989,10 +1018,14 @@ def colecao_6(df, base: Path) -> int:
                                    lyric_text=rb["Notas do Acorde"])
 
                 score.append(part)
-                fname = f"Minima_Distancia_{grau_a}_{_san(ra['Tipo de Acorde'])}.musicxml"
-                fp = root / _san(modo) / _san(tonica) / fname
+                tipo_a = _san(_prefixo_acorde(ra['Tipo de Acorde']))
+                tipo_b = _san(_prefixo_acorde(rb['Tipo de Acorde']))
+                fname = f"{_san(t_pref)}-{_san(m_pref)}-Conducao_{grau_a}_{grau_b}-{_san(cifra_a)}_para_{_san(cifra_b)}-dist_{best_dist}st.musicxml"
+                fp = root / _san(m_pref) / _san(t_pref) / fname
                 _write(score, fp)
                 count += 1
+                if count % 50 == 0:
+                    gc.collect()
     return count
 
 
@@ -1007,6 +1040,7 @@ def colecao_7(df, base: Path) -> int:
 
     for _, row in df.iterrows():
         tipo_acorde = row["Tipo de Acorde"]
+        a_pref = _prefixo_acorde(tipo_acorde)
         notas_str = row["Notas do Acorde"]
         notas_ac = notas_str.split()
 
@@ -1020,7 +1054,7 @@ def colecao_7(df, base: Path) -> int:
             continue
         seen.add(key)
 
-        titulo = f"{tipo_acorde} — {notas_str} — Forte {forte} IV<{iv_str}>"
+        titulo = f"{a_pref} — {notas_str} — Forte {forte} IV<{iv_str}>"
         score = _new_score(titulo)
         part = stream.Part()
         part.partName = titulo
@@ -1033,10 +1067,13 @@ def colecao_7(df, base: Path) -> int:
                            lyric_text=notas_str)
 
         score.append(part)
-        fname = f"{_san(notas_str)}.musicxml"
-        fp = root / iv_str / _san(tipo_acorde) / fname
+        notas_formatadas = "-".join(_san(n) for n in notas_ac)
+        fname = f"IV_{iv_str}-Forte_{_san(forte)}-{_san(a_pref)}-{notas_formatadas}.musicxml"
+        fp = root / f"IV_{iv_str}" / _san(a_pref) / fname
         _write(score, fp)
         count += 1
+        if count % 50 == 0:
+            gc.collect()
     return count
 
 
@@ -1044,7 +1081,7 @@ def colecao_7(df, base: Path) -> int:
 # Collection 8: 8_frequencias_musicais
 # ===================================================================
 def colecao_8(df, base: Path) -> int:
-    """partituras/8_frequencias_musicais/[Freq Grau]/[Nota]/[Freq Grau]_[Nota]_[Tônica]_[Modo]_[Freq Fund].musicxml"""
+    """partituras/8_frequencias_musicais/[Freq Grau]/[Nota]/[Tônica]/...musicxml"""
     root = base / "8_frequencias_musicais"
     count = 0
     seen: set[tuple[float, str, str, str, float]] = set()
@@ -1055,7 +1092,9 @@ def colecao_8(df, base: Path) -> int:
         freq_grau = row["Frequência do Grau (Hz)"]
         nota_grau = row["Nota do Grau"]
         tonica = row["Tônica Fundamental"]
+        t_pref = _prefixo_tonica(tonica)
         modo = row["Modo"]
+        m_pref = _prefixo_modo(modo)
         freq_fund = row["Frequência Fundamental (Hz)"]
 
         key = (freq_grau, nota_grau, tonica, modo, freq_fund)
@@ -1065,7 +1104,7 @@ def colecao_8(df, base: Path) -> int:
 
         ratio = freq_grau / freq_fund if freq_fund > 0 else 0
         titulo = (f"{nota_grau} ({freq_grau}Hz) — "
-                  f"{tonica} {modo} (f₀={freq_fund}Hz, ratio={ratio:.4f})")
+                  f"{t_pref} {m_pref} (f₀={freq_fund}Hz, ratio={ratio:.4f})")
         score = _new_score(titulo)
         part = stream.Part()
         part.partName = titulo
@@ -1078,10 +1117,12 @@ def colecao_8(df, base: Path) -> int:
                            lyric_text=f"{nota_grau} — {tonica} {modo}")
 
         score.append(part)
-        fname = f"{_freq_str(freq_grau)}_{_san(nota_grau)}_{_san(tonica)}_{_san(modo)}_{_freq_str(freq_fund)}.musicxml"
-        fp = root / _freq_str(freq_grau) / _san(nota_grau) / fname
+        fname = f"{_san(nota_grau)}-{_freq_str(freq_grau)}Hz-{_san(t_pref)}-{_san(m_pref)}-f0_{_freq_str(freq_fund)}Hz.musicxml"
+        fp = root / f"{_freq_str(freq_grau)}Hz" / _san(nota_grau) / _san(t_pref) / fname
         _write(score, fp)
         count += 1
+        if count % 50 == 0:
+            gc.collect()
     return count
 
 
@@ -1108,7 +1149,7 @@ def gerar_todas_colecoes(
     print(f"  {len(df)} rows in relational matrix.\n")
 
     colecoes = [
-        ("0. lote de testes (t1)", colecao_0),
+        # ("0. lote de testes (t1)", colecao_0),
         ("1. escalas completas", colecao_1),
         ("2. campos harmônicos das escalas", colecao_2),
         ("3. Acordes", colecao_3),

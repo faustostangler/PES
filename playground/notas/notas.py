@@ -78,9 +78,9 @@ def gerar_dataframe_longo(f_fundamental=440.0):
 
     formulas_acordes = {
         # Tríades Fundamentais
-        '01 Suspensão por Quarta': [2.5, 3.5],
+        '01 Acorde Maior': [2.0, 3.5],
         '02 Aumentada': [2.0, 4.0],
-        '03 Acorde Maior': [2.0, 3.5],
+        '03 Suspensão por Quarta': [2.5, 3.5],
         '04 Acorde Menor': [1.5, 3.5],
         '05 Diminuta': [1.5, 3.0],
         '06 Suspensão por Segunda': [1.0, 3.5],
