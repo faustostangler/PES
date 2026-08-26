@@ -20,7 +20,7 @@ import gc
 import re
 import subprocess
 import unicodedata
-from itertools import combinations
+from itertools import combinations, product
 from pathlib import Path
 
 import numpy as np
@@ -698,6 +698,106 @@ def colecao_0(df, base: Path) -> int:
 
 
 # ===================================================================
+# Collection 0 Rítmica: 0_testes_ritmo (Lote de Testes de Ritmo)
+# ===================================================================
+DURACOES_RITMO: dict[int, tuple[str, float]] = {
+    4: ("Semiminima", 1.0),
+    2: ("Colcheia", 0.5),
+    1: ("Semicolcheia", 0.25),
+}
+
+
+def _canonical_necklace(sequence: tuple) -> tuple:
+    """Retorna o menor representante léxico sob rotações circulares (Colar de Pólya)."""
+    n = len(sequence)
+    rotations = [sequence[i:] + sequence[:i] for i in range(n)]
+    return min(rotations)
+
+
+def colecao_0_ritmo(df, base: Path) -> int:
+    """partituras/0_testes_ritmo/[Compasso]/[Qtd_Eventos]/[Tipo_Variacao]/[Arquivo].musicxml
+
+    Lote de testes rítmicos para a nota Dó (C4):
+    Gera todas as permutações canônicas não-rotacionais de durações (Semimínima, Colcheia, Semicolcheia)
+    e variações selecionadas de pausas (puras, com 1 pausa, com 2 pausas).
+    """
+    root = base / "0_testes_ritmo"
+    count = 0
+    nota_pitch = "C4"
+
+    compassos = [
+        ("01_2_tempos_2-4", "2/4", 8, [2, 3, 4, 6, 8]),
+        ("02_3_tempos_3-4", "3/4", 12, [3, 4, 6, 8]),
+        ("03_4_tempos_4-4", "4/4", 16, [4, 6, 8]),
+    ]
+
+    for comp_id, formula, total_u, k_list in compassos:
+        for k in k_list:
+            k_str = f"{k:02d}_eventos"
+            particoes_durs = set()
+            for durs in product(DURACOES_RITMO.keys(), repeat=k):
+                if sum(durs) == total_u:
+                    particoes_durs.add(durs)
+
+            categorias = [
+                ("01_puras", 0),
+                ("02_com_1_pausa", 1),
+                ("03_com_2_pausas", 2),
+            ]
+
+            for cat_id, max_pausas in categorias:
+                if max_pausas > 0 and k <= max_pausas:
+                    continue  # Precisa ter pelo menos 1 nota sonora
+
+                canons_cat = set()
+                for durs in particoes_durs:
+                    for pos_pausas in combinations(range(k), max_pausas):
+                        tipos = ["S" if i in pos_pausas else "N" for i in range(k)]
+                        seq = tuple(zip(durs, tipos))
+                        canons_cat.add(_canonical_necklace(seq))
+
+                for seq in sorted(canons_cat):
+                    seq_str = "-".join(f"{tipo}{dur}" for dur, tipo in seq)
+                    titulo = f"Ritmo {comp_id} — {k_str} — {cat_id} — {seq_str}"
+                    score = _new_score(titulo)
+                    part = stream.Part()
+                    part.partName = titulo
+                    _init_part(part)
+                    _add_observacao(part, OBSERVACOES[0])
+
+                    for num_m in range(1, 4):
+                        m = stream.Measure(number=num_m)
+                        if num_m == 1:
+                            m.timeSignature = meter.TimeSignature(formula)
+
+                        for dur_u, tipo in seq:
+                            nome_fig, ql = DURACOES_RITMO[dur_u]
+                            if tipo == "N":
+                                n = note.Note(nota_pitch, quarterLength=ql)
+                                if num_m == 1:
+                                    n.addLyric(nome_fig)
+                                m.append(n)
+                            else:
+                                r = note.Rest(quarterLength=ql)
+                                if num_m == 1:
+                                    r.addLyric(f"Pausa ({nome_fig})")
+                                m.append(r)
+
+                        part.append(m)
+
+                    score.append(part)
+
+                    fname = f"{comp_id}-{k_str}-{cat_id}-{seq_str}.musicxml"
+                    fp = root / comp_id / k_str / cat_id / fname
+                    _write(score, fp)
+                    count += 1
+                    if count % 50 == 0:
+                        gc.collect()
+
+    return count
+
+
+# ===================================================================
 # Collection 1: 1_escalas_completas
 # ===================================================================
 def colecao_1(df, base: Path) -> int:
@@ -1150,6 +1250,7 @@ def gerar_todas_colecoes(
 
     colecoes = [
         # ("0. lote de testes (t1)", colecao_0),
+        ("0. lote de testes de ritmo", colecao_0_ritmo),
         ("1. escalas completas", colecao_1),
         ("2. campos harmônicos das escalas", colecao_2),
         ("3. Acordes", colecao_3),
