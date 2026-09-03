@@ -1,0 +1,104 @@
+---
+video_title: "How to Kill the Code Review — Ankit Jain, Aviator"
+video_id: YgEv7IQzGdM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YgEv7IQzGdM
+video_date: 2026-08-17T20:00:08+00:00
+video_description: |
+  Over 30% of changes now merge with no review at all, and the wait on the ones that do get reviewed is four times what it used to be. Ankit Jain's read is that the debate about when we stop reading code line by line is already over, because we stopped. His sharper point is what replaced it: an AI writes the code, an AI reviews the code, the two go back and forth in a web UI, and a human skims the thread and merges. When AI reviews and nobody reads, he says, we have configured the wrong thing.
+  
+  He is also here to correct his own five layer trust model from a few months earlier, which missed that review was never only about correctness. It also carries knowledge sharing, mentorship, architectural feedback, and onboarding, and that half has to survive. Spec driven development does not rescue it, because a spec written up front with no feedback loop is the 1970 waterfall model, and the decisions that actually matter end up in the prompts, which teams throw away the moment the pull request opens. His proposal keeps them: capture the session, turn those decisions into acceptance criteria, pair that with a registry built from your own recurring review comments, and generate a test plan that a verification system runs against a live preview. The review surface becomes intent and evidence instead of the diff.
+  
+  Speaker info:
+  - https://x.com/ankitxg
+  - https://www.linkedin.com/in/ankitjaindce/
+  - https://www.latent.space/p/reviews-dead
+  
+  Timestamps:
+  0:00 - The five layer trust model, and what it got wrong
+  1:17 - We already stopped reviewing, and AI reviews nobody reads
+  3:05 - What code review was actually for
+  4:21 - Spec driven development is waterfall again
+  5:53 - Intent lives in the prompts, which we throw away
+  6:42 - The AI slop registry
+  7:58 - Session to acceptance criteria to test plan
+  11:51 - Deterministic where you can, and reviewing intent not the diff
+  14:12 - Homework: mine your last 1,000 review comments
+---
+[música]
+
+Ok. Ah, olá. Olá a todos. Obrigado por participar. Hoje, vamos falar sobre como acabar com as revisões de código. O tema favorito de todos
+
+. Sou Ankit, cofundador da Aviator. Na Aviator, estamos construindo uma plataforma de verificação de código por IA. Então, vamos incorporar algumas das ideias e conceitos que discutimos e que desenvolvemos em nosso produto. Mas primeiro, vamos nos aprofundar um pouco no assunto. Então,
+
+alguns meses atrás, escrevi uma postagem no LinkedIn sobre como acabar com a revisão de código, criando uma estrutura e um modelo de confiança de cinco camadas. Assim, esse modelo se concentrou em como, de fato, construir confiança no código camada por camada, para que ele possa ser integrado sem a necessidade de revisão linha por linha . E acertei em algumas coisas e errei em outras . Então, esta palestra será sobre aprofundar um pouco mais esse assunto . Não vou falar sobre camadas específicas, mas discutiremos alguns dos conceitos que surgiram nesta sessão.
+
+Então, vamos falar sobre o problema. Atualmente, observamos que o volume de código está aumentando a cada dia e estamos com dificuldades para acompanhar. Então, quando pensamos em quanto tempo levará para realmente pararmos de ler o código linha por linha? E a verdade é que já paramos de analisá-lo. Há uma taxa de rotatividade de código de 861%. Isso significa que estamos
+
+produzindo mais código. A relação entre incidentes e relações públicas está aumentando. Isso significa que, mesmo que você faça avaliações hoje, elas não serão eficazes. Assim, o tempo médio de revisão está aumentando. Acabamos de aumentar o gargalo, passando da fase de codificação, que agora está praticamente resolvida, para a fase de revisão, onde tudo fica travado. Você está gastando quatro vezes mais
+
+tempo do que antes apenas esperando pelas avaliações. E hoje, mais de 30% das alterações estão sendo incorporadas sem qualquer revisão. Então, vamos pensar um pouco sobre isso. Pense em avaliações feitas por IA. Então, provavelmente todo mundo está usando alguma forma de avaliação por IA hoje em dia.
+
+Se a IA escreve o código e a IA revisa o código, por que estamos fazendo isso em uma interface de usuário? Certo? É como quando abrimos um repositório no GitHub e há, digamos, dois ou três agentes de programação com IA que fazem as revisões. Sabe, a avaliação é encaminhada de volta para o usuário e/ ou o agente, e o problema é resolvido. É como se você estivesse fazendo uma troca de mensagens com o agente.
+
+Onde entra o ser humano nesse processo? É como se, no final das contas, você estivesse apenas olhando e pensando: "Ok, se a IA analisou e provavelmente encontrou a maioria das coisas, vamos apenas dar uma olhada rápida e juntar tudo." Portanto, quando a IA revisa e ninguém lê, significa que configuramos algo errado. Então, vamos dar um passo atrás. As revisões de código não são muito antigas. Talvez sejam de
+
+15 a 20 anos atrás. Em 2006, o Google lançou o Mondrian internamente e tornou a revisão formal de código uma prática comum. Se você parar para pensar, o Windows, antigamente , em suas primeiras versões, era desenvolvido sem nenhuma revisão por pares. Mas, se analisarmos com atenção, a revisão de código não se resume apenas a revisões de código. Sabe, obviamente estamos analisando isso como uma forma de detectar erros, entender convenções e identificar problemas de segurança.
+
+Mas a revisão de código também se trata de alinhamento. E essa era uma peça que faltava no meu modelo de cinco camadas, sobre o qual falei há alguns meses. Assim, uma grande parte das revisões de código envolve compartilhamento de conhecimento, mentoria, feedback arquitetônico, integração e a capacidade de colaborar. Novamente, se você está fazendo programação " white encoding", trabalhando em um projeto individual, esta palestra não é para você. Se você trabalha em equipe, o que acredito ser o caso da maioria de vocês, e colabora em equipe, provavelmente não está usando fábricas ou orquestradores completamente obscuros , onde ninguém analisa o código. Vocês estão colaborando em
+
+equipes, então precisam compartilhar conhecimento. Que é a parte do alinhamento. E essa é a parte mais importante do lançamento. Assim, para precisão semântica, podemos construir ferramentas melhores, mas o alinhamento deve ser mantido. Então, vamos começar pelo alinhamento. O que isso significa? Tipo, no
+
+mundo de hoje, será que conseguimos imaginar um modelo melhor do que alinhar o código simplesmente lendo linha por linha? Portanto, a maioria das pessoas provavelmente já ouviu falar sobre o desenvolvimento do espectro eletromagnético. Então, o desenvolvimento do Spectrum é tipo, ok, nós escrevemos uma especificação, sabe, ela cobre todos os detalhes, nós a passamos para um agente, ele gera um código e então nós verificamos. Então, qual é o problema aqui? Se olharmos para 1970, este era o modelo em cascata . Sabe, você tem requisitos,
+
+tem especificações, implementa e depois verifica. Mas não há ciclo de feedback. Sabe, a especificação foi escrita antes de identificarmos todo o resto. Certo? É por isso que hoje em dia todos ainda querem usar suas sessões de codificação, seja Cloud Code, Codex, Cursor, ou qualquer outra ferramenta que você esteja usando, você quer interagir com os agentes. E o motivo de você estar
+
+interagindo com agentes é porque havia certas coisas que não estavam claras na especificação, e ainda precisamos esclarecê-las. E em segundo lugar, à medida que você implementa, identifica mais problemas e nunca volta para atualizar a especificação, porque, por exemplo, se você está desenvolvendo o Spectrum , ele já está pronto. Uma vez que a especificação esteja concluída, você espera que o código surja de forma determinística. Mas adivinhe só? O LLM não é determinístico. Vai tomar as
+
+decisões por conta própria. Portanto, é por isso que o desenvolvimento baseado em espectro é uma ótima metodologia, mas deixa a desejar no desenvolvimento de software do dia a dia. Mas existem alguns aspectos interessantes nisto, que devemos levar adiante. O mais importante é a intenção. Uma intenção não reside apenas na especificação.
+
+A intenção está registrada no seu ticket do Jira. Esse é o objetivo, certo? É como se fosse um lugar onde você expressa o que quer fazer. Ele reside em seus PRDs. É como se fossem detalhes, como se fosse um plano.
+
+Mas, o mais importante, está presente nas suas perguntas de hoje. É aqui que as decisões reais são tomadas. Você começa pensando: "Ok, este é um ticket do Jira que vou analisar", mas fica nesse vai e vem com o atendente, e é aí que todas as decisões do usuário são tomadas. Mas o que fazemos hoje é criar uma alteração, criar uma solicitação de pull request e, em seguida, descartar os prompts. E essa é uma das coisas que precisamos mudar.
+
+Vamos começar falando também sobre precisão semântica porque, sabe, você deve estar pensando: "Ei, Ankit, ok, entendi a parte do alinhamento, mas ainda existem bugs no código. Quem vai olhar para isso?" Os LLMs também não são muito bons nisso, e já falamos sobre como os agentes de IA que atuam como revisores nem sempre são perfeitos. Então, é aqui que eu apresento a vocês o conceito de registro de erros de IA. Então, pense nisso. Estamos analisando.
+
+Se você está revisando código manualmente hoje em dia, e eu espero que todos façam isso até certo ponto. Essencialmente, podemos estar identificando os mesmos problemas repetidamente. Será que podemos realmente capturar e codificar esses conceitos para que não precisemos criar esses feedbacks de avaliação um por um? Na verdade, você também tem todas essas coisas identificadas automaticamente. O interessante é que, se você fizer isso algumas vezes, acaba construindo uma espécie de sistema que aprende com o tempo. Então, pense nisso como se
+
+você estivesse fazendo um treinamento adicional além do LLM padrão, que você já construiu a partir dele. Assim, os sistemas de IA para registro de erros agora conseguem gerar melhores resultados porque são treinados e aprendem com a experiência de revisão que vocês, humanos, fornecem. Agora, cada comentário recorrente serve como um mecanismo de segurança que você não precisa revisar novamente. Certo, então vamos tentar juntar esses dois aspectos: alinhamento e precisão semântica. São duas metades do mesmo problema.
+
+Estamos tentando entender quais são os mecanismos essenciais da revisão. Como podemos, na verdade, dividir isso em duas partes, que são o alinhamento e a precisão semântica, e juntá-las em um único ciclo? Então, em primeiro lugar, você pode gravar a sessão e capturar as respostas do usuário, e isso essencialmente forma seus critérios de aceitação. Os critérios de aceitação, então, combinados com o seu registro de slots de IA que você agora mantém constantemente, finalmente criam um plano de testes. E este é o plano de testes que é então verificado. Isso faz parte
+
+do sistema que estamos construindo: o sistema de verificação, que inicia uma pré-visualização, analisa seu plano de testes e garante que ele funcione de ponta a ponta. Mesmo que o código pareça correto, ele realmente funciona? Então, essa parte da verificação ficou interessante. E agora, a grande sacada é que esta é a sua superfície de avaliação. Você não está revisando o código linha por linha, mas sim analisando as evidências da intenção, se o usuário realmente implementou a funcionalidade definida na intenção e se o comportamento atendeu aos requisitos que definimos como critérios de aceitação.
+
+Portanto, as decisões arquitetônicas continuam sendo tomadas, as discussões continuam, mas a forma de avaliação muda. Então, vamos dar uma breve explicação de como construímos nosso sistema. A sessão se torna um critério, então todas essas decisões que você está tomando aqui com o agente, você está pedindo , você está fornecendo esse feedback. Mesmo em tarefas simples, muitas vezes você fica indo e voltando. O agente irá parar para fazer perguntas.
+
+Essas são as decisões que precisamos registrar. Essa é a intenção. É isso que torna sua avaliação e sua colaboração mais valiosas. É assim que você ensina seus engenheiros juniores a melhorarem com o tempo. São essas decisões que tornam um engenheiro de software valioso hoje em dia.
+
+Convertemos esses dados em critérios de aceitação. É aqui que você também pode usar o LLM para isso. Então, você captura essas decisões do usuário e garante que pode criar um plano de testes com base nisso. Sei que a criação de planos de teste é sempre um processo trabalhoso, e é por isso que sempre recomendo o uso do LLM para essa finalidade. E, finalmente, os critérios somados aos invariantes são o que compõem o plano de testes.
+
+E nós construímos os sistemas de verificação para capturar o plano de testes, executar as prévias e possibilitar os testes com base nesse plano. Então, imagine que você está criando um novo recurso: você não precisa se preocupar com a manutenção dos testes. Isso cria testes em tempo real, e é aqui que você pode aproveitar o poder do LLM, porque a manutenção e a criação do plano de testes podem ser realmente trabalhosas, mas o valor da intervenção humana reside na governança e na revisão, e na revisão do plano de testes em si, e não do código. Certo? Sei que já faz mais de 20 anos desde que criamos o desenvolvimento orientado a testes . De certa forma, isso se aproxima mais
+
+do desenvolvimento orientado a comportamento , onde o plano de testes agora é algo que você pode compartilhar até mesmo com seus gerentes de produto e seus designers. Todos podem participar, pois agora essas informações estão em inglês. Ao mesmo tempo, agora temos a verificação determinística, que verifica de fato se os critérios de teste específicos foram atendidos ou não. Vamos em frente. Então, é aqui que eu diria que o sistema não deve ser perfeito. É
+
+determinístico onde pode ser, mas exige-se um LLM onde for necessário. Nem tudo pode ser determinístico. Nem todo sistema pode ser construído de forma 100% baseada em sistemas determinísticos. É aqui que você usa o LLM como alternativa. Deixe-me dar um exemplo. Por exemplo, se você
+
+fizer uma alteração em sua aplicação web, poderá criar um plano de testes para as mudanças de comportamento. Digamos que você introduza uma nova forma de pagamento. Assim, é criado um novo formulário de pagamento. A verificação aqui consiste em saber se o sistema de pagamento sofreu alterações. Um agente de IA pode navegar pelo seu aplicativo, preencher um formulário e capturar telas como evidência.
+
+Em seguida, faça capturas de tela dessas capturas, bem como instantâneos do seu banco de dados, para identificar se os critérios foram atendidos. Assim, testes de captura de tela ou atividades semelhantes envolvendo areia voando ainda podem ser realizados por agentes. Mas, ao mesmo tempo, você está criando evidências mais sólidas, que agora um revisor pode analisar e ter mais confiança de que isso realmente funciona. Assim, agora os revisores estão analisando a intenção, não a diferença. Você está revisando as decisões de intenção. É isso que
+
+dissemos para construir. O que tentamos e rejeitamos, e registramos tudo isso nas sessões. Lembre-se, registrar as informações das sessões é fundamental. Se tentarmos construir isso a partir do código, acabaremos na mesma situação que estávamos discutindo ontem, ou melhor, se o seu código for construído pelo mesmo agente que está criando o plano de testes, ele não criará um plano de testes que realmente detecte problemas. Por isso, é importante usar as informações da sessão para elaborar um plano de testes.
+
+Vocês podem discutir decisões arquitetônicas. Então, como você está criando os modelos de dados, como esses serviços interagem entre si. Então, você subiu um nível. Então, em vez de revisar linha por linha, você está basicamente tendo discussões sobre a arquitetura, o que é fundamental para qualquer tipo de colaboração. E então você analisa as evidências, tudo o que foi coletado na verificação.
+
+Então, aqui está uma tarefa de casa para todos. Vá para casa, analise os comentários das suas últimas 1.000 avaliações e crie um sistema de IA para registrar os itens que se repetem. Portanto, a grande maioria dos comentários que você fornece em sua revisão de código são algo que repetimos diversas vezes . Isso se agrava a cada merge de PR.
+
+Cada vez que você registra algo , não precisa registrar esse comentário novamente. E é aqui que você pode realmente codificar algumas das melhores práticas de desenvolvimento de código, mantendo a precisão semântica e, ao mesmo tempo, sem perder a parte colaborativa da revisão. Segue, de fato, uma curva em J. Então, a dor é real. Você precisará investir algum tempo para que isso realmente valha a pena, pois a criação inicial de um registro pode levar algum tempo. E é aqui que eu
+
+recomendo que vocês venham experimentar o nosso produto. Portanto, a revisão de código não se resume apenas à revisão de código. Trata-se de realmente conseguir o alinhamento. E onde podemos construir ferramentas melhores é na criação de precisão semântica e na definição do seu registro de slots de IA. Portanto, se você se lembrar de apenas uma coisa hoje, lembre-se de que a revisão de código não se trata apenas de revisar o código, mas sim de obter o alinhamento necessário.
+
+E sim, estamos testando nosso novo produto chamado Verify. Junte-se a nós e seja um dos nossos primeiros parceiros de design. Estamos trabalhando com algumas empresas para testar um novo sistema de verificação. Isso combina tanto o aspecto de alinhamento quanto a criação de ferramentas e recursos para detectar a precisão semântica usando o registro de slots de IA. Obrigado a todos. Obrigado por participar.
+
+[aplausos]
