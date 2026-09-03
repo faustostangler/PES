@@ -29,13 +29,13 @@ from cresmo_shared import (
 from export_cookies import ensure_cookies
 
 # --- CLI & Pipeline Defaults ---
-DEFAULT_DAYS: int = 30
+DEFAULT_DAYS: int = 365
 DEFAULT_WHISPER_MODEL: str = "base"
 DEFAULT_MAX_WORKERS: int = 1
 DEFAULT_KEEP_AUDIO: bool = False
 DEFAULT_ISOLATE_CONTEXT: bool = True
 DEFAULT_RESTART_SERVER: bool = False
-DEFAULT_COMMAND: str = "full"
+DEFAULT_COMMAND: str = "sync" # "full"
 
 CLI_EPILOG_EXAMPLES: str = """
 Examples:
@@ -114,6 +114,8 @@ def main() -> None:
     full_parser.add_argument("--cresmo-dir", default=str(DEFAULT_CRESMO_DIR), help="Path to Cresmo vault root directory")
     full_parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help="Days limit to check back for ingestion")
     full_parser.add_argument("--model", default=DEFAULT_WHISPER_MODEL, help="Whisper fallback model size")
+    full_parser.add_argument("--keep-audio", action="store_true", default=DEFAULT_KEEP_AUDIO, help="Keep downloaded audio files")
+    full_parser.add_argument("--max-workers", type=int, default=DEFAULT_MAX_WORKERS, help="Max worker threads")
     full_parser.add_argument(
         "--category", "--categories", "-c",
         dest="categories",
@@ -147,6 +149,8 @@ def main() -> None:
         args.cresmo_dir = getattr(args, "cresmo_dir", str(DEFAULT_CRESMO_DIR))
         args.days = getattr(args, "days", DEFAULT_DAYS)
         args.model = getattr(args, "model", DEFAULT_WHISPER_MODEL)
+        args.keep_audio = getattr(args, "keep_audio", DEFAULT_KEEP_AUDIO)
+        args.max_workers = getattr(args, "max_workers", DEFAULT_MAX_WORKERS)
         args.categories = getattr(args, "categories", list(DEFAULT_CATEGORIES))
         args.limit = getattr(args, "limit", None)
         args.force = getattr(args, "force", False)
@@ -160,8 +164,8 @@ def main() -> None:
             output_dir=Path(args.raw_dir),
             days=args.days,
             model_name=args.model,
-            keep_audio=args.keep_audio,
-            max_workers=args.max_workers,
+            keep_audio=getattr(args, "keep_audio", DEFAULT_KEEP_AUDIO),
+            max_workers=getattr(args, "max_workers", DEFAULT_MAX_WORKERS),
         )
 
     elif args.command == "process":
@@ -177,6 +181,15 @@ def main() -> None:
         )
 
     elif args.command in {"full", "all"}:
+        run_cresmo_ingestion(
+            playlist_path=Path(args.playlist),
+            csv_path=Path(args.csv),
+            output_dir=Path(args.raw_dir),
+            days=args.days,
+            model_name=args.model,
+            keep_audio=getattr(args, "keep_audio", DEFAULT_KEEP_AUDIO),
+            max_workers=getattr(args, "max_workers", DEFAULT_MAX_WORKERS),
+        )
         run_cresmo_pipeline(
             raw_dir=Path(args.raw_dir),
             enriched_dir=Path(args.enriched_dir),
