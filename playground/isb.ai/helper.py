@@ -24,15 +24,18 @@ def sanitize_for_path(name: str) -> str:
     return name or "unknown"
 
 def format_date_for_path(upload_date_str: str) -> str:
-    """Format any upload date string (ISO or YYYYMMDD) into YYYY-MM-DD."""
+    """Format any upload date string (ISO, space-separated, or YYYYMMDD) strictly into YYYY-MM-DD."""
     if not upload_date_str:
         return "unknown_date"
     try:
-        if "-" in upload_date_str:
-            return upload_date_str.split("T")[0]
-        else:
-            dt = datetime.strptime(upload_date_str, "%Y%m%d")
+        clean_str = str(upload_date_str).strip()
+        if "-" in clean_str:
+            return clean_str.split("T")[0].split(" ")[0]
+        elif len(clean_str) == 8 and clean_str.isdigit():
+            dt = datetime.strptime(clean_str, "%Y%m%d")
             return dt.strftime("%Y-%m-%d")
+        else:
+            return clean_str[:10]
     except Exception:
         return "unknown_date"
 

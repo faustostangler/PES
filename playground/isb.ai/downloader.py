@@ -227,14 +227,14 @@ def extract_video_metadata(url: str, use_cookies: bool = False) -> dict:
         err_msg = str(e).lower()
         if any(pattern in err_msg for pattern in ("sign in to confirm", "bot", "cookie", "login")):
             # Attempt auto-refreshing cookies from browser if blocked anonymously
-            print(f"  ⚠️  Bot detection/expired cookies detected for {url}. Auto-refreshing cookies from browser...")
+            print(f"[COOKIE EXPIRED] Auto-refreshing cookies for {url}...")
             apply_cookies_to_ydl_opts(ydl_opts_meta, use_cookies=True, force_refresh=True)
             try:
                 with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
                     res = ydl.extract_info(url, download=False)
                     return res or {}
             except Exception as retry_err:
-                print(f"  ❌ Retry after cookie refresh failed for {url}: {retry_err}")
+                print(f"[COOKIE ERROR] Retry failed for {url}: {retry_err}")
         return {}
 
 
@@ -267,7 +267,7 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
     except Exception as e:
         err_msg = str(e).lower()
         if use_cookies and any(pattern in err_msg for pattern in ("sign in to confirm", "bot", "cookie", "login")):
-            print(f"  ⚠️  Bot detection on audio download for {video_id}. Auto-refreshing cookies...")
+            print(f"[BOT DETECTED] Refreshing cookies for audio download ({video_id})...")
             apply_cookies_to_ydl_opts(ydl_opts_download, use_cookies=True, force_refresh=True)
             with yt_dlp.YoutubeDL(ydl_opts_download.copy()) as ydl:
                 ydl.extract_info(url, download=True)
@@ -467,8 +467,8 @@ def get_youtube_audio_or_transcript(
     is_live_now = info.get("is_live") is True or info.get("live_status") == "is_live"
     is_upcoming = info.get("live_status") == "is_upcoming"
     if is_live_now or is_upcoming:
-        status_str = "ao vivo" if is_live_now else "agendada (upcoming)"
-        print(f"  ⚠️ Pulando '{title[:30]}...': Transmissão {status_str} (não finalizada).")
+        status_str = "live" if is_live_now else "upcoming"
+        print(f"[SKIPPED] {video_id} | Live stream {status_str} (in progress).")
         return None, None, video_id
 
     subtitles = info.get("subtitles") or {}
@@ -509,10 +509,10 @@ def get_youtube_audio_or_transcript(
                     status_code = getattr(e, "status", getattr(e, "code", None))
                     if status_code == 429 or "429" in str(e) or "Too Many Requests" in str(e):
                         has_429 = True
-                        print(f"  ⚠️ Rate limit (HTTP 429) hit on candidate {fmt_name} ({lang}). Trying next candidate...")
+                        print(f"[429 RETRY] {video_id} ({fmt_name}-{lang}) | Trying next candidate...")
                         continue
                     else:
-                        print(f"Warning: Failed to parse {fmt_name} subtitles ({e}).")
+                        print(f"[PARSE ERROR] {video_id} ({fmt_name}): {e}")
 
             if sub_success:
                 # ACCESS PERMITTED: Update EWMA base quantum, log telemetry, and reset global streak!
@@ -542,28 +542,23 @@ def get_youtube_audio_or_transcript(
                     status="RATE_LIMITED_429",
                     total_blocked_sec=_ACCUMULATED_BLOCKED_TIME
                 )
-                print(
-                    f"  ⚠️ Rate limit (HTTP 429) persisted across all candidates for '{title[:30]}...'. "
-                    f"Waiting {delay:.1f}s for reset (global 429 streak: {_GLOBAL_429_ATTEMPT + 1}, total blocked time: {_ACCUMULATED_BLOCKED_TIME:.1f}s..."
-                )
+                print(f"[429 BACKOFF] {video_id} | Waiting {delay:.1f}s (streak: {_GLOBAL_429_ATTEMPT + 1})")
                 time.sleep(delay)
                 _GLOBAL_429_ATTEMPT += 1
             else:
                 break
 
-        print(f"  ⚠️ Subtitle rate-limit persisted for '{title[:30]}...'. Falling back to Whisper audio processing...")
+        print(f"[SUBTITLE 429] {video_id} | Falling back to audio Whisper...")
 
     if not download_audio_if_missing and not force_audio:
         return None, None, video_id
 
     # Tier 3: Download audio and convert to OGG for Whisper
-    print(f"Downloading audio stream (Whisper fallback) for '{title[:30]}...'...")
     try:
         ogg_file = download_audio_as_ogg(url, out_path, video_id)
-        print(f"Successfully downloaded and processed '{title}' as: {ogg_file}")
         return None, str(ogg_file), video_id
     except Exception as e:
-        print(f"Error downloading/processing audio: {e}")
+        print(f"[AUDIO ERROR] {video_id}: {e}")
         raise e
 
 if __name__ == "__main__":

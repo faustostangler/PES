@@ -243,7 +243,7 @@ def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: b
     if not info:
         info = extract_video_metadata(url)
     if not info or not info.get("id"):
-        print(f"  Warning: Skipping video {url} due to unresolvable metadata/bot protection.")
+        print(f"[SKIPPED] {url} | Unresolvable metadata/bot protection.")
         return {}
     video_id = info.get("id", "unknown_video")
 
@@ -291,7 +291,6 @@ def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: b
                     if detected_lang:
                         break
 
-        print(f"Transcribing audio file with Whisper (model: {model_name}, language: {detected_lang or 'auto'})...")
         result = transcribe_audio_to_text(ogg_path, model_name=model_name, language=detected_lang)
         text = result.get("text", "").strip()
 
@@ -299,9 +298,8 @@ def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: b
         if not keep_audio:
             try:
                 os.remove(ogg_path)
-                print("Cleaned up OGG file.")
             except Exception as e:
-                print(f"Warning: Failed to delete OGG file: {e}")
+                print(f"[AUDIO WARNING] Failed to delete OGG file for {video_id}: {e}")
 
     # Save the text
     assert len(text) > 0, "No text extracted."
@@ -315,7 +313,7 @@ channel_name: "{info.get('channel', 'Unknown Channel').replace('"', '\\"')}"
 channel_id: {info.get('channel_id', 'unknown_channel')}
 channel_category: "{category.replace('"', '\\"')}"
 url: {url}
-video_date: {upload_date}
+video_date: {date_str}
 video_description: |
 {desc_indented}
 ---"""
@@ -333,7 +331,7 @@ video_description: |
         "channel_id": info.get("channel_id", "unknown_channel"),
         "url": url,
         "video_description": desc,
-        "upload_date": upload_date,
+        "upload_date": date_str,
     }
 
 def audio_worker(audio_q: queue.Queue) -> None:
@@ -366,13 +364,12 @@ def audio_worker(audio_q: queue.Queue) -> None:
         target_dir.mkdir(parents=True, exist_ok=True)
         txt_path = target_dir / f"{date_str}-{video_id}.txt"
 
-        print(f"  [AUDIO WORKER START] Downloading & transcribing '{title[:30]}...' ({video_id})...")
         try:
             _, ogg_path, _ = get_youtube_audio_or_transcript(
                 url, output_dir=str(target_dir), force_audio=True, info=info
             )
             if not ogg_path or not os.path.exists(ogg_path):
-                print(f"  [AUDIO WORKER ERROR] Audio file not created for {video_id}")
+                print(f"[AUDIO ERROR] Audio file not created for {video_id}")
                 continue
 
             detected_lang = None
@@ -397,7 +394,7 @@ def audio_worker(audio_q: queue.Queue) -> None:
                 try:
                     os.remove(ogg_path)
                 except Exception as e:
-                    print(f"  [AUDIO WORKER WARNING] Failed to delete OGG file: {e}")
+                    print(f"[AUDIO WARNING] Failed to delete OGG file for {video_id}: {e}")
 
             if text:
                 desc = info.get("description") or "" if info else ""
@@ -410,19 +407,19 @@ channel_name: "{channel.replace('"', '\\"')}"
 channel_id: {actual_channel_id}
 channel_category: "{category.replace('"', '\\"')}"
 url: {url}
-video_date: {upload_date}
+video_date: {date_str}
 video_description: |
 {desc_indented}
 ---"""
                 with open(txt_path, "w", encoding="utf-8") as f:
                     f.write(yaml_header + "\n" + text)
 
-                record_synced_video(csv_path, actual_channel_id, video_id, upload_date, title=title)
-                print(f"  ✓ [AUDIO WORKER SUCCESS] {upload_date} | {actual_channel_id} {video_id} | {title[:40]}...")
+                record_synced_video(csv_path, actual_channel_id, video_id, date_str, title=title)
+                print(f"[AUDIO FETCHED] {date_str} | {actual_channel_id} {video_id} | {title[:40]}...")
             else:
-                print(f"  [AUDIO WORKER ERROR] Empty transcription for {video_id}")
+                print(f"[AUDIO ERROR] Empty transcription for {video_id}")
         except Exception as e:
-            print(f"  [AUDIO WORKER ERROR] Failed processing {video_id}: {e}")
+            print(f"[AUDIO ERROR] Failed processing {video_id}: {e}")
         finally:
             audio_q.task_done()
 
@@ -476,24 +473,24 @@ channel_name: "{channel.replace('"', '\\"')}"
 channel_id: {actual_channel_id}
 channel_category: "{category.replace('"', '\\"')}"
 url: {url}
-video_date: {upload_date}
+video_date: {date_str}
 video_description: |
 {desc_indented}
 ---"""
         with open(txt_path, "w", encoding="utf-8") as f:
             f.write(yaml_header + "\n" + text)
 
-        record_synced_video(csv_path, actual_channel_id, video_id, upload_date, title=info.get("title", "Unknown Title"))
+        record_synced_video(csv_path, actual_channel_id, video_id, date_str, title=info.get("title", "Unknown Title"))
         with SYNCED_IDS_LOCK:
             synced_ids.add(video_id)
-        print(f"  ✓ [JSON FETCHED] {upload_date} | {actual_channel_id} {video_id} | {info.get('title', 'Unknown Title')[:40]}...")
+        print(f"[JSON FETCHED] {date_str} | {actual_channel_id} {video_id} | {info.get('title', 'Unknown Title')[:40]}...")
         return {"video_id": video_id, "status": "json_fetched"}
 
     # Fallback path: Enqueue to Audio Queue if audio_queue is active
     with SYNCED_IDS_LOCK:
         synced_ids.add(video_id)
     if audio_queue is not None:
-        print(f"  ➔ [ENQUEUED FOR AUDIO] {video_id} ('{info.get('title', 'Unknown Title')[:30]}...')")
+        print(f"[AUDIO ENQUEUED] {date_str} | {actual_channel_id} {video_id} | {info.get('title', 'Unknown Title')[:40]}...")
         audio_queue.put((
             url,
             output_dir,
@@ -508,8 +505,9 @@ video_description: |
         # Fallback inline processing if audio_queue is None
         res = sync_single_video(url, output_dir, model_name, keep_audio, info=info)
         if res and "video_id" in res:
-            record_synced_video(csv_path, actual_channel_id, res["video_id"], res["upload_date"], title=res["video_title"])
-            print(f"{res['upload_date']} | {actual_channel_id} {res['video_id']} | {res['video_title'][:40]}...")
+            res_date = format_date_for_path(res.get("upload_date", ""))
+            record_synced_video(csv_path, actual_channel_id, res["video_id"], res_date, title=res["video_title"])
+            print(f"[AUDIO FETCHED] {res_date} | {actual_channel_id} {res['video_id']} | {res['video_title'][:40]}...")
         return res
 
 
@@ -623,7 +621,7 @@ def sync_channels_and_seeds(
                     return
 
             if info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming"):
-                print(f"Skipping seed video {video_id}: live stream in progress or upcoming.")
+                print(f"[SKIPPED] {video_id} | Live stream in progress or upcoming.")
                 return
 
             try:
@@ -641,7 +639,7 @@ def sync_channels_and_seeds(
                     audio_queue=audio_queue,
                 )
             except Exception as e:
-                print(f"Error syncing seed video {video_id}: {e}")
+                print(f"[SYNC ERROR] {video_id}: {e}")
 
         if playlist_urls:
             max_seed_workers = min(max_workers, max(1, len(playlist_urls)))
@@ -674,34 +672,33 @@ def sync_channels_and_seeds(
                 entries = fetch_channel_recent_videos(chan_id, limit=safe_limit)
                 with count_lock:
                     completed_channels += 1
-                    print(f"  [{completed_channels}/{total_channels}] Channel {chan_id}: {len(entries)} video(s) found")
+                    print(f"[{completed_channels}/{total_channels}] Channel {chan_id}: {len(entries)} video(s) found")
                 return chan_id, entries
             except Exception as e:
                 with count_lock:
                     completed_channels += 1
-                    print(f"  [{completed_channels}/{total_channels}] Error fetching channel {chan_id}: {e}")
+                    print(f"[{completed_channels}/{total_channels}] Error fetching channel {chan_id}: {e}")
                 return chan_id, []
 
         with ThreadPoolExecutor(max_workers=max_workers) as chan_executor:
-            print('skip syncing channel videos')
-            # future_to_cid = {chan_executor.submit(_fetch_channel, cid): cid for cid in chan_list}
-            # for future in as_completed(future_to_cid):
-            #     cid, entries = future.result()
-            #     if entries:
-            #         update_channel_cache(cache_path, cid, entries)
-            #         for entry in entries:
-            #             _submit_candidate_video(cid, entry)
+            future_to_cid = {chan_executor.submit(_fetch_channel, cid): cid for cid in chan_list}
+            for future in as_completed(future_to_cid):
+                cid, entries = future.result()
+                if entries:
+                    update_channel_cache(cache_path, cid, entries)
+                    for entry in entries:
+                        _submit_candidate_video(cid, entry)
 
         # 4. Wait for all submitted video processing tasks to complete
         video_executor.shutdown(wait=True)
 
     finally:
         if not audio_queue.empty():
-            print(f"\n[QUEUE] Waiting for {audio_queue.qsize()} background audio download/transcription task(s) to finish...")
+            print(f"[QUEUE] Waiting for {audio_queue.qsize()} background audio task(s) to finish...")
         audio_queue.join()
         audio_queue.put(None)
         worker_thread.join()
-        print("[QUEUE] Parallel JSON download & Audio transcription queue finished.")
+        print("[QUEUE] Background audio processing queue finished.")
 
 def bulk_compile_historical_transcripts(
     csv_path: Path,
@@ -822,8 +819,8 @@ def main() -> None:
     parser.add_argument(
         "--days",
         type=int,
-        default=365,
-        help="Number of days range of videos to sync (default: 7)."
+        default=365 * 2,
+        help="Number of days range of videos to sync (default: 730)."
     )
     parser.add_argument(
         "--output-dir",
