@@ -912,18 +912,37 @@ def run_cresmo_pipeline(
     print(f"   Restart Server:     {restart_server}")
     print("==================================================")
 
-    # 1. Discover raw transcript files
-    txt_files = sorted(raw_dir.rglob("*.txt"))
+    # 1. Discover raw transcript files (fail-fast category filtering at directory level)
+    if allowed_categories:
+        channel_dirs = [d for d in raw_dir.iterdir() if d.is_dir()]
+        allowed_dirs = [
+            d for d in channel_dirs
+            if classify_channel(d.name)[0].lower() in allowed_categories
+            or classify_channel(d.name)[1].lower() in allowed_categories
+        ]
+        txt_files = []
+        for d in allowed_dirs:
+            txt_files.extend(d.rglob("*.txt"))
+        for f in raw_dir.glob("*.txt"):
+            txt_files.append(f)
+        txt_files.sort()
+    else:
+        txt_files = sorted(raw_dir.rglob("*.txt"))
 
     candidate_blocks = []
     total_txt = len(txt_files)
     parse_start_time = time.time()
     last_parse_pct = -1
+    target_blocks_limit = limit if (limit is not None and limit > 0) else MAX_CANDIDATE_PARSE_LIMIT
 
     for txt_idx, txt_file in enumerate(txt_files, 1):
-        if txt_idx > MAX_CANDIDATE_PARSE_LIMIT:
-            print(f"breaking at {MAX_CANDIDATE_PARSE_LIMIT} records")
-            break
+        # Fail fast per-file on allowed categories before parsing content
+        rel_parts = txt_file.relative_to(raw_dir).parts
+        if allowed_categories and len(rel_parts) > 1:
+            folder_domain, folder_cat_type = classify_channel(rel_parts[0])
+            if folder_domain.lower() not in allowed_categories and folder_cat_type.lower() not in allowed_categories:
+                continue
+
         blocks = parse_merged_transcriptions(txt_file)
         for b in blocks:
             b["source_file"] = txt_file
@@ -947,6 +966,8 @@ def run_cresmo_pipeline(
                     continue
 
             candidate_blocks.append(b)
+            if target_blocks_limit and len(candidate_blocks) >= target_blocks_limit:
+                break
 
         if total_txt > 0:
             parse_pct = int((txt_idx / total_txt) * 100)
@@ -957,11 +978,18 @@ def run_cresmo_pipeline(
                 remaining = avg_time * (total_txt - txt_idx)
                 total_est = elapsed + remaining
                 eta_str = f"{format_duration(elapsed)} + {format_duration(remaining)} = {format_duration(total_est)}"
-                print(f"{txt_idx}/{total_txt} ({parse_pct}%) | {eta_str}", end="\n", flush=True)
+                print(f"{txt_idx}/{total_txt} ({parse_pct}%) | Candidates: {len(candidate_blocks)} | {eta_str}", end="\n", flush=True)
+
+        if target_blocks_limit and len(candidate_blocks) >= target_blocks_limit:
+            print(f"breaking at {len(candidate_blocks)} candidate blocks")
+            break
 
     if limit:
         candidate_blocks = candidate_blocks[:limit]
         print(f"ℹ️ Limiting pipeline run to first {limit} video block(s).")
+    elif MAX_CANDIDATE_PARSE_LIMIT and len(candidate_blocks) >= MAX_CANDIDATE_PARSE_LIMIT:
+        candidate_blocks = candidate_blocks[:MAX_CANDIDATE_PARSE_LIMIT]
+        print(f"ℹ️ Limiting candidate blocks to {MAX_CANDIDATE_PARSE_LIMIT} records.")
 
     if not candidate_blocks:
         print("✓ All transcripts are up to date! Nothing to process.")
