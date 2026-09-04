@@ -1,0 +1,31 @@
+---
+video_title: "The Question Behind 10 System Design Interviews #systemdesign #interview #roadmap"
+video_id: wgWDqyn2CY8
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=wgWDqyn2CY8
+video_date: 2026-08-29
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-uber-dispatch-the-senior-walkthrough
+  🌐 Visit our website: https://systemdrd.com/
+   
+  Design Uber dispatch is really 10 questions in disguise — here's the spine they all share, and the six clarifying questions that set up the whole answer.
+   
+  #systemdesign #techinterview #uberengineering #softwareengineering #faang #interviewpreparation
+---
+Welcome back. [music] Today, we're taking on the question that defines the entire marketplace and matching archetype, design the Uber dispatch system. [music] 10 questions in most interview banks are variants of this one. DoorDash, Airbnb, Tinder, parking reservation, surge [music] pricing, ride share fraud. They all share the same spine, and once you've built this architecture one [music] time, the other nine become reskins instead of blank pages. Design the Uber dispatch system.
+
+A rider requests [music] a ride. The system finds nearby available drivers and assigns one. That's the surface prompt, and on its own, it's a 4-hour answer. [music] So, interviewers narrow it. Design the matching flow, or walk me through what happens between the rider hitting request and the driver getting notified.
+
+Both [music] collapse to the same real question. How do you find the nearest available supply in real time at scale without burning down your database on every single request? [music] Notice the shared spine underneath every variant. A supply side, a demand side, a location [music] component, and a real-time matching requirement. DoorDash swaps a moving driver for a fixed restaurant location as the one twist.
+
+But, the matching logic underneath is identical, which [music] is exactly why interviewers reuse the spine across 10 different sounding prompts. Before you draw anything, six clarifying [music] questions matter, and two of them are load-bearing for the whole design. First, does dispatch mean matching only, or does it also include routing and surge? Scope it explicitly. >> [music] >> Design the matching layer, acknowledge the other two exist as separate systems, and move on. Second, how many active
+
+drivers and what geography? A single metro at peak is roughly [music] 50,000 active drivers. That number is what makes an in-memory geo index plausible in the first place, so get it on the table early. Third, [music] update frequency. Every 4 seconds is typical, which at 50,000 drivers works out [music] to about 12,500 location writes per second. Fourth, the latency SLO,
+
+>> [music] >> SUB 100 milliseconds for candidate selection. And riders expect a driver to accept within 30 to 60 seconds of the request [music] going out. Fifth, and this is the one that defines the hard part of the whole system. [music] Can a driver be matched to two requests at once? No. A driver has exactly one
+
+state, available or not. And protecting [music] that single piece of state is the consistency problem at the heart of the question. Sixth, failure modes, offline [music] mid-trip, GPS drop, a driver declining the offer, a rider canceling after [music] match. Do the math out loud in the room. 55 ride requests a second, >> [music] >> 12,500 location rights a second, and a geo index that works out to about 5 megabytes and fits entirely in memory on a single machine. That last number is
+
+the insight that unlocks everything [music] downstream, because it means the active driver set for one city is small enough to hold in RAM. Worth noting, too, if the interviewer pushes toward global scale, 5 [music] to 10 million drivers, that same math jumps to over a million writes per second, and the single machine geo index stops working. State the single metro case [music] first, then name the global extension as a follow-up, rather than trying to design for both at once.

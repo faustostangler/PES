@@ -1,0 +1,138 @@
+---
+video_title: "Do YouTubers actually use the things they promote?"
+video_id: oRtyC0mi5fs
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=oRtyC0mi5fs
+video_date: 2024-12-19
+video_description: |
+  Home Assistant just launched Voice, a little $59 privacy-conscious smart speaker.
+  
+  But will I actually use it? Do I still use the other things I talked about this year? Let's take a look at the Voice, and do a little retrospective...
+  
+    - Home Assistant Voice: https://home-assistant.io/voice-pe
+    - Announcement livestream: https://www.youtube.com/watch?v=ZgoaoTpIhm8
+    - Geerling Engineering: https://www.youtube.com/@GeerlingEngineering
+    - Level 2 Jeff (2nd Channel): https://www.youtube.com/@Level2Jeff
+    - Veritasium's video on Clickbait: https://www.youtube.com/watch?v=S2xHZPH5Sng
+    - Arm NAS build: https://github.com/geerlingguy/arm-nas
+    - Pico Micro Mac: https://jcm-1.com/product/picomicromac/
+    - Ubo Pod: https://www.getubo.com
+    - LocalDeck: https://www.mylocalbytes.com/products/localdeck
+    - Upgrading the HA Yellow to CM5: https://www.jeffgeerling.com/blog/2024/home-assistant-yellow-instant-2x-iot-speedup-cm5
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  
+  Note: Nabu Casa sent me the Home Assistant Voice Preview Edition hardware that I tested in this video. They did not pay for the video, or have any input in the contents of the video.
+  
+  Contents:
+  
+  00:00 - A bit of a different video
+  01:37 - Home Assistant Voice (Preview Edition)
+  02:43 - Will I actually use it?
+  03:09 - CM4 to CM5 makes local voice usable
+  04:35 - HA Voice Hardware Overview
+  05:26 - Do I still use the best things from 2024?
+  05:38 - Ultimate Pi 5 NAS
+  06:45 - Apple TV Replacement
+  09:10 - CM5 changes EVERYTHING
+  11:01 - Is Raspberry Pi the villian?
+  14:40 - More beginner videos?
+  16:22 - Looking forward
+  17:38 - Oh yeah, how much is Voice (Preview Edition)
+  18:01 - Bloopers (watch to the end...)
+---
+Something's a little off... I'm missing some light up here. "Okay Nabu, turn on the hair light."
+
+"Turned on the switch." Ah, there it is! Just that little pop. Today Home Assistant launched the 'Voice' [Preview Edition], a little box that lets you use your voice to interact with Home Assistant. I'll talk about that, but this video is about more than a little box that's basically a privacy- focused version of Alexa.
+
+It's almost the end of 2024, and a lot happened this year. And I'm just talking this channel, not the whole world. I started a second channel, Level 2 Jeff. I've made some amazing videos with my dad on Geerling Engineering. And if you're not already, go subscribe to those channels.
+
+If you watch a lot of my videos, you'll get a kick out of those channels too. But I also focused a lot of time this year on making my automations actually useful, and focusing on actually putting the tech I talk about to use around the studio. One irony of doing this YouTube thing is I review a lot of tech. To do that, I need a lot of tech. And you can see all these boxes everywhere, this is all stuff I've used or I will use to test things.
+
+And that's kinda wasteful. The irony's not lost on me. When I talk about reusing old tech, and I even restore some old Macs, only for them to sit collecting dust. Well, that's partly a lie; my kids actually love playing old games on this PowerBook. But it's also painful when I tell someone like Ron I'll take a Pico Micro Mac and use it, then it sits back here on the shelf for months.
+
+This shelf's actually full of things like that. Like up here there's an Ubo Pod and a LocalDeck, two smart home products I got after OpenSauce last year, and like many other things, they just sit here. Part of the reason I started my second channel was so I could make shorter videos on random projects that would otherwise just rot away forever. But today, before I get into that, I guess I'll at least cover the main thing, this new Home Assistant voice. Now, there'll be a lot of videos from smart home channels about this thing.
+
+Please go check those out. To me, voice control is more of a nice little add-on, but for some people it's a game changer. But my main thing is, I try to make my automations seamless and transparent. Take something you do every day and find a way to automate it without having to think about it. Like in the morning, when I turn off my security system, it automatically turns on all the lights and sets the HVAC temperature to a comfortable range.
+
+Or when I come over to this recording desk, I press this button and the lights and recording stuff turns on. Same thing for the workbench. Or for my 3D printers. I can still do all this stuff by hand, and I could automate that through voice, but even with a completely local solution like this, where all my commands stay in this building, it's using a lot more resources compared to just pressing a button. Plus, when Red Shirt Jeff's around, you just can't trust any AI, even if it's local all the time.
+
+"Okay, Nabu. Unlock the studio door." "I'm sorry, Dave. I'm afraid I can't do that." So for me, I guess this thing's a necessary part of the ecosystem, kind of table stakes for home automation nowadays. But if I'm being honest, it's not really that big of
+
+a thing for me. I bought an Echo years ago, and it quickly went into this box, and not only because of my privacy concerns. All that out of the way, I set this up to run completely local. Nabu Casa, the company that's the steward of the whole Home Assistant ecosystem, has a service that processes your voice in their cloud. But on an old Compute Module More like the one I installed in my Home Assistant Yellow last year, voice commands only take about 2-3 seconds to process.
+
+Okay Nabu, turn on Studio A lights.
+
+But that is just long enough of a delay to be annoying. Luckily, the Compute Module 5 is a drop-in replacement. Score 1 for making flexible, upgradeable, easily-repairable smart home gear. And right now the Everything Presence One sensor that I've been using in here, which works awesome, is not functioning because this is not plugged in, and it requires that. Luckily, since I designed my smart office to be actually smart, it can always manually override with a physical switch that doesn't require any internet or network connectivity at all.
+
+Anyway, let's get this plug back in so that we can do automation. One-handed Ethernet plugs are not the easiest. So with the upgrade in place, I could run the same commands, like turning out the lights, and it only took 1-2 seconds instead of 2-3. That's more than twice as fast. Okay Nabu, turn on Studio A lights.
+
+Turned on the lights. And technically, I could run the AI models on another machine, like my Pi 5 with an eGPU, and get that down to like tens of milliseconds. But that seems wasteful for a feature I probably won't use that often. A few things I like about this tiny box, though: it has a built-in speaker plus an audio out jack. Supposedly it can stream music through here, but I haven't tested that.
+
+It also has a hardware mute switch that physically cuts the mic signal, which is a little nod to the privacy conscious among us. And the rest of the thing works about like you'd expect. There's an iPod scroll wheel that turns up and down the volume, and a button in the middle if you want to trigger it without saying a wake word. And all that stuff can be customized in Home Assistant. There are two microphones and a USB-C power plug. On the bottom, there's even a little Grove port,
+
+so this thing is definitely hackable, especially considering it runs ESPHome on an ESP32 chip. When it's idle, it uses less than a watt of power, and the built-in speaker on it is surprisingly good, though far from HomePod or Echo quality. It was easy to set up, it already supports a ton of languages, and like I said, go check out other people's videos on it for a deep dive. But I'm gonna mute it now, and for the rest of this video, I want to look back at some of the stuff I tested this year. It's not often I can look back to see what's made the most impact, but I think that's useful for everyone to do. Ah, first we have the ultimate Raspberry Pi 5
+
+NAS. It was surprising to me, that video I did not expect it to go gangbusters, but it's now the most popular video on my channel. That little Pi NAS has now been running for, I don't know, six or seven months, however long it's been since that video. It's running ZFS, it's been the secondary NAS, so my ARM NAS. I have an open source GitHub repository to set it up, and it's just a ZFS replica of that.
+
+So if that NAS back there ever goes down, I can just switch everything over to here, and it'll run fine. It'll be a little slower, but it'll run fine. And this NAS right here also backs up to Amazon Glacier. So this, of all the projects I've done this year, this is probably the one that I'm happiest about everything. And I really do still stand by it's the ultimate Raspberry Pi 5 NAS. A
+
+and stuff. It's like sometimes no, like I really think that's the ultimate one. And the performance is great if you just need one or 2.5 gigabits through a USB adapter. It's... I have no issues with it. It's not really my favorite video I've done on the channel, but
+
+apparently everyone else thinks so. But moving over from there, and you can also see my little Apple Pie right there that's serving up AppleTalk for these two Macs and future Macs over here that'll be running soon. I also had a Raspberry Pi attached to this TV and I had a video that it was also pretty popular called I replaced my Apple TV with a Raspberry Pi. You'll notice something is missing here and a lot of people accused me of clickbait in that title and If you look at this you might say oh, of course he was clickbaiting. I don't see the Raspberry Pi there anymore The reason it's not here is because I needed it for another project which will be coming soon But I still use it rather than the Apple TV because it's easier to get media onto it. It's easier to use it on the network. The Apple TV, you need apps and stuff and you need subscriptions. I think it's a philosophical thing. I think some people are really hooked into the subscription way of thinking where there's, you know, you have Spotify and Apple Music for music. You have Netflix and Amazon Prime and all these things. And I get it. It's convenient. It's nice. Some media is only available through those channels.
+
+However, for me, there's tons of great media that exists in the world. A lot of things you can get really cheap on eBay. Use DVDs and stuff. You can go to libraries and rent stuff. It's still out there.
+
+I hope that Blu-rays and DVDs don't go away forever because I think that would be a travesty. Although, if you're a producer producing content and it's not available in some way that's not tied to a subscription, I think that you need to figure out how to get your rights back. But I think that was the difference there. Some people saw that and said, "You can't do that. I can't do my streaming services." But I, in my mind, I'm like, I don't...
+
+Streaming services are an add-on that you could do on an iPad or on your computer or something. But for my TV, I have a media library and I want to stream it to the TV. So the Raspberry Pi works for me. I think some people think when they see someone do something and it works for them, they get angry because it can't work for this person too. So, I don't know.
+
+The first title that I had on that was "You can replace your Apple TV with a Raspberry Pi" and I think that was a little too clickbaity. But I changed it to "I replaced my Apple TV with a Raspberry Pi" and, okay, technically the Apple TV is still there, but it's only because I bought an Apple TV for that video. What else am I going to do with it? Throw it in the trash or something? It's still, like I said, it's still useful for streaming services, but that's about all I use it for, because the Raspberry Pi is easier to integrate with my media library and my network.
+
+This tiny computer changes everything. One of the most popular videos of this year, it's the Raspberry Pi Compute Module 5. And I got a lot of comments saying that, you know, this is clickbait and I'm unsubscribing from your channel, all that kind of stuff. If you haven't seen it already, Veritasium has a pretty good video covering clickbait. And, you know, clickbait is basically making a title that people want to click on and a thumbnail, instead of making a title that's exactly what you're doing. So for this video, I would say,
+
+"I tested the Home Assistant, it's not really for me, and I'm going to talk about some other stuff." That video would get 10 to 20 thousand views tops on my channel. It would die in the algorithm, YouTube would bury it completely. So the big philosophical question is, is it okay to say things that might be true, but are not 100% the reality of the situation, but are not misleading people? Is that okay?
+
+Yeah, debate in the comments whether it's okay to say things that are technically true, but clickbaity versus completely true and not going to get the same audience and not be able to sustain this YouTube thing that I do. I mean, I could go full clickbait. You'll notice that in the picture, in the thumbnail for that, it had a picture with the Compute Module 5 and CM5 and huge text behind it. I could just like have a big black box over it and a question mark or something. That's what a lot of YouTubers do when they don't have good content, but they want to get people to click on it just to, you know, keep their numbers juiced up.
+
+If I start doing that, call me out on that. But I want to make it apparent what it is, but I also want to make it so that people are interested and click on it. Especially people who don't watch the channel already. Because if I can grow the audience, that gets new people involved in computing, new people in open source. Yeah, that's that video.
+
+When did Raspberry Pi become the villain? I have this little box of mini PCs. There's the GMKtec from there. That's the N100. The Windows Dev Kit 2023.
+
+There's a little Lenovo tiny PC. I have a few more elsewhere. I even actually just bought this. There's a Minisforum MS-01, I think it is, with the GPU dock underneath it. And I'm going to be comparing that to this kind of setup up here in terms of price and affordability and utility and all that kind of stuff.
+
+I think this year did have a big shift in terms of a lot of people perceived Raspberry Pi to be like the good guys or the Robin Hoods, bringing us all cheap computers that could do everything. And the Raspberry Pi 4, I think, was the pinnacle of value for an SBC. It kind of blew people away with how much speed you could get in that little thing when it came out. And I think it was 2019, whereas the Pi 5 is middle of the road in terms of performance. It's as good as a lot of RockChip boards in many areas, but it's also way slower and way less efficient in many areas.
+
+But a lot of people, I think a lot of people who don't like where Raspberry Pi is headed, or at least where they perceive them to be headed, have kind of picked up on this. And anytime you say anything about Raspberry Pi that's not a negative story, they get very angry about it. I mean, in Linux we have this. There's all these flame wars between different communities and things, It's like, come on guys, I'd rather have more people using SBCs, whether that's Rockchip, Raspberry Pi, Libre Computers, RadSense, whatever the company is, they all are doing cool stuff. And I don't hate on anyone for doing cool stuff with SBCs.
+
+I think there needs to be more of that in the world because it gives you more freedom to do what you want to do with your computer. In Intel, Intel's had a terrible year, but the N100 still keeps chugging along, and the N305 a little more expensive, but more powerful. There are some great options, like the Radxa X4, which, when I tested it, when I got it out of the box, it was a horrible experience because of the heatsink problems, because of the fan issue. Actually, after I posted my video, I saw that Explaining Computers got these little copper shims, and you could use one of these to solve that height gap issue with the Radxa X4's heatsink. So I might do some more with the X4.
+
+Right now, I think I have it sitting over here somewhere.
+
+Talk about stuff that is just sitting collecting dust. So here's my X4. I will probably do some more work with this at some point in 2025. So expect that. I have two of them now, along with all this stuff.
+
+But yeah, I mean, Raspberry Pi is a different company. They have gone public. They had their IPO this year. They have probably slightly different goals today than they did five or six years ago. And I still enjoy the fact that we can get really well-supported hardware that can do a lot of great things with a well-supported fork of the Linux kernel.
+
+Slowly things migrate their way back upstream. But Raspberry Pi does spend a lot of money on kernel development and on driver development and things like that so that we can help the entire SBC ecosystem. So I appreciate that. regardless of what the exact price is for a piece of hardware and what the exact numbers are you get out of certain benchmarks. It's still great hardware, in my opinion, and it works.
+
+That's the key for me. When I want to do a fun project, I don't want to spend the first week or two of it trying to get an OS to launch. I want to get the OS on there within the first 30 minutes and then start tinkering. If I have to spend a week before I can start tinkering, I'm not going to do that. And finally, I did a video this year getting started with Raspberry Pi 5.
+
+I did that in partnership with Micro Center, and I've considered doing a few more of those. This channel really started doing like tutorials, like here's how you do this thing. I did one on a series on Drupal. I did a series on Ansible. Some of my earliest videos, well, besides the first video, some of my earliest videos were on, you know, how to use an iPhone to record a video with an external microphone, things like that.
+
+So I've been thinking about doing a few more of those instead of just, you know, either product or project based videos. That video did really well. a lot better than I expected again. So maybe that'll come back. Maybe I'll do, you know, how to get started with X, Y, and Z. One thing that I really have been into lately, but I just
+
+haven't shared is SDR. So using your Raspberry Pi for ADS-B or ham communications or receiving other types of wireless data, GPS, that kind of stuff. So maybe we'll get to that at some point this year. Maybe that'll be a Geerling engineering thing. I don't know. But yeah, those are five
+
+videos slash projects that I did this past year that I think made an impact on me or the channel or maybe on some other people. I've had a lot of people email me and said they built the ultimate Raspberry Pi 5 NAS and they're really happy with it. So I think that's awesome. When I can do a video that earns me some money so I can keep doing this, that helps people to get something done that they want to get done and that I think is a really fun thing to do, that's gold. So I want to do more of those kind of videos, and maybe at some point in 2025 I'll also slow down my cadence on the Jeff Geerling channel and continue the weekly stuff on Level 2 Jeff. I don't know. I don't know. Let me
+
+know in the comments what you think. Those are just a few things that I think made a little bit of an impact last year, and I feel like ARM and RISC-V are both in an interesting place right now. I'll be posting a video about the Thelio Astra, a record-breaking ARM workstation, and SiFive has the P550 chip that I hope to cover next year. A lot of amazing stuff is happening, but at the same time, there's so much tech that's already here that I'd also like to cover. Like my old Minolta film camera, or this old Canon MiniDV camera, the camera I used to record my first YouTube videos back in the day. But those videos will probably wind up on Level 2 Jeff, so make sure you're
+
+subscribed. This video was a little weird, sorry about that. It's not just about this little voice box, so thanks for sticking with me to the end here. And huge thanks to everyone who supports on Patreon or GitHub or with a YouTube membership. It means the world to me and makes it so I can do more videos like this one without getting paid sponsors. Coming up to the end of 2024,
+
+I'm a little tired. We had our new baby three months ago. Raspberry Pi has been launching new products practically every week since then, and I have three massive projects underway that I'll get to soon. So this video is more just to wrap up 2024 and wish you a Merry Christmas and whatever other holidays you might celebrate to end this year. I'll probably post another video before 2025, but if not, until next year, I'm Jeff Geerling.
+
+Notifications. Turn on hair light. Sorry, I am not aware of any area called hair light. Yeah, I knew you'd say that...

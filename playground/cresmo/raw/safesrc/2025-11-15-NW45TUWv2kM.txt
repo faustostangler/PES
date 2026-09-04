@@ -1,0 +1,84 @@
+---
+video_title: "FALHA no RDD (REMOTE DYNAMIC DEPENDENCY) gera ATAQUES no NPM com VÁRIOS PACOTES AFETADOS"
+video_id: NW45TUWv2kM
+channel_name: "safesrc"
+channel_id: UCWFmlmegFcu6lvAmeBtV3cg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=NW45TUWv2kM
+video_date: 2025-11-15T12:30:33+00:00
+video_description: |
+  Mais informações: https://safesrc.com
+  
+  Quer ajudar?
+  
+  Doações em Bitcoin: bc1qk67xsekuhfweu3c5pwqraj9vrgs8h4jhyyuxtd
+  
+  Referências:
+  
+  https://www.koi.ai/blog/phantomraven-npm-malware-hidden-in-invisible-dependencies
+  
+  https://hackaday.com/2025/10/30/phantomraven-attack-exploits-npms-unchecked-http-url-dependency-feature/
+  
+  https://www.esecurityplanet.com/news/hidden-npm-malware-supply-chain/
+---
+Esse é o Safe Source e nós vamos falar agora sobre o Phantom Hava ou o corvo fantasma. Uma vulnerabilidade que foi identificada em pacotes npm e que pode ser ajudada pelo pessoal fazendo vibe coding. Vamos entender essa história aqui. Não, olha só, vulnerabilidade não tem a ver diretamente com Vibing, não, tá? Mas um dos vetores que o pessoal tá usando para espalhar essa vulnerabilidade é exatamente esse. Qual
+
+que é a vulnerabilidade? É uma dependência dinâmica inclusa no pacote, uma característica dos pacotes da NPM que ninguém conhece direito, ninguém usa isso na prática. Aí os atacantes descobriram que dá para usar e é terrível a situação. Vamos entender isso daqui. Mais um problema com a npm. Essa
+
+notícia foi sugerida por Bigulin e várias outras pessoas. Obrigado aí o pessoal que sugeriu notícias lá no nosso site, no safesource.com. És safesrc.com.
+
+E obrigado a você que tá assistindo o nosso vídeo. Se você gosta do nosso conteúdo, por favor, deixa o seu like, se inscreva aqui no canal, né? Então vamos entender aqui. Para quem não conhece isso, npm é um repositório de objetos em JavaScript, de pacotes em JavaScript, né? Então hoje em dia, quando você desenvolve um sistema, é muito comum você usar um ou mais pacotes npm. Na verdade, provavelmente, se você
+
+desenvolve comercialmente produtos aí pra web, qualquer coisa que seja usando o JavaScript, você certamente usa a npm para fazer essa indexação, né? Outras linguagens, outros frameworks usam outros outros pacotes semelhantes, né? O Python usa o Pipi, tem Nugget para o C#ARP, enfim, cada linguagem e ferramenta tem essa biblioteca de pacotes, né? Porque aí você quer fazer uma ferramenta, quer usar uma uma tabela especial, você já tem aquele componente pronto ali, você dá inclusão naquilo ali e passa a usar esse componente, né? É lógico, existe um risco, quando você usa um componente de terceira pessoa de ter uma falha de segurança nesse componente. Então assim,
+
+já é uma preocupação de segurança usar componentes, mas é uma coisa que é tão é tão melhor você usar os componentes, é tão mais otimizado, né, você não desenvolver tudo do zero, porque se você começar a desenvolver tudo do zero também, você vai começar a ter falha de segurança, vai demorar para caramba para desenvolver. Então não tem como, não tem saída, tem que usar componente mesmo. Essa ideia de programação com uso de componentes é algo que já tá bem estabelecido, né? Então o que você tem que fazer é só tomar o cuidado de sempre vigiar os componentes, fazer inspeção de código nos componentes, checar se os componentes estão bem e coisa e tal. A própria NPM, ela tem um robozinho que faz vai verificando os componentes para ver se tem alguma coisa, porque eventualmente, lembra, os componentes são sub são eh eh submetidos por outras pessoas, tá? Qualquer um pode ir lá na
+
+NP: "Vou criar um componente novo para, sei lá, jogar no tigrinho. Se você quiser botar no seu jogo lá um jogo do tigrinho, você bota o meu componente, vai jogar no tigrinho no seu jogo, né? Mas esse meu componente pode ter código malicioso, pode invadir o seu componente, o seu seu sistema, pode invadir o sistema do seu cliente, né? Então tem que tomar cuidado na hora de instalar esses esses pacotes. A boa parte dos pacotes, elas têm uma boa qualidade, como eu falei, a NPM faz essa verificação e coisa e tal. E é lógico,
+
+tem uma outra coisa importante quando se fala eh de pacotes npm, que é a questão de versionamento, né? Eh, como é que é o versionamento do npm? Você tem uma uma dependência que é é isso daqui, ó. Por exemplo, aqui, ó, dependência e express é o nome do componente npm na versão acima da 4.18.0.
+
+Então, isso daqui instrui para o seu compilador que na hora de compilar o seu programa, ele tem que checar a versão e baixar a 4.18.0 0 ou qualquer versão imediatamente acima dessa, eh, se não tiver a 4.18.0, né, a primeira acima dela, eh, na, ã, para, para rodar o seu programa, né?
+
+Então, isso daqui já é o que normalmente se usa. Então, essa essa é a anotação para pegar a a versão específica da daquela daquele componente. Então, sempre que o seu compilador roda, ele checa a npm para ver se tem versões mais novas dos componentes, né? E daí atualiza o seu componente. Isso é uma coisa positiva, porque se o componente antigo tinha alguma falha de segurança, essa falha foi corrigida.
+
+Então você tem a versão mais nova do componente. É sempre ótimo. Só que isso requer algum cuidado também, porque às vezes o desenvolvedor faz uma alteração no código que não é que ele resolveu um bug, ele introduz um outro bug. Infelizmente programação acontece isso. Eventualmente você tem uma nova versão que introduz um outro bug ou então que muda alguma coisa no componente de forma que aquele componente não funciona mais com o seu código. Então normalmente o pessoal usa
+
+isso daqui, ó. Eu quero essa versão aqui, no máximo a versão acima dela, mas não não vai não saiba atualizando sempre a versão, não, né? É, isso aqui é o padrão. Agora existe uma outra maneira de você colocar dependências, que é isso daqui, ó. Eu quero esse pacote aqui, ó, o ISLE PKG, que tá num outro site. A
+
+ideia deles é que você poderia botar pacotes que estão em outro site, não no site npm, né? E e qual que é o problema de você fazer isso aqui? Reparou que não tem versão aqui? Isso significa que toda vez que você for compilar, o seu programa, o seu navegador vai olhar para isso daqui e falar: "Ih, tem que baixar o pacote, eu não sei a versão dele. Vou baixar a última versão do do site." Vai
+
+nesse site aqui e baixa a última versão. Mais do que isso, as ferramentas que a npm tem para checar se o pacote tá atualizado ou não, elas não interpretam esse tipo de coisa. e e eles não seguem esse pacote nos outros sites. Então pode ter uma vulnerabilidade não no pacote que tá na na npm, que é um pacote menor. Ele fez aqui um exemplo de um pacote que só faz o Hello World, né? Só mostra olá
+
+mundo aqui. Mas quando baixa esse pacote paraa sua máquina, sempre que você compila o seu código com esse pacote aqui, ele vai ir lá na dependência, vai baixar a nova versão desse cara aqui e vai executar se tiver alguma coisa, porque o pacote ele pode ter uma coisa de execução. Quer ver? Ele mostra aqui, ó. Aqui, ó. Você pode ter isso daqui no
+
+seu pacote. Scripts pré-install nodex.js. JS. Eu tô dizendo que quando você baixar o meu pacote pra máquina do desenvolvedor, tem que rodar esse scriptinho aqui. Scriptzinho pode fazer
+
+qualquer coisa, meu amigo. É exatamente isso que eles estavam fazendo. Eles estavam pegando pacotes. Então, repara o que que eles faziam. Eles faziam um pacote que o pacote tá perfeito. Não tem
+
+nada de errado com o pacote. O pacote tá 100%, não tem e eh vírus, não tem malware, não tem nada no pacote da npm. Por quê? Porque eles sabem que a npm de tempos em tempos faz uma varredura no código e se tiver alguma coisa desse tipo eles detectam. Mas havia uma dependência de um pacote em outro site.
+
+Esse pacote em outro site é que fazia a mágica acontecer. Como tava em outro site, a npm não inspecionava ele. E mais do que isso, você pode até imaginar que num primeiro momento, esse nesse outro site aqui não tinha nada demais. Esse pacote que que baixava do outro site era uma outra coisa que não assim tinha alguma função, mas não infectava a máquina nem nada. Só que como toda vez que você compila, ele vai checar e vai baixar a última versão desse pacote aqui, porque a dependência é nesse modelo aqui, é diferente dessa dependência aqui, é, é a dependência com a o o endereço http completo, ele baixa todas as vezes. Aí você altera isso
+
+daqui depois e inclui o backdoor. E aí, ou seja, o cara que já tava usando o seu pacote, que não tá nem desconfinando, agora o código dele incluiu o backdoor que você botou no seu pacote, entendeu? Isso daqui é o ataque do eh Phantom Rave, né? O o corvo fantasma, né? Justamente porque inclui um negócio meio fantasma ali, uma coisa meio fora de eh de de eh consideração, né? Ninguém
+
+inspeciona esse troço aqui e acaba dando este problema. Então é uma coisa séria. Dê uma olhada nos seus pacotes que você usa. Se algum deles tiver dependência nesse estilo aqui, eles chamam dependência RDD, que é remote dynamic dependency e eh dependência dinâmica remota, que é o nome disso daqui. Se tiver algum pacote seu que tenha esse tipo de coisa aqui, pare de usar ele imediatamente, né?
+
+Eles detectaram que tinha 126 pacotes maliciosos no MPM, que receberam um total de 86.000 downloads ao todo, esses 126 pacotes aqui, e estavam usando exatamente esse tipo de ataque para infectar a máquina das pessoas. Aí ele descreve o ataque aqui, que ele procurava e-mails aqui, ó. ele procurava e-mails, o e-mail do usuário, o e-mail do Git e a configuração do npm, depois e procurava eh credenciais dentro do código, depois procurava procurava um monte de coisa aqui, né? E ah, enfim, pegava um monte de informação da máquina e mandava essas informações todas para o atacante que depois ia tentar dar um jeito de atacar sua máquina. Então, ou seja, é muito
+
+danoso esse tipo de coisa aqui. Repara, é um ataque ao desenvolvedor, então é um ataque de supply chain. O pessoal ia tentar atacar o desenvolvedor para incluir um backdoor na máquina e aí esse backdoor ia chegar lá no cliente final e o atacante iria invadir a máquina do cliente final, né? Então, bastante crítico isso, realmente um negócio bastante sério isso daqui. Tomem cuidado com isso. O segredo, como eu falei, é
+
+evitar esse tipo de, não sei porque que ainda tem esse negócio de RDD. Tá vendo aqui, ó? Isso aqui é RDD, ó. Não pode. Isso aqui é um absurdo. Repara que na na
+
+NPM fica como zero dependências, embora tenha uma dependência aqui, né? Então tomem cuidado com isso. Ainda tem uma outra coisa aqui. Eles falaram ainda que eh uma coisa que eles estavam usando aqui de problemático também é que eles estão aproveitando o fato de que muita gente tem usado Vibe Coding e a Vibe Coding de vez em quando ela alucina, inventa nome de pacotes que são nomes de pacotes parecidos com nomes de pacotes reais. Então, por exemplo, existe um pacote real, legítimo lá na npm que é o Slint Plugin Slint Comands. Esse é o
+
+nome do pacote. Então, se você for colocar ele na sua dependência, você bota este nome todo aqui, bota a versão dele, beleza? 100% funciona muito bem. Só que aí os atacantes criaram um pacote chamado Slint Coms, que é basicamente o mesmo pacote, só que tem o ataque naquele pacote. Entenderam o problema? E por quê? Porque
+
+normalmente uma pessoa se fosse digitar não iria confundir as coisas. Mas a inteligência artificial, meu amigo, ela alucina de vez em quando e gera várias vários casos de código gerado por inteligência artificial incluíram pacotes que não existem com nomes parecidos. Por quê? Alucinação da inteligência artificial. Vibe coding. O
+
+pessoal usando vibe coding sem querer inclui um troço desse no seu pacote. E esse código aqui vai rodar o seu o vírus aqui a RDD. E vai e rodando o RDD vai dar o problema, né? Esse aqui são alguns dos pacotes que eles identificaram com esse tipo de problema. Transforme, React, remove prop types, que o nome legítimo é Babel Plugin, transforme react remove prop types e slint plugin um unused imports. Unused imports é é o
+
+malicioso. Repara que eles botam pacotes com nomes mais simples, eh, mas que são, eh, distintos dos nomes dos pacotes, eh, digamos para valer os pacotes que funcionam, né? Então, eh, bom, com relação a usar Vibe Coding, todo mundo deveria estar prestando atenção nisso daí, tá? Vibe coding você pode usar, é muito útil, realmente ajuda para caramba. Eu sei, eu uso inteligência artificial para programar também, mas tem que tomar cuidado, você tem que est prestando atenção o que que aí tá fazendo. Aí alucina para caramba, erra
+
+para caramba, se confunde para caramba. Eh, a pessoa ser um programador full vibe coding, full aí vai fazer merda para no final das contas, né? Então é uma coisa complicada isso daqui, né? Agora o o principal não é isso, tá? Essa parte aqui do vibe coding é só assim uma um dos mecanismos que eles estavam usando para difundir os pacotes deles. O problema central, como eu
+
+falei, é a RDD, essa essa dependência dinâmica aqui. Isso daqui é que gera o ataque que você tem que tomar cuidado no seu código. Aí dá uma checada se não tem nenhum pacote seu com essa lambança aqui. Obrigado por assistir nosso vídeo até o final. Tem alguns links para você nos ajudar aí na tela e também na descrição desse vídeo.

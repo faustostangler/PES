@@ -1,0 +1,88 @@
+---
+video_title: "How Hubs, Switches, and Routers Work!"
+video_id: b_KpQBBL1L0
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=b_KpQBBL1L0
+video_date: 2025-06-15
+video_description: |
+  How do hub, switches, and routers work? 
+  In this video, we break down the core functions of each device, using easy examples and visuals. 
+  
+  ▬▬ What You’ll Learn ▬▬
+  - Collision and broadcast domains
+  - How switches reduce traffic and improve performance
+  - Why routers are essential for building scalable networks
+  - What really happens when devices communicate
+  
+  ▬▬ Chapters ▬▬
+  0:00 What is a Network?
+  0:32 Hubs Explained
+  01:44 Switches: Breaking Up Collision Domains
+  04:27 Routers and Broadcast Separation
+  07:03 Full Recap
+  09:55 Mini Lab: Who Gets the Packet?
+  
+  Become a Neurix member
+  https://www.youtube.com/@UCUOlY1VUTHMdkLph5ORHF2Q
+  
+  #networking #router #ccna
+---
+What exactly is a network? A network is simply a collection of devices like computers, printers, phones, even smart fridges that are connected so they can share resources and communicate with each other. Let's take your home Wi-Fi as an example. Your laptop, your phone, maybe your game console, they're all part of the same small network. This kind of setup is called a local area network.
+
+When these devices are connected, they can share files, print wirelessly, and access the internet. All thanks to the network. Let's look at a concrete example of a very basic network setup. We've got three PCs. Let's call them Bob, John, and Sally. Connected through a hub. A
+
+hub is an old outdated networking device. It doesn't have any intelligence. When it receives data from one device, it broadcasts that data to all devices connected to it, whether they need it or not. Because of that, this network is considered a single broadcast domain. That means any message sent out by one device is heard by every other device on the network.
+
+This network is also a single collision domain. In other words, if for example, Bob and John try to send data at the same time, their signals can collide, causing network interference and forcing the devices to resend the data. This was a common problem with early networks. This is about as simple as a network can get. And while you might still find this configuration in some very small or older home networks, even most small office and home setups today use more efficient devices like switches and routters.
+
+What does a switch actually do? A switch is a device that creates a separate collision domain for each device connected to it. In other words, it segments the network into smaller, more efficient parts. Each of these segments allows devices to communicate without interfering with each other, reducing collisions and improving overall performance. This means that two computers connected to different collision domains can send data at the same time without any issues.
+
+Looking at the network shown here, Bob and Sally or Jon and Sally could both send messages at the same time without interference because they're on different collision domains. But if Bob and Jon try to send data at the same time, a collision could occur since they are on the same collision domain. So far so good. With the switch in place, our network now has two separate collision domains. That means Sally's device connected to the switch can send or receive data at the same time as Bob and John who are connected to the hub without any interference. That's the
+
+benefit of splitting up collision domains. But this brings us to another important question. What about broadcast domains? To recall, a broadcast domain is the portion of a network where any broadcast message is received by all devices within that domain. So, do we also have two separate broadcast domains here?
+
+The answer is not yet. Even though the switch separates collision domains, it does not break up broadcast domains by default. Switches forward broadcast traffic to all devices they connect to, including across different collision domains. Now, you might be wondering, wait, do switches really forward all types of messages they receive to everyone on the network? Good question. Here is the key. When Bob
+
+sends a uniccast message specifically to Jon, the switch uses its MAC address table to forward the message only to J's port, not to anyone else like Sally. Switches learn and use MAC addresses so they know exactly where to send uniccast traffic. However, if Bob sends a broadcast message like an ARP request or a DHCP discovery, then Sally receives it, too. More on ARP request and DHCP discovery in later videos. So, until we add a device that can break up broadcast domains, like a router, all of these devices, Bob, John, and Sally, are still part of the same broadcast domain.
+
+As a network grows, we often need to break it up into smaller broadcast domains. Why? Because we want broadcast messages sent by one PC to reach only the devices that actually need to hear them, not flood the entire network. This is where routers come into play. Routers are used to separate broadcast domains.
+
+Within a given segment, all devices can still hear each other's broadcasts, but those messages stop at the router's interface. As you can see in each LAN, each host or PC is connected through a switch. So, they all have their own collision domain. That gives us four collision domains total. And thanks to the router, we now have two separate broadcast domains.
+
+Take a look at the diagram here. It is actually a pretty cool little network. In fact, it's an internet network. That means a network of networks because the router connects two separate local area networks abbreviated LAN. So what does that mean in practice?
+
+Well, Sally is finally enjoying peace and quiet in her own segment far away from Bob's constant shouting. If Bob wants to talk to Sally now, he cannot just broadcast a message and hope she hears it as it was the case without the router. He has to send a uniccast message directly addressed to Sally's IP address. Quick reminder, a broadcast is a message sent to all devices in a network segment. A uniccast is a message sent to one specific device. Now, when the
+
+router receives a broadcast, it responds with something like, "No thanks. I don't forward broadcasts." But when the router receives a uniccast message, like in this case a message from Sally to John, it behaves differently, the router looks at the destination IP address, checks its routing table, and forwards the packet to the correct network segment where Jon is located. That's the power of a router. It filters out unnecessary broadcast noise while still allowing targeted communication between different networks.
+
+If we replace the router with a switch, the whole network will become one broadcast domain. This means Sally will receive Bob's or John's broadcast messages. The whole network will also become one entire network or LAN, not a network of network anymore. That's the key. Routers break up broadcast domains by default. And it's
+
+worth noting they also break up collision domains. Each interface on a router is a separate collision domain just like a switch port.
+
+So to recap, a hub operates at layer 1, the physical layer of the OSI model. It has no understanding of addresses. It simply forwards every signal it receives to all connected devices, whether they need it or not. The messages handled by a hub are called bits or signals. A switch operates at layer 2, the data link layer of the OSI model. It uses MAC
+
+addresses to forward messages. The messages handled by a switch are called frames. Very importantly, if the message or frame coming to the switch is a uniccast message, the switch forwards it only to the intended recipient. If it's a broadcast message, it forwards the frame to all devices within the same broadcast domain. Additionally, switches learn MAC addresses by looking at the source address of incoming frames and building a MAC address table, also called a CAM table.
+
+CAM stands for content addressable memory. CAM table is used to map MAC addresses to switch ports. This allows switches to forward uniccast frames efficiently. [Music] Moreover, unlike hubs, switches support full duplex, meaning devices can send and receive data at the same time. And finally, switches can be configured to restrict which MAC addresses are allowed on each port. This is a basic form of
+
+port security. A router operates at layer 3, the network layer of the OSI model. It uses IP addresses to route messages between different networks and it breaks up both broadcast and collision domains by default. The messages handled by a router are called packets. If the message or packet arriving at a router is a uniccast message, the router forwards it to a specific destination IP address, as illustrated in the example where Sally sent a message to John.
+
+If the message or packet is a broadcast, the router will not forward it. It simply drops the packet, helping contain broadcast traffic within its local network segment. That was the case when Bob sent a broadcast to Sally with a router in between. So hubs connect devices within the same network, but they broadcast all traffic to every port, making them inefficient and outdated. Switches connect devices within the same network and intelligently forward data only to the intended recipient using MAC addresses if it's a uniccast or to all devices within the same broadcast domain if it's a broadcast.
+
+Routers connect different networks together and forward data based on IP addresses while also separating broadcast domains.
+
+Let's do some exercises to see if you've grasped the concepts covered in these videos. Consider the following network. Bob sends a broadcast message to Sally. Who will receive it? You can pause the video to answer.
+
+A broadcast message is meant for all devices within the same broadcast domain. The hub will forward the broadcast to all devices connected to it. So, Jon receives it. The router will not forward the broadcast to the other side of the network. Routers block broadcast traffic by default. Therefore,
+
+Sally will not receive Bob's broadcast. Only Jon will hear it. Second exercise with the same network as previously. Now, Bob sends a uniccast message to Sally who will receive it. The hub will send the uniccast to all its ports because hubs can't filter traffic. So John receives it too.
+
+The router receives the packet and checks the destination IP. Since Sally is on a different network, the router forwards the packet to the switch. The switch uses its MAC address table to deliver the packet only to Sally. So John and Sally receive the uniccast sent by Bob. Here are two more exercises for you. I
+
+would like to hear your answers in the comments. Consider the present network. Bob sends a uniccast to Oscar. Who receives it? And finally, one more exercise with a different network.
+
+Oscar sends a uniccast to John who receives it. So now you understand what a network is and the key differences between hubs, switches, and routters. More importantly, you see why routers are essential for creating networks that are both scalable and efficient. If you found this video helpful, give it a like and don't forget to subscribe for more deep dives into networking concepts, real world setups, and hands-on labs. In the next video, we'll explore how devices actually find each other on a network using protocols like ARP and DHCP.
+
+You won't want to miss it. Until then, stay curious, stay connected. Bye-bye.

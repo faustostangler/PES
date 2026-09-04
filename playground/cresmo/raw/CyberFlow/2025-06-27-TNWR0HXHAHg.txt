@@ -1,0 +1,63 @@
+---
+video_title: "I Tried an 'Entry Level' 𝐇𝖆𝖈𝓴𝖎𝖓𝖌 Challenge."
+video_id: TNWR0HXHAHg
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TNWR0HXHAHg
+video_date: 2025-06-27
+video_description: |
+  Join up and get everything you *actually* need to start hacking like a pro 🎓💻✨https://cyberflow-academy.framer.website/
+  
+  Educational Purposes Only.
+  
+  💻 this was supposed to be entry level. five minutes in, i was launching a metasploit payload and fighting windows server 2012 like it owed me money. in this video, we dive deep into hack the box’s "optimum" machine — a so-called easy windows challenge that ended with full system compromise.
+  
+  learn how i went from scanning with nmap to popping a reverse shell using http file server 2.3, exploiting ms16-032 for privilege escalation, and capturing both flags — all while wondering if entry-level hacking should come with a warning label.
+  
+  this breakdown isn’t just for show — it’s designed to teach you the real steps: scanning, exploiting, privilege escalation, and staying calm when metasploit throws errors.
+  
+  📚 extra resources:
+  • https://www.exploit-db.com/exploits/39161 (http file server 2.3 rce)
+  • https://docs.rapid7.com/metasploit/using-metasploit/
+  • https://github.com/SecWiki/windows-kernel-exploits (local privilege escalation exploits)
+  • https://nmap.org/book/inst-windows.html (official nmap guide)
+  • https://learn.microsoft.com/en-us/windows-server/ (windows server
+  
+  #hacking #ethicalhacking #bugbounty #cybersecurity #hacker #pentesting #infosec #cyberattack #hackingtools #sqlinjection #metasploit #cyberflowsacademy
+  
+  → Email: cyberflow10@gmail.com  
+  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+So apparently this was supposed to be entry level. Yeah. I clicked beginner and 5 minutes later I am launching an exploit kit and asking chat GPT if it is safe to run end mapap on my own computer. I accidentally popped a shell, got stuck in some guy's user folder named castas, and then escalated myself to full Windows system access like I was the final boss. If this is entry level, I am scared of what advanced looks like.
+
+Let me show you how this nightmare unfolded. So the challenge is called Optimum and it is from Hack the Box. one of their so-called easy Windows machines already terrifying. I open a new terminal, type in nmap-sv and the IP10.129.4.84
+
+and immediately see my favorite thing, port 80 open, and it is running something weird. http file server version 2.3. Sounds like something your uncle still uses to share fishing pictures, but okay. I run search exploit with the words HTTP file server 2.3,
+
+expecting nothing. Boom. Remote command execution vulnerability. A real one. I get that hacker twitch in my eye. You
+
+know the one. This is either going to be genius or jail. So I open metas-ploit using MSF console with the quiet flag. Search for HTTP file server. And there it is. The exploit is just there. I load
+
+it with use zero. Check the settings with show options. And it only wants two things. Rhost and LHost. That is it.
+
+This is the hacking equivalent of name and email. To get rich. I set the target IP as Rhost. my local tunnel interface as LHOST and run exploit. This is the part where everything should go wrong, but nope. I get a meter prior session.
+
+My screen lights up like I hit a jackpot. I run CIS info, get the system details, then get UID. I am running as someone named Costas. Love that for me. So now I have user access. I grab the
+
+user flag from C drive users Costas desktop user.txt and I feel unstoppable. But hold on, I am still just Costas. Not system, not admin, just a glorified intern with a shell. So I check the system again. It is Windows Server
+
+2012R2. That smells like privilege escalation material. I search for Windows Server 2012 privilege escalation and boom, MS160032 shows up like it is Christmas, a classic local exploit. I background the meter session, search for MS1632 in metas-ploit and yep, it is there. I load it with use 2 run show options and it wants the session ID and L host again. I set those cross my fingers and
+
+type exploit. The module starts throwing errors and I am like yep it is over. I broke it. But then I check the UID again and it says I am system. I have ascended. At this point I could
+
+uninstall Windows Defender just to flex but I play nice. I go grab the final flag from C drive users administrator desktop root.txt. Game over. I beat Optimum. supposedly an easy box, but it
+
+almost cooked my brain like an overheated Raspberry Pi. And look, half the reason I even knew what to do was because of the Discord in my private hacking community. If you want to skip the part where you are googling every command like I was, you should check it out. There are full courses on bug bounty, open- source intelligence, web hacking, C++ for hackers, plus a private group chat with people who already beat these machines before breakfast. First link is in the bio. Anyway, if this is
+
+what entry level looks like, I am terrified of what happens when I try intermediate. Probably reverse engineering a toaster. Now, if you will excuse me, I'm going to go rewatch the recording because I still have no idea how I pulled that off. See you in the next challenge.

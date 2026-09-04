@@ -1,0 +1,178 @@
+---
+video_title: "Agentes de IA vs Workflows: Qual Gera RESULTADO HOJE? (4 Exemplos práticos)"
+video_id: 1B1KHOeEpAQ
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1B1KHOeEpAQ
+video_date: 2025-05-15
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Aberta por tempo limitado): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  
+  Quer construir soluções com IA Generativa que realmente entregam resultados e são confiáveis, mesmo que você seja iniciante? Este vídeo é para você! 
+  
+  Desmistifiquei a diferença fundamental entre Agentes de IA e Workflows de IA, mostrando por que os workflows são a chave para criar sistemas robustos hoje. 
+  
+  Explore 4 exemplos práticos de padrões fundamentais – Encadeamento de Prompts, Avaliador/Otimizador, Roteador e Paralelização – que desenvolvedores, empresários e profissionais de qualquer área podem adaptar para seus projetos. 
+  
+  Aprenda a combinar a autonomia da IA/LLMs com a confiabilidade dos processos estruturados e comece a desenvolver aplicações de IA que inspiram confiança e geram valor real.
+  
+  No vídeo estou usando python e langgraph.
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Vídeos mencionados–––
+  
+  Agente React em detalhes + Langsmith: https://www.youtube.com/watch?v=9bSzZ-9eUkM
+  LLM as a Judge: https://youtu.be/Xr-IWF4GIiU
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:42 Motivação: O lado ruim dos agentes de IA
+  2:35  O que são Workflows
+  3:33 O desafio para construir com LLMs
+  4:25 Workflow: Encadeamento de Prompts
+  11:11 Workflow: Avaliador-Otimizador
+  14:07 Workflow: Router
+  18:40 Workflow: Paralelização
+  21:23 Construir processo é o primeiro passo
+  
+  ––– Agência –––
+  
+  A melhor agência de IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #langchain #langgraph  #agentesdeia #python #workflows
+---
+Você já pagou mais caro por algo apenas para não ter dor de cabeça? Se isso aconteceu, é porque você tem confiança no produto ou no serviço. Criar sistemas com IA hoje em dia é muito fácil. O problema é fazer eles serem confiáveis. E exatamente disso que a gente vai falar hoje. Eu vou mostrar a workflow, vou
+
+explicar o que eles são e vou explicar como você pode aplicar diferentes padrões para as suas soluções. Eu vou mostrar quatro padrões aqui que são, né, padrões fundamentais e todos os elites você pode adaptar para os seus problemas daqui paraa frente para criar boas soluções. Então, se você não me conhece, meu nome é Hulk e eu construo soluções profissionais. Bora pro vídeo. Seguinte, eh, antes da gente entrar nos padrões, eh, deixa eu explicar aqui a motivação.
+
+O que acontece? Agentes de A são muito legais, né? né? Só que ao passo que ele entrega autonomia ou promete autonomia, né, de tomar decisões, né, a agência, eh, por si só, ele tem um problema de falta de confiança. E se você tá acompanhando meus vídeos aqui, pelo menos os últimos dois, eu bati bastante nessa tecla de qualidade, né? Então,
+
+como que você faz com que seu agente tenha qualidade? acontece que além dos testes, né, que você pode aplicá-los, eh, existe uma técnica chamada workflow e ela faz parte dos sistemas de agente, né, onde você pode pré-determinar ações não só no prompt, eh, mas de maneira um pouco mais eh declarativa e o seu agente ou seu sistema de IA vai obedecê-lo e aí você vai ter uma curácia muito maior. Então, é exatamente disso que a gente vai falar. Para ilustrar, teve um brilhante comentário aqui do nosso amigo, deixa eu ver aqui, eh, Ismael, eh, falando exatamente sobre isso, mas aparentemente ele tava tentando entender o que são agentes e tal e foi nenhum dos vídeos aqui. Eh, e aí ele comentou o seguinte: "Ah, então isso era o que eu entendi mesmo, eh, mas confesso que ficar sem o controle do fluxo me causa insegurança para colocar algo em produção." Então, provavelmente o Ismael
+
+é um profissional, ele é uma pessoa que entende eh da importância de ter controle sobre o seu software, sobre o que acontece, principalmente no meio empresarial, né? Você tá lidando com eh milhões de usuários, você tá lidando com a reputação reputação de uma empresa, você tá lidando com bastante dinheiro e você precisa garantir que sua solução é confiável. Então o Ismael ele tem uma certa certa preocupação aqui com os agentes Reacts. Então, Ismael, eh, não desanime, né? tem uma solução. É, além
+
+dos testes todos que eu já mostrei aqui, eh, a gente pode aplicar workflows, Roland, workflows, o que são? Em geral, seria o seguinte, caras, se você tem um caminho pré-determinado, provavelmente, ah, por exemplo, vou imaginar que o atendimento ao cliente acontece da seguinte maneira: passo um, acontece isso, passo dois, passo três, passo quatro, acontece tudo aquilo. Se você tem essa ideia do que acontece ao longo do tempo, o workflow é um excelente candidato, muito porque você pode usar a força da IA, né, da LLM em sua capacidade criativa, né, de de criar texto, por exemplo, eh, e aliar uma estrutura que já é pré-definida. Então, ao invés de você entrar num agente, vamos ver aqui um agente de perto, eh, vamos lá. A invés de você ver um agente assim, React, que a gente já conhece aqui, que ele toma a decisão para onde ele vai aqui, né, o tempo inteiro, você mantém um controle, por exemplo, e aqui e qual vai ser o caminho. Então, é disso que a
+
+gente vai falar e eu vou mostrar exemplos práticos a partir de agora. Então, vamos lá. Eh, já falamos disso aqui, Ronald, por que isso? é o seguinte, eh, já é sabido, eh, de uso e de pesquisa que ao longo das conversas longas e ao longo de conversas de muitos turnos, por exemplo, um chatbot, eh a LLM pode se perder no meio do caminho e uma vez que ela se perde na conversa, ela entra por um caminho e ela começa a te dar respostas como se aquilo fosse verdade, é, e bem convincente, mas que na verdade elas estão bem longe do que deveria ser. Então, o que a gente vai fazer aqui é evitar exatamente esse tipo de eh pegadinha de trabalhar com LLM. E
+
+a gente vai estruturar eh as chamadas para serem únicas. Então, não vai ter multiturner, não vai ter ido e volta e a gente vai conseguir construir soluções bem eficientes. E existem padrões para isso e exatamente disso que a gente vai explorar aqui, tá? Vamos aqui. Esse padrão aqui é o mais simples, tá? É o
+
+encadeamento de prompt ou chaing, tá? É, seria uma cadeia de coisas que acontecem sequencialmente, tá? Então você pode fazer isso de diferentes maneiras e isso é um padrão bem comum e é o primeiro que eu vou observar aqui. E apesar da simplicidade dele, ele é extremamente poderoso pro caso que eu vou mostrar aqui para vocês, que é a criação de histórias. É o seguinte, tem um joguinho, acho que tava aqui na minha mesa, chamado Gerador de Histórias. É,
+
+que é o seguinte, se você gosta aí de brincar, deixa eu ver se eu acho ele aqui, se você gosta de brincar aí com a sua família no final de semana, tal, é, tá aqui, calma aí. Esse joguinho aqui, ã, vê se você consegue ver aí, gerador de histórias, tá? É, se você gosta de brincar aí no final de semana, jogo de tabuleiro, esse tipo de coisa, esse jogo é bem legal. Então o que acontece? Você pega quatro cards, né, de diferentes ideias, né, diferentes objetivos, por exemplo, um é um personagem, o outro é ação, tal, e você tem que criar uma história ali baseada nesses cards.
+
+Então, para esse tipo de de brincadeira aqui, você pode criar um prompt, né? Só o que que eu fiz para criar histórias e se você conhece um pouco de ficção e tal, eh, existem estruturas para você criar história. Você não cria história da tua cabeça. Então, o cara lá que escreve e um filme, por exemplo, ele obedece alguma alguma regra para criar um filme. Ele não cria simplesmente porque ele é um gênio da escrita e tal.
+
+Obviamente ele tem o mérito dele, mas ele segue algum algum framework. Um desses frameworks é são os quatro atos. E o que eu fiz aqui e eu vou deixar já rodando, né, porque pode demorar um pouquinho, eh, e eu vou explicando para vocês. E o que ele vai fazer, vai escrever uma história aqui pra gente, obedecendo exatamente esse framework. Como que eu fiz isso? É o seguinte, eu
+
+já conheço esse framework de prévia data e já conheço o joguinho aqui. Então, o que eu fiz aqui? Para cada uma das características, por exemplo, eh, eu botei três opções, tá? Então, por exemplo, personagem, um mágico, coelho, um detetive, uma professora e uma aluna, eh uma ação, eh, um lugar e um complemento. Então, ele vai decidir aleatoriamente um desses. E não
+
+precisava ser assim, se eu poderia passar eh isso aqui ao invés de ser automático, como eu tô fazendo, que as possibilidades são infinitas. E o que eu faço aqui? Prompt, você é um roteirista experiente, encarregado de escrever o ato um. O que acontece? Um erro comum, muito comum. a pessoa quer gerar lá um
+
+documento enorme e ela faz um promp, vai lá, bota e o documento fica bem mais ou menos, né? Isso porque a LLM tem um grande questão com um contexto e com mensagens, né? Por exemplo, ah, você quer que ela faça muitas coisas ao mesmo tempo? Provavelmente ela não vai funcionar muito bem, mas ela funciona muito, muito bem em contextos pequenos. Então, o que a gente vai fazer aqui especificar exatamente a única coisa que ela deve fazer. Então vou imaginar que
+
+você tá lidando com alguém novo na tua empresa, um estagiário ou alguém que tá começando. Usa esse mesmo pensamento, dá uma instrução específica para uma tarefa direta, eh, não inventa demais e dá o insumo suficiente. Então, o que a gente faz aqui é exatamente isso. A gente tá dando insumo, a gente tá dando instrução clara e a gente tá falando aqui exatamente o que a gente quer. E o que ele vai fazer, vamos ver se ele já tá, já tá lá no lato três. E o que ele fez
+
+aqui foi começar a criar as coisas. E tem coisas interessantes aqui que eu quero falar, caras para vocês. Eh, mas antes assim, presta atenção, tem esse prompt aqui, né? E ele vai nos dar a resposta, tá? E se você vê essa resposta aqui, ele tá dando a resposta, o conteúdo que ele gerou e ele tá dando personagem, ação, lugar e complemento. O
+
+que que é isso, Ronald? Isso aqui é a coisa muito importante em workflow, que são chamados de estados. Isso aqui você não pode, você não consegue fazer com outro tipo de técnica que não seja com grafo, por exemplo. Então, por isso que o grafo é tão importante nessa história aqui, porque você tem estados dentro do grafo. Não necessariamente todos os nós ou toda a execução eh atualiza ou tem acesso a esse dado. Isso é opcional, mas
+
+ao longo do grafo, você pode atualizar esses estados. Isso é um conceito muito muito importante e você deveria eh começar a considerar. E o que a gente tá fazendo aqui eh, a gente criou os estados e ao longo de cada passo nesse workflow, a gente tá atualizando esse cara aqui com novos estados. Então, se a gente vier aqui, a gente vai conseguir ver exatamente o que tá acontecendo. Então, aqui no ato um, né, se a gente for ver os estados, ah, o que que a gente vai ver aqui? Eh, a ação, ganhar
+
+na loteria, eh, o personagem, um detetive, eh, o complemento, remédio para dormir, eh, um lugar, pastelaria. Então, tem todos esses elementos. ele deveria criar a história com esses elementos. E no ato um, como a gente deu o prompt lá, ele começou aqui o detetive Álvaro parará parará. Então, a história começa a ser construída e no final ele dá exatamente o que a gente queria aqui.
+
+Muito bem. E aí a gente vai voltar aqui para o passo dois, que é o ato dois. O ato dois é o seguinte, ele eh mantém essa ideia do prompt, do roteirista, etc. Com muitos detalhes. Só que aqui a gente não tá passando mais nada daquele do personagem e tal. A gente tá passando
+
+apenas o ato um. Então ele vai pegar o que foi feito pela outra LLM, tá? Eh, no passo anterior e vai prosseguir aqui com o passo dois, tá? Então o que a gente vai fazer é exatamente isso aqui, o que ele fez, tá? Então a gente vem aqui no ato dois, a gente vai chegar aqui já tá lá no no ato quatro, já acabou e aqui no ato dois a gente vai conseguir ver os estados. E aí você vê que ele mantém o
+
+estado ganha na loteria, detetive parará, porque a gente não fez nada com isso. Mas aqui no final do estado dois a gente atualizou a história. Então agora a gente tem o ato dois eh todo bem feito aí. E assim subsequentemente a gente vai ter o ato trê e o ato qu. Se você tiver interesse, em ver o fim dessa história, você vai ter que construir o seu próprio workflow e testar. Aqui só para título
+
+de curiosidade, eu tô usando deck R1, tá? Então tudo eu tô fazendo assim. Eh, se você quer aprender a construir isso, ainda tá em tempo, eh, eu vou fechar a comunidade em breve. E para quem já tá na comunidade, eh, esse código já vai tá lá para vocês disponíveis para vocês testarem e construírem suas coisas por conta própria. Eh, a comunidade não tem o objetivo de ser um curso estático, é algo vivo. A gente tem eh reuniões
+
+semanais, eh, inclusive se você tá vendo esse vídeo quinta-feira, hoje vai ser a primeira. Eh, e a gente tá lá construindo, né, trocando ideia, aprendendo junto e fazendo as coisas acontecerem. Então, muito bem, já falamos do encadeamento de prompt. Então, você vê aqui que eu resolvi um problema de escrita, tá? Um problema de estrutura de escrita, eh, de maneira prática. E vocês viram aqui que isso
+
+aqui como como isso aqui pode ser poderoso, né? E o interessante é que assim, dentro desses padrões, você pode botar um avaliador no meio, eh, por exemplo, ver se a parte um foi boa, entende? Então você pode fazer isso aqui ficar bem bem interessante e criar realmente coisas muito interessantes. Ao invés de você ser fazer sozinho, você vai contar com o auxílio da máquina para escrever, digamos assim, uma parte e a outra parte você corrige ou fala: "Volta, eu não quero isso." E é exatamente isso que a gente vai ver aqui na parte dois, que é o padrão avaliador ou otimizador, que é o seguinte, né?
+
+Existem dois tipos que você pode usar aqui, esse padrão, tá? Você manda a LLM gerar alguma coisa e você faz uma outra LLM avaliar aquilo que foi gerado. E se o resultado não for satisfatório, você volta uma resposta falando que não foi satisfatório, tá? Ou então você pode, exatamente você mesmo, o humano, eh mandar LLM gerar alguma coisa, entrar em contato com o humano, né? Isso se chama humano no loop. E você faz o padrão,
+
+você dá a resposta, o feedback baseado nesse feedback, ele vai prosseguir ou não. Então, é exatamente disso que a gente vai falar hoje. Bora aqui eh explorar esse cara aqui. O que que é esse cara aqui? O que que eu fiz, tá?
+
+Esse cara aqui, deixa eu abrir aqui. Esse cara aqui é como se fosse um analisador de e-mail. Então, chega o e-mail na tua caixa de entrada, né? Você vai ter ali uma secretária, um um assistente que vai responder automaticamente para você, só que você quer ver o que ele escreveu antes de responder, né? Então você não quer confiar cegamente, você quer eh confiar, mas verificar. Então o que você vai
+
+fazer aqui é exatamente isso. Então vamos para o exemplo. Eh tenho uma proposta, quero falar com você. Terça às 9. Beleza? Então ele vai começar a
+
+executar aqui, eh, e ele vai gerar a resposta, tá? Eh, e nesse meio tempo a gente vai ver algo muito interessante aqui, porque diferente do outro, vamos ver aqui, optimizer, eh, a gente tem diferentes eh diferentes estados e tem um motivo. E deixa eu te mostrar o prompt aqui. O que a gente tá fazendo aqui é dar instrução. Então, é um assistente parará, faz isso e eu tô dando aqui meus horários, né? E eu dou
+
+para ele o e-mail que o cara manda, eu dou o feedback, caso eu tenha um feedback, né? No caso, no começo, a gente não tem nenhum feedback e a gente dá a resposta anterior, tá? E isso é, ele vai gerar aqui, eu tô usando o Gemini Flash 2.0. E o que aconteceu aqui? Ele gerou o e-mail, né? Então
+
+vamos lá. Prepresado cliente, agradeço seu contato, interesse em discutir paraará. Então beleza. Você poderia estar satisfeito com essa resposta aqui, mas eu não tô satisfeito com essa resposta. Então, eu vou vir aqui e vou dar um feedback, que seria eh feedback eh com vídeo ele para almoçar aqui no escritório de apenas essa opção. Então, vamos lá. A gente agora eh
+
+pegou a resposta e a gente vai voltar para lá. E agora, eh, a gente tá pedindo para ele reescrever, então ele tá lá, eh, para otimizar a nossa conversa, gostaria de convidá-lo para o almoço, nosso cardápio de terça-feira. Assim podemos conversar sobre a proposta. Muito bem. Então, eu fiquei satisfeito com a resposta. Vamos imaginar aqui que
+
+era exatamente isso que eu queria. A gente bota aqui feedback. Eh, e vamos lá. Aprovado. Aprovado. E aí o e-mail seria
+
+enviado e a gente estaria bem para prosseguir. E como isso aconteceu? A gente tem uma simples verificação aqui, eh, onde a gente verifica se tem a palavra provada e você poderia fazer algo mais sofisticado. A gente tá fazendo aqui na linha, né, exatamente no ambiente de desenvolvimento. Idealmente você teria um botão, né, ou alguma coisa do tipo que seria assim aprovado, OK, não aprovado, você dá o feedback, seria ótimo. E como a gente faz isso? tem um
+
+uma técnica aqui chamada interrupt, que é exatamente como a gente implementa o humano no loop. E a gente faz isso de maneira muito legal. Então, como você viu aqui, a gente pode aliar dois tipos de técnica para resolver um problema. Eh, então a gente poderia aqui no nesse avaliador, por exemplo, usar um humano no loop. E a gente pode fazer cada passo da história com o humano no loop e sempre tentando verificar eh e aprimorar a resposta sem entrar no problema da LLM ficar perdida ao longo do tempo, aumentando a confiabilidade da sua solução de maneira eh não vista ainda pelos workflows e pelas soluções de A que você vê por aí. Então, beleza. Muito
+
+bem. E é Houter. Esse aqui, cara, é um padrão bem poderoso, eh, e bem simples. Inclusive, eh, segundo a galera fala aí, o GPT5 você já não vai escolher mais qual LLM você vai usar, ele vai rotear para para LLM que ele achar melhor. E é exatamente assim que um Houter funciona.
+
+Mas a gente não vai falar como será o futuro da Open Ai, mas eu queria falar isso aqui, né? Porque recentemente o São Áltima falou: "Ah, é, a gente gasta milhões com com a galera falando obrigado e tal". Então vamos ajudar o STM aqui a resolver esse problema, porque pobre coitado, né? Ele talvez não saiba, talvez os engenheiros deles que são excelentes não saibam dessa técnica aqui. Eh, então a gente pode ajudá-los construindo algo que resolva esse problema dos milhões de dólares e eh de repente ganhar uma promoção lá na Open AI, né? Então vamos lá, a gente vai
+
+começar aqui. Não vamos criar uma trade nova, né? Olá, como vai? E aí a gente vai eh chamar uma LLM. Então ele eh verificou aqui, foi bem rápido, né? Você não viu o que aconteceu
+
+e eu vou explicar para você aqui. Eh, então vamos lá. Obrigado. Obrigado. Tá. E beleza. De nada. O que aconteceu?
+
+Vamos aqui ver lentamente no replay. É, então eu fiz a primeira pergunta, né? Olá, como vai? Ele entrou aqui no router e ele disse que é false, tá? Então, se você vir aqui no estado, o nosso router tá falso. Eu vou mostrar o código para
+
+vocês, vocês vão entender como é que funciona. Uma vez que tá falso, ele chamou minha LLM e aí ele foi lá e falou: "Ah, beleza, como você tá? Obrigado perguntar, beleza, como posso ajudar hoje". No turno dois, o que eu fiz foi falar obrigado e o que aconteceu aqui no nosso estado é que ele atualizou o Houter Patrol, né? Então ele respondeu de nada. Ronald, como isso aconteceu?
+
+Por que que ele não chamou LM? Ele não chamou, tem certeza que não chamou? Tenho certeza. Eu vou mostrar como eh Vamos lá. Houter, router, router. Tá
+
+aqui. Então, o que a gente fez? Primeira pergunta, eh vamos lá. Eh, a gente tem o nó aqui, tá? definição, mas é basicamente o seguinte: se tiver obrigado na resposta, eh, a gente vai setar o nosso estado true. E se for
+
+true, a gente vai e para o final e vai chamar o de nada direto. Senão, a gente chama a nossa LLM e dá resposta. Desse jeito, a gente salvaria o pobre coitado do Sultima em milhões de dólares, eh, ganharíamos uma promoção, eh, e compraríamos carros muito legais. Eh, então o Houter é um padrão muito interessante, né? Se você tem diferentes setores ou diferentes eh problemas para resolver, é com um ponto de entrada, tá?
+
+Então você pode botar um router na frente. Esse router pode ser feito, como eu fiz aqui, eh, com uma regra explícita, então você teria extremo controle, né? O ruim é que se você tá lidando com um ambiente muito bagunçado, né, que você não consegue prever exatamente tudo que vai entrar, o ideal seria você botar uma LLM nesse Houter e essa LLM seria especialista apenas em tomar a decisão de qual lugar ela vai mandar. Em vez de você ter um agente e que vai rotear para algum lugar para Aráar. Não, você tem uma LLM com prompit específico apenas para aquilo e você vai aumentar sua curácia de maneira muito grande. Muito bem. Vamos para o último
+
+padrão aqui, que é o padrão, ele também pode ser usado em diferentes maneiras, que é o padrão paralelização. Ele pode ser usado eh com aquela filosofia de dividir e conquistar. É uma filosofia padrão, tá? Que você pode eh espalhar seu trabalho em diferentes frentes, né? E os trabalhos são independentes.
+
+Diferente desse trabalho aqui e do chaning em que você uma resposta depende da outra, né? Então você vai tendo respostas cumulativas. Aqui cada trabalho é independente do outro, só que no final você vai agregá-lo em um lugar só, tá? Então, por exemplo, se você tá fazendo um relatório, por exemplo, você quer fazer uma pesquisa sobre meio ambiente e a outra sobre indústria de carros, sei lá, tá? Então, você pode fazer duas pesquisas em paralelo e lá no agregador você pode pegar as duas pesquisas e fazer o relatório, por exemplo, tá? Eh, ou você pode usar para
+
+concurso, para discutir o que foi melhor ou o que é melhor, tá? Então, se você quiser discutir quem é melhor, quem foi melhor, o Cristiano Ronaldo ou o Messi, você pode eh fazer uma técnica dessa, sim, eh botar cada LLM para argumentar, tá? E uma última LLM para eh dar a resposta final e baseada nos argumentos das duas primeiras, avaliar quem estava certa. Então, se você tem esse tipo de problema, é exatamente assim que resolve. E como isso funciona? Eu já
+
+mostrei isso aqui eh no canal. Eh, então vamos lá. Isso aqui é como se fosse um um programa para, sei lá, para é um programa para deixa eu criar uma nova trad, né? Uma nova trad. Eh, é um programa para criar receitas culinárias. Eu vou
+
+mostrar o prompt ali. E aí a gente vai botar duas LLMs para gerar. a gente vai botar duas LLMs para gerar ao mesmo tempo e ã o que vai acontecer que no final ele vai vir aqui e vai avaliar. Então a gente tem um juiz numa técnica chamada LLM como juiz. Eu já expliquei ela aqui, tem vídeo aí no canal. Eh, se você tiver interesse, eh,
+
+eu recomendo fortemente porque sem essas técnicas aqui você nunca vai construir trasções profissionais. você vai sempre construir algo meio meio amador. Então, se você quer construir coisas sérias, você vai ter que começar a ter noção dessas ideias aqui. E aí o que a gente vê aqui que ele tá gerando, né, a resposta e aí ele teve a resposta final. Ele disse que a B foi melhor. Então a
+
+gente pode ver aqui as respostas tanto da A um quanto da A2. E você viu que eles rodaram, executaram de maneiras paralelas, né? As duas começaram a gerar juntos, a mesma coisa. E aí no final o juiz tem que esperar as duas respostas obviamente para ser acionado e começar a avaliar. Então segundo critério aqui, ele deu a resposta B. E a gente vai ver
+
+o código aqui bem rapidinho. Eh, e o que acontece nesse código é que eu tenho aqui eh o juiz eh dando instruções para ele como avaliar e o que que ele deveria fazer. Ele também teria a opção de dar o empate e dar a resposta dele. Então é isso, gente. Esses são os padrões, tá?
+
+Esses são um dos muitos padrões que você pode criar eles cumulativos. Aqui eu tenho eh alguns workflows. Se vocês olharem assim os workflows que estão em produção, eles são uma combinação de todos esses ao mesmo tempo, né? Ele tem várias características. Às vezes o workflow pode ser algo bem grande, mas não importa se ele é grande ou não. Se
+
+você consegue desenhar um processo, e isso é um tópico muito importante, tá? eh, construção de processos. Se você consegue identificar, se você consegue identificar aí na sua empresa processos, eh eles podem ser transformados em soluções, como eu mostrei aqui, simplesmente eh, através de técnicas, eh, corretas. Você não vai entregar tudo a IA para ela fazer tudo. E isso aí é um pensamento eh ilusório, é um conto de fada. O que
+
+você vai fazer é usar a boa parte da LLM, eh, para construir coisas realmente sólidas em que você pode confiar, porque você sabe exatamente o que vai acontecer passo a passo ali. E se não acontecer algo no meio do caminho, você pode botar um avaliador. Ou, por exemplo, onde você tem decisões críticas, você pode botar alguém, você mesmo para avaliar, mas a maioria das coisas que não forem críticas, você pode deixar fluir naturalmente. E aí você vai eh tentar unir essas coisas aqui, que é a confiança e a autonomia. Com certeza as pessoas eh ficam mais assim, ai meu Deus, por conta da autonomia, mas o dinheiro está na confiança. Então, se você conseguir
+
+juntar confiança e autonomia, dinheiro não vai te faltar, oportunidades não vão te faltar. E se você construir um produto com confiança e autonomia, você tem uma mina de ouro na mão, porque é disso aqui que a gente tá falando. E você pode, de fato, eh, entrar naquele exemplo do começo do vídeo, onde eu perguntei para você se você pagaria mais para não ter dor de cabeça. E é exatamente isso que vai acontecer com seus clientes. Eles vão pagar para não ter dor de cabeça. Eh, mesmo que sua
+
+solução custe um pouco mais, a, ao invés de soluções amadoras que prometem muito, eh, entregam alguma autonomia, porém, eh, com pouquíssima confiança. Então, se você quer fazer parte das pessoas que constrói, é soluções que com grande confiança e com grande autonomia, eu convido você a ficar por aqui. Mais uma vez, comunidade HCOP Pro tá aberta só nos próximos dias. Depois eu vou fechar. Ronald, você vai abrir ela novamente, etc. Cara, não sei. Eh, a gente tá
+
+começando. Eh, eu vou dar atenção para todo mundo que tá lá agora, né, individualmente, se necessário, vou garantir que tá todo mundo satisfeito. Eh, quem tá entrando agora são membros fundadores, o que significa que eles são membros assim que requerem uma atenção diferente, muito porque eles pediram o projeto e eles estão acreditando no projeto. Não tava no meu roadmap fazer eh uma comunidade agora, né, até porque eu rodo uma empresa, eu gravo conteúdo, etc. Então assim, eh, a questão do tempo é um é um é um é algo importante para mim hoje. E assim, a gente vai garantir
+
+que lá esteja redondo, que tá todo mundo atendido. Então, entrou, entrou, não entrou, de repente só lá no futuro, quando a comunidade já tiver estabilizada. Então é isso, prazer revê-los novamente. Eh, fique por aqui. Muito mais conteúdo sobre a eh sobre o mundo profissional, o mundo dos negócios, como tudo isso se conecta e como você pode, criar soluções paraa sua empresa, eh criar tua empresa disso aqui, eh, e construir teu império aí, fazer teu dinheiro e todo mundo crescer junto. Então, a ideia é essa. Então, é
+
+isso. Abraço. Até a próxima.

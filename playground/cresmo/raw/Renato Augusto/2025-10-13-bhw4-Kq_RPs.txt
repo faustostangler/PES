@@ -1,0 +1,325 @@
+---
+video_title: "Como Escolher o Banco de Dados Correto pra sua Aplicação | System Design & Arquitetura de Software"
+video_id: bhw4-Kq_RPs
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=bhw4-Kq_RPs
+video_date: 2025-10-13T00:30:27+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  🔗 Link do Diagrama: https://miro.com/app/board/uXjVJCL6b64=/?share_link_id=911501521268
+  
+  Fala, pessoal! Renato Augusto aqui de novo 👋
+  E no vídeo de hoje, eu vou te mostrar como escolher o banco de dados ideal pra sua aplicação, sem cair nas armadilhas mais comuns que a maioria dos programadores comete.
+  
+  A gente vai falar sobre System Design e Arquitetura de Software, e entender como bancos como PostgreSQL, MongoDB, Cassandra, DynamoDB, CockroachDB etc.. se encaixam em diferentes cenários — desde aplicações financeiras até sistemas distribuídos de larga escala.
+  
+  Se você acha que basta “escolher o mais popular” ou “usar o que já conhece”, esse vídeo vai mudar completamente a forma como você pensa sobre bancos de dados, consistência, disponibilidade e escalabilidade.
+  
+  🚀 O que você vai aprender neste vídeo: (Como Escolher o Banco de Dados Correto pra sua Aplicação | System Design & Arquitetura de Software)
+  ✅ Diferenças entre bancos SQL e NoSQL na prática
+  ✅ O que é consistência, disponibilidade e partição (Teorema CAP e PACELC)
+  ✅ Quando e como usar diferentes bancos de dados de acordo com o cenário da aplicação
+  ✅ Como entender o impacto de consistência forte, eventual e quorum
+  ✅ Por que nem todo banco serve pra qualquer tipo de sistema
+  ✅ Dicas de arquitetura pra tomar decisões técnicas seguras
+  ✅ Como pensar como um arquiteto de software na hora de escolher o banco ideal
+  
+  💡 Por que assistir?
+  🔹 Pra entender de verdade o que muda entre bancos relacionais e distribuídos
+  🔹 Pra dominar os fundamentos de System Design e Arquitetura de Dados
+  🔹 Pra nunca mais escolher banco de dados “no achismo”
+  🔹 Pra evoluir sua mentalidade de desenvolvedor pra arquiteto
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que querem dominar System Design
+  📚 Estudantes de tecnologia que querem entender bancos de dados modernos
+  💼 Arquitetos e tech leads que tomam decisões técnicas em projetos complexos
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design e carreira tech.
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 🙌
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo — eu sempre leio tudo e respondo sempre que posso.
+  
+  #bancodedados #systemdesign #arquiteturadesoftware #programador #programação
+---
+Uma das perguntas que mais aparecem nas entrevistas para programador é se você sabe escolher o banco de dados correto para uma aplicação. E se você é daqueles que responde essa pergunta dizendo que quando os dados precisam se relacionar e ter algum tipo de estrutura, a gente usa bancos relacionais como Post Gre e My Cicle. E quando os dados não tm tanta necessidade assim de relacionamento e precisam de mais performance, a gente usa bancos não relacionais como Mongo DB ou Cassandra, você pode ter certeza que vai se dar mal na entrevista. No vídeo de hoje, eu vou te mostrar porque que esse tipo de resposta é completamente superficial e sem sentido e quais as verdadeiras compensações que você precisa fazer e as técnicas que você precisa utilizar para definir corretamente o teu banco de dados. Fala pessoal, Renato Augusto aqui de novo e dessa vez para falar sobre system design, arquitetura de software e sistemas distribuídos. Tudo isso no
+
+contexto dos bancos de dados, porque se tem uma coisa que muito programador ainda peca nos dias de hoje é achar que bancos de dados se resumem somente a Pôst, Gri, My Cicle, Mongo, DB ou até pior, que acreditar que bancos de dados são escolhidos somente pelo tipo de dados que vão ser armazenados pela aplicação. Isso, além de te prejudicar durante uma entrevista, vai acabar fazendo você tomar decisões arquiteturais erradas durante um projeto da vida real e que com certeza vai custar muito caro lá na frente. Então, para tu nunca mais errar na escolha do banco de dados e nem ficar passando aperto nas entrevistas, vem pra telinha comigo, porque tem muita coisa pra gente ver e com toda a certeza tu vai sair daqui hoje com todas as informações que você precisa para tomar as melhores decisões arquiteturais quando o assunto for bancos de dados. Bora lá. Bom, então vamos lá. Vamos direto ao ponto aqui.
+
+Vamos direto ao que interessa, porque tem muita coisa pra gente ver. E a primeira coisa que a gente vai precisar aqui é chegar no conceito de um sistema distribuído, tá? Por quê? Porque tudo que eu vou te mostrar aqui tá relacionado diretamente a sistemas distribuídos, grandes aplicações, grandes arquiteturas, system design. Isso aqui que eu vou te mostrar não tem a ver com sisteminha de padaria, com sisteminha da farmácia, do mercadinho, sisteminha monolítico. Isso aqui tem a
+
+ver com grandes arquiteturas, beleza? Sistemas distribuídos, tá? E o que que eu vou fazer pra gente chegar nesse sistema distribuído? Eu vou só dar uma repassada aqui bem de leve nesses diagramas iniciais que a gente já viu lá no vídeo escalando uma aplicação do zero até 1 milhão de usuários, tá? Eu não vou revisitar todo o diagrama, a gente vai parar bem por aqui até chegar na parte dos bancos de dados e aí a gente vai falar de consistência eventual, disponibilidade, a gente vai falar de um monte de coisas, tá? Incluindo as
+
+técnicas, conceitos, fundamentos e ferramentas para você escolher corretamente o seu banco de dados. Então que que eu vou fazer? Eu vou começar aqui partindo bem do zero pra gente poder recapitular algumas coisas e chegar no conceito de um sistema distribuído. Então, como é que começa uma aplicação geralmente na vida real, tá? A aplicação começa mais ou menos assim, ó. A gente tem a nossa camada de
+
+front end, ou seja, o nosso aplicativo mobile lá, o nosso front end, a nossa aplicação web em si, rodando em Angular, ViewJS, React e por aí vai. Então, a gente tem o nosso front end e a gente vai ter também a nossa API, tá? o nosso servidorzinho back endar lá armazenado, hospedado numa hospedagem qualquer que você escolher e vai est dentro de um servidor. E aí, como é que tudo funciona? A gente tem aqui o nosso DNS, o nosso API.meite.com
+
+e a gente cadastra isso apontando pro nosso IP, tá? Pro IP do nosso servidor. Então, toda a requisição que o nosso frontend fizer para esse API.meite.com, meusite.com. O DNS, que é o domain
+
+nameistem, que é o sistema de nome de domínio, vai fazer a conversão desse api.meusite.com pro endereço IP e a requisição vai seguir até chegar no nosso servidor, tá? E aí o nosso servidorzinho vai responder aqui um Jon, tanto faz, tá? O importante é que você entenda que isso aqui é o nosso servidor que vai est o nosso código lá rodando, seja em Java, se PHP, tanto faz. Isso
+
+aqui eu falo com muito mais detalhes lá no vídeo, escalando uma aplicação. Inclusive, esse vídeo não tem nada a ver com o vídeo de lá, tá? Você pode muito bem assistir esse vídeo aqui, porque a gente vai falar de bancos de dados, tá? Eu só tô revisitando esses conceitos aqui pra gente chegar num sistema distribuído e eu te mostrar como é que funciona a escolha correta de um banco de dados, beleza? Então, dando continuidade aqui, qual é a primeira coisa que a gente faz, tá? Qual que é a
+
+evolução natural de um sistema que nasce dessa forma aqui, tá? Com um único servidorzinho ali para fazer tudo. Inclusive, o banco de dados vai estar instalado aqui dentro, tá? Tanto o código, o banco de dados, tudo que você precisar vai estar dentro desse único servidor. E aí, como é que a gente evolui, tá? Vamos imaginar que o número
+
+de usuários tá crescendo e consequentemente o número de requisições vai aumentar paraa nossa aplicação e com isso a gente precisa começar a escalar a nossa aplicação. E qual é o primeiro passo, tá? Qual que é a evolução natural? É basicamente a gente separar o nosso banco de dados do nosso servidor, ou seja, a gente vai separar eles, tá? Eu vou criar, eu vou instalar o meu banco de dados em um outro servidor e a gente vai ter o nosso servidor pra aplicação e um servidor pro banco de dados. Por quê? porque a gente consegue
+
+dimensionar eles de formas diferentes, a gente consegue escalar cada um de forma diferente. Então, a gente vai separar eles dois e aí toda escrita, leitura, update, delete, a nossa API vai requisitar o servidor de banco de dados e ele vai retornar os dados e consequentemente a nossa API vai retornar os dados pro front end, beleza? Mistério nenhum. Mais uma vez dá uma olhada lá depois. Eu vou deixar o link do vídeo na descrição, vou deixar um card aqui em cima também para tu poder dar uma olhada depois. Beleza? Vamos
+
+adiante aqui. Qual que é o próximo passo da nossa escalada aqui da nossa aplicação, tá? Próximo passo é a gente escolher se a gente vai escalar verticalmente ou horizontalmente. O que que é escalar verticalmente? É a gente adicionar mais poder computacional, mais recursos, mais armazenamento, mais memória RAM na nossa máquina, no nosso servidor, tá? na nossa instância aqui.
+
+Ou seja, fazendo isso, a gente vai ter um servidor muito mais parrudo, que vai conseguir lidar com um número muito maior de requisições. Porém, se acontecer alguma coisa com o servidor, a gente vai perder a nossa aplicação, a gente vai perder a disponibilidade da nossa aplicação e com isso a nossa aplicação vai ficar fora do ar. E não é isso que a gente quer. Então, geralmente para grandes aplicações a gente escala horizontalmente. Não é que a escala vertical seja ruim, tá? A escala
+
+vertical é muito boa, dependendo do número de usuários, da quantidade de requisições. Então, vai depender, mas no nosso caso, a gente vai escalar horizontalmente. E o que que é escalar horizontalmente? É você criar réplicas da sua instância lá do seu servidor, do código da sua aplicação e subir isso em vários outros servidores separados. Ou seja, a gente vai ter várias máquinas para lidar com a volumetria massiva de requisições que vai chegando. E qual é a
+
+ferramenta que a gente usa para escalar horizontalmente? É o nosso querido e amado load balancer. Então o nosso load balancer, que traduzindo seria balanceador de carga, ele é quem vai ficar na frente aqui das nossas instâncias, recebendo toda a enchurrada de requisições e ele é quem vai distribuir essa carga entre as nossas instâncias, tá? Então vamos imaginar que a gente tem 10 instâncias aqui da nossa aplicação. O Load Balancer vai receber todas as requisições, inclusive a gente configura o nosso DNS agora apontando pro IP do Load Balancer. a gente não vai
+
+apontar mais pro IP da máquina, a gente aponta pro IP do Load Balancer e todas as requisições vão ser direcionadas para ele e é ele quem vai fazer a distribuição de carga entre as várias instâncias. Beleza? Só que aqui a gente já começa a ter os primeiros problemas. Por quê? Porque só escalar horizontalmente a nossa aplicação, ou seja, criar várias réplicas, não resolve o problema como um todo. Por quê? Porque
+
+conforme a requisição for chegando em todas elas, todas elas estão conectadas ainda no mesmo banco de dados. Ou seja, isso vai criar um gargalo no nosso banco. Por quê? Porque ele vai ter que lidar com tudo sozinho. Então, a gente precisa dar um jeito de escalar também o nosso banco de dados e não somente a nossa aplicação, porque vai ficar fora do ar. Não adianta. Você pode botar 20
+
+réplicas aqui, todas elas apontando pro mesmo banco, o banco vai chorar, vai abrir o bico, não vai aguentar essa volumetria de requisições. Então, qual que é a técnica que a gente utiliza para poder escalar o nosso banco de dados? A gente chama isso de database replication, tá? Isso partindo do princípio que a gente tá utilizando um post da vida, um mycle, tanto faz, tá? Um banquinho relacional. Então, partindo
+
+do princípio que essa nossa aplicação aqui, esse nosso banco de dados é um post, tá? Que vai facilitar muito o exemplo aqui, que é o que a maioria acaba escolhendo na vida real, que que vai acontecer? A gente usa essa técnica chamada de database replication ou read réplica, tá? Isso aqui também é conhecido como read réplica. E como é que isso aqui funciona na vida real?
+
+Basicamente, a gente vai pegar o nosso banco de dados que já funciona, ou seja, esse banquinho aqui, a gente vai pegar ele e vai transformar ele num banco master, tá? Num banco principal, num banco de escrita dos dados. E a gente vai criar réplicas desse banco e configurar elas para que elas sejam as réplicas de leitura. Ou seja, todas as nossas instâncias dos nossos servidores aqui, as nossas aplicações, as cópias delas que estão lá rodando, elas vão direcionar a escrita para um lado e a leitura para outro. Por quê? Porque numa
+
+aplicação da vida real, a escrita geralmente é menor do que a leitura. Então, geralmente a gente escala a leitura primeiro, tá? Não são todas as aplicações, logicamente que tem aplicações que recebem muito mais escrita do que leitura, mas nesse nosso cenário aqui, nos cenários da vida real, na maioria das vezes, você vai ter um volume muito maior de leitura dos dados do que a de escrita. Porque cada refresh que você dá na página, muit das vezes tem que ir no banco buscar dados, dado que na maioria das vezes são estáticos também. Então, cara, leitura é o primeiro gargalo que você vai ter que lhe dar. E partindo do princípio que
+
+isso aqui é um postgre, isso funciona dessa forma, database replication. Você cria um para escrita e cria vários para leitura. Ah, Renato, como é que a minha aplicação vai se conectar em vários bancos ao mesmo tempo? Eu sei que muita gente tem essa dúvida, eu falei sobre isso no vídeo lá, então, mais uma vez, não deixa de assistir. Mas para você que é curioso, tá aqui um exemplo bem simples feito em Laravel, tá? Isso aqui
+
+é o arquivo de configuração do Laravel e basicamente você configura aqui uma chave chamada My Ciccle. Você aponta todas as réplicas aqui, o IP no caso, né, de todas as réplicas de leitura e aponta um pra escrita. E depois você bota aqui o nome do banco de dados, usuário, a senha e por aí vai. Então é muito simples fazer isso aqui. O teu próprio ORM já consegue se encarregar de fazer isso aqui. É ele quem vai
+
+distribuindo ali as leituras, né? Qual ele escolhe qual que é que ele vai usar aqui para fazer a leitura. E aí como é que funciona na vida real? Vamos lá. Vamos imaginar que isso aqui é uma aplicação bancária, tá? Isso aqui é uma
+
+aplicação bancária, tá? Um banquinho, uma fintec ali da vida. E aí você tem o saldo da sua conta. E no saldo da sua conta você tem R$ 1.000. Vou imaginar
+
+que você tem R$ 1000 lá no saldo da sua conta. E você vai fazer um Pix, tá? Você vai fazer uma transferência bancária de R$ 500. Você fez um Pix para alguém, fez uma transferência, pagou uma conta, então você vai subtrair R$ 500 da sua conta. Beleza? Então o que que vai
+
+acontecer? Se você tem R$ 1.000 e essa informação já tá armazenada no banco aqui, tanto nos bancos de leitura, o que que vai acontecer? Você vai fazer a transferência. Quando essa transferência for confirmada, a transação vai vir aqui nesse banco de escrita e vai escrever ela no banco, vai atualizar aquele dado no banco de 1000 para R$ 500. Beleza?
+
+Nesse ato de transformar esses 1000 em R$ 500, esse dado vai ser replicado para cá, para cá e para cá. Show de bola. Até aqui problema nenhum. Só que agora você imagina o seguinte, imagina que aconteceu algo que sempre vai acontecer em aplicações distribuídas, em sistemas de grande porte e você tem que est preparado para isso. É uma coisa chamada partição de rede, ou seja, imagina que no ato de você fazer a sua transação bancária, a sua aplicação vai escrever nesse banco aqui, a vai subtrair os R$ 500 daqueles 1000 e aí o teu banco, ele vai ter que replicar o dado para cá, para cá e para cá. E aí ele replicou o
+
+dado, só que quando chegou nesse banco aqui, ele não conseguiu. Por quê? Porque houve uma partição de rede. E o que que é uma partição de rede? Primeiro, eu quero que você entenda que tudo isso aqui é conectado via rede. Não tem como
+
+se conectar se não for via rede. Então, todas essas linhas aqui são conexões de rede. Então, quando você insere um dado no banco, você tá fazendo uma conexão de rede com o banco de dados. Quando você replica um dado, ou seja, quando esse banco tem que pegar esse dado e jogar para cá, essa comunicação é feita via rede, todas essas comunicações e a leitura também, só que não é o banco que está fora do ar. O que aconteceu foi que houve uma partição de rede, ou seja, a rede caiu, aconteceu alguma coisa, o o cabo de fibra ótica rompeu, o cabo lá no fundo do mar arrebentou, aconteceu alguma coisa e esse banco não está conseguindo enxergar esse banco aqui. Ou
+
+seja, essa rede rompeu, mas a sua aplicação continua sendo capaz de ler o dado aqui. Olha o que que vai acontecer. No ato de você transferir R$ 500 e subtrair isso da sua conta, essa transação foi confirmada aqui e aí o dado foi replicado para cá, ele foi replicado para cá, mas quando tentou replicar para cá, ele não conseguiu. E aí se nesse exato momento você der um refresh na página e aí agora a tua aplicação vai ter que fazer uma leitura, ou seja, ele tem que buscar o dado de leitura do outro lado e não aqui, porque aqui é só escrita. Quando você der um refresh, ele tem que atualizar seu saldo. Só que imagina que você caiu aqui
+
+nesse banco, ou seja, o seu ORM direcionou a leitura para cá. E aqui nesse banco a informação está desatualizada, ou seja, você tem R$ 1.000 aqui ainda. Que que vai acontecer? Você vai poder fazer transferência de eterno todas as vezes que você cair aqui. Então o nome disso é consistência
+
+eventual, ou seja, os seus dados estão inconsistentes, seus dados só são consistentes eventualmente. E isso não necessariamente é um problema. Isso é um problema no contexto de aplicação bancária, onde você precisa de muita consistência. Então, nós temos aqui o grande primeiro desafio. E aí tu deve est pensando, se você é um cara mais pra frente, você já tá entendendo do que eu tô falando aqui, você deve estar pensando assim: "Ah, Renato, mas isso aí é mole de resolver". É só fazer a
+
+replicação síncrona e a gente garantir, tá? A gente configurar aqui essa replicação. Para quê? Para que o dado só confirme a transação mesmo ali, ou seja, pro banco confirmar a transação, ele primeiro tem que garantir que o dado foi escrito em todos os outros bancos. Aí sim ele confirma e devolve a resposta aqui pro servidor que chamou. Beleza? Se
+
+você acha que isso resolve, eu vou te mostrar que não vai resolver. Porque olha só, no ato de vir aqui e transformar os R$ 1.000 em 500, ou seja, executar uma operação no banco de dados para transitar esse dado de um estado pro outro, que que vai acontecer? Ele vai inserir o dado aqui, ele vai agarrar a requisição, ele vai tentar inserir aqui, vai tentar inserir aqui. E como ele não vai conseguir inserir esse dado, porque nós temos uma partição de rede aqui, que que vai acontecer? Ele não vai
+
+conseguir inserir. Como ele não vai conseguir inserir, ele não vai devolver uma resposta, OK, pro servidor que chamou. E o que que isso vai resultar? Vai resultar na sua aplicação fora do ar. Ou seja, a sua aplicação ficou indisponível. Então isso aqui não
+
+resolve o problema. Você causou uma indisponibilidade no seu sistema. E aí você percebe que agora a gente tem que escolher entre a consistência dos dados e a disponibilidade. E até pior do que isso, porque imagina só, imagina que não houve uma partição de rede, tá? E aí eu vou remover essa partição. Olha o que
+
+que vai acontecer. Se a sua aplicação está funcionando perfeitamente, tá aqui o nosso banquinho tá funcionando, nossa fintec ali e tal, você foi lá e fez uma transação no banco, você foi lá e alterou aqueles R$ 1.000 para 500. E agora não tem partição de rede nenhuma. Você vai precisar ainda assim escolher entre alguns atributos. Por quê? Se esse
+
+dado continuar tendo que ser garantido a consistência dele, mesmo sem uma partição, o banco vai vir aqui, vai inserir os 500, vai inserir os 500 aqui, vai inserir os 500 aqui e depois ele vai retornar a resposta. Só que agora tu imaginas que a gente tem aqui, sei lá, 10, 15, 20 instâncias de réplica do nosso banco. O que que vai acontecer? Ele vai receber a transação, ele vai replicar para um, para dois, para três, para 5, para 10, para 15, para 20. Cara, isso vai gerar uma latência absurda. Por
+
+quê? Porque enquanto ele tá tentando replicar o dado, ele tá aqui agarrando a resposta. Ele ainda não soltou a resposta para quem chamou. Que que vai acontecer? Uma lentidão monstruosa na sua aplicação. E aí, se você tentar ir
+
+pelo outro caminho, que é o quê? que é garantir a não sincronicidade dos dados. Ou seja, cara, eu vou fazer essa replicação de maneira assíncrona. Eu não vou fazer ela de maneira síncrona, que é o que a gente tá fazendo aqui. Eu garantir que ela seja sincronizada primeiro para depois eu devolver a resposta. Não, eu vou garantir que ela
+
+seja assíncrona. Então, eu vou inserir o dado aqui, eu já retorno a resposta para quem chamou e depois por baixo dos panos eu vou replicando. Você vai voltar pro problema inicial, que era o quê? A consistência eventual. Porque se na hora que chegar uma leitura aqui, esse dado ainda não foi transitado para cá, ele ainda não foi replicado, você vai ter dados desatualizados e num banco. Isso é
+
+um verdadeiro problema. Então percebe, nós temos problemas de latência, nós temos problema de disponibilidade da aplicação e nós temos problema de consistência. Então a primeira coisa que eu quero que você entenda aqui é que não existe bala de prata. Não existe isso, cara. Não existe banco perfeito, não existe solução perfeita. Você tem que
+
+fazer escolhas. E é em cima disso aqui que você vai fazer a escolha correta do banco de dados. E por que que eu tô dizendo isso? Porque existem teoremas, ferramentas, conceitos que já foram amplamente estudados desde os anos 2000 até os dias de hoje, que mostram que isso aqui é um problema natural. Isso é um problema matemático. Na verdade, isso
+
+aqui nada mais é do que um problema matemático. E quem tá por trás disso são dois teoremas, tá? Primeiro teorema é conhecido como teorema CAP. Esse C aqui vem de consistência. Esse A vem de availability, que é disponibilidade, e o P vem de partition tolerance, que é tolerância e partição. Esse teorema foi
+
+criado nos anos 2000 por Eric Brewer e ele diz que num sistema distribuído é impossível, é matematicamente impossível você ter os três atributos no seu servidor. Não tem como, não dá. Na sua aplicação é impossível você ter consistência, disponibilidade, tolerância, partição. Só que ainda assim esse teorema dizia que você tinha que escolher duas entre as três. Só que isso aqui se mostrou falho ao longo do tempo.
+
+Por quê? Porque é impossível, na verdade não é ter os três. O impossível é num sistema distribuído você ter consistência e disponibilidade, que foi exatamente aquilo que eu te mostrei. Se você replicar de maneira síncrona, você vai ter indisponibilidade. Se você replicar de maneira assíncrona, você vai cair na consistência eventual. Então
+
+você precisa fazer a escolha, dependendo logicamente da sua aplicação. Então como esse teorema se mostrou falho ao longo do tempo, em 2012 Daniel Abadi, que foi o mesmo criador do Radup DB, ele criou esse teorema chamado Passelk, que nada mais é do que uma extensão do teorema CAP, tá? Ele não anula o teorema CAP, ele é uma extensão do teorema CAP. E o que que esse teorema diz? Ele diz basicamente o seguinte: "Se o nosso sistema, se a nossa aplicação estiver diante de uma partição, tá, tudo parte desse princípio aqui, tá? Da partição de
+
+rede." Então, existe uma partição de rede na nossa aplicação? Se sim, eu sou obrigado a escolher entre disponibilidade ou consistência. Isso aqui é o antigo teorema CAP. Se não houver uma partição de rede e a minha aplicação tá funcionando perfeitamente, todos os nós estão se comunicando, tá tudo funcionando legal, então eu sou obrigado a escolher entre latência ou consistência. E por que, Passelk? Porque
+
+o P vem de partition, o A vem de availability, o C vem de consistência. A letrinha E vem da palavra else, que em inglês significa seão. É o mesmo else que você usa lá no código, lá na hora de você escrever código, tá? é o sinão. E o sinão a gente tem que escolher entre o L, que vem de latência, e o C vem de consistência. Então esse teorema aqui é
+
+ele quem vai nortear a sua escolha do banco de dados. Não tem como você escolher um banco de dados para uma aplicação de grande porte sem passar pelo teorema parcial, que não tem como, é impossível, você vai escolher o banco errado. Se você foi nessa de escolher o banco, ah, eu quero sequel ou no sequel, vou de relacional ou não relacionar, cara, não existe isso. A escolha do banco de dados tem que ser feita de acordo com o atributo que você tá querendo que o seu sistema tenha. Então, por exemplo, aqui no nosso caso do banco aqui, dessa nossa replicação, usando posters e tudo mais, que eu já vou te mostrar que até a escolha do Pegger não faz sentido nesse nosso contexto aqui.
+
+Vamos lá. Imagina que ao invés de um banco, isso aqui é uma rede social. Vamos imaginar que isso aqui é uma rede social, tá? E aqui nos nossos servidores de banco de dados aqui, vamos imaginar que isso aqui é o módulo que cuida da parte de like, de comentário e tudo mais, tá? Vamos imaginar uma aplicaçãozinha de microsserviço. Então
+
+isso aqui é o microsserviço que cuida do like, dos comentários e tal. Então o que que acontece? Se no momento que eu der um like na foto de alguém ou num vídeo ou alguma coisa do tipo, essa informação vai ser gravada nesse banco aqui e ele vai replicar. O que que é melhor numa rede social? você garantir a disponibilidade ou a consistência dos dados. Então, deixa eu botar a parti de
+
+rede aqui novamente, você entender do que eu tô falando. Então, vamos lá. Partindo do princípio que a gente tem uma partição de rede, que que eu preciso fazer? Eu inseri o like aqui. Eu dei um like lá na foto, beleza? Então, o like
+
+tá aqui. Eu preciso replicar esse dado agora. Aí eu te pergunto, o que que é melhor? Eu preciso realmente garantir que esse like seja consistente? Eu preciso que todo mundo veja esse like.
+
+No ato de eu dar um like ali na foto ou num vídeo ou fazer um comentário, escrever um comentário num vídeo, é lógico que não. Por quê? Porque é melhor que a minha aplicação esteja disponível do que consistente. Porque o cara, o usuário que tá do outro lado, esse comentário pode chegar para ele 2 minutos depois, 2 segundos, 1 segundo, uma hora depois, tanto faz. Não precisa ter tanta consistência assim. Por quê?
+
+Porque a disponibilidade numa rede social é mais crítico do que a consistência. Porque se a minha rede social fica fora do ar, os meus usuários, os meus clientes vão embora, eles vão para outra rede social. Então a disponibilidade para uma rede social é muito mais importante do que a consistência do dado. Logicamente que dependendo do tipo de dado aqui, eu tô falando de like, comentário, dados que não são sensíveis, não são críticos. Eu posso dar um like numa foto agora e esse like pode aparecer pro usuário da o dono da foto ou pros outros usuários daqui 2 segundos, 5 segundos, 10 segundos, tanto faz. Então, diante de uma partição de
+
+rede numa rede social, eu preciso garantir o quê? Eu preciso garantir a minha disponibilidade. Então, a minha replicação de dados vai ser feita de forma assíncrona. Eu vou receber a requisição, vou armazenar esse like no banco primário e já vou devolver a resposta. E depois, por baixo dos panos, ele vai tentando replicar aqui. Ou então
+
+ele replica aqui, replica aqui e não precisa garantir que replicou aqui, tá tudo bem. Quando esse banco voltar, o dado vai ser atualizado nele automaticamente. Então não tem problema o dado estar inconsistente numa rede social é melhor que você tenha consistência eventual. E aí vamos lá. Agora, partindo do princípio que a gente não tem uma partição de rede, ou seja, a minha aplicação, minha rede social, ela não tem partição de rede, tá tudo funcionando perfeitamente e todos os nós estão se comunicando. O que que eu
+
+preciso garantir? Eu preciso cair aqui no não do Passelk, ou seja, no ELS. Não existe uma partição, então eu preciso fazer um tradeoff agora entre latência ou consistência. Vamos voltar lá. Então aqui, olha só, chegou o dado, eu armazenei o like e eu devolvo a resposta, eu tô garantindo disponibilidade e baixa latência, porque ele só inseriu o dado no nó e já devolveu a resposta. Eu não tô
+
+garantindo que ele seja consistente. Então, se eu quiser que o dado seja consistente quando estiver tudo bem, cara, aí eu vou ter que inserir aqui, vou ter que garantir que inseriu aqui, aqui em todos os nós. Que que vai acontecer? você vai ter muita latência. A latência vai ser muito alta. Você vai
+
+dar um like, vai ficar lá esperando, cara, um negócio horrível. Então você vai travar a aplicação. Isso vai causar alta latência e vai emputecer os usuários. Então você precisa garantir que numa rede social tenha baixa latência e alta disponibilidade. E aí num banco, por exemplo, numa numa fintec ou transações bancárias, você tem que garantir consistência, porque se o dado tiver inconsistente, o cara vai fazer pix de eterno com dados errados. Então é
+
+isso que você precisa saber na hora de escolher um banco de dados. Então esses dois teoremas aqui eles vão te nortear na escolha do banco. Não tem como escolher banco se não for baseado no teorema. E em cima disso tudo, o que que a gente vai ter? Eu preparei para você aqui uma listinha completa com vários bancos de dados aqui que eu vou usar como exemplo. Vou até falar do
+
+funcionamento de alguns deles aqui para você entender que a escolha do banco de dados se dá através disso aqui, ó. Vamos lá. A gente tem o Cassandra, que é um banco fenomenal, é um banco fantástico. E qual que é a classificação dele no Passelc, tá? Todo banco de dados tem essa classificação, tá? No teorema CAP,
+
+no Passelk, eles têm essa classificação. O Cassandra, ele nasceu para ser um banco altamente disponível e de baixa latência. Então, como é que você vai interpretar esses dados aqui? Vamos lá. O A significa availability, que é a disponibilidade. E o P, você vai ver o P
+
+aqui em todos eles, que o P é de partição. Então ele é um banco que tem a partição, ele vai escolher a disponibilidade. Se caso não houver, ou seja, esse é, você vai ver que ele tá replicado em todas as células daqui para baixo e ele significa o ELCE, tá? Aquelece lá. Ou seja, se não houver uma partição, você vai escolher o quê? O L
+
+vem de baixa latência e o C vem de consistência. Então o Cassandra, ele nasceu para ser um banco A, ou seja, availability. Ele prioriza a disponibilidade e o L vem de baixa latência. O Mongo DB, por sua vez, ele é um branco que prioriza diante de uma partição, ele vai priorizar a consistência e se não houver uma partição, ele também vai priorizar a consistência. E muita gente se engana porque acha que o Mongo DB foi feito para ser altamente disponível. Até dá
+
+para fazer isso, eu já vou falar sobre isso aqui, mas o Mongo Debil foi feito para garantir consistência. Inclusive tem uma situação que muito pouca gente sabe que o Mongo DB ele ainda garante que as transações estejam de acordo com o AC, ou seja, atomicidade, consistência, isolamento e durabilidade dos dados. E muita gente não sabe disso. Muita gente acha que isso aqui foi feito para alta disponibilidade por aí, velho. Não é assim que funciona. Então, a
+
+primeira coisa que você tem que olhar nessa planilhinha aqui, eu vou deixar o link na descrição, tá? Você vai poder baixar essa planilha aqui, você vai poder entrar no diagrama aqui no Miro, você vai conseguir mexer nisso tudo. Inclusive vou deixar também o link do mapa do arquiteto, tá? Dá uma olhada aí, um guia de carreira completo do zero ao absoluto arquiteto do software, tá? Passando pelo júnior, pleno, sior, te mostrando tudo que você precisa saber, te entrego todo o conteúdo que você precisa estudar, fala um pouco mais sobre isso aqui também, teorema cap, por aí vai. Então, dá uma olhada aí, vou
+
+deixar o link na descrição também. E aí, voltando aqui, ó, pro nosso Cassandra aqui, vamos começar do Cassandra. Ele é um banco que foi feito para quê? para alta disponibilidade e baixa latência. Qual é o tipo desse banco de dados, tá?
+
+Qual é, como é que é a forma que você armazena dado? É de maneira colunar. Ele é um banco colunar. Então você tem que fugir desse lance de banco relacional das tabelinhas e relacionamento e banco não relacional ali, no caso Mongo, né, que muita gente vai de Mongo DB ali, que é um banco orientado a documento. Você tem que entender que existe banco colunar, existe banco chave valor, existe banco relacional distribuído, que a gente vai falar também, mas o ponto é esse. É aqui que você escolhe o estilo
+
+do banco de dados. Por qu? De que que adianta eu ter uma rede social e escolher mongo DB para garantir consistência? Aí eu vou ter que modificar a essência do banco, que aí eu vou te mostrar isso aqui, ó. Tem isso aqui. Eu já vou falar sobre essa
+
+modificação, porque dá para você modificar em alguns bancos de dados a essência natural, a arquitetura dele. Você consegue com algumas técnicas modificar isso, mas, cara, muit das vezes é melhor que você escolha um banco que já foi projetado para o que você tá tentando fazer. Então, se você tiver diante de um microsserviço, por exemplo, ah, cara, surgiu aqui uma oportunidade na empresa e a gente vai criar um módulo aqui da aplicação. Só que esse módulo tem que ter baixa latência e alta disponibilidade. eu vou de postg, é lógico que não. Ele não foi feito para
+
+isso. Inclusive, a gente vai voltar lá, eu vou falar sobre ele, mas ele não foi feito para isso. Na verdade, o postre não foi feito nem para ambiente distribuído. E eu vejo muita gente fazendo isso. Então, é baseado nisso que você vai fazer a escolha do banco de dados. E aí, quais são os casos de uso
+
+desse banco aqui, por exemplo, do Cassandra? Rede social, série temporal, catálogo estilo Netflix, catálogo de produto em e-commerce, IoT, assistência médica com os dados de sensores, plataformas que exigem escrita massiva de dados, catálogo de produtos globalmente distribuído, ou seja, cara, eu tenho uma aplicação que é global, é mundial, o Cassandra vai me ajudar nisso. Aplicações também com requisitos de alta disponibilidade 24x7, ou seja, não pode ficar fora do ar. Então você tem que entender também o caso de uso da aplicação, porque de nada adianta você vai escolher um banco que tem caso de uso totalmente diferente do que você tá tentando fazer e ele nem atende a questão aqui da disponibilidade ou baixa latência ou da consistência. Cara, você vai ter dor de cabeça. Então é assim que
+
+você escolhe o banco. E aí, ó, ainda falando no banco, a gente tem alguns pontos interessantíssimos aqui, tá? Primeiro deles, o banco pode ser modificado? Essa é a primeira pergunta que você tem que fazer. Eu posso modificar esse banco? E por que diabos
+
+alguém iria querer modificar um banco que nasceu para ser altamente disponível de baixa latência? Por quê? Porque pode ter algum atributo nesse banco, ou seja, a forma de inserir o dado com mais algumas coisas ali que eu gostei tanto que eu vou preferir optar aqui por alterar ele e transformar ele em altamente consistente, tá? Tanto na questão de haver uma partição ou não haver, eu quero consistência dos dados e aí ele vai me atender porque ele tem alguns atributos que eu gosto. Beleza?
+
+você consegue fazer com alguns bancos e o Cassandra é um deles, tá? Então isso aqui também já vou falar agora qual que é o mecanismo interno, tá? E aqui eu preciso que você preste muita atenção nisso aqui, tá? Para o que você tá fazendo aí, presta atenção nisso aqui. O mecanismo interno são conceitos que você tem que entender ao longo do tempo. Não
+
+dá para falar sobre tudo isso aqui em uma única aula. Isso aqui eu demandaria horas falando contigo para te ensinar sobre quórum, raft, a questão do wow aqui que é o redlog, isso aqui é o postgre sentinel, tem aqui o Paxus aqui também. Então assim, isso aqui é um tema para outro vídeo. Se você deixar nos comentários abaixo, eu faço um vídeo sobre isso. E a observação aqui, eu botei aqui, geralmente isso aqui vai ser a forma como ele vai funcionar e como que você vai conseguir modificar esse banco de dados. Então vamos lá, vamos
+
+por parte que você vai entender. É simples, mas demanda que você preste atenção. Vamos lá. O que que é o mecanismo interno do Cassandra? Esse cara chamado quórum aqui. Que que é o
+
+quórum? Tá, vamos lá. Eu tenho a imagem do Cassandra aqui. O Cassandra ele funciona com um conceito de nó, ou seja, cada bolinha dessa aqui é um nó do Cassandra, tá? Pro usuário é transparente, você vai conectar no Cassandra e ponto final. Por baixo dos
+
+panos, você escolhe quantos nós ele vai ter aqui por baixo dos panos e como é que funciona esse conceito de nó, tá? Isso aqui é uma tabela, tá? Uma tabelinha lá no Cassandra. É muito parecido com SQL, é muito parecido com banco relacional e é por isso que eu amo esse banco de dados aqui. É um dos meus bancos favoritos, tá? Esse banco aqui é
+
+extremamente poderoso e versátil. A versatilidade dele é de apavorar. Então vamos lá. A gente tem essa tabelinha aqui. Então a gente tem aqui, ó, o país, a cidade e a população. A gente tem aqui
+
+Estados Unidos, a gente tem a cidade de Nova York com 8 milhões de habitantes. A gente tem Los Angeles aqui também que tá nos Estados Unidos e tem 4 milhões. A gente tem aqui Paris na França que tem 2.230.000. Beleza? Como é que isso aqui
+
+funciona no Cassandra? O Cassandra ele utiliza um conceito chamado de charging, tá? Que é o quê? É a fragmentação dos dados. Ou seja, no post, gris, lembra que eu te falei que o dado tinha que ser replicado para todas as réplicas de leitura? Aqui no Cassandra é totalmente
+
+diferente. Aqui no Cassandra, cada nó vai armazenar um pedaço dos dados. Então os dados vão ser fragmentados, tá? É como se fosse uma pizza, tá? Imagina uma pizza e cada fatia é um nó e cada fatia tem um dado específico. Então, por
+
+exemplo, o primeiro nó aqui em cima, ele tá armazenando esses dois dados aqui, ou seja, a cidade de Nova York, de Los Angeles. Beleza? Aqui no segundo nó, a gente vai ter outros dados que complementam a tabela, no terceiro nó, no quarto nó e assim sucessivamente. Beleza? Só que olha o que que acontece.
+
+Todos esses nós aqui juntos eles completam essa tabela e aí por baixo dos panos o Cassandra sabe exatamente aonde tá cada dado. Então se eu fizer um select lá no Cassandra procurando aqui Tóquio, lá no Japão, ele vai saber que esse dado está armazenado nesse nó aqui. Ele não precisa ficar procurando, ele sabe exatamente aonde tá esse nó aqui. Isso aqui é tema mais uma vez para um outro vídeo, eu posso falar melhor. Só que o ponto aqui que eu quero que você entenda é o seguinte: como é que funciona aquele conceito de quórum que eu te mostrei ali? como é que ele faz
+
+esse mecanismo ali e como que funciona a consistência dele para você entender a diferença disso aqui para um postigres da vida, tá? Que não foi feito para ambiente distribuído. Vamos lá. No Cassandra a gente tem aqui, vamos imaginar que a gente tem aqui o nosso, a nossa lojinha, nosso e-commerce lá. Então eu vou criar um keyspace aqui, tá?
+
+Isso aqui é extremamente igual ao SQL, tanto que no Cassandra é chamado de CQL, que é Cassandra Cury Language. Então é a quase a mesma coisa que o SQL. Então você vai criar um Kspace. O Kpace é como se fosse o esquema do banco de dados lá, tá? o database lá que você cria. Então,
+
+a gente vai criar um loja, a gente vai criar aqui o nosso fator de replicação. E eu já vou te falar o que que é isso aqui. Já vou te falar o que que significa esse fator de replicação. E a gente tem aqui um create table. Olha como é que isso aqui é idêntico a SQL.
+
+Create table produto. Beleza? A gente tem um produto com ID, nome e preço. E aí, como é que funciona, por exemplo, pra gente inserir um dado no Cassandra? Olha como é que isso aqui é idêntico a SQL. Isso aqui é um código feito em
+
+Java, tá? Se tu não conhece Java, fica tranquilo, que isso aqui é muito simples. A gente tem uma classe aqui chamada Cassandra exemplo. Beleza? Única coisa que ele vai tentar fazer aqui é criar uma conexão com o banco e a gente vai inserir dado no banco de dados.
+
+Então ele vai dar um insert para você ver como é que é idêntico a SQL. E aí a gente vai adicionar os valores. Então vou armazenar a câmera Sony no valor de R$ 15.000. Show de bola, problema nenhum. Onde é que entra a questão do
+
+quórum? E é ele quem vai fazer as modificações de consistência e disponibilidade no banco. Ele entra exatamente aqui, ó. Repara que eu tô dando um set consistence level, ou seja, eu estou definindo em tempo de execução de código o nível de consistência que eu quero nesse dado aqui que eu estou inserindo. E aí eu coloquei aqui o quórum. Que que é quórum? Vamos lá,
+
+vamos voltar aqui no Cassandra para você entender o que que é o quórum aqui, tá? Quórum aqui é o seguinte. O mecanismo interno dele funciona com esse conceito matemático aqui de RF div por 2 + 1, que é muito simples, fica tranquilo que isso aqui você vai sair daqui entendendo o que que é o RF div por 2 + 1. Lembra do fator de replicação aqui? que eu coloquei como 10. Vamos imaginar que
+
+aqui a gente tenha 100 instâncias, tá? 100 nós, tá? Vamos botar aqui 100 nó. Tem 100 nó nesse banco aqui e tem dado espalhado para tudo que é lado, fazendo aquele conceito do charging aqui que se que eu já te mostrei aqui. Espero que você tenha entendido. Então vamos lá.
+
+Cada nó contém um pedacinho dos dados. Show de bola. Qual que é o que que representa esse RF? Ou seja, esse replication factor aqui, esse fator de replicação. Fator de replicação significa o seguinte: toda vez que eu inseri um dado no Cassandra, eu quero garantir o quê? O fator de replicação.
+
+Fator de replicação nada mais é do que Cassandra, estou inserindo essa câmera Sony no valor de R$ 15.000 aí. Show de bola. O fator de replicação que eu quero no meu esquema chamado loja, em todas as tabelas, eu quero que o fator de replicação seja 10. Ou seja, eu quero que você garanta que você vai inserir essa câmera Sony com valor de R$ 15.000
+
+em 10 nós. Ou seja, dos 100 nós que a gente tem, a gente tem cada um desse aqui é chamado de nó. Cada um é um nó que compõe um grande cluster. Eu quero que você insira, que você replique esse dado para 10 nós. Que que isso significa? Significa que eu estou
+
+dizendo pro Cassandra: "Olha, Cassandra, meu fator de replicação é 10 para todas as tabelas que estiverem dentro do esquema chamado loja. E eu tô definindo que é 10 porque eu quero garantir que tenha réplicas desse dado em vários nós, porque se porventura um ou outro ficar fora do A, eu ainda tenho o meu dado ali salvo e eu não vou perder meu dado. Show de bola. Beleza? E aí, onde é que entra esse cálculo do RF div por 2 + 1? Isso
+
+aqui representa a maioria. Ou seja, no meu conjunto de 10 nós, ou seja, de fator de replicação, eu tenho 100 nós, meu fator de replicação é 10. 10/ 2 = 5 e 5 + 1 = 6. O que que representa esse 6? Esse 6 representa que num conjunto de 10 nós, seis é a maioria. É como se
+
+fosse uma eleição, tá? É como se fosse uma grande votação. Se cinco votar de um lado e cinco votar do outro, vai dar empate. Então, qual que é a maioria num conjunto de 10? É seis. E por que que eu
+
+preciso saber qual que é a maioria no meu fator de replicação 10? Significa o quê? Cassandra, insira esse dado da câmera Sony em 15.000 em 10 nós, mas eu não quero que você garanta que inseriu nos 10. Garante que inseriu só em seis, aí já me devolve a resposta que eu vou devolver pro usuário. Então isso vai
+
+garantir que além de você ter consistência, ou seja, porque sempre vai haver uma interseção entre quem leu e quem escreveu. Por quê? Porque tem maioria. E o Cassandra já sabe, ele já consegue fazer por baixo dos panos, ele consegue saber qual é o dado mais atualizado, porque ele vai no date time ali no no minuto, no milésimo de segundo, ele sabe quem é o dado mais atualizado, evitando assim consistência eventual. Então quórum aqui, nesse meu caso aqui é a forma de garantir a consistência do dado. Então em tempo de
+
+execução, eu consigo garantir essa consistência se eu quero ela mais afrouxada, se eu quero ela mais forte. Então, por exemplo, se eu colocar o One aqui, eu tô dizendo pro Cassandra o seguinte: "Cassandra, insere a câmera Sony, garante que escreveu isso, que replicou isso para apenas um nó e já me devolve a resposta que eu vou devolver pro usuário". Então, eu estou dizendo o seguinte: "Olha, eu quero mais disponibilidade e baixa latência". Agora, se esse dado ele é muito crítico, cara, vai de quórum. Por quê? Porque no
+
+fator de replicação, ele vai conseguir garantir que a maioria esteja com dado atualizado. E se alguém vier ler esse dado, ele vai conseguir encontrar nesses 10 nós, a maioria de seis, vai haver uma interseção e ele vai conseguir encontrar o dado mais atualizado. E aí eu sei que na tua mente agora deve est aquela confusão assim: "Pô, Renato, mas pera aí, ele não replica para todo mundo? Ele não, isso aqui funciona de maneira diferente, tem essa questão da replicação. O Cassandra já sabe. Por
+
+exemplo, se eu pedir a câmera Sony depois de ser inserido lá, se eu fizer um select, ele sabe quem são os 10 nós, ele sabe onde que tá essa câmera. Então você não precisa se preocupar com isso, ele sabe. E como ele sabe, e eu vou dizer na leitura também, eu consigo definir essa configuração até na leitura. Então, por exemplo, se na leitura da câmera Sony, se isso aqui fosse um select ao invés de um insert e eu passasse aqui, por exemplo, one, eu poderia pegar o dado de maneira inconsistente. Por quê? Porque eu tô
+
+pedindo só um. De repente, daqueles 10 que ele vai lá buscar e ele só precisa buscar em um, porque eu tô dizendo para ele no select aqui, tô dizendo, cara, busca só de um. Pode ser que um desses desses nós ali esteja desatualizado. E aí eu tô dizendo: "Olha, para mim a consistência não importa tanto." Agora, se eu quero garantir que a minha leitura também seja consistente, aí eu passo o quórum, ou até melhor, eu posso passar o all aqui, que é todos, leia todos os nós. Mas o que que vai acontecer? Quanto
+
+mais perto do all você tiver, maior vai ser a latência, porque ele vai ter que consultar todo mundo ou ele vai ter que inserir em todo mundo. Então o Cassandra é maravilhoso esse conceito de quórum aqui, esse nível de consistência que você consegue ajustar em tempo de execução de código e são pouquíssimos bancos que te entregam isso aqui, cara. Isso é maravilhoso. Por quê? Porque eu consigo em tempo de execução fazer o seguinte, eu consigo aqui n é qualquer, ou seja, cara, só insere aí lei e me devolve aqui que eu já vou devolver pro servidor que chamou. Então eu estou mais
+
+perto de disponibilidade. Se eu jogar um wall aqui, eu tô mais perto de consistência e abro mão da disponibilidade. Então eu consigo, cara, garantir isso de acordo com o dado que eu estiver buscando ou inserindo no banco de dados em tempo de execução. E isso tem que ficar claro para você, que isso aqui não é um sistema binário, tá? Isso aqui não é totalmente consistente ou totalmente disponível. O Cassandra
+
+permite que a sua aplicação escolha o momento de ser consistente e o momento de ser disponível. Isso é maravilhoso. E o melhor de tudo é que ainda é mais próximo do SQL. Então isso aqui é extremamente amigável. Cara, o Cassandra é um banco monstruoso. Inclusive, para
+
+quem não sabe, o Discord usou o Cassandra por muitos e muitos anos, tá? Inclusive, eu acho que até 2022 usou o Cassandra e tinha trilhões de dados lá armazenados. Então, cara, esse banco aqui é fenomenal. Então você fica ligado nisso aqui, porque o quórum é a forma que a gente faz o afrouxamento, tá? Então quanto mais próximo eu tiver aqui do all e quanto mais perto eu tiver do, eu vou escolher aqui ou então eu posso escolher a questão aqui bem no meio e ficar entre consistência e disponibilidade. Então é assim que você
+
+afrocha ou aperta a consistência e vai tornando ali a disponibilidade mais maleável e tudo mais. Então é assim, esse local quórum aqui é um conceito que eu posso trazer em um outro vídeo, mas basicamente esse local quórum aqui é o que os bancos usam, tá? Esse local é o é o data center, tá? Então você pode ter o Cassandro em vários data centers e aí ele vai garantir o quórum daquele data center, tá? Que você tá chamando, tá?
+
+Ele não vai garantir o global. Então o all é global, todos os data centers, leia em todos os nós do fator de replicação que eu já te ensinei qual é. Se isso aqui não ficou muito claro, cara, deixa no comentário aí abaixo que eu gravo um vídeo sobre isso. Eu falo um vídeo só sobre isso aqui. Então não vou estender mais por aqui, tá? O foco aqui
+
+é que você entenda que tá, eu passei por esse lance do quórum para você entender o seguinte aqui. Você escolhe o banco de dados de acordo com os atributos que ele tem a te oferecer e de acordo com a classificação dentro do teorema. Porque de nada adianta você escolher, cara, banco consistente para aplicação que demanda disponibilidade. Não adianta você escolher banco que garante muita disponibilidade, sendo que a tua aplicação precisa de muita consistência. Ah, Renato, mas você disse aí que dá para alterar o a arquitetura interna do banco. Até dá para você alterar. você
+
+consegue fazer isso, mas tem banco que você não vai conseguir. Então fica ligado nisso aqui, porque isso é importante. Mais uma vez vou deixar o link desse diagrama na descrição, você vai poder ler isso aqui, brincar e tal. Então fica ligeiro nisso aí. Dando continuidade aqui, a gente vai ter vários bancos. O Mongo, que é um banco
+
+que é consistente, ele garante atomicidade, consistência, isolamento e durabilidade dos dados. É orientado ao documento. Ele usa raft por baixo dos panos, que é um outro conceito. Vou deixar até aqui, ó. Só você clicar aqui, ó. Você vai para uma aplicaçãozinha lá
+
+que é totalmente visual, um desenhozinho que ele vai se movimentando, você vai entender como é que o Raft funciona. O Raft basicamente ele faz o seguinte, tá? Ele vai pegar o teu mongo DB ali, ele vai eleger um líder e aí dentro de um líder, você vai, se ele ficar fora do A, ele elege uma leitura como líder, um banco secundário. Inclusive isso aqui do líder não acontece aqui no Postcre, tá? Até daria para fazer. Então o que que eu
+
+quero que você entenda aqui que a escolha do Postgre nesse nosso cenário, cara, é horrível. Postgreen não foi feito para sistema distribuído, não adianta. Ele é single node. Ele é um banco que no teorema CAP lá ele era conhecido como CA, consistência e disponibilidade, mas não garante tolerância a partição. E todo o sistema distribuído precisa lidar com partição de rede. Então não adianta você escolher
+
+post grec para sistema distribuído de larga escala, não vai dar certo. Você até consegue fazer uma uma força a mais forçando muito a barra usando um RDS ali da AWS, mas você vai gastar um rio de dinheiro, cara. Então essas são as compensações que você precisa fazer. Voltando na nossa tabelinha aqui, você vai ter vários bancos, cara. Você vai ter aqui o damo DB, que também te garante consistência forte de acordo com isso aqui, ó, o consistent read. Aí é só
+
+a configuração mesmo, configuração geral. Ou você passa o consistent read true ou falso aqui. Então, se eu quero consistência na leitura, eu ten que passar o verdadeiro. Se não é falso, vai de consistência eventual. Então vai depender se o que você tá criando é um microsserviço, vai depender se você tá criando uma aplicação inteira que precisa dessa questão aqui de você contornar a consistência, ou seja, de você trabalhar a consistência em tempo de execução de código. Ou seja, cara, eu
+
+vou fazer um select no saldo bancário, é consistência máxima, eu vou fazer, sei lá, um select nos dados do usuário que pode estar desatualizado ou um comentário, aí a gente vai de consistência leve mesmo para poder ter baixa latência e alta disponibilidade. Então é assim que você escolhe o banco de dados da sua aplicação. Vou deixar aqui um blogzinho do Cassandra lá pr você dar uma lida. Vou deixar o raft aqui pr você ler também. Dia aqui completo aqui para você brincar, pr você entender. Tabelinha do banco de dados
+
+também. Tudo isso aqui vai ficar disponível para você para que você consiga trabalhar a questão do banco. Inclusive antes de finalizar esse vídeo aqui, ó, você tá vendo Postgre aqui, ó, como CP. Postgre não é CP, cara. Post é CA. Eu coloquei ele como CP porque dá
+
+para você fazer umas mandinga aqui e tornar ele um pouco mais distribuído, mas não é o natural. Inclusive esse conceito do charging aqui que eu te mostrei do Cassandra no Postgre dá para fazer, mas dá um trabalho tão federal que se não vale a pena você fazer fazer charging do banco de dados aqui na mão. Você tem que fazer na mão, cara. Você tem que criar o algoritmo que vai entender aonde, em qual partição, em qual fragmento que tá aquele dado que você tá buscando baseado no ID. Cara, isso dá um trabalho federal, não vale a pena. Então entende que não se resume a
+
+posteggre mais cic ou mongo db que a coisa vai muito além e é isso aqui cara que vai te safar na entrevista. Se você demonstra esse conhecimento aqui na entrevista, irmão, acabou, acabou. É game change isso aqui, cara. Então fica ligado nisso aqui, porque isso aqui, cara, de verdade, é o que vai mudar o jogo para você, é o que vai te botar um passo à frente da concorrência dos outros candidatos e vai fazer você se destacar em qualquer entrevista. Inclusive, isso aqui é o conceito mais puro de system design, de arquitetura de microsserviços, de sistemas distribuídos. Não tem como trabalhar com
+
+sistema distribuído. Se você não conhece isso aqui, cara, não tem como. Então, dá uma olhada nesse material. Tem vários outros bancos aqui, ó. Tem o CCK Road DB aqui, que foi um banco feito para ser relacionalmente distribuído, tá? Um
+
+banco relacional distribuído. Esse banco aqui serve para aplicação financeira e bancária. Ele exige de forte, sistema de gerenciamento de inventário global, back end de jogos multirregião. Isso aqui serve para muita coisa. Ele usa raft por baixo dos panos. Já te mostrei ali mais
+
+ou menos o que que é o raft ali, já te falei por alto. A gente tem aqui também, ó, o Spanner B, que é um banco fenomenal, é caro para caramba esse banco aqui. Só que esse banco, ele foi um dos bancos que se atreveu a querer quebrar o teorema. Posso falar sobre isso em outro vídeo aí e tal, porque esse vídeo aqui já tá mais do que esticado. Então ele usa relógios atômicos, usa true time aqui, ele vai no microlésimo de segundo lá dentro para saber quem é o dado mais atualizado, evita a concorrência. Então esse banco
+
+aqui é monstruoso. Ele usa um conceito chamado Paxus. Aqui, ó, esse Paxus aqui é diferente do Raft, é diferente do quórum, ele até usa os conceitos por baixo dos panos, um é inspirado no outro. Posso falar sobre isso em outro vídeo mais uma vez. Tem o Redis aqui que ele usa o Sentinel, que é um outro mecanismo, tá? E aí não dá para você
+
+transformar ele. Como eu falei, ó, tem banco, você vai conseguir transformar a essência, tá? E aí geralmente vai est aqui a informação. Então, dá uma olhada na planilha. Então, é baseado nisso, cara, que você faz a escolha dos seus bancos de dados. Então, mais uma vez,
+
+deixa nos comentários abaixo qual é a tua dúvida, porque eu sei que daqui a pouco você vai surgir um monte de dúvidas aí, mas isso aqui é conceito, é a base para você começar a estudar sobre sistemas distribuídos. Sem isso aqui, esquece, não vai ver sistema distribuído, você vai se estrepar ou vai fazer merda, vai escolher sistema errado, vai escolher banco de dados errado em produção e vai ter problema depois. Então vem na minha, só te coloco na boa, tu sabe disso. Dá uma olhada na descrição, vou deixar embaixo, vou decer esse diagrama aqui que vocês pediram para caramba lá na outra aula. Não esquece também de assistir a outra aula lá do vídeo de 1 milhão de usuários. E
+
+por fim, a gente vai ficando por aqui, beleza? Bom, e agora que você aprendeu a utilizar os teoremas CAP e Passel que, fazendo as compensações corretas entre consistência, disponibilidade, baixa latência da tua aplicação e tá muito mais preparado para começar a trabalhar com sistemas distribuídos, deixa teu like aí, se inscreve no canal, ativa o sininho para tu não perder nenhuma notificação. Não se esquece também de dar uma olhada no mapa do arquiteto, um guia de carreira completo que vai te conduzir do absoluto zero até o arquiteto de software. Então não deixa de dar uma olhada. Vou deixar o link na descrição. Se ficou qualquer dúvida,
+
+deixa nos comentários abaixo que eu faço questão de responder e eu sei que vai surgir dúvidas. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve. Yeah.

@@ -1,0 +1,106 @@
+---
+video_title: "AMAZON divulga RELATÓRIO sobre o PROBLEMA: ENTENDA o que ACONTECEU no GRANDE CRASH da AWS"
+video_id: 5NFId0TP3bg
+channel_name: "safesrc"
+channel_id: UCWFmlmegFcu6lvAmeBtV3cg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5NFId0TP3bg
+video_date: 2025-10-24T12:30:07+00:00
+video_description: |
+  Mais informações: https://safesrc.com
+  
+  Quer ajudar?
+  
+  Doações em Bitcoin: bc1qk67xsekuhfweu3c5pwqraj9vrgs8h4jhyyuxtd
+  
+  Referências:
+  
+  https://g1.globo.com/tecnologia/noticia/2025/10/21/mais-barato-e-mais-antigo-como-falha-em-um-data-center-da-amazon-afetou-ifood-mercado-livre-e-mais-centenas-de-empresas.ghtml
+  
+  https://x.com/copyconstruct/status/1981192300819862000
+  
+  https://viewdns.info/dnsreport/?domain=safesrc.com
+  
+  https://aws.amazon.com/message/101925/
+  
+  https://www.techtarget.com/searchstorage/definition/race-condition
+  
+  https://aws.amazon.com/pt/route53/
+---
+Esse é o Safe Source e nós vamos falar agora sobre a explicação final da WS, sobre o problema que aconteceu alguns dias atrás, né? Você lembra? Alguns dias atrás a a WS caiu, particularmente o US East One, que é uma região de data centers ali da Amazon, é a principal região de data, é a primeira, tá? É a região principal de data centers da nuvem da Amazon. Ela caiu, teve problemas. Eh, eh, isso impactou o
+
+Dinamo DB, que é o sistema de registro de informações da Amazon. Com isso caiu um monte de site no mundo inteiro, né? E, eles resolveram inicialmente um problema, mas aí gerou um outro problema. O fato é que ficou várias horas a Amazon fora do ar e com isso inúmeros sites fora do ar. Muita gente apavorada com o fato de que, caramba, né, eu não consigo nem usar minha cama.
+
+Minha cama parou de funcionar porque exigia contacto com a com a eh eh um servidor da da Amazon e a WS fora do ar. E esse negócio da cama é é um absurdo isso, né? Inclusive, eu vou fazer um vídeo sobre isso lá no canal An Capsul, porque realmente é é muito engraçado essa história. Eu vou deixar o link do vídeo aqui na descrição desse, caso você queira ver esses outros impactos externos aí dessa folha da da WS, né? Mas nesse vídeo aqui a gente vai falar sobre, afinal o que que aconteceu, né?
+
+Qual foi a causa? Segundo o relatório da Amazon que ela deu aqui a o relatório dela aqui explicando tudo que aconteceu especificamente nessa falha. Muito bom da Amazon ser bastante clara sobre o que aconteceu. Vamos entender esse assunto aqui porque olha, eu vou ser sincero com vocês, dizer que isso pode servir para você como alerta, não, não pode, tá? Porque a verdade é que a escala da Amazon é uma outra escala completamente diferente. Nenhum dos problemas que você
+
+tem como desenvolvedor ou que eu tenho como desenvolvedor, que nós temos aqui no Brasil chega perto da escala da Amazon. Mas tem algumas dicas aqui que são interessantes. Essa notícia foi sugerida por artigo primeiro, não contrate ninguém via CLT, Bitman e várias outras pessoas. Obrigado aí ao pessoal que sugeriu notícias lá no nosso site. No safesource.com, é safesrc.com.
+
+E obrigado a você também que tá assistindo o nosso vídeo. Se você gosta do nosso conteúdo, por favor, deixa o seu like e se inscreva aqui no canal, né? Então, na descrição vai tá o link do vídeo lá do OneCaps que eu vou falar sobre as consequências dessa falha. Cadeira que parou de funcionar, mesa que parou de funcionar, cama que parou de funcionar. Quem diria que a gente teria problemas desse tipo um dia, né? E as
+
+visões disso pro futuro. Aqui a gente vai falar tecnicamente sobre o que que causou o problema, né? Enfim, tá aqui saiu o relatório da WS que saiu ontem, né? É um relatório bastante extenso. Eles detalharam muito bem aqui o que que aconteceu. E o problema, segundo eles
+
+estão dizendo aqui, foi uma condição de corrida, né? Uma hace. Condição de corrida é justamente quando você tem dois processos que tentam fazer a mesma coisa e um começa a competir com o outro e um acaba corrompendo o que o outro tá fazendo. É exatamente isso que aconteceu. Segundo eles estão dizendo, que causou todo o problema, né? Então,
+
+primeiro eles começam a explicar aqui que eh o problema maior foi justamente um alto alto índice de erros no dynamo DB, né? O banco de dados dynamo que a a Amazon tem. É um banco de dados muito simples, não é um banco de dados relacional como SQL serve, coisa tal, mas é um banco de d banco de dados com muita capacidade para tratar bilhões de requisições por segundo, esse tipo de coisa, né? Então é um um e ele tem muita capacidade, mas é para informação simples, informação de configuração e coisa e tal. Pois bem, o que que aconteceu? Segundo eles estão dizendo
+
+aqui, em determinado momento aconteceu uma condição de contorno em aplicativos que atualizam o DNS, né? O DNS vocês sabem, são os domain name servers, né? Ou seja, são os servidores de domínio. Todos os nomes da internet, por exemplo, aws.com e coisa e tal, isso aqui, na verdade, é um IP, tá? Isso aqui tem um IP associado
+
+a isso daqui, um aquele conjunto de quatro números, né? Você sei lá o qu ponto sei lá o qu ponto sei se lá o qu ponto sei lá o quer ver, ó? Dá pra gente ver aqui, ó. É só você chamar aqui o eh o navegador, o o console, né? NS Locup Amazon.com.
+
+Então tá aí, ó. Amazon.com é 98.87.70.71
+
+ou pode ser pon74 ou pode ser 185 também tem um outro número aqui diferente, né? Então ou seja, por quê? Porque o seu navegador na verdade, né? A internet, na verdade, ela funciona com esses números aqui, tá? Amazon.com não quer dizer
+
+nada. Então, ele tem que primeiro traduzir esse nome para os números e daí ele faz essa conexão, né? Só que o DNS tem outras informações também, não tem só esses esses o endereço do eh do servidor, tem outras informações referentes ao servidor também. Por exemplo, só para dar um exemplo para vocês, eu peguei aqui o site eh safesource.com, que é o nosso site aqui, né? Então, a gente tem um DNS,
+
+evidentemente, e aí tem um monte de informação aqui. Tem o nome do do o IP desse desse meu servidor, evidentemente tem que ter para você poder chegar lá no site, mas tem mais um monte de informação aqui para eh ser usada aqui. Enfim, eh, um monte de coisas aqui, né? Então, o que que a Amazon fala, né, que ela ela usa um monte dessas informações no DNS para alimentar os servidores de balanceamento de carga dela, outros sistemas dela que ela usa lá internamente para conseguir atender essa coisa toda, né? Como eu falei para vocês, o grande o grande apelo da nuvem, né, da da WS é justamente que você não não precisa se preocupar com isso. Você
+
+sobe o seu servidor lá e aí questão de ah, precisa, tem muito acesso no seu servidor. Eles multiplicam o seu servidor, botam em várias máquinas e dão um jeito de atender. Então eles têm um balanceamento de carga, tem um monte de coisa que eles fazem tudo automaticamente, né? Só que como resultado disso, eles precisam atualizar essa tabela do DNS com muita frequência. tá atualizad as tabelas de DNS com muita frequência dos sistemas dessa dessa e dessa área, né? E particularmente o que
+
+que acontece? Esses esse sistema aqui é um particularmente sensível, foi o que deu problema, o dynamodb.com.
+
+Esse cara aqui foi o cara que deu xabu no final das contas. Como é que foi o shabu dele? Como eu falei para vocês, a foi uma condição de corrida, né? Uma race condition. Eh, eh, a a Amazon ela faz o seguinte, ela ela publica, ela prepara, ela tem um um sistema que lê a situação, a configuração da internet e calcula qual que seria a melhor configuração para balanceamento de carga e coisa e tal. Aí ela prepara um plano
+
+de DNS para ser aplicado nos serviços daquela região. E daí tem os robozinhos que vão lá e começam a ler esse plano e começam a implementar esse plano, aí no realmente no registro de DNS e alterar o registro de DNS para essa nova realidade que foi calculada pelo sistema lá interno deles, que é a melhor para o balanceamento de carga, né? Só que o que que acontece? Eles fazem essa mudança várias vezes ao dia, porque de novo é é a política deles. Para você ter uma eficiência máxima nessa história, eles fazem esse cálculo várias vezes ao dia, né? E aí, como é que você evita que sem
+
+querer um robô faça um e aplique um plano antigo? Eles não deixam isso. O que que eles fazem? Eles, o robô sempre aplica o último plano que foi criado e depois que você tem três ou quatro planos ali na já criados ali, ele joga fora o anterior. Ele joga fora os outros porque tá muito antigo esse plano, né?
+
+Então, normalmente isso funciona muito bem. Por quê? Porque o robozinho que eles chamam aqui de connect, né? Aqui, ó, connect é o nome do robozinho que eles falam, que eles fazem aqui. E usa o Hout 53, que é o DNS ENCOR, não é Connect, não, Ennactor. O DNS ENCOR, que
+
+usa o Amazon Hout 53, que é um serviço para alterar DNS. Então, o DNS Enactor é esse robozinho que lê o último plano que foi feito pela otimização lá e sai aplicando no DNS de vários sites lá da da Amazon, né? Normalmente é uma coisa que dura poucos segundos, então antes de criar-se um plano novo, o plano antigo já foi aplicado, né? Não não tem problema nisso, né? Só que aí o que que aconteceu especificamente nesse dia, né?
+
+Um desses robôs, um desses enactors estava aplicando um plano, só que ele teve várias demoras, teve vários timeouts, teve várias situações em que ele não conseguiu aplicar o plano. E aí atrasou para caramba. Nesse meio tempo, ele ficou preso para alterar alguns DNSs. Quando finalmente liberava o DNS, ele passava pro outro DNS. Teve problema também no outro DNS. Então ele acabou
+
+atrasando muito. Nesse meio tempo, o planejador criou quatro ou cinco novos planos de DNS. E aí em e aí o plano dele foi jogado fora, foi descartado, ficou vazio, não tinha nada. Aí o que que aconteceu? O plano mais novo que foi criado, passou um robozinho correndo na frente dele e acertou tudo, botou pro plano mais novo. Só que ele continuava
+
+executando. Ele tava lá atrás lerdinho, devagarzinho, coisa e tal. Aí quando chegou no Dinamo DB, no DLS desse cara aqui, que ele foi aplicar o plano dele, lembra? O plano dele foi apagado porque já era muito antigo. Ele tava perdido ali, enroscado ali há muito tempo.
+
+Antigo a gente a gente não fala assim no no como se fosse dias, não é coisa de minutos, porque normalmente essa operação dura segundos, né? Então o caso dele já tinha minutos que ele não conseguia avançar. E daí ã quando ele chegou nesse plano, que ele foi aplicar o plano no Dinamo DB US, o plano tava vazio porque tinha sido descartado. Eles descartam exatamente para evitar que você aplique planos antigos. Só que aí o robozinho continua tentando aplicar o plano antigo que não existia mais. E daí
+
+zerou o DNS do Dinamo DB e isso causou o primeiro problema da história, né? Aqui, ó, ao mesmo tempo que esse processo de limpeza foi invocado, né, foi chamado, ou seja, de tirar fora os planos muito antigos, esse ENactor, que tava muito atrasado, muito atrasado mesmo, eh aplicou esse plano muito antigo em vários pontos do DNS, sobrescrevendo o plano mais novo e, no caso, apagando algumas vezes, como não tinha mais plano, né? Como esse plano foi deletado, todos os IPs, os endereços, IPs, né, que é aquele endereçozinho lá, sei lá o quê, ponto sei lá o qu sei lá o qu ponto sei lá o quê, eh, foi imediatamente removido. Então, não tinha mais o Dinamo DB, que é uma ferramenta central da WS, não tinha mais o IP dela resolvido e aí ninguém mais conseguia conectar. E aí começou a cair um monte de gente em sequência, porque os outros sistemas todos usavam a Dinamo DB, o Dinamo DB não tava disponível e daí, né, não funcionava e dava problema, né? Aí ele
+
+fala dos outros problemas aqui, ó. Ah, por que que o SC2, que é o Elastic Cloud, eh, deu problema, né? O Elástic Cloud, vocês sabem, é, é a nuvem em si, né? É o serviço que você coloca um servidor lá, ele é replicado, aumentado, diminuído de tamanho, conforme a necessidade. Daí o termo elástic, né? E
+
+o que que aconteceu? Ele falou que teve latências, teve problemas e coisas e tal, mas justamente por conta da do Dinamo DB, né? O Dinamo DB, porque ele usava o Dinamo DB para armazenar alguns parâmetros. Como o dinamo DB não tava não tava funcionando, a coisa não funcionou, né? E aí o que ele fala que gerou o problema posterior é que quando eles restauraram o dinamo DB, um monte de requisições do Elástic Cloud para replicação de de coisa começou a acontecer. Por quê? Porque lembra eh eh
+
+tinha um monte de requisição que tava chegando na na naquele computador e não tava sendo resolvido porque não funcionava com elastic cloud. Aí, né, aquilo começou a registrar no sistema que tinha uma demanda muito alta para aquelas máquinas. Quando o dinamo DB voltou, havia uma tentativa das maquininhas de se replicar várias vezes, né? Porque, né, teoricamente ele tá entendendo que tem um monte de de processo que a máquina não tá dando conta, então tem que replicar. E isso aconteceu com milhares de máquinas ao mesmo tempo. E aí que causou outro
+
+problema, aquele outro problema que voltou tudo a cair de novo, justamente porque, né, quando eles resolveram o dinamo DB, essa esse esse monte de requisições que tava parada, que tava acumulada, de repente explodiu e aí eles tiveram que de novo dar um jeito de parar as coisas, de escalonar a coisa para para eh eh não gerar esse problema, né? Enfim, teve outros problemas aqui também do network load balancer, teve problema em outros serviços da WS, tudo decorrente do problema original. O problema original, como eu falei, foi o dinamo DB, foi a atualização do DNS do dinamo DB, né? Bom, o que que tem de boa notícia nisso daqui? Não foi um ataque, foi um problema, um erro, é verdade, um erro chatinho, né? Porque o ENCTR que
+
+ficou encalacrado ali, ele deveria perceber que ele tá encalacrado e parar de fazer as coisas, né? Não, olha, deu errado, demorou muito tempo, já deve ter um plano novo. Vou parar por aqui. Ao invés de tentar continuar fazendo o plano antigo dele, que já nem existe mais, ou no mínimo dever desistir, perceber que ol, o meu plano não existe mais, então porque tem alguma coisa errada, é para eu parar de fazer esse negócio, não ficar botando zero nas coisas, né? Eu imagino que isso tudo foi corrigido lá, né? É, é aquele caso, é um
+
+caso que simplesmente é muito raro de acontecer, porque é uma operação que normalmente é muito lenta, né? Enfim, então o fato de não ser um ataque é uma coisa positiva, é o que vai ser consertado e coisa e tal. Outro outro lado ruim é você e e essa é a dica que fica para nós meros mortais, né? A gente se preocupar com esse tipo de problema, assim, condição de corrida pode acontecer em qualquer software, tá? Tem que tomar cuidado com o seu software, pode ter mesma condição de corrida. Mas
+
+e a verdade é que ninguém tem problema nesse nível, só a Amazon mesmo, ou talvez a a Zuri da Microsoft ou a a Google Cloud que vai ter problemas nesse nível, né? Porque realmente são sistemas massivos, muito grandes mesmo. Então, eh, mas pra gente vale a pena você se preocupar com esse tipo de coisa, principalmente de não confiar cegamente num end point que tá na WS. Tem que ter uma uma condição de saída, né? Como a gente vai falar sobre o caso lá nas camas, né? O, pô, não é possível que a
+
+pessoa, porque caiu a WS, a pessoa não consiga mover a cama dela, pô. OK, eu entendo o que você quer registrar, o que que a pessoa tá fazendo de configuração e coisa e tal, mas alguma coisa você tem que fazer no caso de falha. de um end point na internet, de você não conseguir conectar na internet, né? Outra coisa também, essa situação de demora na na conexão de delay muito grande, que você tem que tem que prestar atenção nisso também, né? Isso tem que ser planejado no seu sistema. O que que acontece caso
+
+o sistema demore ou fique e não responsível? Eh, não dá para assumir que vai funcionar 100% das vezes. Por mais que a Amazon tem uma excelente capacidade, né? Raramente você tenha down time com a com a Amazon, né? que ela fique, ela caia. Muitas vezes ela tá
+
+funcionando, mas eventualmente você pode ter problemas, tem que desenvolver o seu software contando com essa possibilidade. Se chegou até aqui e gostou do conteúdo, clique no like, se inscreva no canal. Isso me ajuda a ganhar relevância no YouTube e levar o tema da segurança no desenvolvimento de software a mais pessoas. Obrigado. Considere também clicar no sininho e pedir para ser notificado dos novos vídeos. Caso queira
+
+sugerir uma notícia para falarmos aqui, é só ir no nosso site https2.2/ssafesource.com du/sfesource.com, safesrc.com e clicar em sugerir uma pauta, colocar o link da notícia ali. Agradeço a todos
+
+que nos ajudam a fazer esse programa.

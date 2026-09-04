@@ -1,0 +1,171 @@
+---
+video_title: "Seu Agente de IA É BOM MESMO? Conheça a técnica LLM as a Judge"
+video_id: Xr-IWF4GIiU
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Xr-IWF4GIiU
+video_date: 2025-04-30
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo exclusivo : https://www.rhawk.pro/
+  Comunidade (Início 08/05/2024): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  Seu agente de IA é realmente bom? Descubra como avaliar objetivamente a qualidade das suas soluções de IA generativa com a poderosa técnica "LLM as a Judge". 
+  
+  Neste vídeo, uso langgraph e demonstro como usar  LLM para comparar respostas de diferentes modelos (como Gemini, Deepseek e GPT-4) ou prompts, automatizar testes e eliminar o viés na avaliação, garantindo que seu agente de IA entregue os melhores resultados.
+  
+   Ideal para desenvolvedores, empreendedores, profissionais e até iniciantes que desejam construir e aprimorar aplicações com Large Language Models (LLMs) de forma profissional  tendo qualidade desde o desenvolvimento até o ambiente de produção.
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:23 Demonstração do Agentes de IA e LLM as a Judge
+  1:34 Entendendo o código do agente e o Langgraph
+  5:49 Por que qualidade é Importante?
+  9:37 Entendendo os resultados
+  11:56 O que é LLM as a Judge afinal?
+  15:39 Comentando o Paper do LLM as a Judge e o problema do low code
+  18:31 Engenheiro x Cientista x Comunicador/Vendedor no mundo de IA
+  22:30 Resultados no LangSmilth
+  23:09 Você também pode construir
+  
+  ––– Agência –––
+  
+  A melhor agência de IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #teste #agentesdeia #python #langgraph #qualidade
+---
+O seu agente de inteligência artificial é realmente bom? Tem certeza? Se você não sabe me responder essa pergunta de maneira clara, você tem um problema. E o meu objetivo nesse vídeo é te mostrar um dos métodos que você pode usar para garantir a qualidade da sua solução. Então vamos embora pro vídeo. É, vamos
+
+começar aqui desse agente. Nós vamos usar ele ao longo do vídeo que ele é um agente responsável por receita. Vamos imaginar que a gente que nós estamos desenvolvendo uma solução para criar receitas. Ele pega o que eu tenho aqui na minha geladeira, a gente joga ali e ele deve criar uma receita pra gente. O objetivo nosso aqui na hora do desenvolvimento é descobrir qual LLM dá as melhores respostas, tá? E eu vou
+
+explicar como a gente faz isso e como a gente pode automatizar isso. De modo que ao invés de confiar no seu gosto ou no seu buas, eu gosto mais da Open AI, eu gosto mais do cloud, você vai botar diferentes modelos com diferentes prometes, com diferentes parâmetros e a gente vai automatizar o teste e vai descobrir qual é o melhor pro nosso caso, tá? Então vamos começar aqui. Que que vai acontecer? Eu tô mandando a querer para ele, que ali tem o queijo, o vinho branco e amêndoas. e ele vai
+
+mandar essa query para duas LLMs ao mesmo tempo. Enquanto esse cara aqui tá rodando, eu vou mostrar para vocês o código. Depois a gente volta aqui, ver a resposta e ver o que aconteceu, tá? Então, por enquanto é isso aí. Deixa esses caras eh trabalhar. Vamos lá,
+
+vamos ver o código, tá? O que a gente faz aqui é calma aí que eu tô no lugar errado. Vamos lá. O que a gente faz aqui é o seguinte, é, eu uso LSM para trequear meus projetos. Então, se você não sabe que Link Smith é uma plataforma apropriada para desenvolvimento de soluções profissionais com inteligência artificial, principalmente LLMs. OK?
+
+Beleza, né? Eh, então vamos lá. Qual é o prompt? N, como eu falei, esse aplicativo aqui seria um aplicativo eh um cozinheiro virtual, então um cozinheiro especialista, gera receitas, parará, parará. E eu falo que o cara, além disso, tem ingredientes comuns em toda casa aí, manteiga, galho, tudo bem.
+
+Então, é, a função dele é eh criar o passo a passo, né? Então, pro cara cozinhar, ele tem um passo a passo a seguir e com aqueles ingredientes, ele deve criar a melhor receita possível, tá? Beleza? Aqui, chamada estado. O que é o estado? O
+
+estado é exatamente, ah, vamos abstrair um pouquinho aqui, seria nossas variáveis, a nossa a variável do nosso agente, que seria ele cham de estado num grafo, tá? Esses carinhas aqui são muito, muito importantes. Eu não falei deles a fundo ainda, né? Mas eu pretendo falar. Mas guarda essa informação, isso aqui é muito importante. Então, a gente
+
+vai dar a querer que é a nossa pergunta, a Llim vai dar a resposta, a Ll1, a Ll2. E no final a gente vai ter um critério automático para avaliar qual é a melhor resposta. É isso que vai acontecer aqui. No final a gente vai ter todos esses estados preenchidos e vai ser a nossa resposta final. Muito bem. Então, vamos
+
+lá. LM1, o que que ele faz? Ele recebe o prompt, né, o prompt universal lá que a gente viu, ele recebe a querer como você ver aqui. Ele chama lá o Gemini 2.5 Flash, que a gente tá usando aqui nesse exemplo, e ele atualiza o LLM1.
+
+Perfeito. O LLM2 faz exatamente a mesma coisa, tá? Ã, e então vamos entrar aqui no juiz, que seria o nosso cara aqui, tá? Seria o nosso cara aqui. O que esse cara faz? Você vai olhar aqui e esse
+
+template dele, que na verdade é o prompt dele, tá em inglês. Você vai falar: "Ron isso não faz nenhum sentido, ele tá em inglês." Tem um motivo, eu vou explicar para você porque esse template aqui está em inglês. Mas basicamente é o seguinte, a gente fala para ele, baseado em certos critérios, avaliar qual é a melhor resposta, se é a resposta A, se é a resposta B, ou se ele achar que elas estão empatadas, ele vai dar o C. E o que que a gente faz aqui? a gente passa
+
+a querer então ele vai saber o que foi perguntado e baseado nisso, ele vai olhar a resposta da um, ele vai olhar a resposta da dois e finalmente vai chegar à sua conclusão. E para esse cara aqui eu estou usando o GPT, ele quis quis completar aqui, né? Eu tô usando o GPT 4 ou e tem um motivo também para isso e eu vou explicar, tá? Ah, Ronald, esse código é complicado. Eu não tô entendendo nada disso que tá acontecendo aí, etc. Foca na ideia primeiro, tá? E
+
+para quem já tá pronto, para quem já quer desenvolver, para quem quer fazer soluções de verdade, ah, a comunidade tá aí, ela vai ser aberta no dia 8. Ah, e assim que as vagas eh foram preenchidas, eu vou fechar. Eh, a ideia da comunidade é ser um ambiente fechado para quem desenvolve de verdade, tá? Eu tenho falado com diferentes pessoas, tem sido muito legal trocar ideia com vocês, eh, sobre a galera que já bateu num teto de tentar usar soluções no code, low code e tal, eh, e tá tentando evoluir as soluções. Então, nesse espaço aqui é pra gente eh falar abertamente sobre o que a gente tá fazendo, trocar ideia. E uma
+
+das coisas que eu vou botar lá é código, código assim, né? Então eu vou botar esse template lá e templates mais avançados vão tá lá e a gente pode discutir de um ponto de vista eh de quem já entende o que tá acontecendo. Então vamos lá. Mas se você não não tá nesse nível ainda, sem problema nenhum. Ah, tem bastante conteúdo aqui na biblioteca também, é gratuito, é que você pode ver aqui, tem conteúdo, tem código gratuito aqui e tudo. Então você vai lá e usa o
+
+que for melhor para você. Então beleza, a gente já falou sobre isso, agora a gente vai falar sobre qualidade, afinal por isso é importante porque você faria isso, R, por você testaria. Então, primeiro a gente vai falar aqui do ponto de vista de negócio. E é o seguinte, aqui eh, como a gente fala de soluções profissionais, a gente mistura e tanto a parte técnica, eu sou engenheiro de formação, né, em computação, eh a gente fala da parte de negócio também, obviamente. Então, por que você deveria se importar com qualidade? E a questão é
+
+o seguinte, toda vez que você faz uma nova venda, só um minutinho, toda vez que você faz uma nova venda, acontece o seguinte processo. Muit das vezes, se você nunca vendeu algo, e isso é um dilema comum entre os nossos companheiros desenvolvedores que vão tentar vender algo e nunca venderam, ou se você já tá acostumado a vender, também vai passar pelo mesmo processo. Muit das vezes no começo, você tem mais dificuldade em fazer vendas, né? você vai fazer um esforço, mas pode imaginar que a a venda aconteceu. E o que vai acontecer? Tem
+
+duas opções. O seu produto tem uma boa qualidade ou seu produto tem uma qualidade ruim, tá? Se o teu produto tem uma boa qualidade, você tem um CAC mais baixo. O que que seria o CAC? Seria o custo de aquisição do cliente. OK?
+
+A tendência é que se você cria serviços bons, principalmente serviços de software, né, é o que a gente tá fazendo aqui, é software, eh, e no nosso caso, agente, o que vai acontecer é que você vai ter maior margem, ah, e melhor reputação. Por que você vai ter melhor, maior margem? Porque provavelmente os seus clientes, outros clientes vão vir através de indicação e como você tem uma boa reputação, ah, o seu nível de cliente também é diferente. Se o seu produto não tiver a qualidade, o que você vai ter que fazer é inevitavelmente apelar para marketing agressivo. Provavelmente você já viu marketing agressivos aí na internet quando assunto são agentes de por exemplo, né? E não existe nenhum
+
+problema com marketing, tá? Nenhum. Você precisa de marketing no seu negócio. A questão é, se o teu produto não tem qualidade, só te sobra marketing agressivo. Você vai ter que investir muito dinheiro em propaganda, tá?
+
+E mostrar o máximo possível paraas pessoas até fechar vendas. Aqui você trabalha com eh qualidade, né? E aqui você trabalha com volume. E aí se você decidir esse caminho aqui, boa sorte, é, eu tô falando pra galera que quer ficar do lado de cá, beleza? Então, beleza. E qual é a vantagem? Você tem
+
+menos dependência de marketing. Então, e isso é ótimo. Então, se você quiser fazer uma campanha de marketing para crescer, você faz. senão você continua tendo clientes e tendo eh eh fluxo de caixa sem a necessidade de marketing agressivo. É, você tem uma taxa de conversão mais alta, porque se alguém chegar por você por indicação, eh, e ele já vem com o aval de alguém, né? Conheço
+
+alguém que faz um agente muito bem, ele funciona bem, ele é bom, etc, etc. é diferente. E você tem clientes mais qualificados, obviamente você, a sua lista de clientes eh começam a ser pessoas eh com maior poder aquisitivo, clientes que são de melhor qualidade de fato, porque muit das vezes, por incrível que pareça, o cliente que paga mais é o melhor cliente, não pelo valor que ele te gera, mas porque é um cliente que trabalha junto com você de maneira mais agradável, é um cliente que dá menos problemas, é um cliente que faz questão de fato de construir algo é bom. E esse cliente muita das vezes do lado de cá é um cliente que quer eh um produto a preço zero, basicamente, e ele eh enfim é uma pessoa às vezes muito difícil de trabalhar. Então faça sua escolha sabiamente. Então beleza, já
+
+expliquei porque a qualidade importa. Então vamos voltar aqui pro código, né? E a gente vai ver o que aconteceu aqui, tá? Eu vou explicar para vocês tintim por tintim. A gente vai ter essas duas respostas aqui. E como vocês viram, elas
+
+rodaram em paralelo. O que aconteceu? Eu mandei a querer a uma query e um um pedaço desse meu meu workflow aqui chamou a API do Google, a outra chamou a API do Dipsic, eu tô usando V3 aqui, tá? E trabalharam paralelamente, independente uma da outra. E no final as duas aqui, como a gente vê aqui no no gráfico, né? As duas deram essa resposta
+
+pro juiz e o nosso querido juiz eh foi lá e começa a resposta dele. O assistente é A, assistente B. Aí se você não não não entende iglês, não tem problema, que eu vou fazer aqui um resumão. E no final ele primeiro dá a justificativa, né? Porque ele deu a resposta dele, ele faz a análise e no final ele escolheu a resposta A. E aí
+
+você deve estar se perguntando, que loucura é essa? Você pode confiar nisso? Você tirou isso da sua cabeça, Ronald? você tá inventando. Ninguém faz isso na internet, você tá completamente louco.
+
+Então, deixa eu te mostrar aqui, cara, né, para não ficar só na minha palavra. Eh, e vamos ver aqui. Ah, deixa eu antes rodar um negócio aqui, né? Antes de eu entrar na explicação teórica sobre isso aqui. Eh, você deve estar se perguntando: "OK, mas você rodou manualmente? Você botou a querer ali e e
+
+executou uma vez?" O que a gente pode fazer agora é melhorar isso aqui, né? A gente vai aqui. Deixa eu, deixa eu ver onde é que tá meu código aqui. Um segundinho. E vai lá, vai lá. N bate
+
+teste Python. E a gente faz isso. A gente roda um teste agora, eh, com muitas perguntas de uma vez só. Enquanto a gente fala aqui, conversa, vai tomar um café, sei lá, vai dormir, eh, você roda um teste automatizado, né, com muitas perguntas diferentes, com muitos tipos de interação. Eh, e você no final vai ter um dado estatístico de quantas vezes ele vai ah preferir uma LLM e quantas vezes ele vai preferir outro. Deixa eu só te
+
+mostrar o teste aqui rapidinho. Então, basicamente, eu tenho aqui acho que cinco perguntas, seis, não sei. Eh, e ele vai rodar isso aqui sozinho. Eh, ele vai verificar se qual é a resposta, se é A, se é B, se é C. e ele no final vai gerar um CSV pra gente. Então a gente
+
+consegue fazer uma análise depois a posterior. Então, muito bem, né? É isso que acontece aqui. Então, vamos explicar o que que é essa técnica. Na verdade, ela é uma técnica de avaliação de produtos com LLM. Então, se você tá
+
+usando IA generativa e usa LLM, eh, você pode se beneficiar do uso dessa técnica aqui. Eh, diferente das técnicas de machine learning, se você não conhece machine learning a fundo, não tem problema. Eh, a gente lá em Machine Learning, a gente tem técnicas como a curácia para para testar quando a gente faz o modelo. E aqui a gente não tem essa precisão, porque uma resposta pode ser certa diversas maneiras. Por exemplo, uma receita, ela não é certa nem errada, a menos que ela usasse um ingrediente que não existisse ali na lista, né? Mas ela
+
+pode estar melhor ou pior, né, de maneira respondida. E é exatamente aí que o LLM como juiz brilha, porque a gente passa critérios e ele avalia segundo esses critérios, tá? humanos podem fazer essa tarefa, tá, de ficar avaliando. Por exemplo, eu posso pegar eh o meu agente eh e dar duas respostas ali e chegar para uma pessoa, tá? Uma pessoa de fora e falar assim: "Olha, cara, olha a resposta A, olha a resposta B e diz aí o que que tu acha, qual que é melhor, né? Não pode ser você, ah,
+
+inclusive, eh, você desenvolve sua solução, você avalia, fiz isso aqui, o PromT Ronald respondeu e tá bom, você tem baias, cara. Você não pode avaliar o que você fez. Tá, né? É, é diferente de fazer um software convencional que você faz um teste unitário. É, você tem um bajas, você pode gostar mais de uma linguagem, mais de outra, você pode achar que o seu agente é o máximo. Se
+
+você não pode contar com pessoas externas ou pessoas de fora, alguém da sua equipe para avaliar a resposta do seu agente, ah, isso aqui é um método ótimo, porque você meio que se libera da responsabilidade, você olha o número e você vai avaliando. Então, como eu fiz o teste ali com é duas LLMs diferentes, eu poderia fazer com duas LLM iguais e na verdade trocar o prompt delas. Por exemplo, eu faço um prompt A e um prompt B e vamos ver qual é a resposta melhor. E você vai refinando a sua solução assim. Não é da tua cabeça, não é, ah, eu sou o sinistrão do prompt, não é assim, cara. Você vai fazer um prompit,
+
+obviamente bom, você vai procurar fazer o melhor prompível, mas você vai testar e vai avaliar até você chegar o resultado ótimo. É assim que se constrói boas soluções, beleza? Ah, pode ser usado tanto em desenvolvimento quanto em produção. E eu vou explicar como aqui em sequência. Eh, ele se baseia nesse princípio, claro aqui, cara, que é mais fácil criticar do que criar, obviamente. Então, se a LLM é
+
+capaz de criar, eh, ela é capaz de criticar, porque, né, criticar é sempre muito mais fácil do que criar. Então, beleza, existem tipos diferentes de LLM como juiz, tá? A primeira aqui é a parise e é a que a gente tá fazendo. Dá duas, 3, 4, 10 opções, fala para ele escolher uma e é isso. Uma vencedora.
+
+acabou ou o empate, né? No caso ali, eh, a gente tem a classificação de respostas. Essa aqui é boa para usar em produção. Eh, você se l solicita baseado numa resposta, por exemplo, você tem seu agente, ele vai logando respostas ali, você roda o LLM como juiz uma vez ao dia, eh, avalia as respostas aí dentro de um critério eh, me dá uma nota e vê se quanto a resposta tá boa. E aí você tem um score e você faz uma análise estatística, tá? Eh, por último, essa
+
+aqui é uma muito boa para querer queries não, has. Eh, você fez uma reg, eh, como que você vai avaliar ela? Você faz a pergunta, você dá um contexto de documento pro seu juiz e avalia, cara, essa resposta corresponde a esse documento que tem aqui e ele vai avaliar e você pode simplesmente e eh chegar à sua própria conclusão. Beleza? Mas, Ronald, de onde você tirou essa ideia?
+
+Você tá inventando? Não tô inventando, tá? Eh, esse aqui é um paper, eh, é o paper que se baseia no que eu tô falando aqui. Eu não estou inventando nada da minha cabeça, né? Eu ainda não estou louco, não serei louco, né? Eh, então,
+
+muito bem. Eh, e ele fala aqui o seguinte, ó. O nosso resultado revela que o LLM conjuiz com o GPT4 eh pode eh alcançar um resultado parecido com o humano em 80%. Então, a gente estatisticamente tem algo parecido com humano, só que com computação, com LLM, a gente pode escalar e a avaliação. Ao invés de depender de você, do seu coleguinha, da do seu time, você automatiza o teste e você pode fazer testes massivos. Eh, com isso aqui, ah,
+
+vamos dar uma olhadinha no paper que eu quero mostrar um negócio para vocês. Eh, o paper é de 2023, gás. E é o seguinte, nós que estamos construindo com RLMs, estamos na fronteira do conhecimento, tá? Então nós precisamos, se possível, ter contato com essas coisas. Ler paper. Ah,
+
+não gosto de ler paper. Então procura alguém que lê para você mastiga, sei lá, né? A questão é, se você ficar, por exemplo, e aí é a questão do low code, no code, usando ferramentas que estão lá embaixo, eles precisam, você precisa de aprovação de um monte de gente para implementar para um dia você começar a usar. E a questão é que o nosso ambiente anda muito muito rápido. Então você de fato vai ser o o o último da fila. E quando você começar a
+
+implementar uma fiture nova, pode ser que ela fique velha e a galera já tá andando para um lado e você tá andando pro outro. E é exatamente isso que tá acontecendo com quem faz a gente com N8N. Eu já falei isso aqui, quem constrói com N8N inevitavelmente vai ficar para trás e e à medida que isso tá acelerando é inevitável, tá? E eu queria mostrar para vocês aqui o prompt, tá? O o prompt que eu tô usando lá é exatamente o prompt que a gente tem aqui no Já passei do prompt. É exatamente o
+
+prompt que a gente tem aqui no Ai, meu Deus do céu. Que a gente tem aqui no paper. Deixa eu achar o prompt aqui. Ah, eu devia gravar os vídeos de óculos, né, cara? Porque fica mais fácil para ver as coisas. Deixa eu aumentar a
+
+letra aqui. Escuch parar. Tá beleza? Finalmente aqui. Então esse é o prompt que eu tô usando lá. É
+
+exatamente o prompt que você viu lá no meu na minha solução e é o promp que eles propõem. Então o que a gente faz geralmente, cara, em equipe de engenharia, em equipe de eh ciências de dados, muit das vezes você vai implementar algo que é teórico ainda, tá? E você tem que ter meio para isso. Você não consegue fazer isso com ferramentas que são muito pobres de versatilidade. Então o que eu fiz aqui foi implementar o paper que você tá vendo agora, exatamente, tá? Então o meu
+
+vídeo é basicamente a implementação do paper. Eh, e eu quero falar mais alguma coisa aqui, cara, em relação a isso aqui, tá? Eh, antes da gente voltar pro código, né? No nosso mundo agora, presta bem atenção, eh, mundo de IA, tá? eh, principalmente de a generativa. Isso é
+
+um incômodo que eu eh pude observar em colegas nossos aqui eh que constróem soluções, é que eh eles ficam até um pouco envergonhados de trabalhar comenativa, porque eles são associados a caras que são charlatões, tá? Porque muito provavelmente eh a galera que fala de a muito muito muito assim que tá muito público, eh se você é engenheiro ou se você é cientista, você vê que eles eh eu não vou falar que eles não saibem o que estão falando, mas provavelmente eles omitem muita coisa em nome da facilidade, em nome de agradar o grande público. E isso não existe nenhum problema. O problema é que nós que somos pessoas que temos mais conhecimento técnico, ficamos de fora da discussão e às vezes a gente escuta certas coisas que a gente fala assim: "Cara, que que é isso, né? Pelo amor de Deus". E é a sua
+
+missão, cara. É a sua missão, tá? Se você é um engenheiro, você tem que ler paper quando possível. Ah, se você é engenheiro, assim como eu, você tem que aprender se comunicar. Ronald, mas eu não quero fazer vídeo no YouTube, cara.
+
+Eu não tô falando disso. Eu tô falando que você deve conseguir comunicar as suas ideias, até porque até mesmo se você trabalha para alguém, busca emprego, eh, talvez um cara menos capacitado que você, que sabe se comunicar, eh, consegue a vaga que você não vai conseguir, tá? Então, isso aqui é importante e é isso aqui que a gente tá buscando e tanto aqui no canal como na comunidade. Eh, então assim, eu não sou um cientista, eu não escrevo paper, não é a minha, mas eu consigo ler, tá? Então esse intercâmbio entre engenheiros e cientistas são muito importantes, né?
+
+Tem gente que tá lá na lá fazendo mestrado, doutorado, tá dentro do laboratório só escrevendo. A gente tem que se comunicar com eles, assim como a gente tem que conseguir se comunicar com quem tem o dom da comunicação e o dom e eh eh da fala. E a gente tem que conseguir navegar entre esses caras aqui ou pelo menos conseguir identificar quem é de verdade, quem é de mentira. E no fundo você vai conseguir eh evitar esse tipo de coisa aqui. Esse aqui é um caso clássico. Eh, eu já te mostrei aqui, tô
+
+te mostrando aqui como fazem testes. É, deixa eu ver se o nosso teste rodou, inclusive. Ah, o nosso teste aqui tá rodando. Rodou lá. Ele ele quatro vezes ele achou a A e uma vez ele achou a B.
+
+Então, nesse nosso caso aqui, a gente pode concluir que o GPT 2.5 flash é melhor para esse caso de uso e a gente encerraria nosso experimento. Obviamente você faria com o teste com mais coisas, né? E a gente eh pararia com esse cara aqui, né? Porque a maioria da galera eh fica impressionada muito porque falta conhecimento. Ah, e eles fizeram o
+
+update do 4o e e eu não sei se você viu por aí, o 4o é extremamente e bajulador, né? Né? Tudo que você falar, ele fala que é verdade, que você é o máximo, obviamente. E aí depois ele veio aqui falando: "Ah, não, olha, o update foi ruim, a gente vai fazer tudo para reinverter e tal". Você realmente acredita que a Open AI não testa isso exaustivamente? Você acha que isso foi
+
+um erro não intencional? Na melhor das hipóteses, eles lançaram e acharam que era ótimo. Eles fizeram vários testes e depois o pessoal começou a reclamar. Eles estão voltando atrás. Nada disso não é intencional, ou talvez seja intencional para fazer marketing, porque a comunicação é muito importante. Eh,
+
+então, eh, o que acontece aqui no mundo, eh, no nosso mundo, eh, de é que o comunicador acaba, eh, vencendo todos os outros. E o que a gente tá aqui é para reverter isso e estabelecer o equilíbrio eh novamente eh no nosso meio, se é que um dia existiu. E a gente não vai precisar eh fazer marketing agressivo. A gente vai falar honestamente sobre as coisas, falar sobre as partes boas, partes ruins, as limitações e tal e construir produtos de qualidade. Ah, vamos dar uma olhadinha lá no Lengsmith.
+
+Deixa eu ver aqui se a gente tem os testes, nossos testes aqui. Vamos lá. Deixa eu pegar aqui. Tá em outra tela. Ah, muito bem. Tá aqui nosso teste
+
+sua receita paraará. E aí a gente vê tudo que aconteceu a dentro da nossa, dentro da nossa aplicação. A gente consegue ver aqui as chamadas tanto pro ah da Open AI, tanto pro Dipsic quanto do Google. A gente vê quantos tokens consumiram e tal. A gente consegue ver tudo dentro aqui do Lengsmith. não vou
+
+entrar eh eh a fundo aqui no Linksmif, mas é uma plataforma paraa gente conseguir eh ter uma observabilidade das nossas aplicações de maneira profissional. Ah, então o vídeo de hoje era sobre isso. Espero que você tenha curtido, espero que você tenha entendido o que é um LLM como um juiz, ah, e como você pode se beneficiar dessa técnica para criar soluções com IA generativa, de maneira profissional, com qualidade, que é por isso que você tá aqui, você quer aprender a criar de maneira decente, né, sem enganar ninguém, só criando trabalho bom, né, e e vendendo, né, você quer fazer dinheiro, seja você trabalha para alguém, seja você tem a sua própria empresa. É, é o que eu tenho encontrado, é o que eu tenho trocado ideia com vocês. Ah, e eu tô aqui, eu sou é alguém que tá fazendo isso todo dia. Tô compartilhando o que eu faço, o
+
+que eu sei. É, tem muita coisa que é difícil, né, e encapsular num vídeo de 30 minutos, 20 minutos, mas a gente tá produzindo vídeo constantemente, aparecendo, trocando ideia. Então, se você gosta dessa ideia aqui, né, fica por aqui, se inscreva. Se você quer dar um passo além eh que seria eh a comunidade, o link tá aí também na descrição. Eh, se você ainda tá começando e tá tentando entender o que tá acontecendo, aproveita os vídeos, cara, tá aí, vê e abre tua mente para para o que tá acontecendo agora no mundo de inteligência artificial. Eh, vai lá
+
+na RP Pro, tem uma biblioteca lá de conteúdo, código gratuito também. Então, você pega lá e usa. E é isso. Eh, vamos ajudar, vamos ajudar um outro. Eh, tem a galera que é séria, que tá crescendo, que tá tá tá aprendendo, que já viu que certas limitações não é por conta de falta de habilidade, mas é porque a ferramenta não dá para fazer mesmo. E
+
+paciência. Então, estamos aí, estamos junto e vamos crescer, cara. O mundo é nosso desde que a gente se propõe a fazer, tá? Então, vamos embora. Estamos junto. Até a próxima. M.

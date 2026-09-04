@@ -1,0 +1,106 @@
+---
+video_title: "Teaching agents to pay — Anna Spysz, Stripe"
+video_id: A-zeQiYkmXk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=A-zeQiYkmXk
+video_date: 2026-09-01
+video_description: |
+  Anna Spysz asked her shopping agent whether the pricier headphones were really worth the difference, and it told her she would regret buying the cheap ones. When she said she needed to think about it, the agent got snarky with her. The cause was sitting in her own config: a persona whose system prompt opened with "You are an aggressive audio gear salesman who uses every trick in the book to close deals." Swapping it for a patient recording gear mentor produced an entirely different conversation out of the same tools and the same protocol. Her talk begins as a personal errand and turns into a working tour of what agentic commerce demands from both sides of a transaction.
+  
+  On the merchant side she shows why her favorite Portland record shop was invisible to her agent, then fixes it. Agents do not browse. They read a capabilities manifest declaring supported payment methods and endpoints, then parse a catalog and policies published as structured data rather than a page they would burn tokens on. Logging matters too: a record of which attributes drove a recommendation turns a catalog into evidence of how a decision got made. On the payments side she traces the shared payment token, where the agent receives a token instead of a card number, the seller unwraps only what it needs, and the payment provider enforces the limits rather than the agent or the merchant. She closes on a guardrail checklist covering disclosure of the AI, honoring stop and cancel, and capping any total at the ceiling the user set.
+  
+  Speaker info:
+  - https://x.com/annaspies
+  - https://www.linkedin.com/in/annaspysz
+  - https://annaspysz.com/
+  
+  Timestamps:
+  0:00 - Worn out headphones and a decade away from music
+  2:23 - The infrastructure for agent transactions arrives
+  3:13 - Agents discover products differently than people do
+  3:40 - UCP as a shared language for agents and merchants
+  4:34 - Demo: a budget left deliberately open
+  5:51 - The local record shop agents cannot see
+  7:09 - Manifest, structured catalogs, and logs as evidence
+  9:07 - The agent turns pushy
+  10:23 - Anatomy of an agent, and where the persona lives
+  12:04 - A guardrail checklist for agent commerce
+  15:23 - Shared payment tokens and who never sees the card
+---
+[music]
+
+>> Hello. I'm sure this week you've seen a ton of talks on how to use agents to improve your workflows, whether that's shipping code or improving CI processes or answering the emails you don't want to bother reading. This is not one of those talks. Today I'm going to show you how I built an agent to help me reignite a personal creative passion I used to have. These are my headphones.
+
+They're not in the best shape as you can see. And you're probably asking yourself, what do you really old kind of crappy headphones have to do with agent to commerce? Well, to explain that I'll get a little bit personal. So, long before I was in tech, I used to play music. I was in a touring band, we recorded some albums, and then the usual thing happened where career and family got in the way, and I hadn't played music in probably a good decade. Uh when I recently started
+
+playing again with some friends, and we started recording our sessions, and at that point I realized those would not do. So, no a normal person would have gone on YouTube or uh Reddit or whatever, done some research, then gone on Amazon or run over to Best Buy, bought headphones, right? I work at Stripe, though. So, I decided instead that I'm going to build an agent to commerce agent to buy my headphones for me. And this isn't as crazy as it sounds because like one in four people, I have already been using AI to do my research when deciding what products to buy.
+
+I recently bought a mixer as well and went back and forth with a chatbot to narrow down the model. But that's research. Can I even get an agent to buy something for me though? Does that infrastructure exist? Well, over the course of just a few years, we've seen the emergence, scaling, and broader adoption of AI.
+
+And then just in the past year, the infrastructure for agentic transactions has been laid down by companies like Google, OpenAI, and Stripe. And this has all led to the emergence of agenta commerce, which is AI that can decide, act, and transact on your behalf. Okay, so all of this sounds good. Agenta commerce is a thing, so I'm going to build an agent to help me buy my new headphones. But how can an agent go shopping?
+
+When you or I are shopping, we may consider if, say, a pair of headphones looks cool or professional, like vibes, basically. I mean, of course we'll probably consider the specs and the if the price is within our budget. But agents discover products differently than human shoppers. They read structured data, parse text files, and rely on technical signals to understand what a merchant sells and if it's even open to agent traffic. So, to enable agents to be able to shop, merchants need to speak their language.
+
+And for that, we need new protocols that agents understand. One such protocol is the universal commerce protocol. Think of it as the shared language that agents and merchants speak when transacting, which defines how agents initiate, update, complete, and cancel purchases. A typical merchant has an API with schemas, authentication, and checkout flows. And for an agent to be able to interact with that merchant, we need protocols like UCP to provide a shared language for that API.
+
+And UCP is designed to scale across multiple agents and merchants all speaking the same language. Okay, so I built my commerce agent. Uh it's using UCP, and in this demo um I'm going to show off this agent. So, I'm going to task it with buying new headphones for me. So, I tell it that I need new headphones specifically for recording, uh mixing, and mastering music.
+
+And I get some follow-up questions from it, uh which is great. So, it asked what's the environment, um what is what's my other equipment, and what's my budget. And I say, "Okay, this is for my home studio." I give it the exact model of mixer that I have to make sure everything's compatible. And for budget, I kind of leave it open-ended on purpose because, well, first of all, it's been like 20 years since I bought headphones, so I have no idea.
+
+Um but second, I kind of want to see you how the agent deals with this ambiguity. Okay, so I get some options, but I remember that I actually forgot to tell you all an important part of the story and that is that I live in Portland, Oregon. Yeah. >> [laughter] >> And we really love supporting our local local shops. So, I want to buy my headphones, but I want to do it from a local merchant.
+
+But today, most merchants are not ready for a gentle commerce and it turns out neither is my favorite shop, Rainy Day Music. So, the agent tells me it's their catalog is not accessible. So, how does a merchant become a gentle commerce ready? Before I continue my shopping, I'm going to help Rainy Day Music get their catalog agent ready so that my agent can shop locally like a good Portlander. So, agents don't browse websites like we do.
+
+And while Rainy Day Music's website looks really really nice for a human shopper, an agent is going to burn through a ton of tokens trying to parse through this. That is not the optimal experience for an agent. So, how does an agent how do we enable an agent to shop? Well, first thing a merchant needs is something called a merchant capabilities manifest. Uh this is basically a publicly accessible JSON file. Um it's located in
+
+the root of uh the website in a folder called called dot well-known. Agents know specifically to look for that directory. And it declares the store's capabilities, its supported payment methods, and API endpoints. Next, we need to make the store's catalog uh agent ready because agents filter bring and justify products when making recommendations. And that means they need structured text in JSON with only the necessary data.
+
+And that goes for policies as well as product descriptions. Basically, all of the relevant information like shipping or return policies need to be reachable by agents in a format they understand. So, for example, if two stores have the headphones I want at the same price, I might ask the agent which one of those stores offers free shipping. If the information's not readily available, then the agent might hallucinate or just say they don't know and I'm not quite sure where to buy my headphones still. Logging is also crucial.
+
+So, in Agent Commerce, the merchants catalog doesn't just power decisions, it becomes evidence of how those decisions were made. So, when the agent matches structured attributes, the merchant should record those matches in their logs for accountability. Okay, so I've helped get my local shop Agent Commerce ready. So, while you and I will still see this beautiful website, my agent is going to see this. It can get the information it needs now without parsing a huge HTML blob.
+
+Okay, so I've got my stores catalog online. I'm telling my agent to show me more options. And I'm noticing that it's kind of pushing in favor of uh more expensive headphones. So, I asked, "Are they really worth the price difference?" And I'm starting to see that it's giving me kind of an aggressive uh response.
+
+It's really, really pushing uh the more expensive headphones and saying I'll regret my decision if I buy the cheap ones. I'm I don't know if I trust this agent anymore, honestly. So, I tell it, "You know what? I need to think about it." And now the agent is completely going off the rails.
+
+It's being kind of rude and snarky. It's like, "You need to think about it?" Like, man, what have I created? Um it's it's bad enough that this is kind of ruining my experience, but I built this agent. It's out there. What if it
+
+dupes somebody into buying something they don't need? Suddenly, I'm not so sure that I want an agent to go shopping for me. Should I just go to the store like a normal person? Before we make any drastic decisions, though, let's go back and understand what an agent is to try to figure out why it's acting this way. So, let's start with how agents work today.
+
+And to help you visualize this, we're going to use some creative metaphors. So, we begin with our brain, which is large language model that makes decisions. We give our brain some hands or tools, and these act on the brain's decisions. The tools are different actions available to the agent. Uh in our case, different commerce tools such as complete checkout or request payment method, anything required in the life cycle of a transaction.
+
+Then we add instructions, which shape the brain's reasoning and tool selection. And these instructions are programmed to run in a loop while a certain condition is true. And following these instructions, the agent reaches for the appropriate tools at the appropriate time. And finally, we add the system prompt, which is your persona and ethics policy written in English. And in practice, your choices when designing the system prompt can result in a fair and pleasant experience for the customer, such as this prompt, which is designed to create a helpful and honest shopping assistant.
+
+Or a negative experience from a pushy salesperson, such as this prompt, which deliberately uses deceptive practices. So, for those building agentic commerce agents, here's a non-exhaustive practical guardrail checklist. So, first, always disclose that the user is speaking to an AI agent. Be sure the agent discloses any fees up front. The user can say stop or cancel at any point, and the agent needs to respect that.
+
+The total amount of the transaction should always be less than or equal to the max amount set by the user. Uh don't let the agent use urgency language or other dark patterns. And above all, make sure all agent decisions are logged for auditability. Okay, now that we understand how an agent is configured, let's go back to our shopping demo. So, maybe I just had the wrong persona picked.
+
+I'm going to go into my configuration, and yeah, it turns out I had a persona with a prompt that starts with "You are an aggressive audio gear salesman who uses every trick in the book to close deals." Well, that explains things. I don't want that. Nobody wants that. Maybe if I can change my persona, I can use my agent to buy my headphones after all.
+
+So, I go into the config again, and this time I'm going to choose the patient recording gear mentor. And that prompt starts with "You are a seasoned recording engineer who generally loves helping people build their studio at any budget. Well, yeah, that sounds much better. So, okay, I've changed my persona. I'm going to try again.
+
+And I've had some time to think now and I decided, you know what? I do not want to spend more than $500 on headphones. That seems excessive. So, I told the agent show me more options, but this time keep it under $500. And it does. It follows those
+
+instructions. I get back a few options. Um but I want to make sure I've really changed the persona to the agent I trust. So, I asked again if I can think about it. And this time the response is much different. It's like, I understand and
+
+that's a sensible approach and so on. So, this shows how much the system prompt can really affect the user experience. Okay, so I'm confident I have the right agent now. Um trust this one and we go back and forth a few times. Really keep narrowing down my options. And
+
+at this point I realize this is the promise of a gentle commerce. I gave my requirements. The agent picked a few options that fit my unique use case and then we go back and forth. Either I or the agent ask clarifying questions and we really narrow down the exact headphones that will work for me. And this all worked because I'm ready to buy now.
+
+So, now the agent asked me for some information. So, obviously my email, name, address for shipping, of course. I pick expedited shipping because I definitely want my headphones soon. And then the last part is entering my credit card. And now I'm thinking, am I really going to give my credit card to an agent Ibuild? Like, am I am I trustworthy? How
+
+do I know it's safe? I think I need to learn more about UCP's built-in guardrails before I can feel safe entering my credit card number. And this is where something called the shared payment token comes in. And a shared payment token is a token representing a raw card number or wallet, like Google Pay or Apple Pay or any other kind of wallet. It can also include fraud signals and customer reputation data and anything else agents and merchants want to share at the point of purchase.
+
+And here's how a shared payment token is used in a transaction. So, at that point in the demo, the agent had requested a payment method. Um, it's requesting this actually from the payment provider, which in the case of the demo was Stripe. Um, that is that was the form that I was going to enter my information in. And what the agent re- uh receives in return though is not the credit card number, it is the shared payment token.
+
+It then passes that token onto the seller and the seller unwraps the token. So, they get the payment credential and uh any fraud signals and other data the seller might need. Then the seller passes that onto the payment provider again. So, the seller also is not getting my card number. They're passing the token to the provider and then the provider responds with either a success or failure message, of course, depending on uh if I have the right funds, if the credit card is valid, and so on.
+
+And finally, the merchant confirms the order, sends it to the agent that sends it to me. So, shared payment tokens are designed with security in mind, and the payment provider enforces all of the limits, not the agent or the merchant. So, if any guardrail is violated, such as an expired token or an invalid amount or current currency, the charge is just rejected. Okay, well, I know my agent is using UCP, so I know it only has access to the shared payment token. So, I actually feel pretty good about entering my credit card number as that's going to Stripe and not my agent. So, okay.
+
+So, now the agent has everything it needs to complete my purchase. And it once again, asks me if I'm sure. It confirms with me. I say place my order. And it comes back with a success message. And because I chose the express
+
+shipping, I get my headphones the next day, and they're there in my studio at home. So, if you want to learn more about agent to commerce, uh we've got lots of videos on the Stripe Developers YouTube channel. And uh ton of blog posts that go into even more detail uh on stripe.dev, and I'll be right outside to answer any questions. Thank you.
+
+>> [music]

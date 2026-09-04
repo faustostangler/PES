@@ -1,0 +1,129 @@
+---
+video_title: "Agentic RAG: PENSE e CRIE como um PRO"
+video_id: m6Q9x678myU
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=m6Q9x678myU
+video_date: 2025-11-13T15:57:37+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Junte-se aos Criadores
+  Comunidade  https://www.rhawk.pro/comunidade (reabertura em 17 de novembro de 2025)
+  –––Consultoria –––
+  Precisa de ajuda para criar a solução?
+  A melhor consultoria em IA do Brasil: https://simplework.ai
+  
+  ––– Descrição –––
+  Quer construir soluções de IA Generativa, mas está confuso com as melhores práticas de RAG (Retrieval-Augmented Generation)? 
+  
+  Neste guia completo, desvendamos por que gigantes como Cursor e LangChain adotam estratégias opostas para busca semântica e explicamos a evolução para o poderoso "Agentic RAG". 
+  
+  Ideal para desenvolvedores, empreendedores e iniciantes, este vídeo ensina você a ir além do básico, mostrando como criar agentes de IA que utilizam múltiplas ferramentas e personalizam parâmetros em tempo real para obter respostas precisas. 
+  
+  Com um framework prático e testável, você aprenderá a pensar e construir como um profissional, evitando as armadilhas comuns e começando a desenvolver suas próprias aplicações com LangChain de forma robusta e otimizada.
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  Playlist Negócios: https://www.youtube.com/playlist?list=PLk6saMUFiINl-TQpZjq6isCdhw8eZ7c9P
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  1:29 Agentic RAG
+  4:26 A solução do Cursor ( Busca semântica)
+  6:37 A solução do Langchain (Evitando chuncking)
+  8:31 Entendendo no detalhe - Código da Agentic RAG
+  13:31 Fazendo dinheiro com IA
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  #inteligenciaartificial  #iagenerativa #negocios #rag
+---
+Se você acompanha de perto esse mundo de agentes de três coisas chamaram atenção nas últimas semanas. A primeira é essa aqui. O cursor lançou um blog falando como eles usam busca semântica para melhorar a resposta do agente deles. Então eles não usam só aquela ferramenta de busca de texto normal. Agora eles também usam busca semântica.
+
+Linkchain lançou essa ferramenta aqui para te ajudar a conversar com a documentação. É um caso clássico de hag, né, de recuperar uma informação e exibir a resposta. E curiosamente eles também lançaram um blog falando que eles estão indo para longe da busca semântica e longe de chunks. Então são duas visões conflitantes, correto? Terceiro e não menos importante, não é o lançamento do Gemini da API para conversar com documentos, e sim um framework que eu criei para a geração de ha efetivas, tá?
+
+O que esse framework é? Ele é um framework teórico, Ronald? Não, ele é um framework prático. Do mesmo jeito que tá aplicado aqui nesse repositório, você pode aplicar nos seus projetos e ele usa várias dessas características aqui e você vai aprender a testar, etc, etc, etc. Ron, por que você fez um framework prático? Simplesmente por quê? Falar até
+
+papagaio fala, né? Mas fazer pouquíssima gente faz. Então vamos seguir aqui no vídeo. Você vai entender as ideias por trás desses caras aqui e vai definitivamente aprender a pensar como um profissional e a criar como profissional. Bora lá então. Vamos aqui
+
+na tela, caras. Seguinte, Hag, tá? Hag é um assunto muito falado e pouquíssimo compreendido de maneira geral, muito porque a informação se moveu muito rápido, né? ao longo desse 1 ano e meio. E o que acontecia no início? A gente
+
+tinha esse paradigma aqui de reg, tá? O seu usuário fazia uma pergunta, ele ia no na tua fonte de informação, seja um banco ou seja qualquer outra forma de busca. E presta atenção nisso que eu tô falando aqui, já é um spoiler, qualquer outra forma de busca. E pegava essa informação e entregava para LLM, que gerava uma resposta, tá? Esse foi o nosso início.
+
+Acontece que aos poucos nós fomos movendo para esse padrão aqui. Se você já tá familiar com isso aqui, é o padrão e React Agent. E o que a gente fazia no início? Nós criávamos uma ferramenta de busca, tá? Geralmente só com busca vetorial, principalmente se você tá criando soluções com banco de dados, né?
+
+Provavelmente você não trabalha no curso ou no INDSurf ou qualquer ferramenta dessa que roda na máquina do usuário, né, na linha de comando. Então você buscava num banco, provavelmente, tá? Só que essa ferramenta de busca ela era, digamos, burrinha, limitada. Você só tinha a ferramenta e o teu agente falava assim: "Pega a querer a pergunta que tá aqui, vai lá na ferramenta e busca". E se você não encontrar, você pode tentar mais de uma vez. E era só isso, tá? O
+
+que tá acontecendo agora? O creme de la creme, tá, da busca é o agente que hag, que o que ele faz, ele pode ter acesso a uma ou mais ferramentas. Ele pode escolher qual dessas ferramentas usar para fazer a busca. E o mais interessante, essas ferramentas contêm parâmetros. Então, por exemplo, ele pode trocar certos parâmetros ao longo da execução até achar o que ele tá procurando, tá? Quando ele achar que ele
+
+tá procurando, ele finalmente vai gerar a resposta. Então você vê que a gente cria um loop aqui inteligente, não só de chamar ferramenta, mas de trocar os parâmetros ao longo do tempo. E eu vou mostrar isso aqui, então fica calmo, me acompanha aqui. Então nós estamos nesse paradigma aqui, tá? Reasoning and retrieval. Ele vai lá, pensa na na
+
+entrada, descobre qual ferramenta ele tem e vai chamar. pega lá, recebe o conteúdo, vê se é aquilo mesmo que ele quer, se aquilo cumpre o objetivo de de dar a resposta final corretamente. Não cumpre, ele volta lá, de repente ele troca o parâmetro e ele é livre para fazer. O paradigma que a gente tá fazendo, né? E o Leng Chin fala aqui muito bem em algum lugar do blog, é que eles estavam emulando exatamente como o humano fazia a busca nos documentos eh lá dos funcionários deles. E eles fizeram uma
+
+modelagem baseada em como os funcionários estavam usando eh a documentação e tudo que eles tinham disponível e criaram o agente. Beleza? Show de bola. Tá bom. Então vamos aqui.
+
+Cursor. Você provavelmente conhece o cursor, né? E ele é uma ferramenta que roda em ali na tua máquina, né? E geralmente quando você vai pedir alguma ajuda ali, ele vai nos teus documentos, lê lá e depois gera uma resposta. Acontece que aquela busca e eu já falei aqui em algum outro vídeo, acho que o algum vídeo de reg aqui, é uma busca com grap, né? Ele vai lá na linha de
+
+comando, pega e vê. Essa solução é ótima e você parte da perspectiva que o problema que o cursor está resolvendo é um problema diferente de repente do que você tá resolvendo. Eles estão ajudando você a fazer código de maneira mais efetiva e mais rápida. De repente o seu negócio é outro. De repente o seu negócio não roda na máquina do usuário, ele roda na tua máquina. Independente
+
+disso, eles descobriram que ao adicionar busca semântica, eles resolvem muitos problemas eh de confiabilidade do agente deles. Então, como que eles fizeram essa busca semântica? Eles criaram eh um tipo de chunking específico baseado nos logs. Então, se você observar aqui, é muito comum em soluções profissionais você ter testes, tá? Você vai ter sempre uma métrica para saber como que ele tá performando. E você vê aqui como eles
+
+fizeram. E é exatamente assim que um profissional pensa e constrói, caras. Você não constrói da tua cabeça, você cria métricas, avalia, você cria um baseline e você vai evoluindo a tua solução. Como eles chegaram à conclusão que a busca semântica funcionava melhor, eles tinham baseline sem busca semântica, eles adicionaram a busca semântica, eles fizeram testes e falaram: "Olha, funcionou melhor". Você percebe que não existe uma bala de prata, existe técnica e test. Nada nesse
+
+assunto aqui, uma coisa só vai resolver o teu problema. Cada problema é um problema, cada caso é um caso. E cabe é você que tá criando a solução, você que quer empreender, você que quer criar startup, você que quer, você tem que entender isso, cara. Ronald, eu preciso entender tecnicamente no detalhe. Depende se você quer ser um desenvolvedor disso aqui. Sim. Ah, não,
+
+eu quero só abrir o negócio. Então você tem que entender as ideias centrais, caras, não esqueçam isso. Beleza? Show de bola. Tá bom, vamos aqui no L chain, tá? O que que eles fizeram? E é muito
+
+legal que eles fizeram, tá? Qual é o argumento deles aqui? Eles argumentam que usar chunking quebra a estrutura do documento. Se você nunca usou chunking, eu vou resumir aqui muito rapidamente. Você tem um documento grande como esse aqui, tá? Então vamos imaginar que essa
+
+página aqui é um documento. Quando você criar chunking, principalmente essas técnicas de chunking mais populares lá do do N8N, né, que é o fix chunking com overlap, você vai quebrar a estrutura do documento sempre no meio. Ele vai contar quantos caracteres tem e vai quebrar. Então, se ele achar que aqui satisfaz a quantidade de caracteres que você estipulou, ele vai quebrar isso aqui no meio. E o que acontece é que quando você cria um vetor para o teu agente buscar, esse chunk pode simplesmente pegar uma informação no meio e aí ele não vai entender exatamente que aquela informação é relevante. A semântica vai
+
+se quebrar aqui, tá? E o argumento deles é que como a documentação deles estava toda numa API, eles poderiam, na verdade, criar uma ferramenta que chamasse essa API através de alguns filtros e ele pegava sempre o documento inteiro e não o chunking do documento. E isso melhorou a performance deles demais. Como que eles fazem isso? Modelos modernos, tá? Eu já falei, eu
+
+acho que eu só falei isso lá no curso de de engenharia de prompt, mas todos esses modelos modernos, tá, do GPT5, todos esses do Grock, principalmente o Cloud e todos esses open sources, tipo Kim, GLM, eles são muito bons chamadas de ferramentas. Acho que eu já falei isso aqui no YouTube também, tá? Então esses modelos modernos possibilitam a criação de agente que regue com qualidade, beleza? Então o que eles fazem aqui é basicamente criar mais de uma ferramenta, tá? mais uma ferramenta de busca. E você vi que eu falei disso aqui
+
+logo no início, né? Criar mais uma ferramenta e o agente decide qual ferramenta chamar na hora que chamar e qual parâmetro passar. Show de bola. Show de bola. OK, Ronald, mas e daí? Eu
+
+não entendi. Então eu vou mostrar um pouquinho aqui de código, né? Só o alto nível. E agora você vai entender por dentro e vai fazer a conexão e vai entender definitivamente como essa coisa funciona. Então vamos lá. Abrir a tela
+
+errada. Vamos lá caras. A tela é errada. Agora aqui, tá? Tá aqui o framework. E
+
+esse framework aqui, ele tá especialmente desenhado para você eh testar diferentes parâmetros. Então, é exatamente como eles fazem, e testar diferentes técnicas de busca. No final, o teu agente, ele vai ter uma ferramenta de busca que pode se comportar de diferentes maneiras. Ele pode buscar em diferentes chunks, tá? Ele pode usar diferentes técnicas de busca no banco, se ele usa busca vetorial, se ele busca só texto ou se ele faz busca híbrida. Ele vai fazer
+
+ranking opcional, então você pode testar se o reranking funciona melhor na tua na tua máquina. Eu não expliquei aqui o que é ranking, tem lá e se você, enfim, é simples. Ele vai pegar as respostas e vai fazer um ranking de qual é mais relevante para LLM. Isso vai dar uma dica pra LLM usar aquele chunking ou não na hora da resposta. Beleza?
+
+E principalmente, caras, eh, você tem desse modo aqui um procedimento que eu já mostrei aqui anteriormente, que é exatamente esse procedimento aqui que eu uso para criar reg. Então, você segue esse procedimento aqui junto com aquele framework técnico lá, com todo o código que tá lá e você vai ter uma reg com qualidade no final, com métricas. Cara, é exatamente assim que um profissional pensa e faz. Você não cria uma reg, você vai testar, você vai ver onde tá os erros, você vai começar a trocar parâmetro de modo que você vai descobrir onde tá o problema e onde você tem a oportunidade de evoluir. Beleza? Show de
+
+bola. Vamos voltar para cá, tá? Deixa eu fechar esse cara aqui para ficar mais legível, tá? Readm, tá? Esse aqui é o nosso agente, tá? Eu já vou falar do
+
+prompt dele aqui, mas o principal é essa ferramenta aqui de busca, tá? O que que essa ferramenta aqui de busca traz? Se você vê essa ferramenta de busca aqui, tem um monte de parâmetro. Alguns parâmetros são óbvios, né? Como a querer que seria a pergunta do cara, mas aqui a gente tem um monte de parâmetro aqui, tá? E é exatamente assim que uma regra
+
+funciona de verdade, tá? Se você lembra desse vídeo aqui, se você viu anteriormente, é, eu comparei a registes, tá? E você vai ter que trocar parâmetro, vai ter que fazer teste até você achar o som perfeito. Se você não é músico, nunca viu isso aqui, não se preocupa, tá? É só um modo de trocar as ondas sonoras e conseguir o som que você quer.
+
+Beleza? Só que a maioria da reg, principalmente aquela lá da N8N, a galera acha que é isso aqui. Então é por isso que nunca funciona, porque você tá é completamente perdido no rolê, tá? Você tá completamente perdido na brincadeira e você só vai conseguir criar uma boa reg se você tiver algo assim. Ah, Ronald, é coisa da tua cabeça. Não, cara, olha aqui, cara.
+
+Cursor conhece o cursor, correto? Beleza. Conhece Lchain, correto? Eles estão falando que fazem assim. Eu faço assim e aí você pode escolher o caminho que você quer. Tá aqui o código, tá aqui
+
+a as ideias estão aqui. Mas vamos prosseguir. Beleza, show de bola. Essa ferramenta aqui tem esses parâmetros todos, tá? Então ela já tá tudo implementado aqui no framework, então você não precisa se preocupar em implementar. E aí o conselho que eu
+
+geralmente dou é: se você é desenvolvedor, você deveria ler isso aqui e tentar entender o que tá acontecendo no detalhe. Beleza, Ronald? Eu não sou desenvolvedor, eu faço Vibe Code, eu entendo minimamente só para navegar. Então você tem que entender as ideias centrais e as ideias estão todas explicadas lá. Beleza? Show de bola. Tá,
+
+vamos ver o agente aqui. Se você reparar, o meu agente tem um prompt muito peculiar, onde eu falo para ele dois parâmetros que ele tem acesso da ferramenta e como usá-los. Então, o que que meu agente vai fazer? ele vai fazer a busca naquela nessa ferramenta e ele vai decidir quando trocar os parâmetros o tempo inteiro, tá? E é exatamente aqui que a gente faz. Eu pego aquela
+
+ferramenta, tá? E para esse caso aqui eu limitei a quantidade de parâmetros que o meu agente poderia ter acesso, como você tá vendo aqui, tá? E ele tá fazendo basicamente o seguinte. Aqui, nesse caso, ele vai no banco de dados com o thold que eu especifiquei. O thrash é um parâmetro de busca e vai buscar. Ele vai achar informação, não
+
+sei. Achou, não achou? Se ele não achar, ele tem a opção de trocar esses parâmetros aqui até ele encontrar a informação, tá? Ronald, como que eu sei que meu agente vai encontrar informação? Aí é exatamente o nosso framework aqui, caras. ele vai encontrar informação,
+
+porque quando você chegar aqui nessa parte do agente, você vai saber se a informação existe ou não, porque você testou todos os passos da sua ferramenta criteriosamente, passo a passo, você nunca mais vai ficar perdido na criação de reg. E é exatamente por isso, caras, que esses caras estão criando produtos com LLMs. Eles começaram a criar, principalmente Lang Chain, começaram a resolver problemas externos dois outros. E esse problema aqui é um problema interno. Eles entenderam como os funcionários usavam e transformaram esse conhecimento em uma solução. E é assim
+
+que você faz dinheiro com o IA. Cara, você tem que olhar para algo no mundo real, para algo em algum nicho específico. Você vai observar qual é o comportamento e você vai modelar uma solução. Você vai aprender a pensar e a construir. Quanto melhor você for nos dois, melhor para você. mais chances
+
+você tem de fazer mais dinheiro, seja trabalhando para os outros, trabalhando para alguém, ou seja empreendendo. Beleza? Espero que esse vídeo tenha sido útil e que nunca mais você acredite que existe uma bala de prata nesse nosso ramo aqui. Tudo que existe, cara, é trabalho, teste e ao longo do tempo você vai ficando cada vez melhor, cada vez melhor, cada vez melhor e vai evoluindo com a indústria. O que eu percebo geralmente é que a indústria toda internacional tá indo para um lado e aqui a gente tá na discussão se eu devo usar é o modelo A ou modelo B sem nenhum argumento real, tá? Sem teste, sem
+
+parâmetros, sem nada. Então, se você quer construir como profissional, a ideia geral de reg hoje, a gente que reges no lugar, você vai fazer o teste de caso para caso e vai dar ao seu agente ferramenta ou ferramentas capazes de selecionar os parâmetros à medida em que a querer chega e ele desenvolve ou entendimento. Beleza? Espero que tenha sido útil. Se você tem interesse na comunidade, tá lá. Eh, a gente vai
+
+reabrir dia 17. E além disso aqui, tem coisas muito legais lá que eu ainda não divulguei, mas são imperdíveis. A ideia é entenda o básico, construa, recolha o feedback, entenda o básico, reconstrua, coleta feedback e bota a coisa na rua, cara. Bota no ar, faz. Você só vai aprender essa área se você tiver imerso fazendo. Para de sonhar e começa a
+
+fazer. Beleza? Estamos junto até a próxima.

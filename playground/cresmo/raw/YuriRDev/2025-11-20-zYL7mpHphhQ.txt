@@ -1,0 +1,60 @@
+---
+video_title: "H4CK3EI O CURSO DO RUYTER 💀"
+video_id: zYL7mpHphhQ
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zYL7mpHphhQ
+video_date: 2025-11-20T21:09:10+00:00
+video_description: |
+  Nesse vídeo eu mostro como que h4ck3ei o mais novo curso do Ruyter... 
+  ESSE VÍDEO É EDUCACIONAL - NÃO REPITA ISSO EM CASA. 
+  Todas as vulnerabilidades foram reportadas e corrigidas!
+  
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 O melhor host para seus projetos: https://squarecloud.app/
+  👉 Thumb feita por https://www.behance.net/nez6vi
+---
+Rutter Pobel. Se você não conhece ele, ele é um influencer com mais de 22 milhões de seguidores que cresceu muito nos últimos anos. Super conhecido na área do marketing digital, fazendo vários vídeos e lives, mas principalmente mostrando seu estilo de vida com carros, casas e festas. Tem muita gente que gosta dele e muita gente que não gosta. Só que esse não é o ponto do vídeo. Nesses últimos dias, ele fez
+
+uma campanha de marketing gigantesca. Acabou de lançar o primeiro e único curso dele de web coding. E foi aí que começou o problema. Nos primeiros minutos da live de lançamento, o pessoal já percebeu algumas coisas estranhas, como os pop-ups de pagamento, como João acabou de comprar, eram falsos, puro front end e a fila de espera também era fake. E vamos falar real, isso não é novidade para ninguém. Nesse mercado de
+
+marketing digital, essa prática é até muito comum. Mas enquanto o pessoal tava rindo desses pop-ups, eu fui olhar a plataforma em si. E foi aí que eu descobri uns problemas muito maiores do que alertas falsos. tinham falhas de seguranças reais que poderiam causar um estrago gigantesco. Então, hoje eu vou mostrar para vocês como que eu hackei o curso do Ritter.
+
+A única coisa que eu tenho até agora é o domínio Twitter.com e a gente tem que torcer para ter alguma coisa relacionada ao curso aí. Então, usando Gbuster, dá para descobrir alguns subdomínios e dois chamaram minha atenção. Comunidade.com, que é o site do curso, e o refounds.com,
+
+que é uma página para solicitar o reembolso. Como eu não tenho uma conta para acessar a comunidade, vamos ver o que que a gente encontra em refounds. A princípio é uma página normal, provavelmente vai beed. E procurando pelo texto admin no código da página, deu para encontrar alguns end points, admins que existem, mas não são chamados em lugar nenhum. A gente tem que encontrar onde esse dis. tá sendo
+
+passado para encontrar o RL da API. E seguindo os rastros da função, deu para ver que essa URL tá sendo passada dentro de uma classe OJ. Coloquei em break point na linha onde o objeto é inicializado. E agora é só dar um reload na página que o modo deb ativa e é só copiar o RL e os headers. E logo de cara deu para ver que tava usando Superbase.
+
+Superbase é um banco de dados ótimo quando você lembra de configurar o RLS, que são basicamente as regras de quem pode fazer o quê. Sem isso, qualquer um pode ler e escrever nas suas tabelas. Então eu fui ver o que que dava para acessar e eu conseguia ler a tabela Refound quiz responses, que aparentemente são as respostas do quiz de reembolso. Mandando a requisição para ler tudo, eu conseguia ver todos os pedidos de reembolso com nome, e-mail, telefone e os motivos para reembolsar. Aqui eu encontrei algumas coisas engraçadas, como um pedido porque o filho pegou cartão da mãe escondido, mas o principal que tem aqui são os pedidos das pessoas que pegaram dinheiro emprestado, compraram e só depois perceberam que não tinha condição de pagar. Eu sei, o que eu vou fazer aqui
+
+agora é maldade, mas de alguma forma eu tenho que ter acesso à plataforma dele sem gastar R$ 2.000. E como eu já falei, nessas respostas tem o nome e o telefone de quem tá pedindo um reembolso. Então eu tenho uma forma de contactar essa pessoa e eu posso fingir que eu sou do suporte desse curso e que eu vou ajudar a fazer o reembolso. Então eu comprei um novo número de telefone e criei um WhatsApp novo com o nome e a foto do curso para fingir que eu realmente sou do suporte. E eu comecei a chamar essas
+
+pessoas uma por uma, falando que para continuar com o reembolso, eu preciso do e-mail e da senha da plataforma por algum motivo. A primeira pessoa achou que eu era um golpista, mas a segunda, sem pensar duas vezes, só me mandou as credenciais. E sim, tá funcionando perfeitamente. Agora que a gente tá dentro da plataforma, vamos dar uma olhada no source para ver se a gente encontra algumas coisas interessantes. Pesquisando por admin de novo, a gente encontra algumas rotas e também os cargos que existem na plataforma, que são student, student free e admin. Vamos
+
+ver o que acontece quando a gente muda a resposta da requisição alterando o nosso role de student para admin. Para isso, vamos usar o burp switch. E para fixar essa alteração, eu vou usar o match replace para toda vez que aparecer Slug Student, muda para Slug admin. E dando F5 na página, notou alguma coisa diferente? Apareceu uma aba de configurações que não tinha antes, tá?
+
+Não tem problema esse botão aparecer. Pode ser só uma renderização condicional no cliente. Mas as requisições que ele consome não podem funcionar e funciona. Por exemplo, eu consigo mudar a ordem e o conteúdo da vitrine, que são esses módulos. Se eu tento criar um módulo novo, tipo segurança com IA, e linko com um vídeo já existente, assim que eu dou um reload na página e scrolo para baixo, aparece lá. E se eu tento deletar o
+
+módulo que eu criei, funciona. Também eu tenho permissão em algumas configurações do estilo da plataforma, tipo trocar as cores e o banner. Se eu troco a cor principal para vermelho, ela fica vermelho nos lugares que deveria. Mas o mais perigoso é essa opção aqui, código HTML personalizado. Aqui tudo que foi escrito vai ser adicionado no site nenhuma verificação. Afinal, isso aqui é
+
+uma configuração de admin. Então se eu tento colocar um código JS aqui, ele aparece em todas as páginas. Se você não tá entendendo quão perigoso é isso, eu posso manipular a página inteira, redirecionar os usuários para uma página de pagamento falsa, roubar as contas das pessoas, porque o token de acesso não tá configurado como secure nos cookies. Resumindo, o código que eu mando pode sobescrever o código original da página. Eu posso mudar absolutamente tudo.
+
+Mas não acabou ainda. Eu fui assistir uma das aulas para ver como que as requisições se comportam. E quando carregou os comentários, a API estava vazando telefone, e-mail, CPF e o nome completo dos usuários. Então, todo mundo que comentasse podia ter os dados vazados ali. Era só ver a aba de redes.
+
+Mas se você comprou o curso do Ruter e acabou comentando, não precisa ficar com medo. No final do vídeo eu te explico o porquê. E tem mais uma coisa que deu para fazer. Esse curso tem algumas aulas que ainda não foram liberadas, supostamente para serem lançadas depois que o prazo de reembolso acabar. O que, de novo, nesse tipo de mercado é uma prática super comum. Mas será que tem alguma forma de
+
+burlar isso? Tem como ser a primeira pessoa a ver essas aulas antes mesmo de serem liberadas? Bom, na listagem dos vídeos disponíveis tem um parâmetro muito interessante que é o deliverable, que tem dois campos, o released e o rue. As aulas já liberadas tm um released como true e nenhuma ru e as bloqueadas released false e uma regra de dias de espera. Beleza? E se eu simplesmente
+
+mudar esse releas it false para true? Talvez tenha alguma proteção no streaming, um bloqueio do lado do servidor, mas vai que funciona. De novo, é só abrir o burp, interceptar a resposta do servidor e em todos os lugares que aparece released false, troca para true. E é só dar um forward na resposta e pior que funcionou. Liberou todas as aulas bloqueadas do curso sem limite ao tempo de espera, burlando completamente as regras.
+
+Então, em menos de um dia de pesquisa, eu já consegui alterar tudo no curso, deletar as aulas, pegar a informação pessoal dos usuários e ainda assistir os vídeos bloqueados. Beleza, mas você não vai derrubar o site, deletar as aulas e estragar tudo? Óbvio que não. Isso é completamente errado. Tem que lembrar que esse é um sistema legítimo, independentemente da sua opinião do dono. Eu reportei todas
+
+as vulnerabilidades e em poucos dias tudo foi corrigido. De verdade, as equipes responsáveis por essa parte estão de parabéns. Nenhum dado foi vazado. Tudo foi corrigido antes de qualquer outra pessoa perceber essas falhas. Então, se você acabou comprando, não se preocupa, você tá seguro. Eu não
+
+fiz esse vídeo para atacar o curso do Ritter, nem para falar mal do trabalho dele. A ideia aqui foi mostrar como que vulnerabilidades simples podem aparecer até em projetos grandes com pessoas que podem investir milhões de reais. E também não significa que o sistema foi mal feito, não. Pensa comigo. De 30 rotas adminar umas cinco. De 100 rotas
+
+eu encontrei uma que acabava vazando os dados do usuário. O desenvolvedor tem que se preocupar em proteger todas as rotas e o atacante tem que encontrar brech em pelo menos uma. Bom, espero que tenha gostado do vídeo. Me segue nas outras redes sociais e não esquece de deixar o like e se inscrever no canal. Valeus.

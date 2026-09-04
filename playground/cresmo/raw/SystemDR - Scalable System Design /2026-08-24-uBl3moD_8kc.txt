@@ -1,0 +1,17 @@
+---
+video_title: "Apache Spark vs Apache Flink in 60 Seconds"
+video_id: uBl3moD_8kc
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=uBl3moD_8kc
+video_date: 2026-08-24
+video_description: |
+  Website Link: systemdrd.com
+  Discover the future of Big Data Engineering with Apache Spark, Apache Flink, Kafka, real-time data processing, stream processing, distributed computing, and modern data pipelines. Learn the key differences between Spark and Flink and understand which technologies data engineers need to master for scalable, real-time analytics and modern cloud data platforms.
+---
+Three failure modes worth knowing cold. >> [music] >> Backpressure cascades, a slow sync, a database, an external API can't [music] keep up, and that slowness propagates upstream through the entire pipeline. Fix it with buffer de-bloating and rate limiting at the [music] source, not just by scaling the sync. Checkpoint timeouts, a small number of hot keys accumulate disproportionate [music] state, blowing your checkpoint SLA. Disaggregated state and incremental snapshots address this directly by removing the stop-the-world [music] barrier alignment problem.
+
+Data and key skew is really the root cause behind [music] both of the above. A handful of hot keys, a viral post, a whale trading account overload a single task. Standard mitigation, [music] local pre-aggregation before the shuffle plus salted partitioning to [music] spread that hot key artificially. On the decision side, choose Flink when sub-second SLAs, [music] large keyed state, or complex event time semantics dominate. Choose Spark when the workload mixes batch, ML, and BI, and 1 to 5 second freshness is acceptable. And
+
+increasingly, run both against [music] a shared Iceberg or time on lakehouse, so each engine owns the stage it's best at. One more note, skew bites hardest because it's invisible in development and staging. A pipeline that [music] passes every load test can fall over the first time a real hot key shows up. So per key load monitoring should be non-negotiable for any keyed [music] streaming job. Let's ground all of this in a concrete named production example.

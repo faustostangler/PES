@@ -1,0 +1,19 @@
+---
+video_title: "The Optimization Method Every ML Engineer Should Know"
+video_id: VlaaWmI9wy0
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VlaaWmI9wy0
+video_date: 2026-07-25T17:00:13+00:00
+video_description: |
+  Website Link: systemdrd.com
+  Discover how Trust-Region Methods provide faster, more stable optimization than traditional gradient descent for complex machine learning problems. Learn about nonlinear optimization, Hessian approximation, convergence, SciPy implementation, and practical Python techniques used in AI, data science, and scientific computing.
+---
+mental model [music] into an actual algorithm loop. Four steps, repeating. Step one, build the local model. [music] We form our quadratic using the gradient and the Hessian, or a curvature [music] approximation, at the current point. Step two, solve the subproblem. We
+
+approximately minimize that model subject to staying inside the trust radius. In practice, this means one of three approaches: the Cauchy point, which is cheap and steepest descent-based; the [music] which interpolates between the Cauchy point and the full Newton step; or Steihaug conjugate gradient, which we're going to look at in code in just a moment. Step three, score the step. We compute that ratio row, actual reduction over predicted reduction. Step four, >> [music] >> update and repeat. Reject and shrink,
+
+accept and hold, or accept and grow. And then we're back to step one at the new, or possibly the same, point. Here's the detail worth sitting with. The only [music] piece of state carried across iterations is that single scalar, delta sub k, the trust radius. >> [music] >> Everything else is recomputed fresh each time. And Steihaug conjugate gradient is
+
+the workhorse at real machine learning scale, precisely because it never needs the Hessian explicitly, [music] only Hessian vector products, which keeps memory linear in model size. Let's see

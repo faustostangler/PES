@@ -1,0 +1,113 @@
+---
+video_title: "N8N + FFMpeg Grátis com Docker 🔥| Automação Inteligente em Minutos"
+video_id: 0dE9k6rPfFg
+channel_name: "Eli Rigobeli - AI"
+channel_id: UC1aW5Cdw3hOmygxAQI2O9oQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=0dE9k6rPfFg
+video_date: 2025-07-11
+video_description: |
+  Neste vídeo, eu vou te mostrar passo a passo como instalar o n8n + FFMpeg usando Docker, totalmente grátis. Ideal para quem quer montar um sistema completo de automação de vídeos, seja para YouTube, Instagram Reels ou Tiktok sem precisar contratar uma VPS.
+  
+  🧪 Comandos utilizado na instalação:
+  https://elirigobeli.com/n8n-ffmpeg-docker
+  
+  Quer instalar em uma VPS? Segue esse tutorial:
+  https://youtu.be/NS_LMM6DWfg
+  
+  🖥️ VPS com desconto:
+  https://elirigobeli.com/hostinger
+  Cupom: ELIRIGOBELIAI
+  
+  📺Vídeos relacionados
+  Vídeos no automático: https://youtu.be/7CYCGpoR11I
+  Automatize tudo: https://youtu.be/5eGzhmD_BLw
+  
+  👉 Me segue no Insta!
+  https://www.instagram.com/elirigobeli
+  
+  📢 Curtiu o conteúdo?
+  Deixe o like, se inscreva e ative o sininho 🔔 pra não perder os próximos vídeos!
+  
+  
+  #n8n #Docker #MCP #AutomationTutorial #NoCode
+---
+Fala pessoal, hoje eu vou mostrar como instalar o N8N usando Docker, completamente grátis, para você criar suas automações, criar seus agentes sem precisar contratar uma VPS, um servidor. Você vai rodar aí direto no seu PC. Se você quiser um tutorial para instalar em um servidor, tem um vídeo aqui no canal. Vou deixar o link na descrição. Além de instalar então o N8N completo, nessa versão que nós vamos instalar hoje, ele também vai ter o FFM PEG, que é excelente para você manipular imagens, gerar vídeos, principalmente se sua finalidade é criar vídeos de forma automática. Inclusive, nesse vídeo aqui
+
+tem uma template para você fazer o download de graça e já sair testando essa instalação aqui de hoje. Se você ainda não me conhece, eu sou Eli Rigobel. Seja bem-vindo ao meu canal. Aqui eu falo de automação, inteligência artificial. Então, se você gosta desse conteúdo, se inscreve para não perder outros vídeos como esse. Também deixa o
+
+seu like para me ajudar. E bora pro vídeo. A primeira coisa que nós vamos fazer é baixar o Docker. É só digitar aí no Google Docker. E aí você vai clicar nesse primeiro link aqui. Você vai cair
+
+nesse site. Aí você clica aqui, ó, em download Docker Desktop e vai escolher aqui a sua versão, né? Se é Linux, se é macOS ou se é Windows. Repare que tem aqui Windows AMD64 e ARM. Na grande maioria das vezes aqui vai ser AMD64.
+
+faz o download e executa esse arquivo. Ele vai abrir uma tela, vai iniciar a instalação. Aí vai aparecer aqui para adicionar um ícone, né? Depois de instalar aqui no desktop, você pode habilitar ou desabilitar, dar OK. Ele vai começar a instalar. Instalou, ele
+
+vai pedir para você clicar aqui para fechar e reiniciar o computador. Reiniciado o PC, tá aqui o ícone do Docker, é só clicar. Clica aqui em accept e pronto. Essa é a aplicação do Docker. Beleza. Aqui no meu PC de cara
+
+apareceu esse prompt pedindo para eu fazer o quê? Pressionar qualquer tecla para instalar o Windows subsystem for Linux. Eu vou apertar enter aqui, vou colocar y e vou deixar ele fazendo o download e instalando. Isso daí vai instalar um mini sistema Linux dentro do meu Windows. O Docker utiliza ele para rodar os contêiners, tá? Aí ele fala
+
+aqui que a versão mais recente foi instalada. Pressione qualquer tecla para sair. Pronto. Aí ele tá perguntando se eu tô usando o Docker aqui para trabalho ou para uso pessoal. Você pode criar uma conta ou você também pode clicar aqui em pular. Mas o legal é criar uma conta
+
+depois. Você pode até usar aqui, né, o seu e-mail do Gmail. Eu vou dar um skip aqui, vou pular. Deixa para fazer isso depois. Lembra que nós acabamos de instalar uma versão do WSL, que é o Windows subsistem for Linux. Ele já tá
+
+falando aqui que precisa atualizar. Vamos clicar aqui, ó, restart. Tá vendo o comando aqui? Só vamos apertar restart para ele atualizar, ó. Até aparecer um pinguinzinho aqui, ó. Bem-vindo ao WSL.
+
+Legal, né? Mas pode fechar aqui. O importante é que ele atualizou, ó, já sumiu a mensagem falando para atualizar. Como é a primeira vez que nós estamos utilizando, eu já vou atualizar aqui também, ó. Aqui tinha uma notificação, tá? Aqui alguns componentes estão
+
+prontos para atualizar. Eu vou dar um update componentes. Vou ler aqui. Dá um update. Deixa eu até ver aqui. São
+
+versões, né? Olha só. Docker AICLI Docker Compose. Eu vou colocar aqui para baixo e vou dar update. Pronto, tudo totalizado. O que que nós vamos fazer
+
+agora? Agora vamos instalar o contêiner do N8N. Para isso, eu vim aqui no C2 pontos. Poderia ser qualquer outro diretório, mas eu coloquei no meu C2 pontos e criei uma pasta chamada N8N traço FFMPEG. Aqui dentro eu vou criar um arquivo txt, ó. Vou vir aqui em novo arquivo. Eu vou
+
+chamar esse arquivo, ó, de docker file, tá? Vou abrir. Aí vai abrir aqui o txt, né? E eu vou colar esse conteúdo. Eu vou deixar aqui embaixo. Vou salvar, vou
+
+fechar. Só que eu vou renomear aqui, ó. Deixa eu salvar. Vou renomear só para Docker file. Vou tirar o ponto txt. Ele
+
+dá um alerta aqui. Eu dou yes. Beleza. Docker file. Agora nós vamos criar um novo arquivo chamado Docker Composer.yml.
+
+Tá aqui. Vou deixar txt por enquanto para facilitar. Vou abrir e vou colar o seguinte conteúdo. Olha só. Service N2N build. O contexto Docker file, o nome da
+
+imagem. Cola desse jeitinho que tá aqui, tá bom? É salvar. Vou fechar e também vou remover o txt. Vou deixar só ponto yml. Ele vai dar um alerta. Yes. Beleza,
+
+tudo pronto. Agora eu vou abrir o terminal e entrar dentro desse diretório aqui, ó, o C2 pontos. Eu vou colocar aqui command. Se você tiver o terminal, powers shell, pode ser também, mas vamos fazer pelo command, que a maioria vai ter só ele. Então, ó, eu entro aqui já dentro do meu diretório, ó. CD dois
+
+pontos users ele rigobell, certo? Eu vou dar um CD do pontos. Voltei. CD pontos. Voltei. Estou no C do pontos na raiz.
+
+Qual que é o diretório que eu quero? CD, que é para entrar. N8N. Se eu der um tab aqui, ele já vai completar. Olha só. e
+
+dou enter. Pronto, tô aqui. Tanto que se eu der um dear, ele vai listar o conteúdo. Olha só, o Docker Compose tá aqui e o Docker Fe. Agora eu vou executar o comando para instalar essa imagem, que é o comando docker, espaço composer, espaço up, espaço - d espaço menos build. Eu mostrei na tela e vai
+
+est aqui embaixo também. Vou apertar enter e aguardar. Pronto, pode ver, não deu erro nenhum, ó. Construiru N8Nwork aqui, created, created e starter. Beleza, show. E o mais legal, pessoal, é
+
+que se a gente voltar aqui no aplicativo do Docker, temos o quê? A imagem rodando. Olha só que verdinho aqui, ó. Tudo certinho. Tá rodando o N8N com FFMPEG. Como que nós acessamos? Você vai
+
+entrar no seu navegador e colocar o endereço que é local host, ou seja, na sua máquina local, só que você configurou a porta, lembra? Então, se você clicar aqui, ó, você abre e tem aqui a porta. Inclusive, se você passa o mouse, ele já mostra o endereço que você vai acessar. Se você clicar, já vai abrir. Ou também, se você clicar aqui, ó, e entrar aqui tem o endereço. E aqui
+
+embaixo também, ó. Editor está acessível via local host 2.5678. Então, se você clicar aqui, ó, você pode salvar esse endereço. Vai cair aqui na tela de setup para você colocar o e-mail, o nome, segundo nome, senha. Não
+
+perde essa senha, tá bom? Salva esse endereço também aqui, ó. Arrasta ele paraa sua barra de tarefa aqui. Enfim, você tem que lembrar que você vai acessar local host 2.5678.
+
+E pronto, vamos lá. Preenchi os dados aqui, vou colocar next, vou responder essas questões aqui. Qualquer coisa por enquanto, get started. Aqui ele fala dos recursos avançados do N8N. E aqui você pode ganhar de graça, é só você enviar o e-mail, tá vendo? Porque ele fala, ó,
+
+uma vez desbloqueado, você pode manter eles para sempre. Então, evita pular aqui, aproveita e pega essa senha. Então, eu vou enviar aqui uma licença gratuita, né? E pronto, ele avisa aqui que enviou pro e-mail. Aí depois você ativa ali nas configurações. Mas beleza,
+
+vamos só testar para ver se veio com FFM pack. Para testar eu vou importar um workflow que eu geregar
+
+aqui para começar um novo workflow. Aí vou clicar nesses três pontinhos aqui e importar de arquivo. Selecionei o Jzon. Vou deixar o link dele aqui embaixo. Aí vocês podem baixar também para fazer o teste. Aí, basicamente tem aqui um
+
+gatilho. Ele cria um diretório no barra TMP testn8N. Faz o download da imagem um. Se vocês encontrarem erro, o que que vocês fazem? Você muda esse ID aqui, ó, que tá no meu diretório, tá? Aqui do Google Drive.
+
+Vocês pegam uma imagem, coloca no Drive de vocês e só muda o ID. Você pega o ID da imagem na URL e coloca aqui. Beleza, eu vou executar de cara aqui. Vamos ver o que que ele vai fazer. Ó, fez o download da primeira imagem, fez o download da segunda. Tá gerando vídeo,
+
+galera. Olha só. Vou abrir aqui só para vocês verem, ó. Baixou essa imagem, tá? Inclusive, esse é de um vídeo que eu fiz muito legal, tá? Aqui no canal. Baixou a
+
+imagem dois, beleza? e gerou o comando aqui do FFMPEG, que é esse comando do lado direito. Ger com comando. E vamos ler o vídeo. Ele leu o vídeo, ó. Viu? Vai ter que trocar.
+
+Maravilha. N8N com FFM peg instalado no Docker de graça, sem gastar um centavo. E aí, gostou? Foi claro? Conseguiu fazer o passo a passo, instalar. Eu espero que
+
+eu tenha te ajudado, que agora você consiga rodar o N8N sem gastar um centavo, sem contratar servidor, já consiga testar seus workflows, criar novos workflows e não só relacionado a vídeo, automação, você pode fazer muitas coisas. Depois eu vou trazer alguns vídeos sobre integração com WhatsApp. Já imaginou você mandar uma mensagem, transcrever o áudio, entender o que que foi falado no áudio, tratar, retornar pro usuário, dá para fazer uma atendente virtual, muita coisa com automação, tá bom? Eu sou Eli Rigobelli, muito obrigado por assistir esse vídeo e até o próximo. Tchau. Ó, tem dois vídeos aqui
+
+do lado. Um deles eu falo sobre automação, tá? Bem interessante esse vídeo. Eu falo de Jzon, API, a integração com essas plataformas de inteligência artificial. Então, se você não entende ainda, tem dificuldade, eu super recomendo esse vídeo. E o outro,
+
+eu mostro como que você cria vídeos no modo automático. Inclusive tem uma template de graça lá para você fazer o download e testar logo após essa instalação. Até o próximo vídeo.

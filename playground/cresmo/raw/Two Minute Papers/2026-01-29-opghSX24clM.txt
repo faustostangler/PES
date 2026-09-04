@@ -1,0 +1,66 @@
+---
+video_title: "This Broke My Brain - These Humans Aren’t Real"
+video_id: opghSX24clM
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=opghSX24clM
+video_date: 2026-01-29T10:29:06+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  📝 The paper is available here:
+  https://neuralbodies.github.io/RFGCA/
+  
+  Our Patreon if you wish to support us: https://www.patreon.com/TwoMinutePapers
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Adam Bridges, Benji Rabhan, B Shang, Cameron Navor, Christian Ahlin, Eric T, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Ryan Stankye, Steef, Taras Bobrovytsky, Tazaur Sagenclaw, Tybie Fitzhugh, Ueli Gallizzi
+   
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+---
+It’s been decades now, and my problem with most video game humans is that they often still look like plastic dolls. The skin looks plasticky, the hair does not interact with light like in reality. What I want is some magic technology that can look at us, and then put us in a virtual world. Now, new paper, and I am thinking. Do we start with the good news or the bad news? Let’s start with the good news.
+
+This technique promises to look at you, and then, you appear as a lifelike virtual person. And it does my favorite. It does subsurface scattering. So it accounts for the light penetrating our skin, bouncing around within, and then coming out somewhere else. Yes, light does that, and it is incredibly difficult to compute.
+
+Okay, so does this really do all of that? I want to have a look. Oh my goodness, that indeed looks incredibly realistic. It works with point lights and a full environment as well, so we can put ourselves anywhere, and our appearance will change based on how the lighting of the scene catches us. The characters are also allowed to move, we don’t just have a stationary model, the skin tones look natural. I love it already.
+
+And…goodness. Look at this. The hair looks so realistic, I got to this broke through. It really did! My brain does not tell me that I am looking at a virtual avatar anymore. My
+
+brain says that I am looking at a real person’s hair. Yes, it’s not perfect, but it is so far beyond anything else I am seeing in most games and many digital media, wow…Crazy. But it gets crazier. Now hold on to your papers Fellow Scholars, and look at this. We have images of the actual person these models were based on. So why not compare how close the model is
+
+to reality? Uh…hello? What? I hear you asking, Doctor, did you just copy the image? Well, I did not. This is the virtual character. You can see some differences, some high-frequency
+
+details from the shirt are gone. The hair does not have enough Gaussians to be perfect, but it’s still damn good. If you squint, it looks the same. Absolutely amazing. Wow.
+
+Here is another example. Absolutely stunning how close it is. My goodness. Okay, now I really want to know. How is this wizardry even possible?
+
+Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. Well, it requires two key ingredients. One. Gaussian splatting. Oh yes. Here,
+
+the scenes are not built from a bunch of triangles like in many computer graphics engines, no. Here, a scene is built from millions of tiny, elliptical bumps. 3D bumps. Now, we start shoveling those 3D bumps at the 2D screen to complete the image. Okay…but why? Well, traditional meshes have their weaknesses. They are made of flat
+
+triangles that can't easily represent thin objects. It’s a nightmare with meshes. But Gaussian bumps can overlap with each other, and each has a different transparency. Thus, it can capture fuzzy details so much better than these rigid meshes. But this quality comes at a cost. With meshes, you just store a surface. Gaussians, however use more memory because
+
+we have to store millions of individual points - each with its own position, size, and light data. And, of course, you super smart Fellow Scholars also immediately see that Gaussians also harder to edit. How do you even edit a bunch of points? With meshes you can sculpt in a piece of modeling software like Blender very easily. Gaussians? Not so much.
+
+Ok, so that is how hair is done. But what about skin? Skin is not a bunch of thin strands. So how the heck does it do this incredibly amazing skin rendering? Well, we need another invention for that. You see, most game engines treat skin like a painted wall.
+
+Just slap some paint on it, light hits it and bounces off immediately. Now real skin doesn’t work like that. We noted that human skin is translucent. Light goes in, bounces around inside, and comes out. To get this right, here, Gaussians are equipped with built-in light sensor that can detect where the light is coming from. Then, they know how much glow to release in every direction.
+
+Yes, yes. That sounds good in theory. In practice? Oof. Not so much. Why?
+
+Well, imagine that every tiny part of the skin has a disco ball with 81 different mirrors on it to capture light from every angle. When the person moves their arm, oh no! The computer has to recalculate the position of every single mirror on every single ball. That problem, Fellow Scholars is of cubic complexity. Meaning that if you want to double the quality, you don’t work twice as hard. You work 8 times more. We call this technique spherical harmonics,
+
+and I think it is easy to see that this is not a great solution here. Now here is the cheat code of the new paper. Forget about the disco ball, it’s so ’80s. Give that back to grandpa, and let’s use lasers instead! Oh yeah! The millennial special!
+
+Imagine every tiny part of the skin has 3 laser pointers. Each point in one chosen direction. Whew, finally! Instead of tracking 81 mirrors, the computer only tracks where the three beams point. Now this makes the math much quicker. We say that the cubic complexity has been made linear
+
+instead. And that is amazing. So they call this technique Zonal Harmonics and it really works! They also have a sprinkle of neural network on top to deal with shadows. It looks at the body's pose to predict exactly where shadows fall. And it is…drumroll…a convolutional neural
+
+network. Also old old grandpa stuff, but it does three things really well: it is light on memory, it is fast, and look. Oh my goodness, it works! Thanks grandpa! So that is how all this glorious stuff works, but yes, yes, I haven’t forgotten. Fellow Scholars, I’ve got bad news for you.
+
+To capture this data, you need a room-sized dome. This sci-fi rig is packed with 500 high-resolution cameras and a thousand controllable lights. It probably costs hundreds of thousands, if not up to a million dollars. And we haven’t even talked about the compute you need to crunch all of these numbers. So, is that a problem? Yes….and no. You see, in research, the first paper always
+
+has to make the impossible possible. It has to prove that something is possible at all. Once we know it works, the next paper makes it faster, and the one after that makes it cheaper. So two more papers down the line, and you might be running this with your phone camera in your pocket. That is the First Law of Papers. Just imagine that,
+
+near Hollywood quality virtual you in your pocket. What a time to be alive! Okay, so once again, a really tough research paper explained in simple words. I hope so, at least I tried my best.

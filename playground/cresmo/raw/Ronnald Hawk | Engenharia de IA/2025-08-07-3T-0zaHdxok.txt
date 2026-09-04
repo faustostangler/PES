@@ -1,0 +1,215 @@
+---
+video_title: "Agno é bom. Ignore-o (Por enquanto)"
+video_id: 3T-0zaHdxok
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=3T-0zaHdxok
+video_date: 2025-08-07
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Abertura 11/08): https://www.rhawk.pro/comunidade
+  
+  
+  ––– Descrição –––
+  Quer construir soluções com IA Generativa mas não sabe qual framework de IA escolher? 
+  
+  Neste vídeo, faço uma análise completa do framework Agno, comparando sua prometida simplicidade com a robustez de alternativas como LangChain e LangGraph. 
+  
+  Se você é um desenvolvedor, empreendedor ou iniciante em Inteligência Artificial, vai descobrir por que a busca pela "facilidade" pode ser uma armadilha e como o controle e a flexibilidade são essenciais para criar agentes de IA e workflows que funcionam em produção.
+  
+  Aprenda os fundamentos para escolher a ferramenta certa para o seu projeto, entenda a diferença entre prototipação e implementação real, e veja como focar em hiperpersonalização é o caminho para desenvolver produtos de IA lucrativos e de alto impacto.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução 
+  0:54 A promessa do Agno
+  4:45  Agno é mais um entre muitos frameworks
+  7:37 Qual framework usar?
+  11:18 O mito da complexidade no langgraph
+  18:16 Primeiro os fundamentos, depois frameworks
+  
+  ––– Agência –––
+  
+  A melhor consultoria em IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #agentesdeia #python #langgraph #agno
+---
+Vocês pediram e chegou o dia finalmente de eu revisar o framework agn. Ao longo desse vídeo eu vou passar pelo código, pelas principais features e além do framework agn você deveria escolher um framework e qual escolher, né, dependendo do seu caso. Então bora lá pro vídeo. [roncando] Cara, as primeira coisa aqui importante, tá? antes de a gente entrar no em si. Para você que não me conhece,
+
+meu nome é Ronald Hulk e eu ajudo empresas a implementarem inteligência artificial em produção. O que isso significa? Muuit das vezes eu pego desde a ideia da concepção do produto até a gente conseguir botar em produção. E isso vai ser importante ao longo do vídeo que eu vou conversar com vocês. Então assim, lembre-se, eu não sou marqueteiro, eu sou engenheiro. Por
+
+muito tempo eu fui um engenheiro de software tradicional e hoje eu sou um engenheiro de negócios, se é que isso existe. OK? Então, bora aqui pro código, tá? Agno, qual é a promessa? Deixa eu voltar para cá. Qual é a promessa do
+
+Agno, tá? A promessa do Agno, o principal é simplicidade, né? Facilidade para você criar um agente e velocidade, né? Se você explorar aí a documentação e eu aconselho, se você tem interesse, eh, faça por você mesmo. Eh, antes que eu esqueça, mantendo a tradição, esse código aqui tá lá na Rockpro, é para download, assim como tá o código do LG graph, tem o código do agent SDK da Open AI e tem do agent da Google. Então, é
+
+como eu falo, tem a minha opinião, eu provo com código e é, você pode chegar a sua própria baixando o código e brincando lá, beleza? Beleza, vamos voltar aqui. E de fato o agno tem coisas interessantes, né? É, principalmente para prototipação, né? Ele é um framework bem rápido, né? E ele tenta
+
+ser minimalista em algumas casos, mas aqui tem um, já começa uma coisa interessante que é sobre a complexidade das coisas, tá? E eu vou entrar um pouquinho mais nisso aqui, mas primeiro vamos rodar o nosso exemplo aqui. Eu preparei um exemplinho básico pra gente aqui, tá? Tô usando o Gemini, como você pode ver aí como modelo. Então eu importo ele aqui. E eu tô usando mais o
+
+quê? Tô usando, né, uma ferramenta de busca, tá? Tradicional, é comum nesse nosso meio aqui. Beleza? Então é um assistente com uma ferramenta de busca na web, só esse o prompt. E tem alguns
+
+outros parâmetros que eu coloquei aqui, porque se eu não colocar, eh, ele não teria uma memória, por exemplo, de curto prazo. Eh, e obviamente o exemplo ficaria muito ruim. Então, eu eu trouxe aqui pra gente tentar facilitar. Então vamos lá. Vamos lá. Qual o melhor
+
+restaurante em Niterói? Vamos mandar ver aqui. Como você vê, eu tô usando ele aqui na linha de comando muito porque ele tem um utilitário para você usar. Você pode baixar aí usando o NPX, né, que seria um pacotão e de Typecript. Eh, mas e e também tem uma versão que você tem que logar lá neles.
+
+Então assim, né, para uma demonstração, achei que era too much. Ah, e eu botei aqui na linha de comando pra gente ver. Beleza? E aqui [roncando] o que você vê, eu botei ele para imprimir a chamada de ferramenta. E quando a gente tá construindo agente, ã, uma, um dos fatores mais importantes no agente são as ferramentas que a gente dá para ele, tá? Então, foi por isso que eu botei
+
+aqui. Então, se você baixar o código, você vai ter a oportunidade de ver exatamente o que eu tô vendo aqui, beleza? E ele deu aqui recomendações de restaurante, tudo mais. Então ele vi, a gente viu que ele chamou as ferramentas, ele passou 10 resultados e eh chamou 10 resultados lá e mandou a resposta aqui. Curiosamente essa facilidade, como sempre eh esconde a implementação. E aí
+
+você deve estar se perguntando, Ronald, mas é isso, é tudo que eu quero? E aí que pode tá, cara a tua ruína e eu vou te provar isso agora. Beleza? Então, como você vê aqui, a gente não sabe exatamente como ele tá fazendo essa implementação. Eh, se você for lá na documentação, vai ter um monte de parâmetro e a partir do momento que você vai botando parâmetro, a coisa vai ficando um pouco maior, um pouco maior, um pouco maior, até que você vê que a tal facilidade, na verdade, é é uma tentativa de esconder a complexidade para debaixo do pano. Beleza? Mas isso
+
+não digamos eh desabona o nosso código aqui. Só que tem esse detalhe que se a propaganda é referente a isso é muito difícil, esse é muito mais fácil do que qualquer outro, tá errado, tá? Ponto. Isso aqui, se você tiver curiosidade, aqui eu coloquei pra gente poder fazer a sessão aqui frequentemente, tá? Então se você quiser rodar na linha de comando aqui a de infinito, você pode. Se você
+
+quiser sair, você bota lá sair, ele vai sair da linha de comando. Beleza? Show de bola. Você pode usar isso aqui à vontade, é, é de graça. Show de bola.
+
+Então, vamos voltar aqui pra apresentação que eu quero mostrar algumas coisas para vocês que talvez vocês não saibam. Vamos lá. Frameworks. Frameworks, tá? Se você tá chegando de novo nesse mundo, cara, existem vários frameworks, cara, e provavelmente toda semana sai um framework de agente de ar, tá? Então, eh, o que eu sempre falo
+
+aqui, caras, o que a gente precisa, na verdade, é de uma direção e não de múltiplas direções. Ah, e o que eu vejo, principalmente com quem é mais novato, eh, e quem tá começando a tentar construir, é ficar preocupado com framework para cá, para lá, para lá, para cá, para cá, para lá, tá? Então, vamos botar a bola no chão e vamos sair jogando na moral. Primeiro, Leng Chain, tá? Por que que o Link Chain é tão famoso? Porque ele foi o primeiro, ele
+
+foi o percursor. Foi meio que assim, 3 meses depois disso aí a API do Open Eii, os caras já lançaram uma ferramenta, provavelmente já tinha um conhecimento interno, né, de bastidor, tal, porque não tem como fazer em tempo hábil, né, assim, um framework. E eles ganharam tração e ficaram muito famosos, né? Eu não vou entrar no mérito aqui se ele é bom, ruim, parará parará, isso aí é uma discussão boba demais, mas é fato. Existem centenas de aplicações que usam Lchin em produção. É isso que você
+
+precisa saber. Ponto. Se você tem interesse em ganhar dinheiro, ganhar não. Fazer dinheiro com isso aqui, essa informação ela relevante, tá? A nossa função é resolver problema e fazer dinheiro, beleza? É o que eu te ajudo
+
+aqui a fazer. Então, esse cara aqui tem eh provas de que funcionou em produção, tá? E e eu já mostrei aqui no canal, inclusive no vídeo passado, te mostrei um exemplo funcionando, né, em produção. Show de bola. Show de bola. Então, é,
+
+vamos tirar o nosso LCH chain aqui de framework porque ele é como se fosse o Allancour, tá? Ele é o alfa, é o shad. tá, dos nossos frameworks aqui. Então, vamos falar dos outros. O LC Chain naturalmente percebeu que para fazer eh coisas mais complexas eh o Leng Chain já tava ficando meio esticado, né? Você já
+
+tinha que fazer gambiar. Então eles proporam um novo framework chamado Lenggraph, que é eh o irmão mais novo e digamos assim do L Chain e proposto para fazer soluções robustas. Beleza? Show de bola. E a preocupação dele é te dar toda a liberdade para fazer o jeito que você quiser a coisa ali. E isso você já pode
+
+pensar, ok, isso vem com complexidade, segura aí. Beleza, show de bola. Junto deles vem Open ASDK, ah, o Google Agent, como eu falei aqui, ambos tem código aqui e agora também tem código lá na Rock Pro, tem código desses quatro aqui já. Beleza, provavelmente no futuro vão ter de todos. Eh, e aí a gente tem um monte, né? Tem Crew AI que é bem famoso,
+
+eh, tem o Lam Dex que e pegou bastante tração no início e tem outros aqui como o Pidentic e o Jeepsai, que eu acho eles super curioso, mas enfim, não é o topo o o o tópico desse vídeo aqui, tá? Então, existem centenas, tá? Beleza, Ronald, por que existem centenas e porque eu usaria algum framework? A gente tá num momento da indústria em que existe uma disputa de espaço, cara. Não existe nada escrito na pedra ainda. A gente tá numa
+
+busca. A gente tá procurando, ó, qual é o melhor padrão? O que que funciona melhor? Parará. É exatamente essa discussão. Agora se alguém falar assim
+
+para você: "Esse aqui é o melhor", cara, para a gente tá no momento de definição. O melhor é entender o que você tá fazendo, entender o que existe debaixo dos panos e eventualmente você pode escolher o melhor para o seu caso de uso ou então o melhor talvez seja nem usar um framework. OK? Então por que que eu tô falando isso? Vem cá, vamos ver aqui, tá? [roncando]
+
+Basicamente, caras, você pode fazer um agente exatamente assim, tá? Você vai lá no teu Python, [roncando] abre um while, né, um loop e bota a chamada da LLM aqui lá na competition do Open AI direto. A completion do Open AI aceita chamada de ferramenta. Então você teria um agente de fato que vai ficar girando ali e você pode gerenciar a memória ali no teu loop. Por exemplo, toda a mensagem que chegar, você vai, né, botando um append numa lista e vai fazendo aquilo ali a de infinito. Beleza? Você poderia
+
+[roncando] fazer isso aí. Você não precisa de framework nenhum. A ideia do framework ou o porquê do framework existir é para ater abstrações que você possa usar de maneira conveniente, mas a conveniência geralmente vem com preço, que é o não controle do que você tá fazendo. Então, [roncando] digamos, o nosso framework ideal, ele nos daria essa abstração e o máximo de controle possível. Talvez não seja possível você ter os dois exatos do mesmo lado, né?
+
+Então você vai ter que sacrificar uma coisa em relação à outra. É basicamente isso que você quer fazer no framework, tá? E quando a gente fala de existem três coisas de abstração que a gente quer aqui, tá? A primeira são os workflows. E eu tenho um vídeo aqui sobre o workflow. E ao contrário do que
+
+parece eh para quem tá novo nesse mercado, aqui é onde tá a maior parte do dinheiro, tá? Eu vou entrar um pouquinho mais a fundo na frente, tá? E depois estão os agentes e multidosagentes. Os multiagentes são como se fosse a parte legal, sedutora da coisa, mas fazer multiagentes não é fácil. Eh, além da demonstração no YouTube. É, é fácil
+
+fazer, na verdade. O problema é fazer eles serem confiáveis, tá bom? Então, assim, não é difícil fazer. O difícil é botar ele em produção de maneira que você fala assim: "Não, eu vou deixar meu cliente acessar e eu confio sem funcionando da solução, tá?" muitos agentes é um é um caso eh específico ainda. E se você pretende fazer dinheiro
+
+no médio curto prazo, as oportunidades estão muito maiores aqui agora. Beleza? Show de bola. Tá? Então, caras, onde está o dinheiro? Tá, IA, produtos de IA
+
+é sobre hiperpersonalização, tá? Empresas como a Open AI vão comer o mercado inteiro, que não sejam altamente especializados e customizados. Se é algo muito básico, tá? Uma integração muito básica, algo rotineiro, provavelmente essas plataformas vão ficar com o market share todo. E o que sobra para você?
+
+Jogar onde eles não jogam, é entregar o que eles não vão poder entregar ou não vão querer entregar, né? Não vão querer sujar as mãos com um problema muito específico e que é uma área muito customizada. [roncando] E é exatamente o que eu tô tentando mostrar para vocês, caras, vai tem muita oportunidade e terá muitas oportunidades exatamente de criar coisas com hiperpersonalização. Mas adivinha só? Se você quer hiperpersonalizar, você precisa ter o quê? Grande liberdade e
+
+grande controle. E você pode argumentar, então se eu tenho grande controle, eu tenho e eu não tenho facilidade. É exatamente que a gente vai falar a partir de agora e discutindo o código. Eh, vamos lá. Beleza? Então, você já viu
+
+esse código aqui, tá? Eh, nesse meu lado aqui é do Agno, correto? Tá? E agora a gente vai ver o código da ou do L graph, tá? Ah, esse é o código do L graph que implementa exatamente a mesma coisa que o anterior ali. [roncando] Eh, eh, você
+
+sinceramente aí no fundo do teu coração, deixa eu aumentar um pouquinho isso aqui, [roncando] você acha esse código aqui complicado, cara? Sério mesmo? Você acha que criar um agente React aqui é complicado? Tá? Você passa o modelo, você passa as ferramentas e você passa a mensagem do sistema, que seria o prompt.
+
+Realmente você acha isso complicado? É impeditivo de você fazer algo assim sério, tá? E aqui a gente tem um detalhe que é a ferramenta, tá? E a ferramenta aqui eu implementei na mão e eu vou mostrar um exemplo aqui para vocês. É, rodando exatamente a mesma pergunta.
+
+Vamos copiar a pergunta aqui. É pra gente ver se existe diferença, tá? Então, vamos lá. É, esse é o cara que eu quero. Não, não é o cara que eu quero.
+
+Esse cara aqui eu já vou mostrar para vocês já já, tá? Eh, então vamos lá. Vamos rodar esse cara aqui e vamos ver como ele vai se comportar. [roncando] Ah, vamos lá. O nosso código super complicado porque o L graph é muito difícil. Provavelmente quem fala que L
+
+graph é muito muito muito muito complicado é um problema de habilidade. E tudo bem, né? A habilidade a gente e desenvolve, aprende, é isso não é um problema nenhum. E é exatamente o que a gente faz aqui o tempo inteiro, né? A gente continua aprendendo, aprendendo, aprendendo. Então, vamos lá.
+
+O que aconteceu aqui eh no nosso Lang Graph Studio, tá? A gente fez a pergunta e a resposta agora não interessa muito pra gente. Eh, a grande diferença aqui é que a gente vê a chamada de ferramenta e a gente vê as respostas e a gente vê que ele chamou três eh três e queries. A gente vê o score de cada resposta. Então, vamos imaginar que você eh ache que respostas abaixo de 09 eh não são relevantes paraa sua resposta.
+
+Geralmente são respostas ruins. Então você poderia excluir essas respostas. Isso porque eu criei a ferramenta aqui, cara. Eu tô chamando a IPI direto e eu mantenho algum controle sobre a minha ferramenta. Agentes de são sobre ferramentas. Se você não tiver controle
+
+sobre sua ferramenta, o que você tá fazendo é um brinquedo, tá? Isso é óbvio se você começar a construir. É óbvio se você baixar os códigos e começar a brincar, tá? Mas [roncando] eu repetidamente tenho que vir aqui na internet falar isso, porque eu sei que o discurso é sempre de facilidade. Fique na sua zona de conforto, tome aqui uma papinha, nenê.
+
+Você não precisa fazer as coisas. Quando na verdade, caras, na zona de conforto o teu sonho morre. E é na zona de conflito, cara, é que a coisa acontece. É na zona de conflito que você faz dinheiro. É na zona de conflito que você cresce. E [roncando] é o que eu tô
+
+mostrando aqui. Eu tô mostrando o mundo real, um mundo de o mundo onde passa o dinheiro, onde onde estão os problemas para serem resolvidos. Cara, se você quer ser alguém casual, cara, não, tudo bem, esquece o que eu tô falando aqui, fecha o vídeo, entendeu? Eh, mas se você quiser fazer dinheiro, cara, presta atenção, né? Presta atenção. O que eu tô mostrando aqui
+
+desde o início do meu canal são aplicações profissionais, tá? É, [roncando] quer dizer que você não pode? Muito pelo contrário. Quer dizer que eu tô matando o sonho de alguém? Muito pelo contrário, eu tô te mostrando que você pode sonhar, pode sonhar alto e eu tô te mostrando o caminho para você realizar teu sonho, cara. Mas aí se você não
+
+gosta da mensagem, aí eu realmente não posso fazer nada, é a realidade e tá aí, cara. E eu realmente não posso mudá-la. Beleza? Então vamos voltar aqui pra minha apresentação que tem outras coisas interessantes que eu quero mostrar para vocês, tá? Então a relação de controle e liberdade se dá pelo seguinte, tá? Você
+
+pode ter muito controle e muita liberdade e facilidade, desde que você procure ficar melhor. Não procure que as coisas sejam mais fáceis. Procure ser melhor, procure ficar melhor. Tá bom? Beleza. Uma última analogia, se você não
+
+entendeu o que eu tô dizendo sobre tipo de produto, tá? O que a gente tá que cria negócio, que cria produto, que trabalha para alguém, que trabalha numa startup, que trabalha numa empresa, o que a gente tá tentando fazer, cara, é um F22 rápido. A gente tem que ser mais rápido do que o adversário. A gente tem que ser melhor que o adversário, tá? Beleza. Beleza. E caleha que esse banco
+
+aqui do piloto do F22 rápido é complexo, caras. Obviamente ele não usa todos esses instrumentos o tempo inteiro, OK? Mas eventualmente ele vai precisar usar. E é exatamente o que acontece no dia a dia que eu vejo quando eu ajudo empresas, tá? [roncando] Os projetos de sucesso geralmente são quando eles fundam uma base em cima de algo que é muito maleável ou que tem vários botões, tá? E a partir desse
+
+momento eles começam a aplicar isso no mercado. E adivinha só? Geralmente a ideia inicial que você tem de produto não funciona, tá? Mas se você não tiver uma base flexível, né? Se você não tiver o controle do que você tá fazendo, inevitavelmente você fica preso eh tecnicamente em algum lugar e você não consegue sair, tá? Então é sempre uma
+
+boa ideia você ser senhor, ter liberdade, ter controle total do que você faz. À medida em que você nota que e isso não funcionou, você pivota rapidamente para uma outra solução, para uma outra coisa, para uma outra uma outra resolução de problema, até que seu produto fixa no mercado e aí você começa a ficar fazendo dinheiro. E esse cara que senta aqui no copit, cara, faz dinheiro, tá? Eh, você não precisa ser o empreendedor solo para fazer dinheiro com isso aqui, não. Eh, existe uma demanda por gente que faz isso aqui, só que não tem. Realmente não tem. E é o
+
+que eu tô fazendo aqui, caras, olha, caras, [roncando] vem cá, pô. Tem, vamos, cara, tem um, tem um futuro aqui apontando para essa parada aqui. Beleza? Ah, em comparação aqui, eu tenho um seisna, eu acho, né? Eh, que é um avião casual que eu tô falando, cara. Você
+
+quer ser casual, pô, nem pega isso aqui, fica no N8N, beleza? Ah, N8N. É, geralmente a pessoa fala assim: "Rol, nem falo de N8N com você porque eu acho que você não gosta". Não é que eu não goste, cara. Não tenho nenhum problema com N8N, com nenhuma ferramenta. O meu
+
+negócio é resolver problema e fazer dinheiro, tá beleza? Só que o N8N se transformou em algo que ele não é aqui na internet, né? Principalmente ele se transformou numa loucura. E o curioso é que 90% das empresas que me procuram para fazer serviço, para prestar consultoria, falam assim para mim: "A gente já fez um alguma coisa com N8N aqui, mas a gente viu que não funciona". E aí eu ouvi você falando e aí eu entendi, caras, é real, tá? O que eu tô
+
+trazendo para vocês é a realidade do mercado, caras. Mais uma vez, eu sou engenheiro, cara. Eu tô fazendo isso aqui porque é a minha profissão, beleza? Eu tô trazendo para você a realidade do que acontece no mundo, não é fantasia. Show. E o painel desse cara aqui vai ser
+
+sempre mais simples, vai ser menos complicado, vai ser casual. Se você quer ser casual, não tem nenhum problema, cara. É muito legal brincar com todas essas coisas. E eu convido a todo mundo, comece casual, comece a brincar, comece a resolver o seu próprio problema. E quando você começar a resolver seu próprio problema, você vai ver que se é casual, não vai dar. E aí você vai ter
+
+que se tornar, né, um piloto de elite. Beleza? Show de bola. Eh, esses tópicos que eu queria eh cobrir aqui. Ah, e agora, caras, uma coisa interessante sobre complexidade. Você vai [roncando]
+
+ver agora um pedaço de código que ele supostamente deveria ser complexo, né? Deixa eu botar esse cara para cá. Deixa eu ver se eu consigo aqui. Calma aí. Beleza. Tá. Hum, ficou feião. Vamos lá.
+
+aqui, L graff workflows, tá? Eu tenho uma implementação exatamente de um agente igualzinho que tá ali no eh no Agn e no Leng graph, só que raiz, tá na mão, fazendo linha por linha, nó por nó. Deixa eu mostrar aqui para vocês. Cadê esse cara? Agent, tá? E aí
+
+você vai ver e que a quantidade de código é razoavelmente maior, né? 60 linhas. E eu tô fazendo isso aqui tudo na mão. Ah, e qual é o lance aqui? Se você, por exemplo, quiser controlar a janela de contexto do seu agente, tá?
+
+Por exemplo, ah, eu quero que ele faça o resumo de cada mensagem quando ela entra. Ah, não. Eu quero que toda vez que entra uma mensagem e citar Maria, na verdade, ele mande uma mensagem de WhatsApp para alguém, sei lá, qualquer coisa que você queira resolver no mundo, tá? É assim que você vai fazer. É, você vai descer no baixo nível e vai fazer lá no baixo nível. Hol, eu não preciso do
+
+baixo nível. Então, você vai lá no alto nível, cara. Você vai lá no Creative React agent e faz lá. Cara, é essa beleza do Link graph, cara. Você pode ser muito alto nível como isso aqui, ou pode ser muito baixo nível. Ronald, mas
+
+você, eu não defendo L graph nenhum, cara. Eu uso a ferramenta que melhor se apresenta. E não só, só eu que uso L graph. Deixa eu mostrar aqui outra coisa legal para vocês. Se você entrar aqui nessa página, tá, onde mostra os cases e você pode ler todos os cases, não sei o que tô falando, tem várias empresas que usam isso aqui, tá? E por que eles fazem
+
+isso? né? Porque eles são bobões e você é um malandro, entendeu? A questão é, o mercado caminha para um lado, tá claro a direção do que o mercado tá caminhando. O que vai acontecer no futuro, eu não sei. E é por isso que eu tenho, né? E eu
+
+fico de olho no que acontece o tempo inteiro e eu eh adapto, analiso, adapto conforme o necessário. Mas a questão é fato, você pode vir aqui e ler casos de uso implementados de L graph em produção, assim como eu tenho vários para contar, beleza? Então, LinkedIn, Uber, Elastic Search, tá bom para você ou não? Beleza, não tá, né? Deixa eu mostrar uma parada aqui para provar meu ponto sobre porque eu não sou apegado a Link Graph. Essa aqui é o planejamento
+
+lá da Top Raw dos próximos meses, tá? Por falar nisso, provavelmente esse é o último vídeo antes do da abertura das inscrições. Então, se você tem interesse, não tá na lista ainda, já foi [roncando] exaustivamente falado aqui, mas não custa lembrar, tá lá, tá? Dia 11 do 8 vamos nos unir finalmente e como membros do mesmo time, tá? [roncando] E hoje, tá, eh o que que como que a gente começou lá? Eh, eu tenho um monte de
+
+código de L graphic que eu disponibilizei lá, tá, meu e tal, para a gente jantar a galera que tinha interesse. Beleza? Eh, só que nesse meio tempo eu descobri que tinha uma galera com deficiência em Python. Deficiência não, né? Tinha pouco conhecimento em Python, tal, e queria fazer automação também. Então fiz um curso fundamental
+
+de Python e depois eu parti curso de automação com Castle, né? A gente faz script em Python e automatiza com Castle usando como orquestrador. Beleza? [roncando] Só que agora, é, nos próximos três meses, provavelmente, eh, eu vou fazer essa trilha aqui de GNA, tá? E então eu vou começar com engenharia de prompt, que engenharia de prompt é algo que a gente usa muito, né? e ele requer uma
+
+atenção especial em certos casos de uso de agentes. Então, eh, vai ser voltado exatamente paraa construção de agentes workflows. Eh, depois eu vou fazer um curso de link chain, porque o link chain é o shed, é o alfa, ele tem que ter, não existe eh esse assunto aqui sem, né, saber o que é link chain, tá? Não existe. E depois eu vou fazer um link graph do zer nuvem, que aí você pega a tua ideia e faz aí na tua máquina e bota no ar e aí você, cara, bota no ar. A
+
+brincadeira é essa. O que eu faço aqui na internet é botar a coisa no ar. É, é, tá, tirar da ideia e botar na rua. Beleza? E [roncando] eu vou fazer um concurso aqui, cara. Tem lá aquela
+
+cacetada de framework, correto? Eu vou lá abrir uma thread, eh, um pool, né, uma votação e os membros vão escolher qual framework eles querem depois disso aqui. Para mim, tanto faz, cara. Eu sei os fundamentos e é exatamente o que você deveria focar agora no estado do mercado. Deixa eu mostrar aqui o que eu tô querendo dizer, tá? Eh, fundamentos.
+
+É esse cara aqui, não, esse cara aqui, tá? Esse cara aqui é o agente que você tava vendo ali, que tá implementado raiz, né, na mão. Só que os fundamentos, cara, de agentes é basicamente isso aqui, tá? [roncando] E existem certos padrões, cara. Existem certos padrões, presta atenção, eh onde você pode derivar várias soluções. Existem esses
+
+padrões e é exatamente isso que você deveria tá focado agora, em aprender padrões. E é esses padrões que vão fundamentar as suas soluções para que você possa alcançar voos altos, tá? Então aqui eu já tenho tudo implementado. Você membro, você já viu lá, né? você pode baixar, brincar aqui e principalmente estudar, fazer engenharia reversa, eh quebrar ele, fazer ele funcionar ou não. E você vai ver, cara,
+
+que ao longo do tempo, eh, a tua ideia de que era complexo, na verdade, se torna, ah, beleza, as coisas são como são, isso aqui não é o meu problema maior. O meu problema maior é de fato converter a minha ideia em dinheiro. E é exatamente isso que a gente tá falando aqui, caras. Vocês têm que aprender isso aqui, tá? Eh, a ideia central. E não
+
+importa qual framework você usa, tá? Se você não quiser usar o framework nenhum, você pode não usar, cara. Tá? Se de repente a tua equipe aí eh gosta só de desenvolver em C, tá? Então desenvolv em C. Existem os padrões. Você replica ele
+
+em C. Cara, para mim tanto faz, né? Realmente para mim tanto faz. Eu atendo gente que é o time inteiro é Java, tá? E eu atendo que gente que o time inteiro é Python, tá? E eu não posso ficar preso a
+
+uma linguagem, a um framework, a uma coisa. Só que hoje é fato que o Leng graph é o framework que te dá possibilidade de fazer tudo. Seja se você quer começar casual para fazer um P rápido, ou seja, se você quer de fato navegar em águas profundas e e criar seu F22 rápilá-lo, o melhor lugar que existe em toda a internet, caras, é aqui, tá? É aqui. Por que que é aqui? Porque eu faço isso o
+
+dia inteiro, caras. Eu só, é, almoço, janto, tomo café e trabalho, é, não, e treino também. E é basicamente isso, cara. Minha vida é toda voltada para isso. Eh, e a gente começou a construir a comunidade e eu achei pessoas maravilhosas através da internet aqui, caras, os caras somam muito, né? Tem
+
+caras até muito mais experientes que eu nesse ramo de engenharia e de negócios, principalmente, assim, a parte de negócio tem sido eh uma questão é grande aqui na comunidade eh que eu tenho levado mais a sério. E eu tenho esse roadmap aqui técnico e e eu tenho outro roadmap de negócio que eu não vou mostrar aqui não, porque aí vai ser demais, tá? Então, se você quer se juntar aos pilotos de elite, caras, dessas máquinas maravilhosas que são LLMs e toda a estrutura de ar, tá aí o convite para você eh fazer parte, tá? Qual é o requisito? O requisito é você querer, tá? É querer ser um piloto de
+
+elite. Ah, como sempre, a escolha é sua. Eu não tô [roncando] aqui para forçar nada a ninguém. Tem um bando de material, tem muito bom material e é bom, não é um material ruim. É sobre a gente lá na Rockpr de graça. Eh, tem
+
+agente que você pode baixar e executar aí direto na tua máquina. Ah, e você escolhe qual o teu momento da tua vida. Você quer embarcar na missão, tá? Você quer e de fato voar com quem voa, então tá aí, cara. Tá aí a oportunidade de ouro. Eh, porque e além de mim, você me
+
+vê aqui, né? E eu sou uma pessoa tô aqui público, né? Eh, existem outros como eu que tão criando soluções hoje em dia, agora, exatamente, tanto técnicas quanto de negócio que você pode, eh, aprender junto, construir junto e eventualmente até fazer negócio junto, né? Porque você tá conhecendo um cara que também eh tá voando do teu lado. Eh, e é muito fácil, mais fácil contratar alguém que tá eh voando contigo, fazer negócio com quem tá voando contigo, que você sabe eh que não é um fanfarrão, né, cara, eh do que eh sair aí na rua eh tentando achar alguém que é compatível. com aovisão,
+
+tá? Então é isso que a gente faz lá. E membros que estão ainda vendo, cara, vai começando a pensar aí que eu vou abrir isso aqui. Eh, eu tenho minha preferência, tá, cara? Os meus eu não vou influenciar as escolhas de vocês, não. Eu vou deixar vocês eh vocês
+
+debaterem lá. De repente a gente faz até um [roncando] uma live para debater as opções. Então é isso, galera. Beleza? É, mais uma vez prazer em falar com vocês.
+
+Sempre muito bom gravar vídeo sobre esse tema, que é um tema de fato que eu gosto e que eu faço o dia inteiro e e é de certa forma dá muito trabalho, mas é prazeroso. Beleza? Então, estamos junto até a próxima.

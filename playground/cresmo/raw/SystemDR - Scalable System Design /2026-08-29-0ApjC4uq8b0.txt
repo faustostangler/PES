@@ -1,0 +1,74 @@
+---
+video_title: "Design Uber Dispatch: The Senior+ System Design Walkthrough #systemdesign #uber #interview"
+video_id: 0ApjC4uq8b0
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=0ApjC4uq8b0
+video_date: 2026-08-29
+video_description: |
+  Full Walkthrough: https://systemdr.systemdrd.com/p/design-uber-dispatch-the-senior-walkthrough
+  Read Ebook: https://systemdrd.com/ebooks/52-faang-questions-drillcards-cheatsheets/
+  🌐 Visit our website: https://systemdrd.com/
+   
+  Design the Uber dispatch system is the question that defines the marketplace-and-matching archetype — the same spine that shows up in DoorDash, Lyft, Tinder, and surge pricing interviews. In this walkthrough we go endpoint by endpoint, store by store, all the way to the two problems that actually decide the round: geospatial indexing and driver-state consistency.
+   
+  If this saved you prep time, drop a comment with the question you want walked through next, and subscribe for a new senior-level system design breakdown every week.
+   
+  #systemdesign #softwareengineering #uberengineering #techinterview #faang #geospatialindexing #distributedsystems #interviewprep #softwarearchitecture #backenddevelopment #careergrowth #engineeringinterview
+---
+Welcome back. Today, we're taking on the question that defines the entire marketplace and matching archetype, design the Uber dispatch system. 10 questions in most interview banks are variants of this one. DoorDash, Airbnb, Tinder, parking reservation, surge pricing, ride share fraud. They all share the same spine, and once you've built this architecture one time, the other nine become reskins instead of blank pages. Design the Uber dispatch
+
+system. A rider requests a ride. The system finds nearby available drivers and assigns one. That's the surface prompt, and on its own, it's a 4-hour answer. So, interviewers narrow it.
+
+Design the matching flow, or walk me through what happens between the rider hitting request and the driver getting notified. Both collapse to the same real question. How do you find the nearest available supply in real time at scale without burning down your database on every single request? Notice the shared spine underneath every variant. A supply side, a demand side, a location component, and a real-time matching requirement. DoorDash swaps a moving
+
+driver for a fixed restaurant location as the one twist. But, the matching logic underneath is identical, which is exactly why interviewers reuse the spine across 10 different sounding prompts. Before you draw anything, six clarifying questions matter, and two of them are load-bearing for the whole design. First, does dispatch mean matching only, or does it also include routing and surge? Scope it explicitly. Design the
+
+matching layer, acknowledge the other two exist as separate systems, and move on. Second, how many active drivers and what geography? A single metro at peak is roughly 50,000 active drivers. That number is what makes an in-memory geo index plausible in the first place, so get it on the table early. Third, update frequency. Every 4 seconds is typical,
+
+which at 50,000 drivers works out to about 12,500 location writes per second. Fourth, the latency SLO, SUB 100 milliseconds for candidate selection. And riders expect a driver to accept within 30 to 60 seconds of the request going out. Fifth, and this is the one that defines the hard part of the whole system. Can a driver be matched to two requests at once? No. A driver has
+
+exactly one state, available or not. And protecting that single piece of state is the consistency problem at the heart of the question. Sixth, failure modes, offline mid-trip, GPS drop, a driver declining the offer, a rider canceling after match. Do the math out loud in the room. 55 ride requests a second, 12,500 location writes a second, and a geo index that works out to about 5 megabytes and fits entirely in memory on a single machine. That last number is
+
+the insight that unlocks everything downstream, because it means the active driver set for one city is small enough to hold in RAM. Worth noting, too, if the interviewer pushes toward global scale, 5 to 10 million drivers, that same math jumps to over a million writes per second, and the single machine geo index stops working. State the single metro case first, then name the global extension as a follow-up, rather than trying to design for both at once. Three endpoints carry the whole system. Riders hit post /v1/rides/request with a pickup and destination and get back a ride ID in searching status, plus a price estimate that already folds in the surge multiplier. Drivers hit post
+
+/v1/drivers/location every 4 seconds, and internally, the dispatch service calls post /v1/dispatch/match to get back a scored list of candidates. Two details separate a senior answer from a junior one here. The driver app batches location updates to every 4 seconds instead of streaming raw GPS ticks, which might fire every second. That's a four-times cut in right load and a real battery life win. And saying out loud that the client shares responsibility for right amplification is a detail most candidates never mention. And the location tail load
+
+carries heading and speed, not just latitude and longitude, because ETA to pick up depends on which way a driver is facing and how fast they're moving, not just where they happen to be right now. A driver 500 m away pointed the wrong way down a one-way street is effectively further than one 700 m away and headed straight at you. That's the kind of trade-off the velocity vector lets your ETA model actually capture. Four data stores, four very different access patterns, and mixing them up is a common mistake. The drivers table is the source of truth for status and current position, sharded by driver ID, updated on every location ping. The rides table
+
+holds the rides state machine, searching, matched, accepted, driver on route, arrived, in progress, completed, with any state able to fall back to canceled at any point. Location history is a time series store, not Postgres. At 12,500 events a second, that's roughly a billion events a day in a single metro, and it exists for replay and dispute resolution, not for the hot where is this driver right now query. That hot query hits the fourth store instead, the driver geo index, an in-memory spatial structure that's the actual heart of the whole system, and the subject of the architecture walk-through and the deep dive right after it. Here's the whole flow end-to-end, and it maps cleanly onto three zones. On the left,
+
+continuous background work. The driver app pings location every 4 seconds, an ingestion service writes that update to the drivers table and to the in-memory geo index, and publishes it to Kafka for downstream consumers like analytics and fraud detection. In the middle sits the surge analytics engine, consuming that exact same stream. We'll come back to it in a few minutes. On the right is the request path. A rider calls request
+
+ride. The ride service creates a searching record and publishes a ride requested event. The dispatch manager queries the geo index for nearby available drivers, scores them by ETA using that heading and speed data, and critically runs sequential offers instead of blasting all candidates at once. Offer driver one, wait 15 seconds, cascade to driver two if there's no accept. Do it in parallel instead, and you risk two drivers accepting the same rider at the same moment. The
+
+distributed lock manager on the far right is what makes first acceptance wins airtight. Redis backed state machines that physically prevent the double booking problem we're about to unpack in detail. One more thing worth saying out loud in the room. Production systems sometimes speculatively offer to driver two and three in parallel with the intent to cancel if driver one accepts first, trading a little extra complexity for a faster average match time. It's a real option, but state the trade-off rather than assuming it's free. This is where the round is
+
+actually decided. Saying I'd use a spatial index is an L4 answer at best. Naming the specific structure and walking through its trade-offs is what gets you to L5 or L6. Geohashing divides the world into a grid. You store drivers in a hash map keyed by geohash cell, and a ride request looks up the pickup cell plus its eight neighbors to handle edge effects where nearby driver falls just across the boundary. It's an O1 lookup,
+
+dead simple to reason about, and Redis gives you GEOADD and GEORADIUS for free. Genuinely the right call if you're operating at city scale with a small team maintaining the system. But cell size is fixed, so it doesn't adapt to a variable search radius, and it ignores density entirely. The same cell size that's perfectly sized for Manhattan is nearly empty out in rural New Jersey. A quadtree instead recursively subdivides space, splitting a cell only once it holds more than some threshold of drivers. So Manhattan
+
+naturally gets fine-grained cells while quiet areas stay coarse, self-balancing by driver count rather than by raw geographic area. It's sub-millisecond even at scale, but it's genuinely more complex to build correctly, and concurrent writes need careful locking so reads and updates don't collide. Uber's actual production system uses Google's S2 library, conceptually a quadtree projected onto a sphere instead of a flat plane, and mentioning S2 by name is an L6 flavor detail most candidates never reach. The answer that wins the round states all three tiers out loud. Naive Postgres scan, production simple Redis geohashing, production optimized quadtree or S2, and picks one with a reason tied back to your stated scale. The second hard part
+
+isn't geospatial at all. It's consistency, and it's arguably the most obvious concurrency problem in the entire system if you stop to look for it. Two ride requests land for the same neighborhood at nearly the same instant. Both pick driver D as the best candidate. And without protection, driver D ends up with two simultaneous offers and no way to know which one is real. Two ways to solve it. First,
+
+optimistic locking directly in Postgres. Update the driver's status to on_trip only where it's currently available. And if the update affects zero rows, someone else already claimed them. Fall through to the next candidate in your list. That's correct, but it can mean walking through several candidates before landing on one still free. Second,
+
+atomic state in Redis. A key like driver:id:available claimed with SETNX or a small Lua script. So, exactly one dispatch attempt wins the race in sub-millisecond time. The senior answer combines both layers. Postgres as the durable source of truth.
+
+Redis as the fast, ephemeral lock for the hot contention path. Kept in sync by a background reconciliation job that catches any drift if Redis ever loses state. And here's the detail that separates L6 from L5. This is the exact same two-layer pattern you'd use for payment ID idempotency keys. Fast ephemeral state for speed, durable state underneath for correctness. Naming that
+
+pattern explicitly out loud in the interview is a cross-cutting signal that you're not just solving this one problem, you're recognizing a shape you've already solved somewhere else. Surge pricing gets asked as a pivot almost every single time. And it's worth stating up front. It's a separate system. Fed by the same event stream as dispatch, not a bolt-on afterthought. A
+
+streaming job, Flink, Spark Streaming, something in that family, consumes ride requested and driver location events straight off Kafka. And for each geographic zone, computes a demand rate and a supply rate and a supply rate over a rolling window. The ratio between those two numbers drives the surge multiplier, which gets written into a Redis cache keyed by geohash with a TTL of 30 seconds to a minute. Fresh enough to matter without pretending to be perfectly real time. When the ride service quotes a fare, it reads that multiplier straight out of Redis by the pickup's geohash, a single O(1) lookup sitting right on the hot path. The part
+
+almost nobody reaches without prompting is the feedback loop this creates. High surge attracts more drivers into the zone, which lowers surge, which then discourages drivers from coming back. And a naive proportional controller bounces wildly between those two states instead of settling down. Mentioning a damped response, a PID controller, or something as simple as a moving average smoothing pass is that signals you've actually thought about running this system in production, not just sketched it on a whiteboard once. It's also worth flagging the pricing edge case directly.
+
+Surge can shift in the window between showing a rider an estimate and them confirming. So, most platforms lock the quoted price for a short window, 30 seconds or so, before requiring a reconfirm at the new rate. So, what actually changes as you climb the ladder on this question? A senior answer covers the geo index tradeoff, sequential dispatch with the timeout and cascade pattern, driver state locking, and the ride state machine cleanly and completely. Staff adds the two-layer consistency pattern named explicitly as a pattern, the density argument for quadtree over geohash, the surge feedback loop and its damping, and multi-city sharding by geofence.
+
+Principal goes further still. Proactive supply positioning using ML-driven heat maps to move drivers before a surge even happens, the build versus buy call on the geo index itself, and a single unified matching pipeline spanning UberX, Pool, XL, and Eats instead of separate systems bolted together. If you carry away one structure from this entire walkthrough, make it this: naive, then production simple, then production optimized. State all three tiers out loud, pick one, and give your reason. That's the shape of a strong answer in this whole archetype, not just in this one question. You can
+
+read the complete walkthrough, including the five follow-up probes and the printable drill card, at the Substack link on screen right now. systemdr. systemdr.com/s/systemdesignwalkthrough. And you'll find the site itself at systemdrd.com. Thanks for watching and
+
+I'll see you in the next one.

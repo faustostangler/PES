@@ -1,0 +1,84 @@
+---
+video_title: "Estou te vigiando no Discord... (e você não sabe)"
+video_id: UFdIyC20ycA
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=UFdIyC20ycA
+video_date: 2025-07-28
+video_description: |
+  Nesse vídeo eu mostro como consigo te vigiar no Discord, e como é fácil fazer isso... Se você já enviou alguma mensagem que não deveria no discord, já era...
+  
+  👉 Link pro site: https://search-cord.vercel.app - O site sai do ar dia 29/07 (ou antes)
+  👉 Nosso servidor do Discord:   https://discord.gg/websec
+  
+  Fiquei pobre me mandem dinheiro porfavor 😭
+  https://livepix.gg/yurirdev
+---
+Imagina se você pudesse encontrar todas as mensagens que alguém te mandou no Discord em um clique ou ver todas as pessoas que disseram palavras específicas, tipo Pic, senha ou até o nome de alguém. Pode até parecer impossível, mas já fizeram isso antes. Um projeto chamado Search Cord indexou mais de 60 bilhões de mensagens e a própria UFMG coletou mais de 2 bilhões. Isso tudo demorou meses e até anos. Mas e eu? Quantas mensagens será que eu
+
+consigo pegar em uma semana? Hoje eu vou mostrar para vocês como eu baixei meio bilhão de mensagens em servidores brasileiros. Antes de tudo, o que eu fiz aqui é completamente errado. Vai cont os termos de uso do Discord. É antiético e pode até ter consequência legal. Esse vídeo é
+
+educacional, é um alerta para você tomar mais cuidado com o que você fala online, que você não tá seguro, nunca esteve e nunca vai estar. Vamos do começo. Como que se baixa a mensagem do Discord? Parece fácil. Você entra num servidor, lista os canais e para cada canal você lista as mensagens e salva tudo em um banco de dados. Só que o Discord não
+
+quer que você faça isso. Então, para acessar a API, você tem que usar seu token de usuário, que não é feito para automação. Se você mandar requisições demais, leva rate limit, se insistir, você leva ban. E além disso, nem todo canal é público. Em muitos você precisa de permissão para entrar, então não dá para acessar tudo. Eu foquei em
+
+servidores brasileiros, então eu pedi ajuda pro pessoal do nosso Discord e me mandaram convites para servidores de panelinhas, grupos, servidores aleatórios mesmo. Eu entrei em vários servidores também da nossa área para achar algumas conversas legais. Atualmente não tem como entrar em servidores automaticamente sem levar um capt. E além disso, toda vez que eu entrava em um servidor, o Discord desconfiava que tinha alguma coisa estranha e me pedia para resetar a senha. Mas eu consegui. Depois de muito
+
+tempo, eu entrei em alguns servidores manualmente. Agora para listar os canais é só usar a própria API do Discord para isso e para listar as mensagens também. O único, porém, é que tem um limite de 100 mensagens por vez, então acaba demorando muito. Uma única mensagem do Discord tem muitos dados, só que eu não preciso disso tudo. Eu só quero saber o conteúdo da mensagem e quem enviou. Isso
+
+vai me economizar muito armazenamento. E para salvar essas mensagens, eu não posso colocar em um banco de dados normal, como posts ou longo DB. Eu preciso de alguma coisa rápida pra pesquisa de texto. Afinal, eu quero saber tudo que alguém mandou e todos que mandaram algum texto específico. E eu acabei escolhendo o Elastic Search, que é um banco de dados que tem uma indexação de texto muito boa, mas a realidade é que eu tenho 14 dias grátis na cloud deles. Então eu tenho 14 dias
+
+para terminar esse projeto, senão eu vou ter que pagar muito caro. Pronto, a primeira versão do programa tá basicamente pronta, mas tá bem lenta. 100 mensagens a cada 2 segundos. Para pegar 100 milhões de mensagens, eu precisaria de 2 milhões de segundos. ou 23 dias sem parar. A boa notícia é que
+
+uma conta do Discord pode rodar várias instâncias ao mesmo tempo. Enquanto eu baixe as mensagem de um servidor, a mesma conta pode baixar de outros ao mesmo tempo e isso aumenta a velocidade de forma linear. Então, se eu tenho uma instância rodando, eu pego 100 mensagens a cada 2 segundos. Se eu tenho duas, eu pego 200. Três dá 300 e por aí vai.
+
+Então, se eu rodar 1000 instâncias, eu pego 100.000 1000 mensagens a cada 2 segundos, o que me daria 4 bilhões de mensagens por dia. Certo? A matemática tá certa, mas tem um problema. O rate limit do Discord. Uma conta pode enviar
+
+até 50 requisições por segundo. Então eu posso ter no máximo 50 instâncias. Mas isso ainda tá errado, porque pode acontecer de uma instância mandar mais de três requisições em um segundo. Então eu tenho que ter no máximo umas 16 instâncias da mesma conta e ainda tem chance de ser banida. Beleza? Rodando
+
+com quatro instâncias tá mais rápido, só que ainda não tá na velocidade que eu preciso. Bom, se eu posso usar uma conta 16 vezes ao mesmo tempo, o que me impede de usar várias contas ao mesmo tempo também. A velocidade também aumenta linearmente. Só que como que eu gerencio e controlo tudo isso? Tem muitas instâncias rodando ao mesmo tempo. Eu teria mais de 500
+
+terminais na tela controlando tudo na mão. O que eu posso fazer é tratar isso como se fosse um sistema distribuído. Cada instância tá associada a uma conta no Discord. E para controlar tudo, ela se comunicam com o servidor principal. Eu passei um tempinho fazendo esse site, que vai ser o maestro disso tudo. Aqui
+
+eu posso adicionar mais agents, que são as contas no Discord. Eu só tenho que pegar o token da minha conta. E depois eu posso mudar tarefas para essa conta, como por exemplo, listar os servidores que ela tá conectada e também pedir para ela baixar as mensagens do servidor. E assim que tá funcionando por enquanto. Rodando a minha instância, dá para ver que ela procura por uma tarefa disponível e quando eu envio uma, ela já começa a processar. Eu
+
+comecei a executar essa versão às 1 da tarde e por volta das 5 tava com 4 milhões de mensagens baixadas. Nada mal. Só que o meu maior problema tá sendo entrar em servidores do Discord, porque não tem como fazer isso de forma automática sem cair um capt. O tempo que eu gasto entrando nos servidores é o tempo das instâncias completarem 100% todos os pedidos. Então não tá muito eficiente. E sério, eu passei muito
+
+tempo entrando nos servidores. Mas eu realmente preciso entrar em servidor do Discord para baixar as mensagens? No Discord tem aba discover, onde você encontra vários servidores públicos que não precisa entrar para ler as mensagens. Sim, eu sei. Eu só consigo ler as mensagens de canais públicos, então nada de chat de STF ou coisa do tipo e nem grupinho privado também, mas tá bom já. E também dá para filtrar
+
+servidores por tags, como Brasil ou PTBR, para pegar servidores mais brasileiros. Então tava na hora de mudar um pouquinho a arquitetura de novo. Em vez dos clientes receberem comando de qual servidor baixar as mensagens, agora eles vão automaticamente listar os servidores, checar se eles já foram baixados e se foi baixado, pula pro próximo e se não foi, começa a baixar. Por enquanto eu tô com cinco contas no Discord, mas eu quero a velocidade de verdade. Então eu vou comprar 50 contas novas, que eu achei por um preço até barato, mas eu vou testar só 15 por enquanto. Eu deixei essa versão nova
+
+rodando algumas horas no meu computador principal e no meu laptop ao mesmo tempo. E agora eu tô com 12 milhões de mensagens baixadas. Ainda dá para melhorar, só que já tá tarde, então eu vou deixar meu laptop rodar durante a noite e ver quantos registros eu acordo amanhã. Deu tudo errado. Durante a noite baixou só 2 milhões de mensagens. O programa
+
+tinha crachado depois de pouco tempo, mas eu já resolvi e voltou a normal. Agora eu preciso aumentar ainda mais a velocidade desse programa. Então eu peguei uma VPS de 4 GB, pouquinho, mas é o suficiente, para ficar rodando os clientes 24 horas por dia. Eu tô usando PM2 para dar persistência nos processos. Se por algum motivo o processo craxar, ele só reinicia. E isso acabou
+
+estragando tudo. Depois que eu executei uns 20 clients, o meu banco de dados começou a gritar falando que tinha muitos tokens inválidos. Sim, muitas das contas que eu tinha acabado de comprar já foram inspiradas por atividade suspeita. Então eu tive que fazer com que quando o Discord me retornasse forbiden, o cliente se matava. Isso afetou muitos tokens. Então eu tive que
+
+comprar mais contas, tipo 90. Eu tô com mais de 100 contas totais no Discord e cada uma delas tem três instâncias mais ou menos. Um servidor só não vai conseguir aguentar tudo isso, então vou ter que pegar uma outra VPS. Agora tem 30 milhões de mensagens baixadas. Vamos deixar os dois servidores com mais de 40 instâncias cada rodar durante a noite e ver o que acontece. E pelos meus
+
+cálculos, se nenhum programa carachar, amanhã vou acordar com 80 milhões. É 49 milhões. Não era bem isso que eu tava esperando, não. Ele executou durante a noite e ainda tá executando porque o número de documentos está aumentando. E pelos gráficos da cloud, dá até para ver que o número de requisições foi diminuindo ao longo do tempo. Durante a noite, a cloud do
+
+Elastic Search passou por alguns problemas que fizeram com que as minhas instâncias quebrassem. E eu vou aproveitar que muitos processos caíram e mudar algumas coisas. Eu não tô gostando da forma que os clientes estão lidando com o token do Discord. Atualmente, cada instância tá fixa a um token, o que não faz sentido. Se o token parar de funcionar, a instância inteira para de funcionar. O que eu vou fazer agora é um
+
+gerenciador de tokens. Uma instância vai pegar um token que não tá sendo muito utilizado para poder respeitar o rate limit. E se ele detectar que o token foi invalidado, vai falar isso pro servidor central, que vai tirar ele do gerenciador de tokens e simplesmente pegar um novo. Agora, se um token cair, a instância vai pegar outro token e continuar o processo. E isso funcionou bem até que demais. Eu criei muitas
+
+instâncias novas e acabou esgotando os meus tokens livres. Só que agora o problema é outro. O estoque dos tokens tá acabando. Bom, eu acho que pro tempo que eu tenho restante, essa arquitetura tá boa. Agora a gente tem 128 milhões de mensagens salvas. E enquanto o vendedor
+
+não faz o restock, eu vou passar um tempo fazendo uma interface bonitinha para pesquisar as mensagens e os usuários. A ideia é simples, um campo de texto onde você pode passar algumas tags, tipo user ID, username, content. E 4 horas depois a interface final ficou assim. Só para atualizar vocês, a gente tá com 187 milhões de mensagens salvas. E se você tá curioso, essa aqui foi a primeira mensagem encontrada do Davin, enviada em 2020. Ele se apresentando
+
+como Techlit. E essa foi a do Lucas Montano em 2019, provavelmente no servidor dele mesmo. E dá para encontrar muita coisa. Se eu quero ver quem que falou Felipe de Champs, é só pesquisar que encontra. E eu também fiz uma página que mostra os servidores que foram baixados. Essa lista aqui fala todos os
+
+servidores que o bot viu. Isso não significa que ele foi completamente baixado. Pode ser que tenha pego uma mensagem ou até mesmo todas. Agora falta só colocar um rate limit na pesquisa, porque eu vou disponibilizar esse site para vocês por dois dias. E se não tiver esse rate limit, alguém pode facilmente baixar todas as mensagens. Eu fiz essa
+
+animação do botão habilitando ao longo do tempo. E se você acha que esse rate limit é só visual, se você passar do limite de requisições, você vai ser xingado. E no mesmo tempo, eu acabei mudando algumas coisas no código para melhorar a qualidade dos servidores. Eu tô buscando por temas como programação, desenho, YouTube e clube. Essas palavras chaves me dão uma margem de pessoas diferentes para baixar as mensagens.
+
+Pronto, agora sim tá tudo certo, é só esperar. E eu tive alguns problemas, tipo, os tokens estavam esperando muito rápido, eu tava tomando bloque da Cloud Flare, então eu tive que comprar mais tokens e depois mais ainda. E aí já tava com 266 milhões de mensagens. Então, dá para ver que tá tudo funcionando do jeito que eu queria, mas claro que mais token inspirou, então tive que comprar mais ainda e pronto. Depois disso, eu deixei rodando sem olhar e sem dúvida o jeito que eu fiz não foi o melhor. Eu
+
+levei muito bloco da Cloud Flare, não usei proxy, dava para ter rodado em mais VPS, mas enfim, agora eu tô aqui gravando o vídeo e oficialmente vou parar as FPSs e liberar o link para vocês. a gente conseguiu chegar a 500 milhões de mensagens baixadas em só 10 dias e duas VPS. Imagina o que que não dá para fazer se alguém tiver mais tempo e dinheiro. Só de pesquisar meu usuário a prece mensagem que eu env servidores de programação, jogos e até mesmo de alguns grupos que eu mesmo esqueci. Isso é para mostrar que a sua segurança do Discord tá em risco. Todas as mensagens
+
+que você já enviou, alguém deve ter salvo. Pessoas mal intencionadas podem estar fazendo isso e até mesmo alguns governos. A verdade é que tem vários motivos para alguém querer fazer isso. Eu vou matar esse site aqui no dia 29 desse mês. Então vocês têm algumas horas para acessar e ver por vocês mesmos.
+
+Esse vídeo foi bem caro para fazer. Vps, conta do Discord e se você quiser me ajudar a pagar as contas, considera virar membro do canal. Vai me ajudar bastante. Também eu não ficaria surpreso se o Discord me banisse e a gente perdesse nosso servidor. Então me segue no Twitter para me acompanhar também. E
+
+é isso, espero que tenham gostado. Não esquece de deixar o like e se inscrever no canal. Valeus.

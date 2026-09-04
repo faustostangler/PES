@@ -1,0 +1,17 @@
+---
+video_title: "Java & C++ Debugging Tricks Every Developer Needs"
+video_id: 5j5JwGOQdhk
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5j5JwGOQdhk
+video_date: 2026-08-17T17:00:16+00:00
+video_description: |
+  Website Link: systemdrd.com
+  Learn powerful Java and C++ debugging techniques using visual debuggers, GDB, LLDB, IDE debugging tools, breakpoints, stack traces, memory inspection, and thread analysis. Discover how systems engineers trace runtime errors, segmentation faults, crashes, and complex bugs in production-level software.
+---
+Here's what that principle looks like in practice. The best production [music] debugging tool is often the one you never had to attach at all. Java Flight [music] Recorder, JFR, ships inside the JDK itself, not as a [music] bolt-on agent. It's a continuously running low-overhead event recorder, commonly [music] cited at around 1 to 2% steady-state overhead. Instead of attaching a debugger to a live JVM [music] and risking a safe point-wide pause, teams just leave JFR recording by default [music] and pull a time-windowed recording after something goes wrong, or trigger a snapshot right at the moment of an anomaly, like a GC pause or an allocation [music] spike.
+
+Async profiler, a widely used open-source companion, layers sampling-based CPU [music] and allocation profiling on top of that, using Linux's perf events and JVMTI [music] hooks without the safe point bias that plagued older sampling profilers, which could only sample at safe [music] points and systematically underrepresented everything happening between them. The pattern this teaches goes further than the last slide's [music] live versus postmortem tradeoff. For hot-path production services, the mature answer is often neither. >> [music] >> You instrument continuously at near-zero cost, and you only reach for a debugger once the always-on data [music] has already narrowed the search enough to justify the risk. And the same shape shows up on the native side. Production
+
+C++ services increasingly rely on always-on sampling tools [music] like perf or eBPF-based tooling for the 95% case, and save GDB or core dump analysis for what's left over.

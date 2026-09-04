@@ -1,0 +1,19 @@
+---
+video_title: "How to Improve ML Models with Feature Selection"
+video_id: Aiw4zCpdMDY
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=Aiw4zCpdMDY
+video_date: 20260814
+video_description: |
+  Website Link: systemdrd.com
+  Why does adding more features sometimes make a machine learning model worse? Learn how the curse of dimensionality affects model selection, overfitting, generalization, and computational performance. Discover how feature selection, PCA, regularization, and cross-validation help build better machine learning models with Python and Scikit-learn.
+---
+Once you've decided how many features to keep, you still have to decide [music] how to constrain the coefficients on whatever remains. This table compares your three main options. L1, [music] or Lasso, drives coefficients exactly to zero, which gives [music] you sparse, easy-to-explain models. But when several features are correlated, Lasso [music] picks one of them somewhat arbitrarily and zeros out the rest, which means your selected feature set can be unstable across retrains. Use it when your true signal is genuinely sparse and feature [music] selection itself is the goal.
+
+L2, or Ridge, never zeros anything. [music] It shrinks all coefficients towards zero, but keeps them all in the model. It distributes weight evenly across correlated features, [music] which is more stable, though less interpretable. Use it when multicollinearity dominates and you believe most of your features [music] carry at least some real signal. Elastic Net blends both. Using that L1
+
+ratio parameter we saw in the code a moment ago, it [music] selects correlated feature groups together rather than arbitrarily picking one. This is why it's the safer default, particularly [music] in genomics and embedding-heavy pipelines, where correlated blocks of predictors are the norm, not the exception. The decision rule I'd leave you with: start [music] with Elastic Net, sweep L1 ratio from 0.1 to 1.0, >> [music] >> and let cross-validation find where on that spectrum your data actually lives.
+
+It degrades gracefully [music] to either Lasso or Ridge at the extremes, so you're rarely committing to the wrong prior up front.

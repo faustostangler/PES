@@ -1,0 +1,310 @@
+---
+video_title: "Learn How to Optimize Large Datasets with Pandas: Full Project Walkthrough in Python & SQL"
+video_id: C8FK6l1KVxQ
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=C8FK6l1KVxQ
+video_date: 2025-06-20
+video_description: |
+  In this video, we will guide you through how to analyze startup investment data using Python and SQLite to uncover key fundraising trends.
+  
+  You’ll step into the role of a data analyst working with Crunchbase data, where you’ll learn how to efficiently work with medium-sized datasets by optimizing memory usage, processing data in chunks, and loading it into a SQLite database for analysis. By the end of the session, you’ll be able to extract insights into which startups get funded and which investors are most active. [This project is ideal for learners with basic Python and SQL experience who are looking to build confidence working with larger datasets in real-world scenarios.]
+  
+  What You'll Learn:
+  - Data Optimization: Choose the right data types and process large files in manageable chunks.
+  - SQLite Integration: Store and query large datasets efficiently using SQLite.
+  - Real-World Data Handling: Clean and prepare investment data for analysis.
+  - Fundraising Trend Analysis: Uncover patterns in startup deals and investor activity.
+  - pandas-SQLite Workflow: Combine tools to analyze data at scale.
+  
+  Recommended Prerequisites:
+  - Processing Large Datasets in pandas → https://www.dataquest.io/course/pandas-large-datasets/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-analyzing-startup-fundraising-deals-from-crunchbase/
+  
+  Video Chapters:
+  00:00:00 - Intro 
+  00:01:24 - Project Brief
+  00:03:02 - Reading and Exploring the Dataset
+  00:17:08 - Cleaning and Dropping Columns
+  00:20:24 - Optimizing Memory Usage with Data Types
+  00:33:14 - Loading Data into SQLite
+  00:35:40 - Analyzing and Visualizing with SQL
+  00:42:04 - Audience Q&A
+  
+  #PythonProject #Pandas #DataEngineering #SQL #DataAnalysis
+---
+From Crunchbase, and we're gonna have to figure out how to optimize it with some… parameters in place, it's a great project if you want to work with very large datasets.
+
+Are there any missing values? What is the memory use? For each different column. What are our data types, and can we… convert any data types to be more efficient. And then we're going to go ahead and optimize the dataset, and then finally, we will load everything into a… SQL database, and analyze and end with a visualization, because Everyone loves state officialization.
+
+And, um, if we have time, we'll see. I'll show you how to upload your code into a GitHub gist. And we will end with Q&A, and as a reminder, please do ask your questions in the Q&A box and not the chat box if you would like me to answer them.
+
+We are sort of… playing a… a data game. With ourselves here, where we are imagining We are data analysts, but we only have 10 megabytes of memory available. So, if our dataset has more than 10 megabytes, we're gonna run into trouble. So our task is going to be to look at this very large dataset that's definitely larger than 10 megabytes. And try to optimize it, and work within that parameter. So.
+
+There are some really cool optimization techniques that we'll talk about today. And the end goal of… this scenario is to be able to answer business questions in… um… an efficient manner. Okay, so let's go ahead and jump into the DataQuest environment. You'll see here, I am directly in the project, uh, and what do we have? We have a Jupyter notebook. Very quick tour here.
+
+This basics.ipyNB, this is the file that we'll be writing our code in. On this left-hand… panel, we have everything, um… We have our notebook, we have our CSV, the database, you'll not have this yet. I'm gonna go ahead and… delete this… We'll create that in a moment, and then if you do want to peek at the official solution code, it's here for you. But, because we do not need to change files in this project, I'll… collapse that, and let's get started.
+
+So, the very first thing we need to do is import pandas. This project is going to be based in Pandas. And this is a coding cell, we can tell because of the square brackets on the side, and actually, I ran… I ran a test cell, so we can see that this is the second thing that's run. If I want to restart this from scratch, so it's the first thing that's run. The double triangles here will restart the kernel Now it's gonna run, and it should show a 1 here. There we go.
+
+Excellent. Um… So, now we need to read in our CSV a couple things. If we try to read our CSV just, like, manually here by double-clicking. We're gonna get a file load error. And the reason we'll get that is it's not UTF-8 encoded.
+
+So, when we import. We are going to need to specify an encoding type. And if you've worked with pandas before, you probably are used to doing, like. Df for data frame is pd.read. Csv, and then you use the DF, um… variable with all of your Pandas methods.
+
+But because we're working with this 10MB parameter that we set for ourselves. Are databases to… are our data sets too big? So we're going to iterate through in chunks. So here is our official line of code to do that. Where we are doing chunks, and we're iterating on chunks. And the way that you can tell pandas that you want to iterate is by specifying a chunk size, and then we will be using, um… some loops. So… This is how we're going to deal with our…
+
+Memory rule that we set for ourselves, and then for encoding, Latin 1 is a really good, safe bet to try if UTF-8 isn't working. And for this particular dataset, Latin 1 did end up working. If you are curious about encoding in my gist that is being provided from the DataQuest account. In the chat, you'll see I have, like, a note about how to test out encoding there as well. So, if we run this right now… Uh, it's… it's not gonna do everything we need it to do, because we're only looking at 5,000 rows of the data.
+
+And, spoiler alert, there are more rows. So the next thing we're gonna do is gonna be a very familiar workflow by the end of this project. Where we're going to iterate through. Those 5,000 rows, so 5,000 rows, 5,000 rows, 5,000 rows And the first thing we're gonna do… is… see how many rows are in our dataset. Um, and in order to do that, we are initializing an empty list.
+
+And then, for… Every chunk in our… data frame, we are going to append the length of that chunk To our list, and then SUM that list so we can see what the total length is. And then, because we're in Jupiter, we don't need to include a print statement if it's the last line in a cell. Um, it will automatically try to render the last line if it's renderable. If you want to throw a print statement in, though, you are welcome to. And when we run this, we get that the length of our data frame is over 50,000 Rose.
+
+Big. Um, and in chat, just to clarify here about the… Large data, more than 10 megabytes That is a somewhat arbitrary parameter we are setting just for this project, but the intention is that It helps us… Test out what a workflow would be if you are working with a dataset that is larger than your Local machine's capacity. So, a lot of data is huge. Hundreds of thousands of rows. And most computers can't handle that if you try to throw the entire dataset at it.
+
+Um, so… We're not working with hundreds of thousands of rows, we're working with a relatively small dataset, all things considered But just for the… the learning process of optimization, this is a good way to do it so that you don't accidentally… Right here, Jupyter Notebook, if you try to run 100,000. Rows all at once, right? Um, so yeah, so this is designed to kind of be a thought experiment for those much, much, much larger data sets. So, we know the size of our data frame. And now, because our goal is going to be to optimize our data.
+
+There are a couple other things we're gonna do. And something that confused me about this when I first learned it is we actually are going to reinitialize this in every cell. Because the way that iteration works. With pandas, is After it's gone through every chunk. It doesn't magically know to start back at the top. So… If we were to, for example.
+
+Uh… look at our chunk… iter… head? Uh, oh, no, no, that's not… that's not what I meant to do. Um… What happens if we just do this? Curious. Okay, okay, never mind, uh, I'm getting ahead of myself here.
+
+Um. So, we're gonna move on from now, but… The point of what I was trying to demonstrate there is… The iteration has exhausted itself, and because it's exhausted itself. We need to reinitialize every time during this experimentation phase. Where we are looking at our data frame in different ways. So, this is the same line as before. But this time, what we're gonna do is we're gonna look for missing values, because if a column has a lot of missing values, potentially, we can just remove that column from our data frame.
+
+And removing an entire column? That's removing 50,000 plus bits of… well, not technically bits, but 50,000 portions of data, so it's going to reduce the overall size of our data frame quite a bit. So, are there any columns we can remove completely? That's what we're asking here. So. What we're doing now is, this is Empty list, missing values. Uh, I'm seeing a couple of comments about UTF.
+
+Yes, UTF is the standard, but if we specify UTF here, actually, if we don't specify an encoding. Um, UTF is the default, so this is UTF on the back. But it's not gonna run. It's not gonna run because… Let's see if it gives us the right air here. Here.
+
+Utf-8 can't… decode the byte that is in this part of our data. So, unfortunately, that's why we can't use the standard encoding method. For the read CSV. Um… here. So we must specify a different encoding. And Latin 1 is the one that works. You don't need to… Be an expert in Latin 1. All you need to know is that it's reading in the characters in a slightly different way than UTF-8.
+
+So, it will play more nicely with the Jupiter environment. Oh, okay. Um… So, we're looking at missing values. And so, what we're going to do is, the first thing is, if our missing values list is empty. We want to put in our column names. And the column attribute here is just saying what are the columns in our data frame.
+
+So, once the columns are in our list. We are going to append Uh, the sum of all null values from each column. So that's what this is doing. Isnull returns a… array of Boolean values, and then using SUM on that is going to… only count the… where null is true. Uh, and then we are… Combining everything together.
+
+Grouping by our columns. And seeing our missing values. Um… And we can see that… There are a couple columns with several missing values, but the one that stands out to me is Investor Category Code. Remember, we have about 52,000 rows in this dataset, so if 50,000 of them are missing. This isn't gonna be a super valuable column for us. So this is a great candidate to drop.
+
+The other ones, even though there are 12,000 rows. With null values. Given the size of our dataset, that's… that's not enough to, um… to remove the column completely. So we got one thing from this investigation. That we can remove. So the next thing that we want to do is take a peek at the memory usage.
+
+Because if some columns use a lot of memory. Then we're going to want to see if we can either remove those columns entirely. Or are they columns that we can refine in any way to make the memory smaller? Because remember, we are trying to Make our data set as optimized as possible, so… it plays more nicely with our machine settings, and we have this parameter in the back of our minds Where we only have 10 megabytes available In our memory. So, again, we have to… initialize a new version of our data frame, because the… Chuck iteration had exhausted itself.
+
+And now, this is kind of an interesting use. Um, where… Eventually, we're going to want to add to existing values, but if existing values aren't there to add to yet, we need to set the initi… uh, the initial values. So, what we're doing here is we are creating an empty series. For our memory, and then for every chunk. If it's the first time this is run.
+
+Then, we are initializing the memory usage into our series. Uh, and this is a Panda's… method that… says, how much memory is used by every column in the data frame. And then, if it's not the first time that this loop is running. We're still gonna look at memory usage for the columns, but we're going to add it to the existing memory. Uh, and then the counter at this point, it… it… Doesn't matter, right? All we need it to know is, is the counter 0, or is it beyond zero?
+
+And then we do not need the memory of the index, because that's just the column names. And then we're gonna sort values, because this will show us which columns use the most memory, and which columns use the least memory. And I'm calling this before because One of the final steps of this project is we're going to compare our before and after. Kind of like a makeover montage, right? So, that's why I'm calling this B4.
+
+Okay, and we can see here our smallest Memory use is from the funded year And the largest is Investor Permalink. And Permalink it tells me that it's gonna be a URL of some kind, and for most analytical purposes, that I can think of. We're not going to need to look at URLs. So, in fact, we have two different URL columns that are great candidates to remove. And that gets us soooo much memory back. Because these are the largest in our dataset.
+
+Take them out. So we're getting a lot of information of how to optimize our dataset, um, but the final thing we need to do for R before… Boop! Wrong copy-paste here. Is… let's just look at the total memory use as it is right now. So we're summing… We're adding together all of the values that we had just calculated from the memory use method.
+
+And then, because megabytes is… the most, kind of, like, human-readable understanding of… that we have of computer memory. Uh, that's what this… is doing right here. Now, let's take a look at that. And we have that as it is in its original state. Our dataset is almost 57. Megabytes of memory.
+
+So, if we're trying to operate in our 10 megabytes parameter, this is… this exceeds it quite a bit So, let's start cleaning. Let's start cleaning it up. And the first thing we're gonna do is Get rid of these very, very hefty columns. And I have a few additional columns that I recommend. Dropping, and I'll explain why.
+
+So, the first thing is those link columns. Get rid of them. Then, the category code column. Remember, this is the column we saw had 50,000 missing values, and for our 52,000 size. Dataset, we don't need this. It's not giving us enough information to justify keeping.
+
+But the ones that I decided to drop as well. Our funding month, funding quarter, and funding year. And my rationale for this, um, is that we already have the entire date where is it? Funded at? And the month, quarter, and year are all already present. In the longer date format of funded at.
+
+So, if we really need to specify the month, or the quarter, or the year, we can do that at a later point in time. Where we are specifically looking at that. But otherwise, I think we can drop these and… gain… gain a bit of memory back, right? So, we listed the columns we're going to drop. And now.
+
+We're gonna drop the columns. In order to specify the columns we want to keep. A little bit easier than typing out every single column you do want to keep, because what if you miss one or have a typo? This is a slightly cleaner way to do that. Um.
+
+This is interesting, though. But Anna, you said… you said… That we have to. Do this every cell, because the chunks have exhausted themselves. Yes and no. Um, technically there is a chunk here.
+
+There is a chunk here, but the chunk… is the end of the data frame. It's like rows 50,000 to 50,000 or $55,000, right? Um… But all we're needing is the column names. So that final chunk still has the same column names as the first chunk Which is why we can get away with doing this in a cell without restarting the chunk process. So, let's go ahead and do that, and then in the same cell.
+
+I'm going to turn our columns into a list of columns. Just so we can take a look. Um. And… Here, we can see all of the columns we're gonna keep. Okay, so the next thing we're gonna do is data types, because some data types require a lot more memory than others.
+
+And if we can optimize any of these data types. We want to know that, and we want to do that. So, first thing we're gonna do is we are going to create an empty dictionary for our column types. And the key? Of our dictionaries are gonna be the column names, and the values are going to be what the types are. And the reason we're using a dictionary here Um… Well, there's a couple reasons, but one of the reasons is…
+
+Some columns may have more than one data type present for them. Maybe there's some data cleaning that needs to be done, and a number, one. Is typed in with the letters. O and E. And then that would be a string for that row.
+
+So, in general, it would be a number or an integer, but in some cases, it'd be a string, so we want to see where are the columns that have multiple data types present. Um, and so for… the columns in… the columns that we're going to be using. If the column is not already in our column types dictionary, we're gonna add it. Where the column… uh, the key is the column name. And then the value is the data type.
+
+But as a string, just so it's easier for us to read. Otherwise, we're going to append the data type. And then I'll do this, I think, in the same cell… Where now, if we run this as it is right now, actually, let's do that just… Just so we can see, if we look at call types right now. Hopefully this isn't break my machine. Might a little bit.
+
+But you can see it's not very useful, because for every single chunk that we've iterated through. Every single chunk has popped in the data type So, funded at object, object, object, object, object, object, obj… That's not useful for us. So, what we want to do now… is just keep the unique values. And in order to do this. We're using a set, which… Maybe a new Python thing for you to learn.
+
+Um, for… so we're using the dot items method because we're working with a dictionary and iterating through a dictionary. But for every key and value. In our column types dictionary, looking at the items in that dictionary. We are going to keep the key the same. Nothing's changed just yet, changing there.
+
+But for the values, we're using a set. And what a set does is It only keeps unique instances. Only keeps unique instances, so it's kind of a Python… hack for unique values. Um, and now if we run it. We'll see that… Every dictionary value only has the unique things. We don't have that object, object, object, object under the same column name.
+
+So… We can see here Investor Country Code, for example, we have some float instances, and then some object instances. So, something to check out here. Um, a lot of object instances in this dataset, and objects do require the most memory. So, if we can change any of these object instances into numeric or categorical. That's gonna reduce our memory usage a lot, too. And the only one that's strictly numeric right now is our… Excuse me. Our raised amount.
+
+Um, and at this point, just because I was curious, like. What do these look like in practice? I'm looking at chunk.head, and remember, chunk.head will work, even though we haven't reinitialized our data frame, because the chunk will be the last Last… chunk in our data. So that's why the indexes here
+
+Are starting at 50,000. We're using chunks of 5,000, Chunk, chunk, chunk, chunk, chunk. 50,000… So on and so forth, right? That's why this is… This is the last chunk, that's why it's stored here. Um, and the reason I wanted to look at this was just to see, just to see what we got.
+
+Um, okay, raised amount… Over here, some missing values, but we knew to expect that. And it does seem, just at a glance, there could be some good… Use cases for categorical variables. And categorical variables are good for… Any string column that doesn't have that many unique values. So… USA, um, I'm seeing a lot of those, so if there's a lot of USA instances, we can consider Turning this object data type into a category called data type. But we want to see how many unique values are in each column in order to help us with this.
+
+So, let's take a look. Similar workflow to what we just did. Unique values we're initializing an empty dictionary. And here we are setting up our… data frame again, so we can start the chunks from the top. And then for every chunk. Um, and every column.
+
+If the column isn't in our dictionary, we're adding it. With an empty set. And remember, we're using sets because it can help cut down on… um, duplicate values when we're having to iterate over and over and over again. And what we're gonna do is… we are going to update our unique values. So… For example, if chunk 1 has the values 1, 2, and 3, And chunk 2 has the values 1, 2, 3, and 3.
+
+This is only going to update with 1, 2, 3. But then it's not going to duplicate 1, 2, 3, because it's already set. In a set. And now, if we look at at our dictionary. Using the columns and the unique values, or the keys and the values.
+
+You can see our column names, and the number of unique values we have here. So. Company name… over 11,000 unique values, not… something that we can turn into a categorical. It wouldn't be efficient with memory use. But there are several here that are good candidates for categorical variables.
+
+Um… Depending on your dataset size. A good kind of rule of thumb to keep is if you have under 100 unique values. Consider turning it into a categorical variable type instead of just an object data type. And see if that helps. Uh, you might need to do a little bit of experimenting here, but in my experimentation, I found that Anything under 100 was more efficient for this dataset, because we're dealing with 50,000 rows.
+
+So, company category code, we're gonna turn into categorical, same thing for country code Same thing for company state code. Uh, investor country code, investor state code. Funding round type. And I believe that's it. So now let's start the cleaning.
+
+Now, let's start the cleaning. So. Um, I actually missed one in my GIST code, if you're following along with that. So, just to keep things clear. I am not going to… do the categorical type for the variable I missed here.
+
+Um, but category code, funding round type, investor state code, and investor country code. But was the one I missed? Um… company's state code? This, this would be a good one to include as well. But we're saying that the column types, and the reason we're doing this in a dictionary is we're giving the… Name as it exists in our data frame.
+
+And then saying that we want it to be a category. Then, we use this optional argument in our read CSV. Method? Oh, no, we already have this one. Keep columns that we already said the columns that we're dropping, right?
+
+What we're adding this time is we're adding column types. And pandas will look at our column types dictionary and says, okay, these columns, we were going to say that they were objects, but no, they want them as categories, we'll do categories. But for anything that's not specified in our dictionary, pandas will… continued business as usual with what it was going to interpret the column as. And then, we are also going to parse dates. This is the most efficient way to turn any date-specific column into a datetime instance, and if we look excuse me, if we look back at our… little data frame peak here.
+
+Our funded at column… is data. Or, not data. Of course, it's data. It is dates. So that's why we are specifying that column name.
+
+In our par states. Parameter here. Okay, um… And this code is copy and pasted, we already did this a little earlier when we were calculating memory use. But what we want to do now… You see, after we've cleaned. Right? We're keeping only columns that we want. We're converting some… Data types? Does the memory use change?
+
+And here… It's going to be our memory for after. Okay, so we see that… our total memory use has dropped pretty substantially. But… I thought that we could do a really nice side-by-side comparison to pack the largest punch. To see the work that we've done here. So I'm creating a super quick data frame, and on this step.
+
+It's totally fine to do this, because the only values are coming from These small series. Not our large 50,000 plus row data set. So this data frame should work within our 10, um. 10mb parameter that we have set for ourselves. So what we're gonna do is we're going to have columns for RB4 memory, our after memory, and our difference.
+
+And we're going to sort the values by difference, just… Just because it looks nicer. And we can see here that all of the… variables that we've changed, the data type on. Have substantially improved in their memory use. Um… So, yeah, that's really cool to see. The columns that we didn't do anything to? Nothing's changed about them, which is good, because if it had changed, I would be a little concerned.
+
+And then we have the columns that we've dropped down here at the bottom. And we can see that because we've dropped them, we're saving all of this memory. Which is why we were able to go from… what was it, 57? Megabytes to 26 megabytes. And just to really hit that point home.
+
+Let's do our before and after total memory. Dedicated in a cell here. So, for optimizing, that's where we are going to leave it. Um, for this webinar, but I do have a couple suggestions if you want to try to reduce this even more, or reduce this memory use even more. So I'll get to those in a moment. But now that we have a… data set that's in much better shape to do calculations with. Let's use SQL.
+
+So we can analyze. Um… okay. So we need to import SQLite 3. That's the Python library for working with SQLite. And the first thing we're gonna do is we're gonna connect to a database. And you say, wait, Anna, database, we don't have a database, do I need to download a database? I didn't know.
+
+No, you don't need to. Um… And the reason you don't need to is it's going to create a database in your Jupyter environment. So you can name this whatever you want. I'm going to name mine Crunchbase Test, just so that you believe me. So, look at our files on the left-hand panel here. And now… when I run this… You'll see that we have a new file present that is actually… our database.
+
+Right? So name yours whatever you would like to. Basically, we're just telling SQL, hey, here's your database, this is what you're using. Uh, and now the next part. Once again, we are going to use our… iteration. Um… But remember, this is our final optimized iteration, where we are dropping columns that are too big, we're specifying data types to keep memory nice.
+
+Uh… So everything here should keep us within that 27-ish megabyte memory limit. Now what we're gonna do is just… Just check that our SQL connection is working. And what we're gonna do is, for every chunk in our data frame. We're going to send it to SQL in a table called Investments. Connected to our database. And if the… table already exists, we're going to append new values to it. Otherwise, we would overwrite.
+
+Every single chunk, and that wouldn't be valuable. And index false, because we do not need to keep the index here. This next section tests and tells us that there is a table in our dictionary. And… When we run this, it says tables found in our dictionary. Investments. So now we have a new table in a new database.
+
+Based on our optimized dataset. Okay, and now we can… Use SQL with our data. If you're new to SQL in Python, I know it was, like. Scary for me when I started, because it felt different. Um, but… It is based on the same skills that you know in Python and in SQL.
+
+And in Python. In order to access SQL, you use cursor. Which is… how you tell Python to query. And then execute is, like. You know what the query is, now run it.
+
+And you can write SQL just like you would in a regular SQL environment. The one catch is that in order to display. You need to tell it to… to run on everything. And if we print this, we can now see that we've looked at everything from our investments data. But we're limiting it to 5 rows. Is this the most beautiful formatting? No.
+
+But we don't really care about that. If we needed to print, like, clean it up here, we could. But… I think we should end this project With the visualization. And in order to visualize. I'm gonna operate within Pandas, because I didn't import matplotlib.
+
+Um, and Pandas does kind of, under the hood, have a little bit of plotting capability. So here's what we're gonna do. We are going to read SQL, and this command, as opposed to… this command. Uh, the read SQL command is a cool way to turn SQL immediately into a data frame. And that's why I have DF here, is it's a data frame.
+
+Notice that, because I'm writing a more complex SQL query, I'm using Three quotation marks at the front and the back. So, it can be a string with more formatting. Could he write this in one line? Sure. Sql does not care about that kind of formatting, but for human readability, this is nicer.
+
+Um, so what we're gonna do is we are gonna select the country category code. And then the average amount raised, because the question I thought would be cool to visualize is. Um, which… Categories raise the most money? And so, from investments, we're going to group by category code, and then order by our average. Um, and then a little bit of code here to… set our visualization.
+
+And I have one at the top here, actually. Little bit of coding magic. This is gonna just help our chart display in a nicer way. By rounding to two decimal places. So, we're keeping the top 15, because if you'll remember, our categories… scrolling back up, scrolling back up… Originally, for categories.
+
+We had 44 categories, and a bar graph with 44 categories is going to be a little hard to read. So, I figure we'll get just the same amount of information by looking at the top 15. And here we are going to plot on a bar chart, our data frame. And now, from that very, very large dataset we started with, we ran a… visualization here in… negligible time. Um And that's the end of my walkthrough.
+
+So, at this point in time, I have a couple ideas for you to take this project further. Uh, the first one. If you want to optimize, I experimented with this Before the webinar, and kind of debated, should I include it, should I not? But I figured, ultimately, it was good homework. So my homework for you is, can you convert raised amount USD into a more precise data type?
+
+Remember, right now. It is a… Float64… Or did that go? Here. Float64. But… 64 is the largest Uh… is that right?
+
+It's one of the largest, if not the largest float data types, right? Because it has, like, that many… place values. So, does float 32 work? Does float… 16 work? See if there's a better option here.
+
+And is there any data cleaning you can do? Can you drop duplicates? Can you deal with incorrect values? Maybe find the source of the reason we can't use UTF-8 encoding? I don't know.
+
+Um, so there are more optimization techniques that you can implement, for sure, and if you get this below 26, 27 megabytes? Ping me in the DataQuest community and let me know what you did. I'm very curious. And if you want some analysis ideas to practice your SQL in Python, here are some questions for you to consider. Um, what proportion of funds Did the top 10% raise? So are there some projects that are just… kind of taking over, and everyone else isn't getting any funding.
+
+Uh, what about the top 1%? Um, and then did the same for the bottom 10 and bottom 1%. Which category of company attracted the most investment? We sort of did this with our… uh, visualization Here… But we did it average, right? We did an average. So there's a little bit more nuance you can do with the most investments versus the average dollars.
+
+Uh, with Shinvestor contributed the most money? Which investors contributed the most money per startup? So are there investors that, like, you get money, and you get money, and you get money? Interesting. And… which funding round was most popular? If you want to… work with some date time. You could also look to see if certain months or quarters or years are more popular.
+
+Up to you. Um, and now we can dive into some questions. So, if you do have questions for me that you haven't asked yet, please use the Q&A panel. And I will start going through. Those questions now.
+
+Okay. Kwaku asks, was it easier for me to transition from teaching math to data analysis? Some things were easy, and some things were not. I was brand new to coding. When I made the transition. Um, so the first… First several months, I was just learning Python basics What does it mean to… assign a variable, like, what is a loop? How does… Logic work, and… I… I love DataQuest a lot, but if you need practice with the basics, I'm gonna type it in chat right now for spelling purposes.
+
+Um, actually… I'll go ahead and share the website. Here. Project Oiler.net is a very cool project. Um… That asks you… basic math questions that get more complex, so if you don't like math.
+
+Maybe the first 10 problems is good only. But it asks questions like this. If we list all natural numbers below 10 that are multiples of 3 or 5, Um, find the sum of all the multiples below 1,000. And the idea here is that all code should be able to run in under 2 minutes. So it helps you write efficient code. Answering questions with loops and, um… Then you get to see if he answers right or wrong, and collect points along the way. So if you like this gamification to help you practice Python.
+
+This is how I learned my Python basics. Before I went into Pandas. All right. Um. An anonymous attendee asked. Is it common to only have limited memory when working on your data? Why did this happen, and what's the best way to deal with it? Should we always analyze in chunks?
+
+Great question. So This project was… putting parameters in place that probably didn't need to be there. Um, I haven't done this, so maybe I'm gonna break my computer, we'll see. We'll see. But what happens if we do this?
+
+But without iterating. What if we just try to run the entire data frame at once. What happens? And then we'll look at the head. Um… So we're running into some issues here, and that's partly because some columns have mixed data types.
+
+Or set low memory equals False. So, we are running into issues here. Oh yes, um, Anand… Ari shared Project Oilier in chat, thank you for that, that's the correct link. Um, so… We can see that we're already running into some problems, right? But this dataset had… 50,000… Where did that go?
+
+Oh, here. Um, it had about 50,000 rows. But real-life data, you can have millions of rows, and when you're working with millions of rows, if you try to just put it into Pandas, you're going to have problems. And pandas… this is a larger theoretical conversation about pandas, but it does have limits. It does have limits, and when you get into the millions of rows, pandas probably isn't the best tool for you to use right off the bat.
+
+Um, but… I remember when I first started, I was trying to analyze a dataset locally with my Python instance, um, with VS Code. And I was working with, like, 100,000 rows, and I was running into problems. I… I kind of was blindsided, because I didn't know about optimization. So, it is common to run into memory issues, it is. And understanding what causes large memory use, what you can do about large memory use are all really valuable skills.
+
+And analyze some chunks. Should you always analyze in chunks? No, you don't need to. If your dataset is small enough, and plays nicely enough with your machine. To do the whole thing at once, go for it.
+
+Okay, and then, uh, Bidhu asks, why choose Latin 1 instead of UTEF? Because UTF doesn't work. Um, we'll demo this real quick. If we get rid of the encoding. Um, default for read CSV is UTF-8.
+
+So if we try to do this, it doesn't work because, scrolling down through the trace back here. Utf-8 can't decode it. There's something incorrect. And if you do try to look at the CSV, you can't. Because it's not UTF-8 encoded. Um, is Latin 1?
+
+The only… solution? No. No, it's not. There are some others that work here. In fact, I think DataQuest's official solution uses something different.
+
+Yeah, it uses ISO 88591. And that works just fine. You get the same results. Um, so whatever character or characters that is… causing errors with UTF-8. That character or characters is present in both ISO 8859 and Latin 1.
+
+So, yeah, for some reason, encoding sounds really intimidating. It does. Uh, I remember, I was like, oh, I can't do a data set if it's not UTF-8, because I don't know what to do. This translates the entire data frame into something that you know how to work with. All you're telling the computer is, hey, instead of Uh, speaking in English. Now you need to speak in Spanish, instead of speaking in, uh, English, now you need to speak in into French, right? But then the computer is good to go.
+
+Salam asks, could this work for rows that are greater than 1 million? Maybe. Maybe. Um… Yeah, that's where pandas starts to run into some issues, and I think if you're working with a million rows of data. At that point, you're probably working with… uh, database.
+
+And pulling… Just the data you need from the database with a SQL query first. That would probably be… better. Um… But you know what I'm gonna do? I think I'm gonna write myself a note, because this is a really interesting question. And if you get the DataQuest newsletter, which you ought to if you're here.
+
+Um, but for the next newsletter, I think I've already sent my links, but for the What We're Reading section. I will try to find a good article on Panda's limitations. Because this will answer the question about rows greater than a million. Um, so… Stay tuned for the DataQuest newsletter if you… wants to answer a little bit more about pandas and what it can help with and what it can't. Is, uh, Joyce asks, is memory the same as size? Um.
+
+I'm trying to think of a good way to… talk about this. If anyone in chat has a good way to explain this. Go for it! But… Sort of, is my answer. Um… I'm hesitant of saying yes or no, because Size can mean many different things. Is it height? Is it weight? Is it diameter?
+
+Um, is it depth? So, memory is… a way to measure… what your computer can… can handle. Um… So… DataFrame Size… This data frame's row size is about 52,000 rows. But the memory size to start with was about 57 megabytes. So… I know that's kind of a wishy-washy answer, Joyce, so if you need some clarification on that, please let me know But, um… Yes and no. Memory is the same as size. That's my answer.
+
+Um, and now looking at the clock, we are technically at time, but we still have some questions. So, if you do need to hop off, I want to respect your time, and thank you so much for joining me today. I hope you learned a lot. Um, but… I'm gonna stick around and answer the existing questions in the Q&A, and… Um, yeah. Yeah. Okay.
+
+So… let's see here… An anonymous attendee asks for if the investor country code… Let me scroll down to what they're… Referencing here, investor country code… Here. Those that mean the column has two data types, is it possible? Sorry if you misunderstood, you were lost on this. No, thank you for asking a clarifying question. It's a really important part of the learning process. And, yes, so because we are going through in chunks Pandas looks at chunk 1 and says, okay, this Column is this data type.
+
+But then in the next chunk. The data type might be different. So, for example, in chunk 1, everything might be a number, and then it's like. Float. We got you. But then in the next one. Maybe there's a string.
+
+Or maybe there's a missing value that is put in in a weird way. Then it can't say it's a float. Off the bat, it has to say. That's an object, right? Because Object is Canada's catch-all for everything if it's not… It's not a number. Or a boolean.
+
+So, let me know if that answered your question. If not. I will try my best to… clarify. Uh, GIAP, hopefully I'm pronouncing your name correctly. Can we have a checklist conditions on how to identify columns to be removed before the cleaning? And the good practice to reduce the memory cost.
+
+So this… a checklist, um, is kind of the steps that we went through today. I would say before removing a column entirely. There's a couple different conditions, I suppose. Number one, are the values missing? Do you have enough information in that column to be valuable? And I think that's the overarching question, is is this column valuable?
+
+If it's missing most of its values. It's not valuable. And if you want kind of a hard cutoff, I would say if it's missing more than 75%, That's not valuable. Um, if… It's a URL? It's not gonna be valuable. Like… if you're doing a very specific kind of analysis, maybe this is a valuable type of information.
+
+But… given the types of questions I knew I was going to want to answer. None of my questions involve links. Which is why I decided I could remove these. But this isn't a… black and white answer here. You know, maybe there is a use case for keeping links. My use case, I did not need to keep the links.
+
+Um, and then, what other ones did I remove? My rationale for removing things like the month And the quarter… And the year… is that all of those are already encompassed in the funded app? And in programming, there's a… I mean, it doesn't really apply here, but… There's a principle called don't repeat yourself. And… For me, the month, the quarter, and the year were repeating information we already had In the whole date. So if I needed that information later.
+
+I could pull it from the funded app. Column. So… Those are the main things to… help you remove columns, um, but as far as a checklist, honestly, this project is a really good starting point for that checklist. Every single cell that we did in this project Represents a step. To check what can be removed and what can't. What can be modified and what can't.
+
+Kieran asks, how do you decide which visualization is best? Um, that's a great question, and I actually wrote a… An article on this for DataQuest. Let me try to find that, and I'll pop it in the chat. Let's see here… We also have some lessons about this on the DataQuest app. But I just happen to know this one. Off the top of my head.
+
+Um, so in general, there are some… ideas to help you pick the best chart type. But for this particular use case. I realized that we had categories, right? Automotive, like, we were working with categories, and categories often work well with bar charts. And especially when we have a category. Versus a numeric.
+
+Um… And the other, kind of. Behind-the-scenes reason I picked a bar chart for this tutorial is Bar charts play nicely with pandas. Without needing to use extra Python libraries. If you want to do fancy things, then you need tools like Seabourn. And, um… I… I just didn't… think it would… be necessary to go to that depth for a question like this.
+
+Um, but you totally could. Okay. Uh, Sarthak asks… What was the point of using SQLite in this project? Does it do the memory chunk thing by default? Because we could have done this analysis visualization with Python Pandas.
+
+Yeah, you could use Python and Pandas. But because, um, our… data frame, even after optimizing. But still, you know… larger than our parameter for the 10 megabytes of memory. Um, we would need to continue using an iterator. And the nice thing about putting it into a SQL database is SQL's very quick.
+
+And we don't need to iterate. Once our data is in SQL, And then… Analysis, in my opinion. It's easier to write in a SQL query than it is in Python. Um. Writing this… In Python, especially with iteration, would require a lot of work, very similar to what we were doing Here, where you have to have loops with nested logic, and… It's just a little cumbersome compared to when you're analyzing, a lot of the times, you want to see a result really quickly.
+
+Then go on to the next question. Kind of refine your questions until you get to some really nice insight. So, SQL is… Quicker and better at that. Um, but if you wanted to do this as an experiment, try this whole whole section. Just using Python and Pandas, and you can compare, you can do, um, maybe a time.time start and end to compare how long each cell takes to run. Um… and see if SQL or Pandas is quicker. I have a feeling Pandas will… or…
+
+Seek will be quicker. Um, FAO again, hopefully I'm saying your name right. Why was there a need to reduce the size of the data and memory size? So… to practice working with very, very large data sets, um, for a bit Of background, this project comes from the data engineering path from DataQuest. Where there's a whole course on how to optimize your data. Data engineers work with a lot of data behind the scenes.
+
+They're the ones that make sure your data is ready for analysis. So if you're a data analyst or working in data science. Um, with machine learning models and whatnot. You can thank the data engineers for making sure that Um, everything you get is… Smooth, able to run. For you. But data engineers? Optimizing is gonna be a big, big part of how you touch data.
+
+And this project helped to practice that. All right, uh, oof, we are running low on time here. Let me see… let me see what we got for questions. Um, and by the way, I'll say it right now, if I didn't have time to answer your question, please do ping me in the DataQuest community. Um… if you go to View Community Posts. Uh, this is all about the project, and if you create a new post, you can ping me.
+
+By ating… at… Let me see… Anna underscore Stroll and the DataQuest community, and I would love, love, love to continue the conversation there. Um… Uh, Joshua asks, is it possible to export this project into VS Code? Yes. It should be. You just need to make sure that you download the, um, Crunchbase CSV, you should be able to download it, no problems, although you cannot open it.
+
+Because of the encoding issue. So if you have Crunchbase. Csv locally, and you have the necessary libraries installed, pandas, and then SQLite 3. Um, as well as, you know, Jupiter. You can do this locally, for sure.
+
+Um, Beth asks, and I think this will be our final question, because we are… 10 minutes over. How can you tell how much memory was actually used when the code was executed? Um… So, when the code was executed. I think… I'm trying to think of the best way to explain this, um… There's a couple things you can do. I mean, the big one is really memory, is what can your computer Remember? Without… getting really grumpy. And because we know that we are working originally with 56 and then 26, If you tell your computer, remember all of this.
+
+And your computer says, hey, I can only remember 10. And you say, no, remember 26. You're going to run into an error. The computer's just not capable of parsing that about. And that's Potentially why we ran into an error, um, when I tried to load this without specifying chunks size, right? The computer's like, I can't…
+
+I don't have that capacity. Um, but if you want to test how long functions rung. Oh, I haven't done this in a minute, so you'll need, uh… is it import time? Something like this, and then if you do start equals time dot time, I think that gives you the current time. And then you say some function. And then you do end equals time dot time, it'll clock the time during that line in the code, and then you can say.
+
+Execution… time equals, uh, end minus… start. Don't quote me on the syntax there, but something like this is very, very useful for figuring out function optimization, especially. Alright, um, and like I said, if I didn't get to your question, or if you have more questions, please do reach out. I love answering questions, I love teaching, so, uh, it's no bother, in fact. It's a highlight in my day. So… Thank you for coming. Please do fill out the feedback form. This was one of the first data engineering-type projects that I've done in these project labs.
+
+So if you enjoyed it, if you want to see more of this, let me know. If you didn't enjoy it, if you don't want to see more of it, let me know too. Um, and stay tuned in two weeks, we have another Project Lab coming up. Thank you so, so much for joining, and have a phenomenal day.

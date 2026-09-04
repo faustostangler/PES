@@ -1,0 +1,650 @@
+---
+video_title: "[LIVE] Disparador WhatsApp 100% Automático com IA que Continua Conversas - N8N Tutorial"
+video_id: I5hZpa1KFY8
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=I5hZpa1KFY8
+video_date: 2025-08-05
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=I5hZpa1KFY8
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  LIVE GRAVADA - 17/07/2024 | 2h30min de conteúdo PRÁTICO!
+  
+  Nesta LIVE COMPLETA, eu ensino AO VIVO como criar um DISPARADOR DE MENSAGENS no WhatsApp usando N8N com Inteligência Artificial que CONTINUA a conversa automaticamente!
+  
+  ATENÇÃO: Esta é a gravação COMPLETA da live que fiz no dia 17/07. Todo o processo foi feito DO ZERO, ao vivo, com erros e acertos - exatamente como acontece no mundo real!
+  
+  ⚡ O QUE FOI ENSINADO NA LIVE:
+  
+  ✅ Criar disparador 100% no N8N com HTML personalizado
+  ✅ 3 técnicas anti-bloqueio (randomização de instâncias, intervalos aleatórios, variação de mensagens com IA)
+  ✅ Integração com ZapMemory para memória de contexto (PRIMEIRA VEZ mostrado no canal!)
+  ✅ Painel HTML próprio (sem precisar de ferramentas externas)
+  ✅ IA que continua conversas mantendo o contexto
+  ✅ Conexão com Evolution API
+  ✅ Como usar GPT para gerar código HTML
+  ✅ Dicas com Cursor AI para otimizar desenvolvimento
+  
+  ⚠️ IMPORTANTE: O template completo foi disponibilizado apenas para quem estava AO VIVO no dia 17/07.
+  
+  🎯 POR QUE ASSISTIR ESTA LIVE GRAVADA?
+  
+  Veja o processo REAL de desenvolvimento
+  Aprenda com os erros e correções ao vivo
+  Acompanhe o raciocínio passo a passo
+  Tire dúvidas junto com quem estava ao vivo
+  
+  #livegravada #n8n #automação #whatsapp #disparador #inteligenciaartificial #zapmemory #webhook #evolutionapi #tutorial #aovivo
+---
+Vamos lá. Então, primeiro eu quero contextualizar com vocês o que vamos fazer aqui, certo? A ideia central de maneira geral, tipo a gente vai entrando em mais detalhes, é que primeiro a gente tenha um disparador de mensagens, tá? Feito 100% com HTML do NM. esses parod mensagens, a gente vai aqui fazer três técnicas pra gente evitar ao máximo esses bloqueios. A gente sabe que questão
+
+de disparo tem muita essa questão de bloqueio de chip, né, que é basicamente randomização de instâncias. Então a gente consegui fazer para randomizar lá a instância, né? Além disso, intervalo randômico entre uma par e outro, né? Por exemplo, se eu coloco lá, ah, eu quero que me disparo seja de 30 a 60 segundos, ele sempre vai pegar um valor aleatório entre esse intervalo para poder mandar, para não ficar o mesmo valor, certo? E também a possibilidade da gente tá ativando eh a Ia para poder fazer umas pequenas variações de mensagem. Por exemplo, se eu quiser mandar um oi,
+
+tudo bem? A vai ficar variando eh por exemplo lá, tudo bem? ou como está, sem perder o contexto, mas também não ficar aquela mesa mensagem fixa, certo? E aí a gente vai ter painel em HTML aqui para poder estar fazendo disparo, tá? Vai do zero. Eu tô aqui com flow limpo, então vai ser
+
+realmente, cara, vai vai acontecer erro. Eh, pode ser que dê algum erro aqui no me estresse aqui, tenta três, cinco vezes, vai até dar certo. Vai ter queando mesmo, tá? Não, não vou copercolar de pronto não. E aí a ideia é que após o disparo, se a pessoa lá do outro lado responder esse disparo, aí ela já foi a conversa entendendo o que foi dito, tá? Sem entender o contexto para não
+
+resetar lá a conversa, não entender o que foi dito como disparador e uma conversa. Beleza? Começar aqui mostrando para vocês qual é a memória que a gente vai estar utilizando. Não vai ser, não vai ser post, vai ser assim memory. A gente vai estar utilizando o ZP memory aqui. Beleza?
+
+Não tive nenhum conteúdo ainda no YouTube sobre isso. Essa é a primeira vez que eu vou estar falando sobre essa essa memória que ainda estou brincando com ela. Tô vendo assim mais profundamente o poder dela. Mas a ideia é que esse Zap Memory ele vai armazenar as conversas, só que ele não armazen as conversas de forma eh de forma comum, né? né? Como o banco de dados,
+
+por exemplo, ele vai ordenando por contexto, né? Inclusive isso aqui é chamado de engenharia de contexto, que é ordenar o que foi dito, agrupar em gaveta o contexto da conversa e na hora que for preciso ela busca essa informação, certo? É como fosse um rag misturado ali com memória. E aí para vocês entenderem melhor do que que é isso, que se trata, eu vou estar criando aqui um workflow de um agente mesmo simples aqui, tá? Que a gente vai conversar aqui só para vocês verem.
+
+Como a gente conecta esse zap? Vamos pegar aqui um um chat message normal com agente colocar aqui 4. Mini. Beleza? Aí aqui, ó, em memória, a gente tem aqui o Zep, certo?
+
+Para quem não tem acesso é getzep.com. Vou até colocar aqui no no chat de vocês, caso vocês querem ir fazendo aí conjunto comigo. getzep.com.
+
+Esse cara aqui, ó.
+
+Certo? Ele tem um plano gratuito e tem um plano pago, né? O plano gratuito tem umas limitações de questão de qu de tamanho de armazenamento e quantidade de mensagens mensal, certo? Aí depois eu tenho aqui um plano pago, vai tá utilizando gratuito mesmo pra gente testar aqui. Eh, sim, Vai ficar salvo a cal, beleza? vai ser postar lá no YouTube, só que a o template que eu vou
+
+fazer aqui vai ser liberado apenas para vocês que estão aqui. V aqui. Beleza? Voltando, vou criar aqui uma uma chave B para gente tá testando aqui, ó. Adicionar aqui live.
+
+Já até tem criado aqui, né? Mas vamos fazer aqui do Z para vocês. Zep API live aqui. API aqui opção aqui cloud, certo? Não sei. E show, já conectou, tem mistério nenhum. Beleza,
+
+eu vou começar aqui uma conversa aqui com ele e aí vocês vão ver aqui o qual é o diferencial dele de memórias convencionais, tá? Tem nenhum promptente sem pronto, só pra gente testar mesmo aqui a conversa.
+
+Opa, acabei de tá ativando aqui sem querer. Deixa eu mandar de novo. Posso ajudar você hoje. Eh, quero saber como funciona a quem descobriu o Brasil. Perguntar contextos aleatórios.
+
+Pode sim ser outra plataforma, tá? Pode ser o simple memory mesmo, pode ser o um pois, pode ser o ads, fica a critério de vocês vai usar. Eu quero aproveitar para mostrar o zap, aproveitei aqui o a live para já mostrar essa funcionalidade. Em breve vai fazer, vou fazer vídeo mais detalhado sobre ele, tá? Beleza? Aí, se eu for vir aqui no ZF,
+
+aqui em usuários, vamos ver aqui, ó. Esse aqui foi o usuário que eu tava conversando aqui agora. Olha só, se eu clico aqui, aqui é toda como fosse uma rede de neurônios relacionadas à minha pessoa, ao usuário que tá conversando aqui com a gente, mas tá vendo que ele vai sempre criando aqui um emaranhado de coisas. Acabei bagunçando aqui agora.
+
+E tudo vai se conectando, né? Tudo vai se entrelaçando. Ela usa isso aqui, esse método para poder responder as perguntas que tá acontecendo, tá? De forma assim bem por cima. É isso que ele funciona. Ele dá até aqui um exemplo de um usuário mais avançado que já conversou por muito tempo. Se
+
+eu clicar aqui e vir aqui, ó, em ver gráfico. Olha só, um cara que tá conversando há muito tempo, é basicamente isso aqui que vai ficar ali eh embotido na memória do agente, certo? Isso aqui de um tá beleza. Esse aqui é o contexto do ZP. Espero que tenha entendido assim pelo menos por cima a gente vai est utilizando ele aqui nesse nosso projeto, tá? Mas pode usar o posts simple memory
+
+de vocês. Show de bola. Aí o que que nós vamos fazer aqui no nosso projeto, né? Que realmente vamos estar fazendo aqui no nosso projeto. A ideia central é que, como tinha falado, né? Vai ter um
+
+disparador. Esse disparador após finalizar o disparo, ele vai armazenar na memória lá no ZP o armazenado. E para quem que fez disparo, beleza? E aí quando o lead responder ou a gente já vai responder novamente, vai só a memória do Zep, ele vai continuar esse fluxo aqui. Beleza? Então
+
+o disparador e o agente ele vai ter essa ligação. E pra gente concluir nosso projeto, eu quero matar aqui nessa nossa live esse checklist aqui, tá? A gente tem fora de mensagens e tem o agente VDR. de mensagens, eu quero que tenha um painel HTML, eu quero que faça randomização de instâncias, quero que faça randomização de intervalo e variação de com IA. E aí opcionalmente a gente pode táar colocando um prox também nele, certo? O agente BDR eu quero que ele conte na
+
+minha conversa, áudio, tenha o ZP atrelado para gerir de contexto e tem a conexão da memória com o disparador. Depois a gente faz essa ligação aqui, beleza? Ficou alguma dúvida em relação ao que a gente vai trabalhar? Posso começar de fato? F à vontade aí para escrever no chat.
+
+Eu cheguei a mostrar, mas eu mostro novamente. Deixa eu fechar aqui aqui no aqui em projeto, ó, na página inicial, tá? Você vem aqui, adicionar aqui, coloca o nome, certo? E aqui no ZP ele é bem tranquilo de fazer. É só passar P aqui aqui e marcar essa opção de cloud salvar.
+
+Show. Pode iniciar também, tá? Pode iniciar em p, pode iniciar Telegram, pode iniciar Instagram, tá? Aqui a gente vai ver WhatsApp, tá? Mas se no seu site tiver, por exemplo, um link para conversa, também funciona, tá? Só que a abordagem inicial vai ser o disparador. Teve abordares frios,
+
+eles que não sabe quem quem quem quem é você. Então vamos lá. Vamos começar apagar isso aqui. Vamos lá. Primeiro vamos estar fazendo nosso separador. Vamos colocar aqui, ó, separador live.
+
+E antes de tudo, a gente vai criar um painel, vai ser o front, onde a gente vai estar fazendo os nossos disparos. Beleza? Então pra gente fazer isso, eu preciso estar criando aqui um web, tá? Esse web hook, o método, ele pode ser um get mesmo, tá? E aqui eu vou nomear como painel live, tá bom?
+
+E a partir disso aqui eu vou estar conectando em um respond to web hook, certo? Beleza. Então assim, se deixa eu desativar aqui já esse esse let, beleza? E aqui no meio eu vou est colocando a HTML, certo?
+
+Hmm. Aqui vou colocar aqui Jon. Eu vou só ativar aqui esse nó pra gente pegar aqui a saída dele, beleza? esse HTML aqui, colocar aqui como como text aqui se como tex ele já dá certo. A gente conecta aqui e beleza, já tem já uma página HTML funcional. Vamos ver aqui se tá tudo OK. Pegar
+
+aqui a URL e vamos colocar aqui a URL de produção para rodar. Deixa eu ver aqui. Ah, tá. Tem que marcar aqui também a opção, ó, o using web hook. Agora sim. E beleza. Essa foi a
+
+página que eu acabei de de gerar. Basicamente eu uso essa URL aqui, tá? Eu uso essa URL aqui e quando eu jogo lá na URL do narador, ele vai gerar a página aqui e depois responde, tá? Aqui é um HTML. Olha só, essa aqui foi a página que foi gerada e eu visualizei o navegador. Então assim,
+
+a gente vai já mata essa questão de ter que fazer conexão direta com com sheets, né, de ter alguma outra plataforma externa para poder fazer o colocar os leads, fazer disparo, enfim, a gente tem nosso próprio painel, tá? E como é que a gente vai desenhar isso aqui? Eu preciso saber programar, preciso saber HTML? Não, né? A gente usa o GPT para isso, só saber perguntar para ele e vou fazer isso agora com vocês, tá? Eu vou vir aqui no meu GPT,
+
+eu vou perguntar a ele, perguntar não, né? Vou pedir para ele gerar o Hm de uma página e passar as funções que eu quero que ele tenha, certo? Vamos lá. Quero que você geremja para um disparador de mensais no painel. A parte da instância vou adicionar depois no painel. Eu vou colocar o conteúdo da mensagem.
+
+Vou colocar os números para disparar. Vou colocar o tempo m e tempo máximo de delit. Parabéns. Abaixo terá um botão para iniciar o despaço. Ativando web hook.
+
+Abaixo terá uma barra de a gente vai melhorando e corrigindo. Mandar para mim.
+
+Aqui ele tá gerando o código HML.
+
+Beleza, coloco aqui, né? Apaguei o que tinha lá, coloquei aqui e vou dar F5 lá na minha página HTML. Foi que a gente tinha, beleza, a gente já tem aqui alguma coisa. Tá feio, mas tem alguma coisa, tá? Um campo para mensagem, um campo para colocar os números, um delay mínimo e um delay máximo. Disparo e ele vai disparar, certo? Questão e a gente tem
+
+que tratar com Bootstrap. Então, vou até falar com ele aqui, ó. Eu já vou passar até o web hook também. Como assim? No momento que eu clicar lá em disparar, ele vai ter que ativar um outro abhook, que hook e se vai ser o certo, vamos supor que eu tenho ali 10 números, eu coloque 10 números aqui, três números. Clique iniciar, ele vaiook passa esse número, depois enviar outra webook passa
+
+esse número, outro número, certo? E dentro do webhook vai ter o delay mínimo e o delay máximo, tá? E aqui é a mensagem. Então tudo isso aqui vai ter que ser passado lá no B, tá? Beleza. Melhorar essa aqui do boot strap. Agora adicionem bootstrap, deixar ele mais bonito.
+
+O web hook para disparar vai ser não temos ainda. Agora adicionar aqui um outro. Esse aqui é o web hookml e esse aqui é hook do dispar em si.
+
+Método aqui tem que ser post disparador live responde using respond porque ele vai quando eu isso aqui a página ela vai aguardar final senão ele só vai dar concluída assim que começar aqui. Mas não quero que ele aguarde finalizar depois mandar outra. Beleza? Eu já vou conectar em o respond, só vai dar erro.
+
+Pegar aqui essa URL. Vou jogar aqui puxar aqui. GPT aqui o teste. Passe no B o número o delay mínimo e delay máximo. OK. Não vem.
+
+Vamos atualizar aqui o HTML e vamos atualizar a pasta. Já melhorou. ficou já bem mais bonito. Então aqui mensagem, números, delay mim, delay máximo, iniciar disparo, então a barrinha de progresso aqui embaixo, tá? Vamos ver se tá funcionando, pelo menos a parte de chegar no lado chegou. Primeira parte já foi concluída do disparador.
+
+Números qualquer coisa aqui, tá? Del mínimo em milissegundos. iniciar primeiro e depois mandou o segundo. Vamos ver se realmente ele mandou aqui, viu? E aqui no B, ó, passa o texto, o número, o delay mínimo e o delay máximo. A partir disso
+
+aqui, a gente consegue fazer nossa automação para fazer os disparos, certo? Primeiro passo concluído em relação ao painel. Alguém ficou com dúvida relacionada ao painel? Já pode fazer. Podem podem digitar inglês, pessoal.
+
+O chat tá indisponível. Tá falando que o chat tá disponível. Tudo certo. Tá no chat.
+
+Aí a gente abre o microfone conversar no no responde do HTML ou desse aqui. Esse aqui eu não coloquei nada ainda. Disparado ainda não tem nada. Certo? E vai fazer depois ou HTML eu passo eh como txto conteúdo do HTML.
+
+Disparo de lista. Quando você fala questão de disparo de lista é mandar mais de uma mensagem, tipo, ah, quero mandar duas mensagens com o mesmo L.
+
+Se for isso, tem como sim. Mas aí a gente vai tá passando, a gente tá passando a lista de WhatsApp, tipo com botão. Aí no caso teria que ter a p oficial conectada, mas é possível sim. Não vamos abordar isso aqui, mas tem como limite aí depende muito de como tá seu chip, como tá o IP que tu tá disparando, tá? Mas assim, o máximo de disparo por dia estourando o dia, faz um passar legal. Ah,
+
+quer disparar 1000 aí 5x para fazer certo? Vamos lá. Vou inclusive eu vou fazer aqui aí só um momento. Parou gente em pouco tempo. em em pouco tempo pode bloquear.
+
+Tem como sim.
+
+Mandar aqui mandar aqui o PT.
+
+ass é tudo questão de conversar com GPT, tentativa e erro. Basicamente é isso, certo? Por exemplo, agora a gente vai testar, fazer com que ele liste as instências con Evolution para conseguir selecionar quais que eu quero para domização. Tem fazer isso agora, tá? Como fazer isso? Repitei. Beleza.
+
+Vou pegar esse mesmo espaço com detalhe, pessoal. Já vou para vocês. O GPT ele é excelente, tá? Mas chega um momento que ele começar a dar alguns delírios, né, digamos assim. Vai chegar um momento que a gente vai uma conversa muito grande, vai fazer uma vai lá e remove outra coisa. Acontece muito isso. Como é
+
+que eu resolvi isso? Usando oi, que é o que a gente fazer aqui agora.
+
+Cursor ai o que é isso? É como respond que tu usa para programar, tá? O cursor se eu consigo mostrar para vocês aqui. Ah, colocar aqui a tela cheia. O cursor II é esse cara aqui, ó. Tá? Comor code, só que ele tem uma
+
+ficar conversando e ajustando é GPT para fazendo elaboração de códigos, beleza? E a gente vai aqui nessa questão agora. Então vou pegar o código que a gente tem aqui hoje, que é esse daqui. Vou jogar no cursoi. Ah, ele é gratuito, pessoal. É, ele então ele tem duas semanas de prova. Vocês
+
+conseguem gratuitamente a conta acaba gratuito. Eu não sei ainda a limitação gratuita que tem. Ele só fala lá que tem eh de requisição. Eu tô usando de uma empresa agora gratuito. E vamos testar aqui até onde ele vai. Beleza? Então, ó, posso, já eh sobre uma parte aqui, tá, do meu naveg
+
+do meu computador mesmo, a pasta. Aí eu venho aqui, ó, new text file, criar um novo arquivo, quero criar aqui dentro. Então, botar assim, ó, main disparador p html. Beleza, tá aqui, ó. Aí eu jogo o código aqui que o GPT querou até o momento, certo? Aí aqui do lado não sei que
+
+tá conversando, né? Que ele selecionou aqui. Ah, eu tenho várias pastas, mas ele faz também. Ele vai ter acesso a seu projeto completo. Se você faz com várias pastas. Então,
+
+basicamente eu vou começar conversar com isso aqui, tá? Por eu quero que possa estar visualizando todas as minhas instâncias do Evolution API em um bloco acima do texto. Quero selecionar quantos eu quiser e aleatamente um é escolhida para ser para disparar, tá? Assim, vocês melhoram com texto e do mais. Pode ser que de primeiro não quero dizer, mas vamos ver aqui se essa fal vai tá prova pedir aqui a PQ global lá. Então tá. Vamos ver aqui como é que a gente segue isso aqui.
+
+Fiz aqui algumas perguntas. mensagem perguntas já tem uma lista das evolu sim como ela é composta nome de url senão posso criar uma rei de exemplo você queira editar depois posso ir com desenho falar que sim ele vai começar a mexer no código
+
+Pessoal, eu vi agora você falando. O áudio continua ruim.
+
+Talvez seja o modo que eu tô compartilhando. Vamos ver aqui se ele já fez aqui a modificação. Dizer que eu aceitei. Ele já modificou o código. Mandar aqui a como de apresentação.
+
+Calma. Melhorou. Consegu melhor agora?
+
+Vamos seguindo aqui. Vou jogar aqui e só vou lá. Ele fez algo fictício aqui. Tá mais preocupa dar um presente para vocês que estão aqui na live. A gente tá aqui construindo do zero e tudo mais. Vai que ainda teve erro. É
+
+provável que a gente passe aqui tipo duas horas para deixar o disparador perfeito. Já vou fazer uma coisa que tá programado para essa live a gente fazer. Vou subir aqui um um disparador que eu tenho aqui completo, tá? Vocês vão ver aqui que o nível vai subir muito. Pegar aqui, ó. [Música]
+
+E aí, deu uma melhor.
+
+instâncias, números plan variáveis tempo mínimo, tempo máximo, quidade de mensagens por número áudio ou vídeo e usar.
+
+um lot tava vendendo pessoal tava vendendo aí tá rodando tráfego pago, mas vocês estão aqui na live, vou tá liberando, tá? E vamos progredir, vamos simbora. Já subi aqui o HTML aqui no nosso N8N, certo? Comprou ontem. Foi, foi mal, hein, cara? Mas não pode reembolso não, pô. Na moral, me ajuda.
+
+Vamos lá, vamos lá, vamos lá.
+
+Vou apagar esse aqui que a gente fez por enquanto. Certo? Eu vou soltar aqui, mas não se preocupa não que a gente vai montando aqui para que vocês entenderem. O HTML ele pede algumas informações, tá? Pede os dados do Evolution para poder carregar instância e tudo mais. E já tá configurado nesse HTML, certo? Configurado com HTML.
+
+Deixa eu subir aqui. Eu tenho que tomar cuidado para não vazar P aqui, né? Da última vez que vazou a P aqui, o pessoal mudou até minha foto lá do do grupo. Cara, tem gente que faz isso. Mandou minha foto do grupo, mudou foto, perfil de grupo, tudo. Só um momento. Segura aí.
+
+Show. Se abrir esse esse nó aqui, eu tô lascado. Então não, basicamente, pessoal, esse nó aqui ele ele tem as três variáveis, tá? É o RL Evolution, que é o RL do EVO. Tenho o web hook. Eu vou passar
+
+aqui, eu vou pegar esse web hook aqui, ó. A desse web hook, vou passar lá, certo? E pake global do evolution. Então, basicamente são as informações que tem aqui dentro desse cara aqui, tá? Por quê?
+
+Porque aqui no código do HTML mesmo, ele pede algumas variáveis, ó. Se a gente vir aqui, ó, ele passa aqui global, entendeu? Isso aqui é uma variável lá do no anterior. Ele passa, tem um relato envio. Vamos lá. Deixa eu dar uma um F5 aqui.
+
+Eita. Tem que fazer, não tem jeito não. Sim, sim. Tava com um bugzinho, nova versão, né? Mas peraí que eu já tô ajeitando aqui e mando aqui para vocês, como eu falei, ao vivo.
+
+[Música] Tô pegando aqui o template. Só pegando aqui meu min aqui. Acho que eu tinha mudado. Tá aparecendo aqui. Ah, tá. Tem passado a URL errada. Vou longe por isso.
+
+Global.
+
+Agora foi. Olha só, pessoal, carregou as minhas instâncias lá do Evolution. Essas aqui, ó, tô com essas quatro instâncias aqui, tá? E aí ele carregou aqui no painel. E aí eu posso estar selecionando a que eu quero. Segura o control.
+
+Certo? Em sequência, deixa eu colocar um número real aqui, mostrar para vocês. Vou repetir ele três vezes. Beleza? Aqui a gente pode colocar o condomínio, 5 e 10 segundos, por exemplo. Quantidade de mensagens por número, vou deixar um e aqui vou deixar
+
+um texto mesmo. Oi. Tudo bem? Já mostro para vocês a questão da variável. Aí se eu marcar a opção de usar, ele vai fazer eh aquela variação que eu falei. Travou.
+
+Deixa eu interromper aqui. Var de novo. Então esse aqui é o front. Quando eu clicar em disparar, ele vai mandar esse web hook lá para o N8N. Só que a gente não tem ainda, né? A gente não tem aqui ainda
+
+o negócio funcionando. E como é que a gente vai precisar? Eu vou criando aqui do zero com vocês, beleza? Também não quero que vocês se percam o contexto. Show de bola. Eu vou clicar aqui em
+
+sess aqui e vou clicar aqui em disparar.
+
+disparar. Aí tem um botão de parar também, certo? Posso clicar em parar aqui, ele vai parar na hora. Esperar aqui finalizar. E show de bola.
+
+Finalizou. vindo aqui execuções, ele manda aqui no webhook, ó, o número, o tipo da mensagem, que é texto, o conteúdo, o tempo mínimo, o tempo máximo em segundos, se eu vou usar o IA ou não como variável buliana e a instância que essa mensagem vai ser enviada. Lembrando que ela de forma aleatória que escolhe a instância, entendeu? Então beleza. Eu vou fixar um desses aqui, tá? Vou fixar um desses aqui.
+
+Eu vou estar colocando aqui os nós um por um, certo? Dá aqui um teste. Beleza? Primeiro de tudo, eu preciso estar gerando um número aleatório, um intervalo de tempo que esteja entre aquele meu que esteja entre o intervalo que eu coloquei lá no separador, que era de 5 a 10 segundos, certo? Tá aqui, ó, entre 5 a 10 segundos, tá?
+
+Beleza? A esse código aqui que também eu gerei com chat GPT, né? Sou besto, ele é esse código aqui, ó. Ela vai pegar o valor e vai fazer aqui essa randomização. Vocês vão poner isso aqui para vocês verem um código público por dentro. Aí ele vem aqui, ó,
+
+e gerou 10. Agora gerou oito, gerou seis, entre 5 e 10, tá? Aí a partir disso joga aqui no weit passando o tempo e segundos. Então delay aqui ele vai ser de forma aleatória de acordo com o que o código aqui decidir. Então ele vem para cá, gerou um código aleatório de 9 segundos, chegou aqui no weight, esperar 9 segundos para eh concluir o fluxo. Passou. Beleza? Agora a gente vai continuar o nosso o nosso segmento aqui, tá? Após isso,
+
+o que que eu faço? Eu adiciono aqui um split out. Por que eu coloco um split out bem aqui? Eh, sobre o no code, eu peguei um código que eu já tinha lá no no outro fluxo, tá? Mas a ideia, tipo, tu chega no GPT e pede um código como esse, ele gera, tá? A ideia é que ele vai pegar o tempo mínimo e o tempo máximo,
+
+que foi esses dois valores que chegaram aqui, ó, o tempo mínimo e o tempo máximo. Ele chegou e aí ele vai gerar um número aleatório que entre 5 e 10, entendeu? E aí esse delay passa pro. Basicamente isso que que funciona. E aí quando quando eu faço assim, ó, de forma bem forcada, né, um aqui em cima, embaixo, ele executa primeiro em cima, depois v para baixo, porque eu faço assim, questão de estética mesmo, tá? E também fica mais fácil para eu pegar um um arrei,
+
+né? O que é um arreio? É um conjunto de vários conteúdos aí dentro. O texto aqui que é esse aqui, ó. type text. Isso aqui ele é um conjunto de mensagens. Se no disparador eu tivesse
+
+escolhido mandar duas mensagens paraa pessoa, tipo oi e depois mandar um tudo bem, t escolhido fazer dessa forma aqui, ele ia aparecer, ó, ia tá aqui assim, type, oi. Aí depois ia ter outro bloquinho, typeo. Aí o text, tudo bem? Entendeu? Só que eu quero juntar tudo isso. Quer dizer,
+
+eu não quero juntar tudo isso, ele vem junto e quero separar, entendeu? Nesse nosso caso aqui, só tem um. Ele vai, vou até passar aqui o pra gente ficar esperando um segundo toda hora, mas como só tem um, vai ser a mesma coisa. Ele vai passar aqui esse valor aqui, type e o text. Vou usar um exemplo passando duas mensagens. Oi. E tudo bem?
+
+Mandar só uma vez aqui mesmo, ó. Disparar. Vamos ver aqui. Ah, tá. Deu erro aqui porque não tá conectado no responde.
+
+Deixa eu se fazer assim. Ele resolve. Agora foi. Olha só. Tá vendo? Ele manda dessa forma aqui.
+
+Deixa eu jogar aqui. Salvar. tirar responde do momento. Executar novamente. Aqui, deixa eu dar um F5. Ah, deu certo. Olha só,
+
+tá vendo? Ele recebeu um conteúdo e quebrou em dois blocos. Então, ele vai mandar duas vezes, tá? O motivo de eu colocar ele por outro caminho é mais questão de é mais por questão assim, porque como o valor aqui ele é um arrei, o splitout dá erro quando eu passo em forma de fun centro. Então, se eu colocar só assim conto e body contesses, ó, ele passa assim e aí não vai dar erro, tá? Eu já tentei fazer aqui dessa forma, deve com uma função mais que
+
+o pessoal consegue usar para poder funcionar de uma forma. Tentei uma vez, aí deu errado, eu fiz não, então vou fazer aqui nem passei muito tempo tentando fazer ali seguindo, tá? Mas de qualquer forma funciona porque ele primeiro ele vai executar o de cima, depois executa o de baixo, entendeu? Ele só vai executar o de baixo depois que finaliza o de cima. Então ele só vai chegar no split depois que termina o weight, tá?
+
+Tem como fazer também, Ramon, a verificação. Tem como fazer também, é só você passar um nó devolção. Aí pode estar fazendo aqui, tá? Aí beleza, tive esse split, ele quebrou aqui em dois textos já loops, né? Quero mandar uma mensagem para mandar outra mensagem, tá? Beleza. Joguei aqui no loop.
+
+Depois que eu joguei no loop, eu vou aguardar uns 3 segundos para também não sair mandando duas mensagens de uma vez só.
+
+Sim, Gabriel, se eu colocasse o split aqui, ele executar o split primeiro, tá? Beleza? Aí tá. Agora a gente tem que e diferenciar se se o tipo é texto, imagem, áudio ou vídeo, beleza? É um dos dois. Então aqui, ó, no switch, vou até pegar
+
+um switch que já tem um ponto aqui pra gente também não perder tempo montar no switch, né? Switch. Aí ele faz essa validação, ele vai ver o tipo, na verdade aqui não não tá passando como tipo lá, tá passando como type aqui, ó. type type. Então, se o type for texto, vai por um caminho, áudio vai para outro, imagem para outro e vídeo para outro, certo? Nosso caso, ele vai fazer o quê? Ele vai para texto,
+
+viu? A partir daqui do texto, a gente faz uma validação. Manda mensagem pro cara já de cara. Hum. Não, não vai fazer direto. Por quê? Porque eu quero primeiro ver se a opção lá de usar I.
+
+Lembra que tem essa opção aqui, ó? Usar. Pronto. Agora vamos fazer esse filtro, essa validação para ver se ele vai estar usando. Não. Eu venho aqui, ó, no meu web hook e passo aqui, ó, usar.
+
+Buan. Então, se é paraar, ele vai para cima, que é o nosso caso, né? Ele vai subir. [ __ ] f dele aqui. Vou tirar aqui para não demorar muito. Beleza, ele vai subir. Subiu.
+
+Vem para um agente A. Beleza? Pro agente A. No agente eu vou estar passando o conteúdo. Deixa eu ver aqui, ó. É do loop, no caso. Cadê loop?
+
+Deixa eu rodar até aqui pra gente ver. Pera aí. Open colocar o quadro. Mmo, certo? O prompt dele vou tá fazendo aqui assim, ó. Simples. Responsável por criar uma
+
+variação sutil da mensagem recebida. Você deve enviar no output apenas a mensagem modificada e nada mais. É basicamente isso aqui que eu quero que ele faça, tá? E aqui ele vai passar o que tá lá no loop que não chegou até aqui. Vamos rodar aqui de novo. Qualqu coisa aqui.
+
+Beleza, no loop não tá passando aqui, mas eu sei que é para ele passar eh o textar aqui. Enfim, só bugou, não tá aparecendo aqui, mas é o loop.it.jon. Text porque é o nome da variável para o conteúdo. Text. Beleza? Aí, aí o agente ele vai gerar a mensagem,
+
+vai fazer a variação da mensagem e fazer aqui a variação da mensagem, ele vai estar mandando para o junto para fazer o disparo, tá? Eu gosto, pessoal, de usar a preferência minha, enviar.
+
+Se você não sabe como que instala isso aqui, ele não vem já nativamente, tá? A gente tem que vir aqui, ó, settings. Aí depois community notes, install. Aí você vai colocar traço loades, traço evolution, traço API, aí a caixinha que ele que está lá.
+
+Beleza? Porque ele já tem tudo eh facilmente acessível para você, tá? Ah, eu quero recurso mensagem. Pronto. Só colocar aqui o nome da instância, o nome destinatário e a mensagem. É muito mais simples, tá?
+
+Vamos jogar até aqui que vai passar o nome da instância. Olha, meu amigo, ajuda. Да, fazer manômetro aqui. Nome da instância. A gente vai pegar aqui lá do webhook poniden.jonj.b.
+
+body ponto instância. Então a gente gan minha instância, beleza? Número destinatário ponto número aqui. Mensagem. A mensagem é som.
+
+Que é o que vem aqui no e aí no final vota pro. Essa seria aqui a lógica, tá? Vamos ver se essa lógica tá funcional. Deixa eu só dar um F5 aqui na página.
+
+Beleza, chegou aqui a mensagem, chegou o olá e depois chegou com você está. Certo. Jogar as duas mensagens aqui. A segunda mensagem foi tudo bem, né? Ó, tudo bem. Aí ele se transformou em como
+
+você está a variação feito uma questão de mataria funcional aqui paraa imagem para vídeo. Caso o cara chega aqui e coloque a URL. Lembrando que a URL aqui nesse meu formato aqui, ela tem que ser aquela URL que finaliza com ponto PNG, com um ponto eh P3, com P4, entendeu? conseguir visualizar no próprio navegador. São essas URLs queão aqui nesse sistema. Beleza?
+
+Eu vou, na verdade, faltou essa questão de que caso não seja, né? Tá, caso não seja, deixa eu aqui no no fields, tá? chamo de output e passo que chega aqui no no agente, ou seja, ou passa paraar ou passa para fields, tá? Só quero que eu nomeie aqui como output como quero pegar output anterior independente se vai ser no agente ou se vai ser no no edit field. Beleza? Agora questão de áudio vídeo, a gente não tem essa questão de usar IA,
+
+tá? e já passa direto o conteúdo. Aí eu vou dar uma adiantada aqui nessa questão. Eu vou fazer isso aqui, ó, usando os mesmos nós do Evolution, certo? mesmo.
+
+A diferença aqui vai ser só o nome da BHook, né? que é hookador tá certo. Já tava não é disparador tavaado. Beleza. E aqui não é conteúdo, aqui é beleza. Vamos fazer isso para para os outros. Vai aqui espor
+
+disparador. Se vocês estão vendo travando pessoal, é tá travando mesmo, tá? Tô gravando, transmitindo por já é um pouquinho pesadinho, né? Text.
+
+Beleza. E agora vídeo web hook disparador. [Música] Web hook de espada.
+
+E aqui text e todos eles vão retornar para o loop. OK? E esse respon web hook, ele fica aqui no D, tá? Ele vem aqui pro don e nele eu vou est passando no formato JON, tá? Ó, Jon. E o conteúdo que eu vou estar passando é esse
+
+aqui, sucesso. Mensagem, mensagemada com sucesso. Beleza? Se acabar dando algum erro no fso, ele não vai chegar até aqui e vai enviar erro lá para HTM para ML. Baixar, vai tá lá disparo sucesso, disparos com falha queelee baix. Uma coisa bem legal também que esse parador faz,
+
+vou mostrar até para vocês aqui agora. Deixa eu ligar novamente esse cara aqui. É subir uma planilha no Excel, planilhax. Então você consegue exportar aqui os seus contatos e as variáveis que você tem. Essa aqui é é bom, verdade. Vou até querar aqui uma planilha no rosto para vocês. Vamos ver aqui do zero. Show.
+
+Leads teste Live. Show. Aqui eu vou passar o telefone, tá? Nome e aqui vouar uma cidade, por exemplo. Beleza?
+
+Vou est passando o mesmo número do meu lago de teste. Eu faço isso para todos, tá? Passar no Anderson AD, certo? como Anderson mesmo, só Anderson. Cidade, vou colocar cidades aleatórias, tá? Aqui cidades aqui do RN, tá? Natal,
+
+Lagoa Nova, Rais Novos, nome do interior. Perfeito. Tenho aqui uma planilha. Aí eu vou vir aqui na e vou baixar como XLSX. Certo? É isso mesmo, agora, Gabriel. Exatamente isso
+
+que tô fazendo. Eu venho aqui, mostrar aqui o disparador. Vou subir aqui o arquivo novamente, ó. Aqui o arquivo e olha só, ele passou os números e passou as variáveis disponíveis, nome e cidade. Se eu e colocar olá, abro chaves, nome e fecho. Olha só.
+
+já mudou. Ele bota como exemplo o primeiro lead lá para vocês verem se tá funcionando. Cara, essa aí eu quero somente o primeiro nome. Eu não quero completo, quero só o primeiro nome porque na planilha lá tem só completo, não tem problema. Se eu vir aqui que é uma apenas a primeira palavra, eu clico duas vezes, ficou amarelinho, né? Vou até apagar aqui e colocar de novo. Olha só,
+
+ele vai usar apenas a primeira palavra do nome daquela coluna. Tudo isso usando para criar o código e o curso para vocês de variável parte mais difícil. O GPT ele o curso me ajudou fazer certo? E aí, o que que vocês acharam desse disparador?
+
+vocês aqui pra gente começar a fazer o responder o espaço, enfim. Vocês podem vender pra empresa também aqui poem vender para mudar um PNG, tá? Muda lou, muda que tá de vocês. Alguém fez alguma pergunta aqui?
+
+explicar respond mano de passo o a já deixa o fixada pezzinho. Eh, faço para tardar toda fazendo show de bola. Mand, Ah, tá. Mandar uma mensagem caso que responder, mandar um áudio. H tá. Não vou fazer isso agora. Questão do agente BDR. Vamos partir para esse Não,
+
+esse aqui não é o BDR. Esse aqui é o disparador. BDR vai ser o que a gente vai fazer agora. Diferença de um SDR BDR. O S é aquele cara que Ah, tá. Vou vouar de qualquer
+
+forma. Tá qualificando o lead de forma passiva, né? Então ele tá ali parado, o entrou em contato tráfego pago ou Instagram, enfim, qualquer coisa entrou em contato, certo? E fica qualificando. Esse é o BDR mais ativo. O BDR ele é o cara que vai
+
+entrar em contato com a pessoa lista fria. Basicamente isso. O cara que liga fazendo CODC call e para as empresas é um PDR, só que por ligação, né? Nesse caso aqui só que de forma WhatsApp mandando mensagem para frios. Beleza? Certo. Tá. Vamos lá.
+
+Então agora o que a gente quer fazer? Chegou a mensagem no cara lá, né? Uma mensagem no cara.
+
+A partir desse momento, o ele pode responder ou responder. Se ele responder, a Iara tem que continuar a conversa. Porém, se tu só bota lá um Iar normal, sem memória, ela tem uma grande chance de começar a conversa como se fosse a primeira vez que tá vendo o L, o que não faz sentido. Vai lá, disparo. Oi, tudo bem? A UD responde: "Oi, a posso ajudar?" Entendido entender que você mandou uma
+
+mensagem pra pessoa antes e que ela respondeu, tá? E é isso que a gente vai estar fazendo aqui agora. Vou manter, vou fazer, beleza? Os fluxos, certo? E aí fica até mais fácil da manutenção. O temp vai est responder para vocês que estão aqui,
+
+beleza? Vai deixar por um tempinho ali um drive, depois de algumas horas a gente apaga. Qualquer coisa v aqui no no L fa tr aí. Beleza, vamos lá.
+
+Deixa eu criar aqui uma outra pasta. Aí já compartilho com vocês outra pasta colocar. E aí depois que eu criar a gente linca os dois usando aquela memória do Zep, certo? Beleza. Vamos lá.
+
+Estão conectadas a Revolution, certo? Então, estou conect a gente vai trabalhar aqui com hook e hook lá no no evolution da instância. A só tenho 20 instâncias conectadas disparo, problema nenhum. Uma do mesmo hook, tá? Aí, beleza. Eh, método post BDR lives
+
+aqui. Eh, imediatamente mesmo, tá? Beleza, vou deixar até ativo aqui logo o fun, não esqueço. Vou pegar hook e vouar o meu evolution. Certo, eu tinha feito checklist, acabei nem marcando checklist que ficou perdido lá. Mas beleza,
+
+vamos usar aqui. Deixa eu ver um queijo que que eu não esteja usando. Pegar esse delta aqui. Eu venho aqui, ó. Jogo aqui. Beleza. Ativo. Ativo base 64. Ativo messages upset.
+
+Não sei. Certo. Beleza. Vou pegar o que tá com o número que recebeu a mensagem que recebeu a mensagem lá disparador. Vou responder mandar um oi.
+
+Se foi esse aqui que eu conectei. Não, não fez isso aqui nada. Pera, tem que ser o outro. 93. Show.
+
+Oi. Agora sim. Vamos aqui. Disparou. Certo. Execuçõesou. Já mandei um
+
+esperar aqui o carregar sua boa vontade. É porque também, pessoal, a gente mudou de de sala comercial, aí o rodeador ficou na outra sala, duas salas depois da Aí não tá 100%, né? Tem que usar o dog. Mas deu certo. Vamos lá. Eu vou começar fixando esse aqui. Vaiar aqui um tag.
+
+Rou. Beleza. E aqui está nosso nossos dados, tá? Que que eu quero aqui de importante a gente tá trabalhando aqui? Tem muito detalhe, tem muita coisa assim, ah, interpretar imagem, ah, pausa para atendimento humano, é integrar com CRM, mandar mensagem para Liv, essas coisas todag, coisa mais complexa, eh, não tem como mostrar aqui, tá? É fazer a questão de responder
+
+mensagem e tudo mais, beleza? Eh, porque até porque isso aqui eu mostro lá noamento lá, operação charte A e tudo mais. Mas enfim, vou mostrar aqui o o fundamental para que nossa função aqui funcione, tá? Primeiro vou est colocando aqui o o elit fields edit fields. Eh, e o que que eu vou querer aqui de interessante? Que que eu realmente quero
+
+aqui para utilizar? Eu vou querer o remote ID, eu vou querer o from para saber quem tá mandando mensagem, se é o humano, se é o cliente mensagem, né? Eu vou aqui também o tipo de mensagem, se é texto, se é áudio, essas eu vou querer, eu vou passar aqui também o server URL, server URL. Aqui, ó, vou passar a AP aqui da instância, certo? Passar aqui. O que mais eu passo? Ah,
+
+o nome da instância, né? Cadê o nome da instância? Não tem instância aqui. Instância. Eu tá nomeando da instância. Eu acho que esse tipo é basicamente, beleza? São as informações mais importantes. Vou
+
+dar o nome nesse aqui para dados. Beleza? Primeira coisa que eu vou aqui para checar é se quem tá mandando mensagem é o lead lá e a mãe respondeu ou se fui eu que peguei esse celular aqui e eu passei pelo lead pelo pela IA no caso, tá? Porque se for esse caso aí o from me é tru porque fui eu que mandou mensagem. Agora se for falso é porque foi o cliente realmente que mandou mensagem. Isso aqui é
+
+importante, tá? De validar. Então basicamente eu venho aqui, ó. Se ele true verdadeiro, tá? Tem que mudar aqui o tempo que aqui eu passei como se fosse string, mas não é string, não. É bolando. Agora sim.
+
+Show. E aí é falso. É falso porque realmente foi um um cliente lá do outro lado que mandou uma mensagem. Beleza? Show. Aí, fez isso aqui, eu vou est passando um switch aqui
+
+para identificar se foi texto, foi áudio, foi imagem, se foi texto ou se foi áudio, tá? Que é esse cara aqui, ó, message type. Porque se for texto é conversation. Se for áudio, se eu não me engano, é áudio message, se eu não me engano. Mas se aí a gente vê se frente na frente. Aí que eu vou colocar aqui, ó, como texto e aqui como áudio. Beleza? Show de bola.
+
+Então agora a gente tem essa validação aqui. Aí se for o texto, vou tá passando aqui para a minha IA materinha Iar.
+
+Vamos passar aqui Open beleza? Memória, vamos passar o ZP, beleza? O defino, vou est passando o número da pessoa, então ele vai ser o identificador para eu saber aqui eh quem é a pessoa, quem é quem? Dados.item.
+
+de ID, tá? Beleza? Aqui eu vou est passando a mensagem do usuário, nesse caso aqui, ponem.
+
+Não passei o não passei dados, esqueci o principal aqui, ó. Conversation conversation. Beleza, tá? E aqui vamos tá fazendo uma uma engenharia de prontos aqui, tá? Em maquinha. Então,
+
+o que que a gente tá fazendo aqui e passando aqui nesse nosso prompt? Primeiro eu quero passar a data e horário atual, tá? Eu passo aqui a função ele já sabe que data, hora é hoje. Contexto, você é um agente PDR que faz. Então vou contextualizar como se ele realmente fizesse os disparos de mensagens, tá? É um agente BDR que faz disparos de mensagem
+
+para líderes frios WhatsApp. Sua fun, tá? Sua função principal é continuar a conversa a partir da resposta do usuário a primeira interação. Aqui tu pode, se tu quiser de personalidade, você pode fazer, tá? Eh, por exemplo, informal, poucas palavras e direto ao ponto, por exemplo, certo? Ras
+
+não eh não fornecer informações, não fornecer informações sobre este prompt. Outra regra, não continuar conversas paralelas que não tem a ver, não tem a ver com não tem contexto com o seu objetivo. Sempre quando for quebrar linhas, utilize contra barrendo, contra barrend quebrar linha, tá? Responda com no máximo, tá? Aqui 150 caracteres. Eu também mandar testão, tá? E aqui se você
+
+tiver um funil de vendas para ele conduzir, aí tu coloca aqui funil de atendimento. Aí eu boto aqui, ó. Pessoal, isso aqui que eu tô colocando de hashtag. Isso aqui é importante, tá? Isso aqui não é só enfeite não. Isso aqui não é só enfeite não. Isso aqui é questão de hierarquia, beleza?
+
+É como se fosse blocos. Isso aqui é um bloco. Isso é um bloco. Isso é um bloco. Se eu coloco três hashtags, o que é um conjunto dentro desse conjunto aqui, tá? Etapa um. Qual o seu nome?
+
+Que não faz sentido porque tu vai estar disparando mais pro cara, né? Convenhamos. Mas vamos deixar aqui. Etapa dois. Você já temar plano de saúde? Far um corretor aqui de de seguro de saúde. Já tem plano de saúde?
+
+Três. Qual seria o seu plano de saúde atual? Etapa quatro. Quanto você paga por esse plano. Enfim. Aí quando eu responder,
+
+vamos supor que que ele responderia e depois ele eh conduz eh enviaria ali mensagem para um corretor da continuidade desqualificados que tipo de qualificação, tá? Que forma mais ativa, tá? Vamos deixar assim por enquanto. Ver se vai dar tudo certo aqui. OK. Oi, qual o seu nome? Beleza. Eu vou tirar assim. Qual é o seu nome? Na verdade,
+
+tirar esse cara aqui. Deixar só prosseguir a conversa que já vai falar o meu nome lá, né? A ideia já pegar a sacada se ele vai saber qual foi o nome que o disparador mandou. Beleza, chegou aqui. Quero tá quer dizer, na verdade, antes do loop, a gente pode estar quebrando as mensagens aqui, tá? Se ele mandar um texto muito grande usar contra barra N, contra barra N.
+
+A gente vai fazer um código para ele quebrar essas mensagens, beleza? E aqui a gente pode estar usando GPT também para fazer isso. Eu vou pegar algo que eu já tenho aqui, esse código até mesmo para facilitar aqui nosso processo. Deixa eu pegar um aqui. Inclus quero pegar um que esteja com um bug. E caso você tenha esse bug,
+
+acredito que você possa ter depois dessas últimas atualizações, ganha já resolve. Mas tô matando logo um bocado de coisa aqui nessa nessa live. A gente beleza. Se ele tá passando aqui. Correto? corretamente,
+
+tá? Tá passando. Enfim, tá seguindo aqui a conversa. Show. Vou jogar no loop, caso tenha mais eh mais blocos de T, né? E aqui ele vai tá mandando a mensagem Evolution.
+
+Deixa ver a texto. Nome da instância. Tudo isso aqui a gente consegue pegar lá no em dados. Cifrão dados ponto item. ponto instance, se eu não me engano, tá assim, número destinatário em remote de IDEM, ela tá aqui como conversation.
+
+OK. E aqui eu volto simples assim. Beleza? OK.
+
+Então, a ideia é que com isso aqui a gente já consiga fazer essa continuação de conversa. Deixa eu dar uma Tá, vamos ver aqui o que que vocês estão falando aqui pra gente voltar. Pera aí.
+
+É questão de custo. É isso aí mesmo que o o Gustavo falou, tá? Lembrando que paraa função de continuidade de conversa não precisa ser o Zep. Tô mostrando o Zep porque é uma coisa, é um, é um tipo de memória pro, digamos assim, tá? Ã, mas só ele enviar na EUR um resumo da conversa com as principais informações, essa instrução tem que ser feita no prompt ou em outra etapa.
+
+O resumo das conversas, tá? Você vai estar fazendo uma outra automação, cara. Vou est dando uma esboço aqui para você. Eu não vou entrar muito em detalhes, mas basicamente você vaiar, pode criar um outro fluxo separado, beleza? Combook tudo mais. E aqui, por exemplo,
+
+eu vou criar aqui um ator, ó, chamar humano. Então, enviar relatório. O cara respondeu enviar o relatório aí que eu vou fazer, ó. Use esta T para resumir a conversa e enviar um relatório para o closer, por exemplo, método aqui, eu passar o RL lá do webhook, tu vai n ser a outra automação. E aqui no bora passo informações que quero. Ah, eu quero passar aqui o resumo da conversa. Resumo
+
+conversa. E aqui eu boto uma I. A própria ela já vai resumir a conversa para ti aqui. Ah, tu quer passar o no telefone da pessoa aqui também. Beleza. E aí, só dessa forma aqui ela
+
+vai chamar, tá? Porque isso aqui é uma extensão no ponte, então ele já vai entender que ele vai usar isso aqui. Mas aí você pode eh reforçar no promp também. etapa tr uma regra, por exemplo, é a terceira etapa atu aí tu enviar relatório, nome da atu, entendeu? Aí lá na automação tu vai receber uma hook contendo o resumo e você manda peluch para o responsável, tá? Basicamente será
+
+essa lógica. Mas beleza, pessoal. Eh, vamos ver se tá funcionando. Teria isso aqui, tá? teria que conduzir a conversa e responder. Eu limpar essa memória. Deixa eu fazer o seguinte,
+
+chat manager. Ah, tá esqueci a parte principal que é conectar. É só esse mesmo. Eh, que é conectar o o disparador com a memória do agente, fazer isso aqui, tá? Existe esse nó aqui rusion, né? Esse chat memory, o nome já diz, né? Ele vai gerenciar
+
+as memórias. Então, posso imputar, né, colocar memórias que, na verdade não passam pelo agente, mas eu posso induzir essa memória ao agente, tá? Aqui eu seleciono a memória que eu quero e aqui eu passaria lá. Vou só usar aqui só para limpar aqui a memória, tá?
+
+telefone lá. Eita, a voz até falhou, gente. 9862011. E é isso que a gente vai est utilizando para imputar na memória aqui do ZP. Como é que eu faço isso? Eu vou abrir aqui agora
+
+o flux para face.
+
+Certo? E no final da mensagem, final do texto, que que eu vou fazer? Eu vou estar colocando um chat memory manager, beleza? chat Memory Manager. E aqui eu vou passar o Zap Memory ou o Puries ou simple memory, dependendo do que vocês estão utilizando, tá? E aqui eu preciso passar o mesmo número de telefone que é passado lá. Beleza?
+
+Então, basicamente o número que vai ser o número do cara, eu pego daqui, né, ó, cook, tals. Beleza, tá aqui. Exatamente isso aqui. Show de bola. Só que aí ele tem um @s.net lá no zep, né? Ele tem ele tem isso aí.
+
+fazer, eu posso aqui acrescentar @s.net, tá na memória, ou aqui ou lá no ZP, eu removo o @s.net replace all. Aí eu abro aqui, ó, entre chaves. Isso aqui é o que eu vou remover. S.wwwatsapp.net.
+
+net. Aí o que que eu vou substituir? Eu coloco só abro, abro e fecho, ou seja, eu vou substituir s.wwhatsapp.net por nada, tá? Então também é uma forma de fazer. Eu vou fazer dessa forma aqui.
+
+Então aqui eu não vou passar, eu não vou passar esse @S. Como é que então tá conectado as memórias e vamos fazer um disparo e ver se ela tá funcionando. Vou abrir o disparador de mensagens. Vou passar apenas uma vez aqui o número. Vou colocar aqui apenas a uma instância, tá?
+
+distância mesmo foi que eu conectei lá o web hook foi a essa delta, certo? Tempo mínimo máximo que tá irrante porque eu pausei lá o o weight, né, pra gente testar aqui e beleza aqui. Olá Anderson tudo bem dessa forma. E beleza, vou nem ativar essa questão da Iar, eu só vou disparar e quero que chegue aqui, tá? Tá certo esse número?
+
+Beleza, vamos lá. Clique em disparar.
+
+Opa, aconteceu alguma coisa aqui. Ah, tá, tá, tá, tá. Que aconteceu aqui? Como eu tenho subido a planilha com os três, ele conseguindo os três, certo? Deixa eu dar um F5 aqui.
+
+Ver se deu certo, né? Deixa eu ver a gente usa da forma que tá aqui. Tá, chegou, deu certo. Recebi as três missões, tá? Olá, An, tudo bem? Olá, An, tudo? Olá,
+
+An, tudo bem? Recebi três logo de uma vez, tá? Eu vou responder. Oi. Ver se a execução chegou aqui, ó. Tá executando.
+
+Opa, agora sim.
+
+Certo? Tá, eu errei numa configuração aqui. Já vou até falar para vocês qual foi a a informação que eu errei. Eu passei a mensagem que o Aá vai responder da mensagem que eu mandei. Ou seja, eu mandei oi e aí mandou oi. Ela virou papagaio aqui basicamente. Na verdade isso aqui eu passei a mensagem pro
+
+usuário, né? tem que passar o output do do agente. Enfim, acontece. Vamos ajeitar aqui. A gente agente ponidem.jonjom.
+
+Agora sim. Ou melhor tem que passar aqui do do loop, né? Na verdade, tem que passar do loop.
+
+Deixa eu quebrar isso aqui, pegar a prova aqui. Júnior tá esperto, viu? Já percebeu ali que o negócio errado. Só que nesse caso tá quebrando, a gente passa do loop, que é esse parte aqui. Agora sim.
+
+Qual o seu plano salutal? Vou responder aqui como se tivesse chegado para mim, tá? Vou colocar aqui, por exemplo, Unimed e vamos ver aqui a sequência. Beleza? Deu assim, ó. Beleza? Quando você paga por mês no seu plano Unimed,
+
+tá? Ele já usou Unimed. Então aqui já tá interessante aqui a questão de contexto, tá? Ó para vocês tudo dando certo? Não sei se dá para ver direito aí, mas beleza. Se for peges, se
+
+for peges, não precisa fazer a configuração mais não, tá? Mesma coisa, conceito de memória mesmo. E o código do loop, o que eu fiz foi esse código aqui, ó. Ele vai que onde tiver contra barra n contra barra n, ele vai dividir. Aí ele quebra como fosse dois textos, entendeu? Quando eu mandar o template para você, esse template também vai junto no drive,
+
+aí você vê isso aqui direitinho, tá? Beleza. Quanto você paga por n? Vou botar aqui 2.000.
+
+Aí depois vamos olhar lá no ZP como é que ele montou aqui essa arquitetura. E ele mandou aqui. Nossa, é bem alto. Quer ver mais em conta? Tipo, a etapa dois seria o quê?
+
+Ah, tá. Eu nem eu nem instruí, na verdade, o que ele fazer depois, né? Essa seria a outra pergunta. Ele já deu continuidade e falou: "Nossa, é bem alto, quer opções em conta." Perfeito. Então,
+
+assim, tá dando certo. El tá aprendendo o contexto corretamente. E aí eu vou perguntar agora para saber se o negocamento funcionou. Vouar, lembro qual é o meu nome? que eu não falei o nome, o nome para ele, o disparador que me chamou pelo nome. Então, se ele responder sabendo meu nome,
+
+deu certo. Se não, deu alguma coisa errada aqui. Lembra qual é meu nome? para ele. E de fato deu alguma coisa errada. Ele não te deu meu nome. Ele falou: "Não tenho seu nome,
+
+só o que você contar." Quer me dizer? Agora a gente vai ver o que aconteceu de errado. Primeiro vamos ver aqui no disparador. Ela vai chegar nosso momento análise e correção de book. Vamos ver aqui no disparador se ele realmente chegou
+
+a mandar lá pro chat memory de forma correta, né? Vamos ver. Chat memory. Ah, tá. Já encontrei.
+
+Eu criei o nó do chat memory manager, só que eu não criei a mensagem que vai ser passada. Tipo, tá aqui, tá de enfrake, só isso aqui de nada. Foi isso que aconteceu. Então o que eu teria que fazer? Adicionar uma mensagem. Essa mensagem vai ser
+
+uma mensagem do sistema do usuário ou uma mensagem que a IAK mandou? É a IAK mandou. E qual que é a mensagem? Ah, é aqui que eu passo a mensagem. Foi falta de atenção. A ela vem, tá? É um Jon. Jon.
+
+Eu vou rodar, ver se ele tá pegando certinho. Aqui no celular.
+
+Vamos fixar aqui. Salvar. Executar.
+
+Tá, deixa eu finalizar esse outro aqui. Beleza, vamos lá. OK. Tá, ele não pegou aqui o Certo. Zero. Esse conversation aqui vindo o do Agora sim. Agora vai dar certo. Para não
+
+ter que limpar a memória. Que eu vou fazer? Vou adicionar aqui na no ID. número um no final do meu número, tá? Só pra gente não ter que limpar na memória.
+
+Aí aqui no ZP aqui do agente eu faço a mesma coisa, colocar aqui um acionar um um no final, certo? E já ia dar erro também porque eu tinha esquecido de botar o arroba aqui para remover, para resolver os problemas. Vamos lá. Um minuto, pessoal, que tá passando um paredão aqui em frente aqui do escritório. Se estão conseguindo ouvir.
+
+Passou, passou, passou. E aí, Ismael? Apareceu? Então, eu esqueci do alarme, só que aí, tipo, eu entrei no outro canal e não tava lá o link. Aí eu falei: "Ah, não, estamos no no no canal gratuito." Aí eu vim aqui agora. É,
+
+acontece, mas vai tá gravado. Vamos lá. Eh, vou fazer o disparo novamente aqui, tá, pessoal? Vou subir aqui no mesmo arquivo antes que eu quero pegar essa caixinha de variável aqui duas vezes. Show de bola. 2 a 5 text oi nome ou seja oi Anderson tá? Então já pegou
+
+aqui a variável e vou sel a instância delta até fazer isso aqui clicar aqui em disparar ele vai mandar três vezes, né? Três números aqui e tá chegando. Oi Anderson. Oi Anderson. Oi Anderson. Beleza, chegou as três vezes.
+
+Ele baixou um relatório também em txt, tá? Eu acabei de nem mostrar para vocês. Vou mandar aqui no no Meet o relatório que ele manda para mim, ó. Ele faz assim, ó. Relatório de envio. Tratório enviar os três, tá com erro zero, inverso com sucesso e erros nenhum.
+
+Fechou? Beleza. Agora eu vou continuar a conversa. Vou até abrir aqui a parte lá do do agente, dar o nome flu esquecido, né? BDR. E agora vou mandar mensagem agora tenha tudo certo,
+
+né? Ok. Você sabe meu nome? Eu vou logo de cara, vou nem qualificar. Sabe meu nome?
+
+Nosso objetivo aqui é fazer com que ele saiba meu nome mesmo se eu tenho falado para o agente PDR. Tá, ele tá querendo que eu responda aqui as perguntas. Vou responder. Tenho sim, Unimed e pago 2000 mês. Eu vou responder logo tudo aqui, tá? para evitar que ele
+
+fique perguntando e a gente acelerar o processo.
+
+Ah, olha pessoal, tem outra coisa que acabou não levando em consideração. A planilha eu coloco o nove, vê aquele nove que a gente tem colocado nesse número 84 9 e o número. O evolution ele não pega esse nove, certo? Então no caso lá na planilha eu vou estar passando sem esse nove pra gente bater a memória, tá? Ah, eu quero nove. A gente pode usar um código para
+
+poder tá fazendo esse tratamento, tá? Não há problema nenhum. Então fazer isso aqui agora.
+
+Essa aqui foi nossa planilha. Vou passar o link também da planilha, tá? Vou passar tudo que a gente tá trabalhando aqui. Baixar aqui. XLSX.
+
+Deixa eu dar um F5 aqui nessa página. Opa.
+
+Tá desligado o web hook. Show. Delta. Agora sim. 3 a 5. Um. Oi, Anderson, tudo bem? Certo.
+
+Agora eu vou tirar esse colocar um, dois até a mistura, né, do da memória aqui e no outro vou tá passando aqui dois também. Beleza? Agora é para dar certo. Agora é para dar certo. Vamos lá.
+
+Mandou a primeira mensagem. Chegou a segunda. Eu vou respondendo. Oi. Quem é?
+
+É basicamente esse é o contexto, né? Acontecer mandar um dispar ali para uma pessoa com de frio, ele vai, quem é? Ele vai dar certo, ele vai continuar de acordo seu plano. Aí que ele já respondendo, né? Oi, tudo certo. Posso fazer uma pergunta rápido sobre plano de saúde? Falar que pode.
+
+Você já tem plano de saúde? Sim. Unimed. Legal. Qual seria o seu plano? Com 2000.
+
+Se enviar por mais um número, a vai ser pelo mesmo pelo mesmo número enviado. Tá, deixa eu ver se eu entendi aqui a pergunta. Serviar por mais um número. Ah, tá. Tipo, se tu mandou três instâncias, se ela vai, cada um vai receber de acordo com coisas paradas. Sim,
+
+porque a gente já passa de forma dinâmica aqui, ó. A gente já passa de forma dinâmica aqui. Quer dizer, aqui não. Calma.
+
+aqui, ó, passa justamente a instância que vai tá sendo enviada. Então, a instância que que receba a mensagem vai ser a instância que vai mandar a mensagem, certo? [Música] [Música] Vamos dar uma olhada aqui, pessoal, aqui no zap acontece aqui dentro, tá? Ismel, tu já usou o zap memory ou memory de contexto? Se eu vir em usuários, aqui já tem vários usuários, né? Porque basicamente a gente
+
+usou ali vários testes. Posso pegar esse último aqui, só ó. Aqui ele vai passar a sessão. No caso, seria o meu número que foi esse último que a gente fez, tá? E aqui visualizar o gráfico e já começa, tá? Ó, saúdo, essas coisas todas. Beleza?
+
+Deixa eu pegar um que a gente fez uma conversa maior aqui, mas para que ele serve aqui, ó, uma memória, como fosse suposto, isso, simple memory e tudo mais, tá? Só que ele tem uma questão de engenharia de contexto, né? ele consegue e ao invés de ele tá trabalhando apenas com histórico outras mensagens, ele vai arquitetando o conte um amarelo de neurônios ali, enfim. Tá? Aí tem até um exemplo aqui, ó, que eles dão aqui, esse do por exemplo. Aí se for visualizar o gráfico, só que é muito acontecendo, tipo assim,
+
+ele já tem ali já uma, ele criou a nuvem, ele cria a nuvem dos tornicos. É basicamente isso, se fosse um obsidian, que já usou obsidian, que tu vai linkando contexto e tudo mais. Bem legal. Mas agora n nossas tá dando trabalho aqui e não tá lembrando o meu nome. Sabe aquela coisa que quando vai mostrar dá problema isso aqui tá mostrando Vamos fazer um teste usando o nosso bom e velho post, tá? Acho que a maioria das pessoas estão querendo usar
+
+o membro na questão do do número e dá para fazer também, tá pessoal? Você vem aqui, ó.
+
+Vou usar aqui o poters tá passando aqui.
+
+[Música] Vamos dar uma executar aqui.
+
+Ah, tá. Tem que ser um underline. A Deus.
+
+Agora foi. Ela armazenou aqui, ó. Oi, bem. Eno a mensagem. Beleza?
+
+Lá do meu agente passar aqui como melhor bdr live. Passar o contexto com 30. E a chave é dados.jonjone json p remote aí colocar o número um aquiamento pra gente fazer diferenciação aqui para memória. Beleza? Tá novo agora com o post, certo?
+
+a conversa da mesma forma que eu fiz antes. Opa, foi mal.
+
+[Música] esqueci de o @s.net, né? @swatsapp.net
+
+Replace Oh.
+
+Agora deu certo. Eu tinha basicamente esquecido de tirar o @s. Sendo que lá no disparador tava passando só o número, a memória, a o ID da memória tava diferente. Agora sim, eu perguntei para ele, ó, lembra meu nome? Aí ele fez: "Claro, Anderson, já te planeou, agora sim, ele conseguiu continuar a conversa". Finalmente resum essa esse bo. Eh, poderia usar esparador para enviar os
+
+temperos esposo de massa, oficial do meta, AP oficial estando dentro lá do evolution. Sim para fazer. Então dá para conectar a dá para conectar a API na lá na Evolution, porque embaixo dos bailes você tem o espaço para poder escolher também a API oficial. Então eu consigo conectar o Picial lá na Metal. Consegue sim, mas no caso você tem que usar o template da meta. É,
+
+tu vai criar lá um app, né? a meta. Porque aí, por exemplo, se eu quiser colocar, por exemplo, no lá na oficial, eu tenho um recurso de colocar botão, por exemplo, embaixo. Aqui tem que fazer o botão. Sim, mas aqui tem como fazer também com esse disparador, não?
+
+tá fazendo aqui não tem como porque a gente tá conectando na oficial, mas se tiver com a P oficial aí tem como fazer botão assim, só que vai ter que muda um pouco HTML, né? Vou usar as funções de botão. Por exemplo, a lá escolher a opção lá de a com botão, sem botão. E aí aqui no fluxo n você colocaria aqui eh ao invés de um tu bota aqui um deviar botão. Tá vendo, ó? Você vem aqui no nó, enviar. Aí tem aqui, ó, enviar botões, entendeu? Se eu fizer esse
+
+aqui não vai funcionar, vai dar erro, porque tô na p oficial. Basicamente é isso aqui. Ô, ô, Anderson, boa noite. Eh, esse a lista não ficaria bom para adaptar com o botão, não? E adaptar lá uma mensagem e através da lista e enviar os botões. Daria certo
+
+assim através desse disparador, tipo fazer um disparo porque o botão engaja muito, né? Então usa a lista como se fosse um botão e a mensagem lá que clica baixo. Dá, dá para fazer sim. Você vai mudar que ao invés de ser um 100 de tex aí mesma co que eu falei. Aí você pode criar uma nova, uma outra categoria.
+
+lá no disparador, ao invés de você, ah, não quero, não quero, ó, botão, por exemplo, aí tu passa lá o título do B, aí já tem que mexer um pouco na TV. A partir disso aqui d fazer evolução também, né? Sim, porque nessa nova não tá disparando ainda não. Na 2.3.
+
+É, eu não eu não cheguei a testar de botão, então não consigo dizer para você assim exatamentear como é que faz, mas na evolu tem essa opção, né? Por exemplo, botão aqui, ele tem que ser apicial. Eu já tentei fazer não oficial e não vai. Tá. Agora me dúvida assim só para quem quer revender esse projeto, teria como, tipo, bloquear por login, deixar online o HTML, bloquear por login, tipo fazer um size? Aí você vai fazer, sabe o quê? Você vai sair do HTML aqui e vai pro low verb,
+
+porque com lowber você consegue dar com super base, pegar autenticação e com HTML. que eu tipo teria ainda teria, mas tipo muito mais trabalho, entendeu? Eu já conseguiria criatamente, mas tem como tem que já é muito mais esforço. Entendi. Tá o louv lá, você conversando com com a do Lutomaticamente já faz autenticação lá dentro, entendeu? é mais bonito esteticamente.
+
+Eu tava estudando ontem sobre isso, até com o string, a a a Ia que faz automaticamente que substitui o N8N. Uhum. Em caso de duplic para cada fala de de sais, a ideia é escala. Então assim, a ideia é que você use um fluxo só, né? Só que aí você vai ter que trabalhar com questão de variáveis, tudo dinâmico de acordo com o seu cliente, aí tu pode usar o mesmo fluxo, tá? Eh, Ismael,
+
+criou já o drive que certo. Show de bola. Pessoal, quem tiver dúvida para falar com o microfone, tá? Fiquem à vontade, levantem a mão a gente para ir chamando um por um. Tem uma mãozinha aí, é com filho. Aí, tipo assim, pode ser por dúvida, pode ser opinião, uma crítica, um feedback, alguma
+
+coisa, uma observação, pode ficar à vontade. E aí o já tá preparando aqui o drive para lembrar para vocês tanto o template do disparador, tanto do BDR e também esse Google Sheets que eu fiz aqui. Acho que é isso. Pode mandar o disparador mesmo. Bota sobe no disparador lá no L drive. Sim,
+
+sim. Subiu o disparador drive. É, eu vou te mandar agora o PDF. Diga o pessoal que é o seguinte, sabe esse disparador aí porque o link vai ficar até meia noite? Só meia noite ninguém vaiar acesso porque pague pra gente que a gente vou falar ó. Então Renê,
+
+eu vou mandar aqui agora. O Ismael vai mandar aqui agora no no no aqui do do Meet o link do drive que vai est os templates, certo? Abra e já baixa. Bota botar tudo. Vou mandar para você agora o que eu fiz agora. Gon baixa logo porque a gente vai traduar quando der meia-noite,
+
+tá? Esse template aqui a gente até vende esse template não era tá programado. Eu eu para vocês esse template aqui, né? Acho que antes de mandar falei pro pessoal.
+
+Vamos lá. Deixa eu aqui a fila. Ah, só o Cedrux digital. Pode falar parado presentar aqui. Se tiver falando, não tá saindo o som. Tá.
+
+Foi mal, tava mutado aqui. Boa noite, galera. Tudo bem? Boa noite. Cara, o seguinte, eu comprei o template, acho que foi ontem, se eu não me engano, eu passei a noite já mexer nele, tinha dado alguns bugzinhos, consegui arrumar. O que o cliente queria que quando a pessoa chegasse mensagem,
+
+a pessoa respondesse, ele queria só mandar um áudio já pré-programado ali. Ele no seria trocar só texto por áudio nesse novo que você fez, o BDR. Isso é, então não precisaria nem passar por uma IA, na verdade, né? Se ele quer só que mande um áudio, eu não quero responder, você pode simplesmente no momento que chegar o web hook, tu já manda o áudio, já já direto no Evolution, sem um envio de áudio. Ah, tranquilo. Então, aquela parte da do sua memória não precisaria nem do
+
+agente, correto? Ou não? Porque você não vai, você não vai precisar eh lembrar do contexto, não, não é o IA que vai estar conversando depois, vai ser uma automação anti fixa. Ah, entendi. Tranquilo.
+
+Valeu. Era só isso mesmo. De bola. Joane. Eu. Boa noite, pessoal. Tudo bem? Anderson,
+
+parabéns. Tá, primeiramente, seus conteúdos são maravilhosos. Eh, eu eu fiquei só com uma dúvida, eh, e é besteira na parte ali do do node do HTML que a gente pede pro chatt gerar, certo? Eh, e eu quando eu quando eu solicitei que eu mandei a mensagem do para ele já fazer puxar as instâncias da Evolution, eh, aí a minha a minha dúvida é só essa. Eh, eu mando lá no chat GPT a minha URL já da Evolution aqui lá no chat GPT ou peço só para ele simular e eu e eu alimento isso só lá no NM. Tu pode mandar direto já o RL. Hum.
+
+Certo? Eret. E aí você depois que tiver com a URL, tu pode adaptar para tirar do HTML e colocar naquele nó no edit field anterior, mas para questão de contenção, para não ter que, ah, eu quero alterar a minha P aqui. Aí você vai ter que ficar procurando HTML, entendeu? Passar a variável e tu altera só identific a gente fez aqui. Ah, tá. Ele tem três variáveis lá dentro.
+
+Deixa eu mostrar aqui para vocês. Não tenho mostrado por causa da da P que tinha aparecido, né? Mas eu Pronto. Vou mostrar agora que eu já alterei aqui a P, não tem problema. Ó, o R Evolution, o web lá, que é o do disparador, AP Global.
+
+Aí eu já passo lá dentro a variável, entendeu? Entendi. Então não preciso jogar no chat GPT. É isso. Eu posso jogar só as variáveis, né? É, pode ser também,
+
+porque se eu colocar HTML não fica exposto não. Se alguém for lá dar um F12 não aparece não aqui fica também. Mas aí se você passar aqui com dados, não, porque vai ficar só a variável lá. É. Não. Beleza. Beleza. Obrigada. Era essa a minha dúvida e parabéns aí. Obrigada pelo conteúdo,
+
+né? A oportunidade que você dá para todo mundo aprender. Ah, eu que agradeço. É, você entende. Tem mais alguém?
+
+Boa noite, Anderson. Tudo bom? Boa noite a todos. deu umas cortadas aí, eu peguei uma parte aí, então eu sou novato aí no N8N, ainda tô tentando entender e aprender. É, mas o o nosso colega aí, ele falou se a gente eh nesse template de fazer as instâncias, eu perdi aí a parte de como fazer as instâncias, eu entrei um pouco depois, mas ele deu uma ideia de fazer um SAS até para realmente fazer comercialização desse desse template, eh, como se fosse um SAS, né? Não do template, sim, mas do serviço. E você
+
+falou eh que não era viável fazer HTML. Falou um outro que não, eu não consegui ouvir direito. É o L. Ovvio, eu vou colocar aqui, vou botar digitado aqui para você. Perfeito. E e aí eh dando continuidade no que o outro colega falou, que se esse disparador tiver
+
+um retorno, tiver um retorno, eh, o você pode acoplar um outro agente, um agente de atendimento para esse, quando, vamos dizer, eh, na hora que eu faço o disparo desse template, desse desse fluxo, na hora que o o usuário faz o retorno, pode um outro agente atender. atender ou esse a gente, esse próprio agente vai fazer o atendimento. Nesse caso que a gente tá aqui é o próprio gente, tá? Mas pode ser outro também. Pode ser outro também. Aí você deixaria,
+
+poderia deixar fixo, por exemplo, aqui, ao invés de você passar de forma dinâmica, o web hook que manda mensagem, tu colocaria uma fixa. Qual que vai responder?
+
+Dá para fazer também. Eu deixo assim porque assim fica o negócio mais fica mais fluido, né? Porque o líder ele ele mandou ele respondeu a mensagem, né? Aí ele vai contar a conversa do que tipo, ah, eh, respondeu, aí nada chega outra pessoa em outro número manda mensagem, entendeu? É que não, que o o entendimento que eu tenho é que esse é como se fosse um mensageiro, né? um
+
+uma um agente mensageiro e o outro seria um SDR, alguma coisa assim, você entendeu? Então assim, eu faço disparo, um exemplo, faço um disparo, os disparos aí para 1000 leads, né? Ou 1000 contatos, não são leades ainda, vira são 1000 contatos. desses 1000 contatos, 10% vira leades. Então, os 10% que eu tô fazendo, eh que eu tenho retorno, e eu tenho que ter um SDR, que é um outro agente, SDR, que é um um seios, né, um um vendedor para fazer o atendimento, senão ele vai ficar muito grande esse fluxo. Aí se eu colocar é o fluxo de SDR dentro desse desse fluxo, correto?
+
+Sim, mas você pode você pode colocar tipo vários agentes separados entre o mesmo número do WhatsApp também se você quiser. A diferença é só apenas a mentalidade por trás do número. É como se tu equipe que tenha 10 questionários e todos uso mesmo número com ch, por exemplo. Entendi, entendi. Perfeito, perfeito. Rapaz, eu vou ter que aprender isso do zero que eu tô começando. Então
+
+eu tenho que ver como é que vai funcionar isso da minha cabeça. Obrigado. Nada, tamos junto. Eu vou até aproveitar o gancho que o Renê falou que a aprender do zero, do zero. Eu acho que a maioria deve saber que eu tenho um treinamento que é operação startar. Eu quero aproveitar
+
+esse espaço para mostrar e dar um desconto para quem tiver aqui na live de 21%. Certo. Já soltou cupom, já soltou tudo aqui. Beleza. Vai mandar o drive também, tá? O Ismael, ele é aluno, tá? Participou aqui,
+
+tá? Depois se quiser falar alguma coisa aí sobre, tá? Ismael, fica à vontade. Eu vou mostrar para vocês a área de membro. Microfone já tá ativado. Ismael, seu microfone tá ativado. Pode já ativar.
+
+Ativar se quiser. Então toda vez que você fala Ismael, eu não sei se você falando com teu Ismael ou comigo. Tá falando de você dessa vez. Tá falando de você. É que eu falei do Smil junto, né? O Smoke que mandou o link ali agora e e você que faz parte lá do comunidade comunidade.
+
+Opa, opa. Deixa eu ver aqui. Calma.
+
+mostrar para vocês a área de membros, tá pessoal? Mostrar tudo que tem lá dentro. Já tem um link aí já pronto também. Tá. Essa aqui é a área de membros, tá pessoal? O Glisso também ele ele é aluno lá. Glon ele tem
+
+mais conhecimento aí com a parte de segurança, a parte mais segurança de infraestrutura aí é com ele. Tá dando umas dicas para vocês aí no chat, mas beleza. Essa era de menos pessoal tá do treinamento operação parte A. A gente tem aqui dois duas sessões, tá? que tem a sessão do do curso principal, que o objetivo principal dele é montar um agente SDR completo, tá? Um agente SDR
+
+completo que ele vai escutar rádio, vai escutar imagem, ele faz pausa para atendimento humano, fraciona a mensagem, eh tem um rag ali dentro, tá? Que ele consegue eh puxar informações de uma base de dados, n fac. Então a gente trabalha com tudo isso, ó, essa parte de hack, por exemplo, conceito de aplicação, criando fac, eh, criando tabela vetorial, processo. A ideia é ser realmente do zero, é desde você instalar a ferramenta, instalar a VPS, contratar a VPS, desde você tá com ele completo aqui, certo? Então, realmente é bem do início e a gente vai avançando aí com o tempo, tá? E temos os bônus, né, que é questão de áudio pela webs, multiagentes,
+
+MCP, CRM, followup com IA, entendeu? A gente tem algumas mentorias gravadas aqui também, frequentes, enfim, cada o conteúdo aqui é completo, realmente, a gente sdo, que vocês vão aprender a fazer do zero, tá? E a gente tem também mentorias semanais, tá? em grupo. Então, toda semana o SMAR ele participou quase todas eh toda semana, toda quinta-feira. Então,
+
+por exemplo, hoje teria um horário, mas aí essa live aqui tomou o horário do por isso que Ismael confundiu, entrou no outro link lá, mas outra quinta-feira a gente se reúne e é bem mais, não é tipo eu apresentando conteúdo, é mais gente conversando mesmo, tirando dúvidas. Ah, eu tô com dúvidas sobre isso, gente. A gente vai conversando e vai arranjando solução, certo? Eh, Júnior, o HTM disparador tá aí no drive, tá? Você vai ter um um ponto Jon que é o arquivo em si do do fluxo. Aí se você joga no N, já vai estar com HTML já lá dentro. Beleza? Então pessoal,
+
+em relação a o curso, o treinamento, vocês têm alguma dúvida? Vocês querem tirar alguma objeção para eu tentar quebrar aqui dentro? É valorão, né? Porque tem 20% de desconto, vai dar mais aí de R$ 60 desconto é o o o valor é vitalício, tá pessoal? Ele tá 397. A gente o de
+
+21% aí que vai ficar aí até 23,59. Acho que dá quase R$ 50, né? Desconto a R$ 30 de desconto. Quem tiver alguma dupla, quiser digitar, quiser falar. Pessoal perguntando em relação à gravação. A gravação vai ficar salva subl
+
+até meia-noite. É, a live vai a live vai ficar lá no YouTube, tá pessoal? Pegar essa live. Acho que hoje a gente já vai vou deixar subir lá, tá? Agora o cupom e o template não, só que adquirido aqui pelo drive que foi mandado aí no baixando. É, tá aqui o drive,
+
+ó. Baixam aí. Quando for meia-noite vai sair do A também o drive, tá? Já pega logo, já copia. E di e pessoal, nem copia baixo vai apagar baixo. É, diga o pessoal aí pro YouTube agora fal pessoal
+
+do YouTube vai participar o pessoal do grupo que vai ver participar porque a gente não tava programado para dar o disparador que a gente acabou dando. Então quem que hoje perdeu esse disparador, né? Pode falar do pente. Calma aí, calma aí. Porque ele fala que tô falando parece tá dentro de um balde. Resumindo que o Ismael falou, é porque esse aqui já é pro pessoal do YouTube,
+
+tá? Pessoal do YouTube quando a gente tiver eh live vai sendo meet, vamos fazer com mais frequência participe, certo? Porque primeiro eu nem disponibiliza empresa decidir na hora, então já é uma coisa mais fora que vai ter às vezes a gente solta cupom, tudo assim com exclusivo para quem tá aqui, tá? E sim, é Raniere, a live tá toda vai tá no YouTube. Acho que nem corta vai fazer 2 horas meia acho de live vai est para vocês. Beleza? Mais alguma dúvida?
+
+Vou ver se eu tenho um limite no meu cartão aqui, hein? Comprar com esse desconto. Dá R 81 de desconto. É muito desconto. Veja aí.
+
+Já já tá meu cupom também, tá, pessoal? É ao vivo. Então, acho que é isso, né? Muito obrigado pessoal por participarem, tá? Muita gente ficou do início ao fim.
+
+Valeu Gustavo. Eu que agradeço a participação de vocês uma coisa, pessoal, peçam que deixam fe na comunidade sobre a live para incentivar as outras pessoas a participar porque vai querer fazer sempre a cada 15 dias uma aula. Boa, boa. Pessoal, quem puder tá lá no grupo mandando feedback de como foi, tá? já para gente incentivar a galera que tá lá participar, porque tem 4.000 pessoas, 13.500 pessoas e tudo, tipo, participou 20 pessoas, entendeu? Então assim,
+
+dando um feedback lá pro pessoal que acharam da live e é isso aí. Daqui 15 dias tem e daqui a 15 dias vai fazer outra live também, não sei o conteúdo, mas vamos fazer. Então ficar por aqui, muito obrigado mais uma vez, estamos junto. E é isso, até a próxima. Valeu,
+
+Brasileiro, estrangeiro, sentir, se você dirige uma se você dirige o que é

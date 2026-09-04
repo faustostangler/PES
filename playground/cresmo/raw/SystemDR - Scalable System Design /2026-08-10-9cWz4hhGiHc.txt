@@ -1,0 +1,33 @@
+---
+video_title: "Secure AI Agents with MCP & Tool Calling | Prompt Injection Explained"
+video_id: 9cWz4hhGiHc
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=9cWz4hhGiHc
+video_date: 20260810
+video_description: |
+  Website Link: www.systemdrd.com 
+  AI agents become powerful when they can **call tools, APIs, databases, and MCP servers**—but that power also creates serious security risks. 
+  
+  In this short, discover how to build **secure AI agents** using **MCP, tool calling, function calling, permission boundaries, authorization, validation, and human approval**. We also look at critical threats such as **prompt injection, indirect prompt injection, MCP tool poisoning, unauthorized tool calls, and data leakage**.
+  
+  If you're building **AI agents, agentic AI, LLM applications, MCP integrations, or production-ready AI systems**, understanding secure tool integration is essential.
+  
+  Watch the full Day 3 episode to learn how to move from a basic AI agent to a **production-grade, secure AI agent**.
+  
+  #AIagents #MCP #AIAgentSecurity #PromptInjection #ToolCalling
+---
+The six-step sequence from the last slide is powered by four subsystems, and this [music] is the architecture that makes it real. Permission boundaries are the fortress walls. Every tool gets exactly the permissions it needs and nothing more. So, your file agent might read from a documents folder, [music] but attempting to touch a system config file triggers immediate denial. Security sandboxing is the isolation chamber. Think [music] Docker
+
+containers, but scoped to a single tool call rather than a whole process. So, if one call misbehaves or gets compromised, the blast radius stops at that call. Dynamic discovery is the smart gatekeeper. The system automatically finds [music] available tools, but a new tool can't just appear and start being callable. It has to be explicitly [music] authorized against current policy first. And audit trails are the
+
+security camera system. Every interaction [music] gets logged with forensic detail, which is what lets you actually debug a security incident after the fact instead of guessing at what happened. The detail at the bottom of the slide ties all four together, and it's worth being precise about. This is capability-based [music] security, not identity-based. The system isn't asking whether a given user is allowed to do something in general. It's
+
+asking whether [music] this specific request is carrying a valid capability token for exactly this action. That's a subtle shift, but it's [music] what lets you enforce the four pillars at the level of an individual tool call rather than at the [music] coarser level of an entire agent or user session. Let's ground the architecture in real code. Tool request is a typed data class, [music] the name of the tool being called, a capability token, and the parameters for the call. Notice there's no user identity [music] field here at all. The request carries a
+
+capability token, not a user ID, which is that capability-based distinction from [music] the last slide showing up directly in the data model. SecureToolExecutor.execute [music] is where the life cycle from slide three actually runs. Line nine is the line I've highlighted, [music] and it's the one to internalize. The permission engine validates the request before anything else happens. No
+
+sandbox, no execution, nothing until that check passes. If the policy says no, lines [music] 10 through 12 deny it, log the denial, and rate. The tool never runs. If it's allowed, line 13 creates the sandboxed [music] environment, line 14 runs the tool inside it, and line 15 sanitizes whatever comes back before it's ever returned to the caller. Raw tool output never leaves this function directly.
+
+In a real system, you'd also wrap the execute path in a try-except that logs the [music] successful execution and its result summary to the audit log, mirroring the denial path.

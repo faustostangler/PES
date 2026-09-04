@@ -1,0 +1,25 @@
+---
+video_title: "Why \"Exactly-Once Delivery\" Is a Trap Answer #systemdesign #shorts #interview"
+video_id: 9hsKNCax1qY
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=9hsKNCax1qY
+video_date: 2026-09-01
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-whatsapp-the-senior-walkthrough
+  🌐 Visit our website: https://systemdrd.com/
+   
+  If you say "exactly-once delivery" in a system design interview without explaining what's underneath it, you're about to get probed. Here's the answer that actually holds up.
+   
+  #systemdesign  #distributedsystems  #TechInterview #softwareengineering  #backendengineering
+---
+Let's put real numbers on this, because those numbers are what justify every technology choice that follows. 500 million daily active users and about 100 billion messages sent per day. That works out to roughly 1.16 million messages per second on average with bursts up toward 5 million a second at peak and an average message size of around 500 bytes including metadata and a 30-day retention window for undelivered messages. You land on roughly 1 and 1/2 petabytes of hot storage. The working set of messages
+
+still waiting to be delivered or recently delivered, not a permanent archive. Then there's connection state. 500 million users with roughly 30% concurrently connected gives you about 150 million live web socket connections at once, which at 64 kilobytes of socket buffer per connection is close to 10 terabytes of memory spread across your connection serving fleet. That single number, 150 million open sockets, is arguably the hardest scaling problem in this entire system, harder than the storage. Four surfaces make up the API [music] and only one of them is a persistent connection rather than a request-response call. The web socket is
+
+where real-time delivery actually happens. The client authenticates on connect and the server immediately flushes any messages that piled up while the client was offline. The send endpoint is where the real craftsmanship shows. It carries two identifiers that look redundant at first glance but are not. An idempotency key header and a client generated message _id inside the body. Naming both of these and
+
+explaining why you need both is the specific senior level move on this step. The idempotency key protects you at the transport layer. If the client's HTTP request times out and retries, the server recognizes the same key and simply returns the cached response instead of processing it twice. The message _id protects you one layer up at the application level. It's what lets the receiving client detect and drop a duplicate that arrives through a completely different path like a reconnect replay. Two different failure
+
+modes, two different keys doing two different jobs. Round that out with an act endpoint for delivered and read receipts, and a presence endpoint for online status, and that's the full surface.

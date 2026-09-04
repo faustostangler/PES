@@ -1,0 +1,20 @@
+---
+video_title: "XSS não é só um payload! #javascript #cibersegurança #segurança #vulnerabilidade"
+video_id: YuYoWOpUasM
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=YuYoWOpUasM
+video_date: 2025-06-11
+video_description: |
+
+---
+Se você acha que XS é só script, então você não sabe XSS. Essa vulnerabilidade é completamente contextual. Quando você tá testando por XS, a primeira coisa que a gente tem que olhar é onde o nosso dado tá sendo injetado. Aqui, por exemplo, conseguimos ver que nosso input tá em cinco lugares diferentes. Cada lugar desses tem um contexto diferente e cada contexto exige um payload diferente. Nessa tag de texto, por
+
+exemplo, não tem nada para escapar. Então, injetar script alert script funciona perfeitamente, mas nem sempre esse é o caso. Na tag de meta, nesse exemplo, a gente tem que escapar a string e a tag. A gente consegue fazer isso passando aspas duplas e o símbolo de fechar tag e depois a gente injeta o nosso script. O problema é que vai ter esse caracteres sobrando no final, então a gente pode só abrir uma tag nova para tirar isso. Nesse log a gente tem duas
+
+formas de injetar script. Ou a gente escapa o console.log com esse payload. Ou a gente pode abusar da forma que a concatenação de string funciona e simplesmente concatenar como expressão. Assim, quando a string for construída, vai chamar a expressão, fazendo com que ela seja executada. Se aparecer dentro
+
+de uma chamada de função, a gente também pode aproveitar da forma que isso funciona no JavaScript. Olha bem, se tem uma função que pede por um número exato de argumentos, como é o caso dessa função, a gente não tem que passar o número exato de parâmetros, a gente pode passar mais. Com 1 V alert, a gente vai passar o parâmetro 1 e acabar executando a expressão alert, injetando o nosso script. Isso vai deixar a função executando normalmente com parâmetro válido e ainda executar o nosso script. Nesse caso, a gente tem que escapar a string e a tag, injetar o nosso script e usar uma tag qualquer para tirar os caracteres extras. Viu só? cinco
+
+contextos diferentes, cinco pelos diferentes.

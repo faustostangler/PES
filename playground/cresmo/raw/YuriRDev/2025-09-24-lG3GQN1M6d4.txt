@@ -1,0 +1,82 @@
+---
+video_title: "RECRIEI o Akinator! (do zero 😎)"
+video_id: lG3GQN1M6d4
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=lG3GQN1M6d4
+video_date: 2025-09-24T14:42:37+00:00
+video_description: |
+  Nesse vídeo eu recriei o Akinator do zero! Explicando os algoritmos e a lógica por trás desse jogo que adivinha quem você está pensando...
+  
+  Link pro Akinator: https://akinator.dev
+  (Tem 60 registros, ou seja, muita pouca coisa e poucas perguntas, mas quanto mais jogarem e darem feedback, mais rápido os mods vão adicionar! - Se você quiser ser um mod do akinator, só mandar mensagem lá no nosso discord)
+  Repo: https://github.com/YuriRDev/akinator.dev
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 O melhor host para seus projetos: https://squarecloud.app/
+  
+  Índice
+  00:00 Introdução
+  01:10 Entendo o Algoritmo...
+  01:24 Decision Tree
+  02:13 Nova abordagem
+  03:21 Primeiro problema
+  04:03 Como escolher as perguntas?
+  04:41 Mais problemas
+  05:25 Quando o jogo acaba
+  05:45 Populando o BD
+  06:34 O AKINATOR!
+  07:30 IA aprendendo com Humano...
+  08:05 Fim
+---
+Você provavelmente já jogou ou pelo menos já ouviu falar do Akinator. Esse jogo explodiu na internet jogado por praticamente todos os youtubers grandes da época e que até hoje surpreende muita gente. E é simples, você pensa em alguém, ele vai te fazer algumas perguntas e você só tem que responder com sim, não ou não sei. E a cada resposta ele vai afunilando as possibilidades e do nada ele adivinha exatamente quem você estava pensando. E eu tenho certeza que em algum momento você achou que ele escutava seu microfone. E eu sei que você sussurrava
+
+pro seu amigo quem você estava pensando, só prokinator não escutar. Mas afinal, como que o Akinator faz isso? Como que ele adivinha o personagem que você pensou com tantas perguntas certeiras? Talvez você tenha respondido que é uma IA avançada com milhares de dados, um modelo gigante de machine learning ou até um deep learning. Faz sentido, mas só tem um problema. O Akinator foi
+
+criado em 2007, antes da popularização do deep learning e bem antes da revolução da IA que a gente conhece hoje em dia. Então hoje a gente vai recriar o Akinator, mais especificamente o Akinator da Bolia Dev. Ele vai tentar descobrir quem que você pensou dentro do mundo da programação ou até mesmo alguma linguagem. E no final do vídeo eu vou disponibilizar o link para vocês jogarem e, é claro, o código no GitHub. Antes de tudo, temos que encontrar o algoritmo ideal para resolver esse problema. A
+
+gente quer separar pessoas ou linguagens com base em características. E eu preciso de um jeito de fazer perguntas estratégicas que vão eliminando opções até sobrar só um. A primeira ideia que vem na cabeça é usar uma decision tre ou árvore de decisão. E ela funciona mais ou menos assim. Você começa com uma pergunta que vai separar o máximo de pessoas possíveis. Se a resposta for
+
+sim, vai para um lado. E se não for, vai pro outro. E para cada nó dessa árvore, enquanto tiver mais de uma pessoa, a gente vai escolher a melhor pergunta para esse grupo e continuar até que todo mundo esteja separado. Parece perfeito, né? E é exatamente isso que o Acnetito faz. Vai perguntando e eliminando opções
+
+até sobrar só um. Só tem um problema. A árvore de decisão depende de perguntas objetivas e atemporais. Só que na realidade as perguntas muitas vezes são subjetivas e temporais. Por exemplo, essa pessoa é careca? Hoje a resposta
+
+pode ser sim, mas amanhã se essa pessoa fizer o implante a resposta muda para não. E ainda tem a questão da subjetividade. O que é careca para alguém, para outra pessoa pode não ser. A gente pode usar uma abordagem psiceloprobabilística. Em vez de eliminar completamente as pessoas que não tm certas características, vai aumentar o peso das que tem. E esse peso é simplesmente a
+
+confiança do candidato de seu certo. Quanto maior, melhor. Cada registro tem armazenada a quantidade de sim ou não para cada pergunta. Você pode imaginar isso como se fosse uma grande tabela de perguntas e respostas. Nas linhas a gente tem os candidatos e nas colunas as perguntas. Em cada célula estão os
+
+contadores de quantas vezes ele recebeu sim ou não pra pergunta. E isso é melhor do que ser um sim ou não binário. Se a resposta for sim, a gente vai adicionar a quantidade de sim no peso do candidato. E se for não, a gente vai adicionar a quantidade de não no peso. E a melhor parte é que o algoritmo aprende com o tempo. No fim de cada partida, se
+
+o akinator acertar, ele reforça os contadores corretos. E se ele errar, ele pergunta diretamente pro usuário quem era a pessoa que estava pensando e ajusta os pesos com base nas respostas dadas. Então, a cada rodada o sistema fica mais preciso. Quanto mais pessoas jogam, mais o Akinator vai se moldando do jeito real das pessoas pensarem. E com isso, cria um detalhe importante.
+
+Nem todas as perguntas têm as mesmas quantidades de respostas. Se um registro é mais selecionado, eventualmente ele vai ter mais respostas do que alguém que ninguém conhece. E isso cria o problema do viés do tamanho da amostra. Se um registro tem 1000 sim e 200 não, o peso dele vai ser muito mais forte do que outro que tem 10 sim e dois não. Isso não significa que ela é melhor para diferenciar os candidatos. só que já foi
+
+respondido mais vezes. E para corrigir isso, a gente precisa de uma normalização. A ideia é balancear os pesos, levando em conta o tamanho da amostra, para que perguntas com muitos registros não dominem as decisões. E tem uma forma bem simples de fazer isso, que é transformar os contadores em probabilidade. Assim, não importa se a pergunta foi respondida 5 ou 5.000
+
+vezes, o que conta é a proporção. Agora, um outro ponto importante, como que a gente escolhe as perguntas? Aqui a gente vai usar um conceito chamado de information game, ganho de informação. A gente quer fazer perguntas que reduzam a incerteza ao máximo. A pergunta ideal é aquela que melhor separa os candidatos com maior peso. Primeiro, a gente
+
+seleciona os registros principais de acordo com o peso. Em vez de simplesmente pegar os n primeiros candidatos, eu criei um threshold para separar os melhores. Isso garante que a gente tá focando nos candidatos mais prováveis e não desperdiçando nosso tempo com registros improváveis. E com esse subconjunto a gente vai calcular a pergunta que vai dividir melhor os candidatos, ou seja, o que vai gerar o maior ganho de informação. Enquanto eu fazer esse algoritmo, eu esbarrei em um outro problema. Nesse jogo, a gente
+
+consegue adivinhar pessoas e linguagem de programação. O problema é que as perguntas das pessoas não aplicam em linguagem de programação e vice-versa. Eu não posso simplesmente colocar um não parece que não se aplicam, porque Python é calvo, não faz nenhum sentido. Então a gente vai colocar um valor nulo para indicar que não se aplica. E agora a gente também tem que evitar de novo o viés pelo tamanho da amostra. Perguntas
+
+que dividem dois sim e dois não seriam escolhidas ao invés das que dividem nove sim e quatro não, mesmo que a segunda separe melhor os candidatos. E para corrigir isso, a gente vai aplicar um peso proporcional e assim a gente vai dar prioridade para as perguntas que realmente separem mais candidatos. E a última coisa é que o Aquinator não faz todas as perguntas. Assim que o candidato tiver uma chance grande de seu certo, ele dá um chute. E é isso que a gente vai fazer. Se o registro do maior
+
+peso se destaca consideravelmente em relação ao segundo maior peso, o jogo acaba. Ou quando as perguntas pararem de separar os candidatos. Isso significa que não há mais dúvidas que possam ser resolvidas e o jogo também acaba. Finalmente, a ideia do algoritmo tá pronto. Agora falta só popular o banco de dados. Não existe uma maneira fácil
+
+de fazer isso. Então, peguei alguns nomes que eu conheço da bolha dev no geral e fiquei stalkeando eles e adicionando as respostas. E isso demorou muito tempo, muito tempo mesmo. E agora só tem mais uma coisa que eu tenho que fazer, que é deixar vocês adicionarem mais registros. Eu sozinho não consigo adicionar todo mundo porque eu simplesmente não conheço todo mundo. E o
+
+mesmo acontece no Akinator. Não tem uma pessoa adicionando mais registros 24 horas todos os dias. Então, no final de uma jogada, se o Akinator não adivinha quem que ele é, ele vai perguntar diretamente pro usuário. A resposta vai passar para um processo de triagem interna, onde os moderadores do site vão aprovar esse novo registro e vai verificar se não tem nenhum conflito. Beleza, agora tá tudo certo. Temos os
+
+dados populados, mas falta conseguir jogar. Eu fiquei um tempinho para fazer um design legal pro site. Eu particularmente queria muito deixar parecido com Akinator, só que ele é muito feio. Então eu procurei algumas inspirações e acabou ficando assim. Vamos testar aqui. Eu tô com um
+
+personagem na cabeça. Vamos lá. Não é uma linguagem de programação, não vem curso. Ele não foi cofundador, não é focado em saber segurança e ele tem mais de 30 anos. Ele já acertou que é maninho. Beleza, agora vamos ver se ele
+
+consegue adivinhar a linguagem de programação que eu tô pensando. É uma linguagem de programação. Aqui embaixo aparece os três candidatos que t o maior peso, só pra gente poder ver na hora como é que tá o algoritmo de indução. A linguagem tem o mascote, não é orientado objeto, não é muito usada na web, elow level, amada por muitos e é muito segura. Pronto, já acertou que eu tava pensando no Rust.
+
+Mas no fim existe um grande problema das IAS aprenderem com o ser humano. Eventualmente isso vai dar errado, principalmente nesse meu formato que eu faço algumas verificações mínimas antes de alterar o peso do registro original. Infelizmente dá para ver isso acontecer no Acetator original. Ele tá ficando burro de tanto que as pessoas respondem de forma poluída. E também teve o caso do Simsimi, lembra daquele chatbot que simplesmente foi banido do Brasil porque os usuários estavam ensinando a falar palavrão e cometer crime? E essa questão
+
+de tempo, até o Akinator deve ser estragado por usuários mal intencionados, mas isso é um problema da IA que aprende com ser humano. Bom, como prometido, esse aqui é o link do site. Ao longo do tempo vai ter mais registros e perguntas. Eu até peguei um grupo de pessoas na nossa comunidade do Discord para me ajudar nisso aí. Esse projeto é open source, tá lá no meu GitHub. Se
+
+quiser contribuir, fica à vontade. Última coisa antes do vídeo acabar, eu tô pensando em fazer live na verdinha, porque pr as coisas que eu quero fazer, o YouTube não vai deixar. Bom, espero que tenha gostado e aprendido pelo menos um pouco. Obrigado por assistir até aqui. Não esquece de deixar o like e se inscreva no canal. Valeus. M.

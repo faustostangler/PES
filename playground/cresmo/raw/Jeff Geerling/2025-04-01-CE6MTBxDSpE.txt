@@ -1,0 +1,181 @@
+---
+video_title: "I Turned my Floor Lamp into a Homelab"
+video_id: CE6MTBxDSpE
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CE6MTBxDSpE
+video_date: 2025-04-01
+video_description: |
+  You've heard of a LAMP Stack, but have you seen it in a Lamp Rack?
+  
+  Mentioned in this video (some links are affiliate links, I earn for qualifying purchases):
+  
+    - Project Mini Rack: https://mini-rack.jeffgeerling.com
+    - Sunmory Floor Lamp with Shelves: https://amzn.to/42s0gOA
+    - LabStack Mini rack system: https://github.com/JaredC01/LabStack
+    - Cage Nut Insertion Tool: https://amzn.to/42zoXb5
+    - HackerGadgets PoE + NVMe HAT: https://hackergadgets.com/products/nvme-and-poe-hat-for-raspberry-pi-5
+    - Pi Kubernetes Cluster Ansible playbook: https://github.com/geerlingguy/pi-cluster
+    - My free Kubernetes 101 series: https://kube101.jeffgeerling.com
+    - Netgear GS305P PoE Switch: https://amzn.to/4iS8Ig4 
+    - JetKVM: https://jetkvm.com
+    - Netgear GS305P Switch mount: https://www.printables.com/model/1236177-netgear-gs305ep-10inch-rack-mount/files
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - LAMP Stack, Lamp Rack
+  00:49 - Not a Fancy Rack
+  01:36 - Some Assembly Required
+  03:26 - Comes with a PDU?
+  03:54 - Let there be light
+  04:54 - MONTAGE
+  05:19 - Mounting - The plan
+  05:53 - Mounting - The execution
+  06:34 - Building a Cluster
+  07:48 - Switch goes bump it's too tight
+  08:36 - UPS here, UPS there
+  13:55 - K3s and LAMP Stack Setup
+  14:33 - LAMP is optional. Pi is optional.
+---
+I built a LAMP stack in my lamp rack. What's a LAMP rack? It's this. It's got 4U of rack space, a UPS in the base, and being a lamp, it has a built-in light. That's pretty handy.
+
+Now, why do this? I mean, besides it being April Fools. Well, the LAMP stack stands for Linux, Apache, MySQL and PHP. That software stack has run millions of websites for over 30 years. But has anybody ever tried actually running it in a LAMP?
+
+No! More importantly, after someone on Twitter jokingly suggested a lamp could be the next LACK RACK, well, I took that as a challenge. I didn't just half-heartedly stack a couple mini PCs in here and call it a day. This is a full-on mini rack, with all the bells and whistles. Even a light bulb that has three color temperatures. That's close enough to
+
+RGB for me. But even though it's April Fools, and this is mostly for fun, I want to prove a point: you don't need fancy racks and expensive servers to learn something new about computers. A lot A lot of videos talk about exotic home labs, or sometimes I show off a project inside a hundred dollar mini rack like this one. But you don't need that. In fact, my first cluster, the one that helped me learn infrastructure engineering over a decade ago, it was this thing.
+
+Like 15 bucks in acrylic trays from eBay and six little Raspberry Pi computers. And while I'm showing you like the Lamborghini of literal lamp stacks today, most people don't need all this stuff. If you already own a floor lamp and an old laptop, just put that thing on the shelf, install Proxmox, and, well, that's a pretty bright idea. But you're here to see how I made this, aren't you? I can already see this video's retention graph falling off a cliff, so let's get to it.
+
+I bought this thing off Amazon. It's 50 bucks, and it even comes with a drawer and a little PDU, a Power Distribution Unit. Every respectable rack has one of these, but the one Sunmory includes? Well, we'll get to it. And it says on the box "easy to assemble," but it also says "please read the user manual."
+
+So which one is it? Assembly was actually pretty easy, but as I got into it, let's just say everything was lighter than I expected.
+
+That... that is a light light bulb. That's, we got nothing going on in there.
+
+Let's see what size text this is. I'm going to have it on the old LTT here.
+
+Oh, that's the right size. Look at these guys.
+
+That's pretty flimsy.
+
+I mean it's IKEA grade, that's for sure.
+
+These are square, right? Yeah, more or less.
+
+Oh, that sounds terrible.
+
+That's a little wobbly. Whoa.
+
+At least those are chamfered. That's nice. That's how this is going to be, isn't it? The amount of wobble here is not awe-inspiring. There's sawdust coming out of here as I'm screwing this in.
+
+Oh!
+
+These aren't even threaded. These are just plastic. We're going to be tapping right through plastic into live wires. I'm going to look inside this thing really quick.
+
+That is secured with hot glue. Yeah, I'm not going to trust this thing with anything important. Self-tapping plastic screws.
+
+Well, that's not too bad.
+
+Install the bulb.
+
+There's the 5600K, 4000-ish, 3200. That's incredibly annoying. There's no way– You literally have to cycle through them all every time you turn it on. So this is not the kind of lamp that you want to turn on and off using this. Not the most stable lamp in the whole world, but as long as you don't touch it, it's okay. And I thought there'd be a time delay, like you could turn it to that one
+
+and then wait a little bit, and then after that it would like stay on that one. But no, the bulb is not that smart. It's a pretty dumb bulb. Well, now that it's built, you need a proper montage, so let's do it that's how you do a montage right it's really annoying to film vertical things because the framing here is like this is the one case where a vertical video would actually be a lot easier anyway so initially because these are so well centered on these legs I was just gonna tap holes in here, but then I realized this is like flaky particle board. Like you drill into it and it starts shedding sawdust like nothing else. So I think that would completely destroy the
+
+structural integrity besides the fact that there are sleeves in the bottom part of this to hold those screws that hold it all together. So that would not be feasible. So instead I bought these. They will hold perfectly and give you enough of a gap to put the screws in to hold your rack equipment. So yeah, and these work like, these are like perfectly centered when you put them on that way.
+
+Next up, I needed to put actual computers in the rack, otherwise it'd be a lamp rack in search of a LAMP stack. I prepped a few Raspberry Pi computers, then I went to work 3D printing a little LabStack setup. And let me tell you, doing a video where you're 3D printing a bunch of parts less than a day before posting it is a little stressful. But the LabStack is a cool way to mount a bunch of small devices in a little rack. I got to talk to JeremyC01, the guy who designed it, over on my second channel, Level2Jeff, so go subscribe and check that video out.
+
+My little computer cluster has a JetKVM for remote access. Well, let's be honest, it's here mostly because it looks cool. Then there are three 8 GB Raspberry Pi 5s. Each of them is using a special HAT from HackerGadgets that has an SSD slot and Power over Ethernet. That means each of my little Pi's just needs one plug for network and for power.
+
+And the SSDs will make them run a lot more stable, which is especially useful in such an unstable rack. There are other ways to mount up computers, and you don't have to use Raspberry Pi's, I just like how small they are and how they can run off a single Ethernet cable. It saves me from doing cable management, which I'm terrible at. When I went to actually install everything in the lamp, that's when I bumped into a problem. The blanking panel was fine, the Pi cluster was fine, but when I went to screw in the DeskPi shelf for the switch it was too wide because of the way I installed the rails.
+
+So I set up this janky solution for a few minutes just to keep working on the cluster, while I ran over to Printables to look for a rack mount that might work. Oh please be a mount available so I don't have to do any CAD. Look at this!
+
+Masaikla. Masaikla, thank you very much. I'm going to print this and hopefully it will print quickly. I will print it very fast. Okay, we'll download this thing
+
+And we'll drag it into OrcaSlicer and we'll lay it on the front face. Slice it. Okay two hours. Whoo! Let's do this thing.
+
+I popped the switch into the print screwed it into the rack and next up it was time to solve the power problem. Every rack needs a UPS or Uninterruptible Power Supply. So it was finally time to install the big rack mount UPS I bought a year ago in the rack room so I could take the little network UPS I was using there and use it in this lamp rack. So this giant rack mount UPS that has no business being up here just being used with this TV and this guy This UPS can Come back to the rack. We'll try to figure out how to get this stuff up.
+
+How are we gonna do this? Rack studs are pretty awesome for this kind of thing. When you're changing around your racks, but they will not hold a full UPS, that's for sure. This is the kind of thing you want two people for, but I got one person and so we're just gonna YOLO this upgrade. And by 'upgrade' I mean just moving everything up.
+
+Okay, this might be a terrible idea, but at least I have it on camera. That's the YouTubers pledge. Okay. Okay. We're going okay so far. Oh boy.
+
+Oh no. Okay.
+
+Okay. Get in there. Get, get, get.
+
+Somehow that did not end in disaster. Now my arm is pumped out. I wonder how the depth is. Yeah, that's not a very deep deep guy. But I do need to see. Wow.
+
+That's windy. Look at all that wind. Okay. Okay. Well, that was a bad idea.
+
+Let's check. Oh, gosh, it's heavy. Please don't rip everything off the wall.
+
+Come on, NavePoint! Don't let me down. All right. Yep. Second holes.
+
+The middle ones.
+
+I could have checked that another way, but it works. It works.
+
+Get some cage nuts.
+
+Time to slice up my fingers.
+
+Somehow even using this tool, I still... That's the wrong one. Come on, Jeff.
+
+I even said "the middle one." The middle one. I'm going to take this out. I'll do that in a minute. Because holding these and doing that, I know I'm going to destroy my fingers.
+
+even with this tool i have somehow found ways to slice up my fingers in the past but this tool is a godsend. "The Cage Nut Tool". But now i gotta get this one out
+
+so i do that. Come on release, there we go
+
+okay cage nuts we'll try the uh where. Today could just use this Wera. Uh gamers nexus huh Gamers Nexus versus LTT and we're gonna YOLO this thing. Let's get you in there nope that way come on okay
+
+one screw over here and then we'll get the other side
+
+Hopefully this is tightened. Come on. Nope.
+
+Okay, we're just going to do it this way.
+
+Now let's see which one of these is more critical.
+
+[knocks on that thang] That one has my sticker on it, which is nice. Let's see if this comes on.
+
+Okay, we're not plugged in. And I'm going to swap these over. So here, here's what I'm going to do. Put you down there.
+
+I'm going to take you out of here. Yeah, there we go. Okay. Now this is coming back on. What's next?
+
+Something is down now until we get this plug back in. We can tidy up cables on another day. Okay. Little UPS boy is out of here. Warning.
+
+Oh, gosh. Power outage. Yes. Station on backup battery. No, I understand that; you don't need to tell me.
+
+And I don't know what this thing is. We'll find out soon.
+
+I'm going to do the Pi here. So 50 minutes of runtime... I think we're good on that.
+
+Oh my gosh, the wind!
+
+There's literally a tornado of trash outside. I'm gonna put you in here.
+
+You are gonna be the new TV UPS.
+
+Make sure the TV works on this UPS.
+
+And relax a little bit. "I strongly feel that this is an insult to life itself." "That was years ago, but now this nightmare isn't pulled back." Now that there's power in the rack, everything was booting up, and the last step is to actually get the LAMP stack running in my lamp rack. For that, I ran my Pi cluster playbook with Ansible.
+
+This is an automated configuration that will build an entire Kubernetes cluster on a set of computers, and it automatically deploys a Drupal website which runs on the LAMP stack. I'm not going to get into the details here because I made an entire series of free videos on Kubernetes a few years ago, in addition to my book on Ansible, so we'll just skip ahead to the part where Kubernetes is running and Drupal is installed. So here it is: the LAMP stack on a lamp rack, serving up a Drupal website. And it's quiet enough you could put it in your living room. Now, you don't have to run the LAMP stack on your lamp rack.
+
+You can run anything. And you could just get by stacking up a couple mini PCs, too. And for the people who didn't watch to the end and see this, they'll probably suggest setting up a smart light bulb that can turn red when the cluster's down or something's bad. But I already spent about 10 times more time and money on this project than I ever should have just for an April Fool's gag. But that's what makes it fun.
+
+Every time I do one of these projects, I learn something. Today, I learned a floor lamp can be turned into a computer rack without a lot of hassle and for less than 70 bucks. Is it a *good* rack? Well, it works. I'll leave it at that.
+
+Until next time, I'm Jeff Geerling.

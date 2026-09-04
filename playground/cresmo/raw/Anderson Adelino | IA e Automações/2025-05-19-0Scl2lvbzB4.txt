@@ -1,0 +1,107 @@
+---
+video_title: "COMO CRIAR UM MCP SERVER COM SPOTIFY NO N8N (Controle a MÚSICA com IA!)"
+video_id: 0Scl2lvbzB4
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0Scl2lvbzB4
+video_date: 2025-05-19
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=0Scl2lvbzB4
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  Imagina pedir pra IA "Toca Grafith" e ela abrir o Spotify e começar a tocar.
+  Pois é... isso agora é possível com o MCP Server integrado ao Spotify no N8N!
+  
+  Nesse vídeo, eu te ensino passo a passo como criar um agente IA que entende comandos de voz e controla o Spotify automaticamente:
+  
+  ✅ Toca músicas e playlists
+  ✅ Pausa, continua e pula faixas
+  ✅ Tudo com IA, usando o MCP Server como cérebro da operação
+  ✅ E o melhor: com estrutura reutilizável pra qualquer outro tipo de automação
+  
+  💡 Se você já usa N8N ou quer aprender a montar agentes inteligentes de verdade, esse vídeo é obrigatório!
+  
+  📲 Me siga no Instagram para mais conteúdos:
+  https://instagram.com/oandersonadelino
+---
+Fala automatizador. Esse não é um vídeo qualquer de MCP, até porque hoje vamos estar fazendo uma IA mexer no meu Spotify. É isso mesmo, você vai aprender MCP e ao mesmo tempo você vai estar ouvindo música, você vai estar controlando seu Spotify. Eu acredito que essa é a melhor forma de estar aprendendo. Então, não vou ensinar vocês a mexerem MCP utilizando Google Agenda, nem vou ensinar vocês a mexerem MCP usando APFI ou usando algo é IBNB, por exemplo. Não, vocês vão aprender MCP
+
+mexendo no Spotify, pulando músicas, tocando é uma um álbum aleatório, pausando, dando play, tá bom? Então, cara, esse vídeo aqui tá muito legal, eu vou querer detalhar o máximo possível para vocês. Fechou? Então, pessoal, é o seguinte, eu estou aqui com no meu computador, né? Eu tô com o NN aberto, estou com o meu Spotify aqui aberto também pra gente fazer aqui nossos testes, beleza? E eu estou aqui no site
+
+da do Spotify developer.spsotify.com/dashboard, tá bom? Não se preocupa que eu vou detalhar bem bacana para vocês aqui nesse vídeo. Então, ó, basicamente eu quero que vocês entendam o que que é o MCP. Eu quero que
+
+vocês e coloquem na cabeça de vocês de uma maneira bem prática, tá? Cara, eu não vou ser muito técnico, não vou ficar enchendo de termos técnicos aqui, porque eu acho que isso não é interessante. Então, cara, basicamente o MCP é um um centro de comando, é uma central de comando onde antes da sua IA chamar uma Tor específica, que era antigamente, né, antes do MCP, a IA vai chamar o MCP server. e o MCP Server que vai chamar TU. Então ele virou uma ponte, ele virou uma forma de intermediar o agente da TU, o agente da ferramenta. Nesse nosso caso
+
+aqui, o nosso agente A, ele vai estar aqui conversando conosco e ele que vai estar ouvindo os nossos comandos. Ele vai chamar um servidor MCP e o MCP ele vai ter em suas mãos o Spotify, mais precisamente seis tools do Spotify. Quais são as funções dessas tools? Procurar uma playlist específica, pular uma música, pausar uma música, tocar uma música, continuar a música e saber qual que é a música que está tocando agora. Então, a gente vai ter essas seis opções. Anderson, eu tenho mais opções
+
+no Spotify para poder mexer, para poder brincar. Tem, cara, você tem várias opções. Eu coloquei essas seis para não ficar algo muito poluído, mas você tem muita coisa aqui para mexer nosotify, então tu vai poder brincar à vontade, beleza? Então, vamos lá. Antes de tudo, eu quero que vocês entendam qual que é a proposta aqui do meu agente, né? Vou
+
+mostrar para vocês primeiramente aqui o prom, certo? Aqui é um agente IA, onde a gente vai estar conversando aqui por esse chat, tá? Mas isso aqui pode ser inclusive conectado, por exemplo, lá na minha Alexa que eu criei na minha aula passada. Então você pode até estar conversando por voz e mexendo no seu Spotify. Então veja só as possibilidades. Eu vou deixar aqui no
+
+card, tá? Esse vídeo aí da Alexa. Vamos lá. Eu vou dar aqui um oi pra nossa gente. Ele vai est aqui, ó. Olá, como
+
+posso dar você? Então ele tá funcional. Beleza? Vamos dar uma olhada aqui no prompt dele. Olha só, a gente tem aqui eh contexto. Você é um assistente
+
+musical integrado ao Spotify do usuário. Seu papel é entender o comando e acionar a ferramenta apropriada do MCP Server para realizar a ação solicitada. E aqui eu coloquei algumas regras para ele fluir de maneira correta, tá? Sempre que identificar uma intenção, chame o MCP Server com o nome da ferramenta correspondente e o parâmetro necessário. Não explique o que vai fazer, apenas responda de forma natural e execute ação. Não repita perguntas já
+
+respondidas pelo usuário. Caso o pedido seja genérico, use seu bom senso para escolher a tua mais adequada. Mantenha um tom leve, direto e amigável. E antes de tocar uma música, você deve pegar a URL chamando outras to. Então eu fui bem claro, só que dessa vez é eu não precisei ficar especificando toda hora.
+
+Chama tu tal para isso. Ah, se for pular música, chama a tu pular música. Se for tocar música, chama a tu tocar música. Não preciso, porque a gente tem o MCP Server a fazer isso, tá? Então eu eu uso aqui, ó, o modelo da Openai, o 4 mini mesmo. Eu filtrei aqui para 500 tokens,
+
+tá? Até porque ele consume bastante tokens, porque ele chama eh muitas requisições Spotify. Então faço uma limitação de tokens, tá? Ah, eu quero que seja o mais barato possível. Você pode estar usando o 4.1 Nano, certo? Ele
+
+é extremamente barato, mais barato até do que o 4 mim. E aqui eu coloco a to do MCP. Beleza? Show de bola. Anderson, o que que é esse SSE endp? Isso aqui é a
+
+URL do meu MCP server. Beleza? Simples assim. Quais tours que eu vou pegar? Eu quero todas as tools. Todas as tours que
+
+estão lá. Então, basicamente é isso aqui. Perfeito. Agora vamos chegar agora no nosso MCP Server. Esse aqui é o nosso MCP Server da Spotify, tá? E aqui eu
+
+coloquei um nome para ele. Eu coloquei assistente traço Spotify, apenas de uma forma amigável de tá chamando ele. E é esse cara aqui que a gente passa lá para a tour do MCP, beleza? E aí sim ele vai ter acesso a seis playlists, OK? Eu vou primeiramente estar mostrando para vocês o que cada uma coisa faz e como configurar ela e depois eu vou estar ensinando a vocês a como conectar a credencial dos portf de vocês aqui.
+
+Fechou? E a gente vai começar a fazer nossos testes que aí vai melhor parte. Então vamos lá. Primeiro de tudo, eu coloquei aqui procurar playlist, certo? procurar playlist. Eu a descrição, isso
+
+é muito importante, gente. Por padrão, ela fica de forma automática. Faça de forma manual, descreva de forma manual o que você quer, tá bom? Então, coloquei aqui, ó, busca playlists públicas com base em uma palavrachave, útil para descobrir playlists por temas ou momentos. Beleza? O recurso é playlist,
+
+operação procurar. A palavra de é chave de procura, eu coloquei para propriar, definir, certo? E eu coloquei um limite de cinco. Ele vai pegar as cinco eh mais próximas daquilo que ele tá querendo buscar. A segunda to é o pular música.
+
+Pula para a próxima música na fila de reprodução do Spotify. Controla o player remotamente. Recurso player. Operação next song. Pausar música. Pausa a música
+
+que está tocando no momento. Controla o player de forma remota, recurso. Player, operação, pausa. Então ele vai pausar a música. Beleza? Aqui, ó, tem um
+
+continuar música. Um não, um pausa, o outro continua, ó. retoma a música pausada no play atual e ativa a reprodução de onde parou o recurso player operação resume. Beleza? Aí aqui tem o tocar música, tá? Toque uma música
+
+passando a URI. Essa URI ele pega primeiramente pegando o procurar playlist. Ele vai procurar a playlist, vai pegar o R, aí vem e chama a outra tua aqui, tá? De forma automática, acessar o RI, recurso player, operação start music. E aqui ele vai passar o a URI Ri, tá? E aqui eu faço uma
+
+descrição, ó. Ui é adquirida em toos anteriores, tá? para ele ter essa noção. E por último, temos o tocando agora, nome da música que está tocando atualmente, tá? Recurso player, operação currently play. Perfeito. Então, show de
+
+bola, gente. Essas são as tours que estaremos utilizando. Agora, como é que eu faço para estar criando aqui uma credencial aqui no Spotify, tá? Eu vou clicar aqui, ó, em criar nova credencial. Eu vou até nomear aqui para Spotify e YouTube, beleza? E vamos lá.
+
+Vocês vão acessar o developer.com, tá? É, quando é a conta de vocês aqui do Spotify, é, pelo que eu lembro, gente, a opção tocar música, né, e somente ela, na verdade, né, as outras são livres no modo free, mas o tocar música, tu tem que ter o Spotify assinado, beleza? Para poder tocar. Então, vocês fazem um teste aí de vocês, beleza? Enfim, voltando aqui, é, eu
+
+tenho aqui, ó, dashboard, vou criar um novo app, então tem que criar um app primeiramente, beleza? Então, aquilo que aqui, ó, criar novo app, app name, eu vou colocar aqui N8N YouTube, certo? Descrição, vou colocar aqui teste, enfim, tá? Aqui não precisa colocar é website aqui na nos redireirs vocês vão colocar isso aqui, ó. Você vem aqui na na Spotify, né, pr você criar sua credencial e aí vocês vão copiar essa URL, tá? Copiar URL. Aí vocês colocam
+
+aqui, ó. E aí vem aqui em add. Show de bola, colocou. Aí vocês vão fazer o quê? Ah, vocês vão usar, é, vão controlar o quê? Web, API, Android, iOS, enfim.
+
+Marcou, clica aqui na nessa caixinha aqui, ó, que eu concordo com os termos, e clico em salvar. E ele vai criar agora a nossa nosso aplicativo, beleza? E aqui, ó, ele liberou pra gente um client ID, tá? Então, eu vou pegar esse aqui, ó, copiar esse client, venho aqui e jogo aqui contrl V. E o client secret eu venho aqui, ó, clico aqui, ele vai liberar essa chave, eu copio, venho aqui, conttrl V e show de bola. Aí eu
+
+vou clicar aqui em conectar minha conta. Aí vai abrir essa página aqui, certo? Ó, ele pede para você aceitar aqui. Eu clico aqui em aceito. Pronto, a conexão já foi feita com sucesso. Tá bom? Então
+
+é só voltar para cá. Eu até esqueci de de renomear aqui, né? Tá aqui para renomear. Spotify. Beleza, renomeado.
+
+Show de bola. Agora que eu fiz isso, pronto. Tecnicamente já é para est funcionando, tá? Eu vou até abrir aqui o meu Spotify aqui, tá? Tá tocando aqui a música do Eminy. Baixar um pouquinho
+
+aqui, ó. Então, tocando, né? Beleza. Aí, o que acontece? É, eu vou deixar tocando, tá? E aí eu vou perguntar aqui
+
+pro meu agente. Vou até juntar aqui. Beleza? Aí eu vou aqui agora perguntar para ele, né? Qual música tá tocando.
+
+Olha só. Venom. Ven. Pause a música. A música foi pausada. Olha que legal.
+
+Continue a música. Tá continuando agora a música. Fazer o seguinte, pule a música. Olha só, começou a tocar agora outra música na minha playlist. Quero ouvir agora um forrozinho. Nada melhor que um Lordestin
+
+ouvir um forrozinho, né? Ele começou a tocar Mario Fernandes. Olha só que bacana. Esse é o poder do MCP, tá? Eu não precisei dar muitas instruções pro agente. Isso aqui, cara,
+
+você pode usar com agendamento, com várias outras coisas, mas eu quis mostrar Spotify, que é uma coisa um pouco mais descontraída. Beleza? Então, espero que vocês tenham entendido bem o que eu queria passar para você. Esse template vai estar de graça na minha comunidade, tá? É só clicar aqui embaixo, acessar lá, meu grupo no WhatsApp e na descrição do grupo vai ter esse template liberado para vocês e outros, né, vários outros templates. Já
+
+tem mais de 10 templates gratuitos lá para vocês, tá bom? Se inscreve no canal se não é inscrito ainda, dá aquele hype maroto para me ajudar, fechou?

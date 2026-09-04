@@ -1,0 +1,114 @@
+---
+video_title: "How IPv4, IPv6, Subnets, and Gateways Work!"
+video_id: 4K1S-1OLQT8
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4K1S-1OLQT8
+video_date: 2025-06-16
+video_description: |
+  How does your device get its “identity” on the internet?
+  
+  In this hands-on episode, we break down the Internet Protocol (IP) step by step, including IPv4, IPv6, subnets, and gateways. Using a fully interactive lab with multiple operating systems, you’ll see exactly how addressing and routing work in practice, and why they’re the foundation of modern networking and cybersecurity.
+  
+  Chapters 
+  00:00  Intro
+  00:52  What is an IP address?
+  03:07  IPv4 structure & bits
+  06:12  IPv4  Lab demo
+  07:19  Subnet mask explained
+  09:07  Default Gateway 
+  10:47  IPv6 in the real world
+  11:55  IPv6  Lab demo
+  14:50  Cyber-security Perspective
+  
+  Become a Neurix member
+  https://www.youtube.com/@UCUOlY1VUTHMdkLph5ORHF2Q
+  
+  #networking #ipaddress #ccna
+---
+Hey, Future Network pros. Ever wondered how your device knows where to go on the internet? Or how hackers find your machine in a sea of billions? Today, we're diving deep into the internet protocol, abbreviated IP, the digital address system that makes the internet work. To make all this hands-on and practical, we'll be using Eve NG, as our lab environment. Here's the network
+
+we'll be working with throughout this series. We have a central router connected to two local area network abbreviated LAN. The first LAN includes Bob and John. The second LAN includes Oscar and Sally. Each computer represents a different operating system.
+
+From Windows to Kali Linux, giving us a real world mix for learning and testing. From everyday browsing to hacking and defending systems, IP is where it all starts. Let's begin with the basics.
+
+Think of the internet as a vast city. Each building in this city represents a local area network or LAN. In the lab network shown here, for example, we have two buildings. One has the 192.168.1
+
+postal code. The other has the 192.168.3 postal code. Inside each building or LAN, there are apartments. These represent your
+
+devices, laptops, phones, smart TVs, even smart fridges. Now, here's the key. All apartments inside the same building share the same postal code, but each apartment has a unique number to identify it. For example, Bob's apartment has the number 10. Together, the postal code and the apartment number form the full apartment address. And that's exactly what an IP
+
+address is. For example, Bob's IP address is 192.168.10. That tells us he's in the 192.168.1
+
+building, also called a subnet in networking. And his apartment or device number is 10. Now, how do messages move around? Inside the building, we have the switch. It works like the mail room of the building, sorting and delivering letters internally between apartments. It
+
+doesn't send anything outside, just make sure the mail reaches the correct room inside the same building. Then we have the router, which is like the local post office. It connects multiple buildings together or even entire neighborhoods and ensures mail gets from one building to another across the city or even to a different country. So when your device loads a YouTube video, for example, it's just like writing a letter. The two address is the IP of the YouTube server. The from
+
+address is your own IP. If your device doesn't have an IP address, that letter never gets sent and no video for you. To recap, an IP address is a unique identifier that allows devices to send and receive data on a network. Without IP addresses, computers wouldn't know where to send data. The entire internet would collapse.
+
+The IP address we just saw is what's called an IPv4, short for internet protocol version 4. And most networks today still rely on it. You may ask why four? Well, there was previous version of the internet protocol, namely versions 1, 2, and 3. But these versions were experimental and was never publicly deployed. IPv4 was the first version to
+
+gain broad adoption. It became the foundation of the modern internet. So, where does it come from? Let's rewind the clock back to the early days of the internet. It's the late 1970s. Disco is hot.
+
+Floppy discs are cutting edge. And the internet, it is just an experimental idea between a few universities and the military. But even back then, the pioneers of networking asked a simple but critical question. If we connect machines across the world, how will they know where to send the data? And so, IPv4, Internet Protocol version 4, was born. A brilliant but modest solution
+
+designed to connect just a few thousand computers. IPv4 uses 32 bits to create an address. Now, what is a bit? A bit, short for binary digit, is the smallest unit of data in computing. It can have only two possible values, zero or one. Think of
+
+it like a light switch. It's either off, zero, or on one. Everything in a computer, text, images, videos, music is ultimately made up of long strings of these bits and so are IP addresses. So an IPv4 address is simply a string of 32 bits. Take as example the Bob's IP address.
+
+Let's break it down. Each number between the dots is eight bits, also called an octet. So we have four octets. Each octet can range from 0 to 255. Why? Because each bit has two possible
+
+values 0 or 1. And with eight bits, we get 2 to the power of 8, which equals 256 combinations. So the possible values of an octet range from 0 to 255. You might be wondering how many IPv4 addresses exist. If one octet has 256 possible values and an IPv4 address has four octets, how many total possible combinations do we get? We get 256 to
+
+the power of 4, which equals approximately 4.3 billion possible IP addresses. Another way to compute this is to remember that IPv4 has 32 bits total and each bit can be zero or one. So the total number of possible IPv4 addresses is 2 ^ of 32 which equal approximately 4.3 billion possible IP addresses.
+
+Let's take a look at an actual IP configuration on a real machine in our EVNG lab. We'll use Bob's computer which is running Windows 7. To check the IP settings, we open a command prompt and type IP config. From the output, we see the IPv4 address 192.168.1.10.
+
+This is Bob's unique address on the network. Kind of like his apartment address in the 192.168.1 building or subnet or LAN. It means Bob is host number 10 on this subnet or LAN.
+
+Subnet stands for subnet network. It refers to a smaller logically defined section of a larger network like the two buildings or LAN we saw previously. They are used to divide a big network into smaller more manageable parts. From the output of our IP config command, we also see the terms subnet mask and default gateway. But what do they actually mean?
+
+A subnet mask is a 32-bit number that is used to split an IP address into two parts. The first part is the network part which tells us which subnet or LAN or building the device belongs to. The second part is the host part which identifies the specific device or apartment inside that subnet LAN or building. It is called a mask because just like a physical mask, a subnet mask hides part of something and reveals the rest. In fact, it reveals the network part of the IP address and hide the host part.
+
+As you can see here, the number of bits in the subnet mask lines up with the number of bits in the IP address. Wherever there's a one in the mask, it says keep this part. It belongs to the network. Wherever there's a zero, it says ignore this part. That's the host portion.
+
+So the last eight bits are used for host devices. That gives us 256 total combinations for host addresses in this subnet. Out of those 256 possible host addresses, two addresses are reserved. one for the network ID and one for the broadcast address. That leaves us with 254 usable IP addresses from 192.168.1.1
+
+to 192.168.1.254.
+
+So besides Bob's computer at 192.168.1.10, 10. This subnet can still support 253 more devices like printers, phones, laptops, or other users on the same subnet, LAN or building.
+
+The subnet mask section had a bit of maths in it. I know, hang in there. The default gateway is much easier to grasp. The default gateway is like the main exit door of the building. Or you could think of it as the front desk receptionist. It's the point of contact
+
+for anything outside your local network. Let's say Bob wants to access a website like youtube.com. That site isn't on the same local network. It's out there on the internet.
+
+So what does Bob's device do? It sends the request to the default gateway which is 192.168.1.1 in this case. That IP belongs to the
+
+router. The device that connects Bob's local area network or LAN to the rest of the world including the internet. So how does it works behind the scenes? Bob's laptop checks, is this destination IP on my local network? If it's not, the traffic is sent to the default gateway.
+
+The router then forwards that traffic to the internet, much like how mail is handed to the post office when it needs to leave the building. So, in our analogy, the switch is the internal mail room. The default gateway or router is the post office at the building's entrance, and the internet is the entire city beyond. Without a default gateway, Bob's device would have no idea how to reach anything outside the local subnet. It would be like trying to send international mail without knowing where the post office is.
+
+IPv6 is the next generation internet protocol designed to futureproof the internet. It uses 128 bit addresses compared to IPv4's 32 bits. That gives us a total of 2 to the^ of 128 possible addresses. That's 340 Unicilian addresses, enough to give every grain of sand on Earth its own unique IP address and still have plenty left over. In other words, we have so much IP addresses that will never run out again.
+
+But IPv6 is not yet widely adopted. IPv4 is still deeply embedded in the internet in routers, legacy systems, applications, and even databases. Migrating an entire global infrastructure takes time. That's why we currently live in a dual stack world where most devices and websites support both IPv4 and IPv6. Think of it like a city switching from gas powered to electric cars. It takes
+
+time, infrastructure, and backward compatibility.
+
+Let's take a look at how IPv6 works in a real lab environment. In our EVG setup, we'll use two machines, Oscar, which is running Kaye Linux, and Sally, which is running Windows 10. We will explore their IP addresses and test connectivity using both IPv4 and IPv6. Let's start with Oscar. On his Collie machine, we open a terminal and type IPA.
+
+This displays both the IPv4 and IPv6 addresses assigned to Oscar's network interface. Now let's move over to Sally who is running Windows 10. We first try to reach Oscar using his IPv4 address. In the command prompt, we type ping followed by Oscar ipv4 address.
+
+As you can see, we receive replies confirming that IPv4 communication is working. Now, let's do the same test, but using IPv6. IPv6 link local addresses are special. They're only valid within the same subnet and require a zone index or interface ID to work because multiple interfaces might have similar link local addresses. Let's find out which interface Sally is using to reach the network.
+
+To do so, we use the command netch interface ipv6 show interface.
+
+This command list all IPv6 interfaces. We look for the one connected to our Ethernet adapter. As we see from the output, the IPv6 interfaces connected to the Ethernet adapter has the ID five. Once we have the interface ID which is five, we can use it in our ping command. The ping command then takes the form ping minus 6 followed by the IPv6 address of Oscar terminated by percent 5.
+
+The percent 5 tells Windows which network interface to use when sending the packet, which is required for IPv6 link local addresses. As you can see, we receive replies confirming that IPv6 communication is working as well. With this test, we confirmed that Oscar's device has both IPv4 and IPv6 addresses. Sally can reach Oscar using either protocol, and we've seen how to handle IPv6 addresses in practice, including the important use of interface IDs. This is a good example of how dual stack networks operate in real life, supporting both IPv4 and IPv6 side by side.
+
+As an ethical hacker or a network defender, understanding IP addressing is absolutely crucial. Why? Because IP addresses are your targets or your entry points into a system. For example, using the command end mapap followed by the Bob's IP address on Oscar, we can assess what services are running and what ports are open on Bob machine. Here's what we discovered. Ports like
+
+135, 139, 445, and 3,389 are open. These correspond to services such as MSRPC for remote procedure calls, Net BioSSN for file and printer sharing, Microsoft DS for the SMB protocol, and MSWBT server for remote desktop. These services are commonly found on Windows systems, and they can be potential attack vectors if not properly secured. Now, from a defensive standpoint, tools like firewalls, intrusion detection systems, and intrusion prevention systems are used to monitor and block suspicious activity at the IP level. For example, a firewall might block all incoming connections to port 445 from external sources.
+
+If you found this video helpful, hit that like button, subscribe, and comment your questions below. See you in the next video. Bye-bye.

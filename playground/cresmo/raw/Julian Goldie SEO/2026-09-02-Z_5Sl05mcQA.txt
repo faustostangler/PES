@@ -1,0 +1,75 @@
+---
+video_title: "NEW GLM 5.3 Flash Update is WILD! 🤯"
+video_id: Z_5Sl05mcQA
+channel_name: "Julian Goldie SEO"
+channel_id: UCGpsgNbzdF7BECCVbB1COHw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=Z_5Sl05mcQA
+video_date: 2026-09-02
+video_description: |
+  Want to make money and save time with AI? Join here: https://www.skool.com/ai-profit-lab-7462/about
+  
+  Video notes + links to the tools 👉 https://www.skool.com/ai-profit-lab-7462/about
+  
+  Get a FREE AI Course + Community + 1,000 AI Agents 👉 https://www.skool.com/ai-seo-with-julian-goldie-1553/about
+  
+  Get a FREE AI SEO Strategy Session: https://go.juliangoldie.com/strategy-session?utm=julian
+  
+  GLM 5.3 Flash: Run a 320B Model Locally on Apple Silicon!
+  
+  GLM 5.3 Flash brings a massive 320B parameter model to local hardware using innovative Mixture of Experts and Orca SAQ compression. This guide breaks down the performance benchmarks, technical architecture, and exact commands to run this 1-million token context model on your Mac.
+  
+  00:00 - Intro to GLM 5.3 Flash
+  00:44 - Mixture of Experts Architecture
+  01:47 - How Orca SAQ Compression Works
+  02:42 - 4-Bit Performance Benchmarks
+  05:01 - How to Install & Run Locally
+  05:39 - 1M Token Practical Use Cases
+---
+GLM 5.3 flash just dropped and it's wild. A 320 billion parameter AI model can now run locally on Apple silicon, not in a data center, not on some rented cloud server, on your own machine. And before you say, "Yeah, but it's probably terrible quality." Orca Router measured 92.3%
+
+top one token agreement at the four-bit build. That means the compressed local version is performing remarkably close to the full fat original. Here's what actually happened. Z.ai built GLM 5.3
+
+flash. It's a 320 billion parameter model, but here's the part that matters. Only 18 billion of those parameters are active at any one time. The rest are sitting in reserve. So, you've got this enormous model, but it's not all firing at once. The router picks the best 18
+
+billion for each token every time. That architecture is called mixture of experts. Think of it like a team of 300 specialists. When you ask a question, only the right specialist get pulled in. You're not paying for all 300 at once, just the ones you need. That's why this
+
+can run locally at all. And then Orca Router came in and compressed it further. They took the 328 gigabytes full precision version and built a 200 gigabytes four-bit version. And they did it in a way that keeps quality surprisingly intact. The context window is 1 million tokens. It handles text,
+
+images, and video natively. This is a fully multimodal model that fits on your own hardware. And there's a reasoning mode built in. You can set it to low, high, or max. Max is the default. This
+
+is not some stripped-down toy. GLM 5.3 flash is a genuine frontier class model that Orca Router has packaged for local inference. Now, let me If we haven't met already, I'm the digital avatar of Julian Goldie, CEO of SEO agency Goldie Agency. Whilst he's helping clients get more leads and customers, I'm here to help you get the latest AI updates. So,
+
+now let me show you how the compression actually works, because this is where it gets interesting. Orca Router used a technique called Orca SAQ, sensitivity aware quantization. The basic idea is this, not every part of the model is equally sensitive to compression. So, instead of crushing everything down to 4 bits and hoping for the best, Orca SAQ spends more bits where quality matters most. The regular expert layers get 4 bit, the more sensitive down projection layers get 5 bit, the shared expert gets 6 bit, the attention mechanism gets 8 bit, and some components, the vision tower, the router, the embeddings, stay in BF16, no compression at all. So, when
+
+someone says it's a 4-bit model, that's a simplification. It's a 4-bit base mixed precision build. Orca SAQ is choosing where to spend precision, not just applying a blanket compression. That's why the quality holds up. Here's the table that tells the whole story.
+
+Full FP8, 328 GB, 100% reference. 6 bit, 289 GB, 94.7% top one agreement. 4 bit, 200 GB, 92.3% 3 bit, 162 GB, 86.2% agreement. 2 bit,
+
+143 GB, 73.6% agreement. The 4-bit version is the sweet spot. You lose about 7.7% in token agreement compared to the full version, and you go from 328 GB down to 200 GB. OrcaRouter calls 6
+
+bit effectively lossless, though they note the tiny quality improvement at 6 bit is probably just evaluation noise from a small test corpus. These numbers come from OrcaRouter's own evaluation, not an independent benchmark, worth noting. But, the methodology is documented, and the differences are consistent enough to be meaningful. Now, if you're using AI automation tools like GLM 5.3 flash to save time in your business, get more done, and grow faster, the AI Profit Boardroom is where to go next. Inside, we've got four
+
+weekly AI coaching calls where we break down exactly how to use tools like GLM 5.3 flash in your business, how to run them, how to prompt them, how to build workflows that actually save you hours every week. We've got step-by-step daily tutorials, 30-day road maps built around the latest AI tools, a full prompt library, and 3,600 business owners who are all using AI automation right now. There's a member map, so you can find people near you, and someone's always online, so you get support whenever you need it. Link in the description, or go to aiprofitboardroom.com.
+
+And if you want more customers coming to you through Google AI search engines without having to chase them down, go book a free SEO strategy session with my team. We'll look at your specific business, your website, where you're ranking right now, and we'll put together a completely custom game plan to get you more traffic, more leads, and more visibility on Google. This isn't a generic call. It's a proper one-to-one session built around your business specifically. SEO is changing fast right now because of AI search, and the businesses that get ahead of that curve in the next few months are going to have a serious advantage. So, if you want to
+
+be one of them, link is in the comments and the description. Go book your free strategy session now. It takes 2 minutes to book, and it could change everything for your business. Okay, back to it. Now, here's how you actually run it. The
+
+build is packaged for MLX, Apple's own machine learning framework optimized for Apple silicon. To use it, you install MLX VLM, not MLX LM. That distinction matters because GLM 5.3 flash is a vision language model. The regular MLX LM won't handle it correctly. The
+
+install is straightforward. pip install -u mlx-vlm = 0.6.17, and then run the generate command pointing at the Orca router hugging face repo. The repo root defaults to the 4-bit version. Now, here's a practical
+
+example of how you'd actually use this if you're building something like the AI profit boardroom. Say you want to analyze a piece of community content, a forum post, a member question, a piece of feedback, and generate a useful tailored response. You'd prompt GLM locally, no API costs, no rate limits, full privacy. The million token context window means you could feed in an entire week of community conversations and ask the model to identify the most common questions, the most engaged topics, and the best opportunities to create new tutorials. One prompt, full context, local. That's the practical value of a
+
+million token window running locally. It's not just about privacy, it's about scale of context that cloud APIs would get expensive at very quickly. GLM 5.3 flash running locally, multimodal million token context, 18 billion active parameters out of 320 billion total e. That's where we are right now. And
+
+Alchemist is already building the GGUF versions, the NVFP4 versions, spreading this across every major local inference stack. This is not a one-off experiment. This is a pattern. Okay, last thing. If you're serious about using AI tools like GLM 5.3 flash to automate your business
+
+and get more done, the AI Profit Boardroom is built for exactly that. We've already built out a playbook for running local AI models in your business workflows, how to set them up, how to prompt them effectively for real tasks, and how to build automations around them that save you serious time every week. We've got four coaching calls every week where we go deep on tools like this live with Q&A, so you can ask about your specific setup. Step-by-step daily tutorials showing you how to use the latest AI tools in practical ways, a 30-day roadmap, a prompt library, and 3,600 members. A lot of them already running local AI setups for content, lead generation, and client work. There's
+
+always someone online. Link in the description or go to AIProfitBoardroom.com. And if you want more customers coming to you through Google and AI search engines without having to chase them down, go book a free SEO strategy session with my team. We'll look at your specific business, your website, where you're ranking right now, and we'll put together a completely custom game plan to get you more traffic, more leads, and more visibility on Google. This isn't a
+
+generic call. It's a proper one-to-one session built around your business specifically. SEO is changing fast right now because of AI search, and the businesses that get ahead of that curve in the next few months are going to have a serious advantage. So, if you want to be one of them, link is in the comments in the description. Go book your free strategy session now. It takes 2 minutes
+
+to book, and it could change everything for your business.

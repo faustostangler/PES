@@ -1,0 +1,71 @@
+---
+video_title: "How Hackers Exploit FTP Servers"
+video_id: TElmfsHL-lM
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TElmfsHL-lM
+video_date: 2025-07-11
+video_description: |
+  FTP is still exposed on thousands of servers and many are wide open to attackers.
+  
+  This video is for educational and awareness purposes only.
+  
+  ▬▬ You'll learn how to: ▬▬
+  - Scan a target with Nmap to detect open FTP ports
+  - Connect to an FTP server using the FTP client
+  - Exploit anonymous login on misconfigured servers
+  - Download files and capture the flag
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  0:00 – What is FTP and Why is it insecure
+  1:32 – Scanning for FTP (Nmap)
+  3:20 – Connecting via anonymous login
+  5:53 – Listing files and spotting the flag
+  6:38 – Downloading the flag.txt 
+  7:24 – Reading the contents (CTF-style)
+  
+  #hacking  #ftp #penetrationtesting
+  
+  Become a Neurix member
+  https://www.youtube.com/@UCUOlY1VUTHMdkLph5ORHF2Q
+---
+How are files transferred between devices on a network? There are many ways to move files between systems, but one of the oldest and most widely used methods is FTP, short for file transfer protocol. FTP allows users to upload, download, and manage files on remote servers. It's like a digital warehouse, letting people store and retrieve data from anywhere in the world. But there's a catch. Traditional FTP has no
+
+encryption, making it a prime target for hackers. Even worse, some FTP servers allow anonymous access, meaning anyone can log in and browse or even download files without needing a password. And that is exactly what we will be exploiting in today's session. Nowadays, FTP has largely been replaced by SFTTP, short for secure FTP, and FTPS, short for FTP secure, for secure files transfers. But FTP is still found around, for example, in legacy systems that have not been updated in public file sharing repositories and mostly in IoT devices like printers and cameras.
+
+If you ever come across an open FTP port, it could be a major security risk. Today, we will explore how attackers exploit misconfigured FTP servers to gain unauthorized access and retrieve sensitive files. This video is for educational purposes only. Never hack without permission. Now, let's dive in.
+
+The first step in any penetration test is enumeration. This phase involves gathering as much information as possible about our target. In this case, a Linux server running a misconfigured FTP service, making it vulnerable to unauthorized access. To simulate this exercise, we use the hack the box machine named F AWN. So, if you want to practice this yourself, be sure to check it out. The IP address of our target is
+
+10.129.116.163. As you can see here, one of the most commonly used tools for enumeration is N mapap, which stands for network mapper.
+
+This powerful network scanning tool helps us identify open ports, running services, and potential vulnerabilities, which are crucial information for the next steps of our attack. Let's fire it up and see what we find. To do this, open a terminal and enter pseudo NAPAP minus SV followed by the IP address of the target. The SV flag tells NAPAP to perform version detection, allowing us to identify the specific versions of services running on open ports. This helps us determine potential vulnerabilities associated with outdated or misconfigured services. And voila,
+
+there is the end map result. We can see that port 21 is open running VSFTtpd 3.0.3. VSFTTPD, short for very secure FTP demon, is a widely used FTP server for Linux. praised for its speed and strong
+
+security features. However, when misconfigured or left unprotected, it can still be vulnerable to unauthorized access and exploitation. And that's exactly what we will do. We will attempt to connect to the server, explore its contents, and see if we can retrieve any sensitive files. Let's get started.
+
+Now that we have confirmed that an FTP service is available, let's try connecting to it. To do that, we first need to install the FTP client on our system. On Debian based distributions like Ubuntu, we can do this by running pseudoapp install FTP minus Y. The minus Y flag automatically answers yes to any prompts during the installation. This installation ensures we have the necessary tools to interact with the FTP server. Since I already have the FTP
+
+client installed on my machine, as you can see, the installation did nothing. Now that the client is available, we're ready to establish a connection and explore what we can access. Let's first take a look at what the FTP client is capable of. To do this, we run the following command. FTP minus question mark.
+
+This command displays the FTP usage guide outlining the various options and parameters available when launching the FTP client from the command line. The first section shows the general syntax for using FTP, including options like N to disable auto login, O to set an output file, P to specify a port, or Q to define a quit time. The next section lists different ways to establish an FTP connection. For example, basic FTP connection with user at host followed by a port if available, accessing local files with file slpath or URL-based authentication with HTTP or HTTPS. To connect our FTP client to the target FTP server, we simply use the command FTP followed by the IP address of the target.
+
+This command initiates a connection between our machine and the FTP server we want to attack, allowing us to interact with its files and directories. As we can see, the server prompts us for authentication, requesting a username, likely followed by a password. Let's attempt an anonymous login using commonly accepted credentials like anonymous for the username and something like 12 tree or any random input as the password. If anonymous access is enabled, the server will grant us entry. No real credentials required. Let's give
+
+it a try. So as username, we give anonymous. And as password, we enter one, two, three. And voila, we are in. No authentication required. FTP even
+
+informs us that we connected to a remote system of type Linux. Now that we're connected to the FTP server, it's time to explore and exploit its contents. Let's go. First, we can use the help command to list all available FTP commands that we can execute. This display a list of supported commands, including those for navigating directories, downloading files, uploading files, and managing permissions. Let's use the ls command to
+
+list the files available in our current directory. We see a file named flag.txt. That looks interesting. Could it contain sensitive information? Let's find out.
+
+To inspect the contents of a file, we first need to download it to our local machine. This is because FTP does not support inline file viewing. Commands like cat won't work remotely. FTP is designed solely for file transfers, not for directly reading or executing files on the server. To download the file, we use the get command followed by the file name. This retrieves the file from the
+
+server and saves it locally, allowing us to inspect its contents. Let's grab the file and see what's inside. So we run get followed by the file name and there it is. The transfer between the FTP server and our local machine is successfully completed. Now we can inspect its contents.
+
+We first exit the FTP server using the buy command which takes us back to our local terminal. From there, we use the ls command to list the files and directories in our current location and verify that our downloaded file is present. And there it is. Now, let's check its contents using the cat command. And voila, we have captured the flag.
+
+This could be sensitive data, credentials, or even a key to further exploitation. This is why securing FTP servers is crucial. Hackers constantly scan for misconfigured servers and a single mistake can expose sensitive data. For example, imagine a company uses an FTP server to transfer payroll reports between departments. If the server allows anonymous access or lacks proper authentication, an attacker could easily download files containing employee salaries, banking details, or social security numbers, leading to identity theft and financial fraud. This is why
+
+organizations should always secure FTP services, enforce authentication, and use SFTP or FTPS instead of plain FTP. That's it for today's hacking tutorial. If you enjoyed this, smash the like button, subscribe for more ethical hacking content, and let me know in the comments what you want to see next. Happy hacking. [Music]

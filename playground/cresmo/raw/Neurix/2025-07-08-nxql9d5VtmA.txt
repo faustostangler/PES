@@ -1,0 +1,96 @@
+---
+video_title: "How Hackers Exploit SMB Shares"
+video_id: nxql9d5VtmA
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nxql9d5VtmA
+video_date: 2025-07-08
+video_description: |
+  Misconfigured SMB shares are a hacker's dream. In this video, we walk through the Hack The Box "Dancing" machine to show how anonymous SMB access can expose sensitive files, no credentials required.
+  
+  This video is for educational and awareness purposes only!
+  
+  ▬▬ You'll learn how to ▬▬
+  - Scan a target with Nmap to identify open SMB ports
+  - Use smbclient to list and connect to SMB shares
+  - Exploit anonymous login on misconfigured shares
+  - Navigate, download files, and capture the flag
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker Machine
+  - Hack The Box: Dancing Machine (Victim)
+  - Nmap Port Scanner 
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  0:00    Intro: Why SMB Can Be Dangerous
+  0:15    What is SMB and How It Works
+  1:23    Nmap Scan & Open Ports
+  3:02    Listing SMB Shares (Anonymous Access)
+  9:07    Exploring SMB Shares Without Credentials
+  8:10    Gaining Access to WorkShares Folder
+  11:19  Finding the Flag & Wrapping Up
+  
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #cybersecurity #penetrationtesting #smb
+---
+Ever wondered how hackers exploit SMB file shares? Today we're diving deep into SMB enumeration and exploitation using real world techniques. But remember this is for educational purposes only. How do devices within the same network share files and resources? When computers, printers, and NS, short for networkattached storage devices, need to exchange data in a local network, they rely on file sharing protocols. One of
+
+the most widely used file sharing protocols in Windows networks is SMB, short for server message block. In other words, SMB allows users and devices to access shared folders or transfer files. A shared folder or drive accessible over SMB is called an SMB share. a convenient yet often vulnerable feature. In this video, we will see how a misconfigured SMB shares can expose sensitive data or even give an attacker complete access to a system. Let's dive in. To simulate
+
+this exercise, we use the hack the box machine named dancing. So, if you want to practice this yourself, be sure to check it out. The IP address of our target, which is a misconfigured SMB server, is 10.129.117.86,
+
+86 as seen here. Let's attack this machine. [Music] One of the most commonly used tools for enumeration is N mapap which stands for network mapper. This powerful network scanning tool helps us identify open ports, running services, and potential vulnerabilities which are crucial information for the next steps of our attack. Let's fire it up and see what we find.
+
+To do this, open a terminal and enter pseudo N MAPAP minus SV followed by the IP address of the target. The SV flag tells N MAPAP to perform version detection, allowing us to identify the specific versions of services running on open ports. This helps us determine potential vulnerabilities associated with outdated or misconfigured services. And there is the result of our end map scan. It reveals that the target machine is running Windows and has four open ports. Port 135 running Microsoft
+
+Windows remote procedure call. Port 139 running net bios session service. Port 445 running Microsoft directory services likely SMB. Port 5,985 running HTTP API used for Windows remote management. The presence of port 135,39 and 445 strongly suggests that SMB is enabled which can be vulnerable to various exploits. Meanwhile, port 5985
+
+is used for Windows remote management which if misconfigured could allow remote command execution with valid credentials. We will focus in this video on SMB exploitation. Let's dive in. To interact with SMB from a Linux system, we need a tool that understands the SMB protocol. That's where SMB client comes in. SMB client is a command
+
+line tool allowing to list, download, and upload files to SMB shares just like Windows File Explorer, but from the terminal. To install SMB client, simply run pseudoapp install SMB client. Since I already have the latest version installed, the command did nothing in my case. But if you don't have it yet, this will install it in seconds. Now that SMB client is installed, let's explore its available options and functionalities. We can do this by
+
+running SMB client minus help. This command displays a list of available options and arguments for SMB client. It helps us understand how we can interact with SMB shares. Some of the most useful options include L to list available SMB shares on a remote machine, U to specify a username for authentication, or N to skip password prompt for anonymous login. Let's use the option L to list available SMB shares on our target system.
+
+As we saw in the first part of this video, you can think of an SMB share as a folder that can be accessed over the internet. To list the SMB shares available on our target machine using the SMB client, we run SMB client minus L followed by the IP address of the target. Since we didn't specify a username using the minus u option, SMB client will automatically use the local machine's username, which in my case is Kaye. This happens because SMB authentication always requires a username. If you don't explicitly provide one, SMB client defaults to using your local username to prevent an authentication error.
+
+After running the previous command, we are prompted for a password. This password corresponds to the username we specified earlier. Hypothetically, if we were a legitimate user trying to access our own remote resources, we would enter our known credentials and log in normally. But in this case, we don't have valid credentials. So, we have two options. attempt anonymous access or try
+
+guessing common username password combinations. For now, we'll leave the password blank and see if the server allows anonymous access, a common misconfiguration that can expose sensitive files. If anonymous login is enabled, we'll be able to list the available shares. If not, the attacker usually need to use brute force techniques or stolen credentials to gain access. Let's try anonymous login. That
+
+means not entering any password and see what happens. And voila, anonymous login worked, allowing us to list the available SMB shares on the target machine. As we can see, there are four shares available. Admin, C, a default share, typically a full drive share, IPC for interprocess communication, a share often used for remote management, and work shares, a userdefined shared folder. These shares could contain sensitive files, system configurations, or even credentials.
+
+Now, let's try connecting to one of these shares and see what we can access. Now, we will try connecting to each of the discovered shares except for IPC. This one is not particularly useful in our case as it's not a typical file directory and does not contain any files we can browse or extract at this stage of our learning. Just like before, we will use a simple tactic, attempting to log in without valid credentials to test whether any of the shares have improperly configured permissions. We'll simply leave the password field blank and see if any of the shares let us in.
+
+All right, let's try accessing the first share, admin. This is a hidden administrative share that's typically used for remote system management by administrators. To access a share, we use the SMB client command followed by double backslashes, the target IP, another backslash, and finally the share name. Once again, we're not providing any credentials, just hitting enter when prompted for a password to test whether the share allows unauthorized access. As expected, access is denied. Since
+
+this is an adminonly share, it's usually well protected against anonymous access. Let's move on to the next share and see if our luck changes. The next share is the C share. This is another hidden administrative share which gives access to the root of the C drive. Like admin, it's typically restricted to administrators only. Let's try to access
+
+it. As stated previously, to access a share, we use the SMB client command followed by double backslashes, the target IP, another backslash, and finally the share name. Again, we're leaving the password field blank, checking to see if the share is misconfigured or accessible without credentials. And once again, we get an access denied status. If we were performing penetration testing for a client, this would actually be good news. It means the Cshare is properly
+
+secured and not accessible without valid administrator credentials. Let's move on to the final one, work shares. This one looks more interesting as it's a custom share possibly created by a user. those tend to be more prone to misconfigurations. Again, to access a share, we use the SMB client command followed by double backslashes, the target IP, another backslash, and finally the share name.
+
+Once again, we let the password blank. And there it is. We're in the workshares share allowed access without any valid credentials. We left the password blank and it didn't prompt any errors. Instead, it dropped us straight into the SMB shell where we can interact with the shared directory using built-in commands. This is exactly the kind of
+
+misconfiguration we look for during a penetration test. It shows that no authentication was required to access a potentially sensitive shared folder. Inside the SMB shell, we can use the help command to see a list of available actions from the output. You'll notice that many of the commands are quite familiar, especially if you've used a Linux terminal before. Most of the basic Linux file and directory commands are supported here. To navigate and interact
+
+with the share, we'll mainly use ls to list files and directories, cd to change directory, get to download a file from the share, and exit to leave the SMB shell. Let's start by listing the contents of the workshares directory using ls. As you can see, this workshare contains two entries, Amy and James. The letter D in the listing indicates that both entries are directories. SMB accesses files in blocks and in this case, each block is 4 kilob in size.
+
+Additionally, the last line reveals that the total size of the file system is approximately 20.9 GB with about 7.2 2 GB still available. Now let's explore the content of these folders. We use the cd command to change to Amy folder.
+
+Inside Amy's folder, we find a file named worknotes.txt. Let's go ahead and download it using the get command. And just like that, we've pulled a file from a user's share without any authentication. This is a clear example of misconfigured access controls where sensitive or internal files could be leaked to anyone on the network.
+
+As we can see, the worknotes file has been successfully downloaded to our home directory right alongside our standard folders like documents, downloads, and desktop. By default, when you use SMB client to download a file using the get command, it saves the file to whatever directory you were in when you launched the tool. In our case, we launched SM client while inside the home directory. So that's where the file ended up. If you want to save files somewhere else, you can either navigate to that directory before launching SMB client or use absolute paths when downloading files.
+
+Now let's check out James folder to see if there's anything interesting there. With CD, we change to James folder. And with ls, we list its content. Inside the James folder, we find a file named flag, which immediately catches our attention. Let's grab it.
+
+As we can see, the flag file has also been successfully downloaded to our home directory, just like worknotes.txt. Let's go ahead and exit the SMB client by typing exit. Now, back in our terminal, let's list the contents of our home folder. Perfect. We can see both files,
+
+worknotes and flag. Let's start by checking the contents of worknotes using the cat command to see what kind of information it holds. Looks like it contains internal instructions, possibly part of a setup or operations checklist. This kind of file could provide valuable insight to an attacker or help guide further exploitation. Finally, let's look at the flag file, most likely the target of our exercise.
+
+It contains a flag string which is typically used in capture the flag challenges or penetration testing labs to indicate successful exploitation. And with that, we've successfully accessed a misconfigured SMB share, explored its contents, and extracted valuable files, all without providing a single credential. This highlights just how important it is to properly secure shared folders on a network. In the wrong hands, access like this could lead to serious data breaches. And that's it for today's. We covered
+
+how to enumerate SMB shares, attempt anonymous access, and extract sensitive files from a misconfigured system, all using simple tools like NAPAP and SMB client. Remember, this kind of access may seem easy in a lab, but in the real world, it can lead to serious breaches if systems aren't properly secured. If you found this video helpful, make sure to like, subscribe, and drop a comment below if you want to see more ethical hacking content. Until next time, stay curious, stay ethical, and hack the right way. Bye-bye.

@@ -1,0 +1,74 @@
+---
+video_title: "How Hackers Exploit Telnet Servers"
+video_id: V1BCCYRNx74
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=V1BCCYRNx74
+video_date: 2025-07-06
+video_description: |
+  Telnet is one of the oldest remote access protocols, and one of the most dangerous when left exposed. 
+  In this video, we walk through the Hack The Box "Meow" machine to show how weak credentials on a Telnet service can give attackers full root access.
+  
+  This video is for educational and awareness purposes only.
+  
+  ▬▬ What You’ll Learn ▬▬
+  - How Telnet works and why it’s still dangerous
+  - How hackers find open Telnet ports
+  - Brute-force login attacks using weak/default credentials
+  - Real-world example using Hack The Box
+  - How to protect your systems from Telnet-based exploits
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux (Attacker)
+  - HTB Machine: MEON (Victim)
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00 – Intro: Why Telnet Is Still Dangerous
+  00:16 – What Is Telnet? Explained Simply
+  01:26 – Step 1: Enumeration with Nmap
+  03:01 – Step 2: Connecting via Telnet
+  03:55 – Step 3: Brute-Forcing Login
+  05:13 – Step 4: Exploring the System (CTF Flag)
+  05:51 – How to Protect Against Telnet Exploits
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #hacking #penetrationtesting #telnet
+---
+Ever wondered how hackers break into outdated systems? In this video, we're going to exploit a Telnet service to gain access to a remote machine. But before we begin, let's quickly explain what Telnet is and why it's still around. TNET, short for telecommunication network, is one of the oldest remote access protocols. It allows users to connect to a remote computer or server and execute commands as if they were physically present. In other words, TNET
+
+is a network protocol for textbased communication between two machines over a network. However, it lacks encryption, making it highly vulnerable to attacks. This means a TNET client, such as an attacker, can connect to a server running a TNET service, potentially gaining unauthorized access if weak credentials or misconfigurations exist. Today, Telnet is largely obsolete and replaced by SSH, but it still exists in legacy systems, embedded devices, and closed networks where security isn't a concern. For example, some older networking equipment like switches and routers still use TNET because they were built before SSH became widespread.
+
+Also, some IBM mainframes and older Unix based systems still support Tnet for terminal access. If you see an open TNET port, it's a serious vulnerability. Remember this video is for educational purposes only. Never hack without permission. Now let's dive in.
+
+The first step in any penetration test is enumeration. This phase involves gathering as much information as possible about our target. In this case, a Linux-based server vulnerable to a TNET exploitation attack. To simulate this exercise, we use the hack the box machine named Meon. So, if you want to practice this yourself, be sure to check it out. The IP address of our target is
+
+1010029671 176. As can be seen here, one of the most commonly used tools for enumeration is NAP, which stands for network mapper. This powerful network scanning tool helps us identify open ports, running services, and potential vulnerabilities, which are crucial information for the next steps of our attack. Let's fire it up and see what we find. To do this, open a terminal and enter pseudo NMAP minus SV followed by the IP address of the target.
+
+The SV flag tells N MAPAP to perform version detection, allowing us to identify the specific versions of services running on open ports. This helps us determine potential vulnerabilities associated with outdated or misconfigured services. And voila, there is the end map result. Look at that. Port 23 running the Tnet service is open.
+
+This is a major security risk as Tnet transmits data unencrypted, making it an easy target for attackers who can intercept things like usernames and passwords in plain text. Let's see if we can exploit this open Tnet port. Now that we've confirmed Tnet is open, let's try connecting to the server and see what level of access we can gain. To do this, we simply enter the command Tnet followed by the IP address of the target. This initiates a connection to the TNET service running on the target server. If
+
+authentication is weak or misconfigured, we may be able to gain access and explore the system further. And boom, we're in. But we still need valid credentials to proceed. Typically, Tnet servers require a username and password. In this case, our target system prompts us with a hack the box banner and requests authentication before granting access to remote management.
+
+As you can see, if we fail to provide valid credentials within 60 seconds, the connection is automatically terminated. This means we need to find a working username and password before we can have access to our target. As we saw, we cannot proceed without valid credentials. One technique hackers use to bypass authentication is called brute force. This involves systematically trying multiple username password combinations from a predefined word list until a valid match is found granting access to the system. There are
+
+several powerful tools designed for brute forcing TNET credentials including Hydra, Medusa, and Encrak. We will cover these in detail in future videos, but for now, let's try some common usernames without a password since weak Tnet configurations often allow access with no password set. So, let's try reconnecting. First, we try admin as username with no password. As you can see, the connection fails.
+
+These are not valid credentials. Let's try again with administrator as the username and no password again. The connection fail. Still no luck. Hm. What about the root as user?
+
+Let's see.
+
+And voila. Just like that, we are in as root. This is why using weak or default credentials is a bad idea. Now that we have remote access to the server, let's explore the directory we just landed in. Let's list the files using the ls command. Oh, look, there's
+
+a file named flag. This might contain something important. Let's check its contents using the cat command. Aha, this looks like an MD5 hash in capture the flag challenges. This would be our proof of exploit.
+
+Congratulations, you've successfully hacked the server via a Tnet brute force attack by exploiting weak credentials. Now, let's see how to protect against this type of attack. To prevent this type of attack on your system, follow these three best practices. One, disable Tnet and use SSH instead. Unlike Telnet, SSH, short for secure shell, encrypts all data, preventing attackers from capturing sensitive information. It also supports
+
+stronger authentication methods, such as keybased authentication, making unauthorized access much harder. Two, set strong passwords. Weak passwords make brute force attacks easier. Use long, complex passwords with a mix of uppercase, lowercase, numbers, and special characters. Better yet, implement multifactor authentication for an extra layer of security. Three, use
+
+firewall rules to restrict remote access. A firewall acts as a security barrier between your system and potential attackers by filtering incoming and outgoing network traffic. Configure firewall rules to allow only trusted IP addresses to access remote services like SSH, blocking unauthorized connections. That's all for today. If you found this video helpful, don't forget to like and subscribe for more quick cyber security tips. See you in the next video. Take
+
+care. Bye for now.

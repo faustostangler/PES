@@ -1,0 +1,82 @@
+---
+video_title: "MONGOBLEED é VULNERABILIDADE CRÍTICA para quem USA MONGODB com COMPACTAÇÃO"
+video_id: Mb-BCNGX4YI
+channel_name: "safesrc"
+channel_id: UCWFmlmegFcu6lvAmeBtV3cg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Mb-BCNGX4YI
+video_date: 2025-12-29T12:30:35+00:00
+video_description: |
+  Mais informações: https://safesrc.com
+  
+  Quer ajudar?
+  
+  Doações em Bitcoin: bc1qk67xsekuhfweu3c5pwqraj9vrgs8h4jhyyuxtd
+  
+  Referências:
+  
+  https://www.aikido.dev/blog/mongobleed-mongodb-zlib-vulnerability-cve-2025-14847
+  https://www.mongodb.com/
+  https://x.com/BdKozlovski/status/2005270779953385600
+  https://news.ycombinator.com/item?id=46394620
+  https://nvd.nist.gov/vuln/detail/CVE-2025-14847
+---
+Vamos falar sobre o Mongo Bed, uma vulnerabilidade que surgiu nos bancos de dados Mongodb, que é um dos principais bancos de dados usados para no SQL, né? Vamos entender o que que é essa essa vulnerabilidade, a gravidade dela e como você resolve esse tipo de coisa, né? E apontar também o que que gerou esse problema para início de conversa. É uma vulnerabilidade muito séria, tá? CVE 2025 14874 ou 847, desculpa. Eh, e a solução rápida
+
+é atualizar para uma dessas versões aqui, que são as versões atualizadas do Mongo DB, tá? Todos esses links aqui das abas que estão aqui em cima estão na descrição do vídeo, caso você queira ver, pegar mais detalhes. Eh, mas o interessante é que é um problema com tamanho de alocação de buffer. Vamos entender essa história aqui. Eu sou Ricardo Buquerque, esse é o Safe Source e essas notícias foram sugeridas por ninguém, ninguém sugeriu notícias, não.
+
+Eu que achei aqui na internet e trouxe para falar para vocês. Mas eu agradeço a todo mundo que sugere notícias lá no nosso site, no safesource.com. é safesrc.com.
+
+E obrigado a você que tá assistindo o nosso vídeo. Se você gosta do nosso conteúdo, por favor, deixa o seu like, se inscreva aqui no canal, né? Então essa vulnerabilidade, a CVE 2025 14847 tá sendo chamada de Mongo Bed, porque ela é muito similar ao Hurt Bed, que teve há algum tempo atrás aí e outras vulnerabilidades similares que justamente decorrem de alocação excessiva de espaço. Olha que coisa, né? A gente sempre fala sobre a questão do buffer overflow. Você aloca um buffer de
+
+um determinado tamanho e escreve mais coisas do que aquilo. Mas você tem também o contrário. Quando você aloca um buffer grande demais e não usa esse buffer, isso acaba gerando uma mensagem de erro que expõe as informações que estavam naquela área de memória e que podem ser informações sensíveis de alguma forma, né? Então é isso daí. O que que é o Mongo DB? Para quem não
+
+sabe, o Mongo DB é um dos principais bancos de dados de no SQL, eh, SQL ou sequel, como eles chamam lá nos Estados Unidos, né? É Struttered Query Language. É uma maneira de você ter banco de dados orientado de forma normalizada. você não tem a informação apresentada duas vezes. Quando aquela mesma informação está no no em algum outro lugar do banco de dados, você coloca uma chave estrangeira para relacionar aquela tabela, você não replica a informação. Isso é uma uma
+
+evolução dos primeiros bancos de dados que existiram, né, que eram bancos de dados que não eram relacionais, que era um banco de dados que simplesmente você tinha as informações duplicadas inúmeras vezes no banco de dados. O pessoal percebeu que isso gerava dois tipos de problemas. Primeiro gerava o problema de você ter eh excesso de espaço, porque você registra a mesma informação mais de uma vez. Mas pior do que isso, você tinha um problema de eh eh de consistência. Você alterava uma determinada informação em alguma parte do banco de dados, mas aquela mesma informação, ela tava replicada em outros lugares do banco de dados e aí você não tinha como alterar todas as lugares que ela tava replicado. Isso acabava gerando
+
+problemas, né? E daí surgiu esse conceito de banco de dados relacional, né? sequel, né, SQL, né? E enfim, foi uma revolução isso aí. A gente tá falando de década de 90, tá gente? Década de 80, década de 90. SQL é
+
+uma coisa velha para caramba. Só que o que que acontece? O pessoal começou a perceber que para aplicações muito muito grandes, o sequel ou SQL não consegue escalar muito bem. Por quê? Como ele tem uma série de travas, né? Quando você vai
+
+alterar as tabelas, você tem que travar aquelas tabelas que você tá alterando, porque é óbvio, como é tudo relacionado, você tem que travar tudo. Isso acaba tendo impacto quando você tem muitos acessos ao mesmo tempo, né? E aí, eh, o SQL acabou caindo em desuso no que eles estão chamando agora de no SQL, ou seja, uma um banco de dados que não tem rela relacion, ou seja, você voltou, você fez o ciclo completo, você saiu do banco de dados que as as informações eram replicadas e que não tinha uma consistência garantida e não sei que lá. Aí criou um banco de dados todo bonitinho, que é tudo consistente, tudo normalizado e coisa e tal. E agora você voltou pro mesmo ponto simplesmente pela questão da performance. Mas a verdade é
+
+que isso é uma tendência muito grande. Tem muitos projetos que você tem quando você tem projetos muito grandes com muita muito acesso de dados e coisa tal e o no SQL acaba sendo uma boa opção, né? E o o Mongo DB é um dos principais bancos de dados no SQL que você tem por aí. Funciona muito bem, é um ótimo produto, o pessoal usa para caramba e coisa tal. De certa forma, ele funciona mais ou menos como um SKL também faz busca, aquele negócio todo, mas ele tem algumas particularidades, né? E aí, o que que é
+
+essa vulnerabilidade, tá? O que eles estão dizendo aqui eh é que depende da versão do do Mongo DB. Essas aqui são as versões que já t a correção. Então, se você já tiver uma dessas versões ou posterior a elas, você já tá e já tá salvo, tá? Já tá e e liberado. Repara,
+
+por que que você tem versões diferentes? Porque às vezes você tem eh os sistemas em versões diferentes do Mongo DB. Você não pode atualizar o Mongo DB para uma versão muito mais nova porque é quebra o sistema, né? Altera alguma coisa no sistema. Então, eh, existem outras possibilidades. Se você não consegue
+
+fazer uma mudança do Mongo DB nesse momento, você pode tentar e deixar de usar a Zelib Compression, porque o problema acontece quando você tem a compressão, os comandos são mandados comprimidos com o zip na compressão Zelib. Existem outras formas de compressão que você consegue, que você não tem o problema. Eh, você pode também tentar eh bloquear o acesso direto ao Firews. Por quê? Porque olha só, esse ataque aqui é o tipo do ataque que não requer login senha, não, tá? Qualquer
+
+pessoa, se você tem um mongo DB aberto na internet, qualquer pessoa com com o Zelibe, com a compressão Zelibe, que é habilitada por defô, então a maior parte das instalações de Mongo DB vai ter essa compressão Zelibilitada, você tá vulnerável e tá muito vulnerável, tá? Vamos entender como é que funciona isso daqui. Aqui tem uma uma trada, né? Tá aqui, ó. Quando você manda um comando em bason, sim, bason. Você
+
+conhece Jason, né? Jason é JS O N, né? Bason é é o Jason binário. Então é basicamente a mesma coisa que o Jason, só que é binário. Ele é mandado em formato binário. O o Jason é uma string
+
+de texto, o bason é binário, né? E o Mongo DB usa tá? Eh, e aí o que que você faz? E eh quando você manda uma um comando compactado com o zip, e nessa nesse pacote que você manda, há um campo que diz qual é o tamanho daquele daquela coisa toda descompactado. Para que que isso existe? Existe para
+
+facilitar o trabalho do descompactador. Você já aloca toda a memória para aquilo ser descompactado depois e aí você faz a descompactação daquele comando. Então, qual que é o truque que eles usam aqui? Eles mandam um comando que é pequenininho e tá compactado. Só que eles dizem que esse comando ele vai ocupar um espaço enorme na na memória.
+
+Então ele fala aqui, ó, que vai alocar 1 MB para esse comando, sendo que o comando é só isso aqui, ó. A dois pontos. Minha cabeça tá na frente. Deixa eu tirar minha cabeça daqui. Tá aqui, ó.
+
+O comando é só aqui, ó. A dois pontos. É só isso. São dois caracteres, mas eles falam que vai ocupar 1 MB no total. 1 MB no total. Então, o que que o que que o
+
+decompactador Zelibe entende lá no no servidor? Ele aloca um espaço de 1 MB e faz e roda o descompactador. Só que o descompactador só vai ocupar esses dois espaços aqui e acabou. E não tem mais nada. E qual que é o problema disso? O
+
+problema disso é que é você e eh quando você aloca espaço, esse espaço não é limpo, né, na memória, né? Então, eh, eh, informações que eventualmente estavam nessa memória antes, elas podem ser vazadas através disso. E aí, de propósito, o comando é um comando inválido. E aí, olha só o que que acontece. O comando é inválido. Um, esse
+
+e eh e chaves aspas a dois pontos. São só quatro caracteres aqui, mas e o o comando e eh erroneamente diz que leva 1 MB. Então ele ele guarda toda essa área de 1 MB aqui e daí, ou seja, tem um monte de informação nesse meio tempo aqui. E aí quando ele dá o erro, porque seu comando é um comando inválido, você recebe, o cliente recebe a mensagem de erro aqui, ó, bason failed, eh, nome a sei lá o que, não sei que lá, password 1 2 3, query data, não sei que lá, não é válido. Por quê? Porque repara, todo o
+
+resto do lixo que tava nesse 1 MB aqui, né? retornar é retornado como se fosse parte do seu comando. O seu comando foi só o iniciozinho, ele retorna tudo isso daqui como se fosse parte do seu comando. E aí se tiver alguma informação crítica, como no caso aqui tinha a senha, né, e poderia ter outras informações críticas também, você recebe essas informações. Isso é o ataque. É um ataque muito
+
+sério. Se você for ver aqui na na na descrição, é 8.7 7, a CVSS, a classificação de criticidade dessa vulnerabilidade. Então, é e compromete informações sensíveis do sistema, várias coisas. O atacante pode fazer isso quantas vezes ele quiser, porque de novo, né? Eh, não precisa de
+
+autenticação. Você tá mandando um comando, o comando tá dando erro. Você tá pegando o erro do comando e já tá pegando informação no erro do comando. Você pode tentar quantas vezes você quiser, 1000 vezes, 10.000 1 vezes, uma hora tu vai baixar alguma informação relevante que tá lá na memória daquele computador, servidor. E esse é o
+
+problema desse tipo de ataque. É um ataque muito sério. Eh, e outros sistemas já tiveram esse ataque, né? O Breed Heart também já foi esse tipo de coisa. E agora é justamente com o Mongo DB. Como
+
+eu falei para vocês, a solução para isso é atualizar a versão do Mongo DB ou então desabilitar a compressão Zelibe, se for possível, ou trocar ela por outras compressões que não apresentam este problema, essa vulnerabilidade, lembra? A vulnerabilidade é que a descompressão aloca todo o espaço, mas não zera o espaço, não verifica se realmente usou todo espaço. E aí eventualmente a informação que estava nesse espaço da memória antes de você alocar, ela acaba sendo retornada na mensagem de erro para o chamador original, né? Então é um é um problema sério. Se você usa mongo DB, isso é um problema sério. Tome cuidado com isso
+
+daqui. Dá uma dá uma investigada. Se puder, atualize a versão. Senão, eh, dê uma olhada nessas outras medidas possíveis aqui de de tentar e eh resolver o Mongo Bed. Mongo Bed é o sangramento do Mongo. Seria uma tradução
+
+para o português disso daqui, né? Obrigado por assistir nosso vídeo até o final. Tem alguns links para você nos ajudar aí na tela e também na descrição desse vídeo.

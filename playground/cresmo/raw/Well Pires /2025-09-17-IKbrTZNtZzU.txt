@@ -1,0 +1,150 @@
+---
+video_title: "Crie Agentes de IA 10x mais inteligentes com Setorização & Metadados no N8N!"
+video_id: IKbrTZNtZzU
+channel_name: "Well Pires "
+channel_id: UCOu9pKHv94bFeRy5vzB-b1Q
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=IKbrTZNtZzU
+video_date: 2025-09-17T21:41:31+00:00
+video_description: |
+  🔥 Minha Comunidade de IA: https://www.aimakersclub.com.br/
+  📚 Meu Curso Gratuito de N8N: https://youtu.be/dw5OmezRLoU?si=5wANK0VtPepcr398
+  💼 Me Contrate para Automatizar sua Empresa: https://calendly.com/wellpires/discovery-call
+  
+  Nesse vídeo eu vou te apresentar um framework pra criação de Agentes de IA 10x mais inteligentes no N8N usando setorização de documentos no Pinecone Vector Store & Filtragem de Metadados!
+  
+  VPS da Hostinger usando o cupom WELLPIRES para obter + desconto (por tempo limitado): 🔗 https://www.hostg.xyz/SHHIz
+---
+E aí pessoal, tudo bem com vocês? Wel Pires aqui e nesse vídeo eu vou apresentar uma nova estratégia de hag que eu tô implementando pros meus clientes que deixam os meus agentes de a 100 vezes mais inteligente para fazer prospecção de vendas e seguir o script de atendimento. Essa é uma dor que muitos dos meus alunos da minha comunidade tm. Como fazer agentes de ar que sigue o script de atendimento? Well, os meus clientes me mandam muito documento. Como que eu faço pro agente
+
+de A seguir isso? O que eu tô utilizando agora é uma maneira de setorizar as informações, dividir os documentos em pequenos pacotes e utilizando uma boa vector store. Eu tô utilizando aqui a vector Store do Supas e eu dividi em dois documentos. Esse daqui é um agente de A que fala sobre pet shops. Então eu dividi aqui em documentos para falar sobre bem-estar, brincadeiras e adestramento do PET. E outro documento
+
+para falar sobre saúde, vacina, alimentação e higiene do PET. Eu vou fazer agora um teste aqui com vocês. Antes de passar pro desenvolvimento passo a passo desse agente de A. Vocês podem ficar aqui no vídeo que eu vou mostrar como criar esse framework de hag nó por nó, sem esconder nada para vocês. Eu vou fazer um primeiro teste aqui para vocês, para mostrar o nível de resposta desse agente de A. Então, deixa eu
+
+escolher uma das perguntas desse documento aqui. Eu não vou passar muito tempo para escolher. Vou pegar essa daqui direto. Quais alimentos são proibidos para cães? Ã, deixa eu mandar ela aqui dentro do N8N. Vamos ver a
+
+resposta do nosso agente de IA. Ele já tá consultando o documento certo, que é o documento de saúde. Eu setorizei em dois documentos, como eu tinha falado para vocês. Ele procurou no documento certo e ele falou para mim: "Alimentos proibidos para cães incluem chocolate, uva, uvas, passas, cebola, alho, cafeína, álcool, ossos cozidos, alimentos gordurosos e doces com chilitol. Esses alimentos podem causar intoxicações, problemas digestivos e até danos graves à saúde do seu pet. É
+
+importante sempre oferecer uma alimentação adequada e segura para o seu cão. Se precisar de mais informações ou orientas, estou à disposição para ajudar. Vocês podem ver que ele passou, ele ultrapassou os caracteres dessa pergunta aqui, mas ele citou exatamente os componentes aqui que são proibidos pros cães, chocolates, uva, cebola, alho, macadâmia, café e álcool. Tudo isso daqui tá inserido. Então esse daí é o nível de resposta. Ele passou aqui
+
+porque esse daqui é um agente de abre atendimento e prospecção de vendas para um pet shop que eu criei. Você pode limitar isso a ser somente um agente de perguntas e respostas bem direto aqui no prompt de IA. Mas fica ligado até o final do vídeo porque eu vou ensinar vocês a construir esse agente de IA junto com a construção da Vector Store no Pinecone que eu tô utilizando recentemente pros meus projetos de IA. Então fica ligado até o final do vídeo, ok pessoal? Então vamos começar a construção desse agente de AHAG passo a passo aqui dentro do N8N. Eu já criei um
+
+novo workflow bem zerado para fazer aqui nó por nó junto com vocês. O primeiro nó que eu vou utilizar é esse manual trigger para eu ativar a minha automação de documentos assim que eu quiser. Ou seja, quando eu clicar esse botão, eu já vou conseguir extrair o meu arquivo lá do Google Drive e inserir dentro da minha Vector Store do Pinecone. Eu vou mostrar aqui para vocês mais detalhadamente como faz isso. Primeira coisa de todas, você tem que ter uma pasta criada dentro do Google Drive.
+
+Vamos lá. Eu vou criar aqui o nó do Google Drive para fazer essa integração do Google Drive dentro do N8N. Eu vou direto pro node download file porque eu quero baixar diretamente o meu arquivo. Então eu só preciso pegar o arquivo e inserir aqui dentro da minha pasta. Eu vou pegar os dois arquivos que eu quero.
+
+Eu vou criar esse setor um. Ok. Os dois arquivos já foram enviados aqui dentro da minha pasta do Google Drive. Agora para eu pegar o ID que tá pedindo aqui dentro do N8N, você pode ver que aqui o meu Google Drive eu coloco essa solicitação aqui de ID. Eu tenho que pegar o ID do meu arquivo e colocar aqui dentro do N8N. Para eu pegar o ID desse
+
+arquivo, eu abro aqui com o Google Docs o meu documento. Primeiro de tudo, você tem que se certificar de que esse Google, esse documento do Google Docs, ele tá aberto. Então, ele tá aberto aqui para compartilhar. Para fazer isso, você só vem aqui na pasta, ã, compartilhar, compartilhar e você deixa aberto aqui a sua pasta. Eu vou diretamente pegar o ID, que fica entre essas duas barras. Vamos lá,
+
+diretamente pegar esse ID. Vou colocar aqui o ID, vou executar esse workflow. OK, já consegui trazer aquele documento para cá dentro do N8N, mas eu tenho que transcrever esse documento porque ele vem no formato de um arquivo. Vocês podem ver aqui que o arquivo tá para download. Eu não quero pegar o download do arquivo, eu quero pegar a transcrição do arquivo e enviar pra minha vector store do Pinecoin. Para isso eu vou usar
+
+esse textore. Vou colocar docum from file. >> E eu vou aqui stct from text file. Exatamente assim. Agora eu vou transcrever esse documento.
+
+OK, já tenho uma transcrição do documento e agora eu vou pro Pinecone Vector Store. Só um detalhe que eu acabei deixando despercebido aqui para vocês durante o tutorial. Quando vocês utilizarem o Node Google Drive, sempre deixa habilitada essa função aqui de Google File Conversion. Tem essa opção aqui de add option, você deixa essa daqui ligada. E quando tiver Google Docs, você escolhe a função text, porque daí você vai extrair o texto desse arquivo no formato txt. E é esse
+
+formato txt que a gente quer enviar pra nossa vector story do Supase. A gente quer jogar o texto bruto na nossa vector story do Supase. Então vamos lá. Agora, partindo pra parte final, vocês podem ver que o todo o texto tá inserido aqui, já prontinho pra gente arrastar pra nossa Vector Store. A gente tem algumas configurações para fazer aqui na Vector Store, mas a principal delas é a gente criar a nossa credencial. Então vou
+
+colocar aqui uma credencial. Vocês podem ver que eles só pedem a API key. Para isso, você tem que criar uma conta dentro da Pinecone. Vem aqui no site pinecone.io. É bem fácil de você criar a
+
+sua conta. vai te levar tipo 2 segundos e você pode fazer ela de graça. Eu já criei aqui a minha conta e já na tela inicial eu recebo a minha chave API, o que é bem prático pra gente. Eu vou copiar essa chave API, simplesmente vou colocar aqui, vou colocar meu nome só para ficar de registro. Wpires.
+
+Salvei minha chave do Pine cone. E lá dentro do Pinecone agora eu tenho que criar um index. Vamos aqui criar esse index. Eu vou colocar o nome ã petshop. Eu vou escolher a opção texting small. Vocês tm que escolher essa opção
+
+aqui e colocar 1536 de dimensão, que é a dimensão do banco de dados vetorial integrado com essas LLMs. É uma regra chata e um pouco técnica, mas para dar certo você tem que escolher isso. Fazendo essa integração com N8N. Cloud Provider você pode escolher qualquer um. região, você pode escolher qualquer um.
+
+Na verdade, você tá muito limitado nas opções. No plano gratuito, você só tem acesso à região de West Virgínia, dos Estados Unidos. Ah, eu vou criar esse index aqui, pode levar alguns segundos para criar ele, mas não demora muito tempo. Vamos só esperar isso daqui acontecer. OK, meu index foi criado. Eu sei disso
+
+porque tem essa bolinha verde aqui de habilitado. Eu já tô pronto para fazer a minha integração dentro do N8N. Então, vamos voltar aqui pro N8N. Vou abrir a minha seleção aqui de index. Ele já apareceu petshop com sucesso. Eu não vou
+
+colocar nenhuma opção aqui nesse menu de options, mas aqui embaixo em embeddings, eu vou colocar embeding do chat GPT, text embeding 3 small, a mesma que eu tô utilizando lá. E aqui em documents eu vou colocar default data loader. Options eu vou colocar metadata. E aqui é o grande diferencial do nosso agente deag. A gente vai utilizar metadata para fazer uma setorização das informações do nosso agente de IA. Todos os dois
+
+documentos quando eles são inseridos na nossa vector Store, é tudo texto bruto sendo jogado, tá tudo espalhado dentro do mesmo bolo. E toda vez que a gente faz uma requisição, toda vez que a gente faz uma pergunta pro nosso agente de, ele basicamente vai procurar em todo aquele baralho uma resposta similar. Só que se a gente limitar o baralho, a chance dele encontrar uma resposta similar é muito maior. Então a gente vai separar aqui em dois baralhos ao invés de um só. A gente vai pegar um baralho só pr as perguntas de alimentação e higiene e o outro baralho vai ser para brincadeiras e adestramento. Então eu
+
+vou simplesmente de maneira justa aqui dentro do N8N. Oo invés de chamar de baralho, eu vou chamar de documento aqui. E o nome desse documento vai ser saúde. Ou seja, eu tenho um documento para saúde e eu tenho outro documento para brincadeiras e adestramento, que eu vou chamar de brincadeiras lá no futuro. Mas primeiro eu quero subir todo o texto bruto com essa etiqueta. Então, cada
+
+baralho vai ter uma etiqueta meio que um adesivozinho falando, ó, esse adesivo aqui é de saúde, o outro adesivo é um adesivo de adestramento. E assim, toda vez que eu fizer uma pergunta pro meu agente de IA, eu não vou fazer uma pergunta direto sobre adestramento, porque não é assim que os humanos perguntam pros agentes de A. Eles soltam uma pergunta solta, mas o meu agente de A, ele vai entender o contexto daquela situação. Ele vai falar: "Hum, essa pergunta aqui ela tem muito a ver com saúde, então deixa eu puxar do baralho de saúde alguma coisa que seja similar." E é basicamente assim que funciona esses modelos de hag. Próximo passo, eu vou
+
+colocar aqui load specific data, que eu só quero enviar esse dado aqui, que é o dado de texto que a gente conseguiu extrair do arquivo. Vamos lá. Vamos subir isso daqui. Outra coisa que eu vou fazer é mudar o text splitting. Eu vou deixar de uma maneira mais customizada, mais personalizada. O que isso quer
+
+dizer exatamente? Eu vou pegar, ao invés de todo o texto, eu vou dividir esse texto em pequenos pacotes para ficar mais fácil da minha IA digerir e cortar. setorizar mais ainda as informações. Então vamos lá. Eu vou utilizar esse Recurcif Character text splitter e eu vou cortar em pacotes de 2000 por 200.
+
+Eu vou explicar para vocês como funciona isso daqui. O chun size é mais ou menos o tamanho de palavras que vai ter naquele pacote. Então, ah, tem um baralho lá, o baralho de cartas de saúde. E qual vai ser o tamanho de cada carta? Cada carta vai ter o tamanho de 2.000 palavras. E quando eu puxar de um
+
+baralho para outro, de querer dizer, de uma carta para outra, a carta dois vai pegar as últimas 200 palavras do da carta um. Então é mais ou menos assim essa divisão de chunk size e chunk overlap. Cada carta tem 2.000 palavras, só que é uma sucessão de palavras. Lembra que isso daqui é um livro cortado em páginas, vamos falar assim, sendo que de da passagem de uma página para outra, a gente vai pegar as últimas 200 palavras, só pra gente não se perder no contexto.
+
+Então, ok, a gente tá pronto para ir. Eu vou agora utilizar esse Pinecone Vector Store. Vou rodar ele. OK. O documento tá sendo ingerido lá no meu index do Pinecone Vector Store.
+
+Vamos ver aqui se já foi subido com sucesso. Vou fazer um F5. Ok, as informações já chegaram aqui, tá com a etiqueta de saúde. Você vê aqui que foram dois duas cartas somente. Agora vamos pra próxima parte que é com o outro documento. Eu vou
+
+pegar aqui as perguntas desse setor dois que são brincadeiras e adestramento. Vou abrir aqui no Google Docs. Eu vou pegar o ID desse documento aqui. Vou colocar lá no meu N8N no Google Drive. Ok, já tá aqui. E agora no Pinecon Vector Store eu
+
+tenho que mudar o nome da etiqueta. Agora, ao invés da etiqueta ser saúde, eu vou colocar brincadeiras. OK, brincadeiras, tá ótimo. Vou salvar e vou rodar esse workflow para ficar de maneira setorizada. Então agora eu tenho dois baralhos, OK? Documentos ingeridos.
+
+Vamos ver agora o nosso index do Pinecon Vector Store. Vou dar mais um F5. OK. Cheguei aqui no meu Pony Vector Store. Tô com os meus index. Foram duas cartas
+
+para cada baralho, duas de saúde e duas de brincadeiras. Bem setorizado, bem específico cada consulta. E agora a gente vai testar esse agente de IA aqui do zero. Vamos lá. Ã, eu vou pegar o meu AI agent.
+
+Deixa eu tirar ele daqui. Vou colocar um chat trigger. Beleza, chat moda. Eu não vou colocar nenhum chique, eu vou colocar o chat GPT mesmo no 4.1 mini. Para mim tá ótimo. Memory,
+
+vou colocar uma memória simples, um contexto de 15, só porque eu sou viciado nesse número. Ah, tool, nenhuma tool, na verdade, sim, uma tool, a tool do Pinec Vector Store. Eu não poderia esquecer dessa daqui. E agora eu vou criar uma tool para consultar cada baralho. Eu vou colocar um atu para consultar o baralho de saúde e um atu para consultar o baralho de adestramento. Então vamos lá.
+
+Ou de brincadeiras, né? Foi assim que eu chamei exatamente. Deixa eu copiar isso daqui para duplicar. Vou conectar as duas tools no meu agente. Aqui eu vou fazer a vou dar um prompt para essa tool. Vou
+
+falar assione essa tool. sempre que o usuário fizer uma pergunta sobre saúde do pet. OK. Excelente. Vou puxar do mesmo index. Os
+
+dois baralhos estão no mesmo index, que é aquele index de pet shop. Vou colocar um limite. Como eu tenho só qu eu tenho só duas cartas para cada baralho, o limite não vai importar muito aqui, contando que ele seja maior do que dois. Vou colocar include metadata, porque metadata é a tag, a etiqueta de cada um. Quando a gente colocou lá documento, saúde, aquilo ali é o metadata filter.
+
+Então vou colocar aqui metadata filter, documento saúde. E ele vai puxar lá no index os que tem aqui escrito saúde, documento saúde. Vamos voltar aqui pro N8N. Ok, tá feito. Vou colocar só um embeding aqui da opening e agora muita gente me perguntou sobre os resultados com esse ank results. O rerank results é
+
+basicamente uma ferramenta terceira que você utiliza um reanker da coar. É uma maneira de você reclassificar os dados que foram extraídos do seu agente deag. Ou seja, toda vez que você faz uma pergunta pro seu agente deag, ele vai pegar as cartas que estão aqui na naquele baralho por semelhança. Então você vai fazer o seguinte: ahã o que que eu posso fazer para melhorar a saúde do meu pet? Esse agente de A vai identificar que é uma pergunta sobre saúde, vai procurar no baralho de saúde e vai pegar as perguntas mais parecidas com essa dentro do baralho de saúde. E
+
+ele vai trazer as perguntas de uma maneira de classificação por semelhança. Então ele vai pegar as 50 mais semelhantes e vai trazendo uma ordem espalhada de semelhança, tipo a essa daqui tem 25% de semelhança, essa daqui tem 50% de semelhança, essa tem 75%. O rehanker da Correer vai reclassificar essa ordem. Então, ao invés de ter coisas espalhadas, tipo 25%, 60 e depois pular para 30 de novo, ele vai fazer 25, 30, 40, 45, 60. Isso daí para textos bem maiores, pode trazer alguns resultados.
+
+Nos testes AB que eu fiz de ha nos últimos meses, eu tô documentando a minha jornada de ha lá na minha comunidade do school. Então, todos os testes que eu tô fazendo nos projetos de agentes de IA dos meus clientes, na minha agência de IA, eu tô documentando lá na minha comunidade. Eu não tive resultados muito significativos dentro da Hananker. Eu acho o setup deles também um pouco chato. Então, não tá fazendo parte do meu stack de ferramentas, mas se um dia voltar a fazer parte do meu stack de ferramentas, eu vou trazer aqui para vocês igual eu vou trazer lá na minha comunidade. Por
+
+agora eu vou ficar só na parte de metadata. Então vou tirar aqui esse ranker coier. Eu vou renomear essa ferramenta aqui só para separar porque eu vou utilizar isso no meu prompt. Vou colocar fak_line saúde. E esse daqui vai ser fak_line brincadeiras.
+
+Vou colocar um prompt. Acione essa tool sempre que o usuário fizer perguntas sobre brincadeiras e adestramento do pet. O index vai ser o mesmo index pet shop. Vamos puxar aqui. Vou colocar o embed opening e eu tenho que colocar o metadata filter também, né? Vamos lá. Metadata filter
+
+documento, só para puxar aqui a certeza é brincadeiras o nome. Vamos lá. Brincadeiras. Ótimo. Excelente.
+
+E agora pro meu agente de IA, eu vou colocar um simples prompt para ele aqui no systeme. Vou falar: "Você é um agente de perguntas e respostas para um petshop. Sempre que o usuário fizer perguntas sobre saúde do PET, utilize a tool Fq saúde. Sempre que o usuário fizer perguntas sobre ah brincadeiras e adestramento do pet, utilize a tool fak_line brincadeiras. Nunca deixe de ativar as tools antes de responder as perguntas, senão será multado em $.000.
+
+Vamos colocar essa pressão aqui na cabeça do nosso agente de Ah, só para fazer ele performar melhor. Muita gente fala tipo: "Ah, se você não responder direito o meu o meu cliente, a minha mãe vai ser sequestrada". esse tipo de coisa para fazer o agente de A funcionar. Isso daí funciona porque esses agentes de IA eles têm o mesmo linha de raciocínio, o mesmo maneira de pensar igual humanos. Então esses modelos de a generativa foram feitos para simular respostas humanas. E muitos dos clientes, quando
+
+você tem uma agência de IA ficam insatisfeitos com as respostas do agente de A, porque eles querem uma maneira bem controlada. Tipo, eles eles querem que a IA sempre responda igual tá lá no documento. Mas esses agentes de I, como eles são generativos, se você colocar 10 inputs, você recebe 10 outputs diferentes. Você só tem que educar o seu cliente nessa parte, tipo, ah, olha só, o agente de A, ele vai responder a pergunta, mas ele não vai responder exatamente com as mesmas letras que você tá procurando. Então, ã, isso daqui funciona, é uma maneira de você ter uma segurança a mais. Eu achei legal, só
+
+para explicar esse background neurolinguístico dos agentes de IA. E agora eu vou falar para ele, ã, consulte as tools quantas vezes quiser para trazer a resposta. Só não deixe de consultá-las. OK, para mim tá ótimo. Vamos salvar isso daqui. E agora vamos testar o nosso
+
+agente de eu vou fazer uma pergunta para ele. Vamos lá. Vamos pegar pela primeira pergunta, né? Eu vou utilizar esse setor dois. Vou falar quais brincadeiras estimulam os instintos dos gatos. Eu
+
+tenho três gatos, então isso daqui vai ser uma pergunta útil para mim. Vamos lá. Os meus três gatos, dois deles são filhotes, então eles bagunçam a minha casa o dia inteiro. Ele consultou aqui atu Jeff aqui brincadeiras. Ele me trouxe a resposta. As brincadeiras que
+
+estimulam o instinto do gato são aquelas que imitam a caça. Como perseguir penas e brincadeiras com movimentos rápidos. Essas atividades ajudam e satisfazer o instinto natural de caça do gato. Eu não sei se o gato é muito caçador. Tem aquele dilema, né? Quem não tem cão caça
+
+com um gato. Meus gatos são mais do tipo sedentário. A minha gata aurora, ela fica dormindo em cima da cama o dia inteiro e fica chorando para eu abrir a porta do meu quarto. Então não sei se ela é muito caçadora. E os meus outros dois gatos também ficam na sala sentado o dia inteiro. Eles só ficam entretidos
+
+quando, sei lá, eu tô jogando videogame, tipo GTA ou Watch Dogs. Ah, vamos ver aqui a resposta. Brincadeiras que imitam a caça, como perseguir penas e brinquedos com movimentos rápidos. Então, a gente trouxe aqui uma resposta central, mas não trouxe com as mesmas letras, com as mesmas palavras, mas ele responde o ponto em si. Eu acho que esse é o nível de educação que você tem que ter com o seu cliente. A gente só não
+
+pode que o nosso agente de desvincule o atendimento, senão vai quebrar a linha de atendimento e a linha de vendas do cliente que você tá implementando esse agente de IA em si. Esse framework de implementação de IA aqui com Pinecone e metadata resolve o seu problema. Mas se você não tiver uma habilidade muito consultiva e de comunicação, você não vai resolver o problema de maneira nenhuma. Você ainda vai ter o cliente ali te ligando de 11 horas da noite falando: "Ah, a IA não tá respondendo da exata maneira que eu queria esse tipo de coisa". Eu acho que você tem que deixar a comunicação bem aliada já upfront, tá?
+
+Agora, só para confirmar, eu vou fazer uma pergunta do outro documento que é o F de saúde. Vou fazer uma pergunta sobre cachorro para mudar um pouco o contexto, para abranger também a galera que tem cachorro, porque eu acho que a maior parte do mundo de pais de pet, algo assim, não falando que pai de pet samambaia, eu tenho os dois, né? Eu sou pai de planta, pai de pet, esse tipo de coisa. Não que eu me considere um pai, mas para abranger também essa galera, eu acho que muita gente deve ter cachorro. Coloca aí nos comentários se você tem cachorro ou se você tem gato. Eu vou
+
+fazer uma pergunta agora sobre cachorro para testar o meu agente de AHAG. Vamos lá. Quais raças de cachorro exigem mais cuidados com pelos? Ah, vamos esperar pela resposta. Ele já consultou aqui o nosso FQ de saúde, então ele foi no baralho, certo? É um pouco esquisito
+
+ficar falando de baralho, mas eu utilizo essas analogias para ser um pouco mais didático com vocês. Cachorros com pelos longos e que exigem cuidados frequentes, incluirem raças como Pudle, Shitsu, Malteis, Yorkshire, Terrier e Lha Apsu. >> Então vamos ver aqui se essa resposta realmente tá de acordo com a base de documentos que a gente teve. Raças como Shitsu, Poodle e Malteis precisam de escovação frequente. A gente recebeu aqui poodle, Shitzu, Maltais e York Terrier, Ilhaza Apso. Por mais que ele
+
+procurou aqui o documento pra gente, ele não trouxe uma resposta 100% igual, mas ele ainda trouxe uma resposta. Eu vou querer ter um parâmetro bem melhor, mudando a temperatura do meu agente de A. Eu acho que ele tá muito livre para dar respostas. Eu vou fazer o seguinte, eu vou mudar aqui a temperatura em sampling temperature, vou colocar 0,3. Eu vou fazer mais uma pergunta.
+
+Ã, como prevenir pulgas em cachorros? Vamos lá. F de saúde. Ele tá indo pro caminho certo. Ah, para prevenir pugas em cachorros, é importante manter a higiene do pet, do ambiente onde ele vive. Utilize produtos
+
+antipugas recomendados por veterinários, como shampoos, sprays, coleiras e medicamentos específicos. Além disso, leve lave a cama do cachorro regularmente e aspire à casa para eliminar ovos e larvas de pugas. Uma resposta bem grande. Uso regular de antipulgas tópicos, coleiras ou comprimidos, além de higiene no ambiente. Mais uma vez, ele responde bem parecido, só que de uma maneira bem grande. Eu acho que não é uma questão de
+
+temperatura aqui. Eu acho que se eu mudar o prompt para esse agente de ah, ser mais curto, mais direto e ser mais similar o documento, ele vai trazer uma resposta melhor para mim. Só que ele não tá desvirtuando, ele tá realmente consultando essa tabela e dando a resposta, só que de uma maneira mais contextualizada, sabe? Então bem, eu vou ficar por aqui nesse vídeo e eu espero que vocês tenham gostado. Então pessoal, eu quis trazer essa nova estratégia para criar agentes de A mais inteligentes. Eu tô utilizando na minha
+
+agência de IA pros meus clientes e eu tô documentando tudo nos últimos 20 dias lá na minha comunidade. Isso foi bem pedido pelo pessoal da minha comunidade, porque muitos deles enfrentam essa dificuldade de conseguir fazer o agente de estar alinhado com script de atendimento do cliente. Alguns tm script de atendimento muito longo e se o agente de A quebra o script de atendimento, tá quebrando também o roteiro de vendas da empresa e não tá trazendo resultados. Então esse framework aqui vai proteger vocês disso. Eu convido vocês a participarem da comunidade AI Makers. É uma maneira de
+
+você criar agentes de A mais profissionais e garantir também o seu primeiro projeto de A em 90 dias garantido. Eu vou deixar mais um vídeo aqui sobre criação de agentes de IA e vendas de agente de IA para você se interessar mais no assunto e considerar também se inscrever aqui no canal e deixar um like nesse vídeo. Beleza, pessoal? Valeu, até a próxima. Ciao.
+
+Ciao.

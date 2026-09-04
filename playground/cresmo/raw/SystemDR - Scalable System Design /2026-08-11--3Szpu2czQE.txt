@@ -1,0 +1,19 @@
+---
+video_title: "How to Benchmark AI-Generated Code"
+video_id: -3Szpu2czQE
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=-3Szpu2czQE
+video_date: 20260811
+video_description: |
+  Website Link: systemdrd.com
+  AI-generated code can pass tests and still be slow, insecure, difficult to maintain, or expensive to run. Learn how to evaluate AI code performance beyond accuracy using benchmarking, runtime speed, memory usage, scalability, security, code quality, testing, static analysis, and maintainability. Discover practical ways to evaluate code from ChatGPT, Claude, Gemini, and GitHub Copilot before deploying it to production.
+---
+Here's the single mental model I want you to leave with, even if you forget everything else. Every AI-generated code artifact should be scored across five largely independent axes. Collapsing them into one accuracy number silently drops four of the five. Axis one, functional correctness. This is the axis [music] benchmarks already measure, but only against a fixed, often small, test set. It does not generalize
+
+to edge cases outside [music] that suite. Axis two, maintainability. Complexity, readability, coupling, [music] and the review cost that compounds over time. A function that passes tests today can still raise your [music] team's average review time next quarter. Axis three, security. Generated code has
+
+been shown to reproduce insecure patterns from its training data. String concatenation, [music] SQL, permissive deserialization, even when a secure idiom was available and just as easy to [music] write. Axis four, efficiency. Language models default to the most commonly seen implementation in their training data, [music] which is frequently not the asymptotically optimal one for your actual input distribution. And axis five, the one everyone [music] forgets, verifiable trust. Can a human
+
+reviewer actually confirm this code correct faster than they could have written it themselves? If not, the tool hasn't eliminated cost, it's just shifted it from writing to reviewing. Now, let's look at the pipeline architecture [music] that actually scores all five of these in a real engineering workflow.

@@ -1,0 +1,145 @@
+---
+video_title: "How To Start Ethical Hacking in 2026 (FULL COURSE)"
+video_id: u0NdJwAw94Q
+channel_name: "Privacy Matters"
+channel_id: UCVrrEzxFvIDjM0w5a8LKYwg
+channel_category: "Howto & Style"
+url: https://www.youtube.com/watch?v=u0NdJwAw94Q
+video_date: 2025-10-23T22:06:17+00:00
+video_description: |
+  The Lazy Way To Learn Hacking - Hackify:  https://bit.ly/hackifyio
+  Level up from curious to capable. 🚀 In this hands-on ethical hacking crash course, we walk through a full real-world workflow—recon → enumeration → vulnerability research → exploitation → privilege escalation → post-exploitation—inside a safe TryHackMe lab. You’ll see exactly how pros think, what to look for, and which tools to use so you can stop guessing and start doing.
+  
+  Disclaimer:
+  All demonstrations are for educational purposes in controlled lab environments. Only test systems you own or have explicit, written permission to assess. Unauthorized access, data extraction, or disruption is illegal and may result in criminal and civil penalties.
+  
+  What you’ll learn
+  How to plan an attack path like a real pentester
+  Passive vs. active recon (when to use each)
+  Rapid service discovery & fingerprinting with Nmap
+  Web enumeration with Gobuster (finding “hidden” stuff)
+  Turning versions into vulns with SearchSploit
+  Exploiting SQLi to extract credentials (safely, in-lab)
+  Brute-forcing network logins with Hydra (ethically)
+  Gaining a user shell over SSH (non-standard ports)
+  Escalating to root via misconfigurations (sudo + vim)
+  Capturing flags and writing up your findings
+  
+  Lab used:
+  Platform: TryHackMe
+  
+  Room: Simple CTF (perfect for beginners)
+---
+Welcome to the complete ethical hacking guide. Whether you want to become a real hacker or just learn some cool tricks and how to secure systems, this video will teach you everything you need to get started fast. I'll show you professional tools and walk you step by step through the hacking workflow and process real hackers use reconnaissance, scanning, vulnerability analysis, exploitation, and post exploitation. Before we do anything, hacking without permission is illegal. This video is for educational purposes only and focuses strictly on ethical hacking, testing systems you own or systems you've been explicitly authorized to test. This is a
+
+practical learn by doing course to get you from zero to capable, not a 200hour theory dump. We'll focus on the essentials you need to move forward and how to think like a security tester. We'll practice in a realistic Tryh Hackme lab environment and I'll walk you through every step so you're never left guessing. Try Hackme is an online learning platform that provides hands-on cyber security training through guided gamified rooms. It gives you a built-in virtual machine right in your web browser. So you don't need to install
+
+hacking tools or set up a local lab to start learning. When you launch a room, Try Hackme spins up an isolated sandboxed environment in the cloud that you can interact with directly through your browser window. It's secure, fast, and perfect for beginners because everything runs inside the sandbox. If you break something, you can simply reset it. In this lesson, we'll be working on the simple CTF room, a beginnerfriendly challenge designed to teach the fundamentals of ethical hacking. Our objective is to approach
+
+the target machine like a real hacker, discover what services are running, enumerate and investigate the website it hosts, research known vulnerabilities, exploit a weakness to gain a user shell, and then escalate privileges to capture the root flag. This step-by-step journey will teach you not just how to perform each action, but why each phase matters for securing systems. The very first step in any hack is reconnaissance, gathering information. Think of it like being a digital detective. Before we can exploit anything, we need to know what services the machine is running, which ports are open, and what versions of software it uses. For this, we'll use
+
+one of the most powerful tools in any hacker's toolkit, NAP, short for network mapper. Reconnaissance is like the foundation of a building. Without a solid foundation, the building will crumble. Similarly, without thorough reconnaissance, your hacking attempt will fail. There are different types of reconnaissance, passive and active. Passive
+
+reconnaissance involves gathering information without directly interacting with the target. This can include searching public databases, social media, and other open sources. Tools like Shoddun, Census, and the Harvester can be incredibly useful for passive reconnaissance. Active reconnaissance, on the other hand, involves direct interaction, like scanning the targets network. Always start with passive reconnaissance to avoid detection.
+
+Before we dive deeper, let me introduce you to a secret hacking tool I use all the time called Hackify. This tool is a gamecher for anyone looking to get started with ethical hacking. It has so many modules, but I will cover some of the cool ones. Hackify gives you step-by-step attack flow guides for your specific needs. It clearly shows you the attack process, what tools you would need, and what commands to use in order to meet your hacking objective. You also
+
+get hacking checklists for a bunch of systems such as web, Windows, Linux, and mobile, so you never miss an important step or have to guess where to begin. Perfect for beginners who are unsure what tools to use when and need a helping hand. You also have a command reference module that covers the most important tools and commands along with a database of hacking techniques and script collection. One of the most useful functions for me was the hacker GPT module. Here you can either choose one of the standard hacking scenarios or enter a custom hacking objective. It
+
+will then literally design a custom attack plan for your objective covering the various phases, tools, and steps you would need to do. Pretty cool. In the terminal, I type this command. Let's unpack this slowly because understanding these flags is key. Pseudo runs the command with administrator rights. Some
+
+end mapap features need that to send special network packets. - SS performs a sin scan. This is a fast and stealthy way to discover open ports. It sends halfopen connection requests and listens for responses. Kind of like gently knocking on a door instead of barging in. This method is less likely to be
+
+detected by intrusion detection systems IDs compared to a full connect scan. - SV tells NAPAP to perform service and version detection. It asks the services what they are, which helps us learn whether the target is running Apache, Open SSH, FTP, or something else. Knowing the service versions is crucial because it helps us identify potential vulnerabilities. - SC runs NAPAP's default scripts. These
+
+scripts check for common misconfigurations or known weaknesses. NMAP scripts are incredibly powerful and can automate many tasks, saving you time and effort. -v means very verbose. It prints more information while the scan runs so we can follow along in real time. This is useful for understanding what end map is doing at each step. And
+
+- saves the entire result to a text file named n mapap out.txt which is handy for later reference. Always keep detailed records of your scans and findings. This is not only good practice but also essential for reporting and documentation. When the scan finishes, we analyze the results.
+
+We see three open ports. Port 21 running FTP, port 80 running HTTP, and port 2222 running SSH. Right away, that tells us a lot. FTP might allow anonymous access. HTTP probably hosts a website, and SSH is a remote login service, but it's on a non-standard port, which is interesting.
+
+Non-standard ports are sometimes used to hide services from casual scans, but they're easy to find with NAPAP. Always pay attention to non-standard ports. They can often reveal hidden services or misconfigurations. Understanding ports and services. Ports are like doors to a building. Each
+
+door leads to a different service or application running on the machine. Knowing which ports are open and what services they run is crucial for understanding the targets attack surface. For example, port 21 is commonly used for FTP, file transfer protocol, port 80 for HTTP, web traffic, and port 2222 for SSH, secure shell. Each of these services has its own set of vulnerabilities and configurations that we can exploit. End MAPAP scripts. End MAPAP scripts are
+
+incredibly powerful. They can automate many tasks such as checking for specific vulnerabilities, enumerating users, or even exploiting known weaknesses. The default scripts - SC are a great starting point, but you can also write your own scripts or use community contributed scripts to tailor NAPAP to your specific needs. Always review the scripts you run to understand what they do and ensure they are safe to use in your environment. The next logical step is to look at the website running on port 80. Web applications often expose
+
+valuable information. So enumeration or exploring and mapping the web server is critical. I open the targets IP address in the browser and see a basic web page. However, many important directories and files are not linked publicly. To discover hidden paths, I'll use a tool called Gob Buster. Web enumeration. Web
+
+enumeration is like exploring a new city. You start with the main streets and then venture into the alleys and hidden paths. Go Buster works by taking a word list of common folder names and testing each one against the server. The command looks like this. Breaking that down. Dire tells Gob Buster to run in
+
+directory mode, meaning it will look for folders and files. - U is the URL of the target website. - W gives Gobuster the word list to use, a list of potential directory names such as admin, backup, or uploads. -ash E stands for expanded output, showing full URLs instead of just relative paths, and -X adds file extensions to check for PHP, HTML, and TXT files. In this case, Gobuster is great, but it's not the only tool. You
+
+can also use tools like Derbuster or OASP Zap for web enumeration. Each tool has its strengths, so it's good to be familiar with multiple options. For example, OW PZAP can automate many tasks and is highly configurable, making it a powerful tool for web application testing. Word lists. Word lists are essential for web enumeration. They
+
+contain common directory and file names that are likely to exist on a web server. You can create your own word lists or use pre-made ones available online. The quality of your word list can significantly impact the effectiveness of your enumeration. Always use a comprehensive and up-to-date word list to maximize your chances of finding hidden paths. Go Booster quickly enumerates the site and finds a folder named /simple. That's
+
+promising. So, I open it in the browser. On the page, I notice something in the footer. It says CMS made simple version 2.2.8.
+
+That's a big clue. Whenever you find an application name and version number, note it down immediately. This is what we call service fingerprinting, and it's the foundation for vulnerability research. Service fingerprinting helps us identify the exact software and version running on the target, which is crucial for finding known vulnerabilities. Service fingerprinting. Service
+
+fingerprinting involves identifying the specific software and version running on a target system. This information is crucial for finding known vulnerabilities and exploits. Tools like end mapap, wattweb, and wapalizer can help you fingerprint services running on a web server. Always verify the accuracy of your fingerprinting results to ensure you have the correct information. With the application and version identified, I want to know if it has any public exploits. To check that, I use a command
+
+called search exploit. Search exploit is part of the exploit DB project. An offline database of known vulnerabilities and proof of concept exploits. I type search exploit returns a list of results. One entry stands out.
+
+CMS made simple SQL injection with exploit ID 46,635. That looks perfect for our target. This means there's a known SQL injection vulnerability in this version of the CMS. Vulnerability research is where we start to see the fruits of our labor. We've identified the target. Now we need
+
+to find its weaknesses. Searchloit is part of the exploit DB project. But there are other databases like CVE details and NVD National Vulnerability Database that you can use for vulnerability research. Always cross- reference multiple sources to ensure you have the most up-to-date information. Vulnerability databases. Vulnerability databases are
+
+essential for finding known exploits and weaknesses in software. Exploit DB, CVE details, and the NVD are some of the most popular databases. Each database has its own strengths, so it's good to be familiar with multiple sources. Always verify the accuracy and relevance of the vulnerabilities you find to ensure they apply to your target. Now I'll copy the exploit script to my current folder so I can examine it. The
+
+command is - m stands for mirror. It simply copies the exploit file locally without changing anything. I open the script and read through it. It's written in Python and performs a timebased blind SQL injection, which means it can extract information from the database by measuring how long the server takes to respond. Even if the server doesn't show error messages, timing delays reveal when a guess is correct. Some of these
+
+old scripts use Python 2 syntax, so if necessary, I'll tweak it slightly to run under Python 3. Always test your exploits in a controlled environment before using them in a real world scenario. This ensures that you understand how they work and can troubleshoot any issues that arise. Exploit scripts. Exploit scripts are pre-written code that takes advantage of known vulnerabilities in software. They
+
+can be incredibly powerful, but also dangerous if used improperly. Always review the script to understand what it does and ensure it is safe to use in your environment. Modifying scripts to fit your specific needs can also be necessary. So having a good understanding of programming is beneficial. Now let's execute the exploit. The command looks like this.
+
+Here's the breakdown. Python 3 runs the script with Python version 3. 46635. py is the name of the exploit file. -ash u gives the target URL. In this case,
+
+the base path to the CMS. -w specifies a word list, usually the rocku.txt txt list which contains millions of common passwords. - C is a script specific option that tells the exploit to try cracking any hashes it retrieves automatically. As the script runs, it tries to exploit the SQL injection and pulls data from the database. After a
+
+few minutes, it reveals a username Mitch along with some hashed password information. That's progress. We have our first piece of sensitive data. Now we can try to use that username to log into the system. SQL injection.
+
+SQL injection is a common vulnerability in web applications. It occurs when user input is not properly sanitized, allowing an attacker to execute arbitrary SQL commands on the database. This can lead to data breaches, unauthorized access, and other security issues. Understanding how SQL injection works and how to prevent it is crucial for both attackers and defenders. Since the machine runs SSH on port 2222, we can attempt to login there. If the
+
+password is weak, we can brute force it with Hydra, a popular password cracking tool for network login. Here's the command. Let's explain it clearly. -L gives Hydra the username. In this case, Mitch-P specifies the password list to try. Rocku.txt again. Then we tell Hydra
+
+which service to attack. SSH located at our targets IP address and port 2 22 22 2 - T4 sets the number of threads to four. That means Hydra will test four passwords at once to make it faster but still stable. Remember, brute forcing should only be done in legal labs or on systems you own. In real life, it's noisy and easily detected. Always
+
+respect the law and ethical guidelines when conducting penetration tests. Password cracking. Password cracking involves using various techniques to guess or recover passwords. Tools like Hydra, John the Ripper, and Hashcat are commonly used for this purpose. Password cracking can be time-conuming and resource inensive. So, it's important to
+
+use efficient techniques and powerful hardware. Always ensure you have proper authorization before attempting to crack passwords on any system. After running for a while, Hydra reports success. It found the password secret for user Mitch. Now, let's connect to the machine using SSH.
+
+SSH opens a secure remote shell. -p2222 tells it to connect using that special port instead of the default 22. Then we specify the username and target IP. When prompted for the password, I enter secret and we're in. To confirm, I type who am I and it prints Mitch. At this
+
+point, we've gained user level access. That's a big milestone. Always verify your access level and permissions after gaining initial access. This helps you understand what you can and cannot do on the system. SSH and remote access. SSH
+
+secure shell is a protocol used for secure remote access to systems. It encrypts the data transmitted between the client and the server making it difficult for attackers to intercept or tamper with the communication. Understanding how SSH works and how to configure it securely is essential for both attackers and defenders. Always use strong passwords and consider using public key authentication for added security. Now I want to see what files exist in Mitch's home directory. I type
+
+ls to list the files. I notice one called user.txt. This is likely the first flag. So I type cat user.txt to read it. There it is,
+
+the user flag. But our goal isn't just to get the user flag. We want full administrative or root access. That's where privilege escalation comes in. Privilege escalation is a critical step in penetration testing. It allows you to
+
+gain higher level access to the system, often leading to full control. File permissions and ownership. Understanding file permissions and ownership is crucial for privilege escalation. In Unix like systems, files and directories have specific permissions that determine who can read, write, or execute them. The owner of a file or directory has full control over its permissions.
+
+Knowing how to manipulate file permissions and ownership can help you escalate privileges on a system. The first command I always try after getting a shell is the -l tells the system to list what commands the current user can run as another user often as root. In this case, the output shows that user Mitch can run/ usr/bin/vim as root without needing a password. That's what n o psd means. This is a major privilege escalation opportunity. Vim is normally
+
+just a text editor, but it has a powerful feature. You can run shell commands directly from inside Vim using colon exclamation mark. If vim itself is being executed as root, any shell it spawns will also run as root. Here's the command I use. Let's explain. pseudo
+
+runs vim as root. - c tells vim to execute a command right after it starts. Inside the quotes colon exclamation mark/bin/sh means run the system shell. When this runs, Vim opens and immediately spawns a shell. Now, if I type wami, the system replies root. And just like that, we've
+
+escalated privileges from a normal user to the system administrator. Always document your privilege escalation steps carefully. This is crucial for reporting and ensuring that the vulnerabilities are properly addressed. Privilege escalation techniques. Privilege escalation involves exploiting vulnerabilities or misconfigurations to gain higher level access to a system.
+
+Common techniques include exploiting SUID binaries, misconfigured services, and weak file permissions. Understanding these techniques and how to prevent them is essential for both attackers and defenders. Always test your privilege escalation techniques in a controlled environment before using them in a real world scenario. The final step is to locate and read the root flag, usually stored in the root users home directory. I type that command searches the whole file system for any file named root.txt
+
+and hides permission denied errors. The command runs and there it is the root flag. We've completed the box. Always ensure that you have proper authorization before attempting to access or modify any files on a system. Unauthorized access is illegal and unethical. Post exploitation. Post
+
+exploitation involves the actions taken after gaining access to a system. This can include maintaining access, escalating privileges, and gathering sensitive information. Understanding post exploitation techniques is crucial for both attackers and defenders. Always document your post exploitation steps carefully and ensure that you have proper authorization before attempting any actions on a system. Let's recap everything we did and more importantly why we did it. First, we used end mapap
+
+to perform reconnaissance and identify open ports and services. We learned how sin scans work and why service detection is useful. Next, we used Go Buster to discover hidden directories on the web server, which revealed the CMS installation. We recognized the software name and version, then used search exploit to find a known vulnerability. We copied the exploit locally, studied it to understand the SQL injection it used, and executed it to extract usernames and hashes. We then used Hydra
+
+to perform a password attack on SSH and gained valid credentials. After logging in as Mitch, we checked our privileges with pseudo and discovered we could run Vim as a root without a password. Using that, we spawned a root shell and captured the final flag. But the bigger lesson isn't just how, it's why. Each phase follows the same structure professionals use in real penetration tests. Reconnaissance finds your entry
+
+points. Enumeration expands that knowledge. Exploitation gives you access. Privilege escalation solidifies control. and post exploitation, in this case reading flags, proves success. In
+
+the real world, you would stop there and document every step carefully in a report explaining how to fix the vulnerabilities you found. Ethical hacking is about finding and fixing vulnerabilities to make systems more secure. Always remember to use your skills responsibly and ethically.

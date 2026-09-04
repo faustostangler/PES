@@ -1,0 +1,146 @@
+---
+video_title: "Apple's storage pricing is INSANE! Do this instead."
+video_id: eLtE2kMTVOQ
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eLtE2kMTVOQ
+video_date: 2025-01-27
+video_description: |
+  You CAN upgrade your M4 Mac mini's storage to 2TB youself. It's not hard.
+  
+  Resources mentioned in this video (for Amazon links, I earn for qualifying purchases):
+  
+    - Expand Mac mini 2TB Upgrade Kit: https://expandmacmini.com/product/ssd-m4-2tb/
+    - M4-SSD 2TB Upgrade Kit: https://store.m4-ssd.com/products/2tb-drive-for-mac-mini-m4
+    - iFixit Mac mini SSD replacement guide: https://www.ifixit.com/Guide/Mac+mini+(2024)+SSD+Replacement/180199
+    - dosdude1's M4 Mac mini SSD upgrade video: https://www.youtube.com/watch?v=cJPXLE9uPr8
+    - UGREEN 40 Gbps Thunderbolt 4 NVMe Enclosure: https://amzn.to/40Omjyf
+    - UGREEN 10 Gbps USB-C NVMe Enclosure: https://amzn.to/3CC1Kf4
+    - Sabrent 2M Thunderbolt 4 Cable: https://amzn.to/3PT7YKS
+  
+  Fyde Innovations (makers of the Expand Mac mini kit featured in this video) provided the kit for review and testing. They did not send any money, nor have any say in the content of this video (or any ability to review it before publication). See my sponsorship policies: https://github.com/geerlingguy/youtube?tab=readme-ov-file#sponsorships
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Apple charges HOW much?!
+  01:01 - I was bamboozled. Don't be me
+  03:30 - Cracking the case
+  05:17 - Going deeper
+  07:29 - Echoes of the past
+  09:10 - Apple's DFU
+  12:54 - Cheaper AND better performance?
+---
+When I bought this M4 Mac mini, I paid the Apple Tax. I do video work, and the measly 256 gigs of storage in the base model is just way too small for that. Apple finally upgraded their Macs to at least 16 gigs of RAM, which is great, but their base storage is still tiny. I mean, there are individual games now that would fill up your entire disk if you buy the base model. And forget iCloud; just loading up a few modern apps on the Mac will also eat up all your storage.
+
+And speaking from experience with a 256 GB MacBook Air, it's painful managing external disks if your internal drive is just that small. So Apple's answer is a storage upgrade. You can go up to 2 terabytes of storage—which is great! But what's not great is the insane price gouging for that privilege. Apple's saying 2 terabytes costs 800 bucks.
+
+Even accounting for maybe Apple using the fastest best NAND flash chips on the planet— which they don't—that's a $600 premium (the price of an entire extra Mac mini) over a standard 2 terabyte M.2 NVMe drive. That's just ridiculous, but I'm an idiot. I paid the Apple tax. I upgraded my machine to 1 terabyte, only because I'm not quite gullible enough to pay the full price for 2.
+
+But had I known about this, I would have stuck to the 256 gig base model, because this is a 2 terabyte upgrade for the M4 Mac mini, completely internal, and it costs 260 bucks. That's still more than a normal 2 terabyte NVMe drive, but not by too much. This is the 2 terabyte SSD expansion module for the Mac mini M4, and it comes from Expand Mac mini, a project from Fyde Innovations. The first time I found out this was possible was watching this video from dosdude1. In it, he went through the process of delicately replacing the little NAND flash chips on the drive Apple pre-installs at the factory.
+
+But here's the problem: dosdude1 is an artist. He's like a Picasso of soldering. And if you don't have a ton of experience hacking on modern computer chips, an operation like that's just not going to end well. Luckily, and despite what Tim Apple might tell you, Macs aren't made of magic and pixie dust. They have the same kind of circuit boards and chips as any other computer, at least when it comes to storage.
+
+And that means it's not that hard to reverse engineer Apple's proprietary storage card design. And that's exactly what Expand Mac mini did. And this thing isn't the only upgrade option. I also found this M4-SSD one for a little more, and there might be other options too by the time you're seeing this video. But the Expand Mac mini kit was the first one that that I found out about.
+
+When Fyde's founder emailed me and asked if he could send me one to test, I was all over it. So yes, I didn't pay for this upgrade kit. It was sent to me for review, and I want to be fully upfront about that. So my goal today is to see if I can upgrade this thing from my painfully expensive 1 terabyte module to a much cheaper, 2. But before I take this thing under the knife, I wanted to run a few tests for comparison.
+
+Using AmorphousDiskMark, I got speeds from 2 to 3 gigabytes per second when doing sequential reads and writes, and between 30 to 60 megabytes per second for 4K random IO. Testing with Blackmagick Disk Speed Test, it showed just under 3 gigabytes per second. And to be complete, I also monitored the drive temperatures using smartctl, and that showed an idle temperature around 27 degrees Celsius, and it warmed up to a high of 47 degrees under load. That's not a bad showing. Will the new drive be any faster?
+
+I'm not sure. And one more note: before you attempt something like this, make sure you have a full backup, like with Time Machine. Or, if you're like me, at least make sure you can rebuild your Mac from scratch, like with an Ansible Automation Playbook. So the kit comes in a box here with the chip visible through this little window. It's a nice little touch.
+
+And like I said before, make sure you have a backup before you attempt any of this, because it could be highly destructive. The way this is designed, it looks like there's a NAND flash chip on both sides. Each one, I guess, is one terabyte, and then the other terabyte. And the connector is so similar to an M.2 drive, but it's not quite.
+
+Of course, Apple always has to be a little proprietary. A few different sized heads here for getting into the Mac. I'm going to set those aside because I have my little trusty precision screwdriver here. It's a little higher quality. And I'm not sure what these are for.
+
+Little pads. But I need to get into the Mac. So I'm going to flip it over. It says to put the jimmy (tool) into the gap here. This is the first time I've tried doing this on an M4 mini.
+
+That's not too bad, I guess. and it's coming up, so that's good. It says to get this under first and then get one of these picks underneath. Well, it's proving harder than I thought at first glance. So it says there's clips on each corner.
+
+Come back here. Oh no, what a strange way to open a Mac. Why don't they just do screws on these things? Why is this so difficult? This is insane.
+
+Okay, well that finally came up. These clips are holding in pretty darn well. Oh man. Okay, wow.
+
+That was not too fun. But it's open and I hope I didn't break anything inside. And if I want to remove the power switch button, supposedly I can just pull up on that, but that's kind of tight in there. I'm going to leave it and just let that hang out. So let's see if these are T5.
+
+Yep. T5. Now, there are much, much, much better guides out there for taking apart the M4 Mac mini. So I am not going to show you the whole process on here. This is just, yeah.
+
+And that's still stuck on like, what? Apple, seriously, come on. What is it with all these wires? Wow, that's only been running for a few months and I'm already getting some dust in there.
+
+Look at that. Look at that. [sarcastically] I'm glad Apple makes it so easy to clean these things. Take out the fan. Okay, fan lifted out.
+
+And it looks like we have access to the drive at this point. That's a chunky one. Why don't they use the same screwheads on these things? Come on, Apple! I have to keep switching tips out in here.
+
+So I guess that's why they include all these different tips different sized tips. That's crazy.
+
+How does this come out?
+
+Oh wow. Okay, so according to iFixit, you have to pull it out this way. Like Apple, seriously, why don't you just use an M.2 socket? This would be so much easier. You could do upgrades, people could buy standard drives.
+
+Why? Why? Why? I do not understand. So pull it out gently.
+
+Don't break anything else inside of here while you're doing it.
+
+Okay, I think that's loose enough that I might be able to... Okay. Wow.
+
+There's my $400 of silicon. I can't believe it. That's $400... or $269 and you get double the storage.
+
+And I didn't even look which side. It looks like there's a little key and index on here. Again, the M.2 socket, you don't need a little marker like that because it's very obvious where the indent is. This socket design, why?
+
+Why does Apple feel like they need to do this? Ah, okay. And I guess it is fitting: I have the MacBook Air here with Apple's old proprietary standard for SSDs. I upgraded it using OWC drive, so here I am upgrading again many years later. Okay, I will crank it down a little bit because Apple did at the factory apparently.
+
+I will say that the engineering of these things is wonderful, but it doesn't need to be as wonderful if you just use standard parts. When you're doing the fan screws here, they do have rubber grommets, so when you're tightening it, I wouldn't tighten it too much, just snug. Hopefully at the factory they actually have like a standard for that. It's kind of amazing. Apple has designed this to be completely black all the way through once you put these screws on.
+
+The little design touches that Apple does. It's crazy because they don't design them to be opened really, but they design them to be very nice looking on the inside. Like, why don't you do both? Make it so that people can open these things and enjoy them. I am glad that they're not like gluing it down completely.
+
+So it looks like these sticky parts are for here. They didn't rip off on mine, so I'm just going to leave it like that. That wasn't as bad as I was expecting. Let's get this...
+
+clips back in maybe yeah okay oh I don't like the clip system I wish they just used screws. All right well now we have a dead Mac on our hands. Let's see if I can bring this over to my desk and get it booted up. So I'm back at the desk I have the M4 mini. Under the desk which is down here you can't see it is my Mac Studio and I'm gonna plug it in the Mac mini to the Mac Studio using a Thunderbolt cable. I think you might be able to do USB-C. I don't
+
+think you have to have a Thunderbolt cable, but I have this at my desk for this very purpose. And getting good Thunderbolt cables is nice because you don't have to worry about the fact that you're only getting like USB 2 speeds or whatever. The one thing that's very important is plug it into the middle Thunderbolt port. So the one with a little Thunderbolt icon. I don't know why Apple has it that way, but that is the port for restoring you using DFU mode.
+
+And then I'll plug in the HDMI and I'll go ahead and plug in my keyboard for now, even though it won't be useful yet. And I'll plug in Ethernet while I'm here. Why not? And before I plug in the power cord, I have to hold down the power button, which I always forget. Of course, it's the last corner that I'm not even looking at. It's back here.
+
+So I'm going to hold down the power button and then plug it in. And then after a second or two,
+
+Hopefully that light lights up amber. There we go. So now this is in DFU restore mode. And over here in the computer, I see this little menu. So it says a software update's required.
+
+Uh, sure, I guess. It's not an iOS device, though. That's kind of funny.
+
+So it says the Mac is in DFU mode. It just popped this window up and I'm going to click Restore Mac. Are you sure you want to restore it to its factory settings? All data will be erased. Well, considering there's no data on that drive, yes, I think I will do it.
+
+And it's downloading a 16 GB file. And this whole time, the little amber or orangish light has been flashing. And now it says it's extracting. So I'm guessing it must have downloaded the image to this Mac, and now it's sending it over Thunderbolt or USB-C to the connected Mac. I mean, I guess we could be thankful that Apple at least allows this to happen.
+
+You know, instead of allowing us to not have to have a Mac to restore a Mac, at least you can restore a Mac with a Mac, but it seems like a hack. [heh] Well, now the Mac has a white LED, but there's no display output yet at this point. So in my Finder... Oh, hey, look, it just came up with this!
+
+There's output. Okay, we're verifying the Mac software. Looks like the restore is completing. And hopefully we'll get to the end here soon. Well, I should say it was verifying the Mac software.
+
+Now it's verifying the Mac Restore. This operation is much slower than the software verification, whatever that was. Well, it's doing another Verify Mac Restore. This is the third time it's gone through this little bar. I don't know how many times we're going to do a verifying Mac Restore, but hopefully it's not forever.
+
+That bar has filled up all the way. and this one still keeps going over and over again. Oh, here we go, something's going on. It has been restored to factory settings. Please disconnect the restored Mac from this Mac.
+
+Okay, I'll do that.
+
+Yeah, there we go. And okay. Oh, the light just went out on it. The lights back on, there we go. So...
+
+There we go. We're booting up. I think it's a success. Okay. So now I'm going to restore this Mac and then we'll run some more benchmarks and see how the new drive compares to the old one.
+
+I took my mini home and let it do a Time Machine restore. Once that was done and once things like the photo library and mail database restore were complete, I re-ran the benchmarks. First, I made sure the SSD was in fact showing up as 2 terabytes. It even still identified it. itself as an Apple part because the controller, the heart of the drive, actually lives inside the M4 chip.
+
+The chips on the storage card are just dumb NAND flash chips. The controller is what makes these chips operate as an NVMe drive. But I ran DiskMark and Disk Speed Test again, and both of them showed consistently faster speeds than the stock 1 terabyte drive I paid 400 bucks for. And the temperatures were pretty close, too. Maybe a few degrees hotter because Spotlight was still indexing, but it was perfectly normal.
+
+Now, I don't know about you, but I think the upgrade is a great deal. Might I remind you, this solution saves $500 over Apple's own upgrade. Is the hour or so of time it took me to do the upgrade in DFU restore worth over 500 bucks? You bet! The most annoying thing is you need another Apple Silicon Mac to do this upgrade, and not everyone has that. It'd be amazing if Apple started using real M.2 slots and ditched
+
+the whole DFU dance. Failing that, I'm at least happy third parties can offer these upgrades now. Because, if nothing else, it'll at least give new life to hundreds of thousands of these base model M4 minis out in the world once they get dumped in a few years. And if Apple ever decides to try blocking this kind of upgrade? We revolt!
+
+Before I wrap up, the upgrade does have limitations. First, you have to go through the uncomfortable process of popping the M4's bottom off. Second, this upgrade only works on the base M4, not on the M4 Pro—at least not yet. And third, because companies like Fyde are making these things in China, if you're watching this video in January or February at least, you might run into shipping delays for the Chinese New Year. And like I said earlier, I've spent time wrangling external SSDs before, and it gets expensive if you want an option that's as fast as internal storage. A fast Thunderbolt drive like this
+
+costs about the same as the upgrade does when you account for the case plus a quality SSD, not to mention a cable if the case doesn't come with one. This other drive is a little cheaper and works fine too, but it's USB-C and only about a quarter as fast. Even if you're a little If you take this fancy drive and plug it into the wrong port, it can go from 40 gigabits to like 10 or even worse. That's all annoying to manage. Having enough built-in storage, with a good backup, of course, takes away so much hassle when you're using a Mac.
+
+Until next time, I'm Jeff Geerling.

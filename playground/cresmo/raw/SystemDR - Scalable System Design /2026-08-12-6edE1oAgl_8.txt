@@ -1,0 +1,27 @@
+---
+video_title: "The 6-Step AI Agent Tool Call Flow #Shorts"
+video_id: 6edE1oAgl_8
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6edE1oAgl_8
+video_date: 2026-08-12T16:30:12+00:00
+video_description: |
+  Full lesson: https://aiamastery.substack.com/p/day-3-secure-tool-integration-building
+  
+  Building AI agents that can actually touch files, APIs, and tools — safely. This clip is part of a hands-on walkthrough of AI agent security: permission boundaries, sandboxing, capability tokens, and audit logging for production-grade AI agents in Python. 
+  
+  
+  #AIAgentSecurity #AIAgents #PythonAI #Shorts #AgenticAI
+---
+The state machine from the last slide is layer two of a three-layer defense, and this slide is the full picture. Layer one is request control, distributed rate limiting. Every outgoing request has to draw a ticket from a shared Redis counter before it's allowed to fire. The word shared is doing a lot of work there. If you're running multiple instances of this agent, they all [music] coordinate through the same counter, so you don't accidentally quadruple your request rate just by scaling out. This is what keeps you from
+
+getting banned for accidentally DDoS-ing [music] a site you're only trying to monitor. Layer two is failure isolation, the circuit [music] breaker pattern from the mental model. Critically, each target site gets its own independent breaker. If Amazon servers are having a bad afternoon and that breaker trips to open, it has zero effect on your Walmart breaker, which stays closed and keeps working normally. That isolation [music] is what stops one slow external dependency from taking down monitoring for everything [music] else.
+
+Layer three is security boundaries. Every input your agent receives gets validated. [music] Every session it maintains gets secured, and every external resource it touches gets sandboxed. These three layers aren't independent at all, they're stacked. [music] A request has to clear rate limiting, then the circuit breaker for its target before it even reaches the point where security boundaries validate what comes back. Let's ground [music] the state
+
+machine in real code. Circuitbreaker.call takes the [music] target site and the function that actually performs the request. Line three reads the current state for that specific [music] target. Remember, state is tracked per target, not globally.
+
+Line five is the line I've highlighted, [music] and it's the fail-fast behavior in its purest form. If the breaker is open and the cooldown hasn't expired yet, we raise immediately before attempting any network call at all. That's the entire point of failing fast. [music] You You waste time or resources on a request you already know is likely to fail. >> [music] >> If the cool down has expired, line seven flips the state to half open and lets exactly one request through via the try block. If that call raises a request
+
+error, line 11 records the failure, >> [music] >> which may trip the breaker back to open depending on the current state and threshold, and then re-raises, so the caller still sees the real error. If it succeeds, line 13 records the success, [music] which is what actually closes the breaker if it was sitting in half open. In a real implementation, the rate limiter from [music] layer one would wrap this call from the outside. So, a request has to clear its wait as ticket before it ever [music] reaches this breaker check.

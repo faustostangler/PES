@@ -1,0 +1,127 @@
+---
+video_title: "How DNS Works Explained"
+video_id: tmQ9EbUEv4Y
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=tmQ9EbUEv4Y
+video_date: 2025-07-26
+video_description: |
+  This is a deep dive into DNS... the system that translates website names into IP addresses. 
+  
+  This video is for education purposes only.
+  
+  ⏱️ Chapters:
+  0:00    Intro: Why DNS Matters
+  0:31    What is DNS? 
+  2:05    How DNS works 
+  8:59    Live Demo: nslookup and dig in Action
+  13:29  Breaking DNS on Purpose (and Fixing It)
+  16:03  Final Thoughts: DNS is the hidden hero behind the internet
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #networking #dns #ccna
+---
+Have you ever wondered how your computer knows where to find Google, YouTube, or Netflix? You just type a name and magically you're connected. But what if I told you that without DNS, the internet would feel broken, like trying to call someone without knowing their phone number. Today, we're diving into the magic behind the scenes. DNS, the internet's phone book. And stick around
+
+because we'll build and break DNS live in our EVENG lab with our three test hosts, Bob, John, and Oscar. Imagine you're back in the '90s with a giant phone book. To call your friend Bob, you look up his name and find his number. 55 51 2 3 4. Easy, right? The
+
+internet works the same way. Websites have names like google.com, but computers don't understand names. They need IP addresses like 172.217.5110.
+
+DNS, the domain name system, is like the internet's phone book. It translates the website names we type like netflix.com into the IP addresses that computers use to communicate. So when you type netflix.com in your browser, DNS translates that name into a numerical IP address before your request is sent out over the internet. This
+
+process is called DNS resolution and typically occurs before your request reaches the switch or the router. So here's the full process. When you enter Netflix.com, your device requests the domain to be resolved by the domain name system or DNS into a numerical IP address. That IP address is then passed to your local network, first to the switch, then to the router, which sends the request out to the internet. The response from
+
+the destination server travels back through the same path and reaches your device. This was a highle overview. Now, let's take a closer look at how it works in detail. Let's go on a journey. You're at home trying to visit netflix.com.
+
+Behind the scenes, your computer is like a traveler asking for directions to reach Netflix. But instead of asking one person, it asks several. From local notes to a global hierarchy, the first stop is its own memory. Your computer checks its local cache, like a sticky note on your desk with numbers scribbled on it. If you've recently visited netflix.com, your system
+
+remembers its IP address and uses it right away. This local cache is stored on your device and DNS records can live there for a set time to live. It speeds things up by skipping external lookups, just like checking your desk note instead of calling someone every time you need the same number. Let's look at the DNS cache on Bob's machine which is running Windows 7 to see which websites are currently stored in memory. First, let's clear the DNS cache. To do
+
+this, we run ipconfig/flushdns.
+
+Now to view the DNS cache, we use the following command. IP config/dis DNS. As you can see, the cache is now empty. When the cache is completely empty, running the ipconfig/dis DNS command returns the message could not display the DNS resolver cache. as is the case here instead of showing an empty list of entries. This is normal
+
+behavior especially on older versions of Windows like Windows 7. Next, let's visit the website netflix.com and see what gets stored in the DNS cache. After visiting, we check the cache again. And voila, you can now see that Netflix appears in the cache. This means that
+
+the next time we visit netflix.com, the computer will use the cached IP address, making the process faster. If there's no sticky note, your computer walks to the front desk, the configured DNS server. Think of this as a receptionist whose job is to look things up for you. You don't need to know the whole process. You just ask and they'll
+
+take care of the rest. The receptionist is often your internet service provider's DNS server or Google's DNS which is 8.8.8.8.
+
+We can see the DNS server with the command ipconfig/all. Let's try it on Bob.
+
+As you can see, the configured DNS servers on Bob's machine are 8.8.8.8 and 8.8.4.4.
+
+four which belong to Google public DNS. This means Bob's computer uses Google's DNS servers to resolve domain names. A DNS server translates human readable domain names like netflix.com into numerical IP addresses so the browser can connect to the correct server. If the receptionist, meaning your configured DNS server, doesn't already know the answer, they escalate the request to the top of the global hierarchy, a set of specialized computers called the root servers.
+
+Think of these like a master directory at a massive library. The DNS server forwards your request for Netflix.com to one of these root servers. There are only 13 named root server addresses in the world labeled A through M. But don't worry, they're not stuck in one place.
+
+Thanks to a clever trick called AnyCast, they're duplicated and distributed across hundreds of locations globally for speed and reliability. Now, here is the thing. Root servers don't know the IP addresses of specific websites like Netflix.com. Instead, they guide you to the right section of the directory. The root
+
+server replies, "Ah, you're looking for something ending in com. You will want to speak with the dot servers on the next floor. These are called tople domain servers. Top level domain servers are like the department heads for specific domains com.net.org and so on. They don't know
+
+the exact IP, but they know who's in charge of that domain. So now the.com server points your DNS query one step closer. To find Netflix.com, talk to the person in charge, Netflix's own DNS server. This
+
+final destination is known as the authoritative DNS server, the definitive source of truth for that domain. Think of it as the actual office of Netflix where their receptionist checks the official records and says, for example, yes, netflix.com/breakingbad lives at 172.217.130.
+
+These authoritative servers are typically operated by hosting companies such as site ground, blue host, and hostgator, by cloud providers like Amazon Web Services, IBM Cloud, and Microsoft Azure, or directly by organizations like Netflix themselves. Finally, the original receptionist, your configured DNS server, takes that answer and brings it back to your computer. And just like that, your browser connects to Netflix's IP address. All of this in a blink of an eye. Your computer now caches this information locally, writing it down like a note for next time. So
+
+the next time you visit netflix.com, it can skip the entire journey and go straight there. We just said that with the IP address, your browser connects to Netflix in a blink of an eye. What happens concretely? Well, once your computer receives the IP address for netflix.com,
+
+let's say 172.217.730, the DNS process is complete. Your system now knows exactly where to send requests, like having the street address of a destination. At this point, the focus shifts from asking for directions, which is DNS, to actually visiting the place using HTTP or HTTPS.
+
+To access the site, your computer contacts the web server at that IP address using a dedicated protocol, typically HTTPS over port 443. Common types of web servers include Apache, EngineX, and Lightseed. These servers handle the actual delivery of web pages and media to your browser. This process is also called HTTP transaction or TCP HTTP communication phase. All right, let's put theory into action.
+
+Let's go on Bob, our Windows 7 machine in the EVENG lab. We are going to ask Bob, what is the IP address of netflix.com? To do this, we will use a built-in Windows tool called NSOKOP, short for name server lookup. It asks the configured DNS server to translate a domain name into an IP address. So, we
+
+type the command NS lookup followed by the domain name we want to resolve. Behind the scenes, NSOup sends a request to the configured DNS server on this machine. In Bob's case, that's Google's public DNS at 8.8.8.8 8. And here's what
+
+we get back in the output. Server. This shows the DNS server that handled the request. Here it's Google's DNS. Address. This is the IP of that DNS
+
+server. In our case, 8.8.8.8.8.
+
+Non-authoritative answer. This section shows the IP addresses currently associated with Netflix.com. Why non-authoritative? because this answer came from a cached copy, not directly from Netflix's own DNS server.
+
+And that's perfectly normal. It keeps lookups fast. Addresses. There are multiple IPs here. That's because big sites like Netflix use CDN's short for content delivery networks and load balancing.
+
+Depending on where you are, you may get a slightly different IP for performance reasons. So, that is it. Nest lookup is a simple yet powerful way to see DNS in action. You ask for a name and in seconds you get the machine readable address you need to make the connection. Now let's dig a little deeper. Time to
+
+meet Oscar, our KI Linux machine, the hacker of the group. This time we're going to use a more powerful tool called DIG, short for domain information groper. It gives us a detailed view of what's going on during DNS resolution. So let's use dig. The command is dig followed by the domain name we want to resolve.
+
+And here is the result. Let's break down this output together. The first line tells us the type of DNS operation performed a simple query and that it completed successfully. In the question section, we see what was asked. Netflix.com and A.
+
+That means give me the IPv4 address which is the A record for netflix.com. The answer section shows the magic. Here are the actual IP addresses returned by the DNS server. These are public facing web servers for Netflix.
+
+You might get different ones depending on your region. That's because Netflix uses global load balancing and content delivery networks to serve you from the closest server. We also see the query time 31 milliseconds. That's how long it took to get the answer, less than the blink of an eye. There is also the DNS server used, which is 8.8.8.8
+
+number sign 53. This confirms that our query was answered by Google's DNS server using port 53, the standard port for DNS over UDP. We can also see the time stamp that is the exact date and time when this lookup was performed. Useful for logs and debugging. And finally, the msg size 88.0000.
+
+That's the size of the DNS response in bytes. A small efficient message packed with essential info. So, DIG gives us the full story. not just the answer, but how we got it, who answered, and how fast. It's the perfect tool when you're troubleshooting DNS issues or just want to see what's going on under the hood.
+
+Sometimes you might want to change the DNS server your system uses. This can be done to improve speed, enhance privacy, bypass censorship, or troubleshoot DNS issues. For this demo, I'll use google.com instead of Netflix.com.
+
+This is because Netflix blocks ICMP echo requests, meaning you cannot ping Netflix.com. That's a common security practice to defend against network scanning and DOS attacks. But luckily, we can ping Google. Let's try it.
+
+Perfect. The packets are going through now. Let's see which DNS server the machine is using to resolve Google. To do so, we use the dig command. As expected, the configured DNS server is Google's public DNS server. Let's
+
+also note the Google IP address. We will use it later. The configured DNS server and other DNS configuration are written in the resolve.com file. This file is located at etc.
+
+Let's see the contain of this file using the cat command. Here we see names server 8.8.8.8.8
+
+and name server 8.8.4.4. These are Google's public DNS servers.
+
+Now let's break DNS on purpose by changing the configured DNS server to an incorrect value, something that doesn't respond. We'll edit the file using nano. Now replace 8.8.8.8 8 with something
+
+invalid like 8.0.8.8. Then save and exit.
+
+Let's verify our change using CAD again. Let's try pinging google.com again now that DNS is misconfigured. And there it is. Temporary failure in name resolution.
+
+That means the domain name cannot be resolved into an IP address. Let's bypass DNS entirely by pinging Google directly using it IP address. First, we grab the IP address from the previous dig output.
+
+Then we ping Google using this IP address. Success. The ping works using the IP address even though DNS is broken. This clearly shows that DNS is just the translator. Without it, we need to speak raw IP.
+
+So in this test, we proved how critical DNS is. When we broke the name server setting, google.com became unreachable even though the network itself was fine. This is exactly why understanding DNS troubleshooting is such a powerful skill, especially in security focused environments like Cali. DNS is the invisible hero of the internet.
+
+Without it, we'd be stuck memorizing long, messy IP addresses. From local cache to root servers to final lookup, DNS makes the internet simple, friendly, and fast for humans. And now you not only understand it, you can test, troubleshoot, and tinker with DNS yourself. If you enjoyed this deep dive into DNS with EVNG, give this video a thumbs up, subscribe for more networking labs, and drop a comment if you want a video on DNS attacks like spoofing and cash poisoning. Bye-bye.

@@ -1,0 +1,52 @@
+---
+video_title: "Generative Video at the Speed of Light — Keegan McCallum, uRun"
+video_id: Xln-On3syJk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Xln-On3syJk
+video_date: 2026-08-18
+video_description: |
+  Ten dollars now buys roughly three hours of continuously generated video, and fifty buys fifteen. Keegan McCallum sets that against the room's own habits, since plenty of hands went up for burning that much on coding tokens inside a single hour. His argument is that the interesting axis in generative video stopped being quality a while ago. Put a real time generation next to one that took minutes and the slower clip still has better motion, but it cost on the order of a hundred times more to produce.
+  
+  Helios, the model he serves, is a distillation of a 14 billion parameter open model, and it is one of at least forty released this year carrying real time or long horizon capability. What that unlocks has less to do with better clips than with a different interaction shape. A webcam that shows you the haircut you are considering. A visual medium for people who do not think in text, which is most of what working with AI currently demands. Content creation that stops being a slot machine where you spend ten dollars a minute on a prompt and some keyframes and hope for the shot. Steering a generation in under a second is a different job entirely. What is left is the serving problem: GPUs positioned globally, WebRTC with ICE and TURN, and several models wired into one continuous streaming pipeline that stays synchronized with user controls frame by frame.
+  
+  Speaker info:
+  - https://x.com/keeganmccallum3
+  - https://linkedin.com/in/keeganmccallum3
+  - https://urun.sh
+  
+  Timestamps:
+  0:00 - Generative video along the quality axis
+  1:24 - The other axis: efficiency and long horizons
+  3:23 - What ten dollars of generation buys now
+  4:38 - Magic mirrors, accessibility, and steering shots live
+  6:33 - The hard part is serving it
+---
+[music]
+
+>> I am Keegan. I'm the founder of U Run, um, a new kind of inference provider focused around, uh, interactive media. And I'm here to talk about generative video. So, we hear a lot about generative video improving along the quality axis at the frontier. We have the classic Will Smith eating spaghetti from 2023.
+
+It is nightmare fuel and not something you would ever mistake for reality. In 2024, we got Sora and it gets a little better. It still has a bit of, you know, an AI feel to it, but it it's getting there. And Sora 2, you know, even better. But SeeDance this year, um, absolutely incredible. So photorealistic. And it's
+
+it's no wonder that we talk a lot about quality, but I'm here to talk about another axis which models are improving along, which is efficiency and, uh, the long horizon generations. So, what you're watching here is a demo for a model called Helios that we serve at U Run. Um, the generation in the bottom right corner, you'll see, is a long continuous generation. And the other video, um, is a bunch of clips, um, that have been generated faster than you can consume them. Uh, and they're about at the same quality as the frontier models were last year.
+
+They're Helios is a distill of Juan 2.1 14B. Um, and I'll talk a bit about the techniques that are used in the various models that are hitting the scene right now, but there's been an explosion in just the last year uh, terms of efficiency and capabilities. Um so like looking at this, I kind of ruined it with the last club, but you can guess which one is real time and which one was generated in a number of minutes. And the one on the right is and arguably a bit better. It's got
+
+better motion and it was generated for about a 100th of the cost. And these are just some of the charts showing the quality bar for both long and short video generation. Helios came out in March and it's it's pretty incredible to see how fast these are improving. But these are techniques that are being applied all over the place, not just the one model. There's world models which can keep consistency over long horizons and you can control in a fine-grained way, the camera and the viewport. There's
+
+avatar models like we just talked about with lemon slice and there's video-to-video models that can can transform what you're seeing in in real time, almost like a magic mirror. There's actually been an explosion of innovation. There's been at least 40 models with real-time capabilities and long horizon generation capabilities released this year. Show of hands, who here has burned 10 or even $50 worth of tokens in an hour with Clockwork? A lot of people.
+
+And so we're at a place right now where $10 can get you 3 hours worth of generated video continuously with most of these models and $50 would give you an entire day interacting with an AI in a visual medium. 15 hours. And so I want to talk a little bit about the different things this enables in terms of the way that we interact with computers. Um and I'll talk a little bit about what we're doing at You Run to try and make it easier for folks to experiment and build out applications like this. So, one such use case would be a magic mirror. You [snorts] could have your
+
+webcam and you could ask to see yourself in any outfit. You could ask to see yourself in a car you like or with a haircut you're considering. Um a lot of different possibilities because these are open-ended models that can transform what they're seeing on a webcam in real time. I also think about accessibility a lot with these models. Um you know, working with AI involves a lot of reading and a lot of text.
+
+For some people that's more difficult. Um for some people they just don't think in in text. They think visually and learn better that way. Uh so, there's more opportunities to have companions or visual mediums that are going to allow more people to experience the things a lot of us have with coding models. And I'm excited about content creation.
+
+Um so far we've very much had a slot machine type approach where you're setting up a prompt and maybe some key frames and spending about $10 a minute to try and get the shot that you want. But with these models you can actually steer them in real time in under a second while they're generating and get the actual shots that you want. Maybe you're piloting an agent that you're able to look over its shoulder and see what it's generating in real time. Um but you're able to more granularly control the content you're generating and with modern models like Google Gemini Omni, you can actually render these out as a more full fidelity clip. And of course, we all are thinking about world models, but I want to take the the focus off of just kind of the the the basic world models that we talk a lot about and just try to expand the horizons of what we can do with this technology.
+
+And so, what does it look like to actually build an application like this? So, you're going to need GPUs all over the world potentially if you've got a global audience that's going to be using these. You're going to need to think [snorts] about where you're connecting the users to, what GPUs you're going to use to serve them. You're going to need to set up probably WebRTC and ICE and TURN. And for the most interesting use cases, you're going to want a model wire multiple models together in continuous streaming workflows. Building
+
+those real-time harnesses, and you're going to want things synchronized with your controls that you're providing to your end users with every frame and continually providing a smooth streaming experience. And so, our idea is what if there was just a React component that you could drop into your application to make it easy to provide video interactively inside your applications with any model. And behind the scenes, there's a programmable Python runtime that lets you easily build these complex pipelines generating asynchronously so that you can build avatar models, you can build these video-to-video transformation models, you can experiment and and build whatever you can really imagine on top of these. And I argue that in 2026, don't just need platforms, we need software factories and ways for agents interact with these. And so we've actually built one that will let folks hook into a CLI or an MCP server and build these kinds of applications.
+
+>> [gasps and sighs] >> And so the models are here and the frontier is really in how we serve them. Uh I went way over I went way under time. Um >> [laughter] >> but we are looking for design partners who want to push the boundaries of human human-computer interaction and we're hiring at YURUN. Um so come see me after the talk if uh if you're interested in chatting more.

@@ -1,0 +1,180 @@
+---
+video_title: "Como AUTOMATIZO a Análise de Mídias Sociais com IA (Python + Langchain + Kestra)"
+video_id: vCUZxWFz1nA
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vCUZxWFz1nA
+video_date: 2025-06-26
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Lista de espera aberta): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  Aprenda a construir uma automação completa de análise de mídias sociais usando o poder da IA Generativa com Python, LangChain e Kestra. 
+  
+  Neste tutorial prático e passo a passo, mostramos como ir além das ferramentas no-code e criar um sistema robusto: extraímos comentários e métricas da API do YouTube, processamos os dados com Python, armazenamos em um banco de dados (Supabase/PostgreSQL) e, o mais importante, usamos LangChain com um LLM (Gemini) para gerar um relatório executivo estruturado com insights valiosos, entregue automaticamente no Slack. 
+  
+  Este vídeo é perfeito para desenvolvedores, empresários e profissionais que desejam começar a construir soluções de IA escaláveis e de alto impacto para marketing e negócios, mesmo sendo iniciante, aprendendo a orquestrar fluxos de trabalho que resolvem problemas reais de forma eficiente e profissional.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  Playlist Automação: https://www.youtube.com/playlist?list=PLk6saMUFiINkKTHcF38HBppdxhQKzZFvt
+  ––– Capítulos –––
+  0:00 Introdução
+  Parte 1 - Conceitos
+  0:48 Apresentando a automação 
+  2:53 Como a automação funciona 
+  3:20 Vibe coding em automação 
+  4:37 Vibe Marketing e automação 
+  6:10 Outros tipos de automação em negócios 
+  Parte 2 - Técnica
+  6:44 Apresentando Automação com python e o Kestra 
+  13:30 Verificando os dados no Supabase 
+  14:29 Insights de marketing com Langchain 
+  19:29 Construa o que quiser. Foque nos fundamentos 
+  
+  ––– Agência –––
+  
+  A melhor consultoria em IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #kestra #automação #langchain #python #vibemarketing #analisededados #marketingdigital
+---
+Você não deveria construir automações isoladas, você deveria construir sistemas que ajudam empresas a entregar mais e melhor. E não, as caixinhas não vão te salvar. cedo ou tarde, elas vão te deixar na mão. Um dos setores mais importantes em qualquer empresa é o marketing. E nesse vídeo eu vou te mostrar como automatizar a análise de mídias sociais, eh, usando um exemplo do meu próprio YouTube. E essa essa técnica
+
+aqui você pode usar para qualquer outro tipo de rede social que você desejar. Para você que não me conhece, eu me chamo Ronald Hulk e automatizo negócios há mais de 15 anos. E hoje eu tô aqui na internet te mostrando como você pode fazer isso, com o que existe melhor, com a steack mais moderna possível para que você possa alcançar sucesso. Então bora pro vídeo. O que que a gente vai fazer aqui hoje? A gente vai e criar e uma
+
+solução que pega os dados do YouTube, né? a gente vai pegar os dados através da API do YouTube. A gente vai pegar comentários, a gente vai pegar os números também, views, tarará. Eh, a gente vai transformar esses dados usando um script em Python e a gente vai guardar esses dados num banco de dados. Eu tô usando post gray aqui, mas a gente pode usar qualquer outro tipo de banco de dados e mais especificamente eu tô usando Supas, já que eu sei que muita gente aqui conhece Supas, tá? Depois
+
+disso, a gente vai fazer os insightes. E o que que eu escolhi aqui pra gente fazer hoje? a gente vai fazer os insightes não baseado nos números, mas baseado na linguagem natural. E a gente vai usar o Lengcha para isso, tá? E eu vou mostrar como. É, mas nada impede da
+
+gente também pegar os números e pegar a linguagem e fazer uma análise só ou só fazer uma análise de números com um pipeline tradicional de machine learning. E no final a gente vai fazer uma entrega. E essa entrega é feita através do Slack. Eu vou fazer aqui no Slack, eu uso o Slack aqui, mas poderia ser qualquer outro tipo de canal que você desejar, tá? E como a gente vai fazer isso? Eh, a gente vai desenvolver
+
+tudo localmente, tá? Ah, primeiro deixa eu mostrar como a gente vai mostrar o resultado, né? O resultado vai ser basicamente isso aqui, tá? Vai ser um relatório eh executivo eh com uma estrutura. Isso aqui basicamente vai substituir um analista de marketing, tá?
+
+ele vai pegar os comentários, ele sabe qual é meu público parará, eh, vai interpretar e vai mandar uma mensagem aqui. E é exatamente como eu faço aqui na aqui para eu produzir esse conteúdo. Eh, eu sempre comento, todo mundo deixa o comentário aí, eu comento de volta parará e é bom para trocar ideia, pra gente eh se entender e eu entendi, entender as necessidades de vocês, entender as dúvidas paraará. Eh, mas eventualmente eu rodo isso aqui para eu garantir que eu não tô perdendo nada e assim eu consigo servir vocês de maneira melhor. Então, basicamente é isso. O que
+
+que a gente vai fazer, tá? Eh, vou vamos voltar para cá. Eh, então eu vou usar o Long Shin para gerar esse cara aqui. E beleza. Então, vamos lá. O que que vai
+
+acontecer aqui? Como que esse esse essa stack aqui funciona? Tá? Primeiro eu desenvolvo tudo em Python, local na minha máquina. Então, a gente vai ver o código aqui já. Cadê? A gente vai ver
+
+esse código aqui já. Eh, e aí, uma vez que o código tá funcionando, tá testado aqui na minha máquina, beleza, eu vou salvar ele eh no GitHub e o Castra vai pegar esse código e vai executar. Todo esse essa automação aqui é gerenciada pelo Castra e desenvolvida em Python. Então, é basicamente as duas coisas que a gente precisa. E qual é a vantagem disso, Ronald? Basicamente é o seguinte,
+
+né? A gente entra nessa questão do vibe coding e você pode eh se aproveitar, por exemplo, dessas ferramentas modernas como curso ouf, etc. para criar uma automação, n usando Python, por exemplo. Então aqui, né, eu tô desenvolvendo sozinho, mas nada impede de eu ter um time, como eu tenho aqui na na empresa, né? Então, eh, numas mesma automação, você pode ter diferentes pessoas trabalhando, é porque é código. Por
+
+exemplo, se você tá acostumado com N8N, ele é muito difícil de manter se você tem mais de dois ifs, né? Começa a ficar uma macarronada infinita aquele troço lá. Eh, ele é difícil de compartilhar desenvolvimento porque você não consegue versionar e você tem ele dificuldade de escalar, porque você tem dificuldade de manter e você tem dificuldade de compartilhar eh o trabalho que você faz e isso torna tudo muito difícil. Você só vai conseguir construir soluções isoladas a menos que você faça 1000 gambiarras. E aí, se você tá eh tentando fazer gambiarras com código, você deveria fazer código como todo mundo, né? você deveria eh cair na real e e
+
+seguir tua vida de uma maneira que faça você eh mais produtivo. Então é isso que eu ofereço aqui, beleza? É, a gente já falou aqui de código, gerar código com com com IA e tal, né? Aqui também tudo. E aí a gente vai entrar nessa lança do Vibe Marketing. O que seria o Vibe
+
+Marketing? Seria usar IA e no processo de marketing. Eh, todas as empresas, empresas modernas, tem três áreas principais, tá? Eh, que a gente pode automatizar. É marketing, vendas e entrega. E aí tudo que não for isso é
+
+uma subárea disso, tá? Então não vou entrar em detalhes aqui, de repente essa é uma discussão mais profunda lá paraa comunidade. Eh, eh, o Vibe Marketing entra nessa categoria aqui que seria o seguinte, eh a gente pega o dado, o nosso dado, né? Seja o comentário, seja performance, parará, eh, seja e como um criativo foi, como uma campanha vai, etc. a gente usa IA para avaliar esses resultados e de repente a gente usa IA para criar uma nova campanha, um novo criativo, etc, etc. O que eu tô
+
+mostrando para vocês aqui é só a análise, tá? Eh, e eu não gosto muito dessa ideia de conteúdo gerado automaticamente, ao menos não para mim, tá? Eu acredito que é importante eh certos conteúdos serem e feitos por pessoas, literalmente eu tô aqui, é assim que a gente se conhece, troca ideia, né? Eh, e muit das vezes, né, pai de empresas grandes, por exemplo, uma grande empresa, de repente para eles é interessante fazer eh conteúdo automatizado. Eh, já que eles não têm uma cara, né? Eu sou a cara da minha
+
+empresa, né? Você tá me vendo aqui, é, mas uma empresa grande, de repente, ela precisa contratar um influencer ou alguém que tá na internet, né, para representar a marca deles e de repente para eles é interessante, mas não é meu tópico aqui, tá? Eh, aí você pode automatizar vendas, por exemplo, você pode fazer um agente SDR que, enfim, te ajude a vender, mas de repente esse não é o teu caso, mas você pode eh automatizar certos processos de venda e você pode automatizar a entrega. Por exemplo, um software eh é uma entrega automatizada. É, mas por exemplo, se você tem uma consultoria, você não consegue automatizar só a consultoria, mas você pode já automatizar pequenos pedaços dessa entrega. Em vez de você
+
+fazer tudo manual, você tem mais tempo para focar no que realmente gera valor para o seu cliente. E essa, esse é o objetivo aqui do canal. E essa aqui é a nossa brincadeira aqui. A gente usa o que existe melhor em computação e tecnologia para fazer com que a gente entregue melhores resultados. Então, dito isso, bora para o vídeo, tá? O que
+
+que a gente vai fazer? Esse é o Castel, se você não conhece. E o que que a gente vai fazer aqui? A gente vai pegar nosso script Python, que a gente desenvolve localmente, e a gente vai mandar para cá e ele vai gerar eh gerenciar a automação e a gente não precisa mais ficar se preocupando uma vez que tiver desenvolvido. Beleza? Então vamos lá. Ã,
+
+vamos pro código. Então tá aqui o código. Qual é a estrutura aqui do código, tá cara? E presta atenção nessa estrutura aqui. A gente tem o flows, tá?
+
+Deixa eu flows. A gente tem aqui três scripts. Um é para extrair os comentários, um é para extrair os números e o outro é para analisar, tá? Por que eu faço assim? Cada script, isso aqui é, você não precisa seguir exatamente, mas essa é uma boa prática.
+
+Eh, a gente faz com que ele seja atômico. O que isso significa? Cada script, cada passo aqui tem uma responsabilidade. Então, é exatamente assim que você pode dividir o trabalho. Por exemplo, você pede um desenvolvedor para fazer uma parte do trabalho, você pede outro desenvolvedor para fazer outra parte do trabalho. Então, assim,
+
+você ganha escala, velocidade, teste, porque tudo, cada coisa só faz uma função. Então isso é muito importante, tá? E o que que a gente faz aqui? É, a gente vai vir aqui, simplesmente vai lá no YouTube, IPA do YouTube, lê a IPAI do YouTube e escreve num banco de dados. Rolando, como que você lê da IPI do YouTube? Como que você escreve no banco
+
+de dados? É o seguinte, cara. Se você tá acostumado a usar e N8N, qualquer coisa do tipo Zap, você vai lá e ele fala assim: "Ó, a gente tem 1 trilhão de plugins aqui. Ai meu Deus, o plugins, na verdade, o dia a dia você vai usar poucos plugins. Você vai usar, se você tem uma empresa grande, você tem e muitos clientes, você vai usar 20, 30 plugins, na verdade. E o que a gente faz
+
+aqui internamente é o seguinte, a gente desenvolve o plugin, o que o plugin nada mais é do que a gente desenvolve o que precisa ser desenvolvido para conectar com o banco de dados. Eu tô usando Push Gray aqui, eh, que na verdade é o Supase. Então, toda vez que eu tiver um banco de dados Supase, eu uso esse meu plugin aqui de post gre, já tá desenvolvido, foi desenvolvido aqui dentro, eh, desenvolvido uma vez e a gente usa ele infinitas vezes. Então, assim, é, é benefício infinito e para qualquer coisa que a gente precise, a gente desenvolve o plugin uma vez e amanhã eu tenho um novo cliente que ele usa postay, eu uso esse plugin aqui e é só isso. Então, o que a gente faz? A
+
+gente escreve uma vez, isso é um padrão do Python, tá? Don't repeat yourself. try e a gente simplesmente reusa eh sempre que a gente precisar disso aqui. Então o que a gente faz lá é a gente cria eh as tabelas e a gente roda esse cara aqui. Vamos rodar aqui uma vez pra gente garantir que tá rodando. A gente
+
+vai extrair esse esses dados de números dados numéricos aqui. A gente tá rodando, foi tudo bonitinho, aparentemente. Deixa eu levantar aqui para vocês verem. E foi tudo bonitinho. Então beleza. Então vocês já entenderam
+
+como é que funciona. A gente já tem o nosso código funcionando ali, né? Então deixa eu voltar lá para aquela parte do diagrama. A gente tem nosso código aqui funcionando localmente, já tá tudo beleza. E a gente vai salvar ele no GitHub. E você vê aqui, eu já salvei,
+
+obviamente, né? Já tá tudo salvo aqui. Parará. O código tá com a mesma estrutura que tá aqui na minha máquina. E agora o próximo passo é ir lá pro CRA e executar, tá? Então vamos lá. Vamos
+
+pro Castra. Se você não conhece o Cestra, o Cestra é uma plataforma de orquestração. Ela é agnóstica em relação à linguagem e a gente usa Python aqui geralmente porque Python é, digamos assim, a linguagem de machine learning e a e dados, né? Então é basicamente isso que a gente faz aqui o tempo inteiro. Então eu recomendo você usar Python também. É, se você tá achando que isso é
+
+demais, que não sabe parará, etc. É, recomendo a comunidade. Ah, cadê a comunidade? Eh, as inscrições ainda não estão abertas novamente, mas lá eu tenho um curso de Python básico. Se você não sabe nada de Python, você pode aprender.
+
+E eu também tenho um curso de Castra que tá sendo desenvolvido exatamente agora. Hoje eu mandei mensagem para quem tá inscrito na lista aqui, eh, porque eu eh nos últimos dias tive contato com uma galera que tava pedindo para eu reabrir logo e a inscrição. Não tava nos meus planos de reabrir no curtíssimo prazo, mas eu posso avaliar é dependendo da demanda. Então, eh, se você tem interesse, se inscreve lá, manda mensagem, sei lá, eh, vamos trocar ideia, porque se você fala, eu sei que você existe, sei que você tem necessidade, eh, e fica mais fácil a gente, eh, desenvolver e te servir de uma melhor maneira, tá bom? Então, esse é o Castro, tá? Eh, o Castro faz
+
+exatamente orquestrar e eles nos dá essa bonita aqui, que a gente vê quantas vezes rodou, quantas vezes não rodou, ele manda alerta, etc. Tá? Então, o que que a gente faz aqui, tá? a gente vai ter flows. Flows seriam nossa automação, seria os nossos quadradinhos lá que você já conhecem muito bem, eh, do N8N, tá?
+
+Então, o que a gente faz aqui? A gente tem dois flows. Nesse caso aqui, a gente tem esse distrair números e comentários e a gente tem o flow da análise. Vamos dar uma olhadinha no flow é de perto. É, vamos vir aqui em editar e você vai ver o flow. Primeiro que você tá vendo aqui
+
+é a estrutura do flow, tá? Então, o que eu falei para vocês, o que que vai acontecer? tem um trigger que se ele vai ser acionado eh mediante alguma condição. É. E o que que vai acontecer depois? Ele vai clonar aquele
+
+repositório do GitHub que você viu ali anteriormente. Ele vai extrair os dados do YouTube, tanto numéricos quanto os comentários. E como que isso é construído, Ronaldo? Como que isso acontece? Qual é a mágica? Não tem
+
+nenhuma mágica, é bem simples. Aqui o que a gente faz basicamente é o seguinte, a gente define eh um trabalho para clonar o nosso repositório. Aí a gente define um trabalho Python aqui para rodar um comando. E qual é esse comando? A gente tá rodando aqui, ó, flows e o script que a gente quer, né?
+
+Tanto aqui quanto ali no outro. E é basicamente isso, é só isso. E se você tá vendo esse monte de valor aqui, são os valores das nossas, são as variáveis do nosso ambiente. Por exemplo, eu preciso escrever no banco de dados, eu preciso pegar esse no YouTube. Então eu defino essas variáveis aqui, eh, de maneira que, eh, o script que eu desenvolvo aqui em Python, eu não preciso mudar nada, nada, nada, nada para rodar lá no no Castro. E essa é a
+
+grande, esse é o grande plato porque é exatamente do jeito que você desenvolve aí na tua máquina, é exatamente do jeito que vai rodar lá no Castra. E essa é a grande vantagem de performance que você vai ter e você não encontra em lugar nenhum, porque você simplesmente é exatamente o que você faz na tua máquina, vai rodar e na cloud sem muita dificuldade, n? E para completar a gente define as bibliotecas que a gente precisa. E o que ele vai fazer é ele vai criar aqui um contêiner no Docker. E a gente não precisa se preocupar com nada disso. Ele vai baixar as bibliotecas que
+
+se ele não tiver e ele vai executar o nosso script. Vamos executar ele aqui, eh, enquanto eu explico eh outras coisas para vocês, tá? E você vai ver aqui o que vai acontecer. Ele começa lá executando, né? E a gente vai conseguir ver e todo o log aqui do que aconteceu, tá? Então a gente consegue ver ali do
+
+clone repositório e ele vai começar a executar esse outro cara aqui. Aí você vê que ele começou lá, ó, eh, conectou com o YouTube, falou com a conexão da IPI e aí ele seguiu e a vida dele e foi rolando, tá? É, esse primeiro cara aqui já foi. Beleza. Então, enquanto o outro cara roda, a gente pode ir lá no Supas e ver se o dado tá lá, né? A gente tá
+
+extraindo os números aqui. Então, vamos lá na tabela de números e vamos ver se os dados estão lá. E a gente vem aqui, eh, e a gente vê que o dado foi extraído e os números estão aí, a gente vê a quantidade de comentários, parará, beleza? Etc, enquanto o outro roda. E esse dado aqui é o que a gente vai usar, tá?
+
+Como a gente viu aqui anteriormente, esse dado, uma vez que tá aqui, esse trabalho tá feito. Então, é por isso que a gente isola os trabalhos, porque eh a extração é um trabalho importante por si só e a gente precisa ter flexibilidade se a gente precisar mudar só aquele trabalho. Então, por isso que ele é isolado é do outro trabalho e isso é uma boa prática, tá? Beleza? Então, a gente extraiu o dado, né? É um trabalho muito
+
+de engenharia de dados, né? Tá? Seria assim, mas a gente consegue fazer aqui tudo no Python porque a quantidade de dados não é absurdamente grande nesse caso aqui. Beleza? Então a gente rodou esse cara aqui e ele vai rodar o outro ali. Vamos ver se ele tá rodando. Ainda
+
+tá rodando. Então deixa esse cara rodar e eu vou lá no script mostrar para vocês como é o código do LCH, né? Que é a parte importante aqui no vídeo. Se você ver aqui no nosso no nosso na nossa estrutura de relatório, ele tem literalmente uma estrutura, né? Ele tem resumo executivo, ele tem principais temas e indicadores, ele tem e oportunidades parará, tá vendo? Ele tem uma estrutura aqui. E eu
+
+já rodei isso aqui mais uma vez, né? Então você vê que o outro também segue a mesma estrutura. E aí você deve estar se perguntando, Ronald, como que você definiu uma estrutura fixa para usar com LMs? E aí que o LCH entra, caras, porque a gente vai usar o LCH para, é, rodar aqui o nosso, a nossa LLM. Eu tô usando o GI do Google aqui. Tô usando o Gemini
+
+Pro 2.5 e eu tô usando Pidentic, que define eh um esquema. Então o que que a gente vai fazer? A gente vai usar LLM, a gente vai dar esse dado que a gente extraiu do YouTube e a gente vai falar para ela assim, ó, siga essa estrutura aqui que eu quero que você responda. Então o que ela vai fazer é ela vai e gerar resposta e ela vai garantir que a estrutura do nosso relatório seja cumprida. Isso é a grande diferença
+
+quando você lida com esse tipo de ferramenta, é como Lchain, você tem essas opções e isso enriquece muito seu trabalho. Então, exatamente o que a gente faz aqui, é, eu tô definindo classes, tá vendo, né, que seriam uma estrutura de tabela. É, e a gente tá falando aqui o que que eu quero. Eu quero é uma categoria oportunidade, eu quero uma categoria de análise de sentimento e eu quero e uma análise do reporte. Então, eu tô passando tudo isso aqui pra minha LLM, tá? aqui e no final
+
+ele vai me dar eh a resposta que eu queria. Vamos ver lá se esse job aqui tá terminou. Eh, vamos ver como é que tá. E beleza, o job terminou certinho. Você vê que esse aqui demora um pouco mais, muito porque ele teve que nos vídeos e extrair os comentários. Então, eh, tem
+
+muito mais dado aqui nesse caso, né? Mas você consegue ver aqui tudo de forma transparente. E o que aconteceu aqui? Vamos voltar lá para fora, tá? E o que aconteceu aqui, tá? Eh, ele terminou o
+
+nosso trabalho. Mas e daí, Rod? De onde que tá o próximo trabalho? Como que o Lengin tá rodando? Se você vê aqui em dependências, o que que eu fiz aqui? Eu
+
+criei um outro flow, tá? Que ele é acionado quando esse primeiro flow aqui eh termina de forma eh satisfatória, quando tem sucesso. Então agora a gente vai olhar esse outro flow aqui e você vai ver que ele se funciona exatamente da mesma forma que o outro, tá? A gente vai vir aqui execuções, provavelmente ele tá rodando, já foi, né? já terminou de rodar. Ah, e o que a gente vai ver
+
+aqui é o seguinte, tá? Eh, vamos ver aqui em editar, tá? Como que ele tá estruturado. Mesmíssima coisa, tá? A gente clona o repositório e e a gente executa um flow aqui, tá? E esse flow
+
+agora é o nosso flow de análise, como você pode ver aqui, que é exatamente o flow que a gente tem lá na nossa máquina e o que a gente tem no GitHub. Então, uma vez desenvolvido no local e a gente faz esse flow aqui, você vê que não tem nenhum bicho de sete cabeças, é só uma uma linguagem de definição. E para quem é adepto tem aqui um um um editor no code aqui, tá, cara? Eu quase não uso, tá? Ser sincero, mas você pode vir aqui no editor no code. Eles dá as opções de
+
+você preencher isso aqui apenas com ali na tela, né? Sem usar o yemo, mas aí vai do gosto de cada um, beleza? Eh, então, basicamente você tem isso aqui. Se você tá se perguntando, Ronald, o que que são essas KVs variáveis e tal, pra gente não expor as nossas chaves aqui, né, os nossos valores exatamente no pipeline, a gente tem métodos aqui no Castro para guardar a informação. Eu tô usando aqui um KV store, mas tem existem métodos ainda mais seguros e isso eu falo lá na comunidade lá no curso de Castra que a gente tem lá. Eh, então beleza, ele
+
+falou que executou aqui. A gente pode ver como é que foi a resposta. Vamos ver aqui se a resposta foi certinha, tá? Eh, beleza. Parará. Ele baixou, rodou, fez
+
+tudo que tinha que fazer. E aqui a gente consegue ver tudo que ele gerou. Isso é interessante. A gente pode vir aqui no no nossos leque, ele deveria ter uma mensagem nova e realmente tem. E a gente vem aqui e lá tá o nosso resumo executivo, né, com a estrutura que a gente queria. É. E aí ele vai falar que
+
+que é show, canal, parará. Isso aqui é exatamente baseado nas mensagens que eu recebo de vocês, caras. Então, assim, você tem dúvida, etc., quer trocar ideia parará, cara, não se furte em deixar uma mensagem, porque de fato eu leio eu respondo e eventualmente essas mensagens que vocês mandam me ajudam a avaliar, né, se eu tô servindo vocês bem, eh, e se a gente tá num caminho legal, né? Obviamente, por exemplo, aqui no meu canal, é, se o cara chegar e falar para mim assim: "Ronald, eu não quero fazer nada que não seja e no code." É, com
+
+certeza esse cara não é o cara que eu tô aqui para servir, né? Eu tô aqui para servir quem quer construir de fato coisas eh que são mais robustas. Então, eh, o comentário de vocês de fato ajuda a eu entender, eh, o que vocês estão passando. Eu já faço isso aqui há muito tempo e certas coisas para mim podem parecer óbvias, que para você de repente não é e eu só vou saber se você me falar, obviamente. Então, no geral, caras, é esse o vídeo aqui e com esse tipo de stack aqui que eu apresento, e de fato eu uso ela todos os dias, é o jeito que você pode simplesmente construir o que você quiser, basicamente, sem nenhum esforço é maluco de ficar vendo 1000 vídeos, de tentar parar. O que você vai ter que aprender
+
+bem é entenda bem uma linguagem de programação. No caso aqui eu recomendo automate Python, mas se você tem uma outra linguagem preferida, o CR vai suportar, não tem problema nenhum. você vai entender o básico do Castro. E eu apresento isso aqui no canal. Se você não quer fazer parte da comunidade ou lá na comunidade tem um curso mais robusto, né? E você vai usar orquestra para
+
+simplesmente pegar esse script que você gerou e testou localmente e usá-lo ele online. Ah, e é isso, caras. E você vai aprender sobre API e você vai aprender sobre LLMs ah no futuro, próximo. Isso é um contrato que eu tenho com com a galera da comunidade. Eu vou fazer um curso só de Lchen, tá? pra gente usar
+
+Lingchain de uma maneira devida e tirar proveito dessa maravilhosa biblioteca. É, e aí você começa, cara, a encaixar peças, né? E isso se chama engenharia de ah, cara, isso se chama engenharia de dados, isso se chama engenharia de software. No fundo, o termo vibe é só mais um termo, tá? Vibe coding seria, a gente usa IA para codar, então seria vibe marketing, a gente usa IA para fazer marketing, mas no fundo, cara, os fundamentos é o que importam, tá? Então,
+
+se você conhece marketing e tem interesse em aprender isso aqui, você vai nadar de braçada. Se você conhece isso aqui, o que eu tô mostrando e quer aprender eh marketing, você vai nadar de braçada, porque cada vez mais o nosso mundo profissional converge para profissionais que são multidisciplinares e que conseguem simplesmente andar com as próprias pernas. Enquanto tem uma galera que tá usando IA para ficar mais lento, mais devagar, nós estamos usando IA para prosperar, andar mais rápido, construir melhor e eh ajudar um ao outro. Então, se você gosta do meu conteúdo, gosta do canal, considere se inscrever aqui. Se você quiser fazer parte da comunidade, tá aí o link. Eh,
+
+eu recomendo fortemente. Se a demanda tiver muito alta agora, eh, eu posso reabrir a comunidade. Aí depois você não pode reclamar de novo, como já aconteceu. Ah, Ronald, fiquei de fora, parará, abre de novo, cara, né? Assim, a gente tem que ter, né, para manter a comunidade tem que existir uma certa ordem também, né? Então, eh, só fica de
+
+olho nisso aí, porque se eu abrir, eu vou avisar para quem se inscrever na lista parará, vai ser todo mundo avisado. Bota o e-mail certo lá, né, obviamente, eh, para você ser avisado, né? Não tem spam, não tem nada, só tem comunicação real. Eu sou uma pessoa real e a comunidade sai para pessoas reais. Então, assim, não tem eh esse marketing agressivo. Eu não acredito em marketing
+
+agressivo, eu acredito em um marketing de relacionamento. É exatamente o que eu faço aqui. Ah, então se você considerar, né, eu acredito que uma boa ideia. Então é isso por hoje. Espero que você tenha gostado. Você tem ideia sobre eh outro
+
+tipo de automação que você gostaria de ver? Eh, nesse estilo aqui, eu posso fazer eh agente GA, eu tenho feito vídeos constantemente aqui, fiz bastante vídeos sobre LG graph também e explorei eh outros tipos de alternativa como o SDK da Open AI, o Google ADK e a gente vai criando conteúdo à medida em que vocês forem manifestando também interesse ou que houvidades aqui é interessantes para trazer para vocês. Então é isso, nos vejo até a próxima. Abraço.

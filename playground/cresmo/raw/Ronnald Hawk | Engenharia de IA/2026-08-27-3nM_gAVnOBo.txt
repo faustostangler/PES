@@ -1,0 +1,197 @@
+---
+video_title: "Use OpenRouter do jeito certo"
+video_id: 3nM_gAVnOBo
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=3nM_gAVnOBo
+video_date: 2026-08-27
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade 
+  https://www.rhawk.pro/comunidade
+  
+  ––– Serviços –––
+  https://www.rhawk.pro/empresas
+  
+  ––– Mais conteúdo –––
+  https://www.rhawk.pro/dominio
+  
+  ––– Mercado de IA –––
+  Análises do mercado de IA para quem constrói, decide e lidera:
+  https://www.youtube.com/@rhawk-mercado
+  
+  ––– Descrição –––
+  Usar o OpenRouter parece simples: você escolhe um modelo, chama a API e deixa a plataforma encontrar um provider disponível.
+  
+  Em produção, essa facilidade também pode se transformar em um problema.
+  
+  O mesmo modelo pode ser fornecido por empresas diferentes, com preços, quantizações, throughput, latência, regiões e políticas de retenção de dados completamente diferentes. Se você não controlar o roteamento, nunca sabe exatamente qual infraestrutura está respondendo à sua aplicação.
+  
+  A grande vantagem do OpenRouter é funcionar como um roteador. Se um provider falhar, ele pode enviar a requisição para outro automaticamente. O problema é que, quando você usa a configuração padrão, esse fallback pode direcionar sua aplicação para providers que não cumprem os requisitos técnicos, financeiros ou contratuais do seu projeto.
+  
+  Neste vídeo, eu mostro como usar o OpenRouter de maneira profissional: avaliar os providers, criar um pool aprovado e transformar os critérios da aplicação em uma política explícita dentro do payload da API.
+  
+  A ideia central é simples:
+  
+  No OpenRouter, você não escolhe apenas um modelo. Você escolhe um modelo, um provider e as condições em que ele pode ser utilizado.
+  
+  Neste vídeo, você vai ver:
+  
+  - Como o roteamento e o fallback do OpenRouter funcionam
+  - Por que chamar a API com a configuração padrão pode gerar inconsistência
+  - Por que o preço de um modelo depende do provider
+  - A diferença entre modelos open weight e modelos proprietários
+  - Como quantizações FP4, FP8 e FP16 podem afetar a qualidade
+  - Como avaliar throughput e tokens por segundo
+  - Por que throughput e latência são métricas diferentes
+  - Como a região do provider pode afetar o tempo de resposta
+  - Por que disponibilidade deve fazer parte da avaliação
+  - Como verificar políticas de retenção de dados
+  - O impacto de zero data retention em contratos e projetos sujeitos à LGPD
+  - Como comparar providers usando critérios compatíveis com a aplicação
+  - Por que escolher apenas um provider elimina o benefício do fallback
+  - Como montar um pool com pelo menos três providers aprovados
+  - Como definir uma ordem de preferência para o roteamento
+  - Como restringir providers, quantização, preço, throughput e latência no payload
+  - Como impedir o uso de providers com retenção de dados
+  - Como documentar essa decisão em uma ADR e implementá-la com segurança
+  
+  A melhor configuração não é necessariamente a mais barata ou a mais rápida. É aquela que cumpre o contrato técnico da aplicação e mantém alternativas suficientes para que o sistema continue funcionando quando algum provider falhar.
+  
+  Se você trabalha com agentes de IA, automações inteligentes, consultoria, aplicações empresariais ou sistemas de IA em produção, este vídeo mostra como aproveitar o roteamento do OpenRouter sem entregar o controle da sua solução.
+  
+  ––– Playlist –––
+  Playlist IA:
+  https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  
+  00:00 Como usar o OpenRouter profissionalmente
+  00:39 Roteamento, fallback e o risco da configuração padrão
+  02:40 Como avaliar e escolher providers
+  09:46 Retenção de dados, LGPD e contratos
+  11:19 Como montar um pool de providers
+  14:16 Como controlar o roteamento pelo payload
+  
+  ––– Social –––
+  Instagram: / rhawk.pro
+  LinkedIn: https://www.linkedin.com/in/ronnald-hawk/
+  
+  #OpenRouter #EngenhariaDeIA #IAAplicada #AIEngineering
+---
+No meu último vídeo, eu expliquei o porquê eu movi vários dos meus clientes para o DeepSC V4 Flash usando a Open Houter. Só que eu recebi um monte de comentário questionando sobre preço, política de retenção de dados, etc, etc. Então eu fiquei pensando, provavelmente vocês não estão tirando o melhor possível da Open Houter e esse vídeo se trata exatamente disso. Eu vou te mostrar como você pode usar a Open Houter como um profissional. Para você que não me conhece, eu me chamo Ronald Hulk e eu ajudo indivíduos empresas a colocarem soluções de A em produção e lucrarem com isso para mim encontrar. Os
+
+links estão aí na descrição. Primeira coisa, antes da gente falar da Open Houter em si, a gente vai abrir, eu vou abrir a Open Houter aqui e vou te mostrar o que é importante você olhar lá e quais os critérios são importantes para você decidir qual modelo vai usar e como você vai usar. Mas a primeira coisa, se você não conhece a Open Houter um, qual é a vantagem de usá-la? Ela faz o seguinte, ela literalmente um roteador que você tá usando um modelo, vai imaginar que você tá usando aqui o deepsic, tá? Como era no outro vídeo do exemplo do outro vídeo, vai ter fornecedora A, fornecedora B, fornecedora C, tá? O provedor, o que que
+
+ele vai fazer? Ele vai tentar usar o A. Se o A falhar, ele vai usar o B, tá? Se o B falhar, ele vai usar o C. Por que isso é importante? Soluções de A em
+
+produção, muita das vezes o provedor para de funcionar. Você pode tentar tratar isso do seu lado e você vai ter que construir algo para tratar isso do seu lado ou você pode usar o serviço deles para tratar isso, o famoso fallback. Então, algo caiu, ele chamou outra LLM. Esse aqui é um grande valor que a Open Houter tem para te oferecer logo de cara. Bem prático de usar, é só você chamar API. Se você chamar crua,
+
+igual a maioria das pessoas chamam, ele vai fazer isso automaticamente. Só que isso aqui é exatamente o motivo da tua ruína e que você não tá conseguindo usar isso profissionalmente. E e eu vou te explicar como evitar isso a partir de agora, tá? Vamos lá na Open Houter, só para eu te mostrar isso aqui, se você nunca viu. Se você entrar lá na Open Houter e nunca viu isso aqui, você vai ver uma lista de modelos, um caminhão de modelos lá e você vai ter a impressão que isso aqui é um grande feirão de modelos. E parece, né? Mas isso aqui é
+
+tudo ruído para você. Você ignora completamente essa tela inicial aqui, ignora quando tiver promoção, ignora quando tiver modelo gratuito com modelo com nome oculto. Pode ser uma brincadeirinha para você testar e tudo mais, mas não enfim, não não importa pro seu dia a dia da operação. É mais uma curiosidade, mais uma brincadeira. Então, se você já tá no mundo profissional, você não tá brincando de fazer ya. Muito bem, você já viu isso
+
+aqui. Agora vamos ver um exemplo aqui, claro, que é do deepsic, tá? E a primeira coisa que eu quero mostrar para vocês, eu vou te ensinar a ler isso aqui para você tomar sua decisão. Muito bem. Primeira coisa que você vai ver aqui, ó, é são seis características que eu avali, tá? Seis, não, uma, na só o preço, tá? E
+
+vamos começar pelo preço, porque na verdade essa aqui é a última coisa que você deveria levar em conta, mas é a coisa que as pessoas são mais e estão mais preocupadas o tempo inteiro, tá? Então, vamos lá. Pelo seguinte, primeira coisa, o framework mental que você tem que apagar agora, que você tem que mudar a tua cabeça, tá? desinstala o que tá instalado e e presta atenção aqui, tá? Você vai olhar esse preço aqui, esse preço aqui você deve ignorar. Ponto.
+
+Você vai olhar todos esses provedores aqui, você pode ficar confuso. Então, vamos lá. O que que você vai fazer em relação ao preço? O preço não é determinado por um fornecedor. Não tem alguém um um lugar central falando assim: "O preço desse modelo é X". Isso
+
+acontece nos modelos da Open AI, acontece no modelo da Antropic, porque existe uma empresa com o modelo com close weight, eles são donados e eles não divulgam esse modelo e tudo bem, é, é o negócio deles e eles definem qual é o preço. Muito bem. Aqui os modelos são open weight, o que significa? Você pode baixar o modelo e se você tiver infraestrutura suficiente, você pode fornecer esse modelo através de um serviço. Você tem lá suas máquinas, você bota esse modelo lá e fala assim: "Gente, tá aqui o meu modelo, o preço é X". É assim que
+
+funciona, tá? Então você tá saindo de um modelo de preço central para preço distribuído. Então essa é a primeira coisa que você tem que ter em mente. Ah, mas aumentou o preço. Aumentou o preço aonde? Aumentou o preço para quem?
+
+Beleza, show de bola. Então você já entendeu isso. Então o preço depende do fornecedor. Então quando você tá usando a Open Houter é modelo mais fornecedor, beleza? Não é só modelo. Show de bola.
+
+Show de bola. Então o preço você, a gente já pulou esse cara aqui e esse é um critério de avaliação, mas não é um critério determinístico para sua escolha. Show de bola. Tá, vamos ver aqui. Quantização. Ai Ron, não sei que é
+
+quantização. Que nome é esse feio? Vará vará. Não sei que é quantização. Você vai vir aqui, ó, na Rock Pro. O que é
+
+quantização? Ele vai trabalhar um pouquinho aqui, não pensar, né? Ele vai trabalhar e vai te devolver o que a quantização. E se tiver um material disponível para você, ele vai te mostrar o material. Você clica aqui bonitinho, ele vai te mostrar o que é a quantização nas melhores, na o melhor, né, conteúdo possível para você acelerar seu conhecimento. Muito bem, vamos voltar
+
+para cá. Quantização, como que você vai ver isso aqui dentro da Open Houter, tá? Eh, a Openouter fornece esses valores em muuit das vezes, dependendo do fornecedor pelo seguinte, os modelos eles podem ser fornecidos pros diferentes pessoas, diferentes empresas com diferentes qualidades. E essa é a pegadinha que de repente você não faz sentido. E aí de repente você tá usando aí teu Hermes eh ou algo do tipo ou tua solução profissional e aí você vê que a resposta às vezes funciona bem, às vezes não funciona bem, é porque de repente ele tá agora caindo no modelo com uma quantização menor. Beleza? Eu não sabia
+
+disso. Então isso é importante. Como que você vê isso aqui, ó? Você vai ver essa informação bem aqui, ó. Você vai ver que várias empresas fornecem em FP4, aqui, ó, FP4. E várias delas fornecem em FP8 e
+
+algumas delas em 16, tá? Esse é o padrão, caras. É assim que funciona. Então, provavelmente toda vez que a gente tá consumindo esses modelos, a gente não tá consumindo ele em natura, né? Eh, de repente a gente tá consumindo todos eles quantizados e é assim que funciona. Então, quando você fizer todos
+
+aqueles testes que eu mostrei no outro vídeo, você tá levando isso em consideração, o modelo, o provedor e a quantização, correto? É assim que a gente faz teste. A gente faz esse tipo de teste, você vai perceber que se você for rigoroso e fizer vários testes, como eu já fiz, eh, o FP8 geralmente funciona muito bem. O FP4 a gente tem uma quedinha, mas eh de repente é suficiente pro que você tá procurando. De repente é o preço que te agrada, a análise você é que tem que fazer. Então essa é a
+
+quantização, tá? Então você vai ver que eh os modelos usam diferentes quantizações. Isso é muito importante você fazer. Então o que você vai fazer a partir de agora? Você tá vendo aqui minha tabelinha, correto? Você tá vendo
+
+aqui minha tabelinha? Você vai pegar um uma caneta e um papel e vai fazer uma tabelinha, quantização, trupuol e todas as outras coisas que eu vou te mostrar aqui e preço. Aí você vai fazer uma tabelinha e vai classificar os modelos mediante a isso. É assim que você vai fazer. R, você tá mandando eu escrever?
+
+Tá mandando, é assim que aprende, cara. Você usa o seu cérebro quando você tem que usar e você usa a máquina para acelerar, não é o contrário, né? Você vai prevalecer nessa era aqui se você fizer isso, se você achar que tudo tem que delegar para a IA, eh, você vai se lascar porque você não pode delegar algo que você não pode, não sabe fazer. Você não sabe fazer, você não pode delegar. É o mesmo problema de gerente de projeto que tenta delegar times de A e eles nunca foram desenvolvedores, então eles não sabem delegar muito bem porque eles não entendem como o desenvolvedor funciona, como o engenheiro funciona, etc, etc. Esse é o mesmo problema que
+
+você enfrenta aqui, só que agora você tem uma IA para delegar e se você não sabe fazer, você não sabe delegar. Muito bem. OK. Vamos lá. Já falamos aqui de quantização e preço, vamos falar de trolle, tá? O que que é isso aqui? Isso
+
+aqui é importante porque isso aqui revela tokens por segundo. Então a saída, o quanto aquele provedor consegue te fornecer os tokens. Então quando você viu aqui na Rock Pro eu mandando aqui, você viu lá que tinha e ele respondeu, ele ficou mandando aqui. Então são os tokens por segundo, tá? Aquilo são tokens por segundo. E por que que isso é
+
+importante para você? Porque quanto mais rápido, quanto mais tokens por segundo eles conseguem te fornecer, melhor a experiência do seu cliente, correto? Então isso é importante para você. Então você vai avaliar, tá? Qual é o token por segundo aqui? Qual é o token por segundo
+
+que me fornece aqui? Qual é a importância disso aqui? Você anota de repente, ah, não, Ronaldo, eh, eu tô OK em pagar mais barato com uma resposta mais lenta, porque o meu processo só roda de madrugada. Beleza? Show de bola.
+
+Então, esse é o seu critério para o seu problema. Não existe uma bala de prata. Você tem que aprender a interpretar os sinais e tirar conclusões, tá? É assim que você se torna um profissional importante. Muito bem. Muito bem. Então,
+
+vocês já viram o trupol. Vamos ver latência. Aqui é o irmão, né? É o irmão trupol. Ele também é tão importante nessa equação quanto. É, e ele vai
+
+determinar quanto tempo demora para aquele provedor te responder. Então, você lá naquela tabelinha que eu falei para você pegar papel e caneta e fazer, você tava lá botando, tá comparando um com o outro, né? E é importante você anotar isso aqui. E a latência é importante e é irmã desse cara aqui, ó. Região. Pelo seguinte, vocês vão ver que
+
+os modelos podem ser fornecidos por diferentes regiões. Então eu vou vir aqui, ó, na Cory Wave, por exemplo. Corey Wave tá sendo fornecido aqui, ó, no Estados Unidos em FP8. FP8. Muito bem. Só que você pode ir aqui na Baidu e
+
+você vai ver que eles fornecem na China também em FP8. Então, de repente, eh, você vai levar em conta, até lat tá bem decente, você vai levar em conta que ele vai lá e vai voltar, tá? Então, eh, tem um processo aí de comunicação que você não vê, mas é um baita processo de comunicação, eh, que pode ser importante. Somado a esse todos esses fatores, antes de eu falar do próximo, né, que é o retenção, é, você também é importante observar isso aqui, ó, eh, disponibilidade, tá? Disponibilidade é algo importante, mas você só vê isso no final das contas. Se tiver e, por
+
+exemplo, aqui algo tipo isso, você vai estar fortemente, né? Você não quer fazer isso. E esse é o grande perigo de você usar assim, ó, porque ele vai sempre rotear para qualquer provedor que tiver ali na lista, ele não vai tomar nenhuma conta aí. E a gente tá aprendendo a controlar isso. Muito bem, retenção. Esse é um tópico quente por
+
+conta de LGPD, contrato, etc, etc. O que que você vai ver aqui, ó? Vamos aqui esse cara de novo, ó. Política de retenção, ó. Data policy. Você vai ver
+
+aqui, ó, retention, um no retention. Você não sabe o que ele faz com o teu dado. Você não faz a mínima ideia do que tá acontecendo aqui. Se ele ficar com o teu dado, se ele descarta, ele não quer falar para você e tudo bem, você usa ele ou não, tá tudo escrito aqui, é um contrato, você toma a decisão baseado na tua racionalidade e na tua necessidade. Não adianta falar: "Ah, eu não sabia, você sabia. Você tá vendo esse vídeo
+
+você já sabe." Muito bem. Mas você pode procurar um provedor, por exemplo, que tem zero data retention. Eu não faço propaganda da qu Wave que tá cara, deixa eu abrir o outro aqui porque eu só abro ele, né? Vamos ver aqui na Together. Eh,
+
+na together ele tem zero data retention aqui. Muito bem. Então, zero data retention é importante para você. É importante para justificar a solução pro teu cliente, você fala assim, ó, nós não armazenamos dados. O provedor não armaena dado. Você tá protegendo por
+
+contrato. Você tá assinando um contrato a partir do momento que você usa o serviço falando que eles não fazem política de retenção de dado. Então, você segue tua vida eh protegido por contrato, é assim que você avalia. Você bota isso na tua tabelinha. Zero retention é importante para você? Não.
+
+Sim. De repente eles vão cobrar um preço a mais por isso. De repente sim, de repente não. Você vai ter que avaliar. Por isso que eu disse que preço é a última condição que você vai avaliar.
+
+Você vai primeiro avaliar todas as outras condições compatíveis com o seu projeto e depois você vai tomar a decisão de preço, correto? Beleza? Você vai ter que fazer tradeof. Ah, não, isso aqui é mais importante do que isso. Aí você vai selecionar ali. Beleza. Beleza.
+
+Tá. Vamos voltar para cá. Você já tem todos esses caras aqui. Todos esses caras aqui. Qual é o próximo passo que você vai fazer? Você vai criar um pool
+
+de provedores. O que seria esse pool de provedores, cara? Pelo seguinte, qual é a beleza da Open Houter? Rotear. Se um falhar, ele chama o outro, correto? Já falei isso aqui várias
+
+vezes, já tá cansado de ouvir isso. Só que se você cair na pegadinha de selecionar apenas um nessa bela tabela aí que você criou no teu caderno, eh, você vai ter o problema e vai perder exatamente a feiture que é bonita da Open Houter, que é rotear para um outro lugar se um falhar. Você vai perder isso se você selecionar só um. E o que que você vai fazer? Você vai escolher pelo menos três que atendem o teu requisito, que resolvem o teu problema, correto? E você vai ter
+
+margem sempre, você vai ter margem para, se um falhar, ele vai chamar o outro. Então você, a partir desse momento, você garante que você tá obedecendo a sua política e ao mesmo tempo tendo melhor performance e o melhor custo possível. É basicamente assim que você faz. Beleza? Então você seleciona pelo menos três. Aí você quer ser extra
+
+seguro, seleciona cinco, quatro, beleza? Mas seleciona três. E agora eu vou te mostrar como isso entra em prática, que é como que você configura isso no mundo real, tá? Beleza? Todo eu uso o L chain, todo mundo sabe disso, correto? Link chain, Lraft, DP
+
+agent, etc. Tá? Essa é minha stack de a. Só que como a gente tá usando open router, não importa se você tá usando, chamando a IPI direto ou tá fazendo outra coisa. A IPI é a mesma para todo mundo, tá?
+
+Então esse aqui é o payload da IPI do Open Houter. E aí, como que você vai fazer isso? Esse cara aqui, deixa eu me mudar ali pro outro lugar para vocês verem melhor como que você vai fazer isso aqui. Você vai para certos parâmetros aqui, você vai setar certos providers e aí você vai ter eh exatamente esse pool que você discutiu. Qual é a boa prática no mundo real? Você
+
+fez esse estudo, falá, vi o HW lá falando, fiz esse estudo. Que que você vai fazer? Você vai fazer uma ADR no teu trabalho. O que que você vai fazer? Você vai fazer esse estudo, vai criar a tabelinha que eu te mostrei. Aí agora
+
+você vai transferir isso para um computador. Por quê? Você já armazenou na tua cabeça, você sabe exatamente o que você tá fazendo. Você é dono do projeto, você é dono do problema. É assim que você vai ser liderança. A
+
+liderança não é dada, a liderança é conquistada. Você vai mostrar valor, vai se mostrar importante pro time, pra equipe desse maneira, mostrando um bom trabalho. Você mostrou o seu bom trabalho. Você fala assim: "Ó, cara, eu fiz essas pesquisas aqui, eu tenho essas condições, eu tenho essa tabela, você abre a a DR, você abre a PR. Se você trabalhasse comigo, você ia me marcar na PR, ia falar assim: "Ronald, olha só, eu vi eh esses modelos aqui nessas condições, eu acredito que a gente vai ter melhor performance com de repente melhor custo ou o mesmo custo." Você
+
+pode avaliar aí o teu chefe vai falar assim: "Pô, o fulano fez um bom trabalho, maneiro, vou adotar aqui". E aí o próximo passo é implementar, mas você não vai implementar, sentar no computador, sair implementando, pedir, aí é para implementar sem nenhum critério. Você já vai dar os critérios certinhos assim: "Eu quero isso, eu quero isso, eu quero aquilo." Como que o payload funciona? Campos importantes. Primeiro aqui, ó,
+
+only, tá? Only. Você vai falar: "Eu só quero esse provedor aqui, esse provedor aqui e esse provedor aqui." Show de bola. A partir desse momento, ele não vai rotear para nenhum dos outros milhares de provedores que existem. Você
+
+vai fixar com três provedores. Você vai são fornecedores de LLM para você. Show de bola. Show de bola. Segundo passo, você vai dizer qual é a ordem, qual é a sua ordem de preferência. Então, você
+
+vai dizer: "Tá, eu quero que esse que venha primeiro, se esse falhar ou se tiver algum problema, chama o outro". Show de bola. Essa essa frit aqui é muito importante, ó. A lá o fallback, esse é um dos grandes objetivos que você tá usando, open router, ele vai fazer fallback, se alguém falhar, ele chama outro. Então, show de bola. Você pode ainda ser mais
+
+restitutivo, falar assim que você quer só certos tipos de quantização. Se tiver daquela, fora daquele tipo, você não quer. Show de bola. Você pode estipular max pricing. Então aqui se você quer fazer algo muito diferente, você pode ficar barganhando em preço ali o tempo inteiro, falar assim: "Não, só pago o máximo disso. Você pode fazer um
+
+leilãozinho ali, você usa demais e não tá tão preocupado com a qualidade da resposta." Ou de repente o teu trabalho é bem simples, você pode eh lidar com modelos que são de repente mais lentos, né? Provedores que são mais lentos e eh de repente quantizados. Você pode fazer isso, você pode eh estipular qual é o trupul que você quer no P90. a gente já falou isso no outro vídeo, né? Você pode
+
+dizer qual é a latência. E o importante aqui, ó, para vocês que estão preocupados com data retention, você pode configurar isso no teu payload para ser denai sempre, tá? Então você nega eh a política de retenção e obviamente você já selecionou eh o provedor aqui, mas não custa nada ser extraeguro e colocar este cara aqui. Então em resumo, quando você for usar o penalter, não é modelo, é modelo mais provedor. O provedor é quem determina o preço e não a uma entidade central que determina todos os preços de toda LLM. Esse é um pensamento
+
+natural de se ter no início, porque você vem do mundo da Open A e Dantropic que delimitam e você vem pro mundo onde qualquer um pode pegar esse modelo e fornecer, tá? Espero que esse vídeo vídeo lhe tenha sido útil. Agora você pode usar a Open Houter em todo seu potencial, tirando o melhor dela, sem deixar que ela bagunce a tua solução, porque ela pode bagunçar sem querer querendo. É uma feature, não é um bug, né? É um serviço excelente, mas você tem que saber usá-lo como profissional. Então você é profissional,
+
+você, esse vídeo certamente foi útil para você.

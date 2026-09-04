@@ -1,0 +1,88 @@
+---
+video_title: "Design Stripe Payments — The System Design Interview That Filters Senior from Staff #system #design"
+video_id: TCRglQq2KoY
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=TCRglQq2KoY
+video_date: 2026-08-25
+video_description: |
+  📄 Full written walkthrough: https://systemdr.systemdrd.com/p/design-stripe-payments-the-senior
+  📚 Get all 52 FAANG system design questions, drill cards & cheat sheets: https://systemdrd.com/ebooks/52-faang-questions-drillcards-cheatsheets/
+  All Walkthrough: https://systemdr.systemdrd.com/s/system-design-walkthrough
+  
+  "Design a payment processing system like Stripe" is the question that separates senior engineers from staff engineers in every fintech system design interview — Stripe, Block, Adyen, PayPal, Robinhood, Coinbase, and any FAANG team that touches money movement (Amazon, Apple, Google Pay).
+  
+  Unlike most system design questions, this one has almost no room for hand-waving. Interviewers know within five minutes whether you actually understand idempotency, double-entry ledgers, and reconciliation — or whether you've only read about them.
+  
+  In this video, we walk the exact framework a senior+ candidate uses to answer this question end to end:
+  
+  ✅ The 5 clarifying questions to ask before you draw a single box
+  ✅ Back-of-envelope estimation (throughput, storage, retention)
+  ✅ API design — and the one HTTP header interviewers listen for
+  ✅ The 4-table data model behind every real payment system
+  ✅ The full synchronous charge flow, sequenced step by step
+  ✅ The double-entry ledger — and why it can never be "just updated"
+  ✅ The 5 idempotency failure cases that trip up 90% of candidates
+  ✅ Webhooks, retries, and why exactly-once delivery is impossible
+  ✅ What actually changes between an L5, L6, and L7 answer
+  ✅ The 7 mistakes that fail this round every time
+  
+  Whether you're prepping for a Stripe interview, a fintech system design round, or just want to understand how real payment infrastructure works — this walkthrough gives you the complete mental model.
+  
+  🔗 LINKS
+  Website: https://systemdrd.com/
+  Full written walkthrough: https://systemdr.systemdrd.com/p/design-stripe-payments-the-senior
+  52 FAANG questions + drill cards + cheat sheets: https://systemdrd.com/ebooks/52-faang-questions-drillcards-cheatsheets/
+  
+  📌 If you found this useful, the newsletter publishes one full walkthrough like this every Tuesday, calibrated to L4–L7, plus drill cards, framework cheatsheets, and a private Discord for mock interviews. Subscribe at https://systemdrd.com/
+  
+  #SystemDesign #SystemDesignInterview #StripeInterview #SoftwareEngineering #TechInterview #FAANGInterview #PaymentSystem #BackendEngineering #SoftwareArchitecture #CodingInterview
+---
+Design Stripe payments. This is the question that filters senior from staff in money movement systems. The surface looks ordinary, but the probe underneath has real audit trail consequences. By the end of this walk-through, you'll know exactly how idempotency, double-entry ledgers, and settlement fit together. Before you draw a single box, ask [music] five loaded questions. Is
+
+the API synchronous, blocking on the card network's 200 ms to 2-second round trip, or asynchronous with a webhook later? Which payment instruments? Cards [music] only, or bank transfers and wallets, too? Are you issuing cards, or just accepting them? Because issuing is an entirely different system with its own fraud and chargeback exposure.
+
+Single currency or multi-currency, which adds an FX layer and rate-locking semantics. And what's the SLO? >> [music] >> Typically 99.99% availability and under 500 ms at P99. [music] Asking all five before you sketch anything is what separates you from 80% of candidates. Now, put numbers on it.
+
+[music] 10,000 transactions per second at peak, 100 million a day on average, half a billion on peak shopping days, at roughly $50 a ticket. That's about $5 billion a day in volume, 25 billion at peak. Each transaction record is about 2 kilobytes, and financial regulations require 7 years of retention, which works out to roughly 500 terabytes total. That number tells you your transactional store has to be sharded relational Postgres, >> [music] >> Spanner, CockroachDB, with a cold tiered archive behind it. And don't forget [music] the external dependencies. Card
+
+networks, acquiring banks, fraud services, >> [music] >> and webhook delivery, each with its own latency profile. Three endpoints, but the first one decides the round. Post {slash} v1 {slash} charges takes an amount in integer cents, never floats, because 10 cents plus 20 cents doesn't equal 30 cents in floating-point math, and that rounding error becomes weeks of accounting drift in production. It takes a currency, a tokenized [music] card reference, and this is the line interviewers are listening for, an idempotency key header. Say it out [music] loud. Charging a card is the
+
+highest stakes API call most companies make, and network retries or double clicks can cause the merchant's code to call you twice with the same intent. You detect that and return the cached response instead of charging twice. If you name that header by minute 10, you've passed the first probe. If you don't, you fail at minute 30 when the interviewer asks what happens on a retry. Round it out with a get endpoint to check status and a post to refunds, [music] both itempotent by design. Four
+
+tables carry the weight of this design. Charges, where the unique constraint on merchant ID and idempotency key is enforced by the database itself, not the application, >> [music] >> and where you store a source token, never the raw card number, which keeps that table out of PCI scope entirely. Idempotency keys, which cache the full response and catch [music] a reused key with a different request body before it silently masks a bug. Ledger entries, which are append-only forever. >> [music] >> Corrections are new compensating entries, never edits. And accounts,
+
+which store a denormalized balance cache that's continuously reconciled against the ledger, because computing a balance from 500 terabytes on every read would be absurd. Walk one charge end to end instead of just sketching boxes. The merchant calls the API gateway, which authenticates and rate limits before forwarding to the charges service. That service checks idempotency first before touching anything else, a Redis lookup. And on a miss, an insert of an in-progress placeholder row guarded by that unique constraint. Next, it
+
+dereferences the card token inside a PCI scope subnetwork >> [music] >> and runs an inline fraud check, typically under 50 milliseconds. Then comes the slow part, [music] the 200 millisecond to 2 second round trip to the card network for authorization. On approval, the charge record, the ledger entries, [music] and the account balances are all written in one atomic database transaction. >> [music] >> Only after that succeeds does the service publish a charge succeeded event to Kafka for webhook delivery and return 200 to the merchant. In settlement, the part where money actually moves between banks, happens hours later in a completely separate batch process.
+
+Mentioning that separation out loud is what a staff level answer sounds like. This is the piece that turns [music] we ran some code into we have a financial system. Look at what happens inside that atomic transaction boundary on screen. A $100 charge from the core charges service becomes three ledger entries in the same database transaction. [music] The user's funding account is debited $100. The merchant settlement account is
+
+credited $97. The platform fee account is credited $3. Sum those three entries and you get exactly zero. That's the double entry constraint. And if it doesn't net to zero, you stop processing immediately rather than let bad data propagate.
+
+>> [music] >> Notice the ledger entries feed a denormalized account balances cash for fast reads, while a separate reconciliation engine runs continuously in the background, summing the ledger and checking it against that cash. If a bug ever writes a debit without its matching credit, that transaction group shows up unbalanced within minutes, gets flagged, and gets quarantined, not silently corrected. This append-only reconciled design is exactly what an L6 or L7 answer sounds like. Almost every payments interviewer probes idempotency under failure, and there are five real cases worth knowing cold. >> [music] >> The happy path retry is easy. Same key,
+
+same cash response, charged once. Racing requests are next. [music] Two calls arrive milliseconds apart with the same key. The database's unique constraint catches the second one, and it either polls for the outcome or waits briefly on the first. The one that fails most candidates is the phantom failure. Your
+
+service calls the card network, gets an approval, and crashes before it can save that. The fix is never to blindly retry the charge. It's to make an inquiry call to the network asking for the status of that specific authorization, and trust that answer. Fourth, [music] if the network approves and later reverses, you never flip the original charge's status. You write a compensating ledger entry and mark it reversed. And fifth, if a
+
+merchant reuses a key with a different request body, that's their integration bug. You reject it with a clear error. You never silently replay the old response. Merchants need to know when a charge finishes, especially on the async path. >> [music] >> And webhooks turn out to be their own non-trivial subsystem. Events flow from
+
+the charges service onto a Kafka topic, and a pool of delivery workers pushes them out to each merchant's registered URL. Failed deliveries retry on an exponential backoff. Stripe documents 3 days of retries before an event lands in a drainable dead letter queue. Every payload is signed with the merchant secret, so nobody can spoof a webhook to their endpoint. And you should say this part out loud, too. Exactly. [music]
+
+Once delivery across a network is impossible, so you promise at least once, and the merchant dedupes by event ID. So, what actually changes as you go up levels? A senior answer nails the framework itself. Clarify, estimate, API, data, architecture. Names the ID idempotency key. States cents instead of
+
+floats. Walks all five failure cases. And mentions the ledger's double entry constraint. A staff answer adds the systems senior candidates tend to skip. >> [music] >> The settlement layer as something separate from authorization. A
+
+multi-region failover plan. The reconciliation system with its cadence and alerting. PCI compliance scope. And why the tokenization choice matters for it. And concrete webhook delivery SLOs.
+
+A principal level answer doesn't go deeper on any of that. It zooms out. Smart routing across acquiring banks by card bin range. A strategy for adding new payment rails without rewriting the core. Build versus buy calls on fraud and tokenization. And how the team
+
+itself scales from five engineers to 50. A short list of mistakes that end the round early. Using floats for currency is an instant senior level fail. Leaving out the ID idempotency key means you can't recover once the interviewer asks about retries. Updating a ledger entry instead of writing a compensating one shows you don't actually understand append-only accounting. Storing the raw
+
+card number instead of a token pulls your whole system into PCI scope. And designing only for the happy path, or never mentioning settlement as its own system, both read as a junior tell in an interview built entirely around failure handling. Don't try to memorize this walk-through word for word. Internalize the shape of the answer. The idempotency key on the API, the double-entry ledger, settlement [music] kept separate from authorization, and those five failure cases. Under interview pressure, the
+
+specifics come back to you if the shape is solid. There's a one-page drill card built from this exact walk-through. Reread it the morning of your interview. Plus the full question vault with all 52 walk-throughs organized by archetype, not just by surface question. Next Tuesday we're covering Twitter's timeline and the write fan-out versus read fan-out trade-off. You can read the
+
+full breakdown at systemdrd.com and dive deeper on the Substack link in the description.

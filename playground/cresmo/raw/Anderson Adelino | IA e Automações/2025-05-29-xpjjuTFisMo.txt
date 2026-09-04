@@ -1,0 +1,135 @@
+---
+video_title: "Como PAUSAR a IA para atendimento Humano no Chatwoot | TEMPLATE GRÁTIS"
+video_id: xpjjuTFisMo
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xpjjuTFisMo
+video_date: 2025-05-29
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=xpjjuTFisMo
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  Você sabia que é possível configurar a IA para PAUSAR automaticamente quando um atendente humano intervém? Isso é fundamental para oferecer um atendimento de qualidade no WhatsApp usando Chatwoot e IA.
+  
+  💡 O que você vai ver nesse vídeo:
+  
+  ✅ Como a IA entra em modo de hibernação ao detectar mensagem do atendente humano
+  ✅ Como o Chatwoot facilita essa integração no WhatsApp
+  ✅ O que acontece depois de 15 minutos de inatividade para retomar a IA
+  
+  Por que isso importa? Esse recurso garante que a IA não interrompa conversas importantes e ainda assim mantenha a automação rodando em segundo plano.
+  
+  📲 Me siga no Instagram para mais conteúdos:
+  https://instagram.com/oandersonadelino
+---
+Fala automatizador, Anderson aqui e hoje vou estar mostrando para vocês como pausar a sua IA para atendimento humano lá dentro do chatwood. Sim, você pode ter visto alguns locais aí como fazer essa pausa através do Evolution API, né? Porque o Evolution API ele manda ali um from me. Aí se for true é porque foi você, se for false é porque foi ya. Só que no chat outras coisas ficam um pouco diferente, tá bom? E esse vídeo vai ser
+
+justamente para vocês aprenderem como fazer essa lógica, como fazer esse sistema, fechou? Então vamos lá, pessoal. Eu estou aqui com o meu N8N aqui aberto, tá? Tô com o estetudo aberto ali na outra aba, mas já já vamos para lá. Antes de tudo, eu vou est criando aqui com vocês um web hook, certo? Vou criar aqui o meu web hook,
+
+vou colocar método post e vou nomear o PEF pra chatut YT. Beleza? Show de bola. Vou ativar aqui o fluxo. OK. Agora vou
+
+copiar esse meu web hook, certo? Né? Copiei ele. Beleza. Agora eu vou abrir aqui o meu chatwoodut, tá bom? Eu tô
+
+aqui com o meu chatut aqui aberto e vou configurar essa web hook aqui dentro, tá? Eu venho aqui em configurações, fazer todo o processo aqui com vocês, tá? Integrações, web hooks, configurar. Beleza, estou aqui com meus web hooks aqui. Só tô com um, na verdade, né? Mas
+
+vou criar um outro que é exclusivo aqui para essa aula aqui. Beleza? Então, vamos lá. Vou jogar aqui o meu web hook, apago esse teste que eu tô em produção e o evento eu vou marcar mensagem criada. Beleza? Vamos criar aqui o web hook.
+
+Pronto, web hook criado. Da mensagem chegada vai disparar aquele web hook lá, certo? Então vamos ver se a mensagem ela de fato está chegando. Bom, eu vou pegar aqui o meu WhatsApp e vou mandar uma mensagem aqui pra minha IA. Certo. Olá,
+
+beleza? Vamos voltar aqui para chatut. Vamos acompanhar a conversa por aqui, tá? Quer dizer, na verdade não vai ter conversa aqui porque só tem um web hook, né? Eh, sem a não vai ter conversa, mas enfim, vamos lá, passo a passo que a gente chega na IA. Vindo aqui pra parte
+
+do web hook, ó, e vindo aqui em execuções, o web hook foi criado, beleza? Web hook criado com sucesso. Se a gente abrir o web hook, observamos, ó, todo o conteúdo aqui dentro, OK? Inclusive o conteúdo que é o olá, beleza? Show de bola. Aí o que que eu
+
+vou fazer aqui? Eu vou copiar essa essa resposta aqui do webhook, nesse JSON. Vem o editor e o que eu vou fazer? Eu vou fixar essa resposta, né? Esse output aqui. Eu apago isso aqui, dou um contrl
+
+V e beleza. Vou tá salvando isso aqui. Agora quando der um teste, show. É, foi executado com sucesso. Beleza? Então
+
+vamos lá, pessoal. A lógica é o seguinte, tá? Eu quero que vocês observem duas informações que são muito importantes para você conseguir identificar se quem tá mandando mensagem é humano ou não, tá? E se você ainda não entendeu o contexto desse vídeo, é o seguinte, a Ia vai estar em funcionamento, beleza? Beleza. Aá vai
+
+estar aqui conversando com o cara lá e tudo mais, tá? Porém, o que que acontece no momento que atendente humano, quiser intervir, né, e fazer com que a pare de conversar, eu quero que na hora que eu mande aqui uma mensagem, né, e responda, né, falar aqui o aí eu não responda mais, porque eu assumi essa conversa, entendeu? Então essa aqui é a lógica que a gente quer fazer, tá bom? Então, voltando aqui para o N8N, eu vou abrir aqui esse meu esse edit field e eu vou passar duas informações que são muito importantes para essa loja. A primeira informação, essa mensagem ela está entrando ou se está saindo. Bem aqui, ó,
+
+messas type. Então, esse cara aqui eu arrasto para cá. Esse cara aqui tem que ser igual a, é, perdão, no caso, esse aqui é o message type. Aí aqui eu vou arrastar. Beleza, show de bola, arrastei. Então eu peguei e c essa
+
+variável aqui que é uma message type, tá bom? E ela pode ser em que significa que está entrando ou outgo going significa que está saindo. Beleza? Aqui está como entrando porque foi eh uma mensagem que eu recebi do meu outro número que eu mandei mensagem, entendeu? Então, como fosse o cliente. Então, pegue essa
+
+lógica. Uma segunda informação muito importante também é o source ID. Source ID, que é esse cara aqui, ó. Tá vendo que tem um código? Pois bem, esse código é um código de identificação de onde a mensagem foi enviada. Mas por que que eu
+
+preciso desse cara aqui? Porque basicamente se foi a Iá que mandou mensagem ela vai ter um sid. Agora se foi um humano chatwood, não tem. Calma que você vai entender com mais tranquilidade isso aqui, tá bom? Então assim, o primeiro passo é eu conseguir filtrar se a mensagem tá saindo, se tá entrando. Beleza? Esse é o primeiro
+
+passo. Então, se eu chegar aqui, colocar um switch, eu consigo fazer essa identificação, tá bom? Então aqui, ó, eu arrasto o message type e boto aqui, ó, se for incom, a mensagem está entrando. Se esse message type ele for igual a outing, a mensagem está saindo. Beleza?
+
+Show de bola. Então, se eu der um teste aqui, OK, a mensagem ela está entrando, tá bom? OK. Então, se a mensagem está entrando, então eu preciso sim pegar essa mensagem aqui, esse cara aqui, e jogar para IA e jogar para IA, passando o conteúdo da conversa, tá? Por exemplo, esse content aqui e a IA a partir disso vai responder, tá? Eu vou colocar aqui
+
+um um modelo de linguagem, colocar aqui o 4 O mini, certo? Beleza, que é só para exemplificar para vocês. E aqui eu vou colocar o meu nó do evolution, mensagem, enviar texto, nome da instância. Eh, a gente, se eu não me engano, não é essa aqui o número. Número destinatário. Aí
+
+eu pego o número destinatário bem aqui, ó. Cadê? Identify. Beleza. E a mensagem é a mensagem da própria. Vamos ver aqui
+
+como é que ela vai. Euo aqui, pego a mensagem e jogo aqui. Perfeito. Já é para estar funcionando. Se a instância ela tiver correta. Vamos ver se tá
+
+correto. Não. Motivo. A instância não existe. Então eu acho que tá com espaço.
+
+Vamos ver aqui novamente. Beleza. É agente startar. Então vamos lá. A gente start. Vamos dar um teste novamente e
+
+show de bola, a mensagem foi enviada, tá? Se eu vir aqui no meu mega, né, no meu chatut, está aqui a mensagem que foi enviada. Feito. Então, comandção aqui já tá fluindo, né? Se eu chegar aqui no meu WhatsApp e mandar novamente, quero saber mais sobre você e mandar essa mensagem.
+
+E se eu for volotar aqui, ó, a ideia é que ele já faça a resposta. Beleza? Vamos ver aqui se deu tudo certo, se ele respondeu. Não, deu um erro aqui. Vamos ver que erro foi esse. Ah, beleza. Eu
+
+esqueci de salvar e salvar. Enfim, vamos lá de novo. Quero saber mais sobre você. Vamos ver. Show de bola. E ele
+
+respondeu. Beleza. Ignora esse textão, ignora a forma que ele tá se comunicando aqui. Esse aqui é só um exemplo para vocês, tá? E eu vou até aproveitar aqui para fazer um convite para vocês, tá? Se
+
+vocês querem sair disso aqui para isso aqui, tá? Que é um negócio muito mais completo, né? A gente tem MCP, é multiagente, envio de áudios, era um negócio completo, tá? Isso aqui eu ensino meu treinamento, operação chartear. Isso aqui é ensinado do zero, tá gente? Do zero, desde criação de VPS,
+
+instalação de servidor, é, de ferramentas, tudo nó por nó sendo criado. Isso aqui é uma coisa completa e o preço vai surpreender você pelo que eu entrego, além de a gente ter uma mentoria em grupo toda semana, tá bom? Então, o link vai tá aqui na descrição, se tiver interesse, fica à vontade para acessar lá a nossa página de vendas e ver como que funciona o nosso treinamento, beleza? Então, vamos voltar agora pra nossa aula de hoje. É certo?
+
+Tudo certo aqui? Beleza? Respondeu, tudo OK? Vamos simbora. Agora o que acontece?
+
+Eu quero, no momento que eu chego aqui como um humano, vem aqui, ó. Opa. Quando eu fizer isso aqui, eu quero que aá não responda mais. Na hora que eu chegue e fale: "Oi, tá vendo que a I ela tá respondendo ainda?" Não é para isso acontecer. Um atendimento real não é
+
+para isso acontecer, é para ele parar, porque o humano interfere, tá? Então, quando isso acontecer, vamos fazer agora a nossa pausa, beleza? Então, ó, eu vou vir aqui e vou mandar um outra uma outra mensagem, tá? uma mensagem teste. Vamos observar como que está essa execução aqui no end. Olha só, tá vendo que ela
+
+não foi pro a gente porque a gente já filtrou aqui nesse switch essa questão de entrando e saindo, né? Se que é uma mensagem que tá saindo porque veio do humano para o cliente. Eu vou copiar esse web hook aqui e vou fixar ele, tá bom? Só pra gente visualizar aqui de uma forma melhor. V aqui, vou salvar e vou dar um teste. Vendo, ó, ele saiu porque
+
+o tipo da mensagem, né, é out going. Beleza? Aqui, ó, out going. E observa uma coisa, o source ID é nulo. Por que é nulo, Anderson? Porque a mensagem foi
+
+enviada dentro do chatut. Esse source ID é uma identificação de ferramentas externas do chatut que mande mensagem. No caso, o agente quando manda mensagem tem um SD porque foi enviado pelo N. Entendeu, gente? Então, cara, isso aqui é o que diferencia e a única coisa que vai diferenciar de todo esse web hook para você identificar se a Ia se é uma humano ou não. Beleza? Então, ó, a gente
+
+fazer um filtro aqui. Agora eu venho aqui, coloco um filtro, filtro, pego esse, opa, soci ele só vai passar se esse soci ele for vazio, tá bom? Então, se o sociad for vazio, ele vai passar, tá bom? E no momento que ele fizer isso aqui, aí eu venho aqui no meu querido Super Base, meu querido Super Base, e vou atualizar uma linha lá dentro. Gente, se você tá perdido nessa questão de estrutura, de supo mais, eu tenho aulas aqui no YouTube muito interessante para você, tá bom? Eu tenho uma que é
+
+conectando o seu agente a no WhatsApp e tem um também que é do Chatut, certo? Que é fazendo conexão entre chat e evolui. Assiste essas aulas, cara, que vai aclarar muito a sua mente. Aí depois você volta para cá, beleza? Então vamos lá. Eu venho aqui, ó, na minha tabela e
+
+tenho aqui, ó, a minha tabela de leads, que é onde fica armazenad as conversações do pessoal, tá? E existe uma uma coisa que é o seguinte, ó. É, primeiramente eu quero pegar essa minha condição e eu quero é filtrar, tá? Quero pegar aqui, ó, o número sendo igual ao identifier, que é justamente o que foi passado aqui pela IA, tá bom? Que é esse aqui, ó. Identifier. Beleza, passei.
+
+Show de bola. Então, ele só vai pegar agora o meu número, não vai pegar de outras pessoas. O que eu quero atualizar no Super Base? Eu quero atualizar uma coisa chamada time out, beleza? Passando aqui dentro o horário de agora, horário, dia e tudo mais, certo? Só que não só o
+
+horário de agora, é o horário de agora somado com um valor que eu quero de time out. Então isso aqui você está salvando um valor no futuro. Vamos supor que eu quero que a minha ela fique pausada por 15 minutos. Então eu vou passar agora mais 15 minutos. Então eu venho aqui, ó, e coloco now plus, certo? Eu vou colocar
+
+15 vírgula e abre aqui aspas simples minuts, tá bom? Então observe, ó, que ele vai passar no valor 15 minutos depois, tá? Hoje já são quase 3 da manhã que eu tô gravando esse vídeo. Então aqui, ó, o futuro ficou 3 3:12. Beleza?
+
+Ok. Então isso aqui já fez com que lá no super base, na coluna Time out, eu atualizei e coloquei agora somado com 15 minutos. Então antes de chegar no nosso querido, nossa querida IA, a mensagem, a gente vai fazer um filtro. Que filtro é esse? É um filtro para eu saber se aquele timeout já passou ou não, tá?
+
+Quer dizer, antes eu preciso fazer um get aqui no Supase, né? Eu tenho que pegar aqui uma linha no Supase leads até fazer aqui agora um outro teste, pegando aqui uma mensagem que agora está saindo, né, e não entrando para vocês perceberem aqui a diferença. Vamos ver aqui. Perfeito. Essa aqui vai servir como exemplo. Então vou copiar isso aqui.
+
+Venho aqui. Vamos fixar novamente aqui no web hook. Vou dar um teste. Perfeito. Show de bola. Certo. Aí eu venho aqui,
+
+ó, nesse get. Eu quero filtrar para que o número seja igual ao identifier, certo? Cadê? Aqui, ó. Identifier.
+
+Beleza. Não se preocupa, pessoal, que esse template aqui eu vou disponibilizar de graça para vocês, tá? Eu tenho uma comunidade de graça, eu disponibilizo todos os meus templates de graça lá nessa comunidade. Só entrar aqui no no link aqui do da comunidade gratuita também vai estar aqui para vocês. Bom, então vocês podem só copiar, colar aqui, aproveitar o template. Eu sou bem de boa
+
+quanto a isso. Beleza? Então, vamos lá. Eh, peguei aqui, ó. Show. Ele filtrou
+
+aqui dois números. Deixa eu dar aqui um outro teste que tava sem o filtro, né? Beleza, agora sim, pegou o número que eu quero. Então, ó, a partir disso aqui, agora eu vou fazer o quê? Vou colocar um filtro pós esse get, esse filtro. Por qu
+
+esse filtro ele vai fazer o seguinte, ó. Qual que é a lógica? Esse time out aqui na hora que teve aquela pausa era 15 minutos depois. Então, tenho que checar se o valor de agora já passou time out, entendeu? E o filtro, ele só vai passar se já tiver passado. Então, eu vou pegar
+
+aqui, ó, faço o seguinte, ó. Now, que é o valor de agora. Exatamente. Agora venho aqui, ó, em data e time. Coloco aqui, ó, se ele é depois, né, is after o time out passado do super base. Spoiler,
+
+não vai passar. Não vai passar porque ainda não bateu aqueles 15 minutos. Ou seja, a gente está com a nossa IA pausada. Se eu chegar, vou até vir aqui, ó. Se eu chegar e mandar mensagem novamente para ela, mandando aqui um um oi, o que que vai acontecer? Ela não vai
+
+mais responder porque está pausada. Agora, se eu mandar no horário, que foi aquele hora que tá lá na tabela, né, aí já vai passar porque deu certo. Beleza, pessoal? Então é isso que eu queria trazer para vocês, tá? Essa forma, muita gente ficou com essa dúvida, muita gente aparece em em vídeo YouTube, na comunidade gratuita, eh, perguntando sobre isso. Então, eu decidi trazer esse
+
+vídeo mais específico para isso, tá bom? Eu vou até reforçar o convite para vocês na comunidade gratuita, gente. A gente tá com três grupos já, quase 1000 pessoas em cada um, cara. Network muito bom para vocês, certo? Então assim, gostou do vídeo, já se inscreve para não perder nenhum vídeo, pessoal. Dá aquele
+
+hype, vai me ajudar demais se aparecer para você essa opção, tá bom? E é isso, gente. Tem mais o que falar. [Música]

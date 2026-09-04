@@ -1,0 +1,314 @@
+---
+video_title: "Analyzing NYC High School Data [Beginner Python Project Walkthrough]"
+video_id: nvt4kCTnVkI
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=nvt4kCTnVkI
+video_date: 2025-01-31
+video_description: |
+  In this Dataquest Project Lab webinar, we walk through a real-world data analysis project using Python to explore New York City high school data, with a focus on SAT scores and their correlation with socioeconomic factors like race, income, and school safety. This session is ideal for learners with basic Python skills looking to apply their knowledge to a structured project.
+  
+  🔑 Key Takeaways:
+  ✅ Understand the relationship between SAT scores and factors like income, race, and school safety.
+  ✅ Learn how to clean, merge, and explore datasets with Pandas.
+  ✅ Use data visualization techniques to identify trends and patterns.
+  ✅ See real-time debugging and problem-solving strategies in Jupyter Notebook.
+  ✅ Get insights into the limitations of correlation analysis and how to frame data-driven conclusions.
+  
+  🔗 Start the project here [https://bit.ly/40W3dqf]
+  📁 Access the solution notebook & download the resource files here [https://bit.ly/3EvfEAc]
+  
+  🎓 New to Python? Start with our Python Basics for Data Analysis course [https://bit.ly/3CxiIv8] to build the foundational skills needed for this project.
+  
+  Video chapters:
+  Project brief: 4:38
+  Explaining the starter code: 9:09
+  Visualizing the data: 17:54
+  Safety and SAT Scores: 25:12
+  Race and SAT Scores: 29:57
+  Gender and the SAT: 38:26
+  AP Test and the SAT: 44:30
+  Audience Q&A: 52:43
+  
+  #pythonprojectsforbeginners #dataanalysis #pythontutorial
+---
+And hello, welcome to the Dataquest Project Lab. In this webinar, we are going to be talking about a project analyzing New York City or NYC high school data from the SAT. And we're going to be doing this with Python. As we get started, let me tell you a little bit about myself. My name's Anna Starodubtseva, and I am a senior course developer at Dataquest. And before I
+
+started working as a course developer, I began my career as a high school math teacher, and I did that for 8 years before transitioning into a self-taught data analyst. And I used platforms like Dataquest to help me make that transition from teacher to data analyst. So, if you're in that same boat, you can do it, too. I promise. And in fact, later in this project or yeah, later in this webinar, we will be sharing my student solution to this project, so you can see what my thinking was when I was a learner.
+
+So, who are you? And as we have this slide going on, I am also going to start a poll just asking a little bit about who you are, what your project experience, and if you've attended one of these webinars before, because it'll help me cater to this particular audience a little bit better.
+
+And while that poll is running, everybody is welcome to stay in this webinar, but I do want to make sure that you're spending the hour of your time as best as you can for you. So, this webinar is going to be most useful for people who are fairly fluent with basic Python skills like lists, dictionaries, loops, and conditional logic. And you should have some familiarity with Pandas and Matplotlib, as well as correlations and summary statistics, because we will be utilizing all of those very heavily without diving into the specific um syntax for them too much. And if you feel like this might be a little advanced for where you are right now, stay in the call, try to get a few pieces of information for things that maybe you didn't know before. And if you feel overwhelmed, that's completely okay, too. Uh
+
+everything that we're doing in the project today will be uh shared with you, and you can digest at your own pace. And Recca in chat asks, "Will a recording of this talk be available after?" Yes, we will email a recording to you tomorrow. It'll be on YouTube. All right. So,
+
+project prior experience. Let's go ahead and show these poll results. Um
+
+Oh, share results. There we go. Um Okay, so it looks like for project experience, most of our audience today is complete beginners or have done a couple projects, which this is a fantastic webinar for you. And if you are very confident or are already a pro, welcome. Thank you for joining.
+
+And have you attended a Dataquest project lab before? No, this is your first one is the majority of our audience. So, welcome. We do project webinars every other week or so, so definitely keep an eye on your email if you want to continue attending. Okay. So,
+
+let's dive in. Today's agenda, we are really going to focus on the project, project, project, project. We're going to discuss what is the project about, and then start investigating correlations, and look at some specific potential impacts to SAT scores for different areas of New York City. And finally, I will share a very briefly um how to share your project and get feedback, and we'll have some Q&A at the end. Oh, and on the Q&A note, if you do have questions for me, please use the Q&A panel and not the chat panel, because chat panel goes very quickly, and I might not see your question. Whereas the Q&A panel, I will
+
+I will be able to see your question there. Okay. So, the project brief, um if you're from the United States, you're probably familiar with the SAT, or stand What is it? Scholastic Aptitude Test. And this is a standardized test that the majority of United States students take in 11th grade.
+
+And the results of the SAT historically have been used to when applying for colleges, um and the higher score, the more prestigious schools are more likely to accept you. Um and so, in this project, we are going to be looking at school data and SAT data for schools in New York City. New York City is a very, very large city, very diverse population, lots of neighborhoods, um all over the board. So, how do SAT scores correlate, if at all, with different factors, like race, income, gender? And can we start to determine if the SAT is a fair test to measure aptitude or not.
+
+And spoiler alert, this this SAT has become much much less much much less prevalent since this data set because these questions have continued to gain traction in the public eye. Uh so other or colleges are looking at other tests um and measures nowadays. But the SAT is still around. So if you are just tuning in to this project, it has a lot of data sets. In fact, there are how many? 1 2 3 4 5 6 7
+
+data sets total. And we're not going to be using these individually. In fact, the first part of the project is to combine and clean these data sets into one data set that we can reference for all of our work. Excuse me. So I see a couple questions rolling in about where to go, how to access things.
+
+So let's go ahead and jump into the Dataquest platform and discuss. So in chat, we have some of my colleagues sharing links. And one of the links is to the project. By the way, this project is usually a premium project, but just this week for you guys, we have made it free until next Friday. So if you don't have a premium membership, this is the week to work on this project. And I think the
+
+whole course is free. So just this week, just this week. So definitely check it out. So if you would prefer to work locally, um there's a couple things you'll need to do. You'll need to have your Jupyter Lab or Jupyter Notebook environment set up. You can also use Google Colab,
+
+completely fine. And if you do want to use those things, you can download all the data sets, or if you are in this basics.ipynb notebook file, you can come into the starter code and look at add a school district column for mapping and download this data set using uh combined .to_csv.
+
+Um and just to reiterate, yes, this will be recorded and sent to everybody tomorrow. Okay, so before we dive into the actual code, are there any quick questions on navigating the environment? I want to make sure we're we're all set up before diving in.
+
+All right. Pretty quiet in the Q&A, so I will go ahead and continue. And because we don't need this navigation panel for this particular project in Jupyter Lab, I'll go ahead and collapse that for now. And we'll jump in. So, this project does involve a lot of data sets and a lot of data cleaning, but those steps have been done prior to this project earlier in this course.
+
+And the starter code is provided here. So, we're not going to spend a ton of time on that because there's a lot of other fun stuff to work on here, but I'll briefly discuss kind of a summary of how the data was prepared. So, first of all, we read in the data, and we have our libraries here, Pandas, NumPy, and this is the regex or regex library. And all of our data files are in a list. Read them in.
+
+There's also a very, very robust data set about surveys and that's read in next. Clean some columns, convert some data types. And then combine the data sets. And so this combines all of those different scattered data sets into one and this is the only one we're going to be using now. So, let's jump straight in now that we have that combined data set.
+
+Um and you know, we're going to start just by taking a peek at it cuz it may not be familiar to folks. So, after the last data cleaning step, which is add a school district column for mapping, I am going to add a code cell underneath and my shortcut for that is if you highlight the cell, um you can tell it's highlighted by the blue bar. If you click the B character on your keyboard, it will create a new cell underneath. And we can make sure it's a coding cell because we see the little brackets here. So, let's take a look at the head of our data frame.
+
+Okay, so we can see DBN, which is a school identification number, school name, number of SAT test-takers, lots of SAT data. There's columns here like priority 0607, which actually I did some investigation here and all the values are zero, so you could optionally do a little more data cleaning and remove columns that don't add any value. But we're not going to be needing these columns in this project, so it doesn't really matter if they're in our data frame for now. And here's here's the thing I want to point out. Because we had six or seven data sets, we had a lot of columns here, a lot.
+
+So, we're going to be we're going to need to be very mindful about how we pull data to look at in this project. How do you get the data set? I see someone asking. So, I'll very quickly come back up here. Um so, I'll make a cell above this using A, A for above, B for below.
+
+And let's see. combined.to_csv And um the data set.csv data set.csv Make sure that's in quotation, so it registers as a string.
+
+And if you have to do this in the Dataquest platform, otherwise the the workflow workflow is a little bit longer. But, if we run this cell now, and my shortcut for that is shift enter on a Windows keyboard, it runs, nothing happens. Actually, something does happen. If we look in the side panel where all of our files are, we can now see that there is a data our CSV file named the data set. And we can preview it, and all of our data is here. So, if you did want to
+
+download this to work locally, that's what you would be doing here.
+
+Okay. So, now let's look at some correlations. And in the starter code, we have this information, but I actually want to look at it a little bit differently because we do have 160 columns, and even though they're not all numeric, this is way too much to gain phenomenal insight from because we see a very, very short snippet. So, here's my recommendation instead.
+
+So, I copy and pasted my code from off screen, and now I'll talk about it. So, the first thing we do is I've created a variable named correlations that is a set of all of the numeric correlations from our combined data set. And fun fact, in Pandas version 2.0 plus, you must specify numeric_only=True if your data set has mixed data types. This is not the case for older versions of Panda Pandas where it would infer, but this is necessary now.
+
+Can I zoom in a bit? Yes, yes. Um let me see. Um
+
+Okay. I had a request to make it a little bit bigger, so hopefully folks can see it more. Um let me know if this is an okay size for everybody. All right. So, numeric_only=True creating a correlation chart here.
+
+And here's here's where my code differs from the solution code. I've created a correlations_ascending and a correlations_descending. That way we can take a look at the head. I saw a couple questions in chat about why we use head. It's to take a peek at the first X rows of the data.
+
+Uh because it unlike Excel or Google Sheets where you can see all your visual see all of your data right there in Excel in Python, excuse me. In Python, we do need to write some code to see our data. And that's what the head command can help us with. So, in order to see the largest correlations and the smallest correlations or the largest negative correlations really, I've sorted the values and then for the descending, I've specified the parameter of ascending equal to false. And then I have a couple print statements just so that we can make sure we have a little bit of information about what we're printing.
+
+And then I print the head of each correlation set. For the descending correlations, I decided to go with the top 10 strongest negative correlations. Um just to get a little bit or sorry, flip that around. Um top 10 like strongest positive correlations just for a little bit more insight. So, we can see variables like FRL. This
+
+stands for free and reduced lunch. And this is the percentage of students at a school that um receive free lunch, probably for socioeconomic status reasons. SPED is special education. So, what percentage of the population at the school is in special education? ELL is English language learners.
+
+The Hispanic percentage, the black percentage. And then we have positive correlations. We are correlating to the SAT score column. So we can see it makes a lot of sense. There are three subsections of this test, reading, writing, math.
+
+And it makes sense that if you have a high SAT score overall, your subsection scores are going to be high as well. So these correlations are very, very, very strong here. There are also a couple other race percentages, white percentage, Asian percentage, which we will be investigating. And then some categories like AP test takers, total exams taken, so on and so forth. So now let's start visualizing.
+
+And the first visualization we are going to do is for the survey fields. The survey fields are the fields from a survey that was given to students, to parents, and to teachers. So it's really getting the boots on the ground insight as to what's happening at these schools.
+
+All right. So once again, adding a new cell below to take a peek at some correlations.
+
+And because we're going to visualize, we have to import our visualization library of choice for this project. And that would be matplotlib.pyplot and alias as plt. Very common industry standard for this particular library. And this line is necessary to render graphs within a Jupyter notebook, Jupyter Lab, or Google Colab file. If we
+
+don't have this, we aren't guaranteed to see our rendered charts. So the next thing we're doing is I once again chosen to sort my correlation values to um see a picture of you know, the largest and lowest correlations. And let's take a look. Um Oh.
+
+Um I'm going to restart my my notebook and see if this solves the issue here. No. Oh, we got to do some live debugging. This was not happening earlier. Um
+
+Okay, so type error is saying it's missing the sorting by. But, that's interesting because up here it was working just fine. Um
+
+Uh-huh.
+
+So, let's remove this just for the time being and see if this solves the problem. Well, that's a mess. So, let's see if we can we can fix this. Otherwise, we may take a peek at the solution code and borrow that. Just to keep our webinar moving along here.
+
+You have to specify which column you want to sort. Yeah, the interesting thing is this had been working. Um So,
+
+Okay. It's not my preferred format here. Can we add it now? Nope. Okay, so There we go. Okay.
+
+Little debugging moment there. Just Python being a little picky. Um but the Yeah, seeing a professional debug in real time. Not going to lie, it's nerve-wracking every time. Um But here we have our com Thank you for the applause. Thank you.
+
+I'll be here all day. Um we have our correlation once again setting numeric only equals to true. Um and I think the issue I was having before is is we weren't specifying um what we wanted to sort on. So here, the fact that we are correlating on SAT score, we have a very specific amount of information, so it's going to be a Pandas series instead of a data frame. And in a series, you don't need to specify what you're sorting on because there's only one option.
+
+Um Can you get the recording after? Yes, the recording will be shared um with you. So I I sorted the values here because I want to see the largest correlations. And I like the horizontal the H in bar H stands for horizontal bars instead of vertical bars. And you know what I'm going to do?
+
+Let's go ahead and add in what I had originally planned.
+
+Um Here. This should work. Yep. So just to help us distinguish kind of the noise from the insight, I've decided that we should add in a somewhat arbitrary vertical line. So, this stands for vertical line. I've set
+
+the line style to be a dotted line. And I've put it at the 0.25 mark on our correlation x-axis. And this can help us determine that these correlations towards the top are probably the ones we want to be looking at. The other ones, yes, there is a positive or negative correlation, but they're fairly weak correlations that shouldn't be the main focus of our first analysis.
+
+So, now that we have that in mind, let's look at what these largest, strongest correlations are. So, we see the number of students and the number of parents, and this is interesting because if a school has a higher number of student and parent responses to a survey, their SAT score correlation is stronger. And my best guess as for why is if your students and your parents are engaged, they're taking surveys, and engaged students and engaged parents are more likely to be engaged with the SAT. And study for that and all of that. Uh so, the next up is is where we're going to be investigating further, ACA_S.
+
+ACA is academics. S is for students, and 11 is for 11th grade. So, what is student perception of academics at their school? And if there's a strong correlation here, the SAT scores um are are higher, you know? If you perceive academics as as important, SATs are academic.
+
+And the next one is safety. So, what is the student perception of safety at the school? And what's interesting is the student perception of safety is not the only strong correlation. The total perception of safety, which is parent, student, and teachers combined, and the teacher perception of safety are very strongly correlated with SAT scores. So, let's dive into that.
+
+And in order to do that, I'm going to visualize a little bit more granularly. So, this time we're going to make be making a scatter plot of the SAT score and student perception of safety. And try to see if there's any identifying factors here. So, we can kind of see that there is a cluster of higher SAT scores with slightly higher safety perception from students. So, we're going to investigate this more.
+
+And in my next cell, because we're kind of starting a new section of our analysis, I'm going to highlight my cell by clicking on the white space, and my keyboard shortcut for this is M for markdown. This makes the cell a markdown cell that will render text into headers and so forth. And let's create a second-level header that's with two pound signs, or hashtag symbols, and call this safety and SAT scores. And to render, shift enter.
+
+Okay, so our first chunk of code here is I've created a variable called borough safety. And boroughs in New York City are similar to neighborhoods. You've probably heard of some. Manhattan is a borough, Brooklyn is a borough, Queens. So, we're going to see those somewhat common names um pop up pretty soon.
+
+And to do this, we are grouping our data by borough, which is the variable associated with the borough name. And we are going to be looking at the mean of our numeric columns in this grouping. And remember our original combined data set has 160 columns. We don't want to see them all. So, I've selected a subset of just looking at our safety related variables and the SAT score variable so that we can see if there's any insight to be gained.
+
+And the reason I'm using group by is so that we can see are there any patterns between borough and safety? Because different neighborhoods may have different perceptions of safety level. So, potentially if students are viewing um their neighborhood and their school is more safe or less safe, that could be impacting our SAT scores because like we saw here, there was a fairly strong correlation of student perception with safety and SATs. But looking at our averages here, even though there is some variation in the SAT score average, the Bronx average is about 1150 and the Staten Island average is about 1380. You know, that's a significant spread for the SAT.
+
+The safety ratings don't differ that much. Student perception of safety in the Bronx, 6.6. Staten Island is actually lower. And the same thing can be said of the total safety score.
+
+So, maybe there isn't anything to be gleaned from looking at the borough variable in relation to safety. Now, this isn't in the official project, but I would encourage you, if you want to take this project above and beyond, don't look at borough. Instead, there is a variable for school district. And it's a number. Um I think there's I don't know, 20 or 30 school districts. And if you grouped
+
+here by school district, which is a smaller um section of New York City, would the safety scores tell you a different story? So, that that's my challenge to you. It's to look at this by district instead. So, if we return back to our correlations, which is kind of driving our initial analysis here, um we we didn't we didn't have any conclusive evidence from safety given boroughs. But, if we look at our other correlations up here, there was some pretty strong correlations based on race. So, let's
+
+investigate that. So, once again, because it's a new section here, first we were talking about safety, now we're going to be talking about race. I'm going to make a second level header here called race and SAT scores. Run that. And to help us visualize very quickly, just seeing all of our race-related correlations in one, I have created a list of all of the variables related to race from our data set, cuz we don't want to see 160 variables in our bar chart.
+
+And we are creating a correlation with the SAT score just on the race fields that were specified in the list up here. And we can see there are some pretty strong correlations, positive and negative. So, because the strongest uh negative correlation is with the Hispanic percentage at a school, let's investigate that one more because the the ultimate guiding question of this analysis it is is is the SAT fair? And if one particular group of students is underperforming, we want to investigate, is this fair for them? So, let's visualize again.
+
+Okay, and here's another snippet where this webinar code differs a little bit from our solution file. You'll see that I guess I don't need to do this, do I? Because NumPy is imported up here, but not as NP. And I personally like to abbreviate NumPy as NP just for a little bit of ease in my code. So, we're re-importing NumPy, but aliasing it as NP.
+
+And we are creating a scatter plot comparing the SAT score of the school to the Hispanic percentage at the school. And this is just bonus code. Bonus code, I'm not going to spend a ton of time explaining here, but it's going to show us a trend line. And I wanted to include this just to show it's possible to do this with scatter plots, especially if you are looking at correlations and trends.
+
+And we can see that there is a negative trend. So, the higher the percentage of Hispanic students at the school, overall is the lower SAT score. And um the reason we're using a scatter plot is to visualize potential trends. Whereas here we can see there is a correlation, here we're starting to get more granular with it. And so what what can we what can we get from this?
+
+Well, every level of this analysis we're kind of funneling down. Big picture, medium picture, small picture. So now we're going to look at the schools that are in the highest percentage of Hispanic students just to see is is there any information we can find here that could explain some of the differences. And to do this I have selected several columns to include. And the reason why is I'm a former high school teacher.
+
+These are the variables I was interested in in looking at for this particular question. And we have our school name, we have the number of SAT takers, the Hispanic percentage, SAT score. And then here were some ones I I was interested in. The special education percent at the school, the English language learner percent at the school, school district, borough, and safety rating. And for this particular view we are filtering to see the schools with the highest percentage of Hispanic students.
+
+And because we're in a Jupiter environment, even though we haven't added it a print or display statement to this line, because it is the last only line in our coding cell, it does go ahead and render this for us. And so we can see several schools and the Hispanic population SAT scores. Um now here's what's interesting to me. The English language learner percent is very high. And that's true across the board with one notable exception of Washington Heights expeditionary learning school.
+
+And so I did a little bit of investigation here. The the data can't tell us everything sometimes. And I Googled. I just started copying and pasting these school names into the internet and then seeing like what are these schools? Um is is there a potential reason why the percentage of Hispanic students is so high?
+
+And maybe that could explain the SAT scores. And what's interesting is all of these schools are part of New York City's Outward Bound program, which focuses on English learners. So if you have a school where the majority of students are learning English as a second, third, or fourth language the SAT, which is written in English is probably going to be more challenging. So this is an interesting So now let's look at the converse. Now that we've looked at the schools with the highest percentage of Hispanic students and we've determined that English language learning is very, very important for those schools.
+
+The next thing is same variables on schools with a very low percentage of Hispanic students. And we want to see which of those of those schools Oh my goodness. I'm having a little tough trouble here. Which of these schools have a a very high SAT score? So if we reference our scatter plot here we're now looking at the schools in the upper left corner of our scatter plot.
+
+Just to see the you know the difference between here and here. Let's render this. Very short list of five schools. And once again, we can see phenomenally high SAT scores. Um these for reference if if the SAT scoring system is not super familiar to you, um these are the types of scores you would see from students getting accepted to Ivy Leagues like Harvard and Yale.
+
+And if we look at special education percent, very low percentage of students at these schools are in special education. Very low, almost non-existent percent are English learners. And very low percentages of Hispanic students. Um which this would be an interesting correlation to explore, the correlation between Hispanic percentage and ELL percentage because especially in America, that might be uh pretty pretty prominent one. And once again, did some Googling, did some investigation. And Googling these
+
+schools, let me make sure I get the name right here. All of these schools, all five of them, are part of New York City's specialized high schools. And those schools cater to academically gifted students. And interestingly, the specialized high school program in New York City does have the diversity initiative. But all five of these schools have not elected to be part of it.
+
+So, some interesting insights about race and especially English language learners and maybe the percent Hispanic percentage at schools. So, let's continue on with our analysis. If we remember our other large correlations, is it showing up here? It's not. Um another one I was curious about is gender.
+
+So, let's explore gender in relation to the SAT.
+
+So, very similar workflow to what we've been doing so far. Um looking at just the gender fields. So, I I've set that to a list of male underscore per stands for the male percentage at a school and female underscore per for the female percentage. Um and did a very quick visualization here. So, we can see that not super strong correlations. 10%
+
+for females, -10% for males. You know, these are very weak correlations. But, I wanted to investigate a little further because there there is a small discrepancy, especially if we take the absolute value um between female and males. That's that's 20 percentage points. Um so, no, that's not what I wanted to do.
+
+So, once again, we're going to visualize with a scatter plot and my code once again differs a little bit from the official solution notebook. Because I wanted to highlight what kind of a hand wave here, but what can be considered a normal range of variation in percentage. You know, in a public school, you would expect 50% students to be boys, 50% students to be girls. Um and so, I wanted to highlight things that were outside of that range because that's interesting to me. Why may a school why might a school have um a much larger percentage of girls than boys or vice versa?
+
+And so h span is a horizontal span that will highlight from a range of values. And alpha is sets the transparency because I do want to be able to see the um the data points under it. I see someone in chat said they went to an all-girls school. Yeah, so maybe we're going to see some of that all-girl or all-boy schools. So, we kind of see that there is a substantial number of schools that are above or below what a potential expected variation in um genders would be.
+
+So, I wanted to investigate that a little bit more by looking at okay, what is the average SAT score for these schools versus the average SAT score for these schools. And I've added a couple print statements just to keep our notebook information clear. So, the average SAT score for schools with more than 60% female population is almost 100 points higher than schools with less than 40% female population. Which that's substantial. That's that's a big difference.
+
+Um but we can't make any conclusions based on this. And I see in chat someone's talking about specialized schools. And I 100% agree with that. So, in fact, we're going to another spoiler alert here. Um the code that we're about to run is going to uh add some validity to what Omar and Chad said about this this larger female percentage maybe having some specialization. So, we are
+
+looking at our same variables that we've been exploring in depth a little bit more. Um, personally, I was curious about the sub-section scores on the SAT for this as well.
+
+So, I added those in. And we have a list of five schools that have large percentages of a female population, um, or high percentage of females at the school and high SAT scores. And very similar to what we did for the race exploration of schools in this project, we've got to do some Googling. And if we Google these schools, we can see that they are all part of New York's screened high school program, which has a uh academic admission requirement of some kind. So, all of these schools are are kind of filtering out students that aren't meeting a certain standard of academics.
+
+Um, still interesting that the female population percentage it is so high at these schools. A lot of them are liberal arts focused schools. And I can speak from personal experience here. I went to a high school that focused on performing creative performing arts, so singing, dancing. And just given the nature of performing arts at that time, our school was this type of statistic, 60 plus percent female, and um, also very correlated very highly correlated with SAT scores, um but whether or not that was because of the high female percentage, I can't conclude that because there are other factors. For example, maybe
+
+students who are in the arts are more likely to have high SAT scores. All right. Um so, we are nearing the end of the investigation I was planning to do on screen. So, the final thing I wanted to talk about today is the AP test.
+
+And AP stands for advanced placement, and in the United States, taking AP classes, you can take a test and earn college credit for them. So, often times, students who are college-focused, college-bound, um you also get weighted credit for AP coursework. So, students who are concerned about their GPA, will often elect to take AP courses. So, hypothesis could be that in the number of AP if if there's a larger number of AP test-takers at a school, maybe the SAT score is increased. And here's our code for this. We're once
+
+again going to explore, but we're just going to create a scatter plot this time. Um and in order to do this, we are looking We're creating a new variable called AP percent. So, what percentage of students at the school took an AP test? And we're doing that by taking the number of SAT takers and dividing it by total enrollment. And the reason we're doing this is because if you have a very, very small school, you might have 10 students taking AP tests, but if the the only has 10 students, a 10 out of 10 is going to tell a very different story than just the raw number 10.
+
+So, let's go ahead and render this scatter plot. And right off the bat, I notice something very interesting. There is a fairly prominent vertical line of dots right around 1,200. And this just comes from the data set mean to fill in some missing values. And um in fact I thought this was so important to note that I added a note in a markdown cell below this.
+
+And that's how you can, you know, add in some text. This note the vertical line is the data set mean and it's it's um a very common um what's the word I'm looking for? Very common strategy for data cleaning and data preparation to fill in missing values with the mean. There are some caveats there, but that does go beyond the scope of this webinar. So, from the scatter plot, we could add a trend line, but I don't know. Even if we
+
+ignore the mean values here, there's not a huge trend. It's kind of a a blob a blob. So, maybe the correlation value will tell us something better. Uh so, getting a small little table here. And um correlation value of just about 0.06.
+
+That is a minuscule minuscule very very small correlation value and kind of backs up the fact that our scatter plot didn't show us anything. Could there be trends here? Definitely. And if you wanted to take this into further analysis, maybe you would want to section off kind of these two clusters here. There's like a a lower cluster that does seem to be trending downwards and a a smaller cluster of higher higher SAT scores um with an increase in AP percentage.
+
+Um and so at this point, that's going to conclude the analysis we're doing on screen. However, there is a lot more in this project that could be done. And I mentioned a couple of those as we went along. There are 170 columns of data to explore here and we just skimmed the surface. There were a couple correlations that were strong and interesting in this analysis.
+
+For example, looking at race and looking at gender revealed some very specific groups of schools in New York City. Whereas our first investigations into safety didn't reveal much, but maybe we weren't looking at the right thing. Instead of borough, what if we look at district? And AP didn't initially show anything, but what if we did try to uh hone in on our data a little bit more here. Would it show us a new story?
+
+Maybe, maybe not. So, if you're looking for other project next steps, I have a couple recommendations. Um first of all, class size. I can tell you from personal experience, classes that are smaller get each student gets more of a teacher's attention. So, is Is a correlation between those small classes and higher SAT scores and vice versa?
+
+Um figure out which neighborhoods have the best schools. Is it uniform across a neighborhood? So, for example, is neighborhood one or school district one consistently having better schools or worse schools than district two? If we look at property value, this would require us some extra analysis of finding these property values. Could you find great neighborhoods with cheap housing and great schools?
+
+That's that's interesting to consider real estate. Um and I also did notice, I didn't point it out when you were talking about it, but I'll point it out right now in regards to safety. Um here we go. When you were looking by borough, did anyone else notice that the parent perception of safety is consistently about a point and a half higher than student perception of safety? I thought that was interesting. I don't
+
+have a hypothesis or rationale for why this could be except that maybe because parents aren't at the school every day, they they have a different perception of safety, but in order to confirm that this is actually uh a difference, we would need to do a little bit more and look at things like the overall um scores that parents gave. Were they all a point higher than students and teachers? If so, maybe parents are just you know, more likely to rate things uh higher. But that would be something to consider. Um and then assign scores to schools based on SAT score and other attributes. So,
+
+this is actually done in Oh, excuse me. In the United States on many, many websites, I think someone in chat mentioned CollegeBoard. I don't know if they do this anymore, but yeah, with factors like school attendance and school safety and SAT scores and grades and college acceptance rates, people will try to rate and rank schools. And maybe you create your own ranking system, and maybe it's more equitable than some of the ones that currently exist. Who knows?
+
+So, that's what I have about the project today. Um looking at the clock, we don't have time to talk about sharing projects, but that is covered in um an older Project Lab webinar that is recorded, and we will share that with you if you are interested in learning more about how to share your work on a platform like GitHub. Um So, at this point, I will answer questions from the Q&A. Jeremy, I see you asked one in chat, very interesting question, but if you could pop that into Q&A, it would help me out. Um okay, and I do know our webinar is slated to end relatively soon, but I can stay on a little bit longer if you would like to hear the entirety of the Q&A.
+
+All right, are there Okay. Yeah, I hear I hope I'm saying that right, very excited to participate in the webinar. Thank you. Are there any standard patterns or modern techniques commonly used for these tasks? So, the kind of visual exploration that we did here is very, very common for data analysis tasks because uh looking at kind of raw data in a tabular form like this, if we poured over it for a very long time, potentially potentially we could see um some trends, but the easiest and quickest way to dive into an investigation is looking at some summary statistics, looking at some correlations. There are
+
+a couple other type mathematical values that you could also look at. And then looking at visuals because immediately from this visual this informed our entire analysis. This entire webinar was informed by this dotted line and investigating things above this line.
+
+Um madam, what positive correlation implies that that SAT score is caused by Okay, um so I see Narinder is asking about the correlations in regard to um subsections. So we did look at that correlation here. So very strong positive correlations between the overall SAT score and the subsection scores. Um and Let me try to understand the question. Um does positive correlation So I think the the whole SAT score is literally an addition of the three subsections. So if you scored exactly
+
+500 in writing, reading, and math each section, your overall SAT score would be 1500. So um that's why the correlations are so strong. I think if I were to make a hypothesis, educated guess here of why the correlation for math is a little bit lower, in general, the subsection scores for math are a little bit lower. I saw this as a math teacher all the time. Um and the overall score is made up for slightly higher uh values for reading and writing.
+
+But all three do work together for a strong correlation.
+
+Um Okay, and then Joseph is asking about cleaning the columns. I mentioned columns not adding any value. Yeah, we can investigate that a little bit more cuz I did gloss over it, didn't I? So here, we were looking at the head of the data set and I pointed out that there are some columns named priority 06 07 um with zero values. Um obviously you would want to confirm this, but let's look at priority 06 for example.
+
+So combined Um I don't know why it's adding that tab. No, thank you. Um and if we look at value counts just to see what are the values for this variable. Um so this one's actually it is valuable because it's not all zeros. It has a couple values um that could be adding something. But
+
+if we continue looking at the other priorities really small numbers but with a number of instances, maybe you would want to consider keep keeping it. But priority priority 08 if we look at the value counts, every single row in this data set has a value of 0.0. That's adding that's probably adding nothing. Um my guess is it is from the survey and it is saying when a student responded a student parent or teacher responded to the survey, it was saying the value is false. So, it could be useful, but
+
+you would need to investigate this a little bit more to see if it was needed or not. Um I would also recommend looking at what this column represents. Because there were 160 columns, I didn't talk about each column. I don't even know all the columns cuz that would require a lot of my time. Um so I'm not quite sure what this value represents.
+
+So, looking at time on the webinar, we are technically at time, so I'll quick quickly pause if people need to hop off, but I can stay around for 10 more minutes to answer existing questions um that are in the Q&A. So, if you do want to stick around, I will be working on that. But, if you need to get going, I understand time is very valuable, so I appreciate you taking the the time to join us today.
+
+Um and finally, Joseph, to wrap up the answer to that question, you're you have the fear of deleting columns that may be useful. I feel this all the time. And the good thing about writing code in Python is you know where you manipulated the data. So, if you've deleted a column that you think is not important, and then later on you realize, "Oh, I actually want to use that column." You can go in and uncomment that line out, delete it, rerun the code, and magically that column is back, which is one of the reasons I prefer doing this type of work in Python as opposed to something like Excel uh is that we just have little bit more control and flexibility over adding to and subtracting from our data set.
+
+Um and Joseph, I see you answered in chat. Um the Excel mindset. I love Excel. I use it all the time as a supplement when I'm doing analysis like this. But but yeah, unless you have some Excel workflows set up, the the data cleaning in Excel is kind of a black box.
+
+Um
+
+I think I answered this one about correlation and SAT score column. Um from Owen Iyinyechi, if I didn't answer that question, let me know. Um All right, TN asks, can I consider the flow in this Jupiter notebook kind of typical workflow for a data analysis task such as uh understanding the problem, goal, inspecting the data, cleaning. Yes, this project did follow a data analysis workflow fairly well. Um the the reading in, cleaning, and prepping preparing the data was done before the webinar, but is a very, very, very important part of the workflow. In fact, that's probably where
+
+the majority of the time for this type of analysis would would would be you, it would be the cleaning. Um and if you were to consider this analysis done, I would encourage you, especially if you are preparing this project for an audience, whether that's a portfolio or um uh you know, end user like a a boss, you would want to add some insights here. So, very last cell, what are the insights? And just give a summary of what we found. You know, we found that safety and borough don't have a strong correlation, but more analysis would need to be done for school districts. We
+
+found that there's a very strong correlation um strong negative correlation with Hispanic students. That could be a result of English language learning percentages. And and and just so on and so forth to kind of conclude your analysis.
+
+Um All right. Someone asks, let's see.
+
+Not quite sure I understand this. When checking for correlations, do you check only the numerical features? And how do we interpret the results? For example, what do we do if we have a high correlation between two variables? Or is the correlation feature against the output?
+
+Um I don't fully understand that question. If you want to clarify, let me know. But correlations on their own are not valuable. Uh you've probably heard the phrase correlation does not equal causation. And I would very much encourage everyone in this webinar to take that to heart, especially when working on analysis.
+
+Um Correlations can drive our analysis to find further questions and look for more information. But we cannot interpret results on correlation alone. Um so, speaking to the prior question about the data analysis workflow, if you were to add that conclusion at the end of your report and you are trying to to iterate to your audience, make sure to use the word correlation if it is only a correlation or if you were able to find um more interesting trends. Just just be mindful that correlations are not causation and many many misguided decisions have been made based on on that incorrect assumption. How do we view uh all the survey fields in the Jupiter notebook? Woo. Well, there's a lot of
+
+them. And I'll be honest with you. It's not not going to be easy and I would not recommend it. This is where having Excel as a supplement could be very valuable. And Jupiter Lab and Google Colab are great for this uh because you can preview the data sets in a new tab.
+
+So, honestly, that would be my recommendation for that. All right. Oh, there's so many questions. Can you get the R syntax? If you look on our Data Plus platform and search the projects page for NYC, there is a free version of this project for R and you can see the R solution notebook there. Unfortunately, I
+
+am not comfortable or familiar enough with R to provide that syntax live here. Does the uh Sunitha ask, "Does the data classify schools into public and private?" Fantastic question. Do some analysis. I'm not sure off the top of my head.
+
+Um but yeah, that's a really really interesting question. Um And Kalthar asks, you're having a problem when analyzing scatter plot. When interpreting it, do we analyze by looking at the clusters? Um trend with certain variable values. So, this does speak to the final scatter plot we had here.
+
+Um correlation value was almost zero. It's a public school data set. Thank you, Celeste, in chat. Um so, this is only public schools, but there was some variation in the type of public school, like those selective schools we were um looking at. So, Kalthar, to answer your question, it I'm trying to think of the best way to answer it.
+
+Um here we added a trend line, which because the data was very clearly, when I taught those two students, I asked them to kind of draw a circle around the data points. And if the circle was tilting in one direction or another, that could indicate whether there was a correlation or a trend. So, if we were to draw a circle around this scatter plot, for example, we can see that the circle would be slightly tilted. And the trend line confirms that. Whereas, if we were to try to um draw a circle around this, we might get kind of a weird lumpy blob.
+
+And that's why the correlation value doesn't really show us much. But, I was saying that there are kind of two clusters, and this could be getting into slightly more advanced data science. Um I would be curious in this one if K-means clustering would be able to predict SAT score based on AP test takers um with any accuracy, cuz there there are some clusters, right? But um first glance analysis, this one isn't showing any trends.
+
+Uh Jeremy asks, "Fascinating to watch." Glad to hear that. Um curious, how much time did you spend answering these questions uh when conducting the analysis before this call? So, when I was a student and I completed this project, I spent probably 6 to 8 hours on the project. And that includes everything from conducting the analysis to refining my Jupyter notebook with insights for myself, adding markdown features for easier readability. Um and I did take
+
+some of the investigation a little bit further. Uh and did I finish the analysis to my satisfaction? No. I always wanted to go back and answer some more of the questions I had asked, but just didn't find the time. So, if these projects are taking you hours and hours, that's amazing. That's
+
+great. You are learning so much. And I bet your projects are phenomenal reads.
+
+All right. Um Peggy asks, "Will you get access to the code and data set for practice during and after the 7-day period?" During the 7-day period, this is free for everybody. Um you have access to the notebook, you have access to this walk-through lesson. You do have access to the official solution notebook, which you'll notice is a little different than um the notebook I did on screen today.
+
+Some of the things are the same, but others are different. Um Okay. Oh, we are really out of time here and there are so many great questions. I just don't think I have time to answer, unfortunately. But, I will ask one more from or answer one more from Dave.
+
+Dave, I think if I'm remembering correctly, I've seen you in the Dataquest community before asking about AI. Um and it's a really important consideration. Dave asks, "How much do you use AI to help you write code? You've started using it recently and it's significantly improved your productivity." Curious if I use it. Yes, I use it. In
+
+fact, um last night as I was polishing the final preparation for this webinar, the Oh, that's the official solution. Um I was like, "Wouldn't it be cool if we added a trend line to this?" But, I didn't I didn't have enough time to go into Stack Overflow and figure out the the best code to add this trend line in. So, I asked ChatGPT or you could ask Chandra um from Dataquest, "How can I add a trend line?" And the way I did that was I copied in just the kind of rudimentary code version of this.
+
+Here. So, I copied in this line into AI. In fact, we can do that here. Um how can I add a trend line? And let's see what Chandra says.
+
+Um so, yes, Chandra is also using polyfit, very similar um solution to what I found for my scatter plot here. All right, and at this point uh I'm so sorry if I didn't get to your question, but if you do have your question still and you want answers from me, if you head to the Dataquest community and you tag me um @anastral, I will try to hop in and answer that question for you. And thank you so much everybody for joining today's webinar and staying around a little bit extra for some questions. And um I hope you join us for the next one. It'll be in a couple weeks. We also have
+
+a great career series going on. So yes, thank you so much. Please do fill out the feedback survey also if you can take a minute to do that because it helps me make sure that every webinar is just a little bit better than the last one. All right, thanks everybody.

@@ -1,0 +1,66 @@
+---
+video_title: "I Replaced Elasticsearch with Postgres"
+video_id: ehbPURoL41A
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ehbPURoL41A
+video_date: 2026-08-21
+video_description: |
+  Get started with pg_textsearch: https://tsdb.co/dotb-pg_textsearch
+  ---
+  
+  Atuin, a staple in my setup, keeps getting better...
+  - https://atuin.sh/
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Yeah, PostgreSQL, [music] yet another project. This beast of a database powering giants like OpenAI just got an open-source plugin that can remove this for probably 80% of its users. So, do you still need Elasticsearch? I shoved PostgreSQL in a Docker container, loaded thousands of support tickets, and watched how far the same search algo Elastic uses gets me. It went so well, it made me think, how many people and teams who already run PostgreSQL anyway as their DB of choice rebuild, run, or pay for another service just for simple index text search. What
+
+if we took the exact same underlying math and just ported so that it behaves the same at scale? Don't believe me? Let me show you. >> [music] >> Before diving in, you've heard BM25 before, and it gets thrown around quite a lot when talking about search. Well, for context, Okapi Best Matching 25 is a mathematical equation developed in the '70s. Yeah, yeah. And it's made exactly
+
+for that, find relevance over huge piles of text. Okapi, by the way, was the first system to actually use it and implement the function into its work. Now, do you want to go into the equation and explain it? Yeah, me neither. So, let's actually talk about search.
+
+[music] I'm sure you've heard of this project. It's basically everywhere. Every time someone mentions search in the context of engineering, Elastic comes up. It's been around for years, open-source, written in Java, and yes, save the comments. It can pretty much do anything with speed and power. But, there comes a time
+
+one must ask, is this actually what I need? Might this be an overkill? And perhaps I can just get it with my existing stack. Okay, wait. Let's rewind a little. Let's take a quick look at
+
+what Elastic is to get a good understanding. We can quickly set it up locally with a compose file, but Elastic without Kibana, its UI, is only half the work. Now that we have both, and mind you, these are not small images, thank you Java, we should be good to go. 5601 is the Kibana port for its interface, and there's a lot going on around here. Honestly, one of the most powerful systems out there, and it's currently empty. I ran a script to seed the few
+
+documents, and even added a small search line at the end to see some results. [music] Over to Kibana, now we have typical list of documents, probably originating from a system log, where we see connection timeouts, DB pool exhaustions, TLS certificate renewals, etc. If we search for a string, Elastic comes up with the relevant documents. Not extremely impressive at this scale, but when you have hundreds and hundreds of lines, trust me, you want it there. Now, see the fields on the left?
+
+Category, content, title, and other meta fields added by Elastic. Elastic keeps indices, or [music] indexes, never figured out the right way. Anyway, unless you tell it what to index, which is usually a mapping of keys to keep, it'll index everything, all available fields. Great for search, but for your storage bill, not so much. Now, that's the most basic utility of Elastic, and if that's what you need, as in BM25 ranking search, well, >> [music] >> Elastic may be a huge overkill. You see,
+
+Elastic lets you combine text matches with filters, ranges, nested logic, and comes with its own search language. There's aggregation layers, vector search, and embeddings. You have geospatial search and more, but if you run Postgres, and maybe watch this video covering what it can do, most of what I mentioned above can be achieved in Postgres with plugins or extensions. And, believe it or not, most people and teams don't care about all of these when they're dealing with search. They want a quick, simple, efficient option to find text in their database. Well, this is
+
+everyone's lucky day. PG text search is yet another amazing open-source Postgres extension. It's built and maintained for the community by Tiger Data, the team behind Timescale DB. You get the BM25 relevance full-text search over your precious DB stored data. There's a special syntax to use, which we'll get to in a sec. It works with all the human
+
+languages Postgres can work with, like French and German, for example, on top of plain English. It can handle partition tables, fast queries, and it just scales. But, instead of wasting time looking at it, let's get our hands dirty. We start with PG 18 and some essentials so we could get the PG text search installed. You can get PG pre-baked with it. I wanted to install
+
+it [music] from scratch, so we clone, make, install, and then get rid of the waste. This is then followed by a seed SQL script I made for seeding some data to search [music] on, and then you run Postgres with the preload libraries option and PG text search as value. Now, we're set. Time to run. The container is up. Logs say the system is ready to
+
+accept connections. [music] P SQL in, and now we create an extension like with every other PG plugin. Next, we create a table of documents, insert some log lines inside, and now, and [music] please focus, we add an index on top of our table using BM25. Remember our elastic indices? Same thing. It'll
+
+index the data on whatever column we provide and store the results. The next time we search, instead of scanning the entire table, the extension will provide something along the lines of this, a map of text words and the document they can reference to. Since we've added English to the text configuration, now it's also done with language awareness to not map functional grammar words like if, of, and, etc. Index completed. Documents indexed. Let's search and pay attention
+
+to this. We'll select all columns from documents order by content, but check this out. We're adding BM25 operator, which signifies the distance from the search term, in this case, database system. And there we go. But, here's a weird thing. If we run explain over the
+
+query at the bottom, we're told the system had actually scanned the documents. That's happening because Postgres decided it's such a small table with only three rows, indexing would actually cost more than just a simple scan. Let's make this a bit more interesting, then, shall we? Create a bigger set of documents, rebuilding our DB container, and run it. Now, let's give it a proper search. In this
+
+instance, we'll take our BM25 operator and compute the numeric value of it, and round it to two decimal points, call it score. We'll only pick the databases from the category column, and look at that. Our top contender is the shortest string matching the search, followed by similar lines with added suffixes that gives them the same distance score. By the way, the score is negative because lower values sort first, and more negative means better match. Here's another one for the string certificate renewal. Similar result. You can see the
+
+score changes here because we have the word TLS at the start. It doesn't really matter. We care about the degree of closeness rather than actual computation. Here's one limitation, though. The same BM25 ranks finds candidates, [music] while exact phrase matching still needs SQL condition when that distinction matters. Now, that's
+
+not all PG text search can do. Yes, it's a lean search layer on top of PG, but it has a bit more under the hood, with way to optimize further for speed. You can have parallel indexing if you have the available computer power. All you need is to set max parallel workers and the memory. You can merge segments, and of course, optimize your search queries for performance by making sure you limit the results. And finally, it's always better
+
+to create more refined and specific indices, maybe creating it around an expression allowing you to literally search inside JSON field. There's more, but I think you get the point. A serious full text search using your existing infra with very little effort. If you want to try it yourself, Tiger Data has a full walk-through in the docs. The link is in the description if you want to learn more and try signing up for Tiger Cloud as this is the easiest way to try PG text search out for yourself.
+
+Postgres is more than just a database. It's a full-blown system that can implement cache, queues, schema documents, there's pub/sub, and there's so much more. I can't recommend this next video enough. Check it out and thank me later. Thank you for watching.
+
+I'll see you in the next one.

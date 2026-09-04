@@ -1,0 +1,99 @@
+---
+video_title: "Hy4-Preview Just Shrunk From 1.5TB to 200GB"
+video_id: A3U4iiP9H3M
+channel_name: "Julian Goldie SEO"
+channel_id: UCGpsgNbzdF7BECCVbB1COHw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=A3U4iiP9H3M
+video_date: 2026-08-31
+video_description: |
+  Want to make money and save time with AI? Join here: https://www.skool.com/ai-profit-lab-7462/about
+  
+  Video notes + links to the tools 👉 https://www.skool.com/ai-profit-lab-7462/about
+  
+  Get a FREE AI Course + Community + 1,000 AI Agents 👉 https://www.skool.com/ai-seo-with-julian-goldie-1553/about
+  
+  Get a FREE AI SEO Strategy Session: https://go.juliangoldie.com/strategy-session?utm=julian
+  
+  Tencent shrunk its 770B-parameter HY4 Preview from 1.5TB to 213GB — but the number everyone's leaving out of the thumbnail changes the whole story. I break down exactly how the mixed-precision quantization works, what it actually scores on benchmarks, and the one line in the docs that stops most people from running it. If you care about open models and where local AI is really headed, this is the honest version.
+  
+  00:00  Intro – 1.5TB to 200GB, and the missing number
+  00:40  The Real Math – Why HY4 Preview is 1.56TB
+  01:06  213GB – The compressed build
+  01:14  Quantization Explained – In plain English
+  01:39  The Smart Trick – Mixed precision, not brute force
+  02:00  The Photo Analogy – Why some layers get protected
+  02:09  Where the Cuts Go – Experts vs down projection
+  02:27  Benchmark Results – 85% smaller, ~1 point lost
+  03:38  The Catch – You still need 214GB of VRAM
+  03:57  The Better Option – Why Q4_K_M is the default
+  04:16  Storage vs VRAM – The mistake everyone makes
+  04:24  Real Speed – 20 tokens/sec on 8 data center GPUs
+  04:39  Who It's Actually For – Not your desktop
+  05:19  Inside the Model – MoE, 49B active per token
+  05:49  Sparse Attention & 1M Context – The efficiency stack
+  06:06  It Won't Just Run – Stock llama.cpp fails
+  06:41  The Bigger Pattern – 4 techniques, one direction
+  07:20  The Real Takeaway – Spend precision where it matters
+---
+HY100B for preview just shrunk from 1.5 terabytes to 200 GB. Did a 770 billion parameter model just get small enough to run at home? That's what the headline says. 1 and 1/2 terabytes squeezed down to around 200 and barely any drop in quality. But there's one number nobody's
+
+putting in the thumbnail. Once you see it, this whole story changes. I'm the digital avatar of Julian Goldie and I help people learn AI tools and actually use them in their work. In this video, I'll break down exactly what Tencent did here, why the trick is way smarter than just making the number smaller, what the shrunk model actually scores on real tests, and the one line buried in the docs that stops most people from running this thing at all. Stick with me because the last part is where the real lesson is. Let's start with the numbers because
+
+they're wild. Tencent released HY100B for preview on the 28th of August 2026. It's their new flagship open model. The original weights on Hugging Face are stored in something called BF16, which means every single number inside the model gets 16 bits of space, 2 bytes each. The model holds about 780 billion of those numbers. Multiply that out and
+
+you land at roughly 1.56 terabytes of files. That's the download. Then Tencent's compression team called Angel Slim puts out a compressed version. The aggressive one is 213.66
+
+GB. Tencent's own post rounds it and says 1.5 terabytes down to about 200. So how do you delete that much and keep the model working? The answer is quantization. In plain language, it
+
+means storing each of those numbers with less space. You could write 3.14159265 or you could just write 3.14. You lose a little precision, but the writing gets a lot shorter. Do that to every weight in
+
+a model and the file shrinks. Here's the thing though, if you crush everything down to 1 bit, models usually fall apart. They ramble. They forget how to code. So the interesting part of this release isn't that Tencent went low, it's where they went low. They call it
+
+Mix-dash-STQ1_0. It's mixed precision. Some layers get squashed down to about 1.31 bits, others get about 2.06 bits. On average, the
+
+whole file lands around 2.38 bits per weight. And that layer-by-layer choice isn't random. They use calibration data to work out which layers could take a beating and which ones needed protecting. Think about compressing a photo. If you crush the whole image
+
+equally, faces go blurry along with the sky. But, if you're smart, you keep the detail in the face and let the flat blue sky get crushed hard. Same file size, much better result. That's what's happening here. The routed experts inside the model make up 97.7% of all
+
+the parameters, so that's where the aggressive compression goes. But, one specific part, the down projection, writes its output straight back into the model's main information stream. Errors there don't get filtered out later, they just travel forward. So, Angel Slim deliberately gave that part more bits. The attention pieces and the routing bits stayed high, too, because they're small, but they steer everything. So,
+
+did it actually survive? Tencent published the comparison against the original. On MCP Atlas, it went from 83.7 to 83.2. On SWE Bench Multilingual,
+
+82.9 down to 81.3. On MRCR, 81.3 to 81.1. On IF Bench, 73.5
+
+to 72.5. That is not zero loss. There is a drop. But, look at the trade. You cut
+
+the file by roughly 85% and you give up about 1 to 1.5 points on most of these. A year ago, one-bit quantization did not look like that. And this is where I want to pause, because a lot of you watching aren't here to run a 770 billion parameter model in your garage. You're here because AI is changing how people find things, and you want your brand to show up when it happens. So, here's
+
+something that's completely free. We run a free AI brand visibility session. You get on a call with a strategist and you get a custom visibility plan for your site. They'll show you how you currently show up or don't show up across Google, AI reviews, ChatGPT, Perplexity, and Gemini. You get a competitor gap analysis, so you can see who's getting picked instead of you and why. And you
+
+get direct answers to whatever you're stuck on. 100% free, no obligation. Links below if you want it. Right, back to that number I mentioned at the start. 213 gibibytes is smaller. It is not
+
+small. The Angel Slim model card says it plainly. To hold the whole compressed model in VRAM, you need about 214 gibibytes. That's not a gaming card. That's not a MacBook. That's a rack. And
+
+there's a second build in the same repository, a standard 4-bit version called Q4_K_M, and that one is 435.2 GB. Angel Slim actually recommends that one as the default. Their own advice is to use Q4_K_M unless you're memory constrained. The STQ1_O build is the experiment, the one pushing the limit. There's also a
+
+difference people mix up constantly. Storage is disk space, and that's just the file sitting there. VRM is the memory on your graphics cards, and that's the one that decides whether the model actually runs fast. You can have the file on a drive and still not be able to load it. Speed is its own thing again. Angel Slim published their own
+
+benchmark on 8 H 20 GPS. On the compressed build, they got around 204 tokens per second on prompt processing, and around 20 tokens per second on generation. 20 tokens per second on eight data center GPUs. So, who is this actually for? Universities, research labs, teams who already have GPU clusters, but couldn't fit a 1 and 1/2 TB model onto them. That's a real group
+
+of people, and this release genuinely opens a door for them. It just isn't your desktop yet. If you're watching this and thinking you want to build real skills around this stuff instead of just hearing about it, that's what the AI Profit Boardroom is for. Inside, there are live coaching calls where you can bring your own setup and ask questions directly. There are walkthroughs and tutorials on the AI tools people are actually using day-to-day, prompt libraries you can take and adapt, and a 30-day roadmap, so you're not just collecting tabs and never starting. If
+
+open models and local AI are what you want to get good at, a room of people working through the same problems is the fastest way to stop guessing. Links in the description. Now, let me show you why HY4 preview is more interesting than its size suggests. It's a mixture of experts model, 770 billion total parameters, but only 49 billion switch on for any given token. The backbone runs 78 layers. The first is a normal
+
+dense layer, and the other 77 each hold 256 rooted experts plus one shared expert. For every token, the model picks the top eight rooted experts and the shared one, and ignores the rest. That matters because size and workload are not the same thing. This model doesn't do 770 billion parameters worth of work per token. It does about 49 billion. You
+
+still have to store all of them, which is the whole problem the compression is solving, but you don't have to compute all of them. On top of that, the attention uses gated deep seek sparse attention with something called index cache, which reuses sparse indexes across layers instead of recalculating them. And there's a built-in MTP layer for speculative decoding, where the model guesses several tokens ahead and then verifies them, so you get more output for the same work. It also handles a 1 million token context window. Now, here's the catch I promised you. These
+
+GG UF files do not run on stock llama.cpp. The model card says it in bold. The HYV4 architecture isn't upstream yet, so you have to apply patches from the repository and build llama.cpp yourself against a specific commit with CUDA.
+
+There's a second patch on top of that if you want the STQ1_O build. So, if your plan was to download the file and open it in your usual local app, that isn't going to work today. Step back, and the bigger pattern is what actually matters. Mixture of experts to cut compute, sparse attention to cut what the model reads, speculative decoding to speed up output, low-bit and mixed precision quantization to cut storage. Four separate techniques, all pointing the same direction. Bigger models, smaller
+
+footprints. The open question is how far that goes. If a trillion-class model can drop most of its storage and keep most of its ability, what does the same trick look like in a year on hardware that's also improved? That's the direction worth watching. If you want help applying any of this to your own brand, book the free AI brand visibility session. Different angle from before.
+
+This isn't a pitch call, it's a working session. You bring your site, they show you where you're invisible in AI search, what your competitors are doing that you aren't, and a clear list of what to fix first. Custom plan, real recommendations, zero obligation. One last thought before I go. The takeaway here isn't the headline number, it's the method. Tencent didn't compress
+
+everything equally, they worked out where precision mattered and spent it there. That idea shows up everywhere in AI right now, and understanding it will serve you longer than remembering any single file size. If you want to go deeper than a video can take you, come join us in the AI Profit Boardroom. You're going to hit walls this stuff. A build that won't compile, a model that won't load, a workflow that works in a demo and breaks on your own data. That's
+
+where over 4,000 members, live coaching calls, step-by-step tutorials, ready-made prompts, and structured roadmaps make the difference between spinning your wheels for a month and getting it working in a week. Come join us at AIprofitboardroom.com.

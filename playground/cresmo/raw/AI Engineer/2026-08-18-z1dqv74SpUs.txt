@@ -1,0 +1,148 @@
+---
+video_title: "Voice agents with Realtime Video — Sidney Primas, LemonSlice"
+video_id: z1dqv74SpUs
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=z1dqv74SpUs
+video_date: 2026-08-18
+video_description: |
+  An avatar of Teddy Roosevelt holds court in a replica Oval Office, generating video continuously for eight hours with no reset, and a second deployment is being built to run for sixteen. That duration is the hard part. Sidney Primas explains that a real time avatar can only look backward, because the future frames do not exist yet, so every block it generates inherits the errors of the blocks before it and compounds them. LemonSlice trains with an attention mask that enforces this during training rather than discovering it at inference, and collapses roughly 30 denoising steps down to a single step to hit real time.
+  
+  The less obvious bottleneck is audio. Emotion and facial expression turn out to depend on the audio embedding, and most audio encoders are trained on audiobooks, which are monotone by construction, so an expressive model needs its own. The wider bet is to take a world model and point it at humans, paying a harder training and deployment cost up front in exchange for full body movement, object interaction, and physics arriving closer to free. Two things surprised him. Serving this costs about what serving a voice model costs, despite the difference in pixels. And the model harness, meaning the orchestration of threads and queues across GPU and CPU so that video never stutters through an interrupt, is where he now thinks much of the durable value will sit.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/sidneyprimas/
+  
+  Timestamps:
+  0:00 - Breaking the avatar Turing test
+  2:26 - Teddy Roosevelt in a replica Oval Office
+  4:40 - Why the visual layer matters
+  5:46 - Pointing a world model at humans
+  6:58 - One image in, any style out, and being the API layer
+  9:12 - Audio is what makes it expressive
+  10:15 - Making a video model interactive, then real time
+  12:22 - Error accumulation over hours of generation
+  14:34 - Cost parity with a voice model
+  15:36 - The model harness nobody talks about
+  16:38 - An emotion engine for the next model
+  19:55 - A single end to end EQ layer
+  22:09 - Questions: internal state, and a real Turing test
+---
+[music]
+
+>> My name is Sydney. I'm the CTO and founder of Lemon Slice. And Lemon Slice is on a mission to break the Avatar Turing test. What we mean by this is making an Avatar that is indistinguishable from a human on a video call. And all of this is of course making the Avatar photo-realistic. But there's
+
+actually a long tail of technical problems that we care a lot about that I'll be talking about today that we're planning to solve. And those problems are things like getting the emotions right, getting the object interactions right, getting the like micro-expressions right, and even figuring out an internal state for these Avatars so that they feel like a real human being. So what I'm going to do in this Oh, this What I'm going to do in this talk is talk about our technical bet to solving the Avatar Turing test, what we've built today, and the technical the hard technical problems we've solved today, and our bet on like how we think this problem will be solved in the long term. But before we dive into that I want to give you guys a sense for what our product is and how it works. So actually yesterday was a was a pretty big and exciting day for us. We had a
+
+big big launch yesterday. We had a partnership with Microsoft that brought an ex-US president to life, uh Roosevelt. And they built his presidential library and inside of the presidential library uh they did a replica of the Oval Office and you can walk in and you can have a full interaction uh with Teddy Roosevelt in real time. Uh so definitely not uh Turing test solved yet, but like a big milestone uh towards trying to solve solve that problem. Uh and the coolest part of all of this was uh we had a special guest. Uh but hate hate him or
+
+love him, uh he showed up. Uh so we had President Trump uh who came to the opening uh of this ceremony uh and interacted uh with our avatar. So uh we actually got some footage, real footage, uh not not fake uh AI-generated footage of Trump uh interacting. So let me let me show you guys this real quick. >> your greatest achievement?
+
+Right then, yes. What is that answer? The canal stands as one of my proudest battles, no question. But greatness is a strange thing. It isn't always the biggest or boldest job that matters most.
+
+Panama Canal showed what America could achieve if we held steady and acted fast when the world dragged its feet. That said, I measure my greatest work by the lives improved. Mark set aside, food and drugs made safe, the square deal given to all, not just to a few. Still, when I stood in the mud watching those steam shovels, knowing ships would pass through, changing the world's map forever, I felt I'd left a mark that would last. >> Perfect. Uh so you guys get a sense uh
+
+of of the experience. Um the funny thing is he was scheduled to be there for, you know, a quick minute, one interaction, and he actually stayed for 10 minutes. He left He left the room and then came back again to talk to Teddy Teddy Roosevelt even more. So, you can see there like the avatars there. It's full body avatar. It has
+
+hands. It does actions. It does movement. And all of this is obviously done in real time. I'll talk a little bit more about like the why we think this is an important problem later in the talk. Um but a big part of
+
+it is actually related to this interaction. Um humans like struggle to to to focus and pay attention. It's It's often hard for a lot of people spend a bunch of time reading. And even voice it's hard to really lock in and understand what's happening. So, we think like we're biologically wired to best like understand things when there's a visual component as well.
+
+So, our bet here is in the long term we think most interactions between AI and humans will have a visual visual layer. And we're building that visual layer. Um so, now I want to talk about our approach to building these avatars. It's a very different approach than what most other avatar companies use. Essentially what we do is we take these world models and we focus them on humans. Um
+
+and the reason we take this bet is even though it's harder to get the initial model working, it's harder to train the model, it's harder to deploy the model. Once you have a model, you get all of these nice emergent properties that we all know about where you just very easily can solve things like full body movement, like object interactions, like movements in the scene, all the way down to the micro micro expressions as well and emotions. And all of those kind of don't come for free, but come more for free than when you use the other approaches that other people use. So, let me guys let me show you guys real quick the product in action, so you guys can get a sense. Uh so Let me expand this a little bit.
+
+>> How is it going? I am here to listen and help with anything you need. We can chat about something in particular or play a game if you would like. >> So, the lipstick might be off here a little bit, uh but that's just because of the AV setup here. Uh but as you can see, um we have actions, they can wave, they really can do any actions.
+
+Uh we have movement, we have hands, um and the way the way this works is it it just can use any single image to create the avatar. Uh and so yes, you can have photorealistic, uh you also can have Pixar, you also can have cartoons. Uh it just literally takes a single image and um Show you this. Oh, no.
+
+Perfect. Uh and I'll I'll show you kind of a quick interaction here as well and then and then we can talk about how we built this. Um here I within the same video call and on the same kind of like inference setup, uh we can easily change clothes, we can change the scene she's in. And I can talk to it, too. I'm not going to do it here.
+
+>> be trying to say story. Would you like to tell me a story or hear one? >> Yeah, so you can see here, too, like that there's physics on the earrings. They move. The water moves. So, like the
+
+the video model has a good understanding of of physics and like can use that to like make the avatar feel more realistic. Perfect. Now, the way this is used, just for for kind of everybody's information, is we're mostly the API layer. So, we provide an API. People bring their own LLM.
+
+People bring their own usually like voices. And then we're the the visual layer on top of it. So, people use this for language learning. People use it for like AI sales call. Basically, anything today where you have a voice agent, you now also kind of a video agent if it's on your screen or on your computer.
+
+Great. So, now let's talk about how we built this today. This is our approach. And can't talk about all the technical details, but I'm going to try to go give you enough information to make it interesting. So, what we do is we get started with training our own video DIT model.
+
+The big thing here for us that really matters is the audio. The audio turns out to be very important for getting emotions right and the facial expressions right. People care about that a lot. So, we really focus on getting great audio data that we can train on. And then actually also getting the the encoders very right.
+
+Like most audio encoders today are trained on basically audiobooks, which is very monotone, very simple, don't have a lot of emotions. So, if you want to have a very expressive model, you can't use those audio encoders and you actually have to spend a lot of time like getting the audio embeddings right so that the video model is super expressive. So, so that's kind of like step one for us. And this is basically just a video model. You know, people can call this a world model, but but it's basically a video model that understands the physics of the world. And now the big challenge
+
+is how do you take that video model and how do you make it real time and interactive? And so, the way that works is the interactivity part is interesting. So, usually video models are bidirectional, so they can look into the past, but they actually also can look into the future and like what's about to come. And they basically generate videos all at the same time by looking at all of the the latents that that are being generated. For us, you can't do that.
+
+You only can look into the past. And so, here on this like make interactive, you can see that we basically train a model with an attention mask so that the model can only look into the past. So, when you do inference, it never can see the future because the future doesn't exist because like you haven't given it those inputs yet. So, for example, it doesn't see audio in the future, it only see what has has been said in the past. And then, once you have that, we make it real time.
+
+And there's a bunch of things that goes in here, but the biggest thing to speed up video generation is usually you spend like a bunch of steps denoising these video models. So, like let's say 30 steps. You spend 30 steps like removing the noise to generate the beautiful beautiful videos. And what we need to do is go from like 30 steps, bring it out to one step. So you basically just in a single step go from like pure noise to a pure video model to make it make it real time.
+
+So those are the the two big things that like make it interactive and real time. Now the hard part here, like what makes this difficult is this problem here on the left, which is called error accumulation, which is a problem anybody in like real-time video generation and world model is familiar with. I'll show you this video and then we'll talk about it briefly. >> And ophthalmology at Stanford School of Medicine. >> So you can see I mean that's a very bad example of error accumulation, but you can see as the video continues to generate more errors introduced.
+
+And the reason for that is because since you only can look backwards, you're looking actually backwards at at videos that you've previously generated, but each video you generate or each video block you generate has some error in it. So now you're looking in the past, you're looking at the error, you're adding more error to it, and then just the error compounds over time. And this is especially hard because I mean ideally these these video models are endless. Like the teddy avatar is generating continuously non-stop frame by frame for 8 hours straight with like no reset throughout the entire process. We have another one that's going to be generating for 16 hours straight. So
+
+it's a very hard problem to not have any error accumulation over long periods of time. And um we came up with a new way to solve this problem that is different to the best of our knowledge than what everybody else does today. And so I can't talk about that yet, but because of that we can basically generate these very long videos. I mean you guys can can try it out that essentially have no error accumulation, no noticeable error accumulation in them. Um Great. Um and so the last two hard
+
+problems uh we worked on to enable this is a hardware optimization. Um There's There's a bunch of stuff that goes into this. The big thing here is uh making it low cost enough. Uh so you actually can use this. Like usually when you generate an AI video, it's 5 seconds and you just share that.
+
+Uh we have to generate minutes and hours of AI AI video and still have it be cost-effective. Uh and so the cool cool thing here is we've been able to make the models small enough and efficient enough so that the costs are about the same as a voice model. Which is crazy to me. Cuz like think about the a voice model, how much data is streamed there compared to a video model. Like it it's much more pixel heavy in a video model than with voice.
+
+Uh and the costs costs are about similar. Um so the cool thing there is this enables us to do uh consumer use cases. And a lot of our customers are consumer companies that uh basically use the video for consumer and like entertainment applications. And then the final thing to mention here is the model hardness. Um I feel like the model hardness is something that is often overlooked but is actually super important and super hard. Uh like getting the model hardness
+
+right uh is a huge technical challenge for us. And I feel like a lot of our value actually in like productizing this is in the model hardness. And the way to think about it is you just have a bunch of separate threads. Uh all of it is managing real data streaming through our system. And you have basically a bunch of stuff you do on a GPU and a bunch of stuff you do on a CPU. And you have to orchestrate this
+
+perfectly in a way that like the video always remains real time. There is never any stutter that happens inside of the video. Um and this is especially hard when you have things like interrupts, you have queues, you're buffering data, you have to clean the queues. It's all like getting this orchestration right at production at scale has been a ton of work. And honestly, I feel like over time a lot more of the value uh of like the things we build will be in like figuring out the model hardness. I
+
+think it's especially true for like any real-time applications. Um cool. So, this is This is our technical approach of like commercializing these uh world models for avatars. Uh let me talk a little bit about like what we're actually working on actively now. Um so, the big thing we want to enable next is having more of an emotional engine uh that's driving these avatars. Uh having
+
+them be more more aware of what's actually happening inside of the conversation, and then be able to react to what's happening. So, react means uh the right the right emotions at the right time for the right duration, and same same for the actions. Um and um today when you're when you interact with these avatars, you can try. It still feels a little bit I mean, it definitely still feels um uh awkward. Uh and I think a big part of that is uh they don't emotionally react to you. They they're not listening to
+
+you. They're not like emoting in the right Um and so, this is what we're trying to solve. And so, let me show you guys some of um kind of the the new videos we're able to create uh with with basically basically better emotional control. Um so, this is a real-time video. >> Oh my god.
+
+Goal! Goal! We won the game. I can't believe it. We won!
+
+Oh my god. Oh my god. Oh my god. >> So you can see like a lot like the emotions just matter a lot. They make a huge difference in like connecting with this avatar. You feel
+
+you feel much more connected with that avatar. So that's one thing and then the neck this is the next generation model not in real time yet but there's just a lot more >> I think the most important thing is just to take a moment and breathe. Life gets so busy, you know. >> Do you think you'll stay there for a while? >> Yeah, I really think I need to stay right here for a long time.
+
+>> So there there'll be a lot more basically natural interaction. Sorry. There'll be a lot more natural interactions with themselves and then also with their environment. And the big thing here is like our model can already do this today. It has the capabilities to do this. It's
+
+just not controllable enough to like make it real time with the conversation and not deterministic enough to to make it useful with the conversation. So a big part of our work here is like making these actions actually controllable at the right right time and to do that we're building this emotion engine that is just literally predicting based on like the audio input from the avatar and the text input for what the avatar is going to say what the action they should be doing at this moment in time. So target launch for this next model is and and basically one to two months is what we're targeting. Awesome. Oh All right, great.
+
+So that's where we are today. Um I just want to talk briefly about let's see what the time is. Almost done. Um I want to talk briefly about where we see this heading. So I strongly believe that in the end uh there'll be a single model um that is the EQ layer for AI.
+
+Uh the way you can think about this model is the model will literally take in directly uh the user video and the user audio. So, directly the use the you know, the user talking to you like you are in a FaceTime uh and put out the avatar video and audio and do all of that in an end-to-end model a in a single model end-to-end. Um internally inside of the model it will do the audio understanding generate what it's going to say uh model its own internal state like own internal emotional state uh and then based on all of that produce an output video and audio. And all of this will be trained in one model. Like this will happen. Uh we're
+
+already seeing like early papers that are like doing proof proofs of concepts around this. What we're not saying is that this EQ model will be very intelligent. Uh it'll be very it'll have very high EQ and it'll be very good at like interacting with people uh but there'll be a separate model uh that will drive the IQ that will basically give this EQ model input to like do all the magical things that AI can do today. Like do the tool calling, do the deep thinking, do all the intelligent stuff. Uh but there will be an end-to-end layer up top. And so,
+
+that's that's our bet like we're working towards towards building that uh and um we can talk more about like some of the benefits of this approach but I feel strongly that within two or three years you'll be seeing these kinds of end-to-end EQ models coming on the market. Um that's it. Um Well, maybe take some questions if there's any questions. Um yeah, go ahead. >> Um so
+
+Mhm.
+
+In the future? Well, I think in the future in the long term, uh it's going to be more of an internal state uh where the model will will have an internal state in latent space that like defines what the emotional state is or the goals are of the model and they will be more implicit. So, they won't be human interpretable necessarily. Um today today basically the way we think about actions and emotions is basically words. If you can describe it in words, you can generate those actions and emotions.
+
+Exactly. Exactly and track that over time. Right, like have an internal state that tracks that over over some history of time. But yes, exactly.
+
+Yes.
+
+>> [laughter] >> Uh there's a big debate about that. Uh Twit- Twitter is debating. Gavin Newsom said uh that he definitely doesn't know uh and you know, uh he got tricked by like the ghost of of uh of Teddy Roosevelt.
+
+>> You're asking about what the way method is or the test is? Yeah, that's a really good point. We haven't done this yet, but we're uh in the process of figuring out our own version of the Turing test for these avatars, which will just include real people. Uh and uh we're planning to run that this year. Um and we won't pass it this year, but it'll just be cool for us to track it over time to see when we can actually solve the Turing test uh and ideally allow other people to also go through the test as well. But yeah,
+
+we plan to we've planned to create a test and then publish around around the test.
+
+Oh, yeah.
+
+Uh not for us. Like that's not what we plan to do. Um maybe people can use our technology to do that. Uh but that's not our our goal. Uh but you could imagine uh people using our technology, giving it the right context, having the right harness around it, uh and then having the nice like IQ brain around it to do exactly what you're saying. But like we we don't want
+
+to solve that problem.
+
+Yeah. Um it's still we would still like it to be cheaper. Um, the good news is that it is Okay, I'm almost done. Last question. Um, the good news is it is surprisingly like going into this we didn't know how cheap this would be. I've been very
+
+surprised at how inexpensive it is. Again, like the cost of this is at the same level as an audio model in terms of what we charge for it. Um, and we're all hoping for this costs to go down. Par- part of it is for consumer you just need very low costs. Uh, and then part of it is that as the cost goes down we can do higher resolution which will help us a lot.
+
+Um, but I guess the way we're thinking about it is there's like algorithm improvements and hardware improvements. Um, and the what has been true for some time now is things have been improving on all vectors faster than expected and we're just hoping that continues basically. I think there'll also be very cool architectural updates to to move to more of like a token approach instead of a diffusion approach that will make video like this type of video generation way cheaper. Um, that's it for me. Uh, thank you guys for showing up.
+
+Um, we if you guys are we are hiring. If you guys are interested in like solving these types of technical problems come talk to me afterwards. Uh, or if you're just interested in this at all come talk to me afterwards. Appreciate it guys.
+
+>> [music]

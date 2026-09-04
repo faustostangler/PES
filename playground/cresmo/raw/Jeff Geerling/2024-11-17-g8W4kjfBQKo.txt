@@ -1,0 +1,30 @@
+---
+video_title: "4K Gaming on Raspberry Pi 5"
+video_id: g8W4kjfBQKo
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=g8W4kjfBQKo
+video_date: 2024-11-17
+video_description: |
+  It works! I got an AMD GPU running externally on the Pi 5's PCI Express bus, and it lets me game in 4K. At least with games as old as the card I'm using.
+  
+  But there's a lot of promise here. Can we do hardware video transcoding? Maybe!
+  
+  More info in my blog post: https://www.jeffgeerling.com/blog/2024/use-external-gpu-on-raspberry-pi-5-4k-gaming
+  
+  #shorts 
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+---
+Can you do 4K gaming on a Raspberry Pi with an external GPU? Yes! Look at all those pixels! With the Pi's built-in GPU, I can only get like 20 fps at 1080p. If I plug in this AMD graphics card, I can bump graphics to Ultra and get 60 fps at 4K.
+
+How did I do it? Well, first I plugged in this PCI Express HAT that lets me plug in this Oculink GPU dock. Then I plugged in the GPU. Then I had to recompile the Linux kernel with the AMD drivers. But to get it to actually work, I also had to apply this patch that fixes a bunch of memory alignment issues in those drivers. Without that patch, it all just locks up.
+
+Then I enabled the fastest PCIe Gen 3 speeds with this setting in the Pi's config file, and installed the AMD firmware packages and restarted. After all that, I can play SuperTuxKart and Doom 3 in 4K both with all the settings maxed out. SuperTuxKart is pushing the GPU to the limit, but Doom 3 isn't quite able to push it since it locks the frame rate around 60 fps. I have everything I did written down in this blog post, and ultimately I want to make this work with all graphics cards, not just this old AMD one. And it'd be amazing to use this for video transcoding, like turning my little Pi NAS into a super-powered Jellyfin server, too. I think it's possible.
+
+And for more modern gaming, someone else even has Steam and Doom Eternal running with Box86, so it's definitely possible. I was able to run a bunch of games on my Ampere workstation, so it's just a matter of fixing up bugs for the Pi's little processor. But the better question is, should you do this on a Pi?

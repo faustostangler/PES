@@ -1,0 +1,126 @@
+---
+video_title: "This new type of illusion is really hard to make"
+video_id: FMRi6pNAoag
+channel_name: "Steve Mould"
+channel_id: UCEIwxahdLz7bap-VDs9h35A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FMRi6pNAoag
+video_date: 2024-09-14
+video_description: |
+  Learn more about the Jane Street internship at: https://jane-st.co/internship-stevemould
+  
+  CORRECTION: 17:20 the URL on screen is incorrect. The correct URL is as above https://jane-st.co/internship-stevemould
+  
+  Generative AI can be used to make images that look different in different orientations or different arrangements of parts.
+  
+  Check out Matt's video here: https://youtu.be/b5nElEbbnfU
+  
+  Check out the work of  Ryan Burgert and colleagues: https://diffusionillusions.com
+  Check out the work of Daniel Geng and colleagues: https://dangeng.github.io/visual_anagrams/  https://dangeng.github.io/factorized_diffusion/
+  
+  You can buy my books here:
+  https://stevemould.com/books
+  
+  You can support me on Patreon and get access to the exclusive Discord:
+  https://www.patreon.com/stevemould
+  
+  just like these amazing people:
+  
+  Glenn Watson
+  Peter Turner
+  Joël van der Loo
+  Matthew Cocke
+  Mark Brouwer
+  Deneb
+  
+  Twitter: http://twitter.com/moulds
+  Instagram: https://www.instagram.com/stevemouldscience/
+  Facebook: https://www.facebook.com/stevemouldscience/
+  TikTok: https://www.tiktok.com/stevemould
+  Buy nerdy maths things: http://mathsgear.co.uk
+---
+A while back I made a video in which I posed this challenge. Is it possible to come up with an image that works on this surface in both orientations of these twisty squares? Lots of people had a go, especially on my Discord server. Someone called Han Lin even put together a web interface to help with the design process. But honestly, it kind of seemed like it was impossible to come up with any kind of meaningful image. But then I
+
+got an email from Daniel Gang and simultaneously a Discord DM from Ryan Bergert. They both found images that work using generative AI. So, you know, you give it a text prompt and you get an image like Midjourney or Stable Diffusion. Except, you know, it's not as simple as just giving it a text prompt that says, "I want an image of a duck except that when you rotate the first, third, fifth, seventh, and ninth squares of this image 90° clockwise and all the other squares anticlockwise, I want it to look like a rabbit." I tried that, by the way, and it just gives you trash. It
+
+turns out that Daniel and Ryan, along with their respective research teams, had been working on this problem of creating optical illusions with generative AI by breaking the models apart and tinkering around with the gobbins inside. And what they'd come up with was perfect for the twisty squares problem that I had. This is one of the twisty squares solutions that Daniel sent me and this is one of the ones that Ryan sent me. I'll show you a few more over the course of the video. But anyway, I really wanted to know how they were able to achieve these images, but I realized I don't really understand how vanilla text-to-speech image generation works. Daniel and Ryan were both really
+
+helpful in that, but spoiler alert though, even if you understand what one of these generative models is, you may never understand how it works or why it works so well. So, they both use diffusion models, which is kind of the state of the art for this sort of thing. Ryan uses Stable Diffusion, which you might have heard of, and it's just kind of wild how well this works. The way you train a diffusion model neural network is you take some images, that's the training data, and you tweak the RGB values of all the pixels randomly. That's called adding noise. You then ask
+
+the model to tell you how it thinks you tweaked all of those pixels. Like, I think this pixel is too green by this much. This pixel is not red enough by a small amount, and so on. And it gives you that as an array of values. In other words, you're asking it what the noise was that you added to the image. And
+
+remember, this is still the training stage. So, at this point you say, "No, that's terrible what you came up with. This was the actual noise that I added. Now, go away and fix all of the parameters in your model so it does a better job next time." But actually, you're doing it with millions of images at the same time. So, you're saying,
+
+"Look, you got all these pixels wrong by this much in this image, and you got all these pixels wrong by this much in this image, and all these other images, this is how much you got all the pixels wrong." Like, millions of images. So, try and go away and tweak all of the parameters inside your neural network so that it's better for all of these images at the same time. I told you it was wild. By the way, this is just a brief overview of how all this stuff works.
+
+I'll definitely be skipping over some details and making some simplifications along with the way. But the most important thing for me is that you have a satisfying understanding of how this stuff works. So, anyway, you train it on noisier and noisier images. In other words, images where you've messed about with the values of all the pixels more and more and more until eventually you can give it an image that's just pure noise, completely random pixels. And so then, when it gives you a prediction of the noise that was added to an image, when you remove that prediction, it will give you an image that looks like something recognizable from the training images. Now, at this point you have no
+
+control over what comes out at all. It's just going to be random what you get. To be able to create an image from a text prompt, the model needs to be able to understand the meaning of the text. So, maybe we need a separate model that can understand text. I'll just digress a little bit here cuz it'll help the explanation later, but the way a text model or a language model works is really clever. Basically, it goes
+
+through several iterations where its semantic understanding of the text becomes more and more nuanced. So, like in the first iteration, maybe it realizes that the word blue is in front of the word boat, so that means the boat is blue. Then a few iterations later, it might realize that the person mentioned at the start of the text prompt is actually on the boat, and the waves mentioned later are choppy, and that's causing the boat to rock. And then by the 20th iteration, it knows that the text was written as a gothic horror with an unreliable narrator. But anyway, what you get out the other end for our purposes is basically just a long string of values that represents all these different meanings. That string of
+
+values is usually referred to as a vector because you can think of it like a point in this super high-dimensional space of semantic meaning. I said earlier that it might be impossible to understand how these models work, and I think this is probably a good example of what I meant by that. Like to a certain extent, you can interrogate these vectors that represent the meaning of a prompt, and you can discover that a particular value might represent the linguistic concept of gender. So, that if that value increases, then the prompt becomes semantically more feminine, for example. But in general, it's very hard to see what these different values, or directions if you like, in this super high-dimensional space actually represent semantically.
+
+But it works somehow anyway. So, you give some language model a prompt that it turns into some high-dimensional vector that represents the meaning of the prompt, or maybe it's a few vectors that represent different parts of the prompt. But how the hell do we apply that to the image generation model that's just trying to figure out how to remove noise from an image? Well, the model is able to figure out what noise needs to be removed from an image because it has learned to understand features of images. And in some ways it's very similar to the way a language model understands the meaning of text, which is to say it goes through several iterations where its understanding of image features become more and more nuanced. So, maybe in the first
+
+iteration it's just picking up on where the edges are in the image. And then in later iterations, maybe it's picking up on concepts like furriness or maybe light glinting off a shiny surface. And then later on, maybe that it's in the style of a Monet. it wouldn't have any words for these features, even though we might recognize them as furriness or shininess or carness or catness. Instead, it would just be a long list of values that represent these things. And
+
+again, if you actually interrogate the values, it might be very difficult to actually pick out specific things that we would understand, but it works anyway. This long list of values, again, is a vector. But of course, this model was trained independently of any language model that we might have. So, the vectors in these two different models have no relation to each other. And that's where a model called CLIP comes in. CLIP was trained
+
+on millions of images from the internet and their captions. So, during training, it was learning the meaning of the text and the features of the image, and the vectors it was producing for both of those things, it was putting in the same place in a shared vector space of semantic meaning and image features. So, the vector that represents the meaning of the phrase black cat will exist in the same location in the shared space as a vector that represents the visual features of a black cat. So, when you're asking the noise guessing model what noise it thinks you'd need to remove to get back to the original image, you're also saying, "By the way, I know that the image underneath this noise has a features vector pointing in this direction because CLIP told me, and CLIP heard about it from a text prompt." And so, the model will now guess what noise needs to be removed in a way that pushes the image towards having features that are encoded in this vector. This stage
+
+is called cross-attention because the features vector from CLIP attend to the features vector in the noise removing model. And there's one bit of detail that I want to share here because it was driving me mad until I understood it. CLIP and the noise model were trained separately, meaning that their feature vectors all point in different directions. So, how does that work? How can the two models communicate with each other? And well, it's this
+
+cross-attention part that does that translating between these two different high-dimensional spaces of features. And of course, the cross-attention part of the model has the ability to do this translation because it was trained with lots of data. So, that's how diffusion models turn text prompts into images with a lot of simplifications. But to explain how these illusions were created, I need to tell you about a bit of the process that I skipped over. So, when you give a text prompt to Stable Diffusion like red bunny in a blue top hat, it starts off with an image of pure noise, then tries to figure out what noise should be removed. In other words, which pixels to
+
+adjust in order to be left with an image that has all the features from the vector that the CLIP model gave it. But, it doesn't do it in a single step. Another way of saying that is its first attempt is kind of blurry and gray and flat, which makes sense. Like, if you squint your eyes at an image of random noise, you might be able to pick out some large-scale variation that appeared just by chance, but you wouldn't be able to make out any detail. Noise kills detail. Or, in the case of the diffusion
+
+model with almost no features to work with, it will spit out an image that is like the average of all images that satisfy your prompt. In other words, a blurry blob. You then take that image and add, say, 90% of the noise back and ask the model to predict how much noise you added that time. And after you remove that guess, the image will be a little bit sharper. That's because the image already has some large-scale structure, and this reduced noise that's laid on top can start to nudge it in the direction of more detail here and there. Then, you do it again
+
+with 80% noise, and then 70% noise, 60%, 50%, 40%, and so on, all the way down to zero noise, and you have a nice, crisp, clean image. The actual increments wouldn't be 10%, they'd be some other specific schedule that you choose, but that's the basic idea. So, that's how a text prompt becomes an image, but knowing that it happens by these baby steps towards a crisp image means you can have a bit of fun with it. I came across this brilliant installation called Shadow Play, for example, that takes the shadow cast by someone and injects that into Stable Diffusion at the 50% noise stage. So, it's already primed by the shadow.
+
+And of course, Ryan and Daniel both take advantage of this gradual formation of the image over several steps. They ask the diffusion model for an image of a penguin, let's say, but they pause it after the first guess. Then, they ask it for a picture of a giraffe, let's say, and pause it after the first guess. So, they've got a blurry image that's approaching a penguin and a blurry image that's approaching a giraffe. They then flip the image of the giraffe and combine them by taking the average of all the pixels. This combined image
+
+becomes the input for the next step of both the penguin generating task and the giraffe generating task. And so, slowly slowly the image becomes something that looks like a penguin in one orientation and a giraffe in the other. How cool is that? And it doesn't have to be that it's one image this way round and another image this way round. It could also be that it's a duck in this arrangement and a rabbit in this arrangement. Or you could jumble the
+
+parts up completely, which as it turns out is really useful for something Matt Parker is trying to do with jigsaw puzzles. So, I put him in touch with Ryan and you can see the results of that over on Matt's channel with a guest appearance from me. Link in the description for that. Ryan's technique does something more complicated than just taking the average of the two guesses of noise and subtracting that. And it involves something called score distillation loss, which I won't go into. Whereas Daniel really does take
+
+the average of the two noise guesses. And actually, he has a really nice analogy for that. You've got a block of marble and you've got two sculptors. And And it's it's a good analogy because the way a sculptor works is they'll do a very rough um chipping away. the vague shape.
+
+Yeah. Which is what's happening with these More detail. Yeah, exactly. You chip away, chip away, chip away. So, you've got this block of marble and you say to one of the sculptors, "I want this to be a giraffe." And you get the
+
+And you get the other sculptor, you turn them upside down. Right. Okay. Right. Okay. Make this a penguin.
+
+Yeah. And that's how you get the the the penguin giraffe illusion. And what's really nice is it's kind of a good illustration of how you can apply this idea more broadly. So, the underlying thing that you're trying to create in this case is a single image with these two different perspectives, right? But it doesn't have to be an image. It could be, for example, a 3D
+
+model. And you've got maybe five different perspectives. So, look at this model from this angle, this angle, this angle, and this angle. And they all have to look like, for example, a robot dog. Okay, so you've got five sculptors all making a robot dog, but they're looking at it in different ways.
+
+And what you end up with is like a genuine a 3D file, not an image file. A 3D file that looks like a robot dog. And it And it works. And it's just like it's unbelievable how it works. It doesn't know what 3D is. It doesn't
+
+know And the model has not been trained on 3D data. It's been trained on image data. Because it makes sense because if one thing looks like a robot dog Yeah. from lots of directions is a 3D robot dog. Yeah.
+
+So, I mean, it makes sense that's what it finds, but it's still amazing. Yeah. Something that Ryan's method does really well is transparencies. Like how cool are these? Some work in several orientations. You can even provide a
+
+target image and it will create transparencies that add up to that image. Like my channel logo, for example. You can play with all these different illusions on their website. Link in the description for that. Daniel played with different perspectives, too, where one perspective has all the colors inverted or where a cutout rotates.
+
+This is one that works at different zoom levels. Link to all their work in the description as well. And a huge thank you to both of them for their help with this video. I couldn't have done it without them. One of the things I find most interesting about generative AI is how it shows the ways in which artificial intelligence is similar to human intelligence and the ways in which it is quite different. Like the way AI
+
+distills different layers of meaning from a passage of text seems very human, but the fact that it doesn't know how many R's there are in strawberries seems very unhuman. And maybe we shouldn't be training AI to mimic human intelligence because then we find ourselves having to quash all these human fallibilities like bias and hallucination. Artificial intelligence was trained to play Go by watching previous human matches. And when it eventually won against a human, it was mostly playing human moves. But the clinching move, interestingly enough, was one that no human had ever seen before. And when the AI was
+
+retrained without seeing any human games, just playing against itself, it learned to beat humans more quickly and more comprehensively with moves never seen before, which is both fascinating and terrifying. This video is sponsored by Jane Street. Jane Street? They're sponsoring my video. Yeah. I'm spon- I
+
+Okay. What? What? They're sponsoring your video. Yeah.
+
+Oh, my What are the chances? It's the uh the the the internships. Jane Street is a quantitative trading firm looking for the next wave of curious and passionate people to join their internship programs in 2025. Jane Street uses techniques like machine learning, distributed systems, programmable hardware, and statistics to trade on markets around the world. And they do that from offices in some of the world's most exciting cities.
+
+Applications are now open for internships in quantitative trading, software engineering, research, strategy and product, institutional sales and trading, and more. And those programs are in their New York, London, and Hong Kong offices. Over the summer, you'll dive into the work that's being done all around the firm. You'll be surrounded by these brilliant people from diverse backgrounds. I've met loads of people from Jane Street, and one thing that stands out is they're excited about what they know, and they're excited to share that knowledge with other people, which is exactly what will happen on their internship program. When you're not
+
+working, you can attend social events, guest speakers, you can explore the city that you're in, and they'll really take care of you. You'll get a salary, of course, but they'll also provide flights to and from your internship program and accommodation throughout. People from all over the world and all backgrounds are welcome to apply, and you do not need a background in finance. As a side note, if it's the Hong Kong program you're applying for and you get accepted, you'll meet Matt Parker. I'm going to Hong Kong. I'll do a talk,
+
+we'll hang out, it'll be emotional. I I've done a show for Jane Street. You actually know, we did one together, didn't we? You were there. London office.
+
+Yeah. Yeah. They're good people. Good people. If that sounds interesting, the link is also in the description, so check out Jane Street today. Hope you
+
+enjoyed this video. If you did, don't forget to hit subscribe, and the algorithm thinks you'll enjoy this video next. If you've covered my face on the end screen, you're in so much trouble. But it's the thumbnail for your video there. So, it's not the algorithm, really. The algorithm thinks you'll
+
+enjoy this video.

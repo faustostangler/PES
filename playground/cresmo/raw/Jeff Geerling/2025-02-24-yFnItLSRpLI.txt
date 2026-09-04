@@ -1,0 +1,128 @@
+---
+video_title: "Save your servers! NUT on a Raspberry Pi!"
+video_id: yFnItLSRpLI
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yFnItLSRpLI
+video_date: 2025-02-24
+video_description: |
+  NUT, or Network UPS Tools, is an essential bit of software for disaster prep in your homelab or datacenter.
+  
+  Resources mentioned in this video:
+  
+    - Network UPS Tools: https://networkupstools.org
+    - Full install guide: https://www.jeffgeerling.com/blog/2025/nut-on-my-pi-so-my-servers-dont-die
+    - 3D Printed SBC rack mount I used: https://www.printables.com/model/843677-raspberry-pi-5-rack-mount-right-sided/files
+    - Ansible playbook for automated NUT setup: https://github.com/geerlingguy/pi-nut
+    - My nut_client Ansible role: https://github.com/geerlingguy/ansible-role-nut_client
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Don't rely on luck when it comes to power!
+  00:37 - What's NUT?
+  01:51 - NUT server setup guide
+  05:37 - NUT testing and monitoring
+  06:45 - NUT client setup guide
+  09:24 - End-to-end power fail test
+  13:01 - Success and a pretty severe bug
+  16:56 - Hardware setup
+  18:36 - Happy to have NUT on my Pi
+---
+A few weeks ago, power went out for the first time in the new studio, and that meant all my servers just had power cut with no safe shutdown. Something like handling a power outage is never the top priority— until it's the ONLY priority—and by then it's usually too late. Luckily for me, no data was lost, and my servers all came back up safely. I added NUT to my to-do list and carried on for a few weeks, until just this week, I got an email saying our power company is going to do a planned outage next week, but they don't have an exact time, just sometime next week. So I guess my priorities just got rearranged, and now I'm making this video.
+
+But NUT; what is that? NUT, short for Network UPS Tools, is a little application you can run on an old Pi or whatever other computer, and it can monitor a UPS like the one I have in the bottom of my rack. What's even better, it basically broadcasts that status to my entire network, so all my servers in the rack can safely shut down during a power outage. There are other ways to do this, like with, with apcupsd or UPSMON, but those tools usually require specific UPSs or expensive licenses. NUT is free and open source, and it works with basically any UPS.
+
+Anyway, the idea is you plug a little Raspberry Pi into your UPS, then you set up NUT and then install the NUT client on all your other servers. The NUT client monitors the UPS through the Pi, and then everything gets shut down cleanly when the UPS battery gets low before the UPS shuts off completely. For a storage server like my NAS with a ZFS RAID array, I feel much safer if it shuts down cleanly instead of just getting its power cut off mid-write. So in this video, I'll show you how I put NUT on my Pi and how I configured all my critical servers to power off safely. I'll get to how I install the Pi in the rack physically, but first let's start on how to set up NUT on the Pi and how I set up all my other servers to shut down automatically when the UPS says it's on low battery.
+
+As with most of my projects, I have a blog post that goes into all the details with commands that you can copy and paste to replicate everything I did. The first thing that you need to do is obviously have a Pi or some other computer. You need to have a computer and plug it into your UPS. I used USB because my UPS has a USB port, but your UPS might have some other interface that you can use. That's something that you'll have to look at with the UPS that you bought.
+
+But once you have it plugged in, you need to have NUT installed. And if you just install this package, 'nut', it will install 'nut-client' and 'nut-server' and some other UPS monitoring tools that you might need. Once you have it installed, you can run sudo nut-scanner -u, and that should scan all the USB devices and try to see if any of them are UPSs. Taking that data, you can put that information into a record for your UPS on this, /etc/nut/ups.conf file.
+
+And this is the information for mine. Yours would be a little bit different based on the output up here. And also when you're naming your server, it's probably best just to use like just ASCII characters, just letters, not even dashes. But it allows dashes, so I use dashes in mind to make it very obvious that this UPS is in the server room rack. And if you do have any problems with that, NUT has tons of documentation.
+
+There's a page here talking about all the different driver options. Next, you need to set up the NUT's server configuration. So first, you want to make sure that your Pi or other computer is listening on the network for connections on port 3493. That's the default port for NUT. And this basically tells it to listen to port 3493 on all network interfaces.
+
+You could also just listen on one if you want to have a little bit more of that security of knowing that it's only listening on like an Ethernet port or on Wi-Fi or whatever. But save that, close that, and then go into the upsd.users file to add user accounts. And these are separate than like Linux user accounts. It's kind of like Samba where you define the user accounts separately.
+
+Except in here you just paste some plain text passwords. I have two user accounts set up on my Pi. One is admin and the other is called observer. Admin can do anything including like shut off your power. So you want to have that be very secure and not use that on all your clients. On all the clients that will be observing your
+
+UPS and shutting down if it goes into low power mode, you'd want to use this account because all it can do is basically look at stats. It can't shut off the power or do anything like that. Then you need to change the UPS monitor config, upsmon.conf, and put in a line like this. And again, this password would be the actual admin password.
+
+And this will allow your Raspberry Pi or other computer to actually monitor the UPS and react to it if it's going down. And this is the most important part of this line. It says this is the primary NUT instance. So this is going to tell your Pi to shut down last after everything else shuts down. So if you don't have this primary, it might actually shut down before your other devices, and then they wouldn't see that there's like, hey, I got to shut down now. So make sure you have primary on your primary node. So then we have to set up nut.conf and tell
+
+this to actually operate in netserver mode. There's a few different modes that it can run in. netserver is the server, like the NUT server that serves up the UPS status. netclient is the client mode for clients that will observe the status and shut down in response to the main NUT server is telling them to. And then at the end of that, you'll need to restart and enable a couple services. These are actually enabled by default, but I always like to make sure that I actually
+
+enable them explicitly, because on some systems it might not be, or depending on how you installed it, maybe it's not set up automatically. Anyway, so once you've done that, you need to check and make sure that NUT is actually working. So there's a utility called upsc to kind of gather the information from a UPS, and you just give it the argument, whatever the rack UPS name is, so in my case, server-room-rack, and then it'll give you a bunch of this information. There's also a few different ways to get at the information besides just this like command line interface. I use Home Assistant, and I have a card here that shows the status of the UPS and the battery charge, and here's the card I use for that. I just use Home Assistant's built-in integration
+
+for NUT, which it automatically identified once I had the server running. You can also use a NUT web GUI. nut-webgui is just a Docker container that you can run on any computer. It doesn't have to be on the Pi, and it'll give you a little web interface that shows the current statistics. It doesn't show you statistics over time.
+
+The nice thing about Home Assistant is I can click on one of these and see, like, the battery charge over time, or click on this and go back and see historical values. On here, it doesn't give me all that information because it's not like storing information in the database. But it's still useful. It's nice to have that interface. Now, once you have the Pi or other computer running monitoring your UPS, you have to tell other computers in your rack or other computers attached to that UPS, hey, it's good to shut down when that UPS is on battery and about to die.
+
+So to do that, you install just 'nut-client'. You don't need the whole NUT Suite. So install 'nut-client'. And then you can verify that you can connect to the UPS using this command. I usually use IP addresses here because if your network equipment might be going down due to power outages or flakiness or whatever, it's better to rely on the IP addresses, which should keep working even if your DNS services are down. And then you need to configure upsmon.conf,
+
+which I, in this blog post, I need to edit this. Sorry about that. I will put the actual line that you need to put into your upsmon.conf right here on the screen because it's not in my blog post. I'll, yeah, I'll update that. Sorry about that.
+
+And then you need to also set a netclient mode in nut.conf. So MODE equals 'netclient'. And then restart and enable NUT client on that client node. Now, each of these client nodes should now be tracking your NUT server.
+
+And it should work, but it's just like backups. If you don't actually test things, then how do you know it will work? So I did a full end-to-end test. And while I was doing it, I monitored nut-server on the server. I monitored nut-monitor on the client.
+
+And you can also do things like send out commands like test, test the battery, or do a full deep battery test to make sure that it can cycle and charge up. But when I did that, I actually ran into a Debian 12 bug. Any Raspberry Pis (or any system running Debian 12 right now), if you do a battery test, or even if the UPS initiates one on its own, it will actually set a little calibration flag. And then it'll tell, like, Debian, hey, don't actually shut down. And you're like, but I need you to shut down.
+
+Please, thank you. So anyway, there's a bug in there. And the only way that I've found to work around that bug is to have NUT client restart. So I might just set that up on a cron job. I don't know.
+
+But there's a few different things that you can do. You can do kind of a soft test to make sure that NUT would have sent the right command, but that's not really an end-to-end test. You can also just kind of nuke your servers by sending out this 'fsd'. I think that means like full system shutdown. or something. You can send this command out and it will just tell all the servers shut down right now.
+
+But I wanted to do a full live end-to-end test. And so I'm going to switch out of this blog post and kind of show that process. So the reason I wanted to do a complete end-to-end test is it's just like backups. If you have a backup system, it's not really a good backup unless you know you can restore from it. So in the case of power supplies and UPSs, if you don't know that they're going to work when there's an emergency, then you don't really know that it works at all.
+
+So I wanted to do a full system test. So just showing here in the server closet that the low power UPS is charged up, it's ready to go, everything's okay. You can ignore the spider webs there, but I went around to the backside and I'm just going to unplug this thing.
+
+And there we go, it beeped. That means it's on its backup power, and I'll just, confirm that it's going on battery.
+
+It says 59 minutes remaining. It's funny that that 59 minutes doesn't propagate through to the serial interface on this UPS. But anyway, I'm going to check that now on the computer to see what happens in NUT in the log output, at least by default. You can add more debugging output, but this is the default output on the server and the default output on the actual client. And it says it's on battery here.
+
+And popping over into Home Assistant, you can see it also shows a 99% battery charge. So the battery charge is already going down a little bit. It's not too fast, so that's good. The batteries are probably in pretty good health. And here's the log saying in Home Assistant that it changed to on battery.
+
+And you could also add automations in Home Assistant to react to these things, too, if you wanted. And I was actually kind of surprised. I guess the load is only 11% on here. It's not that much load. so I got, I really got an hour of runtime and then you'll see in a minute when the NAS shuts down up here.
+
+I actually got more runtime after it shut down because then the UPS is like, oh, I have even less load. I can run for longer. But the other equipment, you know, everything's still running at this point. We're only 10 minutes in. And by default, NUT is only set to actually trigger a shutdown when the UPS says, you know, here's an alarm state.
+
+So eventually that happens and you can hear the beeping is more. frequent it just sent that alarm out and the NAS takes a little bit to shut down but once it shuts down that that frequent beeping stops because the load went down so the UPS is like oh I got more more time left now so it went up to 17 minutes here so the UPS is at 17 minutes now it was actually down below 10 minutes and that's when it seemed to trigger the LB low battery event but when it did that the NAS shut down right away and once it did that the time estimate went back up to 17 minutes. You can see that there and now it's done 16. So it seems like it stays at on battery OB until it gets down to 10 minutes then it goes to LB. But the NVR up here did not shut down. It said battery was critical. It said that it was
+
+still calibrating so I don't know what the deal is with that. I think I'll have to look into it looks like there was a bug in version 2.8.0 and 2.8.1
+
+Yeah, we'll have to figure that out. That's a little weird. So after a while, it started beeping rapidly again, and equipment started shutting down. So this is the NVR up here. It's about to shut down.
+
+And very soon after that, I think a 15 second delay or so, the Pi shuts off right after it sends a message out to the UPS to shut off. And you'll see in just a moment, everything else in the rack shuts down. Okay, so after a NUT shut down, it seems like it also triggered the UPS' turn off load event and so now the load is disconnected you can see that there's still a little battery left enough just to power it back on if we needed to in an emergency or if we needed to do something like charge a phone off this thing you could do that but now the next step is I'm going to plug it in and see if everything comes up automatically so ignore this cable this is magically going to be gone when we get this up and running. And before I plug it in, you might be wondering what that is. That is, I think, the NEMA 20. It's a 20 amp plug. So that's, uh, this,
+
+this UPS can take 20 amps instead of the normal 15. Anyway, let's plug this in and see if everything comes back now. Ow, I just hit my back on the rack. So we're plugged in, and I believe that there's a 30 second delay on here, either a 30 second or 120 second, before it will put power back on and turn on the load so we'll see if that's the case it's starting to charge the battery already you can see everything else connected to it is currently turned off; fans are not spinning lights are all out up there so waiting... waiting
+
+for this guy to kick back in the load which it should do automatically I heard a beep. Now it's turning on. It's saying OK on the UPS. And everything else is turned on. So, come on, NAS!
+
+I hear hard drives spinning.
+
+Oh no, that's this guy. up at the top, booting itself back up. But what about my NAS? I wonder if I have the switch on this set to not turn back on. Let's, we can check that really quick.
+
+I'm going to Home Assistant. Home Assistant. Check power. And the NAS's turned on right now. Nope, I just heard it. There we go. We have fan spinning.
+
+So everything came back on automatically. If I go down here, I can see the HL 15 is 70 watts, so it's booting up. It'll take five or ten miNUTes to get all powered back on. But UPS is, it was on battery, it was critical, and then it shut down. That's the dark spot there, and then now it's back online.
+
+Can I see that unavailable? I click on status. It's online. It all worked. I did find that bug. That bug that could have killed me next week,
+
+so I'm glad I did this full system test. I'm not doing anything for this rack over here. It has two UPSs, and I think they have, uh, no, they might not. I think these don't even have USB ports. So I wouldn't be able to get status on those. I should probably put a nicer UPS in this little rack. But this is
+
+mostly networking stuff in my router and it's uh although it is there's a lot of PoE devices on that switch so it might be good to have not running like on these two Pis up here and uh well the other stuff i just have cameras and things which are fine with hard cut power uh but yeah i probably someday will add a a little 1U UPS to this rack so that i can monitor it and shut some things down safely. With this rack, all's well that ends well and so this guy, this is just it is just a massive server and I do have some parts to upgrade this. I will be upgrading it at some point but down here is my little NUT Pi running along and so it has it's getting its power from the PDU this Xtreme Power Conversion PDU which is dual input so I could I can change out the UPS that's back there without having to turn off any of my servers because I can run them all through here to the wall power. For now though it's just running through the UPS And I'm here I can hear my hard drive spinning up in the NAS up here But anyway the NUT Pi is plugged in to it has a USB plug that goes back to the UPS and There it has USB plug that goes back to the UPS. The UPS has a network card in it but I haven't tried that at some point and I might see what I get on that, but I like having this solution because this will be maintained for far longer.
+
+And then right now, I have a network cable going over here. Don't—you can ignore that... I'm going to crimp a custom size cable that goes from down here up to the switch up in this rack.
+
+And that's it. So successful test. Very cool. Now I know that at least my data on this NAS, which is all the data, this is my primary NAS for everything, is going to be protected. And the NVR up here, which will be changing out at some point, that NVR will also be protected.
+
+It has some spinning hard drives inside, so it's good to have that. And there you have it. So I'm happy to have NUT on my Pi. I don't have to worry too much about data loss from a power outage anymore, even if I'm asleep or I can't remote in when it happens. And I've already automated the entire setup in Ansible, so if you want to replicate my setup, go check it out on GitHub. And I love the Home Assistant integration too because it can store historical
+
+data and I can even see things like how long it takes to recharge and discharge, just looking at the history graphs. Every UPS and power backup setup will be a little different, so please let me know in the comments if you would have done anything differently. And let me know if you think I should install this rescue PDU at some point. I've had it for literally years, and it would probably be a huge help for remote control and power outage situations.

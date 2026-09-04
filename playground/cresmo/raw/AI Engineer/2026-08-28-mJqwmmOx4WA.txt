@@ -1,0 +1,103 @@
+---
+video_title: "How to avoid disaster when vibe-coding a billing engine — Andrew Garvin, Stripe"
+video_id: mJqwmmOx4WA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=mJqwmmOx4WA
+video_date: 2026-08-28
+video_description: |
+  Andrew Garvin types one sentence asking for a billing engine that copies Lovable's pricing, and gets back a working sandbox: a customer, metered usage flowing in, and a draft invoice broken into separately scoped credit pools for builds, plan mode, cloud and gateway calls. Reproducing that by hand means understanding auto recharge, credit expiry and overage, which is exactly where people hurt themselves. He cofounded Metronome, the usage billing platform Stripe acquired this year in its largest deal, so he has watched a lot of companies get this wrong.
+  
+  What makes the talk useful is that a billing vendor stands on stage and argues against full autonomy. Billing carries deep business logic and real money, so his recommendation is to let an agent accelerate you into a test environment and stop there, rather than ship to production unattended. The guardrails are unglamorous: portable skills files that carry the API's hard won context, and deliberately verbose error messages written so an agent can correct itself. He also separates three things people blur together, an agent as your product, as your buyer, and as your user. The third is the disruptive one, and he points at a large software company cutting seat prices and moving to credits, because seats stop meaning much once one agent does the work of many logins.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/agarvin/
+  
+  Timestamps:
+  0:00 - Metronome, Stripe, and what they are demoing
+  2:29 - Where billing goes sideways with agents
+  3:40 - Provisioning an environment from the CLI
+  6:02 - Skills files that carry the hard parts
+  7:13 - Why a human stays in the loop
+  9:30 - Agent as product, buyer and user
+  10:38 - Moving off seats and onto credits
+  13:01 - Opening what the agent actually built
+  14:12 - Scoped credit pools and a draft invoice
+  16:27 - What this suggests beyond billing
+---
+[music]
+
+Hi everyone. My name is Andrew Garvin. I'm one of the co-founders of Metronome. Metronome, if you're not familiar, is the top platform for usage billing, which as you might imagine is taking off right now. Um, so much so that earlier this year we were acquired by Stripe in the largest deal that Stripe has ever done. Um, and what I'm going to show you
+
+today is a fun project that we've been cooking on with the Stripe team. Um, that is a demonstration of some of the things that we could work on together. Um, this is going to combine two very different uh products within Stripe. Um, if you haven't seen it already, I recommend looking at Stripe Projects. Just open up open that up on your phone while I'm going through this. Um, this
+
+is something that actually was launched literally the week that Metronome was acquired. And so, as you might imagine, the velocity of development at Stripe and at Metronome is pretty high. Basically, what Stripe Projects is is it's an orchestrator to allow you to operate and build your business as fast as possible. Um, and so in essence, what it does is it provisions a Stripe account for you as well as backend services that you may need, think like Versel, Postgress, and in this case, a metronome billing agent in order to launch a product quickly or an application quickly all through the CLI. Um, so the demonstration that we're going to do today is a very simple demonstration of how to get set up through Stripe projects, but you can imagine all the sorts of things that people are building on Stripe today. Um,
+
+one of the really cool aspects of being inside Stripe is their scale and data. Um, and one of the things that we've observed inside of Stripe is that the use of Stripe's CLI has exponentially increased over the course of the past five six months. We're thinking about all of the implications of the coding agents operating systems which we'll get into uh a greater topic on later in this demonstration. Um so the beginning part was sort of the thesis for this is how to avoid dis disaster when vibe coding a billing engine. Uh as you might imagine being in the billing space for multiple years now we've seen all sorts of crazy things happen and it's even getting crazier now that people are expecting to operate metronome a very complicated and deep product with a coding agent. Um,
+
+and so as a result, we are working from a developer experience standpoint to make this a more seamless experience for people and to have them avoid disaster. Um, and so we're going to see in a second what that de a demonstration of what that might look like and how we're guiding things. Um, but just to frame it the what's happening today in with launching agent products can go crazy and it can go sideways in all sorts of ways. So as just a couple of the types of problems that metronome helps solve for folks. Uh first we are for example and have for many years now taken in all of the API calls to OpenAI and Enthropic and metered that for those companies.
+
+We've worked with those companies since before they had any revenue. Uh and so obviously we've operated at global scale operating a metering service with a number of different data impacts. In addition to that we also operate credit models. Obviously today with usage based pricing it's not just about having a pay go uh metered business model but also all sorts of different forms of credits commits salesled uh discounts and offers. And then finally now in in the last 6 months especially the impact of failures here is growing in importance in particular because agents can run away with spend and so we're thinking about how to give more controls to our customers that they can offer to theirs.
+
+So think like for example having agents have a wallet um that they only they can spend from and having controls at that level. Okay. So that's what we're going to go into today. Let's actually get into doing this demonstration. You're going to see how simple it is. Um so I'm
+
+going to initialize Stripe projects right now. [sighs] Oops. And this is in fact a live demo. So you should expect all sorts of different things to happen here. So what this is doing is again initializing stripe projects. Um we are going to I think
+
+this should work. Um so we've selected that we're going to use claude here and we have a very simple thing. What I I go around the world basically talking with companies about their business model. >> It's not initialized. >> Aha. I see.
+
+All right. Come on up. Cool.
+
+[snorts] I got it. >> All right. Thanks.
+
+[snorts] >> All right. Sweet. Um, yes. Let's proceed. Cool.
+
+All right. So, our product, our project is in fact ready now. And so, I go around the world talking with companies about how to set up their businesses. One of the things that's really top of mind right now is um replicating certain business models. People want to get off the ground without having to think about it too deeply. One of the key topics right now
+
+is replicating Lovable's pricing model. And so I'm going to enter a prompt in natural language that allows us to guide the metronome billing agent and Stripe to set up a demo account that has that um that has that element to it and create a demo billing engine uh in Metronome mimicking the lovable pricing model. Oops. Just make sure I don't misspell that. Um, and so if you want to on the side you can see you can open up Levable's pricing and you can see all the different elements to it. But in
+
+particular they have a prepaid credit auto recharge model which is very common in um in sort of a self-s served motion today. Um so let's get this going. Um so while this is going I want you to pay attention to a couple of things that will happen. Um and in particular if you look at the obviously the slide on the left there's a couple different points that I want to hit on. So first um again metronome is a very complicated and deep product and uh there's a lot of different ways to hit foot guns etc uh if you're not guided and so what we've invested in is building an extensible set of skills files that can provide context to the agent that's implementing metronome and working with our API. Um
+
+these skills files are also portable and easy to install so you can use them on your own side. Um and what it does is it allows us to essentially remove the friction associated with getting started. Um and so here uh that and that's very important because you want to be able to test and work with the product and evolve over time. You're seeing here in error code um from a developer experience standpoint. You know this is nothing new but our our perspective is to have much more verbose and clear errors so that the agent can self-correct. Um and uh and so again our
+
+developer experience teams are working on finding more failure cases like that um and being able to help guide especially in the initialization and setup. Um one thing that's that's important here I think keying off of the last talk that was in this room. Um the goal that we have from a product development standpoint is not to have a customer operate the entire system without a human in the loop. This is a type of system that is both business critical, has deep business logic behind it. And so instead, what we are recommending and building toward is to use the use your coding agent as a way to accelerate your work and get into a test mode and test environment. Um, and
+
+so again, what we're doing here, we're not expecting to ship into production. We're not pushing it into production. In fact, when we go into the metronome environment, you'll see that basically what we've done is built a sandbox experience. Um and in the metronome context there's what it means to sort of test your initial setup is not just that you can see uh a contract or something like that or see a customer provision but also you need to see usage and so in in on the back end here our skills files are directing um the agent to actually flow usage into the metronome platform so that you can see what a live uh in what a live customer would look like. Um I'm going to do one more beat on stripe projects here. I think in this case
+
+what's happening is that stripe projects so so using the stripe CLI it's it's engaging with metronome which is an external vendor here you could also imagine also provisioning a bunch of other applications uh and using natural language to call for those as well um and so what again what's nice about this is that it basically removes the friction associated with setting up a test application or a test environment um and we again have seen a ton of uh of usage of this form um and we expect to see even more. Um, this is sort of like from our perspective coming into Stripe, this is one of the things that's been really amazing is that Stripe is on the forefront of thinking about agentic commerce and preparing primitives for the moment that we're in right now where in fact this is exactly what's happening. Companies that are launching new um new applications and new businesses that we've seen an exponential increase in new business formation at Stripe. Um and then in addition to that an exponential increase in customers that are using Stripe and using Metronome through the coding agents themselves. Okay. Um
+
+we are almost done here I believe. Um, while this is going, I I like another sort of like thing to sit back and think about when I go around to product teams today. They're obviously thinking about building for agents, but I think one of the things that's important to do is to de decode what exactly does that mean? And so I what I like about this sort of framework for thinking about the coding agents today is thinking about the different roles that they play. So obviously companies are launching agents as a product and therefore that's one of the reasons why they need to have a usage based pricing model because if the agent can be the product and run up token a token bill it's important for you to be able to meter on that. Um what we're talking
+
+about here with the Stripe project CLI is the agent as a buyer. So literally procuring their initial Stripe instance as well as additional backend services. That's important to basically make your services discoverable to agents that may be building an application or working in the open web. Um, on the Stripe side, that means both in a B2C environment, so they're working on a gentommerce, but then in the metronome environment, we're talking about in a B2B context. Um, and uh, and so there's sort of like multiple different levels to play out there. And
+
+then finally, one of the reasons why Metronome is really taking off right now is because of the agents as a user. Um, and so for example, we've been working with HubSpot for the past couple of years. They are currently on a path to transform their entire business from a seatbased model to a creditspbased model. Um, if you've seen some things in the news, that's starting in in EMIA where they have dramatically lowered their seats based price and added on a creditspbased model. The fundamental reason behind that is because what they need to be concerned about is a world in which an agent can operate their entire system. Um, and in that world
+
+essentially paying for a seat level access to the product to perform your work is no longer important in some sense. Um, we've been talking about this in uh as sort of headlessness. You know, Salesforce, various others have have talked about this. This is what Metronome is literally seeing today. Um, and so as like one example, last week I was at a uh I was at Andre's demo day where all five of the demoing companies were salesled agents meant to operate platforms like SAP or operate um operate invoicing platforms, etc., etc. Um, and
+
+again in that world, it's important for you to have a usagebased pricing model because you have the possibility of essentially all of the value acrewing to essentially one user of your platform, which in this case would be an agent. If you guys are thinking about pricing models, so not just developing in the agentic space, I'm a good person to talk to. I'll be out here in a second. Some of the things that we're um thinking about here are basically um not only having a creditsbased model which has been uh dominant on the market since openai launched their prepaid credit auto recharge model a couple of years ago through metronome but in addition to that offering more and like more and extended offers including in a salesled in an enterprise environment um and so for example what's happening with all the coding agency in the enterprise think like cognition or cursor or openAI anthropic themselves is that they are starting to adopt more um uh commit structures like the CSPs have done for the past 10 years. Think having prepaid commitments, postpaid commitments, and specific types of offers for specific types of customers.
+
+Okay, I think that we should be good to go now. And let's see what it looks like when we open up Metronome.
+
+Okay.
+
+What's up? Uhhuh. We've done multiple different versions of this, as you might imagine.
+
+Okay. So, as we open this up, uh, pull this.
+
+It's fun. I love all these demos where you're just looking at people logging in. Um, so as we open this up, so the general pain that Metronome has is an onboarding wizard meant for a human that needs to set up their environment. We've we don't need this now because we had an agent set up this environment. And as I come in, you're going to see some of the core metronome primitives here. Let's
+
+start by looking at the customer that was set up. Again, this is for testing purposes. Um, up at the top, you're seeing the customer with a certain lifetime spend. This was auto again populated by um by the agent for the demo environment. Um I'm immediately going to go into their invoice and we'll come back to this in a second. Um and so
+
+what you what you see here is a draft invoice that was created associated with um sort of replicating the lovable pricing model again. Um so if you have this on the side you can see all the different elements of that. But the core aspect of lovable's pricing model is a creditonly pricing model where you autorecharge on a monthly basis. Um and then in add in addition to that they have multiple different types of credits that are scoped to different types of usage beyond the the use of those credits. Then if you go over and if you overspend then you have an invoice at the end of the period. Um so a couple of
+
+the different like concepts there that are relatively complicated to administer is the credit itself. And so Metronome has a first class uh credit object here. What you're seeing is that there was a credit credit created for the initial period that we're testing for. we had usage that that draw that drew down from that entire credit balance. And then finally, if we go back to the customer pane, um in addition to that, you can see the usage that we that we plopped in. All
+
+obviously in a production environment, you would be seeing this in against real usage that you have. The core reason again to show it in this manner is to just see what it would look like if you adopted the pricing model and then had real usage against it. Again, I'm going to come back to the invoice. And so here you can click into each of these different components. Um, build credits, plan mode credits, cloud credits, AI gateway credits. This is exactly what
+
+the lovable pricing model looks like. And again, the way that we coached the agent to be able to do to to build this was just describing a natural language to replicate lovable pricing model. It was nothing more difficult than that. Um, so without going into Metronome's platform to too great an extent, um, the what we just did here was we initialized uh and created a stripe instance. We then in through Stripe projects uh we also created a metronome instance. Then
+
+we coached the agent to be able to uh build a demo instance of metronome that had a real pricing model live in production. And so you could imagine basically testing then from there the exact testing and tweaking from there exactly what you wanted before bringing that into production. Um this sort of framework for thinking about development both applies to Stripe where we are working very very hard to make it easier to uh run a complicated business model and get off the ground but also I think it bears lessons for how we might pursue agentic development more generally outside of Stripe. So again, think about some of the primitives that we talked about here today. Agent as a buyer, agent as your product, agent as your user and disambiguating what the different the different um modes and uh and like implications of those are. And
+
+then in addition to that um having having ways in which we coach the agent to operate more effectively in including in a in a in a difficult environment. You can try this for yourself now. So uh the easiest way to get started is with the commands that are that are listed here and you can see everything that is available through Stripe Projects through Stripe Projects online. Um as there are a number of different providers that are onboarding every day. Um so companies like Versell um like hugging face etc are basically like working in Stripe projects environment to be able to make their own products more discoverable to agents that are operating Stripe system.
+
+>> [music]

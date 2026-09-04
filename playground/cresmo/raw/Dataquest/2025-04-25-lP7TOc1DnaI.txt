@@ -1,0 +1,327 @@
+---
+video_title: "Segment credit card customers using K-Means in Python [Machine Learning Tutorial]"
+video_id: lP7TOc1DnaI
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=lP7TOc1DnaI
+video_date: 2025-04-25
+video_description: |
+  In this video, we guide  you through a real-world data science project using unsupervised machine learning techniques to identify distinct customer groups. You'll step into the shoes of a data scientist at a credit card company, working with real customer data to drive strategic business decisions.  
+  
+  What You’ll Learn in This Video:
+  ✔️ How to clean, prepare, and scale data for unsupervised learning  
+  ✔️ Techniques for feature engineering and data standardization  
+  ✔️ How to determine the optimal number of clusters using the elbow method  
+  ✔️ How to implement K-Means clustering with scikit-learn  
+  ✔️ Tips to analyze and interpret clusters for real-world business impact  
+  
+  Whether you’re aiming to sharpen your machine learning skills or apply data science techniques in the financial industry, this project walkthrough is the perfect opportunity to get hands-on practice with:  
+  - Python
+  - pandas
+  - NumPy
+  - Matplotlib & Seaborn
+  - K-Means clustering
+  - Customer segmentation strategy
+  
+  Recommended Prerequisites:
+  - Python Basics for Data Analysis → https://www.dataquest.io/path/python-basics-for-data-analysis/
+  - Machine Learning in Python → https://www.dataquest.io/path/machine-learning-in-python/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-credit-card-customer-segmentation/
+  
+  Video chapters:
+  00:00:00 - Intro
+  00:07:04 - Project Brief
+  00:08:40 - Load the Data
+  00:11:40 - Exploratory Data Analysis (EDA)
+  00:23:00 - Feature Engineering
+  00:30:20 - Building the Model
+  00:39:40 - Analyzing the Clusters
+  00:49:55 - Q&A
+  
+  #MachineLearning #pythonprojects #kmeans #Python #DataScience #unsupervisedlearning
+---
+So yes, let's get started. So welcome to the data quest project lab. My name is Anna and today we are going to be doing some unsupervised machine learning about credit card customer segmentation. So before we get started, let me tell you a little bit about myself. My name is Anastl and I am a senior course developer for data quest.
+
+But before I found this wonderful role, I spent eight years teaching high school mathematics in the United States. And then I made a career transition and I worked for three years as a self-taught data analyst. And I actually used data quest as a learner when I was transitioning from teaching to data. So um very fond of the platform and if you are also working towards a career transition um here's a success story that it can be done. Now I do want to make sure that you are in the right place. So if you
+
+are not a Python user I'm sorry but today will be a Python webinar. And in order to get the most out of this webinar, I think that you should feel very comfortable with basic Python skills like lists, loops, functions, and even pandas and numpy should be pretty comfortable to you. We're not going to be going into a lot of depth on the data cleaning steps for this project because the data set's already pretty clean, but we will be using data frames. And you should also have pretty good familiarity with mapplot lib and seabourn. And if these aren't very familiar to you, that's okay. But just know that some lines of
+
+code might feel confusing. And having some familiarity with machine learning and the machine learning workflow is a plus for this webinar. So you can follow along more closely with every single code cell that I'm going to be sharing. But if you are brand new to machine learning, you can definitely get something out of today's webinar, too. So, I think that as long as Python is the language of your choice, you will find something value from this webinar.
+
+But because I'm curious, I'm going to launch a quick poll with two questions. And the questions are, have you joined for our project webinar before? I'm curious so I can cater some of my answers to our audience. And then also I'm curious what your experience with machine learning is because if we have a very advanced group or a very new group that'll potentially change some of my explanations. So I'll let that roll for a couple seconds here.
+
+Okay. Um, looks like most people are getting their answers in. I'll let that go for a couple more seconds and then I'll share the results.
+
+All right. So, it looks like the majority of folks are here for their very first project webinar. Welcome. And if you are someone who has attended before, welcome back and thank you for joining us for another project. Um and then for machine learning experience it looks like in general the about what is this 88% of respondents are either brand new to machine learning or know the basics. So
+
+great webinar for you there will be something new for you I'm sure and if you are an intermediate machine learning student here maybe you'll have some insight to share with folks in chat. So if you if you do find yourself in that level and see someone asking something that you know the answer to, chime in and help them out. Okay. So what are we doing today? Today we are going to introduce the project.
+
+What is the scenario we're going to be working with? We're going to analyze the data set, do some exploratory data analysis, and then we're going to prepare our data for modeling, deal with some of our more categorical variables because the model we're using for machine learning needs everything numeric. We're going to then use K means clustering to find the appropriate number of clusters or we're going to use the elbow rule to find the appropriate number of clusters, then segment the data, interpret the results, and then close with some Q&A. And if you do have questions for me specifically, please use the Q&A box instead of the chat box because the chat box goes really quickly and there's a good chance I'll miss your question if it's there. But Q&A pulls those questions to the side so I can answer them at the end. And before we get started with
+
+these projects, I like to give a brief note about AI because we often get this question, why do this project by hand if AI can do it faster? And it's a valid question. AI is a huge part of the programming world and almost even more so in data science. But the truth is practicing these fundamental programming skills, practicing the workflow for machine learning, practicing your debugging capabilities, those are really important because AI cannot put knowledge into your brain. doing the project hands-on is how you develop that knowledge in a way that sinks in and sticks. And AI
+
+gets things wrong. Uh, as I was preparing for this project, I was working with AI to say, "Hey, is this the best code for this particular uh function I'm trying to do?" And sometimes it it doesn't know the best answer. Maybe it's trained on an older version of a library. Maybe it doesn't have enough context to get the function right. And when it gets the code wrong,
+
+you need to know how to debug it. So AI can be helpful, but it should not do the project for you. It can do the project for you, but you're going to miss out on a lot of learning value. And then the final thing is a lot of people like doing projects to build a portfolio or have conversation starters or interview answer for job searching. And if you do a project by hand, you're going to feel so much more like intimately acquainted with the project than if you let AI do it for you because interviewers are going to want to hear where the pain points were and how you addressed them.
+
+So now that we've talked about AI, let's get into the project itself. So for this project, we are going to act as a data scientist for a credit card company. Um, and this we're going to work with a data set that contains information about the company's clients. And all of this is fictional data. So we're not exposing anyone's actual credit card information, by the way.
+
+And we're being asked in this role to segment these customers into different groups so that the credit card company could apply different business strategies or marketing strategies to help their bottom line grow. Maybe there are customers who aren't spending as much as they could. We want to be able to identify what factors they have in common and have a specific strategy for them. Um so this is what we're doing and because we're going to be clustering or grouping unsupervised machine learning is the way we are going to tackle this. All right. And I see in chat where
+
+can you get the data set for this project in the data quest app? If you are in your Jupyter notebook environment and click on the folder here there is a CSV file customer segmentation.csv. CSV that you can either work directly in the platform here or if you rightclick you can download that file and work locally. Okay, but I'm going to close that folder so we have a little bit more visibility of our Jupyter notebook.
+
+Okay, so the very first thing we're going to do as we get started here is import all of our libraries. So, pandas, numpy, mapplot, lib, seabour for our exploratory data analysis and then our visualization libraries will also be used when we're looking at our clusters. And then for machine learning, we only have two functions we need to import. From scikitlearn pre-processing, we're going to scale our data using the standard scaler. And then from C means clustering or from cluster, we're going to import C means. So, let's run this
+
+cell. Uh, I'm going to restart my kernel because I was experimenting earlier. And you can see that this is the 27th cell to run. So, let's just clean it
+
+out. And okay, now it's the first cell to have run. And very first thing we're going to do is load in our data set as a data frame. I named mine DF. Really creative naming here. So that runs. And
+
+now we're going to take a look at the data frame head just to see what our data set looks like. So, customer ID, age, gender, dependent count. Uh, and on the side here, we have some explanations of what our variables mean. And dependent count is the number of dependents for each customer. So, usually this refers to how many children the customer has. Uh, education
+
+level, marital status, estimated income. So far so good. Months on book. This is how long has the customer been a customer with this credit card company. Total relationship count. Uh,
+
+this was the most confusing one for me when I was first looking at this data set. And this is how many times has the customer contacted or talked to the company. So maybe they have complaints or they want to do a chargeback or something like that. This is the interaction count. Then months inactive. So in
+
+um what is this? I think the past the number of months the customer did not use the credit card in the past 12 months. So this can be up to 12. They have their credit limit. So how much money are they able to spend on their credit card? total transaction
+
+amount, total transaction count and then the average utilization ratio which is daily average utilization. Okay, so far so good. And because we are still doing some exploratory data, I always like looking at the info method of the data frame. And this gives us a very brief overview of how many rows we have, what our column data types are, and if there are any null values where this data set has no null values. But it does look like we have some object data types that we'll need to address because K means clustering. we
+
+need everything to be numeric and objects represent uh strings or more categorical variables. So let's take a peek at some of these variables in more depth. Marital status is one of our categorical variables and we can see the value counts. We have uh about half of our customers are married, little less than half are single and then our smaller categories of unknown and divorced. Okay. And now let's do the
+
+same thing but for our other categorical variables. So we have gender and it looks like it the data set is relatively evenly split which is always an important consideration for machine learning. And then the final one is education
+
+level. Oh typo. There we go. Remove the extra space. And here we see that the majority of respondents um or customers rather are have a high school graduate level. Some people have some high
+
+school, some are uneducated. And then getting into our smaller representations, we have college, post-graduate and doctorate. So this was our very very brief numeric piece peak into our categorical variables. But let's now look at our numeric variables at a glance. And we're going to use the describe method to do this.
+
+Depending on what version of pandas you're using, you may need to specify numeric_on equals true here, just as a heads up. Okay. Um, customer ID. Well, that's something we're going to want to address because uh customer ID is technically numeric, but it does it's not really. So later on we will drop this. And I like looking at describe in
+
+a couple different ways. I like looking at the minimum values, maximum values to see if there are any outliers. I also like comparing the mean, excuse me, the mean to the median because if they're drastically different, it could represent some skew which is also an important consideration for machine learning. So, I'm not noticing any substantial outliers. Um, as we go here, everything seems relatively normal and none of the medians and means are drastically different from each other. And this is always a really
+
+important step to do, but because this is a guided project from data quest, we found a nice clean data set to use for this particular project, which accounts for why there are no big skews or outliers already. Okay, so now that we've taken a look at the numbers of our data, let's start to look at some visualizations because numbers are great, but visuals, you know, the old saying, a picture is worth a thousand words. All right. So, the first thing we're going to do is we are going to create a histogram of our variables just to look at the shapes of distributions. Um, and there's a warning here. My code
+
+isn't 100% accurate. So, let's address that. This is one of the things that I was working with AI a little bit earlier. Um, and let's see if the recommendation works. Basically, what I needed to do here was um create a loop to display the histograms rather than putting it all in a single line. Well, that didn't work.
+
+See, this is why we need to not rely on AI is sometimes it doesn't answer the question correctly. So, okay, we're going to stick with the warning. The thing about Jupiter warnings, when I was a beginner, they they really stressed me out. And obviously, if if you're going to be presenting this to um an end user or adding it to a portfolio, you would want to take care of these most of the time. But the good news is in our case, we still get the output we're looking for.
+
+So, I'm going to leave the warning how it is and not not worry about it too much. It looks like Jupiter on its back end addressed the issue in the code for us. Okay, so looking at our distributions here, age relatively normally distributed, dependent count pretty similar. There's kind of an odd histogram issue happening between four and five dependents, but dependent um you can't have half of a dependent. So this is just not plot lib treating the five dependent count strangely. Estimated income looks like
+
+it is um pretty skewed with a tail with larger income numbers. Something for us to be mindful of. Months on book relatively normally distributed. Same for relationship count. months inactive. There's a little
+
+bit of skew, but I don't think it's super substantial. And then we have a little more skew here with credit limit and average utilization ratio and transaction amount. So, it's always important to look at the shapes of things. For our clustering purposes today, this isn't going to be something we have to worry about a ton, but if you aren't happy with your clustering results, this could be a place to come back and look and see if there's any modifications you can make to your data set to guide the clusters in a more targeted way. All right, the next thing I want to do for our exploratory data analysis phase is look at correlations. Which variables
+
+are strongly related to each other? Because if we are wanting to pick features to focus on or maybe there's features we want to remove to help the model stay focused, this is what's going to help us know that. So for our data frame, I'm dropping the customer ID column because as we saw in our describe method, it's numeric, but not really. It's not a column we need for this particular analysis. So removing it. And then we're using the
+
+core method and specifying numeric only equals true. Another place where depending on your pandas version, you may or may not need this. And then for our correlations, I like to visualize them with a seaborn heat map. And here we have a cool bit of code. And I'll show you first of all what happens without the cool bit of code. What if
+
+we're just looking at our correlations data frame? Okay, this is great, right? This is great. kind of a heat map coloring the strong correlations versus the weak correlation. But some of these correlations we don't really care about.
+
+Like look at this one0.2 that's barely a correlation. So the code I have included here shows the strongest correlations that are with an absolute value over 30%. And because I did want to keep negative versus positive correlations visible, that's why I've used the or bar here so that we're not um converting everything into the absolute value because I want to see what's negative. And now when we run this, you'll see it's a much sparer looking heat map, but we can really see where the strengths are. Where's the
+
+positive correlations and where are the negative correlations? So it looks like months on book and age very strongly correlated, which makes sense. If you are older, you've probably had the same credit card for longer. Looks like credit limit and estimated income are also very strongly correlated, which also makes sense. If you have a higher income, you probably have more ability to spend money on a credit card, so your credit limit can be higher. Now, here's our first negative
+
+correlation. It looks like the total relationship count and the total transaction amount. So the more you contact the company, the less you spend. Interesting to note. Maybe the credit card company would be curious to know that particular correlation. Credit limit and average
+
+utilization ratio is also negatively correlated. Um, so the lower your credit limit, the higher you're getting to utilization, which makes sense. And then the strongest correlation here is the total transaction amount, but the total transaction count. So the more you use your credit card, the more you spend on your credit card also makes sense here. Um, all righty. So exploratory data
+
+analysis is done. it it's a very clean data set. There's nothing we had to remove, nothing we had to modify. Uh we were just familiarizing ourselves with the data. So now we are moving on to some feature engineering because we have three categorical variables that we need to
+
+transform. Uh and because we are transforming data, always a good idea and best practice to make a copy of your data frame. This way you're not accidentally um going to run into any issues if you run an old cell and then run this new cell. It's not going to pull information in a weird order. So make a copy start from scratch and I named it customer customers modif modification or modified because I I didn't like that I had initially named this something so unescriptive.
+
+Um, and this is another spot where if I were adding this to a portfolio, I would go and clean up my code to use something more descriptive from the beginning. But I left this in here to show that your first run through a project isn't necessarily what should be added to your portfolio. Go through and see if there are things like this that you can fine-tune. So, making a copy of our data frame. And then for gender, because in this data set, I'll scroll back up to our value counts. For
+
+gender, we have two distinct values. We have female and we have male. And because of this, we can assign ones and zeros
+
+here. So we don't need to do any one hot encoding. We don't need to get dummies. All we have to do is say that if the value is m, change it to one. If the value is f, change it to zero. Uh because it's just
+
+a a boolean, true or false. There's no ranking or hierarchy to this variable. And I like to visualize things as I go just to make sure it's all working as expected. So when we run the cell now we see that gender is ones and zeros exclusively. So all right, one categorical variable down, two more to go. The next one we're going to handle
+
+is education level. And this is an interesting one because there is some inherent ranking to education levels. And because of that, we can keep it as one single column and assign different numbers to it instead. And the way we're doing that is we're mapping with a dictionary where uneducated is the lowest level of education in this data set. So it's going to correspond to zero. Doctorate
+
+is the highest level of education in this data set. So we're going to assign it a five. This will um mean that we can perform means and averages standard deviations by translating everything into a ranked number. So when we run this now we can see education level is zeros 1 2 3 fours and fives. So the final categorical variable we're going to deal with is marital status and this one is the most challenging for our project today because there is no inherent ranking. There are more than
+
+two values. So we can't do any kind of boolean on a single column here. So this is a spot where we can use get dummies and I see in chat some folks are talking about different different label encoding and this is a great spot to experiment with this when you work on this project after the webinar because as we're going to see this runs into some potential issues with our clustering. So, what we're doing here is we're using pandas.get dummies. And I've
+
+commented out or I've added a comment here where my code differs from the official data quest solution code because I had a feeling that marital status could be an important indicator of what you do with your credit card. Maybe someone who's single uses their card very differently than somebody who is married or who is divorced. And if we had drop first equals true, this would get rid of the the divorce column basically. Um, actually, let me scroll over here. I'll show you what that means.
+
+Um, here. So, this is the official data quest solution in our solutions repository. And when drop first equals true is used, it turns married, single, and unknown into boolean values. Um, and drops divorced because if one of these is true, the other ones definitely aren't. And if none of them are true, it must be divorced, right? That's kind of the
+
+logic here. Um, but the problem is, what if divorced is an important variable for clustering? So, I wanted to make sure that divorce was accounted for, which is why I'm not using drop first. And this is experimenting, right? This is just experimenting.
+
+And when we run this, I am printing the information and then the head just so we can see that all of our data types are now numeric, either integer, floats, or booleans. And we do see that divorced is included. For our learners who are newer to machine learning, the one hot encoding we just used here means that the category categorical variable was split so that each unique value is its own column and it's either true or false. If it was a value of married in the row, that's true. and everything else is false because there's only one value to represent it. Um, and we will address
+
+the issues that this introduces into our K means
+
+clustering. All right. So now that our variables are all in a form that we can do clustering on, we're going to scale our data. And as we are transitioning into the machine learning and model building portion of the project, we're going to use a capital X for our variables and then X_scaled for our scaled data. And remember customer ID not valuable.
+
+So we're dropping it. We do not need it. So we initialize a standard scaler and then use the ffit method on our data and then transform our data and call it xcaled. Um, and if we want to take a peek at Xcaled, let's see here. We can see that it is scaled into a numpy array. And we will convert it
+
+back into a data frame in a moment. But from our values, we can see that everything is in a much smaller range. Um, let me back up for a second. Scaling. So if we look at our do head of our columns here, we have really differently sized numbers. We
+
+have one for education level versus income, you know, 69,000 where with clustering, it's based on distances between points and centroidids and having values that are really really spread apart like this, it it could just confuse our model. So sca scaling makes everything within a smaller range and standard scaler is based on standard deviation and mean. So everything will have when it's scaled have a mean of
+
+zero. Okay. So because we're doing clustering and if you're new to key means clustering imagine a scatter plot and on this scatter plot maybe you have a grouping of points down here maybe you have a grouping of points down here maybe you have a grouping of points here those are going to be clusters right but sometimes it's not as clear as three distinct groups and how do you know what the correct number of clusters is we are going to use something called the elbow rule and the elbow rule is a visual way of looking at the inertia of different numbers of clusters. So what we're going to do is here we're turning our X-scaled data back into a data frame and we are initializing an empty list called inertas and inertas in K means clustering is a sum of the squared distances between every data point and its corresponding centrid. So the centrid is the center of a cluster. So
+
+the closer a point is to the centrid, the smaller the inertia. Basically, or the closer all the points are to the centrid, the smaller the inertia. And small inertia is better because it means the cluster is stronger. However, you could technically have a centrid for every point in your data set. If you have a 100 data points, you have 100 centroids, inertia zero.
+
+Fantastic, right? No. because then you don't have any insight. If you have 100 clusters and 100 data points, credit card company's going to say, but what can we do with that? So, where's the sweet spot? You don't want
+
+one cluster. You don't want a 100 clusters. We use the elbow rule. And we are going to um visualize the inertas as time goes on.
+
+All right, there we go. And here we have inertia as our y-axis and the number of clusters as our x-axis. And this particular one gave us this weird lumpy funky line where as clusters get larger, the inertia gets smaller. And what we want to look for is where is the slope tapering off? Um here we can see the slope is very very strong and um gets you know even steeper here but eventually it starts to level off and in in this run it looks like at eight after eight the slope is pretty shallow which tells us this is our elbow. Eight clusters is a good number
+
+of clusters to start with. But I'm going to point out a quick problem with my code. It's a problem of reproducibility. I have not added a seed anywhere here. So if I were to run this again, it's a different graph because the model, the K means model is initializing centroidids in different places. So it might
+
+[Music] um land on clusters in slightly different areas. So you have two ways you can solve this. Uh there's three ways you can solve this. Way number one, you can set a seed. Make it reproducible. Go with what
+
+you have. Um that's your number of clusters. But what if the number of clusters changes from run to run? So for example, if I run this again, it's still at eight. Let me run it again. I'm trying to get a particular
+
+result here. Okay. Uh okay. It's really liking the eights today for the cluster number. Okay. Uh this one is a little
+
+bit different with the cluster drop at
+
+seven. Trying to get it to six just because that would be a nice number of clusters to continue the webinar with. Okay, we'll go with five. We'll go with five because I'm looking for a slightly smaller number just for demonstration purposes. But you can see that because I haven't set a seed, things are changing. The number of
+
+clusters isn't set as the correct number of clusters. You can use elbow rule. There's other rules you can use to determine a good number of clusters. Or you can run this several times and find an average. What's the average best number of clusters to use? So those are
+
+all strategies to consider when you do this project on your own. All right. So now that we have established the kind of best numbers of clusters that will work for our data, we could use eight. We saw that as the elbow in a couple of these runs, but this one is five. Um, and I'm curious. I
+
+actually haven't run this next part of the the model with five clusters before. I'm I'm interested to see what happens. All right. So, what we're going to do now is we are initializing a new C means model, but we are specifying we are specifying five clusters. We're specifying five clusters because that's our elbow. Then we are
+
+fitting and predicting with our model on our scaled data and assigning it to y. Now what is y? y is going to be a number 0 1 2 3 or 4 that corresponds with the cluster that a row of data belongs to. Uh and it's 0 1 2 3 or four because it's going to be zero indexed here. We're going to change that in a moment just for human readability
+
+purposes. So, what we're going to do now is we are going to add a new column to our original data frame. Notice that I have my my bad DF naming from the very beginning of the session. And it's because we've done the model at this point. We don't need to use our scale data anymore. What we want to do is we
+
+want to get the insights. And the insights, we're going to add our y here, which was the cluster assignments from our model. And we're adding one just to make it human readable. So let's see what that looks like. So you see here that our gender, our education, and our marital status columns are back to normal because it was our original data frame. We haven't
+
+done any of the the cleaning steps here. And if we scroll all the way over, we now have a column called cluster that assigns each row to cluster 1 2 3 4 or five. So we have officially created K means clustering. But unlike supervised machine learning where you kind of have a correct answer, unsupervised machine learning is more nuanced. And we're not done. We
+
+need to do a little bit of analysis on what these clusters are telling us to give information to our end user, our stakeholder of the so what. So what I'm going to do here is I'm going to look at our numeric datas uh data points numeric variables. There we go. Numeric variables. And we are going to group by cluster and look at some some plots.
+
+Okay. So um we now have some bar charts that are giving us some interesting information about the clusters. For example, it looks like the average age across clusters is it's relatively similar. So clustering was was not determined by age. Not really. A little
+
+bit of variation with the dependent count. Huge variation with estimated income. Cluster one has a very high estimated average income. Whereas clusters two and three a much much lower average income. Average months on book across clusters is relatively similar.
+
+Total relationship count. It looks like cluster 4 has something interesting happening here. So, we're starting to see a picture of our clusters. But we can see the picture even further by looking at some scatter plots. And for scatter plots, I am taking some of the correlations from our correlation matrix up here. And I'm
+
+plotting the strong correlations against each other. So, months on book versus age, credit limit versus income, uh, relationship count versus transaction count. And let's see if any of the clusters stand out when in a scatter plot against each other. Okay. Yeah, this is interesting.
+
+This is interesting. Looks like the total transaction amount and total transaction count very strong clusters. I'm going to double click this so we can zoom in on the scatter plots a bit. So this one is utilization ratio versus credit limit. And it looks like cluster three in general has a lower credit limit but kind of varies in their utilization ratio. Cluster one in
+
+general a much higher credit limit um but a much lower utilization ratio in our transaction amount versus our transaction count. Yes, this cluster is huge. Which which uh cluster was that? Cluster four. Cluster four high transaction count and amount.
+
+Um the top two scatter plots are a little less clear, but it does look like there's some kind of clustering here of the the blue dots which are for sorry I'm scrolling around a lot. Cluster one is blue and in general the higher estimated income but credit limit all over the place.
+
+So, we're starting to get a picture of our clusters. We're going to visualize one more way, and this is for our categorical columns. And this is the one I'm most interested in
+
+seeing. And here's why. Gender looks like sometimes it is an important factor for clustering. Education level. This one really surprised me. Every time I've run this
+
+data, doesn't matter how many clusters, education level does not seem to be an indicator of clustering. Um, not important for it. But marital status, wow, there is some pretty stark differences in clustering based on marital status. Cluster two 100% single. Cluster five 100% unknown. Cluster three majority
+
+very strong majority married. And then the other two are a little more uh split. But earlier when we were converting our categorical variables into numeric and we used one hot encoding for marital status and we created four columns based on just the the one marital status column. This could be a problem. This could be a problem because very clearly marital status is heavily influencing our clusters. Heavily influencing our
+
+clusters. And um this could be leading to an implicit waiting effect. Basically, because there's four columns in a data set that doesn't have that many columns, the clusters could be over calculating unmarried status. So, next steps for this project would be to figure out if that's something you can address. Um, you could potentially remove unknown and see if that changes the waiting and clustering at all. Um, you could use
+
+different distance metrics and see if that affects anything. Um, you could change the encoding method you use. um you could scale your encoding differently. So like there's options of how to deal with this, but that would be a huge recommendation for a next step for um taking this project further because right now our final step is to give our end users a so what what do these clusters mean? And in a markdown cell, we are going to just I this is how I've been doing it is kind of writing some observation notes about what we see for each cluster. So cluster one kind of
+
+going through our images here. What do we see? So cluster one is in general male. We can see that here in our bar graph for gender. Uh marital status not as much of a factor kind of split between divorced, married, and single. Where else do we have here?
+
+Um looks like estimated income is generally higher, but credit limit is all over the place. Do we have any strong indicators here? Ah, yes. Look at this. Cluster one. Average estimated income is over
+
+$100,000. So, let's add that to our notes here. High estimated income. And then I'm I'm just writing a brief estimate of what that estimated income is. Um, what else do we see here? Credit
+
+limit. high credit limit. So, another thing we can add to our cluster notes. And uh what else? Anything else we can spot from our charts here? Um it looks like in general not
+
+using their their cards, very low utilization ratios.
+
+So very low utilization ratios. So you could even um give like a a recommendation to the company at this point and say customers have money to spend so can be incentivized to you to use the card more or something like this, right? Um, and you would want to go through and do this for every single cluster. What does each cluster what's the story of that cluster? And if you can find a recommendation, you can add it. If you
+
+can't find one, you can just give a quick summary. Like I could also have said highincome males who aren't using their credit cards, right? Um, and that takes us to the end of our unsupervised clustering workflow. So, We did a lot. We did a lot. And if you were trying to follow
+
+along with this project, um, this part was maybe a little bit different for your run depending on the number of clusters you picked, depending on where your centroidids were initialized in your model. But this is a great place for you in your run to do this analysis step. What do you see for your clusters? And did the marital status strongly influence your model as well? My recom or my bet is that yes, yes, it did. So, at this point, I'm going to
+
+look at the Q&A. We do have a couple minutes, so I will do my best to answer those questions. Um, Pierina asks, "Is the relationship count always negative or does it include general calls about account info?" just question great question. So this was about our correlation matrix. Let me
+
+scroll up to that and our relationship count here. So relationship count and total transaction amount had this negative correlation. Maybe that's where negative was coming from. Um it doesn't mean that the the calls are always negative to the company. It just means the number of times the customer has talked to the company. So,
+
+um maybe that's just the calls I've had with my credit card company are never positive, you know, like, oh, that's not a charge I made or whatever. But negative here doesn't have anything to do with the content of the calls. It's just that the more calls you made to the company, the less you use your card. Uh, so I apologize if I misspoke there. Hopefully that answers the question. If
+
+not, please let me know. Um, Aman asks, "Why have I removed the customer ID for the histogram?" That's a great question. So, for our histogram step, scroll down to our histogram. No, where is the histogram?
+
+There it is. Um, we dropped customer ID because histogram is going to give us a distribution of values and customer ID is a randomly generated number that no ID should be the same. So if we were looking at a distribution of customer IDs, we would get a flat a very long very flat bar of ones. Um, so it's not giving us any valuable information here. The the histogram was able to do its thing without having the ID to to count per se, if that was the question. Um,
+
+because if we don't drop this, well, let's see what happens. What happens if we take this up? If you have a whatif when you're programming, explore it. Okay, so here's our here's our customer ID histogram. It it's nonsense.
+
+It's nonsense. Um, we can see scientific notation on our x-axis. Uh, it looks like most customer IDs start with a seven in scientific notation, but like this isn't saying anything valuable for us. So that's why we removed it here. There we go. Run that again.
+
+Um Maya asks, "When you make a copy of the data set, do you have to uh only on Jupyter notebook or both in Jupiter and on your device?" Great question. So this is just within Jupiter. Um nothing you do in Jupiter, I'm going to take that back. The code we run in this project, nothing will actually change your data file. Your CSV file is saved
+
+completely separately. We are not modifying it at all. So the copy method that we were using here is just for Jupiter to have a new copy of the data. Um, yeah, you don't have to worry about the CSV file changing at all unless you explicitly tell it to change. How do you view your copy of the data frame? Um, uh, Idia asks, hopefully
+
+I'm pronouncing your name correctly. If you wanted to view a copy of this data frame, we viewed the head here. So, we can see that actually let me add in a line here. [Music] Um, I'm going to add this in a cell above and customers modif. Um, and I'm going to restart the kernel just in case the copy has changes stored to it already.
+
+Um, where did we go? There we go. So, here the copy of the data frame is identical at this point to our original data frame. [Music] Um, nothing has changed about it. We only start making changes here. And then
+
+when we peek under the hood at the data frame, we can see the gender column, which was the first one we modified has gone from M's and Fs to ones and
+
+zeros. Um, and an anonymous attendee asks about previous sessions of Project Lab. So, previous sessions of Project Lab are available. Um, maybe one of my colleagues could answer more in chat about locations, but I know they're on the Data Quest YouTube account, so you can go binge all the project labs there.
+
+[Music] Um, Tana asks why should we scale the one hot encoded variables just trying to understand the intuition. Um, that's a good question.
+
+So, it's not that we have to scale those in particular, but we're scaling all of our data.
+
+And because we're scaling all of our data, it will include the one hot columns and it will also help to ensure that if there's any skew, the scaled versions uh account for that skew a
+
+bit. Will the recording be available later? Yes, we will send the recording out in about 24 hours and then after that it's um 100% on YouTube. Um IA asks about cluster one. Explain more about what you meant by the utilization ratio. So the utilization
+
+ratio uh is here and it's the amount it's a ratio of how much the customer has spent on their card compared to um their overall credit limit. So that makes sense given our correlation matrix here, utilization ratio here and credit limit negatively correlated because the higher your credit limit is more likely the less you're spending of your credit limit. So yeah, basically how how close are you getting to your limit of credit when you spend money on your credit card? All right. Um, at this point in time, we are technically at the end of our webinar session time, but we still have some more Q&A. So, I will spend a bit
+
+more time going over questions that are already in Q&A. If you have new questions, I'm so sorry, but you can totally talk to me in the Data Quest community. Just me, Anna Straw. Um, but if you do need to hop off here, I want to honor your time and thank you so much for joining us today. Um, I really appreciate it and if you have feedback for me, we have a feedback link. Please
+
+answer it, especially as we start doing more of these machine learning and advanced Python projects. Feedback is great for me to know what works and what doesn't. All right. So, and you're welcome everybody in chat. Thank you. Thank
+
+you. All right. Um, do we have access to the notebook? Yes, in chat my colleagues are sharing links to my solution as well as the official data quest solution. And someone said you missed a lot of parts. it will be recorded and um
+
+you do have access to the solutions so you can go through these parts on your own and I if machine learning is newer to you or there's parts you didn't understand if you feel like you missed a lot one of my recommendations is to copy cells that you don't understand. So for example, for example, um let's go to our question about dotcopy here. If that was a new idea for you, you can just right next to the code ask that question. Um why make a copy and then work with AI this way. to kind of go cell by cell in the Jupyter notebook and see what do you understand, what do you not understand. Clarify that
+
+with AI. Help yourself learn more by working with a tool that most of the time will help you understand the right answer. Yeah. Yeah. I I really like that Chandra is just right here, so I don't have to toggle tabs or go to a different window or anything. Um, very handy.
+
+Aman asks um could I please add comments as well in Jupyter notebook in future projects to explain the code and also insights generated. So my gists are basically the the cheat sheet for following along during the live webinar. However, the official data quest solution code usually has more uh comments about like what's happening in each step. So, if you did want a deeper dive into what's happening, the official solution is a great place for that. And of course, the next level up of explanation is to look at the guided project itself. And every single screen
+
+in the project will explain the steps in the same order that I covered today.
+
+Anonymous attendee asks, "How do you choose a graph for the initial EDA step?" So, for choosing a graph, [Music] um, histograms are great for looking at distribution. So just seeing how our different variables are distributed. So that's always a good idea. And then for did we make a bar chart? No, I guess the only
+
+visualization we really made in our EDA was histogram. Uh could you have done a bar graph for example of our categorical columns? Yeah. And actually, that would be a cool next step to add in here. But because we had so few categorical columns and the categor categorical columns didn't have that many values, um I think for me at least my opinion is the value counts gave me enough information about these variables. So hopefully that answered
+
+your question. Um, Aisha asks, "Quick question about the elbow method. Do you need to just try different cluster counts and look for an elbow point or is there a more defined process for picking the best number?" So, the elbow the elbow itself should be somewhat clear and um visualizing. That's that's really the whole point of the elbow is to see it and to look for where inertia stop stops uh changing as quickly. This one is a bad
+
+example, but in a perfect world, you would see a a beautiful kind of like looking elbow of the cluster point to use. Um, let's see if we can kind of see an elbow here. But this this data set, the elbow is a little bit fickle if I'm being honest. Um, and because of that, you can do multiple runs and save the elbows and find an average and go from there. You could also kind of go through the next steps and see if there's a number of clusters that gives you insight in an actual way. Um when I
+
+ran this project, if you look at my gist solution code, I ran it with eight clusters and there was insight to be gained, but uh the same clusters are sort of presenting themselves with a lower K. So yeah, just just experiment. Um, the elbow is a good place to start because in none of these runs have we gotten anything really lower than five. It's been between five and eight. So, you can experiment with those and see if there's a sweet spot number of clusters or or you can add in a seed and avoid this whole
+
+issue. Aman asks if you have future questions while doing this project in your free time how should you reach out for doubts and queries. So if you click on help in the data quest environment and you go to the community um you can add a new topic or read through and see if someone's already asked your question and then you can tag me. Um, my community name is Anna Straw and I would love to continue the conversation there. Uh, Matthew asks about using a seed so your outcomes can be duplicated.
+
+Yes. Um, yes. Where would the seed go? you know, let's let's do a little bit of um AI support here because I'm pretty sure seed would go right here. But let's just verify. Let's
+
+just verify where would I add a seed and give it our
+
+code. Yeah. Okay. So, we add a random state to our K means function.
+
+And now when we run this, notice we have this looking graph. And if we run it again, we get this the same graph, right? That was the same graph. Um, that's not the same graph. Oh, cuz where did our clusters go? Or where did
+
+our random state go? Let's try that again. Oh, I added them below, didn't I? So, we have this very kind of flat looking curve. If we run it again, the same very flatl looking curve. Run it
+
+again. The same very flatl looking curve. So seed makes your result reproducible. If you change the seed number, then the result will look different. So here we have this weird funky um peak at seven. Run it
+
+again. The same peak at seven. Right? So if you wanted to um have your output the same every time, that's something you could do.
+
+Um, okay. So, another question about seed. Hopefully that answered
+
+it. All right. Uh, yeah, I'm we're 10 minutes after. So, even though we have questions, I'm so sorry, everyone, but I think we have to wrap things up. But if I did not answer your question and you would like it answered, please do go to the data quest community and let me know because I I do want to answer your questions. But we are out of time for
+
+today. So thank you so much everyone for joining. Uh it was really fun to talk about machine learning with you all. I hope you learned something and please do um leave me some feedback because we we do want to do more of these machine learning and advanced projects and the feedback will help to make sure that I am hitting the sweet spot of explanation versus advanced topics. Yes, thanks everyone for coming.
+
+Thank you. Thank you. And I will see you all for the next one.

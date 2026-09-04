@@ -1,0 +1,19 @@
+---
+video_title: "The AI Debugging Trick Every Developer Needs"
+video_id: aIiTAu1GV70
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=aIiTAu1GV70
+video_date: 20260730
+video_description: |
+  Website Link: systemdrd.com
+  Learn how ChatGPT, Claude, Gemini, and GitHub Copilot can help debug traditional codebases by explaining errors, fixing bugs, refactoring legacy code, generating unit tests, improving code quality, and accelerating software development. Discover practical AI debugging techniques, prompt engineering tips, and production-ready workflows for modern software engineering.
+---
+model I want you to leave with today. Treat the model as one stage in a closed loop, not a one-shot oracle. The loop has five stages. Signal, it starts with something concrete, a failing test or a captured exception, not a vague bug report. Retrieve, pull only the code, history, and dependencies relevant to that specific signal.
+
+Reason, the model forms a root cause hypothesis, not just a surface-level pattern match. Patch, it produces a candidate diff scoped as small as possible. And verify, that diff gets compiled and tested in a sandbox before anyone, human or system, trusts it. Here's the part that matters most. If verification fails, the loop doesn't just stop. It re-enters at the reason
+
+stage with the failed test as new signal. That loop back is what turns this from a pipeline into a system that actually improves its own guess over multiple attempts. Teams that skip the loop back and implement this as a straight line tend to plateau around 30 to 40% first attempt fix rates. Adding retry with failure feedback is usually the single highest leverage change a team can make. Let's translate that loop into a concrete architecture. Four lanes left
+
+to right. Ingest turns a CI failure or exception into a structured object, a parsed stack trace clustered by similarity, so you're not duplicating work on the same underlying bug. Loop

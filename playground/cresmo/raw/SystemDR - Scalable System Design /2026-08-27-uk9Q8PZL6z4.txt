@@ -1,0 +1,29 @@
+---
+video_title: "The Interview Question Behind 12 FAANG Questions #systemdesign #interview #questions #twitter"
+video_id: uk9Q8PZL6z4
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=uk9Q8PZL6z4
+video_date: 2026-08-27
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-twitters-timeline-the-senior
+  🌐 Visit our website: https://systemdrd.com/
+   
+  "Design Twitter's timeline" isn't one question — it's twelve, wearing different names. Here's the probe underneath all of them.
+   
+  #systemdesign #techinterview #faangprep #softwareengineering #codinginterview #twitter
+---
+Twitter's home timeline is the single most drilled [music] system design question in the FAA NG interview bank because 12 other questions from Instagram's feed to TikTok's for you page share [music] its exact backbone. Today we're walking the senior plus version end-to-end so that if you internalize this one, you can walk into 11 other interviews you haven't specifically [music] drilled. The version most interviewers actually ask is not the 4-hour design Twitter monster. >> [music] >> It's narrower. Design the home timeline, design a newsfeed, design the part of a product that shows posts from people you follow.
+
+All of these collapse to the same probe, so don't overscope in the first 5 [music] minutes. Notice the phrasing carefully. Posts can be original tweets, retweets, or replies, and by default replies live on the conversation [music] thread, not the home timeline. That's a detail most candidates get wrong under pressure. >> [music] >> The reason this generalizes so well is structural. Instagram's feed, Facebook's
+
+[music] newsfeed, LinkedIn's homepage, Reddit's front page. All four are direct equivalents. Many users, many posts, a feed that [music] has to be fresh and ranked, and a write-to-read ratio that decides the whole architecture. TikTok's for you feed is close but has one real difference. It's not a follow [music] graph feed. It's a recommendation feed,
+
+so candidate generation changes even though the serving architecture rhymes. Naming that distinction out loud is itself a [music] signal that you're not just pattern matching. Before you draw a single box, six clarifying [music] questions separate a mid-level answer from a senior one, but three of them do most of the work. First, ranked or chronological? Old Twitter was reverse chronological, trivial, [music] just sort by timestamp. Modern feeds are
+
+ranked, which drops in a scoring system, a feature pipeline, and almost certainly a model. If the interviewer doesn't specify, default to ranked [music] because it's the harder and more realistic version, and you can always simplify down from there. Second, what's the DAU, the average follow [music] count, and this is the one people skip, the maximum follow and follower count. That maximum is the decisive number. It's the [music] celebrity problem hiding in plain sight, and it's what breaks the naive fan-out design later.
+
+Third, the read-to-write ratio. It's always lopsided in a social feed, but a 100:1 system looks [music] architecturally different from a 1,000:1 system because a heavier skew justifies doing more expensive work on the right path. The other three, freshness target, [music] what else rides in the feed besides original posts, and the load SLO, matter, too, but they're refinements. State a number for each. Something like a 5-second [music] P99 freshness target and a P50 under 200 milliseconds for the API. [music]
+
+Interviewers remember candidates who commit to numbers instead of hand-waving.

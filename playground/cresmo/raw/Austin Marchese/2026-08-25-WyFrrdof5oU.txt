@@ -1,0 +1,154 @@
+---
+video_title: "You’re Overpaying for Claude Code. Use This Open Source Strategy Instead."
+video_id: WyFrrdof5oU
+channel_name: "Austin Marchese"
+channel_id: UCFeFVytEkT8kaqPCJZGFswg
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=WyFrrdof5oU
+video_date: 2026-08-25
+video_description: |
+  Try @heygen_official Free AI Video Generator Today - https://www.heygen.com/?sid=rewardful&utm_content=creator&utm_medium=influencerb&via=austin-marchese #HeyGenPartner
+  
+  In this video - I walk through how to run Claude Code for free using open source models.
+  
+  Part one I walk through the simplest setup you can do to use an open-source model for free no matter what computer you have. Part two sets up a fully local model with Ollama so you own the whole thing end to end with no internet and no privacy concerns. 
+  
+  By the end you'll have two setups you can switch between in one word, know exactly which tasks each one is for, and understand why a local llm is worth setting up even when it's slower.
+  
+  Timestamps:
+  (0:00) - How To Use Claude Code For Free Using Open Source Models
+  (1:40) - Part 1: Free Models Through OpenRouter
+  (2:10) - Step 1: API Key + Free Model Preset
+  (3:03) - Step 2: Build the claude-free Command
+  (8:09) - When To Actually Use Free Models
+  (9:34) - Part 2: Running Models Locally With Ollama
+  (10:12) - Picking The Best Local Model For Your Machine
+  (12:03) - When To Use Local: Private, Unsafe, Offline
+  
+  What to watch next ⤵️
+  Never hit a token limit again: https://www.youtube.com/watch?v=SFh6MMe-XcM
+  The 5 biggest lies about Claude: https://www.youtube.com/watch?v=yGRtK08BdIs
+  Claude Code vs Codex, which to use: https://www.youtube.com/watch?v=fS5M3kLaXAA
+  
+  --------
+  FOR INDIVIDUALS:
+  Free 5-day AI playbook (what I used to build a $25M+ startup): https://austinsnewsletter.com/free
+  Use BuildPartner to build 10x faster with Claude Code (try free): https://buildpartner.ai/free
+  
+  FOR BUSINESSES, Ways to work with me:
+  Apply for my Executive AI Coaching Program: https://www.theincubator.xyz/apply/free
+  Want to build a SaaS product without hiring a CTO? https://www.theincubator.xyz/eng/free
+  --------
+  
+  LINKS MENTIONED IN THIS VIDEO:
+  - HeyGen: https://heygen.com/?via=austin-marchese
+  - OpenRouter: https://openrouter.ai
+  - Ollama: https://ollama.com
+  - Morph LLM, Best Ollama Models: https://www.morphllm.com/best-ollama-models
+  
+  If you're new here, I'm Austin Marchese. How I got here...
+  16: First business (SAT Math Tutor)
+  22: Graduated Stevens Tech, 4.0, College Basketball, software engineering job at JPM
+  23: Bitcoin ATM company + building algorithms for a professional gambler (fun story)
+  24: Started creating content, grew 100k+ followers, built first agency, The Incubator
+  25: Scaled agency to 15+ team members, $75K/M while working full time
+  26: Quit my job, joined a startup called IYK
+  27: Became COO of a $25M+ tech startup, worked with Ed Sheeran, Chance the Rapper and more
+  28: Built a $20M+ real estate portfolio in the background
+  29: Transitioned from IYK, re-launched The Incubator, grew it to a 6-figure biz in 30 days. Now building BuildPartner.ai
+  29: Became one of the biggest Claude Youtubers, with multiple videos over 500,000 views
+  30: Completed an Ironman and just getting started...
+  
+  To everyone who's spending time learning and putting the work in, cheers. Anyone can make comments from the sidelines but not everyone can build...
+---
+The biggest problem people have with Claude Code is token limits and how expensive it gets. So, in this video, I'm going to show you how to run free open-source models inside Claude Code with one command, Claude-Free. [music] And then, I'll show you how to run a model entirely on your machine, so it's free, private, and works without internet. And at the end, I'll walk through how these open-source models actually make money, even if you aren't paying them. Now, for each part, I will give you a step-by-step walk-through for how to set this up. But more
+
+importantly, I'll outline when and what tasks you should use this setup for. But before we get into changing anything, you need to understand at a high level what we're actually doing. So, when you're using Claude Code, you have to think of it like a car. This is what you're using to drive your AI outputs, and it's designed to have tooling to help you use the engine, which is the model. So, normally, Claude Code runs Claude models. That's the exact engine
+
+the car was designed for, and this works very well, but it can get expensive. So, what we can do is we can swap out the engine for other models, which can be free or a lot more cost-effective. And there's a couple questions that you're likely have when hearing this. Is this legal? And the answer is yes, you're allowed to do this, but there's one distinction. Anthropic, the creator of
+
+Claude, doesn't support non-Claude models. And what this means is they're designing Claude Code specifically for Claude models. So, if a Claude Code change breaks how it interacts with these other models, it doesn't really care. And the next is, are these models any good? And this is actually what inspired me to make this video. Kimmy K3
+
+recently launched, and it's an open-source model that's about 90 to 95% as good as Fable. And so, we're at this point where these open-source models, which are pretty much as good as some of these Claude models, and they also allow us to do things that Claude just won't allow you to do. And I'll cover that later in the video, but first, how do we get free open-source models running inside Claude Code today? So, the fastest way to do this doesn't involve downloading anything on your machine. Instead, it's about routing your requests to other models that are hosted externally. So, right now, Claude Code
+
+sends every request to their own models, which are hosted on their own computers. So, what we want to do is we want to change how we're routing these requests to route to free open-source models that we don't host in our own computer, so we don't hit limitations that we'll cover in part two. The tool that we're going to use to re-route is called OpenRouter. So, step one is go to openrouter.ai, sign up, then get an API key. Once you
+
+have that API key, save that somewhere. We're going to use it in a little bit. And now, after you have that, we want to create a preset configuration. What we're going to do is we're going to let OpenRouter pick the best free models for each request that we make instead of trying to pick them ourselves. So, once in OpenRouter, go and click preset, then create a new preset and name it free model preset. Once you're in there,
+
+you're going to select the specific router. So, click in here and then search for and select free model router. This will make it so that the preset configuration will only use free models that OpenRouter thinks are best. And the key reason that we want to do this is we want to avoid selecting specific models because those over time will become outdated, and it's just another thing that we have to manage. So, instead, we don't have to do that. We just let
+
+OpenRouter manage it for us, and they'll select the best models as they upgrade over time. And the best way to do that is by creating a preset. Once we do that, we go to step two is we want to wire this into Claude code. Now, most videos on YouTube, they'll just focus on the setup part, and that's great. But, once you set it up, it is a pain in the to switch back to your normal Claude setup. And as a result, this friction
+
+will lead to you not using these free models in your day-to-day. And I'll cover on the limitations of these free models, but it's not necessarily because it's bad. It's just annoying to switch back and forth, and you're likely going to still want to use the premium models going forward. So, in order for us to actually get value from this setup, we need an easy way to move between free models and premium Claude models without any friction. So, to do that, we're going to make a command called Claude-free. On screen, you can see what
+
+a final product looks like. On the left, I type Claude into the terminal, and that uses the typical Claude models. That's what you're likely used to. And then on the right, I type Claude-free, and then now that uses free models. By simplifying the process of switching back and forth, I can actually use this configuration in my day-to-day. So,
+
+that's the target end state, but how do we actually build to it? Well, we've already created our API key, and we've already created the preset, which sets up the foundation, and now we need to run a single prompt. On screen, you'll see a prompt that will help you set this up on your computer. Breaking each step of this down, at the start of it, it clearly outlines the Claude command versus the Claude free command. And then it talks about using the Claude model preset that we created in step one. And
+
+if you're wondering where to get that preset text, go to OpenRouter presets, you click this button to copy it, and then that is what you bring into your prompt. From there, you'll use your API key from OpenRouter to set it up. Here, you can see me running the command on my computer, and I just add the API key at the end. I'm okay with bringing these keys into the prompt, but if you're not, you can just add it in your credential manager, and that will solve any of your privacy concerns. And the API key I used has been disabled, so don't get any ideas. Now, I usually operate in auto
+
+mode when I'm using Claude code, which makes things go faster, but there are limitations in terms of what it is allowed to edit when it's in this mode. So, you may need to manually run another command, which is setting up the credentials for your machine. In this case, Claude tells me the exact command to run. I take that, I open up a new terminal, I copy and paste it in, and then I hit enter. So, once that prompt is done running, I open a new terminal again, I type Claude-free in, and then it'll ask me about an API key. Here,
+
+just make sure to select yes, and then you can run it on your machine. Now, whenever I type Claude free or Claude, I can switch in between the two. So, in this case, I'm going to write Claude free, and then I ask, "I want to analyze how my internal OS is structured." And this is a pretty robust project. It goes in, and it looks at my files and gives me an overview. Then, I just want to
+
+double-check that it's set up properly, so I go to OpenRouter, and I can see exactly how it's routing requests on its side, juggling between different models. And my favorite part about all this, when I click and see exactly how much it cost, you'll see $0. Now, before we get to the next part, we're talking all about using Claude code for free, but that just works for producing text outputs. What if we want to generate video? Which brings us to video sponsor, HeyGen. HeyGen is an AI video platform
+
+that I first used about 2 years ago, and it's crazy how great this tool has gotten. It allows you to create lifelike avatars, translation, full videos, all without a camera or a filming crew. And if you watch my videos, you know how important quality over quantity is. So, yes, HeyGen can generate an entire video for you, but that's not what interests me. When you create content, one of the worst parts isn't filming, it's re-filming. If you miss one line, now
+
+you have to re-film 2 seconds of footage, and it's just so annoying. So, that tiny gap is really the most unenjoyable part of the entire process. So, instead of all that, you can use a tool like HeyGen to help you fill the gap. You're not replacing video production, you're enhancing video production. Now, this is just one specific use case, but there are three other features that makes this all possible. The first is the digital twin.
+
+If you record one 15-second clip, it'll build a digital twin of you that actually looks filmed, not AI generated. So, I can take raw footage from filming create a digital twin, and then use that to bridge any gaps that I realized after I already filmed. The second feature is their tool Hyperframes. It's an open-source MCP tool that you can connect directly inside Cloud Code, and it can generate motion graphics for you into an MP4 video. So, you use their digital twin to create a character, and then Hyperframes to help create the visuals. The third is that there's a
+
+video agent that will take any idea all the way to a fully edited video. And after it creates that video, every element is still editable after it's created, so you can make small changes, which enhances the editing workflow. Now, to get access to HeyGen and start using it today, click the link in the description. Now, getting back to setting up Cloud Code so that we can use it for free locally. So, at this point, we've set up Cloud so that it doesn't cost any money to run, and there's nothing running locally on my machine to slow it down. And to showcase why this
+
+is so powerful, I open up a new terminal, and I just type Cloud in directly, and now it goes to using the premium Cloud models. So, now I have one setup that's using the premium Cloud models, and then I have another setup that's using the free models, and I can go back and forth seamlessly. The reality is, to build a setup that's actually helpful, you need to remove and kill any friction. And personally, I love having Anthropic's best models. So, if I want a second free configuration, I have to be able to use it without thinking. Now, before getting when to
+
+actually use it, there is one gotcha with the setup. So, yes, OpenRouter is free, but it only allows you 50 requests in a day, which if you're using it, you're going to hit. So, to fix this, you put $10 on your OpenRouter account, and you don't have to spend it. It can just sit in your account as credit. This is basically your way of telling OpenRouter that you're not a robot, and then it'll up your daily request to 1,500. And that's definitely plenty of
+
+requests day-to-day. Okay, so you have it all set up. When should you actually use this configuration? Now, my general rule of thumb with any free models is use them when you need to use them. That's the guiding principle I tell people. So, depending on your use case,
+
+that may change. But, here are some of the scenarios that I look at. The first is when you've burned through your token allocation. Now, the reality is that free models are slower, and they're just not as good. Just keeping it 100. If you
+
+still have premium budget left, use it. Don't downgrade yourself for no reason. The reason that we made these seamless commands is that you can go back and forth easily. So, don't start using the Claude free command before you've actually run out of your budget. And I know everyone's budget's different.
+
+That's why the rule of thumb is use it when you have to. And a natural next question is making your system more token efficient, so you don't run out of tokens quickly, which is a whole different rabbit hole. But, if you do want a step-by-step process on optimizing your setup, my plugin buildpartner.ai will help you do this directly in Claude code, which is linked in the description. Now, the second time to use it is when Claude is down. So,
+
+the reality is that if you can't use Claude models, you don't want to slow down your productivity, and Claude unfortunately has outages. The third is you want to cut your bill. So, if you run free models for a week and you find that it's good enough for whatever you're doing, it's worth exploring downgrading if you feel you don't need these premium models. But, the reality is with all of that, there's still one thing that the setup can't do. Every request that you have leaves your computer. So, if the internet is down or
+
+you have privacy concerns, this doesn't solve those problems. And that's where the second setup comes in. Part two is running AI models locally on your machine. This is a process that everyone should go through because it shows the future of owning intelligence end-to-end. And when most people try and do this, they get stuck on not knowing which AI model to use on their computer.
+
+So, instead of worrying about all the nitty-gritty hardware details, which I know close to nothing about, we're going to have AI help us. The first step is we need to set up Ollama on our machine. Ollama is a service that helps facilitate using open-source models locally. On their website, click download, then you'll see a command, copy that, and run it in your terminal. And if you already have it installed, make sure you have the newest version because we're going to be using some relatively new commands that were part of the newest releases. Once you have
+
+that, we have Ollama set up, and now we have to choose the best local model to run on our machine. And as I touched on, the nitty-gritty hardware details are a bit overwhelming for me. So, what I like to do is go to about this Mac, take a screenshot of my settings, and then I bring that into Claude and I say, "What open-source models on Ollama work best for my machine?" And then I'll bring in the link to Ollama, so it knows exactly where to look and pull the most up-to-date models versus potentially pulling from old training data. If you're not on a Mac, Windows has a very similar My Computer page that you can bring in as well. Now, once Claude has
+
+all the information about my machine, it suggests that I use Qwen 330B or Qwen 3-Code, depending on my use case. Then it actually tells me the command to run in my machine to get this all set up. Once you actually get those models, if you do want to run a quick sanity check, there is a resource from Morph LM, which has an overview of the best Ollama models, which I'll link below, that I love looking at just to do a quick check to make sure that the analysis was correct. see their suggestion was this exact model, so I'm like, "Okay, let's get this all set up." From there, Ollama makes it super easy to actually use the model that we just downloaded. Go to
+
+your terminal and run this command: Ollama launch Claude --model, and then whatever model you're using. So, for me, it's Ollama launch Claude --model Qwen 330B. Two potential issues is you might not have the launch command. Make sure Ollama is the most up-to-date version, or it might say that Ollama is not installed. Make sure to open a new terminal window. It's basically a hard
+
+refresh to get all the updated settings from previous downloads. Now, once you're running that command, you're using the local model on your machine, which is entirely free. You don't need any internet, and it's something that you own end-to-end. And there is a chance that you see some warnings on your Claude Code terminal. This is totally fine. If you're wondering what
+
+this is and how it impacts you, just take a screenshot and then bring it into Claude directly. Once you have it set up, your machine just isn't going to be able to compete with what Claude Code can do and the models they can run on their billion-dollar data centers. So, going back to my rule of thumb, run local models and free models only when you need to. Now, trust me, there are scenarios where this is helpful and it is needed. So, the first is private AI for removing personal information for high-secure systems. So, one real
+
+example is one of my clients is an accounting firm, and they want to leverage Claude, but they don't want to share their PII data into the model. So, by having local models, you can use AI to clean things up before it hits Claude. The next is less-safe activities. So, I was talking with one of my business partners who I do a lot of real estate stuff with, but full-time he's at a top fintech startup and he runs their engineering. And he told me that as these AI models get better, they're better able to find code vulnerabilities in the tools and infrastructure they're building. But
+
+unfortunately, or fortunately, Claude won't let you try and hack into your own system to find these security issues before someone else does. So, the best way to do this is to use open-source models like Kimmy K3 that just came out that allow you to do these use cases that are bit on the edge or not necessarily safe. So, when he's trying to make sure that his code is fully secure, he can't use Claude models, he has to use these open-source models, which allow him to do things like this. Now, in practice, your local model on your machine likely won't be strong enough to actually find these issues. So, if you're wondering a solution that could actually help with that, it would look closer to step one, but instead of using the free models on Open Router, you would have to spend money on the more premium models like Kimmy K3. So,
+
+those are the first two real scenarios, right? The first is private information and the second is these more on the edge use cases that traditional models won't allow. And the third is you don't need any internet for this. So, all the other use cases, you have to have internet connection. But the reality is sometimes you don't. For example, I was flying
+
+back from South Africa to New York and the plane the Wi-Fi was out, which was absolutely brutal. This allowed me to work on my computer without having any issues. And sometimes just doing this makes it click. So, I suggest taking your computer, setting this all up, and then putting it on airplane mode or turning your Wi-Fi off, and go back and forth with the model. Like, once you do that, it kind of clicks that you own this entire thing end to end without relying on any external provider. So,
+
+those are the three times when you should use this, right? When you have to. So, you now know how to set up open-source free models using external providers, as well as on your machine. But what's the catch? How do these businesses actually make money? Now,
+
+before we get to that, if this is your first time on the channel, welcome. But if this is your second or more, you know the drill. This is our anti-slop agreement. The visuals, the testing, everything is built for humans, not for AI robots. So, all I ask in return is that you subscribe this channel so I can keep making videos like this. Also, as a
+
+thank you for everyone who does this, I give away a Claude Max subscription every video. Now, this week's winner is YM Michael 1. He subscribed within 10 minutes of watching. He's using AI to work on his dissertation. Absolute legend. Now, to enter the next giveaway,
+
+comment below with what you're building or a video that you'd like me to make. And every video you comment on is another entry to the giveaway. So, what's the catch? Are these actually free? How are they making money? Now,
+
+I've said it a couple of times, right? When you're using these free models, there is a secondary cost. You get a worse output and you waste more time waiting. Any of this touches your actual career, the bill is not zero. So, in my eyes, AI spend for your personal budget is closer to a car payment, not a Netflix subscription. If it helps you
+
+build quicker and more effectively, it's not wasted money. So, that's how you're spending from a non-monetary perspective. But that's not how these businesses actually make money. So, there's couple things on that. Most models people call open source are technically open weight, which means you get the engine or the model that you can run, but the license for it still controls what you're actually allowed to do with it. And these businesses, they
+
+make money around the engine, hosting the model, enterprise support, custom deployments, cloud partnerships, all of that infrastructure to help the model run. Now, to continue the car analogy, they're essentially handing out the engine for free so that more people use this engine in their car, and they make money by being the mechanic. It's a business strategy that they're focusing on distribution and disruption as a way to make money down the line. So, at the end of the day, these are all tools in your toolbox. Go through the process I covered here and learn about your options because these models are only getting better. Now, one problem you'll
+
+still run into is when you're using those cloud models, hitting your token limits. So, to fix that problem, I made this video, which walks through exactly how to optimize your system to use fewer tokens so you can save time and money. If you like this video, you will love that one, and I'll see you over there. Peace.

@@ -1,0 +1,30 @@
+---
+video_title: "The Detail Everyone Skips: Virtual Nodes #systemdesign #shorts"
+video_id: aSBxdXfxRBE
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=aSBxdXfxRBE
+video_date: 2026-08-22
+video_description: |
+  Most candidates stop at "consistent hashing." Seniors say "150 virtual nodes." Here's why that one word changes everything. 👇
+  
+  Full walkthrough: https://systemdr.systemdrd.com/p/consistent-hashing-why-it-matters
+  All 52 FAANG questions + drill cards: https://systemdrd.com/ebooks/52-faang-questions-drillcards-cheatsheets/
+  🌐 https://systemdrd.com/
+  
+  #systemdesigninterview  #softwareengineering  #TechJobs #InterviewTips #shorts
+---
+Consistent hashing fixes this by changing where keys and servers live. Instead of a modulo operation, you place both your servers and your keys onto an imaginary ring numbered from zero up to two to the 32nd power. To find out which server owns a given key, you hash the key to get its position on the ring, and then you walk clockwise until you hit the first server. That server owns the key. It's a small change in mechanics, but it has a huge consequence. Server
+
+positions on the ring don't depend on how many servers exist. Adding or removing a server doesn't change the formula everyone else uses to find their servers. It only changes a small arc of the ring, and that's the entire point of this design. It contains the blast radius of any topology change. Here's the number that matters. When a server
+
+is added or removed from a consistent hashing ring, only the keys sitting between that server and its predecessor need to move. And for N servers, that's approximately 1 over N of your total keys. Not all of them. 1 over N. Compare that to modulo hashing, where losing a single server out of four just cost you effectively all of your keys. With
+
+consistent hashing, losing one server out of say 100 cost you roughly 1% of your keys. The other 99% of your cache stays exactly where it was. Still valid, still serving hits. That's the difference between a minor blip and a full-blown incident, and it's why consistent hashing is the default answer whenever you're distributing data across nodes that might change. But there's a production detail that a lot of people skip, and it's the detail that separates a textbook answer from a senior-level one. If you hash your server IDs
+
+directly onto the ring, just one position per physical server, those positions won't land evenly spaced. Purely by chance, some servers end up owning a much bigger arc of the ring than others. Look at the left side of this diagram. Node D has ended up owning a massive 150° slice of the ring, while nodes A, B, and C each own much smaller slices. Now, if node D fails, all of that load doesn't spread out. It dumps
+
+entirely onto whichever single server happens to sit clockwise from it, in this case, node A. That's a hot spot, and hot spots are exactly what cause cascading failures, where one overloaded server takes down its neighbor, which takes down the next one. The fix, shown on the right, is virtual nodes. Instead of placing each physical server once on the ring, you place it 100 to 200 times, using different hash inputs like server 1-0, server 1-1, and so on. Now, each physical server has dozens of small positions spread evenly around the entire ring, so ownership is balanced.
+
+And when a server does fail, its load doesn't crash into one neighbor. It spreads thinly across every other server in the cluster.

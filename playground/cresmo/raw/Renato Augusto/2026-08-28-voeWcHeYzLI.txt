@@ -1,0 +1,187 @@
+---
+video_title: "DUAL WRITE | O PROBLEMA QUE MAIS REPROVA PROGRAMADORES NAS ENTREVISTAS!"
+video_id: voeWcHeYzLI
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=voeWcHeYzLI
+video_date: 2026-08-28
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo e dessa vez pra te ensinar a resolver um dos problemas mais importantes quando o assunto é construir sistemas distribuídos, microsserviços e arquiteturas orientadas a eventos: o Dual Write Problem.
+  
+  O problema de Dual Write aparece quando uma aplicação precisa realizar duas operações em sistemas diferentes, como salvar dados no banco de dados e publicar uma mensagem no Kafka ou RabbitMQ e precisa garantir consistência entre essas operações.
+  
+  Nesse vídeo você vai entender como o Dual Write funciona por baixo dos panos, quais inconsistências podem acontecer em caso de falhas, por que simplesmente utilizar uma transação no banco de dados não resolve o problema e como o Transactional Outbox Pattern (Outbox Pattern) pode ser utilizado para garantir uma publicação confiável de eventos em arquiteturas distribuídas.
+  
+  🚀 O que você vai aprender neste vídeo:
+  
+  ✅ O que é o Dual Write Problem
+  ✅ Como o Dual Write acontece em sistemas distribuídos
+  ✅ Por que banco de dados + Kafka pode gerar inconsistência
+  ✅ O que acontece quando o banco salva o dado, mas a mensagem não é publicada
+  ✅ O que acontece quando a mensagem é publicada, mas a transação sofre rollback
+  ✅ Por que transações tradicionais não garantem atomicidade entre sistemas diferentes
+  ✅ Como falhas de rede, timeout e queda da aplicação podem causar inconsistências
+  ✅ O que é o Transactional Outbox Pattern
+  ✅ Como funciona uma tabela Outbox
+  ✅ Como salvar o dado e o evento dentro da mesma transação
+  
+  🎯 Quem deve assistir?
+  
+  👨‍💻 Programadores backend e fullstack que trabalham com APIs e bancos de dados
+  📚 Desenvolvedores que querem entender arquitetura além do CRUD
+  🏗️ Engenheiros e arquitetos de software que trabalham com sistemas distribuídos
+  📨 Profissionais que utilizam Kafka, RabbitMQ, filas e message brokers
+  🗄️ Desenvolvedores que trabalham com PostgreSQL, MySQL ou outros bancos de dados
+  🚀 Quem está estudando microsserviços, Event-Driven Architecture, System Design, consistência e processamento assíncrono
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, System Design, microsserviços, bancos de dados e engenharia de software.
+  
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 👊🏻
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo, pois eu sempre leio tudo e respondo sempre que posso.
+  
+  #systemdesign #programador #arquiteturadesoftware
+---
+Imagina que você tá numa entrevista para programador e o desafio que chegou para você resolver dessa vez consiste basicamente em você criar uma API de cadastro de usuários, onde toda vez que um usuário novo se cadastrar no nosso sistema, você deve enviar um e-mail de boas-vindas para ele. Aparentemente, isso parece ser algo extremamente simples e fácil de ser feito. E realmente é até simples e fácil de se fazer, só que o problema tá na intuição de 99.9% 9% dos programadores para desenrolar esse tipo de desafio. Isso porque a intuição da maioria vai ser exatamente pegar os dados que o usuário enviou no corpo da requisição, criar um registro no banco de dados para de fato criar o usuário e depois chamar algum serviço de terceiros para poder fazer o envio desse e-mail ou até mesmo enviar isso para algum mecanismo de mensageria como um Kafka ou um Rabit MQ para que o envio do e-mail seja feito de maneira assíncrona. Esse tipo de intuição é o
+
+tipo de intuição que vai te sacanear durante uma entrevista e também na vida real quando você tiver diante desse tipo de problema. Isso porque esse fluxo que eu acabei de criar aqui para você é o fluxo que esconde um problema invisível e na maioria das vezes extremamente traiçoeiro, conhecido como the dual right problem ou problema da dupla escrita, que acontece todas as vezes que você precisa realizar uma operação no banco de dados e depois precisa fazer alguma outra coisa. Todas as vezes que você precisar passar por esse fluxo, você vai se deparar com o problema da dupla escrita. Esse tipo de problema é um dos problemas que mais reprovam candidatos de todos os níveis nas entrevistas. E é exatamente esse problema que você vai aprender a resolver no vídeo de hoje, utilizando um padrão de projeto extremamente simples e muito poderoso, conhecido como Transactional Outbox Pattern. Esse
+
+padrão é um padrão de resiliência que garante que você consiga manter o fluxo mesmo escrevendo em dois lugares. E é exatamente isso que você vai sair daqui sabendo no vídeo de hoje. Então, pra gente não perder mais tempo, vamos direto pra tela, porque tem muita coisa pra gente ver e muita coisa para eu te ensinar. Bora lá. Bom, então vamos lá.
+
+Vamos direto ao ponto aqui. Vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver. A gente vai começar partindo do princípio aqui, tá? A gente vai começar primeiro entendendo o que é esse problema conhecido como The Dual Right ou problema da dupla escrita, como que esse problema vai aparecer para você na vida real quando você tiver trabalhando ali, desenvolvendo tuas aplicações, atuando como programador ou como arquiteto de software e como que isso aqui também vai aparecer nas tuas entrevistas para programador, independente do teu nível de senioridade, tá? Isso aqui aparece tanto para programador júnior, pleno, snior, tanto faz, até para programadores mais avançados e até para arquitetos. Então
+
+esse tipo de problema aqui, ele não faz distinção. Ele vai aparecer para você mais dia, menos dia, e provavelmente ele já apareceu para você, você só não percebeu que ele tava ali. Beleza? Então vamos direto ao que interessa aqui. Vamos começar simulando aqui o nosso cenário aqui, que é o seguinte. Vamos
+
+imaginar que a gente tá com o desafio de desenvolver ali uma API de cadastro de usuários que após o cadastro do usuário, a gente precisa enviar um e-mail de boas-vindas para ele. Tarefinha super simples, sem mistério nenhum, sem nenhum tipo de complicação. Beleza? Então vamos lá. Que que a gente tem aqui? A gente
+
+tem aqui o nosso usuário que vai est lá no front end da nossa aplicação. A gente vai ter a nossa API de cadastro ali. A gente vai ter um um servidorzinho ali para hospedar esse nosso back end. E aí a gente vai ter aqui o nosso banco de dados para armazenar o registro dos usuários. Beleza? Então qual que é o
+
+fluxo que naturalmente vai acontecer? O fluxo é que o usuário vai preencher o formulariozinho dele de cadastro. A requisição vai ser enviada aqui pro nosso back end, tá? com os dados dele. Então ele vai enviar lá na requisição o nome dele, o e-mail, o CPF dele, a senha que ele escolheu para criar o registro dele, a data de aniversário, o telefone dele e vários outros dados, tá? Isso
+
+aqui é fictício, só pra gente elaborar aqui o conceito, elaborar o exemplo, beleza? E aí o que que vai acontecer? Essa requisição vai chegar aqui no nosso backend. O nosso backend, por sua vez, vai receber essa requisição. E qual que é o próximo passo natural que a gente tem que executar? a gente tem que
+
+simplesmente pegar esses dados, validar, fazer algumas validações e por fim a gente armazena esse registro lá no banco de dados, tá? A gente cria esse usuário no nosso banco de dados numa tabela de usuários. Então vai ter aqui, ó, o ID dele, vai ter o nome, vai ter o e-mail, vai ter a senha lá, vai ter um created, vai ter todos os dados aqui do registro desse usuário, beleza? Então, basicamente é isso, mistério nenhum até aqui. E depois que a gente insere esse registro no banco, o que que naturalmente a gente vai fazer? a gente
+
+pode chamar um provedor aqui de envio de e-mails para poder enviar o e-mail para esse usuário, e-mail de boas-vindas para ele. Então o fluxo é basicamente esse. Além de chamar aqui um provedor de e-mail de terceiros, como Sand Grid, chamar algum serviço da WS, por aí vai, a gente também poderia logicamente enviar uma mensagem para uma fila de mensageria, tipo um Cafk, um Rabbit MQ, um SQS, tanto faz. E aí quem quiser reagir a esse tipo de evento de um novo usuário cadastrado que reage. Então eu posso ter outros serviços aqui, ó. um
+
+serviço A, o serviço B, um serviço C, que vão fazer alguma coisa quando um novo usuário for cadastrado na nossa plataforma. Então, a gente pode ter aqui, por exemplo, esse serviço A poderia muito bem ser um serviço de notificação. Então, a gente poderia ter aqui um notification service que vai fazer o quê? Ele vai ficar escutando essa fila aqui e toda vez que chegar o registro novo de um novo usuário cadastrado, esse carinha aqui cuidaria de enviar o e-mail para esses novos usuários. Então, a gente poderia fazer isso aqui meio que como uma arquitetura orientada a eventos e tudo mais e tal.
+
+Não importa. O que importa é que a gente armazena o registro no banco e a gente precisa fazer alguma outra coisa. E é aqui que mora o problema. Antes da gente entrar no detalhe aqui do problema, que inclusive ele já aconteceu e você nem percebeu, vamos dar uma olhada no código aqui mais ou menos como que seria, tá? Isso aqui é um código fictício, logicamente. Isso aqui é só para
+
+exemplificar, para você entender o fluxo mais ou menos. Então, basicamente, o que a gente teria era o seguinte. A gente teria um end point naquele nosso back end lá, na nossa API, que vai receber uma requisição e devolver uma resposta. A gente faria a extração dos dados da requisição, faria as validações ali, logicamente, né? O usuário mandou ali os dados de cadastro dele e depois o que que a gente faria? A gente faria um
+
+insert lá no banco de dados. Então, a gente salvaria esse usuário lá no banco de dados. Então, botaria lá o nome dele, o e-mail e por aí vai. Isso aqui mais uma vez é de exemplo. Isso aqui na vida real você estaria utilizando um ORM, você estaria utilizando algumas ferramentas mais avançadas, você provavelmente não faria um SQL na mão assim, um SQL bruto. Eu só tô colocando
+
+dessa forma para você entender como que as coisas funcionam por baixo dos panos, beleza? Então esse é o primeiro passo, validar as coisas ali, fazer a validação do request, dos dados e tudo mais, inserir o usuário no banco e depois a gente poderia publicar uma mensagem no CAFCA ou até mesmo chamar um serviço de terceiros. tanto faz, o problema vai acontecer do mesmo jeito. E por fim, a gente teria aqui o retorno da resposta pro usuário, tá? Um responso 2011 created, tá? Que é o status code ali do
+
+HTTP. E fim de papo, o usuário foi cadastrado, ele foi registrado na nossa plataforma. Agora, qual que é o problema desse fluxo aqui? O problema desse fluxo aqui é o seguinte, cara. Isso aqui não vai funcionar. Por que que isso aqui não
+
+vai funcionar? Porque imagina o seguinte cenário. Imagina que conforme a gente fez a validação dos dados da requisição, a gente inseriu lá o usuário no banco de dados e tudo mais e tal, bonitão, mas imagina que quando chegou aqui na execução da publicação da mensagem do Cafkaa, a nossa aplicação simplesmente morreu. O processo foi desligado, o processo morreu, a aplicação desceu, alguém desligou lá a instância que tava no ar ou então o próprio Kafica ficou fora do ar. a gente teve lá uma indisponibilidade no CAFCA e a gente não conseguiu se comunicar com ele. O que
+
+que você acha que vai acontecer? Vai acontecer um baita de um problema na nossa arquitetura. Por quê? Porque a gente inseriu o registro no banco de dados, mas a gente não conseguiu publicar essa mensagem no CAFC. O que que vai acontecer? Vai acontecer
+
+exatamente esse cenário aqui, onde a gente recebeu os dados do usuário. A nossa API cadastrou ele lá no banco de dados e deu tudo certo, mas na hora de enviar pro Cafkaa essa mensagem não foi enviada. E aí os serviços que fariam alguma coisa posteriormente a esse cadastro do usuário não vão conseguir chegar até essa mensagem porque ela nunca chegou no Cafkaa e o e-mail dele não vai ser enviado, o cadastro dele talvez não seja habilitado, não seja ativado e várias outras coisas que talvez a gente tenha na nossa arquitetura nunca vão acontecer porque essa mensagem nunca chegou aqui. A mesma coisa vai acontecer se você tivesse chamado lá via HTTP o serviço de terceiros ou então enviado qualquer outro tipo de requisição para outro serviço para poder fazer o disparo desse e-mail. Então o problema é que a gente tá tentando fazer duas coisas ao mesmo tempo, de maneira atômica. Daqui a pouco
+
+a gente vai falar um pouquinho mais sobre transações e por aí vai. E você vai entender esse lance da atomicidade, mas o lance aqui é exatamente esse. E aí eu sei que agora, nesse exato momento, você deve estar assim: "Pô, Renato, mas isso aí é mole de resolver, isso é facílimo de resolver. Isso aí não tem mistério. Que que eu posso fazer? Eu
+
+posso simplesmente vir aqui nesse código e aqui eu vou fazer o seguinte, tá? Vamos lá. Eu vou tirar isso daqui. Eu vou tirar essas essa esses comentários daqui pr não embolar muito as coisas aqui. Vou remover isso. E aqui no nosso
+
+insert into aqui do banco de dados, o que que eu posso fazer, tá? A gente pode iniciar uma transação que eu sei que vai ser a primeira intuição que você vai ter quando você tiver lidando com isso aqui, que é o quê? Criar uma transação. Vamos criar uma transação. Se tudo der certo, a gente comita. Se alguma coisa der
+
+errado, a gente dá rollback. Então, vamos fazer isso aqui. Vamos ver se funcionaria, tá? Vamos iniciar aqui, ó. Vamos dar um big transaction aqui e aqui embaixo, depois que finalizar o fluxo do tanto do banco quanto do Cafkaa, a gente dá um comit lá no banco de dados, beleza? E aí, que que a gente pode fazer
+
+até para melhorar isso aqui, tá? Isso aqui é de exemplo mais uma vez, tá? Isso aqui não é código real, isso aqui é de exemplo para você entender o fluxo, tá? O fluxo seria exatamente esse. Só que para não ter que ficar abrindo IDE aqui, codando na mão, isso aqui é para exemplificar, para você entender qual que é a lógica, tá? Então, vamos lá.
+
+Depois que a gente iniciar essa transação, eu posso até fazer isso aqui, ó. Eu posso dar um trycat aqui, posso capturar um erro aqui, um exception, tanto faz. E aqui embaixo eu posso simplesmente dar um rollback caso essa transação não consiga ser de fato efetivada lá no banco de dados. Isso aqui eu posso pegar e copiar e jogar aqui dentro do try. Vou dentar isso aqui para ficar direitinho e beleza. Fim de
+
+papo. Vou diminuir isso aqui para ficar OK aqui dentro do diagrama. Vou limpar isso aqui também porque você já entendeu qual que é o fluxo aqui e vou dentar isso aqui também para ficar tudo OK. Beleza? Então até aqui tá tudo certo.
+
+Vamos lá. Eu vou ampliar isso aqui pr você entender o que que tá acontecendo, tá? Isso aqui é a primeira intuição que você vai ter quando você tiver lidando com esse problema, que é o quê? Iniciar uma transação, tá? No início lá do end point. Logicamente você vai fazer a
+
+validação mais uma vez e tudo mais dos dados, mas na hora de inserir no banco, você vai fazer o quê? Você vai iniciar uma transação, você pode criar um trycat aqui e dentro do try insere no banco e você publica no CAFCA e você dá um commit caso tudo der certo. Se alguma coisa der errado, como por exemplo, se o Cafka tá fora do ar, talvez, o que que vai acontecer? você não insere esses dados no banco, você vai dar o rollback aqui e a mensagem também não vai ser enviada lá para o Kfica. Então é assim que geralmente 99.9%
+
+dos programadores resolvem esse tipo de problema. Só que qual que é o detalhe aqui? Isso aqui não vai funcionar. Isso não tem como dar certo. Por quê? Vamos
+
+lá. Vamos pro fluxo aqui de novo para você entender. Você foi lá e inseriu os dados no banco de dados. Na verdade, você guardou isso aqui na mão ali, tá salvo ali, bonitinho. E só depois que tudo terminar que você insere no banco.
+
+Beleza? Beleza. E você publicou a mensagem no Cafca. Mas imagina o seguinte, imagina que depois que a linha de execução do código chegar aqui, exatamente aqui, ó, nesse comit, antes dele entrar no comit fato, eu vou até pular uma linha aqui para você entender, quando ele chegar, quando a linha de execução chegar aqui na linha 19, depois que enviou a mensagem pro CAFCA, e na hora de dar o comit, a aplicação simplesmente decide morrer ou o banco de dados decide ficar fora do ar, houve, sei lá, uma interrupção de rede, uma falha de rede e por aí vai, até porque já tem vídeo aqui no canal onde eu te mostro que todo o sistema distribuído precisa est preparado para lidar com partições de rede, lembra? Tolerância e partições lá do teorema CAP, tá? Depois
+
+você deixa nos comentários se quiser que eu grave mais um vídeo sobre isso, beleza? Mas o fato aqui é o seguinte: se o banco de dados ficou fora do ar ou se a tua aplicação aqui que tá executando isso morrer nesse exato momento aqui, o que que vai acontecer? Vai acontecer que você não inseriu o dado no banco de dados porque você estava aguardando o comit, só que ao mesmo tempo você já enviou a mensagem pro Cafka. Isso aqui não é atômico. Você não consegue garantir, você não consegue fazer com que a transação do banco de dados que você tá utilizando aqui para garantir supostamente a a o fluxo, que o fluxo seja executado, você não vai conseguir garantir que o Kafica também seja atômico, da mesma forma que você tá fazendo aqui no banco de dados. Então,
+
+quando a linha de execução chegou nesse bloco aqui do CAF, a mensagem foi enviada pro Cafka. E aí o que que acontece? Acontece exatamente isso aqui, ó. O usuário enviou os dados pra gente, a gente pegou os dados, a gente tentou armazenar no banco e não conseguiu, mas a mensagem foi enviada para o Cafkaa e agora o usuário recebeu o e-mail dizendo que tá tudo OK, boas-vindas e tudo mais na nossa plataforma. Só que o registro desse usuário, o cadastro, a senha, o login dele não existem no banco de dados porque esse dado não foi inserido lá.
+
+Olha o problema que isso vai ocasionar. O usuário vai lá agora, recebeu as boas-vindas, agora eu vou tentar logar. Quando ele tentar logar na aplicação, vai dar usuário inexistente, senha inválida, vai dar qualquer outro problema e ele não vai conseguir logar na aplicação. Por quê? Porque não existe o registro dele no banco de dados. Isso
+
+aqui é o problema de dual, ou seja, é dupla escrita. Você tá tentando escrever em dois lugares de maneira completamente atômica, tentando garantir que as coisas realmente vão acontecer. Só que quando a gente fala de sistemas distribuídos ou de chamadas independente entre sistemas, isso não é possível. pelo menos não dessa forma como a gente tá fazendo aqui. Isso aqui é o problema da dupla escrita. Você tá tentando fazer duas
+
+coisas que não dá para você garantir com precisão absoluta, com certeza, porque as coisas vão falhar. Você precisa est preparado para que o seu sistema esteja pronto para falhar. Ele precisa ter a liberdade de falhar e você tem que ser resiliente a ponto de conseguir lidar com esse tipo de falha, sem fazer com que a aplicação desmonte, sem fazer com que o usuário sofra, sem fazer com que a gente tenha inconsistência de dados. Então esse aqui é o problema da dupla escrita. E isso aqui, cara, vai acontecer em todos os cenários possíveis que você imaginar, onde você precisa armazenar um dado no banco de dados e fazer qualquer outra operação. Quer um
+
+outro exemplo disso? Vamos lá. A gente pode ter aqui, ó, de repente, um usuário que vai enviar algum dado pra API e a gente precisa armazenar esse dado tanto no banco de dados quanto no cash. Isso aqui, inclusive é um outro padrão de projeto, é um padrão de cash que se você deixar na descrição, eu gravo um vídeo sobre isso depois, tá? Mas a gente precisa logicamente inserir o dado aqui e fazer alguma outra coisa. Vai dar
+
+problema do mesmo jeito que o cash pode morrer ou o banco de dados pode morrer. A gente pode de repente, sei lá, inserir o dado no banco de dados e a gente precisa armazenar algum log da aplicação lá no Elastic Search. Vai acontecer a mesma coisa. A gente pode, de repente, enviar para um mecanismo de mensageria, tipo um Rabit MQ, um KFKA, um SKS, tanto faz. vai acontecer a mesma coisa, que foi inclusive aquilo que a gente estava vendo ali. A gente pode, sei lá, chamar
+
+um serviço de terceiro, fazer uma requisição, então a gente envia lá o dado pro banco e precisa acionar um outro sistema para que alguma coisa seja feita. Então, cara, assim, isso aqui é um baita de um problema e é um problema invisível, um problema que você só vai perceber que aconteceu, que explodiu quando ele acontecer. Ele não é facilmente identificável, inclusive, porque você vai olhar pra aplicação e tá tudo certo no código, tá tudo bonitinho. Você vê que esse é o fluxo que a maioria faz, só que o problema tá explodindo em produção. Tem dados inconsistentes. Hora
+
+acontece uma coisa, ora o dado existe no banco, hora não existe, aí uma mensagem foi enviada pra fila, mas o dado não tava no banco. Então assim, isso é extremamente difícil de ser investigado em produção. Então antes do problema acontecer, isso aqui vai entrar no teu sangue. Isso aqui, cara, você precisa ter na veia, dominar, porque isso aparece muito nas entrevistas e aparece e muito na vida real o tempo todo, cara. O tempo todo que você tá chamando banco de dados e fazendo outra coisa, isso vai acontecer. Então, você precisa ficar
+
+ligeiro com isso aqui, beleza? E aí, qual que é a solução para tudo isso aqui, tá? A solução é um padrãozinho de projeto extremamente simples, mas muito poderoso, que é o padrão chamado de transactional outbox pattern, tá? Que esse cara aqui é um padrão de caixa de saída, vamos se dizer assim, tá? É um nome, é difícil de traduzir, mas a ideia é uma caixa de saída. Pensa no correio,
+
+tá? Pensa no correio, uma caixa de saída, você vai entender qual que é a lógica, tá? E como que esse padrão de projeto aqui ele funciona, tá? Esse padrão aqui ele não vai alterar praticamente nada na tua arquitetura. Você só vai ter dois elementos novos naquela nossa arquitetura ali, que é o seguinte, tá? O nosso service aqui é o
+
+nosso serviço que tá fazendo alguma coisa, então ele é mantido. Banco de dados, a mesma coisa. A tabelinha que você tá inserindo ali no banco de dados vai ser mantida. o message broker também, que é a mensageria ou mecanismo que você vai precisar utilizar ali para fazer isso. E a gente vai ter o service destination aqui, que é o serviço de destino. É alguma coisa que você faria
+
+depois. Isso aqui também não muda. As únicas coisas diferentes aqui são o outbox table e a gente tem um Outbox consumer, tá? Como que isso aqui funciona? Cara, isso aqui é muito simples, vai por mim. Isso aqui é fácil
+
+de você entender e nunca mais você vai esquecer e nunca mais você vai passar por esse problema, por esse veneno na vida real e nem cair nas entrevistas que vem com pegadinha. Beleza? Então vamos lá. Como que isso aqui vai funcionar? A gente vai pegar aqui o nosso exemplo, tá, do cadastro do usuário, que foi o primeiro exemplo que a gente viu, até para ficar mais fácil aqui a explicação e você conseguir entender como que você implementa isso aqui. E a lógica aqui é
+
+o seguinte, tá? O usuário vai mandar os dados, a gente tem o registration service aqui para poder cadastrar ele, insere os dados no banco e envia pra fila. Aqui você já sabe que tem o problema, certo? Beleza. Que que a gente vai fazer? A gente vai desfazer essa
+
+arquitetura aqui e a gente vai ficar somente com os nossos usuários. Aqui a gente vai ter aqui a nossa API de cadastro ali dos usuários e o banco de dados. E aí o que que vai acontecer? Na hora em que o usuário enviar uma requisição pro nosso pra nossa API, pro nosso backend ali, quando ele se cadastrar de fato e os dados chegarem aqui nessa API, a gente vai fazer o seguinte, a gente vai armazenar esses dados no banco de dados, mas a gente também vai armazenar numa outra tabela chamada de outbox. Então, como é que isso aqui vai funcionar? Fica tranquilo
+
+que você vai entender, tá? A lógica aqui é o seguinte, tá? A gente tem aqui uma tabela de usuários e a gente vai criar uma outra tabela chamada de Outbox users. A lógica aqui é o seguinte. Quando a gente inserir o registro do João lá no banco de dados, quando ele se cadastrar, a gente vai criar exatamente aquela transação, por isso que o nome é transactional outbox. A ideia aqui é a
+
+gente usar uma transação. Então a gente vai criar uma transação, a gente vai inserir na tabela de usuários, que é a tabela de destino ali, a tabela que a gente tá realmente criando um artefato novo, criando ali uma linha nova. E a gente vai inserir os dados que a gente supostamente enviaria para uma fila de mensageria ou salvaria no cash ou chamaria um serviço de terceiro. A gente vai armazenar isso no payload dessa tabelinha Outbox users, tá? Esse Outbox aqui é uma caixa de saída. Pensa nesse
+
+carinha aqui, pensa nessa tabelinha como se fosse uma fila de espera. A gente vai fazer meio que como uma caixa postal, vamos se dizer assim, para que algum serviço depois venha ler isso aqui e fazer o que tem que ser feito. Então, a lógica aqui é exatamente essa. Eu posso aqui no Outbox users aqui vai ter o ID, logicamente gerado ali de maneira incremental. A gente vai ter aqui o event type, tá? que é o tipo do evento.
+
+Então, a gente bota aqui o novo usuário foi registrado, o user ID aqui que é o ID vinculado. Então, a gente precisa de uma chavezinha estrangeira para vincular um evento a um registro novo. E o payload aqui é basicamente a o a mensagem que você enviaria. Sei lá, se você vai enviar um Jon lá pro CAF, então você bota em Jon. Você vai enviar em outro formato para algum outro sistema e tudo mais, você bota nesse formato. A
+
+ideia é você armazenar aqui o corpo da mensagem. Por quê? Porque daqui a pouco alguém vai pegar esse corpo da mensagem aqui e vai enviar lá pro destino que você queria enviar. E no final você bota um status aqui de pendente. Por quê?
+
+Porque isso aqui vai precisar ser lido. Isso aqui é uma caixa de mensagem, literalmente. Então a lógica aqui vai ser a seguinte. Depois que a gente inserir esses registros nesse nessas tabelinhas ali do banco de dados, tanto na tabela de destino quanto na tabela de saída, tabela outbox, a gente vai ter um serviço que vai fazer a operação posterior e a gente vai finalizar o fluxo. E aí, como que seria o código disso aqui, tá? O código disso aqui é
+
+bem simples, tá? Lá no end point que a gente vai receber os dados do usuário, tá? Logicamente eu já apaguei aquele monte de passo a passo, validar requisição e tudo mais e tal. Aqui eu só quero que você entenda isso. A gente vai criar uma transação aqui. A gente vai
+
+inserir os dados do João no banco de dados na tabela de usuários e a gente vai inserir aqui, ó, o outbox users. E o que que vai acontecer? No final a gente dá um commit. O que que acontece se o banco falhar? Se o banco falhar, a operação não vai ser feita e o usuário vai receber um erro lá na ponta dizendo que, olha, não foi possível realizar seu cadastro, a plataforma tá instável, tá acontecendo alguma coisa, não sei, tanto faz. O lance é que ele não vai poder
+
+prosseguir adiante e a gente não vai ter dados inconsistentes. Então a operação atômica, ou ela vai garantir tudo ou ela não vai garantir nada. Então quando a gente inserir, que chegar o comite aqui, que a gente chegar no comit que inserir as duas operações aqui no banco de dados, fim de papo, a gente garantiu a inserção no banco e a gente garantiu que agora existe uma mensagem válida que está pendente, que precisa ser enviada para um outro sistema. Então a gente conseguiu garantir a certeza de que isso vai ser enviado em algum momento para outro sistema. E se alguma coisa falhar, a gente tenta de novo e tá tudo bem.
+
+Então, a lógica aqui vai ser a seguinte. Com essa arquitetura nova aqui do Outbox, como é que vai funcionar? Vai funcionar o seguinte, a gente vai precisar de um outro elemento que é o Outbox Consumer, que basicamente dentro desse cara aqui vai ter um código, tá? Para ficar de tempos em tempos dando um select nessa tabelinha de outbox aqui. Ele vai ficar dando um select lá nesse Outbox users, onde o status for igual a pendente, ou seja, as mensagens que ainda não foram processadas. Ele vai
+
+ordenar isso aqui pelo ID pra gente poder garantir ali que tudo está na ordem em que aconteceu, garantindo ali a linha temporal, a cronologia dos fatos. E a gente pode limitar aqui também pra gente não pegar um calhamaço de de coisas ali no SQL, tá? Então a gente vai fazendo a limitação e aí depois disso, o que que esse cara pode fazer? Esse cara pode enviar para um mecanismo de mensageria essa mensagem aqui com esse payload. E depois de enviado para esse mecanismo, a gente poderia simplesmente vir aqui, ó, e dar um update dizendo que essa mensagem foi processada e fim de papo. Agora, simplesmente qualquer
+
+serviço que quiser consumir essa mensagem para poder reagir a ela, fazer alguma coisa, emitir nota fiscal, enviar e-mail, fazer qualquer outra coisa necessária, a gente garantiu que a mensagem chegou na fila, porque se esse cara não conseguir enviar essa mensagem, ele não vai atualizar o status aqui para processado, vai continuar como pendente, então a gente pode ir retentando novamente. Então esse elemento aqui, esse Outbox Consumer, é literalmente um servicinho que você vai criar ali um códigozinho bem básico ali. Para quê? para ficar lendo aqui o banco de dados e fazendo essas inserções no CAFCA e assim a gente garante que as coisas vão acontecer como elas têm que acontecer, independente se alguma coisa falhar no meio do caminho ou não. Por quê? Porque
+
+nós estamos usando uma transação atômica para garantir que o dado do João vai ser inserido e que uma mensagem vai ser criada aqui na nossa caixa de saída do banco de dados. E é assim que funciona esse padrão de projeto aqui. Inclusive tem uma versão desse padrão aqui que inclusive é um pouco mais avançado, um pouco mais rebuscada, que é o quê? Ao invés da gente ficar utilizando algo manual aqui pra gente poder fazer essa busca no banco de dados, a gente simplesmente poderia utilizar uma ferramentinha aqui conhecida como bizim, tá? Essa ferramentinha é uma ferramentinha de CDC, que é change data capture, que ele pega ali as modificações que ocorreram no banco de dados, tá? Isso aqui eu te ensinei lá no
+
+vídeo do Ticket Master, tá? Arquitetando ali a arquitetura do Ticket Master. Então eu vou deixar um card aqui em cima e o link na descrição, dá um confere aí depois. E essa ferramentinha aqui, o que que ele vai fazer? Ele basicamente vai ficar lendo um arquivinho de log que tem nos bancos de dados. E esse arquivinho
+
+de log, ele fica monitorando todas as alterações. Então, quando a gente inserir um registro novo aqui como pendente, esse cara vai ler e ele mesmo já tem integração nativa aqui com o CAFCA através de um mecanismo chamado de Cafka Connect. Então ele mesmo já consegue enviar essa mensagem pro Cafkaa e a gente consegue ali automatizar esse envio de maneira a não ter nenhum tipo de preocupação e os serviços que quiserem consumir essas mensagens conseguem consumir tranquilamente. Então esse padrãozinho aqui agora que você aprendeu, isso aqui vai entrar no teu sangue, nunca mais você vai esquecer e agora você tá preparado para encarar a vida real e também as entrevistas. Esse padrão de projeto aqui é um dos meus padrões favoritos quando o assunto é resiliência de microsserviços, sistemas distribuídos e por aí vai. E se você
+
+quiser aprender mais sobre não só esse padrão aqui, mas todos os outros padrões que compõem a arquitetura de software como um todo, você vai se juntar aos mais de 10.000 alunos do mapa do arquiteto, um guia de carreira completo para eu te conduzir do zero, passando pelo júnior, pelo pleno e pelo senior, até você se tornar um arquiteto de software e um arquiteto de soluções com conhecimentos práticos pra vida real. E lá dentro eu te entrego não só esse padrão de projeto aqui, mas todos os outros padrões de projetos que compõem a arquitetura como um todo. Tem padrão de banco de dados, tem padrão de microsserviços, tem padrão de arquitetura no geral. E tudo isso você vai encontrar lá dentro do mapa do arquiteto na ordem que você precisa estudar, com tudo que você precisa estudar. E de quebra ainda te entrego um
+
+roadmap completo que vai conduzir a tua carreira independente do teu nível de senioridade. E o melhor de tudo isso é que você ainda vai ter acesso à minha pessoa. Você vai poder me consultar, vai poder mandar tuas dúvidas. Eu vou te ajudando, vou te orientando, vou tirando as dúvidas que você tem. Então não deixa de conferir o mapa do arquiteto. O link
+
+vai tá na descrição. Dá um confere aí depois. Se ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui.

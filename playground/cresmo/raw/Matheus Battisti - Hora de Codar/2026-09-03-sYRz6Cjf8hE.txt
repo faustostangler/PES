@@ -1,0 +1,117 @@
+---
+video_title: "Essa skill GRÁTIS não deixa o Claude Code encerrar enquanto tiver bugs! (unlazy)"
+video_id: sYRz6Cjf8hE
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=sYRz6Cjf8hE
+video_date: 2026-09-03
+video_description: |
+  Unlazy é uma skill que tira a preguiça do Claude Code, fazendo ele só terminar a tarefa quando conseguir provar que concluiu!
+  
+  ⭐ Conheça a Formação Claude Code: https://app.horadecodar.com.br/lp/formacao-claude-code
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  💳 Sistema de pagamentos que eu indico: https://appmax.com.br/desenvolvedores/?utm_source=hora-de-codar&utm_medium=social&utm_campaign=influencer-tech (Pix com taxa zero via API)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  LINKS
+  
+  Skill Unlazy: https://github.com/Leonxlnx/unlazy
+---
+Um problema muito grave de criar projetos com IA é que quando tu desenvolve uma funcionalidade, ela mesmo faz os testes e logo em seguida diz que passou. Eu tenho certeza tu já encontrou um bug de algo recém criado. Para resolver esse problema, existe uma skill chamada Unlazy, que vai justamente pensar nos testes, criar uma série deles e só deixar a Ia seguir pra próxima quando ela resolver todos os problemas e pendências. Chega aí que eu vou te mostrar como usa que é muito bassa. Bora lá. Então galera, eu vou eh melhorar,
+
+né, a questão do problema, dar mais contexto para vocês, porque isso aqui realmente é muito grave ainda mais essa área de vibe coding que muita gente que tá criando o sistema não é programador, tá? Então o que acontece na maioria das vezes é que a gente vai lá, implementa alguma coisa, aí cria uns cinco, seis testes e é sempre o caminho feliz, ela vai lá, diz que deu tudo certo e acaba que quando a gente vai testar tem o problema. Então a gente precisa de algo que realmente pense na situação, crie barreiras para que somente passe quando tudo tá certo. Então ola vem justamente para isso. Cada entrega vai virar um comando que passa ou não passa. É
+
+simples assim. Quando a gente vai rodando o fluxo da skill, a gente vai ter várias coisas acontecendo no processo, que são os testes que a IA tem que fazer a tarefa que tu querou passar. Então é bem simples, não tem muito mistério, mas se tu utilizar a skill durante todas essas etapas vai garantir uma qualidade muito maior. É aqui na tela é um exemplo, né, de como ela vai rodar lá no teu cloud ou codex que foi para onde ela foi feita. A ideia é que há um hook que vai bloquear quando algo não está certo. Então a gente vai ter
+
+uma camada mais segurança que vai fazer com que a tarefa só seja dada como feita ou pronta. quando passa por um arquivo chamado Gate MD, que lá tem todos os testes que a IA precisa fazer passar o que tu acabou de desenvolver. Então, sempre que o agente fala que terminou tudo, ele vai rodar esse gates e se não tiver terminado ou tiver alguma coisa errada, ele volta e faz com que a gente tenha mais uma iteração. Bom, então vamos lá conhecer o repositório, instalar ela num projeto e utilizar para ver realmente se ela é boa ou não. Ó, galera, esse aqui é o repositório do unce, tá? com 2700 stars aqui. Tá
+
+atualizado, né? A última foi algumas horas atrás. Viram que eu atualizei? Já subiu as estrelas. E não é somente um comando, tá? a gente vai ter a comando
+
+de instalação, obviamente, mas na utilização a gente vai ter alguns processos que a gente pode est utilizando, como nós mesmos verificarmos o gates, que é o arquivo que tem ali as condições, a gente aprovar esse gate para poder fazer toda a rechecagem da tarefa e verificar se passa. E por fim, se a gente ainda tiver com dúvidas, a gente pode utilizar o reverify, que vai fazer aí mais uma rodada de testes para poder garantir que é tudo certo. Basicamente são esses três comandos. Depois dei uma lida no repositório. Agora sim, bora lá implementar no projeto. Só antes, né, galera, não
+
+esqueçam, temos à disposição de vocês agora a formação Cloud Coach, meu mais novo treinamento. O link vai est aqui no comentário fixado, onde vocês podem estar conhecendo mais sobre toda a formação. Vocês vão cir nessa página aqui onde eu explico tudo em detalhes. Nesse vídeo aqui, tem cerca de 5 minutos, eu mostro para vocês que será visto em cada etapa da formação, para vocês verem que tem começo, meio e fim e tudo foi planejado aos mínimos detalhes. Também tu consegue baixar a grade curricular, tá, nesse botãozinho aqui para tu ver aula a aula e se ficar alguma dúvida, chama a gente no WhatsApp e a gente responde, beleza? Então,
+
+galera, eu tô aqui com um projeto aberto, tá? É melhor já ter algum projeto rodando para tu utilizar o lazy, porque tu vai testar em funcionalidades dele. Então, é justamente nesse cenário que eu tô fazendo. Tô usando um e-commerce aqui como exemplo, tá? Aí eu já instalei, ela veio instalada aqui no agents. A skill tá aqui, ó, unlaze.
+
+Beleza? A gente vai precisar usar alguns comandos, então por isso que eu tenho um terminal aberto aqui também para apoiar a gente. Qual que é a ideia? a gente vai implementar novos recursos, sempre utilizando a skill un para ela poder entender o que a gente tá fazendo e fazer com que toda a camada de testes seja implementada no contexto da tarefa que a gente acabou de criar, beleza? Então, sempre a gente vai utilizar o un para poder criar o novo recurso. Eu vou
+
+colocar um prompt aqui que eu já planejei antes, que também vai seguir, né, um padrão bem interessante para utilizar skill. Então eu vou descrever o que eu quero fazer. Implemento parcelamento no checkout da loja pisada, né, que é o nome do e-commerce. E aí regras da feature, quais são as regras do parcelamento? Cliente pode parcelar parcelar de um a duas 12 vezes. De 1 a
+
+três é sem juros, de de 4 a 12 incide juros compostos de 1,99%. Existe a parcela mínima de R$ 20. A tela de checkout mostra a lista de opções com o número de parcelas. Ao finalizar a compra, o pedido grava o número de parcelas e o valor da parcela. Então, as regras, né, que a gente definiu para que a tarefa ou a feature preenche os requisitos que eu quero, óbvio, né?
+
+Então, é assim que a gente vai fazer, qualquer coisa independente se usar o unas ou não. Só que aí a gente não precisa citar explicitamente, mas o que eu tô fazendo para garantir que dê certo. Já pediu gates md, tá? Ele com o comando las tende a criar, mas aqui eu tô explicitando pra gente poder ter sucesso aqui na gravação do vídeo, né? Então a gente vai pedir um gatd completo antes de tocar em qualquer arquivo de código, porque é o primeiro passo, né?
+
+Tem que ter ali as condições de passagem. Todo check precisa ser um script node dentro de scripts chamado com node script e o nome dele. Então esses scripts aqui serão partes dos testes. Cada script tem que medir o resultado de verdade, imprimir o carimbo sucesso só no final. Não copie o número esperado para dentro, né? Obviamente
+
+isso aqui tem que ser testado no código e não algo forjado. A verificação da parcela mínima precisa de um controle positivo. Então, algumas coisas que eu quero garantir, eu posso explicitar aqui, cubra a soma das parcelas varrendo uma faixa larga de valores de carrinho. Então, eu também tô pedindo uma gama maior de testes nessa questão aqui para testar vários cenários. E aí agora ele vai trabalhar, ele vai trazer pra gente esse arquivo aqui, que é o nosso próximo passo, né? lidar com ele para que a
+
+gente consiga ver as verificações que ele planejou lá e depois a gente siga. Bom, galera, aí ele me retorna, ele diz que criou o gatd, tá? E não fez mais nada. Aí o que que a gente vai fazer aqui? A gente tem que abrir esse gat ler se todos os cenários de teste que vão ficar aqui em gates estão OK ou se tem mais algum que a gente quer e adicionar.
+
+Por exemplo, olha só, G2, de um a três vezes não há juros e a soma das parcelas fecha exatamente o total do carrinho com o resto indo na última parcela. Então a gente vai lendo aqui e vai entendendo se faz sentido todos esses gates, tá? E a gente garante que a gente tem gates, né, testes pensados para a tarefa que a gente tá desenvolvendo. Bom, que que a gente faz com isso aqui? A gente pode estar utilizando os comandos do próprio que ele vai retornar nesse status, né, somente os títulos dos gates, que fica um pouco mais fácil de ler, né? Não fica
+
+tão misturado com a descrição das tarefas. E vejam que tá tudo unchecked, né? Então ele não fez testes ainda. Que que precisa acontecer? Ele implementar a tarefa, tá? E aí verificar cada um dos
+
+gates para ver se deu certo. Então a gente volta pro cloud e aí pede que ele implemente a feature. Então o que acontece aqui? Cada gate é um teste que vai ser realizado na implementação da tarefa. Então, além de criar o código, ele vai ver se todos aqueles gates, todas aquelas condições vão passar. Se
+
+elas passarem, é declarado que tá tudo pronto. Então, agora é a etapa de criação, onde cada etapa ali que eh coincide com um gate, por exemplo, quando tiver fazendo parcelamento de um a três, ele vai ter que fazer o teste e vai ter que ver se passa. E se não passar, ele vai lá e entra em loop. até corrigir. Então a gente tem vários cenários sempre testados para garantir a qualidade do nossos projetos. Beleza?
+
+Bom, galera, enquanto ele cria aqui, além dessa skill aqui muito interessante que vai garantir a qualidade do projeto de vocês, eu queria indicar um sistema de pagamento que é Appmax. Olha só, provavelmente quando vocês terminarem o sistema de vocês fazendo ali todos os testes de segurança possível, vocês vão querer monetizar em cima disso. É óbvio, vocês vão precisar de uma frutura de pagamentos para poder fazer ali no checkout com a nossa loja pisada, que é um e-commerce. você precisa do checkout, processar pagamentos e aí vocês receberem na conta de vocês. A Appmax, ela tem uma facilidade. Se tu integrar
+
+via documentação, e isso é fácil de fazer com IA, né? Só tu vir aqui na documentação, eh, tu vem aqui em quickstart, passa para, ela consegue fazer esse setup, né? Tu vai ter taxa zero no Pix. Então, o link vai tá aqui no comentário fixado também para tu conhecer a solução deles de pagamento, tá cara? Hoje, né, como a gente tá trabalhando muito com criação de softwares, né, e a gente tem esse poder de criar um sistema com prompt, né, a gente não precisa saber programar e tal, inclusive ele pode ser feito em inglês, né, a gente tem essa possibilidade também, atingir mercados internacionais, eles também tm integração com vendas internacionais, então não tá limitado só a pagamentos do Brasil, pode ser em qualquer lugar do mundo global. Então é
+
+mais uma facilidade para vocês, além do Pix taxa zero, você consegue estar vendendo para qualquer lugar do mundo, né? Seja um produto digital ou qualquer outra coisa que a tua loja sistema vende. Então, olha só, bem bacana o sistema que eles oferecem para vocês, tá? E documentação boa, né, cara? Tu vai conseguir integrar face o teu sistema.
+
+Isso é o diferencial, né, de um sistema de bom de pagamento. Uma documentação clara, objetiva, que consegue te passar aí o que tu precisa fazer para colocar o pagamento rodar o quanto antes, o que é o grande objetivo desse quick start. Beleza? Então, bora lá, vamos voltar para o nosso gat aqui consequentemente vai demorar um pouco mais porque ele vai checar em cada gate. Olha só, G1 check. Quero fazer
+
+isso vezes todos os gates que eu tenho. Você tem 12, se eu não me engano, não tem 11. Então, cada gate vai ficar como etapa do desenvolvimento, ou seja, é um processo mais demorado, né? G2 cheque. Então, garante a qualidade, mas também acaba que o processo fica um pouco mais longo, né? Então isso também resulta,
+
+né, em gasto maior de tokens e tal. Mas cara, eu acho que quando a gente tá trabalhando, por exemplo, com e-commerce, que é algo que deve ser garantido, não é qualidade, faz sentido para caramba, tá? Então vou aguardar aqui e vou mostrar para vocês o resultado final, pra gente poder terminar o ciclo que não acaba por aqui. Bom, galera, então vamos lá. Ele retornou aqui. Aí como eu falei, né,
+
+demora um pouco mais, demorou 20 minutos para essa tarefa aqui, tá? Ele fala sobre os gates. Então a gente pode ver aqui ou rodar o comando lá que eu mostrei para vocês, né? Então a gente vê aqui, ó, um deles foi amat. Que é isso?
+
+Ele não conseguiu terminar esse gate. Qual que é o gate 11? Tá? E ele explicou ali. Ele fala que o gate 11, que que falta? Conferência visual. Ele deixou
+
+rodando, parou um carrinho 6990. A lista tem duas opções. Tarará tarará. Então ele quer que eu então ele quer que eu verifique esse gate aqui para finalizá-lo. Então aqui galera, a gente pode simplesmente dizer que tá certo, né? Só que da a gente burlaria a
+
+ferramenta. Então eu sou forçado a testar quando ele não consegue, né? Ou permitir que ele instale mais coisas aqui no projeto, né? Então vamos lá, vamos fazer essa simulação aqui. Então tem esse produto aqui, 699,90, como ele falou ali no exemplo, né? Ó. E aí eu vou
+
+adicionar a sacola, vou pro checkout, tem que fazer o pedido, né? Aí vamos preencher tudo aqui, ó. Pagamento cartão, tem cartão de teste. E aqui eu tenho que ver se as parcelas batem ali com o que ele falou, né? Então, 12 vezes dá 64 e 66 e 14. Deixa
+
+eu ver aqui. 66 14. Então, bateu. Vamos revisar o pedido. Confirmar.
+
+Eu vou dizer que eu fiz o pedido PIS 2026006 e bateu o que ele falou aqui, ó. Fiz o pedido do G11 seguindo estas regras que você pediu. Deu certo. Pode conferir com o pedido fiz em 12 vezes. Aí teoricamente ele vai completar o G11 nosso feedback aqui. Então vamos
+
+aguardar. Bom galera, então ele falou que os gates foram reverificados, tá? Deixa eu ver aqui agora, ó. Todos deram certo, tá? O status aqui dos gates estão OK. O último foi
+
+verificação manual, mas a gente conseguiu obter êxito também no cálculo final. Então agora se a gente quiser ter uma certeza dobrada, digamos assim, a gente pode estar utilizando o comando reverify, tá? No gates md. Outra coisa que é importante comentar aqui, galera, antes do próximo comando, é que foram criados alguns scripts que contém os testes, né, para cada um desses gates aqui. Então vocês observem que ele fala da passe scripts em algumas passagens aqui, que é justamente ali que estão os testes em código. Então se a gente vem
+
+aqui em scripts, a gente vê, por exemplo, esses verifies aqui. Então, vamos dizer aqui o script da parcela mínima. Claro, isso aqui é tudo código, né, galera? Mas só para vocês entenderem como é que funciona, né? Os testes são baseados em programação pura. Então aqui
+
+tem todos eles, um por um, onde a gente pode verificar que tudo deu certo, né? E isso que prova o A + B, ou seja, porque as respostas dele são consistentes. Então, olha só, G4, nenhuma opção com parcela abaixo do piso é oferecida e o filtro comprovadamente barra algo. É exatamente o que esses scripts aqui estão tentando provar. Por isso que ele vai lá e diz que deu certo, né? E aí,
+
+galera, pra gente dizer que deu tudo certo, né? Após todos os gates serem verificados, a gente viu ali os scripts que ele cria, a gente tem que finalizar o ciclo e a gente pode rodar o comando de approve com reverify. Isso aqui vai fazer o seguinte, ele vai encerrar todos os testes, né? Ele vai dizer que tá tudo OK porque a gente aprovou e ainda ele vai retestar todos eles para poder verificar se encontra mais algum erro após todos os checks. Então ele demora um pouquinho, mas ele mostra o resultado de cada um deles aqui de novo, ó. Passou o gate zer, passou o
+
+gate um, passou o gate 2, rodando aqueles scripts que foram criados por ele. E isso garante o sucesso do nosso nossa tarefa, nosso novo recurso que a gente criou. Vejam aqui, mats, né? O comando reverify, ele é opcional, ele é só um double check, por exemplo, a gente quer garantir mesmo, mas o approve seria a conclusão do ciclo. Então, cara, é meio burocrático, tem que lidar um pouco com o código também, né? Entender um
+
+pouco ali para poder saber exatamente o que tá acontecendo. Mas pensem o seguinte, é uma maneira de criarmos testes de usos reais do sistema, né? Então a IA pensa antes de criar o teste. Ela entende a nossa tarefa por causa do un e cria as gates que vão garantir que aquela tarefa realmente seja funcional. Ou seja, pensando em vários cenários, como aqui o nosso caso, o parcelamento.
+
+Então o que que acontece agora? O ciclo se reiniciaria, né? A gente precisa pegar, né? Esse aqui é um brand onde ele fez várias alterações, comitar tudo e depois ir para uma próxima tarefa, o próximo recurso e fazer tudo de novo. Usar ola, verificar os gates criados, pedir para ele fazer o teste e depois a gente comparar ali se deu tudo certo utilizando o approvefy.
+
+Isso vai garantir que todos os cenários aqui foram testados, evidenciados e a gente tem mais segurança que a nossa tarefa, nosso novo recurso está correto. Então, galera, eu sugiro que vocês deem uma olhada aqui no nosso repositório, né, para vocês entenderem o passo a passo aqui, uma forma mais concreta da pedir para traduzir aqui para vocês terem mais consciência do que tá acontecendo. Mas eu achei o projeto bem interessante porque ele faz aí a pensar um pouco mais no que vai ser entregue e isso garante mais o trabalho final, o resultado do trabalho final, tá? E isso garante mais um resultado bom no trabalho que ela fez ali pro que a gente pediu. Beleza? Bom, galera, relembrando,
+
+formação Cloud Code tá lançada, link aqui na descrição desse vídeo. Acessando essa página, vocês conseguem conferir todos os detalhes, beleza? Tô esperando vocês lá. E se vocês pensam em integrar pagamento no sistema de vocês, né, lá no checkout, em algum parte do processo, né, uma assinatura, deem uma olhada na Appmax. O link vai estar aqui no comentário fixado. Como eu falei,
+
+através desse link vocês vão ter taxa zero no Pixel, o que ajuda bastante quem tá começando, né? Qualquer 1% já é uma adienta, né? Bom, eu quero saber o que vocês acharam. Acredito que é um conteúdo um pouco mais denso, galera. Aqui não é da parte técnica, talvez se sentir um pouco mais perdido é normal, mas entendam que testes, cenários nunca é demais, porque a gente tem um check a mais, ou seja, uma verificação maior do que a gente tá executando. É exatamente
+
+isso que a gente quer quando a gente tá fazendo coisas por vibe coding, por a gente não consegue ter o controle de tudo tão fácil, já que são muitos arquivos gerados, muitos arquivos modificados e acaba que realmente fica uma situação mais trabalhosa, né? Se eu tivesse alterando linha a linha, verificando se passa ou não passa nos meus testes e aí depois eu entrego um resultado final onde eu verifiquei aquela etapa. Aqui a gente pede: "Ah, faz o checkout". E aí a gente recebe o checkout e agora para testar tudo que ela fez, tudo que ela refez, tudo que ela alterou, tudo que ela deletou. Então acaba realmente que é um trabalho muito grande e por isso a gente precisa de ferramentas como o unace. Espero que
+
+você tenham curtido e espero vocês também no próximo vídeo.

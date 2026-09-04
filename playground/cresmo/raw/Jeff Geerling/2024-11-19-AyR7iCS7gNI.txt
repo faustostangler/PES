@@ -1,0 +1,104 @@
+---
+video_title: "A GPU-powered Pi for more efficient AI?"
+video_id: AyR7iCS7gNI
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AyR7iCS7gNI
+video_date: 2024-11-19
+video_description: |
+  The Raspberry Pi is a compelling low-power option for running GPU-accelerated LLMs locally.
+  
+  For my main test setup, here's the hardware I used (some links are affiliate links):
+  
+    - Raspberry Pi 5 8GB ($80): https://www.raspberrypi.com/products/raspberry-pi-5/
+    - Raspberry Pi 27W Power Supply ($14): https://www.raspberrypi.com/products/power-supply/
+    - 1TB USB SSD ($64): https://amzn.to/3OjJysQ
+    - Pineboards HatDrive! Bottom ($20): https://amzn.to/3Zbz0T5
+    - JMT M.2 Key to PCIe eGPU Dock ($55): https://amzn.to/4eCpi0g
+    - OCuLink cable ($20): https://amzn.to/3YTXNJW
+    - Lian-Li SFX 750W PSU ($130): https://amzn.to/48T4a4R
+    - AMD RX 6700 XT ($400): https://amzn.to/3UXywgI
+  
+  And here are the resources I mentioned for setting up your own GPU-accelerated Pi:
+  
+    - Blog post with AMD GPU setup instructions: https://www.jeffgeerling.com/blog/2024/amd-radeon-pro-w7700-running-on-raspberry-pi
+    - Blog post with llama.cpp Vulkan instructions: https://www.jeffgeerling.com/blog/2024/llms-accelerated-egpu-on-raspberry-pi-5
+    - Llama Benchmarking issue: https://github.com/geerlingguy/ollama-benchmark/issues/1
+    - AMD not supporting ROCm on Arm: https://github.com/ROCm/ROCm/issues/3960
+    - Raspberry Pi PCIe Database: https://pipci.jeffgeerling.com
+    - Home Assistant Voice Control: https://www.home-assistant.io/voice_control/
+    - James Mackenzie's video with RX 580: https://www.youtube.com/watch?v=J0z09Ddr58w
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Why do this on a Pi
+  01:33 - Should I even try?
+  02:06 - Hardware setup
+  04:34 - Comparisons with Llama
+  05:43 - How much is too much?
+  06:52 - Benchmark results
+  07:41 - Software setup
+  09:13 - More models, more testing
+---
+We have current-gen AMD graphics cards running on the Pi 5. And they run great! I can game in 4K with ray tracing. I can transcode video or stream with OBS. I mean, there are bottlenecks, and the drivers aren't perfect on Arm, but Vulkan works, and that's apparently all I needed for GPU-accelerated local AI on the Pi.
+
+After I asked AMD and they said they wouldn't support ROCm on Arm, I thought it would be an uphill battle getting tools like Llama.cpp to run on the Pi 5. I mean, Ollama doesn't install on the Pi out of the box and runs models like Llama 3.2:3b on the Pi's CPU, but it's a tiny model and it's slow. Like, only a-few-tokens-per-second slow.
+
+But plug in a graphics card, and now we're in business, getting larger models to run at dozens of tokens per second. But why make a video on this? I mean, just plug a graphics card into any old computer, right? Well, the Pi is different. It's not your typical PC. It's tiny, the size of a credit card, and
+
+it only sips 2-3 watts of power at idle. This whole setup with the Pi and this RX 6700 XT at idle, only sips 11 watts. That's less than the CPUs alone on a lot of PCs. Run one of these in your home lab 24/7, and at least if you're not in the US, that's a significant power savings. The speed of this setup is almost as fast as my Mac Studio. It's almost as efficient, too. But what's best is,
+
+it's a lot cheaper. This whole setup cost me about 700 bucks, and way over half of that was this GPU. You could buy used or use an AMD card that you already have and get a setup for like 300 to 500 bucks. But I hesitate even working on this project. I'm still a bit of an AI skeptic. We're burning a lot of resources
+
+to make these models and get incremental improvements. And it's not even AI, really. That's just a marketing term. I'd rather call it what it is: Large Language Models. But they can be useful. Like with Home Assistant.
+
+I've been tinkering with running my own local voice assistant. More on that soon. But the idea is, instead of inviting Amazon or Google into your private life, you could keep everything local, running inside your house. But before I show you a demo, let me show you how I have this all set up. This is the Raspberry Pi 5. I have an 8GB model with the active cooler on top. And it has a PCI Express
+
+external connection, an FFC connection, that goes out to this Pineboards board. There's other boards like it, but this is the one that I'm using. And this converts the Pi's FFC connection into an M.2 slot. And that M.2 slot has an OcuLink to M.2 adapter plugged in. And that came with this GPU riser.
+
+It's an OcuLink riser, and I'll link to it in the description. But I had to buy this cable, this OcuLink cable that goes over to the riser. That costs, I don't know, 15 or 20 bucks. And then to power the GPU, you can't just use the power from the Pi. It only gives you 5 watts. So this riser has
+
+an input from my power supply. It's a Lian-Li 750 watt power supply. It takes in the 24 pin and has an on/off switch to emulate the PC on/off. And then it also has supplemental power from the 750 watt power supply into the PCI Express connectors on the graphics card. So most graphics cards have that. Like this one
+
+has a single 8 pin. This one has an 8 pin and a 6 pin. And the more powerful the graphics card usually, the more power it needs. But if you wanted to run a 7900 XTX or something like that on it, you would probably need a beefier power supply. Anyway, that's the physical setup. And I have, this is a 4K display
+
+that's plugged into the card through DisplayPort. And everything, including the speaker over there, is plugged in through this power cord that goes into this smart outlet from ThirdReality. And that's measuring my power usage. And I have a dashboard in Home Assistant that is running an ApexChart that shows me how much power I'm using over time. So to start things up, I turn on the power supply using its switch since it's a little bit easier to use than the switch that's on this little board.
+
+And then that powers up the GPU. I have it plugged in here. And this is an RX 6500 XT. I've never tried it before, but hopefully it'll just work. And then I turn on the Pi pressing its power button. And
+
+with any luck, the Pi will come up and I don't have the display plugged in. So that's not going to work. Let me plug in the display too. Oh, there it comes. Maybe. There it is. Right now, nobody makes a GPU
+
+dock specifically for the Pi. And that's why this is a little bit of a jank-fest. But hopefully that'll happen someday. Maybe once the CM5 is launched, assuming it works the same. But here's a demo running one of the most popular models for mid-range setups like this: Llama 3.1:8b. On the Pi 5,
+
+running Ollama on the CPU, it's pretty slow. It only prints out about two tokens per second. It's not glacial, but it's certainly less useful when it runs this slow. Especially if you're trying to build a conversational Home Assistant bot. Now, here's that same model running directly on the RX 6700 GPU plugged into the Pi. It's a night and day difference, going from two tokens per second to 40 tokens per
+
+second. At this speed, I could actually use it to have a real conversation. And sure, this setup uses more wall power, but average power draw for the Pi CPU was about 13 watts at two tokens per second. Average power for the GPU was 135 watts, but normalized by tokens per second, it's 0.15 tokens per watt on the Pi CPU and 0.29 tokens per watt on the graphics card. That's a 20x speedup for only 10x more power.
+
+To make sure all my testing was actually hitting the GPU, I ran nvtop and amdgpu_top and monitored the output. I could watch as the model was loaded into the VRAM. Then the GPU would go wild crunching numbers a while, spitting out responses to my prompts. Now, there are some instances where context windows are too big, or models are just a bit larger than fits in the consumer graphics cards I'm testing. Like here, with the Qwen2.5 14B model, it had to split the processing off between the GPU and the CPU, and that slows things down. But in the llama-bench benchmark I ran with the same model, it went from tens of tokens per second to hundreds.
+
+And here's another large model, Llama 2:13B, running at 4 tokens per second in my test. These models would be unbearably slow on the Pi's CPU, if they ran at all. Now, some of my power measurements are a little tricky. I don't have a setup running to give total joules per run, so I can't give you efficiency results with 100% confidence. I can, however, measure idle power draw pretty accurately.
+
+And considering the massive leap in performance for any of these graphics cards, running them off a Pi can save you power, assuming all else is equal. And to get a clearer picture of that performance, I headed to Micro Center. Thanks to this channel's patrons, I picked up a couple more low-end cards to test. I found the RX 7600 needs a little more TLC with the amdgpu driver patch, but the RX 6500 XT worked right out of the box. And if you like seeing all these shenanigans, please consider becoming a Patron!
+
+After testing everything, here are my preliminary results. Right away, two things are apparent: LLMs love GPUs, and my RX 6700 XT is in the sweet spot for value and efficiency. At least, I think so. For larger models, my M1 Max Mac Studio with 64GB of RAM runs away. But I think, like with Doom Eternal at 4K, the way our patch works coupled with the Pi's slower RAM holds the Pi back here.
+
+Of course, none of these options holds a torch to the 4090—just putting things in perspective. But then again, my Pi setup doesn't run at 600W. So if you don't need monster performance, you don't have to pay for a monster card. And 4090s don't run on the Pi yet anyway. So far, I can't get any Nvidia cards running.
+
+And might I remind you, all these results are using Vulkan with our experimental patch. We're definitely leaving performance on the table. If you want to replicate my results, I'd love that. YouTuber James Mackenzie already did with an older RX 580, and he's using it for retro gaming. The full instructions for getting all the modern AMD cards working on a Raspberry Pi, in fact, I think from like the RX 400 series up to the 7000 series, is on my blog.
+
+And I'll link to it in the description, in this blog post. And here's all the instructions. Right now, it requires compiling your own Linux kernel. But in the future, maybe this will be part of the Raspberry Pi Linux kernel. If you want to give it a try, there's already a couple people that have done it, and confirmed that it works with their cards too.
+
+If you have any problems, if a card doesn't work, go to my Pi PCI Express website, and file an issue for your card, if it's not listed already. And let us know what's going on with your card. And once you have your 6000 or 7000 series card running on the Pi, these are the instructions for setting up llama.cpp with Vulkan. So you get GPU acceleration.
+
+I'm going to put this into a blog post. I'll link to it in the description. But the blog post will show in detail how to do this with all the links that you need, and with a fancy picture or something. But it's, whenever I develop my stuff, I do it all on GitHub. And I do it live, like, you know, I'm not masking what I'm doing.
+
+So if you ever want to see like, "Hey, what is Jeff working on?" Pop over to one of my GitHub repos, and chances are you'll find me in an issue debugging something actively, and posting results and things, before I even post a video. That's a little pro tip for you ;) I've been testing other models too, like Mistral and Qwen. Different models are better at different things, and some run better than others on this setup. For all my notes and benchmarks, check out the links in the description.
+
+But I want to know, what kind of things are you building with this stuff? Let me know in the comments. Please subscribe, and until next time, I'm Jeff Geerling.

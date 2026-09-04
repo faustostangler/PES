@@ -1,0 +1,80 @@
+---
+video_title: "Building an Agentic Video Editor for Mass Consumer — Ekaterina Deyneka, Reelful"
+video_id: pPj_tjlvYjA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pPj_tjlvYjA
+video_date: 2026-08-18
+video_description: |
+  Nearly every hand in the room went up when she asked who had recorded video at the conference. Almost none stayed up for who had actually posted any of it. Ekaterina Deyneka counts herself in that gap, and Reelful is her answer to it: drop in raw footage with a line of direction, and an agent finds the usable moments, cuts them together, and generates captions, music, voiceover, and b roll around them.
+  
+  Her framing for an AI engineering audience is that an agentic video editor is structurally the same thing as an agentic app builder. A prompt goes in, a sandbox spins up, an agent works inside it with tools and skills, and something renders out the other end. The difference that matters is editing rather than generating. A blank canvas lets an agent do anything it likes, while real footage forces it to judge which take is best and what to drop, and to produce something polished from material that is often messy or incomplete. The composition layer is Remotion, which expresses video as React code, chosen precisely because agents write code well. Skills carry the taste: cut rules, font pairings, when a cutaway actually helps. A verification pass catches compositions that will not render and sends the agent back around. All of it hides behind mobile templates, since the point is that a consumer never sees the pipeline at all.
+  
+  Speaker info:
+  - https://x.com/katedeyneka
+  - https://www.linkedin.com/in/katedeyneka
+  - https://www.katedeyneka.com
+  
+  Timestamps:
+  0:00 - Who recorded video here, and who actually posted it
+  1:29 - What agentic video editing means
+  3:33 - The same shape as an agentic app builder
+  4:10 - Editing real footage is harder than generating
+  5:30 - The pipeline, from media understanding to a creative plan
+  6:50 - Remotion, video as React code, and the verification layer
+  8:49 - Hiding all of it behind mobile templates
+---
+[music]
+
+>> Hi everyone. I think we can start. Uh but before we start, I want to ask you a couple of questions. So, first of all, how many of you took a photo or video during this conference? Please raise your hands.
+
+Okay, and how many of you actually posted any video content from it online? Not that many. And um to be honest, that was me. I I was recording a lot of content during conferences, events, trips, meetups, uh and I never posted them online because video editing is hard. Uh it sounds and it is a lot of work. Uh
+
+it's tedious and it's largely still manual. So, and and it also feels like an art and not really automated. And that's why we're building RealFull and we're trying to tackle agentic video editing problem from uh video editing problem from the agentic standpoint. I'm Kate. I'm founder and CEO at RealFull.
+
+But let's first talk about what's agentic video editing is. So, as a user, you just drop in your media, photos and videos, and provide some context. It can be uh the context what happened in these media files, or it can be some directions. For example, like add captions, add music, add voiceover, and something like that. And then, the agent will go, understand your media, uh find the right moments, assemble everything together, generate captions, music, voiceover, b-rolls, uh and give you a ready-to-share clip.
+
+Uh and um yeah, so basically, uh that's uh video agentic video editing. So, agent does everything by itself. Or another example, you recorded a speak-to-camera video and you have a lot of pauses, unsuccessful shots, and you expect an agent to figure it out to remove unsuccessful shots, remove pauses, and give you a ready-to-share clip. Um and uh the the interesting thing is that a lot of actually a lot of the things inside this pipeline can be automated. And this is exactly what we're doing at Real Fall.
+
+Oh, this is um the example of uh video edited. And um since we're at AI Engineering Conference, I wanted to talk a little bit about infrastructure. And from the infrastructure standpoint, agentic uh video editor is very similar to agentic app builder. Uh sorry, there is a typo on the slide. So, the uh second column is agentic video editor. So, both of
+
+them have a prompt uh a UI for prompt uh and in the video editor case, it's a media plus prompt. And usually on back end, what's happening? There is a remote machine which is called sandbox, uh which is spinning up, and inside this machine, there is an agent with tools and skills, which is working on uh what you're uh you're you're asking it to do. Uh in the case of the agentic uh app builder, it's a code base. Uh in the case of the agentic video editor, it's a video video composition.
+
+And as a result, in the Argentic builder user get an app preview and for the video editor users user get rendered a rendered video. And but yes, the the infrastruc- from infrastructural standpoint, it's pretty similar, but there are a couple of differences. Uh and this is actually the most interesting to me, generating versus editing. At RealFull, we're focusing on editing real footage. So, we do not generate a lot of content. We are expecting you to provide
+
+your real life, your personal content, and we will edit it for you. And actually, this is a more complex problem because if the agent has a blank blank canvas, it can do whatever they can. But in the editing case, the agent has to figure out which moments are the best. Uh what to omit, what to use, how to organize everything together. And also, um sometimes footage can be messy or incomplete, and agent still has to deliver a very polished result, professionally made, so that ideally the viewers of this content don't get if it is like AI or human edited.
+
+So, let's actually have a look how we do it at RealFull. So, we start, as I already mentioned, with your media plus a prompt, some directions like how you want it to be edited, and we need to get a polished clip. So, let's go through it step by step. So, we are doing first media understanding. We need to understand what's what's actually happening uh, on those clips and photos.
+
+And we also need to transcribe transcribe speech, for example, in the case if you have speak-to-camera videos. Then, we are providing a creative plan for the user so that they can approve if they like it or not, what they want to change or maybe regenerate, uh, and we create this plan before actually starting editing. Once the user approved this plan, uh, we spin up a sandbox, the remote uh, remote machine that we already discussed, and this is an environment for the agent to, uh, execute everything. So, the agent comes with the skills, and in our case, in in the case of, uh, video editing, our skills are, for example, cut rules, how, for example, how to select the best moments, uh, also font pairs, which fonts are, uh, more suitable for this use case, which are not, for example, how to generate B-rolls, and this is where our taste and craft, uh, live, actually. Um, and then also agent, uh, can, um, can initiate some other sub-processes, for example, generating music that will fit this exact composition, generating voice-over, adding sounds, animating images. Yes, this is actually what we
+
+do, uh, if you provide photos, we can animate your photos to make them more, uh, dynamic and engaging. And then comes Remotion composition. So, here a little bit of background. What's Remotion? Remotion is a framework, open-source open-source framework, uh, to create videos as code, as React code.
+
+Uh, so basically, it's just like a a file with the order with all your assets and tracks and how they're following each other. And, why it is important? Because, uh, agents are really good at writing code and therefore we can use them to create videos with this remotion framework. And then the last thing is the verification layer. Of course agent can make mistakes and that's why we develop this verification layer to make sure that all the the composition is clean, is well defined, everything will be rendered and if there are there are some problems then the agent will reiterate on the composition. And
+
+this is how we got to a polished clip. >> [sighs and gasps] >> So it's a lot, right? It's like very complex workflow and ideally we don't want our users to even know anything about it. And this is even maybe a bigger problem how to deliver this complex agentic workflow to mass consumer. And this is how we're tackling that at Real Flow. So we decided to go mobile
+
+first so that users can edit videos videos while driving, walking or maybe lifting weights. Also, I know that prompting videos can sometimes be also challenging. That's why we create directional templates. For example, like speak to camera in videos or maybe you want to add B-rolls or voiceover so that users can just select these directional templates, drop their media and that's it. Even without any prompt it will it will work.
+
+And the third thing is a building editor. Why? Because we want to make this experience convenient and familiar for users. So a lot of people are already sort of using regular video editors and that's why we want to provide this experience as well. So, how it works? User first generates a
+
+video agentically, but if they want to tweak it, for example, remove a second or maybe correct some word in the captions, they can go into building editor and edit it a little bit. Um Yeah, and actually I have a couple of examples here that I recently created with Real Fill. I will play them just maybe one of that. Oh, sorry. >> Last week I was invited >> Do do you hear?
+
+A little bit. Okay, you just can enjoy the video. >> because of course our creators dinner and honestly it was one of the best event experiences I've had. First of all, the venue was stunning. It was a custom event space transformed into this tropical sunset feast. The whole
+
+atmosphere felt so warm and cinematic. Second, the food was way beyond my expectations. They brought in private chefs from LA and we had lobster, blue crab, and this incredible ice cream that I'm still thinking about. But most importantly, the conversations were so much fun. It was kind of atmosphere. It
+
+felt really easy to connect with people, talk about what they're working on, and just enjoy the community. And lastly, we got gifts. One of the highlights >> So, yeah, basically all these videos they were assembled only using agent, no regular video editor, and I already posting them on social media. And yeah, it I I have a lot of fun with that. And oh, sorry.
+
+And exclusively for this conference, we are giving our better, which is our new new second version. Please give it a try and let me know if you have any feedback. Here is my email. Please Uh free to reach out. Uh we're still early. We're
+
+actively working on it. Uh so we will have uh we will be happy to hear any feedback and also curious how you use it. And also um some exciting news. We recently got funded by A16Z speed run. Uh so I'm very excited to uh continue working.
+
+Um >> [applause] >> Yeah, that's it. Thank you so much. And because it's a presentation about content and how to edit videos, I have to uh film a video with you all.
+
+Second.
+
+Yay!
+
+>> [music]

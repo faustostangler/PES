@@ -1,0 +1,81 @@
+---
+video_title: "Hackeando Golpes 3 (expondo Tudo 🔥)"
+video_id: RSO7Y5nfS9E
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=RSO7Y5nfS9E
+video_date: 2025-10-24T18:26:15+00:00
+video_description: |
+  Nesse vídeo eu hackeio e exponho um novo golpe que ta rolando por ai, envolvendo casas de... (vc sabe oq)
+  ESSE VÍDEO É EDUCACIONAL - NÃO REPITA ISSO EM CASA.
+  
+  
+  👉 Nosso servidor do Discord (ENTRA PRO CTF!): https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 O melhor host para seus projetos: https://squarecloud.app/
+  👉 Thumb feita por https://www.behance.net/nez6vi
+  
+  Índice
+  00:00 Introdução
+  01:08 O Início
+  02:28 UM BANCO DE DADOS DE QUE???
+  03:20 Mais SITES falsas!
+  03:42 .git exposto
+  03:58 O código fonte
+  05:00 Encontrando o responsavel.
+  06:07 Rabbit Hole...
+  07:38 Atacando 😎
+  08:35 Fim
+---
+Você abre o Instagram propaganda de bet, entra no YouTube, propaganda de bet, vai assistir um jogo de futebol, o uniforme do time tem uma bet. E no meio disso tudo, os brasileiros estão sangrando 30 bilhões de reais por mês, perdendo casa, carro, tudo por causa de aposta. Mas tem uma coisa que é infinitamente pior do que perder dinheiro apostando. Existem cassinos online que simplesmente são falsos, parecem reais, mostra que tem um certificado de autorização, mas no final do dia você nunca vai conseguir sacar o dinheiro. Nesse vídeo vamos hackear e expor uma grande operação que tá acontecendo com dezenas de sites falsos, centenas de vítimas e milhares de cartões e reais roubados. Tudo
+
+controlado por uma única pessoa. Bem-vindo ao terceiro vídeo de Hackando Golpes. Antes de mais nada, não faça isso em casa. Tudo que você vai ver aqui é puramente educacional. E já que a gente tá falando de aviso, deixa eu ser bem claro sobre uma coisa. Não apostem. Sou
+
+completamente contra casa de aposta. Não importa se o site é legal, ilegal, famoso, desconhecido. O sistema é matematicamente programado para fazer você perder. A casa sempre ganha. Sempre. Dito isso, vamos acabar com esse
+
+golpe. Tudo começou quando eu recebi uma mensagem do R8 Full. Ele me mandou o link de uma bet falsa e falou que os golpistas deixaram o ponto env aberto. Para quem não sabe o que que é o ponto? É basicamente um arquivo com todas as senhas e credenciais de um site. Senha
+
+de banco de dados, chave de API, token de acesso e isso deveria estar seguro, não sendo mostrado publicamente. Mas antes de tudo, eu queria entender como que esse golpe funciona do ponto de vista da vítima. Então, eu abri o site e a primeira coisa que aparece é um popup pedindo para você fazer um cadastro. Até aí nada demais. Você se cadastra e logo depois aparece um outro popup pedindo pagamento. Tem duas opções, Pix ou
+
+cartão de crédito. E aqui começa a ficar estranho. Eu já analisei muitas bets ilegais e a maioria só aceita Pixs. Mas enfim. Clicando no botão de atendimento, eu fui redirecionado para um grupo no Telegram. E adivinha? A mensagem fixada
+
+no grupo era um vídeo chamado Como trabalhar no set. Esse vídeo ensina um suposto bug dessa plataforma que te faz ganhar muito dinheiro, mas obviamente é só para te convencer a depositar. Eu voltei pro site e em qualquer coisa que eu clicava aparecia um pop-up de pagamento. Qualquer botão popup de pagamento. O site inteiro toda hora pedia para fazer um pagamento e os jogos não funcionavam. Ou carregavam para
+
+sempre ou retornavam um erro. E ele é tão mal feito que tem XS basicamente em todos os lugares que você consegue digitar. Mas enfim, dentro desse ponto ENF tem várias credenciais. Usuário sendo do banco de dados, URL administrativo, credenciais de gator de pagamento e uma outra coisa que é estranho, credenciais de acesso para um banco de dado central. Eu não consegui acessar o banco de dados do site porque ele tava rodando dentro da própria máquina. A porta tava fechada e não
+
+tinha como conectar remotamente. Mas agora esse banco de dado central eu consegui acessar e você não vai acreditar o que que tem nele. Simplesmente tem mais de 600 cartões de créditos com número, CVV, inspiração, titular, tudo. E não são registros antigos, não. O último adicionado foi a menos de 1 hora e o primeiro faz menos de um mês. Então, em menos de 30 dias, o
+
+cara coletou mais de 600 cartões de crédito. E eu acho que você já percebeu de onde que vem esses cartões. E na tabela também tem outro campo que eu não tinha percebido, a origem, que fala de onde veio esse cartão. E aqui tem vários outros links de bet é falsa, mais especificamente 15 bets. E todas são idênticas no comportamento, só muda o nome e a cor. Ele não estava rodando uma
+
+bet falsa, mas dezenas. Só que como que eu sei que todas elas pertencem a só uma pessoa? Eu uso uma extensão do navegador que chama Dotgit, que vê se o site tá com a pasta pongit exposta. E adivinha? Todos esses sites tinham? Se você não
+
+sabe, a pasta. do Git é uma pasta que guarda todo o histórico de mudanças de um projeto, como se fosse a linha do tempo do código. Eu consegui resterar alguns arquivos e encontrei o esquema do SQL e também dois arquivos PHP, só que não tava 100% completo. Peguei uma das linhas do código PHP e joguei no GitHub para ver se eu encontrava o repositório ou uma coisa parecida. E eu realmente encontrei. É um código de 2024, mas que
+
+tá bem parecido com o que eu consegui recuperar. Depois de analisar linha por linha, eu acabei encontrando uma vulnerabilidade que eu consigo adicionar saldo no meu usuário em todas essas casas falsas. Então, eu adicionei R$ 10.000 R de saldo na minha conta e vamos tentar sacar esse dinheiro. Quando eu clico em sacar, aparece uma mensagem dizendo que eu tenho que pagar por uma taxa para liberar o saque. Beleza, vou pagar a
+
+taxa. Então, fala que deu um erro na transação e tenta me cobrar a taxa de novo. E de novo. E mais uma vez, é um loop infinito que você não consegue sacar, mas continua pagando taxas. Inclusive no código fonte não tem uma rota de saque, simplesmente não existe.
+
+E eu também encontrei uma outra vulnerabilidade, mas vai ficar para daqui a pouco. Já já vocês vão ver. Eu também consigo executar o git log para ver quem é o responsável pelas últimas alterações. E em todos eles, a mesma pessoa apareceu nos comits lutor. Com esse consegui encontrar o perfil dele no GitHub. Tem vários repositórios de bets,
+
+mas nada que revelasse quem ele realmente era. O problema é que Lex Lutor obviamente é um codenome. Se eu pesquisasse por isso, eu encontraria o supervilão da DC e eu preciso de alguma coisa real, um nome ou um outro e-mail. Então eu tive a ideia de pesquisar por @gmail nos repositórios dele e eu encontrei um outro e-mail que parecia ser mais antigo. Usei uma ferramenta deintalar o nome aqui, que encontro o responsável pelo e-mail e no final me deu um nome completo, Igor Henrique.
+
+E pesquisando por isso no Google a gente encontra um LinkedIn. Só que como que a gente tem certeza que esse cara é o Lex Lutor Def? Ah, tá escrito ali. A gente coletou o máximo de informação possível. Encontramos sete e-mails usados por ele, dois Instagrams, TikTok, Twitter, dois githubs e mais de 15 senhas. Agora a
+
+gente sabe exatamente quem ele é achei que tinha acabado, mas tem uma coisa estranha, é um detalhe que não faz muito sentido. Lembra que eu falei que todos os sites tinham a mesma credencial praticamente idêntica no ponto ENF? mesma senha, mesmo banco de data central, exceto uma coisa, a chave do gateway de pagamento. Cada site tinha uma chave diferente, ou seja, o dinheiro tava indo para contas diferentes. E isso não faz sentido. Se todos esses sites
+
+são do Lex Lutor, por que que ele não usa a mesma conta para receber todo o dinheiro? Por que complicar isso? Então, eu fui mais a fundo. No Instagram, eu encontrei muitas contas diferentes promovendo o método do set. Sabe aquele vídeo que eu mostrei antes do grupo do Telegram? Pois é, tem muitos perfis
+
+divulgando a mesma coisa. Clica aqui, acessa a Bet, aperta um botão escondido e ganha dinheiro fácil. Mas aí que vem a parte interessante. Eu voltei pro ponto Envy e percebi uma configuração que eu tinha ignorado antes, o split. Split é uma funcionalidade de gator de pagamento que divide automaticamente cada transação entre múltiplas contas. é como se fosse
+
+um sistema de comissão. E quando eu olhei pra configuração do split de todas essas bets, todas estavam mandando uma porcentagem para uma mesma conta. Agora sim, tudo faz sentido. Isso não é só um cara criando bet falso para roubar cartão e dinheiro. Isso é muito maior.
+
+Em vez de ser uma pessoa, a teoria é que esse cara vende as variações da Bet para quem quiser aplicar golpe, rouba os cartões de crédito e ainda fica com a porcentagem de toda a transação. Senhoras e senhores, eu apresento a vocês GOP as a Service. Uma coisa que todos esses sites t em comum é o IP. Isso pode significar que todos eles estão rodando no mesmo servidor e na mesma máquina e logo na Hosinger. E usando Maltego, a gente consegue encontrar muitos sites online ainda aplicando esse golpe. Então,
+
+tirando um do ar, a gente tira todos. Mas como? Lembra que no começo do vídeo eu falei que o sistema era muito mal feito e que tinha XS por todo lado e também agora a pouco que tinha uma outra vulnerabilidade que eu já ia mostrar? Bom, ela aparece agora. Vamos mandar um aviso pro nosso Lex Lutor e também pros responsáveis do site.
+
+Agora, sempre que alguém for tentar visitar alguma dessas bets, vai ver essa linda mensagem. Calma que não acabou, ainda tem aquele banco de dados com cartões de créditos e a gente não pode deixar aquelas informações lá. Vamos deletar tudo e deixar uma surpresa também. E finalmente é isso. E se você me perguntar o que que aconteceu depois disso, vamos descobrir junto. Me segue
+
+lá no Twitter para atualizações e se casos, porque eu fiz esse vídeo 8 horas atrás. Lembrando, sábado agora, às 15 horas vai acontecer um CTF na nossa comunidade do Discord. Vai ter premiação e é grátis para qualquer um participar. É só entrar lá. Espero que tenha gostado. Espero que nunca postem e não
+
+esquece de deixar o like e se inscrever no canal. Valeus.

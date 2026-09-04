@@ -1,0 +1,287 @@
+---
+video_title: "Project Walkthrough with Object Oriented matplotlib and pandas: Star Wars Survey Analysis"
+video_id: 5bgr1YnLSyk
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=5bgr1YnLSyk
+video_date: 2025-07-18
+video_description: |
+  In this video, Dataquest’s Director of Curriculum, Anna Strahl, will guide you through how to clean and analyze real survey data using Python and pandas, while diving into the world of Star Wars fandom.
+  
+  You’ll take on the role of a data analyst working with survey results from FiveThirtyEight to uncover insights about viewer preferences, film rankings, and demographic trends. By the end of the session, you’ll be able to apply essential data cleaning and analysis techniques to answer real-world business questions using survey data.
+  
+  This project is ideal for learners who are comfortable with Python and want to strengthen their data wrangling, statistical analysis, and storytelling skills using pandas.
+  
+  What You'll Learn:
+  - Data Cleaning with pandas: Clean messy survey data by mapping yes/no columns, converting checkbox responses, and renaming columns
+  - Exploratory Analysis: Calculate statistics to identify the most viewed and highest-ranked Star Wars films.
+  - Demographic Comparison: Analyze results by binary segments to uncover trends in fan preferences.
+  - Real-World Data Application: Work with actual survey data to practice hands-on analysis and storytelling.
+  
+  Recommended Prerequisites:
+  - Data Project Cleaning Walkthrough → https://www.dataquest.io/course/data-exploration/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-star-wars-survey/
+  
+  Video chapters:
+  00:00:00 - Intro
+  00:03:14 - Read in data
+  00:06:27 - Exploratory analysis
+  00:10:20 - Data cleaning
+  00:19:09 - Which movies do people like most? 
+  00:20:50 - Object oriented matplotlib
+  00:31:49 - How many people have seen each movie?
+  00:34:40 - Compare males vs. females
+  00:50:31 - Next Steps
+  00:51:31 - Q&A
+  
+  #PythonProject #Pandas #matplotlib #DataAnalysis
+---
+So, we're going to dive in. Lot to do today. A lot to do. First, we're going to see what is this project. What are we doing with Star Wars? I don't know Star Wars. What? You don't need to
+
+be a Star Wars fan in order to appreciate this project. The visualizations are great. We're going to read in the data. We're going to do some pretty important data cleaning and then spend a lot of time on the analysis. And if we have time, I'll show you how you can upload your finalized Jupyter notebook into a GitHub gist and of course end up with some Q&A. So this project,
+
+the team at 538, which is a company that does a lot of surveys, a lot of polls, they wanted to ask Star Wars fans a kind of cheeky question. Does the rest of America realize that The Empire Strikes Back is clearly the best of the bunch? Very biased question to lead an analysis with, but it's it's a little bit tongue-in-cheek there. And so, prior to the release of The Force Awakens a couple years ago, they surveyed Star Wars fans using Survey Monkey and received a little over 800 responses. And survey question data, as we're going to see, has some interesting components we'll need to address. And so, we're going to answer two main questions
+
+today in our analysis of what were the movies people liked the most and the least. And also, um, which movies have people seen? There are six Star Wars movies we'll be looking at today. Have people seen them all with the same rates? Maybe, maybe not. And then the final thing we're going
+
+to do with those same two questions is we're going to break it down by male female gender. Okay. So we are going to get into the data quest environment now. And here is Jupiter. For my folks who said Jupiter is newer to you. This interface right here is a Jupiter
+
+notebook. It's actually Jupyter Lab. And if you know Python, you can work with this just fine. First thing I want to do is we're going to be working with basics. PINB. That's the Jupyter
+
+notebook file name. And we also have a CSV of our Star Wars data, which if we double click, we can open that up in the preview pane and take a peek. And also if you wanted to work locally, you can rightclick this and download the CSV and work with Jupiter locally or Google Collab. Actually, we also provide a data quest solution file if you are working on this outside of the webinar and want to see a solution. This is not the same as my gist that's being provided by the data quest chat, but it is another resource for you. So, I'm going to collapse this folder icon so we have
+
+a little more room in our notebook. And the very first thing we're going to do here is import the libraries that we'll be using. And this is where we're going to add our code. We can tell it's good for code because of the square brackets. The square brackets are coding cells. They're called
+
+cells in Jupiter. And we're going to import pandas as pd standard. numpy as MP, mapplotib.pipplot as plt. These are all standard abbreviations here. And then this is a Jupiter specific line. Mattplot
+
+lib inline is Jupiter magic that helps our charts render exactly how we want them to. And now let's read in our Star Wars data. Actually, before we do that, I'm so sorry. Let's run this cell. To run a cell, you can click the arrow and run it and you'll see little asterisks going and then it turns into a one, meaning it was the first thing run. I also like using the shortcut
+
+shift enter on my keyboard and that's probably what I'll be doing from this point forward. So to read in our data, we're going to create a data frame that we're naming Star Wars Star Wars and using the CSV method from the pandas library. If you're following along with my gist, this is in the gist where it specifies the encoding. I experimented with this yesterday. We actually don't need to specify an encoding for this project. So you can delete that if you want
+
+if encoding stresses you out. And now let's take a peek at the head, which is the first five rows. Okay. And we can already see some interesting things. Really long column names here. Really
+
+long column names, unnamed columns. And then in those unnamed columns, it looks like the cell values are just all the same things, just really long lengthy texts of the Star Wars movie names. And let me explain what's happening with those columns because this is based on a survey that was given. These columns are coming from a survey question that looks like this. Let me see if I can make that a little larger. Where there's a grid and for each option they can select one thing
+
+and this kind of two-dimensional question has to somehow be collapsed into tabular data where each person only has one row. And because of that, the grid has been stretched into multiple columns, but the names didn't transfer correctly. So, the first data cleaning thing that we're going to do is rename some of these columns and also clean up the cell values because uh having Star Wars Episode 1, the Phantom Menace here and here and here is a little messy and unneeded for our analysis. I also usually like looking at the info method when I'm doing my exploratory analysis. It's going to be a little chaotic for this because of our very long column names. So,
+
+new cell Star Wars or Star Wars.info. And yeah, it's it might look a little better if you're following along on your screen because my screen is zoomed in for the webinar. But the most important things we can do here is we have about 1,200 entries. And let me see. Okay,
+
+just for a moment. I'm going to zoom back out so that we can see our nonnull counts a little bit. And we can see that our first two columns here, the respondent ID and whether or not they've seen any of the movies, those have null null values. But the rest of the columns do have null values that we're going to want to address. So we have a lot of unnamed columns to take care of, some really lengthy column names, and we're going to take care of all of that in a moment.
+
+Okay, let's zoom back in. We're better following along here. Um, so the very first thing I want to do is we're going to change some yes no values into true and false because booleans are just easier to work with because yes is a string but true is a boolean. We don't need to wrap it in quotations. Python natively knows what to do with it.
+
+So, have you seen any of the six films in the Star Wars franchise? Remember, this was the one that had no null values. So, if we are looking at the value counts, we're using the Panda's value counts method here. And we're including drop na equals false as an optional parameter. And this ensures that if there are null values, it counts how many there are. So, shift enter to run this. And the
+
+cool thing about Jupiter is if it's renderable and it's the last thing in one of these coding cells, it will render. So, we can see that in general our responses are yes, 900 people have seen a film in the Star Wars franchise and 250 people have not. But remember, this was the column that didn't have any nulls. So let's do the same thing now but for a question we know has null values. So we can see if our value counts is counting correctly. So do you consider yourself a fan? Now we have about
+
+550 yeses 350 null values and I'm very visual when I'm trying to learn coding. So if we take out this optional parameter drop NA equals false and rerun this cell. Notice it turned into a six on the side here because we ran it again. And now we don't see our null count. So if you're trying to count your null values in an exploratory data analysis, this is a really helpful parameter to know.
+
+Okay, so like we said, we want to convert our yeses and nos into trus and falses, but keep our nulls null because we don't want to necessarily assume things here. And what we're going to do is for every column in a list of columns that uses yes no values then we are going to convert our yeses and nos into trus and fes. So the columns we're going to do that for are these. Have you seen a movie? Are you a fan? Are you familiar with the expanded
+
+universe? And do you like Star Trek? All of these are yes no values. And in order to convert yes no into true false, we're going to use mapping. It's the map method in pandas where we're saying we're going to keep this column. the column is going to stay the column,
+
+but map we're going to create a yes no dictionary and put it at the top here. Uh so we're going to say yes is true, no is false. And if we have null values, ignore them and keep them as is. Okay, so there's a reason I saved the mapping dictionary for the end here. I thought it would be a little a little easier to understand. So, it's a dictionary where our key is our
+
+original value. Yes. And then the value is what we want it to to replace to. So, yes will be true. No will be false. But Anna, what is this? That's nonsense. Um,
+
+well, let's let's remove it and I'll explain why I put it in. So, if we
+
+run the same bit of code that we ran in the previous cell where we know the yes count, we know the null count, we know the no count. And we take a look. This actually looks great. It's perfect. True 552 to match our yes 552. Null remains 350. No remains 284.
+
+So why why did you have that nonsense uh with the true equals true false equals false? Well, if we rerun this cell, so notice it's eight right now, but if we run it again, it's nine. Now we have almost 1,200 null values. Nothing is true and nothing is false. And that's because we don't have any more yeses in our columns. So when it's trying to map again,
+
+it's looking for this and not seeing it. So it says, well, I guess this must be a null value and that's why everything gets overwritten. So you want to be really really careful in Jupiter if you are rerunning cells that you don't overwrite things like this. So that's what this kind of clever bit of logic is doing. It's saying if the original value is true, keep it true. If the
+
+original value is false, keep it false. And I'm going to restart my kernel because I've clearly messed up my data set. Restarting the kernel with the double arrows gives you a clean slate. And now if we rerun this cell, no matter how many times we rerun it, it's going to preserve the values we're actually looking for. So that's what this little bit of logic is doing. It seemed to me the cleanest way to not run into overwriting issues. Okay, so our data
+
+set is getting cleaner. Our data set is getting cleaner. we have true false instead of yes no. But the next thing we want to do is deal with these really ugly cell values that aren't aren't doing anything for us. So what's really happening here is this first column, which of the following Star Wars films have you seen? It's actually corresponding with have you seen episode one?
+
+This column is corresponding with have you seen episode 2? This one have you seen episode 3 and so on and so forth. So we're going to do some more mapping here and I'll copy our dictionary over movie mapping. So if the value is our episode 1 title, we're going to convert it to true because it means that that cell yes, the person has seen that movie. Um if the value is null, it means they select that they've seen the movie. So in this case,
+
+we can replace the null value with false. And then the same thing for the other values. And very similar logic to what we did before for every column in a particular list. This time we're using the dot columns method to pull specific columns map using our movie mapping. And I always like to look and make sure that what I'm doing is doing what I think it's doing. So let's look at just
+
+the specific columns that we're touching here. and looking at um what's happening. And so now, which of the star following Star Wars films have you seen? Please select all that apply. Unnamed four, unnamed five. Remember, these are the ones that are the episodes. We have true and
+
+false values. We're cleaning it up, but I'm sure that you have one question in your mind. Anna, why aren't the column names correct yet? Let's take care of that now.
+
+And in order to change our column names, we're going to use the rename method with another dictionary where we're saying rename columns and the original name. We're using another dictionary where the key is the original value and the value is what we want it to be. And I picked something short and simple like scene one. Have you seen episode one? True or false? Seen episode two. True or
+
+false? And then we're going to look at the exact same head that we used before and see if it looks nicer. Excellent. So, we're cleaning up our data a lot. We have a little bit more work to do that's very similar to what we did before. So, I'm not going to spend a ton of time on this because I
+
+do want to get to visualizations. This time, we're renaming some more unnamed columns. Um, and you could combine all this into one rename cell just with lots and lots of values in the dictionary. Um, but unnamed 10, 11, 12, 13, and 14 are people's rankings of the episodes. And the ranking they've said number one is their their Rank one is their favorite.
+
+Rank six is their least favorite. Um, and nan means they didn't rank. Okay. Okay. And this next part is completely optional, but I saved you a little bit of work if you do want to use a next step here because a lot more of the unnamed columns correspond with how people feel about particular characters from Star Wars, but it wasn't really clear which character corresponded with which column. I've done the work to do this correctly. So,
+
+Now we have correctly named columns. Um but we will not be working with that in this analysis. Okay. So now we're getting into analysis. And just to distinguish our exploratory phase from our analysis phase, I'm going to make this a markdown cell. Notice the brackets go away. And let's call
+
+this analysis. you should do something better if you're going to present this to stakeholders, but this is what I got for now. And for our analysis, the very first question we're going to investigate is the average ranking for each movie. So, in fact, let's do another markdown cell. And this time, I'll do a slightly smaller header. Average ranking for each movie. And
+
+in order to find the average ranking, remember rankings are here. So, they're numeric values. And if we're finding an average ranking for each movie, a great place to start seems like looking at the mean. And so using the same slice of columns that corresponds with our ranking columns, let's find the mean of that. I like sorting the values just so that we can see most and least popular more clearly. And I am assigning that to a variable named mean ranking.
+
+Now, because we're in Jupiter, if we have mean ranking as the last thing in the cell here, we can get a very quick peak of our mean values. And it looks like episode 5, remember, this is like the most confusing part of this analysis. Low numbers are good for ranking. So, episode five is most often ranked people's favorite. Um, it's a little bit of a generalization, but looks like the least enjoyed on average movie is episode 3. Now,
+
+we're ready for visualization. The visualization part of the webinar is beginning and we are going to be using objectoriented mapplot lib today which when I was first learning visualization was really intimidating for me. Um I was very used to give me a plt.barh all day every day. Um and let's be on our merry way. Right? So something like this. If we run this, we get a graph. We
+
+get a graph. And this is fine. Um, basically for my folks that are newer to mapplot liib, plt remember is our mapplot lib library. We've imported bar h is a horizontal bar chart. We are using our index from our mean ranking series that we just created. And then
+
+we're using the values from that series. And I'm giving a it a color. It's completely optional to do this. You don't need to do this. Um so let's let's see bare bones. This is fine. This is fine
+
+for exploratory visualization. However, if you are preparing to present these to stakeholders, this is a little lackluster. So we're going to convert this same concept now into something much nicer looking and gently introduce some objectoriented map plot li. So in object-oriented mapplot liib we have kind of the figure as a whole. Think of it as the entire canvas and then within that canvas we have our plots. So we need to specify
+
+those two individual components or objects. And in order to do that, we're going to say fig. It's kind of the common abbreviation for the canvas. And then ax is for our particular plot, our particular axis that we're working in. And to tell it what these variables are, we're going to use plt.s subplots. Um, and I I believe this is optional, but I'm specifying a
+
+figure size as well, just so that it plays nicely with map plot or so it plays nicely with Jupiter. And now, because we're going to be converting or manipulating the particular plot, we're going to refer to everything by the axes. This object still exists, but for what we're doing in this visualization, we actually we don't need to use it. Um, it's much more common to work with the ax variable created with this line. So, remember that bar h line we did a moment ago? We're going to do the same thing. We're going to do the same thing, but instead of plt.
+
+Where is the horizontal bar chart going? It's going in our chart object, which we are going to reference this way. All right. And if you're new to object-oriented programming, this is a way to say this is the object we're working with. Do this thing to it. So we're going
+
+to do the same thing now. Um and actually before I move on, if we render this right now, it's the same plot we had before. Well, with the color I added. Um but now we're going to go line by line and manipulate this chart. And the first thing I wanted to do just to make it a little nicer for a stakeholder is set a background color to make this chart pop a little bit. Be like this is the chart
+
+area we're working with. We can render after each line and see how it's updating. By the way, this is the hex value for this creamy buttery yellow in the background. I looked these up because they seemed like pleasing colors to me. If you wanted, you could also use regular names like this, although that's probably not a color I will stick with. Um, oh, sorry if you can hear my cat. Okay,
+
+so we're chipping away one step at a time, but now we're going to start thinking about our data visualization best practices. So, what is this chart missing? What do we need to include in this chart? First thing that's standing out to me is a title. What is this chart trying to convey? And to set a title, if you're new to this object-oriented idea, think to yourself,
+
+what needs to happen here? What needs to happen here? What needs to go at the beginning of this line? That's right. We're working with ax again. This is saying for this chart give a title. And
+
+now if we render it, we have a title with our movie. Right? Um so the next thing is in data visualization there's a thing called the data to ink ratio which means that you want as much data as possible for the ink that is used and ink is any any mark on the paper and one mark on the paper that we don't need is this black border around the chart. It's not necessary. So, Mattplot Lib includes a way to remove these borders, which they call spines. And so, what we're going to do
+
+is once again, we're going to be working with ax dot because we're working in this figure. And we're going to use the spines method. I'll explain this in a moment. And we're going to make those not visible. But we have four spines. We have a top,
+
+we have a bottom, we have a left, we have a right. And the cleanest way to write this is a quick little loop. So for for every spine in our list of all four of them, make it false. Make it not visible. You could do ax spine top set visible false.
+
+ax spine right said visible is false but this is a non-repetitive way to write the same thing so let's once again render what we have uh oh ah what did I miss the end of my four statement here we go and now we can see that we don't have those black borders around our chart okay uh next thing I wanted to do is because the most challenging Part of this graph is explaining to the audience that small bars are good. And right now one principle in visualizations is the visual hierarchy where things at the top human nature says it is more important. And actually that's not the case here. So how can we get episode 5 to the top? We're going to use an invert axis method to flip the order of our y-axis values. So, ax invert axis or invert yaxis,
+
+my apologies. And now when we run this, we see episode 5 at the top and episode 3 at the bottom. So already um our knee-jerk reaction seeing this visualization is episode 5 is the first thing we're seeing. But it's still not 100% clear that it is the highest ranked, right? The one that people like the most. And so sometimes in visualizations, the best way to convey to
+
+your end user that something is important is to literally tell them with some text. So once again using our object-oriented notation here with a text method and I am saying lowest ranked is the most liked. Uh I'll show you what this looks like. The forward slashn character in Python actually in most of programming means it's a new line. So that's why the word liked appears on the next line down. Um and so now we're g giving information about episode 5 saying hey
+
+this is the most liked episode. A question I got in a previous webinar was how do you pick these values? Trial and error until you find something that looks right. What these values do? This is the x value. This is the y-value. So if we update this, I don't know, it is something like one,
+
+it shifts down. So I just did a lot of fiddling around to find the values that I like the best. And that's how that works. [Music] Okay. Now, there's one final thing missing from this visualization. One final thing missing from this visualization.
+
+Every vis visualization in a Jupyter notebook ought to have it for best practices. PLT show. Wait, and I thought we were using object-oriented. Why aren't we using ax here? This renders the entire thing. It is telling mplot lib that we are ready to display. And if we just used ax,
+
+it wouldn't it wouldn't display everything for us. Um, but it's already displaying. Why do we need it? You might be asking yourself. It does display, but it's not perfect.
+
+It gives us some weird remnants like this. So, PLT show cleans it up and user ready. Okay. Um, I think I'm trying to judge our time here. No, we have time. We have time. So, the next
+
+visualization is very similar to this one, so I won't spend a lot of time on it. It's how many people have seen each movie. We've looked at which movies are the most liked and least liked, but now have people seen the movies in similar amounts. And so we're going to follow a similar method from before, but instead of using a mean method like we used when we were finding the average ranking of each movie, we're using a dotsum method because thinking back to this question set, it was have you seen this movie? True or false? Have you seen this movie? True
+
+or false? And because true values correspond with one and false values correspond with two, taking the sum will add up all the TRS together for us. And when we look at it, it seems like in general values are pretty consistent, although maybe two and three are a little lower. But as always, seeing a set of numbers like this is not quite as simple as seeing it in a visualization. I'm going to copy and paste a big chunk here. Don't panic.
+
+It is nearly identical to the work we just did with our ranking graph where the first thing we do is we initialize our objects. We set our canvas, our figure, and we set our plot. Um, rankings. I'm going to remove that for now. We don't need it right now. And I
+
+specified some colors for the bars. I specified a color for the background. I added a title. I added an X label this time. I don't think we did that before because I thought h maybe I should have added a ranking here actually. That's your homework.
+
+Add a ranking. Um and then once again we are removing the spines and inverting the axis. And we can see here um I decided to keep things in movie chronological order to look at trends that way. So there is not necessarily a right or wrong way to do this. Maybe for this visualization, you want to keep things in movie order as well. So this was personal preference how
+
+I chose to do it. If you want to sort these least to greatest, go for it. All right. Um, so the final graph we're doing is very, very cool. So, let's spend the most of our time here. And this graph is going to be basically the same two charts we've made,
+
+but separated by gender. And we're going to do a bar chart that has uh sidebyside bars for male versus female. So, it's very clear to compare the two in the same chart area. And this is by far the most complicated cart complicated chart that we're doing. So the first thing we're doing is we're going to create two smaller data frames, one for males and one for females. This does represent
+
+all of the data points in this data set. Um where we're filtering on the original data where it is male and we're calling that the male's data frame. And then the same thing for our female filter. We're calling that females. Uh if you wanted to quickly make sure that worked, you could do a display or a print method here. Display, in my opinion, it just looks a little nicer in Jupiter.
+
+It it has a very similar functionality as print. Um and we can see, let's do a quick peek at the gender column. Yes, gender. male, male, gender, female, female. So, we can be pretty confident that our filter worked here. All right. So now we need to do the same same things we did before
+
+where we're going to look at our mean rankings and also look at our total count of who's seen it and who's not. But we're going to do this on our individual male female data frames now. So instead of rankings average for everything, we're going to do male rankings, female rankings, but still using the mean here. And uh note that I'm not using sort values because if these two sort in a different order, it's going to be more complicated to put into a chart together. So I left sort values off here. Now we're going to do the same thing for our if you've seen it or
+
+not. Remember sum because boolean values seen it yes true false no um is going to work best with account. And if you're following along with my gist I do some displaying of these values here. Um so I guess we can do that. It's not a ton of extra time. So for I I shouldn't have called this
+
+means I I should call this for um gender gender stats in the list of variables we just created. Display those stats please. And this is just a very quick way to check that things have worked. And we can see we can see that in general um looks like male ranking averages are a little u more harsh for episode 1, two, and three than the female rankings are. Uh looks pretty similar for episode four, five, and six. Um and then counts in general look like males have seen more of the
+
+movies than females. But let's visualize this. And this is by far the most complicated visual we're doing. So, let's get started. The first thing we're going to do, and I'm actually going to leave room for something we're going to add in here, but we are initializing our objects, our canvas figure object, and our axis object. But but we're going to do side by side charts, which means
+
+we want two charts um and only one row of those charts. So in subplots, if you specify numbers, this means we're going to have one row of charts, but two columns within that row. So each each cell that's created there will have room for a chart. and I'll talk about how we can reference those in a moment. Okay, so the first thing we're going to do is we're going to create a bar chart um that has bars for males and bars for females. And to do a bar chart with like sidebyside values,
+
+we are going to specify some things here that I'll explain. We have kind of a just a list of numbers. That's why we imported numpy. We have a height and we have an offset that is the list plus the height. So we are using something slightly different now. Slightly different where this is saying in the
+
+first of our two plots. Remember Python is zero index. So zero is going to be the first thing. So in our axis object looking at the first part of it, we're going to make a horizontal bar chart. And we're going to use the list 1 2 3 4 5 six that we created here across the bottom. And then for
+
+our values, we're going to use our male average rankings set a color. And then the height says the the height of the bar. Um, and I'll explain why we're doing this in a minute. So, if we render this, this is where we're starting. This is where we're starting. And actually,
+
+before we do this, let's comment that out. This is our two charts we're going to be working in. And the very first thing we're painting onto our first axis object part here is the male rankings. Um, but the next part is where the magic starts to happen. We are also going to be using the female rankings in this same chart here. In this same chart. So, we're still referencing the
+
+first chunk of our axis object, but here's the difference. We are using the offset we created, which is the initial number, but plus the height of the bar. So, everything is going to shift a little bit in this chart. All right, I'll give a second for that to digest. And now when we run this, we have side by side bars for our males and our females. The hard part is done. That I
+
+think in my my opinion that is the largest logic hurdle to accomplish in this project. All right, the next thing we're going to do is a little bit of work for our stakeholders. We're adding some colors. We did this before. We're adding a title. We did this before. The difference
+
+being we have to specify which of our charts that this goes with. So if we start rendering this, we can see that now we have movie rankings by gender. We have a background color um for our X, our Y tick, excuse me, for our Y tick because we did do this offset thing. We have to be a little clever here and say this isn't very valuable like for a stakeholder. What does zero mean?
+
+What's what's one? What's two? What's three? What's four? What's five? And remember these
+
+come from our values here. Um, so I gave it a list episode 1, episode 2, episode 3, episode 4. But if we try to do that without this line, we get an error because it doesn't it doesn't know like the correct placement of these things because we offset it. And so this says that the Y ticks should go in these particular locations. And then the labels know, oh yeah, okay, I know where I am supposed to sit on this chart. So now when we start rendering it,
+
+uh, we start seeing these titles on there. Uh, I I'm annoyed by this. So I'm going to start adding in our PLT show at the bottom here to get rid of it. Okay. Okay. So we are
+
+cleaning up. We're cleaning up. Um, what else do we need? We need an X label here. We didn't do anything weird to the X label, so we don't need to specify ticks or anything. Uh, but
+
+now we have average ranking. What else do we need? Uh, the the thing that's screaming to me that's needed here is a legend. These kind of double bar charts are great, but what do the bars mean? So, let's add in a legend. And this is why we needed to specify variable names for our horizontal bar
+
+chart pieces where we're saying for our legend in this part of our object. We are looking at the first bit of our male bar and the first bit of our female bar and then we are calling them men and women. This is telling it where to go. Okay. Okay. We are getting somewhere now. Now we have a legend
+
+that is going along with our first part of this sideby-side chart. Um and then because episode one comes chronologically, let's invert these axes. So episode one comes first. Okay. Okay.
+
+So, pause a second to digest. We're doing the exact same now. Same thing now for this second part of our axis object. And for time, I will go a little more quickly here, but very very similar process to before. But notice the difference.
+
+Notice the difference because we're working on this second chart space. Now we're no longer working in the first chart space. So we're referencing it appropriately. Uh we are using our total scene series, our total scene series. We're still using the same offset method to stack or not to stack our bars, but to put our bars one on top of another. Um,
+
+and I called this male two bar and female two bar because, well, male bar and female bar were already taken. We set a background color. We set a title. And then remember the title is specifically for this part of the chart. Um, we don't need Y tick here. Um, and I'll explain
+
+why in a moment. Actually, let's remove that for now. I'll we'll see what it looks like. And now we have this this chart. Um, and the reason I set X tick to or set Y tick to nothing is 0 1 2 3 4 5. We don't really need those. We already have that information here and it it matches over.
+
+So this is user. Oh, clicked the wrong thing on my keyboard. Th this is your preference, but I thought for the data to inc ratio, we didn't need that information because your end users can kind of parse out the episode one spans across both images. Feel free to disagree with me and make your visualization different if you want. Okay. Now,
+
+what's the final thing that we need to clean up on these graphs? In my opinion, it's the spines. So, because we're using multiple charts within our axis object, we need to tell it for every chart within our access object, we're removing those fines. We're removing those fines. And now when we run it, we have a pretty nice looking visual that is nearly ready for a stakeholder. Um, it's the end of what I have prepared, but I showed this to my husband and he
+
+suggested or he was confused by the rankings. He said, "Wait, why are episode five and six, which are objectively the best in the Star Wars series?" He's a Star Wars fan. Why are they ranked the lowest? And so this could be an opportunity to add in some kind of text box similar to what we did up here to clarify to your end user that low ranking and small bars is actually good here.
+
+Um, and yes, this is great for a stakeholder to look at, but you always want to give your stakeholders the TLDDR. And you can do that in bullet points. You can do it in a short sentence depending on your presentation format. So, let's synthesize these graphs. Episode 5 was the highest rated amongst both men and women because it has the lowest bar for movie rankings. Uh,
+
+and the ranking differences was pretty negligible across the board. Like men and women ranked movies similarly with the exception of episode 4. It looks like in general men liked episode four more than women did. Uh, what else do we have in our little TLDDR here for our stakeholders? More men have seen each of the six films than women in the survey. And the most popular movies to be seen
+
+um were episodes five and six. So if you give this information to a stakeholder, they'll understand exactly what the purpose of your analysis is even if they don't want to comb through all your code. All right, so homework next steps. If you like what we did today, I have some more ideas for you. Try to look at more of the data. Um, there's information in
+
+the original data set about respondents education levels. Um, there's Star Wars specific questions about who shot first, which is kind of a Star Wars meme. Are there characters that people love across the board, hate across the board, or who are controversial? This could be an interesting question to be clever with. How do you analyze this? And also, is there a correlation between
+
+Star Wars fans and Star Trek fans? Because we do have that information in our analysis. And now, um, I'm looking at my clock and I believe we're technically at time. So, if you need to hop off, thank you for joining, but I will stick around for some questions. So, let me dive into the Q&A now.
+
+And if you do have a question for me, um, I'm going to cut off the questions I'm answering live at the 32 mark, so you can get your question in before then if you want, and I'll try to get to it. Uh, an anonymous attendee asks, "Would you be able to put this project on a resume after?" I think that this project has the potential to be a great showcase for your data visualization in Python skills. I think that as it stands in its current state, it's not ready for a resume. However, if you put this on your GitHub and maybe do a couple of the next steps that I suggested here and cleaned up your notebook, you want to clean it up and your your resume doesn't need to include this type of thing.
+
+You want to include your thought process and your logic if you're going to put this in a portfolio. But yes, if you are preparing for a data analytics job, I think this would be nice. Uh Zahabia asks, you don't want to use Jup Jupiter. Um we have Python 3.13 and VS Code, but you'll do it in a collab notebook. Yes, use Google Collab. It is great for
+
+that particular case. Like if you don't have Jupiter locally but you want to um work on a different environment in a browser, Google Collab is great for that. Um an anonymous attendee asks, "Why don't you need an object AX and a separate object AX1?" This actually comes down to syntax preference. Um let's see if I can remember my syntax preference here. [Music] I think it's possible to specify here AX1 and AX2. Um, and then this
+
+will correspond with the first and second bits. So you could do that and you would just need to change things here to align. Um, and that that's just a preference. Both work the exact same way. But that would take a bit of refactoring for me to do right now, so I won't do it.
+
+Okay. Um, and Zahavia asks, "You downloaded the CSV. You're not sure if it will save or not." Um, yes, you can download the CSV and then it's yours to to work with wherever you want. Um, the one thing is when I started working locally with projects or in Google Collab like you said you wanted to, make sure that your CSV file is in the same subdirectory or location as your notebook. It will save you headaches. Just trust me on that. Uh, especially if you're on
+
+a Windows machine. My fellow Windows Windows users, you may know my pain.
+
+Okay, Monica asks, "How to differentiate between axes and figure level plots? How to know which is to be of use and when?" That's a great question and actually one that I clarified before our presentation um when I was preparing yesterday because yeah, why do we specify two things if we only use one ever? And the fake object is kind of like if you imagine an artist working with a canvas. The figure is the painting size. It is the painting name. It is the big picture type things.
+
+Um whereas the axes object or objects are the components within that painting. So it's the guy going like this from the screen. Like that's your axis object. Um but it's still in the figure, but painting the screen figure doesn't change the canvas object. Um and vice versa. I don't know if
+
+that analogy worked, but basically if you're trying to manipulate your individual charts, that's your axis object. If you're trying to manipulate the entirety, that's your fig object. Um, let me see. I can pull up some methods here. I don't work with the figure name a ton, so I did take some notes here.
+
+Um, so for some things like overall layout, so for example, this Oh, no. We can't do that before we actually create the object, can we? Let's put it let's put that here. This line says that for the entire figure keep everything really tight and compact together. And if we had specified this just on an axis, it would keep everything in the particular chart tightened together, but not necessarily the entire figure. Uh I don't think it actually makes a ton of difference for
+
+this chart, but sometimes it does. Sometimes it does. So hopefully that answered your question, Monica. It's definitely a nuance, but um and actually, you know, let's use a little bit of AI support here because I can't remember the name of the the method. What is the fig method for setting a background color? Oh, not fix. It's going to give me a nonsense answer here.
+
+in mattplot lib fig, ax notation. What is the fig background method? Because it does vary uh face color. Okay. So now if I do fig set base color and I let's just do something nonsense like black. Um now if I run this
+
+this is the figure. The figure is is everything that we just colored black. and our ax objects are the individual components within it. So that might be a good demonstration of the difference there. Okay, trying to answer questions. Um
+
+Sach asks, "How did I find that diving into gender stats is a way to move forward in the analysis? There are columns like age that could be explored." Yes. How do we decide which column you should explore next? wherever your curiosity takes you. Um,
+
+I think the data quest project suggests looking at gender I believe. So that's where I got that idea from. But as somebody who is familiar with Star Wars, in American culture at least, uh it is stereotypically something that guys enjoy more than women. So I thought it could be interesting to see if that holds any like actual analytical weight to it. And it looks like it does a little bit. Um and yeah
+
+so for which column you explore next which question sparks your curiosity go for it um how did you have different values on the y ais side of the sideby side plots the way I did that I'm going to remove our black figure background here is with where did the line go right here it was my clever work around to not have any Y labels for our second chart here. Um, so I'm saying in this second chart, don't say anything for our X or sorry, our Y labels.
+
+Um, an anonymous attendee asks, "How would you annotate the disparity between episode 4 rankings between male and female?" It would be powerful to add a text label on that bit of the graph that shows the difference in values. You could do a text label, although thinking to data inc ratios. I don't know if this is a strong enough insight to warrant extra ink on the chart, if that makes sense. If you wanted it to be the focus of your analysis and really dive into episode 4 in particular, you could experiment with something like making all of the other bars grayed out. And the only bars that have color are episode
+
+4 because color is another way to draw focus in an analysis. And if you just have episode 4 bars colored and then your annotation explains why that would work really well. Uh where can you get the data set ginier? Right here in the data quest interface, you can download the CSV if you would like to or you can go to the 538 GitHub repository and look for the Star Wars CSV that way. Um, they have a GitHub repository.
+
+Yeah, if you go to 538 all words spelled out and look for their data repository, Star Wars Survey
+
+So, thank you all. I hope you learned something. This will be posted on YouTube in about 24 hours. So, have a wonderful day. Continue the excellent data work and I'll see you all next time. Bye.

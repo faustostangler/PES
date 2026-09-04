@@ -1,0 +1,74 @@
+---
+video_title: "Day 14: Multi-Modal AI Agent: Production Integration & Cost-Aware Routing"
+video_id: SbHm4SVVwok
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=SbHm4SVVwok
+video_date: 2026-08-29
+video_description: |
+  Lesson: https://aiamastery.substack.com/p/day-14-multi-modal-chat-agent-with
+  Full course: https://aiamastery.substack.com/
+  Website Link: www.systemdrd.com
+  
+  Six separate agent capabilities don't add up to one production system for free. Today we integrate a full week of work — chat, routing, code analysis, multi-modal classification, learning, orchestration — into one multi-modal chat agent that routes intelligently on cost, stays compliant, and survives real load.
+  
+  What you'll build:
+  
+  A three-layer architecture: Conversation Engine, Monitoring & Analytics, Performance & Compliance
+  A cost-aware model router that picks fast vs. quality models based on latency, budget, and satisfaction
+  Parallel security validation across text, image, and document inputs
+  An immutable audit trail feeding automated GDPR/CCPA/SOX compliance reporting
+  A continuous load-testing harness that catches bottlenecks before real users do
+  
+  This is Day 14 of the Hands-On AI Agent Mastery Course (Module 2), closing out Week 2: Production Integration & Monitoring.
+  
+  These are the same monitoring and cost-optimization patterns that keep production systems like ChatGPT and Claude responsive and accurate at enterprise scale — built here at a scale you can actually reason through end to end.
+  
+  #AIAgents #LangChain #PythonAI #AgenticAI #LLMOps #AIEngineering #SoftwareEngineering
+---
+Welcome to day 14, the last day of week two. Everything you've built since day eight has lived somewhat in isolation. A chat session here, a router there, a code analyzer, a classifier, an orchestrator. Today, all of it becomes one multimodal chat agent handling text, images, and documents at once while staying inside a cost budget and a compliance boundary the whole time. This is the pattern behind production systems at Microsoft, Google, and Anthropic. The
+
+same monitoring and optimization work that keeps a system like ChatGPT responsive during a viral moment or keeps Claude accurate under heavy enterprise load. By the end of today, you'll have a single agent that absorbs everything you built this week and proves it can hold together under conditions a lot closer to production than anything you've tested against so far. Let's build it. Quick orientation. This is day 14 of 30 and it closes out module two, week two, production integration and monitoring. Every day
+
+this week added one capability in isolation. A chat architecture, conversation routing, code analysis, multimodal classification, learning and compliance, tool orchestration. Each of those worked fine on its own, in its own lesson, against its own test cases. The problem today solves is what happens when they all have to work together at the same time, under real constraints. A multimodal agent that has to process text, images, and documents concurrently without security overhead slowing down the user experience, without cost creeping past budget, and without falling over the first time real traffic shows up instead of a single test conversation. That's genuinely a
+
+different engineering problem than getting any one piece to work alone, and it's exactly why this gets a dedicated lesson instead of a footnote tacked on to day 13. Most tutorials stop at the toy chatbot stage. One user, one message, one response. Production systems need to handle millions of simultaneous conversations while tracking every interaction for compliance, optimizing cost in real time, and holding sub-second response times even at peak load. Today is where you stop approximating that and start actually building toward it. Here's the
+
+mental model before any code. Every conversation in this system passes through three stacked layers, not one. Layer one is the conversation engine. It's multimodal, so it's handling text, analyzing images, and extracting from documents. And it streams its responses so the experience feels instant to the person on the other end. Layer two is
+
+monitoring and analytics, response times, token consumption, satisfaction scores, and security incidents, all tracked continuously. Not sampled occasionally or checked after the fact. And layer three is performance and compliance. This is where model selection, response caching, and resource allocation get decided in real time. And where GDPR, CCPA, and SOX requirements actually get enforced rather than just documented in a wiki somewhere. The key insight holding these
+
+three layers together is separation of concerns done right. Streaming keeps the user experience instant, while security scanning, audit logging, and compliance checks all run alongside it in the background. Never blocking it, never skipped, never treated as optional under load. That separation is what lets you have both speed and safety instead of trading one for the other, which is the trap most naive implementations fall into. Hold this three-layer picture in your head through the rest of the lesson. Everything else is really just
+
+filling in the mechanics of these three boxes. Let's look at how the pieces actually connect end to end. Because a three-layer diagram is only useful once you know what lives inside each layer. The unified session layer is the foundation, a distributed session cache that ties every capability you built this week into one coherent graph per user, so nothing is siloed into six separate systems that happen to run near each other. The cost and performance router makes a real-time decision on every single request. Cheaper model or
+
+higher quality model, based on current load, remaining budget, and how satisfied recent users have been. We'll look at exactly this router's code in a minute. The audit and compliance trail turns every action, user, system, or administrative into an immutable structured record, which is what makes automated GDPR, CCPA, and SOX reporting possible instead of a manual scramble every time an auditor asks a question. And the load test harness runs continuously, simulating real user patterns and peak load to catch bottlenecks before actual users ever hit them, rather than discovering them during an incident. Put together, the target numbers here are concrete, not aspirational. SUB 500 ms response time
+
+at the 95th percentile, roughly a 30% cost reduction from intelligent routing alone, and 100% of interactions scanned for security with essentially zero false positives. Those are the numbers this architecture is specifically built to hit, and they're worth writing down before you start implementing, because they're what you'll be testing against later today. Now the code, a simplified but real version of the cost-aware router at the center of the performance and compliance layer. The model tier enum gives you two concrete options, a fast cheap model and a higher quality one, and routing metrics carries exactly the three signals the router needs: current P95 latency, remaining cost budget, and recent user satisfaction. Nothing extra, nothing speculative, just the three numbers the decision actually depends on. Look at the select_model
+
+method and notice the order of the checks, because the order is the actual design decision, not an implementation detail. First, if the cost budget has hit zero, you fall back to the fast model immediately, no exceptions, because you cannot spend money you don't have. That check has to come first, or everything downstream is negotiating with a constraint that's already been violated. Second, if P95 latency is already over your ceiling, you also fall back to fast, because a slow high-quality response that busts your SLA doesn't actually serve the user any better than a fast adequate one. Only after both of those hard guardrails pass, do you even look at quality. If
+
+recent satisfaction has dropped below 0.7, that overrides ordinary cost pressure and routes to the quality model anyway, because losing user trust costs more long-term than the extra API call. Read that ordering carefully when you write your own version. It's the actual policy encoded as a sequence of if statements, not a black box. And every one of those four branches represents a real trade-off someone had to decide on explicitly. This lesson's security
+
+section is about handling three input types safely in parallel without slowing any of them down. And that in parallel part is doing more work than it sounds like. Text gets scanned for prompt injection attempts before it ever reaches the model. That's non-negotiable given how much of this agent's surface area is now conversational and open-ended. Images get analyzed for inappropriate or malicious content before they're processed at all, not after a result comes back and you're deciding whether to discard it.
+
+Documents get sandboxed before extraction happens, running through their own pipeline at the same time as the other two, not queued behind them waiting their turn. And underneath all three, every user action, system response, and administrative change becomes an immutable, structured audit record. Not a log line you'd have to grep through at 2:00 a.m. during an incident, but genuinely structured data built for compliance reporting and security forensics from the very start of the design, not added in as an afterthought. The parallel part matters
+
+as much as the checks themselves. If these three validation pipelines ran sequentially instead of concurrently, you'd be quietly trading away exactly the speed the streaming architecture in layer one was built to protect. And you'd end up with a system that's secure, but slow enough that users notice and complain. Let's be honest about what doesn't get solved just by writing better code because production systems live with these trade-offs permanently, not temporarily. Cost versus quality is a live trade-off, not a one-time decision. Route too
+
+aggressively toward the cheap model and you'll erode user satisfaction faster than the savings justify. And that shows up in your metrics dashboard well before it shows up as an explicit complaint in your support queue. Synthetic load testing can pass cleanly and still miss real bottlenecks because real traffic is bursty and sometimes adversarial in ways a clean synthetic test rarely reproduces. Passing your load test is a milestone worth celebrating, but it's not a guarantee about Tuesday afternoons actual traffic spike. Streaming versus security is a genuine permanent tension.
+
+Streaming makes the experience feel instant, but the background security scan still has to complete before you can actually trust what came back. So, you're managing perceived speed and actual safety as two related but distinct things, not one problem with one fix. And compliance overhead is real money and real latency, not a checkbox. Immutable audit logging on every single action adds storage and write cost at scale, and you need to budget for that explicitly in your infrastructure planning rather than discover it as a surprise line item on next quarter's bill. None of these four tradeoffs go away with cleaner architecture, more clever code, or a bigger budget. They
+
+get managed continuously with real metrics driving the decisions moment to moment, which is exactly what layers two and three of today's system exists to do. Five takeaways to carry past today, not just a recap of what's on the slide behind me. One, integration is its own engineering problem. Six working pieces do not average into one working system for free. The seams between them are where the real work actually lives, and that's where most of today's lesson time went. Two, route by measured signal, not
+
+by a model choice you hard coded at deploy time. Latency, budget, and satisfaction should decide continuously in production, not you deciding once in advance and hoping conditions don't change. Three, security scanning runs alongside streaming, never after it. Treat user experience and safety checking as genuinely parallel processes, not a sequential pipeline where one waits on the other. Four, load test continuously, not once before launch, because traffic patterns shift over weeks and months. And yesterday's
+
+measured headroom is not a promise about today's actual load. And five, audit logging is a day one design decision, not something you bolt on the week before a compliance review. Retrofitting it after the fact is dramatically more expensive in both engineering time and missing historical data than building it in from the very start. That's week two complete. Next time, on day 15, you're opening module three and week three, LLMOps and advanced orchestration. It's
+
+a bit of an inversion of everything you just did. Today you brought six separate capabilities together into one integrated agent. Day 15 starts splitting work back out across multiple specialized agents, each with its own capability-based access controls and end-to-end encrypted communication between them. Multi-agent systems bring a genuinely different set of security questions than a single integrated agent does, and that's exactly where we're headed starting tomorrow. A few pointers before you build this yourself. Today's
+
+lesson and the course home page are linked below along with a pointer back to the full week two arc. If you want to review how each individual piece, chat, routing, analysis, classification, learning, orchestration led directly into today's integration work. If you're only going to review one prior day before building this out, make it day 13 since the orchestration engine from that lesson is exactly what the cost-aware router in today's code is coordinating underneath the surface. That wraps day 14 and week two as a whole. If you built along this week, you now have one multimodal agent that routes intelligently on cost and quality, logs everything for compliance, and has actually been load tested against realistic traffic patterns, not just verified against a single happy path demo conversation. Links to today's
+
+lesson and the full course are on screen. See you on day 15 for the start of module three.

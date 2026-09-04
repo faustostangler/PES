@@ -1,0 +1,102 @@
+---
+video_title: "How Hackers Get Into Your PC on Public Wi-Fi"
+video_id: nnbB4-KlEVA
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nnbB4-KlEVA
+video_date: 2025-08-04
+video_description: |
+  Public Wi-Fi feels harmless, until someone at the next table starts scanning for open Remote Desktop ports.
+  
+  This video is for educational and awareness purposes only.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker OS
+  - Windows 10 : Victim OS with RDP enabled
+  - Hydra: Brute-force attack tool
+  - SecLists : Username and password lists
+  - Nmap: Network scanning tool
+  - xfreerdp3: RDP client for Linux
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  00:28  Setup: Attacker and Victim
+  01:52  Scanning the Network with Nmap
+  04:12  Preparing Hydra with SecLists
+  09:27  Running the Brute-Force Attack
+  11:14  Successful Login & Remote Access
+  12:22  How to Protect Against These Attacks
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #rdp #hacking
+---
+You are sitting in a coffee shop connected to a free public Wi-Fi. You open your laptop. So does everyone else around you. What if someone at the next table was quietly scanning the network looking for open doors like remote desktop protocol on a vulnerable Windows machine? With a powerful tool called Hydra, the hacker can launch a brute force attack guessing both your username and password until he break in. In this
+
+video, we will step into the shoes of that ethical hacker. Our ethical attacker is Kim. He's running Kaye Linux, the go-to operating system for penetration testing. His target is a Windows 10 machine used by Sally, who unknowingly has remote desktop protocol enabled. Let's check on the Sally machine what she uses username. To do
+
+so, we open the command prompt and type who am I? And here is the result. We can see that the username is Sally and the computer name is desktop W10. Next, let's confirm that remote desktop is turned on. This is the service Kim will try to attack. We open the settings
+
+menu. Then we type remote in the search bar and click on allow remote access to your computer. A settings window opens. Right here we see that allow remote connections to this computer is checked which means remote desktop protocol is active and accepting connections. In the computer name section we also see the computer name desktop W10 matching what we saw earlier with who am I. So
+
+let's recap. Sally's machine has remote desktop protocol enabled. username is Sally and she is connected to the same Wi-Fi network as Kim, just like it might happen on public Wi-Fi at a cafe or hotel. Now that Sally's machine is exposed, let's switch over to Kim's Ki Linux system and see exactly how he uses Hydra to launch a brute force attack, uncovering both Sally username and password to break into her computer. Kim doesn't know what IP address the network has assigned to Sally's machine. That's
+
+the first thing he needs to figure out. All he knows is that she's using a Windows computer. He recognized the familiar desktop interface on her screen from across the cafe. To begin, Kim checks his own IP address to understand the subnet he's connected to. On his Cali machine, he opens a terminal and types IPA.
+
+This command lists all his network interfaces and their IPs. He sees that his machine has been assigned the address 192.168.1.25, 25, meaning he's on the 1 192.168.1.0/24
+
+subnet. Now that he knows the subnet, Kim's next move is to scan the entire local network for devices with remote desktop open. Remote desktop runs on port 3389. Kim scan the entire local network for devices with remote desktop open. That means port 3389 opens using NAPAP, a powerful network scanner. The command he
+
+runs is nap-p3389-192.168.1.0/24.
+
+This tells NAP, "Scan the entire 1 192.168.1 network and look for systems with port 3389 open the remote desktop protocol port." In a few moments, the results come in. And there it is, a machine on the network with port 3389 open. As you can see, N MAPAP discovered
+
+all three devices connected to the network. The router or gateway, which has port 3,389, the remote desktop port closed. Kim's own Kaye machine, also with port 3389 closed. And most importantly, a Windows machine with port 3389 open. This is almost certainly Sally's computer. Now,
+
+Kim knows Sally's IP address. That was the crucial first step. In fact, for a remote desktop brute force attack using Hydra, that's the only piece of information Kim absolutely needs from the victim, the IP address of the machine. So, what exactly is Hydra? It is a powerful network login cracker, a tool that can automatically try millions of username and password combinations against a target service like remote desktop, SSH, FTP, and more.
+
+To do that, Hydra needs two things. a list of usernames to try and a list of passwords to try. Hydro will take each username from the list and pair it with each password one by one and try to log in. If the target doesn't block or throttle those attempts, Hydra will eventually find the correct credentials if they're in the list. Think of it like trying every possible key on a key ring.
+
+Hydra just does it lightning fast over the network and completely unattended. Before launching the attack, Kim first checks if Hydra is installed on his Kali Linux system. He opens a terminal and simply types Hydra. And there it is. Hydra is installed and ready. If we scroll up, we can see a
+
+usage guide with examples. Let's take a quick look. We can see that Hydra uses the lowercase L flag for a single username or uppercase L to supply a username list. It also uses lowercase P for a single password or uppercase P for a password list. The lowercase and uppercase options let us perform targeted or large scale brute force attacks. If we scroll down, we even see
+
+a complete usage example in this case for FTP. That's exactly the syntax we'll use, but we will adapt it for RDP instead of FTP. So to run Hydra effectively, Kim needs two things. A username list and a password list. A popular resource for these is called SEC lists. A massive
+
+collection of realworld usernames, passwords, and payloads gathered from penetration testing, default credentials, and leaked databases. Kim checks whether seclists is already on his machine using the find command. Typically, SEC lists is located in share folder or sometimes under word lists. As you can see, seck lists is not installed. So Kim installs it. First he
+
+do pseudoapp update to update the package index. Then he installs seclists with pseudoapp install seclists. Once installed, seclists will be installed located in the word lists folder. And there it is. It is now installed. Let's explore it. As you can
+
+see, it contains several folders, including those for usernames and passwords. These folders hold various lists of common usernames and passwords. Let's explore the usernames folder. It contains several text files including common adminbased names and top usernames short list. The most comprehensive one is zato net 10 million usernames, a massive list based on real world leaked data.
+
+Let's take a quick look at it using the cat command. As you can see, the list is extremely long. We stop the cat command and check how many usernames it contains using the word count command. It contains over 8 million entries, far too many for our demo. Instead, we'll use a much smaller file, namely top username shortlist. Let's see how many
+
+usernames it contains. Just 17 entries. Perfect for a quick test. If we open it with cat, we notice that Sally isn't there. Let's pretend Sally is in the list by adding her manually.
+
+We open the file with Nano and add Sally. Actually, there's no need to include /S. Just Sally will do it. And voila, Sally has been added. Next, Kim heads over to the passwords folder to find a good password list he can use. Inside, there are dozens of
+
+useful files. One important subfolder is the leaked databases subfolder. It contain real world passwords files gathered from actual data breaches. We recognize well-known files like RockU 5, RockU 10, Adobe 100. For our demo, we'll use Rocku05, a lightweight file with just a handful of extremely common passwords.
+
+Let's preview it with CAT. It includes predictable password like 1 2 3 4 5 6 ABC 1 2 3 I love you or monkey. Now we are all set. Kim has a username list, a password list, and the target IP address from his earlier endmap scan. Time to launch the brute force attack with Hydra. Let's recap. Kim noticed that
+
+Sally was using a Windows laptop. And through his end map scan, he found a device on the network with port 3389 open. That's the port used by remote desktop protocol. Based on this, he is confident that this device is Sally's machine. Now, Kim wants to launch a brute force attack to discover both the username and password that would allow remote access to her PC via RDP.
+
+To perform the attack, Kim uses the powerful tool Hydra. The command he runs is Hydra T4ve. Capital L followed by the username list, capital P followed by the password list, then RDP/ the IP address of the victim.
+
+T4 tells Hydra to run four login attempts at the same time in parallel. This makes the attack much faster compared to trying one password at a time. V enables verbose mode so we can see each attempt as it happens. F tells Hydra to stop as soon as it finds the correct username and password. This saves time. So let's run Hydra and see
+
+what happens. As you can see, Hydra is now testing every combination of usernames and passwords from the list we provided. For each username, Hydra tries all the passwords one by one. Behind the scenes, Hydra is trying to log into the target machine using each set of credentials. If any combination works, Hydra immediately stops the attack and shows us the valid match. Hydra shouldn't take
+
+long to finish since both our username list and password list are relatively small. Just 19 usernames and 13 passwords. That's a total of only 247 possible combinations to try. And boom. After a few attempts, it finds a working login. It seems the username is Sally
+
+and the password is 1 2 3 4 5 6. One of the most common passwords in the world. Now, let's try to remotely access Sally's machine using these credentials. To do that, we'll use a tool called Xfree RDP3, a lightweight RDP client for Linux. Here is the command Kim types.
+
+Xfree RDP3/U colon the username /p the password /v colon the IP address of the victim. When we run this it is asked if we trust the certificate. We type yes. And just like that the connection is established and a remote desktop window pops up. Kim now has full access to Sally's Windows desktop right from his Kelly Linux terminal. He can open
+
+Windows Explorer, browse her files, install programs like key loggers or remote access Trojans, or even monitor everything she does in real time using spyware. And that's it. This is how hackers can break into an exposed Windows machine using brute force attacks over remote desktop protocol. Remote desktop protocol is incredibly convenient, but also incredibly dangerous when left unprotected. Tools like Hydra show just how easy it is to guess weak or reused credentials unless you take the right precautions.
+
+Here are a few best practices to protect against brute force RDP attacks. Disable RDP if you don't need it. Use strong, complex passwords. Enable account lockout policies to block repeated login attempts. Use multiffactor authentication.
+
+And finally, monitor logs for suspicious login activity. If you found this video helpful, educational, or eyeopening, hit that like button, subscribe to the channel, and let us know in the comments what topic you'd like us to ethically hack next. Until then, stay safe, stay curious, and happy ethical hacking. Bye-bye.

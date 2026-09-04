@@ -1,0 +1,102 @@
+---
+video_title: "The Keyboard IS the Computer! (Pi 500)"
+video_id: 5YfJWYELA3k
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5YfJWYELA3k
+video_date: 2024-12-09
+video_description: |
+  Raspberry Pi just launched the Pi 500 and a new Monitor. A big feature is missing, but maybe there are some clues as to why hidden inside...
+  
+  Mentioned in this video:
+  
+    - Raspberry Pi 500: https://www.raspberrypi.com/products/raspberry-pi-500/
+    - Raspberry Pi Monitor: https://www.raspberrypi.com/products/raspberry-pi-monitor/
+    - Level2Jeff Pi 500 Teardown: https://www.youtube.com/watch?v=omYWRb1dLA4
+    - Level2Jeff Pi Monitor Teardown: https://www.youtube.com/watch?v=CnBu1wuoWew
+    - sbc-reviews Pi 500 test data: https://github.com/geerlingguy/sbc-reviews/issues/60
+    - Dual display desk clamp mount: https://amzn.to/4f6riOU (affiliate link)
+    - 3D printed Xbox One Controller stand: https://www.printables.com/model/862581-xbox-one-controller-stand/
+  
+  Raspberry Pi sent the Pi 500 and Monitors seen in this video for review. They did not pay for this video, nor have any say in the contents. See my sponsorship policies: https://github.com/geerlingguy/youtube?tab=readme-ov-file#sponsorships
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Pi 500 is here
+  00:59 - External features and ports
+  01:40 - Pi 400 comparison and pricing
+  02:14 - Mini teardown and a missing feature
+  03:59 - Fanless (passive) cooling performance
+  05:35 - Dream Pi Dev Workstation
+  07:09 - Steam Link and casual gaming
+  07:55 - A hidden RP2040 for HID!
+  08:27 - Jeff keeps harping on the missing M.2
+  09:00 - Laptop? Pro model?
+  09:23 - Good first computer, wanted upgrades
+---
+This keyboard is actually a computer. Turning it to the back, there's all your computer-y ports. Even an Ethernet jack if you hate WiFi! It's the Pi 500. Raspberry Pi sent it to me to test, and it's missing something I think we all wanted to see: a built-in M.2 slot. I'll get to that later, when I tear it down.
+
+I'll also fail miserably at soldering on my own slot, but first, I wanted to see, using this plus a couple of Raspberry Pi's new displays, could I use the Pi 500 for web development? To test that, I mounted two Pi monitors on my desk, plugged them both into the Pi 500, and updated the code for my website. I ran Docker containers, updated my database, even ran a preview window in portrait. Then, to celebrate a successful deployment, I played a casual game of Halo Infinite over Steam Link. The Pi 500 is 2 to 3 times faster than the older Pi 400, and they fixed one of the major quirks: they finally put on a dedicated power key, where it belongs, in the top right. Oh, and the power LED turns red when it's off, which is also
+
+a good one. But otherwise, these things look pretty similar from the outside. On the back of the Pi 500, there are three USB Type-A ports. One is USB 2.0, and two are USB 3. Then, there's a microSD card slot, which is populated with Raspberry Pi's own A2-class
+
+card. It's fast enough, but it's only 32GB, so you might want to upgrade for more space. Then there are two micro HDMI ports. They work great at 1080p, but if you try two 4K displays, it can get a little choppy. And of course, micro HDMI is a little annoying since you need an adapter for practically every monitor on the market, even these Pi monitors. But next
+
+to them, there's a 40-pin GPIO port covered by a rubber gasket. If you want to tinker with electronics, you can still do that, though you might want to use an adapter like this one to make that easier. Finally, there's gigabit Ethernet and a physical lock slot. Externally, not much changed from the Pi 400, besides the USB 3 ports getting double the bandwidth. And the keyboard's a little different. It has a slightly better feel, and there's a dedicated power button, of course.
+
+Hiding inside is the faster SoC, faster WiFi, and double the RAM. There are 8GB in this one. But we're getting ahead of ourselves. The thing is, if this were the exact same price as the Pi 400, which was $70, it'd be an instant buy. But at $90, with the full kit with all the accessories also being bumped up $20, it's still a good deal, but it's just a little harder to recommend. Especially without the killer feature, an M.2 slot.
+
+But you might have noticed it looks like there's an M.2 slot inside, but there's not. I recorded a full teardown over on Level2Jeff. Go check that out after this video. But here, I'll get right to it. After spudging open all the snaps holding the shell together, you expose
+
+a giant heatsink. After removing the keyboard and the heatsink, the whole computer is this long, thin board. All the ports are in the back, and what's that? Looks like there is an M.2 slot. Well, sorta. There are *pads* for an M.2 slot, so it's obvious this design is
+
+intended to have that as an option, but the pads on here are empty. And looking over at the left side of the board, there's a lot more empty pads. Over here, there's a little PoE label, so maybe a new variant is in the works with PoE and NVMe? Not sure. But even if it's hard to get inside, I still would've loved to have that M.2 slot populated. And yes,
+
+I tried adding my own. I ordered a slot on DigiKey and hand-soldered it. Very poorly, I may add! But then, after seeing it not work, I realized the board's also missing all the power circuits required to get the slot working. I think, at least for many of us, the M.2 slot
+
+not being present day one is a tough pill to swallow. I thought it would be a given, so I asked Raspberry Pi the thought process behind not including it, and they told me, and I quote, "Those features are present to give us some flexibility to reuse the PCB in other contexts. We feel the feature set we've picked for the Pi 500 is the right one." It's unfortunate, but it's not a deal breaker. I mean, the Pi 400 I've been using as a home computer for our family is ripe for an upgrade. But not being able to go all out or be able to hack around with the
+
+high-speed PCI Express bus that's on every single one of these—just not exposed on the PCB—that is a letdown. But I am happy to see the RAM doubled to 8 gigs. Along with the new chip from the Pi 5 and the other small quality of life improvements like the power button, it is a substantial upgrade from the Pi 400. But the Pi 5 needed more cooling than the Pi 4. Can the giant passive heatsink on here keep up?
+
+First, I weighed the heatsinks on both Pi's, and they're pretty close to the same amount of metal. So I started benchmarking, even running hours-long tests to make sure it doesn't throttle under heavy load. And good news! Compared to the Pi 5, most performance numbers are identical, or within a margin of error. The only caveat is for something like the Linux kernel recompile, it's a little slower. I'm not sure why, though, because there wasn't any thermal throttling. But there was an 8% difference.
+
+But if you really want to make the system shine, compare it to its direct predecessor, the Pi 400. Just like the Pi 4 to the Pi 5, everything's like 2 to 3 times faster. And it's more efficient while being faster. Video encoding, LLMs, and especially my favorite, the Linux recompile, blow the Pi 400 out of the water. And there's some new memory settings coming soon in Pi OS that'll make those numbers all that much better. It'll make all the Pi 4 and Pi 5 lineup faster, but especially the Pi 5, CM5, and Pi 500.
+
+I wrote a blog post that goes in-depth, but this graph shows how the memory tweaks add up to a 12% performance increase and a similar efficiency gain. That's actually a better increase than overclocking. Unlike on the Pi 400, where I recommended an overclock to 2 or 2.2GHz, the default 2.4GHz clock speed on the Pi 500 is probably the best option.
+
+I tested a 2.8 and 3 GHz overclock, and the heatsink on the Pi 500 just can't cope beyond 2.8. The Pi 500 does run a little hotter than the Pi 400. You can see that on this graph.
+
+But using it a while and checking with a thermal camera, it's never uncomfortable. The big heatsink seems to do a good enough job spreading the heat out so there's no hotspots. So it's faster, and the passive heatsink still keeps it cool, but how is it using the Pi 500? First of all, Raspberry Pi is also launching their new monitor today. It'll be $100. So I thought, why not build the ultimate dream Pi developer setup?
+
+I put up two monitors, with one of them in portrait. The monitors have wall hangers, a handle, a stand, and VESA mounting options all built in. And all of them are okay, but I think the VESA mounting option that I used is more of an afterthought compared to just the other options. Having to plug in all the cables in the little pocket back here before screwing in the mount is certainly a little annoying. And at home, when I was testing the monitor on the family computer, that stand doesn't have a removable mounting plate, so it was even more awkward.
+
+It works out in both cases, but I think this monitor is best for a desktop or a place where you won't be changing out anything once you have it set up. Configuring multiple monitors is easy in Pi OS—something that I spent a bit of time with on my 6 monitor Pi 5 setup. Once it was all dialed in, I decided to do some coding on my website. I git cloned the code repository, set up my dev environment with a local database and web server, and started coding. Everything, including Docker, Sublime Text, and Firefox on the portrait display, worked without a hitch.
+
+And unlike the Pi 400, nothing was sluggish—at least when I was coding my site. YouTube video playback still isn't perfect in Firefox yet. And the other thing the Pi still struggles with is multitasking, especially if you're loading up a lot of stuff into RAM. So, for me, I wouldn't switch for my main workstation. I mean, I have a Mac Studio with 64 gigs of RAM!
+
+But if you forced me to, I could do all my coding work on the Pi 500. There are zero issues getting any of the software I use to run on this thing. But most people won't be plugging in two displays. One is plenty, and the Pi monitor fits better just sitting on your desk behind the Pi 500. There's even a little cutout for the cables to go under. So, I did that, and I installed Steam Link.
+
+If you're on the latest Pi OS, you can just apt install Steam Link, then launch it. After connecting it up to my gaming PC and connecting my Xbox controller over Bluetooth, I could jump right into Halo. And while I could tell there was an ever so slight amount of extra latency, I could still play at least on a casual level without a hitch. Steam Link is probably best for games where you don't need hair-trigger response time, but it was still plenty of fun on here. And the speakers built into the Pi monitor aren't incredible, but they work well enough in a quiet room.
+
+There's a headphone jack on the back, too, that mutes the speakers when you plug one in. Now, before I wrap this thing up, I forgot to mention, inside on the PCB, they're using a little RP2040 chip for the keyboard input. I cover all the internals on Level2Jeff, so go check out that video and subscribe to that channel, too. But that RP2040 was interesting because I've been seeing them pop up in more and more peripherals, like in the MNT Reform's Trackball module, or just this week in System76's new ARM workstation, the Thelio Astra. Even their fancy Launch keyboard runs now on a RP2040.
+
+So, it's nice to see Raspberry Pi also dogfooding their own microcontroller. What's not nice to see is that unpopulated M.2 slot. At least they include a faster A2 class memory card, but... I *kinda* get it.
+
+I mean, it is a bigger challenge than just slapping a connector on the board. If users expect serviceability, well, if I've proven anything, it's these clips that hold the thing together aren't exactly the easiest to deal with. I can imagine people snapping the case and ripping the keyboard connector right off the PCB, resulting in a lot of broken Pi 500s. But why not put it on the bottom with a little access door? That would have its own design challenges, but who knows, maybe a Pi 500 Pro?
+
+Or another idea, how about a Pi 500 laptop? Just make this thing a little bit longer, add a battery and a trackpad and a hinge, and boom, you have a cheap laptop. Well, again, it's more complicated than that, but I can almost guarantee someone's gonna DIY that thing. At $90, though, the Pi 500 isn't an insta-buy. But I think it'll still sell well.
+
+The full desktop kit, along with a Pi monitor, is just over $200. I think it'd make a great first computer for a kid, especially since they can tinker with GPIO. I mean, I even showed how I had no trouble doing my web development tests with containers and a second monitor, though it doesn't have the grunt to be a real workstation yet. I think if they had 16GB of RAM and NVMe, it'd be closer, but it's still a far cry from something like my M4 Mac Mini. But that thing doesn't come built into a keyboard.
+
+This is a quirky little thing. It's hard to categorize it. The world's moved on from Commodore-64-style computers decades ago, but Raspberry Pi keeps refining this thing, and while this model is held back a little, maybe there'll be another one. It's obvious the PCB is meant for something more. See the sbc-reviews repo on GitHub for all the test data I used in this video, and until next time, I'm Jeff Geerling.
+
+The power circuit's required to get the slot working. Woo! There goes that. I tested at 2.8 and 3 GHz. [bonk]
+
+That's, uh, that happens.

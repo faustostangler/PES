@@ -1,0 +1,83 @@
+---
+video_title: "Your favourite CLI just got better."
+video_id: pzRze1JZjsc
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pzRze1JZjsc
+video_date: 2025-06-13
+video_description: |
+  This video is kindly sponsored by DeepAgent:
+  https://deepagent.abacus.ai/txd
+  https://chatllm.abacus.ai/txd
+  
+  Atuin is an amazing history fuzzy finder with persistency, and is one of my most frequently used tools. Now, it got better: Atuin scripts brings a new feature, allowing for interactive automation scripts we all have lying around, and I've been using them constantly since the release.
+  
+  00:00 - Intro
+  02:27 - Sponsored Ad
+  03:27 - Setup
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.omerxx.com/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.omerxx.com/courses/second-brain-neovim
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Key caps are made by 3dkeycap.com
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+  🛜 Discounts on yearly Hostinger plans: https://hostinger.com/devopstoolbox
+---
+You know how sometimes you really need an old command from your terminal history, a login command, exporting an envir, uploading a file, or deploying to production? Well, hopefully not that one. Your options are hitting that up arrow until you find the right command. Or if you're a pro, you've been probably using CtrlR, allowing a search over your history. I've also seen too many CIS admins running history, GP, and their command as standard practice. But that's
+
+no way to work. The almost perfect solution is FZF. You get a fuzzy finder on top of your command history and it feels good again until it doesn't. With everything FCF brings to the table, it can't make your commands persist forever. Surely not across other machines. That's where you want your
+
+precious oneliners to show. For the past couple of years, I've been using a twin. A twin does it all. Persistency over commands in a local database, filtering garbage, tracking metadata like exit codes, but also syncing remotely if you want it. But a twin has its limits, too.
+
+these history commands in your history, finding them is a piece of cake. But utilizing them often involves making changes, updating parameters, ids, and others. And as much as I like vi mode in the terminal, this doesn't feel smooth. Well, not anymore. Atin recently published a twin scripts, a new way to make your oneliners are repeatable parameterized scripts. And it's smooth
+
+like coconut oil. Let's get into it. A short context for those who haven't yet tried the magic of a twin. It's a productivity machine for anyone working with a terminal, even if occasionally, and this includes pretty much every developer. It's open source, widely adopted, built in Rust, if that's an indication of anything, and packs a lot more than what you see on the surface.
+
+Almost 25,000 stars don't lie. The author's name is Ellie, which is a really cool developer that's actually doing a twin fulltime. At its core, a twin is your shell history. You know, the history of commands you run and then need to find later again. Instead of hitting that up arrow again and again, some of us improved things with FCF and I have a video about it up here. But a
+
+tune comes with persistency, which means your commands, how long they took, the working directory, even the exit code, are all recorded in a local SQLite database. It plugs with any shell, yes, even new shell. And to start, it requires a short oneliner. That's it. Once installed, a twin uses shell hooks to plug itself in. And my up arrow now
+
+pops a list with recent commands colorcoded by exit code, time it took, and how long ago it ran. But most importantly, everything searchable using a lightning fast fuzzy finder. Taking a short break for a word from today's sponsor. Tired of AI hype tool that just talk a good game? Need a companion that builds anything, not just a pretty landing page? This is Deep Agent by
+
+Abacus AAI, the god tier agent. Check it out at deep agentabacus.ai. Deep agent oneshots a complete website database included from a single prompt. But that's easy. Watch it build the game of
+
+life. Again, one prompt. The efficiency is quite remarkable. Doing research, need to present. Deep Agent excels at rich data analysis, creating interactive dashboards or generating thorough technical reports like this one on EVs packed with charts. Deep Agent Pro also
+
+connects to Google Workspace, automates Slack and Gmail, sets custom domains, hosts your apps, and performs agentic tasks that require browsing. It can literally do anything. As an engineer who values repeatable systems, I've tested Deep Agent and I'm genuinely impressed. This is the power of Deep Agent Pro. Sign up today. It's part of
+
+Chatalm Teams starting at $10 a month for the basic upgrade to pro for just $10 more. Visit deep agent.bakus.ai. The link is also in the description. Get on this. Now, back to
+
+the video. Now Ellie, the author, found herself working quite a bit with remote servers and anxiously looking for these old commands on various machines. So she didn't only make it to persistent on one machine, it's also syncable across multiple nodes, encrypted and safe. I won't ignore the always present risk of syncing shell history remotely. But I will say you're in good hands and check out a twins notes on that. All you need
+
+to do that is installing, registering, and syncing while on the other end logging in with your key. But we're not here to talk about remote hosts. We're here to elevate the process even further locally. A twin stats shows a graph of my mostused commands. And while these are filterable using the config file, I didn't bother. What you can learn about
+
+me is that I'm an avid Kubernetes user. Hence all the Ks that are mapped to cubectl. So a twin recently added a twin scripts. Taking these old long oneliners and turning them into a real machine. A twin scripts list comes up empty at first. So I'll start by creating one
+
+script that has been bugging me for years. Logging into ECR, which is the AWS container registry. Even when I can find it on my history, it requires different accounts and regions when I use it. So a twin scripts new login-cr. This is what a standard ACR login looks like. This is really two commands
+
+stitched together. One gets login password from AWS CLI, which then pipes the output to a standard Docker login. I'm really tired of that. So I can either copy the command or do that a twin scripts new login- ecr-l last. This takes the last command and pops it into an editor by just saving it. I can now run a twin scripts
+
+run login ECR. And there's the login succeeded I wanted. Already an improvement but not enough to justify things. First I'll create a new shell alias called ASR standing for a twin scripts run so it's easier to use. This is a neutral configuration. By the way,
+
+I have neutral video in the channel if you're curious. Now, ASR login ECR and great success. Let's take things further by creating a real script out of it. Let's start with a simple example first. I'll create a script called print. It
+
+will echo hi when I run it. Now, we can add arguments to edit existing scripts. Run a two incripts edit and the name of the script. By the way, you can also rm it this way to remove script. So let's recreate it and this time make it a bit more fancy by adding a tag which will be able to read later and even a short description. Now I can simply do echo
+
+dollar name and then we have the script read from the environment but that's boring and also requires you as a human to remember the scripts keys. A twin does it better. A twin using ginger style wrappers for its variables. So now I can run a twin script run print and then add -v for variables and the name equals omer which works but again requires me to remember the var name for every script. Let's run it without a key and a look at that. I'm now asked to
+
+provide a name. This may look like nothing but imagine having dozens of scripts. Would I remember if my ECR login script uses name or ID or tag? No way. So here's my name DevOps Toolbox printed to the screen after input. when
+
+listing the scripts. Now, there's also a tag and a small description which are again greatly appreciated in an environment with lots of these. Atoin also comes with a get command for scripts that fetches their YAML structure. And if the shebang here interests you, then we think alike. Let's create a script, but this time with Python using a different shebang.
+
+My Python hello script will use user bin and Python and then print hello from Python. As Python Hello, and voila. Another command I deal with a lot is uploading YouTube raw footage to S3 and then signing it to produce a pre-signed link. I was honestly doing that for more than two years every week. Not anymore.
+
+Pre-signing a link by asking the user for a file name and that's it. ASR presign. And there we are. So, how do you find these oneliners that require a script? I'd start from the stats command we've seen earlier. Start there to see
+
+whether there's something that pops and is using parameters that can be tweaked. Then you can use Atuins docs to tweak your search, filtering by exit code, running in a certain directory only, find your targets, build scripts around them, and enjoy. At scripts made my local work so much more enjoyable after investing just 15 minutes into adding these most repeatable long commands as scripts that ask for input. But at the core base of a twin, I mentioned a far more fundamental modern utility, FZF. I covered various ways to work with it and why it's my favorite command line utility of all times. Check out the
+
+video up here.

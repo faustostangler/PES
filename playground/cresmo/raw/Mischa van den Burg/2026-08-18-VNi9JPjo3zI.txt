@@ -1,0 +1,106 @@
+---
+video_title: "I Removed SSH From My Entire Kubernetes Homelab (I'll Never Go Back)"
+video_id: VNi9JPjo3zI
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VNi9JPjo3zI
+video_date: 2026-08-18
+video_description: |
+  Want to work remotely like me? Land a tech job: https://kubecraft.click/cgv148
+  
+  Want to build a cluster like this yourself? Get my FREE Kubernetes Homelab Course: https://www.kubecraft.dev/homelab-n8n
+  
+  Upgrading a Kubernetes cluster from a cabin in the Norwegian mountains, one click at a time. Watch a full Talos Linux and Kubernetes version upgrade run across a four-node home lab cluster with zero manual SSH. Great for home lab builders who want a setup they can manage from anywhere.
+  
+  This walkthrough covers Sidero Omni, Talos Linux immutable OS upgrades, node draining, pod rescheduling, and etcd rejoin. See how the cluster stays online while each control plane and worker node reboots into a new image. Also covered: why remote kubectl access works through the Omni API endpoint instead of a VPN, and the honest downside of automation that quietly atrophies your skills.
+  
+  🔗 RESOURCES MENTIONED:
+  
+  → Free Kubernetes Homelab Course: https://www.kubecraft.dev/homelab-n8n
+  
+  📱 CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischavdburg
+  → Personal blog: https://mischavandenburg.substack.com/
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ℹ️ ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into succesful DevOps careers.
+  
+  #Kubernetes #Homelab #TalosLinux
+---
+What's up, guys? It's Misha here, live from the Norwegian Mountains. I've been on a road trip for over a month now, and I've been sleeping in my van, but now I've rented this nice little cabin, and it is actually time for me to start doing some upgrades on my Home Lab cluster. So, I'm going to take you inside and I'm going to show you how I do that from the mountains. So, there's the van that I've been this my van that I've been sleeping in for the past month or so.
+
+And now I rented this cabin so I can get some serious work done. And I'm going to stay here for a week. And while I'm here, I'm getting back on some chores and some things that have been deprioritized for a while. So here is my remote working setup. It's just my framework laptop. I even forgot
+
+to bring my happy hacking keyboard and my mouse. So, it this is actually how I've been running my business and my life for the past month or so. So, I'm going to put you guys down here and then we can start the video. All right, so we are set up here and let's get going on this cluster upgrade. So my home lab setup obviously is quite advanced. I am using a multicluster
+
+architecture and for example I'm using a separate cluster for all of my databases. But the cluster that we're going to be upgrading today is Yotenheim and that cluster is the cluster that contains all of my applications. So this cluster hasn't been updated for a while. We are currently at Talos version 1.12.6
+
+six and that is what we're going to be updating. So, what you're seeing me use here is Cedaro Omni. And as we are updating, I'm going to explain more about why I'm using this, why I chose to do it. But to get things started, just you'll see you see that I have logged into Omni. This is how I can communicate with my clusters even from the Norwegian mountains. And all I have to do to start
+
+this upgrade is to go to my Talos version. And then I'm going to select first the latest patch version. So I'm currently on Talos version uh 1.12.6.
+
+Well, in order to upgrade to 1.13.7, I will actually need to upgrade to the latest patch version first. So I'm going to upgrade to 1.12.10
+
+first and then I can initiate the upgrade of the minor version. So I'm going to start this upgrade and what this is going to do is it is going to update the machines one by one. So my cluster is a four node cluster. It is going to start with one of these at first. I'm wondering which one is doing first. So we see that it started with
+
+the first machine here. And to understand a little bit about how this upgrade actually works is we have to also understand how Talos works. So Talos Linux and one of the reasons why I like Talos Linux so much is because it runs as an immutable OS. So fundamentally what Omni is doing now it's going through all of these nodes one by one. It is then draining the node and then it's downloading the new image version of this of the Talos OS. So it
+
+loads the new image and it just stores that on the disk and then it will reboot and then it will attempt to start this new image. Now, if something were to go wrong during this upgrade, then Omni will simply recognize that and it will just roll back to the old image and then it will just reboot with the old version. And this is why I love Talos Linux so much and the immutable OS architecture. I'm doing the same on my laptop, by the way. Like my my my laptop is currently running um Fedora Atomic Sway, which is uses the same architecture. It uses the
+
+same concept of an image that is loaded and then um you can switch back to it if something goes wrong. So we've already gone through one node. It is now upgrading the second node. And what you what you see in the logs is that it first downloads the image. It then stops the the the node. it drains it, puts all
+
+of the pods elsewhere in the cluster and then when it reboots, it attempts to load the new image and then when all of that is loaded properly, it's joined into atcd again and it the node is starting. So now the task is actually re the node is actually rebooting right now. So if I do k get nodes in my Kubernetes cluster here, what we see is that we have four nodes and one of them is now uh not ready scheduling disabled one of the control planes and that one is now actually being rebooted as we see it is now back online already. Health check successful as we see. So it will take a few minutes for the the static pots to come back up again on this node.
+
+But then when all of that is done, then it should be marked as uh ready. We see already that scheduling disabled has been taken away. So the node is uncordined. Omni handles all of that automatically. So if I do watch cubectl get nodes then we can actually see this status changing in real time. So it's
+
+still not ready and we can see that it is still booting up. It's still um setting up all of the all of the components here. In this case is icecuz is still waiting to come up. And now we see that the new static parts have come up. And if I check my cubectl output now we see that the node is ready again. And
+
+then we will see it will move over to the next one. In this case it is my uh worker node my final worker node because I'm running three control planes and one worker node so that the control planes can achieve quorum. So if I close this off and if I now run K9s because I do allow workloads to be scheduled on my control planes in this cluster. If I open up K9S and if I let's see if we can check this um process in real time. So we can already see that a few pods have come up 40 a few seconds ago. But as it starts
+
+draining the next one, we should see uh a few other pods being rescheduled. So let's see which one is it going to do next. Here we go. Here we see a bunch of pods being rescheduled. They're all age four 5 seconds now. So we see uh some of my
+
+Cloudflare tunnels, my paperless has been rescheduled. Miniflux, N8N, all of this stuff has now been rescheduled and is being put on a different node. And when everything is then rescheduled and online, then it will simply um download the new image on that node, restart it. And that is how it's very easily just going through everything one by one by one and doing the update completely automatically for me. You might also be wondering how is it that I'm able to connect to my cluster using cubectl when I'm not even at home because all of this what you're seeing now is running as servers in my apartment back home in the Netherlands and I am here in Norway in a cabin. So
+
+how is it that I'm I'm actually able to communicate with those clusters at all? Now the way this works is that when you create a cediro omni instance then what you get an API endpoint. So what what happens is you create an omni instance and then you load machines into there. So I have multiple machines here. What you do is from Omni you generate you generate an image and then this image contains a join token and when you then boot up that image it then talks to the Omni API saying hello I'm a new machine I'm waiting to be joined to a new cluster. The machine will show up here
+
+and then you can gather those up and form those into a cluster. Now when a cluster is created from these machines then you get this API endpoint to talk to. So my my cube config file which I cannot share but my cube config file actually contains this URL. So it will talk to that API endpoint and then Omni is going to forward the requests to the actual cube API server. So I'm never even talking to my own network. It is
+
+all talking to the API that Cedaro Omni provides for me. So, if you like what you see so far and if you're into advanced home labbing and all that kind of stuff, make sure you're subscribed to the channel. About 78% of my viewers for some reason are not subscribed, but they keep returning and watching these videos. So, check out the button below this video. It should say subscribed. If
+
+it doesn't say subscribed, then please click the button, subscribe. It's a completely free way to support the channel. It means a lot to me because it allows me to make more and more of these videos even while I'm on the road like this. Thank you so much for subscribing. Now, back to the video. And as we see
+
+now, Omni has moved on to the final node of the cluster, which is the actual worker node. And we will see that it is now being cordoned and it's going to be drained. So, if I check out K9S again, we should see that a lot of pods are now being moved around and rescheduled. And here we go. We see a few pods on 49 seconds which are now rescheduled and need to restart on a different node. So, you can see how
+
+smooth this all of this is going. All I had to do was just click one button and it's going to up update the operating system of all of my nodes. Now this is an important nuance. It's actually updating the operating system, right? It is not updating Kubernetes yet. It's
+
+just updating the operating system. Now what I like about this is that I have no responsibility for managing a Linux server anymore. So if you are running your Kubernetes clusters with K3S or Cube ADM or something like that, essentially you're spinning up Linux machines using Ubuntu or whatever. then you're installing Kubernetes on there maybe using a single binary like K3S but then you still have the responsibility of updating the actual Linux server all the time. Now with this I'm also updating the Linux server but I'm updating the whole thing in one go and if I can if something goes wrong I can roll back super easily. So yes, in some
+
+ways I still have that responsibility, but Cedaro basically does that for me by releasing a new Talos version. Okay. And that is what has now been updated. So now my cluster is fully updated to Talos version 1.12.10.
+
+Let's now perform a Kubernetes upgrade. So I click this and then the latest available version to me is uh 135.7. So, as you see, I've been a bit sloppy and I have not been keeping up with my home lip updates recently. So, that's what I'm I'm bettering my life and fixing now. So, first I need to update to
+
+135.7. If I want to go higher, then it requires me to update to Talos 113. So first we're going to just upgrade this and it's one by one again it's going to go through the nodes and then update the Kubernetes version on there. Now this one usually doesn't require a drain actually. Now I should also say that
+
+this video is not sponsored by Cidiero or whatever. Uh, I am friends with Justin Garrison and hey Justin, if you're watching this, I I know a few people at Cedaro, but I'm just making this video because I've been using this product for years already and I just think it's really handy and I just want to show you how how I do it because one of the reasons why I do it is precisely because I often am on the road and I still want to be able to manage my stuff like this. Now I could just set up a connection with tail scale for example and just do everything over SSH but you can see how easy it is just to have a nice UI to manage this stuff from and like in the beginning like when I teach my private mentoring students they are not using talos obviously because then you won't learn so in the beginning you have to do it the proper way to to manage everything yourself because that's how you learn but as you become more senior And as you become more interested in just having a stable setup grow going that you can easily update and manage then something like CDRO omni really is attractive. So this is why I I chose this and I'm I've been running this for this particular cluster has been running for almost a year already. But Omni I think I'm using for almost two years now already. It's it's
+
+it's really good. All right. So now my cluster is on Kubernetes version 135.7. And if I want to go higher than that, I first have to upgrade the Talos version again. And again, this is just going to
+
+be super easy. I just go to the Talos version. And since I'm now on the latest version of 1.12, I can now go straight to 1.13.7.
+
+And I click upgrade. And it's going to upgrade the node operating system one by one. And when that is done, I can then upgrade my Kubernetes clusters. uh the actual version of the Kubernetes cluster itself. So if you're watching this and you're thinking, "Wow, this is this is really advanced stuff and how do I even begin with making a Kubernetes home lab?" Well, check out the link in the
+
+description below. I have a free Kubernetes home lab guide that you can get completely for free. Just go to the link and fill out your details and it will send it directly to you. It was a full guide to get started on your first Kubernetes home lab cluster. But then the final question is should you also be using this? Right? And let me just grab
+
+the camera and get some sunlight while I answer this question. So, let's go out into the beautiful Norwegian weather here and I can share a few thoughts on should you actually be using this. Well, obviously if you are a beginner then my answer is a hard no. Do not even think about using Talos. It is a really cool option, but it is not going to do your career any good if you just jump straight into using Talos.
+
+It's much better to begin with something that is more manual so you learn more. The second reason is that it actually makes you a bit lazy. Like I've been running these clusters for a few years now. I know what I'm doing and I don't need to get more practice in upgrading and managing clusters. But this is so automated and it works so well that I have noticed that it's even like atrophying my skills a little bit. So
+
+it's something that you have to be very careful with here. So with all that being said, I don't recommend using Talos especially if you are in the beginning of your journey. If you are in the beginning of your journey and you want to learn Kubernetes, how to build a Kubernetes home lab, how to do all of that properly. I do this for a living. I help people land DevOps jobs through my proprietary method of using Kubernetes home labs as evidence for skills to land jobs and it's working really well. More
+
+about once or twice a week we get messages from our students that land DevOps jobs all over the world even in America. So the method works extremely well. So if you're interested in landing a DevOps job check out the link below. I would love to welcome you as a private student in CubeCraft. Okay. Thank you so
+
+much for watching and I'll see you in the next video.

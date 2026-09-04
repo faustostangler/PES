@@ -1,0 +1,146 @@
+---
+video_title: "CRIEI um Agende de IA que se lembra de TUDO (GPT o4 mini + Langgraph)"
+video_id: ODzB91DWYPg
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ODzB91DWYPg
+video_date: 2025-04-18
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo exclusivo(em breve) : https://www.rhawk.pro/
+  Comunidade: https://www.rhawk.pro/comunidade
+  ––– Descrição –––
+  Descubra como construir um Agente de IA que realmente 'lembra de tudo' neste tutorial prático usando o novo GPT o4-Mini, LangGraph e PostgreSQL.
+  
+  Se você é desenvolvedor, empresário ou iniciante querendo aprender IA e construir soluções com IA generativa, este vídeo é para você. 
+  
+  Demonstro  a criação de um agente de gerenciamento de projetos (Projeto Fênix) com memória persistente, explicando como ele utiliza embeddings e busca semântica para armazenar e recuperar informações relevantes, superando as limitações dos agentes tradicionais que esquecem o contexto. 
+  
+  Aprenda os conceitos por trás da memória semântica (diferente de RAG simples), veja o código em ação e entenda por que essa capacidade de aprendizado contínuo é crucial para criar aplicações de IA mais inteligentes e úteis, ganhando vantagem competitiva no mercado atual.
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:50 Introdução
+  0:30 O agente de IA em funcionamento - Banco de dados e Respostas
+  3:53 O passado e o futuro da Memória de Agentes de IA
+  8:55 Explorando as ferramentas dos Agentes de IA e o código
+  10:58 A estrutura do projeto
+  12:48 Mais exemplos da memória e Agente em funcionamento
+  16:37 Como a busca semântica funciona na prática
+  17:51 Você também pode criar com IA
+  
+  ––– Agência –––
+  
+  A melhor agência de IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa  #agentesdeia #python #langgraph #postgresql #openai
+---
+Olá, criadores. A Ubeni lançou um monte de novidade, mas a coisa mais interessante não são os novos modelos, e sim a memória. Eu vou te apresentar porque isso é importante e como você deve considerar implementar isso em seus agentes. Eu vou te mostrar como eu faço e você pode ter ideias e implementar aí do seu lado. Então, bora pro vídeo. O
+
+que eu vou mostrar para vocês aqui hoje é esse agente aqui e de gerência de projetos, né? Por que eu criei esse agente? É, primeiro era paraa demonstração, demonstrar aqui a vocês essa questão da memória, mas porque realmente eu preciso. Então, eh, primeiro conselho é, você tá aprendendo a fazer, faça para você, eh, experimente e aí depois você vende, porque é assim que eu faço, geralmente eu primeiro resolvo o meu problema, ah, aprimoro e depois crio uma oferta em cima desse problema. Então, muito bem, vamos lá. O
+
+que acontece aqui, tá? Eu tô usando o O4 Mini, então aproveitando o novo modelo e para testar aqui, trazer para vocês, vocês vão ver um funcionamento real e não ai meu Deus, o novo modelo muda tudo, a gente pega e constrói. Então vamos lá. Primeira pergunta que eu tô fazendo, qual é o objetivo do projeto Fênix? Então e você vai ver que ele respondeu aqui, o objetivo é expandir a nossa plataforma de serviços paraará.
+
+Roll, de onde ele tirou essa informação? Vamos lá. Eu tenho um banco de dados aqui, banco de dados de memória, tá? E é exatamente essa a memória que eu vou te mostrar. E provavelmente é algo parecido que acontece no chat PT, tá? Lá no na
+
+Open AI, obviamente com um monte de abstração, né? Mas a ideia central é essa aqui. Então, a gente tem e a mensagem ou que seria e a memória em linguagem natural, a linguagem que a gente fala, e a gente tem uma representação vetorial dessa mensagem. Se você já tá experiente um pouquinho mais, você sabe que isso aqui se parece muito com o reg, com uma reg. Eh, mas isso não é uma reg, isso é um outro tipo de técnica e eu vou falar mais dela agora. Ah, então o que aconteceu aqui?
+
+Eu criei esse carinha aqui pra gente ver o processamento ah ao longo do tempo, o que acontece quando a gente usa o nosso agente aqui. Então vamos lá. Eu fiz a pergunta, tá, sobre o planejamento, o que que era o objetivo do projeto Fênix e ele foi lá na minha tabela, aquela que eu acabei de mostrar para vocês, buscou, fez um cálculo, me retornou aqui 057. E eu vou explicar esse cálculo daqui a pouquinho. E ele traz a nossa resposta aqui, tá? A nossa resposta final. E você
+
+vê que ele chamou duas ferramentas, chamou uma ferramenta para recuperar a memória e uma ferramenta para registrar a memória. Beleza? O chat progrediu aqui e eu fiz uma outra pergunta. Me informe quais são as dependências críticas do projeto. Exatamente o que o deveria um gerente de projeto fazer. E você vê que
+
+ele foi lá na tabela novamente eh para pegar memória e dessa vez ele retornou quatro resultados e não três. E você vê que na nossa tabela inicial aqui ele tinham três memórias apenas. Isso porque na rodada anterior ele criou uma memória e é exatamente essa brincadeira aqui. O nosso agente ele vai aprender ao longo do tempo e ele vai registrar memórias ao longo do tempo em tempo real. Então o nosso agente vai aprendendo ao longo da conversa e não importa se você fechar a conversa e abrir novamente, porque essas informações vão estar lá sempre disponíveis e apenas informações relevantes. E eu vou te explicar como
+
+isso se diferencia do que é o padrão atual e em agente a no mercado aí popular, tá? Eh, e aí ele mais uma vez registrou a memória. Então a gente pode vir aqui agora e verificar se as memórias estão aqui. Então tão aqui as nossas duas memórias estão aqui. Eh, o que ele de fato escreveu. Eu vou deixar
+
+mais uma query rodando aqui enquanto eu explico para vocês ã a diferença do paradigma antigo e do paradigma atual e porque isso é importante do ponto de vista comercial, tá? Aqui tem duas frases de Aristóteles, eh, do livro Metafísica, capítulo um, logo de cara você vai ver essas frases aqui. E ele fala muito sobre memória e fala sobre ganhar experiência e que é através das memórias em que os seres humanos ganham experiência. Se você não lêu o livro, recomendo a leitura, abre bastante a mente. Eh, e o que acontece no mundo de inteligência artificial é que a galera tá perdendo o plote. Se você já viu esse
+
+filme aqui, o jogo da imitação, eh, você sabe que computação no fim das contas é que a gente tá tentando imitar ah um comportamento ah humano muit das vezes. E a gente tá tentando fazer isso com uma máquina, cara. a gente tá tentando eh pegar a arquitetura vencedora selecionada pela natureza ou por Deus ou como você queira definir. Eh, não é o objetivo desse vídeo aqui. E tentar imitar essa arquitetura vencedora, que é a nossa arquitetura, principalmente o nosso projeto cognitivo. Como funciona a
+
+nossa cognição? Como que isso aqui funciona? E como que a gente pode pegar uma máquina e me emular isso? E como a gente pode expandir isso? É isso que a gente tá tentando fazer aqui o tempo inteiro. Então, esses textos são válidos
+
+para entender eh também a natureza das coisas e como a gente pode implementar soluções. Filosofia e engenharia tem muito mais em comum do que eh parece, tá? Eh, então, qual é o problema dos agentes atuais? Por exemplo, se você cria lá um agente no N8N hoje, tá? É, você tem a opção lá de botar uma memória e você vai dar a ele um um limitador, né? 5, 10.
+
+50, quanto você quiser, tá? E o que que vai acontecer? Toda vez que começar uma conversa vai ser assim, o turno do usuário, o turno da IA e ele vai registrando, tá? Beleza? Show de bola.
+
+Na segunda interação, quando esse usuário voltar, eh, o que vai acontecer é o seguinte, ele vai lá e nessa tabela e vai pegar a uma quantidade de informação dessa tabela aqui. Ah, e essa limitação, como eu te falei, você pode escolher. Se você botar uma limitação muito alta, por exemplo, 100, ele vai pegar os 100 registros, hã, e vai tacar na janela de contexto, o que pode ser bom, porque ele pode lembrar das últimas 100 interações, mas pode ser péssimo, porque a pergunta do usuário pode não ter nada a ver com aquelas 100. Então, a chance do seu agente responder e incorretamente é ruim, fora que teu custo vai disparar, porque você vai gastar muito mais tokens que o necessário. Se você botar uma janela muito pequena, ele pode se tornar um agente dore que não se lembra de nada. E
+
+exatamente isso que acontece geralmente pro ladrão que a galera usa no N 8N é 10. E então se você tiver mais de 10 mensagens de turno, é se o se o teu cliente fizer uma pergunta e de alg um pouquinho do passado, se ele fizer de seis meses atrás, provavelmente ele não vai saber o que que o cara tá falando e vai ser o exatamente nosso agente Doraqui. Ah, e é exatamente isso que acontece. Esse seria o exemplo. É, então rolou a primeira conversa, ele pegou só os três as três últimas mensagens.
+
+Então, o cara voltou aqui, pediu uma eh uma música com uma letra dele favorita e ele não sabe o que é essa letra. Então, isso acontece nos agentes que estão sendo vendidos hoje. Esse é o patrão de mercado, mas não será mais por Chat GPT abriu a caixa de Pandora. Essa não é uma técnica nova, tá? Essa é uma técnica que já tá aí um tempo, só que como agora virou mainstream, eh, com certeza você vai começar a ver projetos batendo na porta aí, eh, que o cara vai falar: "Ah, mas o chat PT lembra de tudo, meu, o teu lembra. E você vai falar o quê?" Vai
+
+falar que não é, meu agente é DOR, né? Então você vai ter que evoluir a tua solução, senão eh você vai perder vantagem competitiva. Então, beleza. Muito bem. Então, como a gente resolve isso? É com eh embedings busca e memória
+
+semântica. O que que é uma memória semântica e busca? Tá? Não adianta só a gente registrar se a gente não tem o método de buscar, tá? Então o que a gente faz exatamente aqui é ah registrar e buscar de maneira eficiente, tá? Uma
+
+maneira de fazer isso é através de badgens. Se você fizer algo parecido com aquipro que toda mensagem que entrar você transformar em badgings, é uma força bruta, é uma é solução deselegante. Então o que você pode fazer é tem duas técnicas, a hot e a code. A hot é o que eu tô mostrando aqui, eu vou explorar mais ao longo do vídeo. Ah, então a cada mensagem que o agente julgar é interessante salvar, ele não vai salvar toda mensagem e eu vou te mostrar como eh ele salva e cria uma memória. ou a code, que é rola toda
+
+conversa normal, você não faz nada e sei lá, uma vez por dia você vai lá, roda um processo que cria memórias e disponibiliza pra gente. Muito bem, parecido com hag, mas não é igual a reg. Ah, se você quer saber mais sobre memória semântica, eu tenho um artigo aqui eh explicando o que é, o que é vetor, o que que é beding, blá blá blá blá. Eh, eu não preciso me estender aqui. Então, já falamos da teoria, vamos voltar aqui para o nosso agente. E aqui
+
+eu perguntei sobre eh quais projetos relacionados aí a temos nesse no desenvolvimento atual. E você vai ver que ele provavelmente foi buscar em uma outra ferramenta. Eh, eu espero que sim, né? Tô fazendo demonstração aqui. Então, vamos lá. Ele foi lá em retrieve
+
+tickets. E o que aconteceu aqui? Ah, então a gente já viu retrieve tickets, a gente já viu eh retrieve memory e a gente já viu eh outro para escrever outra ferramenta para registrar a memória. Muito bem. Então agora eu vou te mostrar o código de porque isso acontece, como isso acontece, como ele tá pegando ticket. E o ticket, na
+
+verdade é uma ferramenta moque. Eu moquei uma ferramenta aqui só para a demonstração. Eh, então, deixa eu mostrar aqui ferramentas tools. E eu tenho esse carinha aqui, é um mock. Eu uso liner, tá? Liner é um é um
+
+gerenciador de projeto, mas você pode usar o que você quiser. E se você usa click, é só chamar API que ele ia retornar lá todos os tickets. Essa é a ideia. Mas como eu fui fazer a demonstração aqui, não precisava conectar com os meus tickets reais, aí aparecer nome de cliente, aparecer tudo, né, pô, ia me ia ia ser chato, ia ter que editar o vídeo e tal, então melhor fazer um mock. Ah, e tá, Ronald, essa é a ferramenta. E o agente, vamos lá. Se
+
+você viu o vídeo passado, é exatamente aquele agente que eu demonstrei para você, só que com um modelo diferente. Agora eu tô usando o A4 minion com um prompt diferente e para atender essas minhas necessidades aqui. E o nosso agente aqui, cara, ó lá. Criei o agente com o modelo, ferramentas e prompt. É só isso, tá? É só isso. E você vê que
+
+assim, é muito fácil fazer um agente, só que não é simples fazer ele bem. E você tem milhares de possibilidades, né? Esse jeito que eu implementei aqui é um, você poderia implementar de outro jeito. Aí poderia funcionar super bem também. Então, a gente vai continuar explorando nossos agentes. Eu vou fazer mais uma
+
+pergunta para ele aqui, eh, para entender o comportamento e a gente vai continuar discutindo o que ele faz ou não faz. Então, vamos lá. Ah, muito bem. Ah, vamos voltar aqui pro código enquanto ele roda ali. Eh, então, a gente já tem as ferramentas, a gente tem um agente aqui, tá? Eh, e o
+
+que que eu fiz, cara? Esse esse código todo que você tá vendo aqui, você pode pensar que é complicado e tal, se é a primeira vez que você tá vendo, mas é basicamente o seguinte, você tá vendo que tá dividido em pastinhas, né? O que acontece? Todas essas ferramentas aqui eu já tenho criadas, cara. Então, o que eu faço é só reutilizar código. Eu tenho
+
+esse cara aqui, eh, para fazer ferramentas, eu tenho esse cara aqui para desenvolvimento e eu tenho esse cara aqui pro serviço. O que você tá vendo aqui, esse log aqui é um fecha API, é um serviço. Então, eu crio uma API para poder usar com front end. E todas essas coisas aqui, eh, eu vou disponibilizar para a comunidade que vocês estão pediram. Então, a comunidade está sendo criada. Se você quer entrar,
+
+deixa eu mostrar aqui, eh, entrar na comunidade, eh, eu vou botar aqui comunidade. A comunidade tá sendo criada. Em breve eu vou entrar em contato com quem mandou mensagem. E qual a ideia da comunidade? Eu vou começar a botar conteúdo lá, assim que seja mais eh profundo para criar, né? Então,
+
+assim, tem muito conteúdo gratuito aqui na Rockpr. Eh, se você acha que não tá pronto, você tem uma gente aqui que te ajuda a responder dúvida que você tenha. E agora e eu vou botar pro próximo nível. Então você acha que tá pronto pro seu próximo nível eh de criação de agente? Se você já chegou no teto com as ferramentas que tem aí, né? O que eu vou
+
+oferecer lá é exatamente a possibilidade de criar coisas mais avançadas e de se reunir com quem cria, né? Então tem uma galera que eu já venho conversando e tal e foi essa galera que pediu para eu criar a comunidade e a minha missão lá é exatamente reunir essa galera e todo mundo se ajudar a tirar dúvida, porque os caminhos são infinitos. Então muito bem. Agora que você já já viu o código, já viu um pouquinho do código, já viu hã o Hulk, já viu tudo, eu vou agora expandir o nosso agente e aí você vai começar a ver o quanto ele é útil. Eh, então vamos lá, vamos ver se ele já aumentou a memória. Então, ó lá, ele já
+
+foi criando as memórias dele, né? Muito bem. Vamos voltar aqui pro nosso querido agentão. Ah, e ele, vamos ver aqui as respostas, tá? Ele chamou a memória para registrar. Eh, ele provavelmente foi nos
+
+tickets. Muito bem. E ele deu a resposta. Muito bem. Agora eu vou exigir um pouquinho mais dele. Eu vou fazer uma
+
+pergunta que é a seguinte. Eh, eu pedi para ele procurar na internet. Então, o nosso agente, além daquelas três ferramentas, ele tem uma busca na internet que eu pedi da outra vez. Então, o que ele vai fazer é, ele tem que ter entendimento do que é o projeto Fênix, ele tem que ter entendimento do que é GDPR, que é LGPD da Europa, tá? Estados Unidos não tem, eles tentam adaptar GDPR. Eh, então o meu gerente de
+
+projeto eh aqui ele tem que ser capaz de relacionar todas essas ideias e me dar uma resposta com o contexto. Então, muito bem, ele me deu a resposta aqui e agora eu não sei se a resposta é satisfatória ou não. É como a gente tá em desenvolvimento, é exatamente o que eu tô mostrando para vocês, como a gente faz aqui, eh, na empresa e eu vou ver aqui como e ele faz. Então, ele foi lá, pesquisou na web requisito GDPA para a expansão da plataforma na Alemanha. Ele trouxe com os resultados base legal, parará. Então assim, eu não preciso
+
+saber isso aqui de có, né? Eh, e ele foi lá e gerou nossa resposta. Muito bem. Ah, muito legal. E agora eu vou fazer mais uma eh mais uma pergunta eh mais cabeluda ainda. Então vamos ver aqui o
+
+que nosso querido agente pensa sobre, deixa eu botar aqui, eh busca na web, eh, considerando nossa expansão para o mercado europeu. Então assim, ele tem que ter o contexto do meu problema, que seria do meu eh cliente. ele teria que saber sobre as minhas tecnologias aqui do da minha empresa e ele teria que saber sobre o projeto de expansão pra Europa. E tudo isso ele vai fazer. E se você tá vendo uma demorada na resposta, é exatamente porque ele tá fazendo um monte de operação e a gente consegue ver aqui enquanto a gente desenvolve, a gente vê o que tá acontecendo, a gente vê o passo a passo. Então ele foi lá na
+
+Open A, chamou algumas vezes, ó. Então ele teve várias diferentes chamadas na API e agora ele já deu 200 OK, provavelmente a resposta já vai est lá. Então, muito bem, a resposta tá aqui e ele dá lá o gateway recomendado, eh, e ele traz a experiência interna. Muito bem. E ele vai mostrar aqui pra gente o que ele fez. Busca na web, eh, registrou
+
+memória. Registrou memória duas vezes. Muito bem. Muito legal. E aí agora a gente pode fazer uma pergunta, mas eh sei lá, você acha que devo é contratar um especialista em LLM? Vamos
+
+lá. E a gente vai ver qual vai ser o resultado dessa nossa brincadeira. E aqui você vê que a gente tem eh a gente não, nós temos um agente, porque fica gente, tem agente, um agente que é de fato útil e com memória eh decente, né? Porque agora toda a memória que ele tem, ele vai se basear eh não na sequência, como eu te mostrei ali antes, mas ele vai se basear na importância de cada informação dentro do contexto, infinitamente, hoje, amanhã ou mês que vem. Eh, sempre que eu perguntar sobre um projeto desse aqui, ele vai saber eh ele vai vir aqui nessa tabela, vai rodar esse carinha aqui, a uma comparação de vetor e vai te dar resposta. Ronald, como que essa
+
+comparação acredita? E como que essa comparação acontece? É, eu vou te mostrar, mas deixa eu ver a resposta aqui. Ah, envutor especialista, você precisa de modelo, beleza, né? Então, ele tem todo o contexto e ele nos dá a resposta aqui. Muito bem, muito
+
+bonitinha. Ronald, como essa comparação acontece? Deixa eu te mostrar aqui rapidamente. Ah, se você já tá acostumado com um ha, ó igual a ha e paraa similaridade de cosseno. Mais uma vez, rock pro tem o que que é similaridade cosseno, o que que é vetor e tal. E você pode ler lá,
+
+fica à vontade. E aqui a gente eh é o que é onde a magia acontece, tá? E o que a gente faz é comparar a pergunta, tá? o que a gente tá perguntando com o embeding que tem lá na nossa tabela. Então ele vai vir aqui e vai fazer o que tem que fazer. E eu tô limitando a busca
+
+por 10, né? Então vou imaginar, você faz busca por 10 hoje no N8N, eh, com pergunta, mas você pesca, você pega as 10 últimas que aconteceram. O que eu faço aqui é pegar as 10 mais relevantes dentro daquele contexto. A que tiver maior similaridade, a que tiver mais próxima da pergunta do meu cliente, é exatamente eh o que eu respondo. Então eu poderia aqui agora de fato eh fazer algo muito útil, poderia pedir para ele gerar relatório de vez em quando e coisas parecidas, porque o meu agente simplesmente fica mais inteligente ao longo do tempo e não mais burro. Então é
+
+isso, gente. Espero que vocês tenham gostado. Esse aqui foi um aprofundamento. Semana passada eu fiz o vídeo e teve gente comentando que não é é bom saber que o canhão existe. O que eu mostrei semana passada não é nem um canivete, cara. A verdade é essa, né?
+
+Então assim, esse aqui já é um um um três oitão. E e a gente vai evoluindo. Então, se você já acha que tá pronto para evoluir suas soluções, eu te convido para ir na comunidade eh lá se fazer a inscrição. Eu vou mandar mensagem individualmente para cada um. eh que tiver interesse e se você tiver dúvida, você pode falar comigo nesse momento e e perguntar eh ah, será que é para mim ou não é? E a gente vê ali, se
+
+eu achar que não é, eh, eu vou ser sincero. Eh, então assim, a ideia é concentrar a galera que já tá eh madura para construir e já entendeu que o paradigma atual eh atual, né, o paradigma que eu chamo de antigo sobre a gente tá ficando para trás e que a gente tá entrando numa nova fase. E se você acha que ainda não tá, eh, eu recomendo fortemente a implementar as coisas que eu já botei aqui gratuitamente, eh, a ler os artigos e em breve eu vou ter algo para vocês também. Eh, e vai depender também do feedback de vocês. Eh, fazer esse tipo de conteúdo aqui dá trabalho, tá? Eh, assim, é código, eh, é
+
+gravação, edição e tudo mais. Então, de alguma forma eu preciso ter também eh retorno, reconhecimento eh de vocês para onde tá indo, o que vocês querem. Eh, e eu vou fazendo vídeos baseado no gosto de vocês. Então, se gostou, deu, deixa o like. Ah, essa é uma forma de você me dar um um feedback ou deixa um comentário, sei lá, o que que você quer ver, né? Qual dúvida que você tem? E a
+
+partir daí eu vou melhorando o meu trabalho. Fica melhor para você, fica melhor para mim, fica melhor para todo mundo. E nós elevamos o nível de discussão sobre agente de inteligência artificial e a gente vai sair desse nível superficial que existe hoje e vai pro nível profissional e a gente vai começar a brigar com os caras que são grandes lá de fora. Eh, a gente precisa trazer isso aqui pro Brasil e aumentar o nível de discussão e é exatamente a minha proposta aqui no canal. Então, se você gostou, fica por aqui. Tudo mais.
+
+Conheça a Rock Pro, conheça a comunidade e estamos junto. Vamos aí.

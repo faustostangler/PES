@@ -1,0 +1,132 @@
+---
+video_title: "Como criar um Agente IA RAG com N8N e Supabase em 2025 (Aula da Comunidade)"
+video_id: nOB52xuVdYc
+channel_name: "Well Pires "
+channel_id: UCOu9pKHv94bFeRy5vzB-b1Q
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=nOB52xuVdYc
+video_date: 2025-07-10
+video_description: |
+  🔥 Minha Comunidade de IA: https://www.aimakersclub.com.br/
+  📚 Meu Curso Gratuito de N8N: https://youtu.be/dw5OmezRLoU?si=5wANK0VtPepcr398
+  💼 Me Contrate para Automatizar sua Empresa: https://calendly.com/wellpires/discovery-call
+  
+  Nessa masterclass, você finalmente vai aprender a usar RAG nos seus Agentes de IA usando Supabase Vector Store & N8n.
+  
+  VPS da Hostinger usando o cupom WELLPIRES para obter + desconto (por tempo limitado): 🔗 https://www.hostg.xyz/SHHIz
+---
+E aí, galera? Nessa aula eu vou apresentar para vocês como utilizar o Supas 100% gratuito como a Vector Store do seu agente de IA. Bem, vector store pode parecer um termo um pouco intrigante de primeira. A gente pode traduzir para banco de dados, mas banco de dados também é muito abrangente. Então não vamos buscar uma pr uma palavra, mas vamos definir um conceito.
+
+Eu vou ensinar vocês a como utilizar o Supase para você inserir os documentos que você quer que a sua IA utilize na memória dela ou na base de conhecimento dela, melhor assim dizendo. Vamos lá. Vamos supor que você tenha um documento de perguntas frequentes eh do seu cliente que você tá prestando serviço eh você quer que esse documento seja uma base de conhecimento paraa sua IA, para IA consultar esse documento e responder o cliente, o usuário, né, seja no WhatsApp ou no website ou qualquer lugar. Ã, então bem, você vai hospedar esse documento, obviamente em alguma plataforma pro seu agente de a consultar. Você pode fazer isso no Google Docs, você pode utilizar isso no Postgress, várias ferramentas, sendo bem honesto, mas em questão de um balanço entre performance, barreira de entrada e custo, custo também é uma barreira de entrada, mas desculpa e dificuldade, vamos falar assim, o Supase ele é bem tranquilo de você fazer isso. Vou apresentar para
+
+vocês o passo a passo totalmente direto ao ponto nessa aula. Eu não sei se vai durar mais do que 10, 15 minutos para você fazer isso. Eh, também porque vai ser uma aula explicativa. Eh, mas em questão de eficiência também você vai ter muita eficiência, os seus agentes de a eles vão conseguir responder direitinho o documento que tá lá, até porque eu vou mostrar alguns dos meus truques secretos para vocês. Então, vamos lá. Depois de ter feito toda essa
+
+introdução bem longa, mais longa do que o comum, é só porque ah, hag, hag é um conceito ahã bem técnico, tipo para você inserir esses documentos dentro do seu agente de A são vários truques que você tem que fazer. As plataformas determinam também a performance do seu agente IA. Então, por exemplo, é muito fácil você fazer um hag com o Google Docs, mas o nível de performance do seu agente A não vai ser melhor do que você fizesse no Supase. Ah, você pode fazer também um hag no post SQL, mas você vai ter uma barreira de entrada muito grande com a dificuldade, manutenção, todo esse tipo de coisa por uma eficiência um pouco maior. Então o Super Base foi o que eu encontrei o maior equilíbrio e eu já tô bem ansioso para mostrar aqui para vocês como seguir esse passo a passo, beleza?
+
+Então eu vou começar aqui dentro do N8N. Essa aqui vai ser a nossa aula de hag. Hag, ã, aula school, super base. Primeiro de tudo, galera, você tem que criar uma conta no Super Base. Isso aí é um pouco óbvio, mas você vai criar uma conta no Super Base, você vai ter o seu projeto aqui dentro do Super Base. Ã,
+
+e você vem aqui em tabela editor. Na verdade, não precisa você vir em tabela editor, mas só quero mostrar aqui pra vocês que eu já tenho uma tabela onde eu insiro os meus documentos. Essa tabela aqui tá vazia. Ah, mas eu vou mostrar para vocês como criar essa tabela. Não é vindo aqui em new table, você vai vir em SQL Editor.
+
+Mas para você utilizar esse SQL Editor, você tem que ter um código tipo esse daqui. Mais uma vez, eu não eu não escrevi esse código aqui manualmente. Existe uma maneira bem direta ao ponto de você encontrar esse código. Você vem aqui em Superbase, no node do Superbase, dentro do seu N8N. vem aqui em add documents toor store, ou seja, adicionar documentos da sua vector store. Sua vector store é mais uma vez a
+
+sua base de conhecimento da sua IA. é onde a IA vai ter aqueles materiais de documento para ela se apoiar, né, para ela conseguir consultar as perguntas e respostas ou só algumas instruções, algo do tipo. Mas você escolhe esse node aqui, esse módulo. E se você clicar aqui em docs na documentação do Supash, não precisa surtar porque tá em inglês, você pode traduzir, mas você não precisa ler isso daqui também. Honestamente, ã, é bom adquirir conhecimento, mas eu tenho essa abordagem também voltada a resultados. O
+
+que te der resultado, ã, investe nisso. Então, isso aqui não vai te trazer os maiores resultados se você ler. Sendo bem honesto, você pode ter resultado sem ler. Ã, então o que você faz é o seguinte, você vai pular para cá, supravise a quick start. Ã, você clica e ele vai entregar o código aqui para você de mão beijada. Você só precisa clicar
+
+aqui nesse botãozinho para copiar o código. Você vai abrir o seu Base SQL Editor. E aqui o meu já tá com alguma coisa, mas o seu vai est vazio. Ã, e você vai colocar esse código. Você pode ver que o meu aqui vai dar erro porque eu já tenho uma tabela de documentos criada. Lá no
+
+meu table eu já tenho o documento criado. Então vou rodar aqui. Ele vai dar erro porque eu já criei o documento. Eu já criei essa extension. Ahã. Eu já criei o Mat documents, mas
+
+calma aí. Se você fizer isso daqui, você vai dar sucesso já na primeira vez. Só que se vocês já criaram um documento, você quer criar duas tabelas de documentos, você não tem por fazer isso. Mas se vocês já excluíram a tabela de documentos assim que nem eu, tipo aqui, ó, eu vou deletar aqui essa tabela de documentos. Por algum motivo, eu enjoei dela. Eu, sei lá, eu fiz alguma coisa
+
+errada na minha automação e eu achei que isso aqui iria resolver minha automação. Várias pessoas entram num túnel quando tá resolvendo problemas com automação. Eu já estive nesse lugar, obviamente, mas você vai voltar aqui pro seu código e você, se você explorar um pouquinho só desse código, tá em inglês, beleza? Mas se você explorar um pouquinho esse código, ele tá falando para você criar uma extensão chamada vector. Quando você cria, quando você ativa esse código pela primeira vez, ele já criou essa extensão. Então você não precisa desse
+
+código. Eu vou excluir ele. Ah, criar função mat documents. A gente já criou isso no início, então a gente não precisa. Agora a table documents a gente já criou, só que ela foi apagada. Aquela extensão
+
+vector e aquela função mat documents, elas não se apagam, elas só se criam uma vez. Só que a tabela você pode apagar, você pode mudar de nome aqui. Se você não quiser documents, você pode literalmente mudar o nome da sua tabela. Deixa documents mesmo, não vai mudar nada, não é 8020 para você. Você não precisa investir energia nisso porque não te dá resultado. Então, bem,
+
+eu já posso rodar isso daqui. OK, sucesso. Aqui tá criado a tabela documents. E beleza, a gente já deu o nosso primeiro passo na automação. Vou fechar essas coisinhas aqui, beleza?
+
+De documentação. Ã, OK. Agora, como é o fluxo para eu inserir um documento dentro da memória do meu agente A? OK. A memória do nosso agente A, a base de conhecimento do nosso agente é o Supase. Mas como que eu
+
+faço para inserir um documento dentro do Supas? Well, eu tô aqui dentro do Superabase, dentro do documents, mas eu não tô vendo nenhum botão aqui para inserir documentos. Pô, eu achei que seria algo tipo Google Drive, por exemplo. Aqui no Google Drive eu consigo inserir um documento muito fácil, é muito direto ao ponto para mim. E sim, pra gente facilitar esse processo aqui, pra gente diminuir a barreira de entrada, você vai inserir os documentos dentro do Google Drive. Você insere o
+
+documento do Google Drive e a gente vai criar uma automação para quando o documento for inserido no Google Drive, a gente inserir também de maneira automática dentro do Supase. Eu vou mostrar agora para vocês como que vai ser a criação disso de maneira passo a passo, beleza? Então vamos lá. Primeiro de tudo, hã, eu vou querer buscar um node do Google Drive, obviamente. Vou vir aqui em Google Drive. Ã, triggers,
+
+eu quero um gatilho. O gatilho que eu vou escolher é on changes involving a specific folder, ou seja, em mudanças envolvendo uma pasta em específico. E eu vou escolher o nome da minha pasta. A pasta que eu tô utilizando aqui é Hag demo School, que é de demonstração pra galera que tá aqui na comunidade do School. Hã, e eu quero observar por, eu quero ativar quando um arquivo for criado.
+
+OK? Ã, eu não preciso vir a fundo aqui nessa parte de options, mas aqui tá bom já pra gente, a gente só precisa disso daqui. Então, escrevendo a lógica da coisa, esse gatilho vai ser ativado quando alguma mudança acontecer na pasta hag demo school. E essa mudança tem que ser um arquivo foi criado. E daí quando esse arquivo for criado, a gente pode enviar ele pro Supase. Galera, para
+
+iniciar esse processo de inserir um documento PDF dentro da nossa pasta do Google Drive, primeiro a gente tem que ter um documento PDF. E eu quero criar pelo menos um aqui do zero com vocês, utilizando o chat GPT. Obviamente em algum em casos específicos, o seu cliente ele já vai prover um documento PDF para vocês. Só que eu quero apresentar alguns caminhos aqui dentro do chat GPT que você pode utilizar para performar bem melhor o seu documento PDF. Ahã. Dois disclaimers. O primeiro é
+
+que eu tô utilizando uma pasta nova do Google Drive também, por isso o corte por isso que eu fiz um corte aqui nessa aula. A pasta antiga que eu tava fazendo, ela era bem antiga e deu alguns bugs na automação, nessa automação aqui. Agora eu tô usando essa pasta nova e tudo foi corrigido. E o chat GPT eu vou utilizar ele para mostrar para vocês algumas técnicas que eu utilizo antes de subir o documento PDF dos meus clientes lá no Supase. Mas primeiro de tudo, eu vou criar um documento PDF do zero e depois eu vou mostrar essas técnicas, tá?
+
+Então vamos lá. Primeiro PR um documento PDF com 10 modelos eh fictícios de carro com especificações técnicas e valores, esse tipo de coisa.
+
+OK, ele vai trazer para mim. Ahã. Vamos ver aqui como ficou, né, esse documento. OK. Documento bem puro, uma folha bem branca mesmo, esse tipo de coisa. E pelo
+
+pelo tamanho das informações que tem, são pequeníssimas informações, é pouquíssima informação aquele documento ali. Aí a já iria performar muito bem, porque quantos menos tokens você consome, melhor. A sua chance é maior de acertar. Quanto menos coisa você coloca na sua IA, menor a chance dela saturar, dela alucinar, esse tipo de coisa. Mas honestamente eu já lidei com projetos grandes na parte de documento para base de conhecimento, né? Hag que se fala.
+
+Então eu já lidei com projetos bem extensos nisso daí. Então eu tinha que fazer alguma maneira de, mesmo sendo tanta informação, a minha IA perform. Então era um monte de informação jogada para IA. Ela não sabia quando terminar uma informação, quando iniciar outra ou como dar prioridade para uma informação ou não dá prioridade pra outra. E a melhor maneira de você fazer isso é utilizando um uma coisa chamada MarkD, que ela mesma já sugeriu aqui pra gente.
+
+Então isso daqui é ótimo. Esses modelos de linguagem sabem a tratativa melhor para eles funcionarem melhor. E esse modelo de Markdown ele é importante porque nós como seres humanos a gente também dá prioridade pra nossa pra nossa leitura, né? Pra nossa leitura de informações. Vamos lá. Seja honesto
+
+comigo. Você tá lendo uma folha de jornal. O que prende a informação, a, o que prende a sua atenção é aquela manchete gigantesca escrita, não as letras miúdas que estão no resto da página. Então, esses modelos de A, por mais que eles foram feitos de maneira generativa, modelo de linguagem natural, todo esse jaz, ã, eles ainda são máquinas e para eles entenderem o que é prioridade ou não, eles precisam de algo escrito, meio que como se fosse um código. E a melhor maneira escrita de definir isso é markdown, de definir essas prioridades, o que é um título, o que não é um título, aonde termina esse parágrafo, esse tipo de coisa. Então eu vou pedir
+
+pro nosso chat GPT aqui esse documento PDF escrito em Markdown puro com todas as tags hashtags aqui para separar as informações e fazer um markdown bem feito. Foi um prompt bem honesto aqui pro chat de apt. E olha só, olha já como muda a coisa. Eu trouxe aqui, ó, hashtag, trouxe esses tracinhos para separar, ou seja, esse título aqui termina aqui e já começa outra informação, outro modelo, Velocito XR. Passa todas as informações e termina aqui, já passa pro titânio. Ou seja,
+
+quando você perguntar pra sua IA sobre o modelo velócido XR, ele não vai passar nenhuma informação do titânio. Isso daí é excelente pra gente, porque ele sabe onde termina o velócito XR, termina aqui por causa desses três ifens. Então esse modelo de Markdown é excelente paraa sua IA conseguir definir prioridades, ã, entender todo esse tipo de coisa. Eu vou pedir sim, retorne o PDF, mas da maneira exata. escrita que está aí.
+
+Então isso daqui é uma excelente tratativa, tá? Pessoal, chegando aqui na conclusão final, mesmo que o seu cliente prover um documento PDF com informações para você, coloca esse documento PDF no chat GPT para ele fazer o markdown, ã, e definir essas prioridades, essas separações. E daí você coloca esse documento PDF dentro da sua automação e começa a subir ele lá no Supase. OK? Ah, vamos lá. Deixa eu baixar aqui o
+
+documento PDF. Deixa eu ver como ele ficou. Excelente, excelente, excelente. Isso daqui tá excelente pra gente partir. Ã, vamos lá.
+
+Vamos colocar ele aqui no Google Drive, né? Se bem que ele tá aqui também. OK. Vamos rodar essa aqui automação aqui. Vamos ver se o nome do arquivo tá igual ao nome do arquivo lá do Google Drive.
+
+Carros fictícios markdown puro. Ã, carros fictícios markdown puro. Então, pelo menos esse gatilho aqui, ele tá funcionando. Na pasta antiga que eu tava usando, não tava pegando os arquivos novos. Essa daqui tá funcionando. O
+
+próximo módulo é esse download file. Ã, pra gente fazer um download desse arquivo dentro do N8N, a gente precisa ter esse arquivo dentro do N8N para manipular ele. Eu já vou mostrar para vocês daqui alguns instantes, mas a gente quer baixar esse arquivo dentro do Google Drive a partir do ID dele. Então vem aqui, ó, buy ID. Nessa seleçãozinha aqui, ó, by ID. E você vai procurar o ID
+
+desse documento, a variável que tem o ID dele. Ah, não foi difícil de encontrar, tá? Aqui em ID. Pego ela, rodo essa automação. OK, já tá baixado, já consigo baixar ele aqui de volta. Não preciso
+
+fazer isso, senão seria redundante. E agora eu quero extrair todas as informações que tá dentro desse download para transformar em texto e daí pegar esse texto e enviar pro Supase. OK? Então, a gente tem um arquivo dentro do N8N. Agora, esse download aqui transformou em um arquivo pro N8N manipular e eu quero pegar as informações desse arquivo e enviar pro Supas como texto. Beleza? Ah, como que
+
+eu vou fazer isso exatamente? Eu vou utilizar aqui extract from file, esse módulo maravilhoso do N8N, que permite a gente extrair informações de um arquivo. E o arquivo que a gente tá utilizando é o PDF. Então, vamos utilizar extract from PDF. Vamos rodar isso daqui. E, OK, tá vendo
+
+esse bloco aqui de texto? Esse bloco text aqui é todo o texto escrito do nosso documento PDF puro. Agora eu posso vir aqui para conectar esse módulo no Supase. E vamos pros finalmentes, né? Agora ele vai subir esse texto pra nossa tabela de documents aqui do Super Base. Mas antes
+
+a gente precisa escolher uma embedings aqui que tá nesse maisinho e um documenting honestamente vem aqui no embedings open AI, ah, coloca sua chave e você já tá pronto para ir. In document vem aqui em default data loader, ah, load specific data. E aqui no data você vai pegar o dado que tá no texto. Data é texto. Eh, não, data é dado. E o dado que você vai subir é
+
+exatamente o dado que tá aqui nesse texto. A gente quer subir só o texto, OK? Ã, aqui a gente tá quase pronto para ir. Ele pede um text splitter. Esse text splitter é para quebrar o nosso texto em pequenos pacotes. Então a gente vai ter
+
+mais esse plano ã de segurança para nossa IA não juntar tudo, não passar todas as informações de uma vez, beleza? Ã, ela trazer tudo separadinho. Mas como esse documento tá tão pequeno, a gente nem precisa colocar tanta energia nisso, mas só por padrão você precisa colocar um text splitter. Ele por padrão vem aqui no 1000, ou seja, quantos tokens cada bloco de informação vai ter. Vamos, vamos falar assim: "Ah, cada bloco vai ter 1000 tokens e daí depois de 1000 tokens a gente cria um novo bloco." É
+
+como se você tivesse enviando um monte de arquivo pra sua IA e ela não vai engolir tudo de uma vez. A melhor maneira de você comer um elefante é pedacinho por pedacinho, você pegar um garfo e uma faca e cortar cada pedacinho disso. É uma boa analogia, obviamente eu tô feliz de ter trazido ela para vocês, mas como isso daqui não é um elefante, é bem pequeno, na verdade, esse bloco de informação não gasta energia nisso, mas uma sugestão, você poderia colocar um chunk size de 500 para cortar em blocos de 500 tokens, só que eu acho que esse documento por si só nem tem 500 tokens, então vou deixar em 1000 porque não vai mudar em nada. de option, split code, markd, para ele entender que as coisas estão separadas por markdown. E vamos subir esse carinha aqui. Vamos lá. Ã, the workflow has
+
+issues. Deixa eu salvar aqui. Ah, qual?
+
+Desculpa, passou um cara com a moto a milhão aqui, louco para sofrer um acidente na avenida. Ah, bem, é louco que as pessoas ainda fazem esse tipo de coisa. Eu tinha esquecido, tá, de colocar a minha credencial aqui do Supase. Isso daqui é rápido de você fazer. Eu já tenho a minha credencial cadastrada, várias credenciais cadastradas. Esse aqui é o servidor de
+
+teste da Mavai. Mas bem, você vai conectar com a sua conta. Ã, você vem aqui em documents e aí você já vai est pronto para ir. Vamos ver. OK, já subiu tudo. O seu, ã,
+
+o seu documento PDF já subiu paraa sua tabela do Supase. Agora vamos colocar o nosso agente de IA pra gente testar, né, para ver se ele tá trazendo as informações de fato. Sai daqui, meu filho. Eu vou colocar aqui para testar no chat mesmo.
+
+Ã, cadê on chat message aqui?
+
+Colocar o modelo do chat GPT.
+
+Colocar uma memória simples, só pra gente testar a coisa. E aqui em tool eu venho em Supase. Supas vector Store. Vou conectar a minha conta certinho. H, o nome, o nome dessa tool vai ser carros. Vou colocar ative essa tool.
+
+Toda vez que o usuário perguntar sobre um modelo específico de carro. O nome da tabela é documents. Hã.
+
+Embeding opening eye.
+
+OK, acho que agora estamos prontos para ir. Vamos pegar um modelo de carro aqui do nosso documento. Deixa eu abrir aqui o documento velocitus. Vou perguntar sobre velocitos XR. Qual o valor do velocito XR?
+
+Vamos ver se ele vai ativar tool direitinho. O valor do Veló XR é de R$ 210.000. Então você pode ver aqui que é um carro que o o próprio modelo de linguagem da Open AI, ele não iria conseguir conceber essa informação. Tipo, se você só perguntasse pro chat de PT qual o valor do Velóciu XR, ele ia falar: "Velci XR não é um carro. Ahã.
+
+Não sei. Eu então ele iria inventar um valor, mas o valor aqui tá muito preciso com o valor que tá dentro do nosso documento. Ele soube que esse carro aqui é o carro que tá dentro do documento. Ele ativou a tool do Supas Vector Store. Ele trouxe o dado exatamente como está.
+
+Então essa daqui é uma maneira totalmente precisa. Bem, eu não posso falar totalmente preciso porque esses modelos de linguagem eles têm uma taxa de 98%, então é uma maneira mais precisa de você consultar bancos. vetoriais, OK? Eu espero que essa maneira que deixe vocês mais seguros para entregar os projetos de IADO e seus clientes. Mais uma vez, o template de todas essas automações vão estar aqui na descrição do vídeo, só para você baixar e cortar o seu caminho. Mas os fundamentos dessa
+
+aula foram muito importantes, foram fundamentos muito técnicos, porque hag é um conceito muito técnico, inclusive a gente vai ter mais uma aula de Hag na sequência, beleza? Então, aproveitem todo o conteúdo desse curso exclusivo aqui da comunidade Marven. Um beijo. Tchau. Tchau.

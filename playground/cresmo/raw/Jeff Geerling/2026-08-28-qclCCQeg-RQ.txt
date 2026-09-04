@@ -1,0 +1,114 @@
+---
+video_title: "Unplug it. Move it. It never goes down."
+video_id: qclCCQeg-RQ
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qclCCQeg-RQ
+video_date: 2026-08-28
+video_description: |
+  Back to School Tech Deals: https://micro.center/e01f1d
+  Sign up for a FREE 128 gig Flash Drive at Micro Center Austin, TX: https://micro.center/4f41ea
+  Visit Micro Center Columbus for the Grand Re-Opening: https://micro.center/e9bcb1
+  Micro Center News: https://micro.center/a14f51
+  
+  Huge thanks to Micro Center for sponsoring this build and my trip out to Columbus!
+  
+  Mini rack parts (from Micro Center):
+  
+    - UniFi Cloud Gateway Fiber: https://www.microcenter.com/product/695361/ubiquiti-cloud-gateway-fiber
+    - 2x Ubiquiti 1ft Etherlighting Patch Cable: https://www.microcenter.com/product/709787/ubiquiti-unifi-etherlighting-patch-cable-1-ft
+    - 2x Ubiquiti 3.3ft Etherlighting Patch Cable: https://www.microcenter.com/product/698549/ubiquiti-33-ft-unifi-premium-etherlighting-braided-patch-ethernet-cable-white
+    - UniFi Flex 2.5G PoE: https://www.microcenter.com/product/695379/ubiquiti-flex-25g-poe-8-port-poe-compliant-managed-network-switch-(psu-not-included)
+    - Ubiquiti 210 Watt AC Power Adapter for PoE Switch: https://www.microcenter.com/product/697310/ubiquiti-210-watt-ac-power-adapter-for-poe-switch
+    - UniFi 5G Backup: https://www.microcenter.com/product/712077/ubiquiti-unifi-5g-backup
+    - U7 Lite: https://www.microcenter.com/product/692982/ubiquiti-unifi-u7-lite-compact-ceiling-mounted-wifi-7-access-point
+    - APC UPS BE600M1: https://www.microcenter.com/product/647002/apc-battery-backup-and-surge-protector-ups-(be600m1)
+  
+  Parts I bought on Amazon (these links are affiliate links):
+  
+    - DeskPi RackMate TT: https://amzn.to/4cgPkrL
+    - 2' Twinax DAC (for 10Gbps Uplink): https://amzn.to/4y6Y9Nn
+  
+  3D Printed Parts I used in the rack:
+  
+    - Cloud Gateway Fiber 10" Rackmount: https://www.printables.com/model/1235928-unifi-ucg-fiber-10-inch-rack-mount
+    - Cloud Gateway Fiber M.2 SSD Tray: https://www.printables.com/model/1365302-m2-ssd-tray-for-unifi-cloud-gateway-fiber
+    - Flex 2.5G 8 PoE 10" Rackmount: https://makerworld.com/en/models/2037862-unifi-flex-2-5g-8-poe-10-inch-rack-mount
+    - U7 Lite 10" Rackmount: https://cults3d.com/en/3d-model/gadget/unifi-u7-lite-10-rack-mount-oounnameoo
+    - Ubiquiti 210W Power Supply Rackmount: https://www.printables.com/model/1816999-unifi-210w-ac-power-adapter-mini-rackmount
+    - ServeTheHome UniFi Cloud Gateway Fiber Review: https://www.servethehome.com/ubiquiti-unifi-cloud-gateway-fiber-ucg-fiber-review/
+  
+  Blog post on UniFi 5G Backup debugging: https://www.jeffgeerling.com/blog/2026/unifi-u5g-backup-debugging/
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - I need a mobile homelab
+  00:35 - Thank the sponsor
+  01:14 - Picking a router
+  01:55 - Other hardware
+  03:17 - 3D printed rackmounts
+  03:41 - Flexible and wireless
+  04:33 - A few Ubiquiti annoyances
+  06:19 - It is proprietary
+  07:43 - Protect and 5G quirks
+  09:04 - From livestream build to ER in 1 day
+  10:21 - A flexible but expensive option
+---
+In less than a month, I need to build a demo of NTP for VCF Midwest. And I have a problem: I have at least five projects to finish between today and September 12. The first one, since I'm going to be hosting a Stratum 1 NTP time server for anyone to use at the show, is I need a reliable, portable, low-powered network in a box. And now you probably know what's under this black cloth. It's a mini-rack! But a portable network that's flexible enough for wired
+
+network connections with a backup 5G internet connection and the ability to run off battery or solar power with wi-fi to meet all those requirements, I needed some help. And that's why this video is sponsored by Micro Center! I'm here at their Columbus Ohio store for the grand reopening. A lot of creators have a lot of good things to say about UniFi gear, and here at Micro Center they actually have a mini store with all their gear. So I figured it'd be a good way to dip my toes in the water without like fully committing, to try building a mini UniFi homelab. Speaking of networking creators...
+
+Uh Mr. Patrick Serve The Home—how are you doing? Hey JeffyG! So I have this problem. I want to build a mini homelab rack—okay—and I want a router, I think that's the most important part that fits inside of there and you... Oh! We reviewed a UCG Fiber using our really fancy test setup and I
+
+think they have one right over here. Well Jeff, this UCG Fiber has 10 gig ports 2.5G. It even supports PoE, so if you want to go have an AP or something, which I think you might want to use, well, you can do that right out of this unit without having to have another PoE switch if you don't want to. We tested it on a really high-end Keysight Cyperf network testing solution and found that the performance of this little box is actually great.
+
+So after talking to Patrick and looking at all the stuff they had in the store, I settled on this for the rack: The Cloud Gateway Fiber is the backbone of the network here at the bottom. can use multiple internet connections for failover. It has internal storage if I want to add on a security camera, and it runs on about 6 watts of power at idle, according to Patrick's testing. For mobile internet, I'm going to try the 5G backup, which works with either a SIM card or an eSIM, but right now only T-Mobile and AT&T are supported. Verizon support is supposedly coming at some point, but I'm going to test it with AT&T, and the idea is that on the road, this can be the primary internet connection, but wherever I can get it, I can plug in a separate wired internet connection, and the 5G will just be a backup.
+
+There's a few 2.5 and one 10 Gbps port on the back, and that's handy, but I really wanted more PoE power. Like Patrick said, there is a single PoE port on the Cloud Gateway, but I'm using that for the 5G backup stick, so I need another switch. So I picked up a Flex 2.5G PoE. It's managed, gives you per
+
+port power metrics and your remote power control. One thing I didn't realize until I unboxed it is, you need to buy the power supply separately. I think they built this so you could power it entirely via PoE+++ from another one of their switches, but for my use case, I needed independent power. So I also designed and 3D printed this little rack mount for the power supply, because it's huge. It needs to be, since these PoE++ ports can deliver up to 64 watts each, though not all of them at the same time. I needed some extra power, though, because of this piece
+
+at the top, a U7 Lite access point. Modern networks need Wi-Fi, and unless you live under a rock, chances are you've seen one of these little white turtle shells stuck on a ceiling somewhere. It just has a patch cable running down to a PoE++ port, and I mounted all of these things using 3D printable mini racks that I'll link to in the description. And side note on the 3D prints, I tried them all out of PETG V0, which is kind of a self-extinguishing filament that also doesn't bend over time or sag from heat. But that was throwing me for a lot of loops, so I printed them out of normal PETG, and this one at the bottom is actually out of PLA because for some reason I just could not get it to finish the print.
+
+But anyway, you have a gateway, a switch, and an AP all in a 3U mini rack. And if I wanted, I could plug in cameras and other things to build on top of this system. But having this small is my main goal. I want it portable. The second goal is to make it low power. If
+
+or even a solar panel, it has to come in at less than 50 watts. And at least with this base setup, it does. I measured about 27 watts at the wall using my Zigbee smart outlet, and that would let this thing run for an hour or two on a tiny UPS like this one that I found at Micro Center. It could run almost indefinitely if you had a 100 watt solar panel and a solar generator. And yes, Micro Center sells those too.
+
+This kind of setup could be perfect for an RV, a small campground, or even a little emergency communication network. And if you want to get more complete, add on a separate satellite internet connection and an external NAS to self-host storage and apps. Now I did run into a few hiccups building out this rack. First, Ubiquiti has ports on the back on the router and on the front on the flex switch. And that power jack means routing the power cable is a little annoying.
+
+But even worse, I have to use a longer DAC, or direct-attached cable, to connect the switch to the router at 10 gigs. It'd be nice if they made these things to fit better together in mini-racks. Then there's the M.2 drive on the cloud gateway. It feels like you're being nickel and dimed having to buy it separately from the gateway itself.
+
+Now, if you have a 3D printer like I do, you could 3D print this tray, but I'd like it more if it just came with one. But really, the most annoying thing is these UniFi boxes fit so nicely inside a mini rack, I really wish they had official rack mounts. But one big question I've had through this whole project is, can I actually set up an entire UniFi system without having a Ubiquiti account? The answer is yes. On top of that, I didn't plug any of this into any wired internet connection to get it set up. That did make things a little bit harder sometimes. Like, the 5G backup wasn't recognized
+
+by my cloud gateway out of the box. I had to manually restore a newer firmware to get it to work. And funny aside, I love how the manual recovery screen shows Dream Machine. I guess recovery mode branding isn't a huge priority. But then, once the 5G backup connected, it would just get stuck updating. Apparently, the original firmware on here would get stuck in an update loop.
+
+And if it does, the only way to recover is to use TFTP to copy over the latest firmware, which annoying. But now, when I see comments like "Ubiquiti requires a cloud account so they're crazy," I know that's wrong, because I did everything on here, at least from Wi-Fi to 5G to Protect Setup, and never once did I tie anything to any account. The Setup Wizard does push you that way, just like Apple pushes you to sign into iCloud when you set up a Mac. But like Apple, it was never required, and as long as that's the case, good on Ubiquiti. Of course, running the UniFiOS on this proprietary hardware means I don't have total control over my networking stack, like I do with OpenSense here at the studio. But a lot of network equipment is like that, especially outside the hobbyist space.
+
+You kinda go either fully open or proprietary. There's not much in between. I appreciate the slickness of the Cloud Gateway Fiber, but I also think it's sad that these devices will just become e-waste once Ubiquiti stops supporting them, since they have locked down bootloaders. I really wish devices like the mono gateway could take off, but that thing's more than twice as expensive, and I'll probably never be able to pick one up at a Micro Center. It's a shame, because I do like the option of choosing my own network OS, instead of being tied to a vendor's OS. But putting on my IT shop or small business hat,
+
+being able to buy a replacement router in 10 minutes at a local retailer is more important when your network's down than having the freedom to boot any OS that you want. But still, proprietary is a double-edged sword. On the one hand, I love that I can pick different backends for like DNS and DHCP with OpenSense. But not having that extra layer of confusion in UniFiOS makes it a little easier. Networking can be complex, even with the streamlining they have in their UI. And while I do set up firewalls with bare IP tables rules and I can manage routing in
+
+Linux if I have to, I like the level of abstraction that Ubiquiti landed on. The bottom line is, for 80% of IT folks, UniFi setup does work, and most of the time they even tuck away the settings I want behind an advanced button. And earlier I mentioned I tested out Protect, which is Ubiquiti's like, NVR solution. I installed it through the 5G connection, and it worked fine with one G6 bullet, and I could record a few days of footage on the 1TB SSD that I installed in the Cloud Gateway. This thing's probably good for a few cameras, but if you're gonna set up like 10 or more cameras, a door security system, and more automation, I'd go for one of the bigger routers instead of this little guy.
+
+I think the biggest quirk with this whole setup was the 5G backup stick. Initially, I was borrowing an AT&T SIM from my dad for testing, so I thought maybe just his SIM was stuck on 4G LTE. But when my own 5G SIM came in, and it's definitely a business line, not a home internet line, it was stuck too, and it topped out around 30 megabits. I actually spent a few days going back and forth with AT&T business reps, Ubiquiti, and I even posted this on the Ubiquiti community site. But in the end, I discovered that T-Mobile seems to be the most compatible with the low-end 5G backup stick.
+
+This uses a feature called 5G RedCap, short for "Reduced Capabilities," and while AT&T supports that, at least on business lines like mine, they don't seem to support it for the U5G backup, at least not right now. I published a blog post with everything I've learned up to now, but ultimately, I went in a different direction. Instead of the $99 U5G backup, I'm testing the U5G Max now, which is four times the price. It works on AT&T's regular 5G network, and I was getting speeds between 300 to 500 megabits inside. But you might notice that I put together a different mini-rack for Micro Center's grand reopening livestream. Let me tell you, that was a wild day.
+
+It started by me having literally 30 minutes to assemble everything from scratch, including the little Desk Pi mini-rack kit that I brought with me. I actually tested the fit of this mini-rack in my carry-on luggage, and it fits great as long as you take off the top handles. But I wanted to build a second rack for the Homelab livestream so I could give it away later. Micro Center had thousands of people come in that day, and they really know how to throw a tech party. I mean, just look at this line that they had to get in.
+
+Anyway, the setup I built in the store had the same issue with the U5G Backup's firmware. Except this time, since I didn't want to be standing in the background of the live stream the whole time, I unplugged my Mac and tried running the TFTP process over WiFi. Don't do that, it won't work. After spending far too long figuring that out, I finally got its firmware updated, and it worked just as well as my other build did in the hotel room. I think at this point, my recommendation for the 5G Backup Stick is to use it with T-Mobile or Ubiquiti's plan. I think it's one of their newer products, and maybe it still needs a little
+
+time in the oven. Before I wrap up, I should mention Patrick and I took a full tour of the new store, and later that day we wound up drinking Bawls, and I wound up in the ER. Totally unrelated, but it was a wild day! You can see some of that experience in this Level 2 Jeff video. In the end, for around a thousand bucks, is a mini rack like this worth it?
+
+After all, the Dream Router 5G Max has most of the features I built in this rack for like half the price in one unit. Well, it really depends on your needs. The great thing about this is I can pop out the AP and move it away for better WiFi. Or the same thing for the 5G signal. Things like the Dream Router or the Cloud Gateway Industrial are nice if conditions are optimal, but sometimes it's better to have a separate router, switch, and AP.
+
+One upgrade I think I'll make before I take this to VCF is adding some keystone jacks on the back so I can plug into the WAN ports more easily. Micro Center's been here in Columbus since 1970–[people cheering for JayzTwoCents in the background] [laughter] This is the worst possible timing for that! Micro Center's been here in Columbus, Ohio since 1979. That's almost 50 years. If you're in town, come check out their back-to-school deals.
+
+Or if you're in Austin, Texas, sign up later this year for a free 128-gig flash drive. Until next time, I'm Jeff Geerling.

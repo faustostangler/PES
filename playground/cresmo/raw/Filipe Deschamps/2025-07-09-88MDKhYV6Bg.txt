@@ -1,0 +1,24 @@
+---
+video_title: "Email que não passava de 800km"
+video_id: 88MDKhYV6Bg
+channel_name: "Filipe Deschamps"
+channel_id: UCU5JicSrEM5A63jkJ2QvGYw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=88MDKhYV6Bg
+video_date: 2025-07-09
+video_description: |
+  Imagina o que passaria pela sua cabeça, se o Presidente do Departamento de Estatística da Universidade na qual você é responsável pelo sistema de emails, liga para você reclamando que os emails enviados pelo departamento não conseguem ultrapassar de 800 km de distância (500 miles). Beira o impossível, pois emails não funcionam dessa forma, correto? Se você pensou dessa forma, ótimo, porque você vai adorar escutar a história contada nesse vídeo que envolve o sistema operacional SunOS, o sistema de emails Sendmail e até a Velocidade da Luz 😂
+---
+Um cara chamado Trey Harris era o responsável pelo sistema de e-mails da Universidade da Carolina do Norte em Chapel Rio. Ele recebeu uma ligação do presidente do Departamento de Estatística da Universidade reclamando de um problema ao enviar e-mails. Estamos com um problema para enviar e-mails para fora do departamento. OK. Mas qual que é o problema exatamente?
+
+Não conseguimos enviar e-mails com mais de 800 km. Como é que é? Quanto esse problema começou a acontecer alguns dias atrás? Dias atrás você esperou dias sem estar conseguindo enviar e-mails? Não, não, não. A gente tá conseguindo enviar
+
+e-mails, mas não mais do que 800 km. E o presidente deu uma informação importante, que um consultor instalou um PET nos servidores deles e ele confirmou e garantiu que não tocou no sistema de e-mails. Esse servidor estava localizado na Carolina do Norte mesmo e ele mandou um e-mail para ele mesmo e funcionou sem problema algum. Daí ele mandou um outro e-mail para um servidor localizado em Richmond e funcionou. Outro e-mail para Washington e funcionou. outro pra
+
+Atlanta um pouco mais longe que funcionou, só que daí ele tentou enviar o e-mail pra Memphis que dá uns 1200 km e adivinha? Falhou? Pra Boston também é quase a mesma distância de 1200 km e falhou. Então ainda dentro do servidor ele decidiu cavar num arquivo chamado smail.cf, que é um arquivo de configuração de um serviço chamado Sandmail, que é usado para enviar e-mails. E aparentemente não tinha nada
+
+de anormal. Então ele abriu uma conexão Telnet contra a porta do servidor SMTP do e-mail e ela voltou com um banner do Sandmail customizado do sistema operacional Sunos. E nesse momento todas as peças se encaixaram na cabeça dele. Naquela época a versão 8 do Sandmil já estava bastante estável e era o recomendado a usar, mas mesmo assim a Sunan ainda estava distribuindo seus sistemas operacionais com a versão 5 do Sandmail. Só que quando o consultor foi atualizar o servidor, a versão do Sandmail foi desatualizada da versão 8 para a versão 5 customizada da Sun.
+
+Lembra daquele arquivo de configuração sandmail. Que que eu tinha comentado antes? Ele era um arquivo que tinha sido escrito pra versão 8ito do Sandmil, mas que por sorte a versão do Sandmail 5 que vinha com SOS conseguia ler a maioria das opções desse arquivo de configuração. Mas quando o Sandme 5 não conseguia encontrar uma certa opção declarada no arquivo de configuração, o Sand Mail definia então que o valor para essa opção ia ser zero. Uma das opções que foi setada para zero era o tempo de time out para conseguir se conectar num servidor de SMTP remoto, no servidor de e-mail do destinatário. Ter essa
+
+configuração setada para zero fazia com que uma tentativa de conexão remota, ainda em andamento, fosse abortada em mais ou menos 3 msundos caso ela não conseguisse ser completada dentro desse tempo. E agora que vem a parte mais massa quando o Train pensou é o seguinte: se a gente considerar a velocidade da luz, qual que vai ser a distância que dá 3 ms? Ele calculou 3 msundos de uma informação viajando no espaço, na velocidade da luz e o resultado deu 898 km. São 800 km e talvez um pouco

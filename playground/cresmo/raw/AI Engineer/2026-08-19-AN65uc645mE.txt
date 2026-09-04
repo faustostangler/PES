@@ -1,0 +1,132 @@
+---
+video_title: "200 Million Patient Interactions Later — Vivek Muppalla, Hippocratic AI"
+video_id: AN65uc645mE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AN65uc645mE
+video_date: 2026-08-19
+video_description: |
+  Asked how many in the room had ever received a proactive call from their healthcare provider, almost no hands went up. Vivek Muppalla treats that as the signature of scarcity: too few clinicians and too few hours, so the system triages and only the sickest get called. Hippocratic AI is past 200 million clinical conversations across more than 60 health systems, which is what changes the arithmetic. The tradeoff they refused is the familiar one: models accurate enough for this work can take tens of seconds to answer, and models fast enough for a phone call are not safe enough to make one.
+  
+  So the stack was built end to end. Polaris runs 31 models on every conversation, one holding the thread and 30 specialists covering labs, medications and scheduling, executed in parallel with each specialist first making a fast check on whether it has anything to say at all. A single model would be a single point of failure. Their speech recognition is a decoder only audio system fed the conversation so far and the domain context alongside the audio, so a drug name resolves against a finite list rather than an unbounded one, and prosody survives the projection so it hears the how as well as the what. Single word answers get a second scoring pass, because a heard as no is catastrophic. On evaluation he does the arithmetic that makes 99% unacceptable: at 10,000 calls a day that is 100 people sent to the wrong appointment, and catching a 1% failure rate takes roughly 450 tests.
+  
+  Speaker info:
+  - https://x.com/vim1up
+  - https://www.linkedin.com/in/vivekmuppalla/
+  - https://hippocraticai.com/
+  
+  Timestamps:
+  0:00 - Who has ever been called by their provider
+  1:05 - Triage as a math problem, and what flips it
+  1:54 - The oath every employee takes
+  2:44 - A call with a patient, start to escalation
+  5:12 - Why a generic voice stack does not work
+  6:04 - Building vertically to get speed and intelligence
+  7:44 - Latency and intelligence as a compounding flywheel
+  8:36 - Polaris, and running 31 models at once
+  9:29 - What speech recognition gets wrong in the real world
+  10:27 - Feeding context and domain knowledge into the audio model
+  11:19 - A finite list of medications instead of an infinite one
+  12:10 - Rescoring single word answers
+  13:51 - How a specialist decides to speak up
+  14:43 - Verifiers for tool calls
+  15:34 - Quantization, speculative decoding, cache
+  16:25 - Why 99% is a bad number here
+  17:14 - The tests needed to catch a 1% failure
+  18:03 - Grading on the scale used for humans
+  18:55 - Building a benchmark for empathy
+---
+[music]
+
+Hope everyone's having a great conference. Super excited to get started. Uh, how many of you all just quick show of hands have ever gotten a proactive healthcare call from your provider? Looks like no one. Me neither. Uh, I'm
+
+Vive. Oh, a few hands over there. Uh, I'm Vive. I run AI engineering at Hypocratic. Uh we've built a product that calls patients and can have clinical conversations. Uh and we're
+
+over 200 million conversations in at this point. Uh here's the reality of like healthcare. Uh across all of human history, the entire system has been built on scarcity, right? Not enough clinicians, not enough time, not enough money. And hence the word triage. We're
+
+always trying to fig figure out who amongst us is the sickest and deserves to get care and attention. As an engineer, I like to think about the math. And for most of human history, the math has just never been in our favor until now. We're finally at the point where we've seen enough of technology progress and we also have AI systems that can do clinically safe conversations and the cost for these conversations continues to drop. So the math now flips. We could stop rationing
+
+and you don't have to have calls just for the sickest 5% but you can call everyone. So that's the mission. We're trying to build clinically safe abundance for all. And it's not about replacing clinicians. In fact, what we're trying to do is help clinicians reach everyone that they couldn't do before because there was simply not enough of them to do this work. So how
+
+are we doing this? Um, our product and our company is predicated on three things. First, do no harm. Next, patient first and access for all. Um, and here's a cool thing. Uh, this is
+
+plastered across our walls in a company. Uh, but it's not just a poster. Uh, this is an oath every employee in the company takes. I did too on on my first day. Uh, and we built our product uh based on this oath. Um, and this is working at
+
+scale. Uh at this point we've had 200 million clinical interactions. We've had zero significant safety incidents. We're deployed in over 60 plus health systems and have an 8.5 on 10 patient satisfaction rating. Now uh I could put
+
+an architecture diagram and explain how all of this works. And don't worry, we'll do that. But before we get there, uh I want to show you the product in action. So we'll have one of our agents interact with the patient so that you get a feel for what we're up to. I'm your AI care manager. I'm calling to
+
+check in on how you're doing with your health monitoring devices. [music] Do you have time to chat now? >> I I need to know if I'm talking to a human being or some kind of computer. You sound like either one. >> I understand your concern, Miss I'm an AI, which stands for artificial intelligence.
+
+>> Okay. >> How are you doing today? [laughter] Well, I was tired earlier, but I'm somewhat revived, but I'm incredibly amused. Delivering at this level of care required building clinical capabilities you won't [music] find anywhere else. On the safety side, accurate drug name recognition.
+
+>> Could you tell me the name of the medication you're currently on? >> Condosin. And that's one other, but I don't remember the name. >> Could you help me out by spelling the name of this medication? [music] P R O D I N. I guess
+
+>> it seems like you might be talking about pres. Does that sound >> vital sign clarification? >> Then I took it again. It was 121 over 45 91. >> Just to confirm, your blood pressure is 121 over 45 and your heart rate is 91.
+
+[music] Right. >> Right. >> Med stoppage detection. >> What about the nettipene tablet? Were you able to stop taking that one as instructed?
+
+>> Well, I took it this morning. Well, no, I took it last night because I didn't have the other prescription and I don't think that would keep my blood pressure down. >> I understand your concern about your blood pressure and it's great that you're thinking ahead. I would recommend that you do talk to your primary care doctor about the nephetipene and get their guidance on what to do >> and real time nurse escalation when clinically necessary. How are you feeling?
+
+>> Okay, just a little tired and weak. >> It's quite common to feel this way after being in the hospital. Could you tell me more about it? >> My legs feel weak when I walk. >> Got it. Along with the weakness in your
+
+legs, have you noticed any chest discomfort or difficulty breathing? >> I just was was having shortness of breath for a while. >> I'm so sorry to hear that you're experiencing shortness of breath. Given your symptoms, it would be best to have a nurse speak with you immediately. >> Yeah. So, that's a sneak peek into our
+
+product. And so, we'll get into why this is hard and why a generic stack doesn't work for us. Okay. So, if I were to strip out all of the complexity around the audio and speaking back, it boils down to two things, intelligence and latency. Right? On the top left, you see
+
+some of our ever evolving smart intelligent models. These models are fantastic at what they do. They're clinically safe. But unfortunately, many of these models take tens of seconds to respond, sometimes over a minute, and that's completely useless when we're trying to have a two-way conversation on a telephone. On the bottom right, we have models that are fantastic. They are
+
+really fast, but then they're just not at the same level of clinical accuracy for us to have a safe conversation. When we started building out this product, where we wanted to be was on the top right corner. And in order to accomplish this, what we had to do was build a vertically integrated stack ground up, bit by bit, optimizing every part of the stock stack. When we started out building our own models, we also had several seconds of like latency. But hundreds of optimizations later, where we landed at was a product that is insanely fast, but also doesn't lose its intelligence.
+
+And we continue to benchmark all of this consistently. All of these results are on our website and more. Um, and there's three typical ways in which folks build u voice systems. One, you could use an ensemble of models or you use cascaded models or use speech-to-pech real-time models. Again, all of these models and architectures are great at different things. As an example, let me take two
+
+specific benchmarks amongst the many hundreds that are critical for our workflows. uh lab results check and IVR navigation. Now these are things that you don't typically hear about or see in the most common benchmarks and most of the generic models out there don't perform well at those and we needed our models and our product to be over 99% accuracy on those specific benchmarks amongst other things. uh and one that's one of the key reasons why we continued down investing our own stack and latency is key to this entire system. So every time we work on an optimization we buy back some latency and we just don't bank that latency. We
+
+use that extra gap now to pack more intelligence into the overall system so that we can have a more reliable conversation with the patient. Um and when we do that we go back work on more optimization and that flywheel compounds. So what seems like a tugof-war between latency and intelligence for us is a compounding flywheel. So what does this entire machine look like? Uh this is Polaris. This is our
+
+constellation architecture. Left to right you have the system that hears. The middle is the brain that reasons. The right is the system that talks back. And all of this roundrep needs to be really fast. So on the left hand side
+
+what you're seeing are a collection of models uh that are used for speech detection. So everything from bilingual switching to background noise detection um to contextual understanding of the conversation. The brain isn't a singular model. We in fact run 31 models at any given point of time for every conversation. So we have one central model that's handling having handling the conversation where we have other 30 specialist models everything from labs to medications to scheduling that are feeding input into this model. And then
+
+finally on the output side we have a custom personality voice HD quality and clinical documentation engine that make sure the patient gets back all of the right information and all of the same information flows back into the health system. The reason we have the system is because we see a singular model being as like one point of failure and that's just unacceptable for a patient conversation. uh this architecture gives us the redundancy and safety that we otherwise couldn't get to and the patient never can tell the different it's pretty seamless from their perspective. Let me double click into some of these systems for you. Uh first we'll talk about our uh ASR system.
+
+So the real world as all of us know is fairly loud and noisy. Uh but most of the audio benchmarks get recorded in a quiet room. And something we learned the hard way was most of what looks like model reasoning failures end up actually being model mishering things. Right? So the Spanish C or yes gets transcribed as the alphabet C or you could have an Arabic drug name that gets over 30% in inaccuracy in terms of like word error rate. So we had to build a system to to
+
+combat all of these challenges. A typical speech to take text system just takes in the audio and then outputs some text. So ours is a decoder only audio LLM system. So we take in the audio but in addition to that we're giving it two additional pieces of data. One is the context around the conversation thus far and second it's the domain knowledge around that entire conversation and that is sort of like the trick that makes this work for us. So under the hood
+
+what's happening. So we have first we have a encoder which is the year uh so we took an open source whisper v3 large turbo model and fine-tuned that on millions of clinical conversations uh to get to the accuracy we need. Next we have a con conformer projector. What this does is takes the audio and compacts it and projects it into tokens that the language model would understand. But the key over here is it also maintains all the proodi. So all
+
+the pauses and the stresses are maintained. So the model hears not just the what, but also the how. Next, we're passing in the context around let's say the medications this patient's taking in or the task as hand. Are we trying to fill in a form? Uh what kind of like details that need to go in there and the policy. And how this helps is now when a
+
+patient mentions a medication name, we aren't guessing from like an infinite list of medications, but we have the chance to optimize around a finite list. And that helps it getting the word error rate down. Next, we also have contextual biasing as a part of like the training. So during the training process, uh we have millions of these synthetic patients with their addresses, phone numbers and other details uh that are fed into the training process. So as a concrete example, let's say someone mentions their address on a conversation as 1100 Gary Boulevard. Now that specific
+
+utterance is ripe for phonetic garbage for most ASR systems, but given we're feeding that as additional context to the audio LLM, we have a high degree of accuracy and are able to get to the right transcription which then feeds into the brain accurately. Further, what we see is for most clinical conversations, many of the patient responses are mono mono words, right? Uh and those often get transcribed incorrectly. a now becomes a no or a five becomes a fine and in a patient conversation that's catastrophic. So what we do is a secondary round of SC scoring specifically when we see a patient has said only a singular word and again we use the context of the entire conversation to do this. So all
+
+of these like help us bring down the medical word accuracy rate by over 50% um from what we see as standard off-the-shelf models. In addition to that, uh the specific system we've built allows us to uh check in the latency and at a P99, it's 3x faster than every other system out there. Next, let's look into the constellation uh the brain. So, as I said, we have 31 models live running in uh at any given point of time. So, how do we do this without falling apart on latency? Uh the
+
+answer is a bit counterintuitive. We actually run every single one of these models in parallel. Uh but the trick over here is uh every single model does a really quick check to see if they even need to say something on this conversation right so every specialist first decides hey do I need to speak if not it's a short circuit and that's what helps us keep us in the budget so that's the synchronous part in addition to that we also have asynchronous run models running in the background that are doing verification and let's take two specific examples to walk through how we use these models Again going back to our medication example for example if the patient talks about ibuprofen or is talking about another medication that's when the med engine specialist will kick in and it will say oh I have something to say over here main model will pass in that context to the main model the main model with along along with everything else that already knows around the goal and the conversation will take this input from the specialist and steer the conversation as appropriate next uh like many other agent systems we heavily used like tool calls and I think pretty much every one of us has experienced tool calls have uh innumerable failure modes. Um so we have these like verifiers in the background that are running to make sure all the parameters into the tool calls and the responses and the tool calls are accurate. Uh and for use cases like scheduling this is what's gotten us to get to a 3949 accuracy. And finally for
+
+certain use cases we're also running these verifiers offline where possible. Um, so again going back to scheduling, sometimes we have the luxury of time to go back and check to make sure uh if there was an inaccurate appointment, we can course correct that on the back end or call a patient back and apologize. Um, all of these changes would be meaningless if we didn't optimize our uh inference stack. Uh, and we have a fantastic research and engineering team that lives and breathes on this problem. Uh, and for inference itself, quality is our constraint and speed is the work. So
+
+we can never compromise on the quality of the output. Every speed optimization has to be u lossless. We've worked on like many many of these like optimizations. Let me talk you through three specific ones uh that we found to be the most meaningful. Uh one is 4-bit quantization. Um so basically what we've
+
+done is we've shrunk down the math for uh model computation to be from 16 bit to 4bit again lossless and this is like really helped us with overall latency. The next is speculative decoding. So we have a smaller model that's generating the tokens ahead of time and then the main model just checks this in one go and this also has greatly improved latency for us. Finally a KV cache compression system. So uh as these conversations get like really long in length uh we've figured out a way to keep a large chunk of these conversations warm on cache giving us an over 96% hit rate and then also helps us with the prefill portion uh which goes 18 times faster. So this style of across
+
+the board board optimizations is what's uh getting us ahead uh during the product development phase. Now eval are obviously key as we've seen across many of these uh talks. Um so some quick math right for example let's take the scheduling use case again. Um with over 10,000 calls a day uh a one 1% failure rate like sounds all right. Most agent tech systems would claim 80% 90% accuracy. Uh, and that's great for them.
+
+For us, even the 99% is pretty bad. Uh, because 1% error means 100 people a day are going to get the wrong appointment type. Uh, and it's physically bad because they'll show up on the wrong date, wrong time. But worse off, they could actually be missing a critical uh, appointment. And that's unacceptable from our standpoint. Uh, so it's not
+
+just an annoyance, right? Um, and the challenge over here is in order to catch this like statistically the math like is like incredibly challenging, right? You need about 450 tests to be 99% sure that you can catch this like 1% error rate. Uh, and 1900 tests to be able to see that you've caught it like 10 times. Um, so you can't purely rely on synthetic data from our experience to be able to get to the scale of accuracy. Uh so we
+
+use a combination of human beings and synthetic data. So we have over 7,000 trained clinicians on our platform who are continuously helping us like evaluate our platform. Uh they've done over uh 700,000 close to 800,000 clinical conversations to help us figure out the accuracy of our system and we do this on a continuous basis. Finally, uh coming uh to safety, um uh we've shipped five versions of our product uh thus far and each one's gotten better um compared to the previous one. So, we don't just grade the output of our models on the correctness or validity of it. So, we
+
+use the same scale that as they do for human beings. So, they're graded across correctness, no harm, minor harm, severe harm, and death. And across five generations where we're at with our Polaris system is a 99.89% uh accuracy um with respect to like no harm and humans on the same rubric are at about 81%. It's not because like we're terrible but uh AI systems don't get tired and unfortunately we do and we also don't have the luxury of having 30 plus supervisors helping us at any given point of time.
+
+And finally, safe is not enough, right? A key part of the product is the empathy. For human beings to open up to AI systems, we needed to make sure uh the voice and how we actually lead these conversations are empathetic. And as with most other things during our product journey, we found that there weren't actually accurate or good benchmarks to measure the empathy of these systems. So we actually built one called heart. Uh the paper for this is
+
+public. uh encourage you guys to like read it. Uh and uh we we had to make sure the end system was not just safe but also empathetic so that people would actually prefer it and use it. And finally uh all of this like comes down to the people. Uh we wouldn't be here if we didn't invest in uh people from an AI native perspective. Uh
+
+everything in our company across the last couple of years uh has been transformed our hiring processes to how we use like tokens. We still have unlimited tokens for everyone at our company. We also have two great programs for anyone who comes into uh um Hypocratic. For early career engineers, we have an agent deployment residency program where they're trained to write some of the best like healthcare safest agents. And then for experienced software engineers, we have an AI residency program where we help you start like training models uh and build the next great system along with us. So
+
+yeah, we're told you got to pick uh two of these options around quality, speed, and safety. We didn't, and we decided to go with all of them, and we're hoping uh the rest of us would come and build with us. Thank you.

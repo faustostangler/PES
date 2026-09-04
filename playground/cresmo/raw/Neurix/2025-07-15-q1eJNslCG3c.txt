@@ -1,0 +1,80 @@
+---
+video_title: "How Hackers Clone Websites to Steal Your Password"
+video_id: q1eJNslCG3c
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=q1eJNslCG3c
+video_date: 2025-07-15
+video_description: |
+  What if the login page you just used wasn't real? 
+  In this video, we show how attackers clone legitimate websites to steal credentials, all simulated in a safe lab environment.
+  
+  Using Kali Linux and the Social Engineer Toolkit (SET), we'll:
+  - Clone a real company login page in seconds
+  - Host the fake site on the attacker's machine
+  - Send a convincing phishing email with a spoofed domain
+  - Capture the victim's credentials in real time
+  
+  This video is for educational and awareness purposes only.
+  
+  ▬▬ Tools used ▬▬
+  - Kali Linux: Attacker OS
+  - Windows 10 : Victim OS
+  - Social Engineering Toolkit (SET)
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00 - How the Hack Begins  
+  01:32 - The Phishing Email Trap  
+  04:01 - Launching the Credential Harvester
+  06:19 - Cloning the Real Website  
+  06:57 - Capturing the Login Credentials
+  09:05 - How to Protect Yourself  
+  
+  #penetrationtesting #websitecloning #hacking
+---
+Imagine this. You walk into your office and receive an email that looks exactly like a message from your boss asking you to urgently review a document. You click the link and unknowingly hand over your credentials to an attacker. That's social engineering where attackers don't break into systems, they break into people. One of the most common techniques they use is fishing, where the attacker pretends to be a trusted source to trick you into revealing sensitive information.
+
+Think of fishing like digital pickpocketing. It works best when you're distracted and the thief knows exactly what they're doing. In today's video, we're going to dive deep into how fishing works and we'll simulate a real fishing attack in our lab using Kali Linux. We will simulate a classic fishing attack using two machines in our EVENG environment. Kim will play the role of the attacker running Kaye Linux.
+
+Sally will be the victim using a Windows 10 machine. On Kim, we'll use a powerful tool built into Kaye Linux called the Social Engineer Toolkit or Set for short. With it, we'll create a fake login page, craft a fishing email, and trick Sally into entering her credentials. all within a safe and controlled lab environment. This demo will help you understand how real world fishing works and why awareness and layered defenses are so important.
+
+Let's get started. Let's say Sally works at a company called Acunetics Aquart, an online shop. Here is their website. Now in reality this site is a publicly accessible demo environment used by cyber security professionals to test web vulnerabilities but for the purpose of this demonstration we will treat it as if it is the real company Sally works for. Sally has a company email address sally@acunetics-acqart.com
+
+and as you can see she's using Mozilla Thunderbird to check her emails. Meanwhile, Kim, the attacker, wants to trick Sally into giving up her login credentials. So, Kim creates a fake email address, it supported.com. Notice the subtle difference.
+
+It's not acunetedacquart.com. It's acunetexacuart.com with a missing I. This is a classic fishing technique.
+
+Attackers often register domains that look almost identical to the real ones, hoping the target won't notice the difference. Since Kim doesn't actually have access to the real Acunetics Acuart.com domain, he uses a lookalike to spoof the identity of the company's IT department. Now, let's see how Kim carries out the fishing attack using Kaye Linux and the social engineering toolkit, also known as SET. Kim sends Sally a convincing fishing email that looks like it is coming from the IT department. Here is
+
+what the email says. Dear user, your password is set to expire today. Please click the link below to reset it immediately to avoid losing access. Thank you, IT support team. But here's the trick. The reset password
+
+now link does not lead to the real company website. Instead, Kim replaces the URL with the IP address of a machine or server he controls where he is hosting a malicious clone of the login page using the social engineering toolkit. If Sally clicks on it and enters her credentials, those credentials are captured by Kim in real time, giving him unauthorized access to the system. Let's check Sally to see if the message has arrived. And there it is, a message from Aunetics Aquart IT support.
+
+To capture Sally's credentials, Kim launches the social engineering toolkit, a powerful Kali Linux framework specifically designed for conducting social engineering attacks such as fishing, website cloning, and credential harvesting. When Kim launches the social engineering toolkit, he is presented with a main menu offering several options. As you can see here, the first option is social engineering attacks, followed by others like penetration testing and third party modules. Kim selects option one, social engineering attacks, since his goal is to perform a fishing attack. When Kim selects option one, social engineering attacks, he is taken to another menu with more specific attack techniques like QR code attack or mass mailer attack. From there, Kim chooses
+
+option two, website attack vectors. This allows him to clone a legitimate website and harvest login credentials from unsuspecting victims.
+
+Next, he selects option three, credential harvester attack method. This method captures usernames and passwords submitted on a fake login page.
+
+From the new menu, Kim chooses option two, site cloner. This feature allows the social engineer toolkit to create a fake near-perfect copy of any real website. With this tool, Kim could clone well-known websites like accounts.google.com, facebook.com, or even a corporate login
+
+portal, all to trick users into thinking they're logging into the real site, when in fact, they're handing over their credentials directly to the attacker. At this point, Kim is prompted to enter the IP address of the server he controls. This is where the fake login page will be hosted. He enters the same IP address that he had previously embedded behind the reset password now link in the fishing email sent to Sally. In fact, he doesn't even need to type it manually. Set the Social Engineer
+
+Toolkit automatically suggests the local IP address of his machine. If it's correct, Kim can simply press enter to accept the default and proceed. After that, the social engineer toolkit asks for the URL of the site Kim wants to clone. Kim types in the login page of Sally's real employer, the Acunetics Aquart login portal. The Social Engineer toolkit then automatically clones the page and hosts it on the previously provided IP address, in this case, Kim's own machine.
+
+From this point on, anyone who visits that IP, that means Kim's fake site, and submits their login information will have their credentials sent directly to Kim's terminal in plain text. Now, let's switch over to Sally and see what happens when she checks her email. She sees a message from IT support with the email address it supported.com. Since she's in a hurry and not paying close attention, she does not notice the subtle typo, the missing eye in Acunetics.
+
+Trusting the message, she naively clicks the link, unknowingly falling right into Kim's trap. When Sally clicks the link, what does she see? A login page that looks exactly like the real Acunetics Acuart website, her employer's official site. But in reality, it's a perfect clone hosted by Kim and designed to steal her credentials. Sally enters her username and password, thinking she's logging into the real company portal.
+
+The moment she hits login, her credentials are instantly sent to Kim's terminal, clearly visible in plain text. She has no idea that she just handed over her login details to an attacker, effectively giving him an open door into the company's systems. Now that Kim has Sally's credentials, he can access internal systems and move laterally within the company network. From there, he could deploy ransomware to encrypt sensitive files and demand payment in Bitcoin, just like the Wanukry or Ryuk attacks that crippled hospitals and businesses around the world. He could also conduct corporate espionage, stealing confidential data, intellectual property, or customer records, similar to what happened in the Solar Winds breach, where attackers infiltrated multiple high-profile organizations.
+
+Kim could also simply use Sally's account to fish other employees, escalating privileges and gaining even deeper access without being detected. This is how one click from an employee can lead to a full-scale cyber attack. It often takes just one mistake from one person to compromise an entire organization. [Music] Let's wrap up by looking at how organizations can defend themselves against fishing attacks like the one we just saw. First, email filtering.
+
+Use advanced filtering tools that can detect suspicious links, flag spoof domains, and block emails from fake senders before they ever reach the inbox. Second, user awareness. Technology helps, but human vigilance is critical. Regular training helps employees spot fishing attempts and think twice before clicking suspicious links. Third, two-factor authentication.
+
+Even if credentials are stolen, two-factor authentication can stop the attacker from gaining access. It adds an extra layer of protection that's simple but powerful. Fourth, DNS filtering. By blocking known malicious domains at the DNS level, you can prevent users from ever reaching fishing sites, even if they click the link. And finally, browser isolation.
+
+This approach opens risky websites in a secure sandboxed environment, keeping any potential threats away from your actual system. Together, these strategies create multiple layers of defense, turning a potentially devastating attack into a blocked or contained incident. You just saw how easily a cloned website, combined with a sense of urgency or a moment of distraction, can trick someone into giving away their credentials. That's the real power and danger of fishing and social engineering. These attacks don't target machines, they target people.
+
+But with the right tools, proper training, and layered defenses, even the most convincing attacks can be stopped before they do any harm. If you found this video helpful, don't forget to like, subscribe, and hit the notification bell for more hands-on cyber security walkthroughs. Stay safe and stay sharp. Bye-bye.

@@ -1,0 +1,180 @@
+---
+video_title: "Watch This If Your Coding Agent is Ignoring Your Rules (You Need Hooks)"
+video_id: msfMqW92Y8Q
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=msfMqW92Y8Q
+video_date: 2026-08-27
+video_description: |
+  Hooks are the most underappreciated part of every coding agent. In many ways they are more important than rules! I've seen the setups of hundreds of developers and entire companies, and almost nobody uses enough of them.
+  
+  Everything else you build into your coding agent is simply guidance that can be ignored, but hooks are guarantees for your workflows.
+  
+  So in this video I show you why they are so important, how to build them, and a bunch of practical use cases for them.
+  
+  Every hook is free in my skills repo, along with a skill that writes new ones for you.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Check out MindsHub Cowork, the agentic workspace for getting things done efficiently:
+  https://mindshub.ai?utm_medium=influencers&utm_source=youtube&utm_campaign=26q3-cole&utm_content=integration
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Join Dynamous for the Agentic Coding Course I'm currently building a new version of:
+  https://dynamous.ai
+  
+  - All my skills and hooks resources in one repo:
+  https://github.com/coleam00/skills
+  
+  The hooks-create skill - describe the guarantee in a sentence, it picks the event, writes the script, and wires everything up:
+  https://github.com/coleam00/skills/blob/main/.claude/skills/hooks-create/SKILL.md
+  
+  The self-evolving harness study, where letting the agent rewrite its own rules scored below the baseline:
+  https://arxiv.org/abs/2604.25850
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Nobody is using hooks
+  0:39 What a hook actually is
+  2:13 Why your rules get ignored
+  4:23 Too many rules make agents worse
+  7:17 The hooks-create skill
+  8:18 Sponsor: MindsHub Cowork
+  9:58 Guarantee your tests with a Stop hook
+  12:01 How a hook talks back
+  13:28 Hooks for security
+  15:58 A hook for every event
+  18:09 The audit: event or judgment?
+  20:06 Every rule I'd turn into a hook
+  21:59 Paste the rule, get the hook
+  22:35 Hooks don't replace your rules
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+The most underappreciated part of every single AI coding assistant is hooks. I've personally seen AI coding system for hundreds of developers and entire companies. And almost every single time, there is not enough use of hooks. They are so incredibly powerful and almost always underappreciated. And so in this video, I want to show you what hooks are, why they're so incredibly valuable, and how you can build your own so you can make your AI coding workflows more reliable by building in guarantees. This
+
+is the big word for today. And let me tell you, this is the most requested piece of content on my channel. So I'm super excited to get into this with you. Now, I'll make hooks very concrete for you throughout this video. But to give you the quick definition right now to get started, hooks are actions that you want to guarantee are performed whenever we hit certain events within our coding agent. There's a whole event menu that
+
+we'll get into as well. But for example, right before your agent is going to read a file or right when the conversation stops, fire an action that might perform an audit or block things for the sake of security, maybe log things for observability. There are so many uses of hooks and we'll get into examples for all of them. And no matter the coding agent you're using, like Codex, Claude Code, or Pi, they essentially all support this primitive of hooks. It's one of the core five components of any AI coding assistant that you build up to extend the harness and really create your own AI coding workflows. So we have
+
+rules, which we're going to talk about a lot here as well. We have our sub agents to delegate work, MCP servers to connect to our platforms, skills, which are our workflows, our reusable prompts, and then we have hooks, which are our deterministic automations. And you'll hear me say deterministic a lot in this video because deterministic is pretty much equivalent to guarantee, right? Like everything else that we have for our coding agent, like skills and rules, they're guidance for the agent. It's not a guarantee that it's going to follow the full workflow or listen to every rule every single time. That is why
+
+hooks are so powerful. It's the one thing we build into our coding agent that is actually going to ensure that something is happening the same way as it should every single time. And so if you're wondering right now, should I watch this full video? The answer is yes. If you've ever had a time with your coding agent where you just get so frustrated because no matter how specific you are about some rule within your claw.md or agents.md, the agent
+
+doesn't always follow it. And that happens all the time because large language models are probabilistic. They don't interpret your instructions or your workflows the same way every single time. And sometimes they just miss rules or they miss a step in the workflow. And that becomes so frustrating. And one
+
+really classic example that I've run into myself is typically when you have your agent perform any kind of implementation, you have rules that guide it through checking its own work and validating things after. So you have a step-by-step process like how to run your test suite for example. But agents will sometimes miss different parts of your test suite. And so they'll say they're done and that they did all the testing they needed to, but part of your test suite is still red. And so the agent didn't fully validate its work.
+
+And this is especially common for larger codebases where there's just a lot of checks that have to be performed. And so this is a really classic example where we try to fit something within our rules that really should be a hook so we can guarantee like right when the conversation is done, we'll use a stop hook to run the tests deterministically. We are guaranteeing the tests to be run. If there are any failures, we're going to force the agent to resume and fix those. And so this is a really good example that I'll dive into more in a little bit with you. But this also
+
+presents the idea here that sometimes there are things that you have in your skills or rules that actually should become hooks. And this is the framework I want to guide you through here as well to help you identify when should we be creating hooks? Because I don't want you to just understand them. I want you to know how you should really be building them into your own workflows as well. So really the big idea here is that we want to extract the larger process away from the agent as much as we can. So instead
+
+of having to put in our rules when this thing happens, then you do this, we're going to turn that into a hook so we can make sure it happens without relying on the agent to remember the right order of operations. And really what I'm telling you here is super in line with I'm sure a lot of studies you've seen come out like Anthropic reducing the size of their system prompt for Claude code by 80%. Just a lot of studies like this one here that show that too many rules for an agent can actually become detrimental. You're just splitting its focus between so many processes and conventions. Now please don't get me wrong. I'm not saying rules are bad.
+
+They're still really important. It's just it's way too easy to take rules too far. There's a lot of studies that show that. Like this study right here, super fascinating. I'll link to it in the description. It's a bit more technical,
+
+but I'll cover the high level here. They essentially built their own harness that allows their coding agent to evolve their own AI layer over time. So editing its own rules and hooks to try to perform better on the same tasks later. And then they have a separate evaluator judge like did these changes to the AI layer actually lead to better performance across different difficulties of tasks. And so this is the control right here, how well it did without any self-evolution.
+
+And then at the bottom, this is when it was allowed to make changes to its own rules cuz system prompt is basically the global rules for your agent. And we can see the numbers decreased. It actually got worse, which proves that if we just keep appending on to rules, which is what coding agents will do when you let them evolve their own rules, we are just diverting attention. Even if the individual rules we add might help in isolation for certain types of tasks. If we're just bloating our rules, we're making things worse. And then for hooks
+
+on the other hand, which they call middleware, adding them in was helpful for every single task type except for hard tasks, just changing the hooks was able to increase performance. And really the only reason it's a bit worse for the hard tasks is because you do have to evolve the full AI layer together to really get the best results like they show with the bottom row here. But the main point that I'm making is just tacking on more rules is going to hurt you. That's why we have to be careful about what we build into rules. And if we want to make our rules more lean, we have to think about what other parts of the AI layer are we going to bring those things into? If we're taking process out
+
+of the rules, where does it belong? And it belongs in hooks. And so with that, the star of the show here is I'm just going to go through a bunch of really practical examples of hooks that I'm using every single day to build guarantees into my workflows. And so as we go through this you'll understand more how hooks work just going through the examples. And then we'll cover the audit, figuring out which rules should become hooks because I can guarantee that you already have a good chunk of your rules that's screaming out to you, make me a hook. And so I'll show you how
+
+we can go through that process. You already have a part of your AI layer that you can translate into this. And for all the examples that I cover with you here, I have them all in my skills repository that I'll link to in the description. And so feel free to use these hooks as a reference or just directly use the ones that I am. And so the other thing that I want to show you is the hooks create skill. So for every
+
+single hook that I show you in this video, I used a process pretty much like this to build it. So this skill, you just describe what should the hook do? What's the guarantee I want in my workflow? And then it'll go through an interview process to identify everything it needs, then build the entire hook for you, and incorporate it into your coding agent like Claude code. So this skill is Claude code specific, but you can just tell it like I'm using Code X or Pi instead, and it will be able to adapt.
+
+And so, for every single hook I show you in this video, the way that I created it was pretty much this prompt, right? Like I used the skill {slash} hooks create, but then for example, that testing guarantee example I showed earlier, I just said, "When the conversation ends, run the full test suite to make sure everything is green. If it is not, force the agent to fix it." And obviously, you'll you'll want to specify like what is my test suite, and hopefully you already have that, but that would be a part of the interview process. You can start really simple with your prompt, and it'll just do the whole thing for you. The sponsor of today's video is
+
+Minds Hub, specifically their product Minds Hub Co-work. It's an agentic workspace that takes whole tasks off your plate and comes back with finished work. Now, there are a lot of apps out there that do this, but here's what makes them special. Different models are better at different things now, and the price gap between them is enormous. So, what you really want to do is use the right model at each step of your workflow, depending on what you need at each stage for your price, speed, and performance. And that is what Minds Hub
+
+Co-work specializes in. Plus, their unified inference allows you to use Minds Hub for inference, access to any model. So, within my Co-work here, I have my planning model for deeper reasoning, my routing model to figure out each turn when I want to call upon a more expensive one, and my coding model whenever I need to write code for any of my tasks. And so, these are the defaults that we have here, Claude Sonnet 3.5, Kim i K3, and Haiku 4.5.
+
+The models don't really matter though. What I really want to show you is just how easy it is for us to mix models and providers within Co-work. Then going to the chat interface for Co-work, it has all the features you would expect, very feature-rich. And so here, I asked it to research the current state of open source AI agent harnesses, and it dug deep with all the models and providers that I have set up, and then gave me this beautiful dashboard at the end with a summarization of everything that it found. And yes, I checked all these numbers myself, it got it completely right. And the agent doing all the work
+
+in co-work is Anton, which is MIT licensed right here in GitHub. So, all the routing logic that I'm talking about here is just a file you can open up and read. Mine sub is free to start with 5 million tokens a month across co-work and their unified inference API. If you want the same model freedom for your agents, and you can bring your own API keys. I'll have a link to them in the description. Cool. So, with that, let's
+
+go back to the main example I was showing you earlier where we are always going to run tests after implementation and force the agent to iterate if there are any failures. Let's see this in action now and how I set it up. So, I'm over here in a repo where I have this stop hook set up. All of your hooks, at least for Claude code, are going to be defined in a settings.json file. And the
+
+skill I just showed you to build these, it'll help you with all the setup as well. So, don't worry too much about the technical details. I'm just showing you how we're building this into our process. So, we have this JSON where we are specifying all of our hooks, and we specify the individual events that we have happen in our coding agent where we're going to trigger these different scripts to run. And this really houses all the examples I'm going to show you.
+
+I'm I'm going to at least show you a couple of them pretty quickly here. And so, here we have our stop hooks. These are the things we're going to run, the actions we're going to run when the coding agent says it is done, right? When it passes control back to us. And so, here I have the stop tests must pass.py. So, I don't need to like show
+
+the full script right now, but essentially this just runs the test suite we have for our code base, and it's going to return an error if there's anything that is failing. And so, for an example here, I have a super simple conversation where I just told it to add one line to the read me. But you can imagine this would be a full implementation where it touched a ton of files, and maybe we still have the agent run tests because that's a part of our skill for implementation, but we want to make sure that everything is run. And so, now we can see the stop hook that fired. And we got an error. It blocked
+
+because the tests are not all passing. So, this turn is not done. And we can see the output where it ran the test. It's citing the failures that we encountered in our unit tests. And now the agent is continuing, right? It's
+
+forced to pick things back up and address the failures. Now, this is a little bit of a cheesy example because I'm just telling it to add one line, but I wanted a simple conversation just to show you the hook running. This is what it looks like in a conversation, no matter the agent you're using, they'll just that say that the hook ran. So, going back to the diagram here, I just want to quickly help you understand how the hook communicates back to our coding agent. And remember, hooks are cross-tool. So, really all this applies
+
+no matter the coding agent. And so, the script that runs the hook, it could be a bash script, a TypeScript script, a Python script. It's going to run whatever it needs for that deterministic action, and then it's going to give an exit code. And that exit code determines if the coding agent is able to continue or if there's something that is blocked or something that it needs to iterate on. So, if we exit zero, we're saying the hook is green. The check passed for
+
+that tool eval or we're allowing the conversation to stop. But if there's an exit two, we are blocking. We're communicating back to the coding agent there is a problem that has to be addressed here. Like maybe we're not going to allow the agent to perform that action. That's an example I'll show you in a little bit. Or maybe no, we can't
+
+stop the conversation here. There's something that has to be addressed. This is how we communicate failure. And then if the hook itself, like the code itself, broke, then there's a different kind of error code, but usually that's less important. So, we're focusing mainly on these two, either it passed or it failed. And depending on what the
+
+event is that triggers the hook, the exit code, the failure is going to mean a different thing. So, like for our testing example here, the stop hook failure means that we can't actually end the conversation, right? We're blocking the action of stopping the conversation. But then another example I want to give you here is using the pre-tool use. And this is probably the most popular event to apply hooks to because we're able to evaluate an action the agent is about to take before it makes that tool call. So
+
+there are a lot of different things around security that we can implement with the pre-tool use event. I love this one so much. So one really good example is the .env block. You really never want your coding agent to read your environment variables because then you have API keys that are going into the context of your LLM and that's sent to the data servers for whatever coding agent you are using. And so we want to
+
+prevent the coding agent from ever reading this file. And again, you could put it in your rules, don't read the .env or don't run the remove command or don't edit files in this directory. But just because it's a rule does not mean the agent is always going to follow it. This is such an important guarantee to build into your workflows stopping your agent from making certain tool calls.
+
+And we can see an example of this in action as well. So I just simply asked it, what is my open router API key in my .env file? And it's kind of scary, but the agent was more than happy to just try to read that file. So if you ask it to explicitly or the agent just gets confused with more context run, it'll do things that it really shouldn't like read a .env or delete a directory. But
+
+we blocked it. Take a look at this. We have the tool call here where it tried to read from the .env, but we have an error, pre-tool use. The hook fired and it gave an error, blocked. Access to
+
+secrets is not allowed. And the other neat thing is the hook actually provides guidance to the coding agent. If there's a .env.example, we can read that instead because maybe the agent is just trying to figure out what environment variables we have in the project. And so the agent is able to
+
+adapt based on the failure that comes from the hook. So it's not like we just interrupt the conversation and crash the coding agent. It becomes a part of the process where it takes this as feedback to continue. And the hook is very simple to set up. So, going to our settings.json, instead of a stop hook,
+
+it's a pre-tool use. And then we have this one right here, pre-tool use secrets. This is the script that ran to evaluate what the agent was about to do. It detected, based on a regular expression, that it's trying to access a secret. And then we print the message, which that goes back agent. This is the
+
+feedback. And then we have that two exit code I was telling you about in the diagram that forces it to iterate and do something different. And I've only given you a couple of examples here of hooks that I'm using every single day, but there are super useful hooks for every single event in the menu here. Like for example, you could build another stop hook that sends you an alert, like a desktop notification or a Slack message, whenever the coding agent is done, so you know to give it another input. Or we could use the post-tool use or sub-agent stop for observability. Like every time
+
+a sub-agent is done, or we just finished performing an action, we can build up a sort of audit trail. So, you can go back with our agent later to identify opportunities to make things more efficient, just evolve our AI layer over time. Start session is another really good example. Like right when we start a new instance of our coding agent, like Claude Code, maybe there's specific context you want to inject in. I do this for my second brain, where there's like my core memory file that I use a start session hook to bring in as context along with my global rules. Lot of good
+
+examples here. I don't have time to cover all of them, but you can just start to run wild. You can have your imagination run wild here with the different things that you can automate, just building guarantees into your workflows. The The core sort of mental model that I would have here is with hooks, you're either blocking something from happening or you are observing something. So, we've seen really good examples of pre-tool use and stop already. There's so many good uses for
+
+security with hooks. I mean, you have no excuse for not using hooks. They're useful in any AI coding workflow. And we focus less on observability here because it's a bit more specific to your process and your code bases, but especially using the post tool use just to log all the actions your agent is making. So, the rule of thumb is any kind of pre-hook is a gate cuz it's before the coding agent takes that action like ending a conversation or invoking a tool. And then anything post is more for
+
+logging like the post tool use. And by the way, the hooks create skill that I showed you earlier that helps you create hooks, it knows all these best practices. So, it kind of walk you through like based on what you want to automate, here is the different events that I think you should consider for this in the menu. So, at this point going through examples, you probably already have some ideas for hooks you want to build for yourself. But I want to make this even easier for you. The
+
+most important part of this video is the rule auditing. How do you along with the ideas you already have get even more ideas by going through your rules and figuring out what things should you extract and turn into guarantees with hooks. Now, luckily this framework is actually quite simple. So, I would encourage you to go through this on your own global rules today. It's going to help you so incredibly much. Basically,
+
+what you do is you go through each section or line of your rules and you ask yourself, is this naming an event or is it encoding a judgment? And what I mean by that, let's take a look at a couple examples here. So, like this one, money is integer sense never floats. Well, this really isn't a process at all. We are encoding judgment. This is a
+
+constraint/convention we have for our agent. This definitely belongs as a rule. But now the next line, after implementing run the tests. When we do this, then we need to do this. That is definitely a process and this is the example we covered first that should definitely be a stop hook so we avoid the problem we talked about up here. And now here's another example,
+
+never read the .env file. This is our pre-tool use hook example. Now, it might not necessarily read as a process. This might be a little bit of a stretch, but you can think about it like, you know, when you're about to read a file, make sure it's not a .env. But, in this
+
+example is probably even better, right? It's like when the session starts, read the decision.md. This should be a start session hook because the agent might get lost in the sauce of all your rules and not actually read this file when the conversation begins. And so, all of these we are naming events that need to take place. When this happens, then we
+
+do this. Let's extract the process out because it's not judgment that we're encoding. Definitely, most of your rules will probably stay as rules. But, also, if it's neither, if it's not judgment, if it's not naming an event, then just delete it, right? Like, write clean code. The agent already knows this.
+
+We're not really encoding new judgment here, so we can also prune our rules. That's a whole 'nother video I can make. But, yeah, right now, focus on is it a process or not? So, to make this even more concrete for you to end things off here, even give you more examples. I have a global rule file that I purposely built in some processes that really should be hooks. And these are things
+
+I've turned into hooks for myself. And so, for [snorts] example, at the start of every session, run git status and read the decisions.md. That should be a start session hook. Before you edit anything in routes, read rag/citations.py
+
+first. This should be a pre-tool use hook. And this is also an interesting example. I found this very useful where sometimes you know that there's important context in one part of the code base when the agent is operating on a specific file. So, you can guarantee with hooks that it has looked at those things first, so it really has all the information it needs to go ahead with those edits. And I'll show you an
+
+example of this, actually. Like I said, like, you know, in this file here, I want you to add one sentence to the system prompt. The pre-tool use hook fails. It says blocked. This file is coupled to files you've not read in this session. You'll
+
+see Claude code do this by itself sometimes where it'll try to edit a file and then it'll get an an update failure cuz it hasn't read the file yet. But this hook takes it even further to say like if these things are coupled, just make sure you read everything. Cuz a lot of times agents will try to perform certain actions without enough context. So just another good random example there. This is our classic pre-tool use like never read the .env. That should
+
+definitely be a hook. Never run a recursive force delete. That should be another security guard as a pre-tool use. Log every command you run. That should be post-tool use. When you finish
+
+implementing, run the full test suite. Again, that is our stop hook. So I'm repeating a couple of them here, but just showing you how like without really understanding everything I'm covering in this video, this might actually seem like a good fit for your rules. Like yeah, you want your tests to always be run. Yeah, you don't want it to read from the .env. But these just
+
+aren't guarantees. And the fantastic thing here is that anything you identify in your rules as more of a process, you can pretty much just copy that section or line and feed it to the hooks create skill that I have linked in the description. So {slash} hooks create, just paste it in, right? Like I took it, I pasted it in right here. Before you edit anything here, read this file.
+
+That's the file coupling example. And if I scroll down, it built it, right? It decided this is going to be a pre-tool use. It figured out the parameters. It built the hook. It wired it into the
+
+settings.json. It did everything for me just based on the rule that I gave it. It figured out the type of hook, the configuration, the script, and everything. Just please keep in mind as you're doing this process, hooks don't replace your rules. They complement each
+
+other. They're very, very important. It's just there are certain processes or events named in your rules that you can turn into hooks. So I hope that really helps you identify the kinds of guarantees you can build into your workflows and just how hooks work in general. And so if you found this video useful and you're looking forward to more things on AI coding and different parts of the AI layer, I'd really appreciate a like and a subscribe. And
+
+with that, I will see you in the next video.

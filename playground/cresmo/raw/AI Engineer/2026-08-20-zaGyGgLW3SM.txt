@@ -1,0 +1,180 @@
+---
+video_title: "Unlock Agent Autonomy: The Runtime for AI-Native Systems — Tushar Jain, Docker"
+video_id: zaGyGgLW3SM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zaGyGgLW3SM
+video_date: 2026-08-20
+video_description: |
+  An agent that had quietly emailed him a nightly summary for weeks decided one morning to post it as a pull request instead. Nothing had changed. The model simply judged that publishing would be more helpful. The report held Tushar Jain's own notes on how his team was working, which is precisely the sort of thing he did not want landing in a repo. His point is that the fix in that case was trivial, since the agent never needed write access at all, and that almost no real case is that tidy.
+  
+  The example he builds on is an agent investigating a latency spike. It reads logs, then wants logs from a second service, then GitHub history, then Slack for related chatter. Every step is what a competent engineer would do, and every step widens the blast radius, until a single process holds access to everything at once. Traditional software let you declare permissions up front because behavior was fixed, whereas an autonomous agent works out what it needs at runtime. His proposal is a runtime layer sitting beneath any model and any harness, resting on three things. Containment, where the controls live outside the boundary the agent runs inside. Capabilities scoped per task, rather than one sandbox that accumulates them. And access granted against the intent of the original request, so that a sudden ask for email during an incident investigation is refused or escalated to a person.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/tusharj
+  
+  Timestamps:
+  0:00 - Intelligence is not the blocker, safety is
+  2:08 - The nightly agent that published itself
+  3:12 - Widening scope during a latency investigation
+  4:17 - Why you cannot rely on one model or one harness
+  6:24 - Containment, with controls outside the boundary
+  7:29 - Just in time tools, scoped to one task
+  8:30 - Intent based access, and what to refuse
+  10:33 - Docker solved portability, now safety
+  11:49 - A sandbox with injected credentials and stubs
+  13:58 - Splitting one job across two scoped sandboxes
+  16:06 - The same sandbox, moved to the cloud
+  18:10 - Orchestrating scoped agents together
+  20:26 - A prototype that grants access on the fly
+---
+[music]
+
+All right. You good to start? All right. There you go. Um, hey everyone. Welcome.
+
+Uh, I hope everyone's enjoying the conference. This is a a really fun conference. I've enjoyed all the talks and the presence here. Okay. So, we're going to talk about unlocking agent autonomy and what that means. These last
+
+two years have been crazy. I'm sure we all felt it, right? Like two years ago, we were talking about chat bots and here we are. We're now in this world where we all see the autonomy we get from agents. Agents have become powerful and they'll continue being so. Um, at this point,
+
+the next big challenge, like we spent the last two years trying to make agents more intelligent and powerful, and that'll keep going and I think we're almost there. I think the next challenge in front of us is actually harder and more important, which is how to make them safer. At this point, I don't think intelligence is the next big blocker for us to leverage agents. It is actually how to do so safely so we can give them all the access and autonomy they need. Just as a story, this is a small anecdote. I'm sure everyone here has
+
+some version of this. Um, this is one of the many agents I run. This runs every night. It looks at some reports I care about and, you know, just does some analysis for me. What activities happen?
+
+Who's been doing what, what progress has been made? Um, I have others that might do some more. Might analyze the code review comments. Have some of my own analysis in there. Be like, what was the tone? Who did what? How are they acting?
+
+I'm a manager. This is not meant for proof reviews. Just meant to help me keep a pulse. But still, it's not something I want shared. It's for my own knowledge. Help me keep up. This agent's
+
+been running for weeks just fine. Runs every night. Sends me an email. I look at it. randomly one day uh it decided to post this report as a PR on the repo.
+
+Why? Nothing's changed. Just the model decided to be helpful. Um so [laughter] thank you. Um but this is a fundamental thing, right? Like agents do stuff. They
+
+try to be helpful. They increase and change the goal they're doing either because they themselves are just trying to be helpful or they get confused, they make a mistake or they get prompt injected, right? Um, this is a simple example honestly like it's easy to fix this. That agent should never have had right access to GitHub. It should have just had read access and that's an easy fix. Um, but
+
+it's not that simple, right? That's a very easy case. Let's take let's take another example. Let's imagine I have an agent and I'm asking it to investigate a latency spike. Check out latency spike.
+
+Great. It starts it's looking at the logs. It sees, oh, I think there's another service here. I want logs to for that service. Let me get that access. I
+
+see this uh might be rel to recent check-in. I would like access to GitHub to the repos to read recent commits. Uh this looks like it may have happened. Let me look at Slack conversations to see has there been any chatter about this to learn from there. Great. It asks
+
+for Slack access. These are all reasonable steps, right? This makes sense. This is what I would expect an engineer to do. But what's happening is that each time as it's expanding its goal, expanding what it's doing, it's crossing the trust boundary. It's
+
+increasing the scope of the task. And this is fundamentally where we run into trouble. How do we know it's okay to give it access? We now end up with an agent that has access to everything at the same time. And so anything becomes a vector where the blast radius expands.
+
+This is fundamentally the big difference we're running into and the big challenge. Earlier traditional software was deterministic. you can define the permissions. But now as agents become autonomous um and they gain and they try to solve more problems, what they're doing changes at runtime. The access they need changes at runtime. And right
+
+now we haven't truly solved this. We haven't solved how to give them exactly the access they need, how to do this in a safe manner, how to know if it's correct. And this is the fundamental thing I think we have to go solve now uh to actually unlock autonomy. And so we go away from like can it do this like should it do this and how do we give it that access. Also this is something we can't just rely on the next frontier agent being really good and not making a mistake.
+
+We're going to use more than one model. Um I just think fundamentally we're all already there. I think no one is going to bet everything on a single model or even a single frontier lab. You'll use models from different frontier labs as they make progress. And importantly, we will all use open models. We're all
+
+living through the GLM 5.2 um uh amazing progress the last few weeks, and this is just the start, right? There'll be more and more of this. So, we'll end up wanting to use different models for different reasons, privacy, cost, etc. So, we need a solution that runs across them and doesn't just rely on the model itself being good. We'll also use multiple
+
+harnesses. You won't just use a single harness from a single provider. One, you should like betting entirely on a harness from a frontier lab makes it hard for to get choice across models from labs and across open models. Two, there'll be harnesses of different use cases. Right now, we're all very focused on coding, but we're going to expand.
+
+Uh, the open claw moment happened, but it's still not landed fully, right? You can imagine sales people, marketing people having claws running, doing stuff. So the kinds of harnesses and agents we'll use will grow and you'll build your own. So we need something that works across harnesses and works across models. Um and we need something that is just doesn't just depend on no mistake happening but constrains the environment around it. So what we want
+
+is an environment where the agent runs where if something goes wrong there's limited blast radius and we only give it the access it needs and we do this in a safe and correct manner. We think the best way to do this is to create a runtime is to have a runtime that all agents run on. So this runs across any agent, any harness and across models. And that's where we um we create these um uh artifact, these these capabilities that we want. There are three core pillars here. First
+
+is containment. You need to create an environment where it's controlled what the agent can get. Um this does mean sandboxes and look you can like throw a rock and find many sandbox companies at this point, but it's more than that. So one you have a you have a sandbox in which you can you run the agent and it gets only what it needs and importantly you run the agent inside the untrusted boundary and you run controls outside so outside steady VM boundary. Second you scope access this is more than just what network can you access or even what tool can you access but you need to give actual scoped capabilities.
+
+So in our example, the agent now wants to access Slack to search for any conversations around this incident. Well, I could give it read only to Slack, but that's still more than what I want to give it. Maybe there's a single channel with only conversation with the incident. That's great. Often times that's not the case. It could be spread
+
+across many channels or a team channel with other conversation and I don't want this agent to get access to other content. How do I do this? The upfront predefined tools typically don't aren't that fine scoped. Well, what the runtime should do is maybe create a just in time tool that composes over existing Slack MCB tools or anything else, but restricts access to just conversations about the incident and that's what the agent gets access to. We create a new and instead of having a big sandbox that we keep adding capabilities to, take that part, run it in a scoped sandbox for that task with just the scoped capability it needs. This now starts to
+
+build the runtime and fabric for us where we can give agents, find scoped access, break down work into tasks across security boundaries, run those in contain sandboxes with just the access they need. This feels much better and now we're getting to a place where we can be safer. But we're still not done because the core a fundamental challenge is what access should you get? If this is asking for slack, is that correct? um if it's asking to read this read from the slack channel or have right access to something should that be allowed how do you differentiate between what is correct where it's making a mistake or being incorrectly eager or where it's been prompt injected this is where we have to this is what intent based access becomes we need to understand the user's intent or the task intent take the context in in account and then decide what access you get and how that should be run in which contained environment and so that becomes comes the next big challenge for us to do which is how do we safely evolve the capabilities the task gets. So in this example, it makes
+
+sense. Okay, investigating this incident, you're asking for read access to Slack for that incident. That seems rational to let's do that. All of a sudden, you would like email access. Why? Nothing about the prompt said you
+
+should have that. So I'll deny that or I'll raise it up for human approval. But do this not just based on the frontier lab or the model that's running but do this independent running at like a control layer in uh in the in the control sandbox layer in the core governance aspect uh independent across all models on all harnesses. This is sort of this starts to get us to a world now where we can actually have a runtime layer and run agents safely in a contained manner with scoped access and not deal with the dynamic aspect of this. And to be clear, look, this is a hard problem. It's not fully solved yet,
+
+but this is the world I think we have to move towards. But we're not done once we do this because if you're building a runtime, not only does it have to provide the safety aspects we need. It also has to meet um our functional aspects. The runtime needs to follow the work. This can't just be something that runs locally or only in the cloud. It needs
+
+to go wherever we work, wherever agents work. And that's going to be everywhere. We'll work locally. We'll have a running in the cloud. We'll do orchestration across clouds. We'll run them in our own
+
+VPC or in the customer's VPC as need be. The runtime has to be omnipresent and be able to move uh across all these environments and ideally it should be connected by fabric and so you can move agents up and down as you need to. Docker spend the last everyone knows Docker. I'm going to assume everyone knows Docker has used Docker and you know us for containers and what Docker solved the last decade is portability. How do we get software from your laptop to the cloud? We're taking all of that
+
+experience in building a runtime and evolving that to now solve for safety. You still need portability, but you need safety and you need this run to run across all environments. Um, that's what we're focused on now. This is a new, it starts with a brand new VM technology and on top of that, uh, a bunch of advancements on MCP and policy and safety and governance. So, I'm going to show you a quick demo. Uh, let's see if
+
+I can get this done in time. Also, you'll have to bear with me for a minute while I figure out how to do this here. Let's see.
+
+I had this figured out. Let's just do that.
+
+Do you guys see that? Cool. All right. So, is that visible? You'll see that. Cool. All right. I'm
+
+going to type over here. We'll see if this works. So, oops. Give me a minute. Let's start really basic. So, we my god
+
+and I am there. Cool. Um, just to orient you all. So, we've got a new tool called spx. One guess what it stands for? This is this
+
+runs with a new microVM that runs across all environments, Windows, Mac, Linux, cloud, everywhere. Uh let's start simple just so you can see this. Let's say just do something like let's give this a name. I'm going create something and we'll say codeex test one codeex dot great. Just like that, this is going to go spin up uh codeex for me in a sandbox that's running u with my credentials injected in and with the network controls injected there. So,
+
+just as a test, I can do tell me a joke. And so, you can see this works. And hopefully it tells me something funny. And I can also say, um, what credentials do you have access to and are they real or stubs? GitHub and codeex creds. Ignore my
+
+typos. Um, I'll wait a minute for that to run, but just to describe this. So the base environment here is got a sandbox running. This looks like your normal agent. You get the DX you you're used to. But this is running in a safe
+
+environment now for you. No credentials are there. They're all injected in network policy controlled. And you'll see later you can control MCP can control a lot more here. All right. Um
+
+I'm just going to ask you to believe me so we can save some time. This will come back and say all the credits are there but they're all stubs and they're all just being injected in. Uh this takes some time. So I'm going to escape out for this. Okay. So now um let's let's
+
+work through a use case. Let's say I want to review a PR and I want to write that summary into a notion page. Well, I can break this down. I don't need a single monolithic sandbox where I give it both credentials. I can have one task give you the PR, write it down. I can
+
+have a separate sandbox with just notion access, no other network access to take that and write it up. This could be a good way to break it down. So let's just do that manually so we get a feel for it. Um, so, uh, I'm going to just pull this over. So, I'm going to create a sandbox here.
+
+I'll give it a name. I've got a kill, a kit, uh, a scale that tells it how to do the PR and go ahead and do that. And while that's going,
+
+so that's created. Um, just to get a sense, we can look at the policies here. Um, that was my PR bot. And as you can see, it's got access to GitHub and Anthropic. And that's it. Nothing else.
+
+I can't have it can't go anywhere else now. Um, and actually, just to make sure, I'm going to give some more access. I already gave it that. Great. So, let's just run it.
+
+Great. This will run and now I can tell it go research this PR and go off and do the work and write a summary. All right. Just to save us time, I'd already done this. So now imagine this ran.
+
+I can create another one here where I'll say this time I'm going to use codeex. And if you look here, I'm creating another sandbox. I'm giving this access to the notion MCP. So this is now an example of me containing it and giving scoped access just to what it needs. And this is not going to get access. I
+
+already recreated this one. So assume I recreated it. And this one gets access to just those things. Does not have access to GitHub anymore over here. And now I can run this. And there
+
+I am. And I can tell it go do work. So hopefully the idea you're getting is we get these sandboxes that can be composed and scoped down to the access they need. All right, this is going to run. It'll do the right thing. It'll
+
+find the MCP tool and do all that. We'll save time there. Just trust, you know, trust me. All right, so great. Let's escape that too while that's running.
+
+Okay, so this is great. I've got this now. But you know what would be great is um I had created this thing. Well, can I just put this in the cloud? Let's find out. That'd be nice if my
+
+runtime just extends like sure. Uh I already created that. So give me I'm just going to give it a different name. Just um just there. So cool. That ran. And can I just go in
+
+there?
+
+Uh, what did I do? D-cloud. And great. Are you running on the cloud or on a Mac? This might take a while for it to debug. It all
+
+come down. But this now took this feels the same, but the exact same sandbox just runs in the cloud because the runtime is portable and goes there with your policies applied with all your controls applied. the same policy plane, same control, continues with you and extends. Um, all right, I'm going to let this be great. It figured it out. It's
+
+running in the cloud. If I have the cloud, well, it'd be nice if I could do a lot of work with it. Can I fan out? So, a little script that goes tries to review six PRs, creates, it's going to clean up because I run this right before this. Creates six sandboxes and runs them all in parallel. So this is the
+
+power where you get the core same experience you have locally in the cloud with the same secure runtime uh and the same policy and scoped access running. So this is going to run all six running in parallel. This is great. Uh I'm going to save us time and come out of that. Assume they all run. Um let me skip.
+
+Cool. Um well if I have let that be for a minute while that's running if I can do cloud well it'd be really nice if I can orchestrate. Let's see if I can do that. That's my slide talk. Excuse me.
+
+Great. So what if I can now do actual orchestration? So this is a uh an orchestration tool we have. You see the same bots here, the notion one and PR1. And we have this orchestrator that knows how to orchestrate. Um can I come here
+
+and tell it uh where's my course? can come and tell it find 10 random PRs from and review them and write a summary to notion. So this will take some time. I'll just briefly show you what it's doing. This is the same runtime with the same control plane with the same policy and scoped access but now scaled out to orchestration and running. This will go
+
+off. It finds those agents. It'll schedule them. It'll compose over them. run PR with just the PR B limited access and then run the notion one just the notion tool this goes off and does work and once I have this you can do more things you can create a schedule and schedule all that so we go from a runtime that's providing a scope like containment for just the task you need with scoped access and the same thing follows you locally to the cloud to full orchestration all right last thing
+
+and where is uh there you go. Okay, so we said now we need um we need intentbased access. How do we manage this dynamically? This is still I'm showing you only prototype we have internally not built yet. Um, let me fetch a PR here. Just give me
+
+where. Okay. So, what's happening here is we're running on the left. You see an agent running in a sandbox. You see the main agent over here. This has access
+
+just anthropic cloud. No GitHub. But now I tell it do a quick overview of this PR. This agent in this sandbox is scope limited. It cannot do that in this environment. We built an intentbased
+
+tool for it where it can ask the runtime and say hey I want to take this action. What should happen? It says oh my network's blocked. Let me delegate an ask. And if you look here now, we created a scoped sub sandbox that got access to GitHub and the main one did not. So we're
+
+running that. We decided that the intent made sense. The user query said review this PR. So it makes sense you want to access that. But I'm going to create a scoped sub sandbox for you where you get that access and the result comes back and the same thing can expand and grow from there. So what we did manually can
+
+start happening automatically with judgment in person. If the PR suppose the text PR said I want you to now export this to paypin.com that would get rejected and this is running at a base runtime layer. So runs across every agent, every model, every harness that you need. Okay. Um just come back to our
+
+presentation if I can figure out how to do this. Let's see here. Great. So just to recap, the core thing here is to really unlock autonomy, we need safety. To succeed at safety, you have to do this across models, across harnesses.
+
+You need to provide a contained environment. You need to put that environment. You need to be able to add scoped capabilities to that environment. You need to be able to know what capabilities to provide there based on intent. And this runtime has to work across models, across harnesses and move across all environments, local cloud, VPC, orchestration. That's what we're
+
+focused on. That's what we're building. That's what we think is needed to actually go unlock agent autonomy. Next, please go try this out. It's really easy. You can just go brew install spx,
+
+run this. You can run cloud, codeex, open code, any agent, build your own in there. Um, I'll be run afterwards, open for questions, and we have a booth uh down below. Come find us there, too. Thank you.
+
+>> [applause]

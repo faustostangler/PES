@@ -1,0 +1,17 @@
+---
+video_title: "The Secret to High-Accuracy AI Models"
+video_id: UnHJwSp5RZw
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=UnHJwSp5RZw
+video_date: 20260807
+video_description: |
+  Website Link: systemdrd.com
+  Learn how advanced data labeling improves Computer Vision and NLP models through high-quality annotations, active learning, human-in-the-loop workflows, object detection, image segmentation, named entity recognition, and dataset quality optimization. Discover industry best practices for creating production-ready AI datasets that boost machine learning performance.
+---
+Everything we've covered so far applies to both modalities, but the failure modes and the tooling underneath look genuinely different once you get into the details. In computer vision, [music] agreement is geometric. You're checking whether two annotators boxes or masks overlap [music] sufficiently, typically via IOU thresholds, commonly around .7 overlap accepted. And the hard cases are almost always occlusion, motion blur, and small or distant objects, not the easy, well-lit, centered ones.
+
+Tooling here centers on interactive [music] segmentation and box drawing interfaces, increasingly model assisted in the style segment anything popularized. In NLP, [music] agreement is symbolic. You're typically using Cohen's kappa or F1 against a gold set. And disagreement [music] usually traces back to exactly where a span begins and ends, or genuine linguistic ambiguity, not one annotator simply being wrong. Tooling here centers on active learning first review queues, [music] like Prodigy, or LLM pre-annotation paired with mandatory human verification.
+
+>> [music] >> But there's one failure mode both modalities share, and it's the one teams most consistently under monitor, class imbalance [music] in the label set. It silently caps recall on your rare but critical categories in both domains, while your held out accuracy can look perfectly fine. Audit your label distribution continuously, not just your accuracy. Let's look at a real production system that operationalized model assisted annotation at massive [music] scale.

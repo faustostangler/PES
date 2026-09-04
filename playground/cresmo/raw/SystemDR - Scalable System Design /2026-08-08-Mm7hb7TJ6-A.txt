@@ -1,0 +1,19 @@
+---
+video_title: "Solve Linear Programming Problems with Simplex"
+video_id: Mm7hb7TJ6-A
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Mm7hb7TJ6-A
+video_date: 2026-08-08T15:00:27+00:00
+video_description: |
+  Website Link: systemdrd.com
+  Discover how the Simplex Method solves Linear Programming and optimization problems by finding the optimal solution under multiple constraints. Learn objective functions, constraints, feasible solutions, pivot operations, maximization, minimization, and practical Python optimization techniques used in operations research, data science, machine learning, finance, logistics, and resource allocation.
+---
+Now let's formalize that walk as an algorithm, the simplex tableau. Step one, get the problem into standard form. Every inequality becomes an equality by introducing a slack variable. So we end up with AX [music] = B, X greater than or equal to zero. Step two, [music] the all slack basis gives us a trivial starting vertex at the origin when that's feasible.
+
+Step three, we compute [music] reduced costs. These measure how the objective would change per unit increase of each non-basic [music] variable using the current basis inverse. Step four, the entering variable rule, Danzig's rule, picks whichever variable has the most negative reduced cost. That's the direction of steepest immediate improvement. Step five, the ratio test. We ask how
+
+far we can move in that direction before [music] some basic variable hits zero. And whichever variable hits zero first is the one that leaves the [music] basis. Step six, a Gauss-Jordan pivot updates the tableau. Then we loop [music] back to reduced costs until every reduced cost is non-negative. At [music] that point, we've certified optimality.
+
+You'll notice the loop back arrow on screen. >> [music] >> If we're not yet optimal, we re-pivot and go again. In practice, the full tableau is rarely used in production because it recomputes the whole matrix on every single [music] pivot. It's the right teaching tool though. Before we look at how a real implementation handles this more [music] efficiently.

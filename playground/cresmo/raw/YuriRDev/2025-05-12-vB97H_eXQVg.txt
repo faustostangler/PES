@@ -1,0 +1,69 @@
+---
+video_title: "Hackeando Golpes PARTE 2 🔥"
+video_id: vB97H_eXQVg
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=vB97H_eXQVg
+video_date: 2025-05-12
+video_description: |
+  Nesse vídeo hackeio plataformas de golpes como os de venda de dados que ajudam milhares de golpistas por aí! Também acabamos com sites de venda de cartões e mais!
+  
+  👉 Servidor do Discord: https://discord.gg/UpYMbKsSX6
+  📺 Canal do Snillx: https://www.youtube.com/@SnillxSec
+  
+  | Aviso legal: Links mostrados nesse vídeo são de informação pública, então... se tu é o dono de algum desses sites que eu mostrei, nem tenta :)
+---
+Todos os dias, milhares de pessoas caem golpes online. Mas o que muita gente não sabe é que existe um mercado por trás disso. Golpistas não estão só aplicando golpes, eles ensinam como fazer. Vendem tutoriais, métodos, acessos, contas laranjas, dados pessoais e muito mais, prejudicando pessoas e até empresas. Nesse vídeo, conseguimos hackear plataformas grandes de venda de cartões, dados e muito mais. Tudo isso foi
+
+possível graças à participação de vocês no Discord. Bem-vindo ao segundo vídeo do Hackando Golpes. Essa primeira plataforma é um marketplace para golpistas, sim, onde golpistas compram e vendem diversas coisas obviamente legais. Vamos começar entendendo um pouco como funciona. Como é um marketplace, a gente pode tentar criar nossa própria loja. Vamos fazer
+
+nosso registro e clicar para criar nossa loja. Quando a gente aperta o botão, a gente precisa apagar. Então vamos dar um passo para trás e fazer o mais básico, tentar acessar o barra admin, só que ele me redireciona. Então tá, vamos com calma. Olhando o código fonte e pesquisando por admin, dá para encontrar muitas validações que acontecem no front end.
+
+Interessante. E por ser o marketplace, é bem provável que esse subdomínio pixel seja só uma das lojas. Então vamos tentar entrar no domínio puro, que não é nada mais nada menos que uma outra loja com mais coisas vendendo. Vendo as tecnologias, dá para ver que eles estão usando o Next, só que não tá hospedado na Versel. E é bem raro encontrar sites feitos em Next que não estão na Versel. Outra coisa, olha que
+
+interessante, assim que a gente abre a página, uma das primeiras requisições é um post que pega a informação da loja que a gente está, só que ele retorna, além das informações da loja, todos os usuários com o ID e com o RLE. E pesquisando por Roll Admin, a gente encontra os IDs dos administradores. Agora, abrindo a página dos meus métodos, que são as minhas compras, o meu ID de usuário é passado na requisição. Então, se eu trocar esse ID por algum outro usuário, a gente tem a lista. Com isso, a gente consegue listar as compras de outra pessoa e podemos acessar o conteúdo, que é basicamente um link pro MediaFire.
+
+Mas eu não quero ver a compra de outra pessoa, eu quero mesmo é acessar o painel administrador. A gente sabe que essa plataforma tá rodando em Next e pelas informações da loja, ela foi criada em 2024 e logo nesse ano de 2025 teve aquele escândalo do CVE em Next que faz o bypassad middleware e eu duvido que eles tenham atualizado a versão. Além disso, a gente sabe que eles não estão usando a verso. Então bora tentar explorar essa vulnerabilidade. Só uma coisa, eu explico essa vulnerabilidade que eu tô falando direitinho no meu último vídeo.
+
+Se quiser saber mais, é só assistir lá. Tentando entrar no barra de mim, a gente viu que somos redirecionados pra página inicial, mas se a gente colocar o exmer, que é a vulnerabilidade em questão, assim, a gente conseguiu entrar no painel administrador. E para não precisar colocar esse header manualmente toda hora, vamos entrar no match replace e colocar para sempre adicionar automaticamente. Pronto, agora além de entrar no painel, ele funciona perfeitamente. Inclusive, tem a lista de todas as outras lojas disponíveis que a gente pode editar. Antes de mais nada,
+
+vamos colocar a gente como administrador também. Assim, a gente não precisa ficar colocando esse header toda hora. Só que deu erro. Na requisição, a gente passa o usuário que queremos editar e o nosso ID atual. Talvez a gente só não possa alterar o user que a gente tá logado no momento. Então vamos colocar esse
+
+primeiro user ID com o ID de algum administrador. E funcionou. Eu não encontrei nenhuma rota para deletar uma loja, então a gente tem que deletar todos os produtos de todas as lojas e depois mudar o nome para ninguém conseguir acessar mais. Primeiro a gente precisa pegar todos os subdomínios. Então é só procurar a requisição que lista todas as lojas da plataforma. Essa
+
+é a rota que a gente quer. Ela tá listando com ID, nome, usuários, tudo. Agora a gente precisa conseguir listar todos os produtos de uma loja e por fim a requisição para delitar um produto. Agora que temos todas as rotas que precisamos, bora partir pra ação. Eu fiz um backup de todos os produtos de cada loja que eu considerei importante. Vai
+
+que um dia eu preciso de um método de Robux. E assim que eu executar esse script, os produtos são deletados. Olha aí.
+
+Só que eu acho que não é o suficiente. Esses golpistas podem só acessar a loja de novo e colocar outros produtos. Então vamos dificultar a vida deles e tirar o acesso de todo mundo. Primeiro, eu troquei o subnomínio de todas as lojas e mudei o nome também. Depois tirei o acesso dos administradores. Então as lojas estão
+
+soltas por aí sem nenhum dono. E para estragar um pouquinho mais, eu coloquei cada loja com um saldo negativo de 9 trilhões. Só porque sim. Agora vamos pro segundo ataque, que de longe foi o mais legal porque envolvia engenharia social. Era um dia normal até que os Nukes me mandou essa mensagem no Discord. Ele não explicou
+
+nada, mandou só uma URL. Quando eu perguntei, me mostrou isso aqui. Ele conseguiu encontrar um XS e um painel de consulta de dados, que é basicamente um site que você paga para pegar informação pessoal de pessoas, mas não é um painel normal, é um dos maiores que tem. O que acontece é que nessa plataforma, por algum motivo, você consegue colocar uma foto de perfil, só que não precisa necessariamente ser uma imagem, pode ser qualquer arquivo. Inicialmente, o Snookes mandou um arquivo SPG que tinha um script dentro. E quando alguém abria
+
+a imagem, mandava um web hook com os cooks do site. A ideia era fazer com que o admin desse site entrasse para ver a foto de perfil, mas tinha um pequeno problema. Ele tinha que acessar a URL da foto. Então, como que a gente faz ele clicar em um link sem perceber que vazou os dados dele? E pior, se ele não tiver logado na plataforma, a gente não conseguiria pegar a sessão. Então, criei
+
+um site HTML bem rápido, que é muito parecido com a página 404 Not found da plataforma. Aí quando ele acessar vai achar que a página inspirou ou deu algum bug. Só que assim que alguém entra nessa página manda um web hook pro nosso servidor do Discord com os cooks dele e se não tiver logo, é redirecionado pra página de login. Enviei esse arquivo como foto de perfil e agora faltava só ele acessar o RL. Mas como depois de procurar por algum tempo, a gente acabou encontrando o servidor do Telegram deles e logo depois o do dono. Então a gente
+
+enviou uma mensagem falando que estamos tentando fazer uma compra, só que tá dando errado, e redireciona a gente para essa página. Só que vocês devem estar pensando aí, pô, sem chance dele clicar nisso aí. Mas é um link pro site do cara. Se fosse o meu site, eu teria clicado mesmo sem querer. Aí teve uma conversa entre a gente, ele tentando me ajudar e eu insistindo nesse link. No
+
+final ele falou que quando chegasse em casa ia ver. Beleza? Enquanto isso, eu tava lá em call no grupo do Discord e tentando explorar algumas outras coisas, só que não tinha absolutamente nada. Na verdade, tinha uma pequena coisa. Alguém teve a brilhante ideia de pesquisar o nome da plataforma no GitHub. E não é
+
+que a gente encontrou alguma coisa? Pesquisando pelo nome, a gente encontrou um repositório simples de HTML, que era basicamente um site falando plataforma e manutenção. E olhando pro dono desse repositório, a gente encontrou vários códigos abertos, tipo o bote do Telegram dele e, principalmente muitos repositórios com arquivos. A aberto. Eu acho que ele nunca ouviu falar do Git ignore. A comunidade na hora foi
+
+explorar esses repositórios e conseguiu acessar muita coisa. Mas como isso não fazia parte do nosso álvoo principal, que era o painel de consulta, então a gente parou. A gente ficou conversando lá de boa, só por um tempo, até que nessa hora eu gritei para todo mundo que ele tinha clicado no link e botei a tela para gravar na hora. Mandei uma mensagem pros nukes, só que ele tinha acabado de sair. Só tinha um problema, a gente estava contra o tempo. O cara
+
+podia, em qualquer momento perceber que deu merda, então a gente teve que agir muito rápido. Entrando no painel admin, a gente encontrou algumas coisas. por 17.000 usuários. E também entrando na parte de API, tava lá todas as APIs que ele usava e também a chave de acesso que ele usa para puxar os dados e claro, mais de 4.000 pagamentos. Mas chega de
+
+bisbilhotar, vamos tentar acabar com essa plataforma que é usada por muitos golpistas. A primeira coisa que a gente fez foi criar alguns backdoors, que era basicamente algumas contas com permissão de admin e depois a gente deletou a conta dele. Assim a gente garantiu um pouco mais de tempo para fazer nossas coisas. Foi um speedrun gigantesco. Em menos de 10 minutos eu fiz um código para pagar todos os usuários. E na hora
+
+de executar?
+
+Ah, mano, você derrubou o derrubou o site, Alô? E não, eu não derrubei o site. Ele que tirou do ar. E claro, só para ter certeza, eu perguntei para ele: "O site tá fora do ar? A gente esperou por um bom tempo, mas nada do site voltar. Infelizmente conseguimos deletar
+
+poucos usuários, mas bom que deu trabalho para ele. Ah, e ele não tinha backup, não, viu? Olha a mensagem que ele mandou no grupo depois. Talvez a gente tenha se precipitado em fazer tudo o mais rápido possível. O melhor poderia ter sido esperar até madrugada para pagar tudo. Bom, pelo menos a gente fez
+
+alguma coisa e agora a gente sabe também quem é o responsável pelo site. Muito obrigado ao Snido a ideia e também encontrado a vulnerabilidade. Ele acabou de começar um canal no YouTube, então vão lá dar um apoio. É isso. Obrigado por assistir até aqui. Não esquece de
+
+deixar o like e se inscrever no canal. Valeus. Ah.

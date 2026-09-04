@@ -1,0 +1,129 @@
+---
+video_title: "The Custom Arm PC Era is here."
+video_id: OMnCqmM-WKo
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OMnCqmM-WKo
+video_date: 2025-05-09
+video_description: |
+  Can we finally build a midrange Arm PC? Maybe. Thanks to Micro Center for sponsoring this video!
+  
+  Shop Micro Center’s Top Deals: https://micro.center/d6a529
+  Sign up for a FREE 128gig Flash Drive When Santa Clara Opens: https://micro.center/af854c
+  Check out Micro Center’s GPU Trade In Program: https://micro.center/92b995
+  Read up on ALL Things Tech at MC News: https://micro.center/4972f0
+  
+  Links to things I mentioned in the video:
+  
+    - Radxa Orion O6: https://radxa.com/products/orion/o6/
+    - System76 Thelio Astra video: https://www.youtube.com/watch?v=AshDjtlV6go
+    - All my O6 test results: https://github.com/geerlingguy/sbc-reviews/issues/62
+    - O6 LLM test results: https://github.com/geerlingguy/ollama-benchmark/issues/13
+    - O6 HPL test results: https://github.com/geerlingguy/top500-benchmark/issues/54
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - The Orion O6
+  01:04 - RSJ shopping trip
+  01:58 - Hardware overview
+  03:37 - What it can (and can't) do
+  05:48 - Performance and power inconsistency
+  07:35 - Custom Arm PC build
+  08:22 - Windows 11 (on Arm)
+  10:20 - Nvidia GPU on Windows?
+  11:00 - Many GPUs in Linux
+  13:18 - Quirks and recommendations
+  16:10 - Tariffs
+---
+This is a graphics card. And mounted to it, I have this little Arm motherboard. This is the Radxa Orion 06, and until now, nothing like this has ever existed for custom Arm PC builds. On the low end, you have SBCs and embedded Arm devices, like the Raspberry Pi. They're great for tinkering or low-power servers, but they don't have a lot of grunt or I/O.
+
+On the high end, you have Ampere with OP hardware like the Thelio Astra. This thing is faster than a Mac Pro... with a pretty high price to match.
+
+But outside of Apple's walled garden and Qualcomm's weird, Windows-only-but-not-really-Snapdragon PCs, there's nothing in the middle. Well, when I found the Orion 06, it looked like the perfect middle ground. Maybe I can finally build a standards-based Arm PC with enough grunt and I/O to do almost anything, while still getting the efficiency Arm is known for. I so want to recommend this thing to you, but after using it for months, I can't. At least not yet.
+
+Why? Well, it's not the hardware. At least I don't think it is. But before I get to testing, I wanted to thank Micro Center for giving me a hand with the Arm build. How many other places can you walk in and actually get hands-on with things like PC cases, keyboards, GPUs...
+
+Wait, what are you doing? We're not buying light switches! I knew I shouldn't have let Red Shirt Jeff go shopping! No, that's not actually an atomic clock. No, don't put that in the cart!
+
+Anyway, as I was saying, being able to walk in and grab a graphics card, or whatever components you need, is priceless. No, wait, we don't need those fans. No, we don't need another soldering iron right now either, stay on track! Micro Center's the kind of store where you can't leave without three new project ideas, and all the hardware to build them. I only wish they had more locations.
+
+Well, good news, they're opening another one soon, in Santa Clara, California. Maybe I'll be there. We'll get to the full build later in this video, but for now, check out Micro Center's latest deals using my links in the description. I pre-ordered the $300 32GB AI kit the day this thing was announced. And that hasn't shipped yet, more than two months late now. Radxa's not paying me for this video, and they're not technically
+
+sponsoring it, but since they did provide this 16GB board for review, I follow the policy I always follow. I mark the video sponsored, and I'm telling you about it up front. They sent this kit out to a bunch of hardware testers, and for months we've had what Radxa calls a "debug party." People post their issues to a forum thread, and hopefully Radxa fixes some of those things before the public launch. Except, the public launch happened a month ago, and there are still some fundamental problems with this board. But I'll talk about those later. In the box,
+
+you get the O6 board itself, with a heatsink/cooler combo. It also has an acrylic case that looks nice and provides adequate ventilation. If you order the AI kit like I did, you're supposed to get this fancy enclosure, but apparently that's taken a lot longer to get out the door. The O6 motherboard is a bit of a hybrid motherboard. In fact, I've been seeing more of these boards as AMD has stepped up its mobile CPU game, and Intel has their nicer N150 and N305 chips.
+
+They're like normal mini-ITX motherboards with ATX power, PCIe, and M.2 slots, but the CPU and RAM chips are all mobile versions that are soldered straight onto the board, so there's no upgrading the RAM or CPU on this thing. But for I/O, this is the most fully-featured Arm board outside of the server-class boards from Ampere. It has two USB-C ports for both PD and even DisplayPort. This left port can do 4K60. Then there are a couple USB 2 ports, a couple USB 3.2 ports, HDMI, DisplayPort,
+
+dual 5G Ethernet, and even an old-school analog headset jack. My favorite part of this board, of course, is the full-size PCI Express slot. Supposedly capable of PCIe Gen 4 x8, it should be fast enough for things like 100 gigabit network cards, something forum user willy actually did. He was able to get 70 gigabits of traffic through HAProxy, meaning this board could be a quiet networking beast. *Could* be, because as I've found, there's also a lot of weirdness about how the CPU works that prevents most multi-core apps from running as fast as they they could. And anyone who's bought Radxa hardware early on knows this, but it bears
+
+mentioning: this board needs a little more time in the oven. Radxa has a wiki with a lot of helpful information. The board runs a lot of things well already. But if you already ordered one of these things, don't expect all the features listed on the website to run on day one. And some things, don't expect them to ever run. In fact, when
+
+I pre-ordered my AI kit, the website said there were 12 cores at up to 2.8 GHz. As of right now, the specs were updated to showing 12 cores, but up to 2.6GHz. And in reality, with the latest firmware, depending on how you're running the board, you might only get 8 cores, and only 2.4 or 2.5GHz. But, I mean, that's a little pessimistic. In good news,
+
+it looks like Radxa's trying. There's a full BIOS on this thing, with full UEFI support. That doesn't mean everything works out of the box, though. If you want to run Windows, First, ew... But second, there are precious few drivers for Windows on Arm. And on Linux,
+
+depending on what version and what distro you install, you might get iGPU support, or you might not. You might get Ethernet drivers, or you might not. That's kinda how this board is. I think in a year or two, it might be in a better place. But I probably spent a dozen hours just working on different driver issues to get everything tested. That's not something
+
+I'd want you watching this video to have to do. It doesn't leave a good taste in your mouth when the first time you build an Arm PC, you're wrestling with OS versions, drivers, and firmware for the first few weeks. I *did* wrestle with all that stuff, and after not one but two full cycles of testing, first on a 0.2.x firmware, then again on the SystemReady firmware at version 9, I have test data. A lot of it. I've said before on this channel, what I'm looking for is basically
+
+Apple M-Series performance and efficiency, but in a more open platform. And we get a little bit of that. This thing is at least in the same ballpark as Apple's M1—which is 5 years old now—but it's way off on efficiency. There's something weird with the CPU, because even after multiple firmware updates, benchmarks are all over the board. Though, on average, this thing does feel a lot more responsive and snappy than something like a Raspberry Pi. But at $210 and with 12 cores,
+
+I don't want to compare this to a Raspberry Pi. I want to compare it to an M2 or a Snapdragon X. Compared to those chips, this thing is half as fast. But compared to a Raspberry Pi, or heck, even my M4 Mac Mini that's the most efficient computer I've ever tested, something is seriously off. I can't even get 1 gigaflop per watt of efficiency on here. And some benchmarking software reports 2.5GHz and others reports 2.4GHz and all that,
+
+despite me setting the BIOS to 2.6GHz. I'm not going to get into the weeds on this, but when you have a CPU where there are different types of cores, like efficiency and performance cores on Intel, or big and LITTLE cores on Arm, your firmware has to kind of map things correctly. Otherwise, Linux and Windows will have no clue how to run software, and you end up with kind of a mess. And that's kind of where we are. At least the LPDDR5 RAM is pretty performant, giving me
+
+speeds into the 40 to 50 GB/s range. That's a lot faster than most SBCs, but it is a little slower than the latest high-end Arm PCs from Apple and Qualcomm. But for $200 to $300, I can accept "slower than Apple, but faster than an SBC." I just wish I saw more consistency in the benchmarks. And maybe the board not using 15W at idle.
+
+That seems way more than I'd expect for something that's using mobile-class hardware. But the one thing this can do that Apple, Qualcomm, and Raspberry Pi can't? I can build this into a custom PC. And since the board's so small, I can use a nice ITX case like the Meshroom. Although I found out the graphics card I chose was just a wee bit too big.
+
+That is, unless I removed one of the corners of the case. Just ignore the side panel hanging off over there. Oh, and ignore the front panel connectors I had to remove. And maybe also the I/O shield that didn't fit because the Meshroom has a metal lip in that area. But I mean, if it looks mostly good, that works right?
+
+But it didn't. The graphics card, I mean. I wanted to see how running an LLM on here would go with a full 20 gigs of VRAM on an RX 7900 XT, but when I plugged it in, I got this bus error. So I put a pin in that and switched tracks for a bit. I popped the board back out of the case to try out Windows.
+
+Why? Well, the 06 has full UEFI support, just like the Thelio Astra. Also, I'm a sucker for pain. Except for the first time on any Arm64 system, outside of some of the Qualcomm PCs, the install of Windows was actually easy. I just downloaded the Arm64 ISO from Microsoft, flashed it to a USB stick with Rufus, and it installed.
+
+I did notice a couple quirks, though. First, since Windows has basically zero built-in Ethernet drivers, I had to use an external USB Ethernet adapter. Then for video output, the desktop would just freeze sometimes when I was using it through the JetKVM. It never did that under Linux. Then when I tried plugging in directly to either my screen capture box or my monitor, it would get stuck in this 480p mode.
+
+I think it might have to do with the custom DisplayPort to HDMI chip that Radxa uses. But otherwise, Windows 11 ran surprisingly well. 4K YouTube playback was pretty smooth, even while I was sucking up 30% of the CPU recording the screen with the Snipping Tool. The system sees the 8 cores the firmware exposes, but apparently the other 4 cores are hidden away in the SystemReady version of the firmware, on both Windows and Linux. Another weird thing is Task Manager was only showing 2.4 GHz speeds under load, not the
+
+2.6 I set in the BIOS, and not even the slower 2.5 GHz default option. So there's definitely something weird going on with scheduling on the CPU cores. Despite all that, web browsing was smooth, and the only thing that seemed a little off was sometimes the SSD felt a little slow, though CrystalDiskMark speeds seemed normal.
+
+To round out my Windows experience, I ran Geekbench and Cinebench, and here are those results. Nothing incredible, but it is between a Raspberry Pi 5 and the Qualcomm Snapdragon X. But unlike the Pi, this has a full BIOS, so I can install Windows without any hacks. And unlike the Snapdragon, I can install Linux without any hacks. Speaking of Linux, the Geekbench score on Linux was 5-10% faster, even with the same CPU cores enabled. Chalk that up as another Linux win.
+
+And I know a few of you already left a comment saying this, but yes, I plugged in a graphics card and no, it doesn't work in Windows. Why? Well, if I look in Device Manager, Windows knows it's plugged in, but there's no driver for it. And yes, I went to NVIDIA's website and downloaded the Windows 11 driver. For Windows, they don't distinguish between Arm64 and x86, even though they do that on Linux.
+
+But I tried running the installer anyway, and as I expected, it failed. Right now, nobody outside of Qualcomm really has GPU drivers for Windows on Arm. Well, them and ASPEED, who have a tiny 2D graphics driver for Ampere server motherboards. But you know where GPUs actually do work? Linux!
+
+I plugged this NVIDIA A400 card in, plugged my monitor into one of its DisplayPort outputs, and at least after Ubuntu started loading, I got output. There were all these errors, and it seemed like the open source Nouveau driver wasn't very happy, but it worked. I installed the NVIDIA driver version, and it seemed like it ran a little better, but apps like Firefox weren't able to use GPU acceleration. You can see the card's detected fine, and GNOME is using it, but the WebGL Aquarium demo uses software rendering here, which is why it's so choppy. The A400's from Nvidia, though. I wanted to see how a modern AMD card would run. So
+
+that's why I bought the 7900 XT, though I would probably opt for a shorter card next time if I'm going to put it in this case. But how does AMD do? The 7900 XT kept giving me errors, so I replaced it with a W7700, which got the same error. And I decided to put the board on my bench table instead of in the case at this point, because I got the feeling that I'd be swapping out a lot of hardware. I tried my older 6700 XT that I'd been testing on my Pi, but it gave me some other errors.
+
+Reading through the Radxa forms, it looks like newer RDNA cards from AMD can have issues, depending on what BIOS and OS versions you run. Okay, so what about Nvidia then? I already had the A400 working, but that's a puny little card. I plugged in this 3080 Ti, and it actually worked right out of the box. It wasn't perfect, I still got some errors, and tools like GLMark were only using like 10 to 20% of the GPU's performance, but it did work. One alarming thing though,
+
+when I shut down the system, the fans on the card went full blast. Apparently there's a bug in the BIOS that doesn't fully power off cards that are plugged into the slot. Luckily, my EVGA card goes into a fail-safe mode where the fans ramp up so it doesn't overheat. But some cards might not do that. Hopefully that gets fixed soon. But after booting it back up, I tried out some large language
+
+models like Llama and DeepSeek. The CPU on this thing can do like 4 tokens per second with DeepSeek R1 14B using ollama. Using the GPU? 65. Not only that, you know you're in for a good time when nvtop shows the card sucking down almost all the 400 watts that this thing can take from the power supply. If you're just doing AI networking or GPU compute, this port might actually be a good option
+
+right now, all things considered. But for all the other little quirks, it's still a little bit rough. Like other Arm systems, most graphics cards don't display the BIOS screen. You have to be plugged into the motherboard's HDMI connector for that. And for gaming, I got the open source Doom 3 demo running, and it was pretty smooth thanks to Pi-Apps, but I couldn't uncap the frame limit, so I couldn't really tell exactly how much better this is doing than a Raspberry Pi.
+
+But bonus, the sound output actually works in here. That's not always guaranteed with drivers on Arm.
+
+But I haven't had enough time to run other games yet. Since Steam doesn't install on a 64-bit only board like this one, it's a little more annoying getting my full gaming stack set up for testing. The bottom line: a couple months post-launch now, it feels like everyone who's bought one of these boards is part of some extended beta period. And that stinks, because this hardware at just over 200 bucks for the base model is a pretty decent value. It's not perfect. I mean, if you're
+
+gonna go full desktop with full-size expansion slots, full send the thing. I'd be happy to pay an extra $100 for a socketed CPU and RAM slots. Or even just RAM slots. It's the best Arm ITX motherboard on the market today. But let's be honest, it's almost the *only* Arm ITX motherboard on the market today. Apparently Cix or CIX is working on upstream Linux support, OpenBSD already added
+
+support, and there's a lot of effort to getting this thing running stable in all flavors of Linux. But Radxa's played this game before. They're a hardware company first. Their firmware is often a day late and a dollar short. They're better than some other SPC makers, sure. But so many times I've
+
+mentioned on this channel, software and user experience are what attracts mainstream buyers. Right now, the firmware that runs this board, it's just not there. I think it could be, and maybe for a few use cases it already is, but for most people, while it's fun building your own little Arm desktop PC, especially with a board that's only a few hundred bucks, I have to say, hold off for now. If there's another new firmware that fixes all the problems I've encountered, I'll retest it. But I've already done two full test cycles, and you know what they say: "Fool me once, shame on you." Fool me twice? Until next time, I'm Jeff Geerling.
+
+You thought this video was over, but it's not! Right as I was finished uploading, putting all the metadata in, and everything, I got an email from Arace, or ARACE, or whatever the company is that I bought the thing from, and it said, "We're sorry, but we're not going to be able to ship you the order that you ordered in December. With the tariffs in place, they've canceled all the early orders that haven't shipped, and you have to reorder, and with the new order, they won't use FedEx or UPS or whatever, DHL, that they used to use, and now they're using 4XL or something like that. Anyway, the bottom line is you have to pay the tariff up front, which for the AI Kit 32GB board is $1,500. And at $1,500, it's not worth it for me to place that order anymore. I don't know.
+
+And I don't know how many people in the US are going to buy one of these boards if you're paying $1,500 where you could literally buy the full Ampere desktop board, which is going to give you a ton more power, a ton more PCIe lanes, a ton more RAM flexibility and everything. I think for those of us in the US, the idea of buying this board, even if you were interested in it, is pretty much dead right now until somebody can find a way to get past those insane tariff markups. Anyway, yeah, until next time, I'm Red Shirt Jeff.

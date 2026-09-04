@@ -1,0 +1,116 @@
+---
+video_title: "Why Your AI Agent Needs a Wallet: USDC and Nanopayments — Harshal Bhangale, Circle"
+video_id: xKzU_3riL6s
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xKzU_3riL6s
+video_date: 2026-09-01
+video_description: |
+  Harshal Bhangale gave two identical agents the same job: plan a trip to the World Cup final, covering flights, hotels, resale ticket prices and what people said about getting to the stadium, then email him the summary and call him about it. One had a funded wallet. The other did not. The agent without one drafted the email into his inbox and could not send it, then admitted on screen that it had no way to place a call. The agent with one paid for the data it needed, sent the mail, and rang him on stage, where it also answered a follow up question about reaching the stadium from his hotel. Circle issues USDC, and Bhangale's answer for why a stablecoin company belongs at this conference is that paying is where agents stall.
+  
+  The economics are the whole argument. Agents consume in fractional amounts at high frequency, and a card fee near 3% cannot sit on top of a one cent call, which is exactly the size sellers are moving toward now that they can meter a slice of their data instead of selling a human a subscription. He cites roughly 24 million dollars transacted against paid API endpoints over x402 in thirty days, almost all settled in USDC. Blockchains alone do not fix it either. Gas exists to stop spam, but gas on a microtransaction swamps the transaction, and shared block space makes latency unpredictable. Circle's answer is to keep settlement off the chain: funds are deposited into a smart contract, the agent signs authorizations cryptographically, and the seller relays them for confirmation in a few hundred milliseconds. The wallet enforces the spending cap, not a human.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/harshaldbhangale
+  
+  Timestamps:
+  0:00 - Why a stablecoin company is at an AI conference
+  1:05 - Where agents actually stall
+  1:58 - From prompts to workflows to agents that pay
+  2:53 - x402 in one paragraph
+  4:48 - Why card fees break on a one cent transaction
+  5:41 - Demo: two agents, one with a wallet
+  9:34 - Guardrails in the wallet instead of human approval
+  11:53 - The agent that drafts an email it cannot send
+  14:19 - The phone call, live on stage
+  16:16 - Why gas fees and shared block space bite
+  17:10 - Nanopayments, and settlement in milliseconds
+---
+[music]
+
+>> Good morning, everyone. So, um I've had the pleasure of uh meeting a lot of folks at uh the booth here over the last couple of days, and the interactions have been great, uh but one question kept uh coming up, which was Circle is a stablecoin company. So, why is a stablecoin company at an AI engineering conference? And well, uh the answer to that is fairly simple, because Circle issues uh USDC, which is the world's largest regulated stablecoin. And we've built over the years expertise in making payments simpler and cheaper.
+
+And it turns out that's one of the bottlenecks for your AI agents. So, when you often think about making AI agents smarter, we think about better models, uh more tool calls, complex orchestration, but where your agent actually in practice actually halts is when it hits a paywall or when it has to pay for something. Then you have to step in, either create an account, sign up, or, you know, manage API keys. So, that's where uh the limitation is, and that's the gap that I want to talk about today. So, yeah, I'm Harshal, and I'm an engineer on the agentic product team at Circle.
+
+So, let's sort of take a step back and see how we got here. We believe that the agentic economy is already here. So, how are uh you know, uh we In 2023 we interacted with agents via like prompts, uh your ChatGPT and stuff like that. We got a little bit better. In 2024 we built workflows.
+
+2025 was all about MCPs, skills, and orchestration. And we believe this year, 2026, is when agents actually start paying for services that they want. And the signals are promising. Just in the last 30 days, uh agents have transacted with paid API endpoints, uh and the volume is about like $24 million. Uh over X102.
+
+And 99% of it has been settled in USDC. While this number may look small in terms of volume in the broader landscape, it's only about to get larger. So, what is X102? Um essentially, X102 is a way where agents can uh pay for their the resources that they want because the server essentially returns a 402 header and with the details of how they want the payment to proceed. And then the agent just signs um an authorization from the crypto wallet and then pays for the resource and retries the request again. So,
+
+that's in X102 in a nutshell and we'll see that in action in a live demo. But then, the question is why do the traditional payment rails not work and why do the agents get stuck? So, the answer is simple, uh because for the last 30 years we built the internet around one customer and that was humans. Right? Um so, we built payment schemes, uh monetization strategies, all catered towards how humans interacted. So, you
+
+had your sign-up flows, add your credit card, uh put in your information, and manage your API keys, but agents just don't function that way. Agents want to like come in and grab that piece of data, resource, compute, inference, whatever, and just uh you know, and they have the ability to even like consume knowledge at a scale that humans just cannot. I'm sure like you have seen sessions where it's able to like just scrape through hundreds of web pages, and um then it just like stalls because it can't like reach a particular endpoint, and it skips over it. So, then you could think, "Oh, yeah, just give it a credit card." or something like that. So,
+
+while that is possible, um these agents, uh because they consume so much data as they go, it's um they pay in fractional amounts, so tiny amounts, uh but at a very high frequency. Uh and credit cards and their fees are just like not sustainable for this kind of like economic model. Um you cannot pay like 3% uh each time an agent tries to make a one-cent transaction. And the reason these transaction amounts are so small is because on the sell side or on the merchant side, they've realized that these paywalls were actually catered for humans, and now there's an entirely different customer base which is trying to like access their data, and they just want like a subset of the data. So, you could monetize that as a seller by just offering that, by wrapping that in a uh you know, in a paywall, and saying, "Hey, I take one, pay me 10 cents and grab this data."
+
+And that's why these are tiny um microtransactions, but highly frequent. So, because the agents are just like making these API calls constantly. So, what do these agents need? The agents need um payments to work like the internet. So, they have to be real time, low cost, programmable, and always on.
+
+And that's why we've built the Circle agent stack. So, it's the full stack platform for the agent tech economy. And what we mean by that, let's look at it with a live demo. Um yeah, wish me luck. Okay.
+
+So, I'll just explain uh what I'm trying to if I can get the terminal. Okay. Okay. Let's Mhm. Pull it.
+
+Yeah, I don't know. Excuse me, can I Yeah, I tried but it's just not I don't know where the placement of the desktop is. >> Can you escape out of this? >> [snorts]
+
+>> Okay.
+
+Thank you. So, so what we have over here are two sessions. One is your regular cloud code and on the other on the right hand side is a cloud code that comes equipped with Circle agent wallet. So, it has a wallet which is funded and has the ability to like make uh has the ability to pay for premium content. And now uh let me actually just uh quickly uh add a task to this.
+
+Yep. And run it. So, I'll explain what I'm trying to do over here, which is Yeah, so So, the task I'm giving Claude on and it's the same task on both the terminals is plan my trip for the FIFA World Cup final. So, just, you know, give me summary of flights, hotels, logistics. Also, like what are the odds of like my favorite team Argentina being in the final? Who is it
+
+going to play? And stuff like that. Um and also what's the ticket prices in the secondary market? How is the experience of other people who've actually been to the stadiums? And are there any FYIs and stuff like that?
+
+Grab all of that. Send me an email. And if possible uh make me a make a phone call and tell confirm that all of this has been researched and you know, sort of brief me on the summary. So, we'll see like what's happening on on both the terminals here. And Sorry, it's a bit hard to navigate. So,
+
+as you can see, um the left the vanilla Claude code has spun out like a bunch of sub-agents. And it's going about doing its research. Similarly, on the right-hand side um it's actually like uh going through the wallets and making like um paying for all of these uh premium content and we'll see like what the results of it are.
+
+So, as you can see, it's trying to make a phone call to find sorry, an API call to Stable and Rich. Um and it's paying from its wallet. It's set up a guardrail of like, "Hey, max amount is 15 cents." The beauty of uh having an agent with a wallet is you sort of build these guardrails into the wallet. And you don't have to as a human approve every single transaction because that would just not scale because these agents are just making these ones and five cents, 10 cents transactions. You want to like enforce
+
+those guardrails which is hey, this is the max amount you can send spend per session or this is the max cap you can do per day and stuff like that. So, the agent is still spending within the guardrails that you set but it is autonomous enough to like make these individual API calls. So, let me just look at what the vanilla one is looking up and doing some research for hotels. Yeah, um flights are coming in. Also like in the prompt like try to like tell the agent to wrap this whole thing up within 6 to 8 minutes in the interest of time. So,
+
+let's see if we're able to like get an email and a phone call done in the same time.
+
+Let me also walk you through what the agent's doing if I can grab.
+
+Yep, as you can see over here the agent was able to like make an API call to the poly market data via a provider called Block Run and it provided a query and again set the max amount guardrails and is now passing all the results.
+
+>> All right. So, let's go back to the main subject main agent here.
+
+Yep. And this is where I think you'll see on the left-hand side that the agent gets stuck because the agent just does not have the ability uh it cannot send out an email natively. So, what it's doing is it's using my uh it's just like adding a draft into my Gmail account uh that is logged in, but it just cannot send it to someone. Uh whereas the other agent on the right-hand side will just be able to use um a provider, pay it, and send an email.
+
+Now, let's see like this one's uh the the other agent is also like uh is about to like send an email and place the call, so let's see. Does.
+
+>> Okay. So, as the I think the left agent, the vanilla cloud goods finished, and as you can see, it's sort of like made a confession that yeah, it cannot have It does not have the ability to make a phone call. So, it's just like providing me the highlights over here in the terminal itself. Um and now, uh whereas on the right-hand side, the email's been sent. Now, let me try to actually show you the email that we got, I wish.
+
+Grab this somehow.
+
+Okay, I'm going to make make the phone call. Okay.
+
+Just going to grab my
+
+thing here, and then let's look at the email. So,
+
+yep, there we go. So, I got this email. Oh, this is the old one. Let's see the new one. Yep.
+
+This is the one that we just received like 2 minutes ago. And yeah, it has all the details that it was able to like find, including like getting to the stadium, open stadium and maps. It was able to like, you know, find all of these. And then, what to expect by looking at like Reddit tickets, etc. So, I'll wait for the call but in the interest of time it takes sometimes a few minutes for the call to come in but let's see and I'll move on. So, how does
+
+this work uh in the background? Is Yeah, let's get back to this. Let's
+
+Yeah, so so as you can see like the agent on the right hand side with the wallet was able to just make a bunch of these API calls and pay for it. While blockchains make all of these things theoretically possible, there are there are also some bottlenecks because uh even the most efficient blockchains have a gas fee and these small transactions just don't scale because the gas fee will again be a significant sort of fraction of the actual transaction. But it is important to have gas fees because they prevent the network from spam and abuse. Um and blockchains also have some throughput limitations because there are other use cases that run on blockchains and block space is shared infrastructure. So, the problem for agents is unpredictable latency and degraded performance under load.
+
+So, what we did for that is essentially uh we built a new um infrastructure layer on top of our intra product called gateway. So, it's called nano payments. It's built for sub cent transaction sizes for as low as one micro cent. Uh it supports um it is gas free for the seller and it's instantly cross-chain. And the way it works is you essentially you just fund um your wallet and then Oh, sorry. While I
+
+explain this, let's listen to the actual call that came in. And >> Hi Harsha, here is your World Cup final trip >> I don't know if it's part of it. >> at MetLife Stadium. Fly SFO to either EWR or JFK non-stop. SFO is showing live arrival delays today, so build buffer.
+
+>> Awesome. Can you tell me how do I get to the stadium from my hotel? >> On match day, take NJ Transit to Secaucus Junction, then the Meadowlands Rail Spur direct to the stadium. Budget about an hour before receipt. >> Thank you. I'll read the rest of it in
+
+my email. Thank you.
+
+>> You're welcome. Have >> All right. So, that was just a quick demo of like how you can have like AI agents. Um if they're equipped with a wallet, they can do a lot of things with the as opposed to an agent that does not have a wallet. So, I have a couple of more minutes, so I'll just walk you through how this technology works underneath.
+
+So, if you have a wallet and you funded it with USDC, it's very easy because Circle works with a bunch of providers to on-ramp your actual US dollars into USDC. And from there, you can deposit the funds into a smart contract. The next thing it does is the agent just has to like sign these off-chain authorizations, which are essentially cryptographic signatures saying, "I am paying this address this particular amount of money." And then the server just has to like relay this to Circle and within a few hundred milliseconds, this the server knows the merchant knows that, you know, the user has the funds and is able to release the actual resource that the agent requested. And with this, you avoid the issue of like you know latencies and stuff that are associated with actually settling every single transaction on chain and this the agents are able to like pay for things at the speed at which they operate. So
+
+in conclusion the the the way the stack would work is you have Circle agent wallets which give you the ability to equip your agents with wallets. The agents have can now hold their money, spend that money autonomously but within the guardrails that you set. The wallets enforce those guardrails and then on the sell side the merchants are able to like just wrap their endpoints and resources and monetize it with a few lines of code using our SDKs. Then USDC and nano payments is the layer underneath it which sort of helps settle these transactions at the speed at which agents operate which is sub second. So and that this is how it scales and you can give it a try yourself by going to agents.circle.com.
+
+It's just a couple of clicks and you will have your agent equipped with a wallet and ready to like you know make these phone calls and things like that. So yeah, thank you.

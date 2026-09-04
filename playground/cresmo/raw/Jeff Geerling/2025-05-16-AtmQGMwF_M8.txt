@@ -1,0 +1,121 @@
+---
+video_title: "It's hard to have a good time on a Mac"
+video_id: AtmQGMwF_M8
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AtmQGMwF_M8
+video_date: 2025-05-16
+video_description: |
+  Horology is hard. It's even harder on a Mac. Yes, even the $7000 Mac Pro.
+  
+  Resources mentioned and products referenced in this video (some links are affiliate links):
+  
+    - Blog post with all the gory details: https://www.jeffgeerling.com/blog/2025/using-gps-most-accurate-time-possible-on-mac
+    - The USB GPS module I was using: https://amzn.to/4j08we1
+    - Decent little GPS antenna with U.FL adapter: https://amzn.to/43dxctt
+    - NIST-F4 Clock video: https://www.youtube.com/watch?v=CYpBaUgxGl4
+    - ChronyControl: https://www.whatroute.net/chronycontrol.html
+    - GPSDConfig: https://www.whatroute.net/gpsdconfig.html
+    - Precision Clock by mitxela: https://www.youtube.com/watch?v=SNqm5T5syTM
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Horology is hard on a Mac
+  01:04 - It's easier on a Pi, and better on a Watch
+  02:07 - GPS works on a Mac
+  03:44 - It's time to go mobile
+  04:21 - PyGPSClient and GPSd
+  08:01 - ChronyControl and time sources
+  09:20 - Getting time from GPSDConfig
+  10:47 - We have time (offset)
+  11:54 - Tracking time
+  13:27 - What's the point?
+---
+Horology is hard on a Mac. One step on any modern horologist's journey is GPS time, like the time that's being displayed on the clock right here next to me. NIST, who sets the time standard for all the United States, just turned on a new clock called NIST-F4 that's accurate to within 2.2 x 10^16 parts per million. That's 0.0000000000000022 seconds,
+
+or about the amount of time it took me to realize why 6:30 is the best time on a clock, hands down. But how is that F4 clock so accurate? Well, it's because it uses optical molasses to laser cool a cloud of cesium atoms and launch it vertically in a fountain geometry. Imagine having access to an optical molasses clock, not to mention millions of dollars worth of other atomic clocks, for a one time $10 or $20 fee? Well, that's GPS!
+
+And today there are multiple PNT or Position, Navigation, and Timing constellations just like GPS. We refer to all of these as GNSS or Global Navigation Satellite Systems. On a Raspberry Pi, I can plug in this $17 GPS module, solder a jumper wire from this PPS or pulse per second pin to one of the Pi's GPIO pins, and set it up as a time server accurate down to microseconds. With a better module, like the one I use on my Time Pi in the Rack Room, I can get down to nanoseconds. That's on a $45 Raspberry Pi. Can a $500 Mac Mini do better? And, if not that, maybe a $5,000 Mac Pro? Well, no.
+
+At least, not directly. macOS doesn't expose PPS support. There are no hardware pins you can use to discipline the internal system clock, and even PTP, a technology that could synchronize clocks over the network, is obtuse on a Mac. Ironically, the Apple Watch on my wrist keeps better time than any Mac. Models with built-in GPS get their time and position directly from satellites, and these things are accurate to at least to the tens of nanoseconds range.
+
+On macOS, no matter how amazing your M4 Pro Super Max Ultra is, it'll never be as accurate as my Apple Watch, even with the hack I'm going to show you in this video. To be clear, GPS works on a Mac, but the signal you really need for accurate time, the PPS or Pulse Per Second, that doesn't. At least not unless you're willing to write your own USB drivers and use specialized serial bus equipment. Just as a quick note on this little GPS module, the USB one, it is a lot less selective than newer U-Blox units. You'll notice that on the Mac right now I have a USB to USB-C adapter with a USB-A extension cable, another USB-A extension cable, and the module which finally has a lock for PPS, that blink.
+
+And then I have a little U.FL to SMA adapter, and all the way out here I had to run this antenna outside of the building just to get a lock. Newer U-Blox modules seem to be able to get a lock even inside the building if I put the antenna in this room somewhere where the the ceiling grid is a little wider spaced. In the studio itself, there's actually a lot of metal in this structure, and there's like two layers of roof, so, you know, I can understand why I can't get a lock out there. But the newer ones can get a lock in this room with an antenna. But this guy, I had to
+
+go all the way out to the front and get a clear shot of at least half the sky. It's not getting the full sky, but I guess if you use one of these cheaper modules, make sure you have a really clear shot at the sky with your antenna. And use an external antenna if you can. Now, instead of plugging this thing at the studio, I'm going to take this dongle in my car to show you how I can get time without any internet connection. You might be wondering, "Jeff, why are you in your car?"
+
+Well, that's because even if I blur all of the location data, I'm sure there's somebody out there who would find all the little bits of metadata that are still there with GPS that you could deduce my location. Thus, I'm in my car out in a different part of St. Louis enjoying some nice weather today. And I have my laptop here with desk pad open, so I have a nice little virtual desktop that I can use to show you how this works. And up on the dashboard I have that USB GPS modem connected, and you can see it already acquired a signal just like 30 seconds later. So we are ready
+
+to go, and I will start recording on the screen. So on your Mac when you plug in a GPS module you You should see it in the dev folder. So if I say ls /dev/tty.usb*, this is that GPS module, /dev/tty.usbmodem101.
+
+And you can use an app like CoolTerm to connect to it. So I'm just going to go in here and choose the port, it's usbmodem101, and click Connect. And you can see that there's data coming from it. There's a lot of data. In fact, some of it looks like it might be binary.
+
+tool that you can use to get the information out of GPS for position and all that kind of stuff is called PyGPSClient, and I installed that using pip already, and I already have this selected here, and I click USB/UART, and it should get the position data out of here. You can see it's getting U-blox data, so UBX, and then there's also NMEA statements, and you can actually change this. If you go into UBX config, you can change the types of data that are coming across from the GPS module. So I can say like enable just NMEA stuff or enable just UBX. And I'm going to go ahead and do that here.
+
+I'm going to click on this and exit this. And now I should just be getting NMEA information. So you can see there's timestamps, there's position data. It lets me interpret all of this. And you get a map location, you get all the GPS satellites that you're seeing, positioning overhead, all this kind of stuff in here.
+
+And this is cool because it's cross-platform. You can use PyGPSClient on a Mac, a Pi, I think it runs in Windows too. Not sure. But, you know, if you see this data, you can actually find out where I am right now. And that's a fun little thing that you could do and see where I am in St. Louis.
+
+But anyway, this is all great. It looks like we have a good 3D position fix. It knows where I am. It knows how high I am compared to the Earth's surface, the sea level, all that kind of stuff. But we don't care about that too much.
+
+Another thing that I have installed already when I was back on the internet is GPSd. So if I say gpsd and then pass it the path to the modem, then '-p', this will run in the background. And I can run a command line tool called cgps, and that will give me the same kind of data, but in a console format. So you see a list of all the satellites. You see the time offset from the system.
+
+So actually my clock is off by, I guess, 18,000 seconds right now, something like that. And it knows what time it is from the GPS satellites, your position, all that kind of stuff. And the speed, ideally, it should be zero. That means I'm not moving. But, you know, it's not a perfect fix.
+
+So it's not perfectly zero all the time. I'm going to hit Control-C and get out of here. And I'm going to say 'pkill gpsd' to kill that. And what I could do is take that text data from the GPS modem directly and use something like 'date'. So if I say 'date', it's going to give me the time on the Mac. That's the time it thinks it is
+
+right now. In fact, that's a little wrong, kind of intentionally, but I could even set the date using 'sudo date' and then using the special timestamp format. This is going to be 0429 for April 29, and then 10 02 25 (for 10:02 in 2025) dot 10 seconds we'll say. I'll do that, I'll enter my password and now my computer thinks it's April 29. So what I could do is write my own script that says uh you know every time the GPS modem sends me a time stamp update it using date like this. That's inefficient
+
+and error prone because now I have to be responsible for what if the GPS drops out? How do I make sure that it's always going to be accurate in those situations, or when there's weirdness with the signal, all that kind of stuff. I don't want to do all that. There's tools for that already. So there's two tools that we can use called ChronyControl and GPSDConfig, both written by the same person. And when you launch this the first time, this is
+
+ChronyConfig, which is going to be a utility that synchronizes the clock on your system with other time sources. By default, that's NTP servers, but we're going to set it for GPS. And the first time you open it, it's going to ask if it can install itself, basically. And so, yes, I'm going to do that. Then I'm going to go ahead and, once that's installed, go ahead and start chronyd.
+
+Now, when you do this, it's also going to take over your date and time. So if I go to date and time, it will turn off your set and time and date automatically in here. And it'll set the server to 'no-such-server', I guess, just to not have a server in there. But this is normally time.apple.com.
+
+So if you do this and you want to go back, you can always turn this back on and change this to time.apple.com. But make sure you quit ChronyControl first and uninstall it. Because if you don't, you'll have two different things trying to set your clock, and that's never a great thing.
+
+So right now, it doesn't have an internet connection, so it doesn't know anything about NTP time. So it doesn't have any information here. And if I go to sources, there are no sources for time, because there's no internet, and it doesn't know about GPS yet. And it also comes with a graph that shows you, like, over time, how well your clock is doing. But since there's no time sources, we don't know that.
+
+So I'm just going to leave this open here. And we need to get time from somewhere. And we're going to get it from GPS. So here's GPSDConfig. And this application will look at the GPS modem using a tool called GPSd that's open source.
+
+It runs on Linux and Mac and, I think, Windows. And it will give us that information. But we need to tell it where to look for it. So I'm going to say serial port, that USB modem, and then it gets all this information. And I think it automatically picked up where this GPSd app is.
+
+But if not, you might need to give it the path to where GPSd is installed when you install it with Homebrew. I'm also going to paste in the path to the modem here in the options and then click install boot files. And then at this point, I can take this configuration out of this refclock line. This is going to be what I use for chrony to tell it, here's where the GPS information is. Click on ChronyControl, click on this little widget, and then down here under the NTP information, I'm going to put that refclock.
+
+Check the syntax. Yes. Install the config. Okay. Once that's installed, we should see a GPS time source.
+
+Now this is going to show a zero until we got GPSd running, and sometimes you need to restart GPSd if you had it running already so that the data starts filling in through this .sock [Unix socket] file. So we're going to say start, and hopefully this will pick up the GPS module. Let's see.
+
+There it is. There's all my satellites. There's all the satellites overhead. And it's getting all of the information, time and day and altitude, all that kind of stuff. So now over here in Chrony, we should start seeing some data.
+
+There we go. Now this is way, way off. And I've noticed if you're way, way off like I am here and you want to set the time, you might need to step the time manually. It's also up here, 882,350 seconds. And we'll step time forward like that.
+
+And now it knows that it's Friday, May 9 at 3:30 p.m. And let's make sure that Chrony is running again, because when you step time, it basically quits it for a moment. And then I'm going to go back over to here and restart GPSd. And at this point, this graph should start making a little bit more sense because the time is not way, way off.
+
+Let's quit this. It's definitely messing things up now. Changing the time so much definitely makes things a little bit confused, for sure. Let's go back in here. And we're going to try getting this to work again.
+
+And so now that we have time, you know, not thousands and thousands of seconds off, you can see that it's tracking how many milliseconds we are off of what the actual time is, and over time it can kind of hone in on it, and we can get down to the microsecond level. It'll take a little while for GPS to do that through chrony, but once it does, it's pretty stable, and it's about as good as NTP. But because we don't have a way to connect from that GPS's PPS that tells it, here's the second... here's the second... here's the second...
+
+We'll never get that down to the nanosecond level or the tens or hundreds of nanosecond level, at least not on a Mac. Now, all this information I have in a blog post that'll be up on jeffgearling.com if you want to read into it and do it yourself. Just watching this video, there's a lot of little nuances that you might not pick up on if you're not deep into timing like I am. But one thing that I'm going to do here to show you what happens is we're getting more stable at the time down here.
+
+But if I move the GPS modem, I move this little module, and we remove the lock, or just make it move and not have the time the same, then we're going to see that the offsets are going to change, and the timing accuracy is going to change. That's because we're getting much worse signal. And you know what else I realized that whole time that I had this here? This bottom side is the GPS module. This is actually the antenna.
+
+I should have had this facing up the whole time. Oops, sorry about that! And now the actual patch antenna is facing the sky like it should be. I kept monitoring the GPS time for a while, and it got to around the same level of accuracy as NTP running here at the studio, so it wasn't better, but it also wasn't worse. That is to say, the time was accurate to within about a millisecond.
+
+And that jives with this answer on Stack Exchange, which concluded the same thing: GPS without PPS is about as accurate as modern NTP. There might be ways to get better GPS time on a Mac, but as it stands, I think the two use cases for a Mac with GPS time are: 1. You're off-grid or completely offline, but you still want to have a good time. I mean, in that situation, I'd stick with a Pi or my phone instead, but whatever floats your boat. Or, 2.
+
+You want to run your Mac as a local NTP time server. In that case, ChronyControl already has you covered. I can test that by grabbing the time from this Mac here on another Raspberry Pi on the network. And there's one other option besides ChronyControl, too. You could run chrony itself inside a Docker container and pass the GPS device into that container, but I haven't really dug into that option.
+
+In case you're wondering, this GPS module I'm using was about $20 and uses the U-Blox UBX-M8130. The description on it on Amazon said it's "better than the VK-172", so who am I to argue with that? I guess it's pretty good. But here's the rub. All that work that I did, and there's still no way for me to verify how accurate the time is on my Mac on the nanosecond level with something like a PPS output.
+
+Some audio software for the Mac seems to be able to sync with special network drivers, but I haven't found a way to go beyond about a millisecond. So in the end, maybe just stick with the built-in NTP service on your Mac and build a Time Pi instead. Oh, and I know you're going to ask. This clock next to me is from mitxela. It's the coolest clock I've ever owned, and I'll talk more about it in a future video, so make sure you're subscribed.
+
+I'll link a video to an older version of this clock in the description. Until next time, I'm Jeff Geerling.

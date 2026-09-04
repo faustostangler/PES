@@ -1,0 +1,105 @@
+---
+video_title: "I Played Snake With Water"
+video_id: rf-efIZI_Dg
+channel_name: "Steve Mould"
+channel_id: UCEIwxahdLz7bap-VDs9h35A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=rf-efIZI_Dg
+video_date: 2025-07-01
+video_description: |
+  Take your personal data back with Incogni! Use code SCIENCE at this 
+  link and get 60% off an annual plan: https://incogni.com/science
+  
+  This electrowetting device is called OpenDrop. You can use it to move water around for microfluidics applications. Or you can make games with it like Snake, Frogger, Crossy Road and packman.
+  
+  Buy open drop here:
+  https://gaudishop.ch/index.php/product-category/opendrop/
+  
+  Email address to send your code to: opendrop@stevemould.com
+  
+  Get the OpenDrop code here:
+  https://github.com/GaudiLabs/OpenDrop
+  
+  My code for Snake and Frogger is here:
+  https://github.com/steventhebrave/opendrop-code
+  
+  You can buy my books here:
+  https://stevemould.com/books
+  
+  Twitter: http://twitter.com/moulds
+  Instagram: https://www.instagram.com/stevemouldscience/
+  Facebook: https://www.facebook.com/stevemouldscience/
+  TikTok: https://www.tiktok.com/stevemould
+  Buy nerdy maths things: http://mathsgear.co.uk
+---
+This is really weird, isn't it? It looks kind of fake to me, like it's CGI or something, but it's not. It's actually real droplets of water that I'm controlling with the arrow keys on my laptop. This is a medical research device, but I'm using it for something much more important, Pac-Man. And Snake. And I might have got Crossy
+
+Road working on it as well. You might be wondering how I ended up with a medical research device. Well, it's simple, really. I saw it on the internet. And I had to have it. It's nearly a
+
+thousand euros. Yeah, but if I make a video about it, it's tax deductible. So, it's called OpenDrop, and frustratingly, it doesn't play video games out of the box. Instead, it's got this little joystick that you can use to move the water droplet around. And with this interface, you can create little sequences and paths and things like that. It's cool, isn't it? But if, like
+
+me, you wanted to play Snake on it, then you'd have to write your own code. And I really wanted to play Snake on it. And the problem was, I didn't know how to like So, I went to Switzerland. This is Urs Gaudenz, the inventor of OpenDrop. Not only did he show me around Gaudi Labs, where they make OpenDrop, but he also showed me the various layers of code that make the device work, and a couple of easy entry points if I want to make changes for myself. Okay, so basically,
+
+what I learned was, it's this Arduino compatible device. So, you can change the firmware if you want to, but the firmware that comes with it allows you to just send 256-bit strings of binary digits to the device via the USB cable. And that corresponds to this array of electrodes being on or off, depending on those binary digits. It uses a platform called Processing, and the existing code is written in the Java programming language. So, all I need to do is write some Java code to play Snake. The
+
+problem is, I don't know Java. So, it's going to take a while.
+
+Oh. We're done. God, five lines is quick. I Are we screwed? Is society screwed somehow?
+
+Like it shouldn't be that easy to write code. Now before I show you cottonmouth, that's what I'm calling the game by the way because cottonmouth is a type of water snake. Before I show you cottonmouth, let's talk about how this device actually works. Like how are the droplets moving around like that? Well, you might already know about hydrophilic and hydrophobic surfaces. Like here's a
+
+droplet of water on a hydrophobic water hating surface. The water is hardly attracted to the surface at all, which means there's nothing really to oppose the surface tension of the water. So it beads up like that. But when you put water on a hydrophilic water loving surface, the surface attracts the water to it and so the droplet flattens out. But what if you could control exactly how hydrophilic a surface was with the electricity? So look up close, you can
+
+see all these tiny metal squares. Each one of those is an electrode that we can apply a voltage to. The water doesn't sit directly on the electrodes. Instead, there's a thin dielectric coating. Dielectric means that it's insulating.
+
+It doesn't conduct electricity, but it also means that it becomes charged in the presence of a voltage. So when I turn on this electrode, the dielectric material just above it becomes charged. And that's the key because water is attracted to charged surfaces. But why though? Why is water attracted to electric charge? Well, water is a polar
+
+molecule, which is to say the hydrogens are slightly positively charged and the oxygens are slightly negatively charged. That's because the oxygen pulls on the shared electrons more strongly than the hydrogen do. So what happens to a polar molecule like water in the presence of a negatively charged surface, for example? Well, the positively charged hydrogens are attracted to the surface and the negatively charged oxygens are repelled from the surface. The result is that the water molecule goes nowhere, but it does swing around to face the charge. Think
+
+about what that means for the surface of the droplet closest to the charge. It's going to just be all positively charged hydrogens facing outwards with no negative charge to cancel it out. And the opposite surface of the droplet is going to be all negatively charged oxygens facing outwards. So the droplet will have a positively charged surface and a negatively charged surface. The positively charged surface is attracted to the negative dielectric and the negatively charged surface is repelled from it. But thanks to the inverse
+
+square law, the attraction here is stronger than the repulsion here. So in conclusion, water is attracted to charged surfaces. Or to put it another way, charged surfaces are more hydrophilic. The proper name for this effect is electrowetting because scientists talk about the degree to which water can wet a surface. Like water doesn't wet polypropylene as much as it wets glass, for example. And
+
+because we're using electricity to control how much the surface is wetted by the water, we call it electrowetting. But for our purposes, all we really care about is the fact that water is attracted to charged surfaces. So look, at the moment this electrode is turned on and so the water droplet is attracted to it. But if I turn that electrode off and turn on the neighboring electrode, the water scoots over to that one. And that's how it moves one square at a time. The next step would be to get
+
+multiple droplets moving at the same time. Like with this interface, I can set up all sorts of little dance patterns, which is cool. One challenge is that if two drops ever touch, they merge into one and can't ever be pulled apart again because the surface tension of water is so strong. This sounds like a drawback, but actually it's perfect for a game like Crossy Road or Frogger as my fellow Gen Xers would call it. Because if the frog ever touches a car, well, that's it. The car and the frog
+
+are joined forever. Getting Frogger working was interesting because the display is just 8 by 16 electrodes, so it naturally had to be a pared-down version of the game. I figured there was room for about four or five cars in total, and I needed to modify the game so that the cars didn't disappear off one side and reappear on the other because well, you know, conservation of mass. Actually, that reminds me of when my kids asked me, "Where does all the writing go when you scroll upwards on a phone?" But anyway, I wrote some code, sorry, Copilot wrote some code. So, the
+
+cars move in a kind of conveyor belt fashion. And then there's some separate code to control the frog. Unfortunately, I couldn't use the built-in joystick to control the frog because the device doesn't report the state of the joystick back to the computer where the code is running. I could change the firmware on the device to expose the joystick to the PC, but I got scared about bricking it because I don't trust Copilot not to screw it up. Like, I'm sure I could have figured it out for myself given enough time, but for now you just have to use the arrow keys on the laptop. It's cool,
+
+isn't it? The code doesn't detect an end game state. So, after your frog droplet is enveloped by a car droplet, you can keep playing the game on this little display up here. Pac-Man was a bit easier, actually. Look, this yellow droplet is Pac-Man, and it's eating different colored ghosts. Now, Pac-Man
+
+doesn't quite translate to droplets of water because in the original game, when Pac-Man eats a ghost, he doesn't get any bigger. But when the Pac-Man droplet eats a ghost droplet, it becomes larger by exactly one ghost droplet. And eventually, after several ghosts, it becomes unwieldy, which is a fun gameplay mechanic in some ways, but it's not a faithful recreation of the original. Snake, on the other hand, is the perfect game because it conserves mass just like in the real world, which is to say, when the snake eats a fruit, it becomes larger by exactly one fruit. So, we shouldn't have to worry about making water disappear or anything like that.
+
+We are, of course, assuming that snakes don't poop, which I believe is correct. Can we fact-check that? No. But here's the problem. It doesn't matter how many electrodes you turn on or how big you make the droplet, it's still going to be roughly droplet-shaped because the surface tension of water is just so powerful. But I needed to make snake
+
+shapes. The solution is to sandwich the water under glass. So now surface tension only affects this thin outer edge, meaning it doesn't have as much influence over the shape of the water, and you can make more interesting shapes. This is where it really comes into its own as a medical device, by the way. You've got these four reservoirs here that you can draw different liquids from. So if I've got some sample and I
+
+want to test it at different concentrations, look, I can automate the dilution of it like this. Here I'm delivering a pH indicator to different concentrations of acid, but this could be a much more sophisticated test like a COVID test or whatever. Or I could automate the testing of the efficacy of a new type of test at different sample concentrations. Or a single sample could be tested for multiple things. See how this cartridge has ports for tubes, so you can integrate the device into a larger system, or you can create different channels on the fly. So maybe
+
+I want to link up these two tubes, but then later on I want to switch to these two tubes being linked up. How cool is that? But the main advantage of the glass is that you can now shape the water into a snake. There are some challenges like in the original game when fruit is eaten, new fruit appears instantly in some random position. Whereas we need to draw the new fruit from a reservoir and deliver it to its location without it touching the snake along the way. That was the hardest part
+
+of the code, actually. Like Co-pilot was incredibly quick at coming up with something that didn't work at all. And then we spent about a day debugging it. Did I just say we? Co-pilot and me, that's weird, isn't it?
+
+So anyway, here it is. I've coded it so that the game pauses whenever a new fruit is being delivered. And because the player can't really know when the delivery sequence is finished, the game stays paused until you press one of the arrow keys to continue. So there you go, snake running on water. This is all open source, by the way. All the information
+
+you need to make one for yourself, all the information for how to make the tools you need to make it for yourself, all the software, it's all open source, which means you can do really cool things like custom arrays of electrodes like this one. Or you can just buy a pre-made one from Gordy Labs, link to their online store in the description. So here's the plan. At some point in the future, I will make another video in which I run your code on my OpenDrop device. The best way to send me your code is probably by email, opendrop@stevemould.com. Link in the
+
+description for all the current source code. First person to send me a working version of Tetris wins a prize. Why are you projecting code onto your face? Tax deductible. Tell you what, this five coding is amazing. I might use it for my
+
+SAS project. That's a scary thought though, isn't it? A future where the software that's meant to keep your data safe and secure is written by AI. Like at least these days software is well written and you don't get data breaches. You do. You get them all the time, but
+
+there'll just be more of them in the future. Here's the crazy thing, you know about loads of companies that have your data because they're consumer facing, like your social media account, your e-commerce account, but there are an insane number of companies that you don't know about because they're business-to-business. They're called data brokers and they're buying and selling your data and storing it. These middleman companies have had loads of data breaches over the years. I might speculate that because they're not consumer facing, they're less incentivized to write the most secure code. But anyway, when your data is in a
+
+breach, you're more vulnerable to identity fraud. For example, someone taking out a loan in your name. But even when these companies aren't breached, it's still annoying for them to have your data. Like those robo calls you get sometimes are typically facilitated by data brokers. And then of course there's email spam and physical mail spam. Data
+
+brokers aren't actually a problem for me anymore and they don't need to be a problem for you either thanks to the sponsor of this video Incogni. So look, you could write to these data companies and tell them to remove your data and legally they would have to do it. But how are you going to do that because there's hundreds of them? Like I thought I might do it. I didn't do it. You're
+
+not going to do it. It's too many. But what if one company figured out how to contact all of them and how to deal with all their BS? It's a huge undertaking but now we get to reap the benefits by signing up to Incogni. It works in three steps. You sign up. You give Incogni
+
+just enough information so they can find your data and then you give them permission to act on your behalf. It just kind of happens in the background. Like you can log on to the dashboard and you can see whenever you want. Look, this is the progress. So you can see here, look, these are all the data brokers that no longer have my data.
+
+I've signed up to the annual subscription because my data just keeps popping up in these places. So with the Incogni subscription, they're always just stamping it out for me. The offer on this one is really good. If you go to incogni.com/science, you'll get 60% off and there's a 30-day money back guarantee so you can try it risk-free. The link is also in the
+
+description so check out Incogni today. I hope you enjoyed this video. If you did, don't forget to hit subscribe and the algorithm thinks you'll enjoy this video next.

@@ -1,0 +1,62 @@
+---
+video_title: "Third-party tools for Chrome DevTools for Agents"
+video_id: 1ZGlnGUp0XA
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1ZGlnGUp0XA
+video_date: 2026-09-03
+video_description: |
+  Find out how to build custom third-party tools for Chrome DevTools for Agents. By doing this, you can expose your application's internal state directly to your coding agent using plain JavaScript. Learn how to enable the third-party tools, understand the required schema and how to serve tools from your application.
+  
+  Chapters:
+  0:00 - Introduction
+  0:44 - Built-in tools
+  1:27 - Debugging special runtime issues
+  2:02 - Cache stats tool implementation
+  3:12 - Verifying role-based access
+  4:04 - Security precautions for debugging tools
+  4:48 - Framework-provided tools
+  5:22 - Tool ideas for other libraries
+  5:54 - How to get started
+  
+  Resources:
+  Start building tools → https://goo.gle/dta-3p-tools
+  
+  Questions? Find us on LinkedIn:
+  https://goo.gle/matthiasrohmer
+  https://goo.gle/chrome-for-developers
+  
+  Watch more DevTools Tips → https://goo.gle/DevToolsTips 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome #Lighthouse
+  
+  Speaker: Matthias Rohmer
+  Products Mentioned: Chrome,  Chrome DevTools,
+---
+Did you know the very first Swiss army knife produced in 1891 didn't actually have a corkscrew. It featured just a blade ARIMA, a KAN opener and a screwdriver. Powerful, but strictly standard issue. When building complex web apps, standard developer tools can feel a bit like that original knife. But what if your coding agent could use custom attachments.
+
+Enter custom third party developer tools for Chrome DevTools for agents. Welcome back to developer tooling tips I'm Matthias. Let's dive in.
+
+DevTools for agents. Out of the box tools like Dom inspection, access to network requests and Console logs and interaction tools already bring your coding agent a really long way, but they still don't allow your agent to interact with your applications. Highly specific internal state at runtime. With third party developer tools, you can now expose any aspect of your app to your coding agent all through plain JavaScript and DevTools for agents. No additional glue needed.
+
+Allow your agent to modify and inspect state. Bypass authentication or as a framework and library author interact with internal components like routers or rendering. Let's look at some use cases. Runtime issues like silent cache Mrs. or long running database queries are difficult for coding agents to spot using just standard network locks.
+
+Now you could go in and plaster your app with Console logs and performance.now calls, though that would just create noise in your Console. Both you and your agent would have a hard time sifting through. Instead, you can create a little service that keeps track of the metrics for you, and then expose the service to your coding agent through DevTools for agents to query it only when it needs this data. Here's an example implementation.
+
+We respond to the DevTools discovery event with an object that holds our tool. Get cache statistics in this case alongside a tool description, making it easy for your agent to understand when it might be useful. The actual implementation comes down to your specific application. The actual tool is abstracted away behind an anonymous API service. Now, when you're coding agent navigates to the site, it will discover this tool, and if your prompt applies to the tool description, it will use it to fulfill your request.
+
+For example, this is a demo CRM application which has such a tool implemented. Now we can prompt our agent to investigate cache hits and Mrs. Antigravity first uses DevTools for agents interaction tools to navigate the page, and then uses the custom DevTools tool to understand if the cache was queried as expected. Unfortunately, in this case, it discovered a full cache miss with the app bypassing local updates and triggering a fake 1.8 second database latency.
+
+So no guesswork required here. On to the next use case. Verifying role based access usually means tedious manual logging in and out to check what different users can see. And when working with coding agents, it can mean repeatedly spending tokens just to navigate to sign out, then filling the sign in form and leaking credentials along the way. Custom developer tools offer a cleaner way.
+
+For example, for the same CRM app we used in the previous example, we can implement an impersonate tool, allowing your agent to seamlessly switch user profiles on the fly. The implementation is the same as before. Write a small JavaScript function that handles the actual authentication logic. For example, by calling an impersonation API endpoint, then respond to the DevTools tool discovery event with this function and the tool description. And before we continue a brief call out when implementing sensitive debugging functionality like this, make sure it's not available in any production environments.
+
+To keep your data and users safe having this tool in our example app, we can prompt our coding agent to seamlessly verify the UI for the sales and admin roles all in one go. And without our agent navigating login pages in between, it just instantly swapped to the sales profile using the impersonation tool. Our agent confirms admin panels are hidden and added buttons are disabled before swapping back to the admin profile token, saved with just a few lines of JavaScript. Let's move on. Well, you can use this functionality to build fully custom tools specific to your own app.
+
+The same functionality can be used by framework authors. We partnered with the Angular team to implement built in tools for agents to efficiently debug dependency injection and the signal graph, helping agents to visualize the logical relationship between state and the view, allowing them to identify dependencies. But there are dozens of other libraries where this can be useful to make debugging with agents, and DevTools for agents more efficient. For example, animation libraries could give agents custom tools to change the Play state of animations and pause, resume or fast forward them. Content management systems could ship tools for your agent to efficiently seed them with demo content, without interacting with the raw database or complex migration scripts.
+
+If you have other ideas for the frameworks and libraries you use, let us know in the comments below. And if you're maintaining a framework or library and want to get started, please reach out and we are happy to partner. Now to get started building and using custom tools. First check out documentation through this link. If custom tools are still experimental, make sure to enable the flag in your MCP server config file.
+
+Our docs are also where you can find exact documentation on the required schema for your tools to be successfully picked up by DevTools for agents. Thanks for tuning in and see you next time.

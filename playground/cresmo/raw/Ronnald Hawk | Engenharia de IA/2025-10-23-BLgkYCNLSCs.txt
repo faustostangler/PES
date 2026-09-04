@@ -1,0 +1,120 @@
+---
+video_title: "LangChain 1.0: Comece Rápido, Customize Sem Limites"
+video_id: BLgkYCNLSCs
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=BLgkYCNLSCs
+video_date: 2025-10-23T16:31:37+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade  https://www.rhawk.pro/comunidade (reabertura em novembro de 2025)
+  –––Consultoria –––
+   A melhor consultoria em IA do Brasil: https://simplework.ai
+  
+  ––– Descrição –––
+  Descubra tudo sobre o LangChain 1.0 e LangGraph 1.0 e veja como a maneira de construir agentes de IA mudou para sempre. 
+  
+  Este tutorial completo é perfeito para iniciantes, desenvolvedores e empreendedores que desejam criar soluções com IA generativa, mostrando o passo a passo de como é fácil começar com a nova função create_agent e, ao mesmo tempo, como obter personalização ilimitada com o poderoso sistema de middlewares. 
+  
+  Aprenda a implementar funcionalidades do mundo real, como sumarização automática de conversas e proteção de dados sensíveis (PII/LGPD), com pouquíssimas linhas de código. Entenda quando usar esta abordagem simplificada e quando evoluir para LangGraph puro para criar workflows complexos e sistemas multi-agente. Acompanhe um exemplo prático e tenha acesso ao código-fonte para começar a construir suas próprias aplicações de IA hoje mesmo
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  Playlist Negócios: https://www.youtube.com/playlist?list=PLk6saMUFiINl-TQpZjq6isCdhw8eZ7c9P
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:20 Rodada de investimentos no langchain 
+  1:23 Entendendo a antiga forma de create agentes com Langgraph
+  2:59 O novo jeito de criar agentes com Langchain 1.0
+  10:14 E agora, quando usar Langgraph?
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  #inteligenciaartificial  #iagenerativa #negocios
+---
+O LC Chain 1.0 chegou e a maneira que você constrói a gente vai mudar a partir de hoje. E nesse vídeo eu vou cobrir exatamente isso. Eu vou cobrir o lançamento tanto do Lang Chain 1.0, tanto do Lang Graph 1.0 e eu também
+
+preparei um presentinho para você. Então bora pro vídeo. Então vamos lá caras. É o seguinte, essa semana um LC Chain anunciou algumas coisas, não foi só o lançamento do L Chain e do Lang Graph 1.0. Eles também anunciaram eh uma
+
+rodada de investimento série B de 125 milhões e agora a empresa vale nada mais nada menos do que 1.2 2 milhões, porque isso importa pra gente. Nós estamos construindo soluções e a gente gosta de saber que o que a gente tá fazendo repercute também em outros lugares, que a gente tem um mercado não só de repente na empresa que a gente trabalha ou na solução que a gente constrói, que na verdade esse conhecimento que nós estamos construindo aqui, ele tá sendo também construído ao redor do mundo, tá rolando dinheiro e a gente tá inserido nesse eh macro, beleza? E aí, como você vê aqui, existem outras empresas que usam também além da minha. Então, legal.
+
+E provavelmente você também aí usa, você tem interesse nesse tipo de assunto ou tá avaliando usar, tem um monte de galera usando, então faz sentido. Beleza? Então você tiver interesse, vai lá no blog depois e dá uma lida nesse anúncio, tá? O que que a gente vai falar aqui hoje? A gente vai falar do da principal mudança do link chain eh antigo pro link chain novo, né? Prochain
+
+1.0 e também falar do link graph, tá? Então bora aqui comigo. Que que a gente fazia anteriormente, tá? Se você nunca criou eh um agente eh na tua vida, o agente se parece com isso aqui, tá? Eh,
+
+ele pode ser um loop eh de um modelo, uma IA, uma LLM com ferramentas, por exemplo, enviar e-mail, verificar alguma coisa na internet. Então, o modelo pode ficar chamando essas ferramentas aqui no loop e depois dar a resposta, tá? Essa esse é o agente padrão, tá? Que todos conhecem aí no mundo, beleza? Show de bola, tá? No Link graph, você precisava
+
+usar esse cara aqui, ó. Tinha um pacote lá, prebild chamado create react agent e a gente conseguia criar esse cara aqui facilmente. Se você já foi na lá na rock pro, você já viu lá que lá tem um material que você pode baixar e tem exatamente esse exemplo aqui, tá? Junto desse pacote existe também e duas opções que você conseguia customizar ele, tanto com préhook, tanto do post hook. Se você tá na comunidade, você já viu uma aula que a gente faz lá isso. E você também
+
+deve ter notado se você tá na comunidade ou se você já tentou fazer por si só, que essas customizações são bem limitadas, correto? N você consegue fazer coisinhas ali, mas você não consegue navegar muito bem e aí acaba que a tua alternativa é sempre criar algo do zero, né? Então vem a lenda do L graph, é muito complicado, parará, é que na verdade é só uma questão de entender o que tá acontecendo ali. Só que aí qual é o bacana, qual é o checkm agora, cara? O que que eles fizeram?
+
+Na verdade, o link chain 1.0 é a link graph, tá? Essa é a grande mudança. E o que que eles fizeram? Eles criaram uma camada de abstração para facilitar o uso das pessoas eh no Leng chain eh usando L gráfico debaixo dos panos. Então, basicamente é o seguinte:
+
+quero começar rápido e fácil. Você vai começar com L chain 1.0 e vai usar esse pré-build. Tranquilo, beleza? Quero evoluir a solução porque a minha solução precisa de um monte de requisito. Eu vou
+
+explicar esse cara aqui que tá tudo embutido nessa nova nessa nova solução do create agent. E eventualmente se eu tiver uma solução mais complicada, eu vou mostrar um exemplo aqui também, aí você vai pro Link graph, tá? Então vamos lá. Antes de eu explicar isso aqui, deixa eu mostrar o código aqui disso aqui, cara, tá? Eu tenho um exemplo aqui funcional e eu vou mostrar para vocês já já. E é exatamente isso aqui que tá o
+
+código que tá aqui, ó. Tem uma ferramenta, tá? Tem o prompt e tem o nosso agente usando o LC Chain 1.0 aqui. E você vê que eu tenho 26 linhas de código, cara, rodando aqui e tem um agente funcional com sumarização da conversa. Então, a conversa começou a
+
+ficar grande. Quando ele chegar a 1000 tokens, ele vai sumarizar sozinho e ele sempre mantém as últimas cinco mensagens no contexto sempre, tá? Isso aqui só usando esse cara aqui, Midware, que joga um papel importante nessa nossa solução aqui que a gente vai discutir. E eu também tô usando e uma outra ferramenta chamada PII midware. Ronald, o que que é PII? Por exemplo, você pode ter dados
+
+que você não quer que a sua LLM tenha acesso, por exemplo, o dado de e-mail da do teu cliente, correto? Então você já tem uma ferramenta aqui embutida e aí você vê que ele já tá aqui embutida no pacote já feito e tem vários midwares já feitos e para você simplesmente usar aqui. Então é disso que a gente vai falar e em detalhe agora. Vamos lá. Vamos lá, tá? Então o Lang Chain Create
+
+Agent, ele se comporta da mesma maneira aqui, né? Se você quiser usar esse cara só com modelo e com ferramentas, ele vai se comportar assim. Você só instancinha aqui o create agent, vai passar o modelo, vai passar a ferramenta, o prompt e pronto. Você não precisaria passar o midware, né? Então era só isso.
+
+Ficaria ainda menor, ficaria 18 linhas de código, né? Então show de bola, né? Ah, o linkin é difícil, tá? Boa, não tem mais, tá? Há rolas, mas eu preciso customizar, eu preciso verificar se o meu cliente ele tem autorização para acessar meu agente, eu preciso fazer alguma coisa com prompt e fazer o prompt dinâmico na na hora ali, parará parará, todas essas coisas que acontecem no mundo real, tá?
+
+O LC Chain agora por ser implementado no LG graph, ele te possibilita dentro desse pacote aqui do Create agent e criar essa coisa aqui chamada midware. E esses midwares que eu tô usando aqui, né, esses carinhos são pequenos pedacinhos de código que eles já estão pré-fabricados, esses caras aqui já vêm no pacote, tá? E nada impede de você criar os seus próprios midwares. Então, uma coisa que começa a ficar interessante e você deve estar se perguntando, Ronald, e aí o Lang Graph? Eu tô lá na comunidade, você fez um um módulo lá super denso de Lang Graph e agora? É, na verdade a notícia é ótima,
+
+né? E eu até comentei com a galera lá que eu tava falando com o time de desenvolvimento deles e eu já sabia do lançamento já há mais de um mês e meio atrás, né? Eh, e o que eu fiz foi exatamente construir as bases para usar aqui, né, no Lang Chain 1.0, porque eu já sabia dessa mudança. Então, todo o conhecimento que se você já tem de L graph, agora você vai poder usar explicitamente aqui dentro desses midwares se você precisar construir o midware customizado. Beleza? Então, tem
+
+vários tipos de midware e aqui eu botei as legendinhas para você ver e de maneira é que eles indicam usar, né? Então você tem todos esses carinhas aqui que você pode eh fazer uma customização é tanto da chamada do modelo, tanto da chamada da ferramenta. Então, por exemplo, dentro de uma ferramenta, você quer atualizar um contexto do teu agente, né? Então você pode fazer isso dentro de uma ferramenta e tudo muito prático e rápido, tá? Vamos ver o código aqui, vamos ver em funcionamento para você ter ideia. Mas antes, deixa eu
+
+mostrar aqui, cara, que essa é uma dor muito grande, né, de todo mundo que tá usando Lang chain ao longo dos anos, que é a documentação era muito complicada e muito complexa, né, muito espalhada e a documentação tá totalmente refeita. Então, show de bola. Isso é muito bom porque a documentação era realmente algo muito muito ruim e precário eh do Leng Graph, do L chain. Beleza? Então, vamos ver o código aqui e em funcionamento. Eu
+
+já expliquei ele aqui mais ou menos. E eu tô usando aqui o o GPT 4.1. Você pode usar é o que você quiser, não tem nenhum problema aqui. Eh, e esse código aqui, caras, tá disponível aqui na Rockpr, tá?
+
+Eh, que você tá vendo aí, então depois do vídeo você baixa lá. É exatamente esse código que eu tô mostrando aqui. Mas vem comigo aqui que eu vou explicar o que tá acontecendo, tá? Vamos lá. Eh, esse aqui é um exemplo de chat e que eu tô botei aqui pro vídeo e é o seguinte, eu mandei a mensagem, tá? Meu e-mail é
+
+parará, tá? Como você está? E você vê que o e-mail tá aparecendo redact, tá? Esse é o nosso filtro lá, o nosso midware de PII em ação, tá? A minha LLM não consegue ver o e-mail se eu uso aquele cara. Isso é muito interessante
+
+para diversos casos. Você pode estender isso aqui, por exemplo, para botar um CPF, por exemplo, ou alguma coisa que seja importante você não enviar para LLM por conta de LGPD, etc, etc. Então, show de bola, já tá construído, beleza? É só você usar, tá? Eh, e aí no final vocês vão ver aqui que eu tenho uma chamada de ferramenta, tá bom? Eh, e aí ele
+
+confirmou a inscrição parará. Beleza, show de bola. Agora vamos ver aqui no detalhe, tá? Eh, vamos lá. Esse cara aqui é o nosso agente. E se você vê
+
+aqui, tem um monte de coisa acontecendo, né? E são exatamente esses midwares que eu botei aqui no código, né? E ele já monta, pré-monta isso aqui pra gente. Então, olha a facilidade que você tá tendo e olha o poder de customização que você tá tendo com pouquíssima linha de código, tá? com pouquíssima de fato customização aqui no detalhe, principalmente o sumarization, né?
+
+Sumarization é algo muito importante, a gente gosta de fazer, né? E aqui já tá pré-build de uma maneira muito muito fácil. Beleza? Tá? Então ele tá aparecendo assim e agora deixa eu mostrar para vocês aqui como isso aqui interage, tá? Então vamos lá. Eu digitei
+
+aqui, ó, meu e-mail é hak parará. É como você está? É, e ele já mostrou para cá para o modelo. Quando ele chegou aqui, ele fez o reduct. Então, antes de chegar no nosso modelo, antes da mensagem chegar em algum lugar, ele já fez o reduc desse meio, tá? Eh, ele prossegue
+
+para lá, tudo mais. E aí depois eu faço a chamada de ferramenta e aí você vê aqui, ó, chamada de ferramenta. Eh, ele vai lá e confirma a minha inscrição. Eh, e a vida segue. Todo esse código tá lá na Rock Pro. Não, não é esse aqui que eu
+
+quero mostrar para você não. Isso aqui eu vou mostrar em outro vídeo, cara. Esse aqui é legal também, tá? Eh, mas eh o código tá tudo lá, tá bem assim mesmo, 26 linhas de código. Então baixa lá e aproveita, cara, porque tá legal, tá? Aí
+
+você deve estar se perguntando, Ronald, OK, muito legal, mas e agora onde eu uso o L graph? Como fica o L graph, como fica isso? Tá? A grande diferença, caras, é que, deixa eu voltar para cá, é que esse agente React aqui é o padrão da maioria das coisas, né? A maioria das pessoas ainda pensam soluções de IA, como chats bots, né? Mas a verdade é que
+
+a gente, nós estamos caminhando pra era da construção de sistemas com IA, como eu mostrei, eu acho que no vídeo passado, eh, mostrando aquela feature da AGI, se você não conhece, aconselho fortemente se você tem interesse em criar soluções de a além de chat, né? Eh, lá. E o que a gente faz aqui? A gente se aproveita desse padrão, mas ele tem limitações, obviamente, né? você tá construindo dentro de uma caixinha ali que já tá pré-moldada eventualmente. E
+
+se você tá construindo solução profissional, isso vai acontecer cedo ou tarde, você não vai eh poder mais usar uma caixinha pré-definida e você vai ter que modelar a tua solução para o problema. E é exatamente isso que a gente tá fazendo lá no no curso agora da comunidade de agentes. Eu vou mostrar aqui para vocês como é que tá. Esse aqui é um caso de multiagente, um workflow bem misturado e bem complexo que a gente fez lá. E é exatamente assim quando você vai querer usar LG graph, por exemplo. Então você vai usar LG
+
+graph é puro, eh quando você quiser construir um over um workflow customizado, não um overflow, né? Um workflow customizado, tá? E você também vai usar as mesmas técnicas que você conhece aqui do Link Graph para construir midwares customizados. Então agora a gente tem uma, digamos assim, uma introdução breve e fácil para quem tá começando. Ou se você quer algo rápido, aí você vai usar aquele pacote lá do create agents. E se você quiser
+
+algo customizado, por exemplo, aqui dentro desse meu desse meu workflow, eu tenho um React agent. Se você vê aqui, ó, tá vendo? Eu tenho esse cara aqui. Essa é uma técnica aqui chamada subgrafo, tá? Que você pode usar aqui dentro do L graph. É, é uma técnica
+
+avançada. E aqui eu tô usando router, tô usando avaliador, tô usando eh plan and do. Aqui tem um tem um pacote completo aqui, tá? Eventualmente você vai precisar chegar nessa solução, mas você não precisa chegar numa solução complexa do dia paraa noite. Você pode começar simples e à medida em que você vê necessidade, você pode migrar facilmente para Ling graph, porque agora tudo é uma coisa só, caras.
+
+A ideia de construir agente, como eu venho repetindo aqui, eh, muito tá mudando. Não estamos mais na época lá dos agentes eh de 2 anos atrás. Aquilo foi uma vantagem competitiva do anos atrás. Eu não sei se você sabe, mas o Lang Chain e foi a fundação de diferentes soluções, né, como o N8N. O N8N ainda é suportado, né, aquela base ali do agente do N8N é Lingchain, só que a fila tá andando, cara. As soluções
+
+estão mudando, né? E se você não quer ficar preso a agentes do WhatsApp para sempre e quer de fato explorar o mundo de oportunidades que existem em Iá, tá? Fica aqui o convite para você se inscrever lá na comunidade. Em breve eu vou reabrir as inscrições. Eh, ah, R, eu não posso fazer a comunidade, eu não tenho grana. Parará. Baixa o código,
+
+cara. Eh, vê eu falando aqui, brinca por você, só por você explora, cara. Porque é assim que você vai aprender. O que eu faço lá na comunidade é ajudar as pessoas a acelerarem o processo delas. Eh, sempre alguém que tá fazendo tem uma dúvida, quer trocar uma ideia, parará, parará, eh, e obviamente aprender essas coisas aqui no detalhe. Isso eu posso
+
+ajudar você além da parte de negócio, né, de fato de beleza, eu tenho conhecimento técnico, mas como que a gente faz dinheiro com isso aqui, né? É, mas isso aqui é importante, cara. Seja você de negócio ou seja você um cara técnico, se você não entender o que de fato tá acontecendo nesse mercado, você vai ficar fora. Existem muitas narrativas eh irreais sobre o mercado ainda. Eh, mas tá diminuindo. Você pode
+
+perceber que a galera que é meio folha de coqueiro, né, que falava uma coisa, agora começa a falar outra e eles começam a mudar. Eles vão tentar imitar é o que você tá fazendo, o que eu tô fazendo aqui. Eh, e eles vão sempre ao sabor do vento, tá? Então, se você é sério a respeito de construir soluções com ar, fica o convite. Se você é sério e quer fazer acontecer, é o que a gente faz na comunidade, é o que eu tô fazendo aqui no canal, compartilhando conhecimento, construindo o futuro com se tá a fim de junto, te espero lá. Em
+
+breve eu vou reabrir a matrícula e aí você se junta à galera que tá lá. tem uma galera muito boa que além de eh ter troca técnica, né, tem a galera de negócio também que acabam fazendo negócio entre eles e e tem sido legal observar eh a dinâmica da galera lá. Então é isso, rapaziada, até a próxima. Yeah.

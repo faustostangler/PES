@@ -1,0 +1,32 @@
+---
+video_title: "Why Modulo Hashing Breaks Your Entire Cache #systemdesign #shorts"
+video_id: HWaVQ39qplM
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HWaVQ39qplM
+video_date: 2026-08-22
+video_description: |
+  One server crashes → your ENTIRE cache goes cold. Here's why. 👇
+  
+  Full walkthrough: https://systemdr.systemdrd.com/p/consistent-hashing-why-it-matters
+  All 52 FAANG questions + drill cards: https://systemdrd.com/ebooks/52-faang-questions-drillcards-cheatsheets/
+  🌐 https://systemdrd.com/
+  
+  #SystemDesign #TechInterview #CodingInterview #FAANG #SoftwareEngineer #shorts
+---
+Here's a distributed systems concept that shows up in at least eight of the 52 most common system design interview questions and most engineers only half understand it. This is consistent hashing, why it matters, and how it actually works. There are two types of engineers who fail the distributed systems section of a design interview. The first type simply doesn't know what consistent hashing is. That's an easy gap to spot and an easy one to fix with some reading. The second type is more
+
+dangerous. They know the definition. They can say the words consistent hashing confidently. But ask them why modulo hashing breaks or what problem consistent hashing is actually solving and they stall. That second type fails more often in interviews because knowing the name without the reasoning behind it is worse than knowing nothing at all. It
+
+signals to the interviewer that you've memorized vocabulary rather than understood the underlying mechanics. So before we talk about the solution, let's build the problem from scratch. The naive approach is modulo hashing and it starts simple. Say you have four servers and a cache key. You run hash of the key modulo four and you get a server number zero through three. It's fast, it's
+
+simple, and under normal conditions it spreads keys evenly across your servers. The formula is just server equals hash of key mod n where n is your server count. For a system that never changes shape, this works perfectly well. The problem isn't the formula itself. It's what happens the moment n changes. And
+
+in any real production system, n changes constantly. Servers crash, you scale up under load, you take a node down for maintenance. Modulo hashing was never designed with that reality in mind and that's exactly where it falls apart. Watch what happens when one of those four servers dies. You're down to three servers so your formula becomes hash of key mod three instead of mod four. And
+
+here's the part that surprises people the first time they see it. Changing the divisor from four to three doesn't just remap the keys that lived on the dead server. It remaps almost every key in the entire system because the modulo operation has no relationship between its output for n and its output for n minus one. On the left side of this diagram, you can see exactly that. All four keys that were cleanly mapped to node zero through node three get scattered onto new unrelated servers the instant node three crashes. That's 100%
+
+of your keys shifting to a new home. If this is a cache, every one of those keys is now a cache miss. Every miss falls through to the database. And if the reason you're changing server count in the first place is that you're already under heavy load, which is usually exactly when servers crash or you need to scale up. This is the worst possible moment to empty your entire cache. On
+
+the right side, you can see the alternative, a consistent hashing ring where only the keys sitting between the crashed node and its neighbor need to move. That's the entire idea we're about to unpack.

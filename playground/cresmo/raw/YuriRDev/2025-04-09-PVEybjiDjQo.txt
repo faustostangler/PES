@@ -1,0 +1,58 @@
+---
+video_title: "Hackeando Golpes (vingança 💀)"
+video_id: PVEybjiDjQo
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=PVEybjiDjQo
+video_date: 2025-04-09
+video_description: |
+  Nesse vídeo eu acabo com alguns esquemas de golpes que estão por ai na internet, principalmente os "joguinhos que pagam". Também explico como alguns golpes funcionam. 
+  
+  👉 Servidor do Discord para participar do CTF: https://discord.gg/UpYMbKsSX6
+  
+  Quer aprender a programar? Ou cybersegurança? A melhor forma é entrar em uma comunidade sobre. Entrem no  https://discord.gg/programacao  , lá tem discussões, conteúdos, roadmaps e mais 🐱‍💻
+---
+Todos os dias, milhares de pessoas caem em golpes online, roubam dados, dinheiro e, principalmente, a paz de quem foi enganado. Nesse vídeo, eu fui atrás dos golpistas, investiguei, encontrei e hackei alguns esquemas. Hoje eu vou mostrar como tudo isso funciona por trás e como eu consegui invadir alguns. Bem-vindo ao mundo dos golpes online. Só que dessa vez quem vai aplicar o golpe sou eu. Você com certeza já viu algum vídeo
+
+desse, algum jogo de infância que em vez de você ganhar alguns pontinhos virtuais, você ganha dinheiro. Deixa eu te falar um negócio. Em apostas online, o jogador não tem nenhuma influência sobre o resultado. Senão um pro player em frut ninja como eu estaria bilionário. Não é assim que apostas funcionam. são claramente um golpe para
+
+fazer você depositar dinheiro no aplicativo e nunca mais sacar. E uma coisa engraçada sobre esses jogos é que todos têm a mesma cara, não literalmente o mesmo design e palavras-chaves. A mais comum em genérica é tipo foguetinho. A gente pode abusar um pouco dessa semelhança para encontrar vários desses sites. É literalmente só pesquisar no Google. E aí chega um ponto
+
+interessante. Cada site tem a mesma funcionalidade, só que com um nome diferente. Sabe o que que isso pode significar? que alguém criou um jogo, vendeu o código fonte para outras pessoas para que elas possam aplicar o golpe. Isso é uma boa coisa, porque encontrar esse código não deve ser tão difícil quanto parece. Eu passei dias e
+
+dias entrando em vários grupos do Telegram, procurando por algum fornecedor desses sites, mas eu não encontrei e eu nem perdi meu tempo procurando o código no GitHub, porque não é possível que eles vazariam o código fonte assim, né? Procurando pela mesma palavra-chave no GitHub, eu encontrei 14 repositórios. Sim, eu encontrei o código fonte da plataforma. Agora é só analisar o código e procurar por alguma vulnerabilidade. Só que antes esse repositório aqui me chamou atenção. Além
+
+desse joguinho premiado que tá open source, ele também vem de vários outros, como do dinossauro, da cobrinha, Candy Crush, etc. Bom, analisando o código, deu para entender um pouco da estrutura. Até parece brincadeira, mas olha só esse login administrador. O cara deixou um backdoor para ele sempre ter acesso. Mas vamos para ação. Esse jogo é o do Candy
+
+Crush. Vamos entrar no código da página inicial e procurar por alguma frase bem específica para que a gente possa procurar no Google e deixar o search engine trabalhar pra gente. E com isso encontramos três desses sites online e testando o backdoor que o cara deixou tá funcionando. Beleza, a gente tem acesso à admin, mas eu quero quebrar o jogo. Aqui nesse dasbard tem a parte de configurações, mas não dá para alterar, pelo menos não no frontend. Olhando o
+
+código mais uma vez, existe uma requisição post admin config BD e lá eu consigo passar o novo nome do jogo. Perfeito. Eu posso colocar algo como isso é golpe, mas a gente pode ser mais criativo. Dá para ver que o nome do jogo é colocado sem nenhuma proteção de XS, então a gente pode alterar completamente o site. Bora colocar um aviso aqui para as próximas pessoas que entrarem.
+
+Pronto. E você mesmo pode fazer isso se acabar encontrando algum site assim. É só mandar uma requisição post paraadminfig/bd.php php com os parâmetros nome único, nome um, nome do Não precisa nem estar alugado com admin para isso. Aproveitando, o mesmo cara tem o código fonte do Subway Surfs Money e o código é bem parecido, o que indica que as mesmas vulnerabilidades que a gente viu antes também podem estar aqui. Só
+
+que dessa vez o login admin não tá com aquele backdoor. Não importa muito porque olhando o código SQL que inicia o banco de dados, dá para ver que tem um login administrador padrão e é só torcer para que ninguém tenha mudado. Usando aquela mesma técnica super avançada de procurar no Google, encontramos quatro sites online. Só que nenhum desses sites tem um admin padrão ainda ativo. Só que olhando pras requisições da API, nenhuma rota faz verificação se a gente tá logado ou não. Então a gente não tá
+
+perdendo nada. E aqui também tem aquela rota de alterar o nome da aplicação, só que em vez de ser barra de mim, é barra DM. E ele tá verificando por XS, só que de uma forma muito tosca. Ele verifica se a string script tá no nome. Então, é literalmente só colocar link capslock que vai funcionar. E é só fazer a mesma
+
+coisa para todos esses sites. Calma que não acabou. Todos os joguinhos que você pensar tão aqui. O Mario Pix, por exemplo, o código dele não tá aberto, mas eu tenho certeza que a mesma vulnerabilidade de mudar o nome do jogo tá presente. E eu tava certo. Bom, é
+
+isso. Todos os jogos que você encontrarem que tem essa cara aqui, pode mandar mensagem no Twitter. Agora sim, vamos subir um nível e passar para uma plataforma de venda de dados. Golpistas vendem e compram dados pessoais basados, como CPF, nome completo, e-mail de milhões de brasileiros. E eu não tô brincando, você consegue encontrar um único banco vazado com dados de mais de 200 milhões de brasileiros. E esses
+
+golpistas pegam esses dados através de vazamentos ou fishing e colocam tudo em uma API e vendem o acesso. E dá para encontrar muito disso no Telegram, só que até mesmo nesses grupos, grande parte é só revendedor. Mas sem enrolação, vamos hackear uma dessas plataformas. Aqui a história é um pouco mais legal. Me mandaram uma mensagem no Twitter falando que tinham caído naquele golpe dos correios e a própria pessoa analisou o site e viu uma requisição de API para obter os dados de alguém pelo CPF. E essa foi a plataforma usada para
+
+puxar os dados. Vamos criar a conta e dar uma explorada. Eu consigo adicionar saldo, comprar plano e ver as minhas compras. Na parte do saldo não dá para manipular muita coisa, mas na hora de comprar o plano, o preço é enviado do frontend. Então é só mudar o preço e é por essa ninguém tava esperando. Só que
+
+na parte de listar as compras, a única coisa que eu passo pro servidor é meu usuário, sem senha, sem token, nada. E testando por alguns padrões, eu acabei encontrando o usuário teste, que tem uma compra ativa. Vamos ver como é que funciona. Eu copio esse token, vou em checker, coloco um CPF que eu quero puxar e pronto, os dados da pessoa estão na minha frente. Uma coisa que me chamou atenção foram as portas abertas e na hora de gravar essa parte, o cara desligou os servidores vulneráveis.
+
+Então vou ficar devendo a imagem, mas o que aconteceu foi em um subdomínio que eu encontrei no set, você conseguir acessar o painel admin com todas as requissões de API abertas e lá você conseguiu o token da Evolution API, que é uma API open source que você usa para enviar mensagem de WhatsApp e lá ele tinha vários bots rodando onde qualquer um podia puxar os dados de alguém. E entrando na Evolution com esse token, eu podia desligar todos os números cadastrados, mas eu ia gravar minha tela fazendo isso, só que ele desligou os servidores antes. É uma mini vitória mesmo assim, porque de qualquer jeito o sistema tá desligado, só que eu queria ter feito mais coisa. Agora vamos falar sobre os golpes mais comuns. Sabe aquele SMS que você recebe falando que sua encomenda tá presa nos correios e você tem que regular o envio? E quando
+
+você clica no link, é levado para um site que parece muito com o site original, só que é tudo falso. Aí eles pedem seu CPF e realmente aparecem seus dados lá. E como eu falei, eles pegam essas informações através das plataformas de venda de dados. Mas tem como hackear esses sites falsos de correio ou sites falsos de açaí, de governo? A resposta curta é que não. Vou
+
+mostrar um pouco como é que funciona. Bom, primeiramente você nem tem lendage, então é direto paraa ação, onde você vai colocar o seu CPF e eles vão puxar os dados para convencer que o site é real. Depois disso, você tem o botão para pagar. E quando você clica em pagar, vai gerar ou um QRCode de Pix ou te redirecionar para um gateway de pagamento. E quando você paga, você recebe uma mensagem de pagamento confirmado. E é só isso, não tem uma
+
+brecha, não tem uma lógica de negócios, é só isso. Se eu quisesse hackear esses sites, eu precisaria hackear o gate de pagamento. E eu não tenho advogado para isso. E pior, nem tempo de coletar informação suficiente a gente tem, porque o tempo de vida desses sites são dias. Aí quando tem muita denúncia, eles fecham, criam outros sites e o ciclo continua infinitamente, deixando muito pouco tempo para alguém conseguir pegar alguma informação relevante. Então não
+
+tem muito o que fazer. E é isso por hoje. Espero que vocês tenham gostado. Aliás, eu tô pensando em fazer um CTF, onde qualquer um pode participar de graça. Vou criar uma aplicação com algumas vulnerabilidades e as primeiras pessoas que encontrarem vão receber um prêmio. Vai ser a chance de
+
+testar suas habilidades, aprender na prática e ainda poder ganhar alguma coisa com isso. Se quiser participar, me segue no Twitter e entra nesse canal do Discord que eu acabei de criar. Não esquece de deixar o like, se inscrever no canal e valeus.

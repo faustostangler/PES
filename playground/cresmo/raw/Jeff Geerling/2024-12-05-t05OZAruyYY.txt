@@ -1,0 +1,166 @@
+---
+video_title: "CPU Cores are the new Megahertz"
+video_id: t05OZAruyYY
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=t05OZAruyYY
+video_date: 2024-12-05
+video_description: |
+  AmpereOne and AMD are duking it out for the most cores in a single socket.
+  
+  Links to the things I mentioned in this video:
+  
+    - Supermicro MegaDC ARS-211ME-FNR: https://www.supermicro.com/en/products/system/megadc/2u/ars-211me-fnr
+    - My AmpereOne A192-32X Test Results: https://github.com/geerlingguy/sbc-reviews/issues/52
+    - N+1 Fan Redundancy: https://mainstream-corp.com/n-plus-1-vs-n-minus-1-redundancy/
+    - What is Edge Computing? https://stlpartners.com/articles/edge-computing/what-is-edge-computing/
+    - NEBS Level 3: https://en.wikipedia.org/wiki/Network_Equipment-Building_System
+    - Open RAN: https://www.keysight.com/us/en/assets/7121-1103/ebooks/The-Essential-Guide-for-Understanding-O-RAN.pdf
+    - AWS Graviton Arm CPU: https://aws.amazon.com/ec2/graviton/
+    - Google Axion Arm CPU: https://cloud.google.com/blog/products/compute/introducing-googles-new-arm-based-cpu
+    - Nvidia 4090 HPL FP64 Results: https://www.pugetsystems.com/labs/hpc/NVIDIA-RTX4090-ML-AI-and-Scientific-Computing-Performance-Preliminary-2382/#HPL_Linpack
+    - Ampere-optimized llama.cpp: https://github.com/AmpereComputingAI/llama.cpp
+    - AmpereOne Aurora 512-core CPU announcement: https://amperecomputing.com/blogs/introducing-ampereone-aurora
+    - Phoronix AmpereOne review: https://www.phoronix.com/review/ampereone-a192-32x
+    - Phoronix AmpereOne vs AMD Epyc Turin: https://www.phoronix.com/review/amd-epyc-9965-ampereone
+    - ServeTheHome review: https://www.servethehome.com/ampere-ampereone-a192-32x-review-a-192-arm-core-supermicro-nvidia-broadcom-kioxia-server-cpu/
+    - ChipsAndCheese architecture overview: https://chipsandcheese.com/p/ampereone-at-hot-chips-2024-maximizing-density
+  
+  Ampere and Supermicro sent the AmpereOne server used in this video for testing. They did not pay for this video nor have any say in the content of the video. See my sponsorship policies: https://github.com/geerlingguy/youtube?tab=readme-ov-file#sponsorships
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - 192 Cores
+  01:07 - Massive core counts, and a strange era
+  02:46 - What's in front
+  04:20 - What's in back (only fans)
+  05:49 - What's inside
+  07:32 - What it's for (Edge ORAN)
+  09:31 - Racking and repairing RAM
+  10:30 - Benchmarking hits different (why not Geekbench?)
+  14:16 - An excuse for 25G on the Arm NAS
+  15:57 - Benchmarking 192 Arm cores
+  17:00 - Arm-native workloads
+  18:19 - Other benchmarks
+  19:04 - The only game in town
+  20:30 - Arm's all grown up
+  21:44 - Myths about x86 and Arm
+---
+Let's maybe do this without it running.
+
+Now I can hear myself again. This is a 192 core Arm server. That's like 48 Raspberry Pis, except with like infinity more I/O and speed. Cores are the new megahertz, at least for enterprise servers. We've gone quickly from 32 to 64 to 80 to 128 and now to 192 cores on a single CPU socket.
+
+Amazon built Graviton4, Google built Axiom, but if you want your own massive Arm server, well, Ampere's the only game in town. The fastest Arm CPU in the world is inside this machine. It's got 192 custom Arm cores running at 3.2GHz, and in some benchmarks it stays in the ring with AMD's fastest EPYC chip, which also has 192 cores. High core count servers are the cutting edge in data centers, and they're so insane most software doesn't even know how to handle it.
+
+Here's btop full screen and it can only show what, 128 cores? If I go bananas and show only the CPU, it can finally fit all 192. And to support that monster chip, this system has 8 channels of fast DDR5 ECC RAM. And PCIe Gen 5, like literally everywhere you look inside. This particular box is a Supermicro ARS-211ME-FNR.
+
+It's an updated version of the monster machine Patrick and I faced off against a Pi cluster last year, and it's targeted at Telco Edge deployments. Supermicro and Ampere sent this for testing, and I've been doing that for a month now. Even with 192 cores, this isn't the world's fastest single-socket server. It's not even the most efficient. AMD's latest EPYC Turin CPU takes both of those titles, but this is the best value in terms of performance per dollar. This is a strange era. AMD reigns
+
+for performance and efficiency, Arm reigns for price and specific workloads, and Intel? Well, they're really having a year, aren't they? But Ampere already announced a 256 and 512 core variant, which will also bump the memory channels from 8 to 12. That could be an absolute monster machine, but it's not here yet. This is.
+
+This server isn't targeted at HPC or High Performance Computing. Cores are great, but it's all about how you slice them. Don't think of this as a single 192 core server, think of it more like 48 dedicated 4 core servers in one box. And each of those servers has 10 gigs of high speed RAM and consistent performance. Before we test that and make this thing start screaming again, let's dive into the hardware.
+
+And right away, if you're actually a sysadmin and not just cosplaying like I do—shirt on redshirtjeff.com—you might be confused. Usually servers have their ports on the back, not the front. What gives? Well, like I said, this server is meant for telco use, for 5G.
+
+We'll get to what that means later. But across the front, you have six U.2 NVMe drive bays, and in here each one has a 2TB enterprise drive. Then there's a micro-USB serial port for console access, two USB 3 ports, and VGA for monitoring. This isn't made for desktop use — not that your ears would survive a few minutes of that — but that's why next to it is a 1 gigabit port for remote control with IPMI. That gives you access to the BMC,
+
+the server's Baseboard Management Controller. Using that interface, you can remote control everything on the server. I've covered IP KVMs like the JetKVM earlier this year, but servers like these have it built in. And this server runs OpenBMC, which is nice from a standards perspective. Next to that, there are two 25 gigabit QSFP ports for high speed networking. Older servers
+
+would give you 1 or maybe 10 gigabits if you're lucky, but I'm happy to see faster built-in networking on these newer servers. Then there are some cutouts where you can put more PCI Express cards. Like, you could put an OCP 3 card for even more networking down over here, or you could install four more PCI Express Gen 5 x16 cards. Now, two of those slots are only x8, but the crazy thing is, inside this thing there's even more PCIe expansion. Having 128 lanes of PCI Express is equivalent to 4 *Tera* transfers per second. Usually you're used to hearing about a few
+
+dozen *Giga* transfers, but this thing's on another level. Getting back to something a little more down to earth, the sides just have mounting points for rails, and the back doesn't have any ports at all. Well, except for these dual-redundant 1600 watt Titanium power supplies. The rest of the back is these four giant hot-swap fans. But these are a little different. Let me pull one out and show you. Over on the back, there
+
+are louvres. They open up as the fan speed ramps up, but they close when the fan's off. This was the first time I'd seen louvres on server fans, so I had to ask, "Why?" Like, seriously, I couldn't find any explanation for these things online, so I emailed back, and Roger Chen responded. He's Supermicro's Senior Director of System Design Engineering.
+
+He said the whole point is so air only comes in through the front. If a fan fails, its doors will close, and no air can come in from the hotter backside of the server. I couldn't easily test that out, but I did yank a fan while the server was running, and here's what happened.
+
+If this were out on a remote site, that fan's louvres would close. Louvres? Seriously, I've said louvres like six times now. If I'm saying it wrong, so be it; If this were out on a remote site, the the fan's louvres would close and the other fans could keep chugging along. The system's designed with N+1 fan redundancy, which is something that comes from the HVAC industry.
+
+Basically, fans will fail, so like every other part of the server, it's designed to keep the CPU running full blast even with a dead fan. Anyway, enough geeking out over a fan. Let's get inside this thing. Pretty much everything is tool-less. There are two PCI Express risers that hold up to four front panel x16 cards. Once those are out of the way, you get access
+
+to the motherboard, which includes a bunch of unused headers over here and a plug for more internal USB 3 ports. There's a drop-in air duct to force airflow over the CPU and RAM, and that just pops up out of the way. Under it, there's a full 22110 M.2 NVMe slot, and even more PCI Express connections. Honestly, you couldn't cram anything more in here anyway, so I'm guessing this motherboard was just designed to YOLO all the PCIe lanes wherever it can. But the back is
+
+the business end, with the CPU flanked by 16 RAM slots. In this case, I was sent a system with 512 gigs of DDR5 ECC RAM running at 5200 MT/sec. You can add even more, but since the CPU has 8 memory channels, using one RAM stick per channel like you see here is actually letting them run faster than doubling up. Having RAM in every other socket is kinda like adding speed holes to your car. And the CPU, well, instead of me popping this heatsink, I asked Patrick from Serve the Home if I could use his pictures. This CPU has direct die cooling, at least for the main CPU tiles in the middle.
+
+IO chips are around the outside, under a rectangular heat spreader. This definitely helps cooling performance, but it also means you have to be more careful with this $5,000 CPU, since the silicon doesn't have the same protection once you pop off the heatsink. Otherwise, there's tons of extra power sockets, some neatly packed cabling, and here's the ASPEED chip that handles the BMC. When you plug in the server, this chip basically manages everything about it. It keeps running in the background for remote management, even if the rest of the server is powered off.
+
+IPMI is a handy feature when you're deploying these boxes in remote locations. And that brings me to what this box is actually built for. It's not for HPC. Nobody's building the next Top500 supercomputer with this particular model, though you probably could if you tried. This unit is built for Telco Edge, or more specifically 5G ORAN. But what does Edge mean, and what's ORAN?
+
+Edge is just a fancy way of saying, "We put all our servers in the cloud, but then people started noticing latency was worse, so now we're putting some servers back closer to where people use them." Telco Edge is interesting because there are thousands of remote cell sites, and they're basically tiny remote data centers. Like take for instance, if you're running a service in AWS's East Coast data center, you're going to pay a ton for bandwidth streaming video or games out to people all the way in Idaho. If you can cache the most popular stuff on a server running at the edge, like in a regional facility or individual cell sites, that saves a lot of money. And telco companies run a lot of services, so having a machine like this running 48 4-core VMs with great performance for each service, that makes sense. And with 6 U.2 slots, you could conceivably cache 100 terabytes of data at the
+
+edge, all at ridiculously high speeds. This Supermicro system, though, goes a little further. They took the time to certify it at NEBS level 3, which just means all the parts have been tested for deployment inside telco exchanges. There are standards for fire suppression, vibration resistance, airflow redundancy, and even efficiency limits, and this system hits all those targets. And ORAN, or Open RAN, stands for "Open Radio Access Networks". Vendors like Ampere and Supermicro
+
+are standards-based, meaning they don't throw in proprietary connections or software. You can just drop one of these servers in and use it for your 5G services right away. You can configure these servers for other things too, like for GPU AI workloads. That could accelerate machine learning or LLMs even better. You can also build these things out to be run as CI servers if you develop software for cars or whatever other Arm devices you can think of. Finally, web servers and web
+
+apps are a sweet spot for the custom Arm cores on here. You get a similar efficiency advantage as AWS Graviton, except you can actually buy one of these and run it in your own rack. Speaking of, the short depth makes it easy to install. It came with rails, and I could do the full install without help. It's not even that heavy.
+
+Right after I installed it, though, I had a little trouble. I was getting errors in the BMC, and when I ran benchmarks, Linux's kernel log was barfing out correctable ECC errors too. Everything pointed to one stick of RAM. The nice thing about enterprise gear is not only did every error message include the actual RAM slot that was erroring out, when it came time to mess with the hardware, it was really easy. First I tried reseating the RAM stick. I pulled out the server on the rails,
+
+unscrewed two screws on the lid, and popped it off. I popped out all the tool-less parts in the server, pulled the RAM, and reseated it. The whole operation just took a couple minutes. But apparently that stick of RAM just didn't have it together because the errors came back again. So Ampere sent a replacement, in what's probably the most oversized RAM stick packaging I've ever seen. I mean, better safe than sorry, but I just had to wonder... A tray like this
+
+with all 50 slots full? You're looking at a box that held $20,000 of RAM. My initial testing uncovered a few quirks. Ampere shipped this with a 64 kilobyte page size for the Linux kernel. This is actually way more efficient than the 4k default that most people use, and that's why Apple and even Raspberry Pi now switch to 16k. But if some software bails out on 16k, even more programs
+
+don't know what to do when you try running them on 64. And Geekbench 6 is one of those programs. Although after a bunch of testing running all my standard benchmarks, I realized Geekbench 6 was a really bad measure of server performance. But I'm not the first person to realize that. In fact, Patrick from STH has a lot more to say about it, so I'll let him!
+
+Hey guys, this is Patrick from STH, and Jeffy G asked me to cover a very cool topic. That topic is Geekbench and server processors. And so I just wanted to kind of talk a little bit about why Geekbench 6 is not really a good benchmark for servers. I mean, frankly, it's not even meant to be used on servers. Instead, Geekbench 5 is probably a better metric to use, even though that's a legacy previous version. It actually performs better on multi-core architectures.
+
+And to show you that really quickly, I have two examples here. So the first example you're going to see is a Khadas Mind with a Intel Core Ultra 7 155H or whatever, which is about this big. And frankly, this is not much bigger than a modern server CPU. So just scale wise, this is a tiny, low power device and it's nowhere near the 128 core 256 thread processors, let alone two of them. Yet when we run Geekbench 6 we see a score of about 8200 to 8300 for the Intel Avenue City which is their development platform with two 128 core processors that have 512 threads. I mean that's
+
+not really that high. And just to give you some idea the Khadas Mind which is much lower power well that thing is 7800/7900 so very close in score and you might say, "Oh well the little Khadas mind looks like it's pretty similar in performance to a giant ten thousand dollar plus per cpu two cpus in a system i mean an intel xeon platinum 6900 or 6980p actually," and that's obviously not the case guys. And if you don't believe me let's just go back to Geekbench 5 and look at the results for these two, you're going to see that we add like another digit when we get to the server processors versus the Khadas mind. And keep in mind that Geekbench 5 doesn't actually scale that well up to 256 cores, 512 threads, two sockets, all that kind of stuff. So even hitting scaling limitations, we see there's a huge delta here where that wasn't necessarily the case on Geekbench 6.
+
+And to understand why Geekbench 6 is that way, you kind of have to go back to the whole purpose of Primate Labs and Geekbench 6. The real thought that they had when they introduced Geekbench 6 was that the way that folks use systems is that they go and they run like an application and they see like how fast that is but they're not necessarily running things across all of the different cores. But when you look at servers you have things like virtualization, containers all those types of things that you use on the server side where you actually do run multiple applications on an entire server and although this is probably an extreme example of a Geekbench 5 versus Geekbench 6 result, you'll see the same thing, whether you're using an AmpereOne system on the Arm architectures versus other things like an Apple M4 or something like that. And also, if you go up to higher end desktops and things like Threadrippers and systems like that, those also run into these same scaling issues. And so hopefully this helps explain what you're seeing on the Geekbench 6 side. Thanks, Patrick. So Geekbench 6 is a no-go,
+
+and 64K page size is best for performance, but not necessarily for compatibility. So I switched to a 4K kernel and ran Geekbench 5 instead, and I got a score over 80,000 multicore. Now, that's not the world record, but it's up there with the fastest AMD EPYC chips at least. But servers like these aren't tested the same way as a desktop PC. You have to talk about workloads and use cases, not Cinebench, Geekbench, or Pugetbench. And some workloads require a whole
+
+network that can handle the performance required for benchmarking. Lucky for me, I had upgraded to this MikroTik 25 gig switch earlier this year, but this was actually the first server I deployed with actual 25 gig NICs. So, of course, it was time to upgrade my Arm NAS, the HL15 I built in February. First, to make sure I had some storage devices that could keep up with the flash array on the AmpereOne, I called up Kioxia. I asked if they could send a couple U.2 drives for testing,
+
+and they apparently interpreted that to mean two of their bonkers-fast CD8 drives, the 15TB models. Not that I'm going to complain, but wow. Anyway, that was storage solved, but I also needed to upgrade from the onboard 10 gig NIC to 25 gigs. So I bought a Broadcom card and put it in the HL15. And I still don't know if it's a good idea, but for easier maintenance, I put all my servers through smart outlets so I can remotely power them off in Home Assistant.
+
+Anyway, with that powered off, I plonked in the new card, closed the lid, shoved the server back in the rack, and plugged in a new QSFP cable. Now that I had a little brother to the Ampere one, capable of taking a full 25 gigs, I was ready to benchmark. And I should note, a server like this can put through way more than 25 gigs. You can get 100, even 400 gig networking on these servers. But for my purposes, and to save on the cost of networking here, I just kept my tests stuck at 25.
+
+Unsurprisingly, I got over 20 gigabits per second between the NAS and the server. With Samba, I could copy files over the network between 8 to 15 gigabits, which makes sense with all the overhead of Samba and Ethernet. But who cares about networking, really? Half the reason I did that test was just to have an excuse to upgrade my NAS to 25 gigs. The big thing I think we all want to see is how those 192 Arm cores perform in a system that can harness all their power. And even
+
+though it's kind of silly, I kicked things off with HPL, or High Performance Linpack. This is the benchmark they run on supercomputers to rank them in the biannual Top500 list. Letting the thing rip, the 192 core CPU gets 3 teraflops of FP64 compute. That's almost 3 times as fast as an Nvidia 4090. Granted, that card isn't targeted at the same kind of workloads.
+
+During that run, the system used almost 700 watts of power, making it nearly the most efficient Arm computer I've ever tested. That is, until Apple released the M4. But for a server spitting out a casual 3 teraflops, getting well over 4 teraflops per watt is still pretty awesome. If I bump the clock speed down a little bit to 2.6GHz and unplug the power-hungry NVMe drives on the front, I can knock out 4.82 gigaflops per watt, which is frankly amazing.
+
+I don't have an AMD Turin system to test, but I'm just in awe that we're cramming this much power and efficiency in a single CPU socket. AMD's Turin may be more efficient overall, but one thing the Ampere one excels at is native Arm64 software. To that end, Ampere actually built this Coremark QEMU benchmark. It sets up a bunch of four-core Arm VMs, then it runs Coremark inside each one. Now, obviously, this is slanted in Ampere's favor, it being an Arm CPU and all.
+
+But if you do have Arm native software, like if you're running web services or developing for cars which mostly run on Arm, you might be interested in this result. On this server, I get an aggregate score of about 4.7 million. On a 256-core Intel Granite Rapids system with two sockets, one that Wendell from Level1Techs tested, it only gets 1.25 million.
+
+That's with 64 more physical CPU cores on a hyper-threaded machine, but of course, it's emulating Arm. Ampere tested a 96-core Genoa system and got half a million, and I also got Wendell to test on a more modest 60-core Intel Sapphire Rapid system, which got a little under that. Now, I have to be completely transparent. Ampere's probably using CoreMark here, because it's one of the few benchmarks where Phoronix found the AmpereOne system still beats AMD's fastest CPU, the 192-core Turin monster. So, not only will it perform worse core-for-core, x86 gets slaughtered if it has to run it emulating the Arm64 instruction set. But, like I said,
+
+If you run Arm-native software, this is a very real picture of the speedup you get running it on Arm-native servers. I ran through a gauntlet of other tests too. Like this machine compiles Linux in under a minute; you know how much I like doing that! It can do 64MB memory reads with less than 50 nanoseconds of latency. And the PCIe Gen 4 NVMe drives it shipped with pumped through 8GB/s in RAID.
+
+Also, with 512GB of RAM and a massive CPU, it can run a 405 billion parameter Large Language Model. It's not fast, but it did run, giving me just under a token per second. Ampere has an optimized version of llama.cpp that can run models even faster. Now, I'm a lot more at home benchmarking SBCs than servers. For raw numbers and more thorough analysis, I'd suggest you read
+
+through the links I'm adding. Phoronix, Serve The Home, and Chips and Cheese all have excellent reviews of the AmpereOne. And up to this point, you might think I'm a bit of an Ampere cheerleader. And in a sense, I am. They don't pay me anything, I have no contract with them, But I just love the idea of socketed Arm CPUs and scaling Arm to the moon, and well, they're the only game in town.
+
+Amazon and Google don't count, since they keep their servers in-house and you can't buy one. But there are some things I didn't enjoy testing this thing. First and most glaring for me personally is the idle power consumption. Just sitting there doing nothing at all, this machine is burning 200 watts of power. Removing most of the RAM and NVMe drives can lower that a little, but it's still a lot of power if you don't run heavy workloads all day.
+
+Having all that PCIe bandwidth certainly is a factor, but even Intel and AMD have been working on better idle states for their hardware, to the point some EPYC systems can idle well under 100 watts. And AmpereOne, the chip inside, is also late. There was a ton of buzz back when it was announced back in May... of 2023.
+
+If they had shipped, even towards the end of 2023, Ampere could have reigned supreme at the top of the server CPU market for performance and efficiency, if only for a little while. But for whatever reason, the actual shipping CPUs didn't start rolling out until late this year, after AMD really stole the thunder with Turin. The other problem with the year-plus delay is how it sets expectations moving forward. Ampere announced the Aurora, a 512-core monster with 12 memory channels, back in June. Will it ship in 2025?
+
+It's anyone's guess, but I do hope to see it. But outside all that, besides the whole 'cores are the new megahertz' idea, I think the other theme I've seen this year is Arm is not niche anymore. Arm's all grown up. I've been running a ZFS NAS with hundreds of gigs of ECC RAM, 25 gig networking, U.2 NVMe storage, and 100 terabytes of hard drives for almost a year now. Every single video I've uploaded in the last six months was edited directly off that thing.
+
+The idea that you can't run something on Arm is outdated. Even high-end Arm SBCs running the RK3588 are fast enough to handle edge server use cases. Some server software like TrueNAS still doesn't support Arm, but the amount of software that doesn't run on Arm is shrinking by the day. Only really Windows and certain niche server apps seem to be lagging behind. And Windows might actually install on this thing. Do you want to see that?
+
+I already showed off earlier this year how Windows on Arm runs better on the Ampere Altra than on Microsoft's own Arm PCs. I mean, Linux is still better if you want GPU support, better performance, and drivers for practically anything, But, it's nice that Microsoft is slowly joining the Arm party. In fact, Microsoft's been running Ampere in their own cloud service since 2022. I guess the obvious question is, why doesn't Microsoft support Windows on Arm on the only CPUs that can run it to its full potential? But let's not get sidetracked.
+
+My main takeaway today is we're seeing the death of a lot of computing myths. Like "x86 has faster single-core performance". Apple's ruled that out with their M4. And "Arm is more efficient". That's not always true.
+
+I mean, AMD just built the most efficient 192 core server this year, beating Ampere. The big difference is, this Ampere CPU is $5,555. The EPYC 9965? That's almost $15,000! If you want the fastest, most efficient server CPU, that's the EPYC.
+
+But if you want the best value, the best performance per dollar, it's this Ampere. At least assuming the list prices are anywhere near reality. And I think that's why Amazon, Google, Microsoft, all the cloud providers really, can charge less for more when they run on Arm. We're in a strange place. Arm and x86 are both valid options now, depending on what you want, whether that's the best performance or the best value.
+
+The 192-core Ampere One arrived a year too late to be the smash hit I originally expected it to be, but it still could win out for value this generation. I'm also happy to see systems like this that run without exotic water cooling or 240V power. Some high-end enterprise servers nowadays would be impossible to repurpose for a homelab in a few years, but this isn't one of them. Thanks to Supermicro and Ampere for getting this system here. Thanks to Wendell from Level1Techs, Patrick from Serve The Home, and Jeff from Craft Computing for their assistance in running some tests.
+
+And until next time, I'm Jeff Geerling. Louvres. Ah! That's a tough one.

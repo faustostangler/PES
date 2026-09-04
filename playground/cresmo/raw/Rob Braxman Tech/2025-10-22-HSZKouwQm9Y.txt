@@ -1,0 +1,181 @@
+---
+video_title: "Dual Boot Is Easy...Until It Isnt: Failsafe Techniques to Keep Microsoft From Screwing It Up"
+video_id: HSZKouwQm9Y
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HSZKouwQm9Y
+video_date: 2025-10-22T16:00:27+00:00
+video_description: |
+  As some of you realize, we can't escape Windows 100% of the time. But what if you escape it 90% of the time? If so then all the spyware crap becomes meaningless. The solution is to use Windows only when necessary for limited distribution apps, but conduct your daily life in Linux. This videos teaches you how to Dual Boot Windows and Linux.
+  
+  But if you're already on Windows 11, this has become extremely complicated. So this video will ensure that you evade the minefield and be able to prevent Microsoft from screwing up your Dual Boot install.
+  
+  ----------------------------------
+  BraX3 Privacy Phone is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://brax.me/home/rob Store for BytzVPN, BraxRouter, De-googled Privacy AOSP Phones, Linux phones, and merchandise
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+We often don't have a choice but to use multiple operating systems. And one of the easiest ways to handle this is using a setup called dual boot, which allows you to use Windows and Linux on the same computer. If you have an older computer and are using an older version of Windows, like Windows 10, then I will state upfront that installing dual boot is easy. However, if you're using Windows 11 on a new computer with a TPM, it is extremely difficult if you don't know the steps. The real problem with dual boot is when Windows just overrides your dual boot setup because Windows is Windows. This is where the time wasting
+
+and data loss occurs. So, though dual boot is pretty simple to implement, keeping Microsoft's grubby hands away from Grub is the challenge. We will do a deep dive into installing a dual boot Windows 11 and Ubuntu Linux installation in late 2025. This will be the most difficult case. I've encountered every possible catastrophe using dual boot and all because Microsoft does not play nice and is happy to destroy your Linux installation. Microsoft is terrible. I
+
+truly hate what it has become, but right now I don't have a choice. I've been running several different kinds of dual boot installations over the years, and I have refined them now based on multiple instances of complete data loss, all caused by Redmond. For this video, I set up multiple SSD drives to test and had it fail on me in the most frustrating ways. I don't even want to tell you how many times I've reinstalled. This video will require Windows and Linux installation skills, so you need to be at a power user level or better. We will
+
+deal with partitions, Bit Locker, secure boot, drive formats, UF, grub, the boot partition, and lots of very specific details. Stay right there.
+
+I'll guide you through an actual entire setup as this is very difficult to learn if you've never done it. But with a step-by-step process guide, it's not bad. Not bad at all. I've repeated this process so many times on a new computer because of multiple problems and learning. So, that actually prepared me to make this video for my testing. And
+
+what I will show you is a test SSD with 500 GB. And I split up approximately as Windows with 128 gigabytes, Linux with 128 gigabytes and a data partition at 244 GB. The size of the hard drive and exact splits are up to you, but in general, you keep your data in a separate data drive. And 128 GB to 256 GB is a good amount for an OS. My actual production SSD is 2 TB. So I
+
+allocated more space for each OS in its final form. The point you should notice here is that the data drive should be the largest partition. And this data will be shared between Windows and Linux. This data drive has to be formatted as NTFS. This is not an option. Trust me on this. I'll explain
+
+more later. Now, optionally, if your computer allows it, the other safest option is to put the data in a second hard drive. The advantage of this setup is that even if we restore Windows to factory settings on the main drive, it will leave all your data intact. But in this example, my current laptop used for this demo is a single SSD computer, no slots for a second drive. There are other more advanced configurations like Windows in drive 1 and Linux and drive 2. But we will take the simplest
+
+approach here.
+
+I'm going to summarize what we are going to do in this video. We will learn the proper stress tested sequence for installing a dual boot computer. The main technical skills required are understanding terms like partitions and hard drive device identifiers and of course knowing how to install Windows or Linux. Next, I will insert several backup steps in the middle of the process and this requires some relearning for some of you. Finally, we will discuss the various ways Windows will destroy this dual boot install and that's when you'll learn about restoring the system. The backup and restore will
+
+be done using Clonezilla, which is a utility for backing up discs and partitions. This requires that you have a backup USB drive and a Clonezilla live USB. You don't need a lot of space for this backup, so it can be on an SD card. I'm not going to explain too much of how to use Clonezilla, but I have an old video on it. This, unfortunately, is quite important for recovery. If you
+
+skip this step the moment you have a crisis, the only solution you may have is reinstallation. The next piece that you need to know in advance is what the steps are to boot from USB on your particular computer model. You can search for your computer model and figure this out ahead of time.
+
+The assumption here is that you have a computer with Windows installed normally and nothing else. If this is not the case, then install Windows first. In modern computers, there's a recovery option and a factory version of Windows is reinstalled. So, typically this is not complicated. To do dual boot, we need a sufficiently large hard drive.
+
+You can do this with 500 GB as I show in this video, but larger is better, and 1 to two terb SSD drives are pretty inexpensive.
+
+Let's examine a freshly installed Windows installation. The first tool we're going to use is disk management. So on Windows, just go to control panel and type disk. And the create and manage partition option should appear. And this will bring up the disk management utility. And this shows how your hard
+
+disk is organized into partitions. The first partition is displayed as system. and it is a fat partition of around 270 megabytes. Partition two is hidden and it is called Microsoft reserved and is 17 megabytes. This is hidden by Windows, but I assure you that it's there. I just
+
+don't want you to be confused when the partition count doesn't seem to match. And just to get ahead here, I will show you that on Linux you can see this partition too. This is more of a Windows work area. We don't normally mess with this nor worry about backing it up. Partition 3 is the main Windows partition and should take up the majority of the space. Depending on your
+
+computer model, there is often a partition 4 called Windows recovery, which back in the old days had a copy of Windows on it, but that Windows copy doesn't exist on my particular model, although the space is still allocated. At this point, this is your base setting with Windows and it would be a good idea to have a backup off the system partition right now so you can recover to a Windows only environment. Notice that I said back up the system partition only. This is the most important. So using your Clonezilla live USB and an external USB drive, I would back up the system partition into a Clonezilla image file and store it on the external USB drive. I'm going to ask you to do this
+
+backup again after we have a successful dual boot install. So in the end you will have two restore points of the system partition, a Windows only and a dual boot. Again, what we are backing up is partition number one. This is the most important. It's small, 270 megabytes. So, the backup process is
+
+short. I'm going to explain all the parts of this and how they work later, but let's just do the mechanical steps first.
+
+The first change we will make using the disk management utility in Windows is to create the new partitions. Number one, a shrink the Windows partition. You need to select the Windows partition and then rightclick and select shrink volume from the menu. In my example here, I'm shrinking it to approximately 130 GB. After this, it should create this new unallocated free space now on your hard drive. Number one B, create Linux
+
+partition. You will then create a new Linux partition which will be raw and unforatted. In my example here, I allocated 128 GB to Linux. You cannot label this partition as it will be just raw for now. But it should be contiguous to your Windows partition, meaning it has to be the next partition.
+
+Number
+
+one C create the shared partition. Now we create a shared partition using the entire free space left which in my case is around 230 GB. This one you will designate as Windows D drive and it will be formatted as NTFS.
+
+number one D review. And there you have it. So, in the end, your partition table should look like what I have here. From this moment on, you should be able to go to file manager and see the new D drive, and that can be used to store your data files. So, for example, if you're a gamer and you have your large games, let's say using Steam on Windows, then you would store your games on D drive. At this point, we have
+
+just done a simple redistribution of space. And this is still a regular Windows computer, but now it is set up to allow us to add Linux.
+
+Installing Linux would have been easy on old computers, but new computers with a new version of UF bootloader, secure boot, and Windows 11 will make it extremely difficult to take the next step. So, here are the steps to take to simplify life. Number 2A a disable Bit Locker. Go into security and privacy settings on Windows and make sure Bit Locker is turned off. If it is turned on, it will have to decrypt the drive.
+
+So that will take time, but you need to do this. Trust me on this. Bit Locker cannot coexist with a dual boot install. And Bit Locker is a Microsoftonly utility. And as a bonus, turning off Bit Locker turns off Windows recall. Number
+
+2B, disable secure boot. Some might argue about the necessity to disable secure boot, but I'm telling you now that in the worst moments, you will regret having secure boot turn on. And anyway, it's really pretty useless for security without Bit Locker. Although you can install Ubuntu with secure boot on, Clonezilla, the most important utility to fight against Microsoft will not load. So, remember the step I said about backing up the system partition earlier? You would have learned that
+
+you're going to do that without turning off secure boot. You still have time to back up the system partition even now. We haven't changed anything drastic yet.
+
+We're starting at Windows Windows 11 in my case. So, this may not be identical if you're on Windows 10, but Windows 11 is the most complex. So we'll assume the worst case here. To install Linux, you need to download the ISO image of Linux from the DRO. Let's say Ubuntu.com.
+
+And then you use a utility like Bellina Etcher app to create a bootable Linux live USB stick. You can take these steps all from Windows. We're going to assume you know how to do that or we sell pre-made Ubuntu USB sticks in our store to cut the time to do this. But you're a power user. You can do this and make your own Clonezilla USB stick as well.
+
+Number 3A, booting from USB. As some of you will learn, normally you interrupt the boot sequence on your computer using some key like escape, F1, F12, and so on. Or some message on the screen will tell you how to bypass the normal boot sequence. So you can boot from USB. On a Lenovo, I can hit enter, then F12, and there a boot menu appears, and I can choose to boot from USB. This
+
+unfortunately is often blocked by Windows 11. So, using some Microsoft trick, they actually set a flag in the UF boot sequence to lock this up and hide this feature. It is tied to something called fast startup. So, if you're unable to go to BIOS or access the boot options because Microsoft thinks it owns your computer and you're a security threat, the answer is to go to Windows. Go to control panel, system recovery, advanced startup, and click on startup. Now, this will give you the
+
+chance to pre-seelelect to boot to USB in advance and you don't have to bother with the BIOS interrupt. So this will give you an option offered by Windows upon reboot to boot again using the USB stick. They allow this because you have been validated by your Windows credentials before you boot to USB. So proceed to boot from USB and now you can begin installing Linux. Number 3B, installing from Linux USB. I'll just
+
+show you the sequence here of an installation of Ubuntu which is really pretty basic and I'm just accepting most of the defaults. Now we will pause at the installation method because here you must select manual installation. If you accidentally select automatic, it will overwrite Windows. So be careful here. Select manual installation. You will
+
+then be presented with the selection of where you install Linux. You may recall these partition names when we looked at them under Windows disk management. This is not intuitive on this Ubuntu example. So I will guide you through two important steps. First you must select the bootloadader installation from the drop-down. In my case I'm selecting the
+
+NVME SSD drive which is NVME01 P1. This is the system partition. Once you select it, Ubuntu will mark it as the location of /boot/efi and it should be the same place as Windows boot manager. Next, you must specify which drive will have the root folder of Linux. So we know here that it is the partition after Windows and in my case it is NVMe01 P4 partition 4. Select that line and
+
+click on change. And here select the forward slash to indicate that this is the root partition location. Then select the format to be ext4. After these two items are selected, the bootloadader install and the main Linux partition, you can hit next and confirm your selections and Linux should install.
+
+After installation completes, remove the Linux USB stick and you should now be presented with a dual boot computer successfully installed with a common shared drive. This point once you reboot to Linux successfully, you should now perform a Clonezilla backup of the system partition which now has the dual boot setup. Number 3C, the data partition. I wanted to explain to you the value of the shared data partition and why it is formatted as NTFS. One of the things that Windows does sometimes because it is Windows is to make assumptions about your device. So let's
+
+say you have a drive with an ext4 data partition. Well, that's very dangerous because Windows does not know what it is. And there have been many instances where it overwrote the partition header. So it basically became an unallocated partition. But Windows respects NTFS partitions because it thinks it owns them. So if you reinstall Windows and
+
+you don't reformat the drive, it will preserve the data in NTFS. This saves a lot of time in recovery situations. And on the Linux end, even if Windows forces you to reinstall Linux, it is not that time-conuming to install various apps. It's more about not losing data. Linux can read NTFS. Here's the only warning.
+
+Sometimes if you power off your computer before a write is saved, the NTFS partition may need to be repaired. And by default, Ubuntu doesn't have NTFS repair tools. Don't worry about this. If you can't access your NTFS drive from Linux, just boot to Windows, do a scan and repair on the NTFS data drive, and then it will work again. Do not use XFAT. If you do, you will experience
+
+permission errors when writing from both Windows and Linux. Do not experiment with other formats like BTRFS.
+
+At this point, we will interrupt our regular programming to tell you what this system partition is and its importance. Fortunately, under Linux, you can mount the system partition and see exactly what's in it. I did that before and I made a copy of it. So, here you can see what's actually in here. This is actually where all the magic of dual boot happens. And this is the
+
+partition that Microsoft will routinely destroy. As long as you have secure boot disabled, you can now always restore that quickly using the Clonezilla live USB. The destruction of the system partition doesn't happen often. So, it's not like you're going to have to worry about this on a daily basis, but you have to be ready as the consequence of not being ready is very severe. So, the two extra steps we did of backing up system using Clonezilla is actually enough to cover us in emergencies. It
+
+will not be necessary to understand what's going on but I'll give you the details. UF first the boot sequence is controlled by a bootloadader program called UEFI UF and this is stored in the system partition and these particular modules are the ones with the EFI extension. These bootloadader instructions affect the behavior of what process gets handed the responsibility for booting the OS. Windows always assumes it is the only OS. It doesn't care what you've installed. If you accidentally click on
+
+the option recovery under system in control panel, then what that will do is overwrite the UF boot instructions to load Windows only. Grub. When you install Linux and Linux detects the Windows bootloadader, Linux installs a program called Grub. and grub is the dual boot selector module and it becomes the first loaded module. This offers that option to switch between Windows and Linux. So understand that Grub is
+
+installed by Linux to give you boot options. Windows if left to its own devices will pretty much just destroy Grub. Thus the purpose of the backup. There are various instructions on the internet about how to reinstall Grub using Linux live USB or some Windows-based UF utility and command line options like cheroot on a live USB. I even kept a copy of the system files on my shared data drive which helped a little but unfortunately Windows does all this in conjunction with the firmware. So it is very disruptive and I
+
+found that nothing else is a 100% solution other than to overwrite the system partition with a backup. Fortunately, it is also the simplest method. Boot partition details. If you examine the grub boot file, which is actually grub.cfg, you will see that it actually loads the specific UU ID of the partition. That
+
+will be the root of Linux. For this reason, be aware that the system partition is not interchangeable between hard drives. If you change hard drive, then it needs its own Conzilla backup of system. However, also note that aside from booting and the device UU IDs, the system partition doesn't actually know anything about the partitions that doesn't relate to booting, nor does it care if you resize the partitions or change what's in them. What matters only is the device UU ID.
+
+There are situations where Windows will override the system partition and destroy dual boot. You need to understand this so you prevent the waste of time having to do a recovery. Though sometimes there is no alternative but destruction because Microsoft is Microsoft. But here are the obvious triggers. Changing hard drives. This is a hard
+
+lesson learned because the system partition is somehow tied to the firmware. I'm guessing the TPM security chip is tied to the last hard drive UU IDs. When I changed hard drive on a computer, Windows automatically took over and erase dual boot. So, if you're in a habit of changing SSDs like for testing like me and you did not have a Clonezilla backup of each system partition, this is a new discovery that will kill you. The hard drive will signal Windows that it cannot use PIN codes or fingerprint or Windows Hello and basically requires the password again and secondarily it overwrites the boot instructions. So, this signaling is
+
+tied to the firmware. Like I said, I'm guessing it's the TPM and this is even without boot locker and with secure boot turned off. Microsoft's tendrils are deep inside the machine. Makes me really mad. Windows recovery. When you see the word
+
+Windows recovery, be forewarned. Microsoft idea of recovery is to overwrite the system partition. So never select any of these options as you are likely going to screw everything up. In the control panel, system recovery thinks like critical recovery means it will overwrite the boot partition. Boot locker/secure boot. This is why I've asked you to turn
+
+bit locker off. Any changes relating to Bit Locker and even secure boot will trigger the firmware and cause it to force the bootloader to go Windows only. I'm talking about either turning these on or off. So any modifications to BIOS that has security implications can trigger this Windows updates. Microsoft claims it doesn't do this intentionally, right? But I've had several instances
+
+where a Windows update destroyed Grub. So of course they don't mind that were disrupted. It makes you think Linux is an unstable operating system. I'm careful to not take Windows updates often, but this is not a choice on Windows 11. For those on Windows 10, you're luckier because you no longer get Windows updates, which is perfect for an occasionally used operating system. Fast
+
+startup. You need to disable fast startup in Windows. Go to Control Panel, Power Options, choose what the power buttons do. Uncheck turn on fast startup. Fast startup can interfere with Grub. This is actually another thing
+
+that causes Windows to skip the bootloader option many times.
+
+A common issue with Windows and Linux is that the two operating systems operate with different interpretations of the time. To fix this, run this command on Linux.
+
+This tells Linux to not use UTC time. And when you reset the time on each OS, it will stay consistent from here.
+
+As you've learned here, setting up a dual boot itself isn't complicated. There aren't that many steps, but being prepared for a disaster requires additional steps. The biggest complications really come about because Microsoft thinks it owns the computer and thinks you have no right to put something else in another partition. They think they're the only maker of OSS even though 90% of servers in the world are using Linux. Obviously, a straightup Linux install without Windows is the simplest and you can just leave some old computer on Windows 10 and call it a day. This is not realistic for many
+
+people as there are programs that work only in some operating systems. So this is not the ideal case having to think about dual boot. But if you understand the pieces, interruptions will be minor. Again, don't forget to back up the system partition when you get it running correctly. I'm guessing that Windows dual boot installation will be a lot simpler. So, these are the worst case
+
+scenario instructions. Folks, thank you for watching my videos. As many of you know, this channel does not have sponsors and we primarily sustain ourselves by just creating products and services that we use to defend our privacy posture. I'd like to invite you to visit our community site, Braxme, which has a growing community of privacy enthusiasts. their people from various walks of life and beliefs converge together in the mutual support of privacy issues. We have a store there
+
+with products ranging from the BRA virtual phone service, Brax mail, Bicevpn, Doogle phones and other services like flashing and OS. All these are tools used by the privacy aware and you can even talk to the actual users of the product directly. Join us. would love to have you there and you don't even have to identify yourself to be part of the community. The very successful Bra phone is also available for pre-order on its second batch. The
+
+first batch has been sold out. Information about this is on bratech.net. Thanks also to those who donate to us on Patreon, locals, and YouTube memberships. You are all appreciated.
+
+See you next time.

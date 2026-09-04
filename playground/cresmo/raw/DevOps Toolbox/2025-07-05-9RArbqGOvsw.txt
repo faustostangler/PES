@@ -1,0 +1,79 @@
+---
+video_title: "SQLite Is ULTIMATE Choice For 99% of Projects"
+video_id: 9RArbqGOvsw
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9RArbqGOvsw
+video_date: 2025-07-05
+video_description: |
+  Sevalla is a no-limits, all-in-one PaaS with global performance and usage-based pricing. 
+  Get $50 credit to start and test it for free: https://sevalla.com/?utm_source=prettyprinted&utm_medium=Referral&utm_campaign=youtube
+  
+  SQLite is the most deployed piece of technology in the world.
+  It powers every Android, iPhone, iPad and many operating systems.
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.omerxx.com/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.omerxx.com/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+You know, when it comes to cracking a tough nut, we've all got our go-to tools, right? Maybe your hands, a nutcracker, or for the really stubborn ones, a sledgehammer. We all reach for what we think is the best solution. But why is that so many of us grab that sledgehammer when we're dealing with databases, especially when most of the nuts we're cracking are actually pretty small? And who really wants to drag a sledgehammer around everywhere? About 25 years ago, a part of US Navy
+
+project, a 35-year-old software developer designed and built something that would later become one of the most important open source projects in the world. Many people hear SQite and think of it as a child's toy. You know, that little tool we used in college to learn SQL or a lighter PC version of MySQL or Postgress. But what if I told you it's far far beyond that? It's powering every Android, every iPhone, every Mac. Look, it's even on my iPad right now. It's probably safe to say that
+
+SQLite is the most widely deployed software module of any type out there. And it's not just for light operations. SQLite is a seriously capable system. It doesn't just give you all the database interfaces you need. It's incredibly flexible. It can scale over to 100 terabytes. Doesn't need a
+
+separate running process. It's a breeze to work with locally. Can be shared, moved, backed up, and handle high production loads without breaking a sweat. But with all these fantastic features, there's one major drawback. This compact single file system can become a big problem. Well,
+
+we're about to make this problem disappear with one of the most incredible yet relatively unknown features that allows for exponentially improved performance. This feature staying in the dark is precisely why you don't often see SQLite in big high-scale production systems. These tend to go with my SQL, Postgres, NoSQL options, and others. So, a few smart people joined forces, forked SQite, and built something similar but different. SQLite for modern applications. We'll get there.
+
+Today, I'm going to take you from the absolute basics all the way to hopefully convincing you that it's a no-brainer for your next project. Plus, I'll share a few tools and tricks that will show you why it's the undisputed king of stateful applications, making your project's life a total breeze. With less than 5 megabytes, SQLite is incredibly compact. And this includes everything you need to create, store, and interact with your databases. Simply running the utility against a new file will create it even if it's not there and access it if it is. SQLite as we mentioned earlier
+
+is just a file just like any other object in your project and this makes it unbelievably powerful. There's literally no server to run and no client to require a connection string or any connection at all. With this database file open using the console, we can run SQL queries and execute commands like creating a user table for example holding a numeric ID doubling as the primary key and a name. Then we can insert the user Alice to the table like so. Every command unless mentioned otherwise is executed as an an atomic operation which is one of the key principles of SQLite. Important commands to remember for later are tables listing available tables and
+
+the dots schema command reminding you of the table structure. The dot dump command will help you back up or restore database by dumping the sequence of commands both setting it up and populating it with existing data. Naturally everything works the same from within the application code. We open a file in this instance my data db using SQLite 3 and then getting the data and scanning through the rows to print them. With the same ease, we can create the table and insert data from within the code by literally using the same commands only running as an execution. Let's nerd out for a
+
+second. SQLite among all its other benefits is also acid compliant. You know, something you absolutely want from any database. This means it's atomic, consistent, isolated, and durable. But what does that even mean? Consistency means a transaction can only bring the database from one
+
+valid state to another. In other words, it ensures that any changes made by a transaction follow all the rules and won't end up corrupting the state. I'm taking a quick break for a word from today's sponsor. Tired of hitting walls with your hosting platform, artificial limits, surprise bills, and juggling five different services just to deploy your app? It's time to break free. Meet Savala,
+
+the all-in-one trickery-free platform as a service from the infrastructure experts at Kinsta. They combine the best features of modern platforms into one seamless experience. With Savala, you get unlimited collaborators and unlimited parallel builds. Deploy your apps, databases, and static sites on a global network powered by Google Kubernetes Engine and Cloudflare. There are no fixed plans, just transparent, usagebased pricing. You only pay for what you
+
+use. It's the developer experience you love with the enterprisegrade security and performance you need. Stop compromising and start building. Experience the Heroku successor that's built for today's development teams. Visit savala.com to deploy your first application for free. That's
+
+svala.com. You also get $50 worth of credit to start and test the platform. So, make sure you don't miss that. And now, back to the video. We can add rules that ensure custom checks,
+
+like bank accounts table, for example, that naturally won't have a balance smaller than zero. With this rule in place, every negative value we'll try to insert will result in an error due to a failed check. A standard insert will work with no issues. If you've been focused, you've probably noted something interesting about this insert. There's no ID, although it's the primary key. This is another fail proof mechanism by SQLite, which will add a unique identifier at
+
+the metadata. It's usually recommended to add auto increment when creating the table, making sure these ids are assigned automatically. This brings us to the A of acid atomicity. This means a transaction is treated as a single indivisible unit of work. either all operations within a transaction complete successfully or none of them do. Which if you think about it is another
+
+form of consistency. So I can update my account balances as I wish and as long as it doesn't cross zero. But what if we must have two operations run as an atomic unit like moving $100 from one account but at the same time making sure that the same $100 are added to another account. This forms a standard transaction you'd be sending to your friend like using Venmo or PayPal. SQLite has this mechanism set as a transaction followed by the commit command. It's either all
+
+operations succeed or all of them fail. We can't allow anything between. Now the I in asset stands for isolation. Transactions are often executed concurrently. Isolation ensures that concurrent execution leaves the database in the same state as if transaction were executed sequentially. This one's a little tricky to show in the video because it would require us to stop
+
+asking rights which basically means they'd be running sequentially. So, I'll leave you with some homework if you want to prove this at home. But let's get to the durability aspect of SQLite. This is where it really shines, making it yet again such a fantastic choice. Processes fail, container dies, servers are decommissioned all the time. If this means our data will be corrupted,
+
+that's a huge problem. Hence, the D in acid that stands for durability. Let's run an insufficient test, but one that should get the point through. By panicking and effectively making the process crash at certain points through the DB executions, we'll show how SQLite stands through everything. Whether after starting a transaction, without closing it, perhaps after quering the data, but before committing it, we're still good. There are no tables, but the database is functional.
+
+Crashing a nancond past the commit has the database intact with the data logged into it as expected. But everything we just said is something that most databases have. Why would you even care about having a file-based database? Well, here's a great reason. This is one of my projects running in production serving hundreds of users. My database instead of being served through a
+
+running machine with a dedicated process consuming resources and having to be connected to and from is hosted on a simple attached volume. Just by doing that, the block storage allows a separation, making the data persist, but also easily snapshotted every hour as seen below. And while I don't suggest doing this at home, here is an SSH session to my host where the volume, which is actually 1% utilized, is mounted on smash data path serving the application while also allowing the maintainer like myself use the same connection to query users and other data directly. Now you might be thinking but what about performance as operations multiple connections? This is where a lot of people get stuck and to that you can simply reply with well think of SQLite's well or write ahead logging as a way to make things run smoother instead of directly changing the main database file and potentially blocking others. SQLite first writes down what it wants
+
+to do in a separate log file. This means readers can still access the main database while a writer is busy logging its changes. Once a change is finalized, it's then added to the main database. This is super helpful when lots of people are trying to read and write the same database at the same time. It allows for more things to happen concurrently and make your app feel a lot faster. And it's not just a niche feature. While hacking my iPad, looking at its files,
+
+I actually found that it's also heavily utilizing wall mode. And so does many other systems. All you have to do to enable it is add pragma journ mode equals wall. Pragma changes internal settings and journal mode will set while mode on. And we see that by adding a short sleep allowing me to switch panes and list files where you'll see next to wall example. DB the DB-shm and DB wall files that are
+
+temporary log files allowing for the main database to keep accepting many writes and then following up with merging them into the main DB. Now do keep in mind that W comes with a price. These files require an increased disk space. The atomicity of operations is naturally impacted as many writes are slowly merged after the fact. And lastly, the fact that it adds many temporary files needs to be supported by your disk provider. Something to keep in mind for the heavy users. Before moving on to
+
+production grade SQLite fork that may have changed the view on SQLite forever, here's a utility I've been using as a sidekick when I need to make changes while building my application. Lazy SQL is a nice toy that opens the DB file, but in a visual way, allowing you to view tables, records, run queries, and even change specific cells. While it's a great viewer, I find its hot keys that you can also pop by hitting the question mark a little hard to follow, to put it lightly. Nevertheless, it made a lot of my work easier by allowing humanlike changes with minimal strokes. Something you can't say about esculite update commands. Okay, I promised. And here it is, an SQLite
+
+fork that has been supercharged for the modern cloud era and it's blowing up in popularity. LibSQL acts as a distributed relational database built on top of SQLite. It doesn't replace SQI, it leverages SQI's powerful query engine, and this creates serverless magic. It lets you run SQLite directly in serverless functions. Since each serverless function can have its own connection, you can actually update your database schema or even the entire database file without taking your applications offline. This is a gamecher for continuous deployment. And
+
+while traditional SQLite can struggle with many concurrent writes, libsql while used with its distributed architecture handles concurrency much better. Your database can scale out to handle the load of thousands of simultaneous connections. All of these capabilities had a tremendous effect on how people view SQLite as a production choice. With the right architecture, SQLite can indeed be a robust, scalable, and performance solution for production workloads, even in a distributed cloud environment. So, I hope you're a fan of SQite now, but how about improving your workflow with another game-changing technology that in a way replaces Git? Check out
+
+JJ in this video and thank me later. Thank you so much for watching and I'll see you on the next

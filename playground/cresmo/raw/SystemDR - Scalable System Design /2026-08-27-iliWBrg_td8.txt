@@ -1,0 +1,17 @@
+---
+video_title: "Data Discovery vs Data Catalog: What's the Difference?"
+video_id: iliWBrg_td8
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=iliWBrg_td8
+video_date: 2026-08-27
+video_description: |
+  Website Link: www.systemdrd.com
+  What is a Data Catalog and why is Data Discovery so important for modern Data Engineering? Learn how data engineers use metadata management, data lineage, data governance, data quality, schema discovery, and automated metadata harvesting to build scalable data catalog platforms that help teams quickly find, understand, trust, and use enterprise data. This short covers essential concepts in Data Engineering, Data Catalogs, Metadata Management, Data Discovery, Data Governance, Data Lineage, Data Lakes, Data Warehouses, Data Mesh, and Self-Service Analytics—key building blocks for modern data platforms.
+---
+Here's [music] the reference architecture that actually builds and serves that graph. On the left are data sources, warehouses, lakes, streaming [music] topics, BI semantic layers. Two collection paths feed the pipeline. Pull connectors crawl schema catalogs on a schedule. Push listeners [music] consume standardized lineage events, most commonly using the open lineage format, emitted directly by orchestrators like Airflow, Spark, or [music] DBT at runtime.
+
+Both paths converge into an extraction and normalization layer, which [music] diffs schemas against the last known state, profiles basic statistics, and resolves entities, deciding that prod.orders and the orders [music] table referenced in a DBT model are actually the same node. Normalized metadata lands in two stores, [music] a graph database holding datasets, pipelines, and people as connected nodes, and a search index, >> [music] >> increasingly a hybrid of full text and vector embeddings, optimized for fast ranked [music] discovery. A metadata API layer exposes GraphQL for graph traversal and REST for simpler CRUD and webhooks. [music] And everything above that, the catalog UI, IDE plugins, Slack bots, governance workflows, consumes [music] that same API, so there's exactly one source of truth.
+
+The graph store and the search index are usually [music] two separate systems, kept in sync by the extraction layer. Trying to force one database to do both jobs well [music] well is a common early design mistake that teams end up re-architecting later.

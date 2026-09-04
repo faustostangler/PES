@@ -1,0 +1,31 @@
+---
+video_title: "The One API Header That Decides the Interview #shorts #systemdesign #interview"
+video_id: 9Wxun-oKKjc
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=9Wxun-oKKjc
+video_date: 2026-08-25
+video_description: |
+  The single API header that decides a Stripe / fintech system design interview 💳
+  
+  Full walkthrough (idempotency, ledgers, failure cases): https://systemdrd.com/
+  Written version: https://systemdr.systemdrd.com/p/design-stripe-payments-the-senior
+  
+  #systemdesign  #techinterviewprep  #StripeInterview #codinginterview  #softwareengineer  #faang
+---
+Design Stripe payments. This is the question that filters senior from staff in money movement systems. The surface looks ordinary, but the probe underneath has real audit trail consequences. By the end of this walk-through, you'll know exactly how idempotency, double-entry ledgers, and settlement fit together. Before you draw a single box, ask [music] five loaded questions. Is
+
+the API synchronous, blocking on the card network's 200 ms to 2-second round trip, or asynchronous with a webhook later? Which payment instruments? Cards [music] only, or bank transfers and wallets, too? Are you issuing cards, or just accepting them? Because issuing is an entirely different system with its own fraud and chargeback exposure.
+
+Single currency or multi-currency, which adds an FX layer and rate-locking semantics. And what's the SLO? >> [music] >> Typically 99.99% availability and under 500 ms at P99. [music] Asking all five before you sketch anything is what separates you from 80% of candidates. Now, put numbers on it.
+
+[music] 10,000 transactions per second at peak, 100 million a day on average, half a billion on peak shopping days, at roughly $50 a ticket. That's about $5 billion a day in volume, 25 billion at peak. Each transaction record is about 2 kilobytes, and financial regulations require 7 years of retention, which works out to roughly 500 terabytes total. That number tells you your transactional store has to be sharded relational Postgres, >> [music] >> Spanner, CockroachDB, with a cold tiered archive behind it. And don't forget [music] the external dependencies. Card
+
+networks, acquiring banks, fraud services, >> [music] >> and webhook delivery, each with its own latency profile. Three endpoints, but the first one decides the round. Post {slash} v1 {slash} charges takes an amount in integer cents, never floats, because 10 cents plus 20 cents doesn't equal 30 cents in floating-point math, and that rounding error becomes weeks of accounting drift in production. It takes a currency, a tokenized [music] card reference, and this is the line interviewers are listening for, an idempotency key header. Say it out [music] loud. Charging a card is the
+
+highest stakes API call most companies make, and network retries or double clicks can cause the merchant's code to call you twice with the same intent. You detect that and return the cached response instead of charging twice. If you name that header by minute 10, you've passed the first probe. If you don't, you fail at minute 30 when the interviewer asks what happens on a retry. Round it out with a get endpoint to check status and a post to refunds, [music] both idempotent by design. Four
+
+tables carry the weight of this design. Charges, where the unique constraint on merchant ID and ID idempotency key is enforced by the database itself, not the application, >> [music] >> and where you store a source token, never the raw card number, which keeps that table out of PCI scope entirely. Idempotency keys, which cache the full response and catch [music] a reused key with a different request body before it silently masks a bug. Ledger entries, which are append-only forever. >> [music] >> Corrections are new compensating entries, never edits. And accounts,
+
+which store a denormalized balance cache that's continuously reconciled against the ledger, because the

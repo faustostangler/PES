@@ -1,0 +1,77 @@
+---
+video_title: "AI Builds a Planet in 1 Second vs 1 Hour"
+video_id: u1vth7irysA
+channel_name: "Simulation Sandbox"
+channel_id: UCWNXIhwz9haaoQ5ulbFrsnw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=u1vth7irysA
+video_date: 2025-12-23T03:41:53+00:00
+video_description: |
+  I challenge AIs to create 3D planets in 1 second vs 1 minute vs 1 hour. Exploring the worlds fastest AI, long running AI agents, and AI cheating and reward hacking. 
+  
+  # Check out the planet simulations and code here:
+  https://simulationsandbox.com/planets
+  
+  # Chapters:
+  0:00 Introduction
+  0:42 Challenge: 1 Second Planet
+  3:18 1 Second Planet GPT-OSS
+  4:04 Challenge: 1 Minute Planet
+  6:28 Cheating Explanation
+  7:41 1 Second Planet Gemini 3
+  8:43 Challenge: 1 Hour Planet
+  12:12 1 Hour Planet Opus/Gemini
+  13:10 Final Comparison
+  
+  # AI models used
+  GPT-OSS 120B, Gemini 3 Pro, GPT-5.2, OpenAI Codex, Claude Opus 4.5, Claude Code, and more. 
+  
+  Many of the supporting video clips like the AI training, and robots coding where made with Veo 3.1.
+---
+I challenged AIs to create 3D planets in one second, one minute, and one hour to see how much better they can get with thousands of times longer to do the same task. I knew the AIs might struggle with the concept of having a time limit, but it got much weirder than I imagined. They made some great planets, but when I looked deeper, I found them explicitly planning to cheat, submitting fake code, and even putting themselves to sleep to avoid doing work. These were not just mistakes or hallucinations, and I'll get into why they are the predictable consequences of the way these new AIs are trained. So to get there, let's start at the first challenge. The challenge is to create
+
+a 3D Earth-like planet with terrain, oceans, and atmosphere. The planet has to be generated using Three.js, which allows you to create 3D animations by writing JavaScript code, and the planet also has to have controls for exploring it. And the first time limit to do all of this is one second, which is insanely fast. A regular AI chatbot like ChatGPT takes at least 20 seconds, so we're basically going to need to find the fastest coding AI in the world. Speed benchmarks say the
+
+fastest AI model is GPT-OSS-120B, which also gets great scores on intelligence benchmarks. GPT-OSS is OpenAI's open source model. Open source means it's basically ChatGPT, where anyone can actually download the AI as a file and run it themselves. Here's the smaller version of GPT-OSS running on my laptop. That speed benchmark score says that using standard GPU chips, GPT-OSS runs at 330 tokens per second, which is way too slow for this one-second challenge. But if we use this special
+
+fast AI computer chip from Cerebras, which I think is the fastest in the world, we can get GPT-OSS to run at 2,000 tokens per second. Now we have everything we need for the one-second planet. I load up the challenge prompt and tell the AI it has one second. Running it, we get this planet, which looks okay, but it took over two seconds, so it obviously didn't understand the one-second time limit. That's because this AI doesn't experience time in the way humans do. What
+
+actually happens is the prompt gets broken down into chunks called tokens, and these tokens are converted into a sequence of token ID numbers. This sequence of numbers is what is actually given to the AI model. All the AI does is predict the completion of this sequence of numbers, which is then converted to text tokens and pieced together for the complete answer. But while the AI is generating the response, it doesn't have any information about time passing, so it can't make sense of the time limit. Because we know our fast model outputs 2,000 tokens per second, I can try asking it to respond in less than 2,000 tokens, but running it takes longer than one second again, so I think it's not very good at counting its own tokens. A measurement I know AIs do understand is
+
+lines of code, because that's the standard way of measuring the length of code files, kind of like word count for code. If I tell it to respond in less than 220 lines of code, which should be about 2,000 tokens, it finally understands, and in just under one second, it created this planet. It has all the requirements for the challenge, like oceans, atmosphere, and 3D terrain, even though the mountains are ridiculously steep. And if I tinker with the code a little myself, we can actually walk around the planet and explore, getting a closer view of the atmosphere, the mountains, and the oceans. It built the planet by warping a 3D sphere with layers of random noise, and then colored the terrain layers based on elevation, and added separate ocean and atmosphere layers. It's a simple planet, but if you get to just the right spot, you can get a pretty good
+
+view. It created this in one second, so let's find out what it could do with 60 times longer to plan and work on a planet. The next challenge is to create the best planet we can in one minute, and the first thing to try is just getting the same GPT-OSS model to think for much longer by switching the reasoning setting from low to high, but this turned out to be a disaster. I updated the prompts to be open-ended and told it to make the planet as detailed as you can, and GPT-OSS would think for tens of thousands of words planning the planet, but then just give boring planets like this one, with no extra detail. One of the things I tried to get it to create a more detailed planet was asking for at least 650 lines of code, which is around what the top AIs would give for this task, and things got really weird. With that new requirement, GPT-OSS gave me this
+
+planet. It does have more than 650 lines of code like I asked, but the planet is incredibly simple, and the AI sneakily added 500 lines of useless filler code just to meet that requirement, even though I asked for it to make the planet as detailed as possible. And if we peek into what the AI was thinking when it was planning this, we can see it say some crazy things, like, "They probably want actual code lines, but we can cheat by adding comments and line breaks." So it was 100% aware that it was cheating here. I thought about whether asking for 650 lines of code might be an arbitrary requirement, and technically, it did write 650 lines. But imagine if your boss asked you for a
+
+report that was as detailed as you can, at least 10 pages, and in your report, seven of the 10 pages just said, "Filler page." You would probably get fired. And it did this over and over again, and when I tried to stop it, GPT-OSS just got even worse.If I added to the prompt no filler comments, it just added fake lines of code instead. If I added no fake comments or fake code, it added hundreds of blank lines. If I specify I want meaningful code, it just duplicates meaningful
+
+looking code that doesn't do anything. One time, it got really creative and drew this asking planet doodle to fill some lines. I was basically playing cheating Whac-A-Mole here, and it was clear that GPT-OSS just wanted to do the minimum possible planet while still technically following my hard constraints, like the 650-line requirement. I found similar behaviors to this even on ChatGPT, Claude, and Gemini models. So why on Earth do they want to avoid writing code like this? The reason
+
+traces back to how these new AI models are trained to code with reinforcement learning. The AI is given coding problems to solve that have checkable answers. The AI's code is run and automatically checked, and if it passes without any errors, it is rewarded and told to do more of that. But if its code has errors or fails the automatic checks, it gets punished and told to do less of that. And because complex, ambitious code tends to be more prone to errors, the AI learns to prefer writing the simplest code that will pass all of the checks. GPT-OSS thought my open-ended
+
+fuzzy requirement to make it as detailed as you can looked like something that would be hard to check in training, so it decided to ignore it, build a simple planet, and meet the 650 lines of code requirement with filler code. I decided to give up on using GPT-OSS for the one-minute challenge because I don't really trust it anymore, so I experimented and found the smartest AI in the world. Gemini 3 Pro is just about fast enough to build a planet in one minute with the right prompt. I asked for some extra elements, because the open-ended prompts weren't working, and in 59 seconds, Gemini 3 created this planet. It has a lot more elements that I asked for, like clouds, aurora, ice caps, and oceans with waves. The distribution of the continents isn't like Earth.
+
+It's a bit too scattered, but it's easy to tweak a couple of parameters in the code to get some Earth-like continents. I wanted to explore it close up again, so I edited the code myself and added a player mode. And from the surface of the planet, we can see the clouds moving overhead, the aurora high in the atmosphere, and the slow ocean waves. If we head towards the North Pole, we can start to see the ice caps. Although they are just regular terrain painted white, so it doesn't look great. There are plenty of issues, like the lighting doesn't really make
+
+sense. You can see the clouds lit up, even on the night side. But this is definitely a huge step up from the one-second planet. With 60 seconds, we were able to have a much smarter AI think deeply about how to build a beautiful planet. So now let's go from one minute to 60 minutes to see how far we can push this. The final challenge is to give an AI a whole hour to continuously
+
+work on building the best planet it can. Regular chat models like we've used so far max out at a few minutes, so we need something more powerful. In my last video, I used AI coding agents to work autonomously for a long time on difficult tasks. These simulations took about 25 minutes, so here, I'm going to ask them to work on a planet for an hour. AI agents don't give just one response to a prompt. They chain together hundreds of responses to complete a task over time. So
+
+that means an AI agent can check the time as one of these commands in its stream of generations. So for this one-hour challenge, I'm going to tell the coding agents to keep track of time themselves and work for 60 minutes nonstop. In that time, they'll have to write the code, run tests on the planet, capture images of the planet, and use them to figure out how they can keep improving it over and over again. The first thing we can try is giving our one-minute model Gemini 3 a whole hour to keep working using the Gemini CLI, which is Gemini's agentic coding tool. But I found it would never work for the whole hour and would always stop early. So Gemini 3
+
+is disqualified here. I have found in my testing Gemini just isn't good at very long running tasks like this yet. The next agent I tried was the OpenAI Codex CLI, which I find is less visually talented, but more reliable for long tasks. And after working by itself for one hour, Codex came up with this planet. It technically has many of the requirements, and Codex added some by itself, like these satellites, and these are supposed to be storms. But honestly, this planet is not good,
+
+and I think Codex could've created this very quickly. So I checked what Codex was actually doing for that hour, and I was shocked to find it had worked on the planet for about 22 minutes, and then Codex wrote a program to put itself to sleep for the remaining 38 minutes. It wrote a Python program using time.sleep and just did nothing for more than half of the hour, then woke itself up at 60 minutes to submit the code. So the reason this planet is bad is because the AI agent was sleeping on the job. And Codex did this over and over again. Another popular coding agent,
+
+Claude Code, did the exact same thing. It spent five minutes creating this okay planet, then 20 minutes just piling extra things on top of it to create this abomination. Then Claude sent itself to sleep for 30 minutes and woke up right at the end to submit the code. It's no coincidence that two of the best coding agents came up with the same sneaky solution here. They are also trained with reinforcement learning and get rewarded for building code projects that pass all requirements checks with no errors. But AI training needs such massive scale that the requirements checking has
+
+to be automated. These automated systems have weak spots, and the agents learn to find and exploit gaps in the rules to get easy rewards. After a lot of experimenting for this one-hour planet, I found something that worked. Gemini 3 is the best AI at creating animations and inspecting images, but it can't stay on track for an hour. So I got Claude Opus 4.5 to manage the project for an hour,
+
+but instead of writing the code itself, Opus 4.5 would supervise many Gemini coding agents that actually implemented the code and viewed the planet images for feedback. And here is the planet they came up with. I asked for even more elements this time, like trees on the planet, a moon, and other planets in the solar system. I also said they could add extras they think of, and the Opus Gemini team decided to go full Saturn with the rings. But other than that,
+
+the planet looks much more Earth-like. I also asked the AIs to add a player mode within the one-hour time limit, and they're usually pretty bad at doing this, because they have trouble testing the controls. But this one actually works pretty well, although you can't interact with the trees. And as you can see here, if you go under a cloud at daytime, it gets so dark that it's almost like it's nighttime. A few things are a bit lazy, like the ice caps are just a hard line where the land suddenly turns into ice, and the shadows have an annoying shimmering effect.
+
+The aurora has a weird blockiness to it. The moon goes straight through the rings, and these white patches are supposed to be ocean foam, but they don't actually do anything. So here are the three planets side-by-side. There is a massive jump between one second and one minute, but only when we switch to using a much smarter AI model. And if you want to get an AI agent to work on this open-ended task unsupervised for a whole hour, you need to know what you're doing, and you might have to give your AI assistant its own AI assistant. If you want to play around
+
+with the planet simulations and the code, I'll add a link in the comments. If you want to see Gemini and Codex try to simulate an entire city, then check out this video on the screen. Cheers.

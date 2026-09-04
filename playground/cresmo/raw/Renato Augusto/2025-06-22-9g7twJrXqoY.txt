@@ -1,0 +1,306 @@
+---
+video_title: "System Design: Escalando uma Arquitetura do Zero a Um Milhão de Usuários | Arquitetura de Software"
+video_id: 9g7twJrXqoY
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=9g7twJrXqoY
+video_date: 2025-06-22
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  Compre hoje sua Tech T-Shirt usando o cupom RENATOAUGUSTO: https://creators.insiderstore.com.br/RenatoAugusto
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo, e no vídeo de hoje eu vou te ensinar como escalar uma aplicação web do zero até aguentar um milhão de usuários — e, principalmente, vou te mostrar como responder esse tipo de desafio nas entrevistas técnicas de programação.
+  
+  Esse tipo de cenário é um dos favoritos dos recrutadores porque ele vai muito além de código. Eles querem saber se você tem visão de arquitetura, se entende de performance, escalabilidade e sabe tomar decisões técnicas em situações reais de crescimento.
+  
+  E é justamente aqui que a maioria dos programadores trava na entrevista… principalmente quem nunca estudou System Design ou nunca teve contato com Arquitetura de Software de verdade.
+  
+  Muita gente acha que esse tipo de conhecimento é só responsabilidade de arquitetos de software, mas na prática, desenvolvedores backend também precisam dominar esse assunto. Esse tipo de pergunta aparece direto nas entrevistas justamente pra avaliar se você tem maturidade técnica
+  
+  Assista também:
+  https://youtu.be/vRO0UfvsbDw
+  https://youtu.be/mKIltWid_L0
+  
+  🚀 O que você vai aprender neste vídeo: System Design: Escalando uma Arquitetura do Zero a Um Milhão de Usuários | Arquitetura de Software
+  
+  ✅ Quais são os principais gargalos de performance em sistemas web
+  ✅ Por que CPU, memória, disco e rede viram problemas quando o tráfego aumenta
+  ✅ O papel de um load balancer na distribuição de tráfego
+  ✅ Como o cache (com o padrão Cache-Aside) ajuda a aliviar o banco de dados
+  ✅ Quando começar a usar filas assíncronas pra processar tarefas pesadas
+  ✅ O que é replicação de banco e como ela melhora a escalabilidade de leitura
+  ✅ Trade-offs reais que surgem ao longo do crescimento
+  ✅ Como estruturar sua resposta numa entrevista técnica de System Design
+  ✅ Dicas pra você nunca mais travar nesse tipo de pergunta de entrevista
+  
+  💡 Por que assistir?
+  🔹 Se preparar pra entrevistas de desenvolvedor backend, Arquiteto de Software ou tech lead
+  🔹 Entender como grandes sistemas web realmente escalam na prática
+  🔹 Aprender os principais conceitos de System Design de um jeito simples e direto
+  🔹 Ganhar confiança pra responder perguntas de escalabilidade sem enrolar
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores que querem subir de nível técnico e passar bem nas entrevistas
+  📚 Estudantes de tecnologia que estão começando a estudar System Design
+  💼 Profissionais que lidam com performance, infraestrutura e backend no dia a dia
+  
+  🔥 Curtiu o vídeo? Deixa o like, se inscreve no canal e ativa o sininho pra receber os próximos conteúdos! Quer apoiar meu trabalho? Considere se tornar membro do canal!
+  
+  📩 Tem dúvidas ou sugestões? Comenta aqui embaixo! Eu sempre leio tudo e respondo sempre que posso.
+  
+  #systemdesign #arquiteturadesoftware #insiderstore #backend
+---
+Uma das perguntas que mais aparecem nas entrevistas técnicas para programador é se você sabe lidar com performance e escalabilidade de aplicações, principalmente as aplicações web. No vídeo de hoje eu vou te ensinar a escalar uma aplicação do absoluto zero até 1 milhão de usuários e que com toda a certeza, vai te salvar na tua próxima entrevista. Fala pessoal, Renato Augusto aqui de novo e dessa vez para falar de arquitetura de software e system design. Se você já trabalha com programação há algum tempo, é bem provável que você já tenha encarado perguntas e desafios técnicos que te colocavam para resolver um suposto cenário de uma aplicação que começou a lidar com muitos usuários e que isso estava gerando lentidão na aplicação ou derrubando o servidor durante os picos de acesso. E esse tipo de desafio aparece e muito nas entrevistas técnicas, porque o recrutador não quer só saber se você sabe escrever código, ele quer saber se você é alguém capaz de lidar com os problemas e desafios de uma aplicação do mundo real. E é exatamente aqui que a
+
+maioria dos programadores acaba travando na entrevista, principalmente aqueles que nunca tiveram contato com system ou não manjam muito de arquitetura. Então, para tu nunca mais passar aperto nas próximas entrevistas, hoje a gente vai pegar uma aplicação do absoluto Zero e vamos arquitetar uma solução para escalar essa aplicação para que ela seja capaz de suportar 1 milhão de usuários. E tudo isso, logicamente lidando com todos os tradeoffs e desafios que vão surgindo ao longo do caminho. Então, sem mais enrolação, bora pra tela, porque tem muita coisa pra gente ver e muita informação para eu te passar. Bora lá.
+
+Bom, então vamos lá. Vamos direto ao ponto aqui. Vamos direto ao que interessa, porque tem muita coisa pra gente ver nesse vídeo daqui. Então, qual que vai ser a nossa missão nesse vídeo aqui, tá? Nossa missão aqui basicamente vai ser o seguinte. A gente vai pegar
+
+essa arquitetura inicial aqui e a gente vai transformar, a gente vai evoluir essa arquitetura ao longo desse nosso vídeo aqui. E aí ao longo do vídeo eu vou te ensinando as técnicas, os fundamentos, os conceitos para você levar pra tua entrevista técnica, tá? Para tu poder demonstrar conhecimento. E ao final desse vídeo daqui a gente vai ter evoluída essa arquitetura aqui, que é bem simplista, tá? Já vou falar sobre ela para uma arquitetura muito mais robusta, uma arquitetura escalável, resiliente, tolerante a falhas, uma arquitetura altamente disponível e mais um monte de outras coisas. Beleza? E
+
+antes de mais nada, se você já leu o livro System Design Interview, você sabe que isso aqui é conteúdo que foi dito lá no livro. Então, ao final desse vídeo aqui, eu vou mencionar o livro, vou mencionar o autor também, se você quiser aprender um pouquinho mais sobre sistem, sobre arquitetura e mais um monte de outras coisas, beleza? Então vamos lá, vamos ao que importa aqui. Que que a gente tem aqui com essa nossa arquitetura inicial, tá? A gente tem aqui uma arquiteturazinha bem básica, tá? Então vamos simular o seguinte, a
+
+gente tem a nossa API que você foi lá, escreveu em Java, PHP, C#ARP, Node, Python, tanto faz. E você subiu um servidorzinho pra sua API, tá? você tem uma API lá, o domínio dela é api.meite.com e aí a gente tem aqui a camada do front end, beleza? Então, nessa nossa
+
+aplicação aqui, o front end separado do back end, tá? Isso aqui é para facilitar, tá? Porque no livro ele menciona também a questão do front ali e tudo mais, só que isso aqui ficaria um vídeo muito grande. Então, a gente vai separar o front do back end, então a gente vai escalar a nossa API para 1 milhão de usuários, tá? Depois eu posso fazer um vídeo escalando a parte do front end, mas para todos os efeitos, a gente tem lá o front end que é feito em React, em Angular, tanto faz. e o
+
+aplicativo mobile aqui também que tá rodando lá a nível de front end e todos os dois aqui consomem da nossa API. E aí, como é que funciona aqui por baixo dos panos as coisas? As coisas funcionam mais ou menos assim, ó. O front end vai requisitar a nossa API, ou seja, vai chamar o domínio da nossa aplicação, que é o api.meite.com.
+
+Por baixo dos panos, essa requisição vai bater num DNS, que é o domain name system, tá? Que é o sistema de nome de domínio, que é basicamente quem faz ali a conversão, tá? do domínio pro endereço IP da onde tá aquele servidor que você tá procurando, justamente para você não ter que ficar gravando endereço IP de tudo quanto é servidor. É justamente por isso que existe domínio. Então aqui você tem que entender um pouquinho de como que a web funciona, como que as coisas funcionam ali por baixo dos panos. Então
+
+a requisição procurando api.meite.com bate no DNS. O DNS retorna o endereço IP da onde tá aquele servidor e a requisição segue adiante. Com a requisição seguindo adiante vai encontrar o nosso servidor, vai bater na nossa APIzinha aqui. Nossa PI vai
+
+processar a requisição, vai chegar lá no end point, tal, no controller e ela vai devolver aqui uma resposta em Jzon, tá? E para todos os efeitos, o banco de dados está aqui também. Então, a gente instalou o banco de dados no mesmo servidor da aplicação. Beleza? Essa é a nossa arquitetura inicial. É com isso
+
+aqui que a gente vai começar, tá? Isso aqui é muito básico, é muito simplista, cara. Isso aqui não tem mistério nenhum. Beleza? E aí o que que acontece? A gente
+
+precisa dar algum jeito de fazer o quê? De fazer com que a nossa aplicação, que a nossa arquitetura inicial aqui consiga suportar 1 milhão de usuários. Só que não é de uma vez só. Você não faz uma única coisa aqui e pronto, suporta 1 milhão de usuários. Não, esse processo é gradual, ele é evolutivo, então a gente tem que ir avaliando o que a gente tem e ir dando pequenos passos ao longo do caminho até a gente chegar com arquitetura que suporte essa volumetria massiva de usuários e de requisições simultâneas. Beleza? Então, a primeira
+
+coisa que a gente tem que avaliar é o que a gente tem. E o que que a gente tem? A gente tem uma arquitetura aqui, cara, que tá altamente acoplada. a gente tem o banco de dados dentro do próprio servidor aqui da aplicação. Então aqui a gente já tem o primeiro problema que é o seguinte: o nosso banco de dados e a nossa aplicação lá, o código rodando e tudo mais na memória dá problema por quê? Vão começar a competir por recurso,
+
+cara. vão começar a competir por recurso e isso pode acabar inutilizando o nosso servidor. Nosso servidor pode acabar caindo, pode ficar fora do ar, pode acabar aumentando e muito a latência, ou seja, o tempo de resposta da aplicação. E sem contar que nós já temos um problema aqui que a gente vai falar muito ao longo dessa aula aqui, que é o seguinte, que é um ponto único de falha. A nossa aplicação, ela tem um ponto único de falha, que é o quê? Que é o
+
+servidor. Se acontecer algum desastre, alguma coisa, algum problema físico mesmo no servidor e ele ficar fora do ar, toda a nossa aplicação tá fora do ar. Por quê? porque o front end não vai conseguir consumir os dados. A aplicação vai ficar literalmente fora do ar, cara.
+
+Então, a gente precisa começar a resolver esses problemas. Mas vamos por parte, vamos devagar que a gente vai chegar até lá. Primeira coisa que a gente precisa fazer é o quê? É separar os servidores. Então, eu preciso de um servidor pra minha aplicação e eu preciso de um servidor pro meu banco de dados. Por quê? Porque fazendo isso, eu
+
+consigo dimensionar eles de maneira separada. eu consigo fazer essa separação e eu consigo tratar cada um de acordo com a demanda de cada um deles. Então, o próximo diagrama aqui é exatamente o que acontece, é a evolução gradual da nossa arquitetura que a gente faz o quê? A gente separou o nosso banco de dados e colocou ele num servidor à parte. Então agora nós temos o servidor pra nossa API e nós temos um servidor pro nosso banco de dados. E aí aqui vai
+
+acontecer, né, a escrita, leitura ali, o update, o delite no banco, ele retorna os dados aqui pra nossa aplicação e o fluxo permanece o mesmo. Mesma coisa, bate lá no DNS, retorna o IP e aí as requisições chegam na nossa aplicação. Show de bola, nós já conseguimos dar o nosso primeiro passo. Dá para suportar 1 milhão de usuários com isso aqui? Lógico que não estamos longe disso aqui, porém já temos aí uma evoluçãozinha gradual, já conseguimos alcançar alguma coisa aqui. Pelo menos um pouquinho mais de
+
+usuários a gente vai conseguir atender. Por quê? Porque a gente tem um servidor dedicado agora pra nossa aplicação e a gente tem um servidor dedicado pro banco de dados. Então agora o número de usuários pode ir aumentando aos poucos que a nossa aplicação, a nossa arquitetura consegue lidar com um pouquinho mais de usuários. Beleza? Só
+
+que aí a gente tem ainda alguns problemas, alguns desafios pra gente enfrentar e vamos enfrentando todos eles aqui. Qual que é a desvantagem ou então qual que é o problema dessa arquitetura aqui quando a gente fala de tentar atender 1 milhão de usuários ou um volume muito massivo de requisições? Porque assim, ó, essa arquitetura não é que ela seja ruim, tem muita aplicação que roda com essa arquitetura aqui perfeitamente, com pé nas costas, resolve qualquer probleminha. Isso tudo aqui depende do que você está tentando arquitetar. É justamente para você não sair por aí feito um doido achando que não, essa arquitetura aqui não presta, não serve para nada porque tem isso de desvantagem, tem aquilo. Não, não é
+
+assim que funciona. Não é que isso aqui é ruim, não. Beleza? É essa a mentalidade. Então, vamos lá. Quais que
+
+são os desafios dessa nossa arquitetura aqui? O desafio é o seguinte. Repara que aqui a gente tem uma coisa chamada ponto único de falha de novo. Por quê? Se o nosso banco de dados falhar, a nossa aplicação falha. Se a nossa API, se o
+
+nosso servidor falhar, a nossa aplicação inteira vai falhar. Toda a nossa arquitetura vai falhar. Então, a gente tem que mitigar esse ponto único de falha, porque nós estamos tentando atender uma volumetria muito alta de usuários. Então, quando a gente fala de atender muitos usuários, a gente vai ter que esbarrar no tema que é escalabilidade. A gente precisa escalar a nossa arquitetura. E aí quando a gente
+
+começa falando de escalabilidade, a gente vai encontrar dois tipos de escalabilidade, que é o quê? É a escala vertical e a escala horizontal. O que que é a escala vertical, Renato? Escala vertical é literalmente você adicionar mais hardware, tá? Mais poder computacional, mais poder de processamento, mais memória RAM, mais armazenamento lá no seu servidor. E a
+
+escalabilidade horizontal é você criar réplicas da sua API, da sua aplicação, do seu sisteminha e colocar isso em servidores separados, tá? Calma que eu já vou te mostrar qual que é a ferramenta que você vai utilizar para unificar tudo isso aqui, para você fazer a escala horizontal, tá? Então nós temos aqui dois tipos de escalas. E aí, mais uma vez, o que é que nós estamos tentando fazer? Nós estamos tentando atender 1 milhão de usuários. A escala
+
+vertical vai nos atender? Não, não vai nos atender. Não vai atender o nosso propósito, tá? Não é, mais uma vez, não é que ela seja ruim, é que ela não atende o nosso propósito. Por qu, Renato? Porque é o seguinte, quando a
+
+gente pegar o nosso servidor lá e adicionar mais poder de processamento, mais memória RAM, mais poder de armazenamento e tudo mais, esse número tem um limite. Esse número ele é finito. Ele não é um número infinito. Eu não posso adicionar um número ilimitado de memória RAM no servidor. Não funciona, não é assim. Tem um teto. E aí, além
+
+disso, a gente tem o outro problema que é o quê? O ponto único de falha. Por quê? Porque se eu pego o meu servidor da minha aplicação e entupo ele de memória RAM, entupo ele de poder de processamento, poder computacional, o que que vai acontecer? ele vai ficar lá, vai est mais robusto, mais parrudo, vai conseguir atender ali um número maior de requisições, porém se acontecer alguma coisa com o servidor, a aplicação mais uma vez vai ficar fora do ar. Então aqui
+
+nesse caso não vai nos atender porque nós precisamos de uma aplicação altamente disponível, de uma arquitetura, né, altamente disponível, porque se nós estamos lidando com 1 milhão de usuários, cara, a nossa aplicação não pode ficar fora do ar. Então a gente tem que pensar nisso. Redundância, tá? Failover. Que que é Failover? Filover é você pegar o teu
+
+servidor aqui, se ele falhar, você tem um backup para botar no lugar dele. Isso é redundância, cara. Trabalhar com redundância. Então, escalabilidade vertical não nos atende nesse momento. Então, nós vamos ter que escalar a nossa arquitetura horizontalmente. Como que a
+
+gente faz isso, Renato? A gente escala horizontalmente utilizando uma ferramenta chamada load balancer, tá? Que que é um load balancer, tá? Pensa assim, ó. Load Balancer é uma ferramenta que o que que a gente vai fazer? A gente
+
+vai criar réplicas da nossa aplicação, da nossa PI, e vamos subir um novo servidor com a réplica da nossa PI, com a réplica do nosso código e vamos colocar isso para rodar em outro servidor. E aí na ponta, ou seja, na frente desses dois servidores, a gente vai colocar esse load balancer, que traduzindo ficaria balanceador de carga e é ele quem vai receber toda a enchurrada de requisições do front end ou de quem estiver chamando a nossa aplicação. E aí, como é que vai funcionar, tá? Primeira coisa para você entender legal é o seguinte. na imagem número um lá, o que que estava acontecendo? Vamos lá. Bem aqui, ó, a
+
+gente configurava o IP do nosso servidor lá no DNS. Então, a gente apontava o API.meite.com pro IP do nosso servidor, da nossa aplicação. Beleza? Que que tá
+
+acontecendo aqui embaixo? Agora aqui é o seguinte, a gente vai configurar o IP público do Load Balancer. A gente não vai mais colocar a nossa aplicação exposta pra internet, inclusive isso é uma boa prática de segurança, tá? Elas vão trabalhar agora com IPs privados, tá? A nossa aplicação mesmo, nosso servidor, a nossa API, ela não vai ser acessível pro mundo externo, pra internet. Quem vai ser acessível vai ser
+
+quem? Vai ser o nosso load balancer. Então é por isso que a gente vai configurar o IP público do Load Balancer, tá? Apontando aqui pro nosso DNS, aqui pro nosso domínio, na verdade. E aí todo mundo que requisitar vai mandar as requisições pro load balancer e ele é que vai fazer a distribuição de carga aqui entre as nossas réplicas, entre as nossas instâncias, tá? Porque
+
+ele logicamente conhece o IP privado de cada servidorzinho, tá? Isso aqui você cria, você configura, se tiver usando o cloud aí uma WS da vida, você configura lá sua rede privada e aí vai est tudo certo, tá? Você bota o load balancer lá para comunicar com as suas instâncias internamente. Então, do lado de fora ninguém consegue acessar. E aí, vamos lá. Que que a gente resolveu com isso
+
+aqui? Primeiro, a gente resolveu o problema do failover e redundância lá. Por quê? Porque se um desses servidores ficar fora do A, a gente tem o outro. Então, a nossa aplicação agora, nossa arquitetura agora já está com uma disponibilidade muito melhor, já é muito mais disponível. E uma outra vantagem é
+
+que se o tráfego aumentar repentinamente, a gente pode vir aqui e subir novas instâncias aqui, que o próprio Load Balancer aqui já se encarrega de poder fazer aqui a distribuição de carga entre essas novas réplicas, tá? Então isso aqui te dá um poder absurdo na sua arquitetura. Só que como nem tudo são flores, eu já mencionei isso aqui na nossa caminhada, o que que acontece? A gente tem algumas desvantagens aqui também, porque nem tudo é perfeito, cara. Não existe bala de prata. Quem acha que tem bala de
+
+prata para resolver? Não existe esse negócio de bala de prata. Então, o que que acontece aqui? Aqui a gente conseguiu abrir a camada web, a porta da web, tá? A porteira tá aberta, então agora a gente configura instâncias ali para lidar com fluxo massivo de requisições. Só que temos um problema.
+
+Quem é que vai chorar agora? Quem é que vai abrir o bico? É o banco de dados, porque ele é quem vai se tornar o ponto único de falha da aplicação, porque até então a gente só tem um único banco de dados. E agora tu imagina todas essas instâncias aqui conectando no mesmo banco de dados. O que que vai acontecer?
+
+O banco de dados não vai aguentar, cara. Por mais que a gente vá lá, escale verticalmente o nosso banco de dados, ou seja, adicione poder computacional, adicione memória RAM, adicione poder de processamento, não vai dar conta. Por quê? Porque vai chegar um momento que a gente vai atingir um limite. E aqui a gente tá falando de milhões de usuários.
+
+1 milhão. Vamos botar 1 milhão de usuários, cara. Então, a gente precisa de alguma estratégia. Para quê? para evitar que o nosso banco de dados se torne um ponto único de falha, para que a gente consiga garantir a disponibilidade dos nossos dados ali, para que a gente consiga garantir também a confiabilidade, ou seja, para que a gente não perca nenhum tipo de dado.
+
+Porque tu imagina, a gente tem um único servidor de banco de dados. Se acontecer alguma coisa com esse servidor de banco de dados e a gente não tiver um backup, uma redundância, alguma coisa do tipo, cara, a gente vai perder os dados. Então, não faz sentido manter essa arquitetura pra volumetria que a gente espera. Então, qual que é a técnica que a gente vai utilizar agora? a gente vai utilizar uma técnica chamada de database replication. Isso aqui à primeira vista
+
+eu sei que pode parecer meio cabuloso assim de você perceber esse diagrama e tudo mais. Parece complexo, complicado, não é? Isso aqui é bem simples. Inclusive no próximo diagrama vai ficar um pouquinho mais fácil, tá? Mas o que que eu quero que você entenda aqui? Qual
+
+que é a técnica de replicação de banco de dados? Vamos lá. A gente vai pegar o nosso banco de dados principal e ele vai ser o banco master, tá? Essa arquitetura aqui também é conhecida como master slave, tá? Então, a gente vai tornar o nosso banco de dados principal como banco de dados master e a gente vai criar réplicas desse banco, ou seja, cópias dele. A gente vai clonar o nosso
+
+banco. E aí, o que que a gente vai fazer? A gente vai colocar eles como slave. E como que funciona a operação, tá? Eu sei que você deve estar essa hora aí agora com a cabeça dando um nó aí, tipo, cara, como é que eu vou conectar o a minha aplicação, o meu código ali do framework, como que ele vai saber qual é o banco de dados que ele tem que conectar e tal. Calma que eu vou te
+
+mostrar também um trechinho de código para você entender como é que isso aqui é simples, tá? Mas vamos lá. A meta aqui é a gente redirecionar todas as escritas da nossa aplicação. Update, insert no banco de dados, delete no banco de dados. Toda escrita vai ser redirecionada pro nosso banco master. E
+
+as leituras, ou seja, os selects, a gente vai fazer nos bancos slave, tá? Nas cópias. Inclusive, se você não sabe, boa parte das aplicações, a volumetria de leitura é muito maior do que a de escrita. Então, por isso que a gente cria aqui os slaves aqui e a gente pode replicar quantos slaves a gente quiser. E aí, tu deve estar se perguntando, tá?
+
+Renato, mas como é que eu vou escrever aqui e o dado vai estar disponível aqui? É justamente por conta dessa linhazinha aqui, dessa replicação. Existem diversos mecanismos de replicação que fica aqui no meio, lendo os dados que vão sendo atualizados aqui, inseridos aqui e replicando aqui pras cópias. Tem diversas formas de fazer isso. Uma bem comum é simplesmente pegar as próprias cópias aqui, elas se conectam nesse banco aqui, elas ficam por baixo dos planos lá conectado, ouvindo todas as alterações e vão se atualizando, tá?
+
+Isso aqui é bem tranquilo de fazer. Aí tu deve estar assim: "Renato, como é que isso aí vai funcionar, cara? Como é que a minha aplicação vai conectar? Vamos lá. Eu vou abrir aqui, ó, a documentação. Tem uma documentação aqui,
+
+ó, que ele abriu aqui no meu monitor secundário aqui. Deixa eu arrastar para cá. Isso aqui é a documentação do Laravel, tá? A maioria dos ORMs, dos frameworks aí já vão te fornecer esse tipo de ferramenta aqui, tá? Esse tipo de possibilidade para você separar escrita e leitura. E aí, ó, como é que
+
+funciona isso aqui, ó? Arquivin de configuração lá do teu laravel da vida, tá? Isso aqui vai funcionar para outros RMs, tá? É porque eu achei mais fácil aqui o do larvel pr você entender. Então, o que que você vai fazer? Você
+
+vai configurar um My Sequel da vida, talvez. E aí você bota aqui, ó, o read aqui, ó, o banco de leitura. Qual é o banco de leitura? Aí você bota aqui, ó, os hosts aqui dentro dessa chave aqui. E pronto. Você vai configurando aqui
+
+quantas instâncias de leitura você quiser. E pra escrita, pra escrita, eu vou escrever neste cara aqui e tá tudo certo, acabou. Problema resolvido. Você configurou ali, problema resolvido, não vai ter problema nenhum. Todo insert, delete, update que você fizer, ele vai utilizar o banco de escrita. Toda
+
+leitura, todo select, ele vai utilizar os bancos de leitura. Inclusive, ele mesmo já vai fazendo aqui o balanceamento, tá? ele vai separando ali as leituras, vai como se fosse um balanceador de carga, tá? Então isso aqui é bem tranquilo. Isso aí depois você dá uma lida no seu ORM favorito aí que você vai encontrar alguma coisa nesse sentido, tá? Uma outra
+
+alternativa, se você tiver utilizando o Aurora lá da WS, ele já te fornece um cluster, tá? Ele vai te dar um endereço só para você conectar, como se fosse um único banco de leitura e ele mesmo já se encarrega de fazer o balanceamento de carga aqui entre esses bancos. E com isso, o que que a gente ganhou? a gente ganhou muito mais confiabilidade nos dados, porque se alguém ficar fora do ar, o outro assume o papel. E sem contar que a gente também ganha muito mais desempenho. Por quê? Porque a gente não
+
+tem só um único banco de dados, cara. Agora a gente tem vários bancos de dados pronto para lidar com uma volumetria muito maior de requisições. Então agora a gente já tem muito mais disponibilidade, confiabilidade, autodesempenho aqui na nossa camada de dados. Entendido isso aqui, vamos entender como é que ficou a arquitetura, que agora eu acho que vai ficar um pouquinho mais fácil, tá? Se eu peguei pesado contigo no diagrama anterior, agora tu vai conseguir ficar mais tranquilo, que é o seguinte, aqui é a nossa arquitetura atual, tá? Camada do
+
+front end vem, bate no DNS, retorna o IP, bate no load balancer aqui, distribui a carga e agora o que que acontece? Todos os dois servidores aqui direcionam escritas para um lado, leitura pro outro e a gente tem o nosso mecanismozinho aqui que fica replicando os dados de um lado pro outro, beleza? É simples, direto ao ponto e muito bem objetivo, tá? Só que aí nós temos também algumas outras ponderações a fazer aqui, por nós vamos ter que lidar com consistência eventual, dependendo da forma como a gente for fazer isso aqui. Por vamos lá, eu não vou entrar muito a fundo nesse lance de consistência, até porque a gente teria que falar de uma coisa chamada teorema CAP. A gente teria
+
+que falar um pouco mais profundamente sobre essa camada de dados, tá? Mas deixa eu te dar um exemplo aqui, ó. Imagina que aqui no navegador ou no mobile aqui, o cara foi lá, inseriu um novo produto, cadastrou um produto. Então beleza, ele foi lá, pá, requisição, bateu no Load Balancer, bateu aqui num servidorzinho aqui e a gente escreveu, né? Ele inseriu. Então,
+
+a gente vai escrever no Banco Master. Show de bola. Imagina que nesse exato momento algum outro carinha aqui que tá logado na aplicação também fez uma requisição para ler todos os produtos, a lista de produtos que a gente tem cadastrado. Se no momento que ele fizer essa requisição e chegar aqui no banco de dados e esse dado que foi inserido aqui, ainda não deu tempo dele chegar até aqui, porque isso aqui leva alguns milissegundos, às vezes leva segundos, às vezes minutos, às vezes horas e às vezes dias, depende da arquitetura. Que que acontece? O nome disso é
+
+consistência eventual, porque quando ele lê a tabela lá, a lista de de produtos que foram cadastrados, ele não vai conseguir encontrar o produto que acabou de ser cadastrado. Dependendo do tipo de dado, isso pode ser um problema. Então, a gente teria que lidar aqui com isso que a gente chama de consistência eventual. Não vou entrar nesse assunto aqui agora. Se você deixar nos comentários, eu gravo um vídeo sobre isso, porque é um tema um pouco extenso, mas daria pra gente mitigar isso se a gente fizesse uma estratégia de lock, por exemplo. Então, no ato de eu
+
+inserir, eu só posso devolver aqui a resposta aqui, OK? Aqui o banco de dados largar a requisição depois que inserir também no slave. Só que aí a gente volta para aquele problema de ponto único de falha. Por quê? Porque se o banco slave tiver fora do A, ele não vai conseguir jogar os dados para cá para depois confirmar. Então aí a gente volta a ter
+
+que entrar em outras ponderações. Não é isso que a gente vai fazer nesse vídeo daqui, tá? A gente vai passar direto porque tem muita coisa pra gente ver ainda e aí se você deixar nos comentários, eu posso fazer um vídeo sobre o teorema CAP e também sobre esse lance de consistência fraca, consistência forte, consistência eventual e mais um monte de outras coisas, beleza? Então vamos seguir adiante com consistência eventual, porque foi assim que a gente escolheu e é assim que a gente quer lidar para chegar com 1 milhão de usuários, tá? Que mais que a gente precisa fazer nessa nossa arquitetura aqui, cara? O que que
+
+a gente precisa trabalhar um pouco mais? Porque a nossa arquitetura aqui tá muito robusta, cara. Nossa arquitetura, dá uma olhada, a nossa arquitetura agora ela já suporta uma volumetria muito alta de usuários, tá? Isso aqui não é uma arquitetura mais infantil, não é aquela arquiteturazinha do jardim de infância, isso aqui já é uma arquitetura muito mais robusta, tá? Aqui a gente já suportaria uma volumetria muito alta de usuários. Só que, mais uma vez, a gente
+
+precisa sempre ir melhorando, cara. Não é da noite pro dia que você bate ali uma arquitetura capaz de suportar 1 milhão de usuários. Então, a gente tem que ir melhorando. Que mais que a gente pode melhorar nessa arquitetura? a gente pode melhorar simplesmente a própria aplicação em si, o código lá, o teu framework rodando e tudo mais e tal. Que
+
+que a gente pode fazer? A gente pode melhorar a performance da aplicação. Porque quando a gente melhora a performance da aplicação, a gente vai melhorar a arquitetura como um todo. E uma das formas da gente melhorar a performance da aplicação é fazendo o quê? é adicionando uma camada de cash. E
+
+aí, pra camada de cash é o seguinte, vou deixar um link aqui em cima e também na descrição para você assistir o vídeo passado que eu já gravei te ensinando o tipo de dado que você tem que utilizar, como que você utiliza cash. Te mostrei no código, a gente fez lá o código lá, implementei no código, te mostrei como é que funcionava, utilizamos o redis aqui e tal, mas basicamente o cash, por que cash? Tá, só para você entender, se você não assistiu o vídeo passado, a gente vai criar uma camada de cash. Para quê? Pra gente armazenar os dados que são extremamente requisitados, são muito requisitados. Ou seja, cara, é
+
+requisição toda hora buscando os mesmos dados. Então, a gente pega esses dados no banco de dados, armazena numa camada intermediária de cash, ou seja, uma camada que fica no meio ali e que roda na memória RAM. Ou seja, é muito mais rápido você buscar dado na memória RAM do que na camada persistente, que é a camada de banco de dados. E tudo isso eu te falei no vídeo passado quando eu te ensinei aqui sobre o cash Aside pattern, tá? Isso aqui é um padrão de cash, cara, assim, ó, sensacional. Então, aqui eu
+
+deixei até os dois diagramas aqui, tá? Então, ele vai bater aqui, ó. O usuário bate aqui, ó, no nosso servidor, ele espanca o banco de dados e o banco de dados abre o bico. Então, que que a gente faz? A gente implementa o cash Asside Patter, que existem também outros padrões de cash que eu posso trazer também nos vídeos futuros, mas basicamente bate no servidor, busca primeiro no cash que é muito mais rápido. Existe esse dado no cash? Não.
+
+Se não existe dado no cash, busco no banco de dados, atualizo o cash e retorno pro usuário. Beleza? Próxima requisição. Chegou, busco no cash, existe no cash, devolve pro usuário, nem bate no banco de dados. Então, com isso aqui, a gente consegue aliviar e muito a nossa camada de persistência. Nosso
+
+banco de dados deixa de ser extremamente requisitado para alguns tipos de dados, tá? Isso aí é você que tem que avaliar. Então, dá uma olhada no vídeo passado onde eu te ensino esse padrão aqui, esse Cash side pattern. Esse padrão aqui, cara, é excelente e melhore muito a performance da tua aplicação. Outra coisa que também é excelente e aumente muito a tua performance são as techs da Insider, a patrocinadora oficial desse canal. Se você é um programador que
+
+passa 10, 12, 14, 16 horas por dia na frente do computador, você precisa conhecer as camisetas da Inside, principalmente a Tech T Shirt, que é que eu tô utilizando nesse exato momento. São camisetas antiodor que desamassam no corpo, não desbota nem a pau e que te fornece o maior conforto e elegância para você que tá vestindo. Além disso, são extremamente versáteis, servindo para diversas ocasiões. Numa dessas ocasiões para você vestir as roupas da Insider é quando tu for para aquela entrevista técnica apresentar os conceitos e fundamentos que eu tô te ensinando nessa aula daqui. Porque só de você tá muito bem vestido e apresentável, tu já ganha aquele ponto com recrutador. E para você que é
+
+inscrito aqui do canal, eu já desenrolei aquele desconto na faixa para você. Então basta utilizar o cupom Renato Augusto, que eu vou deixar na descrição, para garantir aquele desconto especial e andar muito bem vestido por aí. O que eu uso e recomendo a Insider e recomendo para você que é meu inscrito aqui do canal, beleza? Vou deixar o link na descrição, então dá uma olhada aí e agora vamos voltar pra aula. Bora lá.
+
+Entendido isso aqui? Vamos voltar aqui, ó. Eu deixei até um código aqui, ó, para você entender como que é fácil, cara, trabalhar com cash. Como que é fácil aqui você setar um dado no cash, você coloca uma chave, eu coloquei esse X, Y, Z aqui para simular um conteúdo, você coloca o time aqui que você quer que ele expire depois de determinado tempo. E para buscar aqui, você só daria um get, tá? Toda a linguagem de programação que
+
+se prez já tem biblioteca pronta para lidar com cash, cara. Cash é uma coisa extremamente simples de fazer, mas é muito poderoso. Como eu já mencionei, isso aqui aumenta e muito a performance da tua aplicação. Então, mais uma vez, dá uma olhada no vídeo que eu gravei sobre casash, tá? Vamos continuar. O que
+
+que a gente tem aqui nesse exato momento? Como é que ficou a nossa arquitetura? Nossa arquitetura ficou dessa maneira aqui, cara. Nós temos aqui, ó, aquela mesma arquitetura anterior, só que agora nós temos aqui o nosso cash, tá? Um servidor de cash. E
+
+aí, ó, se você tá prestando atenção na aula, que que acontece? A gente vai acabar caindo de novo naquele lance do ponto único de falha. Por quê? Porque se a gente provisionar um servidorzinho de cash só e ele ficar fora do A e a nossa aplicação tentar conectar nesse cara e não conseguir, a gente vai derrubar muito provavelmente a nossa arquitetura. Então é interessante que a gente provisione mais de um servidor de cash mais uma vez pra gente falar de failover, de redundância, pra gente ter alta disponibilidade, tá? E aí já tem
+
+alguns serviços que fazem isso por você. Por exemplo, o ElastCast lá da WS consegue fazer isso. Tem alguns serviços que você consegue criar um cluster, tá? um clusterzinho de vários servidores e mais uma vez você vai ter o endereço de um único servidor e por baixo dos panos ele fica fazendo lá aquele lance do balanceamento de carga entre os servidores de cash, tá? Então, cara, isso aqui é tudo automatizável, tá? Isso
+
+aqui é tranquilo de ser implementado, é tranquilo de fazer. Beleza? Até aqui, espero que você já tenha entendido a questão do load balancer, espero que você tenha entendido a questão da escalabilidade vertical e a horizontal. Isso, cara, isso aqui é interessante demais você mencionar na entrevista, porque mostra que você entende. Você pode chegar lá e falar: "Não, cara, a gente poderia escalar verticalmente, mas aí tem que ver se a nossa aplicação depende de disponibilidade. Ela tem que
+
+est altamente disponível, porque a gente pode tratar com redundância. A gente usa escalabilidade horizontal, a gente pode colocar um load balancerzinho ali para balancear a carga e tudo mais. Servidorzinho de cash aqui, replicação do banco de dados para não fazer todas as réplicas da nossa aplicação ficar apontando pro mesmo banco de dados. Então, cara, assim, ó, isso aqui é o ouro, velho. Isso aqui é o ouro. Isso
+
+aqui você vai tirar aquela bronca na entrevista técnica. Beleza? Então, essa daqui é a nossa arquitetura atual. E aí, para onde que a gente vai agora, cara? Qual que é o nosso próximo passo? Por qu
+
+nossa arquitetura aqui agora tomou forma, hein? O negócio agora tá maneiro, tá elegante, tá robusta a aplicação, a arquitetura como um todo. Isso aqui, cara, já suporta uma volumetria muito alta de usuários, tá? Só que como nem tudo são flores, que que acontece? Vamos imaginar um cenário aqui para essa nossa arquitetura. Vamos imaginar, tá vindo
+
+uma Black Friday aí, vamos imaginar que a nossa API aqui é uma API que cuida de alguma parte do nosso e-commerce, alguma coisa do tipo ali. E aí que que acontece? Tá vindo uma Black Friday, cara. Então o tráfego vai ser massivo, vai ser muito alto, vai ser muito forte. Então o que que acontece? Você teria que
+
+vir aqui na mão e fica provisionando na mão as instâncias. E você não quer ficar sofrendo, indo lá provisionar na mão toda hora e provisiona um, daqui a pouco desprovisiona. Ou então provisionou mais instância, esqueceu, ligado lá, acabou, pô, comendo dinheiro, né? que é pago pelo uso. Então, cara, que que a gente pode adicionar nessa nossa arquitetura aqui para ela ficar muito mais elegante, muito mais robusta? A gente pode
+
+adicionar elasticidade, que é um conceito bem simples, tá? é tornar a escala aqui, a nossa escala horizontal de maneira automática, de maneira elástica, ou seja, de acordo com o tráfego que estiver chegando, a própria provedora de cloud, uma da vida, por exemplo, já configura novas instâncias pra gente. Então, a gente deixa parametrizado lá, por exemplo, olha, o número mínimo de instâncias da minha aplicação no dia a dia é dois e o número máximo, tá? A grosso modo, tá? O número máximo é sete. Beleza? Então, o que que
+
+acontece? Vai ficar lá duas instâncias rodando. O tráfego aumentou, tá chegando mais requisições. A WS vai lá e sobe mais uma. Beleza? Três. Subiu mais um
+
+pouquinho, beleza. Quatro, até chegar no sete. Chegou no sete, não tá dando conta. Aí vai disparar alarme, vai disparar alerta lá para você poder ir lá e fazer a intervenção manual. Ou então o que que acontece? Chegou no quatro,
+
+chegou no cinco, pô, o tráfego começou a cair, vai baixando automaticamente. Ou seja, a nossa arquitetura começou a se tornar elástica, é tudo automático agora. Então você vai pagar exatamente por aquilo que você utilizou. Sua arquitetura não vai ficar rodando lá 10 instâncias lá infinitamente sem tráfego nenhum para isso. Então é tudo agora automático e é aí que a gente chama aqui o nosso outscale, tá? Inclusive na AWS,
+
+tá? Tem um serviço que é chamado de outcaling group, tá? Que inclusive você consegue combar o load balancer deles com o auto scaling group e com o SC2, que é as instâncias lá são as máquinas virtuais da WS. Então você com uma configuração já consegue provisionar tudo isso aqui, tanto a escalabilidade horizontal quanto o outcaling, ou seja, a elasticidade e também o nosso querido e amado load balancer, tá? E aí, ó, nosso banquinho master tá aqui, duas réplicazinhas slave aqui, as replicações acontecendo e a nossa camadinha de cash aqui 100%, cara, que arquitetura fenomenal. Aqui já suporta uma
+
+volumetria muito maior, cara. Volumetria de Black Friday, tá? Volumetria muito maior. Lógico que dá para melhorar, cara. Sempre dá para melhorar. E aí, o
+
+que que a gente pode fazer para melhorar ainda mais essa nossa arquitetura aqui? Vamos pensar o seguinte. Essa nossa arquitetura aqui, a gente provisionou ela aonde? Dentro de um data center. Então, a gente foi lá na WS mais uma vez, que é o que eu tô mencionando aqui, e provisionou toda essa nossa arquitetura aqui, o nosso load balancer aqui, os nossos servidores aqui, a camada de cash, os bancos no data center de São Paulo, tá? Eles tm um data center
+
+aqui em São Paulo, então provisionamos lá em São Paulo. Show de bola. Agora imagina se acontece um desastre natural, um furacão, um tufão, alguma coisa aconteceu, um terremoto, um incêndio, alguma coisa aconteceu com o data center lá em São Paulo. Aconteceu alguma coisa, algum desastre natural que atingiu esse data center. Cara, tua aplicação vai ficar fora do ar. E mais uma vez, agora
+
+a gente começa a olhar pro ponto único de falha, tá? De um alto nível, tá? De um nível muito maior, que é o quê, cara? toda a nossa aplicação ficaria fora do ar se acontecesse alguma coisa com o data center em São Paulo. Então, aonde a gente precisa voltar? Lá naquele
+
+conceito que eu te ensinei no começo do vídeo. Ponto único de falha, a gente vai tratando com failover, com redundância. Ou seja, redundância, cara, que que a gente precisa aqui, ó? Vamos lá, data center. Vamos trabalhar com data center, que é o quê? a gente provisiona toda
+
+aquela nossa arquitetura, ou seja, os servidores web, nossos banquinhos lá replicados, vários servidorezinhos de cash, como eu te falei, ó, tudo no servidor lá no data center, na verdade, de São Paulo. Vamos imaginar que isso aqui é o data center de São Paulo. Show de bola. A gente pode pegar toda a nossa arquitetura e provisionar tudo também num data center lá na Virgínia, lá onde a gente quiser, em outro país, cara, não tem problema. Por quê? Porque fazendo
+
+isso, a gente evita o problema que é isso aqui, ó. Se ficar fora do ar, o nosso load balancer vai direcionar 100% do tráfego pro outro data center. Só que aqui tem vários outros conceitos, tá? Vamos lá. Lembra que eu te falei que nem tudo são flores, nem tudo é mil maravilhas e que todo tipo de coisa que a gente adiciona na nossa arquitetura e ela vai evoluindo, a gente também tem que fazer escolhas, tradeoffs ou a gente vai ter algum desafio para lidar? Pois
+
+bem, vamos lá. Imagina que algum usuário aqui fez uma requisição para inserir um dado qualquer. Ele foi lá, atualizou, então criou um dado novo lá numa tabela do banco, inseriu algum registro, beleza? Então ele veio e caiu nesse data center aqui e o dado foi inserido aqui nesse nosso banco. Que que acontece?
+
+Esses bancos aqui estão em data centers diferentes desses bancos daqui. Então a gente vai precisar de algum tipo de mecanismo, de ferramenta, de algum tipo de coisa para poder fazer replicação de dados entre data centri. Ou seja, isso aqui já começa a trazer um pouquinho mais de complexidade e tudo mais. A gente tá falando de coisas em países diferentes, em data centers diferentes, então a coisa vai complicando um pouco mais. Então a gente também precisa aqui replicar esses dados de um lado pro outro, manter essa sincronia. Inclusive
+
+a própria Netflix passou por essa situação aqui, tá lá descrito no blog deles. Depois tu pode dar uma olhada no blog de arquitetura lá da Netflix. Eles explicam como que eles fizeram para lidar com esse problema de replicação aqui em data centers diferente, tá? Então recomendo fortemente a leitura, beleza? E aí vamos lá. O que que a gente
+
+tem aqui nesse exato momento? Nesse exato momento a gente já tem redundância, failover, já eliminamos o nosso ponto único de falha. Aqui a gente já tem aqui, ó, a nossa segurança aqui, ó, na nossa aplicação, que se falhar de um lado, a gente tem do outro. Aqui 100% do tráfego vem para cá. Nossa aplicação tá muito mais robusta, a nossa arquitetura, né, como um todo. Já te
+
+ensinei diversos tópicos que a gente vai voltar ali, vamos bater um papo, só que o que mais que dá pra gente adicionar? Porque como eu disse, cara, sempre dá pra gente dar um passo além, sempre dá pra gente melhorar, refinar um pouquinho mais pra gente conseguir alcançar uma volumetria maior de usuários. Vamos lá. Qual que é o próximo passo? É a nossa querida mensageria. E aqui mensageria,
+
+nesse nosso caso, vai ser o seguinte, tá? Isso aqui tem diversas formas de utilizar, tá? Mensageria dá paraa gente utilizar como mecanismo de comunicação entre microsserviços, dá pra gente utilizar lá com event driven architecture, que é arquitetura orientada a eventos, dá pra gente utilizar para fazer processamento de trabalho pesado em background, ou seja, os jobs assíncronos, que é exatamente o que a gente vai fazer aqui. Então, mensageria não se resume só ao que eu vou te mostrar aqui. Mensageria serve para n coisas, beleza? Só que no nosso
+
+caso, o que que a gente pode fazer? A gente pode ir na nossa aplicação, ou seja, lá no nosso código mais uma vez e ver o que mais que dá pra gente melhorar. Então, por exemplo, aqui no livro ele vai te dar um exemplo de foto, tá? Eu já vou falar sobre o livro, sobre o autor, tá? Só que ele te dá um exemplo de foto, de processar uma foto lá que você mandou uma foto pro servidor tentando processar essa foto e que demorava o trabalho e tal. Eu vou fazer
+
+um pouquinho diferente. Vamos lá. Eu desenhei esses dois diagramas aqui, ó, que vai ser o seguinte. Vamos imaginar o seguinte. Vamos imaginar que a tua aplicação ela precisa processar algum relatório muito pesado, tá? Vamos
+
+imaginar que os nossos clientes aqui, nossos usuários estão fazendo requisições aqui para quê? Para gerar um relatório. E aí toda requisição que é feita, o servidor precisa chamar o controller, o service, gerar o relatório, bate no banco, busca de uma tabela, de um avio, aí vai montando o dado e aquilo demora. Enquanto isso, fica aquele load infinito na tela lá e o usuário agarrado. Inclusive, isso vai consumindo o recurso do servidor em si e aí começa a competir recurso, vai chegando mais requisições e tal. Então,
+
+nunca é bom a gente ficar agarrando o processo demorado na requisição que veio do usuário. Então, o que que a gente faz? A gente joga isso para processamento assíncrono. Como é que funcionaria? Basicamente a gente receberia a requisição do nosso usuário, já dispara uma mensagem para um mecanismo de mensageria, seja um Rabbit MQ, uma PASCAF, com SQS da vida, tanto faz. E aí um código, tá? O códigozinho,
+
+sua classe, vamos botar lá, sua classe de serviço que você gosta de utilizar, vai ficar em background lá em outro servidor, muito provavelmente nessa nossa arquitetura. Até dá para colocar no mesmo servidor, tá? Mas nessa nossa arquitetura, a gente vai separar isso em outros servidores. E aí o que que vai acontecer? Esse teu código vai ficar dentro de algo que a gente chama de consumer, tá? Ou worker, tá? Que vai
+
+ficar lá lendo essa fila de mensageria. Chegou uma mensagem, ele vai processar. Então o fluxo é mais ou menos assim para você entender, tá? Chegou a requisição, manda mensagem pra fila e já retorna o OK pro usuário. Olha, recebi seu pedido aqui para gerar o relatório. Assim que
+
+tiver pronto eu te aviso. Show de bola. Qual é a próxima requisição aqui? Me dá aqui. Pronto, acabou. É assim que
+
+funciona. Ele não vai processar o relatório. Ele não vai gerar o relatório e devolver pro usuário e agarrar a requisição. Não. Ele dispara pra fila e já tô pronto para receber a próxima. E
+
+aí quando tiver pronto, aí tu manda o e-mail lá pro usuário. Vai depender muito da regra de negócio que você tiver utilizando. Então cara, é assim que funciona esse mecanismo de mensageria, tá? Mas para ficar um pouquinho mais claro para você, você muito provavelmente já deve ter lidado com aqueles marketplace ou e-commerce que você tentou comprar alguma coisa, aí você foi lá, montou teu carrinho, botou os dados do cartão e clicou em pagar. Quando você clicou em pagar, ele não agarrou a tua requisição lá e ficou lá tentando processar o pagamento, bateu no gate de pagamento, válido dado de cartão, não. Ele simplesmente te dá um
+
+OK dizendo que olha, recebi o seu pedido aqui, assim que tiver tudo OK eu confirmo para você. Show de bola. Já devolve a requisição pro usuário e acabou. fim de papo. E aí o código lá em background, em outro processo distante da tradução ali das requisições, ele vai processar ali o pagamento, vai fazer e quando tiver tudo OK, aí sim ele vai te informar lá no aplicativo, no e-mail, alguma coisa assim que a tua compra foi processada. Você não vai ficar com um
+
+load infinito lá agarrado, esperando, esperando, esperando. Isso aí acaba trazendo muito prejuízo, principalmente pra performance da nossa aplicação. Então aqui é assim que a gente utiliza. Beleza? E aí o que que a gente vai chegar aqui? E a gente vai chegar na
+
+nossa arquitetura final, cara. A gente vai ter aqui uma arquitetura pronta para lidar com 1 milhão ou mais de usuários. Isso aqui é para milhões de usuários, tá? Isso aqui não é para 1 milhão de usuários, 1 milhão específico, não dá. Isso aqui é para milhões de usuários.
+
+Por quê? Aqui você tá vendo só um data center, tá? Você tá vendo só um data center aqui. Logicamente que isso aqui é para abstrair a imagem, mas esse load balancer aqui estaria direcionando para vários data centers, tá? E aqui a gente teria os nossos servidores, nossos bancos de dados, nossos servidores de cash, a gente teria nosso mecanismo de mensageria e aqui a gente teria servidores de consumo de mensagem lá da fila. É quem vai ficar processando em
+
+background, ou seja, de forma assíncrona, toda aquela nossa demanda pesada. Então, toda vez que você tiver alguma demanda muito pesada, que demanda muito recurso ali, cara, joga isso para processamento assíncrono, beleza? Se quiser, eu gravo um vídeo sobre isso aqui. E aí, por fim, que que você faz? você adiciona log, métrica, automação e monitoramento, porque precisa disso, por principalmente a parte de automação, você imagina que você atualizou lá agora lá o código no GitHub e agora você precisa atualizar e fazer deploy de tudo. Você faria deploy na mão de cada
+
+servidorzinho desse aqui? É lógico que não, né? Então você precisa de pipeline de CCD, você precisa de um monte de automação, ferramenta de log, de monitoramento, para saber como que tá a saúde do teu data center, dos teus bancos de dados, dos teus servidores. Em cima disso você vai fazendo a sua análise e evoluindo a sua arquitetura. Inclusive, nesse exato momento aqui, cara, a gente já falou de diversas coisas. Você já aprendeu aqui a separar
+
+o banco do servidor e por que a gente faz isso? Você já entendeu o que que é escalabilidade vertical da horizontal? Já te expliquei as limitações, principalmente da vertical aqui, e como que a gente utiliza a escala horizontal para ter failover, redundância. Já te expliquei aqui a questão do load balancer. Então tu vai conseguir na entrevista explicar, olha cara aqui, ó, se a gente tiver aqui a necessidade de redundância e tudo mais, a gente pode utilizar escalabilidade horizontal, a gente pode adicionar réplicas da nossa instância ali, da nossa API e aí em cima disso coloca um load balancer na ponta.
+
+A gente faz a replicação dos bancos de dados aqui, aí separa um paraa escrita e as réplicas pra leitura. E aí já te mostrei também um pouquinho do código para você entender aqui também. Depois a gente adicionou uma camada de cast que eu também já gravei vídeo, já falei para você dar uma consumida lá no vídeo, te falei do ponto único de falha pra gente não ter um único ponto de falha na nossa aplicação. Te falei também sobre outaling aqui, ou seja, elasticidade. Cara, tu chegar na entrevista e mencionar isso aqui, não, cara, a gente pode trabalhar com elasticidade, falar de custos também, porque, por exemplo, pô, a gente pode trabalhar com elasticidade por quê? pra gente pagar só
+
+pelo que usa. Configura lá um rangezinho lá de instâncias mínimas, instâncias máximas, em cima disso tu vai trabalhando e aí a gente vai pagando só pelo que usar. E aí falamos de data center e a questão da replicação dos dados que eu te falei também. Então todos os desafios estão aqui e se você quiser aprender um pouquinho mais sobre isso aqui, você vai ler o livro System Design Interview. É um livro que eu super recomendo, foi um dos melhores livros na área de tecnologia que eu já li. Não é um livro barato, não tem esse
+
+livro em português, mas é um livro que eu recomendo fortemente que você leia. Beleza? Vou deixar o link na descrição. Bom, e agora que tu aprendeu todas as técnicas, conceitos e fundamentos pra gente pegar uma arquitetura do absoluto zero e transformar ela num arquitetura altamente disponível, resiliente, tolerante a falhas, com redundância, escalabilidade e que suporte 1 milhão de usuários ou mais, deixa teu like aí, se inscreve no canal, ativa o sininho para tu não perder nenhuma notificação. Se esse vídeo te ajudou de alguma forma, considere se tornar um membro oficial aqui do canal e apoiar essa produção de conteúdos exclusivaça que eu trago para você semanalmente. Se ficou qualquer
+
+dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve.

@@ -1,0 +1,72 @@
+---
+video_title: "Como conectar o Postgres Chat Memory ao seu Agente de IA no n8n!"
+video_id: SlvEm-z3tKg
+channel_name: "Well Pires "
+channel_id: UCOu9pKHv94bFeRy5vzB-b1Q
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=SlvEm-z3tKg
+video_date: 2025-11-25T19:26:07+00:00
+video_description: |
+  🔥 Minha Comunidade de IA: https://www.aimakersclub.com.br/
+  📚 Meu Curso Gratuito de N8N: https://youtu.be/dw5OmezRLoU?si=5wANK0VtPepcr398
+  💼 Me Contrate para Automatizar sua Empresa: https://calendly.com/wellpires/discovery-call
+  
+  Se os seus Agentes de IA costumam alucinar frequentemente, você tem um problema de contexto e memória. E eu vou te ensinar a resolver isso de maneira simples usando o Postgres Chatmemory com n8n. Espero que curtam o vídeo!
+  
+  VPS da Hostinger usando o cupom WELLPIRES para obter + desconto (por tempo limitado): 🔗 https://tag.gs/Well_Pires_
+---
+E aí pessoal, é o Pires aqui. Sejam bem-vindos a mais um vídeo. E nesse vídeo eu quero entregar para vocês uma solução para todo mundo que cria agentes de A. E tem problema quando o agente de A começa a alucinar e começa a se perder no meio da conversa, ele acaba esquecendo algumas informações que o usuário deu para ele e ele acaba pedindo de novo. Isso acaba com toda a humanização do agente de IA, que é o princípio fundamental desse produto.
+
+Então, se você quer uma solução para isso, fica comigo até o final que eu vou te mostrar como resolver isso utilizando o Postgress Chat Memory no seu agente de A, que é uma super memória de elefante pros seus agentes de IA. E eu levo isso daqui muito a sério, porque você consegue ter um grande contexto de mensagens [música] sem a sua IA se perder. Então, quer saber como faz essa solução? Fica comigo até o final do vídeo. Bem, se você já viu alguns dos meus vídeos antigos de agente de a, pelo menos na parte teórica que eu explico ele, você entende um pouco desse ah desse desenho teórico aqui que eu fiz.
+
+Basicamente os agentes de IA são uma linha que recebe um input e entrega um outp. nenhuma ciência de foguete por trás disso, mas se você coloca 10 inputs diferentes, você recebe 10 outputs diferentes. E a maneira que controla a qualidade desses outs aqui é basicamente esses três elementos que ficam aqui embaixo, ah, que é LLM e memória do seu agente de A, que esse é o ponto específico que a gente vai entrar nesse vídeo aqui, o promptente de IA e as tarefas que você designa pro seu agente de IA. Tudo isso controlado pelo cérebro e pelas instruções que estão diretamente relacionado a esses dois pontos aqui, como explica o próprio desenho em si. Então vamos para essa parte aqui de memória. E aliás, a gente tem todo um
+
+curso aqui explicando cada um desses pontos e como criar o seu agente de IA do zero dentro do N8N. Mas vamos para essa parte específica da memória. Você vê que esse diagrama aqui ele é totalmente alinhado com esse desenho propositalmente para você entender de maneira mais ã análoga. mais direta possível, como funcionam esses agentes de IA. E a gente vê aqui que ele depende de três elementos, né? Ele depende de um
+
+modelo de chat, que é o modelo de LLM. Se eu abrir aqui, tem todos os modelos de LLM disponíveis no mercado que a gente pode usar. Alguns mais novos do que o outro, alguns recebem novas atualizações. Inclusive eu tô utilizando o Google Gemini que saiu 3.0 e é uma loucura os resultados que a gente tem com isso daqui. Mas não é um vídeo
+
+específico para Google Gemini. Eu quero trazer um vídeo específico sobre memória aqui para vocês. É basicamente essa memória aqui com a cara de elefante que eu vou trazer para vocês e que funciona muito bem. E tem um propósito, como eu falei para vocês, por que tem essa memória de elefante? É porque ela não se esquece, assim como os elefantes. Então,
+
+bem, vamos lá atacar para esse lado aqui de memória. Para você conseguir utilizar o Postgra Chat Memory, você tem que fazer a sua inscrição aqui nesse aplicativo chamado Supase. E fica calmo porque essa inscrição aqui é 100% gratuita. Você pode, ã, ir lá no site do Supas e criar sua conta através do GitHub, que é um lugar muito utilizado por desenvolvedores. Ou você pode utilizar o seu próprio e-mail e senha que você cria aqui dentro do Supase.
+
+Você só vai pedir para verificar lá no seu e-mail, né? Eu já tenho a minha conta criada aqui, mas eu vou fazer o sign ining. Eu vou logar aqui na ferramenta [roncando] e toda vez que você entra aqui na ferramenta, você tem direito a dois espaços gratuitos. Só que dentro desses espaços é onde você pode criar inúmeras tabelas pros seus agentes de A, que é basicamente através de tabelas que eles conversam em si. É através das tabelas que você coloca todas as conversas do seu agente de A. É
+
+através das tabelas que você cria um banco de dados para todos os seus leads. Você consegue realmente criar inúmeras tabelas, mas você divide assim os espaços. Eu gosto de criar um agente de IA para cada tabela. Ou seja, um agente de A vai ter todas as suas conversas, vai ter todo o seu banco de leads. E bem, a maneira que eu divido isso, você deve se perguntar: "Pô, mas se eu tenho uma conta, eu só posso fazer duis projetos? Isso quer dizer que eu só
+
+posso ter dois agentes de IA. Mas a grande jogada é que para cada agente de eu gosto de criar uma conta no Supase. Isso porque isso serve como um ativo valioso pra empresa do meu cliente. Eu tô entregando uma organização do banco de dados dele que eu quero entregar essa chave do castelo para ele no final do projeto. Bem, eu não vou entregar a minha conta do Sup, mas eu criei uma conta com ele de Super Base para ele e ele vai ter acesso a tudo. Só que eu vou
+
+est lá convidado para usar aquele projeto e desenvolver o agente de A dele. Então, bem, o que você vai passar vai ser por isso daqui, onde você vai criar o seu projeto dentro do Supase. [roncando] Ah, eu já tô aqui logado na minha conta, então vou utilizar essa organização aqui. Bem, ele tá falando que eu não posso usar essa organização, ela tá meio bugado. Deixa eu fazer o seguinte. Por que que eu não excluo aqui
+
+essa organização? Ah, vou excluir ela. OK. Depois excluído aquela organização, eu vou criar aqui uma nova organização para vocês, que esse daqui vai ser o processo padrão que vocês vão passar toda vez que vocês vão criar uma conta aqui dentro do sua base. Então, deixa eu dar um nome aqui. Ah,
+
+demo YouTube 24/11. Simples assim. Vou colocar personal, plano gratuito, 0 por mês. Criar a organização. Vamos lá. OK. Ele vai pedir uma senha
+
+aqui para mim. E prestem bastante atenção nessa senha. Essa daí tem que ser uma senha que você vai memorizar porque lá na frente você vai precisar dela para fazer integração com o Post Chat Memory dentro do N8N. Essa daqui é a mesma senha que você vai integrar com o seu agente de A aqui dentro do N8N. Então anota isso num bloco de notas ou se você quiser ser mais profissional, coloca em um ferramenta de gestão de projetos que você utiliza. Pode ser o
+
+Google Drive, pode ser o ClickUp, etc. Então vamos lá. Vou criar aqui uma conta que eu faço questão de me lembrar. Ah, região. Bem, coloca a região que tiver mais próxima de você, lugar que tiver mais próximo. No meu caso, South
+
+America, São Paulo. Infelizmente não tem um servidor aqui em Pernambuco, mas eu fiz a questão de morar um pouco exilado da movimentação. Então, ã, vamos lá criar um novo projeto mesmo em São Paulo. Enfim, você vai esperar esse project status aqui ficar verde, que é quando seu projeto tá pronto para ser integrado dentro do N8N. E o que você vai fazer basicamente é vir aqui em project settings, você vem em API Keys, eu vou criar aqui uma chave API pro meu projeto. OK, tenho uma chave API pro meu
+
+projeto. E agora vamos fazer a integração aqui dentro do N8N. Eu já tenho aqui conectado o node do Post Memory, mas eu vou criar aqui uma integração nova. Eu vou vir aqui em Post, eu vou colocar demo YouTube 24/11, OK? Eu venho aqui em connect e o método eu coloco transaction poler. Beleza? Aqui
+
+embaixo eu venho em view parameters. O host eu vou simplesmente copiar e colocar esse host. A porta eu recebo aqui 6543. Eu vou copiar essa porta e eu venho aqui embaixo para colocar minha porta. Database posturas. Eu acredito que por
+
+padrão ele já vem posturas. Beleza? E user, eu copio aqui o user. Na senha você vai colocar aquela senha que você se lembrou ou se você é mais profissional que você anotou. Eu vou colocar ela aqui e vamos mais uma vez fazer a conexão.
+
+Bem, conexão tá pronta e agora eu vou simplesmente testar esse agente de A aqui com a memória dentro do N8N. Deixa eu colocar um modelo de chat que é algo obrigatório dentro do N8N para você fazer esses agentes de IA. Bem, eu vou utilizar um modelo mesmo da Open AI. E se você não sabe como conectar o modelo da Open AI, você tem que basicamente fazer o login aqui no platform. Openaai.com.
+
+Eu vim direto aqui pra página de billing, que é a parte onde eu vejo os meus gastos com a minha API, mas ele vai pedir para você fazer o login. Eu vou logar aqui com a minha conta do Google mesmo. E você escolhe esse botão aqui no painel lateral esquerdo do Nav. Ah, você coloca API KIS, você cria a sua chave API e você vai receber o código da sua chave API para cadastrar a sua credencial. Então, por exemplo, se eu venho aqui criar uma nova credencial, eu só coloco a chave API que eu recebi e eu vou est pronto para ir no meu agente de IA.
+
+Agora, a parte valiosa de você ter criado uma conta no Supas que você consegue resolver dois problemas de uma vez só. Você consegue colocar um chat memory pro seu agente de IA e você também consegue criar um banco de dados pro seu agente de IA. Então, se por acaso você tem um fluxo de pessoas entrando no seu WhatsApp, você vai querer ã rastrear a jornada daquele cliente no WhatsApp. você vai saber, você vai querer saber se ele é um cliente que tá em atendimento, se ele é um cliente que tá qualificado, se é um cliente que tá pronto para enviar uma proposta. E bem, basicamente você vai controlar isso através de de planilhas que podem se tornar um lugar visual, como por exemplo, uma CRM de vendas. Ah,
+
+você consegue fazer isso tudo com o Supas e uma ferramenta de código para criar essas coisas visuais, como por exemplo o lovable. Eu vou mostrar aqui para vocês alguns exemplos do lovable. Esse daqui é um exemplo de CRM ã que foi usada com lovable. Eu criei ela com o lovable e todo o banco de dados desses leads que estão sendo preenchidos aqui foram criados com o Supase. Então o Supas eu consigo gerir tanto as conversas do meu agente de ah porque ele tá usando postess por trás do Supase. O
+
+Supas é uma grande interface que os desenvolvedores se aproveitam muito dessa interface por conta do alto valor que essa interface entrega pra gente. E ela tem uma um motor muito potente que é o poster usando por trazer tudo isso de graça. Então você se beneficia muito de ter criado uma conta no Subabase, ter criado a sua chave API. Ah, e só um adendo para todo mundo. Se você quiser o template desse agente de IAC de clínicas para vender ele por R$ 5.000, basta
+
+seguir a página da AI Makers Pro aqui no Instagram e enviar na DM da AI Makers Pro a palavra clínica, assim que tá na tela, desse jeito exato aqui, para receber esse template no seu Instagram completamente gratuito. Beleza? É isso. E para integrar o Supas aqui dentro do N8N, basta você utilizar o node do Supase. Ah, eu tô utilizando aqui o Supas Vector Store, mas você pode utilizar o Supas mesmo para atualizar a sua planilha de leads. Ah, toda vez os
+
+meus agentes de A do WhatsApp, eles eles têm um padrão. Sempre eu sigo esse padrão aqui para construir os meus agentes de A, como foi o agente de A de clínicas que eu mostrei para vocês. Esse daqui é um agente de I que você pode vender por R$ 5.000 para clínicas e eu sempre cadastro todos os clientes que entram em contato com essa IA no WhatsApp lá dentro do Supase. Então aqui explicando um pouco da lógica para vocês. Ah, eu recebo a mensagem desse
+
+usuário através de um web hook. Eu vejo se ele tá inscrito na minha tabela de leads. Se ele tiver, a gente passa paraa frente automação. Se ele não tiver, eu vou criar uma linha para ele lá na minha planilha, com as informações dele, o número de telefone, o nome, o estágio que ele tá no atendimento e eu volto para verificar se ele tá lá na minha planilha. Ou seja, como ele foi criado, a gente vai reverificar isso e vai passar pra frente porque ele foi criado. Então essa daí é
+
+uma maneira de você se beneficiar muito utilizando duas ferramentas extremamente potentes. E eu fico muito feliz de ter ajudado vocês nisso. Beleza, galera? Valeu e segue nas próximas aulas do curso de N8N. M.

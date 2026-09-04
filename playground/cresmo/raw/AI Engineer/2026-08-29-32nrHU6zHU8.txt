@@ -1,0 +1,113 @@
+---
+video_title: "Agents Are Where Microservices Were in 2015 — Roberto Milev & Uday Kanagala, Navan"
+video_id: 32nrHU6zHU8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=32nrHU6zHU8
+video_date: 2026-08-29
+video_description: |
+  Tell a travel agent to book a flight whenever the fare drops below 200 dollars and something awkward follows. When it fires two weeks later, who made that purchase? Roberto Milev and Uday Kanagala keep returning to that blurring, because Navan sells travel and expense management and the answer decides what authorization even means. An agent may act on behalf of a user or under its own service account, and the old model of a user or a service principal does not survive contact with either. Their guardrails run before and after every tool call rather than at the edge.
+  
+  The framing is that agents are where microservices sat in 2015, when the sensible advice was that if you can build a well structured monolith you probably should not reach for microservices. The same holds here for reaching past a single agentic loop. Navan runs one master agent that progressively loads skills, treating a skill as the unit of context, pluggable and testable on its own. Logs stop working when an agent emits this much thinking, so hooks intercept each tool call and emit the goal, the reasoning and a confidence score, which lets an inferred answer be routed to a human. Testing a nondeterministic system means scoring trajectories rather than asserting outputs. Cost remains genuinely unsolved.
+  
+  Speaker info:
+  Roberto Milev:
+  - https://www.linkedin.com/in/robertomilev/
+  Uday Kanagala:
+  - https://www.linkedin.com/in/udaybhanuprasad
+  
+  Timestamps:
+  0:00 - The microservices bandwagon, and what it taught
+  1:25 - A reference architecture starting to crystallize
+  2:34 - Runtime, and agents being stateful by nature
+  3:42 - Memory, from RAG to episodic
+  6:04 - Skills as the unit of context
+  7:16 - Why logs stop working for agents
+  8:24 - Hooks, traces, and confidence scores
+  9:32 - Testing something nondeterministic
+  10:44 - Scoring trajectories instead of outputs
+  13:04 - Who actually bought the flight
+  14:15 - One master agent, or many
+  15:29 - What is solved, and what is not
+  17:48 - Cost, replay, and emerging standards
+---
+[music]
+
+>> Right. Hello, everybody. Um welcome to our talk. My name is Roberto Milev. I am the chief architect at Navan.
+
+And I have Uday here, who's also part of the architecture team. Uh Navan is a travel and expense management company. And we'll share with you some of our learnings around how you run an AI and what have we uh discovered. So, uh if you've been long enough um in this industry, you remember that over time there are a few paradigm shifts. And we all tend to jump on a bandwagon and try to uh kind of do things, all right?
+
+Last time was when we all jumped on the microservices bandwagon. And out of that, a lot of good things came out, like container orchestration, Kubernetes. Then we had service mesh, uh circuit breakers, all of those good things. But it didn't happen overnight. Like it took a long time. It took some time for
+
+us to learn how to do these things. So, one of the quotes from there is, "If you can't build a well-structured monolith, why even try to build microservices?" Uh it kind of translates today because if you can't build a single agentic loop, why go in and try to build a multi-agent orchestrated system? So, over time, just like previously, uh a reference architecture is emerging. So, we have learned a few things by by doing in production. We have a
+
+lot of agents, a lot of tokens per day being used. And as I said, there are few layers that have standardized, that have crystallized around what do we need to run agentic flows reliably in production. Runtime memory, context management, all around operational cross-cutting concerns, and around orchestration as well. So, today we'll go over some of these layers, all of these layers actually, and we will show kind of where the industry is, what we have done, what we have learned, and and so on. So, starting at the runtime layer, we've talked a lot and we've built a lot of services in order to scale them statelessly before.
+
+And now we're in a new world where, you know, agents are stateful by nature. They need to have persistent sessions. They need to have isolation. Their life cycle is different than the life cycle of a traditional API service, and so on. So, the cloud providers have jumped in and try to fill this gap.
+
+Um, you know, AWS, GCP, Azure, they all have a some incarnation of a agentic runtime. If you scan the QR code for this slide and for the following slides, you will see a comparison of some of the features and how different cloud providers try to try to approach this. At Nvono, we run everything on AWS. AWS has an agent core runtime. We heavily use that, but we have filled some gaps around that, like the session persistence and rehydration is something that we have built.
+
+And we also run a bunch of other bunch of SDKs for writing agents. And part of these runtimes is typically they are framework agnostic, although they all prefer their native framework in a way. Um the next layer in the stack is around memory. Um we started with rag. Rag was kind of a big thing for a while. We were
+
+kind of driven to that out of necessity because you cannot fit an unlimited amount of context into an agent. And over time um all of these cloud providers and the industry has implemented a pipeline where memory is kind of automatically generated by following a workflow of ingestion, extraction, and then consolidation and retrieval. And there are parts of rag that are built in things like a long-term memory that inherently has some semantic characteristics. But memory is built up over time from short-term conversational memory to long-term memory that you kind of manage yourself. Uh then episodic memories about kind of instances that worked well and didn't work well.
+
+Uh and so on. We at Navan again being a AWS shop, um utilize their agent core memory. But we are also kind of doing it in a way that uh matches matches our our use case. And then the next thing is context management. You know, it's a hot topic.
+
+It was a hot topic and it's still a hot topic. Context windows are growing bigger, but there's never enough context or if there is too much context again, agents struggle with that cuz you lose focus and so on. Um what we found working is that uh focusing on skills as a unit of context. And I'll explain what I mean by that. Uh we look at skills as both having context, meaning instructions and uh setup about a certain domain or a task.
+
+And there's also the the second part of the skill, which is the tool execution and you know, the agentic part. And we compose context dynamically out of skills that we use as units of work that are pluggable, that we can test independently, and that we can reuse. So, for example, when we are we have an agent, we have skills that are that are specific to a domain. And based on that, we compose them. And we rely on the you know, the progressive disclosure, which is a feature of the skills itself to start with a limited scope of context and then expand by included metadata further down the the line.
+
+I'll hand it over to Uday Uday now to kind of walk us through the rest of this. >> Thanks, Rudra. All right. Can I have a quick show of hands here who have who had built an agent uh which failed halfway through multi 20 20 step or 30 step process and be able to figure out quickly or reason about why the agent failed. So, again, logs we've generally been traditionally with microservices, we all are familiar with logs. There's logs out
+
+there and then we go check out the logs. But this changes everything the moment we switch to agents. Agents output a lot of thinking. There's too much to consume. So, that's not the right way to do it, right? So,
+
+traditionally, that was the way, but our thought has to be changed right now. In the in the way they Claude as an example, when we take Claude as an example for an agent, there is hooks and we can intercept everything that Claude as an agent that does at that level. So, what kind of tool it calls, right? What kind of decision it's making? So, before pre-tool and post-tool call or a pre-decision or a post-decision, so all of that are a point point in time for us to intercept and make a decision and either block to do a blocking operation or to log in metric or emit a metric, right? So, this is a
+
+critical place where we can emit auto traces. At Nvone, we use one of our provider to interest to emit these auto traces and through these traces we should be able to figure out the spans, the traces and at what point in time where the agent is stuck, which gives much more confidence into how we operate and build the agent. This is day-to-day operational challenge. Building agent these days there's so many frameworks, but how do you navigate building and operating an agent later is primary concern. Um And moreover, the reasoning chain, the thought process and critical signals that we emit here as part of the trace captures, we emit a few primary signals here. What is
+
+the current goal the agent is going through, the reasons behind its operations and the belief status and the tool calls that it's making. So, this kind of gives us a judgment pointers. Um Um in the traces. And when we make when the agent makes a decision, there is a confidence score, how confident it is when it makes the judgment, right? So, whether there are multiple paths that it leads to this choice or whether this is an inferred answer.
+
+So, basically these are signals that gives us confidence later to review. If this is an inferred answer, there could be a human in the loop to guide through and tweak the agent to perform a little better. Again, um Can I have a raise of hands again to see how confident are you like 100% confident in testing pipelines with your agents? Right. So, this is one of the other um critical aspect today. Um
+
+Because agents are non-deterministic. We've all been used to program and write much more deterministic flows. And we know how it works. The Can I ask an engineer? Engineer can come and tell me how this the algorithm, the sequence of operations. Everything is programmed in
+
+our mind. Everything is expectations. But now the agents come into a non-deterministic way. And how do we test them, right? So, that is very criticality here.
+
+And yeah. We are also struggling. Um we've uh started doing building agents. We the day to operations was challenging and then we failed in a lot of steps. How do we course correct? The moment we change
+
+something, something else broke breaks, right? So, how do we do that? Um one one approach that we took uh this is from um research papers uh around the in a multi-step uh orchestration, when an agent makes uh 30 steps or decisions to make to reach to a goal, if that is a program or that's a different story. But this is not a program. This is non-deterministic way of It makes up its own steps every time uh differently.
+
+So, how can we chart a deterministic graph here? Is it possible? No. Can we have a trajectory of its starting from an end to a goal and then see how much how far it went in the trajectory and how far it went from the source to the destination is what we can compute to evaluate the efficiency or the completeness of the agent agent evaluation. So, we we heavily rely on um trajectory vals um and uh this There are few other signals uh as I briefly spoke around uh in the previous slide around the inferred signal. Um
+
+If the answer is from an in in inferred answer, uh how can we uh loop that into uh and make a signals around uh how can we classify that this is a regression and make fixes towards the agent?
+
+Uh So, the next is the uh guardrails. Um Where
+
+Is this the one? Yeah. So, guardrails and authorization, um this is uh critical displays a critical role in enterprise AI. A lot of information is being piped to models. Um there could be sensitive information that goes into it uh without our knowledge. And
+
+we as uh uh leaders, how can we put in this governance layer um to stop this um is very uh critical here. And and the concept of uh authentication and authorization um is taking up a different approach here. Um traditionally, we've seen um a user or a service account, but now what is an agent? Agent can be acting as on behalf of users. There is so much of things uh so many of use cases there. Hey, book me a flight
+
+whenever it's cheaper than $200, right? So, we just tell this assertion and then agent go figures out and does this action on behalf of me. So, is it me making this purchase or is it agent me making on behalf of me? So, there is Agent acts as a on behalf of user or agent uses a service account as well. So, the line is being blurred here and we need to make fine-grained authorization decisions here, and the policy layer that's where the guardrails and authentication authorization plays a critical role.
+
+And in the one what we employ here is before every tool call pre-tool and post-tool, we have this guardrails to check and block and make a informed decisions. And this single agent versus multi-agent, again, this is kind of a orchestration wars you can think of with it to build a single agent or a multi-agent. Again, as Roberto briefly hinted if you can't perfect and build a single agent, why go towards multi-agent, right? So, learn from our uh failures, experiences, and build towards that. At Navan, yeah.
+
+What the approach that we have taken is single master, and then we adopted sub-skills. Um There are sub-agents within it. So, it's a single agent that can progressively load the skills and understand decisively what needs to be loaded into the context, and then make this navigation through the use case. But there are other patterns that are also emerging. There are different class of use cases here. One is um
+
+agent-to-agent communication. So, there are If you take a large scale organization, and there are so many of these teams that are that are acting as the boundaries, and they don't talk to each other, let's say. How do we communicate? There are two agents on either of the side, right? How do we do it? So, there is A2A protocol
+
+which can help us establish the contracts in terms of skills. And we can use A2A as a protocol there, which kind of is a boundary between the teams. Yeah, over to you, Uday.
+
+>> All right. So, as we went through the stack, it's obvious that um some components of the stack are in a more mature state and we already have good answers for them. As Uday said, the runtime, I think it's pretty much solved. We are so advanced in orchestration and we are running LLMs in kind of uh a very uh brute-force way. So, scaling is not a not a problem. Also, memory, I think uh
+
+as uh the frontier LLMs get better and as our practices get better, we will uh find a way to cover the majority of the use cases and there is good maturity around the the cloud providers. Uh MCP has emerged as the de facto protocol and tool calling is now a feature that everybody supports. So, we are seeing some industry convergence around that as well and MCP as a standard is also evolving. Now, it's becoming stateless. It's uh we are reaching a point where kind of we know how to invoke uh services and and and tools with agents.
+
+Uh in some areas, things are happening, but you know, there's still a lot of unknown. Around observability, there is a push towards OTEL, but does OTEL really work for agentic calls? Uh yeah, you can make it work as Uday was saying. Um also, we are getting more comfortable around um around that the the the the testing patterns. It's very hard to test, but we have found a way to give customers um quality experiences even with the unreliability of agentic system and I think that's kind of uh getting in a in a state that is uh that is more better defined.
+
+Orchestration is another one um, where, you know, we have a uh, we have patterns, uh, we can build, you know, bigger agents, smaller agents. Uh, as we said previously, probably the right answer is to not over-engineer. Uh, so we're learning there and and and uh, a pattern of school thought is also emerging. Uh, where we're all struggling with and the previous talk was about this for the developer, um, AI assistant development perspective, but also we're seeing these issues from our production agents. It's very hard to predict cost and it's very hard to manage cost, uh, and put guardrails and solve this in a way where there is reliable, maybe fallback or have agents be, uh, using cheaper models for certain tasks. Uh,
+
+uh, this is all driven by kind of the big AI vendors who, I think, their interest is for us all to spend more tokens. Um, replay and debugging, Woody talked about that, that's also a big big issue. It's very hard to understand, but I think this is also something that that is going to be solved because we can now use, uh, agents to uh, get over the cognitive overload of trying to debug what they do. And then standards, um, standards are emerging uh, by, you know, the community. Uh, Hotel, as I mentioned, agent to agent is young, it's kind of pushed by certain vendors, but I think over time we will we will get, uh, there.
+
+Uh, with all of this said, you know, we know what we need and it's up to us to write and build it. Thank you, everybody. >> [applause]
+
+>> I

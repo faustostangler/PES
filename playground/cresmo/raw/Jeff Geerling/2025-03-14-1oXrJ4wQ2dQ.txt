@@ -1,0 +1,96 @@
+---
+video_title: "The fastest WiFi EVER on a Raspberry Pi"
+video_id: 1oXrJ4wQ2dQ
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1oXrJ4wQ2dQ
+video_date: 2025-03-14
+video_description: |
+  It is rare that WiFi is better than Wired. But in the case of the Pi 5, it is.
+  
+  Waveshare sent over the HAT I was using for testing in this video (but nothing else), and they send any other form of payment—it was a project I had underway before they even sent the HAT. The video is NOT sponsored, and I in fact have purchased additional Waveshare M.2 E-Key HATs separate from this project... I just like to be *extremely* transparent about what equipment was provided in all my videos. So there ya go.
+  
+  Some of the things mentioned in this video (as an Amazon Associate, I earn for qualifying purchases):
+  
+    - Waveshare PCIE to M.2 E-Key HAT+: https://amzn.to/3DBWybJ
+    - Waveshare PoE+ PCIE to M.2 E-Key HAT+: https://amzn.to/3Fio922
+    - Intel BE200 PCIe M.2 WiFi (Nicgiga): https://amzn.to/4hvaCBI
+    - Intel AX210 PCIe M.2 WiFi (Waveshare): https://amzn.to/4bHEzNz
+    - Netgear WiFi 7 WBE710 AP: https://amzn.to/4bK6rkd
+    - MokerLink Managed 10/2.5 GbE PoE+ Switch: https://amzn.to/3FoBmGU
+    - Blog post with details: https://www.jeffgeerling.com/blog/2025/exploring-wifi-7-2-gbps-on-raspberry-pi-5
+    - Pi PCIe devices project: https://pipci.jeffgeerling.com/#network-cards-nics-and-wifi-adapters
+  
+  Note: Waveshare also sells bundles including the HAT _and_ WiFi adapters, which will save a few bucks (and maybe a little in shipping!).
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - WiFi 7 Hype Train
+  00:55 - Upgrading my AP from 6 to 7
+  03:34 - Upgrading my Pi from 5 to 7
+  05:54 - WiFi 7 setup in Linux (in Pi OS)
+  08:53 - How fast is it?
+  10:24 - Is it worth the upgrade?
+---
+Companies that build Wi-Fi things want us to praise Wi-Fi 7 as the next big thing, but really, it's Wi-Fi 6E with a few added features. But it's still cool tech, and in five or so years, once more people have gear that could actually take advantage of Wi-Fi 7, you might want to consider upgrading your Wi-Fi. But for most of us, Wi-Fi 6E actually has like 99% of the benefits of 7, and you can get it cheaper. To prove that, I upgraded this Raspberry Pi 5 to Wi-Fi 7, installed a new access point with all the latest acronyms like MLO, and got Wi-Fi faster than a gigabit. But considering the only other device I own with Wi-Fi 7 is this iPhone, even I would get more value out of Wi-Fi 6 or 6E.
+
+Anyway, in this video, I'll install a new Wi-Fi 7 access point, install a Wi-Fi 7 chip on a Raspberry Pi 5, and show you how to upgrade Linux for Wi-Fi 7. And maybe you'll see even more reasons you might want to wait on upgrading. At the studio, I've been running all my Wi-Fi testing off this older Netgear Wi-Fi 6 AP in the rack room. It works well, and it runs on the 2.4 and 5GHz bands, but Wi-Fi 6E, which this doesn't support, added on a few new features and the 6GHz band for faster, more stable connections.
+
+It has QAM, MU-MIMO, and other acronym soup, but instead of rehashing that stuff since I already talked about it back in 2023, I'll get right to my new Wi-Fi 7 AP, the Netgear WBE710, which I've christened AP02. I paid for this thing, they're not sponsoring anything, but it's an enterprise AP that mounts on a ceiling, wall, or in my case, to a T-bar ceiling grid. These things are meant for businesses, where you might be installing like a dozen of them, so the actual box doesn't include things like a mounting guide, but luckily I found that online. Honestly though, even though this thing is like $300 versus the $99 most people pay, it's worth the price. These are way more reliable and work better with more than one or two devices.
+
+Anyway, once I figured out how the mount worked, I put it on my ceiling grid and installed the AP. My next task was getting my network to it, so I crimped together a custom length Ethernet cable. This AP takes power over Ethernet, which makes installing these things even easier. As long as you have a PoE+ switch, you can get up to 2.5 gigabits of speed through the cable, even with older Cat5e cables like the one I made.
+
+But, if you buy 10 gig PoE++ access points, you should probably use at least Cat6A cables, which are thicker and work with more power and more speed. For my needs, 2.5 gigs is enough, since I'm not using like 20 things on Wi-Fi at the same time. I plugged in one end to the AP, and the other end into my little MokerLink 2.5 gig PoE+ switch.
+
+After plugging in, it takes about 5 minutes for the AP to boot up. While it's booting, I should also talk about location: It's important to not only orient the thing correctly so you're getting the most signal possible, it's also more important than ever to think about where you're installing it. With 5 gigahertz, and especially with 6 gigahertz, you need the access point as close as possible to the devices you're using, because the signal can't make it through more than a couple walls, and definitely not like concrete or a foundation wall. That's why I'm installing mine right over my desk, where I test stuff. If you don't have a direct line of sight, there's a good chance your computer, or tablet, or whatever will choose a stronger 2.4 gigahertz signal. That's good for a reliable
+
+connection, but it'll sacrifice a ton of performance. And what's the point of upgrading to Wi-Fi 7 if you only get a few hundred megabits? Anyway, with the AP booted up, I went into Netgear's web UI and set up a couple networks. Basically, I have a 6 GHz only network for testing, and then a mixed mode network to see how the connection connects if I have all the different frequencies available. With the AP online, it was time to turn my attention to the Pi.
+
+Waveshare sent over this HAT, and they're calling it the PCIe to M.2 E-Key HAT+, and they sell a couple different versions. Both of them have external antenna connectors, which is nice, but their more premium model even includes PoE, so you can power the Pi off ethernet too. But the HAT comes with a GPIO extender, so you can use the Pi's pin still even with the HAT installed. You don't have to use the extender, though. It's just nice to have that option. It also has these standoffs so you can mount it to the Pi
+
+like any other HAT, and I just put the screws in through the bottom of the Pi bumper case. Then I plugged in the little PCI Express FFC, this orange cable here. These things are a little finicky, and you also have to get the cable plugged in the right way, in this case with the little arrow at the top, like this. If you plug it in the wrong way around, it won't work at all. These cables are kind of annoying to work with, but they work fine once you get them in. The HAT has a little cutout for airflow, and it lines up
+
+pretty well with the official Pi 5 active cooler, but it might not line up as well with some of the other coolers on the market. I also plugged in the included USB cable. This is only necessary if you're going to use Bluetooth or something like a 4G or 5G card that needs USB connections on the M.2 slot. Not all cards do, so check your card's documentation for whether or not this is required. Finally, here I'm installing
+
+the Intel BE200 Wi-Fi 7 card. It supports Wi-Fi 7, Bluetooth 5.4, and it has two external antenna connectors. Those connectors work perfectly with the two antenna adapters Waveshare included, which go from the absolutely tiny MHF-4 connector on the chip to the U.fl connector on the hat. That lets you install some
+
+much nicer antennas than the cheap flexible ones you might get with, like, a tiny PC. And regarding the BE200 chip, some people speculated this chip only works with Intel CPUs, but that's just not the case. At least I hope not, or else why am I even making this video? To finish off the build, I'm screwing in two Wi-Fi antennas Waveshare included, but you could plug in any kind of antennas if you want even more signal-like if you're putting the Pi further away from your AP. So it's a tidy little setup with a lot of power in a tiny footprint. But that's just the hardware.
+
+Hardware's easy [lol, sometimes]. I found out that getting Wi-Fi 7 fully functional on Linux—much less on a Raspberry Pi—took a little extra work. And as always, I wrote up everything on my blog, including how to get Intel Bluetooth working. I'll link that below, but I'll give you the rundown here. After you flash Raspberry Pi OS to a microSD card and plug that in, turn on the Pi and let it finish its first-time bootup process. With any new PCI Express device, I first run lspci to see whether the Pi sees
+
+it. And if so, I run it with -vvv to see if the Pi also loaded a driver. And that seems not to be the case here. Raspberry Pi actually just added in the Intel Wi-Fi drivers, so upgrade the system to make sure you're on the latest version. Once that's done, reboot the Pi. After it's rebooted, log back in and run
+
+lspci again. This time, it says it loaded in the iwlwifi module. So, is it actually just that easy? If I run 'ip a' to show all the network connections, I only see wlan0, which is the Pi's built-in Wi-Fi. So, no, it didn't work. What gives? Well, whenever I have a problem with hardware in Linux, the first
+
+place I look is the Linux kernel logs. You can see them with the command 'dmesg'. Scrolling up in there, I saw all these red lines about firmware not being found. And, helpfully, the driver even tells me where to get it. Thanks, Intel! Grab the links to the firmware files from the Linux wireless firmware
+
+site, then use wget to download the write files into the Pi's /lib/firmware directory. After doing that, go ahead and reboot the Pi again. Now, when I log back in and check the kernel logs, I should be able to see the driver loading the firmware, and… there it is! Now, next up, I need to see if I can actually use the Wi-Fi. So, I run 'nmcli', short for NetworkManager CLI. And, unfortunately, it's saying
+
+unavailable, with 'software disabled'. Luckily, there's an easy fix for that. If you don't set the Wi-Fi country when you first set up your Pi, you can just do that now. So, in 'raspi-config', under System Options, I can configure the wireless LAN settings and pick my country, the US. I skipped entering the rest of the network details, though, because that would set it up on the Pi's internal Wi-Fi. But, now, going back to
+
+nmcli, it shows my Wi-Fi as disconnected. Good. I can scan for local networks using 'nmcli d wifi list', and, of course, I'll blur out half the stuff. But, the good news is, it's working. I can connect to my Wi-Fi 6 network with this command, then check the connection, and… it's disconnected. Time to head back to the
+
+kernel logs. And, there. It looks like this Broadcom driver might be causing some issues, even though I'm not using the internal Wi-Fi. Let's disable the internal Wi-Fi to stop that. Edit the boot config file, and add in this parameter. Then, save it and reboot. Now, after a reboot, it should just connect
+
+automatically. And, if I check with 'ip a', I can see I got an IP address. And, if I use the iw utility to get all the details for my connection, I can even see it's connected on a 6GHz channel. But, to be complete in my testing, I also want to test it on my BE network, which has 6 and 5GHz channels. And, to do that, I'll show a little simpler UI for Wi-Fi on the command line. And, that's 'nmtui', not to be confused
+
+with 'hawk tui'. Using that, you can edit, delete, and add connections, like I'm doing here for my BE network. It looks like it's connected on a 6GHz channel again, even on this BE network, which is good. So, I'll install iPerf3 and test how fast my connection is. And, well, here we're just testing the ethernet port, because that's what Linux seems to route things through if you ever have Wi-Fi and wired going at the same time. So, I'll unplug the ethernet cable, reconnect to the Pi, and run this again. This time,
+
+I'm getting around 800 megabits. Not bad at all, but that's not more than a gigabit. So, I switched back to my 6GHz only network and ran iPerf3 again. And, there we go. Over 1.4 gigabits. Now we're cooking.
+
+I also tested sending data in reverse and sending data both ways at the same time, and it's not quite as good at that as wired ethernet, but it's still pretty fast for Wi-Fi. But, I got to thinking, what if we can get more? I dug into the PCI Express link details with lspci again, and I noticed the link capabilities list a speed of 16 gigatransfers per second, which means this chip can operate at PCIe Gen 4 speeds. The Pi only runs at Gen 2 by default, which is less than half that. But, bumping up to PCIe Gen 3 is as easy as adding this line to the boot config and rebooting again.
+
+So, I tried that. After the reboot, I confirmed I was now getting 8 gigatransfers per second, so I re-ran the iPerf benchmark. And, look at that! Over 1.8 gigabits! The Wi-Fi on here is now
+
+twice as fast as the built-in wired ethernet. The speeds in reverse weren't that much better with Gen 3, but with traffic going both ways, now the Pi can still get more than 1.2 gigabits while uploading data at the same time. And that's pretty impressive. But, comparing all this to my Wi-Fi 6E testing over two years ago, we're faster, but not *that* much faster all things considered. The newest Wi-Fi tech mostly
+
+helps in, like, business use cases, with dozens or hundreds of clients, or in high-noise environments. For most people, it probably won't be that big an upgrade over Wi-Fi 6E. But, at least with a Raspberry Pi 5, it's a cheap and easy way to dip your toes in the water. Can I set this thing up as a wireless access point? Can I build the ultimate Pi 5 Wi-Fi 7 router? I don't know. I guess you'll have to
+
+subscribe to find out. Until next time, I'm Jeff Geerling.

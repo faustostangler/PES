@@ -1,0 +1,17 @@
+---
+video_title: "How the Simplex Algorithm Finds the Optimal Solution"
+video_id: TXQmdvQYwJ0
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TXQmdvQYwJ0
+video_date: 2026-08-08T17:00:13+00:00
+video_description: |
+  Website Link: systemdrd.com
+  Discover how the Simplex Method solves Linear Programming and optimization problems by finding the optimal solution under multiple constraints. Learn objective functions, constraints, feasible solutions, pivot operations, maximization, minimization, and practical Python optimization techniques used in operations research, data science, machine learning, finance, logistics, and resource allocation.
+---
+One more piece worth covering. What happens when there's no obvious starting basis at all? The all slack basis only gives you a free starting vertex when every constraint is less than or equal to. Rows that are greater than or equal to or strict equalities have no slack to seed a basis with. That's where artificial variables come in. The two
+
+phase method handles this in well, two phases. Phase one adds artificial variables and minimizes their sum until it hits zero, >> [music] >> proving feasibility or proves the LP infeasible if it can't. Phase two [music] then drops those artificials, restores the real objective and resumes ordinary pivoting [music] from that feasible basis. It's numerically robust because it never mixes a huge penalty constant [music] into the objective's natural scale. The big M method takes a shortcut. Fold
+
+a single huge penalty constant M directly into the original objective and solve in one pass. It's simpler to implement, but that constant has to be tuned large enough to dominate [music] without causing floating point overflow or ill conditioning, which is exactly why production solvers favor two phase. [music] It sidesteps the need to tune an arbitrary constant per problem instance. Most commercial solvers [music] actually skip explicit artificial variables for easy cases using pre-solve and crash basis [music] heuristics to find a feasible starting point directly. Two phase remains the fallback whenever that heuristic doesn't get there on its own.

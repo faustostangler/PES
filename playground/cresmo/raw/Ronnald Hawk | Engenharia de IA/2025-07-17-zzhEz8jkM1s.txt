@@ -1,0 +1,145 @@
+---
+video_title: "Por que parei de Confiar em Benchmarks de LLMs (e o que Realmente Importa para Agentes de IA)"
+video_id: zzhEz8jkM1s
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=zzhEz8jkM1s
+video_date: 2025-07-17
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Lista de espera aberta): https://www.rhawk.pro/comunidade
+  
+  
+  ––– Descrição –––
+  Você ainda confia cegamente em benchmarks de LLMs para escolher o melhor modelo? Neste vídeo, vou além dos números e revelamos a tendência que realmente importa para o futuro da IA Generativa: a habilidade dos modelos em usar ferramentas e gerar código para resolver problemas complexos. 
+  
+  Veja na prática Agentes de IA que geram código para resolver problemas, através de um exemplo real onde comparamos Claude 4, Grok e Kimi-k2 na resolução de um desafio financeiro. 
+  
+  Ideal para desenvolvedores, empresários e até iniciantes que desejam entender como criar soluções de automação verdadeiramente inteligentes, este guia prático mostra o padrão que os gigantes da tecnologia estão seguindo para criar a próxima geração de aplicações de IA.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução 
+  0:45 O agente que gera código (codeact) e avalia (llm como juiz)
+  2:06  O que são os benchmarks das LLMs e quais são seus problemas
+  3:32 O lado bom dos Benchmarks de LLMs modernas (claude 4, Grok 4 e Kimi-k2)
+  7:17 Executando o Agente gerador de código com Langgraph
+  13:04 A importância na geração de código em Agentes de IA
+  15:22 O uso de ferramentas por LLMs é o futuro.
+  
+  
+  ––– Agência –––
+  
+  A melhor consultoria em IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #agentesdeia #python #langgraph #grok4 #kimi2 #claude
+---
+Já dizia minha avó, o primeiro milho é dos pintos. Para quem só tem o martelo, todo problema é prego. E em benchmarks GLMs não se confia. Nesse vídeo a gente vai discutir um pouquinho sobre benchmarks e porque eles parecem não se adequar à realidade do dia a dia. E vou te mostrar um padrão que eu encontrei nos últimos lançamentos que sorrateiramente tá guiando a evolução dos agentes e ninguém tá falando. Então
+
+eu vou explorar esse essa tendência. Vou mostrar um exemplo com código e a gente vai usar tanto o Cloud 4 quanto o Grock 4 quanto o Kimica 2. Então bora pro vídeo, tá? O que que a gente vai fazer aqui hoje, tá? Esse cara aqui é o nosso agente de hoje, tá? O que que esse
+
+agente faz? Para você que já tá acostumado aqui com um agente React, são três agentes React e cada um usa uma LLM, tá? Todos eles têm acesso a uma ferramenta e essa ferramenta é uma ferramenta de geração de código. Na verdade é uma ferramenta de execução de código. A LM vai criar um código, vai mandar para essa ferramenta, essa ferramenta vai executar o código e vai devolver a resposta pro agente que finalmente vai chegar à conclusão e vai dar a resposta. É basicamente isso que a
+
+gente vai fazer, tá? Para você que não conhece um agente React, eu recomendo você ir lá na Rock Pro, baixar um agente React que tem lá e tentar por você mesmo, eh, para abrir tua mente, mas você não precisa fazer isso exatamente agora. Você pode fazer quando acabar o vídeo, tá? O que acontece depois dessa resposta é que todas elas vão para um juiz, tá? Que seria o avaliador da resposta. Ele vai olhar as três
+
+respostas e vai decidir qual é a melhor. Essa técnica aqui é chamada de LLM as a chut, tá? Um LLM como juiz. E essa especificamente aqui se chama Parse Wise, tá? Então para você conhecer um pouquinho e se você quiser conhecer mais profundamente procura meu vídeo aí sobre LLM adjud, tá bom? Então bora lá pro
+
+vídeo. O que vai acontecer aqui é que eu vou fazer uma pergunta, ele vai calcular e vai dar a resposta, tá? Mas por que que eu tô fazendo isso? Tem motivo. Eu não tô fazendo isso aqui como uma demonstração isolada. Então vamos aqui
+
+pros benchmarks, tá? Vamos falar deles assim brevemente. O que que seria um benchmark? seria eh uma métrica onde você bota lá uma LLM com um conjunto de perguntas e respostas e você pega uma um número, um valor numérico. É um um jeito de tentar medir a eficiência de uma LLM, tá? O problema primeiro é que esses
+
+benchmark, muitos deles, né, estão saturados. Então você vê assim, uma melhora de um para outro de 1%. Não diz muita coisa. Às vezes você olha lá e quando você pega para usar aí na tua prática, você vê que assim é não não tá muito legal, né? E você vê que tem vários ben marks e você nunca sabe muito bem o que é o quê, tá? A segunda coisa é
+
+que nada garante que modelos sejam treinados para ir bem nos benchmarks, tá? A gente não tem garantia nenhuma. Ah, não, mas o São Áltima falou que não fez, cara. Na boa, né? Você não não tem 10 anos mais, você não acredita em Papai Noel. Então, pode ser que o benchmarket
+
+seja distorcido para passar bem, né, o o dado de treinamento, tá? A terceira coisa é que geralmente a gente tá aqui em língua portuguesa, o benchmark é feito em língua inglesa, o que pode haver uma distorção, tá? Então, benchmarks não são eh totalmente desprezíveis, mas você tem que tomar com uma colher de chá. Então, toda vez que lançar um novo modelo, você não precisa procurar é rápido trocar, você não vai trocar do dia paraa noite algo que tá em produção pro novo LLM que saiu, correto? Isso não existe, né? Então você precisa
+
+se acalmar, beleza? Tá? Mas um porém é que os benchmarks eles não são totalmente desprezíveis e principalmente os detalhes do benchmark, tá? E eu andei reparando os detalhes exatamente onde a gente vai entrar agora, que é eh dos últimos modelos, tá? E eu vou começar aqui do cloud que eu botei no cloud aqui, botei no no nosso exemplo. Eh,
+
+então vamos começar por ele. Quando lançou o 3.7, eu reparei nesse benchmark aqui, tá, cara? Tal bench, tá? E na época eu olhei e eu falei assim: "Cara, eu não sei o que que é isso aqui. Eu
+
+acho que isso aqui não é irrelevante", tá? E e eu não eh fui lá e olhei mais de perto, tá? O que era, beleza? Só que aí lançou o quatro e eles vieram mais uma vez com esse troço aqui e eles vieram com essa ideia de tu use. Tá? Ficou
+
+muito claro para mim que esse benchmark era sobre isso, mas eu não me aprofundei novamente porque o cloud já era assim, é um modelo top para programar, né? é um modelo top para fazer código e meio que assim, aquilo ali era meio que tá, não é isso que eu tô procurando, mas na verdade era exatamente o que eu tava procurando e enfim, eh, faltou conhecimento ali na época do benchmarket, tá? E aí, nessa semana passada lançaram aqui os novos modelos, tá? Eh, tanto Grock quanto Kim, Kim 2, tá? O Kim, se você não conhece, é de uma empresa que saiu meio que do nada, entre aspas, e lançou o modelo open source, open weight. Então, isso é interessante,
+
+tá? interessante pro nosso contexto aqui que você vai ver, tá? E aí se você vê nos benchmarks assim em várias em vários lugares, no cloud também você vê você vê esses resultados aqui, ó. Esquece o benchmark aqui e olha nos resultados. Você sempre vê assim, ó, é Grock com Python, Grock com Python, Grock com Python. Tá? Então o que a gente tá
+
+fazendo ali no nosso exemplo é exatamente reproduzir essas condições ótimas aqui. E você vê que com o Python ele sempre foi melhor do que e a LLM pura. Então o que ele tá fazendo é, ele tá dizendo na nossa cara que ele tá fazendo uso de ferramenta, beleza? Então guarda isso aí. Beleza?
+
+Beleza. Tá. Kim, esse aqui são o benchmark do Kim. E o benchmark do Kim, se olhar lá no blog, tá no lançamento, e eles batem muito na tecla de uso, uso tool use, tá? De uso de ferramenta. E
+
+eles fazem aqui é questão de mostrar isso aqui pra gente, que o uso de ferramenta deles no benchmark tá muito bom. E ele faz uma comparação aqui com os outros modelos no de maneira geral, né? e ele se destaca muito muito no blog, inclusive tem uma sessão só explicando como eles treinaram o modelo para que ele fizesse melhor uso de ferramentas. E por que isso aqui é importante? Como o modelo é open weight, é mesmo é modelos como o Gemini, que eu gosto muito do Gemini, tá?
+
+particularmente, mas ele é ruim em uso de ferramenta. Você se você usa o cursor aí ou undurf ou alguma coisa do tipo, é você já deve ter percebido assim, você manda ele fazer uma alteração, ele fala assim: "Não, beleza, vou fazer alteração aqui" e simplesmente ele para, é porque ele não conseguiu chamar a ferramenta, tá? É, como esse modelo é open weight, com certeza os caras vão fazer aí uma engenharia reversa e vão tirar o dado que foi treinado para cá para treinar os outros modelos. Então, basicamente, o que eu acho que tá acontecendo é que essa vantagem competitiva aqui do Cláudio eh tende a diminuir, tá? Eh, se você vê aqui esses modelos eh t em comum uma janela de contexto pequena, mas eles são muito focados em uso de ferramenta, em chamada de ferramenta, o que isso é um padrão interessante, tá beleza?
+
+Então, eh, ao contrário do que o senso comum eh acredita, parece que tanto Grock quanto Kim estão tentando espelhar o sucesso do cloud e principalmente o cloud no uso de ferramenta e code, né, fazer código, né? Então isso é muito interessante, né? E é um padrão que a gente vai imitar exatamente agora no nosso exemplo. Na verdade eu já executei, tá? E o que que a gente vai fazer aqui no exemplo? O que que tá
+
+rolando aqui? A o agente roda, tá com uma pergunta. E qual é a pergunta? Qual o tipo de pergunta aqui? É uma pergunta, é um problema financeiro. Então ele vai
+
+ter que raciocinar, né, entre aspas, tá? Com perdão da palavra, ele vai ter que fazer o cálculo e o cálculo não será feito pela LLM. O cálculo será feito pelo código Python e então ele vai dar a resposta final, tá? Vamos lá. Eu vou mostrar o código aqui para vocês. Eh,
+
+prometo não entrar em detalhes demais, tá? Esse aqui é um código experimental e se você tá na comunidade, é, o código tá lá para você baixar e tentar aí mesmo. Mais um detalhe, cara, deixa eu mostrar logo aqui para vocês. Esse código aqui, execução, ele é executado na minha máquina, tá? No meu ambiente de desenvolvimento, o que não é ideal. Eu
+
+botei aqui uma nota falando que você deveria executar esse código se você quiser botar isso aqui em produção e um sandbox, que seria você tem lá um contêiner ou alguma coisa do tipo ou alguma solução de sandbox onde o código executado lá, né? O risco de você executar exatamente no ambiente que tá rolando seu agente é que pode dar um crash e quebrar tudo, tá? Então você não quer fazer isso. Beleza? Então vamos lá.
+
+Deixa eu explicar aqui rapidamente o que eu tô fazendo. É, eu usei o Open Houter, a maioria dos casos aqui. Eu só não usei o o Grock é no Open Houter porque tava muito ruim de usar. Toda hora parava de funcionar, tá? Uma coisa que eu notei é que o Kim é muito lento lá no Open Houter, não é legal, mas funciona, tá?
+
+Então o Openhouter me deu todas as os end points aqui que eu precisava. E aí vamos lá ao prompt, tá? Deixa eu só mostrar aqui rapidinho, tem o ritmo também, tá? Se você baixar aí, tá tudo aí, então você não tem drama não. Beleza? O prompt é basicamente é reto,
+
+direto, mas aqui a gente bota é coisas importantes para garantir que nosso agente vai chamar a ferramenta, tá? Eh, eu mando ele analisar a pergunta para ele eh fazer o que tem que fazer. Eh, ele gerar o código. Então, o meu próprio agente, ele olha a pergunta e ele gera o código e ele vai mandar esse código paraa minha ferramenta, tá? Nada impediria de você fazer uma ferramenta com uma outra LLM só para gerar o código, mas pro bem da simplicidade, eh, eu fiz assim, beleza? né? E aí no final
+
+ele tem que comunicar o resultado. A nossa ferramenta de execução de código é um código Python que que recebe eh um arquivo, né? Em algum lugar e executa um código, só isso, tá? Ah, e aqui eu tenho o dicionário onde a gente guarda o contexto. Se você viu o meu vídeo anterior, é aqui que eu guardo o contexto desse meu agente, tá? Nem tudo
+
+vai para ll, certas coisas vão para essa tabela aqui, é temporária e eu posso fazer uso desse dado ou não. É, quando eu chamar m LLM. Ah, e no final aqui, eh, eu tenho o juiz, tá, eh, com o seguinte prompt, eh, ele recebe a as saídas do agente 1, agente dois, agente três, ah, e eu mando ele avaliar segundo critério de clareza, profissionalismo e contexto de negócio, tá bom? Então, é basicamente isso, seria como se fosse aqui um analista financeiro e tem alguém avaliando e aqui eu tô montando o grafo, eu inicio o gráfo, ah, eu crio os nós e eu simplesmente concatendo tudo e não tem dificuldade nenhuma. Beleza? Beleza.
+
+Então essa é a solução. Eu poderia mostrar para vocês aqui, tá? Por exemplo, a gente consegue ver o código que ele gerou aqui, mas eu vou mostrar aqui em outro lugar que é um pouquinho mais confortável, pelo menos eu acho de ver, que é no Leng Smith. Tá bom? Então vamos lá. O nosso flow rodou e a
+
+primeira coisa que você vai notar aqui, ó, é que o Kim é muito mais lento. Tá vendo? Foi 227 segundos para executar e o Kim. Por que que isso aconteceu? O Kim lá no Open Houter, como eu falei para vocês, eu achei muito lento, mas depois quando eu tava olhando algumas coisas aqui, eu achei o Kim no Grock também, tá? É, e ele parece muito mais rápido,
+
+muito, muito rápido. Chegamos aqui e a gente vai ver o que aconteceu, tá? Cloud Code. Vou abrir o cara aqui. O que aconteceu? Investi 10.000 em automação e
+
+meu funcionário, que custa 8.000 por mês, agora tem 4 horas de semana a mais para dedicar a uma outra função. Considerando a taxa de juros a 12%, como é meu payback descontado. Esse aqui são termos financeiros, tá cara? A gente não precisa se preocupar porque esse aqui seria a função do meu agente. O que a
+
+gente vai ver aqui agora é o que aconteceu depois. Beleza? Então vamos lá. Falando do Cláudio, o que ele fez? Vou calcular o payback. parará. Então ele
+
+pensou e ele criou o código. E você vê aqui que você tem alguma intimidade com Python, ele criou com uma biblioteca chamada NPI, tá? Que é uma biblioteca normal para eh assuntos desse tipo. E você vai ver aqui uma coisa curiosa, tá? Deu erro. E qual foi o erro de execução?
+
+Ele não tinha não pai, tá? O meu ambiente local não tem n realmente, tá? E aí o código voltou para o meu agente. Então ele ele fez o loop, voltou e falou assim: "Ó, cara, não funcionou". E aí meu agente Cláudio com Cláudio foi lá e gerou novamente o código, tá? Gerou um
+
+código sem nampai e aí finalmente o código foi executado com sucesso e a gente vê a resposta do código aqui. E aí finalmente o nosso agente Cláudio deu a resposta final. Isso tudo durou 30 segundos, tá? O mesmo se deu pro Grock, tá? Se a gente ver aqui, só que o Grock acertou de primeira, tá? Então vamos lá.
+
+Ele acertou de primeira, tudo certo? E o mesmo se deu para o Kim, tá? Não, acho que não, né? Ele foi duas vezes. O Kim foi duas vezes. Lá, ele foi uma vez,
+
+calculou alguma coisa, eu acho que não deu erro, não. Ele deu erro também. Foi a mesma coisa que o Cláudio. Ele refez o código e deu a resposta. Todas as respostas em termos matemáticos foram iguais, tá? Só que a resposta final do
+
+agente foi diferente. E é exatamente aqui que o nosso juiz entra e avalia, tá? Então, no final ele vai ter todas as entradas e ele avaliar. A gente consegue ver aqui a resposta de uma maneira mais clara. Deixa eu botar aqui um pouquinho pro alto se eu consigo. Vamos conseguir
+
+não. Tá. E aí você vê o consultor um, o consultor dois e o consultor três. E o nosso juiz aqui ao final deu o veredito, tá? E falou que o melhor consultor foi o consultor cloud, tá? Consultor um. E a
+
+gente vê todo o processo que aconteceu aqui, todo o contexto. Se a gente quisesse usar isso de alguma forma para alguma coisa, R, tá legal? Ele gera código. E por que isso é importante? Eu dei um exemplo aqui para vocês financeiro pelo seguinte, todo problema matemático ou problema de data, como eu já falei aqui várias vezes no canal, o ideal é você criar uma ferramenta, né?
+
+Você não depender da LLM para lidar com números, né? É uma boa prática. Só que agora a gente tá tendo o poder de gerar código em pleno voo para resolver problemas. Então, vamos imaginar que de fato eu faço aqui uma empresa eh com um assistente financeiro. Eu posso usar exatamente essa função que eu criei aqui, exatamente esse prompt para ele criar código, mas você vai notar que toda vez que ele vai gerar código, vai gerar token e tal. Se você usa alguma
+
+ferramenta como essa aqui, você vai ter todos os traces, que seriam as conversas armazenadas para você analisar ao longo do tempo. O que você poderia fazer fatalmente seria, tá bom? Ele toda vez tá calculando o payback descontado, tá? Eu iria lá, pegaria um livro de finanças e olharia lá, falar assim: "Tá, cálculo de payback descontado, como é? Você vai escrever essa função uma vez, cara. Você
+
+vai testar essa função uma vez, você vai dar essa função pra sua LLM e toda vez que tivesse um payback descontado, ele ia chamar essa função. Você não precisaria ficar refém dele e gerar o código toda vez. O que você faria é deixa LLM gerar o código é pela primeira, segunda, terceira vez. Deixa seu produto rodar, deixa o seu cliente usar e ao longo do tempo você pode ir otimizando e e cortando o código custom à medida em que você entende o problema que você tá inserido, tá, caras? Isso aqui é o mais próximo do inteligência geral artificial ou qualquer coisa do tipo que chama, é que eu posso imaginar porque você eh cria funções ou cria ferramentas, entre aspas para resolver o seu problema enquanto o seu problema chega, né? Isso é muito interessante.
+
+Ah, você pode passar a usar isso hoje se você usa alguma ferramenta apropriada como essa aqui que te dá liberdade de criar isso. Se você não usa algo assim, não sei, tem que esperar alguém criar algo para você e tal, eh, para você poder usar. Mas é assim, caras, que todas essas empresas estão usando eh código e é por isso que existe uma corrida tão forte para LMs que geram código. Eh, a galera discute muito sobre os desenvolvedores serem substituídos, mas estão perdendo um pedacinho do plot, tá? Porque com coisas assim, quem serão substituídos serão caras de finanças e tal, né? ou pelo menos os caras de
+
+finanças que só fazem esse cálculo. Por exemplo, eu estudei eh negócios h em uma disciplina, numa cadeira de finanças e mais da metade do curso foi como fazer esse tipo de cálculo aqui com uma calculadora HP, tá? E a gente ficava apertando o botãozinho e a gente não discutia o que que era um paybet descontado de fato. A gente gastava quase todo o nosso tempo eh na parte mecânica. E a parte mecânica a gente tá conseguindo automatizar, não só essas partes mecânicas que são, digamos, previsíveis, mas as que requerem um pouco de raciocínio e inteligência. Aqui
+
+nesse vídeo eu te mostrei como a gente pode fazer isso de maneira um tanto quanto simples. Eu usei três agentes aqui, mas você poderia usar um só e aprimorar isso aqui muito mais, tá, caras? Eh, espero que vocês tenham gostado do vídeo, tenham aberto um pouco o horizonte para vocês, que ferramentas elas podem ser eh não só ser ferramentas estáticas, como podem ser ferramentas que se ajustam ao longo do tempo. Eh, o canal aqui é sobre inteligência artificial e ar, se você não me conhece, eh, fica por aqui. É tudo que eu falo, eu trago exemplos práticos, eu falo da realidade e não do mundo da fantasia. É,
+
+se você tá começando e e tem interesse no assunto, recomendo fortemente a Rock Pro. Se você já tá pronto para eh explorar um pouco mais, mesmo que você esteja começando, na verdade, mas desde que você tenha eh a vontade de fato de eh fazer parte de uma, entre aspas, tá? Eu não vou falar a palavra elite porque, enfim, pode ser mal interpretada, mas desde que você queira fazer parte de uma vanguarda de a tá generativa de verdade, eh, tá ao lado de pessoas que estão criando, que estão discutindo, que estão vendo esses tópicos aqui, que esse tópico já não é mais é eh uma coisa, ai meu Deus, isso muda tudo para não, isso aqui é trabalho, a gente pode eh tirar proveito disso. É, recomendo você na comunidade dia 8 do não, 11/08 eu vou abrir é as inscrições novamente e aí você vai se juntar lá ao top rocks que, né, são pessoas que estão aí é na luta para entender esse mundo, se adaptar ao mercado. E eu realmente acredito que esse é o melhor investimento de tempo que você pode fazer hoje, se você tá nessa área e tá entendendo o que tá acontecendo. É, nós somos inevitáveis,
+
+né, caras, né? o interesse de pessoas por eh trabalho e a força de trabalho em geral, né? A população tem envelhecido e alguém vai ter que trabalhar. Eh, e a gente dominando essas tecnologias aqui, a gente tem o poder de fato de, né, automatizar muitas coisas ah e livrar as pessoas que estão trabalhando para fazer coisas que não sejam ficar apertando a calculadora HP para achar é o Payback descontado. Beleza? Então é isso por
+
+hoje e até a próxima.

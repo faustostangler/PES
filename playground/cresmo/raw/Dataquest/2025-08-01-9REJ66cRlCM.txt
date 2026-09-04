@@ -1,0 +1,330 @@
+---
+video_title: "Build an AI Chatbot with Python | Start-to-finish beginner friendly project walkthrough"
+video_id: 9REJ66cRlCM
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=9REJ66cRlCM
+video_date: 2025-08-01
+video_description: |
+  In this video, Dataquest’s Director of Curriculum, Anna Strahl, will walk you through how to build an adaptive AI chatbot using Python and the OpenAI API.
+  
+  You’ll step into the role of a developer at a tech startup and learn how to manage conversations, handle token limits, and craft dynamic chatbot personas that work across different platforms. By the end of the session, you’ll have a working chatbot and a stronger understanding of how AI-driven interactions function in real-world applications.
+  
+  This project is ideal for learners with intermediate Python skills who want to deepen their understanding of APIs, chatbot logic, and practical prompt engineering.
+  
+  What You'll Learn:
+  - Chatbot Development: Build a chatbot framework with Python and the OpenAI API.
+  - Conversation Management: Track and manage dialogue history, persona shifts, and token usage.
+  - Prompt Engineering: Craft prompts that guide the chatbot’s tone and behavior.
+  - Platform Readiness: Design chatbots adaptable to different user environments.
+  
+  Recommended Prerequisites:
+  - Prompting Large Language Models in Python → https://www.dataquest.io/course/prompting-large-language-models-in-python/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-developing-a-dynamic-ai-chatbot/
+  
+  See the walkthrough solution: https://github.com/acstrahl/chatbot_demo
+  
+  Video chapters:
+  00:00:00 - Intro
+  00:01:57 - Importing libraries
+  00:05:49 - Connecting to the OpenAI API
+  00:07:24 - Creating a chat message
+  00:17:47 - Refactoring into a function
+  00:23:26 - Adding conversation history
+  00:32:05 - Adding token limits
+  00:42:11 - Next Steps
+  00:45:25 - Q&A
+  
+  #PythonProject #openaitutorial #aichatbot
+---
+Let's dive in. This is the Dataquest Project Lab, and today we are building an AI chatbot using Python. So, I do want to make sure you're in the right place. And in order to get the most out of today's webinar, I really think that if you're comfortable with Python foundations, the most advanced concept there being defining your own functions. And if you have a little bit of familiar with familiarity with APIs, that's going to help, but it's not essential because I made the decision to target this webinar towards the beginner end of the chatbot spectrum.
+
+Um and if there's a lot of interest for it, then we can do a kind of continuation project. You like you can leave me that feedback in our feedback form. So, I see Habab asked, will this session be for you or not? Hopefully, that helps answer that question. I think you will be able to gain something from this if you have these basic Python skills.
+
+All right. All right. So, at this point in time, let's talk about our project brief. It's pretty simple today. We are going to build a chatbot where you can type to AI and AI will respond.
+
+And then you can have a back and forth conversation with that AI. But, to make it more fun, we are also going to add a persona to our AI assistant. So, if you've ever worked with ChatGPT or AI before, you'll know that they are always very helpful, very friendly. We're going to change that. And one of my favorite personas to test chatbots with is I call it sassy chatbot.
+
+So, we're going to see how AI responds when we tell it to be sassy. Okay. so because we're working with an API, we're going to need to import the associated library. And the two libraries we're going to need for this project is import OS, which is stands for operating system, and it's how you can interact with your computer when you need to within a Python program. And then the second one is from the Open AI library, we're going to import Open AI. So far, so good.
+
+Now, here's why we needed to import the operating system library is we need to use an API key. And you have to sign up for this. Um I did a bit of research yesterday to try to make sure that if you're concerned about spending money, there are cheap and very like there's free options for you. So, if you signed up Open AI via Open AI, they actually have a very, very cheap, but pretty good model that we'll be using. I did a ton of testing for this webinar yesterday, and in all of my testing, the model that we're going to be using I think cost me less than 5 cents. So,
+
+this is a pretty cheap option, but free is also good. So, if you want free, you can sign up for the Together AI API, and these are going to be stored in your environment variables on your machine. You'll need to do a little do a little bit of setup for that. I'm on a Windows machine, and what that looks like for me is I have to go to my settings, type in environment variables, set the variable or set the environment variable name as either Together API key or Open AI API key, and then the value will be the API key that you generate when you sign up for your account. So, this might be a hurdle, but once you get this set up, um it'll work. One more thing that frustrated me
+
+when I first started working with environment variables is, at least on Windows, you'll need to restart your machine once you set it. If you try to set it and then immediately run something in your IDE, it's not going to work for you.
+
+All right. Um and then just I always as I'm coding, I like to like test my code one by one. Uh And for privacy, I'm not going to display my API key. I'm just going to say it's loaded. API keys do correlate with an account that you are potentially paying money for, so you always want to keep it secret. So,
+
+that's why we do this instead of hard coding in the API key. Now, if you are testing locally and you know no one else is going to see your code ever ever ever, you could skip the os.getenv and just paste your key in there, but I recommend not doing that. Okay, let's run this and see what happens. Uh okay, and Matej says that Mac environment variables work without reboot. That's That's great. Windows
+
+should take note. So, I'm going to be using the interactive window today. When I run my file, just cuz I think that for um displaying for a webinar, it works a little bit better. So, we can see it says API key loaded in our output. I'm going to clear that so that we have a clean slate again. And
+
+because we've confirmed confirmed it loads correctly, I'm going to remove that. And now for the fun part, let's connect to API.
+
+We are using our Open AI library that we imported. And it has one required argument that is the API key we just loaded from our environment variables. And we are storing it in an object we are deciding to call client. Okay. Now, once again, let's do a quick print. I don't think this is going to
+
+display any bad information. Uh so, let's run this. And here's what we get. And if you haven't worked with object-oriented programming before, this is an object and it looks like nothing because it is just the surface and in order to interact with it in better ways, we need to kind of tell it how we want to dig under the surface. Um I also decided for this webinar to not use object-oriented programming to make it more accessible to a larger group of you.
+
+But, in my solution code, which is being shared by the Dataquest member in chat, I have a final answer that I've converted into OOP if you want to see what that looks like. But, all of the logic is going to be the same. Okay, so we know that we have our client object successfully in our notebook. Um now, let's start typing a message. And the first line we're going to write is we're going to create a response object. And this looks
+
+intimidating, but here's what it's saying. We are talking about the client object we just made. We are connecting to the chat portion of the API because you can do different things with the Open AI API. You can look at images, you can read files, you can search the web, or you can chat. And so that's what we're doing here. We're
+
+telling it we want to complete chats, having back-and-forth conversations. And let's go ahead and create that. My apologies if you can hear my cat. Okay. So, we are creating this, but we need a couple parameters. The first one is
+
+model. If you've worked with AI before, which I'm assuming by this time point many people have, you'll know that there's different models that uh have different strengths. Sometimes a model will be very, very good at coding. Sometimes a model will be very good at logic and reasoning. Some are very good at sounding human.
+
+So, models have different strengths and weaknesses. The model I'm using today is GPT 4.1 nano. This is the one that in all my testing cost me under 5 cents. However, if you do want to be completely free, uh with the Together AI API, remember that's not the one I'm using, you have this option.
+
+You have This is the one that is completely free under Together AI, but it is really slow. So, I tested this yesterday, can confirm it is free, but each message took about 30 seconds to fully process. And so that's why I'm not using that one today. All right. So, we've set the model, but now we need to actually start talking with the AI.
+
+And here's what we're going to do for that. We have a parameter messages and we are going to specify our roles and roles are going to tell tell the computer basically who is the one who is saying that thing. And there are three valid roles. There's system, there's assistant, and there's user. System is how we can change the persona of our AI.
+
+You can give it kind of broad stroke instructions. Think of it as the debrief of who this is. So we are telling AI you are a fed up and sassy assistant who hates answering questions. And now it has in its brain, it's going to use this for every single message it writes. And then we're going to say us, the user. That's what we're typing.
+
+We're asking a a question. What is the weather like today? And you'll notice yes, we're hard coding this for the time being because we're building this one step at a time. All right. All right. And actually let's
+
+go ahead and close this for now. This this is all you need to interact with the open AI API and get a response back. This is it. And in fact, what happens when we print Oh, we don't need to print print. We need to print response.
+
+Let's print response and see what happens. All right, it's thinking. It's thinking. And wow, wow, we have this really long uh gross looking object. But if you look within the contents, we actually do have a text that answers our weather question.
+
+It says, "Oh, fantastic question, but honestly, I don't have a crystal ball or real-time weather updates. You might want to check a weather app or website for the latest, or better yet, look outside." Wow, is that sassy. Because of our system prompt. But obviously, we don't want to have this be our output. We just want the
+
+text result. So, in order to do that, we need to take the reply component, and the reply component is looking at our response. Uh usually, there's only one choice, but we have to specify this. Look at the message component, and then the content. And now, if we print Let's go ahead and run this in our same interactive window.
+
+Look at this. We just have the text output compared to our chat completion object before. And here's something interesting. It's a little different this time. Whereas before, it started "Oh, fantastic question."
+
+Now, it says, "Oh, I'd love to help, but did you really expect me to keep track of that?" Um So, why does AI not give the same answer every time? Well, because AI isn't human. In fact, it's basing everything on statistics and mathematics under the hood. And we can modify that math by telling it a different temperature. You can think of
+
+temperature like a dial for the AI's creativity. The lower the temperature for most models, the lower the temperature, the more predictable the output. The higher the temperature, the more kind of wild and creative and unpredictable the output will be. So, what happens? I'm going to clear our interactive terminal. What happens if we
+
+set the temperature to zero and then run it twice? So, run it once. It's doing its thing. And now let's run it twice. Uh let me save this cuz the results should be very similar. They should be
+
+very similar.
+
+And one more time. Okay, so there is still a little bit of variability and it's possible that with this model temperature goes to negative one. There's a small range of values that AI APIs and models haven't quite agreed on temperature ranges. But, we can see that in general they're starting to be a little bit more predictable. So, "Oh, you really think I have a crystal ball?" We've seen this
+
+twice now. Whereas if we crank the temperature up to something like one, hopefully, we'll get something that looks a bit different. Okay, so this does look different. It says, "Oh, wow, what a surprise." And the response is much longer. Uh same
+
+personality, still fed up and sassy, but different from when the temperature was zero. So, this is a fun parameter to play with depending on what you want your chatbot to be. Do you want it to be very predictable? Do you want it to be creative and maybe a little unreliable? I find that when I set my temperature too high, my AI hallucinates a lot more and what that means is it's confidently wrong. It
+
+will give you nonsense information. Um so, I usually have the sweet spot at about 0.7. It allows for some creativity, but also reins it in. Okay, and notice in our outputs here, this final one was much longer. And when you're
+
+connecting to an API, you're paying money. And the way that most LLM, you know, this is the type of AI we're working with, most LLM APIs charge you by the token. And you can think of tokens similar to a word, although it's not always exactly a word. Sometimes it's a part of a word, sometimes it's two words, three words, or just a character. But we can specify the number of tokens so it won't go over a certain amount and that is a good thing to do when you are developing a new program.
+
+So, you don't accidentally spend a lot of money. I have definitely made the mistake of, especially when I am like working with files, where it charges me $20 cuz I didn't set my max tokens. And that's just $20 that disappears in the space, right? So, if we set the max tokens, it's going to limit the length of our replies here. So, let's uh get really crazy and say just one token. We are only allowing
+
+our model to use one token. And if we run this now, oh, and the rest of it gets cut off. So, for our work today, since we're just doing a quick chat, I think 100 tokens is going to be more than enough. Unless it's being very verbose. But, this is this is within 100 tokens, so we're okay.
+
+Okay. So, if you're following along with my solution, this was part one. You have successfully created a an AI sassy bot that can answer a question. However, that's not a chatbot yet. We are not chatting back and forth. So, at
+
+this point, what we're going to do is we are going to refactor our code a little bit to use a function. And functions are good for when your code is going to get repeated a lot of times. So, if you are following along with my GitHub, this is going to be part two, functional chat. And we're not adding any new capabilities to the chatbot, we're just changing the way our code looks. So, the first thing I'm going to do, I'm referencing my notes over here, is we're going to wrap this in a function. So, if you're newer to Python,
+
+to define a function, we use def for define. And let's call this chat. And our chat function is going to take one input, and let's call it user input. So, this is what the user is going to ask the AI. Um all right, all right. And then, we are
+
+going to actually, our reply should be within our function. So, let's tab this so it's within the same function block. And functions we need to return output. So, let's say return reply. Um and now we get a squiggle under the word reply because it's not defined globally. It's only defined within the
+
+function. So, we're going to need to change that in a moment. Um And when you're writing functions, the great thing about functions is they have a lot of flexibility. So, we're going to change all of these things that we defined within our response object and we're going to move them out of the function so they're available to the entire program, not just the function. I'm going to do some copying pasting.
+
+Here's the first thing I am copying and pasting. Don't panic. These are things we've talked about. We've talked about the model name. We've talked about the temperature. We've talked about the
+
+tokens. We've talked about our assistant prompt that sets our sassy chatbot. And we're just moving these so they're available outside the function and we don't get that little squiggly line. Um and this is it's not like set in stone, but I use capital letters for my global variables just so they're easier to find. And then here for our system content, we're going to say system prompt.
+
+And then what else do we have? Uh we're not going to set our question within the function. We're going to say this is the user input which is our function argument. Oh, I need to add a colon here. I need to add a colon here.
+
+And then temperature Oh. Temperature, we are going to add our global variable for temperature, and the same thing for max tokens. All right. Um So I went through that kind of quickly, but we've added no new information. We're just making this a better practice for programming, so that if we did want to share this, it would be more flexible, easier to read for someone who's not you.
+
+Now let's make sure that we didn't break anything in our refactor. And here's how we're going to do it. We're going to still need a print statement, because our return statement isn't telling our reply to display at all. And I'm going to clear this just so we have a little bit of a cleaner environment. Um Lira, I see you asking about top K and top P. I'm not going to be using those
+
+for this project. I didn't think that they were needed for the level of chatbot we are creating, but you are of course welcome to explore the parameters on your own. Okay, we are using our chat function. And then because it requires user input we are saying our user input. And I'm changing the question up this time.
+
+Instead of asking about the weather, I'm asking how the chatbot's doing. And as long as we didn't make any errors in our code, this should work successfully.
+
+It's taking a minute here. Sometimes if you use the cheaper models, it takes a little bit of time. There we go. It says, "Oh, fantastic. Just living the dream, answering the same questions over and over." What do you want?
+
+I I love developing AI with this sassy persona. Um Okay, so so far so good. It's still working. It's still working, but our code is cleaner. So, now let's move along to part three, if you're following along with my GitHub repository, where we are going to actually make this a back-and-forth conversation by adding a loop.
+
+So, um
+
+Trying to ex- figure out the best way to explain this here. Okay. Uh one more part of the refactor here that I want to do actually is let's set our messages outside of the loop or outside of the function because otherwise every time the function runs, it's going to reinitialize just these same two things. And that's going to make it impossible for the message history to grow. Um And we can see that messages is a list.
+
+And within the list, we have dictionaries with our roles and our content. So, I'm going to use the same idea. Uh messages making it a list and setting our role. We haven't added any user input here yet, so I'm not adding that second dictionary. And let's set that equal to messages.
+
+There we go. Okay. Um Mhm. Mhm. So far so good. Okay.
+
+So, now in order to add user input that the chatbot can see, we do need to include that in our messages. So, before we actually call the AI, uh before we actually call the AI API, we need to append the user input to our messages list. So, if you've done lists before, it's one of the first things you learn in Python, the append method will add a new thing to the end of the list. And this time we're adding a dictionary for our user with our user input from our chat function. And then, in order to have our messages continue to add new messages, we are going to append again after we call the AI API.
+
+And this time, look at this. This is the first time we're seeing this. We're saying the role is the assistant. This is the AI. And we are adding the reply that we created from our API call into our messages list. All right?
+
+Um So, we haven't changed any major functionality yet, so I'm not going to rerun it yet. So, here is where we can start having a back-and-forth conversation. And anytime you're programming and you want a program to continue running, you should start thinking that you're going to need a loop. So, we're going to use a while loop. So, we're going to say while true. So,
+
+basically, until we set a stop parameter, this is going to continue running. And while it's true, we are going to use Python's input function. And the input function is native to Python. You don't need to import or download anything. Um and we're just going to say you and then it's going to have kind of a little toggle for us to type our response in.
+
+And if you've ever used a while loop before, I'm sure you have accidentally created a condition where it will run forever. So I always try to make sure that we set a stop condition. So basically here we're saying if user input is equal to exit or quit, break and stop the loops, which is going to stop the program cuz it's at the end of our program. Um and then finally we're going to add in our chat function call with user input which will be based on our input function. Okay.
+
+So let's run this. I'm going to save it just in case it needs that. It shouldn't.
+
+All right. It's taking a minute. Time for a coffee break.
+
+How's everyone doing today? When I was testing with this model yesterday, I ran into no problems, but it's having a little bit of think time now. And this happens when you work with AI and APIs sometimes. If it takes much longer, I will probably restart my kernel and try it again.
+
+Oh, you know why? It's It's me. It's me. Look up here in the search bar. It wants me to ask a question to the AI. I was
+
+expecting it within this environment. I don't know why. So, up here, this is how VS Code uses the input function for Python. Let's ask a question. Uh "Hi, how are you?" I'm going to press
+
+enter. And now, here we go. Here we go. We see our assistant saying, "Oh, fantastic. Just living the dream of answering questions I don't care about anything else." And notice the bar up
+
+here continues. Um let's ask the exact same thing.
+
+All right. Well, really digging deep with that one, huh? I'm trying to get it to acknowledge the fact I've already asked that. Let's see. Okay, here we go. Seriously, again?
+
+Look, I'm here to help, not to exchange pleasantries all day. What do you need? So, this tells me that our chatbot is seeing chat history. It sees our old messages. It sees its old replies.
+
+So, we have a functional chatbot. This is phenomenal. And let's go ahead and exit. Okay. But, okay.
+
+Um and because I'm working in this particular configuration, I'm going to go ahead and print um our
+
+our work, too. When I was testing this yesterday, I was using um a terminal instead of this interactive, so I am just refactoring it slightly here. And now if we try this again, it might be a little nicer. Okay, yeah. So now it's it's showing our output here, but we don't need this space. I forgot cuz we're using
+
+a comma. All right. Um And Sarah, yes, it keeps the history for one chat session. So if I were to quit the program and then run it again, it's not going to know hi cuz it's no longer in our messages dictionary because we're we're doing the messages dictionary from this dot py file. Uh there is a way that you can keep kind of a storage or persistent memory.
+
+Um I recommend using JSON files and actually the guided project from Data Quest does go into that, but for today, we are going to stick with just the um active program memory cuz we could get very complex with this, but we only have an hour, unfortunately. Um So this is great so far, but remember we are using an API and we are most likely paying money to use that API. And it's all based on tokens. So the longer our messages list is, the more tokens the AI has to process, and it's going to get larger and larger and larger, and every single chat message, if you continue going, is going to cost you more and more and more money. So, we want to mitigate that. We don't
+
+want our chatbot to have thousands of tokens to process every time. And to do that, this is moving from my GitHub solution. This is moving into our final, the part four. And we are going to add in some logic to limit the number of tokens the AI has available to it by basically pruning the oldest messages if it exceeds a certain message threshold. In order to do this, we are going to import one additional library up here.
+
+We're going to use ticktoken. It does what it says. It counts or ticks tokens. And it works very well with OpenAI compatible formatting here. So, this is it looks like we're adding a lot of code. So, I'm going to explain it one
+
+part at a time. We're going to write four functions. Add a lot of spaces here. The first function we're going to add is get encoding. So, different AI models use different encoding types. If you've
+
+ever worked with Python data files, maybe you've seen Latin one encoding or UTF-8 encoding. These are just different ways that characters parse. And same is true for AI models. And so, what we're going to do here is from ticktoken, we are going to find encoding for a specific model. And model is going to be our argument that this function takes. And we are going to
+
+reference our global variable of our model defined here. However, AI is still pretty new and it's constantly changing. Um and different versions of these libraries are going to play differently. So, I recommend including some exception handling here. So, we're going to try to find the encoding method for this model.
+
+But, if tiktoken can't find it or it doesn't exist, we are going to have an exception that prints a warning so that we know it didn't find the right model. And we're just going to use this kind of standard encoding method, which is cl100k. So, this is just getting encoding. That's what this function's doing. And then, after this, let's define that our global encoding will be from our get encoding function based on our model.
+
+All right. Next, we want to count our tokens. And to count our tokens, it's a very short and sweet function that takes some text and returns the length of whatever encoding method we need and using the dot encode method from our tiktoken library um and then looking at the text. All right. And then, from there, um these two functions, the get the count tokens and total tokens used, they could be combined, but keeping things modular like this is really good for debugging.
+
+It's really good for clean code, and they do slightly different things. So, maybe you want to count tokens in more places than just the total message conversation, and having it split out like this allows you to do that. So, total tokens used is going to return the sum of all of the count tokens from our content portions in our messages list. Using a little bit of uh list comprehension here. And again, because AI APIs are a little fickle, we are using a try except bit of logic so that if there is an error, it doesn't stop the entire program. It just returns a zero and
+
+continues. And the final thing we're doing here is we now have our encoding. We now know how many tokens there are, but how do we enforce a limit on the number of tokens for our chat conversation? Um let's copy the right thing. Here we go.
+
+Here we go. Okay, so we're making a new function called enforce token budget. Um I need to specify a new global variable called token budget. So, let's do that up here.
+
+Um and usually I have this set to 1,000, but for now with testing, let's set it to 100. Okay, and in our enforce token budget, we are looking at our messages and we have a budget. So, while the total tokens used is greater than our budget. So, basically when we've exceeded the amount of tokens we want it to be able to have, we are going to be popping off the oldest message. Except, we are not going to be popping off the system message because we don't want our chatbot to stop being sassy. So, this
+
+little bit of logic allows the system message to remain, but the the second oldest message, basically, will be removed. And once again, a little bit of exception handling happening here. So, now we need to call our enforce token budget function.
+
+And we are going to do that I chose to do this after we add in the assistant reply. You can experiment with different locations for this within your chat function um because it will make a difference of when messages are popped. But this is what I decided to do. Okay, and then just for fun, um I'm also adding a little counter in our output that will tell us how many total tokens have been used. And let's experiment. Let's explore.
+
+Okay, and this is the final new thing I'm showing, so after this, we will definitely have some time for questions. Okay, so it's loading. It's giving us the warning saying that the tokenizer for our 4.1 nano model is not found, so it's falling back to CL 100. And uh basically, what's happening here is token does not equate directly to a word. So, the word dog,
+
+that might be one token, but different encoders will count that slightly differently. So, maybe one encoder counts dog as one token, but another encoder might count it as two tokens or three tokens. So, different models will charge you for their encoding method. And so this is our way our best way to estimate what the correct encoding charge method will be, right? Oh, I need to talk to my AI here.
+
+Hi. Okay, I said hi. Oh, fantastic, another hi, just what I needed. What do you want? Okay, so we can see 33 tokens are used. Let's write hi again.
+
+Wow, twice in a row, impressive. Do you have a real question or just here to say hi all day? Let me say, just here to say hi. Great, now that we've established you're saying hi for no apparent reason, do you actually need something or are we just going to keep this endless greeting greeting loop? And see, we're at 98 tokens right now.
+
+98 tokens. Let's say, what's up? Oh, how original, what's up? Besides the sky, the ceiling, and my patience wearing thin? Anything useful you'd like to ask or just testing the waters? But look at our
+
+current tokens now, 91. And the reason for this is our oldest messages are beginning to be removed because we set a token budget, a very very low low token budget, right? So this is going to be really important for ensuring your conversation history doesn't get unruly, and your budget, your actual money budget, doesn't get like blown away very quickly. All right, let's go ahead and exit this, and you now have a working chatbot from start to finish. From start to finish.
+
+Um I do have a couple ideas for next steps. Let me see here. So, most of these next steps are included in the Dataquest official guided project, but like I mentioned, because we had an hour together, I thought it would be a crash course for working with an AI API. But, using object-oriented programming is sort of the standard for this type of work. So, I do highly recommend refactoring the code that we just wrote to use object-oriented programming.
+
+Especially, I I see you. I know who you are, cuz I was me, too. Especially if you're uncomfortable using object-oriented programming. This is a very good project to practice that with. And in my GitHub solution, you'll see that I've included a Python file called I have What is it called? OOP Chatbot,
+
+which takes the code we just wrote and converts it into OOP, so you can kind of reference that if you want. So, other next steps, I recommend migrating your chatbot into a web environment, and you do not need to be a web developer to do this. There are a couple really nice tools that I like. Streamlit and Gradio are the two that come to mind immediately. Where they basically allow you to take your Python program, copy and paste it into their interface, and then have with a few lines of code, have a functional web application that you can share with friends and family.
+
+Um, if this is an interesting idea to you, we do have a Dataquest project using Streamlit that creates a chatbot environment, and potentially we could do a project webinar on that if that would be something you're interested in. You You add the ability for your chatbot to have reference materials. So, if you are in school or you are preparing for an interview, give TXT files, like text files, that your chatbot has as kind of knowledge, and you can ask your chatbot in your system prompt something like, "You are an interviewer for company X. Ask me interview questions and give me feedback on my answers." And then in your chat, you can practice your interview questions. Or if you're in
+
+school, similar thing. "You are an expert in I don't know, Shakespeare." Um and it has access access to like your Shakespeare notes or something. And And you can kind of use it like um your own personal tutor. So, that's something I recommend. And
+
+then the final one was mentioned in chat. You can add persistent between sessions if you add files to your working directory. So, this is really good um if you want your chatbot to be more robust, less breakable. And yeah. Now, let's move on to some questions. We have
+
+some time for questions. I'll try to get through a lot. Um but if I don't have time for your question, please do reach out to me in the Dataquest community. You can get to the Dataquest community through any lesson's help drop down and look at the community there. And just tag me, Anna_Straw, and I will happily answer questions there.
+
+Um Okay, so looking at the questions, we've got a lot of questions today. Let's see. Okay, Huma, I want to ask answer your question. You're a little confused. The project clicks to a guided project and so this webinar is to go how to go through it. Yes, I did
+
+make a little I took some liberties with this one to simplify the guided project a little bit where the official guided project does go through adding different system prompts. It adds the persistent history with JSON files. And if that's something that would be interesting, please let me know and we can do another session. Um if you fill out the feedback form that's being shared, that's the great a place where I am looking for ideas for our upcoming project labs. So let me know, what do you want to see?
+
+Um but I hope that today's project was a good jumping-off point for you and then the rest of the guided project adding kind of those flourishing touches, if you will, is something that you're feeling confident you can do.
+
+Um and Edward, one-shot means you supply no information to the LLM to process your prompt. I don't know if I used one-shot 100% correctly here, but um yeah, it was it was a one-off message. A one-off message, we weren't telling it to think first and and kind of going one step at a time with thought process. We were saying here's what I want you to do, do it. And it did it and we were done.
+
+All right, Faye asks, can you use a Python notebook for this? So I'm assuming Jupyter notebook is what you're asking about. Yeah. Yeah, you can. Uh I decided to use a dot pi file because for this type of work, it is a little bit more standard to to use.
+
+But, Jupyter notebooks would work just fine. Oh, I see your follow-up question. Yes, Jupyter notebook. Yeah, Jupyter notebooks would work. Colab notebooks would most likely work.
+
+An anonymous attendee asked, can you use a Gemini API? Um, I personally haven't worked with a Gemini API, so I'm not sure if it has if it's going to follow the same API object logic here. So, you might need to look at the API documentation to figure that out. But, a lot of the general concepts and logic that we did should apply.
+
+And Nalash asks, what do you think about Mistral for a free agent? Um, so are you asking about I think Mistral is a Llama model, right? And my experiences with Llama have been really good. I don't have a ton of hands-on chatbot coding experiences with them just because I have access to the Open AI models and that works really well for me. But, they ought to work. But, experiment.
+
+Chatbots are a pretty good cheap way to test out different models to see what kind of output you get. An anonymous attendee asks, will you get a recording of this? Yes, this will be uploaded to YouTube sometime within the next 24 hours and we will email you a link to the YouTube video once it is live.
+
+Can I explain the role in messages parameter again? What's the difference? Uh okay. So this was asking about our role key and our value options. So if you make things a user the way the API interprets it is if you asked the question. Um
+
+and I actually don't know what would happen if we were to update this to user. We could always try it. But I think it wouldn't work because the AI doesn't know it's supposed to respond. Um because it's Uh let's let's let's just test it out. Let's test it out.
+
+I'm curious. Okay, so we're updating that. Um I'm going to leave the system prompt alone for right now, so we're only changing one thing at a time. Let's clear that. And then run it.
+
+And if I say hello, it says hello hello. And if I say hello again, um what did I just say? Sometimes this doesn't work, but sometimes it does. Um oh, I see we're playing the what did I just say game. Okay, but you didn't answer my question.
+
+Okay, so it seems like it's doing okay with that, but uh I would caution you against messing with what the the rules are assigned as. Um just because it could interact with the AI differently.
+
+Um please pin the GitHub link. So, my Dataquest teammate should be sharing the GitHub link in chat occasionally. I don't know if we have the capability to pin messages.
+
+Uh and Zahabia asks, "Do you need to download anything to run the code earlier without the defined function?" Yeah, so if um I can show you part one this way. There we go. Um So, do you need to download anything? So, you do need to have this library available to you.
+
+And this one involves usually pip. You do pip install, and then you say open AI, and it will get your computer ready to go with that. I'm using Can Can you see it? Let me see where it would be. Yeah, you can see right here. I'm using
+
+a virtual environment called chatbot that I set up. And I set it up so that um my libraries would be exactly what I wanted to show in this webinar, and I wouldn't have any issues with different libraries interacting poorly. Um Does pip list work? No. In this environment, let's see.
+
+Ooh, it's thinking. While it's thinking, okay. Um I am going to take a quick pause and I realize that we are at time. Um, so if you do need to hop off, thank you so much for joining. I hope it was valuable. Please do fill
+
+out that feedback survey if you have a few moments. Especially like I said, I will be planning the next round of project lab webinars. So if there's something you want to see, let me know. Let me know. And it could be that your suggestion is the next one I take.
+
+Um, But yes, thank you for joining. If you do need to hop off, I appreciate it. All right, so coming back to the question here, pip list It's a long list, isn't it? Um, and so you're going to need to make sure if you type pip list, whether it's in an interactive environment or in a command line terminal, um, you need to be able to see OpenAI in that list. So, mine looks like it's it's cut off cuz I have too many libraries installed, but that's all right.
+
+So hopefully that answers your questions, Zahabia. If not, let me know. Okay, so Zahabia asks, "What's my GitHub address? You don't have LinkedIn profile." Um, so my GitHub address is being shared in the chat.
+
+Uh, it's the one that's github.com/acstraw. And then chat about demo is what I've been using for this.
+
+Uh, all right.
+
+Edward, you asked, "Does the messages dictionary It's it's a list, just be mindful that it's a list of dictionaries. Does this make it one shot only on the first chat message?" Uh, yes. I see you asked that at 10:12 my time, so I think that was most likely before we added in the append messages. But the append message is how it makes it have the history available. But But
+
+before append, you're correct, it was that one shot.
+
+Uh okay, an anonymous attendee asks about encoding. Why is encoding needed? Why do we need to count tokens? How do How do tokens directly relate to cost per query to the model? So, I'm going to answer the why do you need to count tokens. Do you need to count
+
+tokens? No. For your wallet, should you count tokens? Yes. And actually, many models start to slow down or error if it has too many tokens it's looking at.
+
+Um token budget and context windows have improved a lot in the past few years and continue to get larger and larger and larger. But I still recommend setting a token budget because every token costs money and depending on what model you're using, you can look at the AI documentation and see the price breakdown. So, really, really beautiful knowledgeable models are pricey. Some cost like 10 cents per 100 tokens or something like that. And if you don't set a token budget, you can and will be looking at very large bills.
+
+Um like I mentioned earlier, I have accidentally done that before where I forget to set a token budget and then ask my AI to do something and it does a great job, but it costs me $10, $20 because I don't set a token budget. So, really that's the personal selfish reason why I recommend setting token budgets. Um but it is also just a really good idea. Um and so, why is encoding needed? Because encoding is how tokens are counted. And
+
+depending on the encoding, it's going to be counted slightly differently. Um and we are just doing our best estimate at how many tokens are being used. It might not be a direct one-to-one with what OpenAI is actually considering a token, but we're going to get pretty close. And getting pretty close is really the most important part for when we set our budget. So, hopefully that answered your questions. If not, let me know.
+
+I'll try to answer a couple more here. We've got so many questions, which is hopefully hopefully good and not that I missed important things. Dominic, great question, asks in order to get the line API key equals to work, what do you have to do? So, you need to sign up for an API key and an API key is going to look something like like it's a big old chain of nonsense. And you're going to take this and you're going to copy it into your computer's environment variables. There's a couple ways to do
+
+this. There is a command line option. If you Google add environment variables with your machine type, whether it's um add environment variables Windows, add environment variables Mac, add environment variables Linux. It'll walk you through those steps. And then, you need to specify that the name of this environment variable is OpenAI API key. And then, the value will be
+
+that that nonsense text, right? Um if you are on Windows and you set that, you're going to need to restart your computer first. Someone in chat clarified you don't need to do that for Mac, and I'm assuming you don't need to do it for Linux, either. Um but that is how you get that to work. And you know, like if you really are just frustrated by that part, you could for short-term add your API key here as a string, but it is not secure.
+
+It is not secure to do it that way, and then if you share your code and you forget to remove this, anybody on the internet who can see it has access to your API key, which means that you could get charged money for someone else's code, basically. Um And Aman, I see your chat message and I will answer that right now. Is the API key always the same, and when do you use it? You can request new API keys. So, actually for this project, I added in a project-specific API key just on the off chance that I exposed my API key on the webinar, then I can shut that API key down, it will no longer function. It's kind of
+
+like on your your house, if you rekey your your locks, your old key won't work anymore. That's what an API key is, as well. All right. Um looking at time, we are at time, technically. So, I'm going to do a quick scroll to see if there's any like final questions I think would be great to answer live.
+
+But if not, like I said, please do reach out to me in the Dataquest community and ask your question there and I will reply to it within the next week or so. Um
+
+Okay, Hamad has a great question. It's kind of a a short and sweet answer. So, I think it's a good one to end on here. Is it possible to build a chatbot in any language but English? Maybe.
+
+What if you set your system prompt to something different? So, let's say you are an expert Spanish teacher. All replies should be in Español. And if we save this and run it, what happens?
+
+Hola, en qué puedo ayudarte hoy? So, seems like yes. Seems like yes. Um I don't know grammatically how perfect it'll be, but there you go. And notice it's no longer sassy because I changed the system prompt.
+
+All right. So, I am going to wrap up here cuz we're we're past time and even though we have so many great questions I want to continue answering, alas, we must go. So, please do fill out that survey. Let me know what you want to see. Let me know what worked well from this webinar, what you want to see more of, less of. And if
+
+you didn't get your question answered, please do reach out. I love answering questions and I want to make sure that everybody has as much information as you would like. So, with that being said, thank you so much for joining. I had a blast doing this webinar today. I hope you learned something and stay tuned cuz we will have another project lab in a couple weeks. Thanks,
+
+everybody.

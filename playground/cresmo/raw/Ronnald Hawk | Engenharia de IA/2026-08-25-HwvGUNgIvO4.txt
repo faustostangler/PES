@@ -1,0 +1,173 @@
+---
+video_title: "DeepSeek V4 Flash: Por que migrei meus clientes"
+video_id: HwvGUNgIvO4
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=HwvGUNgIvO4
+video_date: 2026-08-25
+video_description: |
+  ––– Recursos & Educação –––  
+  Comunidade (Engenharia de IA)  
+  https://www.rhawk.pro/comunidade
+  
+  ––– Serviços –––  
+  https://www.rhawk.pro/empresas
+  
+  ––– Mais conteúdo –––  
+  https://www.rhawk.pro/dominio
+  
+  ––– Mercado de IA –––
+  Análises do mercado de IA para quem constrói, decide e lidera:
+  https://www.youtube.com/@rhawk-mercado
+  
+  ––– Descrição –––  
+  Depois de processar bilhões de tokens com o DeepSeek V4 Flash em sistemas reais, uma atualização do modelo levantou uma pergunta: valia a pena substituir a configuração que já estava funcionando em produção?
+  
+  Para responder, eu não confiei apenas em benchmarks públicos. Rodei 1.000 respostas controladas e comparei qualidade, reasoning, latência e custo. O objetivo era descobrir se o DeepSeek V4 Flash 0731 em `high` conseguiria substituir o modelo original em `xhigh` sem degradar o contrato das aplicações.
+  
+  No workload avaliado, o novo modelo preservou a qualidade, passou nos testes single-turn e multi-turn, utilizou 63,8% menos tokens de reasoning e reduziu a latência mediana em 53,2%. O custo observado também caiu, embora parte dessa economia estivesse relacionada ao comportamento do cache e às condições do provider.
+  
+  Mas o vídeo não é apenas sobre uma atualização do DeepSeek. Ele mostra por que escolher modelos para produção é diferente de acompanhar rankings, reviews e lançamentos.
+  
+  O melhor modelo para uma solução empresarial não é necessariamente o mais inteligente ou mais caro. É o modelo mais barato e eficiente que consegue cumprir, de maneira consistente, o contrato da aplicação.
+  
+  Neste vídeo, você vai ver:
+  
+  - Por que reviews e benchmarks não decidem qual modelo usar em produção
+  - Como avaliar custo e capacidade em soluções agênticas
+  - Por que modelos mais baratos podem atender aplicações empresariais
+  - Como comparei o DeepSeek V4 Flash original com a atualização 0731
+  - Como foram construídas as 1.000 respostas controladas
+  - O que são testes single-turn e multi-turn
+  - Como validar o contrato de uma aplicação de IA
+  - O impacto dos reasoning tokens no custo e na latência
+  - A diferença entre `high`, `xhigh` e `max`
+  - Como a latência p50 e p95 mudou no experimento
+  - Por que custo observado e custo sem cache são números diferentes
+  - Como providers e políticas de cache afetam a operação
+  - Por que usar automaticamente modelos da OpenAI ou Anthropic pode sair caro
+  - Como avaliar uma migração de modelo com segurança
+  - Por que engenharia de IA exige testes, métricas e decisões baseadas em evidências
+  
+  Se você trabalha com agentes de IA, automações inteligentes, consultoria, aplicações empresariais ou sistemas de IA em produção, este vídeo mostra como transformar a escolha de modelos em uma decisão de engenharia — e não em uma aposta baseada em hype.
+  
+  ––– Playlist –––  
+  Playlist IA:  
+  https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  
+  00:00 DeepSeek V4 Flash em produção  
+  00:45 Como escolher modelos para produção  
+  04:48 A hipótese e os 1.000 testes  
+  07:33 Qualidade, reasoning e latência  
+  13:27 Custo, cache e escala  
+  16:53 `high`, `xhigh` e `max`  
+  17:55 Como migrar modelos com segurança
+  
+  ––– Social –––  
+  Instagram: / rhawk.pro  
+  LinkedIn: https://www.linkedin.com/in/ronnald-hawk/
+  
+  #DeepSeek #DeepSeekV4Flash #EngenhariaDeIA #IAAplicada #AIEngineering #AgentesDeIA #LLM #InteligenciaArtificial
+---
+Então, você achou que o melhor canal de engenharia de A do Brasil tinha parado? Você achou errado? Nesse vídeo aqui, para voltar em grande estilo, eu vou te explicar porque eu migrei todos os meus clientes possíveis em produção para o Deepsic V4 flash. Eu vou te explicar os números de latência, de custo e de inteligência. E no final você vai entender que você pode economizar um monte de dinheiro com IA sem perder inteligência e na verdade em alguns casos até ganhando inteligência. Se você
+
+não me conhece, eu me chamo Ronald Hawk. Eu ajudo indivíduos e empresas a colocarem soluções de a em produção e lucrarem com isso e com a experiência adquirida em soluções de do mundo real de verdade eu faço conteúdos como esse. Então bora pro vídeo. Eu particularmente não gosto de fazer review de modelo porque na maioria das vezes eles são inúteis. Um é o benchmark do fornecedor.
+
+Dois tá a internet inteira no calor do momento. Provavelmente você já viu milhões de vídeos de review de modelo e no fundo nada muda, né? Você tem um modelo novo aqui, um modelo novo a colar. E essa estratégia de ficar procurando modelo novo o tempo inteiro é algo muito relacionado ao mundo amador e não ao mundo profissional. E aqui eu tô falando de soluções de engenharia de A, tá, caras? Eu não tô falando de vibe
+
+coding. Esse vídeo aqui é sobre construir soluções do mundo real e não fazer o Vibe Code, né? O Vibe Code em todo mundo faz. E provavelmente nenhum desses modelos pequenos substituem os modelos SOTA, né? Os melhores modelos possíveis como o Codex e o Fable. Só que
+
+você não precisa desses modelos de maneira nenhuma para colocar soluções de ar em produção, principalmente as que atendem o mercado geralmente, que são soluções de trabalho de escritório muita das vezes, né? Então é nesse ponto que o Deepsic entra pelo seguinte, até bem pouco tempo a gente tinha a impressão que só modelos da Open do Open AI ou da Antropic resolveriam o nosso problema, né? Só que eh de uns tempos para cá e quem me acompanha mais de perto, né, no meu dia a dia de trabalho ou troca ideia comigo, sabe que eu não uso esses modelos em produção há muito tempo por conta do custo. E eu já consegui extrair inteligência, por exemplo, do Queen, eh, 3.5, 3.6, né, já consegui extrair
+
+inteligência bastante do Deep Sick Flash. Inclusive o deep sick flash é algo que eu já uso há muito tempo desde o três, só que quando lançou o quatro, eh, eu adotei ele mais forte ainda. E eu quero te mostrar primeiro isso aqui, tá? Eh, isso aqui é um gráfico de inteligência por preço numa métrica chamada index score. Por que que isso aqui é importante pra gente? Se você cria uma solução de a em
+
+produção, uma das melhores medidas possíveis que você tem é a medida agêntica. O que que seria isso? o quanto o modelo consegue chamar ferramentas e tomar decisões baseadas nessas ferramentas. Geralmente soluções Enterprise e uma arquitetura comum é você faz fet de dado de algum lugar, bota na janela de contexto, seu agente faz algo, decide chamar uma outra ferramenta e assim por diante. Então essa métrica aqui é muito importante. E
+
+esse gráfico aqui, nesse eixo de baixo, ele mostra o custo por tarefa. E nesse caso aqui ele mostra o valor no index, tá? Então quanto mais alto melhor. Seria basicamente isso, tá? E essa linhazinha aqui é a linha de pareto, que seria o seguinte: qual é o melhor custob benefício possível dado é o preço? É
+
+basicamente isso que você tá vendo aqui na tela, tá? Deixa eu botar um, deixa eu chegar num zoom aqui para você ver um pouquinho melhor. Então aqui como destaque e no topo você tem o Cloud 5 Max Effort. Então dificilmente você usa isso aqui em uma solução do mundo real porque o seu custo é impeditivo. você não consegue criar soluções de de A, é, seja para atender uma empresa onde você vende a solução ou você pru o serviço para dentro da sua empresa, porque você vai tá eh gastando todo o seu recurso com Antropic. Então, ninguém faz isso,
+
+OK? Isso aqui é só para vibe coding praticamente e isso subsidiado. Muito bem. E aqui você vê que certos modelos open source começam a chegar. Há um tempo atrás, um pouco mais de se meses, há um ano aqui no YouTube, eu disse que os modelos open source tinham cruzado um threshold de qualidade para soluções Enterprise. E isso se confirma e, por
+
+exemplo, com GLM. O GLM é um outro tipo de modelo diferente do Deep Sec 4 Flash para soluções de long running. Se você tá criando uma solução que tem suagente, por exemplo, ele é um ótimo modelo. Muito bem. Mas hoje eu não vou falar de arquitetura, mas eu falo em outro momento, tá? E se você continuar vindo
+
+aqui, você vai ver o nosso glorioso Deep Sec V4 flash 0731. Se você tava eh hibernando e não sabe do que eu tô falando, o que que é esse número aqui, tá? Esse número aqui é é a tag, seria o checkpointer, como eles chamam, tá? E quando eles lançaram o Jeep Seic V4 flash, eh, era 04 alguma coisa. Boa parte dos fluxos que eu tinha e que eu pude mudar, eu mudei pro 04 assim que ele lançou. Só que o Dipsic lançou essa
+
+atualização e aí eu fui testar. Então o meu estudo que eu vou mostrar para vocês aqui é baseado nessa troca, tá? Eu já tinha soluções de improdução e aí eu fui trocar do 04 pro 0,71 ou ver se de fato ele era melhor ou mais útil, tá? Então, eh, o que que eu fiz, tá? Eh, o meu V4 flash original, digamos assim, deixa eu me mudar para um outro lugar para ficar mais fácil pra gente se me ver. Eh, ele usava o X R high, tá? O que
+
+que é isso? Se você não sabe, isso é a quantidade de reasoning tokens que a gente usa quando a gente faz uso de qualquer modelo que seja reasoning, tá? Então você pode setar este valor. Então se você vê em todos os benchmark, você vai ver lá max effort, x high. O que significa?
+
+Você vai forçar o modelo a gastar mais tokens antes dele responder. Seria o pensar. Eu odeio esse nome pensar. Eu acredito que o melhor nome seria trabalhar, mas é assim como o mercado chama. OK? Você vai imprimir uma um
+
+conjunto grande de caracteres antes de responder. Esse conjunto de caracteres não vem para você, você não vê essa resposta se você não sabe disso, mas ele acontece. E qual o problema disso? Um, você paga por esses tokens, correto? Dois, a sua resposta fica mais lenta porque ele tá gerando mais computação, ele tá trabalhando mais. Show de bola. Então, o
+
+que que eu fiz aqui no meu experimento? Eu queria ver se de fato o benchmark era tão bom quanto parecia que era o flash antigo é inferior ao flash novo. Esse era o benchmark por alguns pontinhos. E se ele de fato era tão bom, será que eu posso substituir minhas soluções que são x high e pelo high? Era essa a resposta, era essa a minha hipótese, tá? E esse
+
+foi o meu experimento. Como que eu rodei ele? Eu rodo 1000 vezes o mesmo teste, tá? E esse teste é composto de uma série de perguntas de single turn, que seria eh pergunta e resposta, e multiturn, que seria várias turnos e eu avalio eles, então, basicamente esse foi o meu teste. Deixa eu passar pro próximo aqui. E esse
+
+foi o resultado, tá? O que que é o contrato? O contrato são exatamente esses testes. Você tem um contrato, assim como você, por exemplo, se você vem de engenharia de software tradicional, você faz um conjunto de testes antes de fazer deploy na sua ferramenta, por exemplo, você testa, ele passou, é um conjunto de teste. Em A é a mesma coisa. Se você nunca se atentou a
+
+isso, recomendo o meu vídeo aqui sobre, por exemplo, Hag, onde eu mostro lá. E aqui eu já falei outras vezes sobre eh vários outros tipos de de teste. Então aqui no meu canal é um lugar cheio disso, tá? Eh e você faz esses tipos de teste. Esse teste aqui em particular eu criei ele com uma abstração de vários clientes que eu tenho de tipo de tarefa, não a mesma tarefa. E eu tava
+
+estressando ele em vários modelos open source, vários modelos open source. E o Jeep Sic, a nova versão, foi o primeiro a saturar meu benchmark no multiturn e ele conseguiu 36 de 36. Eu já tinha conseguido 50 de 50 na maioria das questões com outros modelos no single turn, mas esse foi o primeiro modelo a conseguir isso, tá? E por esse modelo é especial? Deixa eu voltar para cá. Tem
+
+um ponto aqui nesse gráfico que é interessante, que é esse modelo aqui, ó, é o Quen 3.8 27. Há muito tempo. E também quem me conhece de perto fala: "Cara, o 27 é um baita de um modelo". O 27 é um baita de um modelo. E por que
+
+que eu não uso ele hoje em produção? Eh, ele tinha vários problemas de fornecedor. Então, eh, lá no Deepsic você encontra fornecedores muito eh resilientes e em relação a token por segundo e e latência. Então, a minha escolha em produção também leva isso em conta, tá? E qual é a diferença desses dois modelos? Se você tá se perguntando,
+
+basicamente se esse aqui é 27B, qual é o tamanho desse aqui? Eu não sei de ao certo qual é o tamanho do Deepsic V4 flash. Eu acho que é 230 e poucos bilhões, mas ele é um MOL, tá? Ele é um MOW. Eu tenho um vídeo aqui sobre LLMs locais onde eu falo de MOW. Recomendo
+
+você procurar aí. E esse modelo aqui é um modelo denso, então tem essa diferença também eh relevante aqui. E modelos densos tendem a performar melhor do que modelos MOS, eh, mesmo sendo menores, tá? Se você não sabe o que é MO ou qualquer uma dessas siglas, você pode vir aqui a Rockpr, você vem aqui, ó, faz uma pergunta, o que é o M? ele vai te responder e vai te indicar também um conteúdo para você ver. E provavelmente
+
+o vídeo eh do M tá aqui. Então você pode pegar exatamente esse vídeo e n estudar, né, cara? Estudar é um estudo, é um grande estudo essa nossa área aqui. Muito bem. Então eu fiz os meus testes, eu tive melhores respostas saindo de X high para high e eu tive o melhor score agregado geral, tá? Aí o contrato
+
+preservado, então show de bola. Engenharia não se faz com sentimento, não é? Eu acho que esse modelo é o melhor, eu amo outro modelo. Ai meu Deus do céu, isso muda tudo. Ai ai. É com
+
+número, tá? Isso aqui é engenharia, tá? Isso aqui não é é piada. Muito bem. Muito bem. E o que isso significa na
+
+prática, tá? O a quantidade de tokens gasto no reasoning saiu de 308 em média para 111, tá? Tkens de reasoning por resposta. Então a gente teve aqui uma redução de 63% mais ou menos, né? Quase 64, trocando de modelo ou trocando de modelo e trocando de reasoning. E você vê como
+
+é importante a gente conseguir controlar o reasoning, porque de repente na sua solução aí que você tá usando, você tá usando o reasoning errado para a tarefa. A tarefa pode estar não performando tão bem, não por conta do modelo, mas é porque você não é hábil em saber qual o reasoning ou qual é o valor você precisa usar. Isso aqui é engenharia de a, isso aqui não é achismo. Muito bem. E qual é o resultado disso na prática? A minha
+
+resposta média caiu de 11 segundos para 5 segundos, tá? 53% de redução na na média, né, no geral. E aqui a gente tá usando o P50. Não sei o que é P50, Ronald, não sei o que são essas métricas. Você vai lá na Rockpr mais uma vez, você vai lá colocar métricas para IA, ele vai te explicar o que que é e vai te mostrar o conteúdo, se tiver algum conteúdo disponível para você, obviamente. Muito bem, tá? E o que
+
+é P95, Ronald? O que que é cauda, tá? Se você Vamos parar aqui para esses valores, né, P50, P95, e eles podem ser nomes estranhos, tá? Então você pensa assim, ó, P50 como médio, P95 como caso extremo e no caso extremo, no pior caso, a tarefa que mais demorou, tá? Ela caiu 39.4%,
+
+quase 40% de ganho no pior caso e na média 50%. Isso aqui é engenharia de ar. Tá vendo, caras? Por que que isso aqui é importante? Quanto mais rápido for a resposta, melhor pro seu cliente. Quanto
+
+melhor pro seu cliente, melhor para você. Por que que é melhor para você? Você presta melhor serviço, você faz mais dinheiro. OK? Ah, Ronald, mas não é assim. É assim sim, tá? Então se você
+
+demonstrar esse valor, tudo que eu tô mostrando aqui para vocês, se você chega pro teu chefe, fala assim: "Ó chefe, eu vi o vídeo do Hulk, ele me mostrou isso aqui, eu apliquei e eu tive x resultado. A sua moral no teu trabalho sobe. Você chega pro teu cliente, você tem uma empresa como eu, você chega lá, mostra os resultados, fala assim: "A gente melhorou sua solução, não tem custo nenhum. Qual é a chance de você conseguir os melhores contratos depois?" grande, porque você tá prestando um bom serviço, é assim que funciona. Já passou
+
+da hora de A ser tratada como algo fantástico, uma caixa preta que a gente não conhece e pode ser tratado assim igual tô te mostrando aqui como engenharia, como qualquer outra coisa. Muito bem, muito bem, tá? E aonia aqui no fundo eh foi de 17%, né, no custo total, né? Esse aqui é uma média. Eh, e teve uma outra coisa curiosa que eu não vou entrar no mérito disso aqui, que foi o prompt casing. Eu bati mais em cashing
+
+eh do que e com modelo anterior e eu não consigo explicar muito bem. Pode ser simplesmente provedor, ele provia melhor eh o cash. Então, a gente teve uma redução, além de tudo, trocando de modelo, a gente teve aumento de inteligência, redução de latência, melhora nos casos extremos e nos casos médios e redução de custo. Só vitória, né? Muito bem. Então, o que
+
+eu fiz na prática foi substituir o XY antigo pelo Ri novo. Ronald, mas e os modelos da Open A e os modelos da Antropic? Deixa eu te mostrar uma parada aqui. Deixa eu te mostrar uma parada aqui, tá? Se você não tem ideia da ordem de grandeza, é um cliente meu recentemente ainda usava o Riko 4.5 na
+
+solução. E a reclamação é óbvia, cara. A solução tá crescendo e tá ficando caro. E aí eu fui ver, né? Se você vê aqui o quão caro é, né? Para você ter ideia, é
+
+basicamente o seguinte, cara. Olha aqui, ó. A gente tem o Deep Seekic Flash, é com 0.03 centavos de dólar, cara, é muito barato. Eh, na entrada contra dó, milhão de token de entrada do Hel 4.5. O
+
+que acontece na prática é isso aqui, ó, tá? Eh, essa aqui foi uma PR que eu abri lá, eh, demonstrando o teste dentro do teste que ele já tinha, exatamente das mesmas condições. E você sai de uma situação dessa aqui, ó, eh, para essa aqui. Então, no teste que eu rodei lá, ó, sai dessa situação aqui para essa situação aqui. Então, se a gente extrapolasse isso para 1000 gerações, que é o que acontece em produção, cara, se você nunca viu uma solução de em produção, a gente gasta muito token a medida que a gente tem muitos clientes, muitas tools e processos complexos.
+
+Usar modelos de ponta não escala para uma empresa do mundo real. O que essas eh empresas como Antropic Open estão fazendo é oferecerem contratos vantajosos para certas empresas, porque eles sabem que não existe nenhuma razão racional para você usá-los. é comodidade de contrato. Agora, se você é independente, tem que fazer as suas coisas por si só, não tem motivo de usar esses modelos. Muito bem. E aqui, mais
+
+uma coisa, mais um ponto sobre o cashing. Aqui eu pego o cashing. Então, eu gastei muito menos do que eu gastaria sem o cashing. E o modelo da Antrop que tem uma condição de cashing que a gente não alcança, isso é para outro vídeo. Então, esse aqui é mais um exemplo claro que o custo é muito relevante na caudda longa. Tem um modelo muito interessante
+
+que eu vou falar dele aqui que é o o Luna 5.6. Ele é um modelo interessante, né? Um modelo que eu gosto de trabalhar até quando ah o cliente, cara, a gente só usa o Open AI, tem contrato com o Open AI, dá para usar o Luna, mas todos esses modelos menores são muito temperamentais e você tem que saber lidar com eles. A grande diferença desses modelos é que os modelos da Antropic e da Open AI são mais bem eh comportados. Esses outros
+
+modelos você tem que ter uma atenção extra para você lidar com eles, mas eles são super possíveis de trabalhar, tá? Eh, uma outra coisa que eu quero falar aqui para fechar e se você tá aqui, você merece essa essa essa dica. Deixa eu voltar aqui, ó. É o que acontece no Deepsic V4 original, se você tentar usar o max reason, ele se chama X high na IPI, OK? X high. Você
+
+bota lá no parâmetro X high, e vai funcionar. No ele não se chama X, se chama Max, tá? No parâmetro. Esses modelos é todos eles, tá? Todos os chineses que eu usei até hoje, cada um tem uma IPI diferente, cada um tem um jeito de lidar. E é por
+
+isso que se você for trocar de modelo, você tem que saber muito bem o que você tá fazendo. Você tem que dominar muito bem esses modelos. Eu tenho muita familiaridade com GPS há muito tempo. Eu tenho boa familiaridade com o Quen há um bom tempo. E esses modelos eu garanto que eh são bem diferentes um do outro até num tipo de resposta, né? A gente tá
+
+chegando num ponto que a gente vira eh somelier de LLM, a gente sabe quem tá respondendo. E essa que é a realidade, né? A gente vê muito token todo dia, a gente vê muito trace, vê muita resposta. Então, se você tá pensando em fazer como eu fiz, tome os devidos cuidados, faça os devidos testes, mas os números estão aqui e são inequívocos, cara. Não tem como você brigar contra eh melhor qualidade, melhor custo de preço e você só não alcança isso se você não souber engenheiro. Se você continuar rezando
+
+para LLM fazer tudo o seu trabalho, o que vai acontecer é que alguém vai criar uma solução melhor que a sua, mais performática, com menor custo. E lá na Calda longa, o que acontece é que você é retirado do negócio por ineficiência. Se você lembra daquela curva de gartner, né, de eh adoção de tecnologia, a gente tá saindo do hype e a gente tá entrando no pico de produtividade. A gente vai começar a subir e o que acontece aqui é que os meus quem, se você que me segue aqui, você que é cad comunidade, etc, etc, com certeza você tá subindo junto comigo, porque a gente tá fazendo no mundo real. Espero que este vídeo tenha ali sido útil. Foi bom vê-los novamente
+
+e se prepara porque vem muito conteúdo bom como esse daqui pra frente. Abraço, até a próxima. Yeah.

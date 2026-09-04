@@ -1,0 +1,80 @@
+---
+video_title: "Você está VENDENDO seus DADOS sem saber!"
+video_id: LHUm5Bfg7js
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=LHUm5Bfg7js
+video_date: 2025-10-12T21:04:23+00:00
+video_description: |
+  Nesse vídeo eu mostro como o pessoal sem querer esta vendendo suas proprias informações por ai... E como você pode se proteger!
+  
+  👉 Nosso servidor do Discord (ENTRA PRO CTF!): https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 O melhor host para seus projetos: https://squarecloud.app/
+  
+  
+  Índice
+  00:00 Introdução
+  00:44 File System
+  02:12 Grande problema
+  02:35 Magic Bytes
+  03:40 Fazendo o programa
+  04:33 RECUPERANDO OS ARQUIVOS!
+  08:04 Você deve se preocupar
+  08:31 Formatando do jeito certo.
+  09:14 Forma 400% segura de formatar.
+  09:24 CAPTURE THE FLAG!
+  09:36 Fim
+---
+Você venderia suas fotos, senhas, documentos por R$ 15, R$ 20? Óbvio que não, né? Quem que faria isso? Bom, todas essas pessoas aqui me venderam. >> Você deve est imaginando que eu vou falar que a forma que as pessoas formatam o HD tá errado e eu vou recuperar alguns arquivos e sucesso, tipo vídeo do 1155 ET, mas não. Quer
+
+dizer, sim, eu vou fazer isso, mas vamos aprofundar um pouco mais. Sem nenhum programa pronto, eu vou mostrar como é que faz isso do zero absoluto, lendo os bytes do dispositivo puro. E como hackers podem estar usando essa técnica para recuperar senhas. E por fim, como você pode se proteger. Antes de qualquer coisa, esse vídeo é educacional. Eu vou
+
+demonstrar os riscos reais de vender, doar ou até mesmo descartar seus HDs ou pen drives. Então não repita isso em casa. Primeiro, a gente tem que entender um pouco como as informações são armazenadas, mas especificamente como que funciona o file system. Os dispositivos de armazenamento não são nada mais nada menos do que um monte de zeros e uns organizados em um bloco de memória. E quando a gente vai abrir um arquivo no computador, a gente não tem a menor ideia de onde nesses zeros e un o arquivo tá fisicamente. A gente
+
+literalmente só clica no ícone do que que a gente quer abrir e pronto. >> Essa é a função do file system. Ele é tipo um índice que diz onde cada arquivo tá localizado. E existem diferentes modelos de file system como o FAT e o NTFS. Mas vamos pensar em um modelo geral. Dá para simplificar o file system
+
+em duas partes. O índice que guarda informações como o nome do arquivo, tamanho e o mais importante, onde que ele tá, e também os dados que são justamente os zeros e uns que representam o arquivo. E aqui eu tô mostrando ele em exade decimal. Aí dá para ver que o contrato são aqueles bites iniciais, o vídeo tá logo depois e o arquivo de senha tá um pouco mais pra frente. Mas você tá vendo que tem um espaço grande no meio que não tem ninguém apontando para ele. Esses aí são
+
+os dados lixos. eram de um arquivo antigamente, só que ele foi apagado e toda essa área aí tá livre para ser reescrita. Quando você cria um arquivo novo, o conteúdo dele é gravado na parte dos dados e o file system cria no índice uma entrada com o nome do arquivo e o ponteiro que indica onde que ele tá. E quando você deleta um arquivo, o que normalmente acontece é que a entrada no índice é removida, mas o arquivo continua existindo nos dados até que eventualmente o sistema vai sobrescrever. E na hora de formatar, a diferença é a seguinte. Primeiro, a
+
+gente tem uma formatação completa que pode acabar sobrescrevendo os blocos de dados também, limpando tudo. E do outro lado, a gente tem uma formatação rápida que normalmente só limpa o índice, mas os dados ainda estão lá. O problema real é que a maioria das pessoas quando formata usa essa opção rápida, ou seja, o índice é apagado, só que os dados ainda estão lá prontos para serem recuperados. Então, já que a tabela de índice tá vazia, o nosso objetivo aqui é extrair os arquivos dessa tabela de dados. Mas como? O que que é cada coisa aí dentro?
+
+Por exemplo, eu quero extrair todas as imagens JPEG que tem aí dentro. Mas como que eu sei o que que é ou não é um JPEG? Você pode pensar que o tipo do arquivo é a extensão dele. Por exemplo, vídeo. Documento. Imagem.png.
+
+Mas na verdade não. A extensão só fala pro seu computador qual aplicativo deve abrir. No caso, um videoplayer, Adub Acrobate e Photos. O que realmente fala qual é o tipo do arquivo são os Magic bytes. É como se ele fosse a impressão digital do arquivo. Por exemplo, os arquivos JPEG
+
+começam com FFD8 e terminam com FFD9. Os arquivos MP4 começam com 4 bytes de tamanhos e depois segue os Magic bytes, mas não tem nenhuma assinatura final. E os arquivos de texto não tem Magic bytes, então para recuperar eles é um pouco mais difícil e a gente tem que usar algumas heurísticas. por exemplo, vê se a maioria dos bytes são bytes legíveis de texto, como espaço, a letra A, new line e por aí vai. Agora que a gente sabe como que é possível identificar o tipo do arquivo, vamos por fim fazer o código para não ter que fazer isso manualmente. Imagina olhar
+
+byte a byte em mais de 100 GB. O meu programa, ele vale 32 MB por vez e percorrer cada um dos valores para encontrar os arquivos e salvar. Eu fiz basicamente duas funções. A primeira que vai buscar os arquivos que tm magic bytes iniciais e finais. E claro, os arquivos podem estar corrompidos, principalmente as imagens. Então o
+
+programa vai tentar visualizar cada um desse tipo e se não der, significa que tá corrompido e ignora. A outra função vai buscar por textos. Lembrando que aqui vai ter que ser a partir de heurísticas e também de uma word listar o texto se tiver alguma palavra que eu quiser, como senha, Gmail, @ e por aí vai. Eu acabei fazendo uma outra função que é para ver como as informações do dispositivo estão distribuídas. Ela vai mostrar se tá populado, ou seja, se tem alguma informação ou se tá vazio. Só
+
+para ter uma noção mesmo. Agora vamos lá, de uma vez por todas, vamos ver o que que a gente encontra nos penrives HDs que o pessoal anda vendendo por aí. Eu fui um site de venda de itens usados e no final eu acabei comprando esses aqui. Esse aqui é um pen drive de 4 GB. Vamos ver os blocos dele para ver se ele tem informação.
+
+É, dá para ver que ele tá bem cheio aí já. Basicamente todos os blocos estão preenchidos. Mas olha que interessante, quando a gente abre o pen drive, ele não tem basicamente nada, só informação do volume. E olha só o que que a gente vai conseguir recuperar de arquivo JPEG. Tem muitas fotos de uma pessoa específica que deve ser a ex-dona do penrive. Tem
+
+ela na faculdade, em festa, fazendo careta. Seria bem constrangedor se essas fotos fossem vazadas. Eu obviamente censurei as imagens aqui, mas além disso também tem foto de filme, de ator e também alguns gráficos. E olhando os metadados, dá para ver que essas fotos foram tiradas em 2012. Ela formatou e deve ter achado que ninguém nunca ia conseguir ver essas fotos.
+
+Agora os arquivos PNG, eu não encontrei nada demais, só essas duas fotos aí mesmo. E escaneando os arquivos em PDF, nesse pen drive só tinha esses dois aí. Uma era uma apostila de estatística e a outra era um certificado de conclusão que não tinha nada. Agora os arquivos zipados eu encontrei bastante na verdade, só que não tinha nada demais. Aí eram só vários arquivos Words de trabalho mesmo, de faculdade ou escola.
+
+Esse pen drive aqui, ele tem um arquivo, um downloader executável e também uma página HTML. Só que analisando os blocos, ele tá praticamente cheio, deve ter formatado rápido também. Não deu para encontrar nenhum arquivo JPEG, encontrou dois arquivos PNGs e um deles era coisa de torrent. E o interessante mesmo é quando a gente procura pelos textos. Esse pen drive era do rei da pirataria porque acabou pegando o texto de jogos e de filmes. Teveula da Sony e
+
+também alguns textos de jogos da EA e além de algumas outras coisas ensinando como é que funciona e como que usa o torrent. Não deu para pegar nada demais, porque os arquivos deviam ser executáveis ou de vídeo, porque são os arquivos que meu programa não tá recuperando. Esse é um pen drive que tá lotado de música e também algumas fotos covers. E analisando o bloco, ele realmente tá lotado de informação. Olhando os arquivos JPEGs, tinham bastante coisas de música, mas também algumas fotos que não estão dentro do pen drive, que foram apagadas. E os
+
+textos é a mesma história, é um monte de link para imagem, arquivos HTML e também um removedor de vírus feito em ponto bate e também mais referências sobre música. Agora fica mais interessante. Esse aqui é um SSD de 120 GB e também parece que ele foi formatado até a gente recuperar o JPEX. Tem muita foto de muita gente que deve ser foto do perfil de WhatsApp, além de algumas outras fotos pessoais. Em menos de pon1 GB já pegou 200 imagens. E por ser foto pessoal, eu
+
+também vou ter que censurar. E olha só, em p 2 GB pegou 600 imagens, que é o limite que eu coloquei no programa para não estourar minha memória. Os arquivos PNGs encontrados foram de alguns ícones e também algumas fotos pessoais, mas não tem nada demais. E os PDFs eram praticamente todos boletos e comprovantes. E os arquivos iPados eram arquivos de Word de trabalho de novo. E
+
+claro, o melhor fica no final. Esse aqui é um HD de 250 GB que aparentemente também foi formatado e eu recuperei muita imagem de produto, gráfico e também de perfil de WhatsApp. E nos arquivos PNG também a maioria era ícone, mas agora nos PDFs eu realmente não esperava encontrar isso. Começa com alguns arquivos normais até chegar em documento, mais documento, certidão de nascimento e por aí vai. Ah, mas no meu HD não tem nada demais.
+
+No meu computador tem jogos, fotos e alguns PDFs, mas só isso. >> Certeza? Quando você salva uma cena no navegador ou em algum app, aquela informação fica gravada em algum lugar do disco. Isso não significa que é fácil abrir esses arquivos e ver tudo em texto puro. Na verdade, é muito difícil porque muitos navegadores criptografam as credenciais. Eu só peguei alguns
+
+arquivos aleatórios, mas alguém com mais tempo e mais informação conseguiria pegar muito mais coisa. Agora, se você quer vender seu HD ou pen drive, existem basicamente três formas clássicas para apagar os dados. Primeiro é o Z field, que ele vai reescrever todos os setores com o valor zero. Também tem o One Fiel, que vai reescrever com o valor um. E por fim, o random f, que vai reescrever com dados aleatórios uma ou mais vezes. Na
+
+grande parte dos SOS, você tem a opção de formatar demorado ou de limpar. E isso vai fazer o zero field. Para isso é só clicar no dispositivo, clicar em formatar e marcar a opção erase. E isso vai demorar um pouquinho. Agora vamos rodar o nosso programa nesse pen drive formatado do jeito certo.
+
+E aí dá para ver que basicamente todos os blocos estão sem nenhuma informação, ou seja, sem nenhum arquivo para recuperar. E se você acha que é muito trabalho fazer tudo isso, tem uma forma muito mais fácil que fica impossível recuperar os dados.
+
+Antes do vídeo acabar, no dia 25/10 vai acontecer um CTF, um Capture the flag na nossa comunidade valendo prêmio. Eu vou fazer um sistema com vulnerabilidades e vocês vão ter que explorar isso. Então não deixe de entrar lá para poder participar. E é isso, espero que tenham gostado e entendido que realmente não vale a pena você vender seus HDs. Não esquece de deixar o like e se inscrever no canal. Valeus.

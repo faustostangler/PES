@@ -1,0 +1,274 @@
+---
+video_title: "Project Walkthrough: Learn How Analyze Mobile Market App Data Using Python"
+video_id: bwNlxMT_gj0
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=bwNlxMT_gj0
+video_date: 2024-12-20
+video_description: |
+  In this project walkthrough webinar, our expert takes you step-by-step through the beginner-friendly project, Profitable App Profiles for the App Store and Google Play Markets, where you’ll assume the role of a data analyst. Your objective? To analyze mobile app market data and recommend development strategies to maximize user engagement and ad revenue.
+  
+  What You’ll Learn
+  - Data Cleaning Mastery: Learn to handle a dataset of over 10,000 rows by removing problematic rows, dealing with duplicates, and filtering non-English characters.
+  - Frequency Tables in Action: Use user-defined Python functions to analyze data in frequency tables and uncover valuable insights.
+  - Jupyter Notebook Skills: Get hands-on experience with the Jupyter Notebook environment to structure your analysis and add context.
+  - GitHub Integration: Watch a live demo of uploading project files to GitHub Gists to showcase your work in a professional, sharable format.
+  
+  This walkthrough focuses on the Google Play Store dataset, with additional guidance to apply your newfound skills to the Apple Store dataset after the session.
+  
+  New to Python? You can begin with our Python Basics for Data Analysis course to build the foundational skills needed for this project. https://bit.ly/405YbXO
+  
+  Ready to begin this project? Start here: https://bit.ly/3VJACBp
+---
+Hello everyone. My name's Anna and I'll be your host for today's project lab. As we wait for people to come in, if you would like, it would be lovely to have your name in chat, maybe introduce yourself, say where you're dialing in from. Um if you want, you can also share where you're at in your Python journey and we'll get started in a few moments here. Hi Utkarsh, welcome.
+
+Hi Devin and Heather.
+
+Uh lots of people sharing where you're coming from. This is great. Um I guess I can say where I'm dialing in from. I am in California, so it's morning here and very sunny and very warm. It yesterday was about 80° Fahrenheit, which is close to 27° C.
+
+So, in the middle of winter, this is what we're getting weather-wise. We have people joining from all over the world.
+
+Um if you're just joining in, hello, I'm Anna and please introduce yourself to introduce yourself in chat, say where you're dialing in from. And we'll give it another minute or two and then jump straight into a Python project.
+
+Plus one on the weather, I saw that um Winslow. Nice warm winter weather.
+
+I'm traveling for the holidays next week and I'm going to a place that's expecting snow, which is both exciting, but also a little nerve-wracking because I have to drive in the snow, which is unfamiliar to me.
+
+I I love how many countries and different places are represented in the chat right now.
+
+All right, um we are at a good even number of participants right now, which seems serendipitous to get started. So, if you're just joining us, hello. My name's Anna. And will the recording be shared? That is a great question. I believe it will
+
+be. Um maybe one of my associates can verify that, but in the past when I've done webinars, uh yes, recording is on and it will be shared tomorrow, within the next 24 hours or so. And project files will be shared. Um you have also received an email containing project files and we'll be sharing the links a couple times as the webinar goes on. All right. So,
+
+let's go ahead and get started. Um today's project is going to be about profitable apps and we are going to have a scenario where our role is acting as a data analyst for a company to help them figure out what type of app they should make for their new company and they want this app to be as profitable as possible. But before we get started, a little bit about me. My name is Anna Strehl, and I am a senior course developer at Dataquest. And my background is I started my professional life as a high school math teacher in the US.
+
+And then I transitioned into a career in data analytics. And I was self-taught like many of our learners are at Dataquest. And in fact, before I started working here, I actually did use Dataquest as a learner and really enjoyed the projects. I distinctly remember completing the project I'm about to show all of you when I was learning Python. So, here I am on the other side. Now, I have
+
+the best of both worlds combining my love of teaching and my love of data to teach data to others. So, who are you? We have a lot of people joining us for this webinar from all over the world. And I want to make sure it's the right fit for you because you're spending an hour of your time, and I thank you very much for that. And I want to make sure it's it's it's the right fit. So,
+
+we think that to be successful with this webinar, you need basic Python skills, meaning lists, dictionaries, for loops, and conditional logic. Um we will not be using any Python libraries like Pandas or NumPy in this particular project because it is geared towards very, very basic Python skills. We are also assuming that you have very little experience with Jupyter Notebooks or Jupyter Labs. Um very little experience with data projects and don't have a GitHub account or are very new to GitHub. Um if you are beyond this, you are welcome to stay.
+
+I encourage that. But, I do want to make sure that um this is the right fit for you. So, I in curious what everybody's level with projects is right now. So, we're going to start a quick poll if you would like to share your response.
+
+All right, there we go. So, as we're getting started, what's your project level?
+
+Oh, um I see a raised hand and uh that reminds me I should tell everybody for questions. If you have questions for me or the Dataquest team, please use the Q&A box to ask your questions because chat is very, very busy and I don't want to miss questions. So, ensuring they are in the Q&A box will be um the best place for me to see them. All right, so we're sharing the results of the poll question and it looks like the majority of folks are either complete beginners or have done a couple projects but nothing serious yet, which is great. This is the exact project for you.
+
+So, let's talk about what we're doing today. First, we're going to talk about the data. And then, like most data projects, we are going to spend the majority of our time cleaning the data set. Most data-related professionals spend 80% of their time cleaning data and then 20% of time doing other things and the same is going to be true in today's webinar. So, we're going to clean problematic rows, deal with duplicate data, remove non-English characters, which is going to be very important for this data set.
+
+And then, towards the end for the actual analysis part, we're going to write some user-defined functions to create frequency tables to look at different rows and columns of our data. And then, I'm going to show you GitHub Gists, which is a really beginner-friendly way to share your project files with others, and start building a portfolio. And towards the end, um I'll talk about the Dataquest community and how you can get absolutely free and absolutely wonderful feedback. So, another poll. I kind of back-to-back here, but you know, getting started so I can get to know our audience here.
+
+Is I'm curious, from today's agenda, what is most exciting to you? And unfortunately, you can only pick one thing. If I was watching this, I would I would want to pick all the things.
+
+I'm watching the results roll in, and it's really interesting to see what people are looking forward to.
+
+All right. So, it looks like a lot of you are excited to look at frequency tables, which it is the fun part of data projects is doing that analysis component. And the data cleaning um enthusiasm, it's there. I appreciate that. And uploading projects to GitHub. So, a
+
+little bit of everything. And the good news is we will 100% have time to go over all these things. So, let's dive in. So, here's the project brief. And if you do want to follow along, I am going to be going fairly screen by screen through the Data Quest um project as it's written.
+
+Um Roy, I just happened to see your question. I'm drinking coffee. Um So, here's the brief from the company. They want to build an app that's free. And that means the way they're making their money is through in-app ads.
+
+So, the more people that see the ad, the more profitable the app is. So, we want to be able to determine what is a good popular category for people to download because that is going to give our company the best guarantee of downloads.
+
+up. So, at this point, let's transition to the project in the app. And we're going to get started here. Um So, you can see the split screen. On the left-hand side, we have information about the project. And on the right-hand
+
+side, we have a Jupyter Notebook. Jupyter Notebook is a slightly older interface compared to Jupyter Lab or Google Colab, but they all have the same functionality. So, to get started, we are going to write a title because data projects in particular, you want to design for an audience in mind, whether the audience is a potential employer because you want to put this in a portfolio, whether it is the um end user, for example, the fictional company if you want to provide this to them, or it could just be your future self because 90% of the reason that I write code comments is for myself in 3 months because I will have forgotten why I did what I did. So, to start, we want to give a title and to do that, we're going to use a markdown cell. A markdown cell is formatted text.
+
+So, what can we title this? Let's write profitable uh profiles. And you'll notice that this pound symbol, this is going to render this text into a heading like a level one heading. And to render it, we can either click run or we can type a shortcut on our keyboard, which is shift enter. And you can see it renders into a title.
+
+So, we could also do a short description of what this project will be about. We don't want to use a code cell, we want to use a markdown cell because we are doing regular text here. And I copy and pasted this from my um off-screen cheat sheet that I'll be using. And once again, we can render it clicking run or shift enter. So, now that we have given little bit of information about what we're going to do in this project for our audience, we need to start by loading in the data.
+
+This particular project uses two data sets, one from the Google Play Store and one from the Apple iOS Store. And to make this particular webinar interactive, but also fit within the hour time frame, I am going to be only using the Google um Google data set, and that gives you an opportunity to do the other half of this project, very, very similar set of steps, but you can do your that on your own with the Apple uh store data. So, in our first coding cell here, I have a couple lines that we'll walk through. Um first of all, from the only library we're using in this project, from CSV, we are going to import the reader function, and reader will allow us to read in our data set. I did see a question about why we're not using Pandas, and you could 100% use Pandas with this project, but this project is geared towards beginners who may not know Pandas yet, and I personally really like that it tests your ability and understanding of how to work with um lists of lists and dictionaries to really um flush out your understanding of basic Python.
+
+So, once we import that particular function, we are going to open the file using Python's built-in open function. Then, once it's open, we need to read the file using our imported reader function. And then, this is where we define our data set that we will be using for several steps in this project. We take that red file and we make it into a list stored to a variable named Android. Now, because this is a CSV file, the very first row is headers. Things like the
+
+the app name, the category the app is in, and we don't want that row counting towards the rest of our data. So, we're going to separate it out um in its own variable named Android header. Zero is the first row. It's index zero in Python. And here, Android is now going to be a slice starting from just the first row of the data.
+
+By the way, if you would like to follow along with these files and you don't want to do so in the Dataquest platform, if you um look at the email that was sent to you yesterday, the files were included there for download. Oh, and somebody in the webinar chat helped out. Thank you for that. Now, I am not going to print anything here in my project because I happen to know that this data set has over 10,000 rows. And if I try to print the entire data set, Jupyter Notebook and my computer will be very unhappy with me.
+
+So, instead, I'm going to render this cell. Nothing will happen because we're not asking it to print anything, but we can tell it's rendered because there's a little one in the square brackets. And that means it is the first thing that was run in this notebook. And now to render, there's a cool shortcut in Jupyter Notebook where it will try to render the last thing if the last thing is renderable. Like this, it didn't render because it was an assignment. But this
+
+will render because there's nothing else happening here. And here we can start taking a look at our headers. Uh we got app, category, rating, reviews, so on and so forth. And we can see it is stored in a list, which makes sense because we assigned it as a list here. So, in this project, because it's geared towards beginners, we provide a couple helper functions.
+
+This is one of the helper functions, meaning you don't have to write this. It is written for you. And it is similar to if you know pandas, it is similar to the data frame.head method, where it will display a certain number of rows for you. So, let's use this helper function, and I'll explain exactly what's happening here. First, we tell it which data set
+
+we want to explore the data on. And then we give it the first index we're interested in looking at, up to, but not including, the index that we want to end on. And this um rows and columns Boolean value here will display some um kind of like summative data on the counts of rows and columns. So, I'm going to click shift enter to render this cell. And we can see each row that we asked for is rendering as a list, which makes sense because CSV will include a list of lists for our data set. And at the very end, we have
+
+our summative data. So, the number of rows in this Android data set is currently almost 11,000 rows. And there are 13 columns. But, now we get to the data cleaning because we're not going to keep all almost 11,000 rows. And this data set in particular comes from Kaggle, which is a really fantastic resource to find free data sets.
+
+And in the comments of this Kaggle data set, someone pointed out that there's an issue with one of the rows of data. And I'm going to give you a brief peek into what the issue could be. So, it's only one row that the issue is with, but I printed a range so we could compare. And the issue is with this row. The Life Made WiFi row.
+
+And we'll notice that there is information missing from this row. Right in front of the date column, there's an empty string. This means that the data's missing. And because it's only one particular row of almost 11,000, we're going to remove this. It's not going to impact the data. If we
+
+were working with a much smaller data set and removing rows, we would have wanted to be more mindful. If we had to remove many, many more rows, we'd want to be mindful. But one row isn't going to make a large difference here. And the command to remove or delete a row in Python is going to be del or d e l, and then specifying the index that we would like to delete from our data. Be very careful running this command because every time you run it, it's going to go look at this index and delete it. So,
+
+you could be deleting more data than you intend to if you run this line of code more than once. So, I'm going to be very sure to only run this cell one time. And I can tell it rendered. And now let's take a peek to ensure that row is gone. Notice I'm using a new cell here to really double-check I'm not accidentally deleting more.
+
+So, before in the output, we can see it went from Exposed Wi-Fi to Life Made Wi-Fi, which was the incorrect row, to Osmino Wi-Fi. And now it goes from Exposed to Osmino without the incorrect row. So, our first step of data cleaning is done. In our poll, there was a lot of enthusiasm for deleting incorrect data. That was it.
+
+But now we get on to slightly more complex deleting of incorrect data, looking at duplicates. So, I have my pre-done code on the side here, and I'll walk through it before I render. I am starting out, and this is going to be a very familiar common pattern for this project, where we are going to initialize empty lists, and then add things to them using the append method within a for loop. So, our empty lists this time are duplicate apps and unique apps. And this is going to create a list of anything that it appears in our data set more than once.
+
+So, for an app in Android, so for every row in our Android data set, we are going to pull the name, which is stored as the very first element in the list. And if the name is in our unique apps list, we need to add it to our duplicate app list because it appears more than once, that's a duplicate. And if it doesn't appear in unique apps, we're going to add it because it hasn't It hasn't appeared yet. And then this part, I'm not sure if it's in the official solution code, but I really enjoy visualizing my workflow as I go. So, I am taking a random snippet of the duplicate apps, a very short snippet, and I want it to print those apps out so I can visually see what the duplicates are.
+
+So, if the name is in a duplicate app list, then for that particular row in Android, I'm going to print the row if the name equals the name in the data set. And I think this one makes a little more sense if we run the cell. All right. It's rendering, and we can see that from our actual Android data set, we have lots of duplicate app name. For example, there are three distinct rows for the same app called Box.
+
+There are two distinct rows for the app named Zenefits. And there are three distinct rows for the app named Google Ads. Now, this is a problem. We don't want to skew our result for our fictional company, So, we want to remove these duplicates and only keep one per app. But, the problem is how do we decide which one to keep?
+
+And if we look at Box and Benefits, the rows are identical. Everything about them is the same. Every single element is the same. However, if we look at the Google Ads duplicates, there is one particular element in the list that varies slightly. And it is the fourth element. I'll
+
+highlight it here. And this corresponds to the number of reviews. Now, we're going to make an assumption that if the review count is higher, it is a more up-to-date entry than if the review count is lower because reviews accumulate over time. So, for example, this one is 29,313, whereas this entry is 29,331. So, we want to keep this entry because it has slightly more review counts.
+
+So, to begin the deduplication process we are where we are only keeping the maximum number of reviews, we are going to use this code. And notice this time we are not starting an empty list, we are starting an empty dictionary. And there's a reason for this. We want to associate a count with the number of reviews. Um sorry, I said that incorrect. We want
+
+to associate the max reviews with a particular app. And because there's that association, a key-value relationship from a dictionary makes a lot more sense. So, our familiar for loop initialization here for app in Android, we are pulling the name. And then, we are also pulling the number of reviews for each app. If you'll notice in our printout above, the reviews are originally rendered as a string.
+
+And that's because we're not using Pandas, we're not using a smart library that will try to automatically convert to different data types. We're just using reader, and it reads everything in as a string. So, in order to correctly calculate the maximum, we need to first turn this into a number. And just to allow for flexibility, I chose to use float here. You could experiment with using int because reviews should all be whole numbers, but I'm using float just for a little bit more flexibility.
+
+And so, we're storing variable n reviews of the float of the particular element stored at index three. Remember, Python is zero-indexed, so three corresponds with the fourth element. And now, we have some conditional logic here to check if the name of the app is already in our reviews max dictionary. And if it is, we are going to be comparing whether or not we have um a larger number of reviews or not. And if we have a larger number of reviews, we're going to store that and overwrite the old version.
+
+So, go ahead and render that, and we can see that after that runs, the length of our reviews max dictionary is 9,659, which means that things have gotten added to it from when we initialize it as an empty dictionary here. All right, so we created a dictionary, but our data set is still the same as when we started minus that one row we deleted. So this particular bit of logic is pretty slick. I like it. We create two empty lists, one for our clean Android data set, and one for apps that we've already added to the clean data set.
+
+So for app in Android, we have our name, we have our reviews, and then we have some conditional logic. And this is where at the review reviews max dictionary comes in, where we are looking to see if the value associated with the name in our reviews max dictionary. If our number of reviews is the same, we want to add that to our clean data because that represents the instance of this app with the highest review count. So then we add app data or name data to our associated lists, and the already added line is useful because we don't want to reintroduce duplicates into our clean data set. And then because I do really enjoy getting a visual of the progress as I go, I've used our I've asked for a very small slice of our clean data.
+
+Let that run, let it do its thing, and we can see that yes, we are getting a list of lists of apps. So everything looks like it is going as expected. We could also look at the length of our Android clean data set to ensure it is smaller than we started with. Remember, we started with almost 11,000 rows. Now we're down to well, a little less than 10,000. So,
+
+we've definitely removed information. Okay, so so far in our data cleaning process, we have removed problematic rows, we have dropped duplicates, and now for the next thing, we are going to take a look at English characters. So, I have a very small slice here using our helper function explore data. And the reason I want to show this is before the webinar, I tried to find a row that had some issues and may not be English. And the reason this one isn't English is it looks like it's written in either Spanish or Portuguese. Sorry, I can't
+
+quite tell the difference. Um, but I'm guessing Portuguese actually because of this character. But these two characters in particular, the A with the accent and the A with the tilde, those are kind of indicators that this isn't English text. And we're going to use that to our benefit.
+
+So, in this next cell, I am defining a function named English characters or English char. And this function takes one argument, which is a name. And in Python, because it's a the language, programming languages at the very very root of everything in computers, are based on ones and zeros. So, everything can be represented as a number. And, in fact, every single letter is represented as a number. You may have
+
+heard of ASCII before. This is where that comes from. And, English characters are all less than 127, or 127 and less. So, if a character renders as a number larger than 127, it's not an English character. However, some apps might use an emoji or one special character to distinguish themselves. So,
+
+we don't want to throw out an app on a one strike you're out policy. Instead, we're going to count if there are more than three bad characters, we want to remove that from our data set, because chances are it's not an English-focused app. But, because this logic is a little different from what we've done so far, I created a test list of potential English or non-English names that we are going to evaluate. So, um let me back up for a second. If the bad character count is greater than three, we are going to end the function and return the value false.
+
+But, if it runs completely and the bad character count is under three, we want to end the function and return the value true. So, we're doing Boolean values here. And, if we run this for our test list, I'm going to expand my cell a little bit. We can see the value Instagram evaluates to true, meaning true with English. This next one evaluates to false because there are many, many more non-English characters than three.
+
+The next one in our list is an English-sounding app, but it does have one character. It has the TM or trademark symbol, but we can see it evaluates to true because it's only one and not larger than three. And InstaChat has an emoji character, um, but it also evaluates to true. So, we can see that our our English character function is working how we expect it to. So, now let's clean our data set.
+
+In this next code snippet, once again, we initialize empty lists, one for English Android apps, and one for non-English Android apps. And to be honest, this one's completely optional, but I personally had a really fun time looking at all of the names of non-English apps to do an double-check that my function was working correctly on the data set. So, for app in Android clean, this is really important to note. We are no longer using Android, we're using Android clean, which is our deduplicated data set. So, using our deduplicated data set, if English characters of a name That's the end of the if statement.
+
+There's no equal sign, there's no um, greater than symbol, but because our function evaluates to true or false, the conditional logic is looking for a true or it's looking for a false. And and true is kind of shorthand. We don't need to include that if equals true. So, if it evaluates to true, we want to append that to our English Android list. Otherwise, we want to append it or add it to our non-English list.
+
+And for app in non-English Android, once again, this is me checking the work that I'm doing, I'm going to print the app name. So, this is our non-English list, and at a quick glance, all of these do appear to be in other languages. So, we're doing all right. All right, so we're almost done with the cleaning part. I told you 80% of our time is spent cleaning data.
+
+And the final thing we need to do do it for this data set is our um fictional company wants free apps. And if we scroll back up here, we can see a couple elements that are associated with price. And that means that not all of them are going to be free. You could verify this, do your um own exploration of how many are not free, how many are free, but I did that off camera for time's sake, and I can confirm there are currently non-free apps. So, we need to filter for only free apps.
+
+So, this time I'm only initializing one list because we don't care about the information for non-free apps. So, this one is called free English apps. And for app in English Android, once again, we're using the newest iteration of our data set. We're not storing the name this time. Instead, we're storing the price.
+
+And the price is stored at index seven. And now we look at our conditional logic. If the price is equal to Once again, everything in our data set is stored as a string. And for this particular case, we don't need to convert it to a number, integer or a float, because we're not calculating on it. We're simply checking if the price is equal to zero.
+
+So, we can leave it as a string. And if the price is equal to the string of zero, we're going to add it to our new iteration of the data set. And finally, we're going to print the length of our filtered data. And we can see that after all of our data cleaning, we're left with a little under 9,000 rows. This is a really important thing to check for, because cleaning data is important, but cleaning too much data can introduce bias into your project unintentionally.
+
+So, because we started with 11,000 rows, if our final clean number here was less than half of the original, we would want to be really careful and ensure that we hadn't removed information that was actually really valuable for our analysis. Um So, we can celebrate. We did the cleaning. And now, the fun part, analyzing. Because our data is stored as a list of lists, to help us look at the data more efficiently, we're going to write a function that creates a frequency table.
+
+And I think this was the part lot of people said they were looking forward to. So, time to tune in. Um and I do know that there's some questions rolling in. I'm going to come back to those at the end, and I'm very excited to answer them. But just for the workflow, I'm going to keep going here. But if you do have
+
+questions, please put them in the Q&A. Excuse me. Getting over a cold still. All right. So, we're creating a frequency table function that takes two arguments, a data set and the index we want to count frequencies on.
+
+This gives a lot of flexibility. Remember, there are 13 different columns in our data set. Now, using one function, we can check the frequency of every single column if we wanted to, instead of having to write lots of code over and over. So, in this function, we're creating a table um as a empty dictionary. And right now, the total number of rows that we've looked at is zero.
+
+So now, for a row in our data set, we're going to increase the total by one. So, by the end of this, we'll have a count of every single row um that we've looped through. And then, the value will be the row at that index, and whatever's associated with that. And if the value is already in our table dictionary, we're going to add one to it. And if it's not already in our dictionary, we're going to set it equal to one because it's the first instance.
+
+And then, down here, we are calculating some percentages because frequency tables are most useful when you can compare percentages, especially with very large numbers, like we're dealing with almost 9,000 rows in this data set. So, let's test our function out. Um I'm going to call the function freq_table on our free_english_android data set. And I'm going to look at the category column, which is associated with index one. And we can see here we have our dictionary, and we have the category as the key, and the frequency as a percent. So, for example, art and
+
+design has less than a percent of the frequency. Um and I'm trying to scroll through. What has large frequency happening here? I guess family has a pretty large frequency, 18 almost 19% of the um instances. But the problem with this is everything is alphabetical by category name. And
+
+I just demonstrated that it's really hard to find insights from this. To find cat the 18% 19% for family, I had to do a lot of visual parsing. So, we have one more helper function for this project, display_table. And this one is provided from Data Quest because working with sorting dictionaries can get a little dicey because dictionaries don't inherently have order. So, we've written this for you. And
+
+notice, this part's kind of cool, you're referencing another function from within this function. So, instead of having to first call the frequency table function and store that value, and then use it in the display table function, we only have to call the display table function. So, let's do that and see what the results look like. And I'm writing my future self here quick code comment just so I don't have to scroll back to my data set and figure out what is associated with this index.
+
+All right, and that family that category that we had to visually parse is right at the top of our list sorted as the highest frequency. Um game is next, tools, business, so on and so forth. And right down at the bottom, um the lowest frequency of apps for Google Play Store, art design, comics, and beauty. Um the next one that we're going to do and looking at the time we have left, I want to be able to answer questions. So, I will explain what you can do from here in the project and all the tools are there.
+
+You get to do the fun part of putting the pieces together. I'm also using display table um to look at the frequency by installs. So, the data set has a column with the count of times that app has been installed. And we can see here that the highest frequency has over a million installs. And the lowest frequency is zero or zero plus. So, in general, it seems like apps
+
+are getting installed. Now, here's where you can take a note. What you want to do for this particular company who is asking about recommendations for what type of app gets a lot of installs is you want to use this information of the number of installs because the more installs the more in app apps and you also want to pair this with category because clearly some categories are going to be more visible and some are going to be less visible. So I will pop the code for that up here but we don't have a ton of time to explain it. So um
+
+What we're doing is the average install per app in that category. And using um our frequency table we get information here. The best category with the highest number of installs is communication which is surprising because our um exploration up here communication is kind of in the middle of the pack as far as frequency of number of apps go but it gets the highest number of downloads. There is some more nuance and to consider here. For example, what type of app is communication? It's going to be
+
+things like WhatsApp which is I think the most popular app in the world. And do you want to include WhatsApp in your analysis? Maybe but probably not because it's an outlier. So I will leave the analysis here with you. And the Dataquest project does go into depth here. Actually, I will navigate to
+
+that. You can see I've completed most of this project several times by this point. Uh
+
+And um
+
+it walks you through what you should pay attention to as far as um giving a recommendation here. And the spoiler alert, you want to remove WhatsApp cuz it's not going to be helpful for your analysis. So, at this point I am going to show you what do you do when the project is finished. You've done some brilliant work, you've done the Google data set, you cleaned the Apple data set as well, you finished your analysis, you removed WhatsApp. There's a couple things I highly highly highly recommend. And the first one is
+
+to store your work on GitHub. If you've explored GitHub for as a beginner, it's really it can be really intimidating. But that's why I recommend GitHub gist. GitHub gist is a quick way to upload your files. And this is what you will see if you're logged in to GitHub and you go to
+
+So, what you want to do is drag and drop your completed Jupyter Notebook file straight onto the screen here. You could also copy and paste, but for Jupyter I find it easier to drag and drop. And you'll notice that what appears is not at all like the Jupyter Notebook we were just looking at. But this is how computers store Jupyter Notebooks. And that's for webinar and right here um you do want to make sure that if you created a Jupyter notebook or Jupyter lab notebook or collab notebook you have the correct extension because that's going to tell the gist how to render your output.
+
+So I have my um file name along with the extension uh dot I pi n b. And now you have some choice. Do you want this to be visible to others or just yourself? I'm going to make it visible to others so if you want to see my um demo code after this I'll give you the link. And when you click create public gist immediately on the internet your project is visible.
+
+And it you can see it's rendered exactly how we were rendering it um during our project walk through including the output cells which is really handy.
+
+And then if you want to share this with others they can see that exact same thing. And they can write comments. If you want to provide this to people outside the Dataquest community for feedback they can leave you feedback here. Now let's say that you want to make an edit to your gist. You realize maybe you had a typo or you just want to refine a piece based on feedback you received.
+
+If you click edit you can um either edit within the raw code here, you can drag a new file in. Um uh-oh Come on. I think I broke gist. Let me refresh the page. There we go.
+
+Now let's say we make a random edit. Update. And I click update the public gist. Now when we view it, we can see that code that I just updated. And the final thing I'll talk about for GitHub gists here is if you click this revision tab, you can see what's called diffs of um the changes you've made. And right
+
+here is the code that we added, and it shows the line of the code that was impacted. And the final thing Um no, we're not at questions yet. We're not at questions yet. I want to tell you how to get free feedback on your project. If you go to the last page of the guided project and click share your finished guided project, it will take you to the Data Quest community.
+
+And if you add a new topic and share your project, for example, let's look at this one. This person has shared their project, and there's instructions of how to do this when you click the new topic button. Um very, very simple to add your project. And look, our great team of moderators provides feedback, usually within a couple business days. When I was Data Quest learner, this was so valuable for me.
+
+Um I learned about markdown from a community moderator who encouraged me to add markdown to my finished projects. So, um hopefully our moderators are flooded with great project feedback requests from this webinar. Um and I Yeah, please use this. It's a phenomenal resource. Um all right. So, we have a couple
+
+minutes remaining for questions. So, if you do have questions, please look at Q&A. That's where I'll be looking now. Um All right. First question I'm seeing, are you checking each element in the list or just the first element for duplication? Great question. Let me go
+
+back to my notebook.
+
+Okay, um we are
+
+we are looking at every single row in the data set and we're not just looking at the first element. We are basing the correct um instance for each app based on whatever element for that app has the highest number of reviews. Um so yeah, we're not skipping any data for the deduplication process. Um All right, and then Dave asks, is it possible to use the regex library to remove non-English characters? Yeah.
+
+Yeah, you could um do that. Although I think I'm trying to imagine what the code would look like in my head. I think the number of lines of code would be similar. Um and I personally think it's pretty pretty fun to use the ord function here. But test out regex in your version of the project and um if you tag me when you post in the community, I'd be curious to see your results.
+
+Um all right, next one um Erdkarsh when I'm downloading the project into my system and extracting it, it says there's already a folder with the same name as the file name you specified. Um you tried changing des- destination folder to multiple folders. Interesting. Um It could be because in our system, everything um all of our Jupiter notebooks provided are named basics, but if you would like to provide a new notebook name, you can change it here and then maybe download. I don't know if that'll fix it, but that would be something I'd recommend trying troubleshooting.
+
+But um be cautious changing this name before your project is finished because um our principal engineer isn't on the call, but I don't know if your work could potentially get overwritten if you rename this. So, I would save the renaming as your last step for completing your project. Um Okay, and then Room, hopefully I'm saying your name correctly. In your condition to capture only apps that are free, you only check for the string of zero. What if the price was inputted as 0.0 or
+
+0.00? Won't your condition be skipping these cases? That's a great question. Um off screen before the webinar, I created a dictionary of all of the unique price values and I ensured that this would account for all of the free apps, but you're absolutely correct. If
+
+there had been apps named um something like you know, 0.0 um or this, you would want to add those conditions in um or convert everything to a number first. It computationally, it's not super expensive for your computer to turn everything into a number here um and this code isn't correct, so you'd want to add in the logic appropriately. So on and so forth. Um
+
+So yeah, Room, great question to make sure you are not incorrectly filtering. Um, Harsha asks, "I want to learn more like this. Where do I find it?" Great question. So, on the Dataquest website, there's a couple things you can do.
+
+Um, if you want to find projects, at the top tab here, if you go to projects, if you're a beginner, I recommend looking at the guided projects section. And then you can filter by your level, by your language, and you'll see a ton of projects like this. If you want to learn the skills that I talked about in this project, you can go to the catalog and look at courses, skill paths, or career paths to learn more Python skills. Um, all right. Adrian asks, "If we are familiar with GitHub, would you recommend us to upload these projects on repositories, or is just so better?"
+
+That's a great question. So, this level of project is it's it's a fairly basic project that I would not necessarily recommend including in a portfolio. However, if you have a repository for um, practice projects, you could include it there. But in general, this level of project doesn't need a ton of revisions, it doesn't need, um, a ton of additional files, so it just works pretty well. But if you know GitHub and you're comfortable with repositories, go for it. I know when I was a beginner doing
+
+this project, I was not comfortable with GitHub, so it just would have been my preference. All right, I'm trying to get through as many questions as I can. Um if I'm going to pause on questions for a moment. I can stay a little longer if you want your question answered. Um but just to make sure I am respecting everybody's time.
+
+Um if you need to hop off right at the half hour, I do encourage you to leave feedback. This is the first project walk-through webinar that I have led, and I would love to know what you liked, what I could improve for the next project walk-through, um and that way hopefully they can continue to get better and better and better. So consider this um my first official goodbye if you're not sticking around for extra questions. Um and everyone who's hopping off, thank you so much. I really appreciated um all the great interaction that was in chat and in the Q&A panel.
+
+Oh, thank you for the the kind notes, everybody. All right. So um hopping back into the Q&A. I'm not going to accept any new ones, unfortunately, so I'm going to just stick with questions that were submitted by the half hour. Um so Cynthia asks uh how do you share projects for the community to review?
+
+So the very final page of every guided project will include a link for you um called share your finished guided project. And if you click that, it'll take you straight into the right page on the community where you don't need to do any navigation. All you need to do is click add new topic. And when you add new topic, um you add your title. And then um there's a couple ways that you can um add your Jupyter Notebook here.
+
+But you can drag and drop your downloaded file and it will automatically upload the notebook for you. So, you do need to have the file downloaded on your computer first. Um and then you can see it is added and rendered in the topic. So, hopefully that answered your question, Cynthia. Um uh All right, next up Victor.
+
+Um you joined a bit late, so you're wondering if you could rewatch the webinar. Yes, we will send out a recording of this webinar tomorrow. And will you share the data set and notebook? Also, yes, it will be included in the email we sent out. Um all right, Waleed asks, "Could you work with PyCharm instead of Jupyter?"
+
+Yeah, um in fact, you can use PyCharm or excuse me, you can use Py- You can use Jupyter from within PyCharm. Um totally your preference. Um all right. Buse or Bus asks, "How can we detect missing values at the beginning before deleting? We've just checked by visually looking at rows.
+
+Is there a way to understand?" Yeah, so more in more in-depth way to do this, I would recommend using a Python library like Pandas where you can inspect missing values for the entire data set with one command. But for this project because we were specifically not using pandas, we got a little bit of a cheat from the original data source. Um which is here. Second page of the project takes you to kaggle.com.
+
+And in the discussion section, um people talk about a wrong entry. So that's the back end of how we knew to delete that row. And the Dataquest team has curated to make sure that no other rows in this data set are problematic. But for generally um speaking, pandas would be a good way to do that. Um And Cynthia asks, "For real projects, can you put them on just as you did?"
+
+Mhm, 100% 100%. In fact, if we look at my my personal just, um Oh, not all just. That's not what I want. Um If we look at my just account, you can see I have many, many just. You can just continue adding, continue adding.
+
+You can see just I added several months ago. Um so yes, this is a great way to store your projects online.
+
+All right. And the final question coming in that met the deadline, um is from Cameron. "Hi, I'm still having trouble learning Python. What advice would you give me to learn from scratch?" Practice, practice, practice. Python
+
+from from my personal experience is a lose it or use it or lose it skill. So, if you go a month without touching Python, your skills are going to get rusty. Um we have practice problems on the Dataquest platform. I encourage you to look at those. I also encourage you to practice your Python basic skills with projects like this one. Projects are a phenomenal way to
+
+um learn new skills and keep your existing skills sharp. And also um a couple resources I recommend a lot are Project Euler. I'll type an answer for that. Um
+
+That's how you spell it, Project Euler. Um which is a website where you can practice um lots of things like for loops and lists and dictionaries just over and over and over. Also, Advent of Code, which is happening right now, can help you practice um some more basic type coding skills. All right. And at that time or at this time this is going to signal the end of the webinar. So, everyone who stuck around
+
+extra 6 minutes for some extra Q&A, thank you so much. Um we will be having more project walkthroughs in 2025. So, keep checking your email um and hopefully I will see you see you for the next one. Um And yes, please do provide feedback with the form that Celeste just sent. It will help me make the next webinar even better.
+
+All right. Bye, everybody.

@@ -1,0 +1,81 @@
+---
+video_title: "Day 2: Secure AI Agent Memory: Encrypted Context Systems"
+video_id: nP07AadrC_8
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nP07AadrC_8
+video_date: 2026-08-08T05:30:17+00:00
+video_description: |
+  Webiste Link: www.systemdrd.com
+  Lesson:https://aiamastery.substack.com/p/day-2-secure-memory-and-context-systems 
+  Course: https://aiamastery.substack.com/
+  
+  Production AI agents need to remember conversations across millions of users — but storing raw chat history is expensive and legally risky. In this lesson we build the encrypted, cost-aware memory backbone that solves both problems at once.
+  
+  What you'll build:
+  
+  An encrypted SQLite memory store with per-conversation key derivation
+  A context window optimizer that controls token cost as conversations grow
+  A multi-stage PII detection pipeline (regex, NER, contextual analysis)
+  An inline audit logging system for compliance-ready security events
+  A tiered short/medium/long-term memory architecture inspired by CPU cache design
+  
+  Where this fits: Day 2 of the Hands-On AI Agent Mastery Course (Module 1: Enterprise Agent Architecture & Hardening).
+  
+  
+  This course is built production-first — every pattern here ships with encryption, PII classification, and audit logging from Day 1, not bolted on later. If you're integrating AI into systems that touch real user data, this is the memory layer you actually need.
+  
+  #AIAgents #LangChain #PythonAI #AgenticAI #AIEngineering #DataPrivacy #LLMOps
+---
+Welcome back. >> [music] >> Yesterday, you got an agent running end to end with a proper life cycle and state management underneath it. Today, we're going after the part [music] almost nobody builds correctly on the first try, memory. By the end of this lesson, your agent will remember conversations across sessions >> [music] >> without leaking sensitive data and without quietly burning through your API budget. Let's get into it.
+
+Quick orientation before we touch [music] any code. We're in module one, enterprise agent architecture and hardening, and this is day two of 30. [music] Day one gave you the agent life cycle and basic state persistence. Today builds directly on top of that state layer, except [music] now we're asking a harder question. What happens when that state contains a customer's home address or a support [music] ticket with account number sitting inside it?
+
+Here's the real world version of this problem. Think about any [music] chat product you've used that remembers you across sessions. Somewhere behind that convenience is a database holding every message you've ever [music] sent it. Store that naively, plain text, unbounded history, no classification, and you get [music] two problems stacking on top of each other. First, cost. Every token in that history
+
+gets resent to the model on every turn, [music] so your bill grows with every conversation instead of staying flat. Second, legal exposure. If that history contains [music] personal data and you haven't classified or protected it, you're one audit away from a very bad meeting with legal. Today's lesson builds the system that prevents both. Here's the one picture you need to hold in your head for the rest of [music] this lesson. Production
+
+memory systems don't store everything at the same cost. [music] They use a tiered hierarchy, the same idea CPUs use for cash. Short-term [music] memory holds your last five to 10 exchanges, kept in memory for instant access. This is what actually gets sent to the model on the next turn. [music] Medium-term memory holds session summaries. When short-term fills up, we
+
+don't just delete the oldest turns. >> [music] >> We compress them down to their essential meaning. Long-term memory is where encrypted conversation threads and their metadata [music] live permanently, in our case in SQLite. The interesting engineering happens in the transition between tiers, not inside any single tier. When short-term memory overflows, [music] a compression pass kicks in. It extracts
+
+the key insights worth keeping, flags anything that looks like sensitive information, and only then writes a condensed [music] summary down to medium-term storage. That single compression step is doing double duty. [music] It's both your cost control and your first line of privacy defense. Now, let's zoom into the actual data flow, left to right. >> [music] >> A message comes in, and before anything else touches it, it goes through the PII detection pipeline. That ordering is
+
+deliberate, and we'll come back to why in a minute. Next, it hits the context window [music] optimizer, which decides how much of the conversation history actually needs to travel with this request. [music] Then, AES-256 encryption wraps the payload, and finally, it lands in the encrypted SQLite memory store. >> [music] >> Underneath all five of those stages runs the audit logging layer. And I want you to notice it's drawn beside the pipeline, not after it. That's not a
+
+diagram style choice. It reflects a real architectural decision. If you log after the fact by reading back what happened, you're reconstructing history from secondary evidence, and there's a window where a failure between steps leaves no trace. If you log in line at the moment each stage executes, [music] the audit record is a primary account of what happened, not an inference. Two more details worth calling out here.
+
+Compression on overflow uses three signals, an important score, recency, and engagement >> [music] >> to decide what survives the move from short-term to medium-term memory. And key [music] derivation is per conversation. The encryption key for any given thread is derived from that thread's ID combined with the user's session, not from one master key [music] shared across your whole database. That single decision limits the blast radius of a leaked key to one conversation [music] instead of your entire user base. Let's ground all of that in real code.
+
+Up top, memory record is a typed data class, thread [music] ID, an encrypted payload as raw bytes, a list of PII labels, and a timestamp. [music] Nothing about this record ever stores plain text. The payload field is bytes, full stop. Below that, secure memory store is the class that owns the SQLite connection [music] and the master key used for key derivation. The method to focus on is [music] write, and look closely at the order of operations because that order is the whole lesson.
+
+The classification call runs before anything else happens to the incoming text. That's deliberate, [music] and it's the line highlighted on screen. If you flip that order and encrypt first, classify [music] second, you've lost the ability to make policy decisions, redact, separate key encrypt, or purge based on what's actually in the text because by the time you classify it, [music] you've already committed it to storage in some form. After classification, we derive a key specific to this thread and session, run the actual [music] AES 256 GCM encryption, and assemble the record. Then notice the audit log [music] write happens before the persist call, not after. That's the same principle from
+
+the architecture diagram, now showing up as a concrete ordering decision in code. In a real implementation, you'd wrap this in a transaction. So, [music] a failure between those two lines can't leave you with an audit entry that doesn't match what's on disk. Before we move into the hardening details, [music] I want to show you the piece that ties everything together for whoever has to trust the [music] system besides you, the dashboard. On the left, you've got four live panels. [music] Tier
+
+occupancy, so you can see how much is sitting in short-term versus medium versus long-term at [music] any moment. A live PII flag feed. A token cost trend, so you catch a cost spike [music] the day it starts, not the day the invoice arrives. And the raw audit event stream. >> [music] >> On the right is a single thread's trace looks like end to end. A write gets
+
+classified and labeled before it's persisted. [music] Encryption confirms the key scope was thread in session, not global. The compression pass shows you exactly how many tokens it saved on that summarization. And the audit append confirms the event is committed to the immutable log. None of this is a nice-to-have add-on. When someone in
+
+security or legal asks, "Prove this conversation was encrypted and classified correctly." This dashboard is where that proof actually lives, in real time, not [music] in a log file you have to go dig through after the fact. This slide is the reason this course exists in the first place. Most agent tutorials stop at it works on my machine. >> [music] >> And this is what separates that from something you'd actually ship.
+
+Four things. [music] And I want you to treat all four as non-negotiable, not nice-to-haves. Encryption at rest and in transit using AES-256 with a key derived per conversation. We already walked through why that limits blast radius. Multi-stage [music] PII detection. Regex
+
+catches the obvious stuff like emails and phone numbers. Named entity recognition catches names and locations regex misses. And contextual semantic analysis catches [music] sensitive information that only reads as sensitive in context. None of that is optional. And all three stages run before a single byte hits disk.
+
+Automated data classification means every record you store gets a sensitivity level. And that level is what drives whether something [music] gets redacted, encrypted with a separate key, or purged entirely on a retention schedule. This turns [music] privacy compliance from a manual review process into something your system enforces [music] by default. And immutable audit logging. Every read, write, and [music] classification event gets logged in a way that supports a real compliance review. Not a log you reconstruct from
+
+memory [music] after an incident. >> Let's talk about what actually breaks in production because the failure modes here aren't hypothetical. They're the three most common ways teams get this [music] wrong. First, naive full history context where [music] you just concatenate every past message and send it with every request. Token cost scales linearly with conversation [music] length and because it happens gradually, nobody notices until the bill for one high-volume customer is [music] 10 times what it should be.
+
+Tiered compression is the fix. You only carry forward what's still relevant. Second, client-side only PII scrubbing >> [music] >> where the redaction logic lives in a front-end component or a middleware layer that's easy [music] to accidentally bypass. Regressions ship silently and the first time anyone finds out is when an audit turns up raw social security numbers sitting in the [music] database. The fix is server-side classification that runs on every write path with no code path that [music] skips it.
+
+Third, and this is the one that turns a bad day into a genuinely catastrophic one, a shared encryption key across all users. [music] It's tempting because it's simpler to implement, but it means a single leaked key [music] decrypts every conversation in your entire system, not just one user's. Per-thread key derivation, [music] which we saw in the code a few slides back, limits that same leak to exactly one conversation. >> Five heuristics to carry [music] with you past today, beyond just this lesson's code class, classify before you persist. PII detection is a gate on the right path, never a cleanup job you run later.
+
+>> [music] >> Cost and compliance are the same design problem in disguise. The compression pass that saves you tokens is usually [music] the same pass that reduces how much sensitive data you're holding on to. So, optimizing for one often means optimizing for both. [music] Derive keys per conversation, not per application. A single global key is a single point of catastrophic failure.
+
+Log at the moment of the event, not after. [music] An audit trail built by reconstruction after an incident is a much weaker artifact than one written [music] in line as things happen. And tiered memory beats flat history. The three-tier ladder we opened with [music] lets you keep a coherent conversation without paying full token price for every single exchange, every time. If you only remember one of these, >> [music] >> make it the first one. Classification
+
+ordering is the single decision most tutorials get wrong, and it's the one most likely to bite you in a real audit. That's [music] the memory backbone done. Your agent can now hold context across a conversation without leaking data or torching your token budget. Tomorrow, [music] we shift from what your agent remembers to what it's allowed to do. Day three [music] is secure tool integration, sandboxing, permission boundaries, and dynamic [music] capability validation, all wrapped around a file system agent so you can see [music] the access controls working against real files. See you there.
+
+Everything from today lives at the lesson link, >> [music] >> and the course home has the full 30-day curriculum if you want to see where we're headed next. Thanks for building through this one with me. Subscribe if you haven't already, and I'll see you tomorrow for day three.

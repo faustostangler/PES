@@ -1,0 +1,307 @@
+---
+video_title: "Predict Heart Disease with KNN in Python [Machine Learning Tutorial]"
+video_id: W7kV2HBqeS8
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=W7kV2HBqeS8
+video_date: 2025-04-11
+video_description: |
+  In this hands-on Project Lab, Dataquest’s Senior Content Developer, Anna Strahl, walks you through how to build a K-Nearest Neighbors classifier to predict the likelihood of heart disease based on patient data.
+  
+  Whether you're new to machine learning or looking to sharpen your skills, you'll learn how to:
+  
+  - Perform exploratory data analysis
+  - Clean and prepare a real-world medical dataset
+  - Build and tune a KNN model with scikit-learn
+  - Evaluate model performance with accuracy scores and confusion matrices
+  - Visualize correlations and insights from the data
+  
+  Throughout the session, Anna breaks down each step of the machine learning workflow, shares practical tips, and answers live questions from learners.
+  
+  This project is ideal for learners familiar with Python, Pandas, NumPy, Matplotlib, Seaborn, and basic ML concepts.
+  
+  🔗 Try this project on Dataquest: 
+  https://www.dataquest.io/projects/guided-project-a-predicting-heart-disease/
+  
+  Video chapters:
+  00:00:00 - Intro
+  00:07:15 - Project Brief
+  00:08:53 - Load the Data
+  00:13:00 - Exploratory Data Analysis (EDA)
+  00:25:38 - Data Cleaning
+  00:32:48 - Building the Model
+  00:46:06 - Evaluating the Model
+  00:54:00 - Q&A
+  
+  #MachineLearning #knn #pythonprojects #Python #DataScience  #HealthcareAnalytics
+---
+ahead and get started. Uh hello hello. Welcome to the data project lab. My name is Anna Straw and today we are going to be doing a machine learning project about predicting heart disease. It's a very cool project.
+
+Um and there's a very large amount of space for whether you're a beginner to machine learning or more experienced. Um you can fine-tune your model. You can just build a basic model and still get pretty great results. So, we're going to walk through the whole process today. But before we get started, a little bit more about me. My name is
+
+Anna Straw and I am a senior course developer for DataQuest. But before that, I got my career started spending eight years teaching high school mathematics and I really enjoyed that. Um, but wanted to make a switch. And then I taught myself how to do data analytics and spent three years working in data analytics for a homelessness nonprofit in my city. So now I get to combine both of those worlds. I get to teach about data
+
+and it's my happy place. So if you are also hoping to make a career switch um into the world of data, hopefully this is a inspiration story for you. I actually did use data quest as a learner before I made the switch over to data. And now who are you? I want to make sure that this webinar is the most valuable it can be to everybody here. So
+
+to get the most out of this I think it is best if you have pretty good fluency with Python basics and um pandas nubai and then our data visualization libraries of mapplotib.pipplot pipelot and seabor. If if any of these are like a little bit shaky, maybe you feel like you need to look up methods often or parameters often, that's totally fine. Um, but understanding where these abbreviations, you know, PD, um, PLT, like where those come in, that's going to be important today. And then having some familiarity with the machine learning workflow. And today we're going
+
+to be using the scikitlearn library. Um, if you wanted to do this with TensorFlow, please do. Um, but if you are brand new to machine learning, I think there's still a lot of value to be had. So, on that note, I do want to see who we have joining us today as far as experience goes. So I am launching a quick poll just to see um if you've attended a project lab like this before and what is your experience with machine learning. There is no wrong
+
+answer here. So please be honest. It'll just help me tailor this webinar to you. So we'll let that roll for a few minutes as you answer.
+
+Cool coffee mug. Thank you, Oscar. I actually had this mug when I was a high school teacher and that way none of the other teachers would steal my mug in the break room if they knew. All right, so get your answers in. I'm going to end the poll in a moment so we can take a look at the results. And here we go.
+
+So, in general, it looks like people are newer to the project lab. So, if it's your first one, welcome. If you've attended one or two or more than two, welcome back. Glad to have you here. And as far as experience with machine learning, the majority of participants today are new to machine learning or know the basics. Now, for those of you
+
+who are intermediate or an expert, I'm so happy you're here. If people have questions for the chat, um maybe you think someone there can help you out, please post your questions there. And if you're the intermediate and experts, answer. Um if you have questions specifically for me, please use the Q&A box um because as you can see, chat rolls really fast and I don't want to miss your question there. Q&A is the best way to make sure I see your question.
+
+Um, okay. So, what are we doing today? We're going to introduce the project. What is this project all about? We're going to do some exploratory data analysis to get familiar with our data set. And then, um, that will help us to
+
+pinpoint what we need to do for our machine learning workflow. Then, we're going to clean a little bit of our data and then build and test our model. So, let's jump in. Okay. Oh, actually before we jump in, I forgot brief note about AI. Um, we
+
+often get this question in these webinars of what's the point of doing this project if AI can do it really fast. And there's a couple reasons. Uh firstly, practicing these fundamental skills and practicing the machine learning workflow are really important for knowing how to um guide your project in the right direction. Yes, AI can do a lot of this, but it might not do all of the steps correctly. For example, there are some pretty important data cleaning steps that we need to do.
+
+And if you're not familiar with the workflow there, you might not you might not get results from AI that you're looking for. And I think the most important thing is developing a deep understanding for the project. Uh as you work through the project like hands-on, you understand the data set, you understand each method, each line of code the best. You are the expert in this project. And then when you want to use this project for conversations, uh networking, maybe you talk about it in an interview, you're intimately familiar with how it works. Whereas if you let AI
+
+do the project, honestly, the time it would take you to become familiar with the project that AI created, you should just create the project yourself. So yes, AI can do it, but we're using this as a learning tool, using it for um our knowledge and betterment. So AI has its value and its uses, but completing this project from start to scratch um from scratch all the way to the end with maybe not so great. And Oscar, I see that you say um AI lacks subject matter expertise. Yes. And in fact, there is
+
+one um variable we're going to see today that I had to do some research on. I I tried to ask AI about it and it didn't give me a great answer. it wasn't satisfactory to me. So I had to go and do my own work. So our project brief. So we are
+
+pretending that we're working for an R&D company um providing healthcare solutions and we have collected data on about 900 patients. Um and what we want to do is see if there if there's a way to predict the likelihood that a new patient will have heart disease in the future. And um there's a lot of like medical ethics and stuff that we're not going to get into here, but being able to uh help patients know if heart disease is something that they're at risk for, that's extraordinarily valuable. Uh so that's going to be kind of our guiding question here today. Okay. So I'm just going to go to
+
+my front page here. I'm going to jump straight into the app uh data quest app and we're going to get started. All of my code today is going to come from the GitHub gist that is being shared in chat. It differs slightly in some places from the official data quest solution and I'll try to pinpoint what those things are as we go. But in most machine learning projects, we are going to start with our import cell. Uh I'm not going to be
+
+including markdown cells today because this is very focused just on the machine learning workflow. But if I were to be creating this project for a portfolio or for sharing with anybody really I would want markdown cells here to explain you know the title of the project maybe a little bit bit of information about what's happening here. So our import statements we have pandas, numpy um our mapplot lib, seabourn standard data analytics we're going to be using for our exploratory um data analysis step and then we have our scikitlearn. Um, and this was confusing to me when I first started machine learning of why is sklearn used on four separate lines here. Like this is a little bit different from data analysis if that's the level you're familiar with. And it's because
+
+scikitlearn is massive. And if you just use the statement import sklearn, you're going to be in for a bad time. Um, it's it's just a huge library. So I have the documentation up because I wanted to point out to you that um even in their documentation they break it up here. Uh so for example model selection we drop that down and then there are a ton of methods in here.
+
+So we are just importing the specific methods by name that we are going to be using for this project. um instead of needing to use dot notation to access methods. Um okay, I see a couple people asking for the GitHub link. We have a link getting shared occasionally, but I'll share it just real quick in chat. Uh oh, that's not with everybody. Let me
+
+share that with everybody. There we go. Um so we have pre-processing our minmax scaler. We have model selection. For selection, we're going to use train test split and grid search. And then for
+
+the actual model itself, we're going to be using the K nearest neighbors classifier, which works really well for the type of data we are doing today. And then for metrics to perform how our model is doing, we're going to be importing accuracy score. And then these two are different from the official solution code. I like the confusion matrix. I think it adds value.
+
+So we're importing confusion matrix as well as the confusion matrix display just so that our um confusion matrix is more digestible. And finally because we will be rendering some plots we need to include mplot lib in line since we're working in Jupiter and we want to ensure that our um charts render correctly. Okay. So, first thing we're going to do is uh run this cell. There we go. We can tell it ran
+
+successfully. Um, if you have questions for me, I see a couple questions in chat. Please make sure you're using the Q&A box. That's where I will see them and then I will address those types of questions at the end. Um, so we're going to read in our data set. The data set is a CSV file. We can
+
+take a peek at here. um several columns. But to make it work in Python, we're going to use the read CSV method of the pandas library and take a peek at the first five rows with the head method. Okay. And we can close that now.
+
+Um so we can see we have several columns here. Uh we have age, sex, chest pain type, resting, BP stands for blood blood pressure, cholesterol, fasting, fasting, blood sugar, resting, ECG, max heart rate, exercise and old peak, ST slope, and heart disease. This is our target variable. It's true or false. Do they have heart disease? Yes
+
+or no. Uh, okay. So, that looks pretty standard. And I really like using the info method of the pandas library because I think it gives us a lot of information about our data set all at
+
+once. So what do we have? We have 900 plus entries. So 900 rows of data representing 900 plus individuals. We have 12 columns and it looks like the majority of these columns are numeric either with integer 64. We have one
+
+float column and then we have some object columns which we will need to address because we are using a um k nearest neighbors model here. So something to keep in our brain of work we need to do before our model works. And so now let's dive a little bit further into what our variables look like using the describe method. And this will give us information about all of our numeric data points. So we can see our age. Uh we
+
+have minimum age of 28 years old, maximum 77. Um, some things I like to look at here for exploratory data analysis. I like looking at the minimum value, the maximum value to see if there's any outliers or maybe data quality issues. And I also like comparing the mean to the median because if they are very different from each other, it could mean that the variable is skewed, which could impact our model's ability. Um, so let's see. Resting blood
+
+pressure. The mean and median are pretty close together, 132 to 130. So that's fine. But I noticed that the minimum resting blood pressure value is zero. Now, I'm not a doctor, but having a blood pressure of zero seems not good.
+
+So this is something that we're going to want to deal with, explore a little bit further, and see if we need to clean it up. cholesterol. Very similar thing here. Uh the mean and median maybe a little skewed but not terrible, but the minimum cholesterol value is zero. That's another one we want to check out because that seems not good. Uh fasting or
+
+fasting blood sugar. Um, this one I had to investigate a little bit because I didn't understand what it meant, but basically there is a cut off point of if you're below this value for blood sugar, it's a zero. You're fine. Um, but if you're above this value for blood sugar, you get a one, meaning that uh you're kind of above average here. So, this is all zeros and ones um which explains the minimum and maximum values. Maximum heart rate
+
+um minimum looks okay, maximum looks okay. Mean, median look okay. Old peak. Um so this has to do with the ECG metrics, which gets pretty in the weeds as far as medical information goes, so I'm not going to I'm not going to spend a ton of time on it. But just looking at the values here, nothing is standing out as being bad.
+
+and heart disease looks fine because it is our predictor. Uh so it's going to all be zeros or ones. Okay. So now that we have this to kind of explore our data, we also want to take a look at our non-numeric variables because remember the describe the descriptive statistics is only for our numeric variables. Um so how we're going to do that is with some visuals.
+
+So to do this, I'm going to create a list of all of our categorical variables. Um, so we have sex, chest pain type, fasting, blood sugar, resting, ECG, exercise, anginina, ST slope, and heart disease. Um, and then we're going to create a figure. And we're going to be using the objectoriented version of charting here. And so for every index and column in our list, we're going to create a series of subplots. Um, and this is just a cleaner
+
+way to show all of our plots in one cluster instead of having them be one under another for every single one. And we don't have to scroll as far here. Okay, so we are going to use a count plot. And the reason we're using a count plot is right now we're just exploring the data. So count plot will help us see how many instances, how many rows are corresponding with each value for the variable.
+
+Um, okay. So let's go ahead and render this. And um we can see there's some interesting things to take note of. For example, our male versus female variable. It's a very lopsided data set.
+
+The the majority of our data points are male, which could be a huge issue. um having one over represented or one under represented group. We're going to keep an eye on this. Um chest pain type ASY stands for asymptomatic. So this means that the majority of participants in this particular data set didn't have any chest pain. So maybe they had heart
+
+disease, but there was no corresponding chest pain with it. uh fasting blood sugar. It looks like the majority of rows are in the normal range for fasting blood sugar. Resting ECG, the majority is in the normal range. Um exercise and uh majority didn't have that. Now,
+
+here's an interesting one for ST slope. ST slope up and flat are heavily represented whereas down is not. And a little bit more about ST slope. It has to do with the ECG test. Um if you've ever seen like a medical drama, you know like when they have the heart machine that goes beep beep. Um this has to do
+
+with the slopes of the um the heart. So not a doctor, but the this is going to be something we want to look at because it's directly related to the heart. And then uh our predictor variable heart disease fairly evenly split here between yes heart disease and no heart disease. So that's good for a machine learning model. So this is a good beginning to our exploratory data analysis. Um I
+
+think I saw um somebody asking about like the process and we are going through the process of uh machine learning in real time right here. And the reason we're spending so much time on the analysis part of like looking at our data set is because it's going to help us figure out what factors we want our model to be based on. So maybe all of these variables are important, but maybe they're not. And getting very familiar with our data set this way will make sure that we don't have to just like kind of throw darts at a board with our model. Um, so this is a good first step, but what we're going to do now is we're going to do some more visualization by looking directly at how these categorical variables relate to our predictor variable. So you can see
+
+similar code from before. Um but we are going to be grouping by heart disease. So let's take a peek. Let that run. And so now we can see we have the same categorical split.
+
+So we have male and female. But for the heart disease variable, wow. Um that's pretty substantially different. And in fact, the male values are much more represented with heart disease than not, whereas females are the opposite. Um, the asymptomatic chest pain type represents a lot of our heart disease um havers. And maybe this means that
+
+chest pain type is not going to be a great predictor if the majority of people with heart disease don't have this as a symptom. But just something that we're going to keep in mind. Um fast fasting blood sugar looks like in general uh if you have a higher than average fasting blood sugar there is potentially some correlation with heart disease resting ECG if you have the ST value uh looks like maybe a little bit higher correlation with heart disease and I'm using this word correlation lightly we're going to look further at correlations in a moment exercise really strong um values for heart disease with the yes value and then the ST slope. Wow, this is this is pretty stark. Um the up value very consistently with no heart disease and the flat value very very consistently with heart disease. So, as
+
+we're looking at this, we're starting to form a picture of which of these variables could be factors for or at least tied very closely with heart disease for our model. Um, but the issue with this exploration so far is that we're only looking at our categorical variables and we're going kind of on vibes. Yes, we can tell that there's a difference here between flat and up, but it's not like tangibly quantifiable. Um, so we're going to look at these in a confusion or correlation matrix in a moment. But before we do that, we need to address the data cleaning elephant in the room. Let me scroll back up here.
+
+remember our resting blood pressure and cholesterol values being zero. Yeah, we need to take care of that. So, I'm going to use the info method here for our data cleaning just to see how many instances are there in our data set for when resting blood pressure equals zero. And I'm using because if there are a lot of instances, we don't want to like just have endless output here. Info will give us a number. And we can see there is one
+
+entry. Excellent. There is only one value in our 900 plus row data set that has a resting blood pressure of zero. So, we're going to go ahead and just remove that one row from the data set. But we also want to take a peek at the cholesterol. So similar
+
+um methodology here. We are filtering our data set for where cholesterol equals zero and we're pulling the info for those rows. Oo 172 rows have cholesterol equaling zero. This is a huge problem because we don't know if cholesterol is a factor for heart disease or not. And we very clearly cannot remove 172 rows of data in a data set that has 900 rows. So this is going to require some
+
+more in-depth cleaning here. Okay. [Music] Um I am going to start the data cleaning process. So the first thing we're doing here is because we are cleaning our data frame, we want to make a copy of that data frame. Just best practice. Always
+
+recommends doing this so you are not risking um impacting your old data frame or your new data frame if you're uh moving around cells as you work. So, we're creating a copy and then we are just removing that one row by saying that our excuse me, our data set is everything except for that one row. Excellent. But heart disease is a little more complicated and I'm not going to spend a ton of time talking about how this mask works, but we're creating a boolean mask. And the most important thing to take from this step is that we are not just taking um let me back up for a second. We're
+
+going to replace all the zeros for cholesterol with the median for cholesterol just to kind of make it so that those values don't positively or negatively impact our model. However, in case cholesterol is a factor for heart disease, we're not going to use the median for all values. we're going to separate and have two medians. We're going to have the median for um rows that have the heart disease and rows that don't have heart disease. And that way if the medians are very different, we're not populating a bunch of cells with the incorrect medium. So yes, we are creating a mask
+
+here. Excuse me. And then with the mask we are replacing all of the zeros with the median of the values for the corresponding um values. And when we run this, there was no output. So nothing happened except we have a nine telling us the cell ran. And now we're going to
+
+check that our data cleaning worked by describing. And we're not describing all of the numeric values. We're just looking at the ones we're cleaning. And we can see now that cholesterol has a minimum value of 85. That seems a lot nicer. And our resting
+
+blood pressure has a minimum value of 80. Fantastic. Our data set is cleaned. Uh this data set was not overly messy. So the data cleaning was minimum but very very important. So now we want to continue
+
+our exploratory data analysis by looking at correlations to see which features we want to select for our model. And the way we're going to start is by turning everything into a numeric variable using the get dummies method. Um, this is one hot encoding where if I'm going to scroll back up for our data set head here. If there is a categorical variable like chest pain type, um, because the K nearest neighbors model deals with distances between points, we need to be able to calculate distance which is numeric. and um chest pain type, we can't calculate the difference between ATA and NAP. So what we're going to do with one
+
+hot encoding, if you're newer to machine learning, this is very essential, is we're going to convert all of our categorical variables into ones and zeros. And I think it'll be easier to explain if we see it. Okay, so let's look at chest pain type. You'll notice there are now three columns for chest pain instead of one. And the ATA value is the first column and it's whether it's true or false. NAP
+
+is true or false and TA is true or false. And we can see that each participant will only have one true value because it originally came from one cell. But the reason this is really good for machine learning is true and false is zeros and ones which we can calculate the distance between. And now that everything is numeric, we can calculate our Pearson correlation. All right. So I am creating
+
+a correlation um list here using the core method and I'm using absolute value because we don't really care whether or not it's a positive or negative correlation for this particular purpose. We just want to know the strength of the correlation. And if we had positive and negative values, the color chart that's going to display would get um a little bit harder to read than if everything is a 0ero to one correlation. So we're looking at a heat map using Seabor. I chose the color rocket_r. Uh you can choose whatever
+
+color is easiest for you to see the strong correlations in. and let's take a peek. Okay, so here we are looking at our correlation matrix here. And the brighter the color, the stronger the correlation. We can see that there are some clusters of stronger correlations. Uh looks like down here in
+
+this corner, sort of in the middle, but this isn't super easy to look at. So, we're going to redo our correlation matrix, just filtering for correlations that are stronger than a particular value. You can play around with this number. I played around with it a little bit. Um, I think you could probably even go with a larger number here, but I landed on 030 just to reduce enough features, but not too many that our model has enough meat to go on. So now
+
+when we render this, we can see it's a lot clearer to see where our strong correlations are. And yeah, it looks like if we specifically look at our heart disease value here, there's some pretty strong correlations with max heart rate, old peak, the male sex value. It's like it barely made that cut off. So something we're going to keep in mind, we have chest pain type of ATA exercise angina is yes the slope the flat slope and the up slope. Um so we're going to start building our classifier. This is where
+
+the machine learning officially begins
+
+everybody. Okay. Uh, and this is a large cell, but we'll walk through it. So, the first thing we need to do is we need to split our data a couple different ways. The first way is we're going to do our um non-target variables here.
+
+And best practice is to set those to capital X. And then our target variable, which is our heart disease column, is lowercase Y. And then when I first learned machine learning, this line of code really intimidated me because up until this point, you don't often see uh multivariable assignment. But we are using one fun, yeah, one function from our sklearn library. And in one fell swoop, we have our training data and our validation data for our x values and our y values. The test size. You can play
+
+around with this. Do keep in mind that because we have a relatively small data set of 900 rows, um your test set should always be on the smaller side. So you you can train your model with more data. So I chose 15. um see if you know 20 maybe 25 works here and then random state this is just for reproducibility. So if you want to
+
+ensure that your code is more likely to match mine you can use this. I say more likely because it depends on what versions of these libraries you're using compared to me. All right. Uh so next we are selecting our features and I pulled this list of features directly from the correlation matrix up here of whatever passed our 30% cut off. Um I see quickly in chat this is a good one to address in real time. Val stands
+
+for validation. And what we're going to be doing with our validation data is validating whether or not our training the the model that was created with our training data also works for a completely separate set of validation data. So it's kind of like these rows can't see each other that the training data and the validation data. And afterwards we let the model um do its thing. And if the accuracy is similar that means our model is not overfit.
+
+It's not doing poor performance. Um so it's always very important to split your data when you are training a model. Okay. Uh it's similar to saying test data. There's a slight difference.
+
+um not super overly important for what we're doing today. Um but test data is going to be like the final final thing that we do. Validation data, how we're using it here is kind of a pulse check of how our model is doing in the interim. Okay, so we pulled those features and now we are doing a model just based on one feature at a time to see if there are valuable features that are really good at predicting heart disease or not. So for a feature in our features list, we are going to initialize a k nearest neighbors classifier. I set it to three
+
+neighbors. Um, you can play with this number and we will play with this number in a minute, but for now three is okay. Then we're going to fit our data to our model using our training data for the specific feature we're testing at right now. And then we're going to compare it to our um or combine it with our Y training data. And then we're going to score it. How
+
+accurate is it compared to our validation data? And then we're just printing the accuracy score for each feature. And here we can see the KN&N classifier for max heart rate for example has an accuracy of 66.67%. Looks like old peak uh 77%. The male sex 44.93%.
+
+This is much lower, which uh is maybe surprising if you have some background of hearing that um heart disease is more prominent in men. Like this seems like it would be a good predictor, but remember if we look at our correlation matrix, the male correlation was a little bit weaker. So something to keep in mind here um exercise 73% and then the slope ones are just crushing it. The flat slope is 82% and then the slope up 84% accuracy for a model built with just one feature is pretty phenomenal. Um so now our goal is can we beat this number without overfitting? So let's take a peek. Can
+
+we improve our model? So instead of going with just one feature at a time, what happens if we give it all of our features? And by all of our features, I still mean the list of features that we have specified. So once again, um because we're working with multiple features, we're going to scale our data so everything is within the same zero to one uh range just so that the model isn't trying to calculate distances between, you know, a 600 value cholesterol and a one value exercise in China. Um so that's we're scaling our data here. We do not scale our
+
+validation data to a different um fit. We transform it on the same list as our training data. And then we fit the data and score it. So let's take a peek. And this is on all of the features at once.
+
+83%. Interesting. So not as strong as when we are just training our model on slope. Okay. So um the work we've done so far is is good. You know it's it's pretty
+
+basic model work for K nearest neighbors. Um where we've kind of just been guessing. We we kind of guessed a number for our nearest neighbors. we kind of just went with like the um standard default parameter values here. So now we're going to do some hyperparameter optimization and um because we did some like scaling and fitting and transforming at this point I am going to um kind of refresh all of this information. Refresh our X, refresh our
+
+Y, refresh our train test split. Um and notice we are calling it test here because this is going to kind of signify the the end goal for our data. This is the test that is going to um kind of conclude our project today. Um and then features if you're using my data set locally or not data set if you're using my code locally. Um I made a typo here. I forgot to include max heart
+
+rate, so I'm going to add that in. Uh, and then here's me testing whether or not male is valuable or not. So, I left it commented out, but we can test it again with it uncommented and see what the difference is in our score. And then scaling our data here. Um, and I left this here just so that we can see what scaled data looks like.
+
+So let's run this. And we can we can kind of see what that scaling means because we're scaling everything between zero and one. Now our heart rate is no longer going to be 60 plus. It's going to be less than one. And everything else is between zero and one as well. So that's what it means
+
+when we're scaling our data here. Um, okay. Next up, we are going to be using grid search, which is going to go through and sort of iterate on all of the possible um combinations of things that we could test. Remember, we said three nearest neighbors up here. Our grid search is going to look through many, many different options here. And we're also
+
+going to be calculating distance a couple different ways to see if one distance is more predictive than another. Um, for our nearest neighbors values, I picked a range 0 to 20. This is good for our type of data since we're using healthcare data and also our data set size. Um, so we create a dictionary for our grid parameters. Then we create um our model and then we specify our grid and use the grid search CV method with our model with our grid parameter dictionary. And then we're specifying
+
+accuracy for scoring. Um and notice there's a semicolon here. We can see what happens without it. Let that cell run. It's doing a lot of work behind the scenes. And the
+
+reason I like the semicolon is in my opinion for this particular model. Uh this doesn't give us a ton of information, but if you like seeing this kind of interactive drop down, you can keep it. That's totally fine. Um but the semicolon is just a a way to run the cell without that output rendering. You can see it's run and we don't get that box. Uh because I much prefer to look at
+
+the best parameters this way where we can get our best score and the best parameters for our KN&N grid that we created here. So let's run this and see what happens. Okay, this is really interesting to me because um before this webinar when I forgot to include this the results were very different for this very very different uh accuracy was similar but the metric and the neighbors is different um so we can see here that the best method or the best metric is the Manhattan metric and we're going to use 19 neighbors remember the grid search went through all of the possibilities and determined that the best score that it was able to get was with the Manhattan distance metric and 19 nearest neighbors. Um, just because I want to just cuz I want to show this. If we comment out max heart rate and rerun this and then rerun this and rerun this, look at how drastically this changes. Now our metric is Manowski and
+
+our neighbors is 11. So I I'm very interested by that. But let's stick with heart rate for now. See if it is useful or not. We can always work on um refining our feature selection. And now we're going to test
+
+with our test data. So we are going to use our scaler from here. And using our scaler, we're now going to scale our test data. We're testing out the um accuracy um of the best parameters we found with our grid search. um and we are predicting values using our best estimator. That's how we pull
+
+the values from our grid search um on our test data that has been scaled. Then we use our accuracy score metric from scikitlearn that we imported at the beginning and we're going to use this on our y test data versus our prediction values. And finally, we're going to print the accuracy. So let's check it out. Okay, this is really interesting.
+
+Um so we can see that our model accuracy with our test data is 82.61 versus um our training data here was 82.79. That's that's similar. That that means that our test data is performing similarly to our training data, which is good.
+
+Um, which is actually very interesting in relation to my mistake because if we are to perform this again without max heart rate, um, we can see that the best score for the training data was still at about 80.2%. But then if we look at our model accuracy on the test data, 87.68%. That's a big big difference and could represent an issue with uh our model maybe with some overfitting.
+
+So, you know, this is an interesting one. It's a judgment call. And we could do the same thing now uh introducing the male variable. Uh just kind of playing around with our features, seeing what we get. And um adding in male means that our training data is performing slightly better, but our test data is about the same. So maybe it's it's not a terrible
+
+one to include. But what is interesting is that none of these have performed as well as the one feature model for ST slope up. Um, which does make sense when I was looking up like what this is medically. Um, this is a test that is specifically related to heart health. So having high accuracy scores for a test that is specifically related to heart health makes a lot of sense.
+
+Um, but I'm really curious if there is a way to improve this model at all. Um, and the final thing I want to do is I want to take a peek at distribution of patients by their sex of the entire data set of our training data set and our test data set. Because if we remember from our exploratory data analysis, the data set is pretty lopsided here. There's a lot of male data points, not as many female data points. Um, so given the data we have, is that at least distributed from full data set, train, and test data set relatively similarly. Um, and you could get fancier
+
+here and do some percentages, but this is just a super quick eyeball. Um, and okay, it's not terrible. the test data set about about 30% um training data set yeah about 30% and tire data set about 30%. So it's it's okay but for next steps I would be really really curious to see if there is a way to balance this out and if it has an impact. All right. And we had questions
+
+earlier. I think Muhammad asked about the confusion matrix. Now is the time. Now is the time to look at our confusion matrix. And especially in healthcare where correct diagnoses versus incorrect diagnoses have really like heavy stakes, a confusion matrix can help us see our values that were p predicted correctly versus incorrectly. and was it a false
+
+positive or a false negative because they will have different uh ramifications for patients. So confusion matrix we imported from our metrics library and we are comparing our y test values versus our predictions and then we're displaying the confusion matrix using the confusion matrix display and because it's chart like we're going to have to include plt.show and plot. Okay. Um, so now we can see that the true label, so this is what was actually in our data set versus our predicted label. And in general, the
+
+model got them correct. But it looks like there are 14 instances where the true label was yes, heart disease, and our model said no, heart disease. So basically these are 14 patients who if we were only using our model to predict whether they um were likely to get heart disease or not our model would not catch them and that's you know that's someone's health at stake. So this is a problem. There are 10 patients who were predicted to have heart disease who in fact did not have heart disease. So
+
+these would be um you know for the patient like it would be a little stress for them but ultimately their health wouldn't um be in as much jeopardy as these 14. So I like looking at the confusion matrix because it kind of lets us peak under the hood of what our model is doing without having to go data point by data point. So this is what a confusion matrix is. Um it's another way to kind of diagnose the metrics of how your model is performing. All right. And that
+
+concludes the machine learning work we were doing for this particular webinar. But there are of course next steps you can take with it. Um kind of gave a peak here. Explore with different parameters and hyperparameters. Um maybe the random state. What did we pick? 418 417. What
+
+did we
+
+pick? What did we pick? Uh for so far. Maybe it's a bad random state. I don't know. So explore different random
+
+states. Um try different features. We were testing this out a little bit. We were looking at using male. We were using it looking max heart rate and it changed the model pretty substantially.
+
+So test it out on your own. Um and evaluate whether the imbalance of male and female data can be addressed. Can you um somehow input or data points? Can you balance your data set at all? Can you find more data? I'd be really
+
+curious. And if you do finish this project and do any next steps, especially, please go to the data quest community and share your project and tag me because I'm extraordinarily curious um about what you can do with this project. All right, questions. So, at this point in time, we have a couple minutes for questions. I'll try to get through as many as I can. Um, but I'll be mindful
+
+of time and if you need to head out right right at the 30 mark, um, I'll make sure we say goodbye. Okay, so starting off um what is the learning curve for creating this with TensorFlow and how different is it? Um great question and I I'm not sure. I I think TensorFlow in general is isn't it more deep learning than machine learning? So the great news is all of the concepts of machine learning transfer over very very well. Um our
+
+exploratory data analysis, our one hot encoding we did with get dummies, get dummies was a pandas method, not even an sklearn method. So that that will be the same feature selection looking at correlations, all of that is the same. So really the learning curve to transfer your knowledge to a different um machine learning or deep learning library gets into the specifics of um the models themselves. And I I can't speak to the learning curve there, but my guess is especially with a little bit of AI support to help you make that transfer, it wouldn't be wouldn't be too terrible. Okay. And Muhammad, what is the purpose
+
+of the confusion matrix? Hopefully, we addressed that. Um, but if you had more clarification on that you wanted, let me know. Um, and then anonymous attendee asked, can I repeat what I said uh about what I'm replacing so it doesn't affect if it's important? Um I I think this is probably for the data cleaning step we did here.
+
+Um, so the reason we did our cholesterol data cleaning this way is, excuse me, to find a median um for for heart disease versus not heart disease and replacing any zero values with um the corresponding median. A quick analogy for this is in school you get ABCD F based on a percentage. Um and if you had a lot of students with 0% but they went to Harvard that that would that would be a mismatch, right? um if you have students that have 0% and um maybe didn't end up graduating, it's it's more similar, but still that 0% is weird. So that probably represents um inaccurate data. And so we would want to
+
+replace the 0% with something else. And doing an average or a median would be best. But for the students who didn't graduate versus the students who went to Harvard, their um percentage, their grade percentage is probably different. So that's why we separated out into two groups before we replace it with the median. So hopefully that answers your question. Um because we didn't want to
+
+keep those zeros in our data set, but we could not remove almost 200 rows of data. Okay. Uh someone asks why was your choice K nearest neighbors for the training model. Um great question. So K nearest neighbors is a pretty quick easy way to begin working with a model especially for healthcare data that has um multiple features that could impact the solution but may or may not relate to each other.
+
+So if you are to continue this project, there are some other models you could definitely work with. Um you could maybe look at some kind of linear regression. Um but K nearest neighbors or healthcare um data in this in this way. It was just a good fit. Okay, now someone else asks, "What is slope and flat again?" Oh, actually
+
+before I get to this question, um, if you do need to hop off because we're at time, I want to honor your time and say thank you for coming. Um, but I will stick around a couple more minutes to answer a few more questions if you want to stick around and join. Um, but if you need need to hop off, I understand. And yes, thank you. Uh, okay. So, what was slope and flat
+
+again? So, we can actually take a peek at this. [Music]
+
+Um, let me pull up an image
+
+here. So we can see that ST segment um upward slope, downward slope and flat slopes have to do with the ECG test for heart health. It's like electro stimulation of your heart. And um I mean I'm not a doctor, but one of these is good and two of them are maybe not so great for your heart health. And so that's why slope is a pretty strong predictor of heart health and heart disease. What is scalar? Someone asks.
+
+Okay. So, uh we did pretty good good good good uh peak of it here. So, scaler is a method that we or it's not a method. We created a variable named scaler from the minmax scaler function from the sklearn library. And what scaler is doing it's turning all of our data into a scaled number so that when we're looking because remember k nearest neighbors is all about calculating distances between um data points and calculating a distance between zero and one is going to give us um better measurements than calculating with really large numbers and really small numbers.
+
+And Tammy asks, "How do I choose the numbers of number of neighbors?" Great question. And in our first iteration of the model, I picked three because it just it was easy. Um, not too many, not too few. Uh, you could totally test out different numbers here, you know, like maybe we try five. Let's see what
+
+happens. Um, okay. So, pretty similar results. Um, what if we do 11? Is it the same result? Interesting.
+
+Interesting. Okay. What about 20? Huh. Maybe something's going on here. I'm not sure.
+
+Um, but down here, not there, [Music] thous. We selected the number of neighbors um using a method that picked for us based on the best accuracy. So it it determined that for the particular set of features we gave the nearest neighbor best fit or not best fit the best number of nearest neighbors would be 18 for this particular range of features. Um, and Cola asks, "Do we always derive our validation data from the training data pool?" Um, so I'm going to clarify that a little. It doesn't come from the
+
+training data pool. It comes from the data pool. And that's a dis it's an important distinction um because if you pull your test data or your validation data from your training data you are risking overfit issues um and a not accurate model for new or novel data. So your validation and test data should not be pulled from your training data. It should be pulled from your overall data set. And that's why
+
+the very first thing we do is split our data into distinct groups where um our test or validation data is going to be 15% of the total number of rows from our data set and the training data will be the other uh 85% of our data rows. But it it is important to use the same starting data source because um you know like we did some data cleaning on our cholesterol and changing the data source could it could um introduce new issues. So if you have enough data to train and test, you should split it this way. Um if you don't have enough data to train and test, uh that's a whole other can of worms to figure out. And uh someone asks, is there help available with this project after the webinar? Yes, please join the data quest
+
+community. In fact, if you click on this help option and go to view community posts, then you can see if someone's asked your question or you can ask a question and um myself or our wonderful team of moderators would very happily help you out here.
+
+Um, Gabbor asks, "Would it be more accurate to bin people by age and how would you do it?" Not in code, just in pseudo code. Um, I'm trying to think. [Music] Um, because we're working with numeric data for all of our features after get dummies. I'm not sure bin would add or subtract any value. Um it
+
+would be really important to make sure your bins had the same um width because when those bins would get turned into um you know individual numeric values, you'd want them to not over or underest under represent any um any distances. So, it would be really interesting if you wanted to create bins. There's several ways you can do that. I'm pretty sure Pandas has a binning method built in. Um, you could also just do a loop and say if you know this age is in this range, add it to this bin and just create a new variable for like age underscore bins.
+
+Um, but yeah, I'm actually curious if that would improve the model or not improve the model. Actually, I take that back. Um, because age didn't end up being a factor we looked at. It wasn't a feature we looked at because our correlation of age and heart disease was not strong. But maybe if you bin it, it would be stronger. I'm not sure.
+
+Definitely something worth checking out.
+
+Um, how do you publish this on GitHub? Evelyn asks. Um, great question. I think this will be our final question. It's it's a good one to end on. So, there's a couple
+
+ways you can publish this on GitHub. If you want to ver like a very quick sharing way, um, I really like GitHub gists. It's just gist.github.com. Um, and you can copy
+
+and paste your code. Actually, I'll just do like a a quick gist here. Um, and what I'm going to do is I'm going to take our notebook code here. I'm going to open it with the editor so it shows raw raw text. I'm going to copy it. No, not that. And I'm going to paste
+
+it. And then the most important thing is to correctly name the file extension. So this is an IPI notebook, Jupyter notebook. And um you know give it a name that your audience can see and create a secret or a public gist and or GitHub will render all of your Jupyter code correctly. If you want to create a um repository, and repositories are good because you can have a readme file, you can have um your data set attached and it makes it a little bit easier for folks to um like just reproduce your code.
+
+Um then you can create a repository and add in files here um that somebody can pull and run themselves. But the the creating a repository can be a little bit trickier. Um but there's a there's some content coming from the data quest team that will help you if this is new for you. So stay tuned. Okay. Uh so this does conclude
+
+our webinar. Thank you so much everybody for coming and then sticking around for the question session and uh please do leave feedback. This is our first project lab specifically about machine learning. So if you liked that, if you didn't like it, let me know and I can ensure that each project lab is better than the last one. And I hope that everybody has a fantastic morning, afternoon or evening depending on where in the world you are. Thanks everybody.

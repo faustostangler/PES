@@ -1,0 +1,379 @@
+---
+video_title: "Agent Engineering: Estamos construindo agentes de IA ou MAIS débito técnico?"
+video_id: amuUUrOUwlQ
+channel_name: "Vini - AI Coders Academy"
+channel_id: UCB0zxJZkEkb7TH6DdS-Fe_A
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=amuUUrOUwlQ
+video_date: 2026-08-20
+video_description: |
+  Agentes estão ficando cada vez mais poderosos.
+  
+  Mas também cada vez mais complexos.
+  
+  Skills, MCPs, memória, subagentes, workflows, ferramentas, protocolos...
+  
+  E isso levanta uma pergunta:
+  
+  estamos construindo agentes melhores ou apenas criando mais infraestrutura para configurar?
+  
+  Links úteis
+  🔗 Invokta: invokta.dev
+  🎓 AI Coders Academy: aicoders.academy
+  
+  Nesta live, quero apresentar a ideia de Agentic Engineering e discutir uma mudança de arquitetura que acredito que vai se tornar cada vez mais importante:
+  
+  o agente está se tornando uma interface.
+  
+  Assim como tivemos desktop, web e mobile, agora estamos entrando em uma fase em que boa parte da interação com software acontece através de chat, voz e agentes.
+  
+  Se o agente é o novo front-end, então surge uma pergunta importante:
+  
+  qual é o back-end do agente?
+  
+  Durante a live vamos falar sobre:
+  
+  - por que estamos fazendo over-engineering com agentes;
+  - Hermes Agent, OpenClaw e o papel que essas ferramentas tiveram;
+  - por que grandes players estão absorvendo parte dessa complexidade;
+  - quando ainda faz sentido construir agentes específicos;
+  - por que agentes deveriam ser pequenos e focados;
+  - a diferença entre interface e lógica de negócio;
+  - o conceito de Action Engines;
+  - por que MCP, CLI e Skills deveriam ser formas de acesso, e não a arquitetura do sistema;
+  - como construir capacidades reutilizáveis entre diferentes agentes;
+  - e o que estamos construindo com o Invokta.
+  
+  A tese é simples:
+  
+  O agente muda.
+  O protocolo muda.
+  A lógica de negócio não deveria precisar mudar.
+  
+  #AgenticEngineering #AIAgents #AIEngineering #Invokta #ActionEngines #MCP #AICoding #SoftwareEngineering #SoftwareArchitecture #ArtificialIntelligence
+---
+Ah, tava só vendo vocês estavam espertos. Estamos ao vivo, meus queridos. Como é que vocês estão? Tudo bem com vocês? Já vai dando pra gente o retorno do áudio se tá chegando bacana para vocês, tá? Opa.
+
+aí se tá bacana o áudio ou não. E já chega respondendo aqui pra gente a nossa enquete. E eu tô vendo que já tem uma galera que já tá aqui desde cedo. Gilson tá na área desde cedo. Boa noite, Gilson. Fala, Jeff. Come on. Boa noite.
+
+Estamos aí na área. Quem mais tá na área? O Roger tá na área também. O Mark tá na área. Obrigado pelo pelo repost lá do LinkedIn. Ô Mark, ajuda para caramba
+
+também. O M tá na área também. Boa noite também. Felizão aí. e também o nosso defensor do corso, mas também ele quando tem que criticar critica. Most tá na
+
+área também. Quem tá na área Anderson tá na área e Daniel também tá na área. Coisa boa galera. Hoje o assunto é um assunto que para quem não conseguiu vir no nosso evento presencial, eu resolvi trazer ele aqui pro YouTube porque eu acredito ser um assunto pertinente para compartilhar com vocês e acredito que muita gente vai se beneficiar disso aqui hoje, tá? Então, a ideia é falar sobre engine, eh, se você tá fazendo isso certo ou não. E vai ser um conteúdo bem
+
+objetivo, sem enrolação, para você entender o que que tá acontecendo no mercado. Tem muita coisa acontecendo no mercado e às vezes isso acaba dificultando da gente entender qual o caminho mais interessante ou não de se seguir. Beleza? Quem tá na área também? O Alexandre tá na área, Guilherme tá na área. Boa noite, pessoal. Já vai me
+
+dando o feedback do áudio, se tá bacana ou não. Já manda no grupo da empresa, no grupo da família, fala: "Ó galera, ó, hoje o papo é agenting e pode confiar, eu te garanto que vai valer a pena". Você que tá chegando na live agora, dica, dá o like para você não esquecer de dar o like depois e aí depois se você não gostar, você tira o like. Aí você bota um dislike aqui embaixo. Tem meu compromisso contigo hoje é que o conteúdo vai fazer super sentido.
+
+Beleza, pessoal? Vamos lá, sem mais delongas, vou compartilhar minha tela aqui com vocês, tá? Vocês devem ter percebido que o setup tá um pouquinho diferente. Eu fiz uma leve ajustada aqui, mas para com foco em deixar isso melhor para vocês também. E o tema de hoje é Identic Engineering. Ó que nome
+
+chique. Vamos lá, ó. Pô, tá aqui na tela já. Vocês estão vendo minha tela. Beleza, galera. Isso
+
+que vocês vão ver aqui hoje é basicamente uma aula, tá? A galera que tá na E Coders Academy, tá ligado como é que são as nossas aulas e vocês vão ver que é basicamente uma aula e é uma aula de introdução ao que vem depois que a gente vai fazer lá dentro e coders academy galera. Agenticineering, a gente tem falado muito sobre agentes, muito sobre harness engineering, muito sobre loop engineering e cada dia tem um termo novo. E o novo termo da vez é o enticering, mas não é tão novo assim. Basicamente, se você tá desenvolvendo agentes, se você tá instalando, configurando agentes, se você tá configurando Harness, você já tá trabalhando com ATC Engineering há um tempão, OK? Bom, falando então de Aentic
+
+Engineering, eu queria começar trazendo aqui três caras, tá? Primeiro o Mem Zero. Quem aqui conhece Mem Zero, manda no chat se você já conhece Mem Zero. Memzero é uma ferramenta de gestão de memória. Queria falar também do Hixfield. Manda no chat se você já
+
+conhece o Hickfield. HFD é uma ferramenta para você fazer edição e criação de vídeos usando integração com o cloud, com o Codex, tá? E o Compóito, que é uma ferramenta para você integrar várias ferramentas e aí te facilita para caramba de gerenciar a integração do seu agente com várias ferramentas. Beleza? Olha aí, ó. O Daniel já conhece, ele
+
+trocou o memer pelo Roncho. Beleza? Fala, meu querido Pedro, tamo junto, meu irmão. Tamo junto. Boa. Então, quem já
+
+conhece, manda no chat a que você já conhece se você tá usando alguma dessas ferramentas. Que que essas ferramentas têm em comum? Tá, peça, grava essa pergunta, o que que elas têm em comum? Que a gente vai trazer essa resposta muito em breve. Olha só, tem bilhões sendo investido nessas empresas. O Rigsfield, por
+
+exemplo, ele vale atualmente 1.3 bilhão de dólares. É isso aqui ouve o mesmo. Um MCP, uma ferramenta que é basicamente um MCP, ela vale 1.4, 1.3
+
+bilhões de dólares. Hickfield, para quem não tá ligado, é essa ferramenta aqui, ó, que ela consegue gerar vídeos bizarros, como esses aqui que vocês estão vendo, tá? tem tipo vários vídeos sensacionais, ela consegue gerar em sequência e ela vem meio que para competir com um mercado gigante, que é o mercado, por exemplo, do próprio do Premiere, do Capcut, do da Vince, ferramentas que já estão consolidadas há anos no mercado e que para você simplesmente chegar e tomar o mercado desses caras é uma parada complicada, mas o Rigsfield tá conseguindo abocanhar boa parte desse mercado e por isso tá justificando o valuation deles, tá? Então beleza. Outro cara, Compósio, Compósio tem conseguiu um investimento de 25 milhões de dólares na sua rodada da série A e até agora já tem 29 milhões de dólares captados. Beleza? Outro cara,
+
+o Mem Zero, que é o cara que a gente fala direto aqui no canal, a memória virou a infraestrutura, ele conseguiu 24 milhões de dólares de investimento. Todas essas ferramentas têm uma parada em comum e o que elas têm em comum é basicamente que elas não são um harness, elas são uma integração para o agente. No final do dia, ela é uma conexão que acontece via MCP e essas empresas estão conseguindo fazer, ó, uma grana preta de investimento até agora, simplesmente focando na outra parte do rolê que vocês vão entender o que eu vou trazer aqui para vocês. E bom, hoje vocês vão descobrir porquê. Aqui é uma paradinha que que eu falei na lá na palestra, né?
+
+Eu tô trazendo os mesmos slides, mas eu tenho uma data muito importante para mim, que é a data dia do dia 12 de fevereiro. Para quem não conhece a minha história, no dia 12 de fevereiro a minha filha nasce no ano passado, 12 de fevereiro ano passado. E quando ela nasce eu trabalhava para uma fintecadense chamada Equip. A KP é uma das maiores fintecs focadas, é tipo se fosse um Nubank do Canadá para empresas, tá? A gente movimentava uma grana lá de cartão de crédito, tudo mais. Eu fazia
+
+parte do time de cartão de crédito, o time de contabilidade, o time de eh pontos e milhas aéreas e o time de transações bancárias. Então, esses produtos, eu liderava o front end dessas dessas frentes ali, desses produtos. E ali eu parei três semanas quando a minha filha nasce. E aí ela nasceu, eu tirei três semanas porque neném não vem com documentação, você tem que aprender a a desmistificar e entender o que que é ser pai. Mas foi o deploy mais importante das nossas vidas, minha e da minha esposa. E aí naquela, naquele mês que eu
+
+trabalhei só uma semana, quando eu volto pra empresa, eu vou olhar o GitHub e eu percebo que eu tinha chipado mais código pra produção, mergeado mais PRs do que todo mundo no mês inteiro. Eu falei: "Cara, tem alguma coisa muito estranha acontecendo". Por quê? A empresa inteira já usava o Cursori, inclusive eu já tava usando o Corai há um bom tempo, só que só eu consegui ter bons resultados. E aqui na internet, a bolha dev, a bolha tech, todo mundo falava assim: "Cara, a sua empolgação com a inteligência artificial é inversamente proporcional ao seu conhecimento sobre assunto." Ou
+
+falando, cara, não é tudo isso e, "Ah, nunca vai chegar nesse ponto, é impossível". E eu vendo na minha frente o resultado e falando: "Cara, mas eu tô conseguindo performar bem com a inteligência artificial? Será que eu sou tão imbecil assim que eu não tô conseguindo entender o que esses caras estão falando ou será que eu tô vendo alguma coisa de diferente?" E aí comecei esse canal aqui que vocês estão vendo hoje. Eu falei: "Cara, eu acho que eu enxergo uma visão diferente que o mercado tá enxergando e tem uma baita oportunidade aqui para mostrar isso pras pessoas." Eu fiz um treinamento pro time
+
+lá da equipe. O pessoal curtiu demais, explodiu a cabeça e desde então eu comecei a dar outros treinamentos, fazer vídeo aqui no YouTube e o canal existe eh por conta desse evento. Eu vi que tinha um espaço grande pra gente falar de forma séria sobre desenvolvimento software com inteligência artificial. Ah, e lembra que eu falei que eu tava entregando muito mais que todo mundo na empresa? Não é porque eu era é porque eu tava fazendo engenharia de contexto e spec driven development quando não existia esse termo no mercado. Isso lá no ano passado, em
+
+fevereiro de 2025. Então, entenda que o nosso mercado ele tem vários nomes que vão ser surgindo, vão sendo criados nomenclaturas para práticas que provavelmente você já faz. E aí, por isso que eu quis começar trazendo um pouco dessa minha história. Spectrum development foi onde eu comecei, mas não é sobre isso que a gente vai falar aqui hoje, tá? Quero trazer para vocês hoje, para quem não me conhece ainda, eu sou o Vinícius Lana, tenho mais de 18 anos de experiência desenvolvendo software, sou founder da ADAS Academy, esse canal que vocês estão vendo aqui agora, esse canal no YouTube, graças a Deus, tem mais de 35.000 inscritos e com você vai ser mais
+
+um ainda. E tem live aqui toda quinta-feira, é só se inscrever e acompanhar nosso canal. Tem, eu sou pai da Pieta, ele tem um fusquinho vermelho, tem vídeo dele aqui no canal também, beleza? Tomar, eu quero saber de vocês aqui quais agentes vocês estão utilizando hoje. Manda aqui no chat.
+
+Vocês já estão usando Herms Agents? Já usaram? Já tentaram configurar? OpenCla, entra, Cloud Code, Cloud Cowork, chat EPT, Codex. Manda aqui no chat rapidão que eu vou dar uma moral para vocês aqui pra gente entender qual agente vocês estão utilizando. Olha aí, ó. O
+
+Alexandre tá usando o Herms dele com roncho locals. Fala Codex, como é que você tá meu querido? Bom demais. Mem Zero Nucs, Oráculo. Bom demais. Cursor
+
+em fevereiro, visionário. Pô, fevereiro ano passado, cara. Olha aí, ó. Quem o o Mark tá usando Hermes, OpenCla, Cloud, Chatt, todos eles, né? O Codex tá usando gravit, queria usar, mas tá difícil. Ah,
+
+cursor como a gente, o Aton code sempre. Que mais, galera? Manda aí no chat rapidão. Vamos participar. Isso dá uma ajudada no algoritmo para entregar a live também, tá? E detalhe, esse aqui
+
+foi um evento presencial que a gente fez em Floripa. Tô dando essa moral e fazendo esse conteúdo no YouTube também, porque tem gente que, pô, não dá para viajar para longe, né? Olha aí, ó, só uso antigravity que não vale o custo benefício. Olha aí, tá usando todos cursor Kiroc. Olha aí, Codex. Legal,
+
+galera. Olha só, pergunta para vocês. Será que a gente não tá fazendo overend de agentes? Não, hein? Eu sei que a galera que acompanha o canal que tem muita gente que é dev. Você já pararam
+
+para pensar que talvez o que tá rolando no mercado agora é um baita de um overengine? Não porque a gente quer fazer overgening, porque a gente pode. Imagina só se já dava para fazer overineering antes de existir inteligência artificial, as pessoas já adicionavam um monte de coisas nas ferramentas só porque, ah, cara, eu acho que dá para fazer e não precisava. Imagina agora que a gente tem a para fazer as coisas. Aumenta para caramba o overg. Só que
+
+mais configuração não necessariamente significa que você tá entregando mais valor pro produto, ok? Então, veja bem, pergunta aqui pro chat. Eu quero que vocês mandem um aqui no chat ou dois. Manda um se você passou os últimos seis meses mais tempo configurando agentes e manda dois se você passou os últimos seis meses mais entregando solução. E pode ser honesto, tá? Não, não vem
+
+falar, cara, eu tô voando. Me diz aí de todos os hermags,
+
+configurando MCPs, configurando subagentes versus quanto tempo você tá de fato conseguindo entregar solução pro negócio? Faz essa essa reflexão da consciência agora. Olha aí, ó, a galera da E Coders, né, como sempre voando, claro, né, tá lá dentro. O Miguel tá aqui, ó. Um. Beleza, tá tudo certo o
+
+seu? Tá, galera, gastando bastante tempo configurando a gente. Eu passei muito tempo configurando a gente hermizade, então open craw, muito tempo mesmo, tá? Olha aí, ó. Mostro só entrega a solução aí. É brabo. O o M tá passando bastante
+
+tempo configurando a gente, galera. É isso. A gente tá passando muito tempo configurando a gente e por mais que a gente consiga entregar bastante solução, ainda tem no mercado muito misticismo. E olha só, se a gente observar bem o que tá acontecendo, olha o Hermes agent aqui, tá? Ele é um um bom exemplo pra gente observar. O
+
+Hermes agent, ele já traz hoje de capacidade 82 skills pré-instaladas. 82 skills pré-instaladas. Dá uma olhada nisso aqui, ó. Das skills pré-instaladas que ele já traz. A gente tem tudo isso aqui que vocês estão vendo na minha tela agora.
+
+E eu vou chamar atenção para algumas que podem ser super úteis para desenvolvimento de software e algumas que provavelmente você nem tá usando. Olha aqui, ó. Git Hub review. Pô, tipo, deve ser massa, né? GitHub issue toar massa. GitHub issues gitubier workflow.
+
+Mas olha essa outra pro request aqui, galera. Song writing and AI music. Isso aqui já vem instalado no seu Hermes, tá? Se você tá usando Hermes agent, você tem isso instalado lá dentro. Você tá precisando de gerar música com seu Hermes hoje? Bu you infographic. Isso
+
+aqui, para quem não sabe, é uma ferramenta chinesa para você gerar infográficos. Você tá usando isso aqui hoje? Money vídeo, nem sei o que que é isso. Aí você vai pegar várias outras, open hill para controlar smart. Na maneira como você tá usando a configuração do seu Hermagent hoje, você precisa disso daqui. Himalaya, Codebase
+
+Inspection, Merge Reconile, Apple Notes, Apple Reminders. Isso vem por padrão no Hermes. Inclusive, se você quiser entrar no seu Hermes agora, desinstalar, eu recomendo, porque isso pode estar talvez tomando um espaço desnecessário dentro do seu agente. Beleza? Vocês sabiam disso? Vocês sabiam que ven que vinham
+
+82 skills pré-instaladas? Manda um no chat se você já sabia disso, manda dois se você não sabia. Beleza? Então, essa capacidade que vocês estão vendo ali agora, essas que a gente citou, isso realmente tá gerando valor pro seu contexto ou é só mais boiler plate, só mais overwing que tá sendo adicionado pro seu contexto? A pauta da live étic engineing. Vocês estão vendo? Tô indo
+
+direto ao conteúdo. Então já deixa o like aqui. E sobre enginearing, antes da gente ir para pro hype, ah, entende? Use open claw, use arms agent, eu quero, eu tô te convidando a fazer essa reflexão, se o que você tá utilizando de fato é necessário, ok? Ó, boa. Obrigado pra
+
+galera que tá contribuindo no chat aqui. Valeu demais aí, Fabrício, que deu as joias pra gente. Obrigado, galera. Isso ajuda demais o YouTube a entregar essa live de qualidade. Beleza? Inclusive, se
+
+você já tinha não tinha vindo, visto ninguém falar sobre isso ainda, pô, já deixa o like, dá aquela moral pra gente, pro pessoal entender o que é que tá acontecendo. Beleza? Ó, olha aí, ó, essa aula de agência engil, eu fui, eu tava no Sebrai. Top demais. Tamo junto, Ailton. Que bom que você tá aqui também
+
+de novo, cara. Me fala se vai ser melhor hoje ou se foi melhor lá. Beleza, galera? Então, olha só, Hermes entre OpenClaw, eles foram fundamentais na ideia de agent de new. Sabe por quê? que
+
+eles criaram um conceito que não tava tão fácil de ver antes. Quando saiu o OpenCla, fiz vídeo aqui no canal, saiu Hermes fiz vídeo aqui no canal também. O vídeo do Openc bombou mais de 100.000 views, viralizou a parada, furou bolhas, porque pela primeira vez parecia ser possível você ter um agente que se comportasse parecido com um Jarves. Legal, muito bom. Porém, esses caras
+
+vieram com um monte de problema. Por isso que eu falo, eles foram importantes para criar uma categoria, mas talvez hoje, talvez hoje eles não sejam os caras mais interessantes para resolver um problema real. E aí a gente começa a falar que a gente tá confundindo muito configurar com entregar. Você vai ver vários vídeos de como configurar o Hermes agent numa VPS, como fazer não sei que lá com Hermes agent, como criar, não sei lá, subagentes com Hermes agent, mas você não encontra nenhum vídeo que tá escrito assim, ó, como que eu melhorei o meu processo de spec driven development com Hermes agent, como que eu melhorei o atendimento odontológico da clínica XPTO com Hermes agent. você não vai encontrar, porque as pessoas estão gastando mais tempo configurando agentes do que entregando solução. E
+
+isso tem tudo a ver com identicering, porque entendenticer não é só criar agentes, mas principalmente para que que serve esse agente. Você se você tá só criando agentes, você tá gastando tokens, tá gastando infraestrutura. Se você entrega a solução, aí sim você tá fazendo algo útil com esse agente. Vamos, a gente vai entrar na parte técnica, tá, turma? Vamos nessa, ó.
+
+Então, olha que interessante, nesse tempo todo, em tudo isso que foi acontecendo, o mercado percebeu esse movimento. E agora a gente tem paradas, como por exemplo, o chattop, o gem park, o grock bot que já resolvem 97 98% dos problemas que o Hermes agent resolve, por exemplo, que o OpenC resolve. Só que tem um detalhe, esses caras são de empresas gigantescas, Bigx, que estão liderando a fronteira do desenvolvimento, que conseguem subsidiar o uso de inteligência artificial e que vão trazer muito mais segurança pro usuário final implementar e utilizar. Então você que hoje é especialista em configurar Hermes agent, seus dias estão contados. Por quê? Porque basicamente o
+
+que o seu cliente precisa hoje o GMN Park pode ser que já dê conta. Hoje o Grockbot pode ser que já dê conta. Inclusive, quero ver no chat aqui quem que já tá usando o Grockbot. Manda no chat. Vocês já estão usando Grockbot? Tá
+
+bizarro, viu? Grockbot tá muito interessante. O chat GPT desktop também tá muito interessante. Manda aqui no chat, ó. Sou aluno da EColders Vini é um grande professor e metor. Tamo junto,
+
+meu querido. Obrigado demais. Salve, Vini. Uma maneira mais cara ou fácil de quem não deve usar invocta, inclusive para implementar no Hermes. Meu querido, vamos falar disso hoje, tá? Vamos falar
+
+isso de novo. Ó, meu Herms agent é tão fora da curva que foi o primeiro no mundo a ser especializado em em [risadas] actiones. Olha aí, ó. Bom demais. Beleza, ó. Voltando aqui paraa
+
+nossa pra nossa pauta, galera. Então, a gente entende que o mercado ele entendeu que isso era uma dor real, que as pessoas estavam precisando de uma solução de fato pra gente conseguir resolver essa parte de automação com agentes. E aí agora, basicamente, você não precisa mais de uma VPS para ter um Hermes agent para ele poder ter seu assistente pessoal, você usa o Grockbot, ele sobe várias instâncias, em cada uma instância você instala as suas ferramentas, ele vai resolver seu problema. O JN Park já vem configurado, você não precisa de fazer tanta coisa para configurar ele. Chatt desktop funciona de uma maneira absurda no local você consegue comunicar com voz e o seu computador vai mexendo por conta própria. Então o que tá entrando agora
+
+no jogo é que talvez para você configurar o Hermes agent a dor de cabeça vai ser muito maior para você ter o mesmo resultado que você já teria aqui. E aí você vai falar: "Pô, Vini, mas tu não vem de curso de Hermis Agent e Cloud Agents?" Sim, eu tenho um curso Né e Holders inclusive sobre isso. Então você não tá jogando contra você mesmo? Não, não. Eu tô jogando a favor de você,
+
+do mercado, de você entender aonde que vale a pena você gastar sua energia, que talvez pode ser no Hermes, mas eu quero que você entenda hoje nessa live aonde que vale a pena de fato você colocar energia, beleza? Então [roncando] vamos lá. Então ainda faz sentido criar agentes? Vamos entender sim. A resposta básica é óbvio que sim. Por exemplo, a
+
+gente tem a ferramenta do ADK, ADK, agent Development Kit da Google, que já existe, ó, um tempoço, veio antes de agente. A gente tem uma outra ferramenta que é o EV.dev e manda aqui no chat se você já conhecia alguma dessas duas. Manda se você conhecer a ADK, manda ADK e manda EV.dev se você conhecer EV.Ddev,
+
+se conhecer as duas, manda as duas. Vamos ver como é que você tá antenado aqui. Essas duas ferramentas elas transformaram a capa, a possibilidade de você criar o agente, de criar uma parada gigantesca que já vem com dezenas e centenas de coisas instaladas para simplesmente você configurar um uma linha de código pequeno, um agente super pequeno enxuto que faz uma única função. Ou seja, se eu preciso de criar um agente para atendimento ao público, um agente para me ajudar em code review, ele tem uma única função, é isso. Ele não precisa ser um megazot. E esses dois
+
+frameworks nasceram para isso, exatamente para isso. E aqui que é a parte muito interessante disso. Eu não preciso então mais ter toda a configuração de Herms Agent para fazer as partes que agênticas que vão entrar dentro do meu workfold de desenvolvimento software, por exemplo. Mas quando eu quiser utilizar eh uma questão mais complexa, mais robusta, mais como assistente pessoal, daí eu uso o meu cloud, meu cloud code também, pode ser. Uso o meu Grockbot, uso o meu Gemini Spark. Mas quando eu quero fazer
+
+automações e sistemas agênticos, aí eu uso ferramentas mais enxutas que são boas suficientes para entregar o resultado necessário. Legal. Olha só o Renan já conhecia o ADK, hein? Massa, hein? O RCAM já conhecia o EV.dev com
+
+Dex Hermes. Beleza. Muito caro Grock. Concordo, viu? Ó, o Grock B tá bizarro de bom e fácil de usar também, cara.
+
+Olha aí, ó. Acho só ele meio inseguro para dar tanta senso. Concordo totalmente. E eu vou trazer meu ponto sobre Gokot aqui hoje ainda, tá? Provavelmente não vai ser o que a maioria da galera quer ouvir, mas eu tenho um ponto sobre ele também. Olha
+
+aí, ó. Uso o ADK sempre no trabalho. Olha aí, ó. Bom demais. O e a descoberta não conhecia nenhuma dessas ferramentas.
+
+Vocês estão estão vendo, galera? A entrega da live hoje tá bizarra. Deixa o like, manda nos grupos, ajuda essa mensagem a chegar nas pessoas. Tem muitas vezes que a gente fica com aquela parada: "Ah, os conteúdos bons só acontecem na gringa. Pô, a gente tá tentando fazer um conteúdo aqui para vocês e aí eh só dá certo quando a gente tem audiência. Se se a audiência
+
+mia, daí não, a gente não consegue fazer isso para cá. Beleza? Vamos nessa, então. [roncando] Seguinte, rapidamente aqui, ó, para entender essa questão de configuração, uma, o que que é um agente? O que que tem dentro da anatomia do agente? Cara, basicamente
+
+ele tem que ter um objetivo, que é o input, a entrada, o estado gerenciamento de contexto, o modelo que vai trabalhar dentro dele, né, dentro do seu harness, as ferramentas que ele vai poder chamar, APIs, códigos, sistemas e a observação. Ele observa o que que foi implementado, dá o retorno, o resultado pode ser certo ou não, e aí ele entra no loop agênico para implementar. Além disso, memória estado, prejenciamento e critério de parada. Cara, um agente é isso. Você não precisa de tanta coiseira igual a galera tá tentando te vender no mercado.
+
+Menos superfície, mais ação. O agente certo, ele faz somente o que ele precisa fazer, nem mais nem menos. Um agente certo, ele não precisa ter, por exemplo, se a gente pegar aqui, ó, dentro da camada do do Hermes Agent, o Herms Agent ele permite você conectar Telegram, Discord, Slack, Chat, eh, Google chat. WhatsApp, WhatsApp, cloud, API, Signal e Mattermost, Matrix, Matrix, Ding Talk, Feix Lark e Wicon. Vamos ser sincero, galera, pro que você tá fazendo, talvez você não precise de conectar com tudo isso. Talvez você precise de conectar
+
+com o Slack ou com o WhatsApp ou com o Telegram. E aí você cria uma camada, uma uma um solo gigantesco, um terreno gigantesco. E isso vai gerar aqueles problemas que a gente viu lá no começo do ano de segurança, né? OpenCor, pô, não é tão seguro. Por quê? Quanto mais
+
+espaço, e aí a gente tem o Alpunk aqui, que é um cara da área de cbersegurança, quanto maior a área de atrito você tem, quanto mais código você tem, maiores as possibilidades ter brecha. E aí você pega um framework igual o EV.dev, que é esse cara aqui, que é super enxuto e vai gerar uma pastinha, que é isso aqui, galera. Isso aqui, ó, somente isso daqui é tudo que você precisa para ter um agente base. Olha a diferença desse dessa quantidade de código pra quantidade de código que você tem que ter quando você tá usando Hermes agent.
+
+Beleza? Voltando aqui então na apresentação, menos superfície, mais ação. Talvez o agente não seja o produto como muita gente tá observando hoje. E obrigado, chegamos a 100 pessoas ao vivo. Maravilha, hein? Continue compartilhando
+
+essa live. Talvez o agente não seja o produto, talvez ele seja somente a interface. Já pararam para pensar nisso? Que o agente talvez ele não seja um produto final, somente uma interface? Olha que interessante, as interfaces elas mudam, mas interfaces, o trabalho que precisa fazer não. Se a gente puxar
+
+o nosso histórico, a maneira como a gente interage com o computador, ela sempre veio mudando. Mas tem até uma uma imagem que traduz isso aqui melhor, que é essa imagem aqui, ó, a a evolução das interfaces. [roncando] Pensa uma clínica odontológica. Uma clínica odontológica, ela precisa ter a capacidade de agendar. Esquece IA, tá galera? Vamos esquecer a
+
+por um minuto. Esquece inteligência artificial. Imagina uma clínica odontológica, ela precisa de ter a capacidade de agendar consultas, a capacidade de marcar consult e eh remarcar consultas, cancelar consultas e a capacidade de saber os horários disponíveis dos seus dentistas. Basicamente isso. Concorda comigo que não importa a interface, eu posso fazer isso por telefone, que foi o primeiro primeira interface que a gente teve para facilitar isso. E aí o dentista vai
+
+marcar na agenda dele, no papel. Eu posso fazer pelo web, aí um sistema web, o cara vai clicar ali e vai funcionar tudo bacaninha. Eu posso fazer isso via mobile, aplicação mobile, aplicativo, pá, beleza, faço pelo celular. Posso fazer pro chatbot? Digite um para marcar uma consulta, dois para saber os horários, três para remarcar, quatro para cancelar. Ou eu posso fazer isso
+
+agora por agentes. Configurei um by termínica odontológica para fazer as agendamento de consultas. Mas perceba que a interface [roncando] ela muda, mas a engrenagem, a ação de engrenagem que aquilo precisa para funcionar sempre foi o mesmo. Não importa se é hoje ou há 30 anos atrás. A clínica odontológica, ela sempre marcou consultas com a mesma ação. OK? Por que que eu tô te falando
+
+isso? Porque quando a gente volta para entender justamente que a interface ela muda, mas o que precisa funcionar não muda, a gente começa a entender que talvez a gente tá falando aqui de front end, certo? Web é front end, mobile é front end, o chatbot pode ser considerado um front end e talvez o agente pode ser o front end da rodada agora. E se o agente é o front end, pessoal, qual que é o back end do agente? Se a gente tá falando que um agente, um hermagent, um EV.dev, um agente feito
+
+com ADK, um open chat GPT, cloud code, cursor, Grockbot, se a gente tá falando front que ele é o front end para executar as ações, qual que é o back end desse agente? Já pararam para pensar nisso? Backend desse agente é o que eu tô chamando de action engine. Lembra que eu falei da do spec Divel? Pode ser que esse termo mude de novo, tá? Esse esse
+
+termo, esse nome pode ser que esse nome mude. Lá atrás eu não chamava de spec driven development quando não tinha nome, eu chamava de, como é que era o nome que eu colocava? AI driven Development, que inclusive eu acho que faz muito mais sentido, mas enfim. Acho engine, não tem ninguém colocando esse nome no mercado. Eu tô batizando aqui. Se esse nome pegar, boa. Senão a
+
+gente adota o que o mercado trouxer. Mas o fato é que o seu agente ele precisa se conectar a um backend. E uma vez que você entende isso, você vai parar de configurar agentes e você vai focar em resolver problemas. Olha só, tem dois caminhos que a gente pode desenvolver e resolver problemas. A gente tem o caminho de focar no harness do agente, que é o que muita gente tá focando hoje. Beleza?
+
+E aí eu vou aprender modelo, roteamento de modelo. Eu vou ter que abrir o artificial análisis e ai toda vez e daqui do artificial análisis eu vou ter que entender qual que é o melhor LLM para pro tipo de agente que eu tô construindo. E aí eu vou ver custo benefício, vou ver custo de API, depois eu vou ter que entender de loop orquestração e aí vou entender como é que eu vou criar o loop agente, como é que eu vou orquestrar meus subagentes. Depois vou ter que entender de memória e contexto para que meu agente não alucine, para que eu faça compactação correta da janela de contexto pro Ll. Depois vou ter que entender de skills e subagentes, OK? Depois vou ter que entender de
+
+canais de interface, aonde que vai se dar a comunicação, se vai ser todas aquelas interfaces de chat e de eh WhatsApp, Telegram, Discord, Slack, ou se vai ser num chat web como chatte. Depois eu vou ter que pensar em deploy e observabilidade. E não só isso, manutenção. Lembra quão chato era atualizar um open call? Quantas vezes a atualização do OpenCall quebrou? Se qual que foi a
+
+última vez que você atualizou o seu arm, gente? Você tá atualizando ele? Então, a gente tem duas faces de um de uma mesma situação. Você pode gastar energia aqui aprendendo e configurando o harness e você vai gastar muita energia. Mas talvez se você não trabalha em um business que o seu negócio, a sua solução, a empresa que você trabalha tá desenvolvendo um harness, se ela não tiver trabalhando nisso, talvez você tá gastando energia no lugar errado. Talvez você deveria ter
+
+gastado energia em como que eu construo um back end para que qualquer agente, qualquer interface se conecte a esse backend e isso simplesmente funcione. De novo, como que eu construo uma action engine? que se eu precisar, aí eu falo do Rickfield, se eu precisar de gerar vídeos e editar vídeos e conectar com diversos provedores, o meu usuário não precisa saber da minha regra de negócio, da minha lógica de negócio e de como é que eu faço para usar o Cence 2.5 Nana Banana 2, Cinema Stúoio 40, Nana Banana Pro. Ele só precisa que ele conecte a ferramenta dele, o agente dele, o cloud code dele, o chatpt nele e como um passe de imagem o vídeo seja gerado. É isso
+
+que o meu cliente quer. Meu cliente ele não quer talvez que eu entregue para ele o melhor harness de memória, Hermes agent, que aprende enquanto você vai usando ele, vai evoluindo junto com você. O meu cliente quer simplesmente que eu dê para ele uma solução como o Mem Zero, que é esse cara aqui, e o Mem Zero vai trazer para ele uma memória persistente, que ela vai funcionar em qualquer harness de agente, no OpenCall, no Hermes ou como plugin do cloud Code, do Codex. E aí eu tenho a minha as minhas mesmas memórias compartilhadas entre agentes. Talvez o meu cliente, ele não quer que eu crie um agente que se conecte com todas as ferramentas de mercado. Talvez ele só quer um compósio
+
+que tava que recebeu 29 milhões de investimento e que se conecta com várias outras ferramentas, e-mail, Slack, Firecra, Notion Linear e facilita essa integração para você. Ou seja, tem empresas hoje que já estão focando nessa parte aqui, ó, em criar essas engrenagens que vão fazer a conexão com o seu agente e vão gerar valor pro mercado. Enquanto a maioria de nós, e eu me incluo nessa, tá focando em configurar agentes, configurar harness, fazer a parte mais difícil, mas que tá todo mundo fazendo e que no final do dia você tem dezenas e centenas de soluções resolvendo o mesmo problema. Quantas soluções de spec Deven development você já viu no mercado hoje? Quantas soluções para você juntar vários harness em um lugar só você já vi no mercado hoje?
+
+Talvez você tá construindo essa solução. Pergunta para você, depois que você terminar de construir essa solução, qual que é o valor que isso vai ter pro mercado? Aí você me responde. Não tô falando que é errado, beleza? É super importante entender como é que isso funciona, mas eu tô chamando atenção porque tem um mercado gigante de agentes, de resolver problema de verdade que ninguém tá olhando ainda. Ninguém tá
+
+olhando ainda. Beleza? Olha só. Vamos voltar aqui para nosso nossa engrenagem. Então, a ideia, o Harness vai executar, mas a action engine é onde o valor tá concentrado. E aí a gente
+
+pega dessas empresas que eu falei lá no começo, que o Hickfield tá valendo 1.3 bilhão de dólares em valuation. Caraca, olha só, o cara, eles fazem um MCP, eles fazem um MCP. Sabe o que que o MCP do Higfield faz, galera? Olha só que doideira.
+
+O MCP do Rfield faz, se a gente trouxer nesse conceito de action engin, imagina que eu tenho vários agentes e que eu poderia ter para cada agente vários MCPs de cada uma das minhas ferramentas conectadas. Então, poderia ter o MCP do gerador de vídeo, do Cance, eu poderia ter o o MCP do Eleven Labs, o MCP do gerador de imagem, o MCP do gerador de text speed, speed to text, o MCP do remotion, beleza? Plugin do remotion. poderia ter tudo isso dentro de uma pasta, dentro de uma configuração de um agente meu. Só que olha que louco, isso é meu, tá na minha configuração, gastei um tempão para configurar e configurei no cloud code. Se eu tiver que mudar pro
+
+Codex, ou eu uso agora o conceito que acabou de surgir, que são os plugins, ou, é, não tem muito caminho, ou eu gasto um tempo reconfigurando tudo. De toda forma, você vai ter que se autenticar em todos esses caras toda vez que você utiliza isso. Dá uma baita dor de cabeça. Agora imagina se eu pudesse, olha só, pensa em MCP. Você não precisa usar todas as tools que o MCP traz.
+
+Primeiro ponto. E obrigado. A live tá só subindo audiência hoje. É porque o conteúdo tá Então olha só, você não precisa usar todas as tours que o MCP traz. Não precisa. Conecta o MCP
+
+hoje que você tá usando. Vai lá, vê na lista de tours qual que você tá usando de verdade. Você não tá usando todas, mas tem as tours específicas que você precisa. E se você conseguisse distribuir isso enquanto uma capacidade pro seu agente, ao invés de distribuir todas as tours, trazer só que você precisa. Eu preciso da TU de transcrever o vídeo, atu de criar o plano de edição, atu de gerar o voice over, que é a voz que vai em cima do vídeo, atu de gerar o visual, atu de gerar o cut scene e a tu aplicar a edição, fazer os cortes de zoom, zoom ins out. E é isso, remover
+
+silêncio. É isso. Eu não preciso de ter 500, vezes exagerei, mas 70 tools sendo carregadas no meu contexto, consumindo contexto doidado. Eu posso ter somente isso que eu preciso, como através de uma action engine. Action engine é o conceito que a gente tá introduzindo no Invoc. Eu já vou mostrar para você como
+
+é que você pode fazer isso. Nessa live vou trazer a solução, não trago só o problema para vocês, não. Mas o mais interessante é o seguinte, quando a gente trabalha com com inteligência artificial, talvez você tá pensando: "Pô, Vini, mas para vídeo já tem várias maneiras da gente fazer. Eu tenho uma skillzinha braba aqui para para gerar vídeo. Eu concordo, tem várias maneiras de você fazer, mas presta atenção, toda vez que você vai usar o remotion, toda vez que você vai usar uma skill de edição de vídeo com cloud code, com Codex, sabe o que que acontece? você tem
+
+retrabalho, talvez não você, mas a sua tem, ela vai gerar tokens, vai gastar tokens só para gerar os mesmos scripts de sempre. E talvez a primeira versão não vai ficar boa o suficiente. Você sabe por quê? Porque inteligência artificial não é determinístico. Se você trouxer o mesma pergunta 10 vezes para um agente, ela ele vai trazer para você 10 respostas diferentes. Se você pedir
+
+para ele editar o mesmo vídeo 10 vezes, ele vai editar 10 vezes de maneira diferente. E você não pode contar com a sorte para dar certo. Você tem que ter um contrato fixo que garanta um output fixo para um resultado determinístico, para que a minha edição de vídeo ela sempre siga o caminho que foi proposto para que quando eu for marcar uma consulta a Iá não alucine e marque consulta de odontopediatria com o dentista de eh periodontia, não de implantes, por exemplo, n implante, pô, ou harmonização orofacial para uma criança que tá querendo ali colocar um aparelho. A IA não pode alucinar nisso. O contrato tem que ser fixo, só marca consulta com fulano de tal, que é o dono pediatra pra criança tal. E a resposta tem que ser a
+
+mesma. A resposta tem que ser a mesma, independente se eu tô chamando do chat EPT, se eu tô chamando do cloud code, do Hermes agent, do EV.dev, de um chatbot, responda 1, 2, 3 ou 4, de uma interface web que eu vou lá e clico nos botões para funcionar, ou por telefone. Se eu tô ligando pra clínica para marcar um meu atendimento, a pessoa que tá me atendendo no telefone, ela não pode alucinar também. Então, perceba que tem que ser determinístico o resultado. E
+
+aqui tá o conceito de action engine. Action engine é o mecanismo que você vai convergir aqui, vai eh trazer de uma maneira uma engine tem o nome certo, uma instância. Você vai instanciar todas as integrações em um lugar só. E esse lugar só é o que vai servir pro seu agente. Por isso que é o back end do seu agente.
+
+Ou seja, ao invés de eu ter que ter uma integração para cada ferramenta que eu tô utilizando, eu conecto com o API uma vez e depois eu seleciono qual parte dessa API que eu vou servir. Galera, isso não é uma parada que eu tô inventando, isso é uma parada que muitas empresas estão fazendo. E aqui eu trago alguns exemplos. Olha aqui, ó. Active campaign MCP Server. Sabe o que que é
+
+isso aqui, galera? Isso aqui é um MCP para você configurar uma das ferramentas mais chatas que tem de ser configurada no mercado hoje de CRM. CRM dave campanha é chato para caramba de configurar, mas você agora conecta o MCP no cloud no chat EPT e voa lá. Tá funcionando, você consegue fazer tudo rolar. Isso já rola, por exemplo, com empresas de VPS que te trazem o MCP para você configurar e voa lá, tá lá funcionando. Precisava do Active
+
+Campaignar um agente do Active Campaign dentro do Active Campan o Harness próprio para fazer isso? Não precisava. Quantas empresas hoje tm os seus agentes próprios, os seus harness próprios, quando na verdade seria muito mais simples se eu trouxesse uma solução para integrar no meu cloud, para integrar no meu chat GPT. Já pararam para pensar nisso? Pois é, e eu parei para pensar nisso bastante tempo e no dia que eu parei para pensar, minha cabeça ficou bugada. Juro para vocês que no dia que
+
+eu comecei a pensar nisso, a minha cabeça ficou bugada. Beleza? Olha só aqui para baixo. Eu mudei de uma apresentação para outra, mas eu sigo daqui. Aqui a gente faz na hora, tá? A
+
+gente tem alguns exemplos de agentes para configurar que eu já falei para vocês. Tem um cara muito bom que foi lançado essa semana, fx.sh, um harness super mínimo que você consegue configurar. Deixa eu voltar na apresentação principal nossa e eu vou atualizar de onde a gente parou aqui, porque eu me empolguei aqui e antecipei um pouco mais, tá? Então, a gente entendeu qual que é o backend do agente e detalhe, nada disso depende de inteligência artificial. Quando a gente
+
+tá falando de backend, de ação do projeto, nada disso depende de inteligência artificial. OK? Olha aí, ô Mark, me arrependo de ter gastado tempo configurando pros aplical. Cara, eu não me arrependo porque acho que foi aprendizado, mas hoje eu não faria isso de novo. [risadas] Beleza? [roncando]
+
+O canal mudou. Então, por que que a gente tá reescrevendo? É, essa é uma pergunta, tá? Se o agente ele é uma interface, por que que toda vez que a gente muda de interface, a gente tem que reescrever a lógica toda? A gente tem que trazer todas as skills tudo de novo.
+
+A gente tem que trazer tudo, todos os nossos MCPS tudo de novo. Cara, não faz sentido isso. Por isso que a gente tem as action engines. E aqui eu quero falar para vocês do Invocta. O Invocta é um framework brasileiro, feito por brasileiros, que nasceu dentro da AI Coders Academy. O que que é isso, cara?
+
+O Invocta é o caminho, tá? Para você transformar a sua capacidade de negócio em um MCP rapidamente. Mas não só MCP. Olha que interessante, uma pergunta para vocês aqui. Como que uma qualquer agente se conecta ao mesmo back end? Hoje você
+
+tem alguns caminhos. Você tem o caminho das skills. Aí dentro da skill você passa ali o seu end point, a sua API com Open API spec e aí o seu agente vai saber se conectar com aquela API. É o melhor caminho. Não, porque você talvez você tem que passar a autenticação BR token via variável de ambiente no seu local. Outro caminho que você tem ver
+
+CLI também. Talvez se for autenticado, cara, você vai ter que passar isso localmente, mas pode ser que seja um caminho bom, dependendo da solução que você tá desenvolvendo. Outra maneira de se a gente se conectar com backend, MCP Stadio, MCP que funciona localmente e outra maneira MCP HTTP. São maneiras de se conectar hoje a agentes. E existem essas maneiras hoje.
+
+E pode ser que amanhã venha uma maneira nova de se conectar aos agentes. A questão é que às vezes tá gastando muito tempo aprendendo como que você faz cada uma dessas maneiras para configurar os seus agentes, sendo que amanhã vai vir uma nova e você vai ter que aprender tudo de novo. Então, qual que é o próximo protocolo? Não importa. Quando a gente fala de enticine não importa. E
+
+não deveria importar, porque a sua lógica de negócio vai continuar a mesma, a mesma lógica de negócio, beleza? A mesma lógica. Então, uma parte interessante pra galera que é desenvolvedora mais tempo, né? Se você é dev back end, você provavelmente sabe escrever um HTTP, um end point HTTP na mão sem precisar de framework, mas você não faz isso, cara. Normalmente você vai usar um framework n JS, um Fast API, um Rails, um Laravel. Então por que
+
+que isso deveria deveria ser diferente com a gente? Por que que você deveria estar configurando MCP na mão, todos os protocolos na mão? Aí que entra o Invocta. Olha que da hora. Agora vou fazer uma demo para [limpando a garganta] vocês de como é que você pode criar uma action engine, como é que você pode criar o backend do seu agente rapidão. Beleza? Vou abrir
+
+aqui meu Power Shell. Vou acessar o meu subsystem do Linux. Vou dar um clear. Acabei de soltar uma release do Invocta, tá? CD Workspace.
+
+Vou criar um repositório agora. MKIR Live quinta. Beleza? E vou entrar no no nesse repositório live quinta. Então, control mais pra galera ver aqui, ó. E olha o
+
+comando que eu vou digitar aqui, galera. NPX create Invocta engine, galera que é do React, galera que é do next, galera que é do Nest, vai lembrar. Create React app, create app. Aqui é a mesma inspiração. Vou puxar a versão mais recente.
+
+[roncando] Ai, ai, eu fiz o a release antes da live. Vamos ver se se deu boa, hein? Vamos testar ao vivo. Vou selecionar o nome do meu repositório. Então, vamos pegar a ideia do agente de memória, beleza? da solução de memória
+
+que vale que foi investido em 24 milhões de dólares memory, tá? Vou chamar esse esse cara de memory. O Invocor vai me perguntar qual tipo de protocolo eu quero que meu backend de agentes forneça eh ou se integre. Então eu posso integrar com CLI, MCP local, MCPTP ou todos eles. Vou trazer uma um exemplo de todos eles integrados. Vou autorizar a
+
+instalação.
+
+Burro para hein? Onde que eu parei? Tava só testando vocês. Nossa, tem minutos que eu tô falando. Um minuto falando em silêncio. 2 minutos
+
+falando em silêncio. Já era, caral. [risadas] Vamos lá. Onde que eu parei, galera? Desgrama.
+
+[risadas] Onde que eu parei, galera? Fala aí para mim onde que eu parei. Bom demais. grila. Vamos voltar aqui então. Vou vou explicar para vocês
+
+o que que aconteceu, tá bom? Acho que eu parei aqui, né? Beleza, obrigado. Parou quando o Inox instalou. Beleza, ó. Aqui.
+
+Ah, beleza. Você já Beleza, ó. Tava focadaço aqui. Vamos que vamos. Então, aqui, ó, ele fez a instalação, OK?
+
+Selecionei qual tipo de integração, qual protocolo ele vai integrar. MCP local, MCPTP ou CLI. Ele instalou, ele gerou esse projeto. Instalei esse projeto lá dentro do Codex. O Codex agora tem disponível para mim um MCP. Mostrei para
+
+vocês rodando o comando. Aquele comando npm run mcp 2. Install, ele instala a parada dentro do harness que eu escolhi. E aí pode ser qualquer harness do meu computador. Vou fazer de novo aqui como estava fora ali. Vou instalar no cloud.
+
+Então ele vai identificar quais harness eu tenho no meu computador e aonde que eu quero instalar esse cara. Quero instalar dentro do cloud. Beleza? Vou instalar agora MCP instalado dentro do cloud. Se eu abrir o cloud aqui agora e eu digitar barra MCP, o que que vai ter aqui dentro do cloud? Um monte de
+
+MCP, né, das aulas da EI Coders que eu já tô ensinando isso um tempão. Mas tem aqui também o memory. E o memory vai ter algumas tools. Qual tool? A to de onboarding. Essa to recebe um parâmetro
+
+que é o parâmetro name. E aí quando eu disser a para usar a tu proc falar use a a ferramenta, use o MCP memory. Ele vai usar o MCP memory para dar o fazer isso rapidão aqui, ó. Use o MCP memory para dar as boas-vindas ao Mark, que foi o comentário mais rápido que eu vi aqui, ó, e que falou onde eu tinha parado. Obrigado, Mark.
+
+Beleza? Olha só, vocês viram que, cara, em 2 minutos eu gerei uma parada que já gerou MCP e que já gerou a mensagem. Daqui pra frente, o que que eu posso fazer com isso, galera? Olha que da hora isso aqui, velho. Eu posso pegar uma parada que não tem MCP, que não tem capacidade de se conectar com nenhum LLM hoje, ainda posso pegar uma API que é, poxa, um de um sistema, mas que não tem integração com com IA. Eu posso pegar aquela API e
+
+trazer como capacidade pro meu negócio, pro meu sistema, pro meu cloud, pro meu chat EPT. Eu posso pegar, por exemplo, uma automação que talvez eu estaria desenvolvendo para um cliente e criar uma Action engine. Ponto. Criei essa Action engine. O que que ela faz? Ela
+
+marca a consulta. Ela faz todo o processo de engrenagem que uma clínica precisa ter. Porém, eu vou criar essa engrenagem de maneira que se hoje o que tá rolando é o Hermes agent, tá ali. Mas amanhã eu preciso de mudar a maneira como eu configuro, a maneira como eu faço manutenção. Putz, bacana para caramba.
+
+Show. Eu agora somente troco a conexão, só o front end. Eu posso conectar com GPT, Gemini Spark, posso conectar com Grockbot, posso conectar com cursor, com cara com qualquer coisa, porque eu fiz o backend do meu agente. E aqui eu não tô falando que você tem que usar o Invocta. O Invocta é BR, é nosso. Vou mandar o
+
+GitHub para vocês aqui agora. GitHub do Invocta é feito aqui no Brasil e eu conto para caramba com vocês pra gente fazer essa parada e popularizar e para mais pessoas entenderem que você não deveria ter tá quebrando a cabeça em configuração. Eu já quebrei a cabeça aqui por você, tá? Já gastei um tempão ferrado para estudar essa parada e para montar isso aqui para você, para que você só foque naquilo que gere valor para o negócio. Beleza? o valor que
+
+empresas como como Hickfield, como cara, eh, Mem Zero, Compos já estão gerando pro mercado, é só você pegar isso aqui e usar. E dentro disso, desse rolê que a gente criou, a gente precisa da sua moral para usar, instalar e testar. E olha que massa, talvez você tá falando, Vini, muito legal isso que você me trouxe aqui agora, cara, mas me mostra um caso de uso disso, cara. Te mostro vários casos de uso. A gente tem o mais simples de todos que você vai encontrar.
+
+Quem aqui conhece o Mega Brain? Manda no chat se você já ativou seu mega brain hoje. Eu criei o Small Brain. Small Brain é o melhor exemplo para você testar o Invocta hoje. O Small Brain ele vai ter simplesmente a possibilidade de você criar tarefa, criar uma lista de tarefas, buscar uma tarefa, atualizar uma tarefa e deletar uma tarefa. Só isso. É um MCP. Olha que
+
+da hora. Eu vou instalar um small brin aqui no meu computador, já tá instalado, mas eu instalo de novo para vocês verem como é que é simples. E tudo isso que ele traz de possibilidade do smallin foi criado com o Invocta. Eu não fiz mais nada. Fui, eu dei um prompt pro cloud code, falei: "Cloud Code, faz o small brain para mim e publica essa parada no npm". É literalmente isso.
+
+Instal small brain. Small brain install. Pronto. Tá aqui, ó. Eu acabei de criar um MCP e foi super simples de eu configurar esse negócio no meu computador. Agora vou selecionar igual
+
+eu selecionei ali o meu coisa para instalar em alguma ferramenta. Vou selecionar o GlockBild. Instalar MCP. Opa, deu problema aqui na configuração do meu Grock Build. Mas vocês entenderam a ideia. Então, com
+
+isso, galera, basicamente o que a gente tá criando é a possibilidade de você criar uma integração, criar uma solução de mercado sem que você precise de raspar ali o bit, descobrir como é que funciona a integração de MCP, fazer autenticação e tudo mais. Ô, Vini, mas me diz aí, cara, como é que eu poderia fazer um software ASA Service mais um MCP ASA Service? Aqui dentro do Invocta, você vai abrir a a pasta de exemplos e a gente tem exemplo de autenticação com diversos providers. Alf Zero, JS, Better Alf, clerk, Cognito, Firebase, JWT, Selfosted Alf Engine, que é uma que eu tô usando pro nosso Severino. E o Superbase engine também, o Work Engine.
+
+Eu quero mostrar para vocês o Severino. O Severino, cara, Severino é um cara bacana. Quem aqui já conhece o Severino? Quem sabe o que é Severino? Quem é da época do Severino do Zorra Total? Manda
+
+aqui no chat. Severino é um cara que fazia tudo no Zorro Total, tá? Nesse caso aqui, a gente tem o Severino na AI Coders Academy, que é esse cara aqui, ó. Mostrar para vocês. O Severino é o nosso agente e o Severino, ele sabe tudo da EI Coder. Você quer ver? Ó, Severino,
+
+me fala sobre o que rolou ontem, aliás, antes de ontem, que ontem já foi outro dia. Severino agora vai chamar um agente, uma interface do Severino. Que interface que é essa? A interface do EV.dev, um agente super simples, mínimo, que foi criado para se conectar com o Severino. E aí o Severino vai usar o
+
+nosso segundo cérebro. Vocês viram smallin, mas eu também tenho o meu mega brain e o meu é mega brain de verdade. Funciona que é top. E aí o Severino vai conectar e vai buscar todas as informações. Se você entender a minha empresa hoje, tudo que acontece dentro da Coders aqui no nosso Slack, tudo.
+
+Acabou uma reunião, eh, fizemos uma e alguém falou que vai chegar atrasado pra reunião, tudo. A gente avisa o Severino. O Severino, ele sabe de tudo que acontece na empresa, ele tem contexto de tudo que tá acontecendo. E dessa forma, ao final do dia, o Severino, ele tem uma base de conhecimento, ele tem a lista de tarefas, ele tem toda a gestão de lista e projetos e pessoas. E ao final do dia ele vai sonhar, assim como o M Z Hero faz, ele vai fazer o dreaming. O
+
+dreaming ele vai pegar tudo que aconteceu no dia e vai captar insites, inputs e tarefas que ele aprendeu daquilo. Beleza? Severino, cara crachar. Galera aí lembra, hein? Sacou? Que que o
+
+Severino faz, galera? O Severino é a nossa camada de memória da empresa. E todo dia, ao final do dia, ele roda um Chrome job. E esse Chrome Job vai entender tudo que rolou de conversa em reuniões diferentes de várias pessoas da equipe e vai concretizar em insites. Talvez ele vai falar: "Putz, o Vinícius falou disso e a Giovana tá falando a mesma coisa, mas eles não se conversaram ainda". E aí o Severino vai trazer o
+
+output de é: "Vinicius e Giovana, vocês precisam conversar porque vocês estão fazendo a mesma coisa. A sua empresa precisa de um Severino hoje? Manda no chat aí se a sua empresa precisa de um Severino. Sabe por quê? Que se a sua empresa precisar do Severino, o Severino a partir de amanhã vai est disponível dentro da Air Coders Academy para qualquer membro. Quem é
+
+membro da Ecoders Academy vai receber a instalação facilitada, um instalador para você configurar um VPS com o Severino e um VPS com o nosso Megabrain. Por que Mega Brain? Ó, o Severino respondeu aqui já pra gente, ó. Ontem foi estruturado projeto lançamento e ô spoiler, hein? Trouxe aqui, ó. Vocês
+
+viram? Depois vocês tiram o print aí, desculpe o que que vai rolar. Severino, beleza? Só que o Severino ele também tá disponível em outros lugares. Eu vou abrir o chat EPT, perguntta aqui, Severino, qual era o lembrete? Aliás,
+
+não é? Use o MCP do Megabrain para eh me falar o que eu precisava lembrar sobre o Luan. Beleza? Vou mandar aqui com esforço médio. Lembra que eu falei para vocês que só muda a interface, que eu preciso ter um back end pro meu agente? Cara, isso aqui
+
+é a interface. A interface é o agente e ele vai conectar na mesma base que o Severino tá conectado todo dia. Só que o Severino é a interface que tá no Slack e o chat EPT, a interface que tá aqui. Eu posso estar usando o Codex, o cloud code e tudo mais. A camada de contexto e memória da minha empresa vive em tudo num lugar só. Como é que eu fiz isso?
+
+Com Invocta, sacou? Rapidaço. O Invoca me ajudou a construir isso de uma maneira fácil. Opa, Megabrain tá desconectado. Vou conseguir demonstrar uma parada que eu queria ter mostrado antes. Vou me autenticar no Megabrain.
+
+Se eu tivesse cobrando uma assinatura e poderia pegar a assinatura por ali. E a partir de agora o chatpt tá conectado com megga brain de novo. Megabrain força total, hein? Um copif ativado. Bora nessa.
+
+Olha aí, ó. Top demais. Galera, você que tá vendo essa live até agora, eu ainda não fiz nenhum pit. O único pit que eu vou fazer hoje para você colar para dentro e coders. Mas eu quero te pedir uma moral cabulosa. Entra lá dentro do
+
+nosso do nosso repositório, larga uma estrela e publica isso no no na no grupo da sua empresa amanhã, que talvez a sua empresa tá precisando de um invocta. Olha aqui, o Z Megabin resultado não há registro confiável sobre um Luan. É porque eu já terminei a tarefa. aí você me zoou na hora da demonstração. Mas vocês conseguiram perceber o que aconteceu aqui dentro, ó. Ele buscou os
+
+compromissos, ele fez a chamada de MCP, ele entendeu o que que tá acontecendo, ele usou a carry certa para buscar as informações do nosso contexto de memória. Beleza, pessoal? Então, com tudo isso falar dito aqui para vocês, o que que eu quero que vocês saiam dessa live de hoje em mente? Você não deveria gastar tanta energia criando o harness, você deveria gastar energia resolvendo um problema de negócio. Exemplo, um problemaço de negócio, criar criação de eh um criar um um workflow de specd development. O pai tá problema. Várias
+
+empresas estão tentando criar CLI, MCPs, MCPHTTP. Para quê? para conectar com múltiplos repositórios, porque sua base de código vive espalhada, 150 microsserviços. Como é que você traz esse contexto pro seu agente? Daí eu te digo, se eu conseguir fazer um Severino, que até sonha com as paradas, eu também consigo fazer um uma action engine para me ajudar a gerenciar o meu processo de spec driven development. E não só
+
+consigo fazer, como é exatamente isso que a gente vai fazer agora lá dentro da AICERS Academy. Para você que não conhece, a Coders Academy, a nossa plataforma de ensino, aonde eu ensino você entusiasta ou deve a se atualizar e aprender sobre inteligência artificial do mesmo estilo que você tá aprendendo comigo aqui agora nessa live. E a gente vai ver aqui nos eventos que vai acontecer agora, implementando uma uma engine de expect dentro da coders. Nos últimos dias a gente fez várias lives sobre essa temática de actions. Então, quem tá lá sempre bebe água fresca, já tá sabendo esse conceito h tempão, já tá voando e já tá implementando. E hoje
+
+você pode juntar com a gente e se e aprender isso também. Como que você pode juntar se juntar a nossa nessa live que já começa daqui a 1 minuto? Já tô atrasado, putz, já tô atrasado, tô chegando. Galera, você pode se juntar da seguinte forma. Eu separei um cupom de desconto específico para essa live de hoje e ele vai ficar disponível somente por 24 horas e é para você entrar pro plano pro. Hoje a gente não vai vender
+
+essa live a Vulsa, porque eu sei que o problema que a gente vai resolver é um problemaço que a sua empresa pode estar tendo hoje. Então fica o convite agora para você colar com a gente, vir pra Ecodas Academy e entender como é que a gente tá de fato resolver resolvendo problemas de negócio e não só falando de ferramentas como a maioria a maior parte do mercado faz. Aqui a gente tá fazendo coisas sérias para empresas sérias e para pessoas sérias como você. Se você curtiu essa aula aqui até agora, o convite para você hoje é para colar para dentro da Ecodas Academy. E eu te garanto que se você entrar hoje, você não vai se arrepender, porque o que tá para chegar amanhã, nas próximas três semanas, é uma coisa que você vai falar: "Caraca, eu não tô acreditando que o Vinícius tá me entregando isso aqui dentro desse pacote tudo". E quem já
+
+entrou há mais de um ano, tem a galera que participa das nossas lives aqui, sempre já é membro, pode mandar mandar no chat o depoimento de como é que tá sendo a sua experiência. desde que você entrou. Pessoal, vou deixar aqui na tela, vou sair rapidinho para já preparar a live da ACoders. Então, vou deixar alguns minutinhos aqui para vocês se prepararem, para quem quiser entrar, entrar. Para fazer sentido, vou largar aqui também o nosso o nosso link dentro do chat e eu te espero lá do outro lado, fechou? Vai ser
+
+muito bom ter você nessa live com a gente hoje e vai ser muito massa amanhã você conseguir instalar o seu Severino, instalar o seu mega bra funciona de verdade. Estamos juntos demais, galera. Obrigado pela sua audiência, aquele abraço e valeu.

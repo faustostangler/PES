@@ -1,0 +1,287 @@
+---
+video_title: "Complete Python Data Visualization Project Walkthrough with matplotlib and pandas"
+video_id: 4uHye1tSQP8
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=4uHye1tSQP8
+video_date: 2025-07-03
+video_description: |
+  In this video, Dataquest’s Director of Curriculum, Anna Strahl, will walk you through how to uncover key traffic patterns on one of America’s busiest highways using exploratory data visualization.
+  
+  You’ll take on the role of a data analyst working with real-world traffic volume data from I-94, applying Python, pandas, Matplotlib, and Seaborn to explore how factors like weather, time, and day of the week influence congestion. By the end of the session, you’ll have a solid grasp of how to combine multiple visualization techniques to analyze time series and detect traffic trends.
+  
+  This project is ideal for learners comfortable with Python and looking to strengthen their data visualization skills in a real-world context.
+  
+  What You'll Learn:
+  - Exploratory Data Visualization: Learn how to uncover trends in traffic data using a combination of visual techniques.
+  - Time-Based Patterns: Explore traffic behavior across times of day and days of the week.
+  - Weather Impact: Analyze how weather conditions affect congestion.
+  - Real-World Data Analysis: Use traffic data from Minnesota’s I-94 highway to find actionable insights.
+  
+  Recommended Prerequisites:
+  - Introduction to Data Visualization in Python → https://www.dataquest.io/course/exploratory-data-visualization/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-finding-heavy-traffic-indicators-on-i-94/
+  
+  #PythonProject #Pandas #matplotlib #DataAnalysis
+---
+We are going to look at a data set about westbound traffic on Interstate 94, which is a highway in the United States. I believe it's near Minnesota. Is that correct? I think so. And we're looking just at westbound traffic because if you have ever been on a highway for traffic purposes, usually one direction of the highway has traffic at a certain time while the other direction has traffic at another time.
+
+So focusing on one side will kind of isolate that variable for us. And our goal is to see can we pinpoint anything that correlates with heavy traffic. And heavy traffic means times of increased traffic. So we'll look at weather type, time of day, time of week. So we'll be using a lot of time series today.
+
+And we'll also look at um time of year. Ah, okay. So, let's get straight into the interface here. This is the project in data quest. And for the folks new to Jupiter, I remember when I started to see Jupyter Notebooks for the first time, it was a little intimidating because there's a lot more in the interface than a traditional Python coding environment. But what we have is
+
+in this lefth hand panel here we have our files. We have our IPv ones that's highlighted right now. That's a Jupyter notebook. That's what we'll be working in. We also have our CSV file which contains our data set and a solution notebook from the data quest team if you want to take a peek. But because we're
+
+only going to be working directly with one file, I'm going to collapse this by clicking the folder icon. And then we have a little bit more room in our actual coding panel. So because we are working with data, the very very first thing I'm going to do is import any libraries we're going to need. And for this we will primarily be using three libraries. First one, import pandas as PD.
+
+This is the common alias used. Uh Sean, I see your Q&A. You can use Google Collab instead. you are most welcome to use Google Collab. Uh the next one we're going to need is Mattplot Lib which is our basic data visualization library.
+
+So, and Mattplot lib has a lot of functionalities, but the most common one that you'll see for data analysis and data vis visualization is the piplot module. And that's why we alias this as plt. And the final one we're going to need is seabor, which will help us with some slightly fancier visualization tools. So, import seabor as SNS. I don't know why SNS is the alias for Seabor, but it is. Uh, because we are working in
+
+Jupiter, we do need to specify some what's called Jupiter magic in order to best render our graphs. And Jupiter magic is with this little percent sign. And this inline tells us yes, render all the graphs we want within our Jupiter notebook. I'm going to run this cell. There's a couple ways you can do this.
+
+You can either click the arrow here or my preferred method is on your keyboard if you click shift and enter. It will run that cell. You can see it's running right now. And when it finishes running, it will say a number in the little brackets indicating what order the cell has run in. If I run this again, you'll see it increases to two because it's the second thing that's been run. If I want
+
+the numbers to restart, I can press the double arrows here. it will restart the kernel which kind of clears everything from the backside of Jupiter and it will go back to the first thing that's been run. Okay, so the first thing we're going to do is import our data set.
+
+And I am going to store my data frame as traffic. And in order to do this, we're using our pandas module into this read CSV method with our CSV file. And then under this, I'm going to take a peek at the first five rows of the data set by using the head method. So shift enter to run this cell. And we can see it has a two since it was the second thing run. And we also
+
+have output for this cell. The first cell there was no output to display. But this one there is output. And a very convenient feature of Jupiter is that whatever the final thing in a coding cell is, you don't need to include a print statement if it is displayable code. So notice this is not wrapped in a print statement. It's just traffic.head
+
+and we still get the output. Okay, so we can see our columns here. We have holiday, temperature. At first glance, these look like really outrageous temperatures. It's because this data set stored temperatures in Kelvin.
+
+I don't quite know why, but that's what we have. And we've got the amount of rain in millimeters per 1 hour. Same for snow. Clouds is the percentage of cloud cover. So if it's 100% it means the entire sky is clouds. If it's 0% 0% clouds and
+
+somewhere in between. And we also have the main weather type, the weather description, the daytime, and the traffic volume. Notice that all five of these rows are the same date. They're all October 2nd from 2012. And then each row represents an hour within that day.
+
+So we can really track the traffic and the weather over the course of the day. And one thing I was curious about is the holiday column appears like it has some missing values. Does it have any value for us for this particular analysis? I wanted to look and so I'm very quickly in this exploratory phase figuring out what our data shows us. What does our data contain?
+
+I want to look at the value counts. This will give us more information on whether holidays is a column worth keeping. Let's run this. Shift enter. And we can see really small values here.
+
+Labor Day. There are only seven counts in the entire data set. How big is this data set though? I'm not sure. So the next thing I want to run is traffic.info.
+
+This is probably my favorite exploratory data analysis method in pandas because it gives you a great summary of your data in one quick snapshot. We can see that we have almost 50,000 rows in this data set. And we can see the other columns there are no null values. But holidays there are only 61 nonnull values which at first glance you might think okay let's remove that column it is not valuable it doesn't contain enough information but actually this is a great next step for you to extend the project work we're doing today what I found is that the holiday tag was only done on the midnight hour on the corresponding holiday. So that's why for I think we have six or seven years of data here. That's why
+
+the the numbers are so small. It's only showing it once per holiday. But do holidays affect traffic? I certainly think so. So this is a great question to explore. A little bit of data
+
+manipulation or data cleaning would be necessary in order to complete this investigation. But when we get to next steps, I'll talk about that. All right. Um, as far as data types go, a lot of integers or a lot of floats and couple integers and some objects, which makes sense. Objects in general when you look at info for the first time correspond with strings.
+
+So holiday as a string makes sense. Weather description and main as a string makes sense. Datetime we will convert this momentarily into a datetime data type which pandas offers. So because we have a lot of numeric data types, it's valuable to include some summary statistics and we can use the describe method for that. Um, okay. So describe method will just
+
+pull the numeric columns for us. You'll notice that we do not have the object data types here because getting summary statistics for strings doesn't make a lot of sense. So I always like to look at describe and see a couple things. Are the minimum and maximum values are there any outliers we want to account for? And are the mean and the median very different from each other to represent any sort of skew?
+
+And we can see that the minimum and maximum values across the board look okay. They look okay. Nothing standing out to me there. As far as comparing mean and median, we can see 281 versus 282. That's fairly similar. Not a ton of ski
+
+represented there. Rain has a higher mean than a median, which could make sense because if the majority of your instances are not rainy, then the mean will automatically be higher than that. Same thing with snow. For cloud coverage, this is a little interesting to me. I don't think there's a ton of insight to gain from it. Maybe
+
+there is, but the mean is exactly 50%. Basically, but the median is a bit higher. So, this area is probably cloudier more of the time. And then traffic volume, not a lot of skew here, 3,200 versus 38 or 3,400. So this is kind of telling me all the work we've done so far to explore our data that minus the holiday column, our data set is in pretty good shape.
+
+So because we are asking our questions about traffic indicators in particular in addition to looking at some exploratory data we want to do some exploratory visualization and this is where we are going to start working with Mattplot Lib. Sean, yes, I agree. Going into distribution charts to look at your numeric variables in a little bit more depth. That's what we're doing here. So, I'm using the histogram method from our mapplot lib library. And
+
+in particular, I'm curious about seeing the distribution of our traffic volume column. These two lines are technically optional. In fact, let's take them out and see what we get. And if you are newer to mapplot liib, plt.show is how you ensure that your graph actually renders and is visible for your end user.
+
+Okay. So, we can see a histogram. We can see a histogram. But if you are preparing this for any sort of end user, whether it's a portfolio piece you're including for a resume, someone who's not reading your code line for line will glance at this for two seconds and not understand it because there is there's no information to say what is being looked at here. So that's why we're including these X label gives us a label for our Xaxis and then we are including a title to say what's happening. And when we rerun this
+
+cell, traffic volume distribution is now our title and traffic volume is our xaxis label. And we can see not a normal distribution. This is definitely not a normal distribution. We have two peaks. One peak is for very very low traffic volumes between zero and a thousand. And the other peak is
+
+for relatively high traffic volumes. If we think back to our traffic volume mean and median, let's call it 3,300 for now. Our second peak here is above that mean and median. So these two peaks are things that we're going to want to figure out. Can we pinpoint where or what causes these low numbers versus these high numbers?
+
+So we just exported a histogram of our traffic volume. If you wanted to be thorough, you could explore histograms of our other numeric variables. But given that our particular analysis is about traffic volume, I'm going to stick with just this histogram for now. And one easy hypothesis to explore is day versus night. Maybe these low values of traffic volume are at night and maybe these high volume of traffic volume or during the day because if you'll remember our data set formatting, every row represents an hour of a day.
+
+So nighttime hours are equally represented as daytime hours even though not as many people drive at night typically. So we're going to split our data set into a day data set and a night data set. And then relook at our histograms. So we're going to do a couple things here. Uh the first one is we know we're going to work with datetime if we're considering traffic volume indicators.
+
+So I am converting our datetime column into datetime and pandas has a nice method for this called to datetime. Uh and then you specify what you want to be in datetime and we are reassigning it back to the same column name. And then in the same cell we are going to create our two data frames for our two different chunks of hours. The first one is our day. Our day data frame we are making a copy of our traffic data frame. And this is
+
+important to ensure your dataf frame manipulation doesn't accidentally overwrite or manipulate anything in the wrong place because if you don't include the copy they will be linked to traffic and we don't want that. So make a copy you'll make your life easier. And then what we're doing here, this is kind of a Pythonic way of doing this where we're doing a lot on one line. If you don't want to do a lot on one line, you could separate this out into maybe something like this and just copy the data frame and then do the filtering. But this is slightly faster from a human typing perspective.
+
+And so what we're doing is we are looking at our datetime column. And here's a cool thing. In pandas dtour, we'll pull the hour from our newly datetimed column. And scrolling back up just to check like this is what our datetime instances look like. So it's year, month, day, hour, minute, second. And
+
+because it is very nicely formatted like that, Pandas was able to infer where the hour would be. If it couldn't infer or yours was in a different format, maybe it was an Americanized date where it was month, day, year, you could here specify the ordering of your datetime pieces. All right. So, we are looking at when the hour is 7 a.m. or larger and when
+
+the hour is less than 700 p.m. These are arbitrary numbers to specify day versus night. In fact, I'm very curious what happens if you specify 6:00 a.m. to 6:00 pm. I do recommend trying
+
+to stick with a 12-hour chunk of time here just so we're not over or under representing any data points. Um, and then for our night data frame, we're doing the same thing except with opposite conditional logic where we're saying we are looking for when the hour is more than greater than 7 p.m. or equal to 7 p.m. and it's also less than
+
+7 a.m. So nothing is being duplicated or not accounted for here. So, shift enter to run the cell. And if if we want to make sure it has in fact done what it's supposed to do, we could take a peek at the head of one of our new data frames and got check. We look at our date
+
+times. So, I'm seeing 9:00 a.m., 10:00 a.m., 11:00 a.m. This is all looking
+
+good. Let's do the same for night just to dot our eyes and cross our tees. And we can see yes we have 700 p.m. 8:00 p.m. 900 p.m. So we have successfully
+
+segmented data frames. So the whole point of why we started doing that split was to ask the question about our two peaks. Can we better understand where the peaks are happening if we look at histograms of each new data frame individually? And in order to do that, we are going to do plots side by side. And in order to do plots side by side, if you don't account for it, Jupiter will do plot one, plot two, one under the other. So
+
+we're going to specify a figure size. And then we're using subplots. And subplots are super fun if you want to put lots and lots of graphs in a custom formatting in your output. And what this is, we are going to have one row of graphs in our subplot and two columns of graphs in our subplot. And what follows will be in the first cell in that sort of one by two chart area.
+
+And then I'm going to copy and paste the first chart chunk and we'll talk about it. We are making another histogram and this time we are specifying the day data frame for our traffic volume. The next two lines are specifying our limits. So our xaxis limits, we're going to go from00 to 7,500, which from our describe method. We know our max value is 7,200.
+
+So having our x range go beyond that is good. 100 ensures that we're not cutting anything off awkwardly for our zero values. That's why it's that. And similar thing for our y limits. Um, and I'll show you what happens if we don't specify these in a moment. Then we have our title and our
+
+labels. And now we're doing the same thing for our second graph. I'll pause for a moment. If we're wanting our two graphs side by side, we specified a subplot here. We need to specify another subplot for our second graph. What do we need to do in order to
+
+put the next graph next to this one?
+
+That's not the right thing to copy and paste. Here we go. It's going to be the same rows and columns in the subplot, but this time we're saying be the second chart. Be the second chart in that grid. And we are saying night.
+
+Let's go ahead and call PLT show. And we can see two graphs side by side with some pretty exciting things to to see. We can totally see that this peak around 5,000, it's all daytime volume. It's all daytime volume. And then nighttime traffic, that's where this really low traffic volume density is coming from.
+
+There is kind of a a peak around 3,00 which is interesting. I'm not quite sure why. Now, I said I was going to talk about x limit and y limit. Let's remove those. I'm going to press control question mark to comment those out.
+
+And when we rerun this, you can you can see our x axis and our y- axis are different between the two graphs because they're trying to optimize the display for different ranges of values from our day data frame and our night data frame. And this isn't bad, but it could be a little misleading. And you don't want to mislead your audience. So mandating the same range of values for both gives a more accurate picture, which we're always going to aim for accuracy when possible. I see someone ask about how do you pick your fig size? Trial and error is the
+
+best way. Uh if if we want to explore this, let's really mess the values up here. Let's do four and 15. I don't even know if this is going to render. So, uh this is giving us a really, really squished, really tall, skinny graph. So, obviously, we would want to
+
+make this much wider. Let's try 12. And it doesn't need to be that tall. So, we could do something like five. That's That's better. That's fine. maybe a
+
+little taller than needed. So, yeah, like you said, all trial and error until you see the figure size that looks right to you. So, we found some pretty exciting conclusions here. Day versus night, and I'm curious if the summary statistics support that. Oh, my copy paste skills are failing today.
+
+So, we're going to look at our day data frame describe and in particular looking at our traffic volume mean and median and then the same for our night describe. Okay, so yeah. Wow. the mean very very very different for our night versus day data frame. So it is uh I think a an okay thing to for an end user say traffic volume during the day is typically higher than traffic volume at night.
+
+So, now that we've looked at day versus night and concluded that day is more frequently traffic volumed, we're just going to focus on daytime traffic because remember, we're looking for what causes heavy traffic or is correlated with heavy traffic. So, in this next part, we're going to get a little more granular. Instead of just two buckets of day versus night, what happens when we group by month? Are certain months more trafficy than others. And in order to do this very similar method that we used to pull out the hour in our day versus night data frame creation, now we're going to pull the month from our daytime. But wait, Anna,
+
+if we think about our datetime instances, how does it specify month? It looks right here. it looks right here and then it's going to pull that number and create a month column. And actually, let's explore that. I'm I'm very visual when I'm working on a new project. So,
+
+if we look at day head again, you'll see we have a couple new columns actually. Oh, no, just one new column. One new column here. our month 10 10 10 10 10 and this makes sense because all of our head instances here are from October 2nd. All right. And then we're going to group
+
+by the month to see if the average traffic for each month is different. For those of you working outside of the data quest environment, you may or may not need this parameter. If you have pandas 2.0 plus as your pandas library version, you will need this numeric only equals true. Pandas before version two, you didn't need to specify this.
+
+Um, and then we are going to plot our traffic volume. of the by month grouping we created. Um I'll take this out for a moment so we can see the difference. And we get this graph and plt.plot the default is a line graph which is kind of nice to just quickly throw a graph into a Jupyter notebook.
+
+And while that's a really interesting dip here and the months it's not a perfect access but for exploratory data analysis it's good enough where we have January, February, March, April so on and so forth but I included this marker is a parameter an optional parameter in the plot method and you can specify what you want your marker to look like and then We get dots for each point, which I liked for this because for February and for November, the points kind of got lost, which isn't a big deal, but I think this tells a slightly better picture for exploration. You can change the marker if you want. Let me see if I can remember. Is X a marker? Yes. See, you can explore. I
+
+highly encourage you to look at the documentation for plt.plot. look at the marker and find a marker that works best for you. So, something odd is happening in July. Not sure what. Let's figure it out.
+
+Let's figure it out. And this took a little bit of exploration, but I realized that if we look at the year using a very similar DT.year method here and creating a year column in our day data frame, if we look at just July, if we look at just July by pulling where the month equals 7 and plot that
+
+We can see 2016 something really weird happened. something really weird happened where the average traffic volume for July in 2016 is really low. And I did a little bit of exploration and it turns out that the interstate was entirely shut down for a couple days in July of 2016. And if the interstates shut down, there is no traffic. And mean is very very sensitive to outliers, especially if there's zero.
+
+Well, not especially if there's zero, but because of those days where there was no traffic, the mean got pulled down for July of 2016, which also affected our overall traffic volume by month. So you could clean that, maybe remove July 2016 or just remove the days where the traffic volume is zero from the data set. That's probably the best next step that I would consider. But for our exploration phase, we'll kind of make a note of that and come back to it later. But other conclusions, we can see that January, February, November, and December have notably lower average traffic volumes than the other months. And what do January,
+
+February, November, and December have in common in the United States where this data set's from? They're cold. They're cold. They're winter months. So, it would appear that people are on the road less in the cooler months and on the road more in our warmer months.
+
+So, if you're trying to avoid heavy traffic, so far our best guess would be don't drive during the day. Don't drive during warmer months. But let's keep going. Let's get more granular with this with this. Excuse me.
+
+The next thing we're going to do is we're going to look at the day of the week. Are there certain days of the week that are better or worse to drive from a traffic perspective? And this is a really cool method here. Datetime is able to infer the day of the week if you have the year, the month, and the day present. And the way it works is it's going to spit a number at us where zero is Monday, six is Sunday, and so so on and so forth in between.
+
+If we wanted to graph this,
+
+let me see here. Will this work? I'm going to leave this one off for a second. If we want to graph this, we can see a line graph. Remember that's the default for our plt.plot
+
+and Saturday and Sunday much lower. And this is exploratory visualization. So this is probably fine to leave it that way. But because it's not too terribly difficult to to do, let's convert our 0 1 2 3 4 into actual days of the week. So we're creating a list called days. And then for our x
+
+ticks, we're telling it we have the numbers 0 through six. So the range 0 to 6. And then now instead of that use our days list. And now when we render it, we have Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday across the bottom, which I think is a little easier to read. And this makes sense from an intuitive perspective. Maybe it's intuitive cuz I
+
+live in a city where there's commute traffic, but Saturday and Sunday people often aren't working, so they're not commuting. And when people aren't commuting, there's not as much traffic. So, we're getting somewhere. We're getting somewhere. Weekday, there's more traffic. But is there a
+
+particular time during those weekdays where there's more traffic? Let's take a look. I'm going to copy paste a big chunk of code here. Don't panic. It's all code that's very similar to what we've seen before. What we're doing is we are
+
+pulling the hour from our datetime column and putting it into a new column named hour. And then we are creating two new data frames from our daytime data. Remember when we're creating a new data frame, we copy because we don't want to overwrite anything. And then we are specifying that for business days, that's when our day of the week is less than or equal to 4. And remember, Python loves its zero indexing. So Monday is zero, Tuesday is
+
+1, Wednesday is 2, Thursday is three, Friday is four. So that's where this filter comes from. And then weekend is going to be the same thing, but where day of the week is five or greater. This is slightly less characters to type than if you wanted to specify precisely five or precisely six because unless something's gone terribly wrong, 7 8 9 plus, those numbers should never be represented here. Then we are grouping each of those new data frames by hour and finding our average.
+
+Once again, we're going to do side by side subplots and look at line graphs. Ask yourself, do a quick check, why are we specifying the x limit and the y limit? Why are we doing that?
+
+The reason we're doing that is in order to account for differences in the two graphs. We don't want the ranges to to um adjust one graph to the next because it could introduce a little bit of skew or misinformation. So here we see our sideby-side graphs, same axi ranges, and Monday through Friday across the board, much much higher traffic volume than the weekend. And it looks like there's a couple peaks Monday through Friday. At 7 a.m. there's a peak around
+
+6,000 and then again at 4:00 p.m. there's a peak which that's when people are heading to work or going home from work. An interesting thing to note is if you have to be on the road on a weekday, 10:00 a.m. is
+
+probably a good time to do that if you are in this area of the world. On the other side, weekends people are sleeping in. At least that's my hypothesis. They're sleeping in. So traffic volume in the mornings is very low. Then as people wake up and start
+
+going about their days, traffic volume picks up a bit and then tapers as people go home for the evening. Um, so if we're making some broad stroke type ideas here, weekend traffic less than business day traffic. And there's a lot more you could do with this. Like I said at the very beginning, you could shift your day dataf frame hours around and see if you get any more insight. Um, you can try to get more granular. I
+
+think I saw a comment in the chat about what about the half hours? Our half hours aren't present in our original data set. So, unfortunately, that would be something we don't have information for. you could try to infer, but I would caution against that because we don't know when exactly the traffic volume changes. Um, so doing a mean or something to get to half hour would introduce inaccuracy for not a lot of gain in the analysis process.
+
+All right, we are running out of time. Where did the time go today? But I do very quickly want to talk about weather indicators because we we've looked at time. We've looked at time pretty thoroughly. Now, let's look at weather.
+
+I'm gonna try to speed through this a little bit so we have time for questions because we've got some good questions. So, the first thing we're doing is I'm looking just at the weather columns. Remember, we've added several columns to our day data frame. And we're going to cut out a little bit of the noise here to see are there any correlations. So are there correlations with traffic volume and weather?
+
+And let's take a look. So our cloud percentage, not really a negative 3% correlation is very weak. Nearly zero correlation. Same thing with snow and rain, which I'll admit, I was surprised by this. I thought that if there was snow or rain, uh, it would lead to an increase in traffic volume, but that's not appearing to be the case.
+
+Temperature, there's a slight slight 13% correlation, but that's still extraordinarily weak. Extraordinarily weak. Um, and just because this is a primarily data visualization project, I want to show you a seabourn plot. And you don't need to do this. In fact, I'll start without it. But it's
+
+another way to do a plot. You could do a scatter plot with mapplot lib. But the optional argument that I'm going to add in a moment uh or optional parameter rather will we'll see what it adds. So surprise surprise barely any correlation to be seen between traffic volume and temperature. We have a very big fairly uniform blob of scatter dots.
+
+And remember our data set has almost 50,000 rows. So there are a lot of dots here. Uh this isn't essential to do but I was curious is there any noise to or is there any insight to be gained in this noise? What if we have our hue be the day of the week?
+
+At first I was really excited. I was like oh we there there's a pattern here. Look at all these dark dots that are clustered. And then I realized that aligns with our previous discovery that weekends have less traffic volume and our darker dots in this case correspond with Saturday and Sunday. Um, so there maybe you could explore this a little bit more, but honestly not a ton of insight to be gained here.
+
+Um, and then the final thing I want to look at is some bar graphs of our object data types, which is weather main. It's a string describing the weather and then a quick exploration of the weather description. All right, so a bar bar h gives you a horizontal bar graph, which I really, really like. And similar to before, we're grouping by our weather, finding the mean, and displaying our traffic volume. AXV line is a way to create a vertical line on a graph. Um, and I chose 5,000
+
+to kind of represent heavy traffic. It was an arbitrary number choice, but I wanted to see, okay, are any of the weather types giving us a strong indication of heavy traffic? Um, so no, I mean, clouds may be higher traffic volume than a squall, which what is a squall? It's a very, very heavy rain, which intuitively that doesn't make a lot of sense. Um, so not a lot to be gained immediately here. Let's look at
+
+something different. What if we look at the weather description? Maybe a slightly more granular level of weather description will tell us something. Oo, maybe, maybe, maybe. Shower, snow, light rain, and snow. That's beyond our 5,000
+
+traffic volume eyeball. Cool. Not cool. I'll show you why. If we group by and look at a count of how many values are there?
+
+Uh oh. Uh what do I do? What I do? Oh, I made an error. Um
+
+trying to debug in real time. I'm going to rerun all my cells and see if I had mistored a value somewhere.
+
+No, interesting.
+
+If someone in chat sees why this isn't working, let me know. What happens if I take this out? We're debugging. We're We're debugging. Okay.
+
+Uh, this is gonna have to work for the time being. I'm curious why it didn't work. Oh, maybe it's day of week. Is that There we go. Haha. Successfully
+
+debugged. Uh, I had renamed this between the time I made my solution yesterday and today. Um, so remember our bars that were above our heavy traffic volume, shower, snow. Let's find it. Shower, snow. Oh, there's
+
+only one data point in our entire data set that is shower snow. So apparently that one instance was high traffic volume. What about the next one? Light rain and snow. Light rain and snow. Light rain
+
+and snow. Oh, four instances in the entire data set. Not very valuable. So that's why I wanted to look at the value counts of how many times is this appearing in our data set because it could be indicative, but it's it's not. It's too few data points to actually make a conclusion here. Um, and
+
+that's the end of what I wanted to show you, but I'll leave you with some next steps if you need to hop off and then I will get to some Q&A. We have a couple questions, not too many, so we'll definitely get through them all. So, one question I highly, highly encourage you to explore is, do holidays affect traffic? If you have ever driven anywhere on a major holiday, I'm sure you've noted that traffic is different. Maybe it's increased, maybe it's decreased. So there's a really cool
+
+analysis and a couple cool discoveries to be made there. Uh so we looked at weather and didn't find anything conclusive, but what about consistent rainfall or consistent snow? If many hours in a row have had rainfall, does that affect anything? And what if there's simultaneous weather events? um does that affect traffic? Is
+
+this a data cleaning concern? Or is there insight to draw? And we found that there was an instance in July of 2016 that affected traffic on westbound Interstate 94. But are there other construction things that you could find? Maybe you could find some sort of Wisconsin API about construction projects and add a true false construction column to your data set.
+
+Check it out. And with all of these, if you do this project uh at all or if you do any next steps, please go to the data quest community and tag me. I would love love love to see what you do with this project. In order to tag me, you can
+
+annotate Quest account and I check it pretty often. I have a personal one from when I was data Quest learner, but if you tag that one, I probably won't see it. So, yes, please share your work with me. All right, we're technically at time. It's been an hour and I want to honor your time if you need to hop off and thank you for joining today. I hope it
+
+was valuable. I hope you learned something. Um, but I have some time. I'll stay about 10 minutes if you want to join for Q&A. Okay. So, Sean asked about Google
+
+Collab. I think I answered that one that yes, you can use Google Collab. It's It's very convenient. I like using Google Collab when I need to use a new library or a different version of a library and I don't feel like setting up um a virtual environment on my local machine or my local machine is behaving poorly. So yes. Oh, and this actually
+
+goes great with Justice's question. Between Jupiter Kaggle and Google Collab, which is the best? It really depends. I don't think Kaggle would be in the running for any sort of data science interface for me because it is primarily based on a Jupyter notebook if I'm not mistaken. But between Jupiter and Google Collab, each has their place.
+
+Jupiter is great. It's understood industry standard for sharing your work. Um, but it can be a little fickle to work with locally in the data quest interface. It's great, super convenient. Um, I when I was a learner learning data science, I really liked having the interface right here.
+
+Didn't have to set anything up. I didn't have to worry about pip installing. PIP installing was a hurdle I had to figure out. Um, and Google Collab is even simpler because it doesn't require any local installation. You don't need to worry about directories. You don't really need
+
+to learn about or worry about command line. Um, but it doesn't stay booted up perpetually. So, so yeah, use what tool works best for you. If you want to stay on the internet. Google Collab is great.
+
+If you want to work locally, Jupiter is great. Okay, Kent asked, "Since NumPy is used in this project, why don't we import it?" I actually didn't use NumPy explicitly in this project, which is why I didn't import it. Uh I don't think we did any calculations that required it on the back end either. Um, the only thing that maybe this question is coming from is here, but this is actually a pandas method and how it's being used. So,
+
+we didn't need to import numpy. Okay, looking at a couple more questions. I'm going to try to primarily answer questions that were um asked before the webinar kind of cut off time because we could be here all day, let's be honest. Um Kent, that's where your question came from. Perfect. Perfect.
+
+Okay. Um what is the purpose of EDA? So EDA stands for exploratory data analysis. Do we communicate it to municipal authorities to generate some warnings? you're missing the purpose of the project at the downstream end. Great. Um
+
+I am so glad you asked this. So this project is primarily exploratory in that we are investigating we're investigating if we can find any indicators of heavy traffic. And so actually if we look at the official data quest solution for a moment and scroll down to the bottom this is what you would want to do is yes you've done your explorations here close that you've done your explorations you've looked at some graphs but of course if you are preparing to share this with an end user like a municipality um you would want to give some explanations. So here you can see a conclusion in a nice bulleted list for very busy busy stakeholders. You say time indicators warm months more traffic, business days more traffic, rush hours more traffic. Weather
+
+indicators, well I disagree with this, but you know why. Um, and you want to basically give your stakeholders the TLDDR. So when I was a data analyst, this is what I would do where it feels maybe a little lackluster to not have a this is the answer, but life isn't often black and white like that. So giving the the stakeholders the the hunches and the inklings that have been validated by your data. That's the value here because think of all the time that we've spent exploring this data set and finding concrete evidence of traffic volume concerns.
+
+All those hours the stakeholder doesn't need to spend. So that's the value here and that would be the purpose of this project for the downstream user. Hopefully that answers your question. If not, please let me know.
+
+Uh the cap okay and then Shashank asks, do we have any information on the capacity of the highway to define what is really a heavy traffic? That's a great question and I hadn't considered it. I hadn't considered highway capacity, but I think you would be able to Google. Do we have information about we do have information about what portion of the highway this is? Yes. Hourly traffic from
+
+Minnesota ATR station to between Minneapolis and St. Paul. So you could figure out how many lanes are on this highway. It may change in the time frame of this data set which you would want to consider. Um but I think that it's relative right relative to this same portion of the highway. Here is
+
+what we know about traffic volume. And the relative nature is important. But given the relative nature
+
+I'm trying to think like you could kind of arbitrarily set a heavy traffic amount based on our histograms potentially. maybe looking at a box plot, but yeah, it's a good question. Um, I don't think it has a clear-cut answer. Kieran, great question. How do we upload the project in the data quest community and get feedback? So, when you finish
+
+your project, you will want to download your notebook. Download your notebook. And then if you click help and go to view community posts, actually, no. I'm so sorry. Okay, that's not the right way. At the end of
+
+every data quest project, we give you an option to share your project. Share your finished guided project. And when you do that, you'll need to ensure you have a community account, but you'll add a new topic and you can add your downloaded file right in here. Uh, alternatively, you could make a GitHub gist, which is what I did for my version of this solution code. This screen right here is a GitHub gist.
+
+Um, and you could share the link to this in the community.
+
+Um, okay. I'm so sorry if you asked your question late, but I am trying to honor the questions that were submitted before the 30 mark. Um, but if I didn't get to answer your question, ask me in the community. I had someone after the last webinar ask me a question and we had a great discussion in the data request community about their question. Um, Tammy, do I know any articles about how to get started with using APIs? My idea
+
+was amazing. Thank you. Um, yeah, APIs can be tricky. Data Quest does have, a course on APIs, actually a whole part on APIs and web scraping. And you would probably need to do some web scraping if you wanted to pull information here. So, I highly
+
+recommend this. It breaks down APIs because the one of the tricky parts about APIs is everyone is structured a little bit differently and API documentation is not always great. So learning the concepts behind APIs this way is really really nice. And yes, I appreciate your time. I hope you learned something and stay tuned.
+
+We'll have another webinar in a couple more weeks. Thanks everyone.

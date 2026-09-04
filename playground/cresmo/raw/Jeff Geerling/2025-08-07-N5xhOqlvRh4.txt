@@ -1,0 +1,143 @@
+---
+video_title: "I built a private AI mini-cluster with Framework Desktop"
+video_id: N5xhOqlvRh4
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=N5xhOqlvRh4
+video_date: 2025-08-07
+video_description: |
+  Can we build a private AI cluster in a mini rack with Framework's Desktop motherboard?
+  
+  Mentioned in this video:
+  
+    - Framework Desktop: https://frame.work/desktop
+    - Level1Techs review of Framework Desktop: https://www.youtube.com/watch?v=L-xgMQ-7lW0
+    - Beowulf AI Cluster project: https://github.com/geerlingguy/beowulf-ai-cluster
+    - Blog post with all test results: https://www.jeffgeerling.com/blog/2025/i-clustered-four-framework-mainboards-test-huge-llms
+    - Other test results and benchmarks for the Framework Mainboard: https://github.com/geerlingguy/sbc-reviews/issues/80
+    - DeskPi RackMate T1 (Black - US): https://amzn.to/456iuXv
+    - DeskPi RackMate T1 (Black - EU): https://www.amazon.de/dp/B0FBFDZD4C?th=1
+    - DeskPi RackMate 2U Mini ITX Tray: https://frame.work/products/deskpi-rackmate-10-inch-2u-mini-itx-shelf
+  
+  Framework sent the units used in this review, and DeskPi sent a mini rack and four rack trays to mount the Framework hardware. Neither company paid me, nor had any input into my testing or the production of the video. See my review video policies: https://github.com/geerlingguy/youtube?tab=readme-ov-file#review-videos
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Desktop schmeshtop
+  00:32 - Nirav Patel explains the mini cluster
+  02:06 - Mainboard overview
+  04:16 - Single node performance
+  06:44 - AI and AMD mini-rant
+  07:47 - Single node AI benchmarks
+  09:03 - It's clusterin' time!
+  11:07 - A mini rack for the AI stack
+  14:27 - Large LLMs, clustered
+  16:14 - DeepSeek 671B and Llama 405B testing
+  18:02 - What about value?
+---
+When Framework asked if I wanted to test their new Desktop, I said "No." I told them I want to test this, their Framework Desktop mini-rack: a four-node, souped-up AI cluster. They casually dropped this thing in their presentation back in March, and while everyone else was salivating over a cute little gaming PC, I was like, "Huh, he put them in a mini-rack and clustered them together. "And he didn't invite me!" So imagine my surprise when Nirav Patel, Framework's founder and CEO, was at Open Sauce a couple weeks ago. I couldn't pass up the opportunity to ask him about it.
+
+In your presentation on the desktop, you showed off a cluster of them, and I was like, uh-oh, I see a mini-rack, I see a cluster, I see a mini-ITX. So what inspired that, setting that demo up, and what have you guys been doing with that? Sure, yeah. So like, originally the whole concept behind the Framework Desktop was using this massive new AMD processor that has a bunch of attached memory capability for gaming, compute, but also AI use cases. So we thought like, well, what if we networked together a bunch of them? And then just
+
+as we were doing that, we saw your posts about the 10-inch racks and we realized like, oh, that's like the perfect way to do this. Because we had actually designed the Mainboards as mini-ITX form factor, which obviously fits perfectly into that rack. I got right to the point. I asked him what they've been doing for AI clustering. "We've been working with the team at Exo, and also some of the community on Llama.cpp,
+
+where there's an RPC mode. It is obviously very, very early days in terms of open source AI clustering, but still, a lot of cool stuff you can do even now." Yeah, so we'll get to it in this video. He wasn't wrong. This stuff is early days.
+
+AI clustering is way harder than just running models that fit on one computer. But Nirav agreed to ship four Desktop Mainboards, and I told him my ultimate plan. - Maybe I'll benchmark my 10 node Pi cluster versus your four node cluster, which will probably trounce it, but it'll still be fun. - I certainly hope so. - Well, I have it now.
+
+And thanks to DeskPi, it's all in black. A black AI stack in a mini rack. Okay, now I'm just getting silly. But let's get into it, starting with the centerpiece, Framework's Mini-ITX motherboard. Now, like I said, this isn't a Framework Desktop review.
+
+This is a review of the motherboard [Mainboard] cluster, running on an AMD Ryzen AI Max+ 395–which is a mouthful! But if you just order these components separate, they arrive in these plain cardboard boxes, which I like. Nothing fancy, just a motherboard, CPU fan, and power supply. That power supply comes with this funny snorkel that pulls in fresh air when it's installed in the desktop. But in my case, it just added 1 degree Celsius of heat when I was running it in the open air cluster, so I removed it. But the nice thing is, it's a standard Flex
+
+ATX power supply. You don't have to use theirs if you don't want. The CPU heatsink is pre-installed on the motherboard, and they're using a phase-change thermal interface pad for better cooling performance. They sent along a Noctua CPU fan kit, and it sits right on top. They include a little vent guide for the desktop, but if you're running it bare like I am, skip that. The IO shield in the back
+
+is a little unconventional, with built-in vents and a dust filter, but more ventilation is usually a good thing with tiny ITX builds. One thing I don't see on the back are any holes for mounting wireless antennas. So, despite there being a WiFi slot on the bottom of the motherboard, you'll have to find your own way to mount an antenna if you want wireless. Rounding out the motherboard, there are two M.2 slots, one on top and one on bottom, two USB3 headers [USB 3.2 Gen 2], and a full PCIe Gen 4x4 slot. It'd be nice to have an open-ended slot here,
+
+but seeing the slot only provides 25 watts of power, you're probably a bit limited in what you can do with it. Probably just things like extra wireless cards or NVMe storage. I do like that they kept the slot in, though. The motherboard also includes ARGB, front panel, and audio headers, two system fan headers, and a power and CMOS reset button. In other words, it's a decent standalone Mini-ITX motherboard.
+
+Except, well, I guess you could technically call this a Single Board Computer, because the APU and RAM are both soldered down like on a Raspberry Pi, except just bigger. Supposedly they have to solder down the RAM instead of using something like CAMM to keep the memory timings in check for the best performance for things like AI workloads on GPU. And to test that out, I ran my usual gauntlet of SBC tests against one system. We'll get to the full cluster soon. I did all my testing in Fedora Linux, because that's what Framework recommends. Other distros should run too, and of course you can install Windows,
+
+but why would you? And before I get into results, I should let you know I publish everything I do on GitHub, in one form or another. So, if you're like, "Why didn't you run such and such benchmark?" or "That result can't be right?" check out the links in the description.
+
+I only cover the highlights in my videos. The meat of it is all on my blog and on GitHub. Starting off with the basics, the system runs at about 10 watts at idle, and flat out it'll use about 150. That's good because you could run a whole cluster of four of these off a modest UPS using about 600 watts. With all that power, how's noise?
+
+Well, at least with the Noctua fans they sent, not bad at all. Even with a whole cluster of four of these things running benchmarks, it was a pleasant 46 dBA just a foot or so away. This is a setup you could comfortably run at your desk. And what's better, the fans go off when it's idle. The heatsink can get rid of the heat on its own without the fan having to spin up at all.
+
+The built-in NIC is good for 5 gigabits, and I had no problems there. But I was a little surprised by how Thunderbolt worked. If you're building clusters, you need high-speed interconnects, and 5 gigs just won't do. I should get at least like 20 gigabits between nodes if I use a good Thunderbolt or USB 4 cable, but in my testing, I was only able to get 10 gigabits. It's probably something I can tweak in Linux, though. I'm still looking into why I can't
+
+get more. In terms of comparisons to computers I'm familiar with, the AI Max chip in here is close to Apple's M4 in terms of single-core performance in Geekbench, and between an M4 and M4 Max for multi-core. But Geekbench isn't a great benchmark for high-end systems, so I switched gears to two of my favorite tests: compiling the Linux kernel and High Performance LINPACK. If you're compiling Linux (and wearing my shirt, at redshirtjeff.com), this thing's pretty good, getting the job done in less than a minute. That's even faster than the fastest ARM desktop I've ever
+
+tested: System76's Thelio Astra. High Performance LINPACK is a double precision floating point [FP64] benchmark that's been used for decades to measure the fastest supercomputers in the world. Well, that is, until AI took over everything and nobody cares about science and precision anymore. But running that on here, I can get 308 gigaflops per node. Now, I might be able to get even more, but this is just a baseline test, and I use it to compare to some other systems, like my main editing workstation, an M4 Max.
+
+But this video is not really about a single system. Or even standard benchmarks. I can guarantee there are other videos you can watch for boring stuff like that. I want to get into AI, or specifically Large Language Models [LLMs]. I want to make it so I can run something that rivals ChatGPT, but on my desk here, without OpenAI sharing everything I ever do.
+
+And before we get to clustering AI, I have to make sure everything's good on a single system, because, honestly, can I go on a little rant? I mean, I'm making this video, so I guess, yes. First of all, AMD's support for their AI stuff is... okay. But not great. And that means I spent more
+
+time in my testing debugging driver and library issues than actually testing. And some things I still haven't gotten working, like the built-in NPU. That's supposed to make AI go even faster. But since I can't test parts of the chip, I can't know that for a fact. So, like with all things tech, you're buying the features that work today. Don't ever buy something based on future promises
+
+or spec sheets. Anyway, getting on with things, I tested on a single system with Ollama. I was trying to get it to recognize the iGPU, and that was no dice. I tried a special Docker image, tried it with AMD's ROCm libraries, and eventually gave up and stuck with the CPU. And the CPU's no slouch. I was still getting 45 tokens per second, which, coming from the CPU, is around the performance
+
+I got using a slightly older, dedicated GPU, the RX 6700 XT. But Ollama's pretty limiting. Almost all open source tools use llama.cpp under the hood, so I used that for the rest of my testing. Getting that to work with AMD's graphics acceleration libraries was actually pretty easy, and I found it was actually faster to skip AMD's libraries and use Vulkan instead.
+
+Anyway, I could get about 88 tokens per second using the iGPU with llama.cpp, versus 45 on the CPU with Ollama, both for the same model. And what's better? While it's not nearing the efficiency of Apple's chips, it's a lot better than past AMD offerings. It's more than twice as efficient to run AI models on the Strix Halo GPU than it is to run on the CPU. But again,
+
+you didn't come here to see AI stuff running on a single node. That's boring. Other reviewers can give you some numbers for the desktop. I especially recommend Wendell's on Level1Techs. And I've already put all my benchmarks up on GitHub. Again, link in the description. But here's the thing:
+
+most AI models are small and boring. I want to run the big ones, like 400 billion parameter models, the ones that can do more useful work. I mean, if one Framework Desktop is good, four should be better. So to start my testing, I got all my four kits put together on these 3D printed ITX trays I found on printables. Shoutout to Damian Payne. I initially networked them together using this 2.5 gig switch, but
+
+later on, I found this NICGIGA switch that does 5Gbps, and unfortunately, it's a little too wide for the mini-rack, so that's why I have it sitting on its side. But here's where things get tricky. When you're dealing with one computer, doing everything with a monitor, keyboard, and mouse is fine. When you're dealing with a cluster, all that stuff goes out the window. Headless and remote access are the name of the game, but I didn't have time to automate everything, so I popped this JetKVM on each machine and remote-installed Linux.
+
+But once I got to SSH, it was time for some automation. First, just to make sure they could all work together, I ran the same High Performance LINPACK benchmark, but this time using a tool called MPI to coordinate all four computers together. And if you're playing around with some different memory layouts, I could get over a teraflop of FP64 performance on this cluster. I could probably get more, too, but that was already good enough to put this little cluster on the top 500 supercomputer list. Well, at least in 2005.
+
+That year, it would've beat a Cray supercomputer with 1,900 CPUs. But more importantly, I wanted to see just in raw CPU power how this thing stacks up to some other systems I've tested. It's not breaking any records, but it's almost twice as fast as a $6,000 M4 Max Mac Studio when you put all four of these nodes together. That's decent for around $8,000 for this entire setup. But again, just looking at CPU, and for this one specific benchmark, you're going to get more performance per dollar just buying a faster workstation and scaling it up.
+
+A lot of people think clustering is just putting multiple computers together and getting a big performance multiplier. But it's not like that at all. There's networking overhead, and then there's even things that get slower when you split them up across multiple computers. And I was gonna compare this thing to my 10-node Pi cluster, but that project's gonna have to wait for another day. Subscribe if you want to see whether my Pi cluster can win at anything compared to this Framework cluster. But before we get into how AI runs on this thing, I thought
+
+I'd talk a little bit more about the mini rack itself. I've been working with DeskPi behind the scenes to try to get all this stuff ready for today, and I just put it all together for the first time a couple days ago. These 2U mini rack trays are the perfect size for a mini-ITX motherboard, with an opening for the IO shield on the back. Then there's also an included power button you screw into a hole right above it. On the side of the motherboard, there's a mounting point for a Flex ATX power supply, and right now at least, it fits the Framework Power Supply perfectly, but I'm not sure it works with all power supplies. The whole thing comes together nicely,
+
+and it only took me about 20 minutes to install all four nodes. Now, putting everything together in a cluster is where the magic happens, and I'll show you that bit now. So now we have a little bit of a live portion, and this is called a mini rack. Cool thing is, this is like a full-size rack that you'd find in data centers, but half the width. So you can fit it in places like apartments, or even in my rack you can fit a mini rack inside of my rack! The cool thing is they have just designed and sent over these prototypes. I don't know if this is
+
+going to be the final production version but basically it's a Mini ITX 2U tray for a half rack that includes a power supply mount over here and a power switch. So there might be a couple differences to the final version that you'd see but they they spent a lot of time working on making this work great for the Framework Motherboard and I think that it might work for some other ones too. It has a cutout in the bottom for airflow, which is especially important because the fan is taking in air from here so you want to get as much air in as possible around this thing. But now they have a coating that is black that looks pretty good in person. I don't know how much that shows up on camera; it's sometimes hard to show things that are very dark depending on the lighting that I have. But
+
+yeah, so we're going to put this in the rack. I'm going to put nodes one two three and four I think it'll all fit in here. Oh, I should also mention that I bought... this is the only 5 gigabit copper
+
+ethernet switch that I could find with all 5 gig ports. These do 5 gig, 2.5, 1 gig, 10, 100 megabit. It does everything except for 10 gigabit, basically. And the problem is that this does not fit inside of a mini rack. It's pretty close. And in fact, the PCB inside, the actual PCB would
+
+fit in here but the width of the box is too wide for this opening so you know i'll just have to have this sitting next to it. I guess something like that which isn't the end of the world; we're gonna have power cables hanging out of here anyway so yeah. Let's uh let's get this all together.
+
+Oh! Now it's a bit heavier. Ha! And you might have noticed on that initial build, Node 4 didn't have a power supply. That's because it stopped working after one boot.
+
+I don't know if it was just a dud power supply or what, but Framework quickly shipped a replacement, that's what's in there now. Getting back to software, people have been running HPC workloads for decades now. AI tools are the new kid on the block, and unfortunately, it can be hard to get things to work the way they're supposed to, especially if you're using new AMD APUs like the Strix Halo in here instead of like NVIDIA GPUs. I can use tools like Exo or distributed-llama, but because these APUs are so new, the easiest way I could find to cluster everything was with a feature called RPC built into Llama.cpp. I'm not going to
+
+into all the details here. I actually have a whole project up on GitHub that I'm working on for AI cluster benchmarking. You basically run this Ansible playbook, and it'll compile llama.cpp in RPC mode, distributed-llama, and even Exo, allowing you to run models on any group of computers with any kind of topology. But there are some issues when you run AI in a cluster like this. GPUs really want
+
+fast IO and tons of RAM. They have to read back and forth from memory as fast as possible. With multiple computers, you have to deal with a networking layer. That's gonna slow things down no matter what. What does that mean? Well, for small models that fit in the RAM
+
+on a single node here, like this 70 billion parameter Llama model, I got 37 tokens per second. When I put that on the cluster and distributed the model over 4 nodes, I got 15? Yeah, AI clustering isn't really about speed, at least if you don't have million-dollar budgets. For hobbyists like us, if you want the best speed, you should scale vertically. That means get as much VRAM on a fast GPU as you can. Or, failing that, just max out the RAM and run it on a CPU.
+
+The only reason you'd want to cluster these things for AI is if your model's too big for a single machine. 128GB of RAM is a lot, but the biggest models use hundreds of gigs. Like DeepSeek R1, the download size alone is 400GB. How does that run on the cluster? Well, after working with all three of the different AI clustering tools, I actually couldn't get it to run. I think I was
+
+hitting some bugs with such a giant model size, and I'm still trying to figure out why. I switched tracks, though, and tried another huge model: LLAMA's 405 billion parameter model, which weighs in at 240 gigs. And, surprise surprise, I had trouble with that, too. I did get it to load using RPC, which—I'll get to that—but I got it to run at like 0.7 tokens per second, which is glacial. And let me just pause here to explain: people on Reddit and Hacker News
+
+are always like, "Oh yeah, I could just buy some mini PCs and throw them together in an AI cluster. That'll work awesome!" But it's just not that easy. Besides the network being a billion times slower than memory, the tools out there for clustering just can't cope. [Admiral Grace Hopper] "Here's a microsecond.
+
+984 feet. I sometimes think we ought to hang one over every programmer's desk (or around the neck!) so they know what they're throwing away when they throw away microseconds." Take Llama's RPC feature, which, I admit, is marked as 'experimental'. Not only do you still need to process the whole model on the main server, which doesn't have enough memory to do it, so it has to do it in chunks, it also does text processing in chunks, so it kind of splits things off from one server to another, then to another one, and so on, round-robin style. That means that instead of putting all these systems together and having
+
+things run like three to four times faster like I had with HPL, you basically end up with the same speed than if you just ran the thing on one of them. So like I said earlier, it's better to just scale up one machine for the AI workload you want than to build a cluster. For most people. But I'm not most people. I'm the guy who built a petabyte storage server with a Raspberry Pi. So I can be truthful when I say, "If you
+
+value your time, don't be like me." Anyway, holy cow, we went way off the rails here. Getting back to the topic of value, this cluster will run you around $8,000. How does it stack up against some other options for giant LLMs? The AmpereOne server I tested last year gave me about 4 tokens per second, just on the CPU, and it cost maybe around 12 grand.
+
+An M3 Ultra Mac Studio with 512 gigs of RAM is going to set you back just under 10 grand, but it's way faster at 16 tokens per second. And if you want to just waste some money, buy a cluster of 8 Mac Mini [M4] Pros. Maybe at some point, open source AI clustering tools will get as good as other HPC tools, but right now, if you do want good cluster performance, you need to get specialized hardware and spend a lot of time optimizing things. As an aside, I was excited to try out Exo for this video, and I actually set up a full automation so I could run Exo on different clusters and compare them against each other. Except Exo stopped development like 5 months ago, and even simple fixes are being ignored. One thing I've been
+
+seeing a lot around AI startups is they do classic VC rug-pulls. They hype up some open source tool that admittedly is really nice. But then once it reaches critical mass and there's a community built up around it, the founders go silent. Eventually project maintenance dies off or it gets re-licensed and the tool that you just spent time adopting becomes useless. And it feels like that could be happening with Exo... I don't know. distributed-llama has been a lot easier to work with, but it's more
+
+limited because it can't run most of the models I want to test. But I do have to give a shout out to to b4rtaz, who's been extremely helpful and responsive. So all that to say, I think I agree with Nirav: AI clustering is interesting, but it's far from mainstream. The Framework Desktop makes for a great little mini ITX system, and you can even cluster it together in a mini rack. But don't expect it to start training your own models to solve world hunger—at least not today.
+
+Check out the description for links to everything I mentioned, including my new 'Beowulf AI Cluster' project. Until next time, I'm Jeff Geerling.

@@ -1,0 +1,84 @@
+---
+video_title: "My Smart Home Played me for a Fool"
+video_id: AyE0_6N21h4
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AyE0_6N21h4
+video_date: 2025-08-13
+video_description: |
+  Sometimes smart devices make me feel really dumb. And dumb devices are a smart idea.
+  
+  Mentioned in this video (some links are affiliate links):
+  
+    - Home Assistant Connect ZWA-2: https://www.home-assistant.io/connect/zwa-2
+    - Zooz 800 Series Z-Wave Long Range Dimmer ZEN72: https://amzn.to/46NmRIj
+    - HackRF One: https://amzn.to/40WKGK0
+  
+  Thanks to Nabu Casa for sending the ZWA-2 for testing, and to Zooz for sending a few of their Z-Wave LR devices to connect to it. (The products used in this video were provided for review, but no money exchanged hands and they had no say in the video's contents.)
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Smart TP
+  00:46 - My smart problem is dumb
+  01:43 - The fix
+  02:09 - Setting up ZWA-2 with Home Assistant
+  02:53 - A dumb switch that's smarter
+  04:20 - Making it smarter with Z-Wave LR
+  05:23 - How does it look on SDR?
+  06:48 - Spouse Approval Factor
+  07:09 - Should you buy one?
+---
+This is the Z-Wave TP stick. It's a smart toilet paper holder you can... no, I'm just kidding.
+
+This is actually called the ZWA-2, and I think the tagline for this thing is like, "Z-Wave isn't dead yet." "I'm not dead!" "There. He says he's not dead." "Yes he is."
+
+"I'm not!" Why do I have a rack full of Raspberry Pis and a pile of SSDs on my desk? Don't ask about that right now, it's a little bit of a sore point. But back to the ZWA-2. Basically, they discovered if you use newer radios and a way better antenna, you can extend the range and reliability of smart home devices way further than most current home hubs. Or at least that's what the Home Assistant folks told me.
+
+I've been talking to Nabu Casa, who designed this thing, and to a company called Zooz, who makes these Z-Wave long-range devices, and I'm going to see if this can solve a problem I'm having in my house. Is the problem that I took a not smart thing, made it smart, and now it makes me look dumb to my wife and kids? Yes. But that's how a lot of smart home things go. Let me explain.
+
+I bought some Philips Hue light bulbs years ago, and they've been great. What's not great is the wireless light switch that comes with it. It's the farthest away smart device from the Hue hub in my basement. And that means it's flaky. Sometimes, especially if I'm standing between the switch and where the hub is in my basement, it won't register any clicks. So I'm sitting there like
+
+an idiot pulling out my phone just to turn off the kids' lights for bedtime. Is that obviously a dumb way to do smart home stuff? In hindsight, yes. On top of that, with the way the Philips system is set up, I had to cover up my existing hardwired light switch location and stick one of their Hue switches on the wall next to it. Add to that, Philips trying to make me sign up for some stupid cloud account for my Hue lighting, and, well, here's the fix.
+
+At least, I hope. We'll see if it's smart or if I'm even stupider at the end of this thing. But the idea is I'm going to go back to a regular old light switch. Except, like I've done here at at the studio, the light switch will add smarts to an existing dumb switch instead of removing the dumb switch and adding a wireless battery-powered switch. That sounds like a smarter idea to me.
+
+And because if I recorded this portion at home, you'd just end up hearing my kids more than me, I'm going to do something I've never done before: I'm going to narrate how I *think* this test is going to go, and then at the end, we'll see if the narration was correct. First, I'm going to set up this alien spaceship antenna thing on my Home Assistant Yellow. This should be pretty easy, especially since it's an official Home Assistant Connect product. I had no trouble setting up their Voice Assistant box last year, and this thing should be the same kind of process. Also, since I don't have any pre-existing Z-Wave stuff at home, I'm hoping that'll make this setup smoother. If you have existing Z-Wave devices, well, I guess check the documentation
+
+for how to migrate those over. And do you have to have a Home Assistant to use this thing? Technically no, but I'm not going to cover that or get into the technical details of the radio or antenna they use in here, but we will look at the signal with an SDR later in this video. But I plugged it into my Home Assistant, added the Z-Wave integration, detected the stick, and supposedly that's all I need to do on Home Assistant's side. Now I'm going to install this Zooz smart switch.
+
+There are different kinds of smart switches. Some smart switches are actually really dumb if they don't work like a dumb switch. When you hardwire a light switch, it should work as a light switch. You shouldn't have to have it connected to the internet or even to a local smart hub just to work like a light switch. That's why this Philips switch makes me look like a fool every time I'm standing there with it not working.
+
+And, really quick, can I just say I love that Zooz includes the important instructions right here on the outside of the box. I hate when I buy a product that has no interface except for like one or two buttons, and you have to read through a little Chinese manual just to decipher how to set it into a different mode. Having it right here on the box makes it harder to miss how to set it up, so already I'm hopeful that this Zooz switch will work out for me. If you don't know what you're doing around electrical wiring, hire an electrician. It's not that hard, but there are 120 volts in this box, or 240 over in Europe, so better safe than getting shocked across your heart.
+
+Anyway, I've installed the new Zooz switch. The next question is, will it work like a dumb light switch? Well after replacing the Hue smart bulbs with some regular dumb bulbs, yes.
+
+I sure hope I'm not eating crow right now, but I assume that it's just working in the future when I try using it before I pair it to Home Assistant. And I read in the manual for this thing you can also set up dimming rates and stuff like switch itself, but honestly, I'm just going to use the defaults. You hold the paddle up to make it brighter and down to dim it. That's simple and good enough for me. But all that out of the way, I'm going to pair it to Home Assistant now. First, I'll go into Home Assistant's Z-Wave settings and
+
+add a new device. Then I should be able to just tap the up paddle three times quickly and it should get paired. And for my sake right now, I hope that worked. Otherwise, I'll have to record something on the spot at home. Did it work?
+
+Okay, now in Home Assistant, I should be able to add the light to a dashboard and use it from my phone. And you're probably thinking, especially if you believe like I do, that smart devices are often pretty dumb, especially considering how expensive they are. "Jeff, why didn't you just put in a dimmer switch, you dunce?" Well, yeah, but there are two things I like about smart lighting. First, you can have them fade in around sunset, and that's just a nice little quality of life thing once you get a few installed in your house. It makes it feel like a good
+
+transition from daytime into night, and that helps when it's a hectic time after dinner getting all the kids ready for bed. And second, whenever we're gone or on vacation, having a few smart lights, and we have maybe eight or so around the house now, means that I can have them come on and off at different times to make it less obvious that we're not at home. Anyway, it looks like the switch was a total success, and the best thing about going back from a wireless smart switch to this built-in Zooz switch is, like at my office, I can be 100% sure when I press the off button, the lights are going to turn off. The lesson I learned from all my Philips Hue stuff is this: make the dumb stuff work perfectly first, and if you want to add smarts on top, that's okay. Just make sure the smart stuff doesn't make you look dumb when it inevitably stops working.
+
+Anyway, onto a part of the video that I just wanted to add in here because I've never done it before. I've been getting into RF and radio stuff lately, and so I have this HackRF SDR, or Software-Defined Radio, that I've been using to scan the airwaves around me. This long-range Z-wave stuff is just using radio frequencies, after all. And it's even listed on the spec sheets because radio is regulated by different regions around the world. Like, you can't just use the new long-range feature outside of the US and EU yet because of frequency regulations.
+
+But it looks like in the US, this thing will use frequencies between 908 to 920 MHz. And, Lucky for me, this HackRF should be able to watch that entire frequency range. So if I set up my laptop and start scanning the spectrum, I should start seeing some activity when I'm using the switch. Like if I turn on the light from the bedroom, the switch should send out some activity back to the Home Assistant yellow. And if I turn off the light from the app, then the app should tell Home Assistant to send that message out through the ZWA-2 antenna over Z-Wave out to the switch.
+
+So I'd call this a success. I think to finish things off, I need to ask my wife a question. "So what do you think of all the smart lights that we have in this house?" "Well, when I was a kid, you just turn the light on with the switch. Now you have to have a phone to figure out how to turn your lights on!"
+
+"Well, press the on button. See? And then off. It's just a switch!" So in terms of recommending this thing, it is kind of fun to see the Z-Wave long-range signal.
+
+It looks like my device is using 916 megahertz here. It is a pretty big device and it's like [$69]. But it's not for everyone, that's for sure. I was doing pretty good with just the base device and Zigbee, and Zigbee also has the mesh system where if you can extend it with some outlets and things like that, you can get better signal. You don't have to get something like this, but it does solve a problem for some people that have longer distances between devices that they've had issues with in the past.
+
+So that's kind of cool, and it's kind of cool to see the radio waves on here, and it's nice to see a little bit more security implemented. There's a key now between the devices. If it's for you, that's great. If it's not, that's great too. I just thought it was nice of Nabu Casa and the Open Home Foundation to send over the ZWA-2.
+
+And also, I'd like to thank Zooz for sending over that light switch because it has been extremely reliable and it makes my wife not be quite as angry. Although, we've noticed that it will save the last brightness setting. So I need to figure out how to say, like, when you press on, just turn it on to full brightness. Because that's more intuitive for the way that our family works. But yeah, anyway, thanks to them.
+
+And until next time, I'm Jeff Geerling.

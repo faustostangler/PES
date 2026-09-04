@@ -1,0 +1,17 @@
+---
+video_title: "Why AI Runs on Linear Algebra"
+video_id: EwqB3ukcxEk
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EwqB3ukcxEk
+video_date: 2026-08-04T17:00:20+00:00
+video_description: |
+  Website Link: systemdrd.com
+  Linear Algebra is the foundation of Machine Learning and Deep Learning. Learn the essential concepts including vectors, matrices, matrix multiplication, eigenvalues, eigenvectors, SVD, PCA, tensors, and NumPy to understand how AI models, neural networks, and optimization algorithms work. Perfect for ML engineers, data scientists, AI developers, and Python programmers.
+---
+Precision choice is a direct consequence of how singular values and conditioning behave inside a matrix, not [music] just a memory optimization. FP32 gives the widest safety margin, and it's still used for optimizer state, like Adam's master weights, even in [music] mostly low precision training, because accumulated gradient updates need those extra mantissas. [music] BF16 preserves FP32's exponent range, so it rarely overflows, while trading away some mantissa precision. That's why it's the default for mixed precision training on modern GPUs and TPUs. Matrix multiplies run in BF16, while an FP32 master copy of the weights absorbs the small updates.
+
+>> [music] >> FP8 pushes further still. Two variants trade dynamic range for precision, and because the range is so narrow, production FP8 requires per tensor [music] or per channel dynamic scaling to keep matrix products inside a representable range. >> [music] >> Without that scaling, a poorly conditioned matrix will silently saturate to infinity or underflow to zero. A classic failure mode, a loss trains fine in FP32, [music] then diverges to NaN under a naive FP16 conversion, traceable to gradient values underflowing FP16's narrower exponent range during backprop, [music] which BF16 or proper loss scaling fixes. Precision is one production axis. The
+
+other is how much of the matrix you compute >> [music] >> at all. Let's look at that. Here's the direct question every architect

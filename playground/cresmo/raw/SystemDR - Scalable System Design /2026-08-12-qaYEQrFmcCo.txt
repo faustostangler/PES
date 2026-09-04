@@ -1,0 +1,28 @@
+---
+video_title: "Most AI Agents Are Security Nightmares #Shorts"
+video_id: qaYEQrFmcCo
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=qaYEQrFmcCo
+video_date: 20260812
+video_description: |
+  Full lesson: https://aiamastery.substack.com/p/day-3-secure-tool-integration-building
+  
+  Building AI agents that can actually touch files, APIs, and tools — safely. This clip is part of a hands-on walkthrough of AI agent security: permission boundaries, sandboxing, capability tokens, and audit logging for production-grade AI agents in Python. 
+  
+  #AIAgentSecurity #AIAgents #PythonAI #Shorts #AgenticAI
+---
+Welcome back. Day three gave your agent hands it can trust. Permission boundaries, sandboxing, and audit trail on every tool call. >> [music] >> Today, we send that agent out onto the open web, where nothing is guaranteed. Servers timeout, sites rate limit you, sessions get [music] hijacked if you're careless.
+
+By the end of this lesson, you'll have a production-grade price monitoring agent built [music] on the same resilience patterns that keep Netflix streaming and Amazon selling during their biggest traffic days. >> [music] >> Quick orientation before we touch any code. We're still in module one, enterprise agent architecture and hardening, and this is [music] day four of 30. Yesterday, you built secure tool integration, [music] permission boundaries and sandboxing for tools your agent calls directly. Today, the target changes. Your agent is [music] going out
+
+onto the open web, talking to servers you don't control, that can be slow, flaky, or actively hostile. [music] Here's problem. Most student and hobby projects work fine in a demo, and then fall over the moment they hit real conditions. A handful of concurrent requests, one slow upstream service, [music] a dropped connection, and the whole thing cascades into failure. Production systems [music] don't get to assume a friendly network. Netflix
+
+doesn't stay up during peak hours because it has more servers than everyone else. It stays [music] up because of resilience patterns, rate limiting, circuit breakers, graceful degradation. Amazon [music] survives a flash sale the same way. Today, you're building a production-grade price monitoring agent using exactly those patterns, so it keeps working when a target site is slow, when you're running multiple instances of the same agent, [music] and when something on the other end tries to feed it garbage. Here's the one picture to hold onto for the rest of this lesson.
+
+>> [music] >> A circuit breaker is a state machine with exactly three states, and the entire pattern is about controlling the transitions between them. [music] Closed is the normal state. Requests flow through to the target service like nothing's wrong. If failures [music] against that target cross a threshold, the breaker trips to open. In the open state, the breaker fails fast. [music] It doesn't even
+
+attempt the request. It just raises immediately, which protects both your [music] system and the struggling target from more load. After a cool-down period [music] expires, the breaker moves to half-open, where exactly one trial request [music] is allowed through. That trial request is the whole mechanism. If it succeeds, the breaker closes and normal traffic resumes. If it
+
+fails, the breaker snaps [music] straight back to open and the cool-down timer restarts from zero. This [music] two-outcome design is what makes a circuit breaker different from either naive retries, which just keep hammering a struggling service, [music] or a permanent kill switch, which never recovers on its own.

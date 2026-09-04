@@ -1,0 +1,92 @@
+---
+video_title: "How Hackers See Every Website You Visit on Public Wi-Fi"
+video_id: e1W54tZQafw
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=e1W54tZQafw
+video_date: 2026-08-24
+video_description: |
+  Public Wi-Fi feels harmless, until someone at the next table starts silently listening to every website you visit.
+  
+  This video is for educational and awareness purposes only.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker OS
+  - Windows: Victim OS
+  - Airmon-ng: Wi-Fi Monitor mode
+  - Wireshark: Network analyzer
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  01:07  Home Wi-Fi vs public Wi-Fi
+  03:17  Enabling Monitor Mode
+  04:42  Launching Wireshark
+  06:38  Filtering for DNS Traffic
+  07:13  Browsing History Hacked
+  08:42  How to Protect Yourself
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #wireshark #hacking
+---
+This is Sally. She's sitting at her favorite cafe sipping a latte connected to the free public Wi-Fi. She opens her browser and starts her afternoon like usual. She checks her bank. She scrolls through Instagram.
+
+She Googles a symptom she's been worried about. Nothing unusual, just a normal afternoon online. But two tables away, there's Kim, an ethical hacker and penetration tester. He doesn't know Sally personally. He doesn't need to. And here's the part
+
+that should worry you. Kim isn't even connected to the cafe's Wi-Fi. He never entered the password. He never joined the network. But with a single tool running quietly on his laptop, he can watch every single website Sally visits in real time. Her
+
+bank, her social media, that embarrassing Google search. All of it. Without ever touching her computer and without ever joining the network she's on. Kim isn't cracking her passwords. He isn't bypassing encryption. He's doing
+
+something much simpler and much scarier. He's just listening to the air. In this video, we'll see exactly how. Before we dive in, let's understand why public Wi-Fi is such a goldmine for attackers. When you connect to your home network, your traffic is encrypted between your device and the router using WPA2 or WPA3.
+
+Even someone sitting next to you can't read it. But many public networks are completely open. No password, no encryption. Your laptop is literally broadcasting radio waves in every direction, and anyone within range with the right equipment can pluck those signals out of the air. Your traffic isn't traveling through a wire. It's traveling through the air,
+
+past every table in the cafe, past the street outside, past the apartment upstairs. Now most modern websites use HTTPS, which encrypts the content of what you're doing. So Kim can't see your bank password or read your direct messages. But, there's one thing HTTPS doesn't hide, and that thing tells Kim almost everything he needs to know. That thing is called DNS.
+
+Every time you type a website name into your browser, like bankofamerica.com, your computer doesn't actually know what that means. Computers only understand IP addresses, numbers like 170.65.171.213.
+
+So, before your browser can load anything, it has to ask a special server called a DNS server. It says, "Hey, what's the IP address for bankofamerica.com?" That question, also called the DNS query, gets sent from your laptop to the local network you're connected to, here the cafe Wi-Fi, and then out to the internet. And here's the problem. In most cases,
+
+that DNS query is sent in plain text. No encryption, nothing. Anyone within radio range of Sally's laptop can see exactly which websites she's about to visit, even if the sites themselves use HTTPS. Think of it like this. HTTPS is a sealed envelope. Nobody can read what's inside.
+
+But, DNS is the address written on the outside of the envelope, and anyone watching the mailroom can write down exactly where every letter is going. So, how can Kim actually see that traffic? Let's dive in. Like most laptops, Kim's laptop has a Wi-Fi adapter, and he needs to put it into what's called monitor mode. In normal mode, a Wi-Fi card only listens for traffic addressed to it.
+
+In monitor mode, it listens to Wi-Fi traffic in the air from devices within range. To flip his Wi-Fi card into monitor mode, Kim types sudo airmon-ng start wireless LAN zero. Airmon-ng is a tool that lets Kim put his Wi-Fi adapter into monitor mode. Start tells it to turn monitor mode on, and wireless LAN zero is the name of Kim's Wi-Fi adapter. He presses enter and just like that, his card is no longer a normal Wi-Fi client.
+
+It's a passive receiver, silently listening to every wireless packet in radio range. To confirm the change worked, Kim opens a new terminal and types iwconfig, a command that lists his wireless interfaces and their current mode. And there it is, a new interface called wlan0mon with the type set to monitor. That's Kim's card now silently listening to every wireless packet in radio range. This step is crucial. Kim doesn't join
+
+the cafe's Wi-Fi. He doesn't ask for a password. He doesn't show up in any router log. As far as the cafe is concerned, he was never there. He's just a passive receiver catching radio waves that Sally's laptop is broadcasting into the room, whether she likes it or not.
+
+To read those radio waves, Kim uses a tool called Wireshark. But what exactly is Wireshark? It's the world's most popular network protocol analyzer. Think of it as a microscope for network traffic. It captures every single packet flowing through a network interface and displays it in a readable form.
+
+You can see who's talking to whom, what protocol they're using, and in many cases, exactly what they're saying. Kim opens Wireshark. At first glance, it shows a list of network interfaces on his machine. Each interface represents a way his computer can capture packets. Ethernet, Wi-Fi, loopback, and so on.
+
+Kim knows which one to choose because when he put his Wi-Fi adapter into monitor mode, airmon-ng created a new interface called wlan0mon. So, in Wireshark, that's the interface he selects. Kim double-clicks on it, and just like that, Wireshark starts capturing every single packet passing through the air within range. And immediately, the screen fills up, hundreds of packets scrolling by. Every beacon frame from every nearby router, every device connected to those routers, every request, and every response.
+
+All the invisible traffic that normally flies past your eyes now laid out in front of Kim. Let's break down what Kim is seeing. The top panel shows the packet list. Every line is a single packet. He can see the source, the destination, the protocol being used, and a short summary of what the packet contains.
+
+Below that is the packet details panel. When Kim clicks on any packet, this panel shows him the full breakdown, layer by layer, from the raw radio frame all the way up to the application data. And at the very bottom is the raw bytes panel showing the actual binary content of the packet in hexadecimal. To watch Sally's traffic, Kim doesn't need all of this. He just wants one thing, DNS queries.
+
+And Wireshark has a powerful filter bar right at the top that lets him focus on exactly that. Kim clicks in the filter bar and types a single word, DNS. Then he presses enter. And boom, everything else disappears. Now Wireshark only shows DNS traffic.
+
+Every single question being asked, every single answer being given by every device in radio range. And this is where it gets uncomfortable. Because the info column shows exactly what each device just asked. Kim clicks on one of those queries. In the details panel, he expands the DNS section, then the queries section.
+
+And there, written in plain text, is the domain name, bankofamerica.com. Sally just went to her bank. A few seconds later, another query, instagram.com.
+
+Then another one, webmd.com. Then another one, amazon.com. And another one, netflix.com.
+
+Kim didn't crack any passwords. He didn't bypass any encryption. He didn't even join the cafe's Wi-Fi network. He just sat there with his laptop closed on his knees and Sally's device broadcast all of this into the air for him to catch. In the span of 5 minutes, he's built a complete picture of who Sally is, what she's worried about, where she banks, what she buys, and what she watches at night.
+
+For an attacker, this is gold. Knowing which bank Sally uses means Kim can send her a perfectly crafted phishing email that looks like it came from her actual bank. Knowing she just searched for medical symptoms means she's emotionally vulnerable and more likely to click on a suspicious health-related link. Knowing her habits, her routines, her interests is the raw material for social engineering. And Sally has no idea.
+
+Her browser is happily loading pages. Her bank connection is encrypted. Her passwords are safe. But the map of her entire digital life just walked out of the cafe in Kim's laptop. The good news is protecting yourself is easier than you'd think.
+
+First, use a VPN on public Wi-Fi. A VPN wraps all of your traffic, including your DNS queries, inside an encrypted tunnel. Kim would still see packets flying through the air, but he'd have no idea what any of them mean. Second, enable DNS over HTTPS in your browser. Most modern browsers support it. It
+
+encrypts your DNS queries so they can't be read on the network. It's a simple toggle in your browser settings. Third, avoid open Wi-Fi networks whenever you can. Your phone's hotspot, even a paid Wi-Fi with a unique password, is dramatically safer than an open network anyone can join. And finally, remember this.
+
+On public Wi-Fi, you're never really alone. Someone is always listening and they don't even have to be on the network. And that's for today. Kim didn't hack Sally. He didn't break in. He didn't even connect to the same
+
+Wi-Fi. He just sat two tables away with the right hardware and let her tell him everything without saying a word. Thanks for watching. If you found this helpful, hit the like button, subscribe, and turn on notifications so you don't miss the next episode. See you there. Bye-bye.

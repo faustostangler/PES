@@ -1,0 +1,139 @@
+---
+video_title: "Google Play Integrity 2025: Privacy Phones Still Work (Here’s How)"
+video_id: znQToRxsrCo
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=znQToRxsrCo
+video_date: 2025-11-12T17:01:55+00:00
+video_description: |
+  00:00  Panic for de-Zoogled phones.
+  01:17  The Original Zoogle Safety Net Explained.
+  02:53  The New Zoogle Policing Model
+  04:17 Trusted Execution Environment (TEE) Attestation
+  05:57  Play Integrity Attestation
+  07:28 The Combined Attestation Effect (Four-Layer Menu).
+  08:33  App Requirements and Attestation Levels
+  15:07  Attestation Workaround: PWA
+  16:29  Comparison: BraX3 vs. Other De-Zoogled Phones.
+  18:11  BraX3 Surprise
+  20:01  Final Thoughts
+  21:56  Channel Outro and Support.
+  
+  Zoogle scared the entire custom ROM community in 2025, like a bomb was going to drop… They just created ways for an app to detect if you are using a privacy phone so everyone was afraid that their phones would be automatically locked out of apps . So using the latest iODE OS  my daily driver Brax3 and ran several banking apps, Zoogle Apps, and ride share apps. The results shocked me. 
+  
+  Let's find out what this all means.
+  
+  
+  ----------------------------------
+  BraX3 Privacy Phone is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://bytzvpn.com Premium VPN You Can Trust with Pi-Hole
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+Google just killed safety net and replaced it with play integrity. And what most people heard is that this play integrity required a Google certified device attestation. I have to tell you that this caused a little bit of panic. A lot of people have asked me if this is the death nail for every Google phone because this new Google certification requirement would detect a non-standard OS. This device check which is performed by at the station is actually multiple parts now and isn't like safety net at all. In
+
+fact, it isn't actually just play integrity. It's a more complex story than that. Spoiler alert, this is a mixed bag for the Google phones. Some apps will die, some thrive, your Google Pixel will likely be the same, but your BR 3 might actually come out ahead. Here's the bottom line. 95% of apps
+
+never call this at the station. The 5% that do, that's where the drama lives. Let's break it down. Stay right there.
+
+The original Google Safety net. First, what is Google Safety Net? This was a play services feature that allowed apps to verify if your phone was running an authentic Google Android build. And it was also used to detect if the phone was rooted as well. This was used heavily by banking apps and also apparently by Google's own apps. To
+
+implement this Google safety net, an app use Google Play Services to detect the OS and the configuration of the device. The call goes to Google where it looks at the report of all the local information of an OS and then Google returns a status indicating that your device is running an official Android version and if it is not rooted. So this entire safety net infrastructure was dependent on Google Play services and a cloud connection to Google itself. Because all the Google phones do not have Google Play services or Google GMS then automatically safety net will return a fail response to all apps that call this feature which explains why many apps failed on the Google phones. But not all safety net calls failed. The
+
+Google Play spoofer app micro G which is used on many the Google OSS can fake a basic integrity equals pass signal which explains why some banking apps worked but it can never pass a CTS profile match signal that always returns a fail. So other banking apps still did not run the new Google policing model. So what is this new play integrity at theest station? The new Google policing model is split into two parts. The first part is a hardware at the station model which is handled between the app and the security program and the hardware and is controlled by the OEM.
+
+The second policing part is called Google Play integrity and this part is directly tied to the cloud and supported only by Google itself. In both cases, instead of just having text responses, the attestations are now signed by certificates to ensure that no spoofing is possible. It is up to each app to decide what level of atistation they require. Some apps are fine with just a hardware atistation, but some want to ensure that the OS is Google certified. It is estimated that the number of apps that rely on any sort of attestation is limited to around 5% of the entire app catalog. So based on this, 95% of apps
+
+will have no issue and run on any OS degistation
+
+of the device. We'll get back to that, but first let's focus on these two new attestation toolkits. Trusted execution environment, TE stands for trusted execution environment and is basically a new secure area inside the Android phone. Without dragging you into too much detail, Android devices now come with two separate areas to run programs. On the application side, the main area is called the rich execution environment or re which is where Android runs. But there's now a
+
+second processor area which runs the TEOS. The TE has its own tiny operating system and OEMs can make specific apps that run only in this TE environment. The purpose of apps in the TEE is very specific. One specific function is for apps to respond to attestation requests. TE apps come only from a trusted TE partition on the device and the TEE apps have to be signed and matched with the signing keys of the OEM before they can run in this trusted space. These keys have been
+
+fused into the TEE during manufacturing and can never be modified. A TE at testistation is made to confirm that the device is OEM unmodified and the app cryptographically gets a verification that this is all correct and that the TE itself is secure. Play integrity at astation. Separately, an app can require another level of addestation and this is called play integrity addestation. In order for this add station to be returned with a pass signal, the phone must be running Google Play Services or GMS and a higher level of addestation is available which is called a Google certified device addestation. Meaning it certifies that
+
+this is an original production Google Android. As a result of this requirement, all the Google OSS that do not have Google services will fail. Play integrity at astation. Google Play Integrity at astation is done through the cloud. So any app that requires this will trigger an addestation request with the device identifiers being sent to Google. For example, it sends the TE
+
+endorsement key to Google and thus it is an obvious destroyer of privacy by fingerprinting the device specifically and uniquely. For this reason, it is reasonable to expect that no dooled OS will support this. But this is the equivalent of the attestation via the old Google safety net. Again, just like with the TE, the attestation here is done using certificates. So, it can no longer be spoofed by intercepting Google API calls as done by micro G. So, again
+
+to summarize, Micro G can no longer be used to aid in any atestation. The combined at astation effect. So under this new environment and this is already in effect for most of 2025 apps can ask for multiple levels of attestation. Apps pick from this four layer menu and a special flag. Number one OEM level apps can get a TE atestation off the device. Number two
+
+OEM level bootloadader locked OS signed. Number three, Google. Apps can additionally ask for a play integrity check. Number four, Google. Apps can see if the device is Google certified.
+
+Flag signal. They can also check a flag. Apps can see if there's a stronger security hardware like a phone using a Titan M2 security chip. Let's get into the specifics of which apps would likely require the upper layers of addestation and which do not require any addistation at all or require only a TE level attestation. App requirements Google Pay from what I can see it doesn't appear that too many apps go to the level of a play integrity check or higher. An app that requires
+
+Google Play integrity would be Google Pay. This would require both TE and Play Integrity. So if you check my list of at the station levels, it would appear that a Google Pay requires that the hardware be Google approved and OEM certified as intact and unmodified. That's a TE level annotation. Then it checks to make sure that this is in fact a Google Android OS official version and that Google Play services are installed. So that's the
+
+play integrity section. So from that menu of addestation choices, Google Pay would require four out of four. This makes sense as it ties to the financial side of your connection with Google and anyone with a Google phone knows that Google Pay will not work on it. So this is no surprise. Bank apps. Now here we
+
+will get different results depending on what device you're using. So let's assume you're using a BR 3 phone. As I will explain later, BRA 3 is actually TE certified with OEM signed keys. So an addestation request from apps will return TE valid and TE trusted. On the other hand, if you're running a Pixel phone running Linux OS or EODS or EOS, then the TE will fail as there is no valid TE at theest station and no valid chain of trust. Graphine OS would
+
+also return a valid TE and TE trusted response. They no longer get the source code to pixels, but they have a workaround to ensure they can still sign the OS. Although they are not OEM signed, they are signed with their own keys. By the way, Brax 3 uses no workaround as there is full access to all the source code. So, the entire OS is always built with all source code available and is OEM signed. So, TE is guaranteed with no
+
+special effort. I've tested some bank apps and have determined that Bank of America and Chase only require a TE level of attestation. So, they work fine on Brax 3. I've heard that some bank apps like Revolute and other European bank apps will fail and this means those apps require play integrity level at possibly in addition to TE atestistation. And again to be clear, there is zero at this station available on Google Pixels running Linux OS for example. So what
+
+runs on Brax 3 may not run on those. But I'll explain more of the details a little later. Games. Some games use at a station to determine what the device is for anti-che. This is typically used in multiplayer games with a leaderboard. So
+
+if you use a phone for this kind of gaming, you will have discovered that those games will not work. It appears that most gaming apps use only a play integrity addestation and do not use TE. Here's an example list and I'm using B 3 as the D Google device. Now, I'm not sure about Roblox. That seems to work too on a Brax 3, but I'll leave it there so we can check later.
+
+Streaming apps. Some streaming apps will require addation. An example of streaming apps that have implemented this requirement are Disney Plus, Netflix, Amazon Prime Video, HBO, and so on. The reason is that they stream their content with encryption called DRM and the encryption use is provided by a utility called Whitevine. So Whitevine requires that you are running full TE atestation plus Google certified device at a station. If your device fails the
+
+certified device addestation as it would on all the Google phones without Google Play services, then the result is a reduced resolution to SDON or 480p resolution. This is called L3 performance versus the full resolution called L1. So at least some video still displays though you will not be able to see 4K resolution videos. apps getting payments. Some other apps will not run on a D Google phone without full play integrity at a station because they require Google payments of some sort. This could be tied to inapp
+
+purchases for example. So this is similar to Google Pay and thus you will find that this is the reason apps like Uber, Lyft, Uber Eats, Door Dash and so on do not work on the Google phones. majority of apps. It would seem that most apps do not require addistation and have not required addistation of any sort. The proof of this is that most third party apps, especially social media apps, continue to run on the Google phones. I was afraid that Google
+
+would force at least a TE level annotation on all apps, but it appears that unless the app has some financial connections, most apps continue not to care. And apparently they are not forced to care. So this means that we don't have to panic. Since this was implemented and required in 2025, here we are towards the end of the year. Nothing has changed yet. We can breathe
+
+a sigh of relief that no major global push for higher levels of addestation has occurred that would completely shut down some Doogle phones. Again, those using the Google phones of any sort are not surprised by any of this because we've known for a long time that 5% of apps don't work and these numbers are stable since 2023. So, addestations are not increasing. Here's a quick app summary to explain what's going on and simplistically using Brax 3 as an example. Add a station workaround.
+
+Fortunately, there is already an easy workaround to any add astation requirement on a D Google phone and most the Google phone users already know this. The workaround is to use the browser. Yep. It's really strange that we go through all this trouble with additation on a phone and yet the same old browser, any of them will work just fine. You can use any Google app on the browser. You can use Uber, Lyft, and any
+
+banking app on the browser as well. And these apps that work on a mobile browser are called progressive web apps, PWA. And they will work for the long run. Uber uses PWA and you can save the web page to your home screen and they will look like any normal app. This is exactly how the Brax app works.
+
+By the way, we no longer distribute the app in the Play Store. So regardless of any attempt at add a station for the foreseeable future, the browser workound with PWA will exist. In fact, if you begin to use the Ubuntouch version of Brax 3 at some point since that is running Linux, there will be no Android app. So, all Android apps on Ubuntu Touch are actually just web apps and browserbased some surprises. What may be surprising and is a positive is that some apps worked on Brax 3 that did not work on other the Google phones.
+
+For example, apps like YouTube, Google Earth, Google Translate, Google Maps did not work on some of the Google phones. And the reason these worked is because they likely only require a TE level at a station, which a BR 3 can provide. And going forward, only operating systems built with full source code signed by the OEM and with verified boot will actually have this added functionality. So, Brax 3 will definitely be in this category. Graphino has a workaround that allows them to have verified boot with basic TE even if they don't have full source code anymore. The problem is that
+
+they are not using OEM signing keys. So far, this is working though there is a risk. They're also not able to modify any code in the kernel section like before and have lost some other features like strong box and Titan M2 access. Other than this, Google pixels will not have TE level at a station nor play integrity and micro G will not be able to do even basic level spoofing for them any longer. And this would apply to other existing production phones from China like OPPO, OnePlus, Xiai, Motorola and so on.
+
+These phones can be deooled using lineage OS as before, but as usual, they will have the loss of functionality in the particular 5% of apps I mentioned. Brack 3 good news. Bra 3 is one of the only Google phones where the manufacturer signs the OS giving it a trusted TE out of the box. This means that this kind of phone will support more apps since it passes with trusted TE add a stationation and with a valid OEM signing key. There is no risk of this being disabled in the future. At
+
+the moment, this is kind of a rarity as this can only happen if the OS is built in conjunction with the manufacturer and the full support of the SOC maker which in this case is MediaTek. Currently the shipping OS on a Bra 3 is EOD OS which is OEM signed but it also has the Bra OS which will be made available soon as well which is also OEM signed and already running in beta is Ubuntu touch OS and it will be OEM signed. In all these cases the OS is built from source with the original signing keys and which results in verified boot. So all of these if compiled in this way will result in valid hardware TE addestation results. As a test the Bra tech programming team already compiled a special version of Linux OS for the Bra 3 unofficially and again since it is compiled using valid signing keys that even that runs fine with TE. By the way
+
+standard Linage OS is not built from source code so they cannot have verified boot. So, as of today, only the companies that make both the phone hardware and the software are able to get past this annotation problem, at least at the TE level, with the exception of the graphine OS workaround. Final thoughts, [snorts] here's the big picture. Google has modified Android to provide more addition about its status. The hardware at astation is left to the OEM via the TEE.
+
+This becomes a problem for an OS that did not come from the OEM like Linish OS or any postmanufacturing flashing of an OS that is loaded onto thirdparty devices like Pixels, Motorolas, OnePlus and so on. If the OS is created by the OEM as it is with a BR 3 phone for example, then it is fully certified with a TE. So apps targeting at least a TE level attestation will work on this device. Certain apps like Google payment apps games require an addation that comes directly from Google using play integrity and some require both TE and Google certification. These types of apps will not work on all the Google phones including Brax 3 and have not worked in the past either. Given that
+
+the number of apps that use either add a stationation has not changed, then it appears that no big crisis is at hand. And in fact, it appears that many apps have accepted that a TE level of addestation is sufficient as proven by several bank apps. This means that more apps actually run on a phone like a Bra 3 than other D Google OSS before and apps that didn't work on the Google OSS before still don't work so no change will be apparent. The browser workound is always there and it would be interesting for the community to find out. Let us know in the comments which bank app works on your Google phone. So
+
+it would seem like Google didn't intend for this level of crisis to occur. Good as you were. Folks, thank you for watching my videos. As many of you know, this channel does not have sponsors and we primarily sustain ourselves by just creating products and services that we use to defend our privacy posture. I'd like to invite you to visit our community site, Braxme, which has a growing community of privacy enthusiasts. There are people
+
+from theirs walks of life and beliefs converge together in the mutual support of privacy issues. Join us. We created products in our Bramem store for the purpose of defending our privacy. Do you want a pseudo anonymous phone number that can be used instead of your very public phone number? That's Brack Virtual Phone. Do you want an email
+
+address that removes IP addresses and allows you to create unlimited email identities with aliases? That's Braxmail. Do you want a VPN you can trust instead of the big Eastern European conglomerates that dominate the VPN business? That's BitesVPN. We have other products and services like various Google phones and OS flashing services. The very successful Bra 3
+
+phone is also available for pre-order on its second batch. The first batch has been sold out. Information about that is on bratech.net. Thanks also to those who donate to us on Patreon locals and YouTube memberships.
+
+You are all appreciated. See you next time.

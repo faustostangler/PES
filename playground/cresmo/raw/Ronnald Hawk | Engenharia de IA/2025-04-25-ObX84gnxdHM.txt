@@ -1,0 +1,237 @@
+---
+video_title: "CRIE seu Agente de IA Profissional  - Da Ideia à Nuvem (Masterclass)"
+video_id: ObX84gnxdHM
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ObX84gnxdHM
+video_date: 2025-04-25
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo exclusivo : https://www.rhawk.pro/
+  Comunidade (Início 08/05/2024): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  Quer construir e implantar soluções de IA generativa profissionais, mas não sabe por onde começar? Esta masterclass completa guia você.
+  
+  Esse vídeo vai desde a ideia inicial à implantação na nuvem (deploy), cobrindo tudo que você precisa para criar soluções de IA Generativa robustas e monetizáveis. 
+  
+  Ideal para desenvolvedores e empresários que desejam entrar no mundo da Inteligência Artificial. 
+  
+  Nesse vídeo exploro  como criar um agente self-hosted similar ao ChatGPT usando LangGraph, integrando ferramentas externas (como busca na web),  suporte a diferentes modelos (LLMs) e gerenciamento de memória com checkpointers e Postgres. 
+  
+  Essa é uma das muitas maneiras em que você pode colocar um agente em produção. Aqui estão os conceitos básicos que podem ser adaptados para diferentes casos de uso.
+  
+  Veja o código em ação (Python), aprenda sobre monitoramento essencial com LangSmith, Prometheus e Grafana para garantir performance e confiabilidade, entenda a arquitetura completa (API, front-end, infraestrutura) e como fazer o deploy de forma profissional usando Docker em um VPS. 
+  
+  Ganhe uma visão completa e prática para transformar suas ideias de IA em aplicações reais e prontas para produção.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Agente ReAct–––
+  
+  Agente React em detalhes + Langsmith: https://www.youtube.com/watch?v=9bSzZ-9eUkM
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:30 A ideia. Entendendo o objetivo e desenhando a solução
+  4:41  Código do Agente ReAct
+  6:50 Langsmith
+  10:52 Interface para o cliente
+  12:12 API e integração
+  13:32 Checkpointer com POstgres + Docker
+  18:13 Código da API (FastAPI)
+  21:13 Prometheus e Grafana
+  22:45 Montando a sua equipe
+  26:29 Código Docker
+  26:58 Analisando os dados do checkpointer
+  28:30 Executando em sua VPS
+  30:12 Você também pode construir
+  
+  ––– Agência –––
+  
+  A melhor agência de IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #langgraph  #agentesdeia #python #grafana #cloud
+---
+Você quer colocar uma solução de inteligência artificial no ar, quer ganhar dinheiro com isso, mas não sabe exatamente como fazer. Nesse vídeo eu vou te mostrar passo a passo, desde a ideia até a colocar a sua solução em produção. Se você ficar até o final do vídeo, você vai ter uma compreensão geral do que é construir a solução, colocá-la no ar de modo profissional, com todos os cuidados que uma solução profissional precisa ter. Então bora pro vídeo. O que a gente vai fazer é o seguinte, a gente vai começar aqui pela ideia, tá? Ahã. E a gente, o que que a
+
+gente quer fazer aqui? A gente quer um clone do chatt que possa usar qualquer ferramenta e modelo e ela precisa ser self hosted. O que eu tenho aqui é exatamente algo assim. Então vamos lá. Teste. Botar aqui só para vocês verem
+
+funcionamento tempo real. E muito bem. E ele me respondeu aqui. Teste recebido. Parará. Beleza, né? Além do chat normal,
+
+a gente tem threads, o que seria aquelas conversas que a gente tem ali do lado, né? Então, a gente pode navegar entre as diferentes threads e ver as conversas antigas. E a gente também pode vir aqui e criar uma nova conversa. Oi, como vai, né? O nosso agente aqui, ele precisa emular o nosso querido agente. A gente não, ele precisa emular
+
+o chat PT, correto? Ah, e se você reparar aqui hoje, se você já tem um olhar mais atento atento, você vê nota que as soluções de IA, ah, principalmente essas plataformas como chattíram ao longo do tempo. Além do modelo que você usa agora, ele dá a série de outras opções. Busca na web, usar reasoning, que ele muda o modelo, imagem, tem o depo research, ah, etc. E no fundo, se você tá esperto e já entendeu o que tá acontecendo, ele tem um modelo, ele tem ferramentas e memória. E a gente pode extrapolar e
+
+dizer que isso é um agente React, tá? O que que é um agente React? Ronald, eu tenho um vídeo aqui, né, só falando sobre esse tema, né, do que que é um agente, ah, como ele se funciona, como ele se comporta, mas em resumo seria o seguinte. Nós temos um modelo, uma LLM, a pergunta chega para ele, ele decide o que fazer, tem um ambiente, o ambiente é o nosso sistema e ele decide se chama uma ferramenta ou se dá uma resposta direta. E a gente tem mais ou menos isso aqui, ferramentas, memória e recuperar informação. Então, para
+
+surpresa de zero pessoas, se você não tá caindo na narrativa popular de que os modelos estão melhorando muito e parará, o que não é verdade, o modelo tem melhorado, obviamente eles têm eh tdo ganhos incrementais, mas o grande valor agora nessa nova era da inteligência artificial, nesse exato momento, os grandes ganhos estão vindo das ferramentas. Então o que a gente tem é um modelo acoplado a diferentes ferramentas, trazendo grandes ganhos. E a Open AI não é nada mais nada menos hoje do que uma plataforma ah com um sistema de agentes. E eles vão fazer isso cada vez mais e mais e mais e todas as outras estão fazendo igual. É só reparar. A boa notícia é que a gente
+
+pode construir sistemas assim, já que os modelos estão sendo comoditizados. O que seria isso? Eles estão ficando cada vez mais baratos. as margens das empresas, seja Open AI, seja eh o Gemini, o Google, seja o Grock ou quem mais quer que forneça eh esse tipo de modelo, eh são reduzidas, então a gente pode trocar à vontade o que seja melhor pra gente e a concorrência vasta e a gente pode construir as nossas soluções em cima deles. E isso que parecia desvantagem antigamente, na verdade é a grande vantagem que a gente tem hoje. Então é
+
+por isso que a gente tá construindo com solu com com IA, porque a gente não consegue treinar modelos, né, igual eles treinam, porque nós não temos milhões de dólares, mas a gente pode construir a solução em cima, beleza? Então, a gente já entendeu qual é a ideia, a gente já entendeu o porquê do modelo. Ah, e o nosso agente aqui, ele tem acesso à internet. Deixa eu te mostrar aqui rapidinho, sei lá. E eu perguntei qual os filmes estão em exibição em Niterói.
+
+Ah, e ele foi na internet e buscou. Isso aqui a gente vai ver tudo por dentro. E é por isso que ele tem essas informações. Obviamente o modelo não foi treinado com com dados eh reais, né, com dados de hoje. E é por isso que ele traz aqui as nossas a as perguntas mais atualizadas, exatamente porque ele tem acesso à internet. Vamos primeiro aqui
+
+ver o código e a gente vai ver esse agente aqui por dentro. Eu vou explicar um pouquinho para vocês e depois eu vou voltar lá para aquele eh nosso roadmap lá, OK? Então, eh, eu já falei aqui de agente React, né, com L graph algumas vezes, mas recapitulando, a gente chama esse pacote aqui, que já é um prebuild do agente React e tudo que a gente precisa passar nele é modelo, ferramentas, system e checkpointer. O checkpointer é opcional e como a nossa solução precisa ser self hosted e eu criei um checkpointer para ser self hosted, o que significa que a gente é que gerencia todo o dado da conversa e eu vou explicar o porquê disso, né? E isso é muito legal e dá várias possibilidades.
+
+Eu vou mergulhar um pouquinho nisso no futuro próximo. Ah, muito bem. Então, a gente tá no código e a gente tem esses carinhas aqui. Então, a gente vai criar o nosso agente. Bem simples, né? E agora
+
+vamos testar ele aqui eh na nossa máquina, como se a gente tivesse eh desenvolvendo. E aí você vai ver que aconteceu, né? Como isso aqui a gente tá no no ambiente desenvolvimento, eu crio, né, diferentes mensagens aqui pra gente ter ideia do que tá acontecendo. E aqui a gente só vai fazer teste em desenvolvimento. Ah, e a gente vai ver o que que acontece aqui com o nosso agente. Ah, e aqui eu tenho a memória.
+
+Eu tô usando postare para gerenciar essa memória aqui. E provavelmente ele vai demorar um pouquinho porque é a primeira vez que eu abri essa conexão aqui com o banco de dados. E aí ele já nos respondeu e tudo certo. Então você viu aqui que eu tô usando Gemini flash. Ah, mas eu poderia estar usando qualquer outro modelo. E se você já tem um pouco
+
+mais de entendimento de Python, você sabe que aqui é uma função e eu tô passando um checkpointer. Do mesmo modo que eu tô passando um checkpointer, eu poderia passar um modelo, eu poderia passar uma lista de ferramentas, eu poderia passar o que eu quisesse aqui. Então, esse meu agente aqui, na verdade, seria um grande wpper e a gente poderia criar aqui eh infinitos agentes de diferentes maneiras, com diferentes ferramentas, apenas com uma chamada. E é assim que uma solução profissional vai se parecer, tá? Ela é o máximo flexível para poder suportar diferentes soluções.
+
+E tem uma coisa aqui que eu quero mostrar para vocês que é super importante, Ronald, o que que é isso aí? Uma solução profissional, a gente precisa entender exatamente o que se passa com ela. Obviamente a gente precisa tanto para estudar, né, o comportamento dela, né, a gente começa a receber muito usuário, a gente não sabe exatamente como ela se comporta. Hã, então a gente precisa ter um um método de avaliar e segundo que a gente precisa ter um método para agir proativamente. Eu vou imaginar que a sua solução comece a ficar lenta demais. Ao invés de
+
+esperar o usuário te contactar para falar que tá lento, você tem que ter um método para saber que ela está lenta e ele te alertar. E é exatamente isso aqui que a gente tá fazendo aqui. Eu tô usando o LMI. Deixa eu mostrar para vocês aqui, né? O LMI tá aqui. E a gente tá usando esse
+
+carinha aqui, tá? Deixa eu voltar para cá. Calma aí. Muito bem. Deixa eu clicar aqui, né? E vocês vão ver que a gente
+
+consegue ver tudo que acontece na nossa aplicação. Então, tá aqui teste de desenvolvimento. Você viu que a latência foi alta. Por quê? Foi a primeira vez que eu abri a conexão no banco de dados.
+
+Mas você vê todas as outras conversas, no geral a gente tem uma latência menor. E é interessante aqui, por exemplo, toda vez que eu pergunto algo eh que ele precisa aí na internet, por exemplo, ó, a gente vê que ele vai na internet, busca informação, parará, busca informação, perguntei quando é quando é o próximo jogo do Fluminense. Aqui, por exemplo, ele foi na internet, ele identificou que tem que buscar, já que ele não tinha essa informação, ele me deu, me deu a resposta. E a gente consegue ver exatamente o que acontece passo a passo ah durante a resposta. Então você vê aqui que o grande gargalo é a busca na web pra nossa solução e não necessariamente a chamada de modelo.
+
+Quando a gente chama o modelo aqui, né, a solução é bem rápida, tá bem legal. Isso tudo aqui tá online, tá? Tanto online quanto offline, por exemplo, agora no teste ele ele pega o meu log e a minha solução online que eu vou mostrar ao longo do vídeo, igual a gente tava ali mostrei no início, ele também pega o log e isso aqui é fundamental para soluções profissionais. Não dá para viver sem isso. Ah, e com esse tipo de coisa aqui, a gente consegue criar alerta, por exemplo. Então, vou imaginar
+
+que a gente eh queira criar um alerta para quando a latência tiver maior que X, a gente receber um e-mail, né? Seria legal, né? A gente olhar e ver se aconteceu algo. Ah, e a gente também pode criar ah gloriosos dashboards. O que seria um dashboard seria você tem um método de ter alguma coisa para visualizar em vez de ficar olhando o log. É uma método de agregar. É muito
+
+legal isso aqui. Deixa eu te mostrar só estender isso aqui. Uma coisa que eu achei interessante. Eu fui testar a o o O4, o chat GPT, né, o Open AI. E eu descobri que, na verdade, ele tem duas características muito interessantes aqui. Eh, ele, o número de tokens
+
+geralmente que ele responde é sempre eh inferior no geral é sempre inferior aos outros modelos. E o tempo dele para o primeiro token é sempre muito lento. Ele é sempre mais lento que os outros. Então, esse teste aqui é basicamente o seguinte, eu pego uma pergunta, por exemplo, olá, como vai? e mando para três modelos diferentes. Ah, eu tô
+
+usando aqui o R1, que é o Jeepsic, eu uso o A4 da OpenI e eu uso o Gemini 2.5 do Google. E esses são os resultados. Então, é curioso notar que ele sempre tem a o time to first token, né? o tempo de resposta pro primeiro token chegar até mim mais lento. Isso eu achei
+
+curioso. E aparentemente o Google continua ganhando aqui em termos de usabilidade em relação a todos os outros modelos que eu já testei. E um parênteses, se você quiser ver esse tipo de teste quando lançar um novo modelo, me avisa, porque eu já vi um monte de vídeo de teste aqui na internet e geralmente é mais do mesmo, né? Lendo, sendo quase um garoto propaganda da Open AI ou do Google, né? Mas na verdade os testes são muito rasos. Então, eh, eu
+
+posso fazer esses testes aqui, né, testes mais profissionais, né, e, e posso fazer vídeo aqui. Então, se tiver interesse, me avisa. Muito bem, já conheceram o Lengo Smif por dentro e é assim que a gente monitora a nossa aplicação, nossa inteligência. Isso aqui é fundamental para uma aplicação real. Beleza? Voltando para cá, eh, então a
+
+gente já viu isso aqui, beleza? Qual é o canal? Como que o nosso cliente vai entrar em contato com a nossa aplicação, né? Porque isso aqui não seria legal, né? Deixa eu voltar para lá. O nosso
+
+cliente entrar em contato com a nossa aplicação através de linha de comando não é uma boa. Afinal, ele provavelmente vai achar isso aqui horrível. Então, a gente precisa de algum método para encapsular essa solução aqui que tá funcionando e botar na mão do cliente de maneira mais convidativa possível. E aí que entra a galera de front end, tá? Então isso é um componente importante para qualquer aplicação e com a aplicação de AON é diferente, tá? Eh,
+
+poderiam existir outros canais, como WhatsApp, um aplicativo, um sistema proprietário. Aqui na empresa, por exemplo, o que a gente mais faz é criar uma IA eh, para colocar dentro de um sistema que já existe. Então, um cara tem lá uma loja, por exemplo, e ele precisa botar, ele quer botar uma IA lá, seja lá do que for que ele queira. Atendimento é um caso clássico, né? Ah, mas tem vários outros casos de uso aqui que eu posso explorar depois, né? E aí,
+
+eh, o que a gente faz? A gente cria a solução e cria um método de integrar a nossa solução na solução dele. A gente não depende exatamente ah de uma interface, por exemplo, né? Ele fornece a interface, a gente só fornece o serviço. Ah, e mas aqui no nosso caso é o web, então a gente precisa de um front end. Ah, e a gente e como que isso, o
+
+que que acontece? Como que a gente faz isso, tá? No geral, toda solução vai ter basicamente essa estrutura aqui. Pode ter um pouquinho diferente, um pouquinho para lá, um pouquinho para cá, mas é basicamente isso que vai acontecer quando a gente tem esse tipo de eh eh problema para resolver. A gente tem o front end, né, como o cliente usa, vê o serviço. A gente vai ter a nossa
+
+inteligência, que é o que eu mostrei aqui agora, exatamente para vocês, e a gente vai ter o homem do meio, que seria a infraestrutura. No nosso caso aqui, a gente vai pegar essa nossa inteligência e vai encapsular ela numa API. E é através dessa API que o front endato com a inteligência. Então a gente quebra em pequenos pedacinhos, né? E é por isso que você vai ver em empresas no geral, você tem um time de front end, você tem um time de back end, você tem um time de infraestrutura. É exatamente isso que
+
+acontece, tá? Então, se você tá construindo uma solução profissional, você não precisa ter necessariamente times. E eu vou abordar isso aqui. Existem diversas métodos, diversos jeitos que você pode resolver isso. Não precisa ser do jeito tradicional, mas é uma boa prática você separar ah a etapa de desenvolvimento em diferentes categorias. Tem vários motivos para
+
+isso. Ah, e vamos lá. O que eu faço aqui, né, geralmente na empresa, ah, eu pesquisei diferentes métodos para construir isso, tá? Eh, eu não peguei o primeiro que apareceu, como eu já expliquei, eu comecei a construir agente com N8N. Aí eu cheguei num teto, vi que não dava para fazer quase nada real, do mundo real, ah, só agentes de WhatsApp, tal, mas assim, muito muito rudimentar.
+
+Se você já construiu, você sabe que é verdade. Tem muitas limitações, tá? Eh, então eu precisaria, como eu tenho uma empresa, vivo disso, eu precisaria criar coisas melhores. Então, fui atrás para descobrir e acabei parando Ling graph porque eu achei várias comodidades lá. E eu hoje eu tenho exatamente um framework basicamente construído em cima do LAN RF. Então eu não preciso usar o
+
+framework dos outros, já que eu crio o meu próprio framework, obviamente, né? E é assim que empresas funcionam, tá? N se você for em qualquer empresa aí você vai ver que times de engenharia, de software, no geral constróem um framework em cima dos das ferramentas que existem para atender o problema daquela companhia. Exatamente assim que funcionam as coisas. Ah, então por que que eu usei L graph aqui e porque esse checkpointer é importante? O
+
+checkpointer eh, nesse caso aqui, nos dá a condição de criar este carinha aqui, que são os históricos de mensagem. Ele já tem algo implementado pra gente, então tudo que a gente faz é basicamente só chamar, tá? Então, a gente não precisa reinventar a roda. O que eu precisei fazer foi criar um checkpointer e personalizado, já que a gente tá fazendo self hosted. Se você hospedar na Link Graph Cloud, ele gerencia os checkpointer para você. Então você nem
+
+banco de dados vai precisar para fazer isso, mas como eu tô criando eh local e eu quero fazer na minha própria infraestrutura, eu criei o checkpointer. Ah, e o checkpointer, além do histórico de mensagens, nos permite essas duas outras belezinhas aqui. Eh, esse cara aqui tem muito dinheiro para ser feito aqui, tá, cara? Eu vou falar mais disso no futuro, que seria o humano no loop, que seria o seguinte, né? Eu crio um assistente para um cliente, só que ele não quer delegar 100% do trabalho para um agente. Ele quer que o agente faça o
+
+trabalho, mas antes de finalizar ou antes de dar OK, ele quer pedir a permissão do cliente para que aquilo vá à frente. Então, por exemplo, você tem um assistente no mundo real, né? Você tem uma secretária, você tem qualquer coisa do tipo e é exatamente que isso que acontece. Ele resolve o problema ali até um certo ponto, depois ele te retorna e o checkpointer nos habilita isso aqui, tá? Então ele pode fazer o que tiver que fazer, processa o que tiver que processar, automatiza o que tiver que automatizar, manda mensagem para o seu cliente, ah, pedindo revisão, né, autorização, etc. Ah, e aí ah, o
+
+checkpointer gerencia tudo isso pra gente. E a outra coisa interessante é o time travel. Eh, se você usa o cursor, windsurf, qualquer uma dessas ferramentas de edição de código, você já viu que você pede uma alteração e se você não gostar, você pode voltar lá e falar assim: "Não, vamos voltar para esse ponto aqui". É exatamente a técnica chamada time travel e o checkpointer também habilita isso. Então é uma feature muito interessante. Aí eu posso
+
+fazer um vídeo só sobre o checkpointer. Ah, beleza. Então a nossa aplicação usa esse checkpointer porque a gente quer fazer self hosted e o deploy como vai acontecer? A gente pega a nossa solução, aquela que você viu, e a gente vai encapsular ela ah no Docker. Por que pessoas fazem isso no mundo real, tá?
+
+Por que empresas fazem isso? O motivo é simples. O seu desenvolvedor, a sua equipe, o seu time pode trabalhar na máquina deles tranquilamente. Eles podem dividir código. Cada um com o tipo de máquina. Eu uso o
+
+Mac aqui, mas você poderia usar Windows, o outro poderia usar Linux, tanto faz. Ah, e no fim do dia você vai pegar isso que tá rodando na máquina deles com o Docker, vai subir para um servidor. No nosso caso aqui, a gente tá usando um VPS de 6. Isso tudo tá rodando lá, tá? Eh, e eu vou mostrar aqui o VPS por dentro, você vai poder ver. Eh, e vai
+
+rodar plenamente lá. Então, se você, ah, não, eu não gosto mais dessa, eu tô usando a WS, sei lá, não quero tirar da WS, quero botar no Google Cloud, você pega o teu código e bota lá sem muito problema, já que você tá com contêiner. Obviamente você tem a questão dos dados, né? Se você tiver um banco de dados guardando dado em um provedor, você vai ter que fazer uma migração. Mas a dor de cabeça é muito menor do que seria se você não tivesse o Docker. Então, Docker
+
+é seu amigo, né? E exige que as suas soluções sejam construídas de modo que você possa eh colocar em um contêiner para fazer deploy. Isso te dá muita vantagem. É tanto de deploy quanto de escalabilidade. Você pode botar num cubernet que eu não falei aqui ainda, mas enfim, se você um dia tiver com uma aplicação muito grande, você vai gostar de conhecer o Cubernet. Muito bem. E é
+
+assim que a gente faz. Então, a gente encapsula e esses caras aqui começam a conversar. Como isso acontece? Deixa eu ver se eu acho aqui, tá? Você tem esse cara aqui. Esse cara aqui tá tá local,
+
+tá? Mas é a mesma coisa que eu tenho local, eu tenho no ar. E a gente vai criar um contrato, tá? E eu vou explicar esse carinha aqui agora, que é a famosa IPI. Então, a gente vai ter uma IPI do nosso agente eh na web e o front end vai vir aqui nessa API e vai pegar o que ele precisa e dar as respostas. Você se
+
+perdeu ainda aí não, né? Então o que a gente faz? Vamos lá. Nossa inteligência, a gente já viu o código. API, a gente não viu o código ainda. E o front end
+
+você já virou em funcionamento. Então agora eu vou mostrar para vocês o código aqui rapidamente da API. E se você notar aqui, o meu projeto tá dividido entre desenvolvimento e serviço, que é exatamente ah o serviço é a nossa API, né? Eu tenho diferentes end points aqui. EndP seria o endereço da sua API, aonde ah o front end vai na API pegar as informações. Mas o mais importante aqui
+
+é o chat, que é exatamente o nosso agente. E o que a gente tá fazendo aqui é a gente cria um thread ID, que seria o identificador único da conversa. Ah, e a gente cria a gente instancia a memória, né, que é o nosso checkpointer. E finalmente a gente passa esse checkpointer aqui. E é basicamente isso. E a gente passa o
+
+config, né, a nossa tradid. E o que ele vai fazer é ir lá no nosso React agente. Como você viu anteriormente, ele tá esperando aqui um checkpointer e vai instanciar esse cara aqui. Por que eu faço assim? pelo seguinte, se eu quiser aqui, ao invés de passar só a memória, eu quisesse implementar uma função que passasse um modelo toda vez que ele chama, eu teria eh um agente que seria capaz de trabalhar com qualquer memória, com qualquer modelo e com qualquer prompt. Era só alterar esse cara aqui,
+
+tá? Para receber o modelo, receber prompt. Então, a gente tem de fato algo totalmente versátil, que seria basicamente um template hã para criar qualquer tipo de agente que a gente quisesse e seria muito simples. Beleza? Então, esse é o nosso servidor, esse é o nosso serviço que tá rodando aqui e a gente expõe, ah, vamos aqui, esse carinha aqui são, se a gente vier aqui no chat, é exatamente o que ele tá falando. Ele espera certas coisas e ele
+
+vai devolver certas coisas e é só isso, tá? Beleza? Muito prático, muito simples de fazer. Eu vou mostrar o uso dele aqui agora. E a gente pode usar ele aqui. Eu
+
+tô usando, vou usar ele aqui na web, tá? Esse aqui é o endereço do meu servidor. Ah, e a gente vai usar exatamente esse tipo de handp aqui eh ao vivo. Ah, eu espero que funcione, já que é ao vivo. E muito bem, ele foi lá, mandou a mensagem pro meu paraa minha IPI, tá? E ele
+
+recebeu a resposta. Ah, sei lá o que aí tanto faz. Beleza? Vocês já conheceram? Ah, vamos voltar para cá. Vocês já conheceram a IPI? Já
+
+conheceram a IA, a nossa inteligência. Então, esse aqui é o nosso serviço. Ah, e a gente vai para Ken. Mas antes do Ken, deixa eu mostrar uma coisa aqui que eu esqueci de me falar, cara, e é muito, muito importante soluções profissionais, que são os logs. Aqui eu tô usando Prometeus e Grafana. Has, o que que é isso? Tá?
+
+Vocês já viram anteriormente a solução com Vamos, deixa eu botar aqui pra gente ver mais de perto. 30 minutos tá. Vamos lá. 6 horas. Beleza. 6 horas. Tá legal. É, vocês já
+
+viram a a solução gravando logs da LLN, mas como a gente tem um serviço, a gente tem um servidor, correto? Nós gostaríamos de ver a performance desse servidor também. Então, a gente vai ter uma visão do servidor, da infraestrutura da nossa do nosso VPS e a gente vai ter uma visão da LLM, do modelo, do nosso agente. Então, o Graf e o Prometeus se ocupam desse tipo de coisa aqui. Se você já foi em alguma equipe de TI por aí, já entrou em alguma sala, você vai ver que eles têm um monte de televisões lá, correto? né, com um monte de número.
+
+Exatamente isso que que todo mundo fica olhando para ver se não tem algo muito esquisito. E se tiver algo esquisito, o que acontece é que aqui dentro do grafana a gente consegue criar um alerta. Então, responsável por ela solução recebe uma mensagem no slack dele, no e-mail dele, e a vida dele começa a ficar perturbada a partir desse momento. Então, é basicamente isso, tá? Então, é por isso que a gente separa os serviços. Muito bem. Ah, quem faz isso,
+
+Ronald? É uma questão importante, tá? Eu gosto de dividir em três categorias aqui, tá? Ah, o Rambo, o exército de um homem só, é quando você começa um negócio. Ã, e é o que eu fiz, tá? Que é
+
+basicamente o seguinte, eu tava fazendo tudo isso aqui, eh, sozinho. Aí você fala assim: "Ronald, mas você precisa disso para fazer um negócio tal?" Assim, no meu caso, sim, eu tinha um propósito, claro, de começar um negócio em um certo nicho e eu sabia que era necessário fazer todas essas coisas, mas eu particularmente não manjo de frontend, né? Então, para mim sempre foi muito ruim, apesar de manjar disso aqui. Ah, o ruim de ser o exército de um homem só é você vive exatamente igual o cara aqui.
+
+Você vive assim, cansado, sangrando, mas você anda muito rápido. Você faz coisas que um time não conseguiria fazer, eh, na velocidade que o time conseguiria fazer. Mas é algo ao longo prazo insalupre, tá? Ah, e para você ter todos esses conhecimentos pode demorar um pouco. Eu passei a minha vida inteira fazendo isso, né? Não a parte de e LLMs, que é
+
+uma tecnologia relativamente nova, né? E a generativa como é hoje, mas eu fiz todo o resto, né? Então eu já tinha um conhecimento prévio bom, já sabia como é tá no campo de batalha. Então para mim não foi um grande incômodo, mas não é para todo mundo. Muito bem. Você tem a
+
+segunda organização aqui que seria a equipe corporativa. Você vai numa empresa aí você vai ver que é geralmente assim. Tem o fulano de a, tem um fulano de infraestrutura, tem fulano de banco de dados, tem o fulano disso, tem o fulano daquilo, tem a mulher de RH, tem blá blá blá blá, né? Beleza. E o problema disso aqui é a lentidão, tá?
+
+Então aqui e a gente vai ter eh pouca gente de fato que tem uma performance igual o Rambo, né? apesar que vai ter um ou outro, mas eh é um time que anda continuamente, porém lentamente. Então, cada caso é um caso. Você acha que é bom para você? Boa sorte. Ah, e tem o
+
+terceiro caso aqui, que é o que eu adoto aqui muito, que seria eh contratar um especialista consultor quando você precisa. E na verdade você pode contratar sempre um consultor ou um especialista para tudo. Desde que você entenda exatamente disso aqui e como a solução eh funciona, você pode contratar um cara para fazer isso aqui, um cara ou um time ou uma empresa ou um cara para fazer isso aqui e você gerencia toda essa galera aqui. O que eu faço na empresa aqui na empresa é e eu a gente faz isso aqui internamente e se precisar de front end, eu contrato um especialista, tá? Ronald, como que você acha que é o time do futuro? O time do
+
+futuro, eu acho que é mais ou menos assim, tá? Eh, onde todo mundo é altamente especialista, tem muito talento e usa Ia para acelerar o processo de desenvolvimento. Por exemplo, esse carinha aqui eu criei com vibe coding, tá? Eu não manjo e exatamente se eu precisasse de algo que fosse botar no ar, provavelmente eu contrataria alguém, mas eu consigo me mover muito mais rápido simplesmente porque eu consigo fazer lá, enfim, eu sei exatamente o que eu preciso, né? Eu sei, eu tenho uma ideia mínima de frontend e eu consigo pedir para ele criar aqui, né, de maneira muito mais rápida do que eu faria se eu tivesse na mão, tá? Eh, esse é o objetivo aqui da
+
+Rockpr, tá? É, independente da habilidade que você tenha, ã, a ideia aqui é fomentar a sua ideia sobre a sistemas, negócios, de modo que você consiga se tornar um cara top aí no que você faz, se torne referência e eh tenha contato com outros que também são assim e cada um vai somando à medida em que dá. Um manja mais de A, o outro manja mais de dados, outro manja mais de sistemas. Eh, você tem infinitas opções aqui, eh, para ganhar dinheiro com Iar. E é exatamente lá o lugar que, né, eu quero fazer com que a gente se reúna, né, a gente falar de de uma perspectiva de quem eh tá no topo. Muito bem, vamos lá. Eh,
+
+continuando aqui, deixa eu voltar pro código. Ah, então a gente já viu tudo isso aqui e o que que eu faço no final? Eu coloco esse cara aqui em um docker, como eu expliquei anteriormente. Então, todos os nossos serviços são representados neste arquivo aqui. E aqui a gente tem o Grafana, a gente tem o Prometeus, a gente tem o o serviço do agente, né, que é API, e a gente tem um post grey. Beleza? Beleza. Por falar em
+
+postgre, vamos agora no checkpointer, tá? O que que é o checkpointer? Nada mais é do que essa tabela aí, tá? A gente vai ver os resultados e da nossa. Vamos lá. Tá lento. Tá, ele tá lendo
+
+ali, mas beleza, retornou. Eh, a gente vai ver os resultados das nossas threads. Então, a gente tem todas as threads aqui e é exatamente o que a gente vê lá no frontend. A gente tem agora decidiu ler, a gente tem e checkpoint, né, que é o que é importante ali pra gente, e a gente tem todos os metadatados. Se você já criou alguma tabela assim usando lá o agente do N8N, você vai ver que tem uma tabela bem parecida com essa. E surpresa, a gente
+
+aqui cria na mão, né? Porque a gente quer ter controle total. Ah, e na verdade a gente usou o utilitário do Leng Chain, Leng Graph para fazer. E é exatamente o que o N8N faz por debaixo dos panos. ele usa esse mesmo utilitário para eh criar isso aqui. E com isso
+
+aqui, além do checkpointer e tal, a gente pode ter exata noção do que acontece lá nas conversas. Então, se a gente quer fazer uma auditoria nas conversas também, a gente pode vir aqui e a gente tem total acesso aos dados do usuário. Isso aqui é fundamental para você melhorar seu produto, serviço, entender o que o usuário fala, entendeu o que se responde, etc, etc. Então, a gente conta com o auxílio do Lengchain, a gente conta auxílio com auxílio do Lengsmith, a gente tem os dados no banco de dados, a gente tem visibilidade total do que acontece e o que deixa de acontecer na nossa aplicação. E isso é uma aplicação profissional. Muito bem,
+
+acho que eu já cobri tudo aqui. O que que você precisa mais ver? A gente já viu isso aqui, a gente já viu o Docker. Ah, vamos lá. Eu fiz o deploy dessa aplicação no Digital Ocean. Ele é o
+
+lugar mais barato que eu conheço para fazer esse tipo de coisa. E ã tudo que você tá vendo aqui, você fala assim: "Ah, R, teu IP tá disponível." Cara, quando você vê esse vídeo, não, esse servidor não existe mais, tá? Eh, servidores são eh descartáveis hoje em dia, tá? Você não você já não tem muito mais apego sobre esse tipo de coisa.
+
+Você aluga, usa e desaluga. Então, eu fiz isso aqui só pra demonstração e vamos entrar nele aqui para ver é ele por dentro. E você vai ver que a gente tem exato código que eu tenho aqui na minha máquina agora rodando. É exatamente o código que tá lá. E vamos lá ver. Eh, então aqui, ó, tá lá React
+
+agente base, que é o nosso código. Vamos entrar lá. CD. Deixa eu limpar aqui que tá muito ruim, né? Vamos lá. CD React
+
+agente base S men- LA. A gente vai ver todos os arquivos aí, tá tudo aí, os nossos arquivos. E se a gente vier aqui fizer um Docker PS de repente não, Doc, Docker PS, DockerPS, a gente vai ver todos os serviços que estão rodando aqui. Ele tem o Grafana, Prometeus, o agente e a memória. E se eu vier aqui localmente, é exatamente o que eu tenho aqui. Então, como eu falei, você vai ter
+
+exatamente o que acontece online, replicado localmente, de modo que você consiga desenvolver de maneira profissional, sem funcionar na minha máquina, mas não funciona online. Isso não existe, isso não é tolerável e você não quer fazer isso. Ah, muito bem, a gente já viu as métricas, a gente já viu o tracing. Ah, e você tá munido para fazer o que você quiser. Então, se inscreva hã aí no canal, eh, para aprender sobre esse tipo de coisa.
+
+A aula de hoje, né, o vídeo de hoje foi um tanto quanto eh eu peguei um pouco no código, mas eu também mostrei as razões por trás disso. No fundo, o código é algo muito muito importante, mas a sua ideia ou a sua capacidade de interpretar o problema que existe no mundo real, ah, e saber desenhar a solução, é tão importante quanto o código. Para fazer o código, você pode contratar alguém, para fazer, né, pode ter um parceiro, né? Mas a ideia ou de repente é a abertura, por exemplo, vou imaginar que você seja um excelente vendedor, né? Você tem excelentes conexões. Ah, de repente o
+
+cara que sabe muito de código não consegue ter acesso a esse cara para vender. Então você pode se unir a ele, você pode fazer parceria, você pode, sei lá, contratar ele e pagar o que vale. Ter esse conhecimento aqui, seja se você é o cara que faz código ou seja se você é um cara de negócio, te traz vantagens quase infinitas. Esse é o propósito aqui do canal, é mostrar a realidade do mundo, eh, dos negócios para você. Ah, quem sou eu? Por que que eu tô falando
+
+isso? Eu passei quase 20 anos aqui, tá, fazendo isso aqui, eh, essa parte principalmente de dados e infraestrutura. Eh, mas em algum momento eu decidi aprender negócios e hoje eu navego entre as duas pontas, né? Então, basicamente, eh, eu faço um pouco de comercial e um pouco de de tecnologia. Na verdade, faço bastante de tecnologia.
+
+E eu hoje sou o o CTO da minha própria empresa, digamos assim, só que com uma atribuição um pouco diferente, eh, que eu mesmo acabei criando aqui, eh, por razões próprias. Então, se você tem interesse em fazer negócios com IA, cara, assim, isso aqui foi um um overview geral. Obviamente não dá para cobrir muito mais a fundo do que isso aqui. Eh, e esse é um dos objetivos lá da comunidade, onde a gente pode falar livremente sobre todos esses temas sem a limitação do formato. Aí a gente pode trocar ideia no dia a dia. As coisas
+
+andam muito rápido, né, nesse meio. Então é legal ter um meio pra gente poder trocar ideia. Existe muito espaço, cara. Muito espaço, muito espaço. Geralmente me pergunta: "Pap, você tá falando todas essas coisas? Você não tem
+
+medo da concorrência?" Cara, não tenho, realmente não tenho. Tem muita coisa para ser feita, na verdade. E eu veria a galera que quisesse entrar e quisesse construir de verdade, esquecesse esse esse esse primeira essa infância da inteligência artificial que tá ficando para trás a com ferramentas muito simples e começasse realmente construir sistemas. Ah, no fundo seria benéfico para mim também. Ah, porque as coisas
+
+começariam a melhorar e o entendimento sobre a e sobre mercado de A também mudaria. Então, se você tá fim, fica o convite hã para ir lá. Ah, se não quiser, fica aqui no canal. Eu tenho vídeo sobre isso. Isso aqui que eu posso ficar falando o dia inteiro, já que eu faço o dia inteiro. Ah, eu também falo
+
+sobre automação, que eu não sei se você percebeu, é o que software faz a vida inteira. Software automatiza, só que e a percepção de automação também foi mudando ao longo do tempo. E essas coisas todas que eu tô falando aqui, na verdade, são automação de alguma maneira ou de outra. Então é isso, gente. Beleza? Prazer revê-los e até a próxima.
+
+Abraço.

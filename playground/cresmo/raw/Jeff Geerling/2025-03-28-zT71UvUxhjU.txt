@@ -1,0 +1,128 @@
+---
+video_title: "It's about time..."
+video_id: zT71UvUxhjU
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zT71UvUxhjU
+video_date: 2025-03-28
+video_description: |
+  I control time now! At least, in the studio.
+  
+  PTP, NTP, GPS, PPS, what's it all about? In this first part to a new time series, I'll show you how I built a Raspberry Pi grandmaster time server for my network. Then I'll see how it compares to a commercial grandmaster clock from MasterClock!
+  
+  Mentioned in this video:
+  
+    - My Time Pi project: https://github.com/geerlingguy/time-pi
+    - Time HAT V4: https://www.tindie.com/products/timeappliances/timehat-i226-nic-with-pps-inout-for-rpi5/
+    - GPS Module: https://www.tindie.com/products/timeappliances/ocp-m2-neo-m9n-gnss/
+    - Masterclock CLDNTD12 Analog/Digital NTP Clock: https://www.masterclock.com/digital-analog-clock-cldntd12.html
+    - Masterclock NTDS112 Rackmount NTP Clock: https://www.masterclock.com/ntds112-ntp-display.html
+    - The Atlantic - Where Time Comes From: https://www.youtube.com/watch?v=MfV_vV0sGlo
+    - US Naval Observatory Tour: https://www.youtube.com/watch?v=SnGpdv5J4Ao
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - It's about time...
+  00:18 - The Time Lord!
+  01:25 - Building a Time Server
+  02:16 - Turning back the clock
+  03:47 - Where does time come from?
+  04:32 - Time Pi
+  06:42 - How much does it cost?
+  07:25 - The grandmaster challenger
+  08:19 - Modern clockmaking
+  09:51 - Masterclock's Production Lab
+  12:14 - DIY or buy?
+  14:24 - The Doctor is in
+  15:19 - Only the Beginning
+---
+With the powers vested in me, I will turn this Raspberry Pi into... a TIMESERVER! [thunder crack!]
+
+No, but seriously, I built a grandmaster clock, one that has built-in GPS, PTP, NTP, and even a little USB. And if you don't know what any of that means? Don't worry. This year, I'm going to spend a little time on, well, time. And who better to help me kick that off than the Time Lord himself? Greetings, Dr.
+
+Matsakis! Hi, Jeff. Good to see you! Dr. Matsakis, it is an honor to have you here at the studio. You're not actually a Time Lord,
+
+but compared to most people, you're probably the closest thing that a human could get. Could you sum up some of the things that you did with the Naval Observatory and with NIST? Well, the Naval Observatory worked for the military. NIST worked for the Department of Commerce. So we had different groups to answer to, but the goal was the same, which was to provide the best time to the people that needed it. At the Naval Observatory, in my days, we had over 100 atomic
+
+clocks, so we could have a very precise and accurate timing that was good enough for GPS. And we also helped keep the world on time, because our clocks contributed 40-50% of the weight of Coordinated Universal Time in those days." Dr. Matsakis and time experts around the world are building the most advanced clocks ever. They even use that time to test things like dark matter, or even to challenge the theory of relativity.
+
+But my goals aren't quite that lofty. My main goal today is to figure out the best way to distribute the time organizations like NIST and the Naval Observatory put out. For the past few months, you might have noticed these two clocks in my videos. These are both from Masterclock, a time company here in St. Louis, and Dr. Dimitrios is Masterclock's
+
+chief scientist. For decades, they've built clocks and timing solutions for anything from recording studios to rocket ships, and no, this video is not sponsored outside of them providing these clocks. Last year, as I got into timing more, they offered a couple clocks for the studio. They gave me a tour of their local production facility where they put everything together, from bare PCBs to shipping products. While I was there, and talking with them about their production lab, I had an idea. Why don't
+
+we have a little time battle? They were building their newest time server, and I was working on my time Pi, so why not have a challenge to see which one's better? They agreed, and here we are. But first, why have a time server? Isn't GPS on our phones and watches good enough? Well,
+
+Yes, and for most people watching this, you already have access to time more accurate than any time in human history on your wrist. So the Sumerians and Egyptians needed to have the time very precisely known so they knew exactly when to say their prayers and to please the gods. Other societies wanted to keep track of time with things like water clocks so they could show the harmony of the universe. Fast forward to the Middle Ages. People needed to know when to show up to have their fairs and their festivals in their marketplaces.
+
+And that's why they built these giant Big Ben-like clocks. And once we got into navigating across oceans, we needed to know where we were. It's a well-known fact that for navigating, you need to know the time in order to know where you are. And that led to a big improvement in clocks because we needed better clocks. Now at the modern age, just about everything in our society is synchronized by watches or time, one way or the other. And so we have to all have access to the time and access to the same time.
+
+If anybody asked me who the holiest person was in the 20th century, I would tell you it was Mahatma Gandhi. He had no possessions when he died, no money anyway, and only about 10 possessions. You can see a picture of it. He had a prayer book, he had glasses, he had sandals, and he had a watch. So everybody wants the time.
+
+But the time you get on a wristwatch has to come from somewhere. And what do you do if GPS is down? Or you're in a crowded city where GPS signals get bounced all over the place and you can't get a good fix. Or if someone's flying a drone over you and jamming your GPS signal? That's not a hypothetical.
+
+That's something happening today in various parts of the world. Back in Gandhi's day, you'd go to the town square and get the time from a clock tower. Today, we have time servers. With this little thing and with a bit of software, you can run your own little time server for your local network. Sure, you could slap GPS on every single device you have, like cameras in a stadium or servers in a data center, but that would cost a lot. And it wouldn't solve the signal issues.
+
+It's better to have one precise time server to coordinate the time on your entire local network. And that's where the time Pi comes in. This has a GPS modem on top. It gets extremely precise GPS timing signals to know exactly what the time and day is. Then it has a special network chip with something called PTP, or Precision Time Protocol. That chip has a special circuit that can send out
+
+signals for an entire network to synchronize time all the way down to the nanosecond range. And one important part of timing systems is a special PPS input and output. PPS stands for Pulse Per Second, and it's kind of like a metronome you can use to keep things in sync, even outside of your network. In my case, I'm using them to confirm the time synchronization. We'll get to that in a later video. And I'll also get to GPS a little more later. Right now,
+
+I'm actually less worried about accuracy and more worried about precision. Really simplified, there are three main parts to this time server. First, you need an accurate source for the current time. In my case, either GPS from satellites or as a backup, like here inside the studio where I can't get a signal, NTP over the internet. Second, you need a precise way to measure time intervals, so a good local oscillator, or clock.
+
+And in my case, there's one built right into this HAT. It's a little bit better than the one built into the Pi, but the important thing is it can be upgraded. You could switch to an oven-controlled oscillator, or a temperature-controlled oscillator, or even a mini atomic clock like this one for the highest precision, even without a GPS signal. But to sync that precise time with all the computers on your network, you need a way to distribute it. And that's where the whole Pi comes together.
+
+Right now, it's running as a PTP and NTP, or Network Time Protocol server, for my whole network here. This clock is using NTP to get the exact current time, at least down to a few milliseconds, from this Pi over my network. But some things like VR equipment, databases, robots, or recording devices need much better precision. And for that, we use PTP. I have the entire configuration for this Raspberry Pi up on GitHub, and I'll do a deeper dive on PTP soon, so subscribe if you want to see it. But the HAT I'm using is called the TimeHAT, and you can buy it for $200 on Tindie.
+
+A good GPS module with special timing features is also important, so mine also has this Neo-M9N GPS module, which adds on another $200. And to mount it up, I have this tiny DeskPi TT rack with a 3D printed LabStack mount. It's plugged into Ethernet through a PoE adapter, so I can power the Pi straight off my 2.5 gigabit switch. So all in, a setup like this with the Pi and antenna and everything is in the $500 to $1000 range. It's not cheap, but it's a pretty good value if you're
+
+in the market for a good time server. Of course, once you want to get more and more precise, you need to have more and more accuracy to match. And for that, you need really good GPS signals. So like this GPS antenna, this sets you back another few hundred bucks. But if you notice, this one's in my hand right now and not up on the roof. Subscribe to Geerling Engineering because
+
+my Dad and I'll be installing this soon since the weather's been getting warmer. But for now, let's switch tracks and look at Masterclock's offering. For that, I invited John Clark, the CEO of Masterclock, to the studio. You brought your Grandmaster server. This is like your newest one? Something like that?
+
+Yeah, this is our latest prototype of our new GMR6000, which is just a rack mount time and frequency system that gives you a whole bunch of different inputs and outputs. It's kind of like a Swiss Army Knife of timekeeping. And the back of it has a lot of different things that my little Pi does not have on it. Yeah and so we wanted to do the native 19 inch rack so we can have enough exposure for all the different I/O. Different people need different type of signals and different environments even need multiple signals. Sometimes they have a time source already, sometimes we are
+
+the time source. So a lot of these different inputs and outputs just allow us to be very flexible with how and where we keep time for people. Now, I got a chance to visit Masterclock's headquarters last year, and I saw where they make these things. The GMR6000 is their premium server, but they also sell a tiny GMR1000 that would probably fit inside this mini rack. And if I'm being honest, it does look a little nicer than my Pi. They don't list prices on their website, but let's be honest, when
+
+When you have a Request a Quote button, I can guarantee they're more expensive than my time server. So I won't focus on pricing in this video, but more on why companies especially would choose Masterclock over something DIY like I built here. Unlike the Time Pi, Masterclock gear is built by people like Chris, who have a passion for time and for making awesome gear. Chris is the one who designed the glowing logo on my clock, and, well, I'll just let him tell you more about it. "Basically, once it hooks to the network, you'll see that the colons will stop flashing, that's considered locked. It'll be pulling its time from our NTP server here. Overall, you've got
+
+classic like analog, you've got seconds all around, and you've got the digital portion of hours, minutes, and seconds, and then the Geerling Engineering logo. Which is, is that a new feature that you're rolling out for people? So it kind of is. This is kind of a work in progress. You are one of our prototypers for this one, I would say. We are getting more into 3D printing so that we
+
+can do more customized small batches of logos. We have designed a 3D print that fits over one of our LEDs. Basically allows us to make any kind of logo, any color, whatever we'd like. It's just nice to have that classic analog feel while still having modern digital technology. Chris gave me a full tour of one of their design areas where they're testing new equipment and new production techniques and I love the sense of humor from the lab over the lab to the board over the boardroom. They're
+
+build devices, even down to 3D-printed 7-segment displays for timers, which I think is pretty cool. They also upgraded their SMD line, where they build all the circuit boards for their clocks and timing gear, and they have a new massive reflow oven and a second pick-and-place machine, which I could've honestly stood there watching it for hours. And unlike some manufacturers, they've been extremely open with me about all their processes, including inspection, which they've been improving as they switch to FPGA chips. They have this new X-ray machine, and Chris showed me the inside of his phone's camera he explained why they need one of these things. So really because a lot of the components are, a lot of the components that we're moving to in future products are going to be FPGA, so they're all ball jointed on the bottoms where you cannot see it at all.
+
+You're not going to be able to tell whether one solder joint is correct and the rest are blown out or vice versa. So having the x-ray we can actually check for voids in there, see where it's fully soldered or if there's a pocket of air in one of those solder joints and needs to be reflowed, the x-ray gives us that kind of peace of mind that this chip is going to perform as expected and that it's fully seated to the board. So in the past, you'd use just optical, like visual inspection. In the past, most of our chips are going to be, they're going to have legs on the outside instead of ball joint underneath. So it's easy to tell whether one's attached or not, but now it's kind of attaching them blindly.
+
+The thing I love: this is all happening just a few miles from here. It's great to see a local company building stuff for decades now, and they didn't outsource everything. They still use local engineers and production workers. It honestly gives me some hope seeing people like Chris be able to do so much with the team there. They've been working on the GMR6000 for a while, and when I was there, they were still bringing all the different features online, making sure they'd meet all the security, environmental, and connection requirements for all their customers.
+
+And that, along with about a hundred other reasons, is why my little time Pi is awesome for hobby work or something small-scale, but it just won't hold up in a large-scale production environment. But it's still something I love, because hobbyists like me probably won't ever have a GMR6000 on their desk or in their home lab, but we could have a grandmaster Pi. So I asked John, after he saw my Pi setup, would he be worried about DIY time servers taking any of his market share? Some of our customers definitely could build their own time servers. A lot of them do! The reason they end up coming to us is for most of our customers, building
+
+a time server or creating these devices is not what their everyday work is. They want to use this as a means to an end for them to accomplish whatever it is they want to do. And so while you can put together different modules and pieces to create your own, you know, kind of do-it-yourself master clock, people rely on us to do it because that's what we do every day. We're the experts at it and we provide a warranty for this one So if you have any questions, problems, or issues, you call us rather than having to become the expert yourself. So, yeah, we look forward for people who buy Raspberry Pis and build their own clocking systems because it just teaches more people why our stuff is important and why our industry is relevant.
+
+Would you be nervous if somebody built, like if somebody has cheaper Raspberry Pi things, or do you think that's more of an opportunity? I think it's just the natural evolution of it. You know, you can build a cheaper camera using some of the different camera Pi accessories. You can build your own cell phone. And there's people who do.
+
+And all that shows is the prevalence of this technology and how much it impacts our lives. So when I see people putting together open source Pi solutions, it just shows how important this technology is and how many people are interested in it. And typically that means that there's more and more equipment which is being deployed, which needs accurate timekeeping, which means a bigger market for us. I know that this is the 2% of the problem and then you have 98% to go. A lot of people that watch my channel don't understand that even though I say that every time that I build one of these things.
+
+It's like this is a great thing, but it's not commercial. It's a great thing until that one edge case that you didn't think about takes it offline. And if it's your own experimental server, it's fun. But if that's what's running your bank or if that's what's running your broadcast operation, it's not something you want to experiment with. And you have BNC connectors...
+
+I have this. [a little MHF4 u.fl connector]
+
+BNC... SMA... WTF.
+
+So, Dr. Matsakis, what do you think about all this? Is there like a winner here? Is everybody going to go with a Pi now if you can get it a little cheaper? Sounds like a trick question.
+
+They each have their benefit. So if you're the kind of guy that likes to do things with your hand and have fun, this is a way to go. But if you like working with a team to make the best possible clock you can, looks like you want to go with a Masterclock. The interesting thing is that mathematics exists. So somebody who has a whole set of clocks of varying qualities can do the math and combine them in the right way to take advantage of their different characteristics and make a time better than anything else.
+
+In this case, it probably will only be a little bit better than one of the Masterclock products. [They pay me you know.] I want to thank John, Dr. Matsakis, Chris, and all the folks from Masterclock who helped me with this video, and Ahmad Bayagawi and Julian St. James, who sent over the TimeHAT and have been an immense help with all this timing stuff.
+
+I probably still got like 20 things wrong in this video, and that's my fault, but I'm learning. Every day, I'm learning more about time, and that's the best part for me. If it's not obvious, I love this stuff. I'll be sharing more, like on PTP and GPS and how I'm going to install this antenna. So, make sure you're subscribed to all three of my channels, because later this year, my dad and I might even get a chance to visit some places that are fundamental to our human understanding of time.
+
+Until next time, I'm Jeff Geerling. A TIMESERVER! [then a long, awkward pause as Jeff attempts to replace the Pi, but does so upside-down...]
+
+Shoot.

@@ -1,0 +1,25 @@
+---
+video_title: "Memory Like CPU Cache #Shorts"
+video_id: cCH09-IfaHI
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=cCH09-IfaHI
+video_date: 20260808
+video_description: |
+  Short-term, medium-term, long-term — production AI agents manage memory the same way CPUs manage cache. Here's the tier ladder that keeps context coherent without exploding your token bill. 
+  
+  Full lesson: https://aiamastery.substack.com/p/day-2-secure-memory-and-context-systems
+   #AIAgents #SystemDesign #PythonAI #Shorts #AgenticAI
+---
+Now let's zoom into the actual data flow, left to right. A message comes in and before anything else touches it, it goes through the PII detection pipeline. That ordering is deliberate and we'll come back to why in a minute. Next, it hits the context window optimizer, which decides how much of the conversation history actually needs to travel with this request. >> [music] >> Then AES 256 encryption wraps the payload and finally [music] it lands in the encrypted SQLite memory store.
+
+Underneath all five of those stages runs the audit logging layer and I want you to notice it's drawn beside the pipeline, not after it. That's not a diagram style choice. [music] It reflects a real architectural decision. If you log after the fact by reading back what happened, you're [music] reconstructing history from secondary evidence and there's a window where a failure between steps leaves no trace. [music] If you log in line at the moment each stage executes, the audit record is a primary account of what happened, not >> [music] >> an influence.
+
+Two more details worth calling out here. Compression on overflow uses three signals, an important [music] score, recency and engagement to decide what survives the move from short-term to medium-term memory. And key derivation is per conversation. The encryption [music] key for any given thread is derived from that thread's ID combined with the user session, not from one master key shared across your whole database. That single decision limits [music] the blast radius of a leaked key to one conversation instead of your entire user base.
+
+>> Let's ground all of that in real code. Up top, memory record is a typed [music] data class, thread ID and encrypted payload as raw bytes, a list of PII labels and a timestamp. Nothing about this record ever [music] stores plain text. The payload field is bytes, full stop. Below that, secure memory store is the class that owns the SQLite connection and the master key [music] used for key derivation.
+
+The method to focus on is write and look closely at the order of operations [music] because that order is the whole lesson. The classification call runs before anything [music] else happens to the incoming text. That's deliberate and it's the line highlighted on screen. If you flip that order and encrypt first, [music] classify second, you've lost the ability to make policy decisions. Redact, separate key encrypt, or purge based on what's actually in the text because [music] by the time you classify it, you've already committed it to storage in some form.
+
+After classification, [music] we derive a key specific to this thread and session, run the actual AES 256 GCM encryption, and assemble the record. Then notice the audit log [music] write happens before the persist call, not after. That's the same principle from the architecture diagram >> [music] >> now showing up as a concrete ordering decision in code. In a real implementation, you'd wrap this in a transaction. So, a [music] failure between those two lines can't leave you with an audit

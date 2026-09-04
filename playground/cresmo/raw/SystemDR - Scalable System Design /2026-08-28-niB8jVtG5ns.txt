@@ -1,0 +1,29 @@
+---
+video_title: "Twitter, Uber & Airbnb Are the Same Interview Question #systemdesign #interview #twitter"
+video_id: niB8jVtG5ns
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=niB8jVtG5ns
+video_date: 2026-08-28
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/the-same-10-questions-hiding-behind
+  🌐 Visit our website: https://systemdrd.com/
+   
+  Fan-out, inventory reservation, geospatial proximity — the 10 archetypes hiding behind every "Design X" prompt.
+   
+  #systemdesign  #faanginterview  #softwarearchitecture  #techinterviewprep  #distributedsystems  #backendengineering
+---
+Let's actually walk through the 10 archetypes, starting with the first three. Archetype one is fan out underload. This shows up in Twitter's timeline, Instagram's feed, TikTok's for you page, [music] and Slack's channel messages. The underlying problem is always the same. One right needs to reach many readers, and there's a nasty celebrity or large group edge case where a single account with millions of followers breaks the naive approach.
+
+>> [music] >> The standard solution is a hybrid push-pull model with fan out caches. Push to most users feeds immediately, but fall back [music] to pulling on read for the accounts that are too large to fan out efficiently. Archetype two is inventory reservation. Airbnb's booking flow, ticket booking platforms, parking reservation apps. The problem is preventing two users from claiming the exact same unit at the exact same moment. This is fundamentally an atomic
+
+claim under contention problem, and the same database pattern. >> [music] >> An atomic claim using something like for update skip locked solves all three products, even though they look nothing alike on the surface. Archetype three is delivery semantics under failure. [music] WhatsApp, Slack, and any task queue system all have to answer the same question. What happens when the network drops in the middle of a message being delivered? That's where at least once
+
+versus exactly once delivery guarantees and idempotency come in, and it's the same trade-off no matter which messaging product you're designing. Notice the through-line across all three, a shared bottleneck, read [music] fan out, write contention, or delivery reliability, that shows up again and again regardless of which company happens to own the product. Moving on to archetypes four through six. Archetype four is geospatial proximity. Uber's driver matching, Yelp's restaurant search, Tinder's candidate discovery, and DoorDash's Dasher assignment are all, underneath the product skin, the same problem. Efficiently finding nearby
+
+[clears throat] things in real time. The standard toolkit is geohashing, quad trees, or some other form of spatial indexing. Same index structure, just a different shape of data on top of it. [music] Archetype five is time series at scale. This covers metrics monitoring dashboards, log aggregation pipelines, ride history, and payment history. The
+
+shared problem is storing and querying data that's ordered by time and written at massive volume. And the shared solution is a write-optimized, roll-up tiered architecture. Something like an LSM tree with tiered storage that ages data from hot to cold. Archetype six is pre-computation versus on demand. Feed ranking algorithms, type-ahead search suggestions, and recommendation engines all boil down to one decision.
+
+>> [music] >> Do you compute the answer at write time and store more, accepting extra storage cost for fast reads, or do you compute it at query time and store less, accepting [music] slower reads for lower storage cost? Once you see that trade-off clearly, you can reason through any of these three products from first principles instead of memorizing each one separately. In every one of these three, the company name on the prompt is essentially irrelevant to the core engineering decision you actually need to make.

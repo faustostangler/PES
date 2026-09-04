@@ -1,0 +1,262 @@
+---
+video_title: "Answering Business Questions with SQL in Jupyter [SQL Query Walkthrough]"
+video_id: tqotTkSSSYs
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=tqotTkSSSYs
+video_date: 2025-05-23
+video_description: |
+  In this video, we will guide you through how to answer critical business questions using advanced SQL queries.
+  
+  You’ll step into the role of a data analyst at the Chinook record store, leveraging your SQL skills to extract and analyze data directly from the store’s database. By the end of the session, you'll know how to write complex SQL queries, optimize query performance, and turn raw data into actionable business insights.
+  
+  This project is ideal for learners comfortable with SQL, including writing complex queries with joins, subqueries, and aggregate functions.
+  
+  What You'll Learn:
+  - Advanced SQL Queries: Write and optimize complex SQL queries using joins, subqueries, and aggregate functions.
+  - Data Analysis: Apply SQL techniques to extract insights and answer key business questions.
+  - Business Decision-Making: Turn data insights into actionable recommendations for the Chinook record store.
+  - Real-World SQL Techniques: Strengthen your skills in using SQL for practical business analysis.
+  
+  Recommended Prerequisites:
+  - SQL Fundamentals → https://www.dataquest.io/path/sql-skills/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-answering-business-questions-using-sql-3/
+  
+  Project Chapters
+  00:00 - Intro
+  02:06 - Setting Up Jupyter
+  03:44 - Querying Table Names from sqlite_master
+  04:45 - Exploring the Tables
+  05:58 - Question 1: What Genres Are Popular in the USA?
+  20:14 - Question 2: Which Employees Are Selling the Most?
+  29:10 - Question 3: Which Countries Have the Highest Sales?
+  42:42 - Using SQL with Python
+  51:17 - Ideas for Next Steps
+  
+  #SQL #sqltutorial #database
+---
+Hi, welcome to the data quest project lab. In this video, we are going to be answering some business questions using SQL queries and we're going to act as data analysts for a fictional record store company called the Chinuk record store. And the Chinook database is a very very commonly used database for learning purposes. So, here's a quick view of the schema that we'll be using. And you can see that we have lots of tables. We have a table with employee
+
+information, customer information, invoice information, and then going down into more granular information about the records themselves with track genre and album information. So to get us started, we are going to hop into the data quest platform and we're actually using a Jupyter notebook for this SQL project. It's a little unconventional to use Jupiter for a SQL project. You could use a tool like DB browser if you wanted to use SQL light. Um you could install Postgress locally or use the SQL flavor of your choice.
+
+But a lot of people that use the Januk database are learning SQL and potentially hoping to include their work in a portfolio project. And Jupiter is really good for that because you can include markdown cells. You can see I've already added a markdown cell here. If I double click, I've set it as a level one header and render it by clicking shift enter on my keyboard. And the reason this is so good for portfolio projects is you can explain your SQL query process and also show any output from the queries right here in the interface.
+
+So it's a lot more friendly for sharing. So to get us started, we are going to start with a overview of our database just by looking at the tables. But because we're using Jupyter notebook, we do need to help Jupiter understand that we're writing SQL because Jupiter is set up primarily for Python. So what we're doing here is we have three lines of commands for Jupiter magic. It's called this first line is capture and it is going to remove any warnings that IPython may try to give us for loading in the SQL extension where this one is loading in SQL and then this last command is loading in our Chinook database. So shift enter to run
+
+this cell and we can see that we're now connected to the Chinook database. If you're unfamiliar with Python and you're just tuning in for the SQL part of things, don't worry. Um, this is as much as you need to know to be familiar with the Jupiter environment. Um, although there is an optional portion at the end of this session that will go into a little bit more depth about how you can use Python skills with your SQL queries in this particular Jupiter Jupiter setup. Um, and just out of curiosity, let's see what happens if we remove capture and rerun this cell. Notice our output here
+
+starts with connected. Rerunning it, we see more text. And the capture magic here just cleans up the output a little bit because that's not output we need our end user to see. So, the very first thing we're going to do is look at our table names. And this is specific to SQLite. If you
+
+are using a different flavor, this will not work. Um, but what we're going to be doing is looking from the SQLite master database. It's going to store all of our database information. And we can see the names of all of our tables in this way. We also I'm going to change tabs here. We also do have the schema which
+
+is something that we'll be referencing from time to time. I sometimes get asked how I know the name of a particular column or a particular table in the query I'm writing and it's because I've spent a lot of time staring at this particular schema diagram. So if you are wanting to do the project on your own, which I do encourage you to do, you shouldn't be surprised that you'll be referencing your schema a lot. So, another really good um best best practice is to familiarize yourself with some of the tables in your database. And actually, there's one thing in this cell I didn't talk about and I want to do that now. And that is
+
+using percent SQL. And this is some SQL magic that tells the cell to render the entire entire Jupyter cell as SQL. So we're going to select everything from a table. Um let's go from track and referring to our schema diagram once again. track is the table that has information about every song in the record store database. But of course, if we run this
+
+now, we're going to get probably hundreds of rows, and we don't want that. So, I'm going to limit this to five rows. Uh, and we can see here we have track ID, name, album ID, composers, so on and so forth. Um, a lot of these are ids which is going to be very valuable information for us when we want to start joining our tables together. Uh, so the very first question we're going to be answering here, let me see. Okay. Okay. Yeah. So,
+
+we can see the instructions above my head. This is what we're going to be doing. the record store. The scenario is that the record store has a couple artists that they are looking to sign, but the artists are in different genres. And in order to maximize profits, they want to make sure that they choose an artist with a profitable genre and specifically for the US because that's the market where these records would be sold. So, we have a couple things we
+
+need to do here. referring to our diagram again, we need to look at genre which is in its own table down here with the genre ID and name. So we need to look at the genre. We also need to look at the billing country which is way up here in the invoice section. And we also want to see how many tracks are sold. So
+
+that's going to connect to our track table. So we are going to need to combine several tables here together in order to get all of the information we need. So before in every cell when we want to run SQL we do need to use our SQL magic. Let me reference my notes here. And for this query we are going to use a common table expression or a CTE and that starts with width. And we are going
+
+to what what a CTE basically is, it is a temporary table that you will be able to use in your other SQL queries. Um, if you're familiar with views, views and CTE are similar, but views are considered permanent and they are added to your database. Whereas CTE are not permanent. They are not added to your database. They are only usable within the set of queries you are currently writing. So, we do need to name it
+
+because we're kind of creating this temporary table. And because we are dealing with genres for the United States, I am going to call this table genre USA tracks. And because we're naming something, we're going to use that as an alias. And for our CTE, we are going to have to put it inside a set of parenthesis. Okay. So, this is the
+
+syntax for creating a CTE. And now within it, we write a regular old select statement query. So what do we need to do here? Uh I'm going to start by saying what columns we're going to select. So what do we need? We need
+
+um because we're going to be counting how many tracks were sold, the number of tracks sold are going to come from our invoice line table where every single row in the invoice line table represents a um line of the invoice which represents a line or represents a track. So I know I'm going to be joining tables. I'm going to go ahead and start with the aliasing now. So I stands for invoice line and I'm going to use our invoice line ID. The next thing that we know we're going to need is genre. We need to know the name of
+
+the genres that um are popular or not popular in the United States. And this will come from our genre table, which I'm going to alias as G in a moment. And in the genre table, the name is name. But this isn't going to be descriptive once it leaves the genre table and enters our genre USA tracks table. So I'm going to alias this as genre. The next thing we're going to
+
+need is the track ID from the track table, which I'm going to alias as T. And the last thing we're going to need is because we are going to look at the USA in particular, we need our country from our invoice, which is going to be billing country. And just to clean that up a little bit, I'm going to alias it as country. Okay. So at this point we are going to be doing a series of inner joins because we um don't want any information that is present in one table that isn't present in another. And
+
+in order to do that I'm going to start with the tracks uh is it track or track track as I should capitalize that for best practice as t. And now here are our joins. And I'm going to copy and paste this section just for times sake. But we have our three joins and these joins are coming from the uh columns I know that we wanted from our select statement. So we're joining our genre table on the genre ID. And
+
+there is a cleaner way to write this. I could have used using but for clarity sake I decided to use on and then say genre id equals genre id and um same thing for joining the invoice line table and our invoice table. Now we are nearly done with our CTE here. The last thing we need to do is we need to ask ourselves, okay, if this is for genres in the USA, well, right now this is going to cover everything, not just the essay. In fact, let's visualize that.
+
+Let's select everything from this CTE we're creating. And I'm going to limit the results to five. And let's run this. Make sure it runs correctly. Yes. So,
+
+we're seeing USA. But what happens if we um that's not where that'll go. Uh let's order by country descending. And now we can see that it's not the USA. We have countries like the United Kingdom in here. Um and in fact,
+
+if we order by ascending, which is the default, we'll see Argentina. So the final thing we need to do in our CTE is filter with a wear clause. And the filter we're using is on our billing country. So I do. Billing country equals USA. Uh notice that I am
+
+referring to the original name and not the alias names. This is best practice in SQL. And depending on your flavor that you're using, um, if it's more rigid, it actually won't allow for an alias here. We can try it out. We're using SQLite, and SQLite is known to be very very flexible.
+
+So, it does work in this case, but if you're using something less flexible, um you would want to ensure that you're using the nonaliased version here. Okay. Uh so, this is the first part of our query we're writing together, but we don't have a grouped genre happening. We don't know how many uh tracks are bought from each genre. Right now, we have a really long list showing our inverse lines, our genres, and our track ids. So, let's
+
+delete this test query. And we're going to now use our CTE to write our final query. So, what do we want? We want to select the genre. We also want to select a let me river this. There we go. We
+
+want a count of of everything. And we're going to call that the count. And I'm going to stop here for a second before we add our final column to our select statement. I'm referencing my notes here if you see me looking to the side. And where are we pulling this information from? We are pulling it from
+
+our genre USA tracks table that we just created. But we want to account for the fact that we have used an aggregating method here and group by genre. So let's see what happens if we run this right now. Okay. Um, so far so good. It's It's
+
+not bad, but we could do a little better. It's not clear right now um what the most popular genres are. So, instead of having it looks like the default sort is going by genre alphabetically, let's order by the count. So, I'm using two, which is the shortcut to say order by the second thing in the select statement. And the second thing in our select statement is the count. And we
+
+want to specify we want this in descending order. So the largest count is at the top. Okay. So we can see that rock is by far the most popular genre in the USA followed by alternative and punk and metal. And the least popular is TV shows and soundtracks. Okay. Interesting. But
+
+we could make this insight a little clearer to an end you end audience by giving some percentages. So this line is pretty fun. I like this a lot. We are going to create a percentage column where it says, okay, 561 rock tracks sold is a percentage out of how many tracks sold in the United States. And what we're going to do for that, a percentage is always the part divided by the whole. And the
+
+part, the part is what we just had before. the count of everything. But for the whole we are going to use a subquery. And a subquery is an entire query nested inside another query. So we're going to say select and we're going to count everything, but we're not counting everything in a grouped manner here.
+
+What we're doing is we're counting everything directly from the genre USA tracks table.
+
+Um, there we go. And we're going to alias this as percentage. Now, I'm going to run this. And there is something incorrect about my code that we're going to notice very quickly. Well, that wasn't supposed to be it, though. Let's take a
+
+peek. Error near count.
+
+Oh, I'm missing my comma. Let's try this again. There we go. Um, so you can see all of our percentages are zero, which doesn't make any logical sense because clearly 561 rock tracks sold is a larger percentage of the whole than zero. But the problem is, look at the kinds of numbers we're trying to do division on here. Count is
+
+an integer and count is an integer. So we're doing integer division here. So SQL is interpreting this as us wanting a whole number answer, which isn't going to work. So there's a a couple different ways we can handle this, but we need to in some way signal to the query here that we want float or decimal numbers returned. Um, just because it's good for demonstration purposes, I'm going to show what it would look like if you used cast here. So, cast will tell SQL to
+
+make this value, cast it as a float, not a float display. And now instead of 561, for example, it's going to read this as 561.0. And now when we run it, we see percentages. Um, uh, if you wanted to clean this up a little bit more, a couple recommendations. You could
+
+multiply this by 100. So it's a true percentage and not decimal format of the percent. Um, I do caution against rounding your percentage here unless you are absolutely certain that this is the final form your data is going to take. Because if you round here to two decimal places for example and then you need to take this query output and use it for another calculation you are losing the precision that you rounded to. So now we can very clearly see um that rock makes up not just a lot of the track count for the United States, but in fact over 50% of the tracks are in the rock genre. So that is our first
+
+query for the Chinook record store. And to scroll back up here, we can actually see the artists that were considering signing for record deals in this scenario. and hiphop, punk, pop, and blues are their genres. And given that, um, punk probably would do pretty well. Pop, where's pop? Pop
+
+would be okay. Blues would do pretty well. And hip-hop. So, hip-hop is below pop. So given that that is the lowest popular or the genre at the lowest popularity for the United States, we would probably recommend signing these three artists instead of the hip-hop artists if we were going just on genre alone. Okay, for our next query, we are
+
+going to look at employee sales performance. If we go back to our schema for a second, we can see that there's an employee table that links directly to the customer table with a column called support rep ID. And the reason for this is every customer is automatically assigned a sales representative. And so what we want to do is we're curious if every employee is performing similarly with their customer sales. So our instructions are here.
+
+Let's make sure you can see that behind me. Yes, step one is the most important here. Step two is just asking you to write a short statement. So, we want to find the total dollar amount associated with the sales for each employee. And because we're in a new cell to write this query, we need to use our SQL magic and select. So, starting with the select
+
+statement, we have several things we're going to add to our select statement. That's why I'm um putting this on the line underneath. Although I guess technically for our first um column we can stay on the same line. So what do we want? We want employee name information. And currently in our
+
+employee table it's split into first name and last name. And that's fine. You could keep last name and first name separate but I just wanted to put the last and first names together. And because we will be joining the employee and um invoice tables together, we will need an alias. So for the meantime, while I'm setting up the columns, we're going to use E is going to be the alias for the employee table. So E do first name is
+
+going to be the first name of the employee. And we're going to concatenate that. And concatenate is to join two fields together. And we want to have a space in between the first name and the last name. If you are choosing to complete this project with a different SQL flavor, uh this is how you concatenate columns with SQLite, but other flavors may use uh concat function. And we do want to alias this
+
+as employee name. So for our next column, we're going to include their hire date because I'm curious if we're only looking at total dollar sales responsible for each employee. If an employee was just hired yesterday, that's not a really fair evaluation metric for them. So this is going to be an important one for us to keep in mind for the final line of this select statement though. Okay. So we want to see also
+
+what is the count of customers that each employee is responsible for. Um and we could do this a couple ways. When I was chatting about this in the live webinar version of this recording, someone suggested using distinct for customer IDs, and you're welcome to do that. Um, it just will give you a slightly different um view of the data. So, we're going to alias this as customer count.
+
+And now we want the sum of all of the invoice totals. Remember I will be aliasing things in our join statement. So I stands for invoice, C stands for customer and E stands for employee. Um, so the sum of total, let's alias that as total sales and then dollars just in case it wasn't clear. All right. And for now, let's
+
+have that be the end of our select columns. And where are we getting this information from? We are getting it from the customer table. as C. And now we have our joints. Let's go
+
+ahead and copy and paste those over. Um, so this is a good example of where we have to use on for our join instead of a shortcut like using because the support rep ID is the employee ID, but they don't share the same name across tables. So we need to specify what we're joining on here. Okay. And now here is the line that we need to pay special attention to group by. So because we
+
+have count and sum which are aggregate functions, we are going to group by the employee name. And um actually I'm not going to use the alias employee name. Let's let's use our number indexing shortcut here. So we are grouping by employee name. But notice that I have a comma here and that's because we also need to group by hire date. Uh it wouldn't result in
+
+something different for this particular case because one we're in SQLite and two the hire date should be consistent across the same employee. The same employees hire date in row one will be the same as the employees hire date in row 500. But best practice in in SQL is to not have any what are called bare columns which are columns that are in your select statement but are not being grouped by. Um so this is best practice and let's see what happens when we run this. Oh I have an error here.
+
+Let's take a peek. No such column customers ID. Let's try customer ID. There we go. Um, and we can see that Jane Peacock has a total sales and dollars of 1731. Um, looks like she is the most
+
+senior employee, whereas Steve Johnson is the newest employee and has lower total sales as a result. Um, but I'm curious to see the average dollars per customer. So the final thing I wanted to do here is very very similar to let me scroll back up very similar to what we did here for our percentage calculation. um where we are going to take the the total amount of sales for the employee and divide it by customers to give us kind of an average value per customer for each employee. Uh so let's go ahead and do that.
+
+So, we're going to need to cast again because we're going to be working with um actually we don't need to cast necessarily. Let's explore not casting. Let's see what happens. So, we're going to do the sum of the total and then we're going to divide that by the count of customer ID and alias that as average dollars per customer. Okay. Um, so we can see here
+
+it looks like Jane Peacock is just knocking it out of the park compared to her co-workers where her average dollars per customer is about 18 or $8.16 whereas both of her colleagues about $7.40 41. So either she is outperforming or the other two are underperforming. But I thought this metric was a little bit more interesting to look at.
+
+Okay, so these are two of the queries that we wanted to go over together so far. Uh, one moment, let me make sure everything is looking good.
+
+Um, okay. And so the very final one we're going to go through together is looking at sales by country. So me scroll down to the instructions here. We're going to write a clear a query that looks at data from different countries. Um so let's start that. Let's
+
+start that new cell. So SQL magic and let's start. We're going to use a couple CTE here. It's our our only example today that has multiple tables being assigned in the same with statement. So there's a slight syntax difference we'll have to account for there. So
+
+with customer counts as and so the very first thing we're going to do here is select country and the count of everything as the number of
+
+customers from customer and then group by country. So just to demonstrate what this looks like as it is and uh to debug, let's select everything from customer accounts which is the table we just created. But let's limit actually we don't need to limit our results here. I've seen this table and I know it's not too large to render in full. Um, I keep adding an S to customers today. There we go. Um, so we can see a
+
+couple things. First of all, there are a lot of countries with one customer associated with them, which doesn't add a ton of value uh to our analysis and in fact could like detract from the main analysis we're trying to make. So, what's going to make this query a little more complex is we want to remove the names of countries that have only one customer associated with them and instead cluster them all into one country called other. So, we're not removing them. We're not filtering them out entirely from the query, which that would be simple. we want to put them
+
+into one grouping together while still keeping you know Brazil and Canada. We want to keep those countries with their associated numbers correctly. So in order to do this we are going to be a little clever and label our invoices with the country name or other. And to do this we're doing another CTE. Um, let me indent this just so it's clear. This is
+
+the name of our table. And then this is the query for that table. And because we're creating more than one CTE within our width block here, we're using a comma. And now underneath the comma, we're going to make our next table called labeled invoices. Notice we don't have to use with again because we're still within that command. as I should
+
+have a space here for best practice. Okay, so what do we want? We want to select and here we're going to have a case statement and our case is when our number of customers and where does the number of customers come from? It comes from our customer counts table. So my aliasing strategy here when CC num customers and we'll join this in a moment um is equal to one. So when there is
+
+only one customer associated with that row then we are going to label it other. Otherwise let's there we go. Else we're going to return the country name as is. And what are we doing here? We're going to end that and alias it country. Okay. So this is our fancy bit
+
+of logic for this particular query. Um and now we are going to add in other information that will be valuable when we put our final query together. So what does that include? It includes our customer ID. That includes our invoice
+
+ID. It includes our unit price from the invoice line table. And now we're going to join a bunch of things together to make sure we have all of the information we need from uh for our select clause. So here we go. From invoice line as and then we are going to join. I don't know why I've been copying
+
+and pasting the joins and not other things. It just feels like a lot of uh typing that isn't very interesting to to explain as we go. So join we're joining invoices I using. So just for a little bit of variation in the teaching here, this is a example of how you can use using if the column name is the same across tables. Um whereas this one does the same thing. We could have used using
+
+here but we are using the equals method. And then we are also joining customer accounts as CC. And I don't know why this was on its own line on uh country equals country. Okay, so that is our second CTE. Um so let's just take a peek at what our labeled invoices looks like. I
+
+don't know how long this table is. So I will add a limit statement here. Uh oh, we have an error. [Music] Um, int syntax [Music]
+
+error. Let's see. The one thing I dislike about using uh Jupiter with SQL like this is the debugging hints it gives. Not not as good. Not as good. So, I'm having to
+
+comb through the code here and see if I can spot the
+
+error. All right. Where do we have it? Oh, I see it. I need a comma after our case statement because the case is a column in our select clause. Well, that didn't solve
+
+the issue
+
+though. Why is there a parenthesis here? That doesn't belong. There we go. All right.
+
+Successful debugging. Um, so labeled invoices. Um, okay. So, the USA, that's that's cool. But it'd be nice if we could see something
+
+else. Oh,
+
+country. Um, order by, not sort by. There we go. Okay. So we can see that country is not just USA. I was a
+
+little nervous from our earlier query where we were just focusing on the United States. So labeled invoices is looking successful. We did a little bit of debugging. So I'm glad we did that before I wrote the um the final query for this question. So we know we have our countries. We know that we have counts
+
+associated with those countries and unit prices associated with those countries. So the final thing is to put it all together. We're going to select the country. We are going to select the count of distinct customer ids as customers. And then we are going to uh sum all of our unit prices together because we're going to we're prepping for a group by, right? We're going to
+
+group by country. We know that's where we're headed. And because we don't want bare columns, everything needs to be aggregated here. So the sum of the unit price column, which we can see nicely rendered here as a little hint for us. And now, um, we have a couple more things we can add here, but just to start seeing things visually a little bit more, let's render what we have from labeled invoices and group by country. Okay.
+
+Uh, we don't need a comma there yet. There we go. Um, oh, sum. I should give this a better alias because that does not look very nice. So, let's alias this as total total sales. Total
+
+sales. Okay. Uh, so this is already looking a lot more usable. We can see all of our countries. There's no more ones kind of just taking up all of the table's visual space. Our other is here
+
+and we can see that there are 15 countries or 15 customers and countries really represented here. Um but wouldn't it be nice if other was at the end of the table like is very commonly seen in lots of analyses. So we have a really cool order by we're going to do for this order by a case. And the case we're going to do is when country equals other then one otherwise zero. And the reason this works is because order by by default sorts in ascending order which means zeros will be populated before a one.
+
+So if we do this now, we can see our countries are doing their country thing, but other is sorted down at the bottom, which is pretty cool. Um, we can also order by let's order by total sales, which one, two, three is the third thing in our list here. I think you can combine successfully like that. Um, but we want that to be descending because we want our largest sales first. There we go.
+
+Uh, and the reason I used a shortcut number here, the reason I used a shortcut number here is because I didn't want to have to reference the sum of the unit price in the order by it. It just felt messy to me. Okay, so we can see the USA has the highest total sales followed by Canada, Brazil, and France. Um, looks like this check the Czech Republic is a little bit interesting because two customers have higher total sales than the United Kingdom, which has three customers. So, a couple big spenders there. And then
+
+our other category has high total sales, but if we divide that by 15, um, probably probably no markets that we have enough viable data here to make an impact on. Um, okay. So, this these are the queries I wanted to go over, but the final thing I wanted to talk about in this video was because we're in Jupiter, it's begging the question, how can we use this with Python? Wouldn't it be cool if we could visualize this information using mapplot lib for example? And the great news is we can. There's just a slight slight
+
+difference we have to account for. So because pandas is the python library that is very commonly used for data because uh tabular data and pandas are just they go hand in hand. So we're gonna alias that as PD and because we're transferring from SQL to Python, I need to remember Python is case sensitive and a lot more particular about syntax. We have not started this cell with our SQL magic. So it will render as Python and not render as SQL.
+
+Um, so if we want to combine the powers of SQL with Python here, what we need to do is we need to play using Python's rules. We need to make SQL work with Python, not the other way around. So if we wanted to do a test query here, select everything from customer limit five. Notice that I'm playing by Python rules by making this a string. It's in quotations. It's a
+
+string. And for clarity, I am assigning that to a variable named query. Our SQL query is select everything from customer. And now we are returning to SQL magic. But not not this way. That's
+
+not what we're doing. two percentages, two percentage signs means the entire cell will try to render a SQL. Uh actually don't know if order matters here. Okay, it does matter. So um this is it's not going to play nicely. So
+
+what we need to do instead is a single percentage sign. And for clarity, I'm going to use a Python variable named result with our inline SQL magic. Inline SQL magic is 1% sign. And in order to tell it what we are SQLing, we use the dollar sign. And then we're going to tell it our variable named query.
+
+And if we print result using our Python print syntax, we can see that does not look very nice. That does not look very nice at all. Um, and that's because it's in a funky format right now, which is why pandas may help us. Um, Jupiter can also help you out here. It will try to pretty render everything it can. So, if you
+
+remove the print statement, you actually get something that looks a little bit nicer. Um, just because I'm curious, what's the type of result? because we're using SQL magic, we're giving it a query that if this was just Python and not connected to SQL, this would just be um actually let's demonstrate that this would just be a string, right? It doesn't connect to anything except that we're telling it to connect to something. So, what is the type of this?
+
+And we can see that it is a SQL result set. Um, and because of this, there's a couple ways we can handle this next part. Data frames in pandas are great, but this is is going to look a little ugly, actually. Um, and why does it look ugly? Because we don't have our column names present anymore. We don't have our index. We
+
+kind of have a duplicated index system here. Um, so we can actually do our data frame creation this way. Um, and now will it give us the head? Nope. Nope. Nope, it won't.
+
+Um, okay. I was still experimenting with this before I started recording. So, clearly I need a little bit of refining. Um, but let's ask AI for assistance here. In general, I think AI is great as an assistant. It
+
+is great to help you do your job. Um, so I'm going to feed this to AI and see, okay, how do I make this work with pandas? I know this is behind my head right now, but we'll see the output at least. Okay, so the first part is fine. We don't need to worry about the connect statement.
+
+That's incorrect. Um, no, no, no.
+
+[Music]
+
+Let's let's troubleshoot here. Let's troubleshoot. Figure it out. So, what I like to do is I copy and paste my code and then the error message I'm getting and see if it can help out here.
+
+Oh, very simple fix. Very simple fix. Phew. Phew. I thought I uh completely forgot what I was doing, but I just needed a little bit of nudging in the right direction. Um I totally forgot
+
+that I needed to use the parentheses here when I assigned the data frame. Um and now you can see that our pandas methods work. Um, we could do all of our pandas calculations here. Um, we could just for fun, um, let's copy our last query, we need to copy the entire thing. And because it's going to be a multi-line or a very, very, very long single line, I'm going to use triple quotations.
+
+and um that allows us to copy our entire query in as it's formatted existing um with Python playing well with it. So now if we render this, we'll see we have that table um that we had up here, but now it is in pandas format. As we can see, we can use pandas with our queries as long as they are formatted to play nicely with Python to kind of open up a lot of doors to take our SQL data from a relational database, which SQL's great at handling that. But unless you are using a production tool maybe something like looker or mode or Tableau PowerBI getting from your query results into insight that can be tricky sometimes. So having this ability to take SQL and convert it into Python is very cool and I am excited to see what you could do next.
+
+Speaking of, I have a couple ideas if you wanted to take this project and run with it. I showed you three query examples in the data quest guided project. There is one more query as part of the guided project that I'm leaving up to you. I would love to see what you do with it. And if you do complete that final step, which I'll preview for you here, where you're looking at whether albums or individual tracks are um more popular for the Chunic Record Store, and it's a very complicated query. If you take a stab at it, I would
+
+love for you to go to the data quest community and tag me in your post. You can tag me by adding uh Anna_straw and I would love to see what you do. And in addition to this final part of the guided project, a couple more next step ideas. Which artists are the most popular for people to include in playlists? Questions like how many tracks have been purchased or not purchased? Are there any tracks in the
+
+Chinuk library that have never been purchased? That could be interesting to look at. Maybe they're from certain genres. Maybe they're from certain artists. Um, is the range of tracks in the store reflective of their sales popularity?
+
+So, are some tracks more popular than others? And does that align with expectations? And do protected versus nonprotected media types have an effect? Do you think that streaming or pirating downloading has affected some types of media? You can investigate because remember in our schema we have multiple media types. We have multiple media
+
+types and um it could be interesting to look at. So without further ado, thank you so much for tuning in for this video and I hope you learned something. If you do have questions, feel free to reach out and I'll catch you next time. Thanks everyone.

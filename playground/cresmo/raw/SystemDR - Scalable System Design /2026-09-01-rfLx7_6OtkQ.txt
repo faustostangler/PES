@@ -1,0 +1,29 @@
+---
+video_title: "The Question Behind 10 FAANG Messaging Interviews #systemdesign #roadmap #faang"
+video_id: rfLx7_6OtkQ
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=rfLx7_6OtkQ
+video_date: 2026-09-01
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-whatsapp-the-senior-walkthrough
+  🌐 Visit our website: https://systemdrd.com/
+   
+  Slack, Discord, iMessage, Messenger — they're all the same interview question. Here's the spine that connects them all.
+   
+  #systemdesign  #techinterviewprep  #whatsapp  #FAANGInterview #softwareengineering
+---
+This is the question that defines the real-time messaging archetype in system design interviews. 10 different questions in the question bank are really the same question wearing a different name. Slack, Discord, Zoom, Twitter Spaces, iMessage, Facebook Messenger, Google Chat. They all share one spine. A long-lived connection problem, a delivery semantics problem, and a presence problem. Get fluent with
+
+those three and you can walk into almost any messaging interview and answer whatever variant you're handed. Let's build WhatsApp from the ground up the way a senior plus candidate would. The surface question looks deceptively simple. Two people want to send each other messages and those messages should arrive even if one person is temporarily offline. But the probe underneath that sentence is anything but simple.
+
+Interviewers ask this question specifically because it exposes how you think about distributed systems under failure. What happens when the recipient is offline? What happens when the network drops halfway through a send? What happens when the same message arrives twice? [music] Because a retry fired. And what happens when a single
+
+user has five devices? A phone, a tablet, a laptop, a web client, all expecting to see the same conversation in sync. Those four failure modes and how confidently you handle each one are genuinely where the round gets decided. Everything else, the boxes and the arrows, is scaffolding around those four answers. Before you draw a single box, there are six clarifying questions worth asking and two of them are load-bearing for the entire design that follows.
+
+First, [music] is this one-to-one only or do you also need group chats? Groups introduce fan out, sending a single message out to as many as 256 recipients. So state clearly which one you're solving for. And for a senior-level answer, design for both, starting with one-to-one and explicitly extending. Second, [music] and this is the big one. What are your
+
+delivery guarantees? At most once, at least once, or exactly once. And saying out loud that exactly once is theoretically impossible across an unreliable network in a strong senior signal. Third, [music] how many devices does each user have? Because that decides whether a message needs to fan out to just one target or several. Fourth, how long do you retain
+
+messages for an offline recipient? Most production systems land on 30 days. Fifth, are you designing with end-to-end encryption, which changes what the server is even allowed to see? And sixth, pick a working scale number, so your estimates aren't hand-wavy.

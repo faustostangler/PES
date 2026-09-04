@@ -1,0 +1,187 @@
+---
+video_title: "Project MINI RACK - a Homelab Revolution!"
+video_id: y1GCIwLm3is
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=y1GCIwLm3is
+video_date: 2025-01-17
+video_description: |
+  The time has come for the MINI homelab!
+  
+  Special thanks to DeskPi for sending over their mini racks! Note: they did not pay me to make this video nor have any input into the contents.
+  
+  The DeskPi RackMate T0 Pi 5 cluster giveaway is over, and a winner has been contacted. I have not yet heard back, but will update this post with further information.
+  
+  The entry form (now closed) was located here: https://forms.gle/PP5rPXLF6Gm8X2FfA — **Congratulations to Sam J on winning the mini rack**; happy homelabbing! NO PURCHASE NECESSARY. See official contest rules here: https://www.jeffgeerling.com/2025-sweepstakes-rules
+  
+  Resources mentioned in this video:
+  
+    - Project MINI RACK: https://mini-rack.jeffgeerling.com
+    - LabStack Mini: https://github.com/JaredC01/LabStack
+    - Blog post with more info: https://www.jeffgeerling.com/blog/2025/project-mini-rack
+    - Mini Rack 001: https://github.com/geerlingguy/mini-rack/issues/3
+    - Mini Rack 002: https://github.com/geerlingguy/mini-rack/issues/4
+    - Mini Rack 003: https://github.com/geerlingguy/mini-rack/issues/6
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - You CAN take it with you!
+  01:17 - Little modular racks
+  02:49 - Project MINI RACK
+  03:25 - LabStack Mini - modular, open, and free!
+  08:27 - Some things work, some things need improvement
+  09:35 - Mini Rack 001 - go-anywhere multi-gig cluster
+  11:41 - A solar-powered portable rack
+  12:44 - Mini Rack 002 - a more economical Pi cluster
+  14:34 - Mini Rack 003 - ITX to the gills
+  15:44 - Build Showcase
+  15:59 - JaredC01's party tricks
+  19:56 - Raid Owl's hashtag
+  20:41 - TechnoTim's RGB-powered rack
+  21:41 - Hardware Haven 3D printed all the things
+  22:18 - Just the beginning - and 002 giveaway
+---
+Most homes don't have room for a rack this big. And this is a problem in homelabbing. I mean, if you want to cosplay as a sysadmin, you need a rack, right? Luckily, more and more products are coming out in a new rack format, the 10-inch mini-rack. I have one right here.
+
+And wouldn't it be nice if you could take your whole homelab with you with zero downtime? Let me get this plugged in really quick. So these racks come from DeskPi, and they're 4U high. That means it has four standardized 1U spaces for equipment. What equipment?
+
+Well, pretty much anything. There are network switches, power distribution units, rack shelves, mini PCs, modular SBC clusters. There's even a mini-UPS in this one, and it can get backup power from a solar panel. But these 4U racks aren't the only option. DeskPi actually makes this 8U version, and you can even buy this little kit of screws to join together this and this and get 12U.
+
+And DeskPi is not the only option. A lot of other manufacturers make mini racks, too. DeskPi did send me these racks, but they didn't pay me to make this video and they have no input into what I'm saying. I've actually been emailing back and forth with them and other companies for years about mini racks. I really want the 10-inch standard to go mainstream.
+
+DeskPi just happens to be one of the first companies that went all-in, so I'm happy to give them a shout-out. To mount a mini Pi cluster in this rack, I worked with a local maker, Jared. He built out a modular system that can be cut from metal or even 3D printed. I can install Raspberry Pis, Intel N100 SBCs, Keystone panels, even JetKVMs for lights-out management. And this system here only takes up 2U of space.
+
+The rack has a UPS for battery backup on the bottom. Then there's my 2U modular Pi cluster running Kubernetes. On top is a 2.5G rack-mounted PoE switch. That provides power and networking for the whole cluster.
+
+A setup like this would be perfect for a small apartment, a home, or even one thing I've been working on with my dad. Little modular kits you can take to remote sites and just swap them out if you have any problems. Like, seriously, he manages dozens of radio tower sites. Each one needs a wireless router, a wired router, a Pi for remote access, a little network switch, and usually one or two other devices. Throw a Keystone patch panel on the back, and you can build a modular setup you could deploy anywhere in a heartbeat.
+
+If you play with RF, throw aside antennas in your bag. Slap some SDRs on the Pis, and you have a fully portable wireless rig. But my main goal right now is to downsize my homelab. I currently run this massive rack, and really the main things running in it are all on Pis. There's just a ton of dead space in the back.
+
+I also have these two huge NASes, but ever since I moved into my studio, I only need like 4TB of storage here at home. Having over 100TB of storage, like I have right now, is a little overkill. I think I can downsize. So my goal is to downsize everything in here into an 8U mini rack. But that, I think I'll do in another video.
+
+Today I want to focus on Project Mini Rack. I created a new GitHub repo where I'm putting everything I've learned. I'm putting up guides for all these setups I've built, and hopefully we can use it as a community resource for anyone else who wants to build a mini rack. And if you watch to the end, I'll tell you how you can enter to win this rack, complete with this 4 node Pi 5 cluster. Though unfortunately, I have to limit entries to the US only.
+
+The heart of this mini rack is the modular system Jared and I built, called LabStack Mini. If you haven't met Jared, he's the guy I featured on my second channel, who made a bunch of rack mounts for the JetKVM. He's also on the Voron team and designed the open source Galileo 2 extruder. This is what we're calling the LabStack Mini. It's for a 10-inch rack design.
+
+And how the whole thing started goes back to the JetKVM actually. I had a few people request 10-inch versions of it for mini racks, including you, Jeff. I wanted to put something together. You and I had talked about putting some pies in there as well to fill up some of the extra space. I looked at it in CAD and found that it wasn't really easy to do a 1U with everything on it.
+
+But what I could do is kind of rotate everything on its side and have enough space. So in doing that, it turned into a 2U design. And basically, this is the metal version of it. There's also a plastic version of it. But basically, there's four different modules that are in here.
+
+They're all interchangeable. They all use the same mounting. You can go upside down, right side up. It's very modular. It's very workable.
+
+The updated 3D printer version does have some bracing on the back to kind of help with rigidity there. I made a number of modules. This one will hold up to two Pis. And you can put PoE power on these. That's the easiest way to do that.
+
+But you can put PoE HATs on them. And then they basically slide into place. A couple of screws will hold them there. And you can do up to four of those. So for density, you can do up to eight Pis per side.
+
+And theoretically, you could actually do two of them on a single rack and have 16 Pis in there if you had enough PoE capability and a large enough switch to be able to cover all that, which is a little hard to get in a 10 inch. But it's not completely impossible. So the Radxa, with the way that it works, it's an Intel N100. But the processor is on the back side. So they have this massive heat sink that kind of hangs off of it.
+
+So what I ended up doing is kind of inverting the design. So the PoE hat goes on this side. And then this basically will hold that together. And it ends up sliding through, which that whole thing fits together. The heat sink, because the heat sink does come all the way out in front of the board itself, the heat sink has to stick out a little bit.
+
+And it looks pretty clever. So it looks like it's kind of supposed to be that way. This little fan, I have noticed, does push a decent amount of air out of the front. So it does also help with airflow having the heat sink kind of exposed out of the front. For being the size of a Pi, I'm pretty impressed with the performance on the X4.
+
+But again, fits in the same spot, same module. It is reversible. And being able to flip it also helps, depending on what switch you have, it puts the Ethernet port closer to wherever your switch is. So if it's down and you got a little too much, you can flip it over. And then you can see how your six inch cable works for the network switch that's above it.
+
+So these are sort of assistance modules, if you will. Keystone module. So there's options for two and an opening on the bottom. There's options for four. And then there's an option for two without an opening on the bottom.
+
+The opening being for passing through cables and things like that. So one of the things you can't completely get away from is plugging things into the front USB ports. A perfect example of that is the JetKVM. You still have to have USB connectivity to it. So plug a USB cable in the front and then you would loop it through.
+
+I did actually on mine, I printed a four out and then I brought the USB cables through just one of the keystones because you're able to do that. And then to complement that, for the back of my rack, mine is completely PoE powered. So I don't have any external power connections on there. So I have a couple of keystones on mine. I have one for the Ethernet input/power input.
+
+I've got a USB port that connects to the router that's on there. So I can either do mobile tethering or I can even plug in like a USB thumb drive. And then the Radxa itself, the antennas that are on here are external antennas. And those SMA antennas come to here. So they poke in from the back, screw in from the front, and then you stick the antennas on it.
+
+So yeah, it opens a lot of opportunities basically. It'll all be on my GitHub. GitHub.com/JaredC01. And then I've got a specific repo just for the LabStack Mini, we're calling it.
+
+If you have any modules that I don't have that you want created, you can open an issue and I'll see what I can do about creating some of these. And all the CAD will be available as well. So if you're able to work with some of that, I can at least give you a starting point to create some of your own modules. I also have just a full 1U blanking plate. I know I'm forgetting a couple of modules because I've been kind of head deep in this for a little while now, so you kind of forget, "Oh yeah, that's a good idea.
+
+Let me do that." And then you end up forgetting all the things that you've done, but it's an all-encompassing solution for all the little 10-inch racks, which is really cool. The LabStack Mini is just a tiny part of a much bigger project. Today, I'm launching this Project Mini Rack, which at its heart is just a central resource for anyone getting into this hobby. There's that GitHub repo with all my research.
+
+My goal is to inspire people to build compact and efficient racks. for anyone who can't deal with a full-size rack. I'm way over budget on this project, since I've been buying a ton of 10-inch equipment for testing, and this video doesn't have a paying sponsor, so if you like this stuff, please consider supporting me on Patreon, GitHub, or YouTube. For testing, I bought a few different power options, from this simple rack-mount PDU to a couple different AC power UPSs that would fit inside the rack. Unfortunately, not all my testing was successful.
+
+This ZeroKor box was promising. It even has a bright orange finish to match the 3D prints I was making. But I found out in my testing that it's kind of a one-shot UPS. What I mean is, it would hold charge when I plugged in its power adapter, but it wouldn't recharge the battery until I turned off the AC outlet. Which kind of defeats the purpose, unless you're happy with just getting battery back up one time.
+
+I also bought a few different switches, from ones you just stick on a shelf, like my cheap little Netgear, to this $100 2.5Gb PoE+ switch from GigaPlus. But even there, a lot of vendors don't have 10-inch rack-mount ears for their devices, even though they fit perfectly. Then companies like DeskPi already make a ton of accessories, from brush panels to cable routing panels, and I've been working my way through everything as I'm building out these racks. And that brings me to probably the most important part of Project Mini-Rack: the build showcase.
+
+My idea is to have people post their own builds for inspiration. I already posted three. My first test racks, I'm calling it 001, 002, and 003. Rack 001 has a main Pi 5 with WisdPi's 5Gb PoE hat. It has this JetKVM connected to it, so I can actually get into the Pi remotely, even if the Pi's own networking goes down.
+
+A JetKVM isn't as useful on a Pi as, like, on a mini-PC, since there's no BIOS, but I could get into the Pi's basic boot options if it has a boot error. That's something I'd have to be physically present to do otherwise. But these other two Pi's over here are also running off power over Ethernet. This is a Pi 5 with HackerGadget's PoE+ NVMe hat, and this other one is a Pi 4 running off a microSD card. Now, a couple cool things about this switch.
+
+First, I have an 8-port 2.5Gb PoE+ switch. This guy costs about $100 and has two 10Gb SFP+ uplink ports. So if you run a multi-gig PoE hat on the Pi 5, you can get better than gigabit speeds. It's also useful if you're running a 2.5
+
+or 10Gb box, like a little mini-PC or an orange Pi 5 Max. Mounting this thing in the rack was a chore, though. I had to buy a couple little rack-mount adapter ears, and then modify them on my drill press to fit on the mini-rack. There are a lot of devices like this that are the perfect size for a mini-rack, but the company just has no rack ears for it. I even emailed GigaPlus and asked if they had 10-inch rack ears available, and they just told me, "Yes, we have 19-inch ears," which, of course, I saw them in the box.
+
+Anyway, moving back down to the bottom, that's where the other interesting part is. Down here is the Goal Zero Sherpa. This is a little one-plug AC power bank that can actually act as a UPS. You plug in USB-C power input, and you can plug in up to 100W of AC power. It's a neat little power bank in its own right, but it is a little expensive at $175.
+
+The reason I bought it is because of its height. It fits on this bottom shelf with some room to spare. Now, I hope, maybe this year even, someone will build a 1U 10-inch UPS that's more solid than this thing. Not that it's bad, it's just not really made for homelabbing. Like, it has a solar input, but it's on the back, along with a fan that gets pretty noisy while it's charging.
+
+If someone built a full 1U UPS, you could still get a few hours of runtime, but with a quieter fan, a larger charging circuit, and just a more robust unit altogether. But having UPS means I can literally unplug this thing, throw it in my car, drive it somewhere else, and plug it back in with zero downtime. Now, that's assuming you don't need a persistent wired network connection. But a 4G or 5G connection isn't that hard to add on for emergencies or for mobility. But I wanted to see if I could take this completely off-grid.
+
+With the Pi cluster only burning like 20 to 30 watts, this 45-watt portable solar panel should be able to keep the battery topped off almost indefinitely with no grid power. So this does work, but I've found that with this solar panel, it seems not to be giving me any output through the DC cable. And it does give me 11 watts through USB-C, but that's not enough to keep this topped off indefinitely. It'll still lose power. So definitely some more experimentation.
+
+This is probably the worst day of the year to test this. I mean, at least there's sun, but it's winter sun. The sun is already almost over the horizon. You can see the shadow is right there. So I'll have to try this again in the spring or summertime.
+
+This entire setup, excluding the solar panel, cost about a thousand bucks. Anyway, that's what I'm calling Mini Rack 001. I built a more economical version without all the bells and whistles, but with even more compute, and I'm calling it the 002. This little rack has four 8G Raspberry Pi 5s. Unlike the other rack, this one uses normal Ethernet with a separate USB-C power supply.
+
+On back, there's a 10-inch PDU, but it's basically a glorified power strip. The MicroTik switch up top has two 10Gb SFP+ uplinks, just like the GigaPlus, but it trades off 2.5Gb PoE for regular old 1Gb ports. The Pi 5s are mounted in DeskPi's Pi NVMe mounting kit, which breaks out all the important parts on the front. It even breaks out a couple Grove ports for I2C and UART serial connections.
+
+Now you could also install PoE hats on the Pis in this configuration and use a PoE switch, but I just wanted to see if a cheap modern USB-C power supply would work too. And it does. None of the Pis had any problem, though if I tried running high-power USB devices off all of them, that might cause issues. This whole setup brand new costs just under 800 bucks. And sure, 4 Pi 5s is about as much computing grunt as half an M4 Mac Mini, or even a modern Intel NUC.
+
+But you could also mount up other SBCs in here too, or build a cluster with hardware-level redundancy. There are a few quirks with this setup I should mention. First, USB-C power with a dumb PDU like this means you have no remote power control. So if you want to power cycle a Pi, like if it's locked up, or if you powered it off accidentally, you can't. You have to be physically present.
+
+And on top of that, the DeskPi mount doesn't break out a front power button, so you have to either unplug and re-plug the USB-C cable on the front, or reach around the back to press the Pi's physical power button. Hopefully they make a future version of this board that has two more pogo pins to contact the switch connections on the bottom. That way we could have a front-mounted power button. I think this setup is great for starting out or something you might take with you, but the setup would definitely be bad for remote deployment. The last mini rack is the 003.
+
+It's in this 8U tower, which gives us a lot more room to play with. And this one I built to show off some of the ITX capabilities. Down at the bottom, I have two MyElectronics Mini-ITX cases, each one running an SBC cluster board with 24 Arm cores, but you could build a little x86 PC in one of these too. In the middle, I have DeskPi's Mini-ITX motherboard tray. In this case, it's running a Seaberry board for a Compute Module.
+
+And above that is an SBC tray with a Jetson Nano and a Pi 5. Finally, there's networking at the top of the rack. This one doesn't have built-in power, but that's intentional. My idea with this rack is you'd have an external UPS that's just using a decent portable battery. In this case, it's from EcoFlow, but you could use a Jackery, Ego, Yeti, or whatever you have.
+
+As long as you don't go overboard and put in, like, a Xeon—and yes, there are mini ITX Xeon motherboards—a little battery like this should take care of the cluster with a lot more capacity than the Sherpa. These particular racks from DeskPi are a little shallow once you start getting dense compute packed in. Like over here, you can see the MyElectronics cases stick out of the back ever so slightly. But as long as you're smart about loading up the heavier equipment on the bottom, it works out okay. I'm not the only person thinking about a shrunk down home lab.
+
+And in every case, I learned a creative way to use less space. First, I had Jared bring his rack to the studio, and it has a cool party trick. His doesn't need a power cord. So, I don't have any power cables on this. The only thing that I have is an Ethernet cable.
+
+And on the other end of that right now is a PoE++ injector. And my main reason for wanting to do that is in a lot of network situations, it's a whole lot easier to find a wall jack away from where you're actually trying to put the thing that you're trying to power. So, the limitation on mine is how long of an Ethernet cord can I have. The party trick of this is I do actually have a router in here as well. I can also use my phone to tether on here.
+
+So, even if I don't have an Ethernet connection, I can still power it via Ethernet, connect it to the internet either via Wi-Fi, which this will act as a Wi-Fi repeater, or I can plug in a USB cable to USB-C and tether to my phone. So I can effectively have a full stack network rack wherever I go. And on the front, I'm using the Ubiquiti Switch Ultra, which is powered by PoE++. And this one is cool because it actually has a rear input for power on the jackpot. which makes everything a little bit cleaner.
+
+And then I'm doing a little trickery on here. So these two cables on the far right actually go to the GLiNet. And I have some VLAN set up. So the cable that's coming into the back is actually feeding back out of this port and going into the WAN port on the router. And then comes back into this port to the LAN side and then that feeds the rest of it.
+
+So you'll notice there's PoE+ on here. I do have a PoE injector that's added in line to power the router itself. And then everything else along the line is all PoE powered. So there's a Radxa X4 over here with the PoE hat. Here is a quad keystone panel.
+
+I got a couple of pass-throughs here. One of these USBs is going to the JetKVM. The other one is actually going to the fans on the back, which I'll show you in just a minute. And then these are two Pi4s. And I talked a little bit earlier about cables being a little stretched.
+
+Unfortunately, the reality of our Ethernet cable options are six inches this and one foot has way too much of a loop. So without having an in-between, the other option I would have is if I switched one of these to a Pi3 or a Pi5 because they flip the direction of those again. But for now that does work. It's just a little bit tight. So it doesn't hurt anything otherwise.
+
+The blanking panel down here just keeps everything kind of tidy. And then on the back side, here's the GL iNet router. And this is VHB taped down so it doesn't go anywhere, but it is on a shelf. This is the shelf that actually comes with the rack. And I still have access to my switch, which will turn on or off my VPN.
+
+The WPS button is here. And then here's the antennas, which are kind of rotatable. The second, the second antenna in there is rotated as far up as I can get it. And then on this side, we've got the dual keystone panel we talked about earlier. This is my power input and or Ethernet input.
+
+I can use internet off of here. I don't have to. And then over here is the USB port that I can either tether my phone to or plug in storage or whatever else. And then here's the Radxa antennas actually populated and running. So the fans, this fan grill design I borrowed from Noctua.
+
+So Noctua actually did some research and development and came up with 120 millimeter fan grill design that was as quiet as they could make it, good airflow and the rest of it. I took that. I cut it down to an 80 millimeter size for these fans. And then these fans are Arctic cooling. They're non PWM, but they are kind of a static pressure fan and they move a lot of airflow, but I'm running them at five volts on the USB.
+
+So that's the second USB port that was going into the Radxa. That's cooling for the entire front. So if I were to put all Pis in there, I wouldn't need any additional cooling. And this being all self-contained is nice and quiet. And I mean, honestly, I think it's a pretty elegant solution to kind of the problem we're trying to solve, if you will.
+
+And earlier I was kind of joking about using a full size GPU with a mini rack, but Raid Owl kind of did that. So here is my RackMate. And you can see that it's in a bit of a different state than it was when I did my video on it. And that is because I have some more plans for this, but what I like about it is that it's compact. You can fit as much stuff into it as reasonably possible.
+
+Like you could probably fit about 20 Raspberry Pis in here and a whole ass ITX PC, which I still have in here. I even have a GPU on the back and call me crazy, but I care about aesthetics and I just think it looks good. So let's make this thing more popular. So give me a hashtag. #GiveMe10Inches Perfect.
+
+Yeah. Put that on social media. I'm not quite sure I want to rally around that hashtag, but Techno Tim has been messing around with the rack too. And here's what he has. Building this mini 10 inch rack was a super fun challenge.
+
+And even though it's small compared to my main server rack, it's packed with capabilities. So my goal was to create a complete home lab in a 10 inch rack with just 8U of space. And here's what I managed to fit in there. A 2.5 gigabit network backbone powered by an OPNsense gateway, 2 Beelink mini PCs running Windows, Linux, and even Proxmox virtualized with TrueNAS for an SSD backed network storage.
+
+I also added a PiKVM for local and remote access via Tailscale, plus some Raspberry Pis, mostly to keep Jeff Gerling happy [thanks Tim!]. And of course, I added some RGB lighting because we all know that makes everything faster, right? What's great about these mini racks is how flexible they are. And after building a compute focused rack, I'm now focusing on a network focused mini rack.
+
+It's another fun project that really shows how versatile these setups can be. And someone who's gotten into 3D printing in a big way last year showed off some of that prowess in his build. This is my 10 inch rack or what's sort of left of it because, well, it's not currently working necessarily. That's partly because I have just gutted everything recently in my studio. And so everything's a bit of a mess.
+
+But it's also because I have a little homelab rack that is already doing everything I need it to do. I get to mess around with this quite a bit. And my favorite thing about having a 10 inch rack is that it's a small enough to fit on most 3D printer beds. So you can have a lot of fun 3D printing a ton of different adapters and stuff to really customize and modify and make this rack your own. And also have a lot of fun in the process.
+
+This is just the beginning. What I really want to see is for companies or even individual makers to fill in some of the gaps. And these aren't enough options for a healthy, diverse mini rack ecosystem. Like we could use a good PDU and a better mini UPS. I mentioned I was giving away this rack, the one with the 4node Pi 5 cluster.
+
+And if you want to enter to win, scan this QR code or use the link in the description. Because of logistics, I can only ship to people in the US, but I'll pick a winner by email by the end of the month. And while I'd love it if you subscribe, there's no purchase necessary. I'm not handing over any of your data to DeskPi either. They just sent me these Pis in this little mini rack and they asked me to give it away for them.
+
+So, I'm doing that. Until next time, I'm Jeff Geerling.

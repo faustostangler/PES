@@ -1,0 +1,29 @@
+---
+video_title: "Your AI Agent Is Leaking Data #Shorts"
+video_id: JNiBxCQCMFc
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JNiBxCQCMFc
+video_date: 2026-08-08T00:30:23+00:00
+video_description: |
+  Naive chat history storage is expensive AND a compliance risk. Here's the problem every production AI agent has to solve. 
+  
+  Full lesson:https://aiamastery.substack.com/p/day-2-secure-memory-and-context-systems
+  
+  
+   #AIAgents #DataPrivacy #AIEngineering #Shorts #LangChain
+---
+Welcome back. >> [music] >> Yesterday, you got an agent running end to end with a proper life cycle and state [music] management underneath it. Today, we're going after the part almost nobody builds correctly on the first try, memory. [music] By the end of this lesson, your agent will remember conversations across sessions without leaking [music] sensitive data and without quietly burning through your API budget. Let's get into it. Quick
+
+orientation before we touch [music] any code. We're in module one, enterprise agent architecture and hardening, and this is day two of 30. [music] Day one gave you the agent life cycle and basic state persistence. Today builds directly on top of that state layer, except [music] now we're asking a harder question. What happens when that state contains [music] a customer's home address or a support ticket with account number sitting inside it?
+
+Here's the real-world version of this problem. Think about any [music] chat product you've used that remembers you across sessions. Somewhere behind that convenience is a database holding every message you've ever [music] sent it. Store that naively, plain text, unbounded history, no classification, and you get [music] two problems stacking on top of each other. First, cost. Every token in that history
+
+gets resent to the model on every turn. [music] So, your bill grows with every conversation instead of staying flat. Second, legal exposure. If that history contains [music] personal data and you haven't classified or protected it, you're one audit away from a very bad meeting with legal. Today's lesson builds the system that prevents both. Here's the one picture
+
+you need to hold in your head for the rest of [music] this lesson. Production memory systems don't store everything at the same cost. [music] They use a tiered hierarchy, the same idea CPUs use for cash. Short-term memory holds your last five to 10 exchanges, >> [music] >> kept in memory for instant access. This is what actually gets sent to the model on the next turn. [music]
+
+Medium-term memory holds session summaries. When short-term fills up, we don't just delete the oldest terms. >> [music] >> We compress them down to their essential meaning. Long-term memory is where encrypted conversation threads and their metadata live permanently. [music] In our case, in SQLite.
+
+The interesting engineering happens in the transition [music] between tiers, not inside any single tier. When short-term memory overflows, a [music] compression pass kicks in. It extracts the key insights worth keeping, flags anything that looks like sensitive information, and only then writes a condensed [music] summary down to medium-term storage. That single compression step is doing double duty. [music] It's both your cost control and your first line of privacy defense.

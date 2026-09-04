@@ -1,0 +1,69 @@
+---
+video_title: "FALHA CRÍTICA no REACT-SERVER permite EXECUÇÃO de CÓDIGO no SERVIDOR FÁCIL"
+video_id: ODEPT3-1d24
+channel_name: "safesrc"
+channel_id: UCWFmlmegFcu6lvAmeBtV3cg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ODEPT3-1d24
+video_date: 2025-12-06T12:30:36+00:00
+video_description: |
+  Mais informações: https://safesrc.com
+  
+  Quer ajudar?
+  
+  Doações em Bitcoin: bc1qk67xsekuhfweu3c5pwqraj9vrgs8h4jhyyuxtd
+  
+  Referências:
+  
+  https://react.dev/blog/2025/12/03/critical-security-vulnerability-in-react-server-components
+  https://www.cve.org/CVERecord?id=CVE-2025-55182
+  https://react2shell.com/
+  https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp
+  https://nextjs.org/blog/CVE-2025-66478
+  https://x.com/AndreiDavid/status/1996694301636456756
+  https://x.com/maple3142/status/1996687157789155647
+  https://x.com/securityshell/status/1996976033069670548
+---
+Uma vulnerabilidade nos componentes servidores do React tá causando um escarcel na internet. qualquer sistema ou muitos sistemas feitos em React estão vulneráveis nesse momento e é um ataque extremamente sério. Criticidade 10 de 10 aqui eh a a criticidade desse eh desse sistema, desse dessa vulnerabilidade. A solução é relativamente simples, atualizar os pacotes do seu sistema, mas tem muito código em React por aí e o a Safé tá sendo ativamente explorada. Mais do que isso, já surgiram extensões de navegadores que quando você tá num site que tem a vulnerabilidade, a gente avisa, quer quer explorar esse site para você ter uma ideia do grau de problemas.
+
+É extremamente fácil de explorar essa vulnerabilidade, é extremamente danosa. Você consegue executar código no servidor. Vamos entender isso daqui porque é apavorante esse tipo de vulnerabilidade no React, que é uma plataforma já com uma certa idade que funciona muito bem. E e e mais do que isso, o próprio Node JS tá sofrendo esse ataque, porque embora o Node JS não seja diretamente ligado ao React, ele compartilha algumas bibliotecas e é o problema está nisso daí, tá? Eu sou Ricardo Albuquerque. Esse canal é o
+
+canal Safe Source e nós vamos falar aqui sobre essa vulnerabilidade a CVE 2025 55 182 e outras vulnerabilidades associadas que realmente estão deixando todo mundo apavorado. Essa notícia foi sugerida por Iron 78 e várias outras pessoas. Obrigado aí o pessoal que sugeriu notícias lá no nosso site safesource.com. É safesrc.com.
+
+E obrigado a você que tá assistindo o nosso vídeo. Se você gosta do nosso conteúdo, por favor, deixa o seu like, se inscreva aqui no canal, né? Então, tá aqui a o Facebook, a meta liberou esse aviso aqui de uma falha de segurança, uma vulnerabilidade de segurança crítica em componentes do React Servia. Para quem não sabe, o React é uma tecnologia que surgiu no Facebook na meta, né? E o qual que é a ideia do React? A ideia do
+
+React é você fazer um um código em JavaScript cliente, né? Então você tem componentes que rodam no cliente, componentes que rodam no servidor e a o a própria linguagem que pode ser tanto JavaScript como TypeScript, ela faz a interface das duas coisas, facilitando o trabalho do desenvolvedor. Funciona muito bem, o cliente fica muito ágil, fica muito rápido para fazer as coisas, porque só precisa eh consultar o servidor para pegar dados. a parte central da do código do sistema roda no cliente, então é muito rápido e exige menos, demanda menos do servidor. E em paralelo ainda resolve e em algumas implementações do React o problema de você ter a questão da busca, né? Porque
+
+quando você tem os robôs de busca, você não tem a execução de código JavaScript. Então você tem que resolver isso de alguma forma. O React tem, ele executa o script no servidor para atender os robôs de busca. Então, é uma plataforma muito boa. Eu trabalhei com React muito tempo na minha vida, gostei muito de trabalhar com React. Eh, vários softwares que eu
+
+desenvolvi, eu usava React para cima e para baixo, mas eu já tô afastado desse mundo já há algum tempo, né? De qualquer forma, qual que é o problema? O que eles estão dizendo aqui é uma série de componentes aqui, ó. React Server Dom Webpack, React Server Dom Parcel e React Server Dom Turbo Pack nas versões 19.0, 19.1.0, 19.1.1 e 19.2.0.
+
+Então, essas seriam as versões com problema. Versões mais antigas ou mais novas não tem esse problema. A recomendação, caso você use qualquer desses componentes, é atualizar para as versões que ele indica aqui a seguir, que é a 19.0.1, a 19.1.2 2 e a 19.1.2.1.
+
+Então, seriam as versões mais novas e que corrigem o problema, né? Então, assim, em princípio, o que você precisa nesse caso é só agir rápido. Por que que esse sistema é tão, esse caso é tão crítico? Esse caso é tão crítico porque React hoje em dia é usado em uma infinidade de sites por aí. E embora muita gente faça atualização constante, o pessoal que tá fazendo manutenção em software e coisa e tal, acontece às vezes de você ter um site, ter um sistema que foi desenvolvido alguns anos atrás e que não tá tendo manutenção ativa e aquele código tá ficando lá para trás e o código tem uma vulnerabilidade agora e não tem ninguém para olhar isso.
+
+Isso é uma coisa bastante crítica, né? Então tá aqui o CVE 2025 55182. Aqui é uma vulnerabilidade de execução de código remoto sem autenticação e existem componentes da do React Servia, inclusive esses esses pacotes aqui que estão aqui e outros também. O código a a vulnerabilidade eh eh acontece quando você faz uma dessereização de e de uma um HTTP, né? para requisitar funções no servidor. Então, vamos
+
+entender esse caso aqui. Como eu falei pra vocês, o React ele divide, ele se divide sozinho na parte servidora e na parte cliente. A parte cliente roda no seu navegador, é um código em JavaScript que roda no seu navegador e quando ele precisa de alguma informação, ele contacta a parte servidora que vai estar rodando também em JavaScript lá no servidor. E aí em algumas situações, e essa esse contato tipicamente é através de Jason, né? Então você tem a serialização da requisição, é mandado pro servidor, o servidor dessereializa isso e processa e eh depois retorna para pro seu nessa chamada, né? Só que a
+
+aparentemente há uma falha de descerialização. Então o problema na a origem do problema é a dessereização que gera esse ataque. Isso tem acontecido com muita frequência recentemente em várias plataformas, né? Então, tá aqui toda a o aviso do problema. E como eu já expliquei para vocês, a solução mais rápida para quem tá com código ativo é simplesmente executar isso daqui, atualizar essas versões desses pacotes que o problema desaparece, você não tem mais o problema, né? Eh, eh, ainda tem aqui uma
+
+uma prova de conceito explicando como é que funciona, que é muito fácil de ser explorado. E o pior, eles precisaram colocar isso também no ã no Node JS, tá vendo? Porque aqui ele fala que no React é o 19.0.1.
+
+Agora no Node JS também tem uma série de versões aqui do Node JS. O Node JS é uma base sobre a qual o React é criado. É uma um grupo de funções e em JavaScript, exatamente para fazer essa comunicação entre servidor e cliente. Só que o que acontece é que algumas bibliotecas são usadas pelo Node JS também e com isso o Node JS também estão está com problema nessa história, né? Então, foi criada uma outra, um outro CVE que é o CVE 20256 e 66478, que é específico do Node JS, tá? Então
+
+são esses dois CVS. É o mesmo problema, tá gente? O problema é o mesmo, só que isso daqui é no React ou ou na verdade em qualquer site que use React para ser desenvolvido. E esse daqui é em qualquer site que use o Node JS para ser desenvolvido. O Node JS e o React tem muita coisa em comum, né? E e com isso e
+
+você tem esse problema em comum pros dois. Também a atualização para o pacotes do Node JS é atualizar. Tem aqui as versões que devem ser atualizadas aqui para o Node JS, né? Então a versão eh eh vulnerável é a 15.0.5,
+
+15.1.9, 15.2.6, 15.3.6
+
+e coisa tal. E você tem que atualizar para 16.0.7. Enfim, tá a lista aqui das versões que você tem que atualizar, né? É uma
+
+vulnerabilidade, o principal problema é que ela é extremamente fácil de ser explorada. Por isso, em nenhum dos dos sites oficiais, eles mostram a prova de conceito ou explicam como explorar essa vulnerabilidade, porque é tão fácil que seria arriscado fazer isso, né? Então, a informação é: faça a correção rápida, né? Segundo tem a explicação aqui do Andrei David, o problema no React 19 é que para você fazer essa referência à função que você quer executar no servidor, você diz qual é o módulo que você tem que carregar, qual a função para você chamar e os argumentos que você vai passar. Ou seja, você descreve para o servidor qual função chamar e o servidor meio que vai lá e chama. Ou
+
+seja, realmente isso parece uma coisa bastante complicada, né? Deveria haver uma restrição muito grande nisso daí, né? Aparentemente é é realmente uma uma vulnerabilidade bastante séria. Parece que já tem aqui uma prova de conceito sendo mostrada em algumas e e no GitHub. Então já se consegue essa prova de conceito não pelos canais oficiais. Os canais
+
+oficiais não liberaram isso ainda porque justamente é muito fácil de fazer. E e parece que agora já tem um outro nível. Você já tem uma extensão do Chrome que você instala e que ele já busca, se você tiver navegando, encontrar um site que tem essa vulnerabilidade, ele já mostra a vulnerabilidade aqui, fala: "Se você quer explorar e coisa e tal". Vou te falar uma coisa, realmente assustador. Então, se você trabalha com React, dá uma checada. Se você não
+
+precisa atualizar a sua versão, faça isso o mais rápido possível. Esse é um tipo de problema que vai ser explorado muito rapidamente, já está sendo explorado muito rapidamente aí na internet. Obrigado por assistir nosso vídeo até o final. Tem alguns links para você nos ajudar aí na tela e também na descrição desse vídeo.

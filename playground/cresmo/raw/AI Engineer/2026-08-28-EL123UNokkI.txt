@@ -1,0 +1,86 @@
+---
+video_title: "Building uReview, Uber’s Multi-Agent Code Review Engine — Will Bond & Ameya Ketkar, Uber"
+video_id: EL123UNokkI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EL123UNokkI
+video_date: 2026-08-28
+video_description: |
+  In 2024 an Uber engineer waited about three hours for a first review on a pull request. In 2026 that wait is nine hours. Volume and size both grew, and code review became the bottleneck for thousands of engineers spread across hundreds of teams, twelve sites and six language specific monorepos. Will Bond and Ameya Ketkar walk through uReview, the system Uber built rather than bought, partly because most vendors do not support Phabricator and partly because they wanted agents in the inner loop reviewed against exactly the same rules as humans.
+  
+  The instructive half is what they had to measure before it worked. Early observability was cost, an NPS survey and a Google form, and the quality to cost ratio landed all over the chart. Tracking reply sentiment, whether a comment actually got addressed, and the agent's own trajectory is what let them tune it, because a model never signals that it is wrong and will assert a bad review with full confidence. Teams write their own reviewers, and Ketkar is blunt that authoring a skill was the easy part while running skills at scale cheaply was not. It now posts about 25,000 comments a week, roughly 67% get addressed, and cost fell 60% against their naive first build.
+  
+  Speaker info:
+  Will Bond:
+  - https://x.com/wbond
+  - http://linkedin.com/in/wbond
+  Ameya Ketkar:
+  - https://www.linkedin.com/in/ameya-ketkar
+  - https://scholar.google.com/citations?user=6JO46GMAAAAJ&hl=en
+  
+  Timestamps:
+  0:00 - Three hours to review in 2024, nine in 2026
+  1:53 - Why Uber built this instead of buying it
+  3:42 - The architecture, and deduplicating comment volume
+  4:37 - Humble beginnings, and cost as the only metric
+  5:33 - Sentiment, addressal rate, agent trajectory
+  6:32 - The model never knows that it is wrong
+  7:26 - Letting hundreds of teams customize reviews
+  10:10 - Results: 25,000 comments a week
+  11:08 - Inner loop versus outer loop
+  13:57 - Expanding the outer loop rather than killing it
+---
+[music]
+
+>> All right, hello everyone. My name is Will and uh I'm here to talk to you about automated code review. Uh my teammate Amir and I work at Uber and we're going to be walking through U Review, a system that Uber has built uh to help increase the velocity of our software engineering teams. Um for a little bit of context about what software engineering org at Uber looks like, we have thousands of software engineers who work across hundreds of teams uh located across 12 different sites and uh they work in primarily one of six language-specific monorepos. As many of you have probably noticed over the past 24 months, the volume of PRs, the size of PRs has been growing.
+
+One of the ways that that's been exposed to us has been through uh the metric that we track of the first time to review. Back in 2024, we were seeing that engineers would get their first review within 3 hours. Now in 2026, that has grown to 9 hours uh in addition to all of the volume changes. So, in short, code review is now the bottleneck that we are running into. Um specifically around automated code review, uh there are there are various options available in the industry, uh but Uber spent the time to invest in building an in-house solution due to some of the constraints that we have.
+
+One of those is uh we currently use Fabricator and have for a long time and are in the process of migrating to GitHub. Uh most of the solutions do not provide support for Fabricator. Um in addition, if you were at the previous talk, you saw Uday and Adam talking about the agentic SDLC. A big part of what we want to do is bring a consistent code review experience to the inner loop so that our agents are getting the same code review, the same rules, everything applied as our humans do. With hundreds of teams across the company, we can't have centralized management of our code reviews, our customizations, and our rules, and even the knowledge that goes into those code reviews. We need to distribute that. So,
+
+we have a need for plugging into existing team ownership system rather than trying to replicate that externally. Uh finally, with the volume of code reviews that we perform, we need the ability to take factors like the risk profile and the complexity of a code change and factor that in when deciding how we're going to run a code review. Not all code gets the exact same review. And then finally, consistency. We need to make sure that we have security and compliance reviews run across everything. We can't rely on teams
+
+hoping to run the skill the code review skill that happens. We need reliability there. With all that said, I wanted to give you an overview of the architecture of what you review looks like. We'll talk about a couple of the big pieces, and then we're going to dive into a few focus areas. At the top, you'll notice that we have our code review surface areas, GitHub, Fabricator, and the agent loop.
+
+These all feed into you review service. These This takes in requests for reviews. It brings in feedback from users, and it routes it. We have a number of different generators. Now, these generators are tuned for different performance and cost avenues. There are We also have the
+
+ability to plug into third-party code review systems so that we can compare ourselves to what's available more broadly. Finally, with all these different generators, we might be might be duplicating comments, and we can actually create quite a high volume of comments. If you've ever used AI to to run a code review, you've probably seen that. So, we run through a number of steps in the post-processing where we both rate, categorize, filter, and deduplicate comments so that our engineers get only the highest confidence comments that are actionable for them to work on. You'll also notice along the bottom we talk a little bit about feedback in our evaluation. But, with this context of
+
+the overall system, I'm now going to hand it off to Ameya to dive into our first focus area. >> Hello. Hello, everyone. So, I will be talking about how we evolve U review with observability and evaluation. So, U review had a very humble beginning. Basically, it was a single
+
+prompt that you should do logic checks per file, a simple agent which used to do thorough review. And we had a dispatcher to decide whether to go which generator to choose. Even what we used to collect as observability was very surface-level. We used to collect cost. We used to run an NPS survey, have Google Forms being filled, Slack support. And with all of
+
+this, we saw that our quality to cost ratio was like all over the place. Like, our goal is to be in the second quadrant, that is the top left quadrant, but you can see we were all over the place. Then what we did is that we started collecting more data. So, we started collecting the sentiments of the replies that were made to the U review that the U review uh call you know, the U review agent got from the developers. So, we categorized them into positive, negative. We classified
+
+them into various categories, and we found a bunch a lot of classes of bugs and issues that we could actually solve. And with that, we improved the system, and we were able to move a large number of PRs to a high quality to cost ratio. Um but, we still felt that this was not enough. We need to know more of how the review is done. So we started tracking things like address rate. So basically when a U
+
+review comment is made, does the developer go and actually address the comment? We started tracking that. And then we also started doing more like a runtime profile, which is like the agent trajectory, which told us why the agent is doing what it what it did. We get to know what tools calls it made. We get to know what thinking process it had. And then with that
+
+insight, we were able to actually tune our runtime, tune our performance such that the agent could very quickly give us high-quality results at a low cost. One of the biggest learnings in this process was like the model doesn't know that it's wrong. It always confidently says 100% sure that yeah, this is the review for your code. Go ahead. But we saw that no, it actually needs a lot of guidance from the teams because each team has its own style guide, its own patterns or like anti-patterns that they want to look for. So that all should be
+
+like baked into the agent. And we also realized that we need to have guardrails for the agent. So we need to tell the agent what not to waste turns doing. Like code review is something that has to happen in like a specific time span. And then if it starts spending time doing things that it should not be doing, uh leads to a bad quality code review.
+
+Uh second focus area for U review has been nations. We We went very deep on team customizations because as we'll presented that we have hundreds of teams and everyone has like their own way or their own thing for code review. So our review stack is pretty straightforward. We have single-file reviewers and multi-file reviewers. Uh, we basically do a general purpose "Hey, find me all logic bugs per file" uh, kind of a review. And uh, then we
+
+also do a deep review because we have like six mono repos. So, all these mono repos have their own anti-pattern style guides and all baked into this agent review which does have a nice multi-file review. But, then we extended it further uh, basically to AI linters. These are basically few shot uh, AI problem uh, or like a few shots uh, system where uh, developers can basically kind of deterministically get more context and then run rules with that context and like a file and find some uh, systematic and mechanical issues. And finally uh, the most powerful thing is the custom agent uh, where the teams could basically define their own custom agent, link it to like a knowledge base, uh, link it to their past PRs, have like a skill to do the review, and so on.
+
+But, uh, all of this was not simple because we had to actually uh, piggyback on our uh, ownership model which is at Uber uh, so that we can like very logically roll out to all the teams. Uh, we had to basically do a uh, what do you say? Co-locate the customizations next to where the developers write their code so that they can like quickly uh, keep updating these customizations. We had to implement a smart deterministic uh, routing so that we could route which team gets what kind of review with which model, what kind of generators, and so on. And finally uh, the hard thing was like we had to actually surface all of this observability that I talked before, like the agent trajectory, addressal rate, uh, sentiment analysis back to the teams. So, so that the teams could
+
+actually understand that "Oh, I wrote this rule, but maybe not a lot of developers are liking it in my team, so let me go and update it." And then we had to give Bubble up that kind of observability to all the people who are contributing to the platform. Uh one thing that we learned is that actually writing the skill was very easy. Like teams just very quickly wrote a skill by asking Claude to write one, go over my previous PR reviews and write me a skill. But the hard part was how to run these skills at scale with consistent quality and low cost. And that required
+
+a lot of iterations not only from the U-Review team side, but also like for each team who was trying to write these rules. Uh in results, we basically uh see that, you know, uh U-Review does like around 25,000 comments a week. And uh we get 10% of them actually get some feedback. And only 4% of the PRs actually get some negative feedback. Uh we also saw that um the overall addressal rate was uh around 67% and almost three quarters of the high severity issues uh were usually addressed by the developers, which shows that U-Review actually adds some value to the entire development life cycle. And then uh with
+
+all the observability and uh evals that I showed that I went through, we saw that against like a very naive implementation, our costs were down by 60% and our quality and our accuracy was up by uh around 70%. Uh for a last focus area, I'll give the mic back to Will and he will go over the inner versus outer loop. >> Awesome. So, now that we've talked about uh some of the details of actually implementing high-quality reviews, it kind of brings us to the last area, which is where we start talking about where things are going, right? With moving to the Agentech SDLC, we're moving software into a model where engineers are interacting with the code less.
+
+They're often times not as involved in authoring the code. Uh currently, we still have uh humans approving the code, uh but we see a a short path in the near future to a percentage of our code landing automatically, having automatic approvals, right? The various parts of the industry are already moving there. Um Part of the way along the process was figuring out by having our single code review platform, what did we need to tune for the various audiences that are actually getting these code reviews? Um you know, the interface, that's one area that's sort of intuitive there. Uh one
+
+thing that might be less intuitive is around accuracy. Uh with the inner loop, our accuracy needs actually need to go up, or else we can result in uh dealing with cavitation of an agent where it fixes something, goes back, gets another code review, and has to kind of like fix backwards because the quality of the comment was low. Um The one of the other interesting things is agents are more than happy to go through and fix 100 nits on a pull request where your engineers really get frustrated in situations like that. Um but probably the most interesting aspect of this transition is the feedback. As you can see, quite a bit of what went into getting high-quality code reviews at Uber was bringing the human feedback into the system and using that to figure out how to tune our prompts, how to tune our agents.
+
+Uh and so as we move to a model where humans are less in the loop, where software engineering is moving to an agentic model, we're effectively going to a place where we're starting to talk about are we going to kill the outer loop? Is the human engineer not going to be involved in the code review. Some people are already here. Now, with the feedback taken into consideration, you start wondering, all right, what could this result in, right? I'll let your imagination go there in terms of quality degradation, slop, and so forth. But, rather than killing the
+
+outer loop, I think that we believe and the industry has just started to really kind of coalesce on this idea that we're really expanding the outer loop. Rather than removing humans from the code review process, we are moving their responsibilities up a layer. Rather than them dealing with the details of the implementation, the agent is great at writing the software. The agent is getting much, much better at reviewing the software as a human would. But now, as software engineers, we still are going to have an outer loop. It's just going to look a little
+
+different. Instead of you worrying about the optimization of the performance and the API compatibility, you're going to be thinking more about architecture in your code reviews. You're going to have time to focus on the domain expertise that you have and product thinking. So, we believe that as we adopt this automated uh code review, this is going to be the result of how our engineers are interacting with the system and guiding it. And that's it. Thank you so much for
+
+coming. Thanks.

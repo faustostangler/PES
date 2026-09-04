@@ -1,0 +1,85 @@
+---
+video_title: "Your Code Has Bugs. Lean4 Has Proofs: Formal Verification for Engineers — Varun Pant, AWS"
+video_id: lRa9sPaMyy4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lRa9sPaMyy4
+video_date: 2026-08-28
+video_description: |
+  An AI spent about a week rewriting zlib in Lean and emitted 32,000 lines of proof. Not tests, proof. It decomposed the job into lemmas, closed each one with tactics, assembled them into a single theorem, and a small independent kernel checked the result. Varun Pant opens on the gap that makes this worth caring about now. Coding agents are producing hundreds or thousands of pull requests a week, and none of the usual checks actually clear them. A model grading code is probabilistic, tests cover the inputs someone thought of, and human review does not scale to agent throughput. None of the three can say the code is correct for every input.
+  
+  His division of labor is the memorable part: humans own the specification, machines own the code and the proof. That puts all the weight on the spec being right, which is why he insists on validating it before anything downstream runs, whether a person reviews it or it gets tested against real inputs. The chess analogy carries the rest, with tactics as moves, a theorem as checkmate, and backtracking when a branch will not close. AWS runs this in production on Cedar, whose authorization semantics live in Lean while the shipping code is Rust, reconciled by roughly 100 million differential tests nightly. Nothing ships until they agree.
+  
+  Speaker info:
+  - https://x.com/varun_pant_
+  - https://www.linkedin.com/in/varunp1/
+  
+  Timestamps:
+  0:00 - Why none of the usual checks clear agent output
+  1:06 - Specifications humans own, proofs machines own
+  2:00 - Lean as one language for code and proof
+  3:01 - Tactics, theorems, and the chess analogy
+  3:58 - A small kernel you can independently rebuild
+  4:52 - Rewriting zlib into Lean, and 32,000 lines of proof
+  6:44 - Cedar: Lean semantics, Rust in production
+  7:40 - Solvers, preconditions, and code erased at runtime
+  8:37 - Bringing any language into the same core
+---
+[music]
+
+>> Coding agents are generating more code than ever. Builders are generating hundreds and thousands of PRs every week. How do you know that this is correct? Using LM as a judge for the code? Well, that's probabilistic.
+
+Tests? They only check some inputs, not all. Human code review doesn't scale to match agent speed. None of these can say for all inputs the code is correct. Formal verification can.
+
+Hi, I'm Varun Pant. I build AI products at AWS leading teams at in formal verification. Formal verification provides mathematical proof that code is correct. For all inputs. You write what correct means, which is the specification, and a formal verification tool proves that your code satisfies it.
+
+If the proof passes, it holds for every possible input. How do you use this? Well, one way is back driven development, for example, with Kiro. You write what the specification is, which is what correct means. Either you write it formally, for example, directly in Lean, or you write it in natural language, and you let the AI auto formalize it.
+
+Now, this is really important. You then validate the specification. So, either the human reviews it, or you test that it holds on some inputs. And this is important because the specification is upstream. It's a living, breathing artifact that the builder interacts with. You want this to be correct.
+
+Everything else is downstream from this. The AI coding agent then goes and implements from the specification. And the formal verification tool proves that the implementation matches the specification. So, humans own the specification and machines own the code and proof. Lean is a programming language and a proof assistant.
+
+It is the same language for the definitions and proofs. There's no translation layer. It is implemented in Lean, which means it's very extensible. And this is important. It has a small trusted kernel.
+
+Proofs can be exported and independently checked. So, here's an example of a Lean file which has both the code and proof in the same language. At the top, you'll see the code, which is a function that reverses a list in Lean. So, reverse of one, two, and three gives three, two, and one. And right in the middle, you'll see a theorem. This is the proof.
+
+And this theorem prover approves a property which says that reverse of A plus B is in fact reverse of B plus reverse of A. And this holds for every possible input. How do you do this? You have something called as tactics which do the work, which we'll get to in a second. And the kernel, remember the small trusted kernel?
+
+That checks the work. A good analogy to understand the Lean proof assistant is that of chess. So, in chess, your goal is to checkmate the opponent. And you make a bunch of moves. You move the knight, you move the bishop.
+
+Similarly, in Lean, you have a bunch of tactics which are your moves. And it's the same chess board. It's interactive. You want to prove the goal, the theorem, checkmate. And you're kind of going down a tree. So, you're traversing the tree,
+
+you're trying different tactics. Maybe for some goals, you're not able to prove it, so you backtrack and then you try another a branch of the tree. Very similar to chess. And finally, you get a goal that hopefully proves the theorem, and then that small independent kernel confirms and checks it. The kernel catches the mistake. So,
+
+here's an example at the top where an incor- incorrect proof is rejected immediately. And you only need to trust the small kernel. The good thing is that you can have multiple independent kernels. You yourself can actually go write one. It's completely open source. You have kernels
+
+in C++, Rust, Lean. That's uh a link to the Arena Lang where you can go and add a kernel. So, let's look at some examples where you can put this to practice. The first one is having the specification and code both being in Lean. Now, this is open source Andreo. AI
+
+converted zlib, which is a C compression library, to Lean. Now, granted this happened over a week or so. But, kind of going back to our specification methodology that we mentioned where you had specification at the top and then verification for the code, we'll kind of see the same thing here. So, the natural language specification says that you decompress the output of compress returning the original data. And then, you have an AI that generates the formal spec. Now, remember this is
+
+important. Checking the specification is key. After you do that, the AI goes and writes your code in Lean, and then generates these helper lemma subgoals, and proves the theorem. And at the bottom, you can see that it's verified with that small independent kernel. So, what you just saw was that AI decomposed the problem into lemmas, which are subgoals. It proved each of
+
+them using tactics. Remember the chess moves that we were making? And it assembled it into a final theorem. Checkmate. And the kernel checked it.
+
+And this particular example had 32,000 lines of proof. So, it was pretty big. Let's take another example. What if you have code in Rust? Well, you can write the functional specification of it or the model in Lean.
+
+An example of that is Cedar. Cedar is an open-source authorization policy language, which is used by AWS verified permissions and access. The specification of Cedar is written in Lean. The production code runs in Rust. Why is this important? Because
+
+let's take an example. You have forbid Trump's permit. You want to make sure that for any forbid policy being satisfied, the request is always denied. This is key. Here you can see the example of what I was talking about, which is you have the Rust production code and you have the functional specification in Lean, and you run differential random testing to check that both of those for the same inputs give the same output.
+
+And there's about 100 million differential random tests uh run nightly. No version ships until this is satisfied. Let's take another example. What if you have code in Rust and you want to deductively verify with Lean or solvers? Before we go there, let's quickly talk about this new term solvers. So,
+
+remember we spoke of Lean being this chessboard interactive where you're making a bunch of moves trying to checkmate. A solver is a calculator, a very powerful one. You feed in a formula and it returns an output. In this case, satisfiable or unsatisfiable. So, an example of this is Verus, also an open-source tool.
+
+It uses this solver, this very powerful calculator, Z3. And if folks are familiar with adding annotations, it's kind of similar to that where you can add specifications in the form of that. And the code is in line. So, you see these two requires and ensure keywords, that's what we call a pre and post condition. What must be true before and what must be true after.
+
+And this is a static check. It's enforced by the verifier and erased at runtime. So, almost like ghost code. Another example of this is Eneus, which uses the mid-level intermediate representation for Rust and does a functional translation to Lean. And right after that, you use the same theorem prover, the same chessboard that we spoke of.
+
+Now, you may be asking, well, what if I have any programming language? We at AWS have been working on an open-source tool called Strata. This is work in progress, but the idea is that you can have any programming language and you yourself can create what we call a dialect. Think of this like a compiler. You have a high-level intermediate representation and you lower it down to a low-level intermediate representation, which is what Strata core is. Now, this is
+
+written in Lean. After you have all of these programs talking in the same language, which is the Strata core, you can dispatch it to any of the engines. For example, the Lean proof, remember the chessboard, or the very powerful calculator, SMT solvers, or model checkers.
+
+So, you can get started with this today. You can go to Lean in in your browser with the link I pasted, and you can pick your most critical code, write what correct means, which is the specification, which is very important, and then you can let your coding agent implement it and your formal verification tool prove it. So, hopefully in this brave new world, we have software and systems that are not probably correct, but probably correct. Thank you.
+
+>> [music]

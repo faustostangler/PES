@@ -1,0 +1,138 @@
+---
+video_title: "Shipping AI to a Million Patients Without an A/B Test — Jared Joselowitz, Ufonia"
+video_id: McknwOzbmyg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=McknwOzbmyg
+video_date: 2026-08-19
+video_description: |
+  You cannot A/B test on patients, because randomizing someone into the worse variant is unethical and often illegal. You cannot undo a call once spoken. And a vendor's benchmark number is not a defense at a post incident review. Jared Joselowitz builds the safety and evaluation stack behind Dora, a Ufonia voice agent that phones patients for post op follow ups and pre op checks. It has made roughly 200,000 real clinical calls across 20 UK hospitals and is contracted to reach a million patients within two years. Because it asks about symptoms and gives advice, it is a regulated medical device.
+  
+  Ship to 5% and watch the dashboard does not survive that. 5% is thousands of patients, and a dashboard turning red means someone was already harmed. So the reactive loop moves into simulation, as self driving did with millions of simulated miles. Their framework has one model play the patient against hazards written with clinicians, and a second model judge every dialogue. Both were validated rather than assumed. In a patient and public involvement study, real patients shown a genuine consultation beside a simulated one picked the simulated patient as more realistic in three of four sets. The judge, checked against 10 clinicians from 10 specialties on 240 cases, matched or beat them at near perfect sensitivity, the metric that counts when a missed red flag is catastrophic and a false alarm is merely annoying. Prompts are then optimized against a cost matrix instead of hand tuned. You do not ship the model, you ship the evidence.
+  
+  Speaker info:
+  - https://x.com/JaredJoselowitz
+  - https://www.linkedin.com/in/jaredjoselowitz/
+  - https://jossy.co.za/
+  
+  Timestamps:
+  0:00 - Proving a product is safe before a patient hears it
+  1:28 - What Dora is, and the scale it runs at
+  2:18 - A call with a patient after cataract surgery
+  3:22 - Giving advice makes it a regulated medical device
+  3:59 - Starting from what could actually harm someone
+  4:35 - Why ship to 5% and roll back breaks here
+  5:53 - Borrowing the simulation playbook from self driving
+  6:32 - Matrix, and a model that plays the patient
+  8:24 - Can real patients tell which one is simulated
+  9:43 - An automated judge, and validating it against clinicians
+  11:35 - How brittle prompts really are
+  12:50 - Optimizing prompts instead of hand tuning them
+  13:30 - Making the metric a real cost function
+  14:42 - The flywheel that replaces the reactive loop
+  15:20 - Simulation is necessary, not sufficient
+  16:38 - Shipping the evidence, not the model
+  17:14 - New modalities bring new hazards, same framework
+---
+[music]
+
+Uh hello everyone. It's really nice to see you all. Um my name is Jared and I'm going to share some of the work that we do on shipping healthcare AI safely basically. Um so just a little bit about me. Um I come from South Africa where I actually studied electrical engineering um before making the very unique decision to transition to AI a few years ago. Um I now work as a research
+
+engineer for Euphonia which is basically a healthcare company based in the UK and um the work we do I work within the science team is we build the safety and evaluation stack behind DORA which is a clinical conversational agent and my job and our job within the science team is proving that the product is safe before a patient ever actually hears it. So shipping to patients takes away the normal safety nets you would normally ship with. Um, three of them could be that you can't actually AB test on patients. Of course, randomizing patients into a worse variant is unethical and often illegal. Um, you can't undo a call. One store says it,
+
+it's been said and there is no roll back. And very importantly, the model card won't save you. Um, you can't claim like some model vendors said that they have 92% on some benchmark. Um, it's not a defense at a post instant review. So everything that we do at Euphonia comes from living within these three constraints.
+
+So what is Dora? Um a little bit about Dora. Dora is a a voice AI agent that phones patients and has real clinical conversations like posttop follow-ups or pre-op checks. Um these are calls that a clinician would usually have to make themselves. But Dora doesn't so Dora obviously doesn't replace doctors, but it just takes a hugely time consuming task off their plate and gives them their time back.
+
+Um, so far we've done around 200,000 real clinical calls within the UK across 20 hospitals and we are contracted to scale to a million patients in the next two years. Um, we also um released our product in the US this year and we are live in in in two clinics and we've signed up for six more clinics across four different states. So I'm just going to for for a bit of better context I just want to do a quick demo of what the experience with Dora is actually like. That's not uncommon after cataract surgery. Are you having trouble seeing clearly at a distance, up close, or both?
+
+>> Um, at a distance is fine. It's just uh up close. That's um it's a bit it's I'm having a bit of trouble with that. >> So, when exactly did you first notice it was a bit blurry when trying to read or see things up close? Um, well, really just after the surgery, and I was wondering how long it would last.
+
+>> So, you're asking about the duration. That's understandable. Blurry vision should improve rapidly in the first few days after surgery. >> Okay. Um, also, um, is it all right if I go swimming again?
+
+>> You should avoid swimming for a month after surgery. That's just to be on the safe side and help your eye heal properly. All right. Okay. >> Awesome.
+
+So, as you just heard, sometimes Dora asks about symptoms, it gives advice, sometimes it it answers questions. And when it does this, this makes it what's called a medical device. And therefore, it has to, of course, be regulated. Um, and we have to prove that it's safe. And regulation essentially bottles down to three main questions. What does your
+
+software do? What could go wrong? And how do you ensure that it doesn't? For normal software, it's quite tractable the question. But for a model that talks to actual patients, what could go wrong is quite huge. So where do we start? We
+
+start from what could go wrong. We start from the harm. What could actually harm a patient? And let's look at some examples. Um Dora could miss a red flag symptom such as sudden vision loss or severe pain. A patient could ask a
+
+medical question and Dora invents an answer, hallucinates something. The patient could be distressed and Dora just ignores it and carries on without actually acknowledging the distress. There's many many many documented hazards of these 20 30 40 and we have to ensure that none of them actually happen in real life. So how would we actually normally catch a problem like this before it actually spreads? We would lean usually on the playbook that most software ships on.
+
+You ship to a small percentage of people. You watch the dashboard. You roll back if it breaks and you iterate from there. This is a very good playbook. It's reactive. It's fast. It's
+
+very safe. And it's how the industry usually derisks a launch. But there's a hidden assumption here that it only works because you can afford to be wrong for an instant. A bad change hits a few users. You can quickly catch it. You can
+
+roll back and no one's actually literally harmed. This is the one assumption um is why that it breaks when when the actual user is a patient. for 5% that could be a hundred if not thousands of of patients that have got unproven changes and un undue care roll back you can't really roll back the call has already happened the person has already been harmed by watching the dashboards the dashboards are just going to going red means that a patient was actually hurt so the reactive loop is actually gone now so how do you iterate at all when you can't touch a patient until you're sure well for this we started looking at other at at examples from other high reliable industries ries. The most obvious one is self-driving cars. Obviously, we're in SF now. There's a
+
+lot of Whimos driving around. They've only just come to London, unfortunately, very very late to the to the party. But what did what did self-driving cars do? Well, they didn't just drive around crashing into walls and say, "We won't do that again." And then doing another RL loop. They put millions of miles of
+
+simulations first before they actually got any um passages in into the car. For us, we believe in the same thing. Simulation is only real. the real ethical option we can go with. You can't run all the hazard the hazards I just mentioned on real people as a first grasp.
+
+So for our clinical history taking we built a sim simulation framework called matrix and I'm going to work through how it works and how we use it to prove that our product is safe. And the paper's on archive if you want to read it along with some of the other research that we do. At its core, Matrix recreates a real clinical work conversation but with no real patient in it. We use an LLM to play the patient. We call it patbot. And
+
+what does it do? We use a simulated patient and not a hired actor because hired actors don't scale. If we want to iterate very fast and simulate different things at the same time while also updating our system, um, hiring actors would just be too slow of a process. So, as a first version, we just use a simulated patient. The simulated patient is conditioned on the actual scenario we want to test. The
+
+scenario defines exactly what the patient should try and do when talking to our agent. For example, asking whether the agent is a human or a or an AI. Patbot then has a conversation with Dora, our target system, and then generate simulator dialogues. Very importantly, this all happens under a very specific clinical use case context. So, the scenarios are grounded in real clinical workflows and not abstract situations.
+
+So, how do we actually make sure that the the patient is realistic? If if Patbot is is sounding robotic, the tests aren't really worth much. So, we had to, of course, validate it. The first thing we did was just a pure um script adherence check. If we told Patbot to do something, does Patbot do it? Yes or no? This helped us filter out
+
+a lot of maybe weaker models that that were that didn't listen to instructions properly. But just purely um following instructions does not make a realistic patient. We want a patient that flows more realistically like a like a real person. So we set up what's called a PPI study, a patient and public involvement study. We took real patients and we showed them two sets of conversations. One
+
+conversation was between a real doctor and a real patient and one conversation was between Dora and Patbot within our matrix framework. and we showed them these two examples side by side and said, "Looking at the patient, can you tell which one is the real person and which one is the simulated person?" So, I'm going to just wait for a few seconds here. If you guys want to quickly read the two conversations, um maybe we can do a do a hands up. Who thinks conversation A is the real person?
+
+Who thinks who thinks conversation B is the real person? Okay, I think us as as engineers sometimes are pretty good at at finding these things, but um it was actually much more difficult than we thought. And we did this with four conversation sets. Basically, in three out of the four, the majority of people actually thought that the simulated patient was more realistic. But the most important thing that we found was of course there is no single realistic patient. That doesn't
+
+really make sense. Some people prefer to speak more verbosely, a lot of ums and os. Some people are more straight to the point, a lot of yeses and nos. But the point is that we actually want to simulate all these different scenarios. We want to simulate people with very diverse personas. Um, but what it did
+
+show us is that at least our patot was realistic enough um for this simulation. Okay, so now you've got thousands and thousands of simulated dialogues. Are us as the engineers going to go read through them one by one and see if a hazard happened? Of course not. It doesn't scale at all for one and number two we on clinician so we don't actually know if an actual hazard has really occurred.
+
+So we use another LLM as a judge of course and we call it bev judge. It takes the simulated dialogue a set of expected behaviors and the hazardous scenarios that we talk through with clinicians and it makes a judgment pass or fail. If it fails it gives us a reason why it gave that answer. So we give we get a structured output of which hazard were triggered and what actually went wrong in that scenario. So how did we validate bev judge? Uh we
+
+val we we validated bev judge against expert clinicians. We had we created a corpus of 240 examples and we had a ground truth of whether a hazard existed in these conversations yes or no. Then we got 10 clinicians from 10 clinical specialties to to label them for whether they had a hazard or not. And we did the same thing with a judge. And the results showed that our judge is at least on par if not slightly better than the the real expert clinicians. The top model which
+
+as of a year ago when we wrote the paper was Gemini 2.5 Pro. Now we've maybe updated the models. Um it achieved an F1 score of of 0.96.
+
+And even maybe more importantly it achieved almost perfect sensitivity. Um sensitivity being a very important metric to to healthcare and and to clinicians of course because you want to make 100% sure almost that there's that no hazards appear in a conversation. You would rather overall hazards that aren't there than underall hazards that are there. So now we have an automated judge that performs at expert layer at at expert level and this is actually what makes this whole process scalable. Okay. So now matrix can grade thousands
+
+of conversations but grading isn't technically improving the product. A pile of pass fails tells you where door breaks and where is not safe but doesn't actually make the product better. So how do you do this without experimenting on the patient? The answer isn't like maybe uh very long ago in our world eight eight months ago we would manually prompt engineer this. We would look at which agents are going wrong or which prompts are going wrong and we would have to manually prompt engineer. But we
+
+know that prompt brittleleness is real and it's it's quite absurd. Formatting changes alone have been seen to swing a benchmark by 76 percentage points. And reordering few shot examples flips a model from near random, so near 50% to near state-of-the-art on some benchmarks. and hand tuning can't survive that. It's very subjective. It's
+
+not reproducible and very importantly it's extremely timeconuming. So over the last year or so there's been these prompt optimizers that have started to come out and we've focused on those. The one that we use the most is is JPE which stands for genetic PTOA. It comes from the same people who made DSPY if anyone knows about them. And how does JPE work?
+
+You essentially define a metric for what good is which I'll I'll get into a bit later. Then um you you pass your data through through um through through Jeppa and and it tells you which examples failed. Then you get a very strong LLM to reflect on the failures and update the prompt automatically. You do this over and over and over again and it it keeps what they call a PTO frontier of the best prompts until your budget has been exhausted and you've now come up with with what what Jeba comes up with the best prompt. So we believe this is a much better process from both both a time consuming process. You know it takes maybe manual
+
+prompt engineering would take in the order of hours to days to this is in the hour of minutes. Normally between 30 and an hour minutes and an hour you get an optimized prompt and very importantly it's reproducible and there's a very clear order trail and clear feedback loop and if anything goes wrong you can just maybe it's purely now a data science problem. It's mainly focused on the data, how to make your data right, the feature engineering and you define the actual metric along with the clinicians. So how do you actually know what good is? Um it's not a flat accuracy score. You
+
+don't want just an average of how your whole data set did. You give it a cost matrix. So let's go back to our sensitivity metric. Let's say it's very important for clinicians to understand when when and where a red flag is present. If a red flag is present and you correctly catch it, that's good. If
+
+you if you miss it, it is it could be catastrophic. If there's no actual red flag and it overcauses um um that there's a red flag there. It's just mildly annoying to the patient. They may need to ask answer a couple extra questions, but it's not a cat catastrophic harm situation. So, we what can we do? We can optimize for
+
+sensitivity. we can we can work with the feedback metric and we can just make it um give a higher reward for finding the red flags and a lower reward for um for missing them. So you can optimize for certain metrics. You can also optimize for something else that that a that a a clinician might want. They might want to optimize for accuracy or might want to optimize for some other metric. All you
+
+have to do is recompile the prompt and then you got a a new um optimized prompt. So remember earlier when we said the re we feel like the reactive loop is gone. You ship, watch and roll back. This is what we believe replaces it. We take real calls, real data. We um we use then
+
+synthetic edge cases which may not come up in real calls such as like rare symptoms or or misranscriptions. We get an optimized prompt through through Jeff or some other prompt optimizer. Then we pass it through through something like matrix as a simulation safety gate. If anything fails or anything doesn't look right, we can redo that whole process, redo the data or or re label or get more data. And then after that and you're happy with that, then you can do some gated deploy which we'll get into a bit. Um
+
+the most important thing here is that it's a flywheel. Every single deployment and every new call produces more call data. So your system is consistently improving. So as we said with with our matrix framework, we use simulated patient. But however realistic you think they are, of course they are not real patients.
+
+Passing every test in simulation doesn't prove that Dora actually helps someone in real life. The things might come up in real life that that you can't get in simulation. It only earns the right to actually try carefully. Simulation is the inner loop. It's fast. It's free.
+
+You can do thousands of runs before anyone actually real is is exposed. But real patients are the outer loop and that's where the only real proof is. So simulation is necessary but it's not sufficient. Simulation earns the right to to to test on real people and then eventually real patients. But you don't just flip a switch. You cross it in stages and each
+
+stage earns the the right for the next. After you've done your simulations and you're happy with the results, you might do a round of user testing. Then you get supervised clinical evaluation based on those tests and you and you base it on real patients. You can do some voice actors, but of course the the most realistic is to get real patients. But in this step, it's very important that there's clinicians at every step in the loop. Then you can do some deployment,
+
+but it's still monitored. And how much autonomy you allow the system to do depends on your evidence. As the system gets more evidence, you can give it more independence. And underneath all of this, um, every call, every data set, and every pinned, um, prompt, every judge verdict traces back to the exact hazard that it addresses. That's the real deliverable. The important thing is
+
+that you don't ship the model, you ship the evidence when trying to regulate. So, what can you take back to your own stacks both in healthcare and other areas? You first have to define exactly what harm is for your product. You have to manufacture your rare but dangerous cases. Don't wait for them to to happen naturally. Make your evaluation metric
+
+your real cost function to optimize. Pin your prompt versions and keep the traces. These are the important things. The important thing also is that the the work is never done. As you move into new modalities or new languages, there'll always be new hazards that start to arise. But with something like matrix
+
+and a a prompt optimization loop, um you can use the same framework as new modalities arise. You know, when you move into voice, for example, there's things like back channeling and interruptions, which which breaks a lot of the the texts. For example, an agent might be midsafety advice, like you must avoid bright lights, and when the patient maybe um um cuts in with some um out of scope question, and weaker models usually just forget about the safety advice and just ask answer the next question. But Matrix captures these things. Um, other things that that usually go wrong that we've tested is that um the the patient could the the Dora or or an agent could be halfway through giving some safety advice and a back channel just cause the model to just completely ignore the safety advice and and stop right there and and wait for the patient to to say something else. The failure models the
+
+failure modes change the framework doesn't. You still blackbox the system, write down the new hazards and simulate and judge them exactly the we did over text. Voice is just a new module in the same safety case and we actually use matrix in the voice space to do these exact same things. So whatever modality you move into, you're not starting over. The same approach finds the hazards before a real user does. So again, you
+
+simulate before it ever touches a patient and you use an optimization loop to actually improve the system. Thank you very very much for coming to listen. Um I'm very very open to to talking more about this and if you want to connect during the conference or after, there's my LinkedIn and socials. Thank you very much. [applause]

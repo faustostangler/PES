@@ -1,0 +1,212 @@
+---
+video_title: "Introducing Cpeak | Building Express.js from Scratch"
+video_id: sd7-bYUrkUM
+channel_name: "Cododev"
+channel_id: UCEygwyqjUUMj6TOnxMsDjjQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=sd7-bYUrkUM
+video_date: 2024-08-28
+video_description: |
+  Introducing Cpeak, our zero-dependency Node.js HTTP framework. Let’s build an industry-leading product together!
+  
+  Starter Code: https://github.com/agile8118/cpeak-app-starter
+  
+  Full Playlist: https://youtube.com/playlist?list=PLCiGw8i6NhvqsA-ZZcChJ0kaHZ3hcIVdY&si=xIOyVIid88WjbcDp
+  Follow Cpeak on GitHub: https://github.com/agile8118/cpeak
+  
+  Chapters:
+  Introduction 00:00
+  Setup 09:30
+  Code Walkthrough 14:20
+  Current Cpeak Status 21:41
+  Express.js Compatibility 23:22
+  Outro 29:26
+  
+  
+  www.cododev.ca
+---
+Hello and welcome to CP a journey to infinity. We're going to [music] build a node framework from scratch and we're going to keep on improving it until it's one of the best out there in the world. [music] In this video I'm going to talk about why we are doing this, what you can expect from this playlist and also how you can get set [music] up to follow along with the project. So first of all a quick introduction to CPI. Right now, this is an npm package that has been published and you can find it by going into npmjs.com and right
+
+here in the search bar, search for CP CP AK and then it should pop up right here a minimal and fast node framework. So, as of now that I'm recording this video, this project is still in development, but we're going to keep on improving it until it is ready to be used in complex production applications. And by doing this, we're going to learn a lot about development, about node, about HTTP, and so much more. Now, we came up with this framework here in this course, which is my Node.js course, and you can check it out by this link. And in this playlist,
+
+now we're going to take what we came up with in that course, and then well, take it from there, keep on improving it. Now, you don't necessarily need to have gone through this course if you want to follow along with this playlist, and I want to talk about how you can go about it if you haven't done that already. We're going to go through the code here in this video. So, you should get pretty much set up by that. All right. So, why
+
+are we doing this? Why are we going to create this framework and then keep on improving it? Now, first of all, ExpressJS or any other framework isn't perfect. Now, we can come up with something that is better than those and more suitable for our own needs. Now, it's not going to be easy, but it's doable. And by doing this, we're going
+
+to learn a lot of things. Okay. So, in this playlist, you can expect us to take care of a lot of security issues, do a lot of error handling. We're going to do so much error handling, the likes of which you've probably never seen before in any other educational content. So, we're going to do all these things to make our framework super robust, really performant, and also really secure. And
+
+we're going to take care of all the little things that we have to take care of. And we also want to be super minimal. So here in this framework, we are not going to have any dependencies whatsoever. All right. Right. So if you
+
+want to create your HTTP application and when you say npm install express maybe cookie parser body parser and so forth and then you take a look at your node modules and you've got like dozens who knows maybe a hundred packages right there and you just installed a few. We don't want to end up like that. We do not want to end up with a dependency hell and we're going to keep it zero and we want to make sure that this is a framework that everybody has a chance to learn about. So you can come to this playlist and learn how this framework was built and learn about every single file here in the source code, every single line of code so that you can now take the project improve it in your own applications. And because now you understand every single step of this project and how it was built. Now you've
+
+got full control over the thing, you can change anything that you don't want. you can remove any code that you don't care about and eventually come up with an application that is more performant, more easily maintainable, more secure, and more minimal than the other approaches that you could have taken. So that's one of the reasons that we're doing this project. Again, although we're using this as something to learn a lot, the end goal is not to come up with an educational code, okay? This is meant to be used for production. And if you
+
+scroll down right now here in the versioning notice, all the version ones were the ones that we developed here in the understanding Node.js core concepts course, which isn't a lot. It's just a few lines of code. And all the version twos, all of these are going to be our active development ones. Okay, these are the ones that we're going to work on right now from this video on out and then keep improving it until it is production ready. And our first release
+
+for production is going to be version 3.00. Okay, so we're going to get there eventually and we've got a lot of work to do until we get there. Now, this framework is also going to be express compatible. So at any point that you want, you can go from CP to ExpressJS.
+
+More on this later on, but it's also pretty important that we take this into account. And also, it is going to be very fast, potentially even faster than Express in a few ways. We don't need to take care of a lot of legacy code here. and CPIC these other frameworks have been there for many many years and they need to take care of many legacy code. We do not want to care about them. We
+
+don't care about a project that wants to now refactor to this. We care about only the projects they're about to start. Okay. So, we're going to make use of all the modern features in node and also JavaScript to make this happen. And we also don't want to offer a lot of customizability to our users. if you can
+
+do it one way and it doesn't really matter much in terms of your flexibility. We want you to do it that way and instead we're going to come up with less junk in our code. So we're not going to offer a ton of amount of customizability. And here I want to talk about what I mean by this. So if you go to Postman, let's say that you want to upload something and you want to use CPI to do it. You can either upload it here
+
+as a binary. Okay? So you can either do it this way or you can do it here as a form data. So you can add a key for it and then add a value here in the value we're going to have to change it to file and then well add the file in. So we do not want to support this. We want to say
+
+that if you can do it here using this binary thing. Go for it. You might be saying what if now I want to upload 10 different ones. Well then send 10 different requests. So that's what I mean by this. We're not going to support
+
+all these different HTTP things. If you can send JSON and binary data and also all the headers, that is pretty much it. Okay. But we don't want to make it too crazy. We don't want to take care of all the special cases, all the legacy projects out there. We want to make it
+
+modern. So this framework is meant to be used with React or Angular on the front end. Okay? So if you want to use CPE for your project, that is how you should take care of the front end. So if you going with something traditional like jQuery, this is not the right framework for you. Now, one reason why someone
+
+wants to consider using CPEK. Imagine you're a project manager or you have a company and now you want to start this new project and you chose node for it. Now for the framework you can maybe go with express or nest or any other node framework out there. But the problem is that your engineers won't know exactly how that thing was built. Okay? And they
+
+don't have an easy way of figuring that out. If they want they have to go through the source code. They're going to see a lot of things that they can't make sense out of. Many files they probably can't easily figure out why they are there in the first place. So they're going to have a really tough time with that. I remember first when I
+
+came to know it many years ago and then I was exposed to this ExpressJS and I was wondering how this thing was built. How can I now learn how to build something like this myself or change it in one way or another for my own projects and I couldn't find easy ways of doing that. Okay, sure I went to the source code but it was one heck of a thing to pull off. But now with this framework, we're going to change it. This is a framework that everybody that wants could come to this playlist and learn exactly how it was built. All
+
+right, every single step you can go to the source code and by the help of this playlist learn every single file here and what is its purpose. Okay, we're even going to talk about the license one and I'm not kidding. Okay, so I mean every single last file that we've got and also all the code that we've got. We're going to explain it all. We do not want to leave any stone unturned. We're
+
+going to go through all of them to make sure that everybody has this potential to learn this in depth. And again, zero dependencies. So, let's say you want to create a new project. I'm going to create a random one. I'm going to delete this in just a minute. And here, let's
+
+say that you want to maybe start a new HTTP project with node. So, you're going to have to maybe install express, maybe body parser, and maybe cookie parser serve static. probably course and maybe a few more. I want to install all these things and you try to now create your project. If you go to your node modules, you're going to see a whole lot of things. You have no
+
+idea what these things are doing right now. What if one of them has a security bug? You have no idea to figure that out because the moment you start to introduce these dependencies, those dependencies also have other dependencies. And that's how you end up in a dependency hell. with a node module that is just so big that you have no idea what is going on in there. Now,
+
+this is not that bad right now in this example. It's 70, but still that's not something that we want. We want this framework to be something that when you install it, you're going to get just one folder right here in the node module that says CP and that's it. And you can go through the code and understand every single file and every single line of code there if you want. Okay? And if you
+
+want to change something at any point, you can maybe fork the project, change it, and now you've got something fully tailored for your own project needs. And if you are in a team, you can do this with all your other engineers because they can go through this playlist and learn how this was built. All right, so remember what we're doing. We're trying to build something better than Express. Express is an industry-leading product here in Node. So this is going to be a
+
+tough playlist. So, if you want to follow along with this playlist, you need to have a deep understanding of node. If you don't, you're not going to be able to make it. Now, we're going to see if you are pretty comfortable with node or not. And I want to talk about what to do if you are not. So, let's
+
+first talk about setup. And for the setup, we're going to clone a repository here from GitHub. I'll put this link down in the description box below. So click on it or manually go to github.com/aggile8118-apparter
+
+and then clone this repository. So I'll clone this here in my desktop and I'm going to put it in a folder called cpek-app. All right. And I'll go here and open this up in my code editor. All right. So this is where we're going
+
+to begin our journey of working on the CP project. So here if you take a look we've got this CPE folder. This is the CPI source code. Now ideally what happens is that you say npm install CPI and then you get this folder in your node modules. All right. But because we
+
+are now developing it, we're going to manually put it right here and then include it like this. Okay? So we're not going to say require CP like this with no path whatsoever. All right. We're going to do it like this. And we're
+
+going to have the project files manually here in this folder. Okay. And then this source and public, these are the folders that we're going to use for a dummy CPE project that we're going to use to test the CP framework. So here in the source index.js, I am including the CPI. I'm
+
+specifying a port, initializing my server, and then start to listen on that port. Okay, so we're not going to do anything crazy right here in this index. And then here we also have the router file to keep things separate. But we don't have to do it this way. We can just put it all here in this index.js
+
+file because it's going to be pretty straightforward and we'll just use it for testing. So we're going to be spending the majority of our time here in this CP folder. Now right now it has a bit of code but not too much. About 80 lines here in the index and in the util only about 20 lines. So I want you to go through the code and understand it. And
+
+I'm going to also do a walkthrough over it. And here's how you can know if your understanding of node is deep enough or not. So if you have no difficulties understanding this code, it means that you are pretty okay to follow along with this playlist. But if you see something that doesn't make any sense to you, there's a good chance that you do not understand node on a really deep level. And if that's not the case, you're not going to be able to do something better than express. So maybe take a pause. Do
+
+not go through the playlist and instead go and deepen your understanding of Node and also the fundamentals of computer science. You need to know these things if you want to follow along. Now, this code right now is what we came up with in the understanding Node.js course and I'm going to just pull up the curriculum very quickly. All right. So, here is the
+
+curriculum of the course and I don't want to push you to buy the course. You do not need to buy the course if you want to follow along with the section. But you do need to understand the concepts explained here if you want to be able to follow along. Okay? So you do need to understand event emitters. You
+
+need to understand buffers, hexadesimal and binary content file system, you need to understand it. Streams, we're going to use them a lot. And also networking and HTTP. Okay? So you need to have a deep understanding of these concepts.
+
+And of course also the command line. All right. So you can either go through this course or learn them on your own. Okay. So you have to spend a ton of time if you want to do it on your own in the node documentation and also learning about the computer science topics like binary content, the file system and networking and HTTP. Okay? So either do
+
+it on your own or maybe go through the course but you need that deep understanding if you want to follow along. All right. So this code right now this about 100 lines of code. This is what we came up with here in the HTTP section. So at the end of the HTTP section, we had something like that. Now
+
+we were not working on this framework from the beginning of the course. We only worked on it from the HTTP section. But still we needed to have all those previous knowledge to make sure that we can do something like this. So I expect you to have all that knowledge. I'm not going to explain here what is this content type. I'm not going to explain
+
+here how this streaming thing is working. I do expect that you know all of these things. We're not going to talk about the core concepts of note here in this playlist. What we're going to do in this playlist is that we're going to have a deep focus on how to do proper error handling, how to take care of security issues, how to make sure that our application doesn't have memory leaks and it's as performant as we can make it, how to come up with good production ready code and things like these. Okay, so we're not going to do all these explaining again. Although we
+
+are going to explain the code that we're going to write so that we do but we're not going to explain all the fundamentals from scratch. For example, this is something that you should know. You should know how to set the status code here in the Node.js res object. All right. So a quick walk through on the
+
+project. When you include it, you are including this gigantic class. All right. So this is all this class and then here inside we've got the constructor. In the constructor, what we're doing is that we are initializing our HTTP server. Okay? And then every
+
+time we get a request to the port that we fired up, this callback function right here is going to kick in, which is pretty long all the way until this point. And here in the call back, we're going to determine which route to run. All right. So, I expect if you're here, we have for sure used Express at one point before and you know how it works. So if you go to the router right here, we've got different routes. We say maybe
+
+server.out or in express it will be server.post and the function that we want to run. And this way we can easily have all these routes in place and give a neat structure to our application. So if you take a look at these functions which is here in the controller and then here in this test, we're grabbing the request and response just like in express. We have modified these here in
+
+the constructor. So if you go here in CP and then index, we're adding properties to this res and request objects. One is the status. So if we want to now set the status of our response, we don't need to say res. status code equals something.
+
+We just say res.status. If I go back right here and then we can chain on it. Then we can easily say.json and then specify a JavaScript object. And this is
+
+now going to be sent to the client as the response body. So we're adding all these convenient methods here in the constructor. So one is this send file that accepts a path and the mime type and it's going to send the binary contents back to the client. All right, we're going to use this to serve HTML, CSS, and anything else that we could possibly have. And then we've got this JSON. We use it to send some JSON back.
+
+And then here we're doing something here with nodes. You can try this in your terminal and you can get up to speed. What we're doing is that we're stripping the parameters the URL parameters from the URL. So if we get something like this maybe slash users and then maybe I don't know filters something and then maybe key2 equals value 2 something like this. We're removing all this stuff so that we have a clean path and then we're putting all those things here in the params. Okay, we are also doing this
+
+search params on top. So in our code we should now be able to easily say here in a controller in the rec object we can say rec.parrams.get and then maybe q2 or something like that. So it's now way easier for us to deal with URL parameters.
+
+All right back here in the cpek we've got then this function this run middleware that is going to run recursively. And the reason that we're doing this is that we usually have some middleware functions before we get to our route. Right here we have only one this before each this is going to be a function that is going to run before our actual route logic and we could be having many of these like this. So we get wreck res and then the next just like in express we can modify the w and res we can maybe return an error and if we are ready to move on to the next middleware function or to the actual route logic we say next and that's it. And if we can't find a route that has that method and the URL without the parameters, we're going to return a 404 error and say that you have not added a handler for this particular route. And
+
+then right here, this is where we're calling the actual function in the actual callback function that was specified here in the controller. So this one and for that one, we are passing in the modified request and response objects. Okay. And now if I scroll down here, we've got these methods. This before each which we talked about. All it does is that it's
+
+going to push that call back to this middleware that we've got. So it's an array right here. And then before we run each route, we're going to run all of our middleware functions. So it's pretty straightforward. And then we've got this routes right here. And every time a
+
+developer says server.oute, we're going to add a new property here to this routes thing. All right. with the method and the path and then we can easily find it and then call its callback if we get a request that has specified that method and that particular path. Okay. And then
+
+we've got this listen thing which is just a wrapper on top of this. And that's it. And also here in the util we've got this parse JSON and this is going to run in a middleware function. So we're going to run this piece of code before each route that we have. Okay.
+
+And all it does is that it's going to get all the data on the request body. So a node as you should know all the request body and response bodies are being transferred through node streams. So what we're doing right now is that we are grabbing all the chunks and then once we are done we are putting that data to JSON.parse so that now we have this wc.body property that we can make use of in our code. So here in the
+
+controllers and then test. This is how I am reading a property from the body. All right. So that's it about the code walkthrough. We also have some testing files here. A simple HTML scripts and
+
+then styles. We want to make sure that all of them do apply when somebody goes to our route, which is not the case right now, but we're going to make that happen in a future video. But that's it about the code walkthrough. Pretty straightforward. If something is not super clear to you right now, well, of course, you have to take your own time and go through this code. You have to
+
+try a few things on your own. But apart from that, this should all make sense to you. And if there's something that doesn't make sense, it means that you are not ready to move on with this playlist. All right. So, let's now test this and make sure that it works fine.
+
+So, here in the terminal, you should be here in the CP app. Say mpm start and then go to localhost port 8020. You can either navigate like this. In this case, it's just going to send the HTML file and that's it. So, these styles and the scripts aren't being applied yet. And
+
+also, you can try another route. So, if you open up your Postman here, go to localhost and then 8020 and then slash API. So, let's see what this route was that we've got right here. So, it's API and then bar. Okay. So I'll go there and
+
+then here if you take a look at the bar function it's going to read the rec.body.name and send us a simple JSON response. So let's specify a JSON body right here. I'll change this to JSON and I'll say name is Joe. I also need to
+
+change the method from get to post. And now I'll go ahead and send it. And now we should get this response that says hi Joe. We're all set to start. Okay. So if
+
+you do see this, it means you're completely set up and ready to go with this project. All right. So in each video from now on, we're going to keep working on this C peak. We're going to add a new feature and explain why we're adding this, why do we need that, what are some of the alternatives, what are the pros and cons of doing this and stuff like that. Now, if you go to the CPM MPM version right now, at this moment, this is more advanced than what we have in the CP project. This is
+
+version 2.2. And I'm going to go to the versions. Actually, let's go to the repository commits. So, right here, I'm going to go back to the C peek and click on the commits. So, the one that we have
+
+right now is this one. So, the code has this utility function for JSON. So, we're at this version 1.1 or something. Okay. So, all these things haven't been
+
+added to the code yet, but we're going to add them all to the project and explain every single thing that we're going to do. But right now, we are at this basic step. It's not also that much. If you take a look at the current code, it's not really that crazy. So, as of now, there are some things in version two that we do not have in our current version. For example, this is a pure ESM
+
+package as of this version, but we are using CommonJS. We're going to refactor it later on. Another thing is if you scroll down, we don't have this serve static function, but we're going to add it in. Another thing that we don't have is the variables here in the URL. So, we can't do that, but we can take care of these, but we also need to do a modification right here. So, it's not
+
+that much. And you can also take a look and see it's pretty much like express. And we're also pretty much there to have all these features that Express offers. Okay. Now, of course, we have to make it way more robust, do many more error handlings and stuff like that. Something
+
+that is missing is maybe adding middleware functions for each particular route, which is something that we will do. And we also need to of course add in more utility functions like parsing cookies, taking care of cores and a few other things like that. But we're going to get there pretty soon. Okay. Now I want to mention one last thing here and that is about this express compatibility. So I'm going to create
+
+another project. Now you don't need to do this, just watch me do it. So I'm going to create a new directory and I'll call it maybe CEK- demo. And here I'll initialize a package JSON. And then I'm going to install CPEK. All
+
+right. So now this is going to install version 2.2. And let's go ahead and open this up. So here in node modules, we've got the source code. You can take a look
+
+at the index. So it's not that different. Sure, it has more codes, all of which we're going to add, but it's quite close. We still have the parse JSON. We have one more utility function, this serve static, but we're going to take care of all of them in future videos. Now, let me talk about that
+
+express compatibility. So let me create a new file here. We'll call it server.js here in the package. I'm also going to say type is module. We're going to talk
+
+more about this ESM later on. But right now we need to do this to make use of the new version. And then I'll include the CP app. Now initialize the application. So con server equals new CPI and then I'm going to listen on a port.
+
+I'm going to listen on maybe 898 89 and then a simple log here. I'll also add a simple route that is posts or get doesn't matter to maybe slash test and then here we're going to have the wreck and res and here let's say that we're going to pass in some cookies. So if we want to grab the cookies right now we have to do it like this. So const maybe cookies equals rec do headers and here we're going to have to grab the cookies header. Okay. So let's log this.
+
+So now we're grabbing the cookies in pure Node.js way. So this is how you would grab the cookies if you are just using the HTTP module in Node to create your application. And let me also send something to ND request. Sorus.json just
+
+an empty object. Let me run this. So node server.js I want to navigate to this. So localhost and then that port and it should be a post request to / test. And
+
+if I send it I'll get this empty thing and in my terminal I get undefined because I did not specify any cookies. So let's specify a few cookies here in Postman. We can do that by clicking on this one and then adding a few dummy cookies maybe. So I'll put down the domain first localhost and then port 8989. I'll click on add and then here I'll select it. Click on add cookie.
+
+I'll go with this cookie 2 equals value. Click on save. Let's add one more. This is cookie three. And let me add just one last one. So cookie four. And I'll
+
+change its name to cookie one maybe. All right. So I'm going to go with these and click on send again. Now this actually has to be cookie and not cookies. And let me run that one more time. and then
+
+send the request again. All right. So now if I go back here, I'm going to see all these cookies. I'm getting all of them in this text format. But it's not a JavaScript friendly thing. I can't say
+
+maybe now cookies do I don't know cookie one and get this value or cookie 2 and get this value. Now of course we can add a new middleware function right here and parse all of them or we can use an mpm package that is compatible with express and is already doing that for us. Okay, so let's say that we want to do that. We've got this package called cookie parser. So I want to install this.
+
+Let's take a look at the mpm package for this here. I'll search for that cookie parser. And let's go into this one. And if you go to the source code, you can see that this belongs to Express.js. So
+
+this is built by the same developers that built Express and it is meant to be used with Express.js like this. But because our framework is compatible with express, we can also use it. So let's include this thing. So import cookie parser from the cookie parser thing. And then
+
+here in express we have to say app dot use. Let me actually copy this and put it right here. In CP we have to use this object. So server and then instead of use we are using before each meaning that this is going to run before each route. And then that's it. Now here
+
+instead of saying this, we should be able to say this rec.cookies. This is not a property by default on top of the request object. And note this is the thing that ExpressJS right now is adding to the request. To be more specific, this cookie parser package.
+
+And well, it's just like how we are adding all these features to our objects as well. If you go to the node modules and then cpek lib and then right here in the index we talked about it that we're adding these properties like JSON like status zen file and well this is also how express is adding all these properties on top of the objects. All right so with this in place here instead of saying that I should be able to say w.cookies and now let's go ahead and run this. So here I'll say server.js JS and I'll send
+
+my request again. And now look at this. I do get that value in this nice JavaScript object. And I can now say cookies dot cookie one. And now I want to get the value of that cookie like this. All right. So that's what I
+
+mean when I say it's compatible. We can use passport.js JS and many other MPM packages that have already been built because in our middleware functions we also have the request and response and also the next argument. So at any point that we want we can easily refactor from CP to express and vice versa. All right.
+
+So that's about the introduction to this CP project. This is going to be a really exciting playlist. We're going to learn a lot and you'll see what it takes to build an industryleading product. It's going to be tough, but it's really going to be worth it. If you would like to use the current version of Cake, you can download the project and go through the documentation and you should get up to speed. All right, that's it about this
+
+video and I'll see you in the next one.

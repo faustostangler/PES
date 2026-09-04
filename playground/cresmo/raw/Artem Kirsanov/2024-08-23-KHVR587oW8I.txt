@@ -1,0 +1,139 @@
+---
+video_title: "The Key Equation Behind Probability"
+video_id: KHVR587oW8I
+channel_name: "Artem Kirsanov"
+channel_id: UCR2uRTQ53V_egXKFflMMaaw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=KHVR587oW8I
+video_date: 2024-08-23
+video_description: |
+  Get 4 months extra on a 2 year plan here: https://nordvpn.com/artemkirsanov. It’s risk free with Nord’s 30 day money-back guarantee! 
+  
+  =====
+  My name is Artem, I'm a neuroscience PhD student at Harvard University. 
+  🌎 Website and Social links: https://kirsanov.ai/
+  📥 "Receptive Field" neuro-newsletter: https://artemkirsanov.substack.com/
+  ✨ Support me on Patreon to get access to Discord community: https://patreon.com/artemkirsanov
+  =====
+  
+  In this video, we explore the fundamental concepts that underlie probability theory and its applications in neuroscience and machine learning. We begin with the intuitive idea of surprise and its relation to probability, using real-world examples to illustrate these concepts.
+  From there, we move into more advanced topics:
+  1) Entropy – measuring the average surprise in a probability distribution.
+  2) Cross-entropy and the loss of information when approximating one distribution with another. 
+  3) Kullback-Leibler (KL) divergence and its role in quantifying the difference between two probability distributions.
+  
+  🕒 OUTLINE:
+  00:00 Introduction
+  02:00 Sponsor: NordVPN
+  04:07 What is probability (Bayesian vs Frequentist)
+  06:42 Probability Distributions
+  10:17 Entropy as average surprisal
+  13:53 Cross-Entropy and Internal models
+  19:20 Kullback–Leier (KL) divergence
+  20:46 Objective functions and Cross-Entropy minimization
+  24:22 Conclusion & Outro
+  
+  =====
+  Special thanks to Crimson Ghoul for providing English subtitles!
+  
+  Icons by https://www.freepik.com/
+  =====
+  
+  *Disclaimer:* This channel is my personal project. The views and content expressed here are my own and are separate from my research role at Harvard University.
+  
+  #probability #entropy #datascience
+  
+  
+  _Description remastered: February 2026. Links & Bio updated; original context preserved._
+---
+Imagine you're walking home one night through a thick fog. Ahead, you see a vague shape moving towards you. Is it a stray dog, a cat, or maybe just a garbage bag blown by the wind? In this moment, your brain doesn't pick a single answer. Instead, it considers multiple possibilities, each with its own likelihood.
+
+This scenario illustrates a fundamental aspect of how our brains process information. We don't just see things as binary, we interpret probabilities. When faced with unclear or incomplete information, we naturally think in terms of likelihoods and uncertainties. This probabilistic view of sensory data also underlies many advancements in modern machine learning. In fact, a surprising number of computational problems solved by both biological and artificial systems can be viewed through this lens, learning the probability distribution of data, performing inference and synthesizing new samples from it, a capability often referred to as generative modeling.
+
+The language of probability and uncertainty is built on a few crucial concepts, such as entropy and <b>KL</b> divergence. These ideas are so fundamental that they appear across diverse fields, from the latest diffusion models in AI to theories of perception in biological brains, like the free energy principle. Today, we'll dive deep into the core concepts behind probability, starting from the ground up, and demystifying many of the formulas that might appear intimidating at first, but which have a very intuitive understanding. If you're interested, stay tuned.
+
+Before we dive into probability theory, let's address the uncertainty lurking in our online lives. Nord VPN, who are kindly sponsoring today's video, offers an excellent solution to mitigate that digital uncertainty. Navigating the web is much like walking through that fog we mentioned earlier but instead of mysterious shapes, you're surrounded by potential threats to your privacy. This risk is particularly high when using public Wi-Fi networks. Using an unsecured connection is like hoping to have a private conversation in a crowded room where anyone could be listening.
+
+This is where Nord VPN proves invaluable. It encrypts your data, making it unreadable to prying eyes. Remember those annoying banners that somehow know where you live? That's just the tip of the iceberg. Consider all the other sensitive information potentially at risk.
+
+Passwords, personal identity, credit card details, the list goes on. This is why using online protection tools is a must in today's reality. Nord VPN goes above and beyond basic protection with their Threat Protection Pro feature. It not only encrypts your data, but also scans downloads for malware, blocks suspicious websites, and even eliminates those pop-up ads for anyone prioritizing both security and a seamless browsing experience. This feature is a game changer.
+
+If you're ready to take control of your online security, visit
+
+to get four months extra when you sign up for a two year plan. Still unsure? Nord VPN offers a 30 day money back guarantee. You can try it risk free so the probability you'll be satisfied approaches 1. Nord VPN is committed to privacy.
+
+They have a strict no logs policy, which means they don't track or store online activities. It is also the fastest VPN on the market, ensuring you won't even notice it's running. Don't leave your online security to chance. Head to
+
+Link in the description to claim the exclusive offer. The most fundamental concept in our today's discussion is the notion of a probability distribution. In general, we deal with an abstract set of possible states and to each of those states, we assign a positive number between zero and one. This number reflects our degree of belief in how likely that particular state is to occur. You're probably familiar with thinking about probability in terms of the proportion of outcomes from high school.
+
+For example, a six-sided die has six possible states. To find the probability of rolling a three, for example, you would roll the die many times, count how often it lands on three, and divide it by the total number of rolls. As you increase the number of rolls, this ratio converges to 1 over 6, which is the probability for any side of a fair die. This approach, which relies on repeated trials and tracking outcomes, is called the frequentist interpretation of probability. While this interpretation works well for dice or coin flips, it has limitations.
+
+Consider a weather forecast stating the probability of rain tomorrow is 70%. We intuitively understand this, but it doesn't fit neatly into the frequentist definition. We can't repeat tomorrow's weather multiple times to find the frequency of rain outcomes. Tomorrow will happen only once, and it will either rain or not. This is why we'll adopt the Bayesian view, which treats probability more generally as the degree of belief.
+
+When we say rain with probability it means we've assigned a 0.7 degree of certainty to it. While this definition might seem very broad, it still obeys certain laws. The most crucial one is that all the degrees of belief you assign to possible states must sum to one. For instance, if there are only two outcomes, rain and sun, then saying the probability of rain is 0.7
+
+implies that the probability of sun is 0.3. This brings us to the notion of a probability distribution. Essentially, it is a function that maps each possible state to its assigned probability value. Because probabilities must sum to one, we can't manipulate this function for one state independently of others.
+
+It characterizes the system as a whole, completely describing how uncertainty is distributed among individual states. Here are a few examples of probability distributions. For a fair die, the distribution is uniform. Each side has a possibility of 1 over 6. The distribution of heights of adults in a population follows the famous bell-shaped Gaussian distribution.
+
+There is a technical detail here. Since height is a continuous variable, the probability distribution must integrate to one, meaning that the area under the entire curve equals to one, but this is just a general case of summation. You can think of continuous distributions as being made up of a large number of tiny discrete bins. It won't change the core concepts we are discussing. So far we've only looked at the probability distributions over
+
+But what about more complex scenarios like states that include both height and weight? We could try to put them on a one-dimensional line, but that's not very enlightening. Instead, it is more natural to think of states as occupying a two-dimensional plane with one coordinate for the height and one for the weight. Then, each point on this plane corresponds to a particular state, and we can represent its probability with color or as a third coordinate. For more coordinates, we can't directly visualize higher dimensions, but the idea remains the same.
+
+In machine learning, we often deal with much higher dimensional probability distributions. For instance, all possible 100 by 100 pixel images images occupy a 10,000-dimensional space with one axis for each pixel's value. We can then reason about the probability distribution of images by assigning a probability to each point in this space. But how do we actually use or interact with these complex distributions? To understand this, let's go back to our simpler example and think about the reverse process of generating outcomes from a probability distribution.
+
+This is called sampling and it is a crucial concept that is at the heart of many generative AI models. In the case of a die, rolling it generates a new sample from the underlying distribution, picking one state at random with a certain probability. Similarly, if we have a way to draw samples from a 10,000-dimensional distribution, we can generate new images, because this distribution captures the structure of data present in natural images. This would be entirely different from randomly selecting values for each pixel independently, as this would always result in noise. Now that we have established a common ground for the language of probability, let's explore the powerful math behind what it takes to describe and model a distribution.
+
+Let's start with the notion of surprise. Imagine that before you toss a coin, someone comes up to you and correctly predicts the outcome. Will you be surprised to see this prediction hold? Well, maybe, but not too much. After all, the chance of guessing was 50-50.
+
+Now suppose you do the same for rolling a die and someone correctly predicts that it would land on one. You'd likely be more surprised by this rather than a coin, right? Let's try to formalize this notion of surprise. Essentially, we are looking for a way to assign a positive number, a surprisal measure, to each state. This measure should be a function of probability that gets larger for smaller values and shrinks to zero when the probability approaches one.
+
+After all, events that are guaranteed to happen should have no surprise at all. A crucial but less obvious aspect is the additive nature of the surprise. If someone correctly predicts the outcomes of three dice rolled simultaneously, would be about three times as surprised as for one die. But the probability of such an event would be the product of individual die probabilities. In other words, when probabilities multiply as for independent events, the surprisal function should add.
+
+The function that behaves this way is the logarithm of one over the probability. This makes intuitive sense. Surprise is high for rare events and low for common outcomes. Now that each state has its own surprise, we can characterize the entire distribution by finding the average surprise packed into it. This average surprise is what we call the entropy of that distribution.
+
+Mathematically, it is expressed in the following way, where we sum over all possible states, multiplying the probability of each state by its surprisal value,
+
+For example, consider a thick coin that lands on heads and tails with probability 49% each, and on its side 2% of the time. If you randomly flip it many times, record your surprisal caused by the outcome of each flip and compute the average surprisal, what value are you going to get? Well, every time you get either a heads or a tails, which in total comprises 98% of all the flips. Your surprise is about 0.7, but in the remaining 2%, your surprise will be around 4.
+
+So the weighted average given by this formula is approximately equal to 0.8. Compare this to the entropy of a fair coin that always lands on heads or tails. This value is less, which means you will be on average more surprised by observing outcomes of a coin that lands on its side. In other words, it has more inherent uncertainty packed into it.
+
+Now I'd like to highlight an important point. Computing entropy relies on knowing the probability distribution, but in real world when we observe a random variable unfold, we don't have access to the true underlying probability distribution. Instead, we usually have an internal model what we believe the probability distribution should be, and this is what we use to assign the probabilities. The true underlying distribution is hidden and typically far too complex, so all we have are approximate models of it. For instance, consider a fair die.
+
+The true probability distribution of its sides slightly deviates from uniform due to inherent microscopic imperfections in the dye itself, air resistance, etc. It may even include other outcomes such as landing exactly on a corner or with vanishingly small probability falling apart in the air. However, we approximate this with a simple uniform distribution. 1 over 6 for each side. This model captures everything we need for practical purposes.
+
+But what if the deviation between our internal model and the actual distribution is more drastic? Let's consider an example. Suppose someone gives you a coin to flip. Based on your prior experience with coins, you believe the probabilities for heads and tails to be around 50% each. What you don't know, though, is that this particular coin is rigged with its center of mass shifted so that it lands on heads around 99% of the time.
+
+You go ahead and flip it 10 times, getting 10 heads in a row. Under your current model of a fair coin, the probability of this happening is extremely small, so you will be very surprised. However, the actual true probability of this outcome is quite high, because the coin is rigged. Notice that the surprisal you experienced is caused by your belief about the probability distribution being wrong, not because something truly remarkable had happened. This brings us to the idea of cross entropy.
+
+Essentially, it is a function of two probability distributions that quantifies the average surprise you might expect when observing a random process generated by one probability distribution while believing it comes from another. Mathematically, the cross entropy between distributions <b>P</b>, the true one, and <b>Q</b>, your model, is defined similarly to entropy, but we use <b>P</b> for the outcome probabilities and <b>Q</b> for the surprisal terms. The surprise given by cross entropy can come from two sources, the discrepancy between your model and the true distribution, as well as the inherent uncertainty of the underlying distribution itself. If <b>P</b> & <b>Q</b> are the same distribution, meaning that you have a perfect model, the cross entropy is simply equal to the entropy of <b>P</b>. A key mathematical property, which we're not going to prove rigorously here, is that the cross entropy of distribution <b>P</b> as the ground truth and<b> Q</b> as its model is always greater than or equal to the entropy of <b>P</b> itself.
+
+In other words, believing in the wrong model of a random variable can only increase the surprise you'll get by observing it, never decrease it. Another important feature of cross entropy is its asymmetry. The roles of <b>P</b> and <b>Q</b> matter, and swapping them can lead to very different results. Let's explore this with two examples. First, believing a coin is fair when it is actually rigged.
+
+Suppose the true distribution <b>P</b> is a rigged coin. 99% for heads, 1% for tails. But your model <b>Q</b> is a fair coin. For a single flip, the cross entropy can be calculated in the following way and is equal to approximately 0.7.
+
+Now let's reverse the scenario. What if you believe a coin is rigged when it is actually fair? Computing the cross entropy gives us 2.3. This value is much larger than the other way around.
+
+This is because half the time, when you see tails, you will be extremely surprised as your model predicted this was very unlikely. The other half of the time, when you see heads, you'll have a very low surprise. But the extreme surprise from tails dominates, leading to a high average surprise measured by the cross entropy. Our examples of cross entropy highlight an important question. How can we quantify the difference between our model's beliefs and the reality?
+
+Can we somehow isolate the part of the surprise that comes purely from our model's inaccuracy rather than from the inherent uncertainty in the data? This is where the concept of <u><i>Kullback-Leibler divergence</u></i>, or <b>KL</b> divergence for short, comes into play. It allows us to peel away layers of surprise. Recall our definition of cross entropy. This measures the total surprise when using <b>Q</b> to predict <b>P</b>.
+
+Now, what if we subtracted the entropy of <b>P</b> from this? This formula represents the inherent uncertainty in <b>P</b> itself, by subtracting it from the cross entropy and using the properties of logarithms, we're left with this. This is the <b>KL</b> divergent. It measures the extra surprise we get from using <b>Q</b> as our model instead of <b>P</b> beyond the surprise inherent in <b>P</b>. In our coin analogy, it is like isolating the surprise caused by believing in the wrong model, separate from the surprise caused by the coin flip itself.
+
+But why might we need to measure this discrepancy in the first place? Well, the ultimate goal of building and training many machine learning systems is to construct a good approximation, a model of the underlying probability distribution of some data to later use it for prediction or sampling. For example, suppose you're building an AI system that can create new lifelike photos of cats. Ideally, you'd want to sample directly from the distribution of all possible cat images in the real world. However, that is an incredibly complex space that we can't directly access or describe, so we'll have to resort to building a model to approximate it.
+
+Without diving too deep into the specifics of generative models in this video, I will just say that we usually approximate the shape of that distribution with neural networks. These can be viewed as mathematical functions with enough expressive power to capture complex patterns, Once we have parameterized the distribution with a neural net of some kind, we can optimize its parameters with techniques like gradient descent. If you're not familiar with gradient descent or backpropagation, you can check out my previous video on the topic. But how do we know whether a particular approximation is a good or a bad fit to the true target distribution? After all, we need some kind of error function that we'll be trying to minimize.
+
+You might have guessed that the <b>KL</b> divergence between our model and the true distribution is exactly the target objective we would like to make as low as possible. Ideally, we'd aim for zero, which would mean our model perfectly aligns with the data distribution. However, in practice, if you look at the code for training models to capture a probability distribution, you typically won't see the <b>KL</b> divergence as a loss function. Instead, you're likely to see the optimization objective framed as minimizing the cross entropy. So what's the catch here?
+
+Let's look at the definition of <b>KL</b> divergence once again. We're trying to find the model <b>Q</b> that would minimize this quantity. However, notice that the term <b>H</b> of <b>P</b> does not depend on our model at all. It is a constant determined by the true distribution <b>P</b>, which we can't change, because it stems from the inherent uncertainty in the training data that is fixed. No matter how we tweak the parameters of a neural network, it has absolutely no effect on how diverse cats in the real world are.
+
+This is why whatever approximation <b>Q</b> minimizes the <b>KL</b> divergence, it also, by definition, minimizes the cross entropy. In other words, the two objectives are equivalent. The entropy of data term does not affect which <b>Q</b> is optimal, it just shifts the value of <b>KL</b> divergence by a constant amount. Computing the exact value of <b>KL</b> divergence would require estimating the entropy of training data from a finite number of samples. Although you can certainly do it, usually we don't really care about what the actual value of the divergence is as long as it's the lowest one possible.
+
+It doesn't affect the resulting model, so we just don't bother with estimating the entropy of data in the first place to save some computation. This forms the basis for many machine learning algorithms, especially in the realm of generative models. By framing our objective in terms of cross-entropy minimization, we can train our models to approximate complex real-world distributions even when we don't have direct access to those distributions. While minimizing the cross-entropy is at the very core of modern generative models, training complex systems like image generation networks, in practice, often requires additional techniques that go beyond the scope of this video. These may include things like variational inference, which we might explore in the future.
+
+My main goal today was to lay a solid foundation for understanding what it means to learn the probability distribution of data. My main goal today was to lay a solid foundation for understanding what it means to learn the probability distribution of data. We have explored fundamental concepts like entropy, cross entropy, and <b>KL</b> divergence, showing how they are rooted in intuitive ideas of surprise and uncertainty. These principles are not just abstract mathematical constructs. They form the backbone of how we quantify, model, and learn from data in the real world.
+
+So hopefully, next time you encounter terms like cross entropy in the minimization problem, you will recognize it not as a mysterious formula, but as an intuitive idea of measuring and minimizing the gap between our models and reality. If you liked the video, share it with your friends, press the like button and subscribe to the channel if you haven't already. Stay tuned for more computational neuroscience and machine learning topics coming up. Goodbye and thank you for the interest in the brain.
+
+(Subtitles by Crimson Ghoul)

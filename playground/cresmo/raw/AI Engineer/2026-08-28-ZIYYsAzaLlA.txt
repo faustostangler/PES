@@ -1,0 +1,100 @@
+---
+video_title: "Building the Engine While Flying the Plane: Launching the Figma MCP Server — Jesse Lumarie, Figma"
+video_id: ZIYYsAzaLlA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZIYYsAzaLlA
+video_date: 2026-08-28
+video_description: |
+  Figma did not have 20% projects. Jesse Lumarie gave one to the MCP server anyway, one day a week, because he had seen an internal demo and wanted non designers to be able to pull from Figma. That side project became the company's first MCP server in about three months, and then one of the fastest growing products Figma has ever shipped. The build happened while the ground moved. Weeks in, a new version of the spec deprecated the transport they had chosen, and client support was so uneven that a compatibility matrix was a real artifact they maintained.
+  
+  The interesting decisions are about representation. Figma's canvas is a scene graph in C++, close to the HTML DOM, and they had three ways to hand it to a model. They picked React and Tailwind on a hunch that models had seen the most of it, and the output is pixel perfect. Passing images inline as base64 blew up the context window and got cut. Pixel perfect turned out to be only half the problem, because an enterprise does not want a beautiful generated button, it wants its own accessible internationalized one, so Code Connect sends a pointer to the real component instead of markup. Two hours grading an eval by hand in a spreadsheet convinced them never to do that again, and evals now run hundreds of times a week behind LLM judges.
+  
+  Speaker info:
+  - https://x.com/jesselumarie
+  - https://www.linkedin.com/in/jesselumarie/
+  
+  Timestamps:
+  0:00 - A 20% project at a company without 20% projects
+  2:02 - Uneven client support, and a spec that moved
+  2:55 - What the local server gave developers
+  3:52 - Three ways to represent a scene graph
+  4:47 - Why images alone did not work
+  5:40 - Grading evals by hand, once
+  7:32 - Code Connect, and why pixel perfect is not enough
+  9:24 - Elicitation and sampling, and hacking around them
+  13:55 - Shipping local first, then remote
+  15:43 - How early all of this still is
+---
+[music]
+
+All right, get started. Hi, I'm Jesse and I've been a software engineer at Figma for about three years and I'm going to talk to you about how we built Figma's first MCP server in about 3 months. Um, and in case you don't know what it is, the Figma MCP server is a way for you to send context between production uh code and design and vice versa. AI tools don't need to build a dedicated integration. They can just use our Figma MCP and they kind of get started.
+
+So, taking you back to November 2024, long long time ago, Anthropic released the MCP server spec and uh everyone in the world of AI was sort of starting to use it and experiment with it. Um but outside of anthropic none of the other AI agents or labs were really using it. So OpenAI cursor VS Code they didn't support it yet. Um once we got access to the feature in cursor however uh we were able to kind of ideate and understand what it was capable of and we got something a little bit closer to an actual product and that's where my story begins. Um I was working on growth initiatives at the time and I saw our internal demo and I really wanted to use it. I thought it'd be great for
+
+non-designers uh to kind of be able to use Figma. Um, I started creating actually a Figma plug-in based MCP server and I started doing it one day a week. It was kind of my 20% project that we didn't we didn't really have 20% projects, but I really wanted to work on it, so I did. Um, and so I got staffed with some other folks um on the team. We were the MC Peeps. That's a peep. It's a
+
+candy if you don't know. Um, they're delicious. And I I just want to be very clear um I'm going to say I a lot and we there was a big team behind this so it's not just me and they're all fantastic. Um a few weeks later after we started getting our initial architecture sorted a new version of the spec dropped uh deprecating the support type that we were going to use which was server events and while the MCP spec was sort of chugging along clients were adding features and support in different paces. Uh cloud had early support cloud desktop but cloud code you was wasn't really supported uh with all the complete set of features. OpenAI and VS Code didn't h
+
+have support until that spec update and then it wasn't even then uh VS Code didn't go out of uh didn't get to G until July. It didn't mean that all the features were implemented either. There are lots of different pieces um and in many cases only tools were supported. VS Code was truly like the golden client. Uh they eventually supported kind of all pieces of the spec, but it was it was hard to kind of understand what you were building towards because clients supported so many different things. [snorts]
+
+But even though we didn't know exactly what the MCP server spec would be supported, we we knew that it would be extremely powerful and a great product uh for us to to utilize. And so we started building um and so taking a a more highle re recap about a year ago uh we launched our local MCP server. And what local means it was heavily designed for developer use cases. You kind of had to know what you were doing a little bit and we targeted developers because they were the first to adopt AI workflows. they would use a single plop prompt like help me implement this and a developer could pull everything that they would normally get from Figma's dev mode into their coding agent. This include things
+
+like component data, spacing, variables um and from there we just kept adding more and more re read tools like for fig jam for make um etc. But they all shared this kind of uh mutual goal to make Figma context available for develop develop developers wherever they are. So, Figma, if you don't know about Figma, um Figma is a canvas. Um and it's represented as a scene graph in C++. It's a graph of connected nodes, not unlike the HTML DOM. And we had a number
+
+of different ways we could represent the scene graph. We had this internal representation which was kind of akin to JSX or XML, effectively converting the scene graph into JSS tags and XML tags and passing those to the agent. It was abstract and sparse, but it didn't have super rigorous fidelity. Another option that we had internally was um D2R which is our like way of saying a react tailwind representation. Uh and the reason we had this is Figma has a sites product and so we already had a way of basically converting the scene graph into HTML.
+
+If you actually copy the output of the Figma MCP today and you paste into like a simple MCP or simple HTTP server, it should be pixel perfect. Um and if it's not, file a bug. Uh but um we had a hunch that this representation would be the best one because lots of the models were sort of rldled on this React Tailwind type of code. Um and we we had a suspicion that it would work really well. The last one that we kind of considered was just a plain image. But
+
+back in early 2025, 2025 agents weren't great at converting images directly to HTML or CSS or sort of other languages. And so we kind of use that as an additional piece of context, not as the sole one. And to give you what what this kind of looks like in practice, on the left here we have a a Figma frame and on the right we have the React Tailwind code. Um you can also see at the very top the image can crew meetup uh link. Uh we also basically abstract out the images within the code or sorry within the scene graph and put them at the top level. Our first attempt was just
+
+passing B 64 data into the code and that was just a terrible idea. It it just blew up the context window and was bad all around. um don't do that. Um we'd also pass an image of the current node to the agent as well. While the image by itself did not do a good job of converting to uh code, having the code context plus the image actually had better agentic output.
+
+So what do I mean by better? How did we know what was better? We tried to do evals. Um and so we did some sort of very simple eval to start with a mix of quantitative and qualitative data. Uh, from a quantitative standpoint, we we looked at did it use variables? Uh, did
+
+it use the theming we expected? Did it use the right spot? And from the qualitative side of things, does it look good? Did it make good decisions with incomplete information? And we spent like two hours grading an eval into an Excel spreadsheet. And we said, we're
+
+never we're never doing that again. It was awful. Don't do eval by hand if you can help it. Um, we had a bunch of toy repos that we kind of created or kind of had folks create for us. Um and we eventually ended up coding up a web app to sort of help us with the eval which made things a lot easier at least from like a um process perspective. One
+
+interesting thing is Figma um there are Figma files which we are converting there's a lot of open source code out there but there's not a lot of uh open- source code that also has fig files attached and so we had to either create our own or sort of find different ways to make automated systems. Um, and now we have a um, eval that sort of runs like hundreds of times a week. Engineers can kick this off and sort of grade against prompt changes um, with LLM judges. So, we kind of remove the human from the loop where we don't need it. Um, but having an agent translate a pixel uh, perfect version of code isn't enough. Um, I mentioned that the React
+
+Tailwind version of our output was pixel perfect. That's really only half the story. An enterprise doesn't care if it's pixel perfect if it's not using its like battle tested accessible and internationalized components. At Figma, we already had this concept of code connect which allows you to link design components to components in your codebase. We needed a way to use this with our MCP server so that an a an agent used the correct components. For
+
+example, this beautiful button here. Uh this would be a perfect representation if you were to throw that into an HTML server. But you kind of see two problems. um if you had a primary button in your codebase, you wouldn't be referencing it. And that's not ideal if it has accessibil accessibility properties or internationalization properties. And then second, um you'd
+
+eat up the context window. We we use Oh, this happened last time. Uh we use React Tailwind to um basically convert things over. Um but we want to make sure we do it in the sparest way possible. All right, just going to keep vamping a bit here. And so picture the same thing
+
+on screen. Uh but now we have like all this React Tailwind code. It's going to then be converted into sending over uh basically a sparse representation of it via code connect. Um and by connecting the user's code to the design, we're able to pass back effectively what is a pointer which allows the agent to use the code component leading to our higher fidelity uh implementation. So effectively you go from like this big old thing of uh react tailin to the small react component that just says use button component.
+
+Um all right it's going to let you restart it. Okay cool pause that.
+
+All right I can start talking a little bit about the next bit. Oh, wait. You can see this cool thing. You can ask yourself how I described it well, but yeah, it's basically like a React component that you're able to then bring into your code. Um, once we felt good about the serialization syntax, we started to look at what an MCB server can be. And the MCP spec had a lot of
+
+great pieces in it, but some features weren't quite fleshed out within clients, and other features we really wish existed. Many clients only implemented a subset of the spec, and many features were very experimental. This is the client compatibility matrix from March 2025. Today, for example, we expose a host of resources to an agent so that it can figure out um how to use our server as well as different help articles within Figma. Um whereas before we would send that information down with like an air for example, and the agent would have to call uh wasting inference and sort of reasoning to sort of figure out what is actually going wrong. Um one small part
+
+of the spec uh that was missing was server instructions. I shouldn't say missing from the spec. it was in the spec, but no clients implemented it. Um, and it wasn't really highlighted in the docs until Anthropic added a nice blog post uh to sort of talk about it and then some clients started adding it. And therefore, we would add uh additional instructions into each tool call.
+
+Basically instructing the LLM how to use our server um even though server descriptions weren't necessarily written out yet. Some other features that we really really wanted were elicitation and sampling. Um, elicitation, if you haven't heard of it, is a way for you to ask the user a question, take that input, and pass it back to your server. So, here we have it's VS Code, uh, and basically just asking, you know, what's my name? And you're able to take that input and pass it back, uh, to the server. Um, which is interesting on its
+
+own, but we thought in combination with sampling, which is unfortunately deprecated, but it's fine because you're able to work around it. Sampling is a way of having a server query the client's LLM from from our server and in kind of the canonical case was for small queries. We thought it'd be really useful to combine elicitation and sampling into a single workflow. We talked about how code connect improves users workflows quite a bit and kind of makes outputs a lot better. What we wanted to do was ask a user can we map out your code code base for code connections so that our MC MCP server can link them so that the output would be better and reduce the amount of context we send. Unfortunately though
+
+most of the clients didn't implement these features and didn't allow you to properly query the the agent in the context of the codebase. So for sampling even when VS code supported it you could only really query it as a general agent not specific to the codebase. But we were able to kind of hack around it using tools. When you got the context of a particular component or sorry of a particular design in Figma, if we noticed it was a component and that it wasn't code connected, we'd send down a prompt to ask the user if they'd want to map the unlink component component. Kind of mimicking elicitation.
+
+If the user said yes, we'd send down another prompt to have the agent scan the code for potential matches, mimicking sampling. We then service them in a specified format or ask the agent to do so and then have them send it back in bulk to make a bunch of code connections. Um the screenshot on the right is the MCP inspector and if you haven't used it and you're developing an MCP server, you're doing yourself a disservice. It's a really great tool and it's open source and great. Um but the magic in our case was combining these two features because we could ask the user for for permission. we can have the
+
+agent give us those suggestions and we can map them and in the end the users got a better experience. Um that's pretty great. Um the last sort of little thing that we did was we wanted to make our output the best it could be and we didn't necessarily know when we were starting you know we had our eval but we didn't know if the react tailwind code would be successful for other types of code bases. Um and outside of the elicitation and sampling which didn't really work as we wanted there was no way of getting that information from the user. So we added some optional query arguments to our tool calls for ones like get design context where they would send back what sort of language what sort of framework the user might be using. This is imperfect uh agents lie
+
+but it was at least a signal for us to understand like oh this type of user this felt user may not have had a good experience. Perhaps it's because our translation layer wasn't working as well. We have found that that works pretty well but this was kind of our way of verifying that. Um while we were working towards our first beta, we know we wanted four things. We wanted to launch quickly. Um
+
+we wanted to have the highest possible bar for our security. We wanted to respect file permissions. And we wanted to respect our pricing impact packaging so we didn't have abuse vectors. And so after the spec changed and introduced OOTH in March 2025, we had to decide whether to keep our MCP server local or sort of switch to the new remote server using streamable HTTP and kind of like work on all the off problems. Um we punted so until HMR there wasn't this offspec to to build from and we could easily relay off from our web app to our desktop app. So for folks who don't know
+
+the Figma desktop app is Electron and so the front end of it is a web app and we basically just run figma.com in that and then we have an um IPC uh bridge between the two and that sends it to our node process that allows us to talk to the user's file system. Um we then sort of expose a server events server in node and that way clients could talk directly locally. The local story was also really great with enterprises because they kind of like the idea of our data not being sent anywhere. Um, this architecture was our fastest path to getting something into the hands of users to understand product market fit and what kind of tools and use cases folks had.
+
+Um, we launched the MCP server internally and the reception was extremely honest. Um, we [laughter] uh but we we worked out a lot of the kinks and we started to get some really positive feedback in the community um from from a bunch of nice folks. Um, but launching this part was just the beginning. Um we had a lot of improvements that we wanted to make and we immediately started working on the remote server as soon as we launched. Um clients were on different timelines and we were still trying to figure out you know where we're going but we knew we wanted to get the remote server out so that's what we worked on. Um in
+
+September we launched the remote server. We ged both servers in October 2025. Um, and then we started adding read and write capabilities and kind of all these things combined ended up making for Figma one of the fastest growing products that they've ever had, which was not something we expected when we started working on this. Um, so late last year, I started working on a slightly different thing. Um, we started to see some research that designers really wanted to shift to writing production code in certain cases and we didn't really have a dedicated product for this. So I started hacking
+
+with a bunch of MCP MCP folks at an offsite and this eventually became something called make in your local codebase uh which is kind of Figma's agent solution for for working on on git GitHub and and local code bases. Um and the reason I bring this up is only slightly self- serving but it relates to this this next slide. Um if there's one thing you want to take away from this talk it's that we're so early like this has not been a long time. The MC MCP spec is only two years old and we're still figuring out the best way to do things. And then second, um, Figma's done a great job of letting engineers build and figure out, uh, what's next and letting them run with it run with it. I wasn't staffed on MCP. I wasn't
+
+staffed on our make product, but I ended up helping them be built um, just because I was kind of given the leeway to do so and learning a ton along the way. Um, that's all for my talk. I'll be around today and tomorrow, but feel free to reach and happy to talk about MCP, Figma and all that. Thanks so much for your time.

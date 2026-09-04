@@ -1,0 +1,119 @@
+---
+video_title: "Por Que Você NUNCA Deve Usar FLOAT pra Representar Dinheiro no Código — Como Corrigir do Jeito Certo"
+video_id: vFBUWtrzz48
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vFBUWtrzz48
+video_date: 2025-05-04
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  📚 Leituras Recomendadas:
+  🔗 O Programador Pragmático: De Aprendiz a Mestre - https://amzn.to/4jHQBd8
+   🔗 Refatoração: Aperfeiçoando o Design de Código Existente – https://amzn.to/4i9ZZWc
+  
+  Fala, pessoal! Renato Augusto aqui de novo, e no vídeo de hoje eu vou te mostrar por que você nunca deve usar o tipo FLOAT para representar dinheiro no seu sistema — e, mais importante, vou te ensinar como resolver isso do jeito certo.
+  
+  Pode parecer um detalhe bobo, mas esse erro pode custar caro. Literalmente. FLOAT foi feito pra outra coisa, e quando você usa esse tipo pra armazenar valores monetários, você abre espaço pra imprecisões, bugs difíceis de detectar e até falhas graves em sistemas que dependem de cálculos precisos.
+  
+  Nesse vídeo eu te mostro, de forma clara e didática, o motivo técnico por trás desses erros, exemplos reais de bugs causados por arredondamento, e como linguagens como Python, Java, JavaScript, PHP e outras lidam com esse problema.
+  
+  🚀 O que você vai aprender neste vídeo? | Por Que Você NUNCA Deve Usar FLOAT pra Representar Dinheiro no Código — Como Corrigir do Jeito Certo
+  
+  ✅ O que é o tipo FLOAT e por que ele foi criado
+  ✅ Como o FLOAT armazena números e por que ele é impreciso
+  ✅ O motivo técnico por trás da falha em contas simples como 0.1 + 0.2
+  ✅ Exemplos reais de bugs graves causados por imprecisão de ponto flutuante
+  ✅ A forma correta de representar dinheiro usando inteiros e centavos
+  ✅ Quando essa abordagem não é suficiente (ex: juros compostos, criptomoedas)
+  ✅ As bibliotecas recomendadas em cada linguagem para trabalhar com alta precisão
+  ✅ Como essas bibliotecas funcionam por baixo dos panos
+  ✅ Quando ainda vale a pena usar FLOAT e quando evitar a todo custo
+  
+  📘 Minhas Recomendações Pessoais de Leitura:
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  📚 Domain Driven Design: Atacando as Complexidades no Coração do Software - https://amzn.to/3Bmr3RV
+  
+  💡 Por que assistir?
+  🔹 Entenda um dos erros mais comuns e perigosos no armazenamento de valores monetários
+  🔹 Descubra por que seu sistema pode estar calculando errado sem você perceber
+  🔹 Aprenda como resolver de forma definitiva esse problema usando a ferramenta certa
+  🔹 Eleve a maturidade do seu código e evite armadilhas comuns da programação
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Desenvolvedores buscando aprender as melhores práticas de programação
+  📚 Estudantes de programação aprendendo tipos primitivos e representação de números com casas decimais em sistemas complexos
+  💼 Profissionais que trabalham com sistemas bancários, ERPs ou e-commerces
+  
+  🔥 Curtiu o vídeo? Deixa o like, se inscreve no canal e ativa o sininho para acompanhar mais conteúdos como esse! Quer apoiar meu trabalho diretamente? Considere se tornar membro do canal!
+  
+  📩 Tem dúvidas ou sugestões? Comenta aqui! Eu sempre leio tudo e respondo sempre que possível.
+  
+  #programacao #float #python #java #javascript #php #cleanCode #boaspraticas
+---
+Se você pegar a tua linguagem de programação favorita agora e somar os números 0.1 + 0.7, você vai ver que o resultado não vai dar 0.8. E a mesma coisa vai acontecer se você tentar somar 0.1 + 0.2 ou subtrair 0.3 de 0.2 e por
+
+aí vai. E isso em sistemas financeiros que lidam com dinheiro ou que precisam lidar com valores muito precisos pode ser extremamente perigoso. E no vídeo de hoje eu vou te explicar por que isso acontece e como que você resolve esse problema. Fala pessoal, Renato Augusto aqui de novo e dessa vez para falar sobre o problema de você utilizar o tipo float para representar valores monetários ou números que precisam de muita precisão no teu sistema. Muita gente acredita que pelo fato do float ter sido feito para lidar com números quebrados, ele é o tipo certo para representar dinheiro. Afinal, se
+
+dinheiro tem vírgula, então faz sentido utilizar o tipo que aceita casas decimais. E é aí que mora o perigo. Então, para início de conversa e para você entender o problema, se a gente pegar, por exemplo, o JavaScript e lançar um console log somando 0.1 com 0.7, você vai ver que o resultado não vai ser 0.8 e sim 0.79, seguido de um
+
+monte de outros nov. E a mesma coisa vai acontecer se você tentar somar 0.1 com 0.2, que vai dar 0.3, e depois de 17 casas decimais vai aparecer o número 4.
+
+E isso significa que esse número é completamente diferente de 0.3. 3. Exato. E isso não é um problema do JavaScript em específico. Isso vai
+
+acontecer com qualquer linguagem de programação, como Python, Java, PHP, C#ARP, Rust e por aí vai. O problema aqui não tá na linguagem em si, mas no tipo da variável que a gente tá utilizando, que nesse caso é um float. Esse tipo float ou ponto flutuante é um tipo de dado que existe na maioria das linguagens de programação e que foi feito para representar números que t casas decimais, ou seja, números quebrados como 1.5, 2.75, 0.00. 001 e
+
+assim sucessivamente. E a proposta do float é justamente armazenar esses números na memória do computador, utilizando o menor espaço possível. E é exatamente na forma como esses números são armazenados na memória que tá o problema. Fazendo uma analogia com o mundo real para você entender como que o float é armazenado na memória do computador, na época da escola a gente aprendeu um conceito chamado notação científica, que é um conceito bem simples. Se a gente pegar, por exemplo, o número 1 milhão, a gente pode tanto escrever esse número todo por extenso, ou então a gente pode simplesmente representar esse mesmo número de um jeito muito mais compacto, utilizando notação científica. Ou seja, 1 milhão é
+
+igual a 1 x 10 elevado 6. Então, ao invés da gente guardar todos aqueles zeros, a gente guarda só o número um e a informação de que ele precisa ser multiplicado por 10 seis vezes. E isso economiza espaço, é mais eficiente, ainda facilita o cálculo quando a gente tá lidando com números extremamente grandes. No computador, o conceito é quase o mesmo quando a gente fala especificamente do tipo float. No exemplo do 1 milhão que eu te dei, a gente utilizou a base 10, ou seja, 1 x 10 elevado 6 = 1 milhão. Só que como o
+
+computador só entende zeros e uns, ele é sempre obrigado a trabalhar com a base dois, ou seja, tudo é feito usando somas de potência de dois. E quais são as potências de dois? 1 2 4 8 16 32 64 128 e assim por diante. E para alguns números, essa matemática se encaixa perfeitamente nesse esquema. Por exemplo, se a gente pegar o 0.5, 0.5 ig
+
+a 1/ 2. E como 2 é potência de 2, então o computador consegue representar o 0.5 em binário tranquilamente, sem problema nenhum. Só que alguns números decimais que a gente escreve no nosso dia a dia simplesmente não tem representação exata em binário usando a base do e um exemplo disso é o 0.1, porque 0.1 =
+
+1/, lembra? 1 2 4 8 16 32 e assim por diante. E é por isso que o computador não consegue representar esse número de forma exata, usando apenas potências de dois. E aí quando ele tenta fazer isso, o que acontece é que o número se transforma numa sequência infinita de zeros e uns que nunca fecha. E para você entender isso, pensa no número 1/ 3. O
+
+resultado dessa conta vai dar 0,33 e esse três vai ficar se repetindo infinitamente. E isso é o que a gente chama de dízima periódica, ou seja, quando a parte decimal do número tem uma sequência que nunca termina. Agora imagina que você precisa escrever esse número infinito num papel e aí você vai pegar a folha e começa a escrever. Vai chegar um momento que a folha vai acabar e você vai precisar cortar esse número em algum lugar. E é exatamente isso que acontece com o computador. Quando ele
+
+tenta representar o 0.1, ele se depara com uma dízima periódica, ou seja, um número infinito, mais ou menos assim. E essa sequência de zeros e uns se repete infinitamente. E como ele não pode armazenar um número infinito na memória, ele faz o quê? Ele corta em algum lugar.
+
+E quando ele corta, ele arredonda esse resultado. E é nesse arredondamento que mora o problema, porque o computador não guardou exatamente o número que você escreveu no código. Ele guardou um número muito próximo, mas que não é o número exato que você escreveu. Então, é por isso que quando você faz uma conta simples, como 0.1 + 0.7, ao invés de dar
+
+0.8, o computador te devolve algo como 0.79. E aí você deve estar se perguntando: "Ah, Renato, mas é uma diferença pequenininha. Qual que é o problema de eu usar float no dia a dia?
+
+E a resposta para isso é bem simples. Se você tá lidando com cálculos onde uma pequena margem de erro não faz diferença, como, por exemplo, sei lá, tu tá trabalhando calculando a distância entre cidades ou então, pô, a temperatura ambiente, ou você trabalha com desenvolvimento mobile ali, tá precisando pegar o nível de bateria do dispositivo. Nesses casos, o float é perfeito, porque ele é leve, rápido e economiza memória. Agora, se você tá lidando com coisas que exigem precisão absoluta, como cálculos financeiros, valores monetários ou até sistema de engenharia, onde 1 mm pode significar a diferença entre uma ponte segura e uma ponte caindo, aí a história muda de figura. Nesses casos, qualquer errinho besta de arredondamento pode gerar um prejuízo ou até um desastre. E foi
+
+exatamente isso que aconteceu durante a Guerra do Golfo em 1991, onde os Estados Unidos tinham um sistema antimísseis chamado Patriota, que era responsável por interceptar os mísseis lançados contra as tropas americanas. Esse sistema, ele precisava calcular com altíssima precisão a posição e a trajetória dos mísseis inimigos com base no tempo em que o radar detectava o movimento. Só que tinha um detalhe aí. O tempo de operação desse sistema era medido em tiques e não em segundos. E cada tic representava 0,1 segundo. E
+
+lembra que eu te falei agora a pouco que o 0.1 não tem representação exata em binário? Pois é, no código esse 0.1 tava sendo armazenado como um float e não como um número exato. E foi aí que o problema apareceu. A cada uma pequena
+
+imprecisão ia se acumulando no sistema por conta dessa representação errada do 0.1. E parece bobeira, só que o patriota ficou ligado por mais de 100 horas seguidas sem ser reiniciado. E aí esse erro minúsculo foi crescendo segundo após segundo, tick após tick, até o momento em que o desvio acumulado na contagem do tempo chegou a 0,34 segundos. e 0,34 segundos parece muito pouco, só que os mísseis inimigos da época viajavam numa velocidade de 1700 m/ segundo e isso significa que em 0,34 segundos o míssil percorreu 578 m e com isso o sistema acabou calculando a posição errada do míssil por mais de 5 km. E o resultado disso foi que o míssil
+
+não foi interceptado, atingiu um alojamento de soldados americanos que resultou em 28 baixas e mais de 100 feridos. Tudo por causa de um errinho besta de arredondamento que foi se acumulando no cálculo do tempo. Agora que você já entendeu os problemas do float porque você não deveria utilizar ele em sistemas que exigem precisão, vamos entender agora como que a gente consegue resolver esse problema. Começando pelos sistemas financeiros, onde você vai precisar representar dinheiro no teu código. A primeira forma de resolver esse problema e a mais simples de todas é você não trabalhar com os valores em reais, com casas decimais, mas sim com centavos utilizando o tipo inteiro ao invés do float. Então, se o teu produto lá no teu
+
+sistema custa R$ 10,99, você vai armazenar uma variável do tipo inteiro com o valor de R$ 10,99, ou seja, R99, que é igual a R$ 10,99. Basta multiplicar o valor em reais por 100 ou remover a vírgula que você descobre o valor em centavos. E por que que isso resolve o problema? Porque agora você tá lidando com números inteiros e o computador armazena os inteiros de maneira diferente dos números quebrados, ou seja, os números do tipo float. Os números inteiros são armazenados diretamente em binário, bit. Não tem
+
+notação científica, não tem dízima periódica, não tem aproximação. Inteiro é inteiro. Sempre vai ser 1099 exato. E é por isso que na maioria dos casos faz sentido você trabalhar com centavos usando inteiro ao invés de reais com valores quebrados. E essa abordagem vai te atender na maioria dos cenários mais simples, só que ela tá longe de ser perfeita e ela tem também as suas limitações. Porque se o teu sistema, por
+
+acaso, precisar lidar com algo mais complexo, como por exemplo, calcular juros compostos, investimentos, que pode gerar mais de duas casas decimais no cálculo, então se por exemplo tu vai trabalhar com criptomoedas, onde é normal ter até 18 casas decimais, aí essa abordagem de guardar tudo inteiro já não serve mais, porque você não vai conseguir representar esses valores quebrados só multiplicando por 100, igual a gente faz com reais. E é aí que entram as bibliotecas de cada linguagem de programação e que foram feitas justamente para resolver esse tipo de problema de precisão das casas decimais. No Python, por exemplo, a gente tem a biblioteca, o que basta a gente importar ela no código e instanciar ela passando os valores que a gente quer. E aí quando a gente executa a soma desse 0.1 + 0.7,
+
+o resultado agora vai ser 0.8 e não aquele 0.79. Isso porque a biblioteca tá guardando os números como texto, não como aproximações binárias. E com isso ela consegue controlar com muito mais precisão as casas decimais. Por isso que
+
+o resultado agora dá 0.8 cravado e não mais aquele 0,79. E calma que eu já vou te explicar como que essas bibliotecas funcionam por baixo dos panos. Olhando agora pro Java, a gente tem o big decimal, que funciona exatamente do mesmo jeito. Basta a gente importar e usar. E quando a gente somar 0.1 com
+
+0.2, o resultado agora vai ser 0.3 cravado. No JavaScript a gente tem algumas opções, como Big JS, o Decimal JS e até o Big Number JS. Só que aqui cabe um ponto de atenção. Cada
+
+libação muito específica. Então, cabe a você dar uma pesquisada depois na função de cada uma delas. Fora essas linguagens que eu te mostrei, todas as outras linguagens vão ter suas próprias bibliotecas ou extensões para lidar com valores monetários ou valores decimais e por aí vai. Agora, se você tá curioso para saber como que essas bibliotecas funcionam por baixo dos panos, o que elas fazem é mais ou menos assim. Elas pegam o número que você digitou lá, aquele número quebrado com as casas decimais e armazena ele como texto, ou seja, como string ou até como uma rei de dígitos individuais. E aí quando você
+
+manda ela fazer a soma, ela pega os dígitos e calcula um a um na mão, igual a gente fazia na época da escola, somando coluna por coluna, tudo na raça. E é por isso que elas conseguem manter a precisão, até mesmo em conta que tenha 10, 15, 18 casas decimais. O resultado sempre vai ser exato. Agora, tem um ponto importante aqui. Antes de você sair por aí, que nem um doido querendo aplicar essas bibliotecas em tudo quanto é lugar. Essas soluções que garante
+
+precisão absoluta não são mágicas. Elas funcionam muito bem, mas tem um preço a se pagar por elas. Elas são muito mais lentas e consomem muito mais memórias do que o bom e velho float. E isso acontece justamente porque essas bibliotecas precisam fazer o cálculo na unha, dígito por dígito, na base da força bruta, igual a gente fazia na época da escola. E é por isso que você não vai querer usar uma biblioteca dessa em todo o cálculo do teu sistema, principalmente onde não faz sentido exigir toda essa precisão. Porque no final das contas,
+
+escolher entre usar float inteiro ou uma biblioteca dessas não é sobre qual é a melhor solução, é sobre qual é a ferramenta certa para resolver o problema certo. Se você tá fazendo cálculo de temperatura, tempo de execução de função ou qualquer coisa pequena que a margem de erro não vai fazer tanta diferença, o float continua sendo a melhor opção, porque ele é leve. rápido e consome muito pouca memória. Agora, se o assunto é dinheiro, juros compostos, criptomoedas, cálculos financeiros ou qualquer cenário onde um centavo faz toda a diferença e pode dar problema, aí sim vale a pena você pagar esse preço em performance para garantir a precisão. No final das contas, programação é isso, escolher a ferramenta certa para cada situação, porque você pode até usar uma chave de fenda para bater um prego na parede.
+
+Pode até funcionar, mas eu garanto que não é a solução mais inteligente. Bom, e se esse vídeo te ajudou de alguma forma e você conseguiu de fato aprender os problemas gerados pelo tipo float, o problema das casas decimais e como que o computador trabalha com tudo isso, eu te convido a se tornar um membro oficial aqui do canal. Um valor extremamente irrisório, você consegue contribuir com o canal e apoia a criação desses conteúdos exclusivaços que eu trago para você semanalmente. Vou deixar também na descrição o link de alguns conteúdos que com toda certeza vão te ajudar nessa busca pelo código de alta qualidade. Se ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por
+
+fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve.

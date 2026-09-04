@@ -1,0 +1,33 @@
+---
+video_title: "AI Agents Can Be Hacked Through Tools!  MCP Security Explained"
+video_id: uzsHSGOB_XM
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uzsHSGOB_XM
+video_date: 2026-08-10T00:30:06+00:00
+video_description: |
+  Website Link: www.systemdrd.com 
+  AI agents become powerful when they can **call tools, APIs, databases, and MCP servers**—but that power also creates serious security risks. 
+  
+  In this short, discover how to build **secure AI agents** using **MCP, tool calling, function calling, permission boundaries, authorization, validation, and human approval**. We also look at critical threats such as **prompt injection, indirect prompt injection, MCP tool poisoning, unauthorized tool calls, and data leakage**.
+  
+  If you're building **AI agents, agentic AI, LLM applications, MCP integrations, or production-ready AI systems**, understanding secure tool integration is essential.
+  
+  Watch the full Day 3 episode to learn how to move from a basic AI agent to a **production-grade, secure AI agent**.
+  
+  #AIagents #MCP #AIAgentSecurity #PromptInjection #ToolCalling
+---
+Welcome back. >> [music] >> Day two gave your agent a memory it can trust. Today, we give it hands, >> [music] >> the ability to actually touch files, call APIs, and run tools without [music] turning it into a security incident waiting to happen. By the end of this lesson, you'll have a file system agent with real permission boundaries, >> [music] >> a security sandbox, and a full audit trail on every action it takes. Quick orientation before [music] we touch any code. We're still in module one,
+
+enterprise agent architecture and hardening, and this is day three of [music] 30. Yesterday, you built the encrypted memory backbone. Your agent can now hold context safely. Today, we hand that agent tools, [music] and tools are a fundamentally different risk surface than memory, because a tool call can reach outside your database and touch the real world, files, [music] APIs, other systems. Here's the actual problem in the industry right now. Most AI agent
+
+implementations sit at one of two extremes. Either they hand the agent broad, unrestricted access, >> [music] >> read anything, write anything, execute anything, which is a breach waiting to happen the moment the model does something unexpected, >> [music] >> or they lock it down so tightly it can barely do anything useful, which defeats the point of [music] building an agent in the first place. GitHub Copilot can read your code, but can't delete files. Claude can analyze a document, but can't execute system commands. That's not an accident. It's
+
+the deliberate tool integration design, and today, you're going to build exactly that [music] kind of design yourself, starting with a file system agent. Here's the one picture to hold on to for the rest [music] of this lesson. Every tool call your agent makes isn't a single atomic action. [music] It's a sequence of six steps, and each step is a distinct place where security gets enforced. Step one, [music] the agent requests a tool execution. This is just intent.
+
+Nothing has happened yet. >> [music] >> Step two, the permission engine validates that request against the current security policy. Step three, if it's allowed, [music] the sandbox manager spins up an isolated environment for that specific [music] call. Step four, the tool actually executes with its input and [music] output monitored the entire time. Step five, whatever the tool returns gets [music] sanitized before it goes anywhere near the agent's context.
+
+Step six, the full trail, >> [music] >> request, decision, execution, result, gets written to the audit log. The detail I want you to really sit with is what happens on a denial. If [music] step two rejects the request, everything downstream simply doesn't happen. No sandbox gets created, no tool runs, nothing external is touched. But the denial itself still flows through to step six and gets logged. A rejected
+
+request is still a security [music] event worth recording because a path

@@ -1,0 +1,157 @@
+---
+video_title: "COMO USAR RAG NO N8N COM PINECONE (AGENTE IA ULTRAINTELIGENTE!)"
+video_id: NlCQjRjugUY
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=NlCQjRjugUY
+video_date: 2025-06-03
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=NlCQjRjugUY
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  Nesse vídeo, eu te mostro como usar RAG (Retrieval-Augmented Generation) dentro do N8N, integrando com o Pinecone pra dar memória e contexto real aos seus agentes IA.
+  
+  💡 Tu vai aprender:
+  ✅ Como configurar o Pinecone pra indexar e buscar dados
+  ✅ Como conectar no N8N e usar o módulo de IA
+  ✅ Como criar prompts inteligentes que acessam essas informações
+  ✅ E claro: como usar isso num agente IA que responde como se fosse humano!
+  
+  📲 Me siga no Instagram para mais conteúdos:
+  https://instagram.com/oandersonadelino
+---
+Fala automatizador Anderson aqui. Vamos hoje aprender mexer com rádio. Aprender de vez da melhor maneira, do jeito certo, como que tu mexe com esse negócio aí, tá? Então cara, vamos lá. Primeiro, o que que é hack? É uma sigla bonitinha
+
+para um nome inglês que eu não sei falar e nem sei como é que é agora no momento, mas basicamente ela quer dizer que vou pesquisar antes de responder. É basicamente isso, tá bom? É uma forma de você estar respondendo os seus clientes, porém você vai pesquisar antes sobre aquela coisa antes de responder, seja uma pergunta frequente, seja um cardápio, um preço e algo do tipo, tá bom? Então, basicamente é isso aí, certo? Então, pessoal, vamos lá. Como
+
+que a gente vai est trabalhando nesse vídeo aqui? Eu quero deixar bem detalhado como que eu vou estar utilizando, como que eu uso, tá? Eu espero que abra mente de vocês, porque tem coisinhas ali que não é em todo local que você vê e tem esse vídeo aqui tem muito valor. Bom, então se não se inscreveu, já se inscreve aí, senão seus promptos vão ficar delirando aí por 10 anos, beleza? Então vamos lá.
+
+Brincadeiras à parte, primeiramente dizer para vocês que existe basicamente a dois locais onde tu pode estar fazendo essa vetorização, tá bom? Você pode estar utilizando um super base ou você pode estar utilizando o Pinecone, tá bom? um ou outro, eu vou estar utilizando o Pine Phone. Beleza, Anderson? Qual a diferença de um para o outro? O Supas ele tende a ser mais
+
+barato, tá bom? Então assim, o modo todos tm o modo gratuito, tá bom pessoal? Dá para usar o modo gratuito. Supas ele é mais generoso, certo? E também caso você já usa o Supas como banco de dados, então você vai usar tudo uma coisa só, vai facilar sua vida.
+
+Agora se tu quer algo em alta escala, algo mais robusto e algo voltado exclusivamente para vetor, tu vai usar o Pine con, beleza? Então, basicamente é isso aí. Para quem não sabe nem é o o motivo de usar hag, gente, é o seguinte, olha só essa planilha aqui, tá? Deixa eu até aumentar aqui a o tamanho. Olha só, eu tenho aqui uma tabelinha com pergunta, resposta e produto relacionado, certo? Eu tenho três
+
+produtos que eu criei. É algo fiqutício aqui, tá gente? Essas perguntas, essas coisas aqui, gerei com GPT mesmo. Tenho aqui, ó, pão, tapioca, suco de goiaba. Eu tenho cinco perguntas e respostas para pão, cinco para tapioca e cinco para suco de goiaba, tá bom? Normalmente
+
+os faxs é só pergunta e resposta, então já tem uma coisinha diferente aqui, beleza? Então já vai se atentando aí. Vamos lá. Então o meu agente quando tiver conversando com aquela pessoa, se a se a pessoa chegar e falar: "Ah, eu quero é qual a validade da tapioca?" Ele vai responder: "A validade é de até 5 dias de geladeira, mas antes ele vai fazer uma filtragem por produto. Isso
+
+vai reduzir as chances de delírios, né? e aumentar a sua precisão. Beleza? Perfeito. O que que eu vou fazer aqui agora? Eu vou pegar isso aqui e vou
+
+jogar no Pinecone, beleza? Aqui no meu Pinecone, eu vou, ó, tô, já loguei aqui na minha conta, tá? Eu vou criar um index, certo? E aqui eu vou nomear, tá? Para facutos, por exemplo. Ah, não pode
+
+colocar a letra maiúscula aqui, tá? Então, vamos fazer o seguinte, pode assim, pode. Beleza. Fac produtos, tá? A configuração, eu vou usar o da Open, o Small, certo? é o mais recente, o mais
+
+eficiente, é mais rápido no caso, tá pessoal? Eu vou usar aqui o small. Show de bola. Então aqui a gente tem aqui algumas informações sobre essa vetorização, beleza? Então vamos lá.
+
+Aqui embaixo, cadê? Ã, aqui, ó. Criar index. Vamos lá. Ele vai estar criando aqui. Beleza, criou o index, certo?
+
+Perfeito. Agora a gente vai adicionar as informações aqui dentro. E para fazer isso, vamos usar o nosso querido Supase. Superabase não, perdão, nosso N81N, tá? Não vamos utilizar Supra Base aqui.
+
+Beleza? Estou aqui no N8N. Vou criar um nó trigger manual pra gente ativar essa coisa aqui. Beleza? E eu quero primeiramente pegar as informações lá do Google Sheets. Então vou criar um nó do
+
+Google Sheets, tá bom? Venho aqui, ó, get rose inhe. E aí, o que que eu vou fazer? Eu vou pegar essa minha URL. Bom, eu já tenho a credencial aqui conectada, tá, pessoal? Tenho a credencial
+
+conectada. Aí eu venho aqui em documento, vou colocar aqui por URL, vou dar um contrtrl V. Aí aqui em choose, ó, já apareceu aqui, ó, facos. Beleza, show de bola. Vou dar um teste. Vamos ver
+
+aqui se você tá pegando aqui tudo OK, ó. Pegou 15 itens, beleza. A gente não vai conseguir visualizar. É, ah, quer dizer, dá para visualizar, né? Não visualizaria. No caso, se a gente
+
+tivesse baixado no drive, ele ia fazer um download do arquivo binário, a gente não iria conseguir visualizar aqui. Como a gente baixou, fez um get direto do nó do Google Sheets, ele vem aqui nesse formato JSON, tá bom? Isso aqui é importante, pessoal. Então ele vai aparecer aqui, ó, o número da número da linha, a pergunta, a resposta e o produto relacionado. Beleza? Show de
+
+bola. Agora eu vou ter vou clicar aqui, vou apertar P só para fixar, para não ter que ficar pegando toda hora, tá? Se eu dar um teste novamente, ó, ele já vai est fixo aqui. Agora eu vou vir aqui e vou pegar o nó do pinecone, pinecone vector stop e vou adicionar documentos ao vector stop. Aí aqui, ó, eu vou criar uma credencial que eu não criei ainda, tá bom? Eu vou vir aqui, ó, create new.
+
+Ele vai pedir aqui para eu passar uma API K. Vindo aqui no nosso Pinecone aqui, ó, API Kys, tá? Eu vou criar uma nova API aqui e vou colocar aqui, ó, YouTube, beleza? E vou criar. Feito isso, ó, eu vou copiar, beleza? Vou
+
+voltar aqui e vou dar um conttrl V, vou dar um save e pronto, conectado com sucesso. Show de bola. Feito isso, eu venho aqui, ó, nessa nessa nesse index foi aqui justamente aquele que criou. V em chose e apareceu aqui, ó, facos. Beleza. Aqui eu não mexo nada, tá? Eu
+
+deixo o dado do jeito que está e OK. Vindo aqui agora em bed, eu vou selecionar o modelo da Open e vou colocar o mesmo, ó. Vou colocar aqui o mesmo que a gente fez lá, que foi small. Beleza? Aqui a gente não precisa mexer é em nada, deixa da forma que está. Show
+
+de bola. Agora vamos colocar a forma que ele vai e estar pegando esse documento, que pode ser pelo GitHub ou pode ser ali por um arquivo aqui no próprio Nin, que é o nosso caso. Beleza? Vamos pegar aqui. Show de bola. Vou deixar o tipo Jon, tá?
+
+E o modo eu vou colocar aqui, ó, para especificar a data, porque eu fazendo isso aqui, eu consigo especificar aqui qual que é o conteúdo que eu vou estar passando lá para fazer a vetorização, beleza? E qual que vai ser o conteúdo? Eu vou vir aqui, ó, em expression, tá? Expression. Aí aqui eu vou fazer o seguinte, pergunta dois pontos e vou arrastar aqui a pergunta, certo? Vou dar
+
+um enter, resposta dois pontos e eu vou passar aqui a resp. Então el vai ficar, ó, dessa forma aqui assim, tá bom? Esse aqui é o conteúdo. Isso aqui é isso aqui é os dados que vão estar sendo passados. Aqui em opções, eu venho aqui, ó, metadata, tá bom? É uma forma ali de da
+
+gente estar fazendo uma busca mais precisa, tá bom? Então aqui em metadata, o nome do eu vou colocar aqui, ó, é o produto relacionado, tá? Opa. Na verdade aqui o nome vai ser produto, tá? Ó, produto. E aqui o valor é o arrasto.
+
+Beleza? Então, cada pergunta e resposta dessa, cada linha, ela vai ter ali um valor que vai est relacionado, tá? Que nesse caso aqui vai ser o produto, beleza? Aí o text splitter, eu venho aqui, ó, coloco aqui o recursiver, tá? Deixo aqui chunk size em 1000, overlap, eu coloco em 100. é o que eu gosto de
+
+fazer por padrão. Porém, pessoal, quando a gente se trata aqui de Google Sheets, isso aqui nem importa tanto, tá? Porque eh só se tivesse gigante aqui e e enfim, porque o que acontece? O que é o chun size? O chun size ele é basicamente a quantidade de caracteres que vai ter em um grupo, beleza? Só que como a gente tá
+
+utilizando o modo recursivo, não necessariamente ele vai usar os 1000, ele vai ser recursivo. O que é ser recursivo? ele vai eh ele não vai tipo eh vamos supor, ele não vai cortar a palavra do meio, por exemplo, o contexto do meio, ele vai manter o contexto completo, contexto bonitinho, tentando manter esses 1000 caracteres. Beleza? O chunk overlap, ele vai pegar um pouco, né, 100 caracteres ali de do documento posterior, por exemplo, ele vai pegar um pouquinho ali e fazer essa sobreposição, tá bom? Para ter ali um contexto melhor
+
+aqui para ai e tudo mais. Mas isso só é mais válido quando a gente tá trabalhando documentos, né? Documentos ali escritos um Google Docs da vida. Aqui em Google Sheets a gente quer que exatamente o que tá na linha seja passado, tá? Então isso aqui não vai ser tão relevante aqui pra gente. Isso aqui
+
+já vai suprir, beleza? Então feito isso, vamos agora dar o nosso teste e vamos ver o que vai acontecer aqui agora. Show de bola. Aparentemente deu tudo OK. Se a gente for olhar aqui agora, ó, tudo certo, ó. Tá? Produto, pão e aqui o
+
+conteúdo, pergunta, resposta. Beleza? Show de bola. Então, tudo certo, tudo OK. Se a gente for olhar aqui agora lá no nosso Pinecone, vamos voltar aqui, ó.
+
+Base index. Vamos abrir aqui esse daqui. Olha só, apareceu aqui, tá bom? Todos os produtos, ó. Produto, pão. A pergunta,
+
+resposta, pergunta, resposta. Aqui o produto, ó, tapioca, pão. Beleza. Name space, gente, é o nome que a gente dá. É, caso a gente queira fazer algum agrupamento. Como não passei no nome,
+
+ficou aqui como def mesmo. Beleza? Seria caso você quisesse ter ali um outro tipo de de fac, né? É. É, ao invés de ser uma pergunta pergunta sobre o produto em si, tu queira questão de preço, aí é legal tu fazer esse agrupamento, tá? Tu passa
+
+ali nam, aí depois outro name space seria ali preço e tudo mais. Beleza? Nesse nosso caso, como a gente tá usando apenas facos, eu deixei como padrão mesmo e que mostra aqui quantos records tem ali dentro. Aqui são 15, certo? OK.
+
+Anes, agora como a gente vai usar esse cara aqui num IA? Tá? Pergunta importante, pergunta interessante. Vamos fazer o seguinte, eu vou até limpar isso aqui, tá? Aqui embaixo vamos estar criando um agente, tá? O trigger vou
+
+colocar aqui como um chat trigger, tá? Vou vir aqui em agente AI agent, OK? Modelo, vou tá passando 4.1 mini, certo? 4.1 mini, OK? Vou deixar aqui uma simple
+
+memory mesmo, tá gente? Algo provisório. Colocar aqui 30. Beleza? Aqui em to pessoal, aqui em Tool, a gente vem aqui, ó, coloca Pine con, beleza? Tá aqui, ó,
+
+Pine con. E aqui a gente faz o seguinte, o nome aqui eu gosto de botar aqui para identificação como fac, beleza? Vou colocar até aqui, ó, facos. Eu gosto de deixar nessa formatação, ó, facos. O nome da do banco de dados, facos, né?
+
+Vou repetir aqui. Beleza? Aqui mantém, ó, recupera, retrieve documents, tá? Não muda nada aqui. E aqui você vai descrever quando ele vai utilizar isso aqui, tá, pessoal? Descreva bem aqui
+
+nessa parte para você não precisar descrever no promp do agente. Aqui é uma outra sacada, porque isso aqui é uma extensão do promp lá do agente. Então se você fica colocando muita coisa lá no agente, ele vai ler aquilo sempre. Aqui não, ele só vai ler quando for preciso. Então tu vai economizar to, você vai deixar seu sua operação mais eficiente.
+
+Então vou te escrever aqui, ó. Use esta tu quando eh for questionado sobre algum produto e seja necessário dar uma resposta, tá? Descreva o máximo possível, tá pessoal? a não sei mais como descrever melhor. Manda pro GPT, cola isso aqui, joga nele lá e fala: "Olha, descreva com mais detalhes."
+
+Sério, gente, isso funciona? Bom, aí aqui, ó, é na indexação, vamos pegar lá o fac. Esse limite, pessoal, esse cara aqui é quantas é quantas linhas daquela tabela a gente vai estar puxando, né? Quantos records vamos estar puxando aqui. Nesse caso aqui, quatro. Então, a
+
+gente tá tendo aqui basicamente duas cabeças. Eu gosto de pensar assim, como se tivesse dois cérebros trabalhando. A gente tem um cérebro aqui, é do FAC, né, do Hag, beleza? Que ele vai e pegar a IA, vai mandar pro Hag o que que ele precisa procurar. E aí ele vai fazer essa pesquisa lá na na base vetorial, nesse caso aqui no Picone. Beleza? Vai
+
+fazer a pesquisa no Piccone. Ele vai pegar as quatro melhores respostas que mais são e interessantes para I, para o agente, tá bom? E vai passar pro agente essas quatro respostas. E o agente vai pegar essas quatro respostas e vai ver qual delas que ele quer e vai usar, tá bom? Então, perceba, quanto mais tu passa aqui, mais chance do agente dele irá. Por quê? Porque a gente vai receber
+
+mais informação. Eu gosto de deixar, não tanto, só se, tipo, ah, beleza, eu tenho um 100 produtos, a tu pode deixar quatro, a gente tá trabalhando com 15, eu vou deixar dois. Beleza? Aqui, ó, inclui metadata, deixa ativado. Aí, aqui em opções, tu vem aqui, ó, eh, primeira coisa, se tu deixou agrupado lá o Piccone, o name space, né? Aí, tu passa
+
+aqui, tá bom? Senão, tranquilo. Metadata filter, adicionar filtro. E detalhe, pessoal, isso aqui tu vai usar, ah, eu quero usar super base, tu vai usar da mesma forma, tá bom? Da mesma maneira. O
+
+conceito é o mesmo aí aqui no nome, tá? Produto, lembra que o nome lá do do metadata é produto, qual que é o valor? Pão, pioca ou ou subo de goiaba, não é isso? Então, ó, vou passar aqui, ó. Vou abrir aqui aqui chaves. Eu vou fazer
+
+aqui um from AI. Beleza? O que que é esse from Ei? Eu vou deixar aqui que a IA preenche isso aqui, tá bom? Vou abrir aspas simples, vou colocar aqui, ó, nome, produto, vírgula. e vou descrever
+
+o nome do produto que será consultado. Show de bola. E aqui vamos tá passando aqui o embeding, tá? Que vai ser que vai ser o small. Show de bola. Aí aqui no
+
+promp do agente vamos estar descrevendo um pouco, né, sobre o que ele vai fazer. Não vou nem usar muito giro de promp aqui, tá gente? É só pra gente especificar. Faz o seguinte, ó. Você é responsável por tirar dúvidas sobre os produtos e você produtos, pão, tapioca, suco de Beleza, de bola. Vou estar
+
+salvando e vamos agora conversar com ele. Oi, tudo bem? Opa, vamos ver o que aconteceu aqui. Humum. Na verdade, pessoal, é o que acontece aqui é o seguinte. A gente não tá com a gente não
+
+consegue passar aqui o from AI aqui dentro, infelizmente, certo? Por ele vai, ele entende que aquele texto do Fron é o nome de um produto, né? Provavelmente é isso que ele tá entendendo e por isso tá dando esse erro, tá? Esse bug. Então o que que vai acontecer pra gente contornar essa situação? A gente vai passar aqui o
+
+filtro direto com o nome do produto, tá? Pode parecer inviável a gente tá fazendo isso aqui, tá? Sem o produto já resolveria. Só que lembre-se que isso aqui é um exemplo que eu tô fazendo para vocês, um exemplo que seja mais dinâmico. Você não vai separar por produto, vai separar para por algo maior. É perguntas administrativas, né?
+
+Ou perguntas sobre um produto X, é, não um pão, mas sei lá, um curso, entendeu? Algo mais macro. Tá bom? Então vamos lá. Vou colocar aqui com pão. Beleza? E aí,
+
+com base nisso, vamos lá, ó. Oi, tudo bem? Aí sim. ele vai vir aqui. Então a ideia, pessoal, é que você consiga fazer esses filtros, tá? Então nesse nosso
+
+caso aqui, para ele conseguir consultar sobre os três produtos, eu irei criar um para cada produto, tá? Vamos lá, ó. Vou fazer uma pergunta aqui sobre o pão de qual a validade, quer dizer, sobre o pão aqui, ó. Ã, o pão é feito com fermento natural. Beleza. O pão é feito com
+
+fermento natural. Vamos lá. Ele vai consultar. Show de bola. E vai dar resposta. Sim. E descansa por 24 horas.
+
+Olha só. Show de bola. Eu vou fazer agora uma pergunta sobre a tapioca. Qual a validade da tapioca? Qual a validade da tapioca? Vamos lá. Não encontrei
+
+informações específicas, certo? Porque a gente fez um filtro. Então ele vem aqui, ó. Olha só. Ele pegou duas informações, porque ele sempre vai pegar informações, tá? Só que ele só consegue pegar
+
+informações do pão. Você pode ver que isso aqui, ó, é do produto pão e isso aqui é do produto pão. Então, pessoal, metadata é usado dessa forma. Beleza? Agora, se eu viesse aqui e criasse um outro, tá? Se eu viesse aqui e criasse
+
+um outro, passando o mesmo beding, tá? mudando até o nome aqui e tals. Aí você especificaria aqui para cada produto. Passasse aqui tapioca. Vamos testar aqui agora, ó. Dente de de novo, tá? Nesse
+
+caso a gente vai ter que especificar, né? Vamos colocar aqui, ó, faco, pão. Vamos especificar aqui como facuto tapioca. E vamos mandar aqui ele tentar novamente. Agora sim, ele já sabe qual que ele precisa procurar e deu a resposta. Beleza, pessoal? Então é isso.
+
+Eu vou deixar disponibilizado esse template para vocês, tá? Lá na minha comunidade, tá? a gente tem uma área de membros só com conteúdo dos templ gratuitos também, tá? Então, tu tem lá todo um painel, eh, todos os templates que eu uso aqui dentro do YouTube, tá, pessoal? Esse aqui vai ser um deles. E
+
+aí, para você ter acesso é só ir lá na descrição do meu grupo e acessar o link, tá bom? E o link do grupo aqui na descrição, fechou? E pessoal, espero que tenham gostado desse conteúdo e é isso.

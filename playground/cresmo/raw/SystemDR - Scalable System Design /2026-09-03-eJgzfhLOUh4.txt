@@ -1,0 +1,29 @@
+---
+video_title: "Why \"Design Netflix\" Isn't About CDNs #systemdesign #netflix #cdn #roadmap #shorts"
+video_id: eJgzfhLOUh4
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=eJgzfhLOUh4
+video_date: 2026-09-03
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-netflix-streaming-the-senior
+  🌐 Visit our website: https://systemdrd.com/
+   
+  The interviewer isn't testing whether you know what a CDN is — here's what they're really scoring.
+   
+  #systemdesign  #NetflixInterview #techinterview  #codinginterview  #softwareengineer  #faang
+---
+Netflix streams to 270 million subscribers, and on the surface, that sounds like a simple file serving problem. Store a video, hand it back on request. It [music] isn't. This is the senior plus walk-through for design Netflix streaming. Adaptive bitrate encoding, Open Connect CDN pre-warming, and the cold start problem that actually decides the round. [music] If you can
+
+talk through those three things unprompted, you're already answering at the level this question is designed to filter for. The interviewer isn't testing whether you know what a CDN [music] is. They're testing whether you understand why naive HTTP file serving collapses at this scale, what adaptive bitrate encoding is, and why it exists at all, how a CDN edge network makes cold start latency a non-issue in steady state, and what happens operationally when the most watched show in the world premieres at 9:00 p.m. and 50 million people press play on the same episode within seconds of each other. Those four
+
+problems, not the basic ingestion to delivery pipeline, are where this round is actually won or lost. And the level calibration tells you exactly where to spend your 50 minutes. At L4, mid-level, you're expected to sketch the high-level pipeline. Content comes in, gets encoded, gets stored, gets served. That's table stakes, and it earns you nothing extra. At L5, senior, [music]
+
+you're expected to bring adaptive bitrate with multiple renditions, CDN repositioning, and the cold start problem into the conversation without being prompted for them. At L6, staff, [music] you're layering on the encoding pipeline at scale, a multi-region active-active CDN strategy, the playback session architecture, and quality [music] of experience monitoring, and naming what Netflix actually does differently from a naive CDN deployment. Knowing which tier you're being evaluated at changes how you should be spending your time on the whiteboard. Six clarifying questions matter here, but three of them are load-bearing. Get these wrong, and your whole architecture is built on the wrong assumption. First,
+
+[music] on-demand only, or also live? On-demand content can be pre-encoded and pre-cached entirely offline, which is what makes most of the tricks in this walk-through possible. Live content adds a hard latency requirement. Viewers want something close to real-time, which changes the delivery model, even though the encoding fundamentals stay similar. Default to on-demand unless you're told otherwise, and say so out loud. Second,
+
+which devices need support? Smart TVs, mobile phones, browsers, and game consoles all support different combinations of codecs and DRM systems. H.264, H.265, AV1 on the codec side, Widevine, [music] FairPlay, and PlayReady on the DRM side.
+
+You don't need to design the full DRM system in this interview, but acknowledging that this diversity exists, and that it drives real encoding and licensing decisions is worth a sentence. Third, and this is the one that actually drives every downstream architectural decision. What are the quality and latency SLOs? Netflix's real targets are playback starting within 2 seconds of pressing play, buffering events under half of total playtime, and 4K HDR delivery on supported

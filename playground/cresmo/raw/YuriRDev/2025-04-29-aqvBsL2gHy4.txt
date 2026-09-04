@@ -1,0 +1,73 @@
+---
+video_title: "Desafiei HACKERS a invadirem meu site! (Eles conseguiram 💀)"
+video_id: aqvBsL2gHy4
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=aqvBsL2gHy4
+video_date: 2025-04-29
+video_description: |
+  Nesse vídeo desafiei os meus inscritos a hackearem o meu site! Era pra ter 5 vulnerabilidades, só que eles eram bons e encontraram 6...
+  Se vcs encontrarem mais, mandem aqui no comentario hehehe. 
+  
+  💜 Procurando um gateway de pagamento pro teu site? Acabou de achar! Acesse agora a RelaxPay, taxas baixas, documentação objetiva e muito mais!
+  https://relaxpay.site/dashboard/register?ref=E628D9F4
+  
+  👉 Servidor do Discord: https://discord.gg/UpYMbKsSX6
+  👨‍💻 Liberei o código do CTF pra quem quiser ver: https://github.com/YuriRDev/CTF-1
+---
+Esses dias criei um site de venda de jogos muito inspirado na Steam e chamei de Steam. Publiquei na internet e tava praticamente completo com página de login, carrinho, avaliações, tudo. Só que teve um problema, começaram a me hackear. Mas calma, isso tudo faz parte de um CTF que eu fiz. Deixei cinco vulnerabilidades no site e desafiei vocês, os inscritos, a encontrarem. Cada
+
+falha valia R$ 150 para quem encontrasse. E no final do desafio reportaram seis vulnerabilidades. Sim, eu tinha colocado cinco erros, só que alguém acabou encontrando um extra que eu não tinha percebido. Então o prêmio total que era de 750 acabou virando 900. Então muito obrigado ao Relaxpay, que foi o patrocinador do CTF. A gente vai
+
+falar dele já já. Vamos ver como que o pessoal encontrou cada vulnerabilidade, que inclusive estão presentes em muitos sistemas reais. Para contextualizar, essa é a Steam. a gente consegue criar uma conta e começamos com R$ 5. Na página inicial, a gente pode entrar em um jogo e comprar ele. Com o jogo
+
+comprado, a gente pode deixar uma avaliação e também reembolsar o jogo. Mas vamos lá. A primeira vulnerabilidade. Race condition, no caso, time of check to time of use, foi a primeira vulnerabilidade reportada pelo Aviator em apenas 3 minutos do desafio. Um absurdo. Vocês podem pensar
+
+que o Race Foundation tá na requisição de comprar o jogo. Vamos tentar então. Abrindo Burp Switch. Interceptando a requisição, a gente vai mandar pro Turbo Intruder, que é perfeito para testar race condition. E dando play, só uma requisição é aceita, então essa rota não tá vulnerável. E para proteger contra
+
+race condition, no código eu usei as transactions do Mongo DB, só que não presta, eu odeio o mongo DB. Então eu usei uma abordagem gambiarra. Na hora de fazer a compra, no próprio registro de compras, eu crio um hash que é a concatenação do ID do usuário com o ID do jogo. Esse hash ele é unique, então se alguém comprar mais de um jogo, vai ter dois hash idênticos, gerando um erro forçado no banco de dados, fazendo cancelar toda a transaction. Então, onde que tá essa race condition? Na hora de
+
+reembolsar um jogo? Vamos tentar aqui. Interceptando a requisição de pedir o reembolso, a gente vai mandar de novo pro Turbo Intruder, dar play e pronto, várias requisições foram aceitas. E se a gente checar nossa carteira, a gente vai ver que tem muito mais do que tinha antes. Beleza? Agora vamos pra segunda
+
+vulnerabilidade, que foi o Mes assignment nas avaliações. Foi encontrado pelo Javox em 20 minutos. Antes de tudo, a gente tem que comprar um jogo para poder avaliar ele. Agora vamos colocar uma avaliação aleatória e interceptar a requisição. Dá para ver que ele me retorna todos os dados da compra. Então, aparentemente a avaliação
+
+não é nada mais nada menos que alguns campos a mais no registro de compra. Então, se a gente tentar mudar o price aqui também na requisição, torcer para ter o mais assignment, funciona. A gente mudou o valor da compra que a gente fez, então agora podemos abusar dessa vulnerabilidade e pedir um reembolso que ficamos com dinheiro extra. Agora sim, vai ficar interessante. A terceira vulnerabilidade foi reportada pelo Nuo 28 e ela tem a ver com aquele último CVE descoberto do Next nos Middlewares. Sim, exatamente aquela que
+
+gerou uma baita discussão na comunidade. Mas antes de mostrar como que eu vou explorar isso, vamos contextualizar um pouco sobre esse CVE. Middwars é basicamente uma função que roda antes da requisição chegar no render da rota. Ele é muito usado para fazer autenticações. O que acontece é que nesse CV descobriram um jeito de burlar esse Mer, literalmente pular ele, ignorar, fazendo assim que você consiga acessar todas as rotas protegidas. Como usando alguma
+
+coisa chamada de sub request. No next tem um header especial que chama X Mid sub request e ele é usado para detectar e prevenir recursões infinitas. Então, quando o next encontra o header x mid request com valor middleware três vezes, ele pensaria que a requis só passou por três midwers e provavelmente ele tá em loop infinito. Então ele automaticamente pulava o próximo middleware para parar essa recursão. Então fui lá coloquei o CTF na versão do Next Vulnerável, só que não dava para explorar porque eu tava hospedando na Versel. Mas e daí? A
+
+Versel depois desse CV começou a tratar internamente o Header X Midb request. Então, toda vez que algum usuário passasse esse header, a Versel dentro da própria infraestrutura removia esse header, deixando assim até os sistemas vulneráveis seguros. Então, eu tive que dar uma dica durante o CTF, eu falei que sempre que alguém fosse usar a palavra sub request na hora de explorar alguma coisa, era para usar subrek. Assim, o X Mid request virava X Midck, fazendo com que a versão não removesse o header e eu tratasse como um sub request normal e assim a galera podia explorar normalmente. Vamos pro exemplo aqui. Se
+
+eu acessar a rota barra de mim normalmente eu sou redirecionado. Mas se eu passar no header o Xmer subreck com um valor específico, eu consigo acessar a página protegida e consigo ter acesso a de mim. Pera aí, pera aí. Antes de continuar, esse CTF só foi possível graças ao patrocinador Relaxpay. A parte mais chata de fazer uma aplicação é integrar o método de pagamento, mas não precisa mais ser assim. E calma, não é
+
+um gateway só para PJ. É muito provável que o teu site ainda nem tem CNPJ, então tá ótimo, porque a Relaxpay é tanto para pessoas físicas quanto jurídicas. É ideal para você que quer integrar um método de pagamento sem enrolação e sem burocracia. É um gateway 100% brasileiro criado por debs para debs. A integração é fácil, documentação objetiva e você consegue integrar com qualquer sistema.
+
+E tem mais uma coisa, eles estão com uma taxa promocional nesse exato momento. Então corre para usar que já já vai acabar. Quer saber mais? É só acessar o primeiro link da descrição do vídeo. Obrigado Black XP por ter patrocinado o CTF. Agora bora voltar pro
+
+vídeo. Agora a quarta vulnerabilidade foi um IDOR também no reembolso. Foi reportado pelo Gome Zero no minuto 43. Aqui é bem mais simples. Quando a gente faz o reembolso, a gente manda o ID da compra na requisição. Só que o servidor
+
+não valida se a compra que eu quero reembolsar é o do usuário. Só que o ID da compra é um ID aleatório. Então não importa ter essa vulnerabilidade se eu não consigo encontrar o ID das outras compras. Olhando o código HTML, a gente pode ver que os reviews t o ID, que é exatamente o ID da compra. Então, se a gente mandar um request de reembolso, só que com o ID da compra de outra pessoa, a gente recebe o dinheiro na nossa conta. A quinta vulnerabilidade foi
+
+reportada pelo Luiz Bagre 4 minutos depois, no minuto 47, e era um XS storaged. Calma aí, eu sei o que que você tá pensando, pô. Um código Next com XS? Eu sei, eu sei, eu viajei um pouco. Para você encontrar um XS em Frameworks que usam JSX é bem raro. O programador
+
+deveria explicitar um uso de danger reset inner HTML e usar isso sem motivo é pedir para tomar. Mas beleza, vamos tentar explorar esse XS. Ele tava no perfil do usuário. Quando a gente entra para editar o perfil, a única coisa que dá para alterar é a descrição. Então vamos tentar o payload mais simples que existe. Script.
+
+Só que o servidor não deixa a gente usar caracteres especiais, tipo menor que. Beleza? Vamos ver onde é que a descrição do usuário é renderizado na página. Olhando o código fonte, a gente vê que ele tá dentro de um console. Log, mas não é um console log normal. A
+
+string tá entre crases. Então a gente pode abusar da forma que o JavaScript funciona para colocar um XS aqui dentro. Usando esse símbolo, a gente pode interpolar variáveis dentro de uma string no JS. Só que não precisa ser exclusivamente uma variável, pode ser também uma expressão. E alert é uma expressão. Então, se a gente colocar,
+
+por exemplo, olá pessoal, o cifrão e alert deve funcionar, porque esse alert vai ser evaluado pelo JavaScript na hora de construir a string. E pronto, funcionou. Todo mundo que acessar o meu perfil vai receber um alert na cara. Isso é o XS Storage. Por fim, a vulnerabilidade extra, que eu mesmo não tinha pensado, foi descoberta pelo Henry MataGi em 1 hora e 7 minutos. Era um DOS que fazia
+
+com que algumas páginas do site parassem de funcionar. Sim, esse erro tava nas avaliações, no sistema de estrelas. Você pode pensar: "Ah, ele colocou 1000 estrelas, colocou estrelas negativas?" Não. O servidor verifica o input. Ele só
+
+aceita estrelas entre um e cinco. Só que o cara foi além. O que acontece se eu colocar 1.1, por exemplo? Bom, faz sentido. 1.1 tá entre 1 e 5. Então o
+
+servidor vai aceitar, mas esse ponto decimal vai quebrar as páginas. Mas por quê? Pelo jeito que eu tô renderizando as estrelas. Lá no código, as estrelas são mostradas como um array de tamanho N, onde N é a quantidade de estrelas. E se você tenta criar um array com ponto flutuante no JS, ele vai dar erro de run time e a página não carrega. Assim,
+
+qualquer pessoa que tentasse acessar o site não ia conseguir usar. Isso que é o DOS, denial of service. Esse ataque é sobre deixar um serviço indisponível e foi exatamente isso que aconteceu. No final foi um CTF divertido de fazer e ver você se resolvendo. Eu, sem dúvidas, vou fazer mais no futuro. Então, para
+
+não perder os próximos, me segue no Twitter e entra no canal do Discord. Inclusive a live que eu fiz durante o CTF também tá disponível aqui no canal, se vocês quiserem ver. É isso. Obrigado por assistir até aqui. Não esquece de deixar o like e se inscrever no canal.
+
+Valeus.

@@ -1,0 +1,149 @@
+---
+video_title: "Esse é o FUTURO da AUTOMAÇÃO de NEGÓCIOS (Python + Langchain + Kestra)"
+video_id: 8TgIEzyIgmA
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=8TgIEzyIgmA
+video_date: 2025-06-05
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Lista de espera aberta): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  Explore o futuro da automação de negócios e aprenda como construir soluções robustas com IA Generativa neste vídeo essencial para desenvolvedores, empreendedores e profissionais (mesmo iniciantes!) que desejam dominar a Inteligência Artificial e Automação. 
+  
+  Descubra como Python, Langchain e a poderosa plataforma de orquestração Kestra podem levar suas automações a um novo nível, superando as limitações de ferramentas no-code como o N8N. 
+  
+  Aprenda passo a passo a criar desde automações simples até fluxos de trabalho complexos que integram LLMs para análise de dados inteligente, tudo gerenciado como software para máxima escalabilidade, flexibilidade e controle, abrindo um oceano azul de possibilidades para seus projetos de IA.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  1:24 Comparando ferramentas de automação
+  3:08  O que é o Kestra?
+  6:28 Automação com um script em python e trigger
+  9:08 Automação com um script python modularizado
+  14:35 Automação com um script python clonado do github e langchain
+  20:22 O oceano azul
+  
+  ––– Agência –––
+  
+  A melhor consultoria em IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #kestra #automação #langchain #python
+---
+Isso que você tá vendo aqui é uma automação de N8N para análise de vendas, n? Isso que você tá vendo aqui do outro lado, esse código faz exatamente a mesma coisa. Lê um arquivo, processa o arquivo e manda uma mensagem nos leque. Eu vou mandar uma mensagem aqui pra gente ver. Eh, de uma maneira bem simples, né? São
+
+pouquíssimas linhas de código e hoje em dia, eh, código é uma coisa cada vez mais fácil de fazer. E você deve estar se perguntando se é tão fácil assim fazer no código, por que as pessoas usam N8N? E aí eu acredito que tem três motivos. Uma é a falta de conhecimento de alternativas. É, a segunda é que a pessoa nunca precisou fazer algo de médio ou grande porte. Então o N8N
+
+atende. Mas quando você começa a ter maior exigência das suas automações, ele não vai atender. Ah, e a terceira é que talvez botar isso aqui no ar, né, né? Botar na nuvem e rodar isso aqui, uma computação possa ser difícil para um monte de gente. E é exatamente do que esse vídeo se trata. Eu vou te mostrar
+
+eh uma ferramenta chamada Kestra e como você pode usá-la eh para automação eh de maneira muito superior ao N8N e qualquer uma dessas outras ferramentas no code eh que existem por aí, né? De modo que você consiga evoluir as suas soluções, né? Para você que não me conhece, eu me chamo Ronald Hawk e eu construo soluções profissionais, seja de automação ou seja agente GA, é que no final tem uma interseção muito grande. Então bora para o vídeo. Eh, então vamos lá.
+
+Antes de tudo, você tá chegando aqui, você não conhece, deixa eu fechar esse cara aqui que a gente não vai usar mais. Eh, antes de tudo, eh, ferramentas de automação, né? Existe muita muita discussão, né? E eu já testei de tudo, cara. Assim, o que acontece quando eu comecei a trabalhar com automação, né?
+
+Eu acho que é natural, todo mundo começa com N8N ou com make ou com zapper, né? É por ser muito fácil. Acontece que essa facilidade cobra um preço, né? Você não tem flexibilidade e você não tem escalabilidade. N. E o que aconteceu é
+
+que eu comecei pegar projetos cada vez mais exigentes e tinha que achar um meio de resolver esse problema. Eh, e aí minha primeira alternativa foi usar Python puro para fazer requisição de banco de dados, para ler IPA e tal, porque o N8N eu não dava conta. Eh, então eu acabei eh indo para um outro lado eh de usar ferramentas como o airflow. O airflow é uma excelente ferramenta, porém ela tem eh dois problemas em relação à automação e pelo menos no meu caso, um problema era a manutenção. A manutenção dele não é tão simples. Eh, e e conseguir e gerenciar
+
+dependências é algo complicado no airflow. Ah, e a segunda coisa que o airflow ele não é naturalmente feito para ser algo orientado a eventos. O que é orientação a eventos, R? seria eh você começar um trabalho ou começar uma automação ou rodar um script eh a partir eh de um evento externo que acontece. O airflow é muito bom para você fazer bet, para você fazer algo que já tá agendado eh mas ele tem certas complicações para fazer eh de digamos assim um trigger em tempo real. É, e automação requer muitos
+
+casos de uso em que algo acontece lá na empresa ah e você precisa rodar aqui um script. Então, eu acabei chegando no orquestra e é exatamente que eu vou mostrar aqui para vocês hoje, tá? Eh, o que é orquestra? Eh, antes de eu falar um pouquinho da plataforma, eu vou mostrar os três scripts que eu vou mostrar aqui para vocês hoje. O primeiro é exatamente essa automação que eu rodei aqui na minha máquina rodando eh no orquestra, exatamente igual o mesmo código copiado e colado. É, o segundo é
+
+um código já modularizado. Eu gosto de trabalhar assim por diferentes razões. Eu vou mostrar o porquê. Eh, e o terceiro seria uma automação moderna, seria uma automação que a gente vai enriquecer eh essa leitura de dado eh usando LCin. E a gente vai usar LChain para fazer essa análise de dado de uma maneira mais inteligente. E a gente vai
+
+clonar o código direto de um repositório. A gente não vai gerenciar nenhum código aqui diretamente no orquestra. Isso faz com que a gente consiga tratar eh automação também como software. E aí a gente tem todos os benefícios de escalabilidade, eh, e controle de versão e tudo, todas as coisas divertidas que a gente ama. Então, bora lá, né? O que
+
+orquestra, né? Eles se vendem como, eh, uma plataforma para orquestrar qualquer coisa. E é exatamente disso que a gente precisa, né? A gente precisa de automações que sejam orientado a eventos, a gente precisa fazer automações de negócio, a gente precisa fazer machine learning e a gente precisa ler dados e fazer eh leitura de API o tempo inteiro, né? Isso é natureza da automação, né? E eles eh cobrem
+
+exatamente isso aí. Eles têm algumas já, enfim, empresas que dizem que usam e tal. Eh, mas pro nosso propósito é o seguinte. Eh, ao invés de usar o N8N, eh, que tem a sua versão gratuita, né, mas ele não é a parte 2.0, ela é uma versão, enfim, proprietária deles lá, que é gratuito, mas é um pouco diferente da parte 2.0. O Castra é a pasta 2.0,
+
+que significa que você pode baixar o código e fazer o que bem entender do jeito que você quiser fazer, né? Então, é exatamente o que a gente procura. a gente procura eh flexibilidade e escalabilidade eh mesmo ao custo de um pouquinho mais de complexidade, mas eu vou te mostrar aqui que a complexidade não é tão grande assim, tá? Eh, então beleza, né? Primeiro aqui, cara, eu vou mostrar para vocês a cara geral do Caster, n? E de cara aqui você vai e
+
+notar a grande diferença, se você tá acostumado com o N8N, que é um dashboard. E nesse dashboard você consegue ver todos os trabalhos que já rodaram. Esse aqui eu levantei, essequestro aqui tá rodando localmente e eu levantei para fazer esse vídeo. Aí eu rodei várias vezes até eh dashboard, coisas que não tinham só para ter e a gente conseguir ver isso aqui, né? E é muito legal que você consegue ver taxa de erro, taxa de acerto. Ah, e ele tem
+
+uma interface bem agradável para trabalhar, tá? Eh, coisas interessantes, ele também tem plugins, assim como você tá acostumado lá com o N8N, mas sinceramente eu uso muito pouco, eu prefiro manter tudo em Pythons, então eu faço desenvolvimento local na minha máquina. Eh, e aí depois eu vou mostrar para vocês como eu pego esse código que tá na minha máquina e rodo diretamente aqui, eh, sem fazer muita adaptação, sem usar plugins demais aqui para não ficar dependente. Então, se eu tivesse que migrar meu código ou a minha automação para alguma outra coisa, seria fácil no futuro, tá? Eh, a outra coisa que ele tem interessante aqui são os blue blueprints, é que seria aí um uns templates. Então, você copia o template
+
+e começa a usar. Então isso aqui ajuda bastante se você tá começando eh a ter ideia e ver as possibilidades. Eh adianta muito a vida. Então beleza, você já viu como é que ele é aqui e a gente tem esse eh agradabelíssimo dashboard. Eh e a gente vai começar a ver os workflows, tá? Primeiro a gente vai
+
+executar esse cara aqui, que é exatamente o código que eu mostrei para vocês lá no início. Então, eh, vamos mostrar ele rodando aqui. Eh, e aí a gente vai ver o seguinte, além da topologia, a gente pode vir aqui, né, e editar flow. É, e ele tem essa opção aqui de editar sem código ou editar com código. E olha que interessante, é, você vê aqui que é aquele meu script, você tá falando Ronald, mas o seu slack aí, a URL tá exposta. Tarará. Essa aqui é
+
+quando você estiver vendo esse vídeo, esse web hook não existe mais, tá? Eu deixei assim para você ver que é exatamente o código que tá lá e a simplicidade que é. Eu copiei aquele código, colei o código aqui, né? E a coisa que eu fiz foi a eu botei um trigger, que é exatamente uma das vantagens da gente usar eh orquestra, né? A gente vai usar ele para ter triggers, que seriam ah, ele, no meu caso aqui tá para rodar todo dia às 9 horas da manhã, mas tem outro tipo de trigger que ele pode agir mediante alguma coisa que acontece no mundo externo, por exemplo, um web huck.
+
+Então, se algo acontece no web hck, eh, faça aquilo outro. Então, você poderia, por exemplo, usar para, é um caso de uso que todo mundo adora, né? eh o WhatsApp, sei lá, acontece alguma mensagem no WhatsApp, ele vai trigar um um job aqui, por exemplo. Então, enfim, super versátil, eh, de maneira muito facilitada. E tudo que eu fiz, se você não tá acostumado com isso aqui, esse tipo de arquivo aqui se chama em e esse arquivo aqui também é código e você pode versioná-lo de maneira muito simples e simplificada, tá? É, e a gente pode vir
+
+aqui e ver as execuções e aí a gente tem um gráfico muito bonitinho e a gente consegue ver todas as execuções que aconteceram. A gente vê a execução que a gente rodou agora e a gente consegue ver todos os logs de maneira muito interessante, coisa que você não tem eh se você fizer um script Python é sozinho na mão, né? E também você não teria no N8N que é cada vez mais difícil, enfim, ver as coisas lá e entender o que acontece. No N8N você tem que aceitar que funciona ou não funciona. Eh, e é isso. Ah, uma coisa que eu queria falar
+
+aqui, eh, em relação a isso, eh, tem um termo que eu não vi em lugar nenhum ainda, mas talvez exista, eh, que se chamam de microautomações. E eu acho que esses caras aqui são microautomações, tá? É, são automações interessantes. Se você tá dentro departamento, por exemplo, de marketing, tem que fazer uma automação rápida. E, e existem automações grandes, né? eh, que você tá automatizando algo
+
+que tenha 100, 200, 300 usuários eh ou uma empresa inteira ou um departamento inteiro. Eh, microautomações são passíveis de ferramentas assim, mas se você tá fazendo macroautomações, eh, vamos chamar de macroautomações, vai, eh, você não vai conseguir fazer aqui de uma maneira satisfatória e você vai ter muita dificuldade em manter. É, e como a gente tá falando em software, que agora automação é software, é mais importante do que desenvolver uma automação é conseguir mantê-la. E é exatamente isso que a gente tem aqui nesse segundo exemplo. Eu já vou executá-lo agora. E
+
+você vê aqui que tem algumas outras propriedades que são interessantes. Por exemplo, se você quiser passar algum algum valor e para esse workflow, você pode definir valores aqui. E uma outra coisa importante que tem aqui no no Castra de opção é uma coisa chamada backfield. Se você nunca ouviu falar de backfield, é que provavelmente você nunca lheu com lidou com dados de verdade, né? É, o backfel é o seguinte, vou imaginar que você receba um cliente agora eh e ele te dê acesso a uma API.
+
+Só que ele tem dados desde 2023, né, disponíveis. Então o backfield seria isso. Você vai eh pegar os dados antigos para preencher em algum lugar, né? E ele dá a opção de backfield aqui como parâmetro também. Então você pode, construir uma automação, eh botar certos valores como parâmetro e então você fazer um backfield aqui diretamente na interface. Ah, muito bem. Eh, vamos lá.
+
+Vamos executar isso aqui. Eu queria mostrar aqui primeiro, eh, esse esse gráfico aqui gigante. E você lembra aqui na topologia que eu quebrei isso aqui em diferentes pedacinhos. E isso tem um propósito, né? Então a gente agora tá separando nossos logs e os nossos trabalhos eh individualmente. E por que
+
+isso é importante, né? Primeiro que você vai ter modularidade. Então você sabe que um trabalho tá extraindo dado, né? Você sabe que um outro trabalho tá manipulando o dado, né? E você sabe que um outro trabalho tá mandando a mensagem no Slack. A gente vai ver aqui no SLEC,
+
+provavelmente vai ter uma nova mensagem, tá? Aí é a nova mensagem. Ah, e qual interessante disso é que você consegue ter controle total sobre eh o código na sua aplicação. E e, por exemplo, quando você tá trabalhando com time, que é o meu caso aqui, eh eu posso botar um desenvolvedor para trabalhar na extração de dados e um outro desenvolvedor para trabalhar na manipulação de dados de maneira independente, cada um na sua casa. Eh, então a gente eh começa a ter, né, escalabilidade não apenas eh computacional, eh mas a gente também tem escalabilidade de times e equipe, que faz toda a diferença quando a gente tá trabalhando em projetos grandes. Eh,
+
+essa ideia de fazer tudo sozinho, eh, infelizmente, eh, funciona muito mal, é, quando a gente tem projetos grandes, OK? Eh, uma outra coisa que eu quero mostrar para vocês aqui são os outputs, porque como você viu aqui, vamos voltar lá na topologia, você viu aqui que ele roda um trabalho, depois roda outro. É, então, por exemplo, ele extraiu o dado aqui, vamos dar um zoom, né? Eh, ele extraiu o dado, né? Uma vez que ele extraiu o dado, significa que o próximo eh o próximo nó aqui da nossa brincadeira, ele tem que ter acesso ao dado anterior e o próximo nó, o nó da mensagem tem que ter e o valor, né, o valor que esse cara aqui fez, né? Então, como isso acontece aqui?
+
+Vamos lá. Outputs, eh, extracta, n? E a gente consegue vir aqui e ver o dado extraído bem aqui, tá? facilmente a gente consegue ver aqui o dado todo que a gente tá lidando, eh, usando propriedade do próprio Cra. Então, vou mostrar o script para vocês, vocês vão ver que é bem simples, tá? E a
+
+gente consegue ver aqui também e a variável que seria o valor dele calculado. Então, lá resultado do relatório de vendas total parará. E é esse valor aqui, exatamente que vai lá pro nosso output. É, deixa eu mostrar o código aqui para vocês, né, de uma maneira eh mais simples. É, vamos lá. O
+
+que que aconteceu aqui, né? Primeiro, esse aqui é um subcódigo lá daquele código original que a gente fez, mas eu tô pegando apenas o pedacinho aqui de eh ler o dado e criar um CSV, tá? Então, beleza, esse nosso problema aqui foi resolvido. É, a segunda coisa que a gente faz aqui é processar o dado. Então, é um subconjunto daquele dado ali. E no final eu tô usando aqui uma
+
+propriedade do Cestra chamada Cestra outputs, tá? Eh, eu vou entrar em detalhes nisso no futuro quando fizer mais vídeos de Castra. Eh, e se você tá na comunidade, essa semana a gente tem uma reunião, a gente tem a live nossa da semana e o assunto é exatamente Castro. Aí eu vou mostrar isso para vocês, então não se preocupem. Eh, uma outra coisa que eu uso aqui são os output files, que é exatamente assim que a gente consegue ver eh, os arquivos, né, os valores do arquivo lá fora, igual mostrei para vocês anteriormente ali, né? E no final
+
+a gente tem a mensagem do Slack. E você vê aqui que eu tô usando muito simplesmente e importá para eh o meu slack. Simples assim, sem sofrimento nenhum, mas eu tô quebrando cada coisa em seu pedacinho. Eh, outra coisa muito interessante que eu quero mostrar para vocês aqui é que se você ainda não tem um olhar acurado para esse tipo de coisa, eh, é bom você ficar atento, porque como assim uma ferramenta roda um código eh de um outro lugar ou um código estranho? Na verdade, o Caster ele dá suporte a diferentes linguagens. Você não precisa usar
+
+Python. Eu uso Python porque ela é uma linguagem universal, principalmente para quando a gente fala de dados e tal, ela é uma linguagem padrão. É, mas o que você vai notar é que o Castra para cada trabalho cria um contêiner. O que isso significa, Ronald? significa que o seu aplicativo ou sua automação ou o seu trecho de código, ele é encapsulado apenas para essa essa execução aqui.
+
+Então você não tem nenhum problema de fato de dependência e nunca vai ter, porque você pode definir as suas dependências em um contêiner eh externo, por exemplo, você pode criar o seu próprio contêiner com as suas dependências e toda vez que você for executar esse trabalho aqui, você chama esse contêiner e ele vai rodar baseado nesse contêiner. E você também pode instalar, né, outros pacotes se esse contêiner não tiver. E eu vou mostrar isso agora e como isso é feito, tá? Eh, nesse terceiro exemplo aqui, o que que a gente vai fazer? A gente vai clonar o repositório do GitHub com o código que a gente quer que execute e a gente vai executar o código, né, aqui diferente.
+
+Eh, e eu vou mostrar para vocês aqui cada pedacinho desses códigos. E a gente tá usando aqui diferentes formas. Tem três formas da gente executar Python aqui. Eu tô usando as três aqui. E é isso que eu vou mostrar agora. É, vamos
+
+lá. Primeiro eu vou executar aqui, eh, porque esse vai demorar um pouquinho mais e vocês vão ver o porquê. Eh, enquanto isso eu vou mostrando o código, tá? Deixa rolando aí. Eh, enquanto isso eu vou mostrar aqui para vocês, né? A
+
+mesma ideia. A gente tá definindo um trabalho, né? Um um um uma pasta de trabalho aqui. Eh, a gente começa extraindo o dado e vocês vão ver aqui que eh o que que eu tô fazendo é tô falando assim, ó, roda esse comando aqui, ó, Python Struct e eu tô usando esse contêiner aqui. O que que tá acontecendo? De onde ele tirou esse
+
+Python Struct? É, o que eu tô fazendo aqui é basicamente o seguinte, ó. Eu tenho esse repositório, tá? Deixa eu abrir ele aqui pra gente ver. Eu tenho esse repositório com extract data, tá? Apenas
+
+um script aqui bem simpleszinho, igual a gente viu antes, tá? E o que ele tá fazendo é pegar esse script lá na branchin e e depois ele tá executando. Então ele clona e ele executa. Simples assim. Maneiro, né? Porque qual é a
+
+vantagem de fazer isso? Eh, se você fizer isso globalmente paraas suas coisas aqui, é como eu faço aqui na empresa, eh, você pode começar a criar regras de se a e se de se você não sabe o que é isso. É uma forma da gente evitar que erros ocorram, eh, quando um novo código chega no seu repositório. Então, você não corre o risco do desenvolvedor eh funcionar, fazer ele funcionar, mas na hora que você bota em produção ele quebrar, porque você vai ter teste automático eh nesse CD, eh se você tiver essa expertise e souber fazer isso. É, mas você tem essa opção e na pior das hipóteses você tem tudo versionado é no Git, que é uma grande vantagem. Beleza? É, após isso, a gente
+
+tá rodando esse cara aqui, ó, é esse trabalho aqui chamado L chain. E o que que esse trabalho faz de diferente? Ele vai pegar o resultado, que a gente já processou anteriormente, né? A gente leu o resultado parará. E ele vai fazer um, ele vai criar ali um agente. A gente vai
+
+usar uma LLM para analisar o dado e dar uma resposta um pouco mais rica lá na nossa nossa saída. Tá? E aqui tem uma coisa interessante, eu tô usando um Docker, eu tô usando a mesma imagem, tá? Eh, só que essa imagem não tem algumas bibliotecas que eu gostaria de usar. Por exemplo, eu gostaria de usar o Langcha Open Ai e eu gostaria de usar o Langin Experimental. Eh, então para isso, eu
+
+tenho um comando aqui muito conveniente que me deixa instalar eh novos pacotes, né? Obviamente, se isso aqui tiver em produção, como eu tenho coisas assim em produção, eu crio uma imagem no Git lá no no Docker, eh, uma imagem com as bibliotecas que eu já uso e isso evita que ele baixe toda vez que ele executar, né? Porque senão, eh, você vai ter um problema aqui de lentidão ao longo do tempo. E no final a gente manda, eh, uma mensagem usando novamente o o Slack. Eu tô usando aqui o Script Python, ele tem, né, plugin do Slack, mas eu gosto de mandar assim, tá? Eh, então vamos dar
+
+uma olhada aqui nos no código. Eh, e você vê que não tem nada demais no código aqui, né, cara? Assim, o que que a gente faz aqui, já que você tem curiosidade aí como o Lengchain funciona, eh, a gente pega o arquivo que ele leu, eh, a gente instancia o nosso o nosso na nossa LLM e eu tô usando aqui o 4o mini, eh, por questões de custo mesmo, né? Eh, e eu tô definindo um agente aqui chamado Create Pandas Data Frame Agents. O que que esse cara faz?
+
+ele recebe um data frame. E se você não sabe, um data frame, ele é um objeto do pandas. Eh, é o pandas é uma ferramenta muito, muito comum para trabalhar com dado em Python, tá? É uma ferramenta padrão. Eh, e com base nesse cara aqui, o interessante é o seguinte. Se você vê
+
+esse parâmetro aqui, allow dangerous code, o que ele vai fazer é gerar código para responder a minha pergunta. Então, ao invés de a gente usar LLM para responder, é baseado no texto, igual a gente faz tradicionalmente lá no chat GPT, é o que a gente tá fazendo é, ó, toma esse data frame aqui e baseado nessa minha pergunta, você usa as funções do pandas para calcular o que eu tô perguntando e me dar uma resposta. E o que ele vai fazer de fato é gerar código. Aí você pode ver no debug e de forma geral eh o código que ele gerou e ele vai te dar a resposta final. Eh, essa altura a gente já deveria ter uma resposta aqui. A resposta tá. E você vê
+
+que a grande diferença, né, entre eh uma automação, né, durona eh para uma automação eh mais profunda usando o IA, é que a gente tem a possibilidade de fazer isso aqui. E a diferença é que a gente não tá usando LLM pura, solta, né? A LLM pura e solta, ela não é tão boa em fazer cálculo. Se você não sabe disso, saiba agora. Eh, então a gente tá usando uma ferramenta que gera código, faz que faz cálculo de maneira eh acurada eh para resolver o nosso problema aqui. Eh,
+
+e a gente vem aqui em execuções. Eu quero te mostrar só mais uma coisinha que é, vamos lá, eh, o link chain aqui. Eh, e se você vê, né, eh, ele vai começar em algum momento a instalar as bibliotecas que a gente eh especificou ali, ó, collectin download. ele vai fazer esse cara todo e vai ficar te avisando aqui eh o tempo inteiro eh até ele começar a executar, o que vai demorar um pouco. Então você vê aqui que esse processo aqui do Lengchain demorou bastante, muito provavelmente porque ele ficou fazendo download das bibliotecas que a gente precisava usar. Então vou
+
+imaginar que agora esse job aqui tá pronto para ir pro pra pro a. A gente pode criar uma imagem lá no GitHub, eh, desculpa, no Docker, e disponibilizar pro nosso script, ou pode criar uma imagem privada onde você quer que seja e usar aqui facilmente, eh, de maneira muito simplificada, né? Espero que você tenha curtido esse vídeo. Espero que a teus horizontes sobre automações tenha eh mudado. Eu sei que o mercado eh principal, né, o mercado eh eh popular, né, só fala de um tipo de ferramenta, mas a verdade é que o mercado real e exige tem outras exigências que essas ferramentas não podem cumprir. Nós
+
+estamos num momento de transição. Todo mundo fala que a EA vai dominar o mundo, que tudo é computador e por algum motivo também essas mesmas pessoas falam que é uma ótima ideia não aprender a usar o computador de maneira ótima. Não é uma boa ideia você aprender a dominar e tirar o melhor proveito do computador. Eu realmente acho um argumento eh muito fraco, né? E o tudo que sobra é é nada, né? É hype, porque no fim é se os
+
+computadores vão dominar tudo, você deveria dominar os computadores, obviamente, né? Eh, então, se você gostou do vídeo, eh, te convido a ficar por aqui. Se você, eh, considera ter algo assim na sua empresa, gostaria, eh, considere simple work. Eh, nós temos algumas dezenas hoje de automações rodando assim diariamente, eh, aqui na nossa infraestrutura. eh e cada dia tá crescendo mais e tem sido interessante eh notar eh esse comportamento também eh em termos de enterprise, em termos de interesse das empresas eh em automatizar, né, certos processos, né?
+
+Eh, e no fundo a gente só vai conseguir automatizar esses processos se a gente tiver liberdade de escalabilidade, a gente não pode ficar preso a nenhum tipo de eh silo, como é essas ferramentas no code. Infelizmente, elas vão te manter ali no eh no mais do mesmo, eh brigando num mercado em que é um mar vermelho completamente eh enquanto existe um oceano azul que pouca gente consegue ir, não porque elas são especiais, mas porque elas enfrentam as dificuldades, eh, e vencem e é o que a gente faz. Então é isso aí, pessoal. Até a próxima.

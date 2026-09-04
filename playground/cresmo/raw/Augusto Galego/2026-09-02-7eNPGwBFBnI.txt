@@ -1,0 +1,73 @@
+---
+video_title: "Recursos do Claude Code Que Você Provavelmente Não Usa"
+video_id: 7eNPGwBFBnI
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7eNPGwBFBnI
+video_date: 2026-09-02
+video_description: |
+  💸 Aproveite o Pix com taxa zero na Appmax para novos usuários: https://appmax.com.br/desenvolvedores/?utm_source=augusto-galego&utm_medium=social&utm_campaign=influencer-tech
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Integrar pagamentos não é só linkar uma API e receber dinheiro. Você vai precisar pensar em antifraude, em retri, em tokenização, recorrência, split. E aí você vai perceber que a maioria dos gatos de pagamento não acompanha o seu produto e não oferece tudo isso de maneira completa. Amax foi construída para quem integra API com ambiente de testes, web hook configurável, antifraude com machine learning, gestão de recorrência e split de pagamentos nativo. Eles têm uma documentação completa, sem pegadinha na implementação. E para quem acompanha o
+
+canal, Pix com taxa zero integrando pela PI. Link na descrição. Bom, eu fiz dois vídeos trazendo dicas diretamente da documentação do Cloud Code. Muitos de vocês gostaram e falaram: "Galego, pode continuar fazendo vídeo assim, faz mais vídeo assim. Gostei, aprendi bastante coisa". Alguns de vocês falaram: "Cara,
+
+não aguento mais ouvir falar sobre a não faz mais vídeo assim de maneira alguma". Então, vamos fazer um meio termo que é esse é o último vídeo que eu vou trazer dicas de cloud code por um tempo, a não ser que surja algo que eu acho imprescindível você saber. Todas essas dicas estão vindo diretamente da documentação do Cloud Code da Entropic. O link delas vai est na descrição, na verdade, o link da documentação vai tá na descrição. E embora sejam dicas que a Antropic tá dando para o cloud Code, a maioria dessas dicas funciona em contextos parecidos. Elas funcionam no
+
+Codex, elas funcionam no Open Code, elas funcionam em qualquer outra harness de A que você utilizar, elas funcionam no cursor, porque, né, fundamentalmente todos esses sistemas funcionam meio que da mesma maneira. Bom, primeira dica de hoje é sobre utilizar works. O cloud tem aqui a própria flag traço traço work. Com essa flag, o cloud code, né, a o ferramental aqui vai criar uma gite. E a ideia de utilizar workes é a seguinte ideia. Quando você tem uma sessão
+
+fazendo aqui a feature A, outra sessão do cloud code fazendo aqui a feature B, você não quer que essas coisas entrem em conflito, porque, né, elas podem estar editando o mesmo arquivo, elas podem se confundir, uma pode fazer uma um commit e acabar comitando coisas incompletas da outra. Você separa isso em duas workshes, tá? Você vai ter basicamente duas versões desse código e cada workthr, cada sessão do Cloud Code vai estar trabalhando numa versão diferente. Elas não entram em conflito. Os arquivos não entram em conflito dentro do seu computador. A segunda dica, indo nessa
+
+linha, é sobre paralelismo. Existem algumas diferentes maneiras de paralelizar o trabalho dentro do cloud code. Você pode simplesmente abrir essa a CLI em dois terminais diferentes, né? Isso vai agir de maneira paralela. Você pode ter subagentes dentro de uma única sessão em cada em que cada um deles tá trabalhando em uma diferente tarefa.
+
+Você tem aqui a ideia de agents teams, que você pode orquestrar times de sessões diferentes de cloud code e essas sessões podem interagir entre elas. Você também a ideia de workflows dinâmicos e o resumo mais fácil para você entender, tá? Que em subagentes, o cloud vai delegar e coletar os resultados dentro de uma única conversa. Na visualizações, na agents View, você vai entregar tarefas individuais e visualizar depois. Na ideia aqui de agents Teams, o Cloud vai planejar e supervisionar um grupo de trabalhadores. Lembrando, essa feature
+
+aqui é experimental, então toma um pouco de cuidado. E no workflow customizado, você vai ter um script que tem um plano ali para seguir um determinado workflow, um determinado fluxo de trabalho, tá? Essas são as diferentes maneiras de se paralelizar dentro do cloud code, segundo aqui a Entropic. Cada uma aqui tem um objetivo, mas é importante você entender que o paralelismo primeiro ele vai aumentar o seu custo muito rapidamente, né? Você vai estar rodando as coisas ali em paralelo. Você vai
+
+produzir, digamos assim, duas vezes mais tokens e isso vai te custar duas vezes mais também e você continua sendo uma única pessoa, né? Então, paralelismo, existe um certo limite ali do quanto você vai conseguir prestar atenção nisso. Se você for na ideia de Agent Teams especificamente, a recomendação é você quebrar o trabalho para que não existam arquivos em comum entre dois dois colegas diferentes no seu time. Porque se ambos estiverem trabalhando, um trabalhando na feature A, outro tá trabalhando na feature B, ou então parte da feature A e parte da feature B, só que existe um um arquivo em comum no trabalho desses dois, um pode sobrescrever o outro, tá? Então toma cuidado com isso. Existem algumas
+
+maneiras de fazer agendamento de tarefas. Uma delas é o barra loop, que você pode fazer com que algo fique ali no seu computador, mas você pode também rodar coisas dentro da cloud da Antropic. Então você pode fazer uma schedule, pode agendar algo e falar: "Cara, em determinado período, né, a cada uma hora, eu quero que você r os testes, eu quero que você faça sei lá qual coisa". Então, dessa forma, você pode automatizar o seu trabalho com uma rotina, agendar ele para que isso seja feito de maneira recorrente algum determinado horário. E você pode fazer tarefas, como, por exemplo, fazer um health check e te alertar se tiver um erro na sua PI, revisar os P requests que estão abertos, coisas nesse sentido.
+
+Você pode ter uma como se fosse uma Chrome job que vai rodando e vai fazendo isso. E se você achar meio complicado fazer isso dentro da CLI, você pode fazer isso na web também, tá? Você pode abrir aqui o o cloud code ai aqui em cima/code/routines. Você pode criar uma rotina nova aqui e aí você vai conectar, sei lá, o seu GitHub, o que for necessário aqui para executar a tarefa e a tarefa vai ser executada. Ah, me perdi na dica, vou supor que a gente tá na sete. A dica
+
+sete é sobre browser. Você pode integrar o Cloud Code com o Google Chrome. Isso permite que você teste modificações do seu aplicativo web e que você dê bug sem precisar ficar mudando de contexto. Claro, também é possível você integrar o MCP do Playgright e do cloud manipular o Playg também funciona. A oito, ela é definitivamente uma dica meio estranha, mas existe, muita gente sabe disso já, algumas pessoas não, existe como você deixar o Cloud Code manipular o seu computador e é bem fácil de fazer. Tem
+
+uma flag interativa que é o IFN P. Aqui existem outras maneiras também de você atingir esse objetivo, tá? E aí você ativa o MCP Computer Use. Isso permite que o Cloud Code manipule a sua tela, o seu mouse, faça tome ações ali dentro do seu MacBook. Eu não tenho certeza se já funciona em outros OS que não são o MacBook, tá? Perdão, né? O MacOS. E isso
+
+aqui é meio loucura, mas existe. Tô te falando que existe, mas é meio loucura. Nove. Sessões remotas. Quando você tá fazendo um refactor muito grande, quando você tá construindo algo que vai demorar um determinado tipo uma determinada quantidade de tempo, né? As suas sessões
+
+do cloud Code, elas são armazenadas dentro da sua máquina, como a gente conversou num vídeo anteriormente, mas você pode inicializar uma sessão remota para isso ficar disponível de maneira mais global, digamos assim. Isso aqui, na verdade, permite que você rode tarefas de maneira remota e contínua. Aqui dentro da documentação, ele tá dizendo, especificando dentro do desktop app. Então você abre o aplicativozinho do Cloud Code e aqui, ó, aqui no aplicativo, não na Cine, no aplicativo, você vem aqui em local e você pode mandar rodar na cloud ou, enfim, configurar um remote control aqui, tá? Sobre o remote control você vai usar isso para executar na sua própria máquina. Então eu posso executar algo
+
+aqui, rodar localmente no meu computador, mas eu vou poder monitorar isso através de outro dispositivo. Então eu posso deixar o meu PC ligado rodando aqui e monitorar isso através do meu do meu smartphone, por exemplo, quando eu tô fora de casa. Agora, disclaimer, eu não faço e nunca fiz isso e eu não recomendo por isso, simplesmente porque eu não acho que é um hábito muito saudável você ficar monitorando seu cloud code do seu smartphone. Gente, é muita loucura, né? você você já trabalha 8 horas por dia, você não precisa ter trabalho, enfim, quando você tá fazendo outras coisas, você não precisa ficar na academia prom optando o cloud code, mas se você quiser, existe, tá aí, tá aí para para usar, se quiser usar, tá aí, enfim, não diz que eu não avisei. A
+
+gente falou de sessões, né, e em alguns momentos eu comparei sessões com branches do do GitHub ali, com commits no GitHub, né? Você pode fazer um forque numa sessão. Então, tipo assim, tô fazendo um refactor na minha code base, né? aqui nessa conversa do cloud code, cheguei em um determinado ponto, eu não sei exatamente o que que vai resultar no melhor código. Eu posso fazer um fork, quebrar essa minha sessão aqui em duas sessões diferentes. E aí o fork ele vai
+
+criar uma nova sessão com uma cópia exata da sessão que você tá nesse momento. Por exemplo, estou aqui no meu cloud code, ele tá fazendo alguma coisa aqui irrelevante. Eu tô aqui nessa sessãozinha, eu posso dar um barra aqui, escrever fork aqui, né, barra fork. E eu posso pedir algo na nessa sessão forkeada aqui. E ele vai criar um fork e vai me retornar o ID da sessão. Esse
+
+fork vai spawnar aqui embaixo um subagente que vai estar trabalhando nisso, enquanto a minha sessão aqui permanece intacta. Então você pode, né, forquear ali e criar dois caminhos diferentes. Em algum momento se você quiser, você pode utilizar só o outro ou enfim, só um que você quiser. Isso daqui ele passa a ser mais útil quando você tá utilizando a SDK ou quando você tá criando, construindo uma aplicação em cima disso daqui, tá? Que é o output estruturado. Como assim? minha
+
+aplicação, o meu backend, vai mandar uma request lá paraa Antropic e vai obter algo de volta. Eu posso especificar exatamente a estrutura com que eu quero que isso volte e eu posso utilizar inclusive libsidar esses dados. Como assim? Aqui no próprio exemplo de de código da Entropic, você vai utilizar o Zod do TypeScript ou então Pidentic do Python, como exemplos que eles deram aqui. Ele define um output estruturado. Esse output
+
+estruturado é feature name, summary, steps, etc. Eu não acho isso daqui super útil quando você tá usando o cloud code localmente, né? Não, não é o que faz muito sentido, mas dentro de uma aplicação pode fazer sentido. Aí você vai transformar esse feature plan aqui do Zod esquema de Jason e você vai mandar esse esquema de Jason aqui nesse formatinho aqui, tá? Pra entrop ela vai responder nesse formatinho aqui. Depois
+
+você vai validar ali com os ódios. Dessa forma, o output vem estruturado da maneira que você quer. Então, se você tá construindo ferramental em cima disso, ah, tô construindo um orquestrador de agentes de, ah, tô construindo algo que quebra tarefas muito complexas em sei lá o quê, utilizando por debaixo dos panos a o ferramental do Entropic pode ser muito valioso. Por hoje, a última referência que eu quero te dar é que se você esver muito interessado nisso, você pode ver aqui o entropic.com/engineering, o blog do engineering@enthropic. E nesse
+
+blog tem alguns artigos muito interessantes, por exemplo, effective hardness for long agents, né? harnesses efetivas para agentes que rodam por um determinado, por um longo período de tempo. E você pode ler esses blogs. Eu acho que se você tá assim avançado nesse mundo, mirando trabalhar aí numa bigtech de maneira internacional, pode ser útil isso daqui, não porque você vai usar esse conhecimento no dia a dia, mas porque você vai conseguir conversar sobre isso, que acaba sendo algo valioso em momentos de contratação, quando você conhece pessoas que estão fundando startups nesse âmbito. Enfim, esse tipo de coisa, né? Saber conversar com o Vale
+
+do Silício é muito bom se você quiser ser contratado pelo Vale do Silício. Por hoje era isso. Se você quiser, temos vários cursos aqui do canal. Os links vão estar na descrição. E acho que esse vídeo, não sei se é o último ou um dos últimos de julho, mas deu, né? Vamos dar
+
+um tempinho de cloud code, tá bom? cursos na descrição. Valeu, pessoal.

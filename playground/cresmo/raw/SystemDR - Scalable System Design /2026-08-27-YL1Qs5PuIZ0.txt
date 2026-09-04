@@ -1,0 +1,27 @@
+---
+video_title: "Why a Celebrity Tweet Can Break Your Whole System #systemdesign #shorts #twitter"
+video_id: YL1Qs5PuIZ0
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YL1Qs5PuIZ0
+video_date: 2026-08-27
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-twitters-timeline-the-senior
+  🌐 Visit our website: https://systemdrd.com/
+   
+  100M followers, one tweet, one write storm. Here's the hybrid fanout pattern that keeps a celebrity post from taking down everyone else's feed.
+   
+  #systemdesign #softwarearchitecture #backendengineering #distributedsystems #techinterview #scalability
+---
+Let's put working numbers on this because everything downstream, [music] cache sizing, sharding strategy, even the fanout threshold, falls out of these estimates. [music] Assume 500 million daily active users, each opening the app about five times a day. That's 2.5 billion feed reads daily, [music] roughly 30,000 reads per second on average, spiking to around 200,000 at peak. On the right side, [music] each user posts about a fifth of a time per day, 100 million posts daily, 1,200 writes per second average, [music] 10,000 at peak. That read to write
+
+ratio, on the order of 25 to 1 at the request [music] level, is exactly the kind of number you'd stated out loud in step one. The follow graph itself is enormous but cheap. Hundreds of billions [music] of edges at roughly 30 bytes each, so 3 to 5 terabytes total. >> [music] >> The posts table, 5 years of retention at a kilobyte per post, lands around 180 terabytes. [music] But the layer that actually distinguishes a senior answer is the timeline cache. 500 million users times
+
+1,000 [music] cached posts times 200 bytes per entry is about 100 terabytes. Bigger than your hot transactional store, and it has to live somewhere built for it, typically [music] Redis or Memcached. Naming this as its own system, separate from the posts database, is exactly the kind of detail that tells an interviewer [music] you've actually built something like this. Four stores, and the mistake candidates make is putting all four in one database. In production, they're four different systems, [music] each shaped by its access pattern. The posts table is the
+
+source of truth, sharded by author_id, and it uses snowflake [music] IDs, Twitter's own invention, for distributed, roughly time sortable ID generation without a central counter. >> [music] >> The follow graph is deliberately not in your OLTP store. At scale, it lives in something graph-aware, or [music] at minimum a sharded relational table with a composite key on follower and followee, with a secondary index the other direction. And here's the asymmetry that [music] matters. Who do I follow is fast and small because most users follow under 500 accounts. Who
+
+follows me? [music] Can return over 100 million rows for a celebrity. That single query pattern is what breaks naive designs later. The user timeline cache is the hot read path, a Redis sorted set keyed by user ID holding roughly the thousand most recent post IDs updated by ZADD on write and read with [music] a simple ZREVRANGE. No database hit, no graph traversal. And
+
+post by author cache exists purely to support [music] fan out on read for the handful of accounts too large to push to. We'll get to exactly why in a moment.

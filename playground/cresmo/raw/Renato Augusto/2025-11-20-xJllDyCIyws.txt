@@ -1,0 +1,358 @@
+---
+video_title: "Aprenda a Escalar Bancos de Dados Usando SHARDING | System Design & Arquitetura de Software"
+video_id: xJllDyCIyws
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=xJllDyCIyws
+video_date: 2025-11-20T20:01:01+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo. E no vídeo de hoje, eu vou te mostrar como funciona a escalabilidade horizontal dos bancos de dados usando a poderosa técnica conhecida como sharding SHARDING, uma das técnicas mais importantes do System Design e da Arquitetura de Sistemas Distribuídos.
+  
+  🚀 O que você vai aprender neste vídeo (System Design: Escalando Bancos de Dados Usando SHARDING):
+  
+  ✅ O que é sharding e por que ele é essencial para escalar bancos de dados horizontalmente
+  ✅ Como escolher a shard key ideal e evitar hotspots
+  ✅ Por que IDs sequenciais criam problemas e como resolver com hash
+  ✅ Como bancos distribuídos implementam sharding internamente
+  ✅ Como sharding aparece em entrevistas de system design e arquitetura de software
+  ✅ Como lidar com joins, transações, migrations e re-sharding
+  ✅ Quando usar sharding na vida real — e quando NÃO usar
+  ✅ Como pensar como um arquiteto de software na hora de escalar o banco da sua aplicação
+  ✅ As fortes ligações da técnica de sharding com microsserviços e domain driven design
+  
+  💡 Por que assistir?
+  
+  🔹 Pra aprender de verdade como funciona escalabilidade horizontal
+  🔹 Pra dominar arquitetura de software, bancos de dados distribuídos e system design
+  🔹 Pra nunca mais acreditar que “read replica” resolve escalabilidade
+  🔹 Pra se preparar para entrevistas técnicas de alto nível
+  
+  🎯 Quem deve assistir?
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que querem dominar System Design
+  📚 Estudantes de tecnologia que querem entender como funcionam os bancos de dados
+  💼 Arquitetos de software e tech leads que tomam decisões técnicas em projetos complexos
+  
+  🔥 Curtiu o vídeo?
+  
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 para não perder os próximos conteúdos sobre Arquitetura de Software, System Design e Sistemas distribuídos!
+  
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 👊🏻
+  
+  📩 Dúvidas ou sugestões?
+  Comenta aqui embaixo — eu sempre leio tudo e respondo sempre que posso.
+  
+  #systemdesign #bancodedados #arquiteturadesoftware #programação #backend
+---
+Dando continuidade na nossa playlist de System Design, arquitetura de software e sistemas distribuídos, no vídeo de hoje eu vou te ensinar a escalar horizontalmente os bancos de dados através da poderosa técnica conhecida como charging, ou melhor, fragmentação. E de quebra, eu ainda vou te mostrar como que esse tipo de desafio vai aparecer na tua próxima entrevista para programador ou arquiteto de software e como que você tem que raciocinar todas as vezes que tiver diante desse tipo de desafio. Fala pessoal, Renato Augusto aqui de novo e dessa vez para te ensinar a poderosa técnica de charging, também conhecida como fragmentação dos bancos de dados. Essa técnica tem como intuito principal escalar horizontalmente os bancos de dados e é ela quem vai definir se a tua aplicação vai conseguir suportar milhares ou até milhões de usuários. Então, sem mais enrolação, vamos direto pra tela, porque tem muita coisa pra gente ver e com toda a certeza tu vai sair daqui hoje preparado para encarar qualquer entrevista quando o assunto for escala de bancos de dados.
+
+Bora lá. Bom, então vamos lá. Vamos direto ao ponto aqui. Vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver, tá? E a primeira coisa que eu vou começar fazendo aqui é pegando essa arquitetura bem básica aqui. A gente vai escalar
+
+ela, ou seja, eu vou partir do zero. Por que que eu vou partir do zero? Você já vai entender, tá? Não se precipita, não acelera, porque você vai entender o por que eu tô partindo do zero até a gente chegar no problema que o charging vai resolver, ou seja, escalabilidade horizontal do banco de dados, tá? Entendido isso? Vamos lá. Que que a
+
+gente tem aqui? A gente tem uma arquitetura bem básica, tá? Arquitetura cliente servidor aqui. E aí a gente tem os nossos usuários fazendo requisições pra nossa aplicação aqui, tá? Pro nosso servidor web. E a gente tem aqui o nosso
+
+banco de dados, tá? Muito simples, muito objetivo e direto ao ponto. E aí, qual que é a simulação que a gente vai fazer aqui? a gente vai fazer a simulação de que a gente tá trabalhando numa empresa e essa empresa começou a fazer marketing demais, tá bem agressivo no marketing, tá fazendo bastante propaganda e o que que acontece? O número de usuários tá aumentando. Com o número de usuários
+
+aumentando, o que que sempre vai acontecer? Vai acontecer que vai começar a gerar um gargalo tanto na nossa aplicação quanto no banco de dados. Por quê? Porque muitos acessos simultâneos na nossa aplicação vai gerar o quê? consumo de recurso. E aí a aplicação não
+
+vai aguentar lidar com essa volumetria, vai abrir o bico, vai levar o banco de dados junto e aí a gente vai ter o problema formado, tá? E aí, qual que é a situação aqui, tá? O que que eu recomendo que você proponha, caso esse tipo de problema bem básico aqui apareça para você numa entrevista ou na vida real? E isso aqui é bem comum de aparecer na vida real, tá? Primeira coisa que você faz é escalar verticalmente, ou seja, você adiciona mais poder computacional no seu servidor, na sua máquina. Aqui na sua
+
+instância, você vai adicionar mais memória RAM, mais poder de processamento, você vai adicionar mais recurso computacional. Para quê? Para que ela consiga lidar com essa alta volumetria. No nosso cenário aqui, como a gente tá falando de charging daqui a pouco, significa que essa nossa aplicação é uma aplicação crítica, é uma aplicação de milhares e até milhões de usuários. Então, a gente vai utilizar o quê? A escalabilidade horizontal.
+
+Basicamente é o ato de você criar réplicas do seu servidor, da sua instância. E aí você coloca um balanceador de carga na ponta, tá? Um load balancer, tá? Ele vai receber todas as requisições. Ele foi projetado para lidar com alta volumetria e é ele que vai distribuir essas requisições, ou seja, ele vai distribuir a carga entre as várias réplicas da aplicação. Beleza?
+
+Entendido isso aqui? Bem básico. E aí, qual que é o ponto aqui agora? Espero que você já tenha percebido qual que é o problema. O problema aqui é o seguinte, a gente tem agora o banco de dados tendo que se virar com todas as requisições.
+
+Por quê? Todas essas nossas instâncias aqui estão apontando para um único banco de dados. Esse banco de dados aqui não vai aguentar essa volumetria de requisições. E o que que vai acontecer? Ele vai abrir o bico, vai ficar topado e aí os usuários vão começar a ficar puto com a situação. Por quê? E a aplicação
+
+vai cair várias vezes durante o dia, a aplicação vai demorar para responder e muito provavelmente a gente vai perder os nossos clientes ali da nossa empresa e isso nunca é bom. Beleza? Entendido isso aqui, qual que é o ponto, tá? Isso aqui é o primeiro gargalo que você encontra, cara. Na verdade, os primeiros gargalos, tá? Esse baronec aqui
+
+significa gargalo. E isso aqui é a dor do crescimento. Todo lugar, toda empresa, todo software que você for trabalhar, que tiver em ascensão, que tiver com novos usuários chegando, isso aqui, cara, é o normal, é o comum que você vai ter que aprender a lidar. Então, isso aqui são os primeiros gargalos. Você tem que estar preparado para lidar com isso. Beleza? Como que a
+
+gente resolve essa situação aqui, tá? Qual que é a primeira tática, tá? A gente não vai escalar nada horizontal agora. A gente vai escalar primeiro o quê? a gente vai escalar verticalmente, ou seja, a gente adicionar mais poder computacional no nosso banco de dados, mais memória RAM, mais armazenamento e com isso ele vai conseguir lidar com a alta volumetria. E aí tudo vai entrar no
+
+padrão da normalidade. E aí, qual que é o ponto, tá? Como a empresa está em ascensão, vamos imaginar o quê? Vamos imaginar que ela continua fazendo ali as campanhas de marketing, continua ali forçando a barra e tudo mais e tal. Então, o que que a gente pode fazer mais? A gente pode fazer aqui, ó, o
+
+basicão, feijão com arroz. Você pode aplicar os índices lá no banco de dados. Você pode utilizar a estratégia de cash. Inclusive já tem vídeo aqui no canal onde eu te ensino como é que faz. Até na prática implementei lá na prática o cash aside pattern, que é um padrão de cash extremamente poderoso e te mostrei tudo por baixo dos panos. Vou deixar o card
+
+aqui em cima e o link na descrição, dá uma olhada depois. Você pode otimizar as suas queres, você pode criar réplicas desse banco aqui, tá? Inclusive já te ensinei também sobre essa questão das réplicas aqui do banco de dados. Então, mais uma vez também vou deixar o card aqui em cima e o link na descrição. Dá um confere lá depois. Não precisa
+
+inclusive parar esse vídeo aqui, tá? Você pode assistir esse vídeo aqui e depois você assiste os outros. Beleza? E aí, ó, a réplica é o seguinte, tá? Tem muita gente que tem dúvida com isso aqui, tá? A réplica, tem gente que acha
+
+que isso aqui é escalabilidade horizontal do banco e não é, tá? Isso aqui você tá escalando a performance dele, tá escalando as leituras ali. Por quê? Você vai pegar o banco principal, que é esse nosso banco que tá aqui, e vai botar ele pra escrita. E você vai criar réplicas desse banco aqui e colocar eles para leitura. E aí todas as
+
+nossas instâncias lá, os nossos servidores vão ler de um lado e escrever do outro. Isso aqui te mostrei todos os benefícios, como que funciona, te mostrei também os pormenores e também os desafios, tá? Questão de consistência de dados e tudo mais e tal. Então, dá uma olhada lá no outro vídeo, tá? Mas você pode fazer tudo isso aqui como solução, tá? Você pode trazer aí essa abordagem
+
+também e somar isso com a escalabilidade vertical no banco de dados, que é melhorar a performance, melhorar o hardware do teu banco de dados. Beleza? E aí, qual que é o ponto aqui? Vamos lá. Você foi lá, você fez tudo isso, você, pô, tratou os índices, fez cash, otimizou as querer, fez réplicas, calou verticalmente. Até então o problema
+
+parece tá resolvido. Mas vamos forçar um pouquinho mais a barra. Vamos imaginar que a empresa tá lá e continua forçando no marketing, fazendo campanhas agressivas, propaganda para tudo que é lado. E aí o que que acontece? Tá começando a subir ainda mais o número de clientes. E aí nesse último mês, vamos
+
+imaginar que entrou mais 100.000 usuários na nossa aplicação. O que que vai acabar acontecendo? Vamos voltar de novo pra dor do crescimento e o problema volta de novo ao início. Por quê? Porque
+
+o banco vai chegar um momento que não tem como escalar mais. Não vai dar mais para escalar. Existe uma limitação física de hardware, não tem como escalar mais para cima. Memória não é infinita, armazenamento não é infinito, poder de processamento não é infinito. Então a gente vai encontrar um topo, uma limitação. Quando a gente bater nesse
+
+topo, quando a gente esgotar todas as nossas possibilidades de índice, de cash, otimização de querer read réplica e tudo mais, aí sim é a hora da gente fazer o quê? da gente começar a pensar em escalar horizontalmente o nosso banco de dados através da técnica chamada de charging. Que que é charging, tá? Esse nome charging aqui é fragmentação, tá? Imagina uma pizza bem grande, tá? Que
+
+você vai fatiar ela em vários pedaços. Isso aí é charging, tá? Já vou te mostrar um pouquinho mais sobre isso. Mas o charging em si, ele é a técnica de scale out, é a escalabilidade horizontal do banco de dados. Então, é dessa forma aqui que a gente vai escalar um banco de dados quando a gente encontrar todas as limitações que a gente encontrou. Isso é
+
+importante que você tem em mente, cara. Vai por mim, grava essas informações porque é extremamente importante. Beleza? E o que que é o charging, tá? Vamos lá. A gente tem aqui o nosso banco
+
+de dados, tá? Aquele nosso bancão lá que tá todo cheio de anabolizantes lá, beleza? E aí dentro dele a gente tem várias tabelas e uma dessas tabelas aqui é uma tabela de usuários, tá? Então, a gente tem aqui a Lúcio, John, Mark, T, Mila, Mary e vários outros usuários assim sucessivamente. Beleza? Como que o
+
+Charging funciona em uma única imagem? Charging funciona basicamente dessa forma aqui, tá? Você vai pegar o seu banco que estava com todos os seus dados e você vai fragmentar ele. Isso aqui é totalmente diferente da escalabilidade horizontal, das instâncias lá da tua aplicação, da tua API, do teu código. Por quê? Lá o que que você faz? Você
+
+cria réplicas da sua aplicação e você bota para rodar debaixo de um balanceador de carga. Fim de papo, acabou. Não precisa se preocupar com mais nada. O ponto aqui é totalmente diferente. Por quê? Porque no charging a
+
+gente não vai ter mais um banco de dados que armazena todos os dados. A gente vai fragmentar os dados, tá? Então, na nossa tabela aqui de usuários, por exemplo, quando a gente chardear esse banco, a gente vai ter cada fragmento aqui com um pedaço dos dados. Nenhum deles vai armazenar todos os dados. E isso aqui é o conceito de charging. Beleza? A gente
+
+vai falar bastante sobre isso aqui, mas eu quero que você entenda isso aqui por hora. Entendido isso aqui, eu quero que você entenda mais uma coisa. Cada charge desse aqui, cada fragmento, tá? A tradução disso aqui é fragmento. Cada fragmentozinho desse aqui é um banco de verdade, tá? Ele vai ter um endereço de
+
+conexão, ele vai ter a própria memória RAM, o próprio processador, o próprio armazenamento dele ali. Esse aqui é outro banco de dados em outro endereço, em outra hospedagem, tá? Então são bancos separados. a gente tá entrando no nível mais alto de complexidade dos bancos de dados, que é a distribuição dos dados, tá? Então é sobre isso aqui que a gente vai falar, beleza? E aí,
+
+qual que é o ponto aqui? Ponto aqui é o seguinte, ó. A gente vai ter a nossa arquitetura, tá? Nossa arquitetura do jeito que ela ficou. Então, a gente vai ter os nossos usuários felizes aqui, fazendo requisições, o nosso load balancer aqui na ponta, nossas réplicas aqui das nossas instâncias e a gente vai ter aqui vários chards aqui do nosso antigo banco de dados singular, tá? E aí
+
+eu sei que nesse momento você já tá cheio de dúvidas. Você deve est pensando aí: "Meu Deus, onde é que eu vou, como é que eu vou saber onde é que armazena cada dado? Como que eu vou saber onde é que tá o dado X YZ? Como que eu vou buscar o usuário tal do ID 1 2 3? Como que eu vou fazer isso? E calma que eu já
+
+vou te falar como é que isso aqui é resolvido, tá? O ponto aqui é que você entenda como é que funciona uma arquitetura chardeada, tá? Uma arquitetura com chard aqui dos bancos de dados. E tudo que vier daqui adiante é para te preparar tanto pra entrevista quanto pra vida real. Eu vou trazer algumas nuances aqui da vida real que você só encontra na vida real. A teoria
+
+não te ensina, beleza? Então vamos lá. A gente tem aqui essa nossa arquitetura. Qual que é a primeira coisa? E isso você tem que mencionar numa entrevista. E
+
+isso você também tem que fazer se você tiver querendo chardear alguma coisa. A primeira coisa que você faz é escolher uma chard key, tá? Que é a chave de fragmentação, tá? O que que é, Renato, uma chave de fragmentação? Vamos lá. A
+
+chave de fragmentação é o seguinte: você vai pegar a entidade mais importante do seu sistema, tá? a entidade mais importante, a tabela mais importante e você vai escolher ali uma coluna dela para representar essa chave de fragmentação. Quando a gente fala de charge, a gente só pode escolher uma chave de fragmentação, tá? No geral, é uma chave só que você vai escolher do seu sistema para você fragmentar. No final, eu vou te mostrar como que o domain driven design entra nesse cenário aqui, qual é a relação que você tem com microsserviços. No final eu vou falar
+
+sobre tudo isso, porque eu sei que muita dúvida que você vai ficar daqui pro final do vídeo, no final do vídeo eu vou matar todas as dúvidas que você tem, tá? Então vamos lá. O que que é a chave de fragmentação? A chave de fragmentação é literalmente a coluna que você vai escolher de alguma tabela sua e é ela quem vai servir como ponto de roteamento, tanto para inserir dado quanto para recuperar dado e até para distribuir esses dados entre os fragmentos. Vou falar muito sobre isso daqui pra frente, tá? Mas vamos lá. Uma
+
+simulaçãozinha bem básica aqui. Imagina o seguinte, a gente tem aqui uma mini rede social, tá? A gente tem aqui uma tabela de usuários, a gente tem os posts dos usuários e a gente tem os comentários também numa rede social. Os usuários são a coisa mais importante daquela rede social. Num sistema hospitalar, a coisa mais importante é o paciente, porque o paciente tem prontuário, o prontuário tem um médico que tá atendendo o paciente, tem o medicamento que ele tá tomando, tem a doença que ele tem. Então assim, no
+
+hospital a entidade mais importante é um paciente. Num sistema de e-commerce talvez é o pedido, porque o pedido é a coisa mais consultada e tudo mais e tal. Então assim, aqui na nossa rede social é o usuário e aí o usuário ele pode criar um post. Então, por exemplo, eu tenho a Lúcia aqui, o ID dela é um, ela tem 23 anos de idade e aí ela criou um post. O ID desse post é 566, beleza? É um
+
+exemplo, tá? Ele tem o user ID aqui, ou seja, a FK, tá? Ela tem o ID de quem é o dono desse post, quem foi que criou esse post. E a gente também tem uma tabela de comentários, onde a gente tem o ID ainda da Lúcia aqui, beleza? O ID do comentário e o ID aqui do post, o post de alguém que ela comentou aqui. E aí
+
+aqui também estaria o texto lá do comentário e tudo mais e tal, que isso aqui é uma simulação, tá? numa rede social é um pouco diferente disso aqui, tá? Isso aqui é uma simulação para você entender o seguinte ponto aqui. Imagina o seguinte, eu tenho aqui o meu chard 2. Vamos imaginar que na hora de fragmentar, eu já vou te mostrar as técnicas de fragmentação, a Luci veio parar dentro do chard 2. Aí eu te
+
+pergunto, faz sentido que na hora que eu for fragmentar a tabela de post e a de comentário, jogar elas lá dentro do banco de dados, faz sentido que o post da Lucy vá parar lá no chard 1? Não faz sentido. Faz sentido que o comentário que ela fez em algum post vá parar lá no Chard 3. Não faz sentido. Por que que não faz sentido? Porque é o seguinte, se
+
+eu tiver o dado da Lúci num banco e outros dados dela em outro banco, o que que vai acontecer? vai acontecer que eu vou ter que consultar um banco, vou voltar com esse dado na memória lá da minha aplicação, vou ter que conectar em outro banco, ou seja, em outro chard, buscar o restante dos dados laal luci, juntar tudo isso e devolver pro usuário. Isso não faz sentido. Isso quebra a proposta do que é o charding, ou seja, escalabilidade horizontal. Então é interessante que esse dado da Luci venha para cá, que o post dela venha para cá também e os comentários dela venha para cá também. Então é dessa forma que você
+
+fragmenta os dados através da chard key. A chard key, a gente vai falar bastante sobre isso, é o conceito mais importante que tem quando a gente fala de fragmentação. E você precisa mencionar isso aqui também na sua entrevista. E é a primeira coisa que você define quando você tá fragmentando alguma coisa. A gente vai falar muito sobre isso, tá? E
+
+aí, qual que é o ponto aqui, tá? Uma chard key, tá? Uma boa chave de fragmentação, ela tem algumas características, tá? Isso aqui vai te ajudar, vai te nortear na escolha de uma boa chard. Lembrando que você pode escolher qualquer coluna, tá? Não
+
+precisa necessariamente seu ID. Você pode escolher qualquer coluna de qualquer tabela que você quiser para poder usar ela como chave de fragmentação, tá? Ali eu usei o ID porque faria muito sentido a gente fazer isso, mas tem alguns cenários e eu já vou te mostrar já onde a gente não usa o ID, tá? E aí vamos lá. O que que a char key tem que ter para ela ser uma boa char key? Ela tem que ter alta afinidade
+
+de relacionamento, ou seja, ela tem que ser uma chave primária, sendo uma chave estrangeira em outras tabelas. Ou seja, ela tem um alto poder de relacionamento com outras tabelas. Por quê? Porque quando tu fragmenta, tu leva todos os dados juntos. Beleza? Ela tem que ter
+
+uma alta cardinalidade. Que que é alta cardinalidade? A chave precisa ter uma grande variedade de valores, ou seja, eu tenho que ter muitas possibilidades exclusivas naquela chave. Se eu tenho uma tabela com 1000 de usuário, os 1000 são exclusivos porque ID de usuário não se repete, não pode ser igual. Então eu tenho 1000 possibilidades, ou seja, então eu tenho alta cardinalidade, tá?
+
+você vai entender um pouquinho melhor como é que funciona. E a gente também tem que ter a distribuição uniforme e aleatória dos valores. Grave essa palavra aleatória porque ela vai ser importante, tá? E aí, para você entender o que que é uma boa chave, primeiro eu vou te mostrar o que que é uma chave ruim, que aí você entendendo o que que é a escolha errada de uma chave vai provocar e com isso você vai ter em mente ali como que você faz a escolha de uma boa chave. Vamos lá. Nesse cenário
+
+aqui, o que que a gente tem? A gente fragmentou os nossos dados aqui pela coluna chamada created, tá? Todo dado tem essa coluna aqui, tá? Created ed, tá? Isso aqui, a maioria dos sistemas usa isso aqui para poder armazenar quando que aquele dado foi criado ali na tabela do banco de dados. Só que qual
+
+que é o detalhe aqui? Qual que é o problema da gente fragmentar através desse created aqui? Porque que isso é uma chave de fragmentação ruim? Vamos lá. Se a gente tá falando de uma rede social, pensa comigo, faz sentido eu pegar aqui todos os posts, tá? Todas as
+
+postagens lá da rede social de 2023 e colocar num chard, de 2024 e colocar no outro chard, de 2025 e colocar no outro chard. A princípio isso parece intuitivo, você parar ali certinho, bonitinho e vai dar tudo certo. Não, não vai. Isso aqui vai criar um efeito chamado hotspot, que é o quê? Que é um ponto de fogo aqui, que é um ponto de aquecimento em um dos bancos de dados. E
+
+qual é o banco de dados que vai sofrer? É o banco de 2025. Por quê? Porque quando você abre uma rede social, quais as postagens que estão aparecendo para você lá no feed? São as postagens mais recentes, ou seja, são as últimas postagens que foram feitas. Então, se
+
+você pega o banco de 2025 aqui e coloca todas as postagens de 2025 nele, o que que vai acontecer? Esse banco aqui vai sofrer todo o calor, porque nesse momento não tem ninguém consultando, pelo menos não deveria ter ninguém consultando postagens de 2024 ou 2023, a não ser que fosse o YouTube, logicamente, que tem vídeos aí de todos os anos, tá? Mas mesmo assim, no feed do YouTube, a maioria dos vídeos são vídeos recentes, tá? Então essa abordagem aqui não funciona porque vai tacar fogo no banco de 2025, vai desequilibrar. E por que que isso aqui tá acontecendo? Porque
+
+a gente não está respeitando aquilo que eu falei sobre uma boa chave de fragmentação. Que que é a boa chave de fragmentação? Ela tem alta afinidade e relacionamento. Essa daqui tem baixo. Outra coisa, ela tem baixa cardinalidade, ou seja, são pouquíssimos valores exclusivos. Como são
+
+pouquíssimos valores exclusivos, o que que acontece? Se a gente pegar, vamos imaginar que a nossa rede social é desde os anos 2000 até 2025, cara, são só 25 possibilidades, porque foram 25 anos só. Então a gente tem baixa cardinalidade, baixos valores exclusivos, poucos, né? Poucos valores exclusivos. E a distribuição aqui também foi feita de forma não aleatória. Isso é um perigo,
+
+tá? Isso aqui é um perigo. Por quê? Quando você tá começando nesse mundo aqui da distribuição dos dados, tá? de dados distribuídos, bancos distribuídos, você geralmente, por intuição, vai tentar fazer tudo organizadinho, porque você não quer ter problema com aleatoriedade. Só que a aleatoriedade
+
+nesse nosso cenário aqui é obrigatório. Se você tentar fugir da aleatoriedade, você vai ter esse tipo de problema aqui, ó. É isso aqui que vai acontecer. Eu vou te mostrar mais um exemplo agora, que é o seguinte. A gente tem um user ID aqui, tá? Isso aqui também é uma chave de
+
+fragmentação ruim. Aí você deve estar assim: "Pô, Renato, mas tu acabou de falar lá no no na rede social que era bom. Você pegou lá o ID da luz e tudo mais e tal, você usou a coluna do ID do usuário como chave de fragmentação. Como é que você tá falando que é ruim? Então, a chave é boa, mas o modelo de distribuição é ruim. Por qu, vamos lá,
+
+vamos imaginar que a gente tem 2.hões 500.000 usuários, tá? 25 milhões e meio de usuários na nossa plataforma. Que que eu vou fazer? Eu vou pegar do z0 ao 1
+
+milhão aqui e vou jogar nesse banco. Eu vou pegar do 1 milhão ao 2 milhões e vou colocar nesse banco aqui. E vou pegar o usuário com ID 2 milhões até o 2.500.000 e vou jogar aqui, tá? E aqui eu tenho
+
+espaço para armazenar mais 500.000, ou seja, eu tô armazenando 1 milhão para cada um de maneira uniforme. Só que aqui esse último banco aqui só vão ter 500.000 usuários. Eu quero que você pense agora, eu quero que você reflita porque isso aqui vai te preparar pra vida real. Inclusive o problema que eu
+
+vou te mostrar, a teoria não te ensina, tá? Pensa um pouquinho e me diz qual que é o banco que vai sofrer aqui. Se você respondeu que era o banco três, você acertou. E eu acho que você não respondeu esse banco, por a teoria muito diferente da prática. Porque olha só, a gente escolheu uma boa chave de fragmentação aqui, tem alta afinidade de relacionamento, ou seja, ela é FK em mais um monte de outras tabelas. Ela tem
+
+alta cardinalidade, ou seja, eu tenho 2.500.000 possibilidades exclusivas. Só que a distribuição, mais uma vez, o problema tá na distribuição, tá? Inclusive, a distribuição não é característica da chave. Eu tô colocando isso aqui
+
+propositalmente. A distribuição, existem padrões de distribuição, que é o que a gente tá vendo aqui. Então, a distribuição é que é o problema. Então assim, ó, isso aqui a teoria não vai te ensinar, tá? Por que que o Banco Três é o banco problemático, sendo que ele tem 500.000 usuários. Porque numa rede
+
+social ou em qualquer, na maioria, pelo menos dos sistemas que você vai encontrar pela vida real, o cadastro dos usuários, tá? Os usuários recentes, os últimos usuários, geralmente são os usuários mais ativos do sistema. E quem são os últimos usuários? É do 2 milhões ao 25 milhões. Você acha que o primeiro usuário tá usando ainda a plataforma?
+
+Pode até ser que sim, mas a chance desses usuários aqui já terem deixado a plataforma e já tá usando outra coisa é muito alta, cara. Então, quando você pega usuários novos, são eles que estão fritando o teu sistema. E se você cai na besteira de, ah, a quantidade de dados é o que vai mandar, não é? Tem coisas que só o comportamento do usuário é que vai definir a arquitetura, cara. Então, guarda isso pra tua vida, tá? Isso aqui
+
+é conhecimento extremamente importante. Beleza? E aí, qual que é o ponto aqui? Isso aqui é um modelo de distribuição, é um padrão, tá? Isso aqui é um pattern chamado de range based charging, tá?
+
+Isso aqui é fragmentação baseada em intervalo. Isso aqui não é de todo ruim, tá? Mas isso não é padrão do mercado. Tem raríssimas exceções que você vai aplicar isso aqui, mas são muito poucas, tá? Que é onde você pega um intervalo aqui do 0 a 1 milhão, 1 milhão a 2 milhões, 2 milhões a 3 milhões e vai alocar nos bancos aqui, tá? Agora, qual
+
+que é o próximo cenário? Tá? Esse aqui é a fragmentação baseada em intervalo, tá? Até minha câmera tá aqui na frente aqui, mas você vai entender, tá? Isso aqui é fragmentação baseada em intervalo. Qual
+
+que é o próximo cenário? O próximo cenário é a fragmentação baseada em hash. Que que é a fragmentação baseada em hash? Esse aqui é o padrão de mercado, tá? É o padrão mais utilizado e também um dos mais simples, tá? Um dos
+
+mais fáceis. Vou te explicar isso aqui com muita tranquilidade, tá? Vamos lá. Isso aqui é basicamente a resposta para uma das tuas primeiras dúvidas que você tava lá no começo do vídeo, que é o seguinte: "Cara, como é que a minha aplicação vai saber aonde que tá um dado? Como que ela tem que recuperar esse dado, se tá aqui no um, no três?"
+
+Isso aqui vai responder essa tua dúvida. Por quê? Porque esse algoritmo aqui, isso aqui é uma forma, é um algoritmo, tá? É a forma da gente distribuir os dados, é a forma da gente buscar esses dados. E para você entender e para isso ficar mais claro, esquece o hash por enquanto e foca só nesse key aqui, que é a chave de fragmentação que a gente escolheu. E esse número três aqui, tá?
+
+Esse número três aqui é um número de fragmentos. Esse percentual aqui é calcular o módulo, tá? Isso aqui é uma operação matemática, que é a coisa mais simples do mundo. É mais fácil do que cálculo de somar e multiplicar, tá? Então fica tranquilo que isso aqui é de boa. E a gente vai pegar a chave de
+
+fragmentação e vai fazer um cálculo em cima dela. Qual que é esse cálculo? Vamos lá. A gente tem aqui um select, tá? Vamos imaginar que o usuário foi lá, fez um select, onde ele tá querendo pegar os dados da tabela de usuários, onde o user ID, ou seja, lembra do nosso user ID? Vamos voltar aqui pro nosso
+
+contexto da rede social, tá? O user ID é igual a 10. Então ele tá querendo os dados do usuário que tem o ID 10. Agora, como que a minha aplicação faz para saber aonde que tá o usuário com ID10? Ele vai fazer o seguinte, ele vai pegar essa chave, tá? Como eu falei, esquece o
+
+resto por enquanto, depois eu te explico. Você vai pegar a chave e vai calcular o módulo, tá? O três aqui. Você vai fazer um cálculo de módulo aqui com o três. O que que é calcular módulo?
+
+Isso é conta básica do primário, tá? Se você pulou o muro da escola, né, para ficar jogando bomba pet, ning level, Tony Hulk, Line Aid, Moon Online, Warcraft, aí vai ficar difícil, né? Eu não te julgo, eu também pulei, mas eu voltei depois para aprender o que que era o módulo, tá? Mas eu vou te ensinar, para te dar essa moral. Vamos lá. Que
+
+que é o cálculo do módulo aqui? Presta atenção, cálculo do módul é literalmente a coisa mais simples desse mundo. Por é calcular o resto de uma divisão, só isso. É descobrir o resto de uma divisão. Então, como é que vai funcionar isso aqui? Eu vou pegar o usuário, tá, o
+
+user ID 10, que é a minha chave de fragmentação. Lembra? Aqui só vai passar a chave de fragmentação. Então, você vai pegar a chave da sua fragmentação aqui e tá aqui, ó. User ID = 10. O três aqui é
+
+o número de chards. Então, se eu tivesse cinco chards aqui, o número era cinco. Se eu tiver 10 chards, o número é 10. Então, como eu tenho três, eu vou fazer o qu? Eu vou calcular o módulo dessa operação aqui. Como é que você vai fazer
+
+isso? Você vai dividir 10 por 3. Qual que é o resultado? É três. Qual que é o resto? É um. E para qual charde esse
+
+usuário 10 aqui tem que ir? Ou da onde que ele tá vindo? Onde que eu tenho que buscar ele? Você tem que buscar ele lá no chard. Acabou. Fim de papo. É isso.
+
+Não tem mistério. É isso. E aí eu até troquei aqui, tá? Se você pegar aqui no diagrama anterior, você vai ver que eu tenho aqui charge 1, 2 e 3. Por que que aqui nesse diagrama eu tô trocando para 0, 1 e 2? Porque presta atenção, o
+
+primeiro número positivo na computação é o zero, não é o um. Isso aqui em cima eu tava fazendo só por conta do diagrama mesmo, tá? Nos outros diagramas ali, e três, para ficar mais didático para você. Mas o chard é o zero, o primeiro chard é zero, o segundo é o um e o terceiro é o dois. Por qu o resultado aqui do resto sempre vai ser 0, 1 ou dois, nunca vai ser três, porque se o resto da divisão for três, tem alguma coisa errada com a matemática do mundo.
+
+Por quê? Porque daria para ter dividido. Que é 10 div por 3. Como é que o resto vai ser três? Não faz sentido. Então,
+
+por isso que o chard é 0 1 e 2. E por que que eu errei nos de cima ali? Para ficar didático. Mas agora você tem que levar isso aqui em consideração na hora que você for propor uma arquitetura ou você tiver durante uma entrevista. Porque se você colocar 1, dois e três, você vai errar porque vai dar resto zero aqui. Você não vai saber onde enfiar
+
+esse dado ou você vai confundir o roteador. Então é 0 1 e 2. Primeiro número positivo na computação é zero. É isso você tem que ter em mente. Beleza?
+
+Vamos pro outro exemplo aqui para ficar mais claro. Pegamos aqui o user ID igual a 30. E aí, como é que funciona? Você vai pegar o 30 dividir por 3 é igual a 10. E aí, qual que é o resto dessa divisão? Zero. Aonde que tá esse dado
+
+aqui? Tá no chard zero. Beleza? Fim de papo. É isso, cara. É isso. E o
+
+algoritmo, tá, que você vai escrever lá na sua aplicação, isso aqui é um roteador, tá? É ele que vai fazer essa essa busca aqui, ele que vai fazer essa dinâmica todinha entre os chads. Aqui, ele que vai descobrir, tá, onde que tá o dado. Esse cara é extremamente simples, cara. Esse cara aqui é muito simples.
+
+Então, você deixar nos comentários aí, eu gravo um vídeo só sobre isso aqui, eu faço na prática, tá? Implemento na prática lá, você vai entender, tá? O hashzinho aqui, pr você entender qual que é a ideia, tá? O hash é nos cenários aonde você não tem um ID, tá? Você não escolheu uma uma coluna com número inteiro, então você vai gerar um hash numérico, não criptográfico, para esse valor. Então aqui, ó, vamos lá pegar
+
+aqui, por exemplo, um select aqui do usuário 1 2 3 4. Como é que funciona? 1 2 3 4/ 3 vai dar o módulo. Só que se eu tivesse usando aqui uma coluna, por exemplo, uu ID ou um L ID ou algum número muito grande com letras e números misturados para identificar esse usuário, não teria como dividir por três. Você já viu dividir letra por número? Você nunca viu isso. Então tem
+
+que ser um inteiro você dividir pelo número de chardes, tá? Para você saber onde é que tá o charde. Então tem que gerar um número inteiro. E outra, presta muita atenção, esse número inteiro que ele vai gerar tem que ser o mesmo para aquela entrada que você passou. Então, todas as vezes que eu chamar essa função e passar o 1 2 3 4 pr dentro dela, ela tem que retornar esse mesmo valor aqui.
+
+E toda vez que eu decodificar esse valor aqui, ela tem que me retornar 1 2 3 4. Porque aquele valor vai ser inserido no banco. Quando ele chegar para ser consultado, ele tem que bater o mesmo número aqui. Para quê? Para que o cálculo sempre dê o mesmo charde. O
+
+cálculo aqui sempre tem que dar aonde tá aquele charde. Se você errar nisso aqui, você vai errar o roteador e o roteador vai apontar pro chard errado, tá? Então isso aqui tem que ficar fixado nas suas ideias. O rhe que você escolher, independente da função que você escolher pr gerar esse número inteiro aqui, tem que gerar o mesmo inteiro, seja para inserir ou para recuperar o dado do usuário no banco, tá? E aí eu sei que você deve estar com uma dúvida aqui agora que é o seguinte, tá, Renato, mas como é que eu vou inserir o dado no banco? Quero criar um usuário, qual é o
+
+charging em que eu vou inserir esse esse usuário novo que eu tô criando? Porque até então ele não tem um ID. E aí você deve estar pensando assim: "Eu vou lá no banco e faço auto incremente. Beleza, gera um ID no banco. Não, você não faz isso." E eu mencionei isso no vídeo
+
+passado, tá? no vídeo lá da arquitetura do encurtador de URL, onde eu te mostrei que num sistema distribuído você não vai em banco de dados, você não fica consultando toda hora diretamente o banco, você não vai lá gerar autoincremente porque o sistema tá distribuído, isso vai dar conflito, vai dar riscondition. Então você tem que ter um gerador de ID exclusivo, tá? Eu implementei isso lá, eu mostrei na arquitetura como que eu faria utilizando até o redis, tá? Tem várias abordagens aí. Dá para você usar o Snowflake do
+
+Twitter, dá para você usar uma porrada de de solução aí que já tem no mercado, tá? Mas você precisa de um gerador de ID. Então lá no seu controller chegou a requisição, vai num serviço para gerar o ID, tá? Esse serviço tem que ser um serviço distribuído, porque ele tem que gerar ID para todo mundo exclusivo, ID único. Então você vai lá, pega um IDzinho ali, cria os dados, pega ali, monta a sua entidade e depois você armazena isso no banco. Lógico que antes
+
+de armazenar no banco, o que que você vai fazer? Você vai passar esse ID que tá ali, que vai ser o novo ID que você vai armazenar lá no banco, vai passar ele dentro do r e aí você passa ele dentro do r, vai gerar um valor aqui, tá? Esse valor você não armaena no banco, é só para fins de roteamento, tá? Tenta entender isso aí. Para te ajudar, dá uma olhada lá no vídeo da arquitetura do encurtador de URL, onde eu falo melhor sobre o gerador de ID exclusiva e como que ele funciona, porque vai te ajudar nesse conceito aqui do H e tudo mais na hora de gerar um ID para você inserir um dado no banco de dados, tá?
+
+Então vou deixar um card aqui em cima e o link na descrição, tá? Vou deixar também o link do mapa do Arquiteto, um guia de carreira completo, onde eu vou te conduzir do absoluto zero, passando pelo júnior, o pleno, sor até chegar nos níveis mais altos de um arquiteto de software, de um arquiteto de soluções. E tudo isso te entregando todo o conteúdo para você estudar e um roadmap completo para você montar todo o teu cronograma de estudos. Então, dá uma olhada aí, dá um confere na descrição e vamos voltando aqui pro vídeo, beleza? Entendido isso aqui, qual que é o problema dessa abordagem? Porque como eu falei, não
+
+existe solução perfeita. O problema dessa abordagem aqui é o seguinte: se eu quiser adicionar mais chardes, tá? Imagina que tá crescendo a minha arquitetura e eu preciso adicionar mais chards. Olha o problema disso aqui. O usuário 10, você lembra que ele foi direcionado pro chard, né? Porque 10/ 3
+
+é igual a 3 e sobra um. Então ele foi direcionado pro chard. O problema é que agora eu tenho cinco chards. Eu precisei adicionar mais dois. Lembra que eu te falei que o número do módulo aqui sempre vai ser o número de chard? Se você
+
+dividir 10 agora por 5 é igual a 2 e o resto é zero. E agora o meu roteador tá achando que o meu dado tá lá no charde zero. E o que que eu vou ter que fazer? Eu vou ter que rebalancear, ou seja, eu vou ter que redistribuir todos os dados dos bancos. E isso dá um de um trabalho. Você não tem noção do trabalho
+
+que dá isso, não. Então essa é a desvantagem dessa abordagem aqui, porque quando você altera o número do módulo, você vai alterar por consequência a questão dos cálculos e você vai bagunçar o roteador. Você vai ter que fazer redistribuição dos dados. Qual que é a solução para esse problema? Eu preciso de uma solução que consiga fazer esse balanceamento ou pelo menos se aproximar e diminuir um pouco o trabalho que vai dar, porque sempre vai dar trabalho distribuir dado. Qual que é a abordagem
+
+que eu posso utilizar? Eu posso utilizar a abordagem chamada de consistent hashing, tá? Ou hash consistente. Eu não vou te ensinar isso aqui agora porque eu demandaria um vídeo aí de 30 minutos só para te explicar isso aqui, tá? Então não vou falar sobre isso aqui agora, mas ele basicamente vai criar um anel virtual, vai distribuir todas as suas chaves, vai distribuir seus chardzezinhos ali e ele aqui vai controlar isso ali. Isso aqui é
+
+literalmente como que funcionam os bancos não relacionais com chard nativo. Então é dessa forma aqui que funciona os bancos de dados por baixo dos panos. e você querer implementar isso aqui na mão, você vai sofrer, você vai est recriando a roda. E às vezes, vamos voltar aqui nessa imagem, às vezes é melhor você migrar de banco de dados, tá? Eu vou falar um pouquinho sobre isso daqui a pouco. Fica comigo aí, beleza?
+
+Então, vamos lá. Agora que você entendeu toda essa situação aqui, você entendeu o charding como todo, você entendeu os métodos de distribuição, você entendeu como que funciona uma chave de partição, mas eu sei que você tá cheio de dúvida ainda, eu sei que você tá com dúvida ainda das tabelas, tem tabela que não vai ter relacionamento com a minha chave primária lá, com a minha chave de fragmentação. Eu sei. Calma, calma, vem na minha que você vai entender. O lance é que antes de eu falar disso, eu tenho que te mostrar os desafios aqui, os principais desafios dessas arquiteturas de chard aqui, ou seja, de você escalar horizontalmente seu banco de dados.
+
+Primeiro problema é o problema da celebridade. Que que é o problema da celebridade? Vamos lá. Imagina que nosso sisteminha tá lá rodando, funcionando perfeito, lindamente. Escolhemos nossa chavezinha lá, tá tudo rodando legal. E
+
+de repente, um belo dia, CR7, Cristiano Ronaldo, o robozão, foi lá e decidiu virar usuário da nossa plataforma. Isso vai trazer um problema que você não tá entendendo. Qual que é o lance aqui? Se o Cristiano Ronaldo decide se cadastrar e virar um usuário na nossa plataforma, imagina que ele passou por todo aquele processo, fez o rashzinho, gerou o ID e tal, cadastrou o Cristiano Ronaldo lá no banco e ele caiu aqui no nosso terceiro chard, tá no chard 2 aqui, tá beleza? Tá armazenado lá. Qual que é o problema
+
+disso? No momento em que ele fizer uma publicação, a quantidade de interações de comentário, de like, de compartilhamento que vai ter essa publicação não tá no gibi. E o que que isso vai ocasionar? Isso vai ocasionar o banco parando, o banco vai abrir o bico e aí os usuários vão ficar o quê? Ficar puto, porque vai travar a aplicação.
+
+Como que a gente resolve isso aqui? Existem várias formas. Você poderia distribuir os dados do Cristiano Ronaldo entre os vários chards, mas teria que fazer um controle manual sobre isso. Isso dá um trabalho também que você não tá entendendo. E aí, qual que é a ideia?
+
+O que que eu faria? Tá, isso aqui também é uma solução, tá? Eu criaria um chard pro próprio CR7, teria um chard da própria celebridade ou de algumas celebridades agrupadas, tá? Dá para fazer o lance. É o CR7, ele tem um alcance monstruoso, então você precisaria de um chard só pros dados dele. Então você poderia até escalar
+
+verticalmente esse chard aqui e adicionar mais poder computacional nele, porque ele vai ser diferente dos outros bancos. Então o Cristiano Ronaldo precisa de um Chad específico para ele, tá? Isso aqui é uma solução e eu quero que você entenda o problema da celebridade por você poder apresentar isso no teu dia a dia ali na entrevista ou na vida real quando você tiver realmente projetando algo muito grande. Beleza? Entendido disso aqui, qual que é o próximo problema? Nosso próximo
+
+problema é o Cross Charge operations, tá? Que que é isso aqui? Basicamente, você pegar uma consulta simples, tá? Imagina que você vai fazer uma consulta simples lá para seja para exibir na página inicial da tua rede social, por exemplo, os 10 posts mais populares, tá? Os que receberam mais like, comentário, tanto faz. Mas você quer os 10 posts
+
+mais populares. Qual que é o problema de fazer isso? É uma query simples até, tá? Só que qual que é o problema? O problema é que você vai ter que consultar o chard zero, pegar os posts lá, fazer a contabilidade. Você vai ter que ir no
+
+chard, consultar o chard. Você vai ter que ir no chard 2, consultar o chard 2, pegar todos os posts, trazer isso pra memória. Depois que trazer na memória, faz o cálculo e retorna pro usuário. Isso aqui vai gerar uma latência monstruosa. E assim, cara, não faz sentido. Você precisa implementar alguma
+
+solução para resolver isso aqui. Qual que é a solução que eu implementaria nessa situação aqui? O que eu faria era o seguinte, implementaria uma camada de cash, tá? Já te ensinei isso aqui no canal, já falei aqui várias vezes, tem vários vídeos aqui a questão do cash, mas eu colocaria uma camada de cash, tá? Então, que como é que funcionaria isso aqui? A primeira vez que alguém
+
+solicitasse, tá? que alguém acessasse a página inicial do meu sistema e essa query fosse executada para pegar os 10 posts mais populares, a primeira vez eu ia aqui, buscaria no banco, buscaria aqui, buscaria aqui, traria pra memória, faria todo aquele trâmite pesado, armazenaria isso no cash e depois eu retornaria pro usuário. Na segunda solicitação, ou seja, o segundo usuário que acessar a página inicial e que vier fazer a consulta, eu vou direcionar a consulta pro cash e não pro banco de dados. E aí eu posso botar um tempo de inspiração ali de 5 minutos, 10 minutos, tanto faz, e depois retorna novamente, tá? Eu posso até colocar de 24 horas, tanto faz, tá? Vai ser as 10 postagens
+
+do dia ou do dia anterior, tanto faz, vai depender da regra de negócio, mas eu colocaria uma camada de cash, porque o cash, já te falei, já ensinei sobre cash aqui, são nanosegundos, tá? E você alivia muito o teu banco de dados, beleza? Esse aqui é o segundo problema que é conhecido como cross chard operation, tá? São operações que você faz através de vários chards, o que acaba quebrando essa magia do charging, tá beleza? Qual que é o próximo problema, tá? E esse aqui é um pouco
+
+mais sério. Esse aqui é um problema que se você tiver lidando, vai depender muito, tá, do tipo do sistema que você tá lidando. Mas vamos lá. O lance aqui são transações distribuídas. Qual que é o problema da transação distribuída num banco de dados distribuído? O problema
+
+aqui é o seguinte, imagina que a gente tá mexendo com aplicação financeira, tá? Vamos sair do contexto ali das aplicações de rede social. Vamos entrar no contexto financeiro. Se eu tenho o usuário um, que ele vai fazer um Pix pro usuário dois e eu preciso debitar R$ 50, tá? Ele vai fazer R$ 50 aqui uma transferência pro usuário dois, que que acontece? No banco de dados por baixo
+
+dos panos, eu preciso criar uma operação de SQL. Ou seja, eu vou dar um update no accounts aqui na na conta bancária e vou setar o balance aqui, tá? Eu vou pegar o saldo dele e vou subtrair 50 onde o usuário for um. E depois eu tenho que executar outro SQL, onde o usuário for dois e adicionar R$ 50 de saldo. Só que num banco de dados distribuídos, como é que você vai fazer uma transação distribuída? Você não consegue fazer
+
+isso, não tem como. Você tá conectado num banco aqui, você vai fazer transação aqui, você não consegue fazer transações nos dois bancos ao mesmo tempo como se fosse um só. Então isso aqui não tem como ser feito. E é aí que começam os por menores. Por quê? Vamos lá. Se eu
+
+tenho que tirar R$ 50 do usuário um e tem que adicionar 50 no usuário 2, imagina se no momento que eu fiz aqui, ó, eu subtraí 50 dele, fechei a transação, OK, tá lá, finalizei tal, tirei os 50 dele. Só que no momento que eu vou tentar inserir 50 no usuário dois, simplesmente o banco caiu, alguma coisa aconteceu, a instância desligou aqui, aconteceu alguma coisa e eu não consegui concluir essa operação. E agora o usuário aqui vai ficar com saldo negativo e esse saldo de 50 positivo nunca vai chegar nesse usuário dois aqui. Então, a gente tem um problema aqui, esse é um dos principais problemas dessa arquitetura, que é o quê? Transações distribuídas. Você tá
+
+precisando fazer operações em dois bancos diferentes com o mesmo contexto dos dados. Então, cara, isso aqui é um baita problemão. Tem formas de resolver isso aqui. A forma mais comum e a mais recomendada de você resolver é um padrão que muito provavelmente você já deve ter ouvido falar o nome dele, que é o Saga, tá? Tem o Saga pattern aqui, que basicamente ele funciona da seguinte forma. Vamos lá. Se eu tiro R$ 50 desse
+
+usuário aqui e finalizo a transação, OK, tá sem os 50. Só que eu ainda não levei os 50 lá pro usuário 2. Quando eu for tentar jogar os R$ 50 no usuário dois lá no outro banco, se porventura acontecer alguma coisa, eu desfaço a operação anterior ou as operações anteriores, tá? Então o saga ele é basicamente uma saga mesmo, né? Ele vai criando ali os pontos, tal, ele você vai criando as transações, você vai fazendo modificações em vários pontos que você quiser, tá? banco de dados, com qualquer
+
+coisa que você quiser, você pode utilizar o Saga. Se acontecer alguma merda lá na frente, você vem desfazendo tudo. Então, o Saga foi preparado para isso, para ele desfazer tudo que foi feito até ele conseguir chegar no ponto final. Se ele não conseguir chegar no ponto final, ele desfaz todo mundo e é assim que ele funciona e é o padrão mais recomendado para poder resolver esse tipo de problema aqui. Agora, o ponto é o seguinte, tá? Vamos lá. Eu sei que
+
+você ainda tá com dúvida sobre tabelas do banco de dados, tá? Eu vou falar sobre tabelas no banco de dados. Você vai entender um pouquinho mais agora. Vamos lá. Olhando pr essa imagem aqui.
+
+Pensa comigo. Eu tenho aqui um paciente, um prontuário, médico, medicamento e doença. Vamos simular que agora a gente tá trabalhando com aplicação hospitalar, tá? Eu não sei que diabo de hospital é esse que tem tanto usuário que precisou fazer charging, tá? Mas vamos acreditar aqui que a gente tá numa aplicação hospitalar e você vai entender o lance das tabelas, que eu sei que você tá com dúvida. Numa aplicação hospitalar, qual
+
+que é o detalhe? Quem é a entidade mais importante? é o paciente, não é o médico, vai por mim, não é o médico. Isso tá relacionado a domain driven design, cara. Você tem que entender o modelo de negócio, você tem que entender de negócios. Num hospital, o a coisa
+
+mais importante é o paciente. Por quê? Por que que a entidade ela é mais importante? Porque um paciente ele tem um prontuário, então tem relacionamento. O prontuário, por sua vez, vai tá a informação do médico que tá atendendo esse paciente, vai est a informação do medicamento que ele tá tomando, vai est o ID da doença dele, vai tá todas as informações ali vão estar dentro do pontuário. Então pensa comigo, o
+
+paciente carrega praticamente todas as tabelas nas costas, só que tem várias outras tabelas num sistema hospitalar que não tem relacionamento direto com o paciente, como por exemplo, o fornecedor do medicamento XY Z. Não tem, não tem um FK. E aí o que que acontece? Você deve estar na dúvida assim: "Pô, Renato, mas eu vou fragmentar os meus dados ali, beleza? Vou fragmentar o todos os dados que tiverem relacionados com a minha chave primária e tudo mais e tal. Mas e
+
+o dado que não tiver essa relação que for simplesmente um crude, tá? É um crudizão básico. Até porque, por exemplo, se tu pensar no médico, o médico não tem relacionamento direto com o paciente. Eles se relacionam através do prontuário, mas o médico em si, a tabela do médico, ela não tem uma FK pro usuário. E aí, onde é que eu vou cadastrar meu médico? Como que vai ficar
+
+meu médico aqui? Em qual em qual charde que vai ficar o meu médico? Nessa situação, existem algumas abordagens que você pode fazer. A primeira delas é você fazer o seguinte, é você criar um chard específico, que geralmente a gente chama de chard global, com todas as tabelas mais comuns que não tem relacionamento direto com a minha chave de fragmentação que eu escolhi. Pode ser dessa forma. O
+
+mais comum é que você faça o quê? Que você replique as tabelas aqui dentro. Você vai simplesmente replicar as tabelas que não tem vínculo. Você pode replicar para quê? Para evitar consultas em chards diferentes, tá? Então, por
+
+exemplo, você vai ter uma tabela fornecedor de medicamento aqui, um aqui e um aqui. E você pode colocar um mecanismo aqui de mensageria ou de replicação de dados, só para ficar replicando. Caso eu atualize aqui nesse chard, eu posso replicar eles por aqui e não vai passar pelo roteador, tá? Lembra do roteador lá e tudo mais e tal, que vai pegar o hash, vai fazer o cálculo ali do módulo e tudo mais. Essas tabelas não passam pelo roteador, elas passam direto pro banco de dados. Qualquer
+
+chard que ela cair, caiu e tá tudo certo. Então é esse o ponto que você precisa ter. Tô te falando isso aqui, cara, pra vida real. Isso aqui não cai na entrevista, tá? Se tu tiver que explicar isso aqui num entrevista, você tá fazendo entrevista para trabalhar na meta, para trabalhar no Google, na Amazon ou em alguma empresa muito grande, tá? Então isso aqui é pra vida.
+
+Agora, qual que é o ponto que eu te falei sobre domain driven design, tá? Dá uma olhada nessa imagem aqui. Essa imagem aqui é o seguinte, tá? Presta atenção. A gente tem aqui dois usuários aqui requisitando um AP gate e aí tá batendo aqui no microsserviço de catálogo, no microsserviço de pedido, num microsserviço aqui de carrinho, tá?
+
+Shopcart aqui e um de desconto. Beleza? A gente tem um mecanismo de mensageria aqui, provavelmente para fazer replicação de dados ou para trabalhar com eventos. E a gente tem aqui, ó, vários chards aqui, tá? A gente tem o banco chardeado aqui e o banco chardeado aqui. O que que eu quero te levar a
+
+refletir sobre essa imagem aqui, tá? Vem pra tela comigo aqui que você vai entender. Eu quero que você entenda aqui o seguinte, cara. Presta muita atenção no que eu vou te falar. Muito provavelmente você veio a você passou pela aula inteira pensando no monolitão que você já trabalhou, como é que você faria charding disso e você não vai fazer charingo. Sinto muito te informar,
+
+não vai rolar. Por quê? Se você pegar um monolito gigantesco com, 100 tabelas, 200 tabelas, 500 tabelas, não vai dar certo fazer charging, porque o que tu vai acabar fazendo é fragmentar seis tabelinhas ali e as outras 90 tabelas vão ficar sendo replicadas em todos os bancos. Não faz sentido fazer isso. Você vai precisar de uma outra estratégia. E esse monolitão gigantesco,
+
+antes de você pensar em charging, primeiro você precisa pensar em quê? Vamos voltar aqui. Você precisa pensar no arquitetura de microsserviços. E paraa arquitetura de microsserviços, você precisa conhecer muito bem uma coisa chamada domain driven design, porque é o DDD, que é o desenvolvimento orientado a domínio, na verdade design orientado a domínio, ele vai nortear você fazer o quê? Você pegar o teu monolitão gigantesco, quebrar ele em pequenos pedaços, tá? Em bounded
+
+contact, tá? Que a gente chama assim, são contextos delimitados, tá? Que fazem sentido pro negócio. E aí, fazendo sentido pro negócio, como é que funciona? Você vai criar os microsserviços específicos. Eu tenho um
+
+vídeo completo aqui onde eu falo sobre tudo isso aí dos microsserviços, a relação com o domain driven design, como que isso funciona por baixo dos panos. Vou deixar o card aqui em cima, o link na descrição, então dá uma olhada depois. Mas eu quero te levar a refletir que não adianta pegar monolito gigante e pensar em fragmentar, isso não vai funcionar. Primeiro é interessante que você faça o charge de um microsserviço. Cara, você reparou que você pensou muito nessa questão da tabela, não pensou na tabela? O problema é que, você
+
+vai ter n tabelas ali, cara. Não faz sentido chardear esse tipo de de banco, esse tipo de de de sistema, não faz sentido. Então, primeiro você fragmenta o sistema. Primeiro você tem que chardear o sistema, o código. E aí você quebrando ele em microsserviços, aí sim faz sentido você criar o chard do banco de dados. Você não faz sentido
+
+você pegar, um sistema inteiro com milhões de regras de negócio e tentar chardear isso. Você não vai nem conseguir encontrar a entidade principal do teu sistema. Então pensa nisso, grava isso, reflete sobre essa situação e assiste o vídeo que eu vou deixar aqui em cima e o link na descrição, beleza? Bom, e agora que tu já entendeu praticamente tudo que você precisava entender sobre charging de banco de dados, sobre escalabilidade horizontal, as nuances e como que isso funciona por baixo dos panos, deixa teu like aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Se ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por
+
+aqui. Um forte abraço para você. E nos vemos em breve.

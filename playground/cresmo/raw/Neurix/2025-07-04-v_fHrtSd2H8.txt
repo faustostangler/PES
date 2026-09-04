@@ -1,0 +1,116 @@
+---
+video_title: "Gemini CLI: Install, Debug & Build Apps with AI"
+video_id: v_fHrtSd2H8
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=v_fHrtSd2H8
+video_date: 2025-07-04
+video_description: |
+  Google just gave its AI direct control over your terminal, and it’s called Gemini-CLI. 
+  I put it to the test by asking it to build an entire web app from scratch using just a single prompt. 
+  
+  Watch until the end to see it open VS Code, write working code, and launch a real web app, with no typing beyond the prompt. It’s seriously impressive.
+  
+  ▬▬ You'll learn how to: ▬▬
+  - Install Node.js and npm (prerequisites)
+  - Install and authenticate Gemini CLI
+  - Debug a JavaScript file using natural language
+  - Build a full FastAPI web app from a single prompt
+  - Launch projects directly in VS Code
+  
+  ▬▬ Timestamps ▬▬
+  00:00 - Intro: AI in Your Terminal  
+  00:24 - What is Gemini-CLI?  
+  00:52 - Required Tools: Node.js   
+  02:52 - Installing Gemini-CLI  
+  05:41 - Debugging a Local File with Gemini-CLI 
+  11:13 - Building a Web App with One Prompt
+  
+  #geminicli  #AI #Google
+---
+Imagine chatting with a million token context window superrain directly from your terminal. No extra windows, no subscription, totally open source. Google just dropped Gemini CLI and it might be the most generous free AI tool we've ever seen. Stick around and I will walk you through installation, first prompts, and a real world coding fix. All of this under 10 minutes. Let's go.
+
+Gemini CLI is an open- source AI agent you can run right from your terminal. Think of Gemini CLI as a smart layer between your computer and Google's Gemini 2.5 model running in the cloud. It sits on top of your operating system and acts as a translator. You type a request in plain English. It figures out
+
+what to do, sends that request to Google's servers for processing, and then brings the answer back to your terminal. Almost like magic. [Music] To install Gemini CLI, we will need to have Node version 18 or higher installed on our system. Node is a tool that lets your computer run JavaScript outside of the browser. Normally, JavaScript runs inside your web browser, like when you're clicking around on websites.
+
+But Node brings JavaScript to your computer system level, so it can run tools, servers, scripts, and yes, things like Gemini CLI. We will also need npm, but that's something that's installed automatically when you install node. So, let's check if we have them installed. To do so, we type node/v. The v stands for version. If nodejs is
+
+installed on our system, it will return us the installed version. As you can see, it is not installed yet. Let also try npm. Same command now with npm. And we can see that npm is also not installed.
+
+To install them, open your favorite browser and search for NodeJS. The first search result lead us directly to the official NodeJS website. From there, we click on install NodeJS. This give us a set of bash command we should run. We can run them one by one from the terminal. But let's do it in a
+
+much better way. We will save all the command in a bash script so that we can run them all at once. So, let's copy these commands. We will paste them in a text editor like Sublime Text. Let's save this file in a folder like dev node. We will save it as setup
+
+node.sh. [Music] Now we go back to the terminal and navigate to the folder where our bash script is located. We make the script executable using the schmode command. And finally, we run the script.
+
+And voila, Node and npm are now installed. Now that the necessary tools, Node and npm are installed, we're ready to bring the real magic to life, it's time to install Gemini CLI, our terminalbased AI assistant. To install it, let's head to the official GitHub page. To do so, we launch our favorite search engine and search for GitHub Google Gemini CLI. The first result lead us directly to the official GitHub repository of Gemini CLI. We scroll down until we find the
+
+quick start section. Here we can see the step to install. There are only two steps. First, ensure node 18 is installed on your system. That is what we have done previously.
+
+Then second install Gemini CLI either with npx or npm. So let's copy one of these installation command. I will take the npm one and paste it to our terminal. We press enter to run it. And there it is. Our Gemini CLI agent is
+
+installed. Now let's bring it to life. Open a fresh terminal and type Gemini. And voila, we are inside Gemini's own command prompt. Right after launch, Gemini CLI asks you to choose a color theme so the interface matches your taste. There is a list of options like
+
+Xcode, GitHub, Dracula, and more. Use the arrow keys to navigate the list and press enter to select the one you like. For this demo, we'll stick with the sleek and easy on the eyes default dark theme, but feel free to pick whatever matches your style. Next, Gemini CLI needs to confirm who you are. It offers three sign-in options. Google account, which is
+
+fastest, zero setup, and give you up to 1,000 requests per day. Each of your 1,000 daily requests can be very long, up to 1 million tokens. That's the equivalent of two to three fulllength novels. Google has been extremely generous on this one. The second option to sign in is with a Gemini API key. If
+
+you have created a key in AI studio with this option, you get a higher quotas and can pay as you go. The third option is with Vertex AI service account. This is for enterprise projects as it scales to production loads. For most users, the Google account is perfect. Let's select it by pressing enter. A browser window pops up for us
+
+to sign in with a Google account. We choose the Google account we want to sign in with and click sign in to confirm. Now if we go back to terminal, we will see that the authentication was successful. We are inside the Gemini CLI. Now that Gemini CLI is installed and we have authenticated, let's see what it is capable of. Gemini CLI is incredibly
+
+powerful. It's not just another language model like ChatGpt. It's a real AI agent with access to your local files and shell environment. It can read your code, reason about it, and take action, all from a simple natural language prompt. To demonstrate what it can do, we will walk through two hands-on scenarios. Let's say we've written a
+
+small JavaScript script to define a simple calculator function called sum. It just adds two numbers. We save the file as calculator.js js inside a folder called dev node. In line six, we use that function to calculate the sum of two and three.
+
+But then we introduce a tiny bug. We accidentally overwrite the sum function by reassigning it to the number zero. Now when we try to compute the sum of four and 1 line 12, we are actually trying to call a number like it's a function. That will trigger a JavaScript type error. Sum is not a function. Let's
+
+try to run that script and see what happens. So we are inside the node folder. Let's verify that our calculator file is there. Now let's run that script. To run a JavaScript file, we use the command node followed by the name of the file. And there it is. We get the
+
+type error. Sum is not a function. Now let's head back to Gemini CLI, our powerful AI agent, and ask it to debug the file using nothing but a natural language prompt. No copy pasting code, no line numbers, just a simple instruction. Before we ask it to read the file, let's make sure Gemini is working in the correct directory. So we ask, what is my
+
+current working directory? Meaning the directory where Gemini CLI is currently operating. And Gemini replies, "You are in home nurx documents dev node." Perfect. That's where our calculator file lives.
+
+Now, let's give it the actual task, which is to debug our JavaScript file. We tell him, "Please open calculator.js and explain why it throws sum is not a function and fix it." As soon as we press enter, Gemini CLI begins its reasoning process. Defining the current context, beginning the search, inspecting the code, investigating the error, analyzing the root cause. As you can
+
+see, it reached a step where it needs our feedback, namely asking, should I proceed? Let's scroll up to see the process. The first step was to find the file. The agent say yes I can do your task. First I need to find the file. Once the file
+
+was found the second step was to read it understand the code and find the error. And here we can see how Gemini CLI explains the error. It say the error sum is not a function happens because the sum function which is initially defined to add two numbers is later overwritten and reassigned to the number zero. When the code then tries to execute total equal sum of four and one, it's attempting to call the number zero as if it were a function, which causes the error. To fix this, I should remove the line that overwrite the function and the subsequent line that tries to call it.
+
+Next, Gemini shows us the exact change it plans to make. Then it asks if he should proceed. We type yes and press enter. Gemini CLI immediately begins implementing the solution, analyzing the root cause, refining the action plan, optimizing the implementation, evaluating revised strategies, implementing the solution. Then it pauses again to take our feedback.
+
+It has modified the JavaScript code to fix the bug and asks if it should apply these changes permanently to the file. We respond with another yes. Next, Gemini says, "I have fixed the file. Now I will run the code to verify the fix." Before executing, it once again asks for permission. We answers
+
+with a yes. And voila, it confirms that the code ran without any errors and the output is five, which is exactly the correct result, the sum of two and three. Let's scroll up and take a closer look at the process. You'll notice Gemini highlighted in red the line where the bug was. Then it displayed a message saying the file was fixed. And finally,
+
+it executed the corrected file to prove the error was gone. Let's click on the file to see if some changes was applied. And there it is, the new version of our script, clean and corrected, all thanks to our powerful AI agent, Gemini CLI. Let's run the script from our terminal. We use the command node followed by the script name. And there it is. We get
+
+five, which is the correct result. Gemini CLI did not just read our calculator JavaScript file. It understood it. It analyzed the logic, found the bug, suggested a fix, and even rewrote the file with the corrected code. All with a single prompt. That is
+
+really impressive, isn't it? Let's look at another example of just how powerful the Gemini CLI agent really is. We've watched Gemini CLI debug and fix an existing file on our machine. Now let's push it further and see how it can build an entire application from scratch all from a single prompt. Here's the challenge we will giving it. Create
+
+a new Python virtual environment. Install fast API. Scaffold a hello world app. Then open VS Code. That's a big endto-end workflow. Set up dependencies,
+
+generate code, and launch the editor. Pretty ambitious, right? All right, let's hit enter and watch the agent do its magic. Here we can see Gemini CLI working process. Confirming the approach, planning the setup. Then it asks for our
+
+feedback. It says I can do that. I will start by creating a Python virtual environment. This command will create a new directory named ven containing the Python virtual environment. We click on yes to let the agent run the command.
+
+Gemini CLI tries to execute it then warns Python 3 VNV package isn't installed so I can't create the environment. You'll need to install it using pseudoapp install python-3vn then I can proceed. As you can see, Gemini CLI detects missing prerequisites instead of crashing and give us a feedback. Let's install that package ourselves. We open a terminal and enter that pseudo command.
+
+Now that Python 3 VNV package is installed, let's go back to Gemini CLI agent and let him know we have installed it. To do so, we simply type I installed it. And it immediately answers great. Now that you've installed the necessary package, I'll proceed with creating the virtual environment. We hit enter to approve and Gemini CLI spins up the environment.
+
+Next, it say now that the virtual environment is created, I will install fast API and its dependencies. The main dependency is Uvorn, which is a lightweight server for running Python web applications. We approve again. You can watch the install scroll by. Fast API drops in without a hitch. The agent says, "Fast
+
+API and Uicorn have been successfully installed. Now I'll create a simple hello world application. Should I apply the changes?" Note that we can press Ctrl S to preview the file before committing or ask for edits. We choose yes.
+
+[Music] And there it is. The app has been created. The agent tell us now I'll open VS Code as you requested. We approve once more and boom VS Code launches displaying our brand new project. This is a simple web application and Gemini CLI also tell us how to run it namely with the command uvorn main app-re.
+
+Let's copy this command. We open a terminal in VS code to launch it. And voila, our mini web application is now running. As we can see on VS Code terminal, it is running on localhost port 8000. Let's open a browser and navigate to that address.
+
+[Music] And there it is. We can see the hello world message from zero files to a running fast API app. All orchestrated by Gemini CLI with just a handful of approvals. Quite handsome, right? Give a like if this helped you. Subscribe if you want
+
+more beginner friendly tech tutorials. Drop a comment if you ran into trouble. I will do my best to help and answer every question. Until then, stay curious, stay safe, and I'll see you in the next video. Bye-bye.
+
+[Music]

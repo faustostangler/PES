@@ -1,0 +1,133 @@
+---
+video_title: "COMO PROCESSAR ERROS NO N8N E ANALISAR COM IA | ALERTA AUTOMÁTICO NO GRUPO"
+video_id: mz695qFBL2o
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=mz695qFBL2o
+video_date: 2025-06-07
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=mz695qFBL2o
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  Nesse vídeo, te ensino como criar um sistema completo de processamento e análise de erros no N8N, com envio automático pro grupo e IA analisando a falha em tempo real.
+  
+  Você vai aprender:
+  ✅ Como capturar e tratar erros no N8N
+  ✅ Enviar o erro automaticamente pra um grupo
+  ✅ Usar IA com Rabbit, Think e OpenRouter pra analisar o que aconteceu
+  ✅ Ganhar tempo, evitar retrabalho e automatizar o próprio suporte
+  
+  💥 Ideal pra quem cria robôs pra cliente e precisa de um “IA de plantão” avisando quando dá pau!
+  
+  📲 Me siga no Instagram para mais conteúdos:
+  https://instagram.com/oandersonadelino
+---
+Fala, automatizador Anderson. Aqui estou num cenário diferente, né? Eu não estou lá no meu escritório, tô aqui no quarto, mas eu não poderia deixar de estar gravando um vídeo aqui para vocês, até porque eu tive algumas ideias bem legais e, enfim, tô com sem sono e ainda vou gravar vídeo, né? Fazer o quê? Então, pessoal, olha só, eu tô com esse workflow aqui para vocês e lembrando, vou deixar liberado gratuitamente para vocês esse template aqui, tá? lá na
+
+minha comunidade gratuita, link aí na descrição. Mas vamos eh explicar aqui o que que esse cara faz, o que é esses nós aqui, erro, trigger, habit, f, o que são essas coisas aqui. Não se preocupa que eu vou explicar coisa por coisa, tá? Isso aqui vai dar um insight bem bacana para vocês, por mais que vocês não utilizem de fato um analista de erros, mas vai ser bem bacana para vocês, tá? Então vamos lá. Aqui, gente, é um fluxo
+
+basicamente que ele vai estar detectando, ele vai estar detectando erros em alguns workflows dentro aqui do meu N, certo? Então assim, no momento que ele detecta algum erro, esse erro trigger ele é disparado, tá bom? Então, no momento que ele é disparado, vai acontecer o quê? Oá vai estar analisando, vai sugerir um passo a passo e vai mandar essa solução e as informações do workflow, como o que deu erro, o ID, a URL do workflow lá no meu grupo de projetos, né, do pessoal que vai estar responsável para e por corrigir erros que acontecem no workflow, tá? Então vamos estar abordando aqui nó por nó, explicando o que acontece, né? A função de cada um
+
+aqui. Basicamente, pessoal, a gente começa tudo com um error tried, certo? Esse cara aqui ele é bem simples, de se usar, tipo, basicamente não tem nada aqui. Para ele ser ativado, vocês precisam fazer o seguinte, vocês vão em algum outro workflow aqui de vocês, tá? Deixa eu abrir um novo workflow, deixa eu ver aqui. Beleza, vamos abrir aqui um
+
+novo workflow. Show de bola. Vou salvar esse workflow, vou colocar aqui um trigger, um edit fields, enfim, só para dizer que tem alguma coisa aqui. Aí vocês vão aqui em configurações, esses três pontinhos, tá? settings. E aqui
+
+existe essa opção aqui, ó, erro workflow. Vocês vão estar escolhendo, vocês vão estar escolhendo o fluxo que está aquele trigger, beleza? E você salva. Só é você fazer isso no momento que esse fluxo aqui tiver algum erro, ele vai estar disparando esse trig aqui, tá bom? De erro, passando algumas informações, certo? Que informações são
+
+essas? Então, ó, vamos dar um play aqui. Vamos lá. Olha só, a gente tem aqui, ó, esse formato. Beleza? ele mostra a URL
+
+do workflow, tá? Isso aqui é um é um exemplo, tá pessoal? Temos aqui a URL de workflow, a gente tem aqui é a mensagem do erro, tá? A stack, o último nó que foi executado e o nome aqui do workflow. Então tudo aqui são informações interessantes que podem ser passados, beleza? Então esse aqui é o formato que
+
+ele está utilizando. Após ele disparar esse web hook, ele vai estar mandando esses erros, essas informações para oit MQ, tá? Se vocês não sabem o que é Rabbit MQ, inclusive se vocês quiserem vídeo específico sobre ele, só deixar aqui nos comentários, tá? Que eu gravo um vídeo só falando aqui do nosso coelhinho, tá bom, pessoal? Então, basicamente o Rabit MQ ele é um sistema de filas, tá? Ele serve para que as
+
+informações aqui no meu workflow não se percam. É, vamos supor que acontecesse aqui algum erro, né? Acabou os créditos aqui do da da Llm, né? Deu algum erro aqui no, sei lá, por exemplo, no Evolution, tá? o servidor caiu, algo do tipo. Então, se isso se não tivesse aqui
+
+o nosso querido coelhinho aqui nessa nesse fluxo, o que aconteceria? Basicamente não ia mais acontecer nada, né? Na hora que o servidor votasse, ok, não vou fazer mais nada, só vai funcionar a partir dos próximos erros que forem acontecendo. Isso não é interessante, até porque vai acabar passando percebido algum erro, a equipe não vai ver essa mensagem de erro e aí vai ficar despercebido para dar um problema lá no futuro. Então esse carinha aqui, ele serve justamente para impedir que isso aconteça. Então imagine
+
+que o Habit MQ, né, o nosso coelhinho, ele é como se fosse um Correios, ele é um carteiro e ele tem a função específica de entregar informações para outro lado. Então, é como se eu tivesse, é, enviando uma mensagem para alguém e eu peço para o coelhinho que enviar essa mensagem para essa pessoa, tá bom? Ao invés de eu mesmo ir lá e fazer esse envio. Só que aí que tá o legal, no momento que você faz isso, você consegue dar três opções para esse coelhinho. Você pode dar uma uma opção para que ele entregue o produto para o eh pro cara final e espere para ver se o produto está com sucesso, se está tudo ok com ele, não tá quebrado nem nada. Se tiver,
+
+show. senão ele vai voltar, vai pegar outro produto e vai mandar novamente e vai ficar fazendo isso até dar certo. Essa é a primeira orientação que a gente pode dar. Outra orientação é tipo assim: "Olha cara, vai lá, entrega o produto, espere o cara receber o produto, mas dependendo se deu problema, se tá quebrado ou não, se tá tudo certo, finalize. Tu já entregou e conferiu que ele recebeu." E uma terceira opção é
+
+basicamente tacar o dano nesse ali. Vai lá, pega, pega o produto, jogue pro cara e nem precisa ver se deu certo ou não, se recebeu, não. Só joga lá e acabou. Então, basicamente, tu tem essas três opções aqui para eh informar aqui pro nosso Rabbits, beleza? Nesse nosso caso aqui, a gente é faz com que ele aguarde, né? Aguarde a entrega ser com sucesso,
+
+porque se der algum erro na entrega, ele vai tentar novamente até dar certo, tá bom? Então aqui é um outro trigger, certo, do Rabbit. Então o erro ele vai ser passado aqui para ele, tá? E depois é disparado aqui, tá bom? Mas aonde que fica essa informação? Basicamente essa
+
+informação vai ficar aqui, ó, no nosso Rabbit, tá? Eu tenho o Rabbit instalado no meu servidor e aqui eu consigo observar os tipos de filas que eu tenho aqui, tá? Então temos confira teste e tem essa esse que erro que é exatamente isso que a gente tá usando ali da exemplificação, tá bom? No momento a gente não tem nenhum nenhum nenhuma informação em fila aguardando sem entregue, tá? Então tá tudo tranquilo.
+
+Basicamente é isso. E esse nome aqui dessa fila eu venho e passo aqui, tá? Eu passo aqui clear erro, tá bom? O modo fila, certo? Aqui eu escolho que os arquivos eles vão ser enviados no formato JSON. E doable significa que
+
+mesmo que o servidor caia ou algo do tipo, a informação ela vai continuar e tá, beleza? Então mesmo, então não vai perder informação porque se o servidor reinicia perderia informação se tivesse desabilitado aqui o drible. Então não faz sentido, a gente deixa marcado aqui. Ok? Beleza. Aí a gente tem aqui o
+
+recebimento. Ele vai receber aqui a informação, vai aguardar, né? É, tá com sucesso e tudo mais. Do rible Jason. E aqui, pessoal, é quantas mensagens em paralelo ele vai estar trabalhando, tá bom? Aqui é literalmente de filas, né? A
+
+o sistema de filas convencional que a gente conhece, né? Uma fila indiana. Quando vai lá na fila ali do supermercado, por exemplo, é de um em um, tá? É de um em um. Porque a gente fica aguardando a uma pessoa da frente ser atendido para depois a gente ser atendido também. Mas você pode fazer com
+
+que seja de três em três, de cinco em cinco, tá bom? Isso aqui é mais um controle para evitar que ah, aconteceu 20 erros simultâneos, 50 erros simultâneos, acabe sobrecarregando, tá? Por exemplo, um agente SDR, se der um erro, né? não chegou a mensagem pro cliente final, então consegue fazer esse controle. Eu gosto de deixar de um em um para só enviar um quando o outro for e com sucesso, porque senão, pô, deu 20 erros seguido, vem 20 mensagens uma vez só ali dentro do do WhatsApp, então não faz sentido. Tá bom? Beleza. Finalmente
+
+a gente chegou com as informações aqui no analista de erros. Eu já deixei aqui uma informação fixada, pessoal, uma informação aqui fixada rabbit que é o seguinte. Isso aqui é um erro, um erro simulado, tá? É uma causa possível desse acontecer. Eh, falha ao buscar dados no SOP para base. Aqui tem um erro e aqui,
+
+ó, o nome do workflow, consulta delitos qualificados. Então, deu um erro aqui. Show. Aí ele vai mandar aqui para uma analista de erros. Uma analista de erros. Então, o análise de erros ele vai
+
+receber a mensagem de erro, a stack, o último anor executado e o nome do workflow. Beleza? Esse é o contexto que a vai receber. E aqui a gente tem um prompt, tá bom? O prompt ele funciona da seguinte maneira. Eu passo primeiramente
+
+um contexto, tá, para ele. Então, ó, você é uma lista de erros com linguagem acessível e explicações didáticas. Seu papel era analisar mensagens de erro vindas de sistemas de automação, como e transformar isso em um relatório claro, direto e fácil de entender mesmo por quem não tem conhecimento técnico. Bom, você recebe mensagem de erro com stack trace, logrições geradas automaticamente. Sua missão é interpretar, diagnosticar a causa e sugerir um passo a passo objetivo.
+
+Objetivo explicar o erro de forma liga, sugerir um passo a passo para corrigir. Formato da resposta detectado, explica com suas palavras que aconteceu. E aqui um passo a passo para resolver, tá? Aqui a gente tem aqui três passos. Pode colocar mais, inclusive, tá? o estilo
+
+mensagem clara, né? Como se tivesse explicando para um estagiário curioso, tá bom? Então assim, ele quer, ele vai fazer ali de uma maneira que seja para pessoa que não tenha tanto conhecimento técnico avançado conseguir entender do que se trata. Exemplo de erro, beleza? E aqui um exemplo de resposta, né? E a
+
+trabalha muito bem com exemplos, beleza? A partir disso, a gente tem aqui, ó, provavelmente vocês não conheçam esses nós aqui, tá? O open router e o FK. E eu vou explicar para vocês que cada um funciona. Primeiramente, o Fink, tá? O
+
+FINK é basicamente, como já diz, né? eh um pensamento. Então eu vou estar dando a possibilidade da pensar, refletir antes de dar uma resposta, né? Se não tivesse esse cara aqui, ela ia vir para cá, prompt e manda a resposta. Eu quero que ela pense que eu quero que ela corrija, né? Dê soluções interessantes
+
+de correação. E dentro do F, basicamente, eu passo aqui uma descrição do que eu quero que ela faça na hora de refletir, tá? Então eu tenho aqui, ó, analise o erro de forma lógica antes de explicá-lo. Quebre o problema em partes. Identifique onde ele ocorreu no fluxo, porque aconteceu e o que precisa ser alterado. Pense como em gênero de
+
+automações. Qual foi a falha lógica ou de dados? Liste mentalmente os seguintes passos. Onde o erro ocorreu? Qual variável, dado ou condição causou isso?
+
+Esse erro tem chance de acontecer novamente. Como evitar esse erro no futuro? Não responda ainda. Apenas pense e prepare essas conclusões para compor a resposta final com clareza. Então ele vai fazer esse pensamento e depois responde qual modelo de linguagem eu utilizo para esse caso aqui. Então
+
+pessoal, aqui eu utilizo o opener, tá? O opener ele é uma ferramentazinha bem bacana, onde ela agrupa todos os tipos de modelos de linguagem e você paga tokens para a plataforma, basicamente. E tu consegue utilizar todos os modelos lá disponíveis. Inclusive lá também tem uns modelos gratuitos que você pode estar utilizando caso você esteja começando, não tem como gastar com tokens ainda, certo? Então, olha só, tem muitos modelos aqui do Google, tá? Eh, tem
+
+modelos eh do Meta, né? Os lhamas aqui e tudo mais, tem modelos da Open, né? Para esse tipo de caso aqui, pessoal, eh o modelo 4 mini, ele é bem interessante. Eh, o modelo 2.5 do Gemine, né, o Flash, ele também é muito interessante porque eles são rápidos, são bem baratos, né, e conseguem dar uma resposta interessante.
+
+Eu optei aqui pelo Gemini, por ele ser mais téc um pouco mais técnico, tudo da Openai, beleza? É mais por isso. Existe outros modelos também interessantes, né, só que acabam sendo mais caro, né, como por exemplo, existe aqui o Cloud Sonet 4, né? Basicamente assim, na minha opinião, ele é o melhor que tem para essa questão de de correção de erros, essas coisas, sabe? De programação e tudo mais. Porém, cara, ele é 3 por 1
+
+milhão de token, então ele é bem carinho assim. Para um caso como esse, que possa acontecer vários erros, não é tão interessante. A não ser que seja algo muito específico, algo bem mais controlado, né? Não caso que vai est acontecendo em loop. Beleza? Então eu
+
+uso aqui o Gemini 2.5 Flash Preview 5 traço 20. Show. Beleza. Ah, antes, mas como é que eu faço para conseguir ter acesso a esse carinha aqui? Esse open
+
+cara é bem tranquilo, né? Para você criar uma credencial, ele só pede uma p ke, tá? E essa payar no site do da Open Router, certo? Esse aqui é o site deles. Então vocês vem aqui, ó, tá? Essa aqui é
+
+a página inicial. Você faz uma conta aqui e conecta com o Google mesmo tranquilamente. Aqui vocês conseguem observar inclusive e ranks de modelos de linguagem, tá? Isso aqui é não necessariamente vai dizer que é a melhor, né? Isso aqui é por popularidade na verdade, tá? Top wick, tá? Então você
+
+vem aqui, ó, mostra, ó, tem tudo aqui a descrição. Você vê aqui a questão de hoje, pela semana, é por mês, consegue ver novidades também, beleza? Então você vê aqui que o quatro min ali é bem interessante nesse quesito aqui todas as categorias. Então você consegue até categorizar, né? Ah, eu quero algo votado para o jurídico. Você consegue
+
+ter aqui alguns modelos 4.1, né? Tem aqui o o 2.5 Flash Preview, que é o que tô utilizando, tá? Você consegue estar utilizando eles aí para roleplay, por exemplo, para simular uma pessoa de forma mais interessante, o tipo S que tá sendo mais utilizado nessa semana, tá? O
+
+V3. Então, se você quiser simular um pessoa ali no WhatsApp que não que pareça mais humano possível, pode utilizar. Então, tem toda essa questão para você fazer essa análise, tá bom? Aí aqui os modelos, tu consegue fazer uma filtragem aqui por preço de prompt, certo? Eu acho interessante filtrar até dó para esse meu caso, tá? Dó por 1
+
+milhão de token, beleza? E as categorias eu marco programação e tecnologia para esse meu caso. E aqui está o nosso querido Gemini 2.5, tá? Se eu ordenar aqui por pelo top, a gente 4 OMIN, Gemin 2.0 flash e o 2.5 Flash Preview, beleza?
+
+E aí você consegue estar utilizando ele, só copiar aqui o o a o nomezinho e jogar lá na Open Her, tá? Inclusive vocês podem vir aqui para criar API, vem aqui em kiss e aqui criar uma API. Vocês colocam o nome, cria, copia API K e joga lá no N8N. É bem tranquilo, tá? Beleza?
+
+Então a gente já tem aqui nosso frink, temos aqui um open home e conectado. Agora o que acontece depois? Ele vai eh entrar aqui em um inclusive eu acabei alterando a ordem que esqueci de colocar. Mas na verdade, agora sim, o que acontece aqui é o seguinte, pessoal. Eu quero que no momento que ele execute aqui, tá? É enviado uma a solução lá
+
+para o grupo marcando todo mundo, depois de 3 segundos envia as informações, né, que é o mesmo sai aqui no erro trial. Certo? Eu vou clicar aqui um teste, vamos simular aqui e vamos ver qual que seria a resposta aqui do nosso analista de erros. Vamos aguardar. Ele fez aqui a sua reflexão. Show de bola. E teve aqui
+
+uma saída. E a saída dele foi basicamente o seguinte, tá? Eu detectado. Ele fala aqui, ó, que o fluxo consulta de lit qualificado tentou buscar informações de um banco de dados chamado Supas, mas falhou na conexão, tá? E ele explica de uma forma bem eh para uma pessoa que leiga ainda no assunto, tá? É como se ele tivesse
+
+batido na porta do super base, mas a porta não abriu na passagem dos dados. Aí um passo a passo para resolver conexão, acessar consultar subente do seu fluxo. Então ele dá um passo a passo interessante aqui, beleza? E no momento que ele fizer isso é para ele estar enviando primeiramente aqui para o grupo, beleza? Então, eu tenho aqui o ID do meu grupo, certo? Tenho aqui a
+
+mensagem que eu arrastei aqui de uma lista de erros e menciona todo mundo. Uma coisa interessante, observe que existe esse codigozinho que eu coloquei aqui, ó, replace all, tá? O que que esse cara quer dizer? É, basicamente o a IA quando ela vai mandar mensagem, né, ela manda com dois asteriscos, então fica feinho quando vai chegar lá no Ah, deixa até afastar aqui, ó. Vem aqui. Dois asteriscos, então fica bem
+
+chatinho, na verdade. É feio visualmente, porque fica o engrito e fica com asterisco lá no WhatsApp. Então, basicamente, eu tô substituindo os dois asteriscos por um antes não se enviar, tá? É basicamente isso. Mas questão de estética ali dentro e facilidade de visualizar, tá? Aí depois
+
+ele vem para cá, aguarda 3 segundinhos e manda, quer dizer, 5 segundos, na verdade, e manda aqui para efetividade informações, que é o aquelas informações lá, ó, o nome do workflow, URL, mensagem stack e o último nó executado. Beleza? Tudo certo, tudo legal. Então, vamos só conferir se tá tudo OK aqui. Beleza, eu vou dar aqui um outro teste. Vamos lá.
+
+Ele vai fazer sua análise do erro, vai fazer sua reflexão, mandou o envio da solução, é a solução no caso, ó, tá? E aí ele enviou depois as informações, beleza? Então, gente, é basicamente isso aqui, tá? Eu vou estar disponibilizando para vocês. E caso vocês queiram aprender a montar aí um agente SDR do zero, desde instalação da VPS, desde montando ali nó por nó, tá? Mentoria em
+
+grupo toda semana, bônus de multiagentes, Cry CRM, tá? Então assim, MCP, quer ter acesso a isso? Link na descrição ali, tá? É no meu treinamento, operação startar. Fica à vontade aí para consultar. E se quiser o template, além
+
+de vários outros que eu tenho aqui disponíveis, grupo do WhatsApp, minha comunidade, link na descrição. Então é isso, pessoal. Então fico por aqui e te vejo no próximo vídeo.

@@ -1,0 +1,19 @@
+---
+video_title: "Too Many Features? Your ML Model May Be Overfitting"
+video_id: 9DNe8jW42Ps
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=9DNe8jW42Ps
+video_date: 20260814
+video_description: |
+  Website Link: systemdrd.com
+  Why does adding more features sometimes make a machine learning model worse? Learn how the curse of dimensionality affects model selection, overfitting, generalization, and computational performance. Discover how feature selection, PCA, regularization, and cross-validation help build better machine learning models with Python and Scikit-learn.
+---
+Not [music] every dimensionality reduction technique serves the same purpose, and picking the wrong one for the job is one of the most [music] common production mistakes I see. On the left, we have PCA, principal component analysis. >> [music] >> It's linear, it's fast, about 1.2 seconds on 20,000 features and [music] 800 samples using a randomized SVD, and it's fully deterministic. Its components are linear combinations of your original features, [music] so the loadings are genuinely interpretable.
+
+This makes PCA the right default when you're preprocessing before a linear or tree-based [music] model, and especially when your features are noisy and correlated. >> [music] >> On the right, we have the non-linear methods, UMAP and t-SNE. These preserve local neighborhood structure [music] far better than PCA can, which is exactly why they're so good for visualization and cluster discovery. But they come with real costs. They're slower, [music] roughly 8 to 15 seconds on that same data. They're stochastic,
+
+so you need to fix a random state for reproducibility. >> [music] >> And critically, their axes carry no direct meaning at all. That last [music] point is the one that trips teams up. A common anti-pattern is feeding UMAP output directly into a production classifier as if it were just another feature transform >> [music] >> without revalidating on every retrain. UMAP's transform step has no guarantee of reproducing [music] the same geometry run to run.
+
+Use it for exploratory analysis and cluster QA. Be very careful before you wire it silently into a production model.

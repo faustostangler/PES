@@ -1,0 +1,17 @@
+---
+video_title: "How Data Engineers Build a Data Catalog"
+video_id: BbvIfDHYQ10
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=BbvIfDHYQ10
+video_date: 2026-08-27
+video_description: |
+  Website Link: www.systemdrd.com
+  What is a Data Catalog and why is Data Discovery so important for modern Data Engineering? Learn how data engineers use metadata management, data lineage, data governance, data quality, schema discovery, and automated metadata harvesting to build scalable data catalog platforms that help teams quickly find, understand, trust, and use enterprise data. This short covers essential concepts in Data Engineering, Data Catalogs, Metadata Management, Data Discovery, Data Governance, Data Lineage, Data Lakes, Data Warehouses, Data Mesh, and Self-Service Analytics—key building blocks for modern data platforms.
+---
+Let's look at a simplified, [music] but realistic slice of that pool-based harvester in code. This coroutine harvests [music] one table's metadata. It acquires a connection from an async pool, queries the schema catalog and an approximate row count, >> [music] >> builds a normalized metadata asset keyed by a stable URN, a unique resource name like [music] URN:catalog:postgres:prod.orders, >> [music] >> and upserts it into the catalog through the metadata API from the last slide. Three details matter here for production correctness.
+
+>> [music] >> First, the retry decorator with exponential backoff. At scale, a harvester touching tens of thousands of tables will hit [music] connection resets and timeouts constantly. And without backoff, a blip turns into a thundering [music] herd retry storm against the source database. Second, everything runs through pooled non-blocking [music] connections because a synchronous harvester crawling one table at a time simply cannot keep pace with a warehouse adding hundreds of tables a week. >> [music] >> And third, the most important detail for correctness, upsert is idempotent. URNs
+
+are deterministic, so rerunning the same harvest on a schedule updates the existing graph node instead of [music] creating a duplicate. Teams that skip idempotent URNs learn the hard way when a scheduler retries duplicates half the catalog overnight. URN design is worth getting right before the first production [music] run, not after.

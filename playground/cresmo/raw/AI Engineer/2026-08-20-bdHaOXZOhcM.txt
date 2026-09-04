@@ -1,0 +1,126 @@
+---
+video_title: "Prototyping as Leadership: How a CTO Ships with AI Agents — Hursh Agrawal, The Browser Company"
+video_id: bdHaOXZOhcM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bdHaOXZOhcM
+video_date: 2026-08-20
+video_description: |
+  Fifteen recurring meetings a week, seven direct reports, a toddler at home, and somewhere inside that Hursh Agrawal ships between two and ten pull requests. It was not possible a year ago. His argument is that the manager schedule has quietly become usable as building time, which makes building part of a leadership job rather than a hobby squeezed around the edges of one.
+  
+  The reasoning is less about output than calibration. Frontier models turn over every few months and nobody can reliably tell you what a new one is good for, so a leader without hands on time ends up relaying opinions from Twitter. Building also solves a communication problem, since showing engineers a working prototype beats arguing about capability every quarter. He thinks leaders are unusually well suited to it as well, because they hold the most business context and their steering is therefore worth more per token than an engineer's.
+  
+  The mechanics come down to a single overnight loop. A coworker agent wired into Slack and the issue tracker spends twenty minutes assembling context into a prompt, that gets handed to a coding agent at five in the evening, and the morning block goes on reviewing whatever came back. He runs it to build features, to hill climb prompts against eval sets assembled from a handful of feedback dumps, and to train small classifiers end to end. The caveats are real. It only works on top of trustworthy CI, feature flags, and a prototype branch, and he is candid that his own code has caused incidents.
+  
+  Speaker info:
+  - https://twitter.com/hursh
+  - https://www.linkedin.com/in/hurshagrawal
+  - https://www.hurshagrawal.com
+  
+  Timestamps:
+  0:00 - A manager's calendar, and why building became the job
+  2:44 - Judging a new model, and showing rather than arguing
+  4:25 - Execution is solved, judgment is not
+  5:16 - Four things leaders should build, and one to avoid
+  6:05 - The daily shape, and why 5pm matters most
+  6:56 - Building a feature overnight, and assembling the prompt
+  9:28 - Verification, PR hygiene, and the morning report
+  11:16 - Hill climbing a feature from a few feedback dumps
+  13:47 - Training a classifier overnight
+  15:27 - Pushing task scope, and the scaffolding it needs
+  17:06 - Never add reviewers to code you have not read
+---
+[music]
+
+Hi everyone, thanks for coming. Uh, I'm Hersh Agarwal. I'm the CTO and co-founder of the browser company, makers of the Arc and Dia browsers. Uh, and I'm going to talk about prototyping as leadership as you get to a manager schedule, how you can keep building. So this is my actual calendar from last week. Uh I imagine
+
+this is kind familiar to some of you in leadership. Um that was my actual week. I uh have a whole org that reports up into me. So I have 15 plus recurring meetings a week uh standups, reviews, recruiting meetings, etc. Uh and seven direct reports. And I've noticed
+
+something over the last several months, which is I've started to consistently ship, you know, two to 10 PRs a week. Uh and this is new. This was not possible several months ago. It's really because of these new AI agents. Uh, and notably, I also have a toddler at home, so I like cannot work 996. You know, I'm working
+
+40 50 hours a week. So, I really have to fit all this in into a regular week. And pre-I agents, uh, as you grew as a leader, you had more of the org reporting to you. Uh, you would sort of the way you would influence the org was through communicating to people. Uh so you'd uh write road maps, docs, meetings, and you'd sort of incept uh your context and what you wanted to build with your employees uh and your engineers. And now, interestingly, in
+
+the last few months, as coding agents have become more autonomous and able to handle longer tasks, the manager schedule, as Paul Graham put it, is suddenly usable as building time. You can actually ship stuff. And so I think building is part of the job now. you can do it first of all as a leader but it's I think it's also becoming necessary as part of the job for two reasons. First, uh, the technology world is changing where suddenly the core technology that's part of our products are these frontier models that change every 3 months, which is a new dynamic that's come out. And as
+
+each new frontier model comes out, its capabilities change. The contours of what it's useful for change. It's, you know, how it actually reacts to prompting changes. And there's so much noise on Twitter, even internally for us, and so many opinions with each new model release on what's good and what's bad. And I found it is impossible to tell what a new model is good for unless you have your hands in it and you're using it all day long. And so having an
+
+ability to slot in building time into your schedule means you can figure out the contours of what is this new model family capable of and both how do I direct my engineers in terms of uh setting expectations on how they should be building but also getting a sense of how does this fit into our product? How does this fit into our business? You know how is this how is our strategy going to change because of this? What's going to happen in three to six months when the open source models catch up? All of that intuition comes from actually using the models and building.
+
+I've also found even if you've built the intuition, it's actually tough to communicate that to other people who haven't played with the models. Uh, and so you're like, "Oh, this new thing is possible. It's going to be amazing." And your engineers are like, "Okay, yeah, sure." Um, so it's really helpful to have some time to actually build stuff so you can show them, you know, you can be like, "Hey, I built this prototype with this new model family. It works in
+
+the product. Here's an actual prototype you can play with." And this is just so much faster and more efficient than trying to convince people every 3 months when a new model family comes out. I also think leaders are really well suited for it. You know, you all have uh context, more context than anybody else uh in the organization about the business, the strategy, the trade-offs, the decisions to be made, what needs to be done, what's uh what's coming up, what are imperatives. And so the
+
+steering of a leader uh as you are prompting these models is to per token uh more impactful than an IC's. And so you can really fit this into a little bit of time. The delegation skill also transfers like you delegate to people. That's sort of one of the core skills of being a leader and that transfers to agents pretty well. You know it's setting goals, giving context, checking in, even coaching the agent. You know
+
+what if you tried this? Um, and then I've also found I I think this is maybe specific to now. Uh, maybe this will change in several months as these models get better, but the models are really good at execution, but still not unbelievable at judgment. You know, often the model will come back and be like, hey, that algorithm idea is not possible or like I can't do this. And so you have as a leader have to be like, oh, have you tried this thing? And the
+
+model's like, oh, okay, cool, cool, cool. I'll try that. And so it's a really nice dynamic you can have with these models if you have time slotted out for building. uh that really leverages all the context you have. So the great Julie Zo had a great tweet about this uh a month ago. She pulled
+
+some Bay Area technical leaders on what can you actually build? What should you be building in this new world? And four categories emerged. Uh you could build internal tools. So internal efficiency uh quality of life improvements just like gardening around the codebase and the product. This is really helpful. Um
+
+I really like this. I learned from this the celebration story. You can build artifacts to celebrate people on your team. And then arguably, I think the most important is the vision piece is really playing with the new model families, understanding what's possible viscerally yourself, and then trying to fit that into the business and building products that can show that off to your engineers so you can really push uh the boundaries of what's possible with the product and business. I she's right. I
+
+would not take any critical path work. the last thing you want to do is to have that dependent on you, especially you're going to be dragged into fires and recruiting calls and meetings, etc. Uh so really trying to do one of these four categories is is optimal. So this is this is my how I work. Uh and what two to three hours a day of coding can actually look like. Uh so I usually
+
+have a morning coding block about an hour and this is when I look over last night's code, what the uh agent did last night, review it. I'll talk a little bit more about this. Uh, and then a few maybe steering blocks throughout the day interspersed between one-on- ones and reviews and meetings and everything else you need to do. And then the most important block is that 5:00 p.m. block
+
+at the end of the day where you really set up whatever overnight run it is you want to run. And I'll talk about that whether that's coding or training models or whatever you want the agent to do. I'll go over sort of three examples of tasks you can do. But really what I found work for me is this one overnight loop. uh you first in that 5pm block gather context I'll talk about that uh you set up the run you know you get ask answer any clarifying questions uh and then claude code or whatever your coding agent is overnight does the thing you know does the work for four six eight hours and in the morning you get this beautiful report uh and you figure out what to do with it and then you ship whatever it is so I'll talk about building features which is sort of the most obvious one uh I found this worked really well with evals and hill climbing so optimizing AI features uh and then a new thing actually in the maybe more recent uh generations of models is you can have these models train other ML models overnight too and this works really really well.
+
+So building features um the big mindset shift for me that really helped was starting to think about building features not in terms of how do I build this feature and break it up and then give it prompting on how to do the individual task but rather what is all the context this frontier model needs to be able to make decisions like I would make. So trying to give it as much context as possible because if it's working for 6 hours, 8 hours overnight, you're not going to be there to steer it. And so you want it to have as much context as you do about the business goals of whatever you're trying to get it to do. So, uh, a little tip I found that has worked well for me, um, if you have a co-work agent, whatever your, uh, cloud co-work or codeex or I recommend DIA, I feel like that's the best one. Not biased at all. Um, whatever it is
+
+that's connected to your Slack and your Jira, Confluence, notion, the repo, etc. Uh, just I before a meeting or something, I'll be like at like 3:00 4 p.m. I'll be like, "Hey, I really want to build this. go and do like 20 minutes of research and go dig through all of Slack and Notion and everything else and come up with a cloud code prompt that I can post paste into a cloud code and just give me as much context as possible the trade-offs what we tried before what works what doesn't why are we're doing it what is like the business context of this feature I want to build or this model I want to train and that takes like 30 seconds to whisper flow into DIA or whatever your co-work agent is and the nice thing is this comes back with a giant prompt that then you can paste into cloud code or cursor or codeex or whatever your coding agent is. So this
+
+is an example of a 5mm prompt I'll have that I give it before I go to bed. I'll say implement this whole feature and then just paste all of that context I got from my co-work agent. Uh and then it's important to think about verification. So as this uh agent is running overnight, you want it to verify how it's doing as it's building and testing the feature. So first I'll be like hey write the tests first so they capture what you do. This is really
+
+helpful because I I found of decoding agents if you if they write tests afterwards, they're a little sloppish. Um, and then I'll tell it to test the endto-end flow with computer use. You know, go around, click around, just make sure the flow works and matches the business context I gave you. And so the modern models are really good at reasoning about, okay, does this flow actually solve the problem I was trying to solve? And then uh I usually prompted to do as much work as possible so that when I wake up in the morning, the stack is ready. So split this into reviewer
+
+friendly PRs with clear descriptions, manage CI and get CI green and just make sure you're you're monitoring uh just to make sure the the whole stack is passable. AI code review is really important. We have a bunch of internal AI code reviewers uh you know pre the previous talk was talking about codto and other AI code reviewer. If you don't have any, I would look on Twitter for a bunch of AI code review skills and then just prompt it, hey, once you're done, run this AI code review skill in a clean sub agent, and then fix those things. And then watch the PRs, fix every bot comment, every, you know, CI check that shows up, any sort of uh anything you need to do, resolve the threads, run this autonomously. Uh, don't ask me
+
+questions, and then I'll like throw in a little encouraging something, you know, be like, you'll do great. I believe in you. It's going to be great. Um, I don't know if that helps or not, but it's it's a I tend to do that. Uh, and then I tell them I'm going to bed. Just leave me a
+
+report in the morning on what you do. I need the full stack ready and a report on what trade-offs you made, how you did. Uh, and it does great. Uh, it actually modern models, new Opus 4.8 or the new GBT. They can handle what used
+
+to be, you know, weeks of work uh, in one overnight run and you come back in the morning with this uh, beautiful package ready for you. It actually makes the mornings kind of nice because you have this little present ready for you. Another example is optimizing AI features. So, first you're at the AI engineering conference. I assume you all are familiar with this. When you first
+
+build an LLM call or agent into a into a feature, it's not optimized. You know, you need to optimize it hill climb on some eval to get the quality, the latency, the cost to where you want it to be. This is also all doable overnight. Um, especially with the modern coding agents. So, uh, usually if I'm prototyping a feature, I will, uh, put a little feedback button on it. So
+
+after the LLM call or the agent runs, I'll be like, "Hey, uh just add a feedback button and a little text box. And then in one of my 1 hour slots or 30-minut slots throughout the day, I'll just take the time to uh collect a bunch of feedback." So I'll uh you know, run it a few times, collect a bit of feedback, be like, "Hey, this was bad or this was good or this could have been better." And then just have it save JSON dumps on my downloads folder. So it'll save a dump of each of the runs with the system prompt and the inputs and my feedback. uh and you just collect a
+
+handful, you know, like even four, five, 10 are fine. If you can get some other uh co-workers to run it, that would be great. Collect like 20 or 30. And then similarly, uh at 5:00 p.m. when
+
+you're setting up an overnight run, uh just say, "Hey, like here are, you know, 10 20 30 feedback JSONs. This is all the information they have in them. Turn this into an eval set." Like just do it locally with SQLite or Markdown or whatever you want. And then over the next few minutes, talk me through how would you design evals or scoring functions to optimize for this and let's do it interactively. And then I want you
+
+to a build a harness that runs this call against the evals and hill climbs until the score goes up. Like just do whatever you need to do to get these scores to go up. And obviously with this kind of thing, if you have such little data, overfitting is a problem. But even that I found these modern models, you can just tell it to not overfit. And it actually does a pretty good job. Uh and
+
+to just say don't overfitit, just keep it general. uh run overnight autonomously until we align on a scoring rubric and then give me a full report uh in the morning. And then a little tip, it's also nice to just say, "Hey, save this flow as a generic skill so I can reuse it." Uh and that allows you to improve this flow over time and improve that skill. And this works actually in the morning. You wake up to ideally
+
+something hill climbed. Uh and actually when using that feature when we we ship these features to employees to to further dog fooding to production it actually does improve the quality. You know these are not overfit. Um and we we use this flow quite a bit internally. Uh we have an internal code reviewer similar to uh some of the external ones.
+
+And same thing there we add that hill climb to pretty good quality just with these overnight runs. And then the last example uh and this is again pretty new and really interesting. uh you can train custom models with this mechanism overnight you know in one night. So uh this is an example of a modern BERT PII classifier we trained. We were trying Opus and Haiku for it and it was expensive and latency was not great and we just couldn't get the precision recall to be amazing. And so
+
+uh we collected a bunch of training data and then overnight one night I was like here is a bunch of business context and a bunch of training data we collected. uh a clean up the training data cloud just bolster it with synthetic data whatever you need to here's a bunch of open AI and enthropic keys uh use an ensemble of frontier models to push the quality I don't know anything about what ML model will be good here so like you decide you know just give me the best model class give me a few options and in fact train two like don't even train one train two separate ones uh and then I gave it AWS access I was like give me a provision sandbox do not give it prod that's not a good idea that's how you take prod down um pick the right GPU and EC2 cluster like train it, test against eval examples, deprovision it, whatever you need to do. Just give me back the train models. Uh, and then give me a report in the morning. And in fact, even put in how I would host this with my codebase on inference once this model is ready. And again, ask me any clarifying
+
+questions. You can do it. I believe in you. You're going to do great. Uh, and in the morning, just have this ready.
+
+And of course, it works beautifully. In the morning, you have uh, two ML models trained, a full report, great results. Uh, and we've, uh, pushed a bunch of these to production. So those are three examples. Um I would try try your own. Uh but I think the
+
+main takeaway for me in doing these is really to push on task scope. So this was a tweet by Simon Lass, one of the notion founders. Uh and he he called out these modern models are just capable of so much more than we think. uh and I think it's our jobs as leaders to really understand the contours of how much we can push these models because it affects both how we lead and how we influence our teams but also how they fit into our products and what these our new products are capable of in terms of utility. So I'd really push you overnight try to think of how do I give it more and more uh scope so that we can do you know weeks of work months of work overnight and see what these models are really capable of.
+
+I will say a caveat a lot of this works because of existing organizational scaffolding. So you'll have to build this up in your organization. You know, AI code reviewers, this really helps. You have an internal one we trained, but also just external ones, whatever you need. Um, agents.md hygiene, you know,
+
+cloud.md, agents.mmd, proper CI that you can trust. And then we have a bunch of other things like uh really sophisticated feature flags. Uh, we have a prototype branch that you can push to that goes to employees, but it doesn't go to production. Just layers like that.
+
+So you're not taking prod down basically as you're prototyping and showing these things off. Not amazing for the CTO to take prod down. I will say again code hygiene really matter really matters. I've been humbled a lot. You know my code has annoyed engineers. It's caused sevs. Uh coding
+
+agents are not perfect yet. So just uh your mileage may vary. you will get humbled, but I I still think it's worth it uh because you learn so much and you can model what taking on more and more scope even with a busy calendar looks like. Some tactical tips on hygiene. Uh I would test everything before the PR goes up. That morning slot, that's a lot
+
+of what I'm doing is just testing what the overnight run did. Uh even though there's computer use, etc., it's really important you test it yourself. Um small readable PRs are really helpful. I think they you're modeling to the rest of the team what good looks like. So, if you're
+
+putting up three 5,000 line PRs, uh, other engineers on the team are going to start doing that, and that's not amazing. So, uh, it's really important. Your hygiene is really good because it's modeling for the rest of the team what good looks like. Um, and then, ooh, this is so tempting. It's so tempting to put other reviewers on code you haven't read yet. Don't do it. It's uh, mostly
+
+because you're going to look like an ass because there's going to be something in that code that is going to be so obviously bad and then some senior engineer is going to call you and be like, "Yo, why didn't you read this?" So uh I speak from experience. Read the code, review it properly before you add anybody else to it. So hopefully this convinces you. Building is part of the job now. Uh you
+
+can do it uh even with just one or two hours a day and you should uh you'll start to feel the models every 3 months as the new model families come out and you'll learn the skill on how to push scope as you are uh instructing them. And you'll be able to show the the the team and the org what's possible as well. you know, just because you as you have this capability, you'll automatically think of ideas on what to slot in for these overnight runs and then you can model for the team. Hey, this is what the future looks like. Thank you.
+
+[applause]

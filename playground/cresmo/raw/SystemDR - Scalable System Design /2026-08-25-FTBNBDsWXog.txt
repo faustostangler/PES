@@ -1,0 +1,31 @@
+---
+video_title: "Never Do This to a Financial Ledger #shorts #systemdesign #interview #roadmap"
+video_id: FTBNBDsWXog
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=FTBNBDsWXog
+video_date: 2026-08-25
+video_description: |
+  Why you should NEVER update a financial ledger entry (and what to do instead) 📒
+  
+  Full system design walkthrough: https://systemdrd.com/
+  Written version: https://systemdr.systemdrd.com/p/design-stripe-payments-the-senior
+  
+  #SystemDesign #SoftwareEngineering #StripeInterview #TechInterview #BackendDeveloper #FAANGInterview
+---
+Walk one charge end-to-end, instead of just sketching boxes. The merchant calls the API gateway, which authenticates and rate limits before forwarding to the charges service. That service [music] checks idempotency first before touching anything else, a Redis lookup. And on a miss, an insert of an in-progress placeholder row guarded by that unique constraint. Next, it dereferences the card token inside a PCI-scoped subnetwork and runs an inline fraud check, typically under 50 milliseconds.
+
+[music] Then comes the slow part, the 200-millisecond to 2-second round trip to the card network for authorization. On approval, the charge record, the ledger entries, and the account balances are all written in one atomic database transaction. Only after that succeeds, does the service publish a charge succeeded event to Kafka for webhook delivery and return 200 to the merchant. And settlement, [music] the part where money actually moves between banks, happens hours later in a completely separate batch process. Mentioning that separation out loud is what a staff-level answer sounds like.
+
+This is the piece that turns [music] we ran some code into we have a financial system. Look at what happens inside that atomic transaction boundary on screen. A $100 charge from the core charges service becomes three ledger entries in the same database transaction. The user's funding account is debited $100. The merchant's settlement account is credited $97.
+
+>> [music] >> The platform fee account is credited $3. Sum those three entries and you get exactly zero. That's the double-entry constraint, and if it doesn't net to zero, you stop processing [music] immediately rather than let bad data propagate. Notice the ledger entries feed a denormalized account balances cache for fast reads, while a separate reconciliation engine runs continuously in the background, summing the ledger and checking it against that cache. If a bug ever writes a debit without its matching credit, that transaction group shows up unbalanced within minutes, gets flagged, [music] and gets quarantined, not silently corrected. This append-only
+
+reconcile design is exactly what an L6 or L7 answer sounds like. Almost every payments interviewer probes idempotency under failure, and there are five real cases worth knowing cold. The happy path retry is easy. Same key, same cached response, charged once. Racing requests are next. Two calls arrive milliseconds
+
+apart with the same key. [music] The database's unique constraint catches the second one, and it either polls for the outcome or waits briefly on the first. [music] The one that fails most candidates is the phantom failure. Your service calls the card network, gets an approval, and crashes [music] before it can save that. The fix is never to blindly retry the charge. It's
+
+to make an inquiry call to the network asking for the status of that specific authorization, and trust that answer. Fourth, if the network approves and later reverses, you never flip the original charge's status. You write a compensating ledger entry and mark it reversed. And fifth, [music] if a merchant reuses a key with a different request body, that's their integration bug. You reject it with a clear error. You never silently replay
+
+the old response.

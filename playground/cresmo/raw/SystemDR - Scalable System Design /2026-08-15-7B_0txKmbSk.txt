@@ -1,0 +1,27 @@
+---
+video_title: "The 4-Step AI Agent Handshake #Shorts"
+video_id: 7B_0txKmbSk
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7B_0txKmbSk
+video_date: 2026-08-15T16:30:04+00:00
+video_description: |
+  Full lesson: https://aiamastery.substack.com/p/day-6-agent-communication-security
+  Website Link: www.systemdrd.com
+  Identity exchange, session keys, encrypted messages, then destruction — here's the handshake that makes intercepted AI agent traffic useless within minutes. 
+  #AIAgents #SystemDesign #PythonAI #Shorts #AgenticAI
+---
+Five layers, [music] and they map directly onto the handshake from the last slide. The message broker is Redis with TLS [music] sitting at the center. Every message gets AES-256 encrypted and HMAC signed [music] before it's ever inserted into the queue. So, even the broker itself never handles plaintext. The authentication [music] gateway issues JWT tokens with a deliberately short expiration window, 15 [music] minutes. And each token carries the
+
+agent's identity, its permissions, and its security context, which is what identity exchange in the handshake actually checks against. The event correlation engine is where Gemini AI earns its keep. It's not just logging traffic, it's actively analyzing communication patterns in real time >> [music] >> to catch an agent suddenly requesting unusual data or communicating outside its normal patterns. The audit trail logs every message, every authentication attempt, and every security event with a cryptographic timestamp. This is your forensic evidence, not just a compliance check box. And the monitoring dashboard gives
+
+a human a real-time view into all of this. Communication health, active alerts, [music] performance, because automated detection is only useful if someone can actually see [music] what it's flagging. These five layers aren't independent. The broker enforces what the gateway authenticates, and the correlation engine and audit trail both feed the dashboard that makes it [music] all visible. Let's ground the handshake and the five layers in real code. Agent
+
+message [music] is a typed data class, the sender's ID, an encrypted payload as raw bytes, >> [music] >> and a signature. Notice payload is bytes, not a dict. By the time this record exists, the plaintext is [music] already gone. securemessagebroker.publish is where a message actually enters the system. Line nine is the line I've
+
+highlighted. The JWT gets verified before any encryption [music] or signing happens. This is the authentication gateway from the architecture slide, gating the message broker itself. [music] If the token doesn't verify, line 10 raises immediately, and nothing about this message ever gets encrypted, signed, or queued. If it passes, [music] line 11 encrypts the payload with the sender's agent key.
+
+Line 12 signs the encrypted payload with the sender certificate. This is exactly the [music] two-line pattern from the lesson's own snippet, encrypt then sign. Line 13 assembles the agent message record. Line [music] 14 writes an audit entry before line 15 ever pushes to the queue. Notice the [music] audit right happens before the push. Same principle
+
+you've seen in earlier lessons. The record of what happened doesn't wait on the action succeeding to be worth capturing.

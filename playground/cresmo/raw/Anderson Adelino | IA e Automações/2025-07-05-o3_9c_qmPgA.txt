@@ -1,0 +1,150 @@
+---
+video_title: "N8N Revoluciona o Jogo dos Agentes RAG! (Reranker Cohere)"
+video_id: o3_9c_qmPgA
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=o3_9c_qmPgA
+video_date: 2025-07-05
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=o3_9c_qmPgA
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  🚨 O N8N acabou de revolucionar o jogo dos Agentes RAG!
+  
+  Agora é possível usar o Reranker da Cohere para deixar sua IA ainda mais precisa nas respostas. Isso significa que seus agentes vão entender melhor as perguntas e entregar respostas mais certeiras, como um verdadeiro atendente com cérebro turbinado!
+  
+  Nesse vídeo, eu te mostro:
+  ✅ O que é o Reranker da Cohere
+  ✅ Como ele muda o jogo no RAG do N8N
+  ✅ Como ativar e configurar na prática
+  
+  Se você usa IA + N8N nos seus projetos, essa atualização é um divisor de águas!
+  
+  Minutagem:
+  00:00 Introdução
+  00:21 Antigo RAG vs Novo RAG
+  03:13 Como funciona
+  06:20 Vetorizando um PDF
+  10:39 Conversando com o Agente IA
+  11:21 Explicando o que aconteceu
+  16:44 Template grátis
+---
+Fala automatizador Anderson aqui. Hoje vamos estar trabalhando com uma nova forma de utilizar o hag. Ao invés de usarmos o hag tradicional, vamos estar utilizando também o método chamado rehunker, certo? He rehanker da Corer. E como é que funciona isso e qual que é a diferença para o método anterior?
+
+Basicamente no método anterior era assim que funcionava. A gente fazia aqui uma pergunta para o o agente A. ou a gente já por sua vez, por sua vez chamava lá atu do hag, certo? E o hag ele iria retornar três blocos de texto, tá? E a partir desses três blocos de texto aqui, o agente analisaria qual que era o melhor e daria resposta ali para o usuário. Então é basicamente isso que
+
+funciona o método antigo. No método novo, a gente tem uma pequena diferença, porque aqui nesse método antigo, se vocês prestarem atenção, ele vai retornar três blocos, beleza? Ele retorna aqui os três blocos que possui ali um eh uma contextualização parecida com o que foi pedido, né, pro usuário. Mas aqui a gente não sabe qual que é o melhor bloco. Pode ser que tenha algum bloco que ficou passado para trás, que até seria melhor do que esses aqui.
+
+Então é algo que acontece normalmente utilizando esse método aqui. Novo método, a gente tem agora o uso do rank. Como é que ele funciona? Basicamente a gente pode estar, ao invés de dando permissão pro Haag puxar três informações, a gente pode estar pedindo para que ele eh retorne blocos, tá? 15, 20, fica seu critério de acordo com o tamanho desse documento. No
+
+meu caso aqui, nesse exemplo, temos 10 blocos. Então, ao invés de ele puxar três blocos, ele consegue puxar 10 blocos, tá? Isso aqui até então também podia ser feito aqui, tá? Eu podia dar para é permissão para que esse hag aqui ele puxasse 10 blocos, mas aí a chance de delírio, de erro é muito grande, até porque eu teria que ter 10 opções aqui diferentes para o agente a lidar e escolher. Porém, o que acontece aqui?
+
+Após da escolha dos 10 blocos, né, os 10 blocos que tenham é uma contextualização parecida com o que foi pedido, a gente passa pro rehanker. O rehanker ele vai fazer o quê? Ele vai pegar os 10 blocos e vai dar uma pontuação de zero a um para cada bloco desse, né? Esses blocos aqui são eh grupos de de textos, tá? É o conteúdo ali que foi agrupado. Então, ao
+
+fazer essa pontuação, ele vai pegar os três melhores ranqueados e vai colocar em ordem, como por exemplo aqui, bloco 1 com 0.876, bloco 2 0.731, bloco 3 0.646. 646, ou seja, ele vai retornar pro agente isso aqui de forma ranqueada e com uma pontuação já bem assertiva. Então, ao
+
+invés do agente ele dar tiro no escuro aqui, aqui não, ele vai ver realmente qual que foi o bloco mais próximo do que que do que ele perguntou, certo? Isso é uma observação, ó, que se a pontuação já for acima de 0.7, já é uma pontuação bem legal, tá? Não precisa ser 100%, tá, pessoal? 0.7 set aqui já é uma pontuação
+
+bem interessante. Então, beleza, entendendo aqui o conceito aqui por trás disso, vamos aqui para o nosso fluxo, tá? Aqui no N8N eu tenho aqui o nosso agente. Observe que agora a gente consegue colocar aqui o rehanker conectado com o Vector Store e aqui embaixo tem uma automação que vai fazer essa vetorização do documento, tá? Tanto essa automação como essa eu vou estar disponibilizando para vocês gratuitamente lá na minha comunidade gratuita, tá pessoal? O link ele vai tá
+
+aqui na descrição, então é só você acessar e conseguir aqui o material gratuito para ficar brincando, ficar testando aqui, beleza? Fica de vocês. Mas vamos lá agora ver como é que funciona esse agente aqui. Basicamente o promp do agente eu não coloquei nada, certo? Eu não dei nenhuma instrução, né?
+
+Até para vocês verem que realmente o negócio é bem bacana. Claro que se vocês darem instruções, ele vai ficar bem mais preciso, né? O modelo de linguagem eu utilizo 4.1 mini, OK? Aqui uma simple memory mesmo. E aqui está o nosso Super
+
+Base Vector Store, tá? Só para vocês verem qual que está sendo a minha versão. Vamos ver aqui, ó. 1.100.1,
+
+tá bom? Essa aqui tá sendo a minha versão. Então se no seu, no caso de vocês, no seu Nenver essa opção aqui de rehanker, é porque você está desatualizado. Então ó, o nosso agente ele tem a conexão aqui com o Super Base Vector Stock, eu nomei de Sech Cafeína. Por que se cafeína? Porque nesse nosso
+
+exemplo eu peguei um artigo científico, tá? um artigo científico de eh 36 páginas, se eu não me engano. Tem várias páginas esse artigo científico. E aí ele contém informação sobre cafeína, tá bom? Informações sobre cafeína, benefícios, enfim, tudo mais. E eu vetorizei esse
+
+conteúdo, certo? Então aqui eu falo, ó, use esta to para consultar informações relevantes sobre a cafeína. Aqui eu coloco a tabela que contém esse conteúdo e aqui o limite, tá? Olha só, coloco o limite 10. E aqui temos o reank results, tá? Ele vem desativado por padrão, então
+
+se eu desativar ele já perde essa conexão aqui com o nosso reun, tá? Então vou ativar novamente e fazer aqui a conexão com ele. O modelo do rehanker eu deixo aqui ele v 3.15 mesmo, mas aí constando a documentação a gente consegue ver melhor é qual desses junks aqui eles são melhores, tá? Mas eu deixo aqui o 3.5 como padrão mesmo e eu
+
+conecto a API que do Corer aqui dentro, tá? Só vir aqui nova credencial e passar P key. É bem simples. Como que eu faço isso? É só você acessar o site aqui, ó, correry.com, tá bom? Faz aqui é o login
+
+de vocês. Você consegue fazer a criação aqui gratuita, tá, pessoal? Faz aqui a continua com Google, funciona. E aí vocês vão pegar ali a API K, tá? Que que é gerado e passar aqui no N. É bem
+
+simples de fazer, não tem mistério nenhum. Beleza? O embedgings, eu deixo por padrão o small, tá? Da da open mesmo. E é basicamente isso. Antes da
+
+gente começar a fazer aqui os testes, vamos precisar fazer a vetorização, né? Até porque eu não fiz a vetorização para fazer aqui nessa aula aqui para vocês. Então, como é que eu consigo trabalhar com isso aqui? Primeiro de tudo, o conteúdo, né, o PDF, eu deixei armazenado no Google Drive. Beleza?
+
+Então, ó, ele fica armazenado aqui, ó. No caso, eu falei 36, né? Mas na verdade são 16 páginas, tá? Esse aqui é o artigo, tá? Esse aqui é o artigo científico e é justamente esse carinha aqui que eu vou estar fazendo o download, tá? Aí eu faço o download dele
+
+aqui. Eu passei aqui a URL desse drive que eu subi lá no no Google Drive, fiz o download e após fazer o download, eu extraio esse arquivo. Eu uso esse extract from file, extract from PDF, binary field data. Por quê? Porque eu quero passar apenas o conteúdo, certo?
+
+Então, se eu executar aqui para mostrar para vocês, ó, fiz o download, beleza? Ó, ele faz download aqui do arquivo, certo? Aí aqui eu vou extrair o conteúdo, tá? Eu extraí o conteúdo. Se eu colocar aqui o formato de som, ó, número de páginas, eh, o formato do do PDF, produtor e tudo mais. Então assim,
+
+se eu não fizesse essa extração, o que aconteceria é que ele ia passar todas as informações. Eu não quero, eu quero que ele passe apenas o text, que é justamente o conteúdo aqui do PDF. Bom, aí sim eu coloco ele aqui no Super Base Vector Stop, tá? Passo aqui a tabela, deixo aqui 200 e aqui eu ativo o query name para fazer assim, ó, match underline e o nome da tabela, tá? Essa tabela aqui, na verdade, se eu for rodar agora, vai dar erro, porque essa tabela aqui, ela foi excluída, não existe mais, tá? Eu excluí para fazer agora com
+
+vocês. Como é que eu faço isso? Vindo aqui no meu super base e vindo aqui em SQL Editor, quick starts LC Chain, beleza? Eu já tenho aqui um modelo de SQL pronto para criar uma tabela vetorial. Beleza? Se for a primeira vez
+
+que você tá fazendo isso, você faz do jeito que está aqui. Só muda o nome da tabela se você quiser, tá? Por exemplo, aqui tem documents, só que eu quero que o nome da tabela seja cafeína, por exemplo. Então, eu posso dar aqui um contrl F, coloco o nome aqui documents, que é o nome que tem atualmente. Clico nessa setinha e vou substituir por cafeína. E aí eu venho aqui, ó, e clico
+
+nesse nesse símbolo bem aqui, ó. Cliquei. Beleza. Tudo que tá tinha documentos foi trocado por cafeína. E aí eu clico aqui, é, clico aqui em cima na tela e clico em run. No meu caso, vai
+
+dar um erro. Por quê? porque eu já rodei esse código algum momento. Então ele vai dizer que já existe essa extensão chamada vector. Então a partir das próximas vezes que você for fazer, você apaga essa linha aqui do jeito que eu fiz aqui agora, beleza? E aí eu consigo
+
+vir aqui em run e ele vai criar a linha, ó, sucesso. Então criou com sucesso. Eu vim aqui em tabela, vai aparecer aqui várias tabelas que eu tenho aqui criadas e eu vim aqui em cafeína. Olha só, ele já criou com quatro colunas, tá? ID, o conteúdo, metadatas e bed. Então aqui já
+
+está pronto para ser utilizado, beleza? OK. Agora feito isso, eu vou voltar aqui para o meu N8N. Aqui no Superbase Vector Store, eu vou selecionar minha tabela e eu vou colocar a tabela que a gente acabou de criar, que é a tabela cafeína. Beleza? E aqui o query name geralmente
+
+ele vem com nada, tá? Eu venho aqui adicionar a opção, automaticamente ele cria esse query name. Eu apago esses documentos e coloco cafeína, senão vai dar erro. Beleza? Então feito isso, só para vocês observarem como é que eu faço aqui, ó. Aqui nesse é default data
+
+loader, eu coloco o tipo de data como JSON, tá? Que justamente o que tá sendo retornado aqui, tá? Vou fazer o o load de um dado específico. Então, seleciona aqui e eu arrastei aqui o tex, tá? Eu arrastei o text para cá. Beleza? Aqui eu
+
+não mexi em nada e pronto, ele já está pronto para ser vetorizado. No momento que eu clicar aqui em executar, ele vai fazer aqui o download do drive, vai extrair o conteúdo e vai vetorizar. E olha só, ele retornou 56 itens, ou seja, 56 blocos de conteúdo referente à aquele documento. Então, olha só, ele tem aqui o conteúdo, certo? Temos aqui o metadata e tudo mais. E aqui temos o embeding,
+
+que é o nosso vetor provavelmente dito, que é aqui que ele vai conseguir estar fazendo a sua busca, tá bom? Beleza? Voltando agora para o nosso N8N e vindo aqui no nosso agente, vamos ver como é que ele funciona. Antes de botar para rodar, a gente tem que alterar aqui no Subace Vector Store o nome da tabela, né, que eu coloquei agora uma nova tabela chamada cafeína. Beleza? Alterei
+
+e aqui eu vou trocar caf, tirar café e colocar cafeína. Beleza? Feito isso, eu vou salvar e vamos agora conversar com o nosso agente. Olá, quero saber os benefícios da cafeína. Vamos agora ver aqui o funcionamento dele. Olha só, ele
+
+mesmo sem promete, ele já chamou aqui o B vector Store e agora vai estar respondendo. Beleza? E respondeu. Falando aqui, ó, diversos benefícios, aumento a respiração de metabolismo, melhora da fadiga, liberação de catecolaminas. Então assim, ele fez aqui é a resposta, tá? A forma que ele vai te
+
+responder aí já tem a ver com o prompt mesmo, se tu quer que ele seja mais resumido, se ele seja mais informal, mais formal e assim por diante. Vamos agora observar como é que foi o processo aqui dentro, né, internamente. Veja que ele chamou aqui a os vector store, chamou o reank e tudo mais. Vamos ver por dentro como é que funcionou aqui a coisa. Se eu vir aqui, ó, é nos logs, olha só, aqui em sech cafeína, ele passou para o superbate Vector Store o nome benefícios da cafeína. Beleza? E a
+
+partir disso que vai acontecer a busca com base nessa frase que o agente enviou, certo? Aqui em embedings open tá aqui o query, OK? E aqui é a resposta, ou seja, isso aqui é basicamente isso aqui, só que vetorizado, tá? Basicamente essa vários códigos aqui, beleza? E aqui temos o rehunker, tá? Esse input foi o
+
+que foi colocado para o rehanker, tá? São aqueles 10 blocos que eu falei. Então ele pegou os 10 blocos query benefício cafeína e aqui ele pegou um conteúdo dentro lá do nosso hag, tá bom? Ele pegou esse conteúdo aqui, pegou outro conteúdo, pegou outro conteúdo e ele vai pegando vários conteúdos, vários blocos. Ele vai pegar um total de 10 blocos, porque eu coloquei para ele pegar 10 blocos. Se eu quer que eu que
+
+ele pegasse eh 20, ele pegaria 20. Tá bom? Caso ali tava misturado em pont. Beleza? Que ele pegou 10. Show de bola.
+
+aqui foi que entrou para ele os conteúdos, aqueles 10 conteúdos ali que t certa forma um contexto parecido. Mandou para ele. OK. Agora se eu fechar aqui o input e abrir o out, agora sim é o que o rank retornou de forma pontuada e rankeada. O primeiro conteúdo foi esse aqui, certo? Onde ele passou aqui
+
+algumas informações e aqui ele fez uma pontuação, ó, revelance relevance score, ou seja, uma pontuação de relevância 0.83. Depois ele fez esse outro bloco pontuação de relevância 0.77 e o terceiro bloco com relevância 0.74.
+
+Então todos os três blocos eles tm uma relevância bem interessante, tá bom? Sendo que o que teve a melhor relevância foi esse outro aqui com a pontuação de 0.83, tá? Então é isso que aconteceu. Resumindo, se você não entendeu ainda, o agente A ele mandou pro super pro Super Base Vector Store a Crary, benefício da cafeína. O Super Base Vector Stor, por
+
+sua vez, ele retornou 10 blocos de texto, que tem uma semelhança no que a gente pesquisou. Depois ele mandou isso pro Ranker. O Ranker retornou os três mais relevantes em ordem por pontuação. Beleza? E aí a gente já retorna à pergunta. Vamos fazer aqui agora uma
+
+outra pergunta pra gente confirmar isso aqui. Show de bola. Qual a dose mínima recomendada? Eu não sei se tem isso no artigo, tá? Mas vamos perguntar aqui e ver se ele vai ter aqui alguma informação. Ok, retornou. Vamos ver. Tá
+
+gerando uma resposta. Ok. A dose máxima recomendada. Ah, é a dose máxima, né? Eu perguntei dose mínima. Faz sentido, mas
+
+enfim. A dose máxima recomendada para adultos é de 400 mg por dia, conforme indicações da Food and Drug Administration e da agência acionada de vigilância sanitária Anvisa. E ele descreveu de forma bem detalhada. Vamos ver. Isso aqui foi realmente uma coisa que ele pegou de algo ou se ele inventou. É só vir aqui, vamos observar
+
+aqui os logs novamente. Olha só, o query que ele mandou foi dose mínima recomendada de cafeína, beleza? Só que não existe isso de dose mínima, né? Dose máxima. Beleza. Aí vem aqui, ó, rerrank
+
+com Harry. Vou tirar o inputs e eu quero ver o que que ele retornou. Então, olha só, ele pegou aqui um um bloco pontuação de relevância 0.64, tá? A segunda 0.51 e
+
+a terceira 0.48, tá? É uma pergunta bem mais específica. Então assim, a pontuação, OK, não é uma pontuação ruim, tá? Mas podesse uma plantação um pouco melhor. Aí podia ser pôr limitação no
+
+poderia ser pôr questão de limitação no documento apresentado. Até porque o documento ele tinha apenas 16 páginas, certo? Pode ser também na pergunta que eu fiz, né? Por ter sido uma pergunta, por exemplo, que eu perguntei ali a dose mínima, né? Não perguntei a dose máxima, então uma questão da pergunta mesmo que eu fiz. E pode ser até a questão a lei
+
+do limite, né? Se a gente colocar aqui mais, por exemplo, para 15, ele pode ter uma um leque maior de possibilidades. Mas vamos tirar aqui essa dúvida limpo em relação se esse mínimo tem alguma diferença. Não sei. Vou perguntar aqui.
+
+Qual a dose máxima recomendada? Vamos lá. Qual a dose máxima recomendada de cafeína? Limpei a memória e vamos ver aqui agora se eu fazendo, se eu falando de fato dose máxima, se a pontuação é maior. Já vou até abrir aqui antes dele responder. Vamos ver aqui os logs. Opa,
+
+tá, ele já respondeu aqui, certo? logs. OK. Tá vendo, ó? A pontuação de relevância já foi maior. E de fato, como
+
+eu perguntei, é dose mínima, então ele não tinha algo sobre mínima de forma exata, tá? Porém, apesar de mesmo assim ele retornou algo correto. Agora sim temos uma pontuação de relevância 0.75, que é uma pontuação boa, tá? As outras por sua vez, já não são pontuações legais, porém essa aqui já é o que a gente queria. Isso aqui, tipo, se dá
+
+pelo fato de ele só ter mostrado em algum momento específico realmente essa informação e em outros locais talvez ele nem tenha e fornecida, né? Por exemplo, aqui nesse segundo bloco, ó, ele já fala aqui sobre a manteiga da meduim, dosagem de cafeína na parte de diferentes profões de café, fala aqui sobre quantidade de café de exemplificação. É, e ele realmente não fala sobre dose máxima, né? Ele fala sobre dose de café, mas não necessariamente sobre dose máxima de cafeína recomendada. Por isso que a a pontuação de relevância foi baixa. Já aqui não. Aqui ele realmente
+
+fala sobre isso, que o consumo de área de cafeína descendo no máximo 400 mg para adultos, tá? Crianças não devem consumir bebidas que contêm cafeína. Então é isso, pessoal. Então é isso. É esse foi o conteúdo que eu queria mostrar para vocês. Cara, isso aqui vai
+
+mudar demais o jogo de vocês relacionado a agentes pesquisadores, tá? Espero que tenha gostado. Se gostou já se inscreve aqui, tá? Vai me ajudar demais. Deixa seu like, tá bom? comenta também com
+
+sugestões de próximos conteúdos, tá? Eu sempre leio todos os comentários e vejo ali os comentários com mais eh conteúdos que tem mais comentários e eu procuro trazer vídeos sobre isso aqui pro canal. E é isso, lembrando que esse template vai estar lá na minha comunada gratuita. Link vai estar aqui na descrição e te vejo nos próximos vídeos. T lá.

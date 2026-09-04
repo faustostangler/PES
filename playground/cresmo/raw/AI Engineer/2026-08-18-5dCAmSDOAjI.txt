@@ -1,0 +1,121 @@
+---
+video_title: "The Next Medium: Why Real-Time Interactive Video Changes Everything — Ahmed Ahres, Reactor"
+video_id: 5dCAmSDOAjI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5dCAmSDOAjI
+video_date: 2026-08-18
+video_description: |
+  Uber could not exist without GPS. Ahmed Ahres uses that to argue real time is a change of medium rather than a speedup: before GPS you consulted a map somebody else had already made, and afterwards your own position became something you could act on continuously. He runs the same argument through film. Once a viewfinder showed you what you were shooting, you could adjust while shooting, and that is the reason Instagram and TikTok were possible at all.
+  
+  Generated video today sits on the wrong side of that line. You prompt, you wait, you get a file back, and there is nothing further to do with it. His definition of world models is not Gaussian splatting and not a longer clip, but video that is interactive, effectively infinite, and generated fast enough to steer, which he demonstrates by prompting a cat into a scene while that scene is still generating. What it unlocks divides three ways: control, which he sums up as instant feedback being the ultimate form of it; character driven worlds that reach past games into robotics training data and into education; and live avatars, which he is refreshingly candid are still not working properly. The engineering consequence is that none of the batch playbook carries over. You are streaming pixels rather than returning files, every session is stateful and has to remember what happened when a character looked away, and sub 100 millisecond latency means putting GPUs near users rather than in one region.
+  
+  Speaker info:
+  - https://x.com/Boudatw
+  - https://www.linkedin.com/in/ahmedahres/
+  - https://www.ahmedahres.com
+  
+  Timestamps:
+  0:00 - World models, defined as real time interactive video
+  1:44 - What happens when video becomes programmable
+  3:25 - Maps to GPS, and film to viewfinder
+  5:04 - Model one: infinite, interactive, real time
+  5:52 - Control, advertising, and instant feedback
+  7:32 - Model two: controllable worlds, robotics, education
+  9:13 - Model three: live avatars, not cracked yet
+  10:06 - What people are actually building on it
+  12:37 - Why real time infrastructure is not batch infrastructure
+  16:10 - Evaluation is still an unsolved problem
+---
+[music]
+
+Hi everyone. Uh welcome to the talk. First of all, thank you all for making the time. I know it's the last talk of the day probably or I think the last one is at uh 3:45, but uh yeah, thank you all for your time. I I know you're all probably very busy. [snorts] Um, today
+
+I'm going to be talking about something that is a little bit slightly futuristic, though not for San Francisco, and that's world models. Um, I know here it's written real-time interactive video, but the way we think about world models is really in real time interactive video. And I'll explain why. Um, and in today's world, I think world models is a little bit of a marketing term that people think about it from a gosh and splatting standpoint, others from video. Uh, but the way we define world models is really real- time interactive video. And I have strong
+
+evidence or like beliefs that this will actually change everything in how we produce and consume content. Oops. What happened? Sorry. Sorry about that.
+
+Cool. [clears throat] So if you think about video, video has always been something passive. Before people used to produce videos and movies and then we would watch it. And in today's world we have these models. the V3, the C dense 2 and what they do is you prompt them, you get back a file, you watch and good luck. It's a
+
+slot machine. You cannot change it, you cannot do anything about it. So there's a question that um we like to think about in our company is what happens when video becomes programmable like software and what happens when pixels can be generated in real time. Once this happens, it actually changes completely how we think about consuming content and even producing content. and I'll be talking about how in history we've seen that real time has always been the future and the kind of applications that it unfolded and how you can get started today.
+
+Quick quick background here. Um so my name is Ahmed. I'm the head of go to market at reactor. My background is in computer vision and machine learning. Um and I state machine learning because this is the time where we used to actually train our models. Um I built
+
+and shipped games on iOS uh on iOS and Android for fun. Um I was a founder. Um and today I'm the head of go to market at reactor and who we are quickly is we're a series A company building the platform for these real-time world models. So so far the main most of them have been still models but we are building the infrastructure and the developer platform to make them usable so that anyone can integrate these real-time interactive video and we can democratize access to this technology. I'll start with a problem. We can today
+
+generate pretty much anything, but we just can't change it, right? A generator video, as I mentioned earlier, is still a recording. You get it back, you can't do anything about it. And real time changes what the medium is. It doesn't just make it faster. And I'm going to
+
+talk about two examples that actually show us what real time has unlocked in the past. Before, in the 1950s and even before, we used to look at a map to know where we are. Someone produces a map, you look at where you are, and that's it. You cannot do anything about it. Then GPS came. GPS made it real time.
+
+Suddenly I can know where where I am at the instant and I can you know track it. Now you think GPS has just made it a bit faster to know where I am. But actually Uber would not exist if we did not have the GPS. Another example which is even a bit more powerful. I'd say before we used to to use the film to produce content, right?
+
+We had a film. Someone shoots something they can't see what they're shooting. They go somewhere, they produce that film, and then you can see it. And then it became digital. You can start seeing what you're shooting. If today you pick
+
+up your iPhone and you start recording a video, then you can see what's going on. And that's why we can produce high quality content. It's because you are able to see what's going on in the screen and adapt accordingly. That gave rise to in Instagram and Tik Tok. Instagram and Tik Tok would not exist if we could not produce high quality content. And the only reason why
+
+we're able to produce high quality content among many reasons is because we can see in real time what's happening. It's not a slot machine. We can actually just edit and see. And that's what unlocks all of these new use cases. So when video becomes programmable, you can address it. You can condition it.
+
+You can change it. I can show you on the screen whatever I want to show you on the screen. And it becomes programmable a little bit like software or like anything that is programmable in the world. And in in the market today we are seeing three kinds of models that do this. Some of them you will be familiar with others you will not be familiar with. The first
+
+one is these are VO think about VO or Sora but real time and interactive meaning that first of all they're infinite. So they don't stop after 5 10 or 30 seconds. They actually continue forever. They're interactive, meaning you can change what's happening on the screen, and they're in real time, so you don't need to wait to see what's going on. And assuming this works, so this is an example of a of a video that I passed an image with a dog, and this was all generated in real time. And at some
+
+point, I'm going to prompt a cat shows up and you will see that a cat showed up in the in the video. This would not be possible in the existing batch regular video generation models because you would get back the video and you cannot do anything about it. I could have added anything. I could have gone on to create an entire story with it. I could have said the cat the dog starts running, starts jumping, a dragon shows up, it goes to I don't know to the world cup.
+
+All of this would have happened in front of you. These type these types of models pro like unlock a few things. First of all, control. So if you think about generative media today, the big problem that content creators all have is I don't have the control I need. Like yes, it's great to use Cense 2 or VO3 to generate videos, but I just don't have the control. And this is always the
+
+thing that any filmmaker or movie producer or any content creator will tell you. And so real time actually ends the slot machine type of mentality and actually gives you the the control that you need. And a big saying I like to say is instant feedback is the ultimate level of control. And you we will never be able to have this level of control if we don't have real time. The second thing it unlocks, which you know, among other things, which is a field I'm not particularly fond of, but I think is going to be big, is advertising.
+
+If I can know what you looked for a minute ago, why can't I insert the logo of whatever you've been looking for? Why can't I produce an ad in real time in front of you? We don't need to produce pre-produce anything. Now granted, this is going to take some time because you know brands afraid of AI, afraid of uh you know if their logo has one pixel that is white instead of dark but it will happen eventually and so and I think at the moment that happens we will not be to need to produce any ads anymore. Everything will be happening in front of you in real time.
+
+The second type of model is the one that probably you're most familiar with. It's the Genie3 like from Google. These are models where you can pass an image and a text typically and you can control a character. They're fun. The first thing that you think about when you think about this is games, right? It's a
+
+character. It's a world. You can generate anything. But actually, it actually goes way far way beyond games. It creates entire new interactive experiences where combined with the first types of models that I talked about, we've already been seeing people in our community building a mix of games and and movies. If you've ever watched
+
+Benders Nash from Netflix, which is the game, the movie that you can pick your next scene, this is one of those things that gets uh that that becomes possible that you can control a character, you can control what's happening and create entire new types of interactive experiences that were not possible. The second thing is robotics. So because you can simulate and you can control, you can actually create as much training data as you want. And robotics, world models in robotics is actually a ginormous market today. Um I cannot tell you the number of robotics labs that um are training and building these models.
+
+But because you can control whatever you want to control in any environment, this creates a new opportunity to generate infinite amount of data for robotics. And finally, something I like to think about, this is more maybe a passionate thing that I have is education. Um, because you can step into anything who with today's world in AI, I don't actually believe that educ in the future of education is LLM based or textbook based. If you can put any any kid in the situation, for example, in a history lesson, that enables entire new types of educ experiences that uh can be educational. The third type of model is probably the type of model that you know is more, let's say, um, something that we've been seeing before, which is avatars, but live and interactive. The thing with
+
+avatars, though, is it hasn't actually been cracked. They're still all kind of weird. If you speak to an avatar in any customer support or anything, it's still kind of off, right? Um, and these types of models, and we're seeing a rise of these live and interactive avatar models in research preview, that combined with model one and model two is actually going to be, I believe, a a big change in what we've been seeing so far. And this will be applied to things like customer support, training, sales, gaming, streaming services, etc.
+
+And so just just to give you a glimpse of what our users are building today at Reactor with these types of models, some of them are building interactive live stream, right? A live stream where people are watching and then the users can type what happens next and then they vote. Why? Because pixels can be generated in real time. So there's no reason why I cannot put a live stream on X, YouTube or Twitch and enable users to pick what happens next.
+
+Something that was surprising to me is a little bit on on the medical simulation. So we've seen users create applications where you generate a world and then you simulate what happens next. What if I put this medicine? What if I remove this medicine? Right? And this creates can be
+
+a training playground for people wanting to become doctors. The third one which is also kind of surprising is cooking simulation. So people are building applications where you can simulate cooking and what happens if you put this ingredient. And finally, video editing. With videotovideo models, video editing becomes very interesting because I'm able to just add visual effects in real time. And we've seen people build entire
+
+video edit editing platforms. Now, granted, they're not very good yet just because of the quality of the models, but it's a new paradigm when you're able to edit videos just via prompting or via talking to it or via clicking. And now for the final part, how do you actually do all of this? And this is why I like to save the world behind an API. At at Reactor, we have four types of models today. First one is called
+
+Helios, which is the interactive video model that I talked about. This one is from Bite Dance. Lingbot, which is a world model like Genie 3 trained by Alibaba. Long live 2 from Nvidia, which is multi-shot film. You can prompt things in advance and create a consistent story over time and sound streaming also from Nvidia which is a model that does video to video editing. So people are already
+
+using this for example by shooting something or creating something on CDE 2 uploading it and then adding visual effects removing people adding background and this be gets very interesting in previsualization for example for Hollywood movies and under the hood when we talk about infrastructure the thing that I think I like to drive home is building infrastructure for regular video generation models is very different from real time because in regular video generation models, you're talking about requests. You just send a request, a job gets run in the cloud, and I'm oversimplifying here, but you know, a job runs in the cloud and it gives you back a file. With real time, it's a different ballgame. Uh you cannot just take what works for batch inference and apply to real-time inference. For example, you need to think about streaming, right?
+
+Once you need to think about streaming um pixels uh from a server to the client um it adds entire new entire complexities that batch generation does not have to think about. The second one is that everything is a live session. So everything runs constantly and there's memory to be kept into account. Now granted one of the things that live vid live realtime models struggle with is memory. If you've seen demos from Genie, for example, we've all seen that the character can look back and then not remember what what's going on. So, there
+
+is a lot of work that needs to be going into maintaining that context window so that you can remember what happened if you turned your character left and right. And finally, global scale. If you if you're think about real time, it needs to be sub 100 millisecond latency anywhere you are. And if you're deploying applications in the world, then someone based in India or someone based in Japan should be routed to a GPU that is based in India or Japan or as close as possible to it. If not, if you don't have the compute worldwide, then the experiences are not real time anymore and it breaks completely the medium.
+
+And with Reactor, this is as easy as it gets to integrate these real-time mods. Okay, I kind of maybe oversimplified it a little bit here, but it really is maybe 10 lines of code. Um, and we have docs to do all of this, but essentially you can just load the model with an API key and just start integrating it in whatever video, image, plugin, anything that you're building. And if you want to get started, there's a QR code there. And I've added a promo code AIE 2026, which will give you $75 off. Well, $75 worth of credits, which
+
+is um significant amount of compute uh in our case because we make the models extremely cheap. Thank you very much. [applause] I'm happy to take questions if anybody has a question.
+
+>> Okay.
+
+uh well one thing that actually we do is multiGPUs. So we use multiple GPUs. Um optim optimizing the model weights applying quantization techniques. So there are ways it's just a matter of priorities but it is uh there are ways around it. Yeah good question though.
+
+Hey. Yeah.
+
+>> Sorry. >> Are you aware of what the >> uh No. >> Okay.
+
+>> I wasn't, but now I'm going to look at it. Yeah. [laughter] Yeah. >> How do you feel like?
+
+>> Yeah. >> Yeah. Do you guys experiment with that? >> When you say deterministic engines, what do you mean exactly? any kind of like deterministic rule set that you check against maybe so that the simulation stays
+
+>> so we don't do any of that today um the reason why also we build a developer platform and but we've seen people build that on top of us um building the infra for this is already a lot of work um and I think we we were seeing already developers building and then open sourcing and then we reuse it um but so the community is doing it for which is even better. >> Yeah. Question. Yeah.
+
+>> Uh you're asking a question that the entire research community in world models has not answered. You're evolves for real time and consistency is uh and fidelity. Well, fidelity is easy. It's just like pixels, right? But um evaluation for these real-time models is an unsolved problem. So today it's
+
+literally just look at it and human judgment. That's what it is today. And this is including by the way J deep mind and everything. Nobody has solved this problem yet. We're working on it. We have a research
+
+team. Yes. [laughter]
+
+Awesome. Cool. Well, thank you everyone. Thanks for your time.

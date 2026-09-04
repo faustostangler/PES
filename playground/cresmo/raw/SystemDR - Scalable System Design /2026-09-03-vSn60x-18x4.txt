@@ -1,0 +1,25 @@
+---
+video_title: "Why \"Design Netflix\" Isn't About CDNs #systemdesign #shorts #netflix #cdn"
+video_id: vSn60x-18x4
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=vSn60x-18x4
+video_date: 2026-09-03
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-netflix-streaming-the-senior
+  🌐 Visit our website: https://systemdrd.com/
+   
+  The interviewer isn't testing whether you know what a CDN is — here's what they're really scoring.
+   
+  #systemdesign  #NetflixInterview #techinterviewprep  #codinginterview  #softwareengineer  #faang
+---
+Do the math before you design anything because one number in this estimate decides whether a CDN is optional or mandatory. Netflix carries roughly 36,000 titles globally, each stored in about 20 renditions, [music] different resolutions, codecs, and bit rates at an average of 4 GB per rendition. Multiply that out and you land around 3 PB of encoded video sitting in object storage with metadata like posters and descriptions adding a trivial few terabytes on top. Now the harder number and the one that actually matters in the interview. >> [music] >> At peak, Netflix serves somewhere around 50 million concurrent streams averaging roughly 5 Mbps each once you blend standard definition and 4K viewers together. Multiply [music] concurrent
+
+streams by average bit rate and you get approximately 250 Tbps of peak egress bandwidth. That figure alone is worth stating out loud in the room because it's roughly 15% of all downstream internet traffic on the planet at that moment. Netflix is one of the largest single sources of internet traffic that exists. No single origin, no S3 bucket, no data center, no matter how well provisioned, can serve that directly. A distributed CDN edge network isn't a nice-to-have here. It's the only
+
+architecture that survives contact with these numbers and deriving that conclusion from the estimate rather than just asserting we'll use a CDN is what makes this feel like an engineering decision instead of a buzzword. Four APIs matter for this system but one design decision buried inside them carries almost the entire signal. When a client calls playback start, the response does not include a video file URL. It includes a manifest URL. That's the whole adaptive bit rate architecture compressed into a single field name and walking through why before you move on to the next endpoint is exactly [music] the kind of thing that separates a senior answer from a mid-level one. The
+
+manifest is a small index file, an HLS or DASH manifest, >> [music] >> that lists every segment at every available quality level along with byte offsets and durations. The player fetches this manifest first and only then starts requesting individual segments from it independently as playback continues, adjusting quality segment by segment. The second signal worth calling out explicitly is the heartbeat endpoint. Every 30 seconds, the player reports back its current position, current quality, buffer health in seconds, the number of rebuffer events, and its own live bandwidth estimate. Netflix doesn't stream and forget. That telemetry stream is the
+
+basis for quality of experience monitoring across the whole fleet, for AB testing new adaptive bitrate algorithms against real traffic, and for catching a degraded CDN node before a single human ever files a support ticket about it. Candidates who volunteer the heartbeat endpoint are signaling that they've thought about the operational layer, not just the happy path of pressing play.

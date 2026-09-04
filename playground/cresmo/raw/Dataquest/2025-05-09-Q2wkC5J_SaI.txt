@@ -1,0 +1,291 @@
+---
+video_title: "Predict Insurance Costs with Linear Regression in Python [Machine Learning Tutorial]"
+video_id: Q2wkC5J_SaI
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=Q2wkC5J_SaI
+video_date: 2025-05-09
+video_description: |
+  In this video, we will guide you through how to develop a linear regression model in Python to predict patient medical insurance costs.
+  
+  You’ll step into the role of a data analyst at a hospital administration, using real-world patient data, including demographic and health information. By the end of the session, you'll have a complete understanding of how to build, evaluate, and interpret predictive models to support strategic decision-making. [This project is ideal for learners comfortable with Python, pandas, NumPy, Matplotlib, Seaborn, and intermediate-level data science concepts.]
+  
+  What You'll Learn:
+  - How to clean, explore, and prepare healthcare data for analysis.
+  - Techniques for building and interpreting linear regression models.
+  - Methods to assess model performance using diagnostic techniques.
+  - Ways to draw actionable insights from your predictive model results.
+  - Practical Python techniques to apply to real-world healthcare projects.
+  
+  Recommended Prerequisites:
+  - Python Basics for Data Analysis → https://www.dataquest.io/path/python-basics-for-data-analysis/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-predicting-insurance-costs/
+  
+  Video Chapters:
+  00:00:00 - Intro
+  00:06:06 - Project Brief
+  00:07:27 - Loading and Inspecting the Data
+  00:09:52 - Exploratory Data Analysis (EDA)
+  00:24:28 - Building the Linear Regression Model
+  00:30:16 - Evaluating Model Performance
+  00:33:28 - Analyzing and Interpreting Residuals
+  00:39:43 - Refining the Model
+  00:49:26 - Audience Q&A
+  
+  #MachineLearning #pythonprojects #LinearRegression #Python #DataScience #HealthcareAnalytics
+---
+So let's get this started. Once again, hello. My name is Anna Straw and I am a senior course developer for DataQuest. And today we are doing a dataquest project lab for predicting insurance costs using machine learning. So a quick introduction of myself. My name is Anna
+
+Straw and I used to teach math. Um, I have this lovely math mug here from when I was teaching and I did that for eight years until I made a career switch and I was a self-taught data analyst for three years. I actually used data quest as a learner before I worked here and um, now I get to do the best of both worlds. I get to teach and I get to do data. So that's who I am. And now I want
+
+to know if you're in the right place. Uh because this is a machine learning webinar, it's going to be a best experience for you if you have some fluency with our more basic Python skills like list loops and functions as well as some um understanding of our data analysis Python libraries, pandas, numpy, mapplot, lib, and seabboard. So if these are less fluent for you, but you understand data frames um and some of the basic plotting methods, that's going to be really valuable. And it's also important to have a little bit of understanding of the machine learning workflow, but that's not essential because we're going to be going through all of that today. So, just to get a little bit of data because we all love data here, I'm going to launch a quick poll with two questions so I can best tailor this webinar to the audience we have. The
+
+first question is just knowing if you joined for a webinar before. Um, and also the second question is what's your experience with machine learning? So, I'll let that run for a couple seconds there. Go ahead and let me know what your answers
+
+are. All right, let's wrap that this up and I'll share the results. So it looks like um the majority of folks this is your first webinar but if you are back welcome back I'm glad that uh you are joining us again. And as far as machine learning experience the majority of individuals looks like 85%ish is new to machine learning or knows the basics. So this is a great webinar. You're in the right spot. And
+
+if you are an intermediate or expert in machine learning, I highly encourage you in the chat to engage with people and answer any questions you see there because this is a community of learners and let's help each other out. So before we move on further, a couple housekeeping things. If you do have questions for me in particular, please use the Q&A box instead of the chat box because as you can see, the chat box moves really quickly and I might miss your question if it's there. So, please do use the Q&A box for me and I will answer those questions towards the end of the webinar. A few other things. We often get asked if this
+
+webinar is being recorded. Yes, it is and it will be shared out um via a link tomorrow and then available on YouTube as well. Um, and the final thing that's really exciting about this webinar in particular is we're going through a premium data quest project which has been made open and free for you guys for a week for this webinar. So, it's been open this week and the final free day is tomorrow. So, if you see something exciting in the webinar today and you want to use the data quest platform to dive into it and you have a free account, tomorrow is going to be the last open day for that.
+
+Um, so just a little bit of housekeeping. Now, let's jump in. Today, what we're going to do is we are going to introduce what this project is about. We're going to do some exploratory data analysis, then prepare our data for modeling, build the model, and then interpret and explain the results. And I think the majority of our time is going to be spent on that final bullet point of what do these results mean? Because they're pretty
+
+interesting. But before we get started, I I forgot there's one more note, one more housekeeping thing because this is another question we get asked very very frequently. Why are we doing this when AI can do it? And it's valid. It's a valid question, but the thing is doing a project without AI or just with AI as a supplement or a support gives you so much more value. It builds
+
+your debugging capabilities. It builds your programming skills. It helps you understand especially from machine learning where models are strong and weak. And machine learn or um AI can only nudge you in the right direction so far for machine learning. You you need to make the judgment calls of how to refine your model, how to make decisions there. And then a lot of people who use
+
+Sata Quest are career seekers or you want to um you know switch careers like I did. And when you're in interviews, you're going to be asked about projects and you're going to have a much stronger understanding of your project if you do it by hand. Um, that's not to say that's not to vilify AI. I use AI as a supplement. I did for this project, and I'll point out where. Um, but I strongly
+
+encourage you to have the majority of your code be code that you've written and you understand. All right, project brief. So, what we're going to be looking at today is a medical cost data set from Kaggle. And we're interested in knowing how different characteristics of individuals such as age, gender, BMI, which stands for body mass index, how these things potentially relate to an individual's total medical cost. And this is very applicable to the healthcare industry because predicting medical costs allows hospitals and insurance companies to properly plan for their budgets and being able to accurately predict how much money a patient may need to spend is going to help them allocate those resources.
+
+Okay, now we are going to jump straight into the project. So I'm in the data quest interface here. I saw someone in chat ask about the data set. If you are in the data or data quest interface, insurance.csv is going to be that file for you. You can double click it to take
+
+a peek. Or if you do prefer to work locally, you can rightclick and download from here. You can also use the Kaggle data set like someone shared in chat. Okay. So the first thing we need to do is make sure that our data set is in our Jupyter notebook. So I am going
+
+to begin with importing all of our libraries. And just to talk through this a little bit better, I'm going to put it put this one uh in a different order. So here we have our pretty standard data analysis libraries. We have pandas for our data frame, numpy for some mathematical operations. We're going to do uh mapplot lib and seabour for v vis visualization.
+
+And then we have our scikitlearn um modules that we're importing different classes from. So, train test split for splitting our data, linear regression, which is going to be the model we're using today, and then some evaluation metrics to see how our model performs. And those loaded in successfully. So, let's get our data into Jupiter. Pretty pretty quick here with the data analysis because I want to spend a ton of time on the machine learning portion. So, we're reading in
+
+our CSV using the read CSV method and taking a peek at the first five rows using head. And we can see it's a pretty um I was going to say small data set, but just the columns. There's a small number of columns. Age, sex, BMI, children, smoker, region, and then our dependent variable that we're going to be trying to predict is charges. So, um, just to break down a couple of these variables if they're unfamiliar, uh, BMI is body mass index. And I
+
+believe this is calculated from height and weight. Um, and there is some conversation in the medical world whether this is valuable or not, but it's something that we have in our data and we're going to determine whether it's valuable or not for our predictive needs. Children refers to how many children the individual has. I think it's zero to five in this data set, whether or not they are a smoker and then what region this person resides in. And charges refers to the amount of money for a calendar year. So now let's dive into a little
+
+bit more exploratory data analysis. If you are newer to machine learning, this is a really important step because if you don't know your data, you're not going to know if your model well, first of all, you're not going to know what to include in your model. And second, you're not going to know if your model is doing what it needs to do. So, I really like looking at the info method. Oh, thanks Mike in chat for showing the BMI calculation.
+
+Uh, okay. So, info I really like because it tells us how many rows we have in our data set. It also tells us how many columns. And this is a really clean data set. There are no missing values, no non or no null values for any of our columns. And for data types, there are a
+
+couple we'll need to address because for linear regression, which is the model we're using, we need to have numeric data. But right now, sex, smoker, and region are all an object data type, which means they're strings or categoricals. So that's something that we're going to have to keep in mind as we continue. So, let's dive further into our numeric variables by looking at the describe method, which will include a lot of our summary statistics. And what I really like to do here when I kind of am exploring the data is I like to compare the mean to the median because if there's a big difference, it will potentially pinpoint some skew. So for example, age our mean
+
+is about 39 and our median is also 39. This is a potential signal that this particular variable is evenly distributed which we'll confirm with some visuals later. Um BMI similar mean is 30 median is 30. The children mean is one, median is one. But charges this is telling here the mean of charges is about 13,000 whereas the median is 9,000. That's a pretty big
+
+difference. So we're going to want to evaluate if there's skew happening. when the mean is very different, it means that there could be values pulling the mean one direction away from the median. Um, and especially because this is our dependent variable or what we're trying to predict, skew is going to have a big impact here. Um, some other quick things to check that aren't a huge issue with this data set is comparing the min and max values because it could signal outliers, but everything in this data set's fine for that.
+
+So let's take a look at this charges data visually to see if there is any skew. And I'm making a quick histogram um from our insurance data frame just looking at charges. Wow. Yeah, that is very skewed. For reference, we want a normal distribution which is that nice bell curve we usually see in normally distributed histograms. This is not
+
+that. So before we continue, we are going to want to um transform this column. And here's how we're going to do that. We are going to use a base 2 log. And what we're doing, this is numpy.
+
+Um and we are applying base 2 log to our charges column. So that our large values kind of uh chill out a bit and our small values shrink a bit. And now if we were to look at a histogram of the log charges, it's much more normally distributed. Um and I see someone in chat asking why we want a normal distribution. And it's important because if we are asking our model which is based on a straight linear regression if we're asking it to predict something um it's it's important that everything is predictable in a in a linear fashion which normal distributions are more valuable for.
+
+Um okay. Oh and this is a great question. Um, Joyce is asking why a base two log. It actually doesn't matter a ton whether I use a base two log or a natural log. Um, just either of those really helps with this particular shape of skew. If
+
+you don't believe me, I highly encourage you to change this. just delete the two and test it out with the log and your values will be slightly different from mine, but the overall model will perform very very similarly. There is one important thing that we'll need to account for if you choose um a base 2 versus a natural log. So I'll get to that when we do. Um all right. So now let's continue with our
+
+EDA, our exploratory data analysis by looking at some correlations and correlations. Here I'm including the original charges column and the log charges column just to see if there's any differences here because it's all based on the same data and we would expect that these correlations would be similar. So if there are big differences in the correlations that could indicate something is up with that column. So, for example, um age correlations for charges versus log charges, they're both, you know, moderately strong correlations about 30% versus 50. Okay, that makes sense. Uh
+
+BMI about 19 20% versus 13 is similar enough. Children though, this is pretty different. We have six 7% correlation versus 16%. So uh in my opinion and you'll see in the model that I create I didn't choose children as a feature because on the original data it's not a strong correlation. Uh but you can experiment here. This is kind of
+
+where the art of machine learning can come in and you can see does it improve your model? Does it make your model worse if you include children as a feature? And to just to visually see correlations, I really like using a heat map from the Seaborn library. And we can confirm some of these visual or um correlations visually. And yes, we can see age very strongly correlated.
+
+um BMI it's it's a pretty weak correlation but since we have limited columns maybe we'll include it in our model and then children I addressed that for my particular model I am not going to use it but you are welcome to experiment with it now this next one is really cool to look at and also pretty fun another visual way to explore our data and this is with a pair plot uh pair plots. I will caution you though, it works very well for this data set because we have a limited number of numeric columns we're looking at, but pair plots are going to create a plot of every possible pair of numeric values. So, it takes a lot of computational power and can mess up your notebook if you are doing too too many columns. So, you can see I'm pulling the numeric columns here. I only have five, so it's going to work pretty well for a pair plot. And then seabour.pair plot. And we
+
+specify that we want to look at a scal scatter plot because we are really wanting to evaluate the relationships and correlations here. And then I set an alpha parameter which is just going to um increase the transparency of each scatter plot point so we can see any overlaps a bit easier. So let's let this run. You can see it's taking a moment. And look at this really beautiful graph.
+
+We can see uh that's kind of small, isn't it? I'm going to close this. We don't need to look at that anymore. Um and we can see here that we have the log charges and our charges columns with a scatter plot comparing each numeric variable. And already there's some really beautiful insight. The first thing I want to point
+
+out is because we applied this base 2 log transformation, we have this very perfect logarithmic graph for charges versus log charges. Um, some other interesting things is BMI looks fairly uncorrelated and that matches the correlation coefficient we found of about 13%. But there is an interesting grouping towards the top that we may want to investigate. Uh children because it is um oh I'm blanking on the word right now. It's a discrete variable. You can't
+
+have half of a child for this data set. Um that's why we have these bands here. But the really interesting one that we're going to want to keep in mind for the remainder of this project is age. Wow. What is happening with age? We
+
+have these three very distinct bands of ages in relation to charges. Uh and this does not seem normal to me if I'm being completely candid. Uh it's very possible that this particular data set is synthetic data. I couldn't find a 100% confirmation of whether or not it's synthetic or not. I recommend checking out the Kaggle data set. There's a great
+
+discussion there about where this data set comes from. Um, so it's it's possible that these bands we're seeing in age are from whatever equations and formulas the synthetic data set creators made. Uh, so something we're going to want to keep in mind. We can also see quick distributions um of our variables. So log charges we can see normally distributed compared to our charges. Looks like children is it's
+
+fairly skewed. Um BMI is very very normally distributed which is nice. There's a slight tail on the right hand side and age is a fairly uniform distribution which is is good. Um I see Edward and shot talking about bad sampling. This uniform distribution of age in the histogram seems to indicate that age sampling on the surface was okay, but there's clearly some banding happening with the charges.
+
+So, we'll see. We'll see. We'll continue our investigation here. So now that we've investigated our numeric variables, we do want to take a look at our categorical variables, which were uh sex, smoker, and region. And to do that, I'm going to use a box plot to visualize. There's several other ways
+
+you could do this, but a box plot will allow us to look at our categorical variables in relation to our dependent variable. So, let's see if gender is a determination um or not a determination. I misspoke there. Let's see if it it would be a good feature to use to predict uh medical cost charges. And looking at our box plot, medians are about the same. Um overall
+
+ranges are about the same. male IQR is slightly larger, but I'm not seeing any strong indicators here that could inform our model. So, personally, I'm going to rule this out as a feature. Let's do the same for our smoker variable. And this is very telling here.
+
+We can see that the uh yes smoker box uh has a much much higher median. In fact much higher just values for our lower cortile our upper cortile just everything is much much higher costwise than for a non-smoker. So we are most definitely going to include this as a feature. And our final categorical variable to investigate is region. And here we can see um there are four regions. Northeast, northwest,
+
+southeast, and southwest. Medians are fairly similar. In an investigation yesterday, a colleague and I were looking at this and he suggested that maybe east versus west had some notable differences. We can see east, northeast, and southeast have slightly higher medians than northwest and southwest. So maybe you want to do something with that. Um, in my investigation, I didn't
+
+find anything conclusive, but that doesn't mean there's nothing there, right? You could explore it further if you choose. Okay, exploratory data analysis is done. we have figured out that smoker is very important for um a relationship with the charges. And then scrolling back up here to our correlations for for me, I chose to use the age feature and the BMI feature based on their correlations. So with that in mind,
+
+let's get our data ready to model. Excuse me. Um, in my gist that is provided in chat, there are a couple areas where you can see my explorations that I did when I was preparing this presentation. Um, these are commented out, but you can see that I did I did investigate northwest versus um or west versus east with this line. Um, but for this webinar, I'm I'm not going to use those. Okay.
+
+So because smoker is originally a categorical variable and we need everything to be numeric for this machine learning model. I am simply converting it using a conditional here and saying if the smoker value was yes uh then make it equal one in a new column called is_moker and then we are selecting our age BMI and is smoker variables for our X our independent data and then we are using the log charges for our Y or dependent variable which is going to be our predict predictor, right? And train test split. We are using the train test split function that we imported from scikitlearn. And the reason we do this, if you're new to machine learning, we like to split our data into training data and testing data. And this allows us to create our
+
+model using our training data but then see if the model works on brand new data because in some cases um the model hyper tunes in right it kind of overfits is the word to training data but on brand new data it it's not very useful. So we want to account for that by splitting our data set into these two groups here. Um and then let's see I'm choosing 25% of the data for the test size. And then for reproducibility, we choose a random state here. I chose 42. Okay. So now that we have split our
+
+data into our independent and dependent train and test, we are ready to build our model. So in order to build a model, we instantiate an object from the linear regression class that we imported from the scikitlearn library and I'm calling it insurance model. Now this is an object. It's it's it's a variable but it's an object. So it can store attributes and it can have um methods aka sort of functions called on it which we're doing right here on our insurance model. we are fitting our training data.
+
+So we're fitting it with our independent variables that are going to predict our dependent or y variable. And just to see a little bit visually what's happening here, we're going to look at the coefficients because we are using linear regression. Um, if you're familiar probably in middle school or high school, grade school, you learned about y= mx plusb slope intercept form. And coefficients are the part that can influence the slope of a of a line, right? Whether it's steep, whether it's shallow, whether it's negative. Um, so
+
+we can take a peek at our coefficients here. And we have an array with three numbers in it. And these three numbers correspond with our three independent variables. So the coefficient for age is about 05. The coefficient for BMI is 016 and the coefficient for smoker is 2.2.
+
+So smoker's coefficient here is much much larger which means um we can start to think about our model and for this model if you're a smoker or not is a very very strong indicator of how much money you're going to owe um for medical insurance. So now that we've trained our model, we want to predict um or I'm sorry, now that we've fit our model, we want to predict. So we're going to use the predict method with our training data um but just giving it our independent variables. And we're going to set this to our Y predicted values. So our model is doing its thing. It's
+
+calculating for each row in our X-RA data what the charge value should be. And if we want to take a look at that visually, we can do that. Let's just There we go. And we can see we have an array with values here. Now remember these are the U base 2 log scaled values. So everything is going
+
+to not have a bunch of um like inherent meeting meaning because money this this doesn't make sense for an insurance charge. So one of the steps that I encourage us to look at from time to time is to undo the log transformation so we can see if the money numbers make sense. So we'll do that in a moment. Uh so now that our model has run and made some predictions, we want to evaluate it and we're going to look at mean squared error on our training data. And because it's on our training data, we want to specify it's the training MSE because there isn't a lot of inherent value here. Um because it was trained on
+
+that data, the the number here should be good. So when we run this um we get4479. What does that mean? So this is an area where we are going to want to undo the log transformation. And this, if you're following along with my notebook, I made a typo. We should use um x 2 here
+
+because we're using a base 2 log. we need to undo the base 2 log with um an exponent two to the power of. So when we do this we get 1.364 as our training mean squared error. Um so a bit of information here.
+
+The error is basically what is the difference in value between the actual y training value and the predicted y value. And the reason it's squared is to really emphasize um larger differences and penalize them more. It also helps account for the negative values to un ungify them and make them positive. Um so that when we do the mean we get a very accurate picture of what the error is. So if we're talking about money having a a mean squared error of 1.36 that seems pretty good on the
+
+surface, right? We're talking insurance thousands of dollars. A 1.36 error is is okay. So maybe our model's perfect. Maybe our model's perfect. We
+
+have a couple more ways to evaluate it, though. So let's not get our hopes up yet. We're going to look at the um R2 value. And um this is the Oh, my brain is blinking. But it is a way to determine um how much variance our model allows for and I think it makes sense once we see the percentage here.
+
+So our model as of right now accounts for 74% of the variance in our predicted values. So there's there's fairly good predictive capability here. Um Edward, thank you. Coefficient of determination. Yes. So
+
+our model is determining about 75% of the of the predictions. Um so so far these metrics are looking good, but here's where we hit a snag. We're going to look at residuals. And um let me I'm going to pivot over to show you a quick image of residuals. And so this is not our data. This is for
+
+teaching purposes. Residuals are how different um actual and predicted values are from each other. So in linear regression we are trying to fit everything onto a straight line. And you can see in this graph on the left hand side we are plotting predicted versus actual values. Um and they hover pretty closely to a line. That's nice.
+
+Residuals are how what like literally it is what is the difference between the predicted value and the actual value. So if an actual value is 10 and your prediction is 10 the residual is zero. If your actual value is 10 and your predicted value is 11 the residual would be one. And because um we see oh negative one thank you Mike. Um because we see that in this actual versus predicted graph there are points above and below the line. We
+
+expect residuals when plotted to be pretty random. Zero is where the center should be kind of focused around. There should be points above it. There should be points below it. No rhyme or reason. And
+
+if there is rhyme or reason to a residuals graph, that could pinpoint an error and maybe linear regression isn't the right method for the data. So with this in mind, let's take a peek for our data in our model. And the first thing we're going to do is plot our actual values versus our predicted values. And just to make it a little easier on myself, I'm making a plotting data frame um where I have predictions versus actual. Um these are not going to be columns in the data frame along with our independent variables for each row. And then I have
+
+created a column called residuals which is our actual values minus our predicted values. So let's look at a scatter plot of predictions versus actuals. And remember, just remember, we should have this be a somewhat straight line if linear regression is doing its
+
+thing. Okay. Well, that's that's a little concerning um because a straight line is what we're looking for. And we can see that we have a curve here. Um which indicates potentially linear regression is not not a good fit here. Or if it's not a if it
+
+is a fit, we need to make some really significant changes to our models to try to flatten this out into a straight line. Uh just to emphasize a little bit further what I mean here, let's add in a straight line. So this dotted line is what we would expect um our points to follow around. If an actual value is 12, the predicted value would be 12. If the actual value is 13, the predicted value would be 13 and so on and so forth. And we can see that
+
+about half of our data points are above and half are below the line. But it's clearly not following the same pattern. So this is the first flag that something could be incorrect with our model. And um we're going to want to dive in deeper. But let's check the residuals out because maybe the residuals tell a different story. And remember, when
+
+we're looking at residuals, we want to see no pattern. Oh, that's not the right copy paste. So, this is the scatter plot again, but this time instead of doing actual versus predicted predicted, we are doing predictions versus residuals. And this is not random. Uh this is very much not random.
+
+Um we can see some clear patterns happening and uh this is not looking good for linear regression. Um so it's at this point that if you are just wanting to do this project to get a bit of experience with linear regression, you could stop and call it a day. However, I I wanted to investigate a bit further. Um, so if you're following along with my notebook, I'm going to skip down a bit just for time. And just to thoroughly finish this model off, let's do some metric evaluation um using our mean squared error, but this time we're using our test data. And
+
+this will see if our mean squared error is similar different to our training mean squared error. And our training mean squared error was 044 um with the base log base base 2 log uh and this is about 045 and then when we convert it back into our original form 1.36. So the mean squared error is very small but the residuals are telling a very different story. So, I think a couple people in chat are asking about biodal. Like, yes, there
+
+are a lot of kind of I I call them spider senses, right? If you're a fan of Spider-Man, uh there has to be something here explaining what's what's going on with this actual versus predicted chart. Um, and one that I found very interesting, no, that's not the right place here, is I'm going to add a hue to this scatter plot. And I'm going to base the hue on whether or not the individual is a smoker. And this will color code points in the plot to this extra variable. And be prepared to
+
+be a little bit amazed. Wow, there is something significant happening here where smoker versus non-smoker is almost entirely segmented right around here. Um, still doesn't explain this kind of odd band at the top, but but this this is stark. I was talking about this project with my husband and I showed him this and both of us just like were like whoa what's happening. So I chose to continue my analysis with a separate model because it it almost appears looking at this graph that smokers if we just look at the smoker orange points here those are fairly linear. Uh yes there's this weird
+
+banding but the points themselves seem linear. So my prediction or my hypothesis rather was that if I separate out the smokers um into their own data set and I make a model just for smokers, can we more accurately predict insurance cost? Because it seems here that smokers versus non-smokers have two very very different insurance cost models and maybe they're mixing each other up. Um and Thomas in chat, yes, I think that is the spoiler for where this project could go next is uh if you just if you joined a bit late when we we're looking at our pair plot, our pair plot versus age, we can see these bands and I have a very strong suspicion that these age bands are influencing um these bands we see here. So, for next steps, I have a couple recommendations there, but I'm getting ahead of myself.
+
+No worries, Thomas. No worries. Uh, it's a good spoiler. These are the types of things I I think are very important to think about all along the process of machine learning. So, okay, where were we? Where were we?
+
+Okay. Um, I am going to just create a new smokers only data frame. And the way I'm doing this is I'm pulling only rows where smoker equals true. This is going back to our original data set. This was a very quick quick calculation I did. So
+
+if I'm not using all best practices, I apologize. For example, this next line uh probably not the best practice because I'm reassigning variables and it's not going to it's not going to play well with where we uh split our data earlier. So if you do play around with this um be aware that this cell will be overwriting our X train X test variables from earlier. Okay. Um so you can see here because we are already filtered on smokers. I'm not using that as one of
+
+the independent variables. I'm just using age and BMI. All right. And once again we are instantiating a linear regression object fitting it looking at our coefficients and then we are going to make some predictions. I'm doing this really quick because we've already done this process. Um now here's where things
+
+are kind of exciting in my opinion is let's look at the training MSE. Remember before it was about 044 now it's 07. That's pretty good. That's pretty good, but it's training MSSE, so you know, we don't want to get our hopes up yet. Um, let's look at the coefficient of determination just to see if it's slightly better. Yes, before it was
+
+about 74%, now it's about 76%. So, a slightly better model. And if we look at our graph um just just as a reminder our graph here had these very split bands very nonlinear uh so if we are just looking at smokers do things get better slightly slightly um so in fact let's add in that sorry if I'm scrolling fast Here, I'm going to add in that 45° angle line just to see. And we don't need it that long. Um, if it fits a line a bit better. Okay, I
+
+can I can uh start this at 13 to clean the chart up a bit. And we see that maybe it is slightly better. Maybe it's slightly better. There's still a clustering here which I I think that it is related to those age bands. I really do. Um but I did not complete that for
+
+my particular analysis. That would be a next step, a really exciting next step that I would encourage everybody in this call to go ahead and do. Um and if we look at the
+
+residuals, well, they're not perfect. They're not perfectly random. It is much more random than the residual plot from above. We still have a couple issues here, which means that um our model is it's not treating all the data the same. Um so there is more refinement to be done but in general this residual plot is much much better. And then the final thing that I
+
+think is interesting to look at is our test MSSE. Our mean squared error on our smokers only test data is 09 whereas before 045. This is substantially different and this is very exciting. So a smoker only model is doing a much better job at predicting cost. Um all right. So in my gist, I also
+
+included an investigation where I added more weights based on our independent variables. Uh I'll copy it over, but I'm not going to go into depth here just so you can see if you want to peek at it later. um where I was experimenting where do interactions um between variables if we give those more weight does that matter would that help? Um and so this is an idea for a next step if you want to try to refine the model. Um speaking of next steps here here's a couple more recommendations. So the first one add
+
+interaction terms which I just briefly demoed uh feature engineering consider consider some nonlinear transformations. So because there was clearly some kind of nonlinear issue happening with our actual versus predicted models and our residuals were showing some weird um correlations. Maybe adding some different transformations to features here could make the model better. You may also want to try polomial regression uh to help capture those nonlinear relationships better. And then here's the one I really want someone to do.
+
+This is the homework. And then please tag me in the data set or data quest community if you do this uh where I think if you cluster by band or by age and then train a linear regression model using those clusters you might get some very very valuable information. Someone in the data quest community actually did do this um and I recommend checking their project out. Let's take a quick peek at that actually.
+
+Uhuh. I think it was this one.
+
+Um, there we go. And I won't show their whole project because that's for you. But you can see here they did um they accounted for these weird bands with groups and clusters. And uh it's it's yeah they they have a cluster for these higher charges, a cluster for these middle charges and a cluster for these lower charges. And then for their model they used these clusters. Um so when
+
+they were selecting their features they included clusters here and um no spoilers but the results are pretty exciting. Okay at this point in time I am going to answer some questions. So, if you have questions for me, please drop them in the Q&A and not in the chat because chat moves very quickly and I don't want to miss it. All
+
+right. All right. An anonymous attendee asks, "Why do the train tests split of 7525 exactly?" Um, there isn't a hard and fast rule here. Um if we go back to our EDA step, we can see that we have in our original data uh 1300 rows. So it's it's a decently
+
+sized data set for using this particular model. It's not too much data, but um splitting off 25% of that to testing is okay for the amount of data we have. In general, you want to have the majority of your data used for training and a smaller chunk used for testing. But you can experiment with different numbers here. See if a slightly larger training set or a slightly smaller training set impact your results. Um hopefully it doesn't
+
+impact things too much because then we could run into some fit issues. Um but anything from 15 to 30% depending on your data set size and um the complexity of your model. You can experiment here. This isn't a hard set number.
+
+Um, an anonymous attendee from Kenya asks, "How do you just look at the graph and know that your problem doesn't need, let's say, a logistic regression?" Yeah. Um, so you could try logistic regression with this because it does kind of appear like maybe some kind of logarithmic um relationship between predicted and actual. So that's definitely an idea. [Music] Um but it is possible that because of the variables we have um just any kind of like linear logistic model isn't going to work. Um you could try a
+
+different model entirely. Maybe some kind of I don't know decision tree. I I really think clustering is a great next step. Uh if you do want to make this regression type of model, have a good
+
+try. Um and then Dove asks, "You understand the Python stuff? Awesome. How do you get an understanding of the analysis part of this? Do you need a PhD in math or something? Most of
+
+it's totally over your head." Yeah, I mean data science and math are linked um integrally integrals. Get it? Anyway, um so understanding math is very important and in fact in our data science path with Python before you get to this project there's an entire course on math because you need to understand how um graphs and coefficients work. So, if the math part of this type of project is the part that is murky, I definitely recommend checking out the math course.
+
+In fact, I can take a quick peek and show that. So, you can see I'm in the data scientist path. Um, and then for machine learning in Python, uh, before you get to linear regression, there's calculus for machine learning and linear algebra for machine learning that talk about a lot of the things that, um, were touched on in this project. So linear systems um I guess we didn't really use any limits um explicitly in this project, but all of this math will help you more intuitively understand the linear regression that we talked about. All right, let's get back into our project. Uh Paru says you can do 8020 as
+
+well. I think that's referring to the train test split. And yes, 8020 for training versus test data here. Totally fine. Totally
+
+fine. Um, and Sarke asks, do you think there could be a difference if you run the test on real time data? So, real time data, I'm assuming that's um like a different data set with uh actual data like from patients um in a in a real hospital or with real insurance. Um, I bet there would be a difference because synthetic data is, you know, on the back end, a data scientist or a researcher, maybe a data engineer creating a data set based on on something. And if they don't make public how they created that data set, maybe they are using just their own um bias to create the more important variables or not. Um I mean to me it
+
+seems pretty intuitive that smokers have to pay more for insurance than non-smokers. Um, if we wanted to explore, oh, we don't want that notebook. We want this notebook. If we wanted to explore other things, remember this really interesting clustering we saw with is smoker in the hue. Um, we could do the same thing, but look at our other variables just to see.
+
+Oh, remember I said that our our smoker data set was going to cause issues. Here's it's causing issues. So, let me rerun these cells. So, it gets everything back into the correct state. There we go. And so, we can see
+
+um once again like it's very very clear that smokers are this upper quadrant. Um but within each individual quadrant, age is very very um pred predictive of um a higher insurance cost. Right? We could do the same thing with BMI. See if there's anything there. Um
+
+and once again, we see this cluster at the top is just very glaring. So, Sarah, to answer your question, if there could be a difference with real-time data, yeah, definitely. And I bet if you run it with real data, um, you wouldn't run into this similar banding issue. However, finding real time data that is reliable and, um, free and publicly accessible, that's the trick.
+
+Uh Muhammad asks, "Let us know which BMI standard is in use in this data." Uh and you checked Asian and Europe and they have different standards to measure. That's really interesting and I didn't know that. Um but I don't know. Um I don't know because the Haggle data set um if we can take a peek at that. I do really encourage everybody
+
+to look at the Kaggle page here, look at the discussions, look at other people's code. Um, but this data set comes from a book, Machine Learning with R, and they do not talk about how they got the data. So, I don't know the answer to what BMI it is. I think in general um we can feel pretty confident in saying that a higher BMI means that you have more fat to your height. Um or more weight to your height. I apologize. Um so the more
+
+weight you have relative to your height, the higher your BMI is, which um that relationship is what we're investigating. Now, I'm looking at my clock and we are technically at time, but I do have a few more questions. So, I want to honor people's time and if you do need to hop off, thank you so much for joining. Uh, if you could fill out the feedback survey, that'd be amazing. It really helps me out to know what's going well, what I could improve on. Um,
+
+and yes, thank you. So, if you need to hop off, I understand. So, let's see what other questions we have. And I'll stay just a few more minutes here. [Music] Um, Kala asks a great question. Where
+
+should you start if you want to combine different models as I mentioned before? So, um, I'll reference this wonderful data quest learners model here. So, what they did was they clustered first and to cluster they used uh, I think it was cines. No, it looks like they did a Gaussian mixture. So they did the clustering method first uh and used three clusters and then assigned those clusters into columns in their data. Um and then once their data
+
+set had new columns associated with cluster numbers then they did the linear regression model. So that's one option to combine models
+
+here. All right, looking through questions. I'm trying to like um pick questions I think will be the most valuable to the most people. But if I don't answer your question question here, please reach out to me in the data quest community. You can find me there as [Music] um show you my profile just so you can see my username.
+
+Um clearly I know what I'm doing. There we go. Anna_straw. If you just ping me or send me a message, I would love to continue the conversation there.
+
+Uh, Vishall asks, "In real world applications, how do you determine the optimal numbers of clusters when using unsupervised learning algorithms like K means, especially when the data doesn't show clear separation?" Yeah, this is a very special case where we could see three distinct clusters. Um, elbow rule is a pretty common way to determine cluster numbers. And in fact, two weeks ago in the last project lab, I did a project on Cayman's clustering where we talk about the elbow rule. So I recommend checking that out and you can see me discussing that in more
+
+depth. Uh Jean or Jean asks, "When we finish training our model, how can we show it and explain it to non-data scientists?" Wow, phenomenal question. I can't believe I forgot to address this if I'm being honest. So, let's talk about that really important question. So, where were we? Where were
+
+we?
+
+Um,
+
+okay. Here we go. So, we just ran. Okay, I'm trying to make sure that we're not in our smoker territory. Okay, here we go. Um, so this is just making a very
+
+quick data frame from our coefficients and our column names. And this is an optional step because we already have the coefficients stored in the coeff attribute, excuse me. But we can barely very easily see coefficients and what they correspond with here. Um, and because linear regression is based on the linear regression formula, what this means, I'm just going to make some empty cells to remove smokers from the visual here, is our log charges is equal to the coefficient for age, which is what about 0.05 05 times the value for age added with the coefficient [Music] 0.016ish for
+
+BMI plus 2.232 times whether or not they're a smoker um plus the y intercept. And the y intercept, if we think about this conceptually, um if your age is zero, your BMI is zero, and you're not a smoker, um that's what your y intercept should be. And if you have a BMI of zero, that's not possible. But this is where the model um differentiate or deviates from real life a little bit. It's mostly just used as a
+
+way to help us get a line that fits. Um so if we are to plug in values here we should be able to predict the charges and the most important thing here is the smoker coefficient is so much larger than either age or BMI. So it is the strongest indicator. It's a very very strong indicator of what the insurance charge will be. Um it's you know comparing 2.23 to 0.2
+
+two. The difference there is astronomical. So if you were to to share this with a non-data person, this is what I would focus on is those coefficients. Which coefficients are large? Which co which coefficients are small? And
+
+um what does that mean for the decision makers? for the decision makers if you're a smoker or not is going to be the strongest um
+
+predictor. All right, trying to comb through questions here.
+
+Um okay. So the rest of the qu questions I think are great candidates for continuing in the conversation in the community. Um so please do reach out to me there. I I love talking there. um we had someone do that after the last webinar. So at this point I want to
+
+thank everybody for joining and participating with some wonderful questions and um great chat and du of you said you thought you were smart because you taught yourself a lot of the map plot lib stuff and now you feel really stupid. I'm so sorry and please don't because this is everybody literally everybody in this call is on a learning journey and we're just at different points in our learning journeys. Um so seeing something new here doesn't mean you're stupid. It just means you know what your next steps are, right? Um so yes, thank you everybody. Please
+
+do leave me feedback with the links from my colleagues because it will help make the next webinar even better. Um yes, thank you so much for joining everyone.

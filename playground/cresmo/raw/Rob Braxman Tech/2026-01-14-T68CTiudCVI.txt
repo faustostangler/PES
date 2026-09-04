@@ -1,0 +1,168 @@
+---
+video_title: "Windows 11 QEMU/KVM Installation Guide in Linux Including TPM and Secure Boot"
+video_id: T68CTiudCVI
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=T68CTiudCVI
+video_date: 2026-01-14T17:00:51+00:00
+video_description: |
+  This video is a tutorial on how to install Windows 11 in a QEMU/KVM Virtual Machine. This is based on Ubuntu 24.04 as the host Linux system, using a Linux compatible Laptop (Lenovo Thinkpad X1 Carbon 2025), with a TPM emulator and UEFI/Secure Boot emulator.
+  
+  Windows 11 25H2 Download
+  https://www.microsoft.com/en-us/software-download/windows11
+  
+  Virtio-win.iso Download
+  https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso
+  
+  Installation Script for QEMU/KVM and Utilities
+  sudo apt update
+  sudo apt install qemu-kvm libvirt-clients libvirt-daemon-system virt-manager ovmf swtpm swtpm-tools virtiofsd bridge-utils
+  sudo usermod -aG libvirt $USER
+  
+  Windows File System Proxy (winfsp)
+  https://winfsp.dev
+  ----------------------------------
+  BraX3 Privacy Phone is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+Today we're going to learn how to install Windows 11 inside Linux. To some of you, this could be an old topic. However, even if you're familiar with some of the technology I will discuss today, it will be clear that Windows 11 introduces some complexities and it is a lot more difficult to do this than using Windows 10. The technology we're going to use today is based on virtualization, which has come a long way over the years. Using the latest techniques in virtual machines, the performance of a guest operating system can be up to 95 to 99% of the speed of the host system or what we refer to as bare metal.
+
+Installing Windows 11 on Linux can be mostly a flawless experience and with a few limitations, you can be running Windows applications within your Linux host with barely a hiccup. The steps to install Windows 11 on Linux is not super simple, but it is something that a power user should be able to manage. Some of you might ask why we would want to install Windows 11 when Windows 10 is simpler. And yes, if Windows 10 can work for you, this is indeed a long-term safe solution to running Windows 10 even without updates. However, we also know that some applications, notably TurboTax, will no longer run on Windows 10. So, some of
+
+you will want to stick to Windows 11 albeit for just a few apps. Using a VM to run Windows 11 is actually a simpler alternative than running Windows 11 and Linux in a dual boot scenario where you choose the operating system on boot. The reason this is complicated is that Windows cannot be trusted and without the steps I taught in a prior dual boot video, Windows can just willy-nilly wipe your Linux install. Doing Windows Linux dual boot also waste space on the hard drive as you have to leave reserved partition space for growth of each operating system. The biggest advantage of running Windows 11 in a VM is that you can corral its many unsafe features and tame it so that it cannot control your computer. You
+
+will always control it. You can shut down the AI features, limit access to the TPM, and use only a local account to eliminate any Windows telemetry. As a part-time user operating system, this will tick all the boxes. You can still have the performance and features of most of your apps and you can easily restore from backup if some dangerous update is released by Microsoft. If you use a method of operation I call immutable Windows, you can even be immune from malware when using Windows and safely have it managed by Linux.
+
+Let's get started. Stay right there.
+
+Technology we will use. To do Windows 11 virtualization, I will try to keep things simple. My host system will be Ubuntu 24.04. My machine is a Lenovo ThinkPad X1 Carbon running Intel Lunar Lake from 2025.
+
+For virtualization, we will use QEMU/KVM. Our VM GUI will be managed by Virtual Manager. We will also use a TPM emulator called swtpm and a UFE virtualization called OVMF. These are pieces required by Windows 11. We will need two ISO files to install this. One is Windows 11 25H2
+
+and the other is a virtio-win.iso, which is a driver project from Fedora, which is needed to optimize Windows. There will be more and I will discuss those later. Just a brief note, while there may be other virtualization tools that some of you have experience with, that is not the tech I will be using. Suffice it to say that other tools will not work as easily with Windows 11. So,
+
+there are reasons for these choices. So, stick with what we will discuss here. Also, I will simplify this quite a bit. There are further optimizations in VM performance that you can get by tweaking drivers and so on. But given a gain of performance of less than 10%, it's probably not important to focus on them right now.
+
+Downloading the ISO. The first CD image we need for installation, otherwise known as an ISO, is Windows 11 25H2. You can get this directly from Microsoft at this link. I will leave the links and commands in the description or I will link a downloadable PDF later on. It is important to just get the ISO image from Microsoft. You do not need to
+
+create any other media. Just for your information, Windows 11 25H2 is 7.7 GB large. The next ISO we need is downloaded from fedorapeople.org.
+
+And here's the link. This is a direct link and my final file is called virtio-win.0.1.285.iso.
+
+Just to keep things organized, I have a specific directory called ISO where I keep all my ISOs. Installing QEMU/KVM. To install QEMU/KVM and all the associated virt-manager files and related utilities, go to Linux terminal and cut and paste this command. sudo apt update sudo apt install qemu-kvm libvirt-clients libvirt-daemon-system virt-manager ovmf swtpm swtpm-tools virtio-fsd bridge-utils. Just to make sure you know all the pieces being installed, we are installing QEMU/KVM, the libvirt applications, which support virt-manager, OVMF is the UFE emulator, and swtpm-tools is the TPM emulator.
+
+virtio-fsd provides the tools for the optimization we need to do on Windows 11. Next, we run this command so we don't need to invoke sudo to run virt-manager later on. sudo usermod -aG libvirt $USER. Initializing a virtual machine. In virt-manager, from file, select new virtual machine.
+
+Then select local install media and hit forward. Then in the chosen ISO field, I'm going to click on browse. This will display the locate ISO media volume window. Now, for frequent use, I have added pools of locations from my hard drive so I can find things quickly. The important ones being the ISO folder. So, I will
+
+hit the plus button and add that as a pool. Later, I will use a fixed VM folder where I will place my VMs and I made that my VM pool. This is all optional, by the way. This becomes more important when you're running virt-manager remotely. I will select the Windows 11 25H2 ISO from my ISO pool. I've stored
+
+all my ISOs in that ISO folder. And it should be detected as Windows 11 at the bottom and I will hit forward. Now, you can select the memory you want to allocate to your VM and the number of CPUs you want for it. I happen to have 32 GB and 8 CPUs in my machine and I'll be allocating 8 GB and 4 CPUs to it. Later, depending on the amount of use you will put on the VM, you can adjust these settings by looking at task manager to see where bottlenecks are.
+
+Then I get to choose where to put the storage. Generally, I would recommend 80 GB for Windows 11. And in my case, I've selected it to be stored in my VM pool area. When you hit the plus button, you can create a storage volume, give it a name, and allocate it the size that you want. The format of a QEMU VM is called QCOW2.
+
+Click on allocate entire volume now. This will then create the space on the hard drive and it will take some time to complete. It will then say creating storage volume and wait for it to complete. After it completes, you can select the created storage volume in the next step.
+
+Setting up a new VM. Next, choose the name for your VM and check the box customize configuration before installation. Let's examine the settings for the VM. Under overview, chipset should be Q35. Firmware, UFE.
+
+CPUs, check copy host CPU configuration. Memory, enable shared memory. CD-ROM one will be the Windows 25 H2 ISO. We need to add another CD-ROM for the virtio-win.iso.
+
+Click on add hardware, storage, select or create custom storage, then choose the volume of the virtio-win.iso file. Then under device type, select CD-ROM, then finish. Under TPM, choose emulated, model CRB, and version 2.0.
+
+Now you can begin the Windows installation. Windows 11 installation. Click on begin installation at the top.
+
+Select language, select keyboard, install Windows 11 and agree that everything will be deleted. Product key state, I don't have a product key. Select installation image, which is Windows 11 Pro, and accept license terms. Select location to install Win 11, and begin install.
+
+Choose country, keyboard layout, and then alternate keyboard, skip that.
+
+Next, name the machine.
+
+Select setup for work or school. Sign-in options, select domain join instead. Enter your username. Enter your password. And then enter your three security questions.
+
+Choose privacy settings, disable all.
+
+Next, it will check for Windows updates.
+
+Install virtio-win-guest-tools.
+
+After logging in, go to the second CD-ROM drive and look for virtio-win-guest-tools. Click on it. Agree to license terms and install it. It should install several apps.
+
+Next, resize the display. Right-click display settings, and I set mine to 1920 by 1080 and 150%.
+
+Next, go to Edge browser,
+
+navigate to https winfsp.dev. This is the site that has the Windows file system proxy. Download the installation file and install it.
+
+At this point, I would download Brave browser and install it so I don't have to deal with Edge again. And after installing it, I will make it my default browser.
+
+Clean up Windows. Now I remove the apps from the taskbar. Copilot, Microsoft Store, Outlook.
+
+I right-click the taskbar to see taskbar settings, then I disable widgets and task view. In settings apps, I uninstall Copilot and OneDrive and whatever else you'd like to remove.
+
+Configure services. Then I go to start and type services. This will show me the services app. And then in the services app, I look for virtiofs, and this is marked as start manually. I set this to start automatically or start automatically delayed.
+
+Then I shut down Windows. The purpose of virtiofs is that you can share the drive of your host system, so it is easily accessible inside your VM, and this makes it easy to pass files back and forth between the VM and Linux. By configuring this ahead of time, it will always be active. Clean up the hardware CD-ROM devices. Then going back to virt-manager, I click edit the virtual machine details. I
+
+click on the I button to see the details. What I want to do here is delete the CD-ROM hardware because we don't need those anymore. So, I right-click and select remove hardware. And I do it for the two CD-ROM hardware devices. Now, I can restart Windows and it should now be in a permanent kind of setup.
+
+There are some things I would do to monitor it. While I'm using Windows, I would periodically run task manager and see what the CPU, memory, and disk activity is. If your disk activity is very high, I recommend that you recreate your VM on an NVMe drive and it will make a big difference. You can tweak the CPU and memory as you wish depending on which you spend more time on, Windows versus Linux. Also, for ease of use, I would enable auto resize VM with window always.
+
+When you are in full screen mode and you want to return back to a windowed VM, just move the mouse to the center top area of the screen and you will see an option to leave full screen mode. Sharing files between the host and VM. To share the files between the VM and the Linux host, go back to edit virtual machine settings, then select add hardware. Choose file system, then fill in the fields as shown here. Driver should be vert io fs.
+
+On source path, click on browse, then browse local and point to the root folder you want to share. Then give the share a name. There's no slashes in the name. Just use the name only. Then hit finish.
+
+Now, when you start the Windows 11 VM, when you go to file manager, you should see that share. If you don't see the share, it is because the service vert io fs hasn't been started. So, make sure to check that. I originally set it to automatic delayed start just to make sure other services were running first, but you can manually force it to start immediately if needed. Just be careful with this. Be aware that
+
+Linux files and Windows are not necessarily compatible.
+
+Apps that need advanced tweaking. While it is possible to run more advanced graphics dependent apps like games and even DaVinci Resolve on a Windows 11 VM, I personally encountered problems with using Lunar Lake. In order to use a graphics heavy app like DaVinci Resolve, you have to enable OpenGL and GPU passthrough. And frankly, that crashed for me using my Intel Lunar Lake with built-in Arc iGPU. I also researched that some games supposedly work well in a VM at 1080p resolution, but again, this could be dependent on the type of GPU installed on the machine.
+
+The new architecture of Intel Lunar Lake with its new Arc iGPU is not the most stable of all platforms for this at this time. So, generally, I would stick to dual boot for graphics heavy applications. However, for anything else, Windows 11 runs pretty normally and I imagine most apps should behave as expected. Windows 11 as a VM is not a new concept and likely many enterprises use this in production with remote desktop. Immutable Windows.
+
+Once you have a running instance of a Windows 11 VM, that instance is embodied in the QCOW2 file, which we used as the storage for that VM. In this example, that is in my VM folder as win11.qcow2. You can make a copy of the original VM so you keep the original constant. What you would do is clone the original win11.qcow2.
+
+Right-click on the VM and select clone. Then select the name of the QCOW storage file. Here, I just call it win11clone. Then next, you will see the clone as your production file. This is what you would use every day. But depending on
+
+your intent, you can then just delete the clone on a regular basis and then create a new copy of the clone. In which case, you will be restoring the original when it was in its original state right after creation. This means you can undo Windows updates and if you're using it heavily for certain types of apps that can potentially expose you to malware like email, using a saved copy over and over ensures that malware cannot persist. TPM and recall. In a Windows 11 VM, you are running TPM 2.0 only in emulation mode. This means
+
+that Microsoft's ability to identify the machine using an endorsement key is eliminated. If you recreate a new virtual machine, it should have a new endorsement key. So, in a VM, this threat is non-existent. Secondly, as I teach here, you install Windows using a local account. At no point should you use a Microsoft account. Once you do, then the VM will
+
+be trackable on the Microsoft end. And every time you turn it on, all the switches and lights will turn on at the Microsoft cloud to indicate that you're online. When using a local account, that threat is also absent. If you ever make that mistake like log into Xbox or the Microsoft store, then I would delete that instance and start with a fresh copy from the original. Also, when using a local account, by default, BitLocker is turned off and there's no threat of BitLocker keys being forwarded to Microsoft for storage with your Microsoft account.
+
+Finally, because there is no BitLocker and no Microsoft account, by default, Windows recall will also be naturally disabled. Thus, without having to do anything special, the threat of the see-what-you-see technology is absent. As you can see, the VM solution defangs Windows 11 quite a bit and it is no longer near as dangerous as it could have been. There are still tweaks you can do to remove various telemetry that occur between Windows and Microsoft like crash report telemetry and such communications with HQ. You can continue to tweak those and could be a never-ending list. But that
+
+will be the subject of a future video or you can watch other videos on the topic by others. Folks, if you're serious about privacy, come join us at Brx.me. It's the growing community where real privacy people hang out. No censorship, no nonsense. While
+
+you're there, check out the tools we actually built and use ourselves. BrxMail, unlimited aliases, no IP leaks. Brx Virtual Phone, real anonymous numbers. Bytes VPN, no logs, Pi-hole DNS, no big unknown corporation. De-Googled phones and more in the store.
+
+The Brx 3 phone second batch is open for pre-order right now at brxtek.net. The first batch sold shortly after release. Big thanks to everyone supporting us on Patreon, Locals, and YouTube memberships. You keep this channel alive. See you next time.

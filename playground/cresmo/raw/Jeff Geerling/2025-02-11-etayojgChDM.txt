@@ -1,0 +1,165 @@
+---
+video_title: "AMD NASes give us everything we ever wanted"
+video_id: etayojgChDM
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=etayojgChDM
+video_date: 2025-02-11
+video_description: |
+  Two new NASes go all-in on AMD. But in totally different directions.
+  
+  The 45Drives HL4 and ASUSTOR Lockerstor 6 Gen 3 were both provided for this video, though neither company paid any money or had any control over what I say about them.
+  
+  More information and other videos I mentioned in this video (as an Amazon Associate I earn for qualifying purchases):
+  
+    - 45Drives / 45Homelab HL4: https://store.45homelab.com/configure/hl4
+    - ASUSTOR Lockerstor 6 Gen 3: https://amzn.to/4huZNAn
+    - Kioxia XG8 NVMe SSDs: https://amzn.to/42RpI0K
+    - Seagate EXOS 20TB HDDs: https://amzn.to/40SifvV
+    - RaidOwl's video on the Lockerstor and ADM: https://www.youtube.com/watch?v=VgmDEd_Ny-4
+    - Hardware Haven's video on TrueNAS on the Lockerstor: https://www.youtube.com/watch?v=OTWiQs4TLjs
+    - CraftComputing's video on the 45Homelab HL8: https://www.youtube.com/watch?v=IitwrXJuKzw
+    - Lawrence System's video on 45Drive's Houston UI: https://www.youtube.com/watch?v=07uTKOB1z7E
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Two wildly different, expensive NASes
+  01:51 - Lockerstor 6 Gen 3 - teardown
+  04:38 - Rebuild and overview
+  07:12 - Plugging in HDDs
+  09:31 - AMD Ryzen Embedded + ECC RAM
+  10:27 - First boot and setup
+  12:14 - 45Homelab HL4 - teardown and overview
+  16:18 - The same, but different
+  17:43 - First boot and setup
+  18:37 - Networking nightmares
+  19:29 - Houston UI and a more Linux-y experience
+  20:53 - Network storage performance
+  22:38 - A lot to like (except maybe the price)
+---
+Two new AMD-powered NASs are here, and they're giving us features we've been asking for for years. But do they cost too much? That's the question I set out to answer in this video. A NAS is a Network-Attached Storage server. Traditionally, you stick some hard drives in one of these boxes and just store a bunch of data. But nowadays, you can use one of these
+
+to self-host anything. Like with NextCloud, you could have your own personal Dropbox. Or Plex or Jellyfin lets you self-host all your movies, TV shows, and music, so you can break free from greedy streaming services. Running all this extra stuff, and even just storing your files, requires more hardware performance and features than ever. Like now, in addition to hard drives, you might add multiple SSDs for caching.
+
+So the machines inside these boxes each offer a unique twist. Traditionally, outside of high-end or DIY builds, you couldn't get things like upgradable motherboards and CPUs, or you couldn't get reliability features like ECC RAM to protect the integrity of your precious photos and other files. There's no such thing as a Goldilocks NAS, but 45Drives and ASUSTOR are both trying new things, and I like it. The main disclaimer for this video, besides the fact both of these systems were provided for review, is they're both expensive, especially from the perspective of someone who enjoys DIY or buying used. The Lockerstor 6 Gen 3 costs $1,500.
+
+And the HL4, the fully built and burned-in option I have here, costs $1,200. And we're not quite comparing apples to apples. The HL4 is a 4-bay NAS for up to 4 hard drives, and the Lockerstor 6 is, well, 6. Both companies sell other versions too, but I wanted to cover these two models because, for the narrow part of the market willing to drop a thousand-plus bucks on a premium NAS, these two models are pretty compelling. To be clear, neither company paid anything for this video. They sent me these
+
+NASes for review, but have no control over what I say, so take what I say with that in mind. But first, let's focus on the ASUSTOR. I've been running their Gen 2 Lockerstor for a couple years, and it's been a workhorse. Let's tear this thing down and see what's new. This chassis is pretty much unchanged. It looks, in fact, identical to the one that's in the Gen 2, so I'm not sure exactly what
+
+all has changed inside. So this cover pops off, and we should get inside this thing. There it goes. Yeah, so there's an 80+ Bronze Flex ATX power supply. There's a pre-installed PCI Express card. This
+
+one has four M.2 slots, which is why I have four M.2 NVMe SSDs, some KIOXIA XG8s, which KIOXIA has provided. It looks like for, in terms of user accessible parts that are quick and easy to get to, you have the power supply of that card, and there's a little flap back here. And this little flap allows you to install another SO-DIMM. These are DDR5 4800 MT/s SO-DIMMs,
+
+and I actually have one here, but there's something interesting about this. So this is a DDR5 16GB 4800MHz SO-DIMM, but it does not say ECC on it. So the ECC sticks of these are a little bit harder to find, and they're a little bit more expensive than plain-vanilla ones, but I could install this in here physically, and it would give me more RAM, but it would basically disable ECC. I generally prefer [ECC], but it's not a hard and fast thing for me. Like the one that I run at home doesn't have it. So I, you know, debate that in the comments.
+
+But anyway, so that's, that's the RAM. That's upgradeable. And then this is the little PCI Express slot, which it must be secured somehow because it's not just popping out. Oh, okay. So they have little stickers over these little screws that are holding down this card. So if I peel these two stickers off,
+
+you can see that there's two screws that are holding this card down to the board. Yeah. So that comes right out. There's a little shield on the backside, I guess, to cover up some of the ICs back there. But there is the M.2 expansion card. There's no, it doesn't look like there's a switch on here.
+
+So it looks like it might just use bifurcation. See, there's no, there's no PCI Express switch chip in here. But you could put in another card. But like I said, it's a little bit limited because there's just this tiny aperture back here for ports. So a PCI Express card would slot in and you'd have, you know, if you had four ports, the four, the third and fourth port would be over here. You wouldn't
+
+be able to access them. So that's one thing that would be nice if they improved this enclosure. So it could take an actual like full half height PCI Express card instead of just these tiny ones. And I'm not going to tear it down all the way. There's actually other videos that have gone into that.
+
+So I'm going to plug this back in and I'm going to put four NVMe drives onto this card. And then we're going to put the four hard drives in. One thing I do enjoy about these cards is ASUSTOR has this little, you know, tool-less design where you just pull these back and it snaps the card in and you pull them back to release it. And these are XG8s, I believe they're PCI Express Gen 4 NVMe drives installation for these. You just pull back on that and push and it retains it. So I'm going
+
+to put four of these in. Each one of these is two terabytes, so you can use them for caching and you could also use it for an actual storage volume. So I have eight terabytes of storage installed here. And then on the backside here, this is the major upgrade, at least externally from the Gen 2 that I have. This has dual 5 Gbps ports at the bottom and dual 10 Gbps ports up here. There's two SuperSpeed ports; I
+
+think these are USB 3.1 or 3.2 Gen 2 or whatever it is. I think these are 10 Gbps. And then there's two USB 4 ports. And I am not set up to test these out today, but apparently you could use this as a DAS, as a
+
+Direct Attached Storage device, like with a Mac using Thunderbolt 4. At least that's what Wendell was testing in his video covering the same generation of NASes. So that's pretty cool and makes this box a lot more flexible than it would be otherwise, because that gives you 40 Gbps. This is 40 Gbps in one port versus 10G, 10G, 5G, 5G. I'm going to put the cover back on, and I think this is one area where they could really improve this box if they had a new enclosure style. This is, I think, three generations now. They've used
+
+the same enclosure and it's kind of showing its age in terms of, you know, even just getting it back together.
+
+So you've got the NVMe drives inside and there's also, I noticed a little ventilation along the top here. So you can see that there. And it looks like for airflow, there's a little ventilation on the side, I guess, to bring in some air behind the motherboard. Some ventilation on the top for those NVMe drives in that slot. And then there's a giant fan in the back and it pulls a lot of air through all these slits in the drive bays. So should be adequate ventilation. It would be nice also to have maybe an option for a
+
+fan up here if you did put in a card that needed more cooling. Or if you, you know, there's no, there's no heat sinks on these M.2 drives. So they could overheat if they're hotter, hotter running drives. I don't know.
+
+But I'm going to plug in the drives themselves. So I have, I just have four today. I'm not going to plug in all six. Because four 20 terabyte hard drives is enough for anybody, right? But the design that they have is also unchanged for two generations, three generations now, this is not a tool-less design. So these caddies
+
+actually have four screws for each drive. And you could just do two screws if you really wanted to. Some of their other NAS models have tool-less drive trays. So I'm not sure why those haven't kind of made their way into this line. It would be nice to see those because it just is, it's one more annoying thing to have to do, especially if you get a six or eight or 12 bay version, you're ending up having like tons and tons of screws just to get started. There's a quick install guide here, which I will be promptly ignoring
+
+because I have set one of these up before and it should be pretty quick. And then there's screws. These are for 2.5 inch, which screw into the bottom. And then there's 3.5 inch, which screw in from the sides.
+
+Okay, we have four hard drives and I'm going to get these plugged in. And since I'm setting this up new, it doesn't matter which bay I'm putting any of these into. Ow! And I just gave myself a little cut.
+
+First blood. Always good on a homelab project. Okay, we got four drives in and I will do the peel for people who want to hear that. Looks like there's two peels on here, so. Okay, this is a nice feature that ASUSTOR has on their more premium NASes. They have a little screen and
+
+you can actually do setup from here. And you can change network settings, you can shut it down. It's, it is nice. And they also have a little USB port here you can plug in for a one-click backup. They have the power button up here and activity LED. So overall, I mean, like I said, it's a good enclosure.
+
+I just think that with some refinement, this thing could make it even nicer. More tool-less, that would be appreciated. So maybe in Gen 4. But before I get this booted up, the big feature in here is it uses an AMD Ryzen Embedded V3C14, which is a lot faster and a lot more capable and has things like ECC RAM support than the Gen 2 and the Gen 1 of these. But there is a trick to this. It doesn't have an iGPU. It doesn't– it's not an APU, so it doesn't have the ability to have like an HDMI port on the back.
+
+So there's no easy way to install an alternate OS. So I actually will refer you out to a Hardware Haven video. He actually does install an alternate OS. I think he installs TrueNAS on here. And that seems to be supported.
+
+It'd be nice if there was an official way that you could do that without having to plug in an external monitor, like through, through remote access or serial console or something like that. But I'm going to plug this in and set it up and show you how quick and easy that is. And then we'll do some performance testing for later in the video. So I plugged it into my power meter and pressed the power button on the front. The first time it boots, it takes a few minutes. But I think one underrated feature here is that front
+
+display. Using it and the buttons next to it, you can actually completely set this thing up without having to do anything in a web UI at all. And once it's booted, you can grab the IP address here too. It just makes setup a lot simpler. Also, I noticed besides the hard drive noise, which is going to be different depending on what drives you put in, the system is pretty quiet. They have a giant fan in the
+
+back, which seems to do a good job of moving air without making too much noise. It's not silent, and if you put it next to you on a desk, you might go nutty with the hard drive noises. But it's a pretty refined box three generations in. In terms of power draw, it pulls down between 45 to 65 watts, depending on how much you're using it and what drives you're using. That's not great, and it's not terrible. My Gen 2 uses a little less, but it also doesn't have 30 gigabits of ethernet and
+
+80 gigabits of USB 4 bandwidth built in. But the ASUSTOR also has a pretty mature management interface. ADM 5 is their NAS OS, and it has most features covered. You can set up shares, extra apps, containers, and VMs. It's pretty manageable, though some things like SSH and fully remote configuration outside of the web are more of an afterthought. But it is running Linux kernel 6.6,
+
+so I'm happy to see them put some effort behind keeping ADM up to date. And their UI also makes storage tests pretty easy, even if it hides away some of the more technical detail. I put two SSDs into a read/write cache for my hard drive volume, and I also created a separate RAID 1 volume with the other two SSDs just to see how fast they could go. ASUSTOR also has their own cloud-based remote access, but I skipped that and used my own VPN. I'm not going to get into a full review of the ASUSTOR Data Manager system or anything like that.
+
+If you want to know more, I can't recommend Raid Owl's video enough. But before I get to performance benchmarks and my final thoughts on the ASUSTOR, let's switch gears and tear into the 45Drives unit. And this unit has a few party tricks. The first one, the front cover thing, has retained screws, which is nice. Hinges open, and you have four drive bays. This is a completely tool-less design,
+
+which I enjoy quite a bit. But it has some other party tricks too that we'll get to very soon. First, let me go ahead and install these hard drives and I'll show you how nice that process is. I just noticed though that it doesn't hinge down quite flush. I don't know if that's just, you know, the tolerances on my model or what. But let's see if we can still get these drives in.
+
+There we go. It still goes in there.
+
+If the fan weren't on here, this would actually be a little bit easier, but we're just testing this out of the box. How is the experience right out of the box? The drives are certainly in there pretty tight. And I'm guessing the fan will just be touching them, so that'll kind of provide a little extra retention.
+
+There we go. They're all four in there. And that's it. So this one is, they say it's completely built and burned in. That means that it already has an OS on it. Usually when you buy a 45Drives box, you might do some extra setup work,
+
+but this one is meant to go out of the box with their Houston UI system. And the other party trick in here is, actually, this is tool-less as well, which is very cool. This also has retained thumb screws. Just two on the side here. And you'll notice that it just sprung up a little bit. This is actually just a mini ITX motherboard inside of a hinge system.
+
+This is actually a joy to work on. The cabling is a little bit concerning, just because it's all kind of tied up pretty tight, and you have a few bends that are a little bit alarming. But if you're not rebuilding this thing on a daily basis, I don't think that's going to be a problem. But this model, I have the base model fully built and burned in, with an AMD Ryzen 5 5500 GT, which has an iGPU. It has Radeon Vega 7 graphics. And so AMD actually calls this thing an APU, not a CPU.
+
+And so things like GPU-accelerated transcoding should work on this. Support for that on the AMD platform is a little bit better in Jellyfin than Plex. And even if that is not the case, there's a full PCI Express slot. Now, you're not going to be able to fit a two slot card or something like that in here. You can just do one slot. But that is very cool. And I did notice that shipping somehow, even with the great packing that they had,
+
+shipping has damaged the corner on here. It's a little bit bent. One downside to this particular platform, the one that they have, is it doesn't have ECC support, but it does have full-size sticks of RAM. This is, it's basically a PC in a box that's the size of a NAS. It's very cool, this design.
+
+And I just noticed they even have this very nicely detailed laser etched HL4 logo that's on both sides here. There's no exhaust fan, but there is space for one. So it looks like there's space for 120mm exhaust fan back here. They have the thin fan in the front for the drives. They have the fan on the CPU cooler. This is a slim CPU
+
+cooler because they don't have a lot of vertical space here. And then they have a little fan over here that kind of, I guess, intakes some air for the motherboard and whatever card you might have. And the top is fully ventilated so that you have airflow coming through the bottom into the top. There's just a lot of speed holes as they are. And from 45Drives, the cabling all looks great. The hinges all seem to work
+
+well. I've opened this and closed it a couple times already and nothing has had any issues. Let's see, it uses another Flex ATX PSU. This is a 500 watt 80 plus gold. It's interesting, both of these have AMD, but both of them have a lot of differences. And you know, some of those differences might matter more
+
+to some people than others. But let's get this one put back together and we'll see how it works. And one more thought too, as I'm closing this up and making sure that I don't pinch that cable down there. There are probably, this is their first ever, you know, consumer NAS box type thing. It's an expensive consumer NAS box, but it is their first one. And there's probably a few little things like that cable,
+
+cable routing and cable management that could improve. Just like with the other 45Drives hardware, I think that this, this box itself is going to far outlive the hardware that's inside of it today. People are already 3D printing little things for it, you know, little mods and stuff. You could probably fit eight or 12 smaller 2.5 inch drives in here. This is just a very solid, well thought out,
+
+well built box that will be able to run anything, including maybe like a Raspberry Pi 5 on an ITX motherboard running its own little storage server. That could be interesting to try out in here. It'd be the most overkill enclosure for that on the entire planet, but that doesn't mean it's not fun to do! But it's just cool to see, you know, a North American manufacturer making these boxes that we don't have to ship across the entire planet for storage. And it's, it helps that it's a great high quality enclosure. When I turned on the HL4 the first time, the fans all ramped up to 100% and that
+
+was pretty loud. But even when it settles in at idle, it was still 4dB louder than the ASUSTOR. It seems like a lot of that noise was coming from this front fan, and maybe if they update the front design, they could optimize the airflow a little more and get this thing a little quieter. Because unlike the ASUSTOR, I could hear the fans on this thing louder than the hard drives. It isn't terrible, especially if you're going to run the thing in like a closet, but it definitely isn't as quiet as I had hoped seeing all the Noctua fans. Also unlike the ASUSTOR, there's no front panel status at all.
+
+The power button's on the back, and the only thing that you can see from the front, if you move your head around and look through the ventilation holes, are some RGB LEDs under the motherboard. Now, score one for RGB, I guess, but it is a little annoying having no front panel I/O, LED, or power button. It's not the end of the world or anything, but right after setting up the ASUSTOR, it was a bit of a letdown in comparison. And networking was the second letdown. Now, let me preface what I'm about to say. 45Homelab is a pretty new thing for 45Drives, and they're a small company. I'm willing to give them a little slack as they navigate selling to consumers, when they traditionally just sold to enterprise.
+
+business customers. But when I first set this up, I was expecting it to pick up an IP address from my router. But the actual process to get this thing connected to my network took me about an hour. I posted my experience on the community forum, but I eventually figured out the default Rocky Linux install they had was basically blocking the ethernet port from making any connections. That's not a very convenient feature for a homelab!
+
+Sure, in a corporate environment, that kind of feature might come in handy because you can kind of lock the thing to your network. But in a home lab, it's nice to just plug in a box and get connected. This probably isn't a problem on the latest version of their software, but I think their burn in process might still need some refining. Once I was in, the Houston UI 45Drives has let me do just about anything. on the system. In fact, I could do a lot more out of the box than I could on the ASUSTOR. The only caveat being, it's all a lot more Linux-y than ADM. Which is a mixed blessing. Something like setting up a storage volume, enabling Samba, and adding a user took a few more clicks in Houston than in ADM. And there are weird quirks like if you enable SMB shares in ZFS volumes, that kind of nukes the regular Samba.
+
+share settings, and that wasn't obvious in the UI. And when there were problems, I'd have to kind of figure them out myself. There aren't a lot of guides from 45Drives for common issues you might run into. But like I said, 45Drives is new to this. ASUSTOR has been in the game for over a decade now, so I don't expect the software on the 45 drive side to be quite as polished. They have been improving though. I noticed they even have personalized hardware overview pages like this one showing all the storage,
+
+or even this one showing the entire motherboard, and you can hover over things and see the specs. It's a nice touch, and I like the direction 45 home lab is heading. For an excellent overview of the 45Drives lineup, check out Craft Computing's video where 'Crafty' Jeff walks through everything, including the backstory to why this thing is so kind of different. Seriously, he goes way more in depth on the HL servers than I can go into here. And if you want to dig into Houston, the software that 45 drive supports, check out this Lawrence systems video. Before I get to my final verdict on these boxes, I did some brief performance testing. Other reviews go more in depth, but I mounted Samba shares on my Mac,
+
+a Linux box, and Windows, and in all three cases, I was able to max out the bandwidth on the NAS. Which isn't that much on the HL4. The nice thing is, I could either install a 10 or 25 gig NIC in the open PCIe slot, or I could even upgrade to another motherboard if I need more bandwidth, like this ASRock Rack board. But over on the ASUSTOR, I tested copies to and from both the hard drive and SSD arrays. iperf3 shows a solid 10 gigs up and down, and real world, on the SSD side, I got over 800 megabytes per second writes, and over a gigabyte per second reads.
+
+Copying actual files and folders, that translates into like 300 to 500 megabytes per second with a single client. And benchmarking network shares is a little annoying, because performance is different between Windows, Mac, and Linux, and it also differs depending on what you're copying. But I also tested the hard drive array, and I noticed something interesting, and I'm not 100% sure of the reason yet. But when it's writing to the array, it starts off around 800 megabytes per second, presumably writing to the SSD cache through the RAM. But after a few seconds, it consistently slows down to 500 to 700 megabytes per second.
+
+So, I'm not sure if there's something like a RAM cache filling up or what. In any case, I didn't have any problems with the bandwidth, and for a 4 drive hard disk array with RAID 5 and an SSD cache, that's acceptable. I think the Ryzen CPUs in both these systems are adequate for all the I/O they have. I do wish the HL4 had more networking bandwidth out of the box, though. For a system that's more than a thousand bucks, I think 10 gig networking is a bare minimum now.
+
+So there's a lot to like about both of these approaches. A lot of my gripes with the HL4 are with the software. But, you know what? I could just install Windows, Unraid, TrueNAS, or whatever else I want on here without much hassle. On the hardware side, I'm a little nervous about cable management, especially if it has to be open and closed a few times.
+
+That fan cable will definitely get crunched at some point. But despite the fan noise and some of those design quirks, I think this chassis will far outlive the ASUSTOR. And having a full-on ITX motherboard means you get tons of little features you don't normally get in a NAS, like full-size PCIe and built-in Wi-Fi. And who knows, maybe I could downgrade this chassis and build the most overkill Raspberry Pi NAS on the planet. But in terms of just buying a NAS to use as a NAS, I think I'd stick with the ASUSTOR.
+
+It is a little more limiting for non-storage use cases, though. No iGPU means no built-in transcoding, so it's not as useful as a media server. And ADM's app store limits you to just the built-in VM and container solutions, which aren't bad. But if you want to get more advanced, they definitely don't grow with you as you go. The proprietary hardware design means upgrades besides maybe faster drives or more RAM are out of the question.
+
+Because there's no easy way to upgrade the motherboard or CPU, this whole box is going to be obsolete in like 10 years. I have links to both of these boxes in the description, and I'd love to hear what you think. DIY or buy? Are these just way too expensive, or do you think they'll find a niche? Until next time, I'm Jeff Geerling.

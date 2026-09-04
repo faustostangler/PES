@@ -1,0 +1,143 @@
+---
+video_title: "Why Two Identical Neurons Behave Differently"
+video_id: gLtGVEhMFN4
+channel_name: "Artem Kirsanov"
+channel_id: UCR2uRTQ53V_egXKFflMMaaw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=gLtGVEhMFN4
+video_date: 2024-12-08
+video_description: |
+  To try everything Brilliant has to offer—free—for a full 30 days, visit https://brilliant.org/ArtemKirsanov . You’ll also get 20% off an annual premium subscription
+  
+  =====
+  My name is Artem, I'm a neuroscience PhD student at Harvard University. 
+  🌎 Website and Social links: https://kirsanov.ai/
+  📥 "Receptive Field" neuro-newsletter: https://artemkirsanov.substack.com/
+  ✨ Support me on Patreon to get access to Discord community: https://patreon.com/artemkirsanov
+  =====
+  
+  In this video, we explore how the internal dynamics of neurons give rise to their remarkable computational properties. Through geometric reasoning about phase portraits and bifurcations, we'll gain intuition behind various phenomena, such as excitability, bistability, hysteresis and resonant oscillations.
+  
+  Code for the video:
+  https://github.com/ArtemKirsanov/Youtube-Videos/tree/main/2024/Elegant%20Geometry%20of%20Neural%20Computations
+  
+  🕒 OUTLINE:
+  00:00 Introduction
+  01:26 Review of Hodgkin-Huxley equations
+  02:18 Deriving a 2-variable model
+  04:34 Phase Plane concepts
+  08:04 Excitability
+  12:14 Bistability and hysterisis
+  14:09 Saddle-Node Bifurcations
+  16:17 Andronov-Hopf Bifurcations
+  21:03 Integrators vs Resonators
+  22:26 Putting all together
+  25:15 Brilliant.org
+  26:17 Outro
+  
+  📚 FURTHER READING & REFERENCES:
+  Dynamical Systems in Neuroscience: The Geometry of Excitability and Bursting by Eugene M. Izhikevich:
+  https://mitpress.mit.edu/9780262514200/dynamical-systems-in-neuroscience/
+  
+  =====
+  This video was sponsored by Brilliant
+  =====
+  
+  *Disclaimer:* This channel is my personal project. The views and content expressed here are my own and are separate from my research role at Harvard University.
+  
+  #neuroscience #dynamicalsystems #biophysics
+  
+  
+  _Description remastered: February 2026. Links & Bio updated; original context preserved._
+---
+Picture 2 identical neurons receiving exactly the same input. To the naked eye, they are indistinguishable. Same size, same shape, same basic structure. You might expect them to behave more or less identically. Yet one is sitting quietly at rest, while the other is rapidly firing bursts of electrical impulses.
+
+What causes this striking difference? You might think that there are some fundamental variations in cell electrophysiology or biochemistry that are invisible from the outside. But the answer lies in their history. What these neurons were doing before that observation. Well, all the other factors, including cell biophysics, could in principle be identical.
+
+Unlike simplified neurons in artificial neural networks that act as basic input to output functions, biological neurons have memory. Their response depends not only on the input, but also on the recent history of activity. Today, we will see how this remarkable property arises from the internal dynamics of neurons, along with other fascinating neuro-computational properties of biological cells. Using the powerful language of dynamical systems, we will gain a geometric intuition that makes these complex behaviors seem crystal clear. If you're interested, stay tuned.
+
+Let's start by modeling a single neuron. In the previous video, we explored the Hodgkin-Huxley model, a complete biophysical description of neuron's electrical properties. If you haven't seen it, I highly recommend watching it first, as it'll be our starting point today. But here's a quick recap. A neuron's electrical behavior is governed by 4 differential equations that track how key parameters or state variables change over time.
+
+The central equation describes changes in membrane voltage driven by ionic currents flowing through the membrane. The other three equations monitor the proportion of open ion channels, which themselves depend on voltage, creating an intricate feedback loop. But here's a catch. Being four-dimensional, this system is impossible to visualize directly. To gain intuition, we need to simplify it.
+
+Let's start with the gating variables, specifically <b><i>n</b></i> which represents the fraction of open potassium channels. We derived its equation by considering transitions between two states, with alpha and beta representing the rates of gates becoming permissive and non-permissive. Imagine we freeze the voltage at some value. Now alpha and beta become positive numbers. While initially there may be an imbalance, eventually the system reaches an equilibrium where the two directions of this reaction balance perfectly, we can highlight this equilibrium seeking behavior by rewriting the equation.
+
+After expanding and rearranging terms, we get the following. This is mathematically identical, but the interpretation of constants is a bit different. Here, n-<b>∞</b>(infinity) represents the equilibrium value, the fraction of open channels at a given voltage when the dust settles and both sides reach their stable balance. And Tau is the time constant telling us how quickly that equilibrium is reached. Think of it like this.
+
+If too many channels are open, which means that n is greater than n-<b>∞</b>, the negative rate of change closes them until reaching an equilibrium. If too few are open, the positive rate drives them up. The smaller the Tau, the faster this process happens. A key insight emerges when we compare time constants across gating variables. The <b>m</b> gates are lightning fast compared to <b>n</b> and <b>h</b>.
+
+So fast, in fact, that we can treat them as instantaneous. Since we have an explicit equation for m-<b>∞</b>, we can simply replace <b>m</b> with its equilibrium value and eliminate one differential equation completely. Even better, it turns out many neurons generate perfectly good spikes without h-gates at all. Their potassium currents alone can counteract sodium & restore the resting state without the inactivation gate. So by removing h, we are left with just the two coupled equations, one for voltage and one for potassium gates.
+
+This simplification opens up a powerful visualization tool called the phase space. Imagine a landscape of moving water where each point represents a possible state of our neuron, voltage on one axis and potassium channels on another. The differential equations act as the laws of fluid dynamics, creating currents and eddies in this space. Drop a leaf at any point and it will be carried along by these currents, tracing out the neuron's behavior over time, the direction and speed of the flow at each point, represented by arrows in our diagram called the phase portrait, tell us exactly how voltage and channel states change from moment to moment. In this plane, there are points of tranquility called equilibria, where there is no flow in either direction.
+
+These correspond to states where both derivatives equal to 0. Some equilibrium points are stable, like a ball resting at the bottom of the bowl. If you give it a small push, the system's dynamics will naturally drive it back to the equilibrium. These stable points often correspond to the neuron's resting state. Other equilibria are unstable, like a ball balanced precisely at the top of the hill, where the slightest perturbation sends it racing away.
+
+To understand how these equilibria arise, let's examine special curves called Nullclines, regions of the phase space where just one variable remains constant. The voltage Nullcline shows all states where voltage remains steady, where inward and outward currents perfectly balance. Along this curve, our arrows point either straight up or straight down, as only the gating variable continues to change. Similarly, the end Nullcline reveals where the fraction of open potassium channels stays fixed. With arrows pointing purely horizontally, where these Nullclines intersect, we find equilibrium points.
+
+Finally, let's clarify what we mean by injecting current into the neuron. Any external input, whether applied through an electrode or received from other neurons, is simply another source of ionic current flowing through the membrane. We can incorporate it into the voltage equation as an additional term alongside other currents. When we adjust the input current, it shifts the V nullcline up or down in our phase portrait, altering the system's dynamics. If you find it uncomfortable and biologically unrealistic to reason about what applying a current to a neuron means, you can think of it as a kind of ion channels whose conductance depends on an external factor, such as a concentration of neuromodulator molecules floating around in extracellular space, resulting in persistent current.
+
+Then the concentration of this hypothetical neuromodulator is a knob that we can turn, controlling the level of excitation supplied to a neuron. While a persistent current does change the phase portrait, throughout the video we will also think about transient perturbations, which can be visualized as brief, instantaneous in fact, pulse like currents which just push the system state horizontally without affecting the face portrait. With that mathematical framework at hand, let's try to map concepts from the face space to neural behavior. In their default state, neurons sit quietly at a stable equilibrium point, their resting potential, where small perturbations from this equilibrium are quickly dampened out. Give the neuron a tiny push and it will return to rest.
+
+The fundamental property of neurons is their excitability. If you push the voltage beyond a certain threshold, something dramatic happens. The neuron generates an action potential. This isn't just a simple return to rest as before, it's a large stereotypical excursion through the phase space where the voltage rises explosively, Potassium channels activate, bringing the voltage down, and the system eventually resets. Excitability means that larger perturbations are not dampened, they are amplified by the system's internal dynamics.
+
+But it could be that the trajectory doesn't stop at the resting state after completing one spike. Instead, there are certain regimes typically observed with the sustained input current being sufficiently large when the neuron fires repetitively. In the language of dynamical systems, this corresponds to a limit cycle. A closed loop in the phase space that the neuron transverses again and again. The system is no longer seeking a stable resting state.
+
+It is locked into the repetitive pattern of activity, where each loop around the cycle corresponds to one action potential. To understand why such transitions arise and what causes the behavior of the neuron, we need to take a closer look at the underlying phase portrait. As mentioned before, the stable equilibrium corresponds to the resting state. It is also called a stable node since all nearby trajectories flow into it. But zooming out and looking at the nullclines, we can see that there are, in fact, two more points in which they intersect, so there must be two other equilibria.
+
+The problem is that both of these equilibria are unstable, so even the tiniest perturbations will cause the state to rapidly diverge from this equilibrium. But in which direction? Where does this runaway trajectory go? This is where the roles of these two unstable equilibria become important. Let's start with the one on the right.
+
+This equilibrium seems to be right in the center of the limit cycle, so no matter in which direction the trajectory is knocked away from the equilibrium it's going to fall into the basin of attraction of the limit cycle, wind itself around it and continue looping indefinitely, resulting in the rhythmic firing. But what about the one in the middle, where the ascending part of the voltage nullcline intersects with the end nullcline? This equilibrium is known as a saddle point. Indeed, if you start near it, trajectories are pulled towards it along one direction and pushed away along another direction, resulting in the saddle shape. There is a special curve in the phase plane called the separatrix, which actually converges to the equilibrium if you follow it perfectly.
+
+This curve acts as a boundary, a watershed separating the phase plane into two regions, distinct basins of attraction. Trajectories that start inside it get swept into the spiking orbit, while the ones that start outside return to rest. As you can see, the separatrix plays the role of a threshold. If the input perturbation is large enough to knock the trajectory into the attraction domain of the limit cycle, the neuron will fall into the spiking behavior. If not, return to rest.
+
+However, if the push is too strong that it overshoots the limit cycle attraction domain entirely, the trajectory will also return to rest with a spike detour. There is thus a sweet spot for perturbation amplitude to switch the neuron into persistent firing. You may have noticed an interesting duality in neuronal responses. When we perturb a neuron from rest, one of the two things can happen. Either it generates a single spike and returns to rest, or it transitions into persistent firing state.
+
+This behavior depends crucially on where the limit cycle is located in the phase space and how it interacts with the separatrix. In some neurons, the limit cycle exists as a separate orbit, carving out a basin of attraction in the phase space, with the separatrix forming a boundary around this attraction domain. For these neurons, perturbations of the right amplitude will cause the system to transition from rest to persistent firing. This means that under the same input current, the neuron can be either resting or repetitively spiking, depending on its history which is why such neurons are called bistable. This dependency is called hysterisis.
+
+It's a powerful computational feature, individual neurons to serve as kind of memory elements that maintain their state, either rest or firing, even after the perturbation that triggered the switch is gone. This explains the mystery we saw in the very beginning. Other neurons, however, which we call Monostable, have their biophysical parameters tuned in such a way that the limit cycle intersects with the stable equilibrium. In these neurons, even when a perturbation is strong enough to trigger a spike, the trajectory inevitably returns to rest, because any would-be spike in orbit must pass through the stable equilibrium. In other words, if there is a stable equilibrium, persistent spiking is not possible without well timed perturbations.
+
+If we want to make such a neuron fire repetitively on its own, we need to remove the stable equilibrium by fundamentally changing the phase portrait. This brings us to the crucial concept of bifurcation, which refers to qualitative change in the phase portrait, such as when equilibria appear, disappear, or change their stability. Importantly, bifurcations involve changes in the underlying differential equations, and thus, will change the nullclines and vector fields. For example, increasing the persistent current applied to a neuron corresponds to a constant shift in the V nullcline, and thus might cause a bifurcation, as we'll see shortly. In other words, we are changing the landscape of fluid flows, unlike merely pushing the leaf around with perturbations.
+
+Let's turn the knob on the applied current and see what happens to the bistable neuron first. As the voltage nullcline shifts up, the two points where it intersects with the end nullcline, the stable node and the saddle approach each other closer and closer until at some critical value of current, they fuse and kind of annihilate each other. Indeed, this branch of the voltage nullcline now lies fully above the end nullcline, so the only point of intersection is the unstable equilibrium, that is, in the middle of the spiking orbit, because there is no more resting equilibrium, basically all trajectories get attracted to the limit cycle. So at this current, repetitive spiking is the only behavior the neuron can exhibit. This kind of bifurcation observed when a node and a saddle coalesce is known as the saddle-node bifurcation.
+
+When we do the same thing with a monostable neuron, we see a similar picture of the node and the saddle annihilating each other. Because there is no more stable equilibrium getting in the way of the limit cycle, this neuron can now start to fire persistently. This bifurcation is a special and important case of the saddle-node bifurcation called
+
+or <b>SNIC</b> for short, to emphasize that the bifurcation is happening on the cycling orbit, waiting to break loose. While we just saw how a saddle-node bifurcation can lead to repetitive firing, there is another excitability route that neurons can take, one that is accompanied by drastically different behavior. Let's look at a neuron with a slightly different biophysics of potassium channels, which tend to open at lower voltages. In this neuron, the end nullcline is shifted to the left, so now the voltage nullcline intersects it only at one point instead of three. This means that our phase portrait has just one equilibrium.
+
+In the absence of input current, that equilibrium is stable and corresponds to the resting state. Now, as we increase the current, this equilibrium slides along the <b><i>n</b></i> nullcline until at a critical point, it undergoes a qualitative change, switching from stable to unstable. Such bifurcations. where a single equilibrium suddenly changes stability rather than colliding with another equilibrium are called
+
+These come in two flavors,
+
+In the supercritical case, when input current is low and the equilibrium is stable, all trajectories eventually converge to rest. However, the dynamics are not simply linear. Certain perturbations get amplified, causing the system to take a spike shaped detour before returning to rest. Importantly though, these are not stereotyped all-or-none action potentials we saw previously. Their shape and amplitude depends on the perturbation size.
+
+Some might look like full spikes, while others are more like half spikes of smaller amplitude. This happens because there is no unique spiking orbit but rather multiple possible detour trajectories. Like neurons with sneak bifurcations, these neurons are monostable. There is no separate stable orbit of repetitive firing, and while the stable equilibrium exists, the neuron can only generate individual spikes in response to strong perturbations. As we increase the input current past the bifurcation point, the equilibrium becomes unstable and a small limit cycle emerges around it.
+
+Now all trajectories converge to this orbit. Large perturbations might cause temporary excursions, but the system always returns to these uniform oscillations. The neuron no longer has a single resting state. Instead, its equilibrium behavior is to produce small rhythmic oscillations A strong push might trigger a larger spike of variable size, but the system will always settle back into its characteristic oscillatory pattern. With further increases in input current, this limit cycle gradually grows until its amplitude matches that of spike responses, transitioning the neuron into repetitive firing.
+
+This explains why spike amplitude can vary. The sharp distinction between spikes and non-spikes that characterizes all-or-none responses is blurred in these neurons.
+
+The sub-critical case tells a different story. Here, even before the equilibrium loses stability, there exists a large amplitude limit cycle, a full spike in orbit somewhere out in the phase space. However, this stable cycle is separated from the stable equilibrium by an unstable cyclic curve which acts as a threshold. Any perturbation that pushes the system beyond this boundary will cause it to jump into the large amplitude firing orbit. This creates <b><i>bistability</b></i>.
+
+The neuron can either rest quietly or fire repetitively at the same input current, depending on whether its state lies inside or outside this unstable cycle. When we increase the input current, the unstable cycle shrinks around the equilibrium. At the bifurcation point, this cycle collapses onto the equilibrium itself, causing it to become unstable. Now there is no more barrier protecting the equilibrium, and the tiniest perturbations will send the system into repetitive firing. The transition is sudden and dramatic, unlike the gradual emergence of oscillations we saw in the supercritical case.
+
+This brings us to another fundamental distinction in how neurons process information. Neurons that transition to firing through saddle node bifurcations, either a pure saddle node or snake, are called integrators. They gradually accumulate perturbations until their state crosses the separatrix threshold, triggering either a transition to repetitive firing or a single spike. For these neurons, the timing and the pattern of inputs don't matter. Only their cumulative effect.
+
+In contrast, neurons that undergo Andranov-Hopf bifurcations are called resonators. These neurons exhibit sub-threshold oscillations, making them sensitive to input timing. They preferably respond to inputs that arrive at specific phases of these oscillations, and poorly timed excitatory inputs might even suppress their response rather than enhance it. Think of it like this. An integrator neuron is like a bucket filling with water.
+
+You can add water quickly or slowly, regularly or irregularly. Anyway, once it reaches the threshold, it spills. A resonator neuron is more like a swing. Pushing it at random times won't get you very far, but even small pushes at the right rhythm can build up to a large response. All right, let's try to put everything together.
+
+We have seen how dynamical systems theory and geometric reasoning about face portraits elegantly explain the diverse zoo of neural behavior. Our exploration revealed 2 fundamental dichotomies in neural dynamics, monostable versus bistable neurons and integrator versus resonator properties. These distinctions perfectly map onto four different kinds of bifurcations. A neuron undergoing a saddle-node bifurcation is a bistable integrator. At a given input current, it can either rest or repetitively spike, depending on its history.
+
+Switching it from rest to firing requires sufficient perturbation but the timing of inputs is irrelevant. A neuron with a SNIC bifurcation is a monostable integrator. The same input current cannot support both behaviors since the resting equilibrium blocks the spike in orbit. Repetitive firing only emerges when the applied input current is strong enough to annihilate the stable equilibrium with its neighboring saddle. A neuron exhibiting supercritical Andranov-Hopf bifurcation is a monostable resonator.
+
+It has prominent oscillations around the resting state, which means that the timing of perturbation matters, and it has certain resonant input frequencies and because the spike in orbit emerges from the destabilized equilibrium, only one regime is possible at a given level of applied current. A neuron with a sub-critical Hopf bifurcation is a bistable resonator. It combines timing sensitivity with the ability to maintain either resting or spiking states at the same level of input current as the spiking orbit can coexist with the stable equilibrium. While real neurons are undoubtedly much more complicated, these fundamental mechanisms help explain their diverse computational roles. For example, integrator neurons excel in brain regions that need to accurately encode input strength, like sensory systems and resonator neurons are prevalent in circuits that need to process temporal patterns or generate rhythmic activity, such as those controlling movement or maintaining certain forms of memory.
+
+As you can see, this diversity in neural dynamics isn't just a mathematical curiosity, it is fundamental to brain's computational power. This video was mostly based on a wonderful book by Eugene Izhikevich called
+
+I highly recommend taking a look if you're interested in diving deeper into what we talked about today with more rigorous and extensive treatment, and if you're looking for a way to build up mathematical foundation to tackle books like this, you're going to love the message from our today's sponsor. Brilliant combines interactive visualizations with problem solving. To make complex STEM topics engaging, their hands on courses breakdown challenging concepts into bite-sized lessons that build your intuitive understanding step by step. I particularly want to highlight their linear algebra course, which is incredibly relevant to today's discussion. For example, analyzing the stability of equilibrium points relies on eigenvectors and eigenvalues, crucial tools that are essential, whether you're studying the biophysics of real neurons or abstract neural networks.
+
+Brilliant offers a great variety of courses across mathematics, computer science & data analysis. Whether you're just starting out or looking to solidify your understanding of complex topics, Brilliant has got you covered. If you're ready to take your curiosity to the next level, head to
+
+to get a 30-day free trial of everything Brilliant has to offer, plus a 20% discount on your annual subscription. If you enjoyed the video, share it with your friends, subscribe to the channel if you haven't already, and consider supporting me on Patreon, where you can vote for video topics and find extended versions of video scripts. Stay tuned for more interesting neuroscience & machine learning topics coming up. Goodbye and thank you for the interest in the brain.
+
+(Subtitles by Crimson Ghoul)

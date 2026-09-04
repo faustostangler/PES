@@ -1,0 +1,150 @@
+---
+video_title: "Your Windows 11 Computer’s Hidden Spy: The Dark Truth About TPM Chips"
+video_id: t1eX_vvAlUc
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=t1eX_vvAlUc
+video_date: 2025-10-29T16:01:24+00:00
+video_description: |
+  If you're running Windows 11, your computer has a TPM Chip Version 2.0. This is one of the requirements to using Windows 11 and of course Windows 10 has been declared as "End-Of-Life". While you think that Windows 11 is an improvement, wait till you find out what this TPM chip is all about. It is such a giant invasion of privacy that I turned mine off.
+  
+  ----------------------------------
+  BraX3 Privacy Phone is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://brax.me/home/rob Store for BytzVPN, BraxRouter, De-googled Privacy AOSP Phones, Linux phones, and merchandise
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+If you're using Windows 11, your computer has a TPM chip, trusted platform module version two. This thing is required now to run Windows 11 and is supposed to be a security feature. But I discovered something that made me turn mine off the same day. This is another one of these moments where cyber security is not privacy. Just remember this. Whoever sets the rules for cyber
+
+security, big tech in this case, may not have the same priorities as you do, their cyber security may equate to your loss of privacy. And today you will hear a pretty solid example of that. This security chip not only erases your privacy, but could become an instrument of control. I'm going to walk you through exactly what I found step by step with the technical details and you will learn about the APIs involved in this TPM chip which apparently is tied to the cloud. I will explain new terms connected to the TPM like PCRs, PCP, EK and UU IDs plus the cloud calls is connected to everything. You will be
+
+surprised. Stay right there.
+
+Let me start with what happened to me. I bought a brand new laptop, a Lenovo ThinkPad X1 Carbon Gen 13, the newest model. It came with Windows 11. First thing I did, like I always do, was dual boot with Ubuntu. I've done this for a dozen years. which takes me 20 minutes
+
+on older Windows for the Ubuntu install. But as always, it takes a long time to restore my data. After all this work, I turned off secure boot. Why? Because I'm a developer. I run custom kernels. I
+
+test various software. Secure boot blocks unsigned bootloadaders. And specifically with secure boot, you're tied only to operating systems that are signed using Microsoft's keys. To my surprise, without warning, the entire drive locked up. My Abuntu partition inaccessible. Grub wiped. The only way
+
+to recover, I had to download a Lenovo recover USB and start over. I lost not just Ubuntu, but all my data since this recover USB had to reformat the hard drive. Why did this happen? because Bit Locker is now on by default on Copilot Plus PCs and Bit Locker's hardwired to the TPM. Now, there's a reason that Bit Locker is automatically enabled and that's because it's tied to Window Recall, but we'll get back to that later.
+
+The digital ID endorsement key. When the drive locked, the bootloader gave me a recovery option. Go to aka.ms bitlock recovery and sign in with your Microsoft account. This was problematic right there because I actually with great difficulty managed to sign in with a local account. Now just to get this
+
+going, it's forcing me to identify myself. This was very suspicious, but I did it. And there it was in plain text. my device name, my 48digit Bit Locker recovery key, my TPM chips endorsement key, which is a 20 48 bit RSA public key. Pay attention to that. The TPM
+
+endorsement key, that's the unique identifier of your machine. Now, it is tied to your Microsoft ID identity. As it turns out, this EK is burnt into the TPM at the factory. It never changes. is the internal serial number of the chip.
+
+Once you use Bit Locker, this EK becomes your digital passport. You can't change it. You can't delete it. It's now tied to your Microsoft account, Windows Hello, any cloud service that uses Microsoft APIs for using the TPM, which you'll learn about later, and some Microsoft Azure services. Right now, Microsoft is the main company using the EK at scale. They use it for Bit Locker
+
+Recovery, cloud services, gaming anti-che systems, for example, Valerant and Fortnite. But here's the problem. They expose an open API. Any application can call the TPM and reveal the endorsement key. And here's a command you can run on PowerShell and run this yourself as I'm not going to show you my endorsement key. This is not
+
+locked down like an iPhone on a phone. Only Apple, Google, and the carrier can read it. On your PC, any app with admin rights can pull your EK. And yes, gaming anti-che systems are already doing it. Microsoft Cloud Cryptography, the PCP.
+
+Now we enter the rabbit hole. The Microsoft platform crypto provider PCP is a version of a cryptography provider that routes all TPM operations through Microsoft's cloud. It's not just a driver, it's a cloud service. Just to explain this a bit more clearly, Microsoft provides an API for applications to interface with security functions of your TPM, but it is handled through the cloud through Microsoft, which means Microsoft knows every security interaction, including every interaction with Windows Hello, booting with Bit Locker, or interacting with any application that uses these Microsoft security features like gaming apps. When you generate a key like this on PowerShell, that key is sealed to the TPM and registered in Microsoft cloud servers.
+
+The PCP exposes APIs like these. Every call goes through Microsoft's attestation infrastructure. That means Microsoft knows every TPM key you create. Microsoft knows every device that uses this crypto service. Microsoft can build a database of every Windows 11 machine. Microsoft knows when you are
+
+using these keys [snorts] and yes they are doing it. Platform configuration registers PCRs. This was my second disaster. I swap SSDs all the time. I have several NVME drives, several preset dual boot drives, some for backup, and some for testing. As a normal thing, I
+
+pulled my existing SSD drive out and put in a new one so I can do this video testing on machine that didn't have my normal data. [snorts] This one was dual boot Windows 11 with Ubuntu 24.04. Then when I booted the drive, Grub was gone. Once again, I could only go to Windows and the Linux setup was gone. What's happening here is something
+
+new and it's called the platform configuration register PCR. There's now a mechanism to watch your hardware and record this configuration on the TPM and this can be queried remotely and locally by the bootloader. The TPM measures your hardware on every boot and stores it in these PCRs. This registry area is another part of the TPM. So in every boot, the bootloadader can query for particular characteristics based on the PCR selected. And here's a list of the
+
+different PCR categories, meaning it can give you a response on any of these measures. PCR1 is the killer. It includes CPU microode, motherboard firmware, NVME drive, UU IDs, partition gooids. When I swapped the SSD, the drive UUI ID changed. The TPM saw the mismatch when it quered the PCR using PCR1 measure. And this apparently sent
+
+the signal to the Windows 11 bootloader, which then proceeded to wipe out Grub. And yes, the UU ID is stored in PCR1. You can see it yourself by trying this on PowerShell. Look at PCR1. It's different on every machine.
+
+If you change one component on your device, PCR1 changes. If you are using Bit Locker, it locks. I wasn't even using Bit Locker, and it still signal Windows to take over the boot sequence. This is not a bug. This is by design.
+
+Very devious. Remote attestation. The final boss. Now we get to the scariest part. Using Microsoft's platform crypto provider PCP service, any application can remotely query your TPM and get a signed PCR quote. And here's how it works. An app
+
+calls get TPM attestation quote. TPM signs all PCRs with the atestation identity key. That quote is sent to Microsoft cloud service called the Azure atestation service. Then Microsoft returns this device is running Windows 1124H2. This device has secure boot enabled.
+
+This device has no Linux bootloadader. This is not theoretical. Microsoft Azure at testation is live. Windows device health attestation uses it and any app can use it. For example, a bank app wants to know if you're running Linux.
+
+It calls attestation, sees PCR4 equals grub signature, then it denies login. By the way, Google does this on Android with the newlyannounced play integrity API. It is an attestation service. So basically, today some bank apps will not run in Europe because some of these banks require Google atistation to work. And this is a progression from the Google safety net which before just required the app to be signed. Now it
+
+checks the OS and AD Google OS will be rejected by this API. They will require the production OS for their apps to work. Microsoft is building the same capability for PCs. Can Microsoft see everything? Yes. Every time you use Bit Locker,
+
+enroll in Windows Hello, use a TPM protected certificate, run a Copilot PC feature, your EK endorsement key and PCRs are sent to Microsoft. They don't need to hack you. And remember that in order for certain apps to work, those apps that need Microsoft attestation services will require that you be logged in with your Microsoft ID or at testation doesn't work. So, you can't just log in with a local account since all the attestation processes need to be signed and verified through the Microsoft PCP. You're sending them the data. Microsoft is now in the middle of
+
+everything. Windows Copilot, the AI that never forgets. [snorts] You can't talk TPM without C-Pilot. Windows recall takes screenshots every 3 seconds. Stores the analysis of them in encrypted SQLite databases at this address. Guess what
+
+encrypts it? The TPM. Guess why they need the TPM and Bit Locker to encrypt it. So now your behavior is logged. Your identity is tied to the TPM. Your
+
+configuration is attested. And Microsoft says we shouldn't worry about this. It's all local. But here's the thing. There is no technical barrier to sending an instruction to the AI companion to examine your recall database and report findings to HQ. This can be done without
+
+any data leaving your computer. Apple already proved it with neural hash. Apple scans your photos. Then it computes what it perceives as a hash which is basically turning the observations into some secret digital identifier. Then it is compared to other hashes pre-ompiled by Apple that it identified as CSAM and if a match is found it is sent to Apple. They
+
+suspended this project but they already did the proof of concept that this was doable. This was already a demonstration of communications between the AI and HQ. All they did was to turn off parts of it. The portion that's doing the scanning of photos, that's the media analysisd I keep talking about, it's still running today. Microsoft can do the same. And Windows recall is much
+
+more capable. And actually, they can do it easier because during Apple's time, there was no LLM. But today, they can just ask this. Hey co-pilot, summarize this users last week. They visited privacy forms, searched disabled TPM, opened tour, zero technical difficulty, the kill chain.
+
+Let's put it together. Identity. You now have an inescapable identity with the Microsoft key and the permanent TPM endorsement key configuration. Now through PCRs applications can require very specific configurations of your system and all verified by the TPM with atestation. This can now force you to use those required configurations behavior. Now they can observe what
+
+you're doing with Microsoft recall and copilot control. The next step is to lock you out via policy if they want to shut you down. This is debanking 2.0. In case you forgot, let me remind you. In
+
+the UK, Nigel Farage was debanked for politics. In Canada, truckers were frozen out of their bank accounts. In China, if you have low social scores, you have no access to WeChat, which is their primary payment method. Now this new sophisticated infrastructure exists in the west. How to fight back?
+
+You don't have to play this game. The only way to beat this is if the market says no and we the consumers need to decide that we don't want what they are pushing. Here are important takeaways. Number one, don't use Windows 11 as your main OS. Stay on Windows 10. Run Windows
+
+11 in a VM or confine your use of this to a minimum. Use Linux for everything else. Number two, disable or reset the TPM, but with a caveat. Let me be very clear here because this is important. The endorsement key EK cannot be changed. It is burnt into the TPM at the
+
+factory. It is permanent. There is no API, no BIOS setting, no clear TPM command that will ever change it. But here's what you can do. Option A, disable the TPM and BIOS recommended.
+
+And these are the steps I had to take on my Lenovo ThinkPad. I rebooted then clicked on F1 and then went to security in the BIOS trusted computing set the TPM state to disabled and then I saved and exited. Bit Locker will suspend itself. Some apps maybe Turboax may refuse to run. This depends on which apps start using the attistation service. Option B, reset the TPM
+
+ownership, but only if you never log in again to Microsoft. Run this in elevated PowerShell. Clear TPM. What happens? TPM ownership is removed.
+
+All the AI keys, they're called at the station identity keys are deleted. All Bit Locker protectors tied to the old TPM are invalidated. you are prompted to retake ownership. Bit Locker re-encrypts with a new protector. But if you don't use Bit Locker, much of this won't matter. So, make sure you
+
+don't use Bit Locker. But, and this is huge, if you sign back in with the same Microsoft account, Microsoft will read your EK and relink everything because the EK is factory burned. Microsoft already has it in their database. They match it on login. It's like burning your passport and then walking into the same embassy with your old photo. Same
+
+chip, same identity, same tracking. The only way to break the chain permanently is reset TPM using clear TPM. Create a local account. Never sign in with Microsoft. Suspend Bit Locker or don't use it. Use a different machine for
+
+Microsoft services. And yes, you can verify this yourself. After clear TPM, sign in with your Microsoft account. Go to akams Bit Locker Recovery. Your old recovery key is back. Your EK is rel.
+
+However, if you don't go to Microsoft again on this device and the keys are gone, it will simulate a new user like a new user got your computer. It's not too different from selling a phone and the IMEI now belongs to someone else. Number three, never use embedded AI. So, no C-pilot, no Apple intelligence, no Google Gemini. Use Linux on PCs and the Googled OSS on a phone. Remember that embedded AI is
+
+controlled by someone else. It is okay to run AI like local AI you installed yourself like at least you're the only one giving it instructions. Number four, boycott attestation apps. If a bank is using atestation, switch. If government services use at testation, demand alternatives. Social
+
+platforms leave. Final thought. This isn't coming. It's here. Every new PC ships with TPM 2.0 required. Bit
+
+Locker on by default. Copilot watching. You are not the user. You are the product. Disable your TPM. Switch to
+
+Linux. Reject the AI companion because tomorrow your PC might decide you're not allowed to log in. Folks, thank you for watching my videos. As many of you know, this channel does not have sponsors and we primarily sustain ourselves by just creating products and services that we use to defend our privacy posture. I'd like to invite you to visit our community site, Braxme, which has a growing group of privacy enthusiasts. There are people
+
+from various walks of life and beliefs converge together in the mutual support of privacy issues. We have a story there with products ranging from the Bra virtual phone service, Braxmail, Bicevpn, the Google phones and other services like flashing an OS. All these are tools used by the privacy aware and you can even talk to the actual users of the products directly. Join us. We'd love to have you there. And you don't even have
+
+to identify yourself to be part of the community. The very successful Bra phone is available for pre-order on the second batch. The first batch has been sold out. Information about that is on bratec.net.
+
+Thanks also to those [music] who donate to us on Patreon, locals, and YouTube memberships. You are all appreciated. See you next time.

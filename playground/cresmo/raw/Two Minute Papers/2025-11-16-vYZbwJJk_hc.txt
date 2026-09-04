@@ -1,0 +1,77 @@
+---
+video_title: "Games Have Never Simulated Clothing Like This Before"
+video_id: vYZbwJJk_hc
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vYZbwJJk_hc
+video_date: 2025-11-16T16:46:06+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  Guide:
+  Rent one of their GPUs with over 16GB of VRAM
+  Open a terminal
+  Just get Ollama with this command - https://ollama.com/download/linux
+  Then run ollama run gpt-oss:120b - https://ollama.com/library/gpt-oss:120b
+  
+  📝 The paper "Fast Physics-Based Modeling of Knots and Ties Using Templates" is available here:
+  https://wanghmin.github.io/publication/guo-2025-fpb/
+  
+  Sources:
+  https://www.youtube.com/watch?v=2RQcoLV_bVk
+  https://www.youtube.com/watch?v=7d158rQ1R3k
+  https://www.youtube.com/watch?v=qirVdKg3qgs
+  https://www.youtube.com/watch?v=TPokJdN2bkw
+  https://www.youtube.com/watch?v=DRzT3c1jk14
+  https://www.youtube.com/watch?v=er23-Kt-uHE
+  https://www.youtube.com/watch?v=Odg7acl3nIM
+  https://www.youtube.com/watch?v=jo2ppdJ0Jao
+  
+  📝 My paper on simulations that look almost like reality is available for free here:
+  https://rdcu.be/cWPfD 
+  
+  Or this is the orig. Nature Physics link with clickable citations:
+  https://www.nature.com/articles/s41567-022-01788-5
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Benji Rabhan, B Shang, Christian Ahlin, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Steef, Taras Bobrovytsky, Tybie Fitzhugh, Ueli Gallizzi
+  If you wish to appear here or pick up other perks, click here: https://www.patreon.com/TwoMinutePapers
+  
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  X/Twitter: https://twitter.com/twominutepapers
+  Thumbnail design: Felícia Zsolnai-Fehér - http://felicia.hu
+---
+Video games have a clothing problem. And not a small one. You see, in many games, you can choose the clothing for your own character. But often, a piece of clothing simply does not sit well on the character. And I don’t mean it’s stylistically bad, no. The game does not simulate
+
+it correctly. Sometimes it gets worse, it’s not even visible. That is really fun, especially in games where they try to sell you this clothing. And it doesn’t matter how much in detail you have modeled it if it does not sit well on the game characters, no one’s going to believe it. So how can we make them sit well? Well, this research promises that, yes, finally! But I
+
+am a little skeptical because knots and ties are notoriously difficult to simulate properly. One designer, who does it by hand says that knots fall apart so many times he was close to despair. The reason is that things intersect into each other like crazy, and it’s nearly impossible to resolve. So this new research work promises us a physics-based way to solve this knot and tie problem. It has an editor where we can add a new knot, okay, so I have a problem here. And the
+
+problem is that it looks terrible. Of course it does, we just drew something, this is not how things look in reality. But then, check this out. Whoa! It runs a little physics simulation, and it pops into life. Okay, are you ready? Now hold on to your papers Fellow Scholars,
+
+and…it’s simulation time. Yo, whoo! That looks beyond amazing. Wow. It all really behaves as it should in reality. So here, you can basically just design roughly what the scarf should look like,
+
+and then once again, let’s gooo! Yes! It pops into place. This is glorious. And if you look at other examples of these simulated characters, holy mother of papers.
+
+Look at that. This is beautiful beyond words. How is this even possible? But it gets better. It gives you artistic control over the results, and it works on a wide variety of clothing. High-resolution models, crazy knots and ties built
+
+from hundreds of thousands of vertices, not one issue or artifact appears. Wow. And get this, this is a completely Michelin-star handcrafted technique, no AI was used whatsoever here, only human ingenuity. The paper has lots of jargon and mathematics, I mean of course it does, it was written for other experts. And I think I found a way to explain it so anyone would understand what this does. How the magic happens. It’s
+
+not easy because it is talking about BVH for broad-phase culling, that’s a bunch of…words. Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. Dr. Carroll.
+
+Now, instead of simulating every thread and every fold like a crazy person, instead, think of this like giving the computer a straw. It’s defined as a Bézier-curve, which enables you to bend and twist this straw easily and smoothly. Now, the algorithm takes a look at this straw, and it makes it thicker or thinner to avoid weird intersections and weird geometries. Then, the poppy thing, the physics simulation shakes it into place, so it gets a natural shape. Man, this is brilliant.
+
+But we are not done yet. Not even close. It then applies continuous collision detection to make sure things don’t intersect into each other. And surprisingly, it doesn’t do it looking frame by frame, like a human would. Nope! It predicts
+
+collisions before they happen, and corrects them instantly. But that is bloody expensive. So, how? Now that is what BVH helps you with. It’s called a bounding volume hierarchy, and when there’s lots going on that might be colliding, it helps us narrow down the search. How? Well,
+
+it does not intersect a high-resolution cloth against another high-resolution cloth, that is a nightmare. It puts these cloths into nice little boxes, I am not even kidding, and finding where these boxes collide is super easy. And fast too. And then, when you find two boxes overlapping, you perform precise collision tests, but only there. Ha! Genius. This is a godsend, saving a ton of computation time.
+
+I’ll tell you about how long this takes to run and its limitations in a moment. And once again, I don’t see anyone else talking about this paper. Except this one Fellow Scholar. I salute you. So help me save a paper today, like, subscribe, and leave a really kind comment. Okay,
+
+so runtime…I thought you know, you wait a couple minutes for this whole thing to run. Apparently not the case at all. It all runs in real time. That is jaw dropping. What a time to be alive! You can pull up a Lambda GPU instance and run simulations like this on it really fast.
+
+Now, even this technique has its limitations. It works with templates for these straws, and while new and unusual styles are possible, it takes some modeling in external tools. The other limitation is pretty surprising: other techniques typically have trouble when the resolution of the garments is too high. Here, not so much. The problem is when you have the opposite: if the 3D cloth model isn’t detailed enough, if it has too few triangles, it might poke through itself. This work still handles it better than most,
+
+but it might still happen. So make sure to give it the good stuff. And try Lambda.

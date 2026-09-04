@@ -1,0 +1,122 @@
+---
+video_title: "This tiny KVM controls your PC—anywhere!"
+video_id: 6pYfHedjjgw
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6pYfHedjjgw
+video_date: 2024-10-26
+video_description: |
+  Thank you to Notion for sponsoring this video! Sign up for Notion AI at https://ntn.so/JeffGeerling. #NotionPartner #Notion #NotionAI
+  
+  The JetKVM is a tiny IP KVM that lets you control any computer, anywhere.
+  
+  Find out more: https://jetkvm.com
+  
+  Disclaimer: JetKVM sent me the two units I tested in this video. I did not pay for them. And they did not pay for this video, nor have any control over what I said in it.
+  
+  I did back their Kickstarter, but as with all Kickstarters, the standard caveat applies: you are not buying anything, you are simply pledging money towards a hope and a dream that the product may someday appear. Many Kickstarters fail. I don't think this one will, but I can't promise it will, either.
+  
+  A few other things I mentioned in this video (some links are affiliate links):
+  
+    - GMKTek G3 N100 Mini PC: https://amzn.to/3zYmo8c
+    - USB-C power/data splitter: https://www.aliexpress.us/item/3256803607115029.html
+    - Pi-KVM v4: https://pikvm.org/buy/
+    - Sipeed NanoKVM Review: https://www.youtube.com/watch?v=riDd6d0Vmy0
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Not an Apple Watch
+  00:17 - RED ALERT
+  00:51 - How does it work
+  02:13 - Software: UI, ISOs, BIOS, and auto-updates
+  04:09 - Simple, elegant, and useful software
+  05:58 - How it's made
+  07:14 - PCB and hardware internals
+  08:18 - Hardware gotchas
+  08:49 - Latency testing (thanks Wendell!)
+  09:46 - Gaming problems
+  10:14 - RJ11 Extensions and missing features
+  10:56 - Remote access and JetKVM Cloud
+  11:46 - A huge caveat
+  12:37 - Compared to PiKVM v4 and NanoKVM
+---
+Despite what it looks like, this isn't some hot rod Apple Watch. This is an IP KVM. What does that mean? It's basically a remote control rocket pack for any computer, including the little mini PCs you might be running in your homelab. It's called JetKVM, and the team behind it sent me two to test out.
+
+"Belay that order, number one. Red alert!" Oh! We're at red alert! That must mean it's time for the Kickstarter disclaimer: The JetKVM is currently on Kickstarter. If you decide to back it and they don't deliver, that's...
+
+actually pretty common. I *did* back their Kickstarter, and I *think* they'll deliver, but there are no guarantees. They did *not* pay me to make this video, and I am *not* sharing in any profit or even using an affiliate link. I just saw this thing come across my feed and thought it looked amazing, and they're letting me test these out. This video *is* sponsored by Notion, though. More on them later.
+
+So how does it work? Well, first you plug in your computer's HDMI to the mini HDMI input, and they actually include a thin adapter cable since most people don't have mini HDMI. Then you plug in USB to one of your computer's USB ports. This should power it up, at least if your computer always provides power to USB, and some computers don't. More on that later. But the last step is to plug the ethernet port into your network.
+
+After a few seconds, you should see an IP address on the screen. Visit that IP address, and you'll see the JetKVM interface. It walks you through setting up an optional admin password, and then dumps you right into the remote admin UI. Neat. Now, every time I post a video about an IP KVM, someone asks me why they'd need one instead of just using Remote Desktop Connection, or VNC. Raspberry Pi even launched Pi Connect this year.
+
+Well, this goes a level deeper. Instead of requiring software running on your computer, it's completely independent. That means it can work even when your computer's shut down or locked up. It can also send out magic Wake-on-LAN packets to wake up other computers, even if your main computer's off. And it can do things like mount virtual disk images and help you reinstall an OS on a computer that you can't get to easily.
+
+Those features are actually built into enterprise servers like these, where people stick hundreds of them in data centers, and they don't want to walk up to each server all the time. But the JetKVM takes that ability and puts it in the hands of homelabors. All this stuff is worthless, though, without fast, reliable software, so let's dive in. I love how simple the web UI is. It's like the first time I used PiKVM. The UI is pretty
+
+easy to pick up, and it has all the tools I need, and it works well on my laptop or on a larger desktop. It also tucks away a few handy tools, like these live connection metrics, for things like latency, jitter, and how many frames per second it's sending. You can choose from different EDID monitor emulation options, you have controls for how the mouse works, and it has all the standard KVM features, like a virtual keyboard or full-screen sharing. One feature I haven't tested yet is ATX power controls. I'm guessing there'll be a little menu for pressing the power button or reset, but I haven't seen it yet. It also has the
+
+ability to mount virtual disk images, but it takes that feature a little further. In addition to install disks like you would have on other IP KVMs, there's built-in netboot.xyz support so you can boot a remote computer through the network. I haven't tested that out, but I did test mounting ISOs. I decided to try out upgrading this GMKtec Mini PC from Windows 11 to Linux.
+
+Normally, I'd use Ventoy to install an OS, but with JetKVM, I mounted a Debian 12 image and installed a fresh copy of Linux. And I could do this anywhere. I don't have to touch the computer at all. But while I was doing all these reboots, I realized the Mini PC behaves just like a Pi. When you shut it down, it cuts power to the USB ports. My streaming PC doesn't
+
+do that, but this one does, so I had to use this little USB-C power splitter. It supplies constant power to JetKVM even when the Mini PC is turned off. In terms of keeping itself up to date, JetKVM comes with over-the-air automatic updates enabled. That's easy enough to turn off, though, and you can either manually check for updates or just ignore them completely if you want to flash your own OS to it. I did test out an OTA update by switching to the Dev Channel, and again, I was impressed by the level of polish.
+
+This isn't even a public project yet. There's actual progress bars and meaningful status information? What madness is this? JetKVM promised to release all the code under a GPL open source license in December, when they start shipping. That means you could modify their code and build your own images if you want.
+
+So the software side of this thing is nearly as full-featured as PiKVM—the gold standard for open source KVMs. And it's polished, too. Outside a few small layout bugs, I had no problems controlling a variety of computers. I'll talk about hardware and remote access later, but first, I wanted to talk about another piece of software that nails elegant simplicity. And it happens to be the sponsor of today's video: Notion. Now, I usually write up my video outlines
+
+in a boring old text file. But when I need to collaborate with someone else on a project, I use Notion. I love simple tools. I especially love simple tools that are fast and powerful, and Notion checks off all those features. One feature that seems to be everywhere these days is AI. And a lot of places just
+
+jam in the AI where it doesn't fit, just to say they have it. Notion didn't do that, though. Notion's a great place to structure my thoughts, and I can use Notion AI to make organization, writing, and editing even easier. I don't have this set up on my instance, but if you connect it to Slack or Google Drive, you can let Notion AI add your chats and files to its context. It's still private, though.
+
+Notion never shares your data for AI training. It keeps your information in your own account. I was playing around with it while brainstorming this video. I grabbed a PDF on IP KVM security, and in just a few seconds I got Notion AI to give me a full summary. I also asked for a quick outline of why IP KVMs are useful for Homelabs, and it gave me all this.
+
+Homelabs can benefit from KVMs in many ways. You can use them for remote access, to cut down on clutter if you have multiple computers, and it's a great learning opportunity figuring out how these enterprise-level tools work. Notion AI integrates models like GPT-4 and Claude, making their AI useful across a wide variety of topics. No AI tool can replace your own work, of course. For me, I just use it to be a foil for all my ideas, kind of like a rubber duck.
+
+Thanks to Notion for sponsoring this video. Scan the QR code on the screen, or visit the link in the description to sign up for Notion AI today. Taking a look at the outside, two things struck me right away. First, that front display. It looks almost exactly like an Apple Watch. And second, when I hold the thing, it's heavy. In
+
+a good way. I asked Adam, one of the co-founders, if he could share more about how they made these things, because the level of polish is a lot better than most of the homelab stuff I review on this channel. He said the main body and back cover are a die-cast zinc alloy, specifically, ZAMAX 7, with 5% aluminum and 95% zinc. They take those castings and use CNC machines to get a nicer finish. They wind up with these shiny enclosures, add a copper plating, and then give it this kind of gunmetal gray finish. Apparently, to do all that, they had to order
+
+a batch of 5,000 cases, which I hope means they also have a ton of these ready to go. It certainly looks that way from all these pictures. Then, the screen is an off-the-shelf component used in some smartwatches. That means it A) does look kinda like an Apple Watch, but more importantly B) doesn't have an Apple Watch price tag. All that to say, this is one of the nicest Homelab devices I've seen, and it's a huge improvement over the NanoKVM. That thing has a lightweight
+
+plastic body and doesn't stay put when it's plugged in. But it is cheaper. JetKVM also includes thin, flexible HDMI and USB cables. Pair that with slimline Ethernet, and you won't have to worry about it flying off your desk. The nice design extends to the inside. JetKVM actually sent this PCB straight from the
+
+assembly line so I can show you how it looks without having to open up the device. But don't worry, I did that too. It's powered by a Rockchip RV1106G3, the same chip used in some Luckfox boards. This chip is meant for camera applications, and it has a single Arm Cortex-A7 core. It's not fast, but it's plenty fast to run a simple web UI. The more important feature is it has almost
+
+everything this board needs built-in. It has hardware-accelerated video encoding, embedded 10/100 Ethernet, and integrated RAM; 256 MB of DDR3L RAM, to be precise. Attached to it down here is an 8GB EMMC chip for storage. In the middle, there's a Toshiba chip that converts HDMI to CSI. This translates the video signal from your computer into something the Rockchip can understand. On the bottom there's a little PMIC chip with two inputs. And it looks like
+
+right now, one input is wired into 5V USB power from your computer, and the other one goes to this RJ11 jack. I'm guessing a dongle could supply AUX power if your computer doesn't always provide power over USB like this one. Now, the two main hardware gotchas are mini HDMI and the 10/100 Ethernet port. Both are fine, but they do come with a trade-off. For mini HDMI, most people don't have mini HDMI cables. But,
+
+luckily, JetKVM includes the adapter. The Ethernet port has the same problem I mentioned in my NanoKVM review. It should work with most switches, but there are some scenarios where switches might not play nice at 100 megabits. It's just something to be aware of. That's it for the hardware. The big question is how well this thing can perform with such
+
+a tiny low-power processor. For this test, I have an HDMI splitter plugged into my streaming PC. The splitter has port 1 plugged into the JetKVM, which sets the display mode to 1080p, and port 2 is plugged into my gaming monitor on my desk. I have JetKVM up on my Mac over here, and the monitor is wired straight into the splitter. I can run a latency test by setting up a large millisecond timer on the display. Recording in 120 frames per second, I can count frames between when the picture updates
+
+on the monitor versus through JetKVM in the browser. Thanks to Wendell from Level1Techs for that trick. –Yeah, thanks Jeff! –Doing that, it looks like there's consistently around 100 milliseconds of lag, at least on my local network. I didn't do that same test over a separate network like through my VPN, but day-to-day for the things this is intended for, the latency is perfectly fine. I could even watch a video on YouTube through it,
+
+except there's a bigger problem with that: there's no sound! So yeah, if you want to buy one of these things expecting to play video games off a console or to replace Parsec or Moonlight, that's not gonna work. Plus, gaming through this has its own problems. Like, in Halo Infinite, absolute mouse positioning means you can't use the mouse to look around. Eventually, JetKVM will support relative positioning, and that should fix that issue. But no, don't buy this for remote FPS gaming. It's not made for that at all.
+
+So, this little box certainly isn't perfect. There's trade-offs with every KVM. And in this case, it doesn't have Wi-Fi, so you have to use wired Ethernet. And there's no built-in PoE support, though you could add on a PoE splitter if you want. And I haven't been able to test any of their RJ11 extensions yet. They said they'll have a few ready for launch.
+
+An ATX power control extension would allow you to emulate a power button press on a PC or a server. A DC power control extension would allow you to cut power to a mini-PC like this one, since it doesn't have any power switch headers. And eventually, they'll have a serial console extension, too. The other thing that's currently lacking is a rack mount adapter, or even, like, a silicon sleeve to hold it in place better. But they do have a 3D model available, so designing an enclosure might not be that hard.
+
+And the last thing missing is dark mode. And that reminds me: if you like this shirt, go check out Techno Tim's merch store. That's where I got it. But they said dark mode might happen in the future. Right now, they're focused on the rest of the UI first.
+
+The last thing I'll talk about is remote access. For myself, I have site VPN set up here and at home. So if I need remote access, I just connect to my VPN and I act like I'm sitting here in the building. But if you don't have that, JetKVM has a free cloud option. You can read more about how it works in their docs, but the bottom line is: it's there if you want it, but it's not at all a requirement. And it's not even enabled by default.
+
+I did test it out, and after logging in with my Google account, I could add my JetKVM and access it anywhere. Their software handles punching through firewalls, but honestly, if you have any questions about their security or whatever, they'll have their GitHub issues open. And they've been pretty responsive on Discord, too. You can also enable Developer Mode to get SSH access. Using that, you could get in and probably set up something like Tailscale or WireGuard straight on the device.
+
+And like I said, they promised to release all the software under a GPL license in December when they start shipping these things. But—and this is a huge caveat—this is a Kickstarter. If I had a nickel for every time I backed something on Kickstarter and never got anything out of it, well, I'd at least have 10 cents. But that's a risk with Kickstarter. If you don't like the idea of throwing your money into the void, just wait. Patience is rewarded.
+
+If they're successful, I'm sure they'll be selling these things like hotcakes after they ship to all the backers. And if you're concerned about the security implications of a tiny device like this giving full remote access to your computer? Well, yeah, that's why safeguarding your physical infrastructure against people like Red Shirt Jeff is so important. If someone has physical access to any of your machines, it's game over. That's why a lot of companies disable USB ports entirely.
+
+So, in the end: this is a Kickstarter. All the usual Kickstarter caveats apply. It's no skin off my back if you support it or don't support it. I get absolutely nothing either way, and the Kickstarter's already been funded. I just love seeing creative new takes on an old idea, and this is nothing if not that. The PiKVM still exists, and it has its own tricks, like you can pop
+
+in a cellular modem for backup internet. And the NanoKVM also still exists, with its own upsides and downsides. I covered those just a few weeks ago. But this thing, I think it has a bright future. Until next time, I'm Jeff Geerling.

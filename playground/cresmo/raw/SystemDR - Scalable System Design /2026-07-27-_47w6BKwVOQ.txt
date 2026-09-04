@@ -1,0 +1,19 @@
+---
+video_title: "Avoid Data Leakage in Time Series ML"
+video_id: _47w6BKwVOQ
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_47w6BKwVOQ
+video_date: 2026-07-27T15:00:27+00:00
+video_description: |
+  Website Link: systemdrd.com
+  Learn the correct way to split time-series data for machine learning using TimeSeriesSplit, rolling window validation, expanding window validation, and walk-forward validation. Discover how to prevent data leakage, improve forecasting accuracy, and build production-ready predictive models in Python with Scikit-learn using industry best practices.
+---
+Welcome. Today, we're talking about [music] mastering cross validation. Specifically, the best practices for splitting [music] data in time series analysis. Here's the promise of the next 15 [music] to 20 minutes. By the end of this session, you'll know how to partition historical data into train [music] and test sets without silently leaking the future into the past. That
+
+sounds [music] like a solved problem. Scikit-learn ships a splitter. Everyone's used k-fold before. [music] What's the issue? The issue is that most production forecasting and trading [music] models that worked great in back testing and then failed in production, failed right [music] here at the validation step, not in the model architecture.
+
+This isn't one trick. [music] It's a family of splitting strategies. Expanding window, sliding window, purged k-fold with embargo, >> [music] >> and choosing the right one depends on your data stationarity and auto correlation structure. Let's start with exactly how standard [music] cross validation breaks on time ordered data. Classic k-fold cross validation makes [music] one core assumption, that your rows are exchangeable. That shuffling [music]
+
+them changes nothing about what the model can learn. Time series data violates that assumption directly. Each observation is correlated with its neighbors, [music] and a shuffled fold routinely ends up training on data that was collected after the point it's being tested on. >> [music] >> Here's the key insight I want you to walk away with from this slide. A shuffled k-fold split can silently

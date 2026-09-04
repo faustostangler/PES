@@ -1,0 +1,105 @@
+---
+video_title: "Is this the perfect Mini NAS?"
+video_id: M_Ft8OAPQ3g
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=M_Ft8OAPQ3g
+video_date: 2025-04-17
+video_description: |
+  I'm mini-fying my entire Homelab, but shrinking my NAS has been a problem.
+  
+  Is the 4-bay NucBox G9 the perfect choice? It fits in 1U, has 4 M.2 NVMe SSD slots, an Intel N150 CPU, and dual 2.5 Gbps networking. The specs seem like they'll do great, but the proof is in the pudding...
+  
+  Some of the things I mentioned (some links are affiliate links):
+  
+    - GMKtec G9 4x NVMe N150 mini NAS: https://amzn.to/4cuGRzY
+    - GMKtec G3 N150 mini PC: https://amzn.to/4jxb8R9
+    - My Pi 5 SATA NAS build: https://www.youtube.com/watch?v=l30sADfDiM8
+    - Geekbench test results:
+      - Quiet / Linux: https://browser.geekbench.com/v6/cpu/11471182
+      - Balanced / Windows: https://browser.geekbench.com/v6/cpu/11470130
+      - Performance / Linux: https://browser.geekbench.com/v6/cpu/11471355
+  
+  *UPDATE* – I've also tested many of the suggestions in the comments to get the system to run cooler, to no avail. See my blog post (specifically the UPDATE section towards the bottom) for all the details: https://www.jeffgeerling.com/blog/2025/almost-perfect-mini-nas-my-mini-rack
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - The need for mini
+  01:02 - NucBox G9 overview
+  01:52 - Quick teardown
+  02:52 - A quick boot into... Windows?
+  03:39 - Ah, Linux
+  04:16 - 4x NVMe SSD install
+  04:58 - Hot hot hot
+  05:51 - Drive and network benchmarking
+  06:30 - Uh oh
+  07:43 - Oh no
+  08:09 - One drive works
+  08:23 - Trying other SSDs
+  09:05 - One more trick, toaster mode!
+  09:57 - The perfect Mini NAS?
+---
+This is the Nucbox G9. It's a 4-drive NAS that's small enough to fit in 1U of rack space in my mini-rack. I want to downsize my homelab, but right now I'm running one of these NASes. It has all my family's movies, TV shows, and backups. And I know what you're thinking: how can you cram all that into this thing? Well, considering I don't do YouTubing at home anymore,
+
+how much of that space do I actually need? It turns out, I'm only using like 3 terabytes for all the movies and TV shows I serve up with Jellyfin, and another terabyte for backups. So, my two main requirements are: it needs to fit in a mini rack, which I just proved it does, and it needs at least 6 terabytes of storage space to give me a little room for expansion. My old NAS uses hard drives, and that's great for value in terms of cost per terabyte, but they're big and loud. My mini homelab should be small and quiet, so this thing might be perfect.
+
+And before I go on, I should be clear: GMKtec sent me this G9 for testing, but no money exchanged hands. They don't get to see the video before you, and they had zero input into the making of this video. The G9 has four internal NVMe slots, so I can install four 2TB SSDs and meet my 6TB goal with one drive for redundancy. Using smaller 2TB drives is a good compromise versus 4 or 8TB SSDs in terms of value. Of course, there's a premium with SSDs compared to hard drives, but if you want small and quiet, you can't have it both ways. I'm gonna test these four Kioxia XG8s, which are fast Gen 4 SSDs, but the tiny
+
+Intel N150 only supports PCIe Gen 3, so these are definitely overkill in the G9. But even slower SSDs would still be overkill for the dual 2.5Gb Ethernet ports. We're gonna max out at like 250 MB/s regardless. But for me, most of what I would do with this thing is playback video through Jellyfin, so I'm fine with a downgrade from the 10 Gbps connection I get on my ASUSTOR. Before I boot up the G9, though, let's take a quick
+
+look inside. They give you a 19V power adapter with a USB-C connector, but their setup is a little strange. It's a 65W adapter and I don't think I'd plug this into anything else because it doesn't look like it supports power delivery, just 19V. Besides the power brick, they include an HDMI cable and mounting bracket in the box. Getting back to the G9, you flip it over and unscrew this plastic door to access the four SSD slots. There are a couple fans that blow across, but the heatsink they installed on
+
+the 1TB SSD it came with seems like it might block most of that airflow. I'm a little nervous about cooling performance on here. But moving on, you can pop off the entire base after you remove all the screws. Under that, the bottom side of the motherboard has a couple things of note. There's an eMMC chip with built-in 64GB of storage on my unit. Then there's an M.2 E-key slot with a little
+
+Intel Wi-Fi 6 chip. I didn't tear it all the way down, but seeing a plastic cover on the SSDs and those two tiny fans, I thought that could be an issue in terms of cooling performance. But before I install four of my drives, I wanted to see how it worked out of the box with just the one. I powered it on, and it was pretty quiet, but the first time it booted into Windows 11 by default. And of course, you still have to do a little dance to skip Microsoft's account requirements.
+
+But I waited a few minutes for all the updates and stuff to finish, and made sure it was idle, and I ran Geekbench. Under Windows, it scored around 1000 single-core and 3000 multi. That's not bad, but I was expecting a little bit faster. Digging into the BIOS, I found two issues. First, it was defaulted to the Balance power limit, which means I should get a little more speed if I set it to 'Performance'. And second, it had Linux
+
+pre-installed. That's not the issue, though. The issue is, it's set to boot off Windows by default. Why would you build a nice little box like this and poison it with Windows at all? I set things right and booted into Ubuntu next. It came with Ubuntu 24.10 pre-installed on the 64GB
+
+eMMC, and it had Windows on the 1TB NVMe. Here are all the stats on the system from screenfetch, but I ran Geekbench on Ubuntu, and with the Performance mode I got a more reasonable 1300 and 3300 single and multi. To be complete, I also ran Geekbench in Quiet mode, and it still scored better than Windows, so I guess that just shows these little boxes run better under Linux. But I want stability and long-term support for the software on my NAS, so I went ahead and plugged in a USB drive with Ubuntu 24.04 server on it, and I wiped the existing 24.10 install.
+
+Once that was going, I installed my four SSDs. Like I said earlier, each of these are PCIe Gen 4x4 capable, but this system only lets you run them at Gen 3x2, and that's helpfully labeled under each drive in the drive bay. The last slot even accepts M.2 SATA drives, but I didn't have one on hand to test. Now, before I had installed the NVMe drives, the system would idle around 11 watts.
+
+At least, in Linux. When I was running Windows, the power draw was all over the place, and averaged a bit higher. But in Linux, with all four of my SSDs running, the idle power draw was up to 19 watts. That's not horrible, but seeing how the system can burn up to 30 or so watts full tilt with no drives installed, I realized why they included a 65 watt power brick. The SSDs seemed to use about 2 watts each at idle. That's actually a decent amount of heat to push away in
+
+such a tight space, so I pulled out my thermal camera and checked. The top, where the CPU fan exhausts, was getting up to like 65 degrees Celsius, and that was on the outside, at idle. It was actually kinda hot to the touch, and when I flipped it over, things weren't looking so hot for the drives—or, well, they were! The plastic enclosure was getting up to 50C, but when I popped the cover off and looked at the drives themselves, just looking through IR, the drives were toasty, reaching up to almost 80 degrees. Well, except for the first one. It seemed to get the brunt of the
+
+airflow and it didn't look too bad. But SSDs like these Kioxias can take a little heat. That's why I use them in a lot of my builds. They've always been rock solid for me. And just to prove the numbers I saw on thermals weren't a fluke, I fired up the NVMe CLI and the SMART status said the same thing. These drives were hot. Anyway, my next step was pushing everything to the limit. I confirmed
+
+Even the network jack could give me 2.5 gigs, and I benchmarked the built-in eMMC boot drive. It could read and write over 200 megs per second, which is what I expected. It's not NVMe speeds, but it is faster than a hard drive, and this is just for booting the system anyway. I wrote a little script to print out the drive temps, and I started benchmarking.
+
+You can see, just like with the IR camera, that first NVMe drive was running a lot cooler than the rest. But testing with a 1 gig file, my benchmarks showed it could copy at over 2 gigabytes per second. Which is good. with all four drives in a striped RAID 0 array. That's not a good setup for production, but it was good to get a quick performance baseline. So I did another test with a 10GB file size,
+
+and I noticed the whole system rebooted itself. At that point, I launched s-tui, not to be confused with 'hawk-tui', and ran some stress benchmarks. This thing gets hot. The CPU, the drives, the whole thing is a hot little box. But I also noticed when the CPU ramped up, the drive fans also ramped up, and the drives got a little cooler. So I went in and ramped up the fan curve
+
+overall in the BIOS. And I wanted to see how ZFS and Samba would run over the network, so I set those up and ran a basic test reading and writing to the array as a RAIDZ volume over my network. For my Mac, I was seeing like 250 megs per second, which is what I'd expect on a 2.5 gig network. And more importantly, there were no lockups this time. That is, until I copied some actual files
+
+over. After about 1GB, the G9 froze again and rebooted. Not good. I did it again, this time watching the drive temps, and none of them were over 70, but it still rebooted. You can see when it was blipping offline in the power graph here, too. I started debugging, and I took out one of
+
+the SSDs and rebuilt the array. And again, lock up. This time about 6GB into the copy. So, I took out another drive, and just had a 2-drive ZFS mirror, and nope, locked up again. I went down to just one drive, that first one that gets all the best airflow and runs the coolest, and, you know, something else I noticed all this time: on a lot of reboots, there'd be no network connection. I'd have to physically swap out which ethernet port I plugged into, and then it would
+
+connect. I only mention this because it happened about four times out of the 15 or so cold boots I performed. I don't know if it's a driver thing, a hardware bug, or what, but that definitely wasn't helping inspire confidence. But anyway, with just one drive, Samba actually worked! First, I copied that whole folder across, then I did a copy both ways, and that worked fine too.
+
+So, at this point, I'm thinking, maybe it's a power issue, maybe a PCIe switch issue, not sure. But my next step was to swap in two of these lower power PCIe Gen 3 Inland SSDs, and you know what? They worked. But they still got hot. Like, definitely-causing-problems-someday hot.
+
+The ZFS array benchmarked pretty well, about 2 gigs per second, not accounting for ZFS's RAM caching tricks, but all this testing made me a little concerned. This box won't be running the power grid or anything, but I don't want to be chasing ghosts whenever I have problems. And power and heat issues can definitely cause a lot of ghosts. And I could just turn up the fans to max to make it a little more stable, maybe? But they already are loud enough to be a little bit annoying, and I'll let you hear what they sound like. [proceeds to let you hear what the fans sound like]
+
+Short of running the fans full blast, I had one more trick up my sleeve. See, I had bought this ThermalRight M.2 heatsink a while back, and I got to thinking, how much difference could this make, even without any fan at all? And the answer to that? A *lot*.
+
+Now yes, the PC looks like it's floating on my desk now. And yes, I could also run the PC in toaster mode, where all the heat naturally convects up out of the top like this, but that kinda kills the whole mini-rack vibe, because there's no way I could fit that in 1U anymore. But I tested it anyway, and wow, what a difference that made! 33 degrees in the middle slot, instead of 70 to 80. But I got to thinking, GMKtec had a perfect solution. They could've made the backplate
+
+metal with some fins for the fans to blow across, and at least got those drives down to maybe like 50s or 40s. Maybe not, but they definitely can't do anything good with a plastic back like this that insulates everything. So is the G9 the perfect mini NAS for me? No. It needs better cooling for the drives, and it has to be a little more reliable when I push it to its limits. If I'm buying a box for
+
+storage, I at least need it to survive my benchmarking. The Pi 5 I set up over a year ago? It's still running strong as my backup NAS for the studio, and it's had zero issues, despite its janky open air style. Is that Pi slower than the N150 here? Sure, but only a little. The standout feature on the G9
+
+is the four M.2 slots. If they aren't rock solid, I'm not even worried about the other stuff on here. If you just want a little mini PC, save some money and buy something like the G3, which I reviewed a few months ago. If you really need 4 NVMe slots and you're willing to give a little on the height, there are other options, too. I haven't tested them, but the Aiffro K100 and the
+
+Maiyunda M1S might have better thermals. I'm not sure. I am sure I'm still on the hunt for the perfect mini-NAS, though. Until next time, I'm Jeff Geerling.

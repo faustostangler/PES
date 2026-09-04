@@ -1,0 +1,223 @@
+---
+video_title: "The mathematics of AI uncertainty"
+video_id: tBjgCj_dGZM
+channel_name: "Google DeepMind"
+channel_id: UCP7jMXSY2xbc3KCAE0MHQ-A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=tBjgCj_dGZM
+video_date: 2026-08-26
+video_description: |
+  Long before the current wave of large language models, one academic researcher was trying to give machines a sense of their own limitations. Zoubin Ghahramani has spent the last 30 years pioneering a type of intelligence built on the mathematics of uncertainty. Today, as a professor at Cambridge and VP of research at Google DeepMind, Zoubin finds himself at the heart of an interesting debate: will improving machine uncertainty be one of the missing pieces to ever improving AI? 
+  
+  Timecodes:
+  00:00 Introduction 
+  01:06 The role of uncertainty 
+  07:45 Correctness vs confidence 
+  09:40 Historical perspectives
+  16:10 Bayesian thinking in AI 
+  26:30 Uncertainty in the real world 
+  36:42 Future research and AGI 
+  ___
+  
+  Subscribe to our channel https://www.youtube.com/@googledeepmind 
+  Find us on X https://x.com/GoogleDeepMind
+  Follow us on Instagram https://instagram.com/googledeepmind 
+  Add us on Linkedin https://www.linkedin.com/company/deepmind/
+---
+Welcome to Google DeepMind, the podcast. Now, if you ask an AI a question, it will usually give you an absolute answer with unwavering authority, even if that answer turns out to be wrong. In fact, today's AI seems to be missing a fundamental human trait self-doubt. But long before the current wave of large language models, one academic researcher was trying to give machines a sense of their own limitations. Zoubin Ghahramani has spent the last 30 years pioneering a type of intelligence built on the mathematics of uncertainty.
+
+Today, as a professor at Cambridge and co-lead of frontier AI at Google DeepMind, zoubin finds himself at the heart of another interesting debate. On the one side are those who are hoping that Pure Scale will be the answer to ever improving AI, and on the other are those like zoubin, who believe that true intelligence requires innovations in architecture, and that improving machine uncertainty may be one of the missing pieces.
+
+Zubin, welcome to the podcast. Thank you. If you were to distill it all down, I mean, your central thesis is that we need to have uncertainty in. I mean, give me the top line of it. So yeah.
+
+Well if you think about intelligence, one of the most important parts of intelligence is decision making. Can't have an intelligent system that doesn't make decisions, from bacteria to animals to humans to robots decision making is really important. And if you want to make decisions in the real world, our perception is limited. So we are always uncertain about the state of the real world. And we need to make decisions under uncertainty.
+
+We can't know everything. We don't know everything from our senses. We can't predict the future. And so fundamentally, to build an intelligent system, you need a system that can represent uncertainty, that can update its uncertainty and then can use that to make good decisions under uncertainty. Because actually, I mean, there's two different types of uncertainty, I guess, right.
+
+There's the uncertainty of just the inherent randomness of the world. Yeah there's a pedestrian in a normal, typical street, and you just don't know which way they're going to. They're going to turn. But then there's the uncertainty of a scenario that you've never encountered before. Let me give an example from something that is becoming more and more of a reality in all our lives, which is self-driving cars.
+
+So when you're in a self-driving car, the self-driving car has been trained on lots and lots of data. It's seen many, many scenarios. But you can imagine that there is what's called the long tail of things that could happen. For example, the car may have not been trained in many instances of hailstorms, and it may not have been trained with horses suddenly jumping in front of the car in a hailstorm. And so essentially, what you really want from an intelligent system is a certain self-awareness.
+
+If we can use those terms, a self-awareness about its uncertainty. So it needs to be able to know the situation that it's in is something that is unusual or it hasn't seen before. And in the case of the self-driving car, for example, if it were to have a sense of its uncertainty, it would basically decide to slow down because it hasn't encountered that situation before. It's not confident that the horse isn't a bicycle or whatever it is. There are many different kinds of uncertainty, but the beauty of it is that from a mathematical point of view, we can boil it all down to probabilities.
+
+So we can map all these different forms of uncertainty onto probabilities, and then use the rules of probability theory to manipulate uncertainty, update your state of uncertainty, et cetera. But how important is it that a machine can tell the different types of uncertainty apart. Yeah, I think it's important insofar that the different types of uncertainty may mean different decisions. So for example, if you have what's called aleatoric uncertainty, which is the randomness of a coin flip, which is the pedestrian going to turn or which ways the pedestrian going to turn might want to decide that you're going to give up on trying to predict because it is just random, whereas in other cases, your state of belief is uncertain and you would want to collect more information to. And in fact, that's the definition of information.
+
+So information a bit of information that we use in computer science is the reduction of your uncertainty by a factor of 2. That's what a bit is. And so collecting information is the way we reduce our uncertainty. How did these ideas of uncertainty map onto what humans are doing. So I actually studied cognitive science.
+
+I studied computer science and cognitive science as an undergraduate. So I've always been interested in human intelligence as well as machine intelligence. And one of the really interesting things is that the field of cognitive science has really embraced these ideas of uncertainty and probabilities and so on, to try to understand both human perception and human decision making. So we go through our lives perceiving things. Perceiving the world is fundamentally an act of sensing something that is uncertain.
+
+I can't see the back of your head, but I can infer what the back of your head might look like from you. Hope it was there. I would hope it's there. And similarly, let's say I'm hiking in Costa Rica and suddenly there's the rustling of the leaves. It may be a Jaguar.
+
+And so my sense is through evolution, my senses have developed to take in perceptual information, taken my prior beliefs, because there are Jaguars in Costa Rica, or there wouldn't be Jaguars in the middle of London. And that process of combining information has been modeled by cognitive scientists and psychologists and neuroscientists through the language of probabilistic inference, basically. And also actually one of the interesting things is that we as humans are actually quite bad at estimating probabilities explicitly. If you ask somebody what is the probability of a certain event, they might get it wrong by orders of magnitude, for example. And, we have these fallacies of probabilistic inference and belief.
+
+Kahneman and Tversky showed that humans are actually quite bad at representations of uncertainty at a conscious level. But in our perceptual systems, unconsciously, we tend to be quite good about these things because our survival depends on them. I'm thinking also about babies here. Toddlers and the way that they learn is a lot about their belief in what action will drive a particular outcome. Yeah I mean, it's all implicit.
+
+Obviously babies don't know what probabilities are and they won't be able to write down any equations for you. But there are many cognitive scientists and psychologists who try to understand human learning, human perception, human decision making, using these same formalisms that we're using for AI systems. I think there are a few things here we should probably tease apart before we get really into it, because there's a difference between correctness and confidence, which both sometimes come under the umbrella of uncertainty. Yeah, absolutely. A great example of this is we use AI systems for image classification all the time.
+
+So you give it an image and it gives you an answer of what's in the image. And we can measure correctness, but we also want it to tell us how confident it is. And more than a decade ago, people discovered that you can take an image, for example, of a school bus, modify just a few pixels in that image in an imperceptible way, so a human being would look at it and say, well, that's an image of a school bus. You give it to the neural network and it confidently says, that's a cheetah. 99% that's a cheetah.
+
+And in fact, you could do it for any category. You could turn the school bus into a monkey or whatever in the eyes of the neural network. And so that sort of adversarial example shows us that it's not correctness that we care about alone. It's actually correctness and confidence. We don't want systems that can be overconfidently wrong.
+
+Yeah, or can be fooled, I guess. Or can be fooled. And I think our systems can still be fooled in that way. These ideas of overconfidence and humility, are these going to end up being important as we start to build AGI. Yeah, absolutely.
+
+I think we've advanced a great deal with systems that can acquire a lot of knowledge, but when we deploy them, for example, large language models, we've all encountered this. No matter what large language model you interact with, it will confidently give you an answer and then you question it. And maybe it will then flip-flop and give you a different answer. And so it's hard to trust the system that is overconfident. It's also hard to trust people that are overconfident.
+
+I think we would all intelligent systems to have a sense of their limits, their knowledge, and we need to bake that into our AI systems for sure. Absolutely I know that you've been working in AI for a really long time, right. I mean, since the late 80s, basically. Yeah what was the field like then. So I'm pretty boring in that I was interested in AI as a teenager.
+
+So when I was 14 or 15, I already wanted to work in AI. When I went to University, I needed a summer job, so I went to the head of the computer science department, this very famous computational linguist, Arvind Joshi at University of Pennsylvania. And I said, I'm here for the summer. I'm a first year student. I need a summer job.
+
+And what he said was that these two books that have come out, these were called parallel distributed processing. This was in 1986, the same year that the back propagation paper had come out that launched the whole neural network, kind of modern neural network revolution. And he gave me a summer job reading these books and explaining them to him, which was most wonderful summer job one could possibly have. If you're interested and curious about things. So I learned about neural networks back then.
+
+And you asked me what was it like in the mid to late 1980s. Well, the dominant paradigm in AI was expert systems. So people were looking at Rule based systems that would make decisions, and they were quite brittle. And neural networks, which were sort of modeled after the human brain, were actually much more flexible. And fundamentally, they could learn from data in a way that previous methods were not very good at learning from data.
+
+So that was really a revolution back in the 1980s. We talk about the transformer revolution and all that. But back in the mid 1980s, that was a real revolution. And it attracted people from cognitive science, from computer science, psychology, neuroscience, economics. And then I went on to write an undergraduate thesis on learning how to parse human natural language using neural networks.
+
+So it was one of the very earliest I didn't publish it, but if I'd published it, it would have been a very early paper on small language. Let's call them small language models, because my models were very small. Wait, what year was this. This is 1989. And you're very much ahead of the game.
+
+Yeah and we had and we actually had a parallel computer. So now people think about data centers and all sorts of GPUs and parallel computers. And we had the most sci-fi, beautiful, iconic parallel computer of the time, which was this connection machine, which was this cube with 65,000 little red lights blinking inside this kind of opaque cube because it had 65,000 processors. So I would sit there coding up in this parallel language, neural networks for natural language. And it was pretty revolutionary at the time because neural networks were at the counterculture.
+
+People were very enamored of the old school of AI. But then, OK, despite being ahead of the game by approximately, what, 40 years. Yeah then I messed it up. Yeah, well. Well, what happened.
+
+No, no, what happened is actually really fascinating. So I was working in neural networks, and at the time, this was now the early 1990s. We felt like we understood how they worked. So neural networks are these amazing function approximators. We can feed them data.
+
+They can map from inputs to outputs, from x to y, from images to labels of images and so on. And remember, the data sets were very small at the time. So when I was writing my undergraduate thesis, the world wide web didn't even exist. Compute was also very limited, so we felt like we understood neural networks. We felt like their nice function approximators.
+
+But people started to uncover these beautiful relationships between neural networks and other ideas from probability theory, statistics, stochastic processes. I mean, you actually gave up working on neural networks in favor of these probability questions. Yeah, absolutely. Was it annoying though. Yeah In the end, neural networks were the thing.
+
+And you were there so much earlier than anyone else. Yeah, well, I didn't. I did redeem myself. I spent a number of years working with Geoff Hinton. Of course, he went on to win the Nobel Prize for his work on neural networks.
+
+So we were attempting to do deep learning, but we were using probabilistic models rather than simple neural networks. We were overcomplicating things because we hadn't seen what happens with large scale data. And then I went off and worked on Bayesian machine learning and probabilistic models and all these things for many years. But I never totally dismissed neural networks, actually, because I knew that they work. It's just that they weren't from a research point of view, they weren't as interesting to me because the mathematics was at the time, we felt well understood.
+
+In 2015, though wrote this seminal nature paper, which appeared in the same issue as all of the foundational deep learning and reinforcement learning papers by Hinton. And in that paper you argue many aspects of intelligence depend crucially on the careful probabilistic representation of uncertainty. Yes I mean, has everyone heard you have they needed your Warning. No, no, I think there are many people who understand that and believe that. I think that it depends on the level that you think about things.
+
+So actually, if you look at large language models, they are probabilistic models. They predict the probability of the next token or word given a sequence of previous tokens. So probabilities are at the heart of everything we do in machine learning. But what's missing is we're not really doing what I said, which is the careful representation of probabilities. We're actually hoping that the models represent probabilities, OK, because we've trained them on enough data, but not thinking about it in an explicit way.
+
+Yeah if you look in a giant neural network, you can't really find the explicit representation say, the probability that it thinks something or other. It's sort of spread out somehow over all the activations of billions of units in the neural network. And by contrast, I mean, you're more of AI guess, a Bayesian thinker. Yeah just explain for anybody who hasn't come across this before, just explain to us what that actually means. Yeah so Bayes' rule is this fascinating and very simple concept from probability theory.
+
+So before you observe something, before you get some evidence or data, you have what's called prior beliefs. You represent those with a probability distribution. So for example, think of a detective story like a whodunit. There's a number of suspects and you may have some prior beliefs about it's the Butler that did it or whatever. So he's looking suspicious.
+
+Yeah somebody looking suspicious or something. So you have some beliefs. You represent those with a probability distribution. And there are many, many reasons why probability theory is the right way of representing beliefs. There's whole, branches of mathematics that have proven that.
+
+And now you observe some evidence like the murder weapon is found in the pantry or something like that. And so you take your prior beliefs, multiply them by what's called the likelihood, the probability under each possible, culprit. And then you renormalize because probabilities have to sum to 1. And from that you get your posterior beliefs, your new state of knowledge. And through that evidence, by the way, you've gained information literally measured in bits, how much your uncertainty has decreased.
+
+And now if you get more evidence, you just take your current posterior probability distribution, which is now your new prior, and you repeat and rinse. You do it again. You get the new evidence, you update the probabilities, and so on and so forth. And through that application of Bayes' rule, we can model both perception. I open my eyes, I see something that I see more things, and I know it's not a Jaguar that's following me in Costa Rica, but you can also model what learning is.
+
+So learning is you have a model. The model has parameters. At the beginning you don't know what the parameters should be. You get some data and you update the model parameters sequentially through that data. Applying Bayes' rule.
+
+In theory, that's the beautiful model that I had been pushing forward as a model of learning because I guess I mean, on the one hand, this is a very elegant mathematical way to link together evidence and unknowns and knowns. But I guess actually, on an intuitive level, I mean, this sort of is the way that our brains work. I mean, going back to your example of the detective it's like, oh, I did think it was that person. But now this new evidence has come in and I've changed my mind. I mean, that's essentially a one sentence description of what Bayes' rule is doing.
+
+Exactly, yeah. But this is a formal way to get AI to be able to do it. Exactly so we would like to build AI systems that accumulate knowledge and information over time. And we would like them to be rational sort of data from Star Trek is a very rational being. We don't want them to flip-flop around unpredictably based on no evidence.
+
+And, I mean, I would argue that ideally we would like them to be, even more rational than humans. I want my I just like I want my calculator to be really good at multiplying large numbers. I would actually our AI systems to be more rational, better at representing and manipulating probabilities than humans are. If we fast forward to today, I mean, the paper you wrote was a decade ago. Yeah how good, really are the AI systems that we're all used to playing around with.
+
+How good are they at representing uncertainty. Yeah, they've been getting better, but they're not very good. And you can tell that because if you interact with a large language model and it asserts something, you can ask it, how confident are you. And it might say something back, but it's really doing next token prediction. It doesn't have an explicit representation of how confident it is.
+
+It's not calculating Bayes' rule. It's not calculating Bayes' rule, at least not explicitly. It may be because you've trained it on trillions of tokens of stuff on the web. It's mimicked a lot of other kinds of reasoning traces and so on. It's sort of faking it.
+
+And you can tell it's faking it, because then if you push back and you say something silly like, no, I think you're wrong, then it might respond, oh, sorry, yes, I was wrong. So it's not really coherent. It's not going to stand its ground. And our systems are getting better at factual grounding and things like that. But we haven't really nailed the idea of how one of these models should be able to represent probabilities over its beliefs.
+
+Because that, I mean, I feel like that would be a very useful feature for a large language model to be able to say, it's not sure why do they struggle with that so much. They struggle because the paradigm for training them hasn't prioritized that. We train them to be just really good at modeling the data. If the data involves a lot of human reasoning by many different humans with many different beliefs, then what you get is a soup. You get a mish mash of everything.
+
+But if we want to build, like I said, self-driving cars or robots, they need to be able to reason about the real world. They need to have an understanding of cause and effect. They need to have an understanding of their own uncertainty, and they need to use that to be able to act in the real world in a safe way. But then, I mean, I'm just thinking about hallucinations here because that's part of this as well, right. There are some times where you just want there's a verifiable fact that it's getting wrong.
+
+Yeah and that all plays into this too. Yeah I mean, hallucinations are a symptom. Of course, sometimes we want our models to hallucinate. So there's a tension between not hallucinating at all and not being creative. For example, if I want my large language model to write me a short story of that time that Albert Einstein went to the moon in a rocket, that's clearly a hallucination, but it's an act of creative writing, so it should be able to do that.
+
+It should be able to infer that that's what you want, infer your intent. If I ask it a factual question, it should try to be grounded. And of course, at Google, we think a lot about grounding our models in what's available. And even information on the web is often contradictory. And so you want to hedge your bets.
+
+So actually what you would like is a system that's able to tell you for any statement, some estimate of its belief or probability. I think that's what we want. We don't have it yet. Know how might you build it if you wanted large language models to have uncertainty in there. How do you do it.
+
+Because there are some quite good ideas. I mean, thinking about semantic entropy here, which is one of your students came up with. Tell me a little bit about that. How might that work. Yeah, I mean, I think you can take the internals of a particular model and try to infer from that is the degree of belief.
+
+So before it answers, before it produces a token, in a large language model, you actually have a probability distribution over all possible next tokens. And that probability distribution, the entropy of that distribution tells you something about the uncertainty. A low entropy distribution is very spiky, is very certain. A high entropy distribution is very spread out. It's very uncertain.
+
+And so there are ways of teasing from the internals of a model how certain it might be. Yeah I guess I'm thinking here about an example, let's say the Eiffel Tower in Paris, right. Those two things would be an example of something that's quite spiky. Yeah, yeah if you ask it, where is the Eiffel tower. It should have a high probability over Paris.
+
+Although I believe there's one in New York as well, isn't there. There's a little Eiffel Tower Vegas as well. I think they've got. Maybe there's one in Vegas as well. So basically, depending on the context, you might have little bits of entropy on these other Vegas and New York as options.
+
+But Paris would have a big spike on it. Is that the idea then, that in the data set, Paris and the Eiffel Tower appear near each other a lot. You have a lot of really big signal there, whereas I don't the Eiffel Tower and Marrakesh. Yeah, that might have very low probability. The problem with that is that's faking it in the sense that you're relying on the data.
+
+I'll give you the analogy of a calculator. It's trying to build a calculator just by showing it examples of addition and multiplication. But imagine you never show it a particular number. Then it might not generalize to that particular number. And you don't want to fake a calculator.
+
+You want a calculator that actually calculates. You want it to actually reason about the world that it's in. That's what we want from our AI systems. So why hasn't this been done yet. I mean, what is it that makes it so hard to do.
+
+It is genuinely hard because it's computationally hard. So essentially, I would argue we had all the ingredients of AI maybe 15 or 20 years ago. We kind of know how to build rational systems. We just thought like, well, representing probability distributions over every possible thing is computationally intractable. It would take giant supercomputers that we don't have and it would be incredibly slow.
+
+You'd be waiting for millions of years before you get the answer. So people abandoned that for let's go with just training from data. And I think we can revisit this idea. And I have ideas for how to do this, and I'm exploring them now. But it's not super well formed yet.
+
+OK So moving away from the large language model, the transformer type system for a moment because I mean, there are other examples of really cutting edge artificial intelligence, which does handle uncertainty in more of this Bayesian way that you're describing. I'm thinking about weather forecasting here. Yes I mean, that's really important in weather forecasting. Tell me a bit about that. Yeah so we've developed a whole series of state of the art weather forecasting models at Google DeepMind.
+
+And if you look at the GenCast model, very recent model, one of the key features it has, it can predict weather over 15 days. And it can do it very fast, much faster. It can do it in eight minutes rather than on a giant supercomputer for hours. And it's obviously using neural networks and things like that, but a key ingredient for getting this to work is that it. It uses a diffusion model so that already is the image generation models that already is manipulating probability distributions over time.
+
+But then it generates an ensemble of forecasts. So if you're trying to track a tropical storm like the hurricane, Hurricane Melissa, let's say which we did with this model, you have the data so far. And then you want to be able to forecast the track of this into the future, because your decisions depend on that, whether you evacuate a city or whether you call in emergency services and so on. And so it represents that with an ensemble of forecasts, it has a whole probability distribution over the possible tracks. You rerun the model over and over and over and then as you get more data.
+
+So a few hours later, you get more observations, you update that ensemble. And that is essentially applying these basic ideas from Bayesian updating to this sort of problem because I mean, the original weather forecasting models that came up here did not have this. Yeah, that was added on. And every time we add on these features, it makes the model better because you're essentially saying there is an inherent uncertainty in the way that weather works. You can't just run the model once and be like, oh, well, that's to be the weather tomorrow.
+
+Yeah, you have to do it lots of times and then work out a probability. Yeah, yeah, it's a combination of both that inherent randomness, a classic butterfly effect in weather and that it's chaotic. It's very hard to predict. But also there is an uncertainty just because we have limited numbers of sensors. So it's a system that represents his beliefs about the weather, whether it's the trajectory of this hurricane and its intensity, and then those beliefs get updated as you take in the sensor measurements and as time progresses.
+
+I think there's something quite delightfully counterintuitive about that you add in uncertainty to the system. Yeah and it makes the predictions more accurate. Exactly yeah. I think it is definitely a key insight in I mean, it's not that you're making the system noisy in an arbitrary way that's not going to help you. But what you're doing is you're being honest about the fact that know your sensors are inaccurate.
+
+Sometimes you get faulty, faulty sensors, just like sometimes my ears are blocked and I can't hear very well. And sometimes your model assumptions are wrong. That is also a form of uncertainty. And so all of those different forms of uncertainty have to be represented somehow. Approximately we can't do it all exactly so that we can get better calibrated forecasts.
+
+I think the other example that really manages to get this uncertainty idea is AlphaFold, where the protein prediction is color coded by how sure the model is that that's yeah, that's the correct folding. Yeah, absolutely. And essentially you're fundamentally trying to solve an uncertain problem. You're going from a sequence to the folded structure. And the physics itself means that some parts of the protein are going to wiggle around more.
+
+So you don't know exactly where they are. And you also have just uncertainty because you've used the model to predict that it's not like experimental data. And so you need to be able to represent that uncertainty in the Cloud of forecasts of where the molecules are. There is a danger here that you could go too far the other way. You could.
+
+You could end up with a model that was so honest about its uncertainty that it just sort of didn't ever really give you an answer. It just always said, I don't just hedging, hedging all the time. That would be pretty funny. But I think there's different degrees of I don't how do you get the balance right then. Yeah, I think the balance is if there is a repeatable event in the real world, then you want to be calibrated in that.
+
+If I say the chance of rain is 0.7 or 70% then for all days that I've said that if I sum up over all those days, if I'm calibrated, then on 70% of those days, it actually rained on 30% It didn't rain. So that's the calibrated probability. Now, if you ask me a statement of uncertainty about something that is not a repeatable event. So for example, we may be uncertain about the first day a human being reaches Mars.
+
+So that's a date. It's either going to happen or it's not going to happen. And that date, when it happens, you'll be certain of it. That's the event that you can have probabilities over. You can have beliefs over.
+
+And it will resolve itself when it happens If it happens. And Bayes' also has a way of handling that where it's not just 50% It's not just yeah it doesn't. Yeah, absolutely. So what Bayesian statistics tells you is that it's perfectly valid. And in fact, the right thing to do to use probabilities to represent your degree of uncertainty about things that only happen once.
+
+How do you communicate that uncertainty in a way that actually means it adds value, rather than just has a human sort of nodding along, or taking cognitive shortcuts when the machine says it's really confident. Yeah I think people have different reactions to AI systems. Some people are just very skeptical and will not believe anything the AI system tells it. Other people are going to end up being reliant. Let's say.
+
+Let's imagine a future where we've got not a very distant future, but imagine a future where we've got AI systems in a medical domain, for example, and you have doctors aided by an AI system looking at patients and symptoms and tests results and so on. It's a great example of why we need uncertainty. If the AI system says something, you really want it to convey its uncertainty, because that's literally what is going to determine your treatment plan or whether you take one decision or another. These could be life and death decisions. So it's absolutely essential that first of all, we don't become reliant on overconfident AI systems.
+
+But to be able to do that, we need our AI systems to be honest about their uncertainty and bring that uncertainty in a visible form to the human user so we can understand it. And I mean, my colleague at Cambridge, David spiegelhalter, has done a lot of amazing work on how to convey uncertainties and probabilities in elegant ways to the general public. And I think there are ways you can do that. You can visualize the answer and so on. So, I mean, I really believe that it's important to have AI systems that are doing complementary things that are additive to humans, that are helping people solve problems that we care about.
+
+And in order to do that want them to be honest about what they know and what they don't know. It feels like this is really very critical that we get this right. Yeah it's such an important part of designing our collective future with AI. Yeah, I think it is really important. I mean, I don't want to take away from the fact that AI systems have been incredibly useful already.
+
+I think they're pretty good at some of these things. And we can do better. And they're open problems along the way. And that's one of the reasons we actually need more research, actually. The thing is, I mean I'm sort of sitting here agreeing with you.
+
+You're sort of you're also a Bayesian thinker. So this is very much my philosophy. But not everybody does. No, no, not everyone agrees with you. I mean, there are some people who say, look, you just put in more data and then you don't need to worry about uncertainty because the model will know everything.
+
+Yeah, I think that is a view that a lot of people have in the field, and they're not completely wrong. Just like I'm not completely right in that the models are actually pretty good at a lot of useful things. The problem is that when you stretch them in the long tail of unusual things, then you can uncover some gaps. And also, I think when the decisions if you're just interacting with a chatbot, the decisions may not be so consequential. But if we're trying to build self-driving cars that are reliable or medical AI systems that are helping us make diagnosis decisions, then we really do care about getting those probabilities right, because I guess when it comes to building AGI, to oversimplify it, two camps really, one which says you just need scale, you just need more data, more compute.
+
+Off you go. And then the other that's no, we actually need a new architecture to be able to do things better that we can't do at the moment. It sounds like you're very much in the second KMP. Yeah I think we've made a lot of progress in the first KMP. So of course, our systems are incredibly useful.
+
+They're used by billions of people every day. But that doesn't mean that we've run out of interesting things to discover. So I'll give you a few examples of things that I think are important areas of research. One example is continual learning. So the way we currently train our models and we means everybody in the field.
+
+We train a giant model and then we use it in products or we release it in various forms. And then a few months later, we train another giant model and so on. If you compare that to how humans and animals learn, we learn continuously. We're basically constantly getting a stream of data and constantly adapting our connections between our neurons and so on. And our AI systems are not really able to do that very well.
+
+They suffer from things like catastrophic forgetting and so on and so forth, which absolutely links back to the idea of Bayesian thinking that we were talking about earlier. Because the reason why humans, animals are able to do that is because we have this updating system in our minds of incorporating evidence with existing knowledge. Yeah so it turns out, if you think of learning from a strictly Bayesian point of view, you have your prior beliefs, you get a data point, you update them, you get a posterior, and you get another data point. You update them. It turns out that sort of Bayesian updating can do continual learning and does not suffer from catastrophic forgetting.
+
+And all these things in theory, actually, many of our attempts at doing continual learning in large neural networks are approximations of that Bayesian updating. So that's one. One area of research is continual learning. Another area where I think we may need breakthroughs is energy efficiency. So if you look at the power consumption of a human brain, it's about watts.
+
+I don't want to make an equivalence. It's a light bulb. Yeah, it's a light bulb. It's a rubbish light bulb. Yeah it's a nice, very energy efficient light bulb, let's say.
+
+If you compare that to training, a large language model in a big data center, it's orders of magnitude off. I don't want to compare a single brain to a large language model, because single brains involve the single lived experience of a human being. Large language models are basically giant soups of all of World knowledge of some kind, but they're definitely less efficient. But they're way less efficient. So we can certainly afford to do more research in more energy efficient learning.
+
+I also think that there may be new architectures that we need to discover. Basically, the two workhorses of modern AI are transformers and diffusion models. They're great, but there may be completely other evolutions of software and hardware, like novel hardware architectures that may involve very sparse neural networks of various kinds and oh, I'll give you another one. Are learning systems are incredibly data inefficient compared to human and animal learning. So again, I think Bayesian ideas can help us there sort of sounds a bit like you've discovered a magic trick.
+
+This magic trick which embeds humility and uncertainty, offers the opportunity for continual learning and makes it data more efficient. Yeah and you can write a single line of Bayes' rule, is this a little bit too good to be true. It's too good to be true, right. Obviously, we've known this for a long time. I think it's important to understand these ideas.
+
+So I think all students of machine learning should at least understand that it's possible to do these things. The magic trick comes with a big curse. The curse here is that to do all of this is computationally very slow. So essentially, if you look at textbooks in AI, they will explain to you how to do some of these things, but they will say, we can't do these things exactly because they're computationally hard problems. They're kind of NP complete or NP hard problems to solve.
+
+And so we need to approximate them somehow. And you could argue, well, we know how to build ideal AI systems using these concepts. Are modern AI systems are approximations to that. Can we have our cake and eat it too. Can we have the best of both worlds here.
+
+Because the thing is, what you just said there about well, it's very computationally expensive. It's very slow. They were saying that about neural networks in the 80s. Yeah you're not going to make that mistake twice. Yeah, yeah.
+
+I think we can revisit some of these ideas with the compute power that we have now. The giant state of the art supercomputer. Parallel connection machine computer that I used in my undergraduate years is actually slower than the Pixel phone that I have in my pocket. Computation is getting better, faster, and also we have decades of ideas on how to approximate these methods really efficiently. And so we have the tools.
+
+We just need to put them together and maybe come up with a few new ideas. What really strikes me is everything we've discussed, they feel very human like qualities. The sort of ineffable characteristics of humility and honesty and uncertainty and doubt. Yeah I mean, did you imagine when you started all these years ago that this would be the thing that our systems are lacking, rather than just computational power or power for analysis. I mean, certainly I didn't really imagine we would be where we are now, because I think if you talk to any AI researcher, they will be saying that they're stunned by the rate of progress.
+
+But I also think that, although these are human qualities we want to add, they're also kind of fundamental qualities of intelligence systems. So I think we need to have a concept of intelligence that transcends humans because as I mentioned before, we have flaws in our reasoning. We're actually quite bad at making good, rational decisions under uncertainty in the real world. We will miscalculate probabilities or misestimate probabilities and so on. So I think if we build human centric AI systems, we work backwards from.
+
+Well, what do humans need. What are society's biggest problems. What are humanity's biggest problems. And what are the AI systems that we need to solve those things. And for I think, all problems that matter, I would rather have an AI system that knows when it doesn't know than an AI system that is arrogant and overconfident.
+
+What an amazing point to end on. Steven, thank you so much. That was brilliant. Thank you Hannah. For years, we tried to build AI that was focused on accuracy.
+
+Building systems that crunch through enormous amounts of data to land an answer. And these things, they're astonishingly capable, of course, but they're also quite brittle in some ways. When they fail, they fail with total confidence. But by teaching AI to embrace uncertainty, it gives it something more human humility and honesty. And the wisdom to doubt.
+
+And this isn't a vulnerability. It doesn't make AI weaker. It grounds it in reality, making it a collaborator we can actually rely on.

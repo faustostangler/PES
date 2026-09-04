@@ -1,0 +1,17 @@
+---
+video_title: "The Optimization Algorithm Every ML Engineer Must Know"
+video_id: uWLs6jJHOrg
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uWLs6jJHOrg
+video_date: 2026-07-24T15:00:16+00:00
+video_description: |
+  Website Link: systemdrd.com
+  Confused between Batch Gradient Descent, Stochastic Gradient Descent (SGD), and Mini-Batch Gradient Descent? Learn how each optimization algorithm impacts training speed, convergence, memory usage, and model performance in machine learning and deep learning using Python, TensorFlow, and PyTorch.
+---
+Welcome [music] everyone. Today we're doing a working engineers deep dive into gradient [music] descent. Specifically, the three variants you'll run into in almost every training pipeline you touch. Batch gradient [music] descent, stochastic gradient descent, and mini batch SGD. Here's the framing for the next 18 minutes. Just use Adam [music]
+
+is a perfectly fine default, but it quietly glosses over a decision that's still happening underneath every optimizer. [music] How much data backs each gradient estimate. That one choice, a single example, [music] mini batch, or the entire data set determines how noisy your training is, [music] how much memory you need, how well your training loop maps onto GPU hardware, and ultimately how long it [music] takes to get to a trained model. We'll build one shared mental model for all three [music] variants, walk through a real configurable implementation, compare the tradeoffs with actual numbers, look at a well-known large [music] batch case study, and close with the adaptive optimizer which is built directly on top of mini batch SGD. This is pitched at ML engineers and applied researchers who already [music] know what a gradient is and want the production reality underneath it.
+
+Let's start with why this decision matters more than it looks like [music] it should. Here's the reframe I want you to leave this section with. Batch GD, SGD, [music] and mini batch SGD are not three unrelated algorithms. [music] They're the same update rule. Beta gets updated by subtracting the learning rate times the gradient

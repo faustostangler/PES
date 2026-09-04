@@ -1,0 +1,56 @@
+---
+video_title: "Why Spinlocks Are Destroying Your CPU Performance (Mutex vs. Spinlock Explained)"
+video_id: EsB0pMkEnpE
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=EsB0pMkEnpE
+video_date: 20260813
+video_description: |
+  https://howtech.substack.com/p/spinlocks-vs-mutexes-when-to-spin
+  
+  System design newsletter: systemdr.substack.com
+  Full platform: systemdrd.com
+  
+  Staring at a perf top output showing 60% CPU time in pthread_mutex_lock? Switched to a spinlock only to watch your 16-core server peg at 100% CPU usage? You fell into the synchronization primitive trap.
+  
+  In this video, we break down why both Mutexes and Spinlocks fail in opposite ways, how futex(FUTEX_WAIT) and context switching degrade latency, and how cache bouncing destroys multithreaded performance.
+  
+  ⚡ WHAT YOU'LL LEARN:
+  - The hidden cost of pthread_mutex_lock and futex syscalls (~500ns)
+  - Why spinlocks cause 100% CPU usage and cache line bouncing (~40-80ns per bounce)
+  - When a 50ns critical section makes a Mutex a disaster
+  - How context switching (~3-5μs) kills low-latency systems
+  - How to choose the right synchronization primitive for high-performance C/C++ applications
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The 60% CPU Mutex Trap
+  0:45 - The Spinlock Fallacy: Burning CPU for Nothing
+  1:30 - How Spinlocks Work (LOCK CMPXCHG & Cache Bouncing)
+  2:45 - How Mutexes Work (Userspace Fast Path vs. Futex Syscalls)
+  4:00 - Context Switches vs. Spinning: Calculating the Tradeoff
+  5:15 - How to Choose the Right Primitive for Your Workload
+  
+  #LinuxKernel #Cpp #SystemsProgramming #LowLatency #Multithreading #SoftwareEngineering
+  
+  Daily lessons (free): sdcourse.substack.com
+  System design newsletter: systemdr.substack.com
+  Full platform: systemdrd.com
+  
+  #DistributedSystems #SystemDesign #BackendEngineering
+---
+Spinlocks versus mutexes. When to spin and when to sleep. Every synchronization primitive costs you something. Today, we're figuring out exactly when each one pays off. Target duration.
+
+5 seconds. You're staring at perf top showing 60% CPU time in Pthread mutex lock. Your latency is in the toilet. Someone says, "Just use a spinlock." And now your 16-core server is pegged at 100% doing nothing useful. This is the trap. A
+
+spinlock does an atomic compare and swap in user space, looping until it wins. Zero syscalls, but 100% CPU while it waits. And every failed attempt bounces the cache line between cores at 40 to 80 nanoseconds a bounce. A mutex tries the same fast path first, but on contention, it calls futex, which is a syscall, a context switch, and your thread goes to sleep until it's woken back up. Same problem, opposite failure mode.
+
+An uncontested mutex costs 25 to 50 nanoseconds, about the same as a spinlock's atomic operation. The difference only shows up under contention. A cache line bounce costs 40 to 80 nanoseconds, a futex syscall costs about 500 nanoseconds, and a full context switch costs 3 to 5 microseconds. That gap is the entire decision. Under 100 nanoseconds with low contention, spin. Between 100
+
+nanoseconds and 10 microseconds, use an adaptive mutex that spins briefly, then sleeps, which is exactly what Postgres LWLock does. Over 10 microseconds, let the scheduler do its job with a regular mutex. And for real-time work, use a priority inheritance mutex on a preempt RT kernel, because spinlocks can't fix priority inversion. Here's the trap almost nobody warns you about. A low priority thread holds a spin lock. A high priority thread starts
+
+spinning waiting for it, but the low priority thread never gets CPU time because the high priority thread is hogging the core just spinning. That's a deadlock hiding as a scheduling problem. Priority inheritance mutexes fix it by temporarily boosting the lock holder's priority. Spin locks simply can't do that. Redis uses spin locks for its tiny job queue because critical sections run under 50 nanoseconds. Postgres' buffer
+
+pool spins for lookups, which take nanoseconds, but uses mutexes for IO, which takes milliseconds. Engine X sidesteps the whole problem with a multi-process architecture. No shared memory, no locks needed at all. So, the real answer isn't always spin, and it isn't always sleep. It's measure your critical section, count your threads, and pick the primitive that wastes the least time. Perf stat,
+
+strace, and proc status tell you exactly which one you're paying for right now. Target duration? 10 seconds. Profile your critical section, then choose your lock. Now, go run the test yourself.

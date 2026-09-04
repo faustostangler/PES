@@ -1,0 +1,135 @@
+---
+video_title: "How to Make Apps Safe (On De-Googled Phones)"
+video_id: HI82bOlT4Is
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HI82bOlT4Is
+video_date: 2025-07-16
+video_description: |
+  This is a practical guide explaining the potential risks of third party apps on a phone. Just to eliminate the threats of Apple and Google in the equation, this video will focus solely on a de-Googled phones which will not have anything from Google secretly embedded in it. But even in this case, lack of knowledge will result in a lot of dangerous exfiltration of your private data. Fortunately this is an aspect of phone use that has solutions.
+  
+  ----------------------------------
+  BraX3 Privacy Phone is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://brax.me/home/rob Store for BytzVPN, BraxRouter, De-googled Privacy AOSP Phones, Linux phones, and merchandise
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+A common question among my followers is how to make sure that they only install safe apps on their phone. Some more industrious users actually examine even hidden system apps and disable some if the name sounds suspicious. At other times, users will run protective firewall apps like Netguard to actually block internet access or track the amount of traffic for all apps while manually deciding which app should be given access to the network. Another approach taken by more serious security-minded people is to use only apps that come from FDroid. Now to make it clear, the most dangerous features of a phone are actually built into the operating system itself, meaning iOS and Google Android.
+
+These do 24/7 location tracking, contact tracing, even notification monitoring, and the identity of the phone is plainly attached to you. These OSS can track everything you do on the internet. Today though, we will isolate the problem only to third-party apps. If you're one of the smart few that use a degled Android phone, then the only realistic risks on your phone come from third-party apps. By the way, there's also the risk of the cell network side with the carriers interacting secretly with the salebased momentum or OEM supply chain attacks.
+
+Unfortunately, this potential risk applies to all phones, but typically this is something that would be used against high-V value targets like the Edward Snowden types or International Spycraft. So, we will skip that as well for now, though I will cover that in a separate video. We will talk about things that apply to average everyday people who just want privacy in their lives and teach you about things you can control. Stay right there.
+
+Once again, I will remind you that the focus of this video will be third-party apps. We will assume that neither Google nor Apple nor the OEM has directly inserted malware, spyware, or trackers on an open-source phone. Let's look at this chart of the Android architecture. And though iPhones are not really part of this explanation, you will find that the architecture of iOS is actually similar just using different nomenclature. And the very interesting detail about this architecture is that the actual nuts and bolts that operate the devices like displays, touchscreen, speakers, microphones, sensors, cellbased band modes, Bluetooth, Wi-Fi, GPS, and so on are actually just running on Linux. By
+
+the way, on iOS, the base OS is using another Unix like OS. So, very similar to Linux. Linux as used on Android devices requires that the source code be made public. This is why open-source operating systems are deemed to be safer because we can examine the code of both the Android framework which gives you the user interface and also the nuts and bolts which are visible on Linux. In this chart, you will see that the Android code is in the layer called Android framework in green and Linux is the section colored in yellow. And
+
+there's an intermediate translation layer in purple which connects communications between Android and Linux called the hardware abstraction layer. Android framework. Now let's just focus on the Android framework section which is grouped into system apps and third-party apps. What is interesting is that apps actually run under a supervisory layer which in this chart is called the Android runtime art. The apps cannot run by themselves. They
+
+cannot directly access any device drivers. Only the art interacts with the Linux side of things. The other interesting detail is that each app actually runs isolated in their own individual virtual machine. So apps cannot see other apps. Apps cannot directly interact with other apps. They
+
+do not share memory or resources outside of what's provided to them in the virtual machine. When things have to be shared between apps, Android will be an intermediary and provide a way to pass a resource and Android will announce the request so that any app can respond to provide information permissions. Apps that you download from an app store or are included with the OS cannot perform functions outside of what's in the Android open source project. And as it is open source, it cannot be hidden. So AOSP provides a limited set of functions and this is further tied to permissions that are built into Linux itself.
+
+There's a security model called SE Linux which is integrated it into the access of Linux functions and calls to device drivers. Each app will declare publicly what devices and features it will use on the device and you the user will be able to grant that permission or not. One thing that is not possible is for an app to secretly not declare that it needs to use a device like a camera and then without permission turn it on later. And again this is locked down by the SE Linux security policies and it is available in open source so you can see it. This design ensures that each app cannot perform functions outside of what is stated by the developer of the app and again only if the user grants that permission location threat.
+
+Some apps are very dangerous. As I've already revealed in a recent video on Fog Data Science and another on Anomaly 6, these companies actually track users on their phones using apps you willingly install. Just like you happily buying your newest iPhone knowing that the iPhone will know your activities and locations 24/7. But sticking to just apps, the main risk of apps is that they sell the data they collect. And this is important because it is a monetization method.
+
+The app may be free but you are the product so they will take advantage of that and make money with your data. The primary piece of data tracked is your location and some constant ID they can use that could be created by the app itself or use one allowed by the OS which is typically the advertising ID. Fortunately, open source phones do not have an advertising ID. So this is one of the biggest benefits. However, the offending app can still create some temporary ID and pass it with the location data. Someone will always tell
+
+me that the location data is anonymous as these apps are not allowed to send data like name of the user or a Google ID. But as fog data science has already proven, this is not an issue. And this particular service is used heavily by law enforcement. If you go to a protest and your location is then registered by some app running in the background, as long as all your other locations are constantly being captured by the app, then you are easily identified just from seeing where you go home to. So, a series of location points attributed to a particular user, even anonymous ones, will yield the actual identity. All that has to be done is to
+
+match the home address to public databases like driver's licenses, credit reports, and property records, and they've got you. Location plus IP address threat. There's a second layer of threats tied to the location threat. This is when data is captured in addition to location. This is when the location is sent together with an IP address to the data aggregator company. This was a
+
+technique used to create a very common database called the reverse IP lookup. What this does is attach a real fine location to an IP address. Normally IP addresses are only up to the level of the ISB center in the area. In small cities, this can be the entire city. In larger areas like Los Angeles, the IP address can be attributed to specific neighborhoods.
+
+At least this is what is publicly available using free services like what is my IP address.com. But if you pay for access to the reverse IP lookup database then you can possibly get a precise location especially if you are using your home network to within 6 ft. This is important data for financial institutions for example. Often this service is called verified location. and
+
+they're able to get this more precise location by creating a history of location coordinates tied to an IP address as captured by apps. This makes the IP address a very dangerous piece of data all of a sudden. How to counter these location threats? Currently, the surveillance in location is a huge thing. Likely a big chunk of the population shows up in these location database if you're cavalier about the use of apps. So, the first
+
+thing to do is to go to your phone and check app permissions. Depending on the phone, you can even go to settings and look specifically at those that you gave location permissions too. This is the easiest threat to counter since simply blocking location permissions will stop the exfiltration of your data. Without location data, even the IP address could prove meaningless on an open-source phone. Now if you use a VPN you can obviously protect your IP address from being acquired. This is extremely
+
+important when you are at home. It is less important on sale data or Starlink and the reason is that many people will be sharing the IP address in these cases. So these types of services will not directly tie an IP address to a particular individual. The harder problem is that some apps will not run without you giving them permissions for location. An example here is Yelp, Craigslist, Ways, and another one is the Weather Channel app. And the average
+
+person will give in. In my mind, these are examples of ultra dangerous apps that will exfiltrate your data to a location database aggregator and will end up on Fog Data Science and Anomaly 6. Can you still use these apps? If you have to use them, I would always disable location permissions when I'm not using them. And for better peace of mind, I would shut down the apps when not in use so they're not running in the background. Again, they force you to
+
+give your permission. So, it is actually your fault that you agree, but correct it now by scanning through all the apps with location permissions. So, mostly they are all off. The clue is that the apps are typically free and require location. Fitness apps.
+
+Fitness apps are another kind of location risk. Often they're tied to locations as well because you're recording things like 10,000 steps or some such. But fitness apps have another risk and that is to combine the location history with gyro sensors. So as I said earlier that knowing your gyro data like every step will actually be enough to roughly gauge your location even if you turn your location data off. I recall some Russian officer using fitness apps extensively and of course this is common for military personnel and then some intelligence operatives were able to track his jogging path and he was assassinated on that route. I know so
+
+many people using fitness apps. It's likely better to use a Garmin watch that has fitness data but not connected to the internet and not connected to your phone. I'm sure these watches can connect to phone apps, but see if you can use it without connecting to a phone. Google apps. There's a category of apps primarily those from Google that can monitor your activities and IP addresses and connect it to what you are doing on another device like a desktop computer. This is
+
+even with location off. The biggest identifier here is the Google ID. Examples of these apps are Gmail, YouTube, Google Maps, Ways again, Google Drive, Google Photos, and even Chrome. These apps will send a constant telemetry of your IP address and Google ID to Google. Then this can be matched to other devices you're logged onto.
+
+This is called crossdevice tracking. These apps can also store a cookie of the Google ID on your mobile browser and this is the instrument used to track everything you do on any other platform. Actually, the idea of having a Google ID tracking your every move on the internet is a big issue I frequently discussed and is the main threat of big tech on the internet. However, what is interesting is that an open-source or deoogle phone has no Google ID. Thus, the risk comes only if you actually log into a Google app and put in your credentials.
+
+Fortunately, it is not often necessary to do that. I have a Bra 3 phone which is open source running EOD OS and on this I installed a Google app which has search and voice search, YouTube, Google Translate, Google Maps and Ways. Now, I specifically chose these apps as examples because none of these apps require me to be logged into Google. If you do the exact same steps of denying location permissions and not logging in, then these apps are not really as dangerous as they sound. I actually can't think of too many threats with their use. Perhaps in this set, the
+
+biggest threat potentially comes from voice signatures or voice prints. And when you use ways to take you home, it will learn where home is and then sell that data to Fog Data Science. But otherwise, they're not that risky in this particular use. And especially if you use a VPN at home, this is even less of an issue. Now, Google apps that require you to log in are automatically dangerous as they provide a constant telemetry of IP addresses even if you block location permission.
+
+This include apps like Gmail, Google Docs, Google Drive and so on since these are impossible to run without logging in. Just understand that their use opens you up to tracking dangers. Meta apps. Meta apps meaning specifically Facebook, Instagram and WhatsApp are very dangerous apps. And that is because unlike in other apps, Meta knows precisely who you are. And this is
+
+crowdverified by your friends. It also knows all your location, retrieves your contact list daily, and creates a dynamic relationship map from this that establishes who you know and who you circulate with, including specific activities you participate in. Meta does not hide that it does this intense collection of data. And unlike the Google apps I mentioned earlier, it is not possible to use meta without logging in. Meta also clearly states that it combines the information about you from all its apps. So you cannot really use
+
+WhatsApp anonymously. And just like Google, the Facebook ID is an internet identifier that is recognized by any site that embeds a Facebook login, Facebook ad or Facebook like button. This means a lot of websites can track you simply by using Meta. This is a case where I can't really find any safe solutions for. So for privacy reasons, I cannot ever recommend to anyone that you use any of these apps. Once you join one, then
+
+anyone you connect to is part of the surveillance algorithm. Contactless dangers. While Facebook is number one when it comes to taking contactless information daily, others include Tik Tok, LinkedIn, and many social media apps. Contact lists collection allow the establishing of these relationship maps and it can be used to connect people by phone number. Just in general, I always ban apps that will send my contact list to some external database like what most social media apps do. However, some apps like
+
+your contactless app or your phone app does not connect to the internet per se and thus there is no danger to giving it contactless permissions. Remember that contact list are downloaded daily. Once I installed Tik Tok and did not give it contactless permissions, but Tik Tok is so suspiciously aggressive with contact list that it asks you for permission each time you launch it. One time I accidentally accepted the permission and it immediately uploaded my contact list. At that moment I closed the account.
+
+Foid apps. For those of you with the Google phones, you will find that you have the choice of using the Froid store. I will tell you now that these Foid apps are going to be very safe and no secret data collection can occur. The reason is that to be listed in the Froid store, you must submit your app source code to Foid itself and Foid independently builds your app from the source code and that's what's made available in the store. And these apps must not connect secretly to Google. Foid can examine source code and
+
+see if there's some hanky panky going on with your data. So this is a case where you can just automatically trust this source. Foid apps may not have similar versions on the Google Play Store, but if they do, I would use the Foid version as much as possible. For example, if you want an ultra safe map app, instead of using Google Maps or even Magic Earth, you can find some app like Osmand on Foid and it will be the safer option. An example application of this is with weather apps. Since location data is
+
+frequently sold by weather apps, this is a case where I would go to Foid itself and find some app like Breezy weather. Other possible threats. Other potential threats that scare people are apps that will just turn on the camera or microphone. While these are legitimate features when the app captures photos and videos, these are real possibilities. So, I would rarely grant access to camera photos and videos. But be careful here as these
+
+permissions are often forgotten on the browser. If you screw this part up, you have to blame yourself since the cause of this is bad permissions. Another real threat is some thirdparty app acquiring device identifiers like MAC addresses, IMEI, MZ and so on. These are identifiers that actually are unique to your phone and thus can be used to track particular users. These identifiers reside in the Linux layer.
+
+So a Linux executable code could read these values. But this is no longer a threat nowadays because for many years now this information is now locked down by permissions and not available to thirdparty apps on a Google phone. No Google system app can read it either because they don't exist. A threat that was recently identified was the government starting monitoring notifications. Notifications are not encrypted and if your device can be identified then it is possible that some can read your notifications. My response
+
+to this is to limit which apps can send notifications. One particular conspiracy theory is that apps will interact with your body using WBAN WBAN using nanobots injected via vaccine. This one I do not bias risk. If such a radio transmission exists, it should be easily detected using common digital radio tools and hidden communications should not be possible on a third-party app. Not sure why people worry about this when the tracking of all your activities is done in a more obvious manner using simpler methods.
+
+Firewalls. Is it necessary to use an Android firewall app like Netgard? And can this even catch anything? Unfortunately, I don't think firewall apps are useful at tracking Linux level traffic since that is beyond the control of Android apps. So things happening at the OS level in Linux may not be visible. Meaning don't expect a
+
+framework level app to record things happening outside of the Android framework. This is a big giant hole. However, if you are experimenting with some new app, you can make sure it will not reach out with your data by activating a firewall to stop it from communicating. Let me just warn you of limitations though. While you may be able to stop your data from being exfiltrated while using the firewall, the problem is that if you allow the app to transmit eventually, there's always the risk that the data has been accumulated and sent in batch. So, it's okay to use these,
+
+but they have limitations. Summary. In summary, although there are many risky apps, you can control them so they stay within their lane, but as a matter of habit, I would recommend that you install as few apps as possible. And if you're not using an app, then delete it. And be careful about login apps to Google or Facebook.
+
+On a privacy focused OS, I really wouldn't worry about the system apps. Those developers will have already curated what can be found there. The reality is that the biggest threats have always been more inside Google and Apple itself. Google, for example, deliberately collects constant location and other telemetry, and you cannot stop it with permissions. They store it in what is publicly called the Google sensor vault. In case you think I made
+
+this up, this is really an important element. System apps installed by Google itself can evade permission requirements. They can talk to HQ and hidden channels and have encrypted traffic. And likely you will see more of this with AI companion type apps. But Google and Apple successfully limited the risk of third-party apps and open-source oss are immune from Google and Apple's surveillance infrastructure.
+
+So the risk left is often just at the level of permissions. So, that's where you need to raise your awareness, granting permissions and making sure no one has installed a Rogue app on your device. Folks, while other channels sustain themselves via sponsorships, we are actively sustained solely by this community. Thank you to those who provide financial support directly to us through Patreon, locals, and YouTube memberships. We have also taken the approach of actually creating an organization you can trust by creating products that support your goal and ours of achieving privacy and offering it with the best possible service at a reasonable price. And this is how we
+
+chose to sustain this channel. For those interested in the BRA 3 project that is handled by the site bratec.net net and you can see the current status of the project there which currently started shipping. We have other products that you will find on our community area on Braxme. There are over 120,000 users that are part of our community that discuss security and privacy issues in a safe environment. Many of you believe in
+
+us and so this community is growing. Some of you have been involved for more than 10 years. In our store, you will find products like Pixel phones, Brax virtual phone, Bra, and ViceVPN. These are an essential base to build your personal privacy and of course support the creation of content on this channel. Thank you for watching and see you next time.

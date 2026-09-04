@@ -1,0 +1,171 @@
+---
+video_title: "Cute, but powerful: meet NanoCluster, a tiny supercomputer"
+video_id: UEtpaiODNs0
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UEtpaiODNs0
+video_date: 2025-06-06
+video_description: |
+  Sipeed sent a NanoCluster - up to 7 nodes in the palm of your hand!
+  
+  At least, that's what the photos show. Does it run when you put in seven Raspberry Pi Compute Module 5s? And how are thermals, power, and performance?
+  
+  Sipeed did not pay for this video nor have any say in its content (or a chance to review it before it went live). But because they sent this early review sample to me for my testing, I put the 'Includes Paid Sponsorship' tag on the video. See my review and sponsorship policies here: https://github.com/geerlingguy/youtube?tab=readme-ov-file#sponsorships
+  
+  Links to things I mentioned in this video:
+  
+    - Sipeed NanoCluster: https://sipeed.com/nanocluster
+    - Review data on Pi PCIe site: https://github.com/geerlingguy/raspberry-pi-pcie-devices/issues/739
+    - Ansible Pi Cluster playbook: https://github.com/geerlingguy/pi-cluster
+    - Top500 HPL benchmark results: https://github.com/geerlingguy/top500-benchmark/issues/63
+    - SBC Reviews website: https://sbc-reviews.jeffgeerling.com
+    - Distributed Llama: https://github.com/b4rtaz/distributed-llama
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - It's tiny
+  00:39 - First look at the NanoCluster
+  03:02 - IO and a RISC-V network switch
+  04:25 - Tiny LM3H SoMs
+  05:39 - CM4/CM5 Adapter boards
+  07:05 - eMMC vs Lite considerations
+  09:07 - PoE++ First Boot
+  09:47 - Power and cooling testing
+  11:00 - Accidentally discovering redundant power supplies
+  12:51 - Watch the hand, Jeff
+  14:20 - Fan noise, cooling performance
+  15:45 - Viewer questions
+  16:43 - Power consumption
+  17:18 - How fast is networking?
+  17:32 - K3s and kubernetes performance
+  17:50 - How fast? (featuring MPI and HPL)
+  18:47 - Distributed Llama
+  19:31 - distcc for speedy Arm compile times?
+  19:59 - Ceph distributed filesystem
+  20:16 - Other CM4 clone compatibility
+  20:35 - Actual use cases
+  21:09 - Gaming on a cluster?
+  21:37 - Strong opinions
+---
+Inside this box is the smallest computer cluster I've ever seen, and it gets all the power it needs through one network cable. At least, if it actually works. This is a prototype of Sipeed's NanoCluster. It promises to hold up to seven Raspberry Pi Compute Modules—these things. Each of these can have up to 16GB of RAM and a quad-core ARM CPU.
+
+That means this little thing could hold over 100 gigs of RAM and 28 cores of CPU power, all in the size of a coffee mug. Through the magic of editing, you might be seeing some B-roll of this thing running, but I don't even know if it'll work yet! So let's get it out of its box and build a Pi cluster. So I'm going to tell you about everything I see in this box and just let you know that of course, Sipeed sent this to me. I did not pay for this and I will be buying one of these when they're for sale, but they're pre-sale right now. So pre-sale is always weird. I'm not going to go deep into the pricing,
+
+only to say that Sipeed usually makes things that are a lot cheaper, sometimes without as many features as other products that you could compare it to. But this is, I think, starting around 40 or 50 bucks for the base model. And then you add on things like PoE power and other stuff, and it can get up to 100 to 200 bucks, depending on where you live, because in the US we have our wonderful tariffs and also depending on the different options that you choose. So they sent me pretty much everything. This comes with, in the top here, there's this little USB to UART adapter that I think can get four modules UART into the USB of the first module that you install in here.
+
+I don't think I'll set this up yet. I will set that up later once I get everything else going, but they also include a GaN 65-watt USB-C power supply and USB-C power cable, which I'm not going to use right now. I'm going to try to use PoE power. So we're going to set that aside right now, and we're going to get right into here. And it has a quick start guide printed right on the top.
+
+It says visit wiki.sipeed.com/nanocluster before use. And it has a few notes about the different ways that you can use this. Being such a small device, it looks like these are the Compute Module adapters.
+
+Being such a small device, cooling and power are two very important issues to take into account. So you can even see on the bottom they have a heat sink down here and some airflow to cool the bottom of their board. And then on the top here they have this PoE power module that plugs into the board. And it's all put together using some 3D printed inserts. So I'm sure there's going to be a way that you could 3D print your own case for this thing as well.
+
+But let's take a look at this device before we get into the other goodies that they sent along. This is a seven-node cluster, and it looks like it's using M.2 slots, which is interesting. So there's got to be some adapter boards that goes from the dual M.2 slots to a compute module riser.
+
+And then there's LEDs over here, 1, 2, 3, 4, 5, 6, 7, one for each slot. These are the pins for that UART adapter that gets you serial console access to all of these. And then on the back here, there's two USB 2.0 ports, it looks like. I don't know if you can get USB 3.0 out of that.
+
+There's a USB-C power input that takes 65 watts PD. There's a network cable. This is a 1 gigabit LAN connection. And what's interesting is under here, I'm not going to take it apart right now because I want to make sure it actually works. Under here, there's a RISC-V network switch that's managed.
+
+So from any node on here, you can actually manage this network switch and set up VLANs for your Raspberry Pis. You can set whether the ports are active or not active. And there's a very lightweight BMC for power so that from this slot you can turn on or off all the other slots as well. I think there are some caveats with different models of compute module that you might use on here. Check the wiki for all those instructions.
+
+There's also an HDMI port that connects to slot 1. So slot 1 is kind of like the node that takes over everything else and can control everything on here. Then there's a fan header that goes to this fan, which is a pretty beefy fan. And it might be a little bit loud, we'll see, but it also is good to have good cooling, especially when you have a big PoE module here kind of blocking the exit airflow. But this is meant to run in open air, so it'll blow the air in and exhaust it out the top like that.
+
+And that should hopefully work okay. But we're gonna see, they also included these three little guys. So let me get my scissors. These are LM3H modules. So the way that this works is it's basically two M.2 modules side by side,
+
+and they have an open source repository that has the pinouts and everything in it, so you could build your own carrier boards. Or if you're building your own system on module like this where the whole computer is on the module, you could build your own SoM and put it into here. But it looks like these just plug in like this, and that's it. And these are very low-power, smaller computers, but they also don't require as much cooling, so you can have the cooling run a little bit lighter. And these also don't have the ability to have M.2 NVMe SSDs on them or anything like that.
+
+They have a lot less IO. They have 100 megabit networking instead of gigabit. So I'm not going to test this right now. I'll test this. I'll probably put it up on my SBC Reviews repository and that website.
+
+So if you want to see how this runs with the H618 chip from Allwinner, I'll test it later and I'll put those results up on that website. But for today I'm going to take these out and we're going to focus on the Raspberry Pi Compute Module 5s. It looks like they have seven adapters, so I could put up to seven Compute Module 5s in here. Let's see how these are sitting in here. So they have a little piece of foam holding all these together.
+
+Actually yeah, there's seven of these. each of these little carrier boards with the foam that's a little flaky. I'm going to take these out of here and get this foam out of here so it doesn't flake all over the place. Okay, so each of these little carrier boards, this is the one for the Compute Module 4 and 5, and you plug your Compute Module 5 into the top side here, and then it looks like there's a USB-C port. I'm not sure if that's for UART or power or what. It might be for like USB 3 from the module, and that'd be really cool
+
+because then you could plug in USB devices. And then there's an NVMe SSD slot. They didn't include any screws, so I'll have to go dig around and find some M.2 screws to test this, but I'm actually not going to test the M.2 slot today for a reason I'll get into in a little bit.
+
+The board works with any type of compute module, whether you have eMMC where there's a chip on the back here that has all the storage on it, or if you have a 'Lite' Compute Module like this one that doesn't have that chip, You can use either microSD cards or an NVMe SSD to boot it, or of course you can always network boot a Raspberry Pi if you have your NAS set up appropriately. But let's get these plugged in and get them into the module carrier, and we'll see if we can boot this thing up with PoE power. So the first six of these are eMMC modules, which means I plugged them into my computer over there, and I used Raspberry Pi Imager to flash them. But anyway, let's get these all set up, And I'm going to have, I already named these cluster 1, cluster 2, 3, 4, 5, 6, 7. And so I'm going to put this number 1 into the first slot.
+
+It looks like you just push down. These little PCBs are a little bit thin because they're M.2 size and they fit into the M.2 slot. So just keep that in mind.
+
+They're a little bit more fragile than I'm used to with some other carrier board designs. But let's get these all plugged in.
+
+I just realized that my alpha version of the Compute Module 5 has its little UART debug port sticking out here, so I'm going to put this number 6 into the 7 slot, which is going to confuse me later on, but that's okay. So I'm not going to install number 7, and I'm going to tell you why. I was reading through the wiki—Sipeed's wiki for this thing—and it mentions if you're going to use PoE power, that's this thing, it gives you 60 watts with PoE++ I believe. And if you only have 60 watts of power, it's a little risky using NVMe drives because they each use one to three watts, sometimes even more than that, and that can go over your power budget and cause instability. So if you're using all NVMe drives, they actually recommend you use like four of these instead of seven and have a little space between them for cooling and for power, especially when you're using PoE.
+
+There's also some different rules about whether you're using CM5s or CM4s or these little teeny tiny ones, the LM3Hs. So read the wiki for all of that. And today I'm just going to stick with the six of these, which should fit within the power budget of this guy, which is a PoE++ charger with 56 volts at 0.535 amps. I hope this is the right one.
+
+I have it labeled in the box as 802.3bt, which is 60 watts [in this instance]. So we'll see. I got my network cable. I'm going to plug into the output on my PoE
+
+device and we're going to plug this in and see what happens. Now remember I pre-flashed these so they should all boot up assuming that this just doesn't just catch on fire in front of me but hopefully that doesn't happen.
+
+There it goes. It's not the quietest in the world. I think with the CM5s and CM4s it runs the fan at a hundred percent just to be safe but you can control the fan speeds but so far everything's looking good and I'm gonna see if I can see these on the network I did indeed see them on the network and the main questions I had when I originally saw this cluster were around power and cooling to cram in that many computers and that smallest space you have to supply enough power and cooling to make sure they don't just immediately throttle or shut down I I pushed it to the limit with six CM5s. So how did the NanoCluster do? So the power limits are real.
+
+This is hitting 60 watts with six Compute Module 5s running the 'stress-ng --matrix 0', which runs stress on all CPU cores. I'm running that indefinitely, and that's enough to make it so that I can't even reach some of the Pis. The other thing I noticed was when I just ran it on five of them, it was still getting up there, and they were reachable, but when it was in the heat of it, it was hitting throttling limits. So you can see it throttled here. So if you're going to run Compute Module 5s, you probably should heed the warnings from Sipeed and run maybe four of them or maybe five of them.
+
+Six of them, I think, is pushing it a little too far, even with the USB-C power supply. Also something interesting I noticed when when I'm just running these at idle, it goes down to 0.2 watts, and I think that there's like a weird power factor thing with—[beep!]—I'm just going to cut myself off here I had never seen this kind of behavior before and I assumed maybe the GaN charger was doing something weird with my power measurements but no I actually discovered another feature of this board redundant power supplies. If you have PoE and USB-C plugged in at the same time it'll fail over between the two, and in my case my other network cable was plugged into this other PoE switch. But that switch is only giving like 30 watts max over PoE+. Because of
+
+of that, when the board needed more power than that, it automatically switched over to USB-C, which was supplying the full 65 watts. I've also noticed that after I shut these down, I have to reseat them if I bring back board power. So I think there's a power issue with something in the firmware on maybe these carrier boards or something that causes that to happen. That's probably something I can fix in firmware. They said that CM4s also have some issues with that sometimes. So another thing to keep in mind. This is idle with PoE power, 22 watts.
+
+So running stress-ng on all six Pis, I'm actually using more than 60 watts, 67.9 watts through this PoE injector, which is rated for 60 watts. But over here, how are the temperatures on the Pis doing? Actually not bad. I think that it actually stopped running the command though. Let's
+
+Okay, they're getting warmer but not overheating. Let's see if they're throttling.
+
+So it looks like we did get a little throttling earlier, but they're not currently throttling.
+
+And they're getting hot though, so I think with the density, you probably want to do four Compute Module 5s, not six of them like I have running right now. And shut down completely... We are at 8 watts using PoE.
+
+And through the fun process of powering this on and off a bunch of times, I've noticed that if you don't power it down for more than about 8 or 10 seconds, some of the slots won't come back up. I think that it's like, there must be something in the little BMC on this board that remembers things. If you don't leave it powered off long enough, maybe there's a capacitor holding some charge in there. So, if you're powering off the whole system to reboot all the boards, make sure you do it for 8 or 10 seconds, I guess. It's been consistent, so there must be something that's holding a little power in there, some little memory that keeps it booted. But now I can
+
+reliably boot... Okay, I need to be careful with where my finger is here. I need to do some more testing with USB-C, but I think I have a pretty reliable setup with PoE. And
+
+it can run 6 CM5s. I would stick to 5. I will keep doing my power testing, yes, and not sticking my finger inside that fan blade because it's running very fast. So just running stress-ng on that was on the Ethernet with the PoE injector and this is on USB-C. USB-C is using less power because the power supply is a little bit more efficient but both of them throttled in the end. You can see here that this
+
+was at the peak. A couple of Pis were hitting 85 degrees. So Sipeed says you know if you're gonna be running a lot of high power stuff you want to space out four Pis instead of having them crammed in so tightly and that's probably some good advice. So that's it for power. Next up I wanted to dig into that fan. It's a bit loud and we can already
+
+see the Pis were throttling without enough airflow between them. I wanted to see if I could control the fan and also how thermals and sound levels were a little more quantitatively. So next up I was going to mess with the fan speeds because by default I'm going to be quiet for a second so you can see how loud it is without me yapping away. You can see it's about 58 decibels from 6 inches or whatever. It's definitely noticeable. I'll let you listen to it for a second without
+
+me talking close up so you can hear kind of the sound that you're going to hear. And it's not a horrible sound. It's not like a little whining bee or anything, but it's definitely not quiet. And what I was going to do was try to get it to be as quiet as I could get it without throttling the Pis under normal workloads. However, the scripts that they provided, this script right here for the CM5, didn't seem to work.
+
+It wasn't changing the fan speed, so I have an email out to Sipeed to see. It's probably a 'PEBKAC'. The problem exists between the keyboard and the chair. So anyway, they do provide instructions for their modules as well as CM4s and CM5s. And I followed these instructions and it didn't quite work.
+
+But like I said, usually it's a PEBKAC. Sipeed did respond with some better instructions and they're updating their wiki right now. That's all well and good. But I did want to get questions from all of you. So I posted on Twitter, Bluesky, Mastodon, YouTube, Threads...
+
+It'd be nice if we went back to the old days when there was just one social media micro-blogging site, but now there's like 25 of them. Anyway, I posted that to all those sites and asked, you know, what do you want to know? And here's some of the most common questions that I heard: First, is the switch a managed switch? Yes, though right now everything is in Chinese. Luckily, Safari can translate things on the fly so I can at least see most of the information, what it's doing.
+
+And I think that they're going to hopefully update that RISC-V switch firmware at some point so that it's available in more languages. And also the first time I tried loading it in Safari, it didn't actually load. It was a white screen. I had to refresh a couple times. So hopefully they'll get those bugs worked out.
+
+How much power does it use? I showed some of that in this video already, but just to give some numbers to that, idle, all slots powered off. PoE was 8 watts. USB-C was 6 watts. Idle with 6 CM5s booted.
+
+PoE was 22 watts. USB-C was 19 watts, but that went up and down a little bit over time. Maximum with six CM5s running stress-ng. PoE was pulling 68 watts or so. That was, again, with the power losses inherent in the actual adapter. Same thing with the USB-C, but it was pulling 60.8 watts with that same
+
+stress-ng test. How fast is networking? All the Pis were giving me a full gigabit individually, But that's, of course, bottlenecked quite a bit because there's just a 1 gigabit uplink. So, you know, if you need a lot of network bandwidth, this is not the board for you. Can you run K3S or Kubernetes on it?
+
+Yes. In fact, I ran my pi-cluster Ansible playbook and it installed Kubernetes with a Drupal web app running inside of it. I could monitor the cluster with k9s. I could see all the stats in Grafana dashboards. Everything in there ran just fine like any other Pi Cluster I've set up.
+
+How fast is it? Well, running my HPL clustering benchmark, I got 112 gigaflops. That's actually faster than a single M.2 MacBook Air, at least the base model, and it's faster than two N100 mini PCs put together, but I have to add some caveats here. First, I was running the 4 gig models, and only four of them, because that was the most stable configuration I could run with the power and thermal limits.
+
+I could get more performance with 16 gig CM5s, but then the cluster would go from like 500 bucks all-in to over $1,000. Second, whether you can see that performance gain really depends on what you're running. This thing doesn't just glue all the CPUs together, you have to run distributed software or have stuff running separately in each slot, like Blade servers. Finally, Apple still takes the efficiency crown. The Pi isn't terrible, but it's really on the low end of ARM efficiency compared to like Apple and RockChip.
+
+It's more efficient than Intel, but only a little. (I mean, Intel is a kind of a low bar to clear there.) I also ran Distributed Llama on it, and I could get 17 or so tokens per second with a small model using about 40 watts of power for four nodes. It's not slow, but it's not a speed champ either compared to just like running a single computer with a GPU. But what's cool is for 500 bucks, you can have a learning platform for things like distributed LLMs or HPC, High-Performance Computing.
+
+And that's, I think, where the niche is that this thing might make the most sense. It's not like this is a practical option versus like a single server for a home lab. But if you want to learn how clustering works or build software that scales horizontally, this takes up almost zero space and uses only 60 watts of power. Stack up mini PCs and you'll burn through 100 watts in no time with similar cluster performance on the low end. How fast does this compile the Linux kernel?
+
+Well, I have a shirt for that, first of all. Go check out redshirtjeff.com. But I set up distcc so I could distribute a Linux kernel recompile over four Compute Modules. And normally a compile takes about 45 minutes on a single one, so with 4 going at it, it didn't use all the available compute power, but it did get that compile time down to about 22 minutes.
+
+So a little over two times faster with 4 nodes, which honestly—for a cluster, that's fine. Will it Ceph? Technically, yes. You can have distributed storage on a cluster like this with a bunch of NVMe drives, but 1 gigabit networking isn't the best for that. If there were some bottlenecks on the kernel compile, there's going to be way more bottlenecks with a distributed file system running over that one gigabit network.
+
+Do other Compute Modules work on it? I don't know yet. I have almost every other Compute Module board in existence, so I'll try to test a few when I get some time. But these things take a lot of time, especially since—unlike with the Raspberry Pi— a lot of these clone boards, they're just not well supported. And I have enough trouble just testing them *outside* of a headless cluster environment.
+
+What are some actual use cases for it? If your needs are modest, a tiny multi-node homelab for Kubernetes or just running separate services on separate machines, that might make sense here. For a very small niche of people, it's actually a nice compact setup for things like CI jobs or distributed compiles that run better on ARM CPUs natively, where you might not have the space or the budget for something like an Ampere server. Otherwise, this thing's a fun learning platform. Not everything in your homelab has to be the most practical thing in the world. Otherwise, there'd be no market for old Dell
+
+PowerEdge servers! Can you run a full DOOM deathmatch on the cluster with each Pi running as a different player? Actually, you might be able to with Pi Connect, but latency and the fun of the experience might not be there. Can it play Crysis? Well, there's actually a chance it could. It has an
+
+M.2 slot, and I can adapt that to a full-size PCIe slot and put a GPU on it, but it's far from the ideal platform for that, and I don't even want to spend the time to try that because I'd have to change everything about it. In the end, I think you'll fall into one of two camps. On the one side, it's a fun little cluster board, and it comes with some limitations, but you might be willing to overlook those because it's not that expensive. On the other side, this is a completely impractical device with no use cases, and Raspberry Pis are overpriced garbage!
+
+For that perspective, I'm not sure if I'll ever convince you that you can still have fun with things that aren't your version of ideal. But for the former, Sipeed, I think, hit a nice spot between cheap and functional with this thing. It's not perfect, and you definitely have to tinker with things to get the right setup for power, performance, and noise, but I'm happy to do that. It let me play with software I never would have touched without using this thing, like Distributed Llama and distcc. Right now, like I said, it's on pre-order, but it should be available soon for between $50 to $150, depending on where you live and what options you choose.
+
+Until next time, I'm Jeff Geerling.

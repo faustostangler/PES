@@ -1,0 +1,137 @@
+---
+video_title: "While my guitar gently speaks — Todd Fisher, Philo Ventures"
+video_id: E_Txocq-Lrw
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=E_Txocq-Lrw
+video_date: 2026-08-18
+video_description: |
+  Someone in the audience asked the guitar what reality is, and the guitar answered. Todd Fisher's build routes a microphone through speech recognition into a local model and pushes the reply back out through the strings, which is the most recent step in a project that began with a much simpler question: how hard could it be to make a guitar speak?
+  
+  The lineage he draws runs from a pickup and an amplifier, through stomp boxes, to Peter Frampton sending guitar sound down a physical hose into his mouth. His own version is a plugin built with JUCE that drops into a DAW like any other effect. Getting it to say one word was straightforward. Getting it to say several meant slicing synthesized speech into words automatically, and that turned out to be the hard part. Energy gap segmentation cuts wherever the signal falls toward silence, which fails because running speech often has no silence between words at all. A sonority peak syllabifier looks for vowels instead. Combining the two got close enough that he finished by dragging segment boundaries by hand. Singing needed a different stack again: the YIN algorithm to pull a fundamental frequency off each fretted note, a synthesized tone shaped by an envelope, then a vocoder, with pitch shifted samples from an open singing dataset baked ahead of time because the processing is far too heavy to run live. He also declines to play the song his title alludes to, on the grounds that this recording was going online.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/todd-b-fisher
+  
+  Timestamps:
+  0:00 - Live performances that stayed with him
+  2:44 - The guitar's evolution, up to the talk box
+  4:24 - A Halloween project on a garage door
+  6:06 - Building it as a JUCE plugin, and saying one word
+  7:50 - Slicing speech into words, and why that is hard
+  10:23 - Pitch detection with the YIN algorithm
+  11:15 - Synthesis, vocoder, and jamming with it
+  13:28 - A guitar that answers questions from the room
+  16:01 - Pitch shifted samples, and getting closer to singing
+  17:51 - Go build your passion project
+---
+[music]
+
+So, I am Todd Fischer. I love the guitar. That's one of my passions in life. Uh, today I want to talk about uh this project I've been working on for a while here, effectively making my guitar speak. Uh, but of course I want to start out with kind of framing it under this awesome premise. You know, we've all
+
+been to live performances where like your mind was just blown. It was awesome. You know, the the first one I remember way back I was in high school. I went to a Slipnot concert, so a little bit heavier music uh here in the Bay Area. And I remember at some point the drummer was drumming a cool drum solo, and his drum set started raising up. And
+
+I was like, "Whoa, that's cool." And everyone got kind of excited, right? And then halfway through the solo, his drum set started to go like this and tipping. and his whole drum set was like on the wall while he was upside down playing his drum solo and everyone was just cheering like whoa this is so crazy mind-blowing like whoa it was so so impactful right I still reme remember it today um fast forward probably about a year ago uh I went to New York to see the Stranger Things on Broadway the the first shadow and it was really cool because the whole time I was there I was watching it and it felt like it was actually like a a Netflix episode but in real life and it was just like the effects that they did there was so so amazing. I remember even one time at near the end there was a scene where somebody somebody was falling backwards and it was like a slow motion scene and it probably about a minute long the whole scene but just like the fact that like they they were able to produce that in real life but it looked like it was a post-prouction slow motion scene just just mind-blowing. So it's like well
+
+that's cool. So given you everyone here's probably had some experiences with live performances in the past and I think it's really awesome just to like see the creativity uh that people can do with leveraging technology in some creative way. And so you know I'm thinking about all the projects that we have as engineers over the years where it's like hey that's a cool idea. I'm going to write this down. I have like a big giant list. Anyone have a list of
+
+projects that maybe they'll get to? Yeah. So it all happens right? Uh, and it's really awesome because the last 6 months or so with AI, uh, being able to, you know, push us forward with some of these projects, it's just really cool to see where we can take all these projects. So, so part of, uh, my goal today is to inspire you guys to find whatever project you're passionate about, go start building it because it's super easy now with AI. I get easier
+
+with AI. I know sometimes there's caveats, but but in general, uh, I I want to have you guys leave this session being inspired to go build whatever that cool thing is for you personally. that's gonna, you know, help you to learn stuff or maybe make a difference in the things that you're you're trying to figure out. Uh, so I want to start off with framing this kind of in the realm of the guitar. So the guitar acoustic guitar has been around for several years, several thousands or hundreds of years, sorry.
+
+Um, and at some point somebody said, "Hey, I'm going to put a pickup on a guitar. I'm going to plug it into a speaker." And now we have rock and roll. We're going to make it super loud. That was pretty awesome. And then of course
+
+we have a lot of people getting these stomp boxes, these these effects pedals. We put them all together. We have really awesome sounds. You really famous people have a lot of these. Uh and then at some point Peter Peter Frampton came along and said, "Hey, what if we get the sound of the guitar, put it through an actual hose, like a physical hose, put it in my mouth, and then basically play the guitar sound in my mouth and inform some sort of words. So that's pretty awesome
+
+that that's known as the talk box. And then in the last couple decades we have a lot of progress made with software emulation. Uh you think of you know protools you think of logic of uh fruity loops there's a lot of software even to the point where all the effects are in software now there is the argument made hot take that maybe you don't need all those physical effects pedals anymore. So so there's that question right and then of course looking forward it's what is that next evolution of the guitar uh with AI in the picture. So, with that said, I want to take you back several years ago, Halloween time.
+
+I was passing out candy, bunch of trick-or-treaters. You know, it got kind of boring. So, I was like, "Hey, what if I go and actually bring my guitar out with my amp and just play?" Uh, so for the past what, 10 or years or so, I've actually been playing guitar on Halloween, passing out candy, and it's kind of fun. Uh, and then fast forward probably three years ago, I decided to dress up as Eddie Mson. Anyone know
+
+Eddie Mson? Stranger Things guitar player guy. So, pretty awesome guy. So, I dressed up as him. I was like, "This is going to be so fun. I can play the
+
+music with him." Whatever. And you kind of go the Oh, hold on. Hold on. Wait a minute.
+
+Technical difficulties. All right, there it goes. [music]
+
+So, a bunch of little Stranger Things awesomeness, right? Uh, but figured out, hey, what if there was like some more stuff I could put in this whole experience. And so I decided to go and build a little app that would actually paint the Stranger Things alphabet on my garage door just because it's fun, right? Uh, and so let me just show you a quick example of how this worked. So effectively, make sure I have the mic permission. Whenever I play a note,
+
+it would go and communicate whatever lights. And I even had it to where I could actually set custom messages such as happy Halloween, all that fun stuff. It was it was overall pretty fun just to kind of mess with that, right? So once again, you know, whatever I type in there, I could actually spell whatever and and very much a cool nod to Stranger Things. But it kind of got me thinking like what is the next evolution of this project? And I settled on this idea of
+
+like, hey, how hard would it be to make my guitar speak? It sounds easy. Maybe, maybe not. So, so today I want to share kind of my journey uh in this process and where kind of I'm at today. Uh so looking around the different tools, there's a framework out there called Juice. Really awesome. For anyone
+
+building audio software, look into Juice. It's it's pretty good. Um and then of course there's a number of plugins uh sorry plug-in formats out there uh for your your digital audio workstation. And for for those that are not aware, uh your DAW is effectively your IDE but for musicians and and music producers. And then I I started with some text to speech stuff with Piper and some built-in Apple stuff and then some other really fun uh digital signal processing. Uh so with that said, my
+
+first stab here was I want to get raw text so I could just type in whatever text I want uh push it through the text to speech uh get the audio clip and then whenever I play a note on the guitar I want to go and play that back. So let's go see how that works. So, switching over to my Logic Pro here, and this is the plugin I made. So, it's just like any other plugin in Logic where you just plop it in there. It's just, you know, chaining all the effects together. And so, this is what I came up
+
+with. >> Developers. >> So, it's playing it. >> Pretty awesome, right? >> Kind of reminds me of something, right?
+
+>> Start clapping. Everyone start clapping. Developers. Developers. developers, developers, developers.
+
+Awesome. Thank you. That's pretty awesome. Uh, you guys are great. Um, so I got it to where it's playing an actual audio file. That's pretty awesome. But
+
+it turns out, you know, in English or in any languages for that matter, there's more than one word. So the next kind of evolution, it's a little bit chatty. The next evolution there is let's actually go and slice it per word now. So I got to the point where it's playing now. It's going to slice per word. Look at
+
+me. I can speak. Look >> me. I can speak. >> So now it's speaking words. And that's
+
+pretty awesome, right? Uh but it turns out that uh as we speak, there's a number of challenges in how we automatically slice words. So I looked into this thing called energy gap segmentation. The general idea here is if you look in any waveform over here, we see that here's a bunch of of words that we're speaking, right? Uh the idea there is there's typically silence in between words. So let's just cut it
+
+whenever the decibb are very much close to zero, right? Uh but the issue with that is there's actually sometimes when you know as I'm speaking right now, for example, uh there's actually no silence in between some of my words. So it gets a little bit challenging to where it's not 100% foolproof, right? So beyond that, I looked into this thing called sority peak syllab syllabifier. That's a hard word to say. Effectively
+
+identifying the syllables of the audio signal and identifying that there's vowels in here. Vowels typically lead to syllables. That's kind of the idea. So I said, "Okay, let's take the senority peak, add it to the uh the energy gap, and figure out if we could just make that work automatically." So with that said, made it kind of work.
+
+So let's just play this one. >> Thank you for letting me Nope. Oh, >> here it feels so good. >> Get out of my target case once in a while. >> So, there you go. It's working pretty
+
+well. Not quite as good as I want to. So, long story short, uh I settled on just the ability to go and actually I could drag this and manually edit some of these uh uh segments in here. So, worked okay, right? Um but moving on, you know, with the spirit of evolving the thought, evolving the project, right? It's like, okay, we're we're
+
+having the AI say stuff. That's great, but what if we could actually make it sing? Let's take it to the next step because this is music. Why not, right? Uh so, looked into pitch detection. And
+
+for those that are not aware, uh, as you hear any any noise out there, there's typically multiple frequencies going on at any given time, you know, you think of when you play the the C key on the piano. Uh, there is definitely a fundamental frequency or the the kind of the the one that we identify as the note, but there's a bunch of other frequencies. So, we needed a way to go and figure out like how do we detect that fundamental frequency? So, when I press something on the guitar, how do I translate that into an actual note? Uh, and then I found this uh, yin pitch algorithm. Basically what it does is it
+
+detects the pitch. I won't get into all the details, but look it up. It's kind of a fun uh, really cool way of detecting the pitch. Uh, but effectively what I do is I play the guitar. Uh, I detect the the pitch. I I make what's
+
+effectively a pitch saw or aka a synthesized note. Uh so for those that are not familiar with how audio works on the the computer, you think of all the e electronic music, all that stuff. Uh that is basically uh a synthesized note. We have ADSR which effectively are the levers to figure out how to actually make the note sound in different ways. Uh and then so basically we get the pitch note or the syn synthesized note.
+
+Uh we then push it through uh the the voice clip effectively. So think of the talk box. We're kind of filling up the cavity of the talk of the voice that is. and we push it through a vocoder and it should sing. So that's kind of the idea, right? So with that said, let's go ahead
+
+and jam out a little bit because I have a guitar and it's fun. So get back to Logic here. Uh so I'm going to play some chords. Uh I originally was gonna uh play a song that is very much related to the talk or the the title of my talk, While My Guitar Gently Speaks. But because it's going to be posted online, I don't want to muddy up the waters with any copyright things. So, I will play some
+
+chords that may or may not sound similar to a famous song. So,
+
+[music]
+
+Hey, hey, hey.
+
+So that's the backing track. So let's go ahead and have some AI speaking on top of it. >> I'm here. >> No. Hold on. Technical difficulties.
+
+Let's try that again. >> Live demos always the best. I'm here at this con friends. [laughter]
+
+>> All right, technical difficulties again. So, sorry for that. But let's just run through it and see what happens. >> [music] >> Con friends [music] that speak. I'm the guitar that can speak.
+
+So >> awesome. So there you go. Some bugs to work out, but overall we are able to to say words on top of this. And for what's worth, I'm trying to mix the uh the the synthesized note with this clarity lever right here. So balance or mixing the the synthesized note with the actual voice that the AI is giving. Uh so so that
+
+worked pretty good. Um but there's also this other question, you know, given that uh when you speak it's typically conversational. What if I could take this to the next level? And what if we actually had this microphone right here where I could speak into the mic? It would then respond on the guitar. So the way that I accomplished
+
+this is speaking to the mic used speech to text. a whisper uh put that into raw text, run a local model on my computer. It doesn't really matter what LLM, just any local model. Have a conversation coming and then from that output go and plop it on the guitar. So, let's see how this works.
+
+Anyone have a question you want to ask my guitar? >> Anybody? What is reality? >> Let's do it. >> What is reality?
+
+>> So, it's thinking going through the LLM things and let's see what it says. >> That's quite a question to start with. [laughter] How does your music help you understand that elusive concept to real be right now? >> So, yeah, very existential. I like that.
+
+So, thank you for that suggestion there. So, there you go. We have a choppy version, but but it is working. So, so that's a win, right? Uh, awesome. And
+
+thanks for the claps, sir. Um, but really like it's not quite singing yet, right? So, moving on in this project, it's like how do I actually make it sing, right? I found a lot of uh open- source options out there as far as uh uh recordings or or samples if you will. There's a thing called vocal set out there. They basically recorded a
+
+bunch of singers and I could use those audio files to go and do some fun stuff with them. And effectively, I took those samples. I used a project called World, which helps with things like pitch shifting and some other things. and I'm able to then shift the the pitches of everyone singing on those audio clips and map it to the guitar. Uh, this is a very heavy process and so I can't really do that live. I have to effectively
+
+pre-bake that and then once it's already pre-baked, I could then go and jam out with it. So, with that said, uh, let me go ahead and show that example here.
+
+So, uh, because it takes so long, I actually just started with the vowel sounds. So there's somebody singing all each of the five vowels. And so we'll see how that sounds, right?
+
+Kind of fun. Kind of weird, but overall it's working. It's It's closer to singing, right? Uh so let's go ahead and throw that on top of all the chords over here, and let's see if we can make it sound decently well. Oh, so we'll just play these chords again.
+
+>> [groaning]
+
+>> So, not quite your opera singer, but getting closer and and so I I think there's something awesome there. Uh so effectively once again that is going through the whole synthesize process uh putting a sample shifting the pitch shift of the sample and then effectively mapping each fret or each note on the guitar to one of those samples that are pre-baked effectively right. So with that said you know where do I want to take this next uh very much want to get into more of of the you know AI heavier options if anyone has any other ideas of how to make the guitar sing feel free to come up to me after. I think it's pretty awesome. Uh but more importantly, you know, everyone here going back to the the charge to go in and build some awesome, you know, side project, some passion project of yours, like what is that for you? Go and build awesome
+
+things because nowadays with AI, we could build so many really cool things and time is typically not the the big time suck that that it once was, right? So, with that said, uh be awesome or be good to each other and thank you very much. [applause]

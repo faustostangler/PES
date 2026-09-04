@@ -1,0 +1,104 @@
+---
+video_title: "Honest Explanation of the BraX3 Shipping Delay"
+video_id: 70BYBK29kBI
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=70BYBK29kBI
+video_date: 2025-05-18
+video_description: |
+  Shipping of BraX3 has been delayed to June 2025. We will talk about a significant issue that we were unaware of with iODE OS and the solution planned. This problem prevented the final production of phones at the factory. I will explain the specific problem which has to do with IMEI and how it will be handled. So bear with us a moment more and we will get through this!
+  
+  ----------------------------------
+  BraX3 can be ordered soon on Braxtech.net
+  https://braxtech.net
+  Pre-Orders ending soon on Indiegogo
+  https://www.indiegogo.com/projects/brax3-the-most-privacy-friendly-smartphone#/
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me. 
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://brax.me/home/rob Store for BytzVPN, BraxRouter, De-googled Privacy AOSP Phones, Linux phones, and merchandise
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+There's a delay on the shipment of the Bra 3 phone, which is now targeted for June. I want to be completely transparent and explain the causes to you. By the time I release this video, the delay may already be shortened, but I really want to focus on the problem we discovered, and I want to explain it in detail. If you're impatiently waiting for your phone to arrive, I'm sure you will be disappointed with any delays. But it isn't all bad news. So please
+
+listen to the entire story. What is key is that we learn about some technical issues that relate to compatibility with the OS and it was discovered during the final production run. BRA 3 is a community project. While our company Bra Technologies Inc. managed the hardware manufacturing, the OS is actually being made by multiple players. The first OS
+
+to be released with a phone is AODE OS. Although we planned to release the phone last March, we were not able to do that because a final version of EOD OS was not yet ready. However, I want to make it clear that the hardware was in fact ready. To aid in the OS process, we started a beta test campaign and a group of volunteers got the Brex 3 phone early and were able to test EOD OS. After several bug fixes with the help of the community, a release version of EOD OS had been completed and it also coincided with the update of EOD OS to now be based on Android 15. IMEI flash
+
+failure. The new delay was discovered at the factory when they attempted to flash a new IMEI to each device. As it turns out, you cannot flash the IMEI on phones installed with AOD OS. While this seemed weird initially and perhaps shocking, we finally now understand what the causes are and the solution. I will be frank with you that I did not know this myself. First, AOD OS is based on
+
+Lineage OS. Lineage OS is one of the most popular alternate OS solutions for Android because it supports so many phone models. But I didn't understand the architecture of how Lineage OS works. When a phone is made, the motherboard maker either MediaTek or Qualcomm will provide a base Android open-source project image that is complete with all the drivers needed for the phone to work. So Android open source project is AOSP. For most other
+
+operating systems based on AOSP like our own Lunar OS, Kix OS or Graphine OS, these drivers are directly integrated into a complete flashable image of the OS. But that's not the way Lineage OS works. Apparently Lineage instead retains the original Linux kernel with all the drivers of the original AOSB. Then lineage is installed over the original OS files. Next, Lineage OS is booted by this original kernel as a separate container. Think of it as like
+
+a chirut or a Docker image or basically just imagine Lineage OS as running as a separate virtual machine. Lineage OS itself doesn't have direct access to the hardware drivers. Instead, it interfaces with a hardware abstraction layer or HAL. And this module communicates with the original drivers. I was familiar with this method of overlaying another OS on a phone because this is the same method used by Ubuntu touch another OS that we expect to be supported by Bra 3.
+
+So Ubuntu touch also does not manipulate drivers directly. It uses the same hardware abstraction layer. And it's been so long that I actually forgot this. I now recall that Ubuntu touch took this module from Lineage OS. Again to explain the architecture of Lineage OS, the original kernel and vendor files from AOSB are still there. It is not
+
+overwritten. If you're looking at the storage of the phone, this would be the vendor related directories. Then Lineage OS is placed in the system directory and that's booted by the kernel. The exact problem we discovered is that because EOD OS is actually a fork of Lineage OS, then the IMEI writing tool that comes from MediaTek cannot write the IMEI because Lineage OS is running as a container. It doesn't have permissions to access the actual hardware in this case the bassband modem. So the factory
+
+could not flash IMEIs using EOD OS IMEI flash solution. Now to make it clear, the original manufacturers's version of AOSP and our own version of it called Lunar OS actually has direct access to the drivers. We did not originally plan on making Lunar OS available to end users immediately, but it appears it will be necessary to enable IMEI flashing. If Lunar OS is flashed to the phone, it will in fact work like normal and the IMEI can be flashed with no problem. But it means a double load of the OS. First we have to
+
+flash Lunar OS on it. Flash the IMEI. Then we have to reflash with EOD OS. Once EOD OS is flashed, then it is now locked from any further IMEI changes. Allowing IMEI changes. One of
+
+the features we wanted to have on BRA 3 is that similar to BRA 2, we wanted to allow users to reflash the IMEI if they want. On Brax 2, many carriers blocked the IMEI of the phone because they didn't know what the model was and just labeled the phone as incompatible. So, all we had to do was flash it with an IMEI of an acceptable model like Google Pixels and all the carriers accepted it. All Brack 2 phones had modified IMEIs in the US. This IMEI blocking was specifically a USA issue during the Bra 2 production period. No other country
+
+did IMEI blocking to identify incompatible models. Brax 2 was actually compatible. So the IMEI changing scheme worked fine. BRA 3 registered IMEI. The difference today is that BRA 3 is a fully registered phone with GSMA which is the association that manages IMEI pools. and the BRA 3 IMEIs were
+
+already approved by T-Mobile, so all MVNOs's using T-Mobile were all going to be fine. The question was AT&T. We were concerned that AT&T was going to block the IMEIs of the BR 3. So, we wanted the option to allow reflashing of the IMEI to get around that. Well, apparently while this IMEI flashing problem evolved, we just got informed by AT&T that they will not block the phone.
+
+While we don't have an official approval in hand yet, it looks like in the USA there would likely be no need for anyone to flash the IMEI for compatibility reasons. Also, beta testers on AT&T say that it works currently. Thus, the big crisis for having IMEI being easily changeable is no longer a concern. However, we're still working out the details with the factory as flashing the OS twice affects the production line which is all automated and that's why production is on hold. And by the way, the Bra 3 will likely still be blocked by Verizon and we don't intend to support Verizon. Some frequencies used
+
+by Verizon are not on the phone. IMEI flexibility. At this point, while the large majority of people do not need to concern themselves with the IMEI, there are some of you who want the ability to change IMEI yourselves except for very few countries like the UK. This is completely allowed. If you get your Bra 3 and you want to do this, you just have to flash the phone back to the Lunar OS version and then you can change IMEI over and over. But if you then
+
+subsequently install EOD OS or Ubuntu touch in the future, then the IMEI is unchangeable unless you restore Lunar OS. By the way, reinstalling any OS will result in loss of data. So you always back up before you do this. We will provide instructions for flashing Lunar OS and EOD OS to Brax 3 if you're technically capable. It will require a computer. Australia
+
+issues. Currently, there is one potential area in the world that may experience IMEI blocking, though we are currently not aware of issues yet, and that is with Australia. Until full IMEAI testing is done in Australia, it could be that early phones will be shipped initially with Lunar OS instead. This would allow emergency flashing of IMEIs if needed without shipping the phones back. By the way, beta testers in Australia have confirmed that BRA 3 with EODS works with Telra. So that's at
+
+least one carrier that has no issues. If needed, the procedure for flashing an IMEI requires the installation of an SN writer tool on a Windows computer. I had it available for Brax 2 users, so it's easy as long as you have Windows. Maybe by the time this video comes out, we would have some answer on what to do about Australia. In which case, read any announcements in the comments or go to bratec.net site to
+
+see what other announcements are made. So any potential additional delays may be solely related to Australia. As of the time of this video, this is still not finalized. Stay
+
+tuned. The good news, delay aside, is that now we understand how EOD OS can provide long-term support through the phone. Lineage OS typically supports a phone for 10 years and they can do this because a global image is updated with the latest AOSB version without having to worry about drivers. In contrast, the drivers and main kernel typically don't get updated as quickly because they have to come from MediaTek in our case. Because of this, EOD OS is always newer than Lunar OS. Lunar OS is currently
+
+still based on Android 14 while EOD is Android 15 and Lunar OS is more of a barebones OS with hardly any apps installed. You have to install your own apps. Also to repeat the other good news for USA users and all other countries other than Australia. There is no particular reason for IMEIs to be changed for reasons of compatibility that we are currently aware of. To compensate people for the delay, we will be adding a screen protector to each pre-order for free. Finally, the other
+
+good news is that we are not adding any additional cost due to US tariffs. we will eat that cost and that's also another reason for the delay before were the tariffs and the price of the phone has not yet changed so it is still $2.99. There's still time to order more phones at the pre-order price. I also encourage you all to visit the website bratech.net to see what the actual phone
+
+looks like. It's a beautiful phone with a great design and includes a beautiful case. And if you're worried about production, I just want to remind you that beta testers already have the phone. This is not vaporware. It's real.
+
+So, please bear with us for a little longer. You will find that when you make a custom phone and you're not Apple or Google that it is very hard to do, but we are doing it. It is especially hard when there are other players involved, organizations outside of our control. I think most of you will appreciate a product that's tested and works and will have few problems. That's better than releasing early and having issues with tons of warranty problems. Remember why
+
+you wanted a Bra 3 privacy phone to begin with. These phones are invisible to big tech location tracking and telemetry. This is an important tool to not be part of the phone surveillance infrastructure. Trust me, it will be worth it. Please visit the brac.net site
+
+to see what you're getting. There are more detailed specs and photos to check out. We will be opening the store soon for actual ordering from bratec.net. So, Indiegogo will soon be closed for pre-orders. And thank you for
+
+supporting us. There are few companies with the capability to make custom privacy phones.

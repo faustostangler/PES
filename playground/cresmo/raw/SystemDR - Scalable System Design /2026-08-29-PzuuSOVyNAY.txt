@@ -1,0 +1,27 @@
+---
+video_title: "Geohash vs. Quadtree: The Answer That Wins the Round #systemdesign #shorts"
+video_id: PzuuSOVyNAY
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=PzuuSOVyNAY
+video_date: 2026-08-29
+video_description: |
+  📖 Full Walkthrough: https://systemdr.systemdrd.com/p/design-uber-dispatch-the-senior-walkthrough
+  🌐 Visit our website: https://systemdrd.com/
+   
+  "I'd use a spatial index" is an L4 answer. Here's the geohash-vs-quadtree trade-off — and the two-layer Redis + Postgres trick — that actually gets you to senior.
+   
+  #systemdesign #distributedsystems #softwareengineering #techinterview #faang #backenddevelopment
+---
+Three endpoints carry the whole system. >> [music] >> Riders hit post v1/rides/request with a pickup and destination and get back a ride ID and searching status, plus [music] a price estimate that already folds in the search multiplier. Drivers hit post v1/drivers/location every 4 seconds, and internally, the dispatch service [music] calls post v1/dispatch/match to get back a scored list of candidates. Two details separate a senior answer from a junior [music] one here. The driver app batches location updates to every 4 seconds instead of streaming raw GPS [music] ticks, which might fire every second. That's a four times cut in
+
+right load and a real battery life win. [music] And saying out loud that the client shares responsibility for right amplification is a detail most candidates never mention. And [music] the location payload carries heading and speed, not just latitude and longitude, because ETA to pick up depends on [music] which way a driver is facing and how fast they're moving, not just where they happen to be right now. >> [music] >> A driver 500 m away pointed the wrong way down a one-way street is effectively further than one 700 m away and headed straight at you. That's the [music] kind of tradeoff the velocity vector lets your ETA model actually capture. Four
+
+data stores, four very different access patterns, [music] and mixing them up is a common mistake. The drivers table is the source of truth for status and current [music] position, sharded by driver ID, updated on every location ping. The rides table holds [music] the ride state machine: searching, matched, accepted, driver en route, arrived, in progress, completed, with any state able to fall back to cancel at any [music] point. Location history is a time series store, not Postgres. At 12,500 events a second, that's [music] roughly a billion events a day in a single metro, and it exists for replay and dispute resolution, >> [music] >> not for the hot where's this driver right now query. That hot query hits the
+
+fourth store instead, the driver geo index, an in-memory spatial structure that's the actual heart of the whole system and the subject of the architecture [music] walk-through and the deep dive right after it. Here's the whole flow end to end, and it maps [music] cleanly onto three zones. On the left, continuous background work. The driver app pings location every 4 seconds, [music] an ingestion service writes that update to the drivers table and to the in-memory geo index, and publishes it to Kafka for downstream consumers like analytics and fraud [music] detection. In the middle sits the surge analytics engine, consuming that exact same stream. We'll come back
+
+to it in a few minutes. On the right is the request path. A rider [music] calls request ride. The ride service creates a searching record and publishes a ride requested event. The dispatch manager queries the geo index for nearby available drivers, >> [music] >> scores them by ETA using that heading and speed data, and critically runs sequential offers instead of blasting [music] all candidates at once. Offer
+
+driver one, wait 15 seconds, cascade to driver two if there's no accept. [music] Do it in parallel instead, and you risk two drivers accepting the same rider at the same moment. The distributed lock manager on the far right [music] is what makes first acceptance wins airtight. Redis backed state machines [music] that physically prevent the double-booking problem we're about to unpack in detail.

@@ -1,0 +1,145 @@
+---
+video_title: "Agents' next frontier: agent-to-agent and network effects — Jean-Denis Greze, Town"
+video_id: REascnFlq_8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=REascnFlq_8
+video_date: 2026-09-03
+video_description: |
+  Jean-Denis Greze and his wife share an agent that can read both of their inboxes, including mail from before they were married, and neither of them minds. Greze is CTO of Town and spent seven years as CTO at Plaid. He opens by rejecting his own topic. Agent to agent, he argues, is not a useful concept. Every LLM system is really a search problem: what matters is whether the right information sits in the context window at the moment of the tool call. The ideal is a single agent with access to all the world's information. What blocks it is not context length but privacy, and he reaches for the Coase theorem: perfect information and zero transaction cost produce the optimal outcome, and privacy is that cost.
+  
+  He grades five real strategies by how closely each approximates that impossible agent. A shared trust boundary, such as an HR agent with the access of the team's most junior member, popular today but needing just as many humans as models improve. Custom tools that trade power against privacy, like one that reads everyone's mail and returns only a connection score. Shared silos fed by a sweeper agent that decides daily what may leave a private space, which he thinks pays off soonest. Humans as the conduit, which pings a hundred people to reach one. And a black box that searches every silo unasked, then seeks approval only from whoever owns the information the answer needs. Each leaks in its own way. His own wiki still calls his agent Apex, a month after he renamed it Ivy.
+  
+  Speaker info:
+  - https://x.com/jgreze
+  - https://www.linkedin.com/in/jeandenisgreze/
+  - https://greze.com/
+  
+  Timestamps:
+  0:00 - Agents that work with other agents
+  1:20 - Multi agent systems reframed as a search problem
+  2:30 - The single agent that could see everything
+  3:24 - The Coase theorem and the privacy limit
+  4:17 - Strategy one, a shared trust boundary
+  5:28 - Why that approach does not scale with the models
+  6:21 - Strategy two, tools that trade power for privacy
+  8:39 - Strategy three, shared silos and the sweeper agent
+  11:54 - Strategy four, humans as the conduit
+  12:49 - Strategy five, the black box
+  15:31 - Where it breaks, and a wiki poisoned forever
+  17:32 - Auto mode for privacy, and crossing company lines
+---
+[music]
+
+>> Can you all hear me? All right. Um Well, first things for coming. I can't believe there's anybody in the room, but that's very nice. Uh Uh my name is Jean-Denis. Um I'm CTO at
+
+a company called Town. We're not going to really talk about Town, so you can go to town.com and check that out if you want, but that's not the point of the talk today. I was CTO at Plaid for 7 years, and then I was at Dropbox before. And then before that I built software for hedge funds. I've done lots of stuff
+
+in my career, and right now I'm working on uh assistance agents for for normal people, not not for engineers, but for like basically everyone in America and the world. And one of the things we've been working on are systems where agents work with other agents. So, agent-to-agent. And the main idea is that we think there's huge network effects if agents can work together to get things done for people because in the real world the way most of us do work is with other people, right? Uh more is better. But, actually
+
+I don't think agent-to-agent makes much sense as a concept. So, I want to reframe the entire talk in terms of search. So, I think most LLM systems are just a search problem. And what you're trying to do is you're trying to make sure the context window right before you either return results to the user or before a tool call, you're trying to make sure the context window has the right information for the user. If you put the right information in the context window then based on the intelligence, so to speak, of the LLM, you will get the best result possible.
+
+Um so, you know, 4 years ago the way we did that is humans would populate the context window manually. Then a couple years ago, most people are ragging, so they were like, let's have a tool, like a search tool, that can look across systems and bring the data in there. And then people were like, well, that doesn't scale super well, has issues. And now we're all about agentic search, which is the idea that you give the agent a lot of tools, and it'll search through the space of all content, and then hopefully before it makes a tool call, it has exactly the right content to make the right tool call to return the right information to the user. Um and in this, by the way, there's no there's no people. It's just a one LLM
+
+call at the like the one that matters having the right context. That's That's what you're trying to do. You're trying to engineer um that system. Cool. So, what what does that have to do with agent agent? So, I want you to
+
+imagine the following world. There's not many agents that can do things. There's just one agent, right? And it has one context window, and it has access to all the information in the universe. It can look at any one person's email, can look at any company's information, can look at any government's information, and it has it right there in the context window, and then you ask it to do something. You
+
+You have your little system prompt with all that data, and what's going to happen is it'll give you the best possible outcome. And that actually That is a multi-agent world. It's just an agent that has access to all the world's information. That's the natural state of things. That's the ideal state of things. There's a problem
+
+with this state of things, and the problem comes from a few So, you're learning economics something called the Coase theorem, and it says that basically even humans, if they all have access to all the right information and there's no transaction costs, we get the economically ideal outcome out of a out of a contract or negotiation. Well, it's the same thing. We can't put all of the world's contacts We can't make it available to the LLM. Like theoretically even with infinite context window, because of privacy and security. We're humans. I don't let you look at my
+
+email, so there cannot be an agent that I'm willing to just let it look at my email all the time. But, if it existed, it would be very, very powerful. So, I I think this is like this is the test for a multi-agent system, which is how well does it approximate this? If it approximates this, that means if you can get the same data in your window that a perfect system that has access to all the world's data could, then you get the optimal outcome. That's what you need to try to do. So, we're going to
+
+talk about five strategies that people use at various companies to try to get the right data into that that LLM call with an externality. So, the first one is approximate access to everything within a trust boundary. So, my wife and I, we have an agent together, and that agent has access to my email and her email, uh including emails before we were married. Uh and it's okay, she doesn't ask my agent questions about that, but she does ask about, you know, whether I like schedule something for our kids or, you know, uh if I followed up on some third-party thing. And so, the fact that our agent has access to both of our systems is wonderful.
+
+Um and the work context, this might be there's a an HR team agent that has access to all the HR systems, just like an employee of the HR team would, or maybe as much access as the lowest employee in the HR team. All the employees in the HR team have the ability to ask this agent questions, and boom, it gets pretty good results. And this is very popular right now. Uh it's very popular with IT teams and security teams cuz it's the same model as SaaS for security, so it works really well. I think it has a problem, which is a fundamental problem that if I wake up in the morning, it's like basically the only thing I think about, which is does it get Over time, does this system naturally require fewer humans?
+
+And then, as the models get better, does this approach get better? And the problem with this approach is the answer is no to both. Uh you still need humans to think about all the data, and you don't get magical de-siloification of your data. You've just created a new silo cuz a human thought about it. So, the problem with this is I do think if this is your approach to building better AI, you're going to be in the next couple years.
+
+Um but that's okay. Your is my opportunity. Uh I'm just I'm just not an I'm sorry. That was mean. But like I think it's not I think it's a good now way to think about it. It's not the good end
+
+game way to think about it. The other approach which is I think is a little more clever and then I'm going to try to explain it is basically you try to have tools that make a different trade-off between power and privacy. So, I'm going to give you an example here. Um the use case is I want to ask my agent, does anyone in my company is anyone in my company connected to someone on the finance team at Acme Corp? And so, what the the no silo way to do that is just give me access to everyone's Gmail in my company.
+
+I'll see who has emails with people from Acme Corp. Then I'll look at their profile on Google or LinkedIn and then I'll be like, oh, you seem to email a lot with the CFO. Can you do the intro for me? But right, obviously silos, we don't want that. So, what if you build a tool and what the tool did is it looked at everyone's Gmail. So, that
+
+tool had access to everyone's Gmail and it just returned a relationship strength score. So, the tool you would give it like a domain and you would say I'm looking for someone who's a CFO. It would look at everyone at the company who sent emails to that company and then it would like rank their score and they would give you back the score and then the agent would get the score and it would be like cool. Then they would use a Slack tool to text that person the company. It's like, hey Bob, I see that you're connected to the Jane who's the CFO at Acme Corp. And
+
+then Bob would be like, yes, I am. And then your AI would be like, oh, can you draft an e- can I draft an email or can you draft an email introducing me? And then Bob would say, yes, and he would do that and you'd be connected and everything would be wonderful. So, this is actually very cool approach. I don't know how many of you do it. Like we we
+
+do this at Town for a few things that we see a lot of our users do. We ask ourself, what is a privacy preserving tool that all of our users would be okay existing? They can opt out if they don't want it, but it has a natural network effect because it breaks through silos in interesting way. Um, like another one that's interesting here is letting other people put draft emails in your inbox. You let other people at your company draft emails on your behalf cuz they're going to ask you to anyway to get intros if they're on the sales team, so might as well save yourself a few clicks.
+
+So, the question here is like are people going to be okay with a privacy trade-off that you make within a corporation? Uh, bad. Bad. Oh, boy. Within a corporation that will, you know, mostly it works. Um,
+
+so the problem here again is it's again manual and not dynamic. It's manual cuz humans need to think about the tools. Maybe I could build the tools. Uh, and it's also manual cuz you need to explain it to everyone that it's happening. Humans may not like it if this is happening if they're not okay with the privacy security the privacy kind of power trade-off that you've made. Cool. And again, this doesn't
+
+really get better as they I guess better. That's the problem. Cool. So, now the third category. This one's super popular, but only mostly in the single user context. So, this is,
+
+you know, like personal wikis in claw land. That's what we would call it. But it's across teams. So, it's a shared silo. Create a new place where data accumulates within your company within subgroups at your company.
+
+Um, and you start to put more and more stuff there over time. And all the agents have access to that stuff. Because they have access to it, you no longer have information that would be okay to be shared that's stuck in a silo. It now automatically filters out into this public space. So, examples, shared skills. If you code in
+
+an organization, probably in your repo you have shared skills. Anyone can make them better. Someone has a better way to, you know, profile your database or whatever. They can write the skill. Next time someone's sitting there is like, "Oh my god, the database query is slow."
+
+It uses the profiling skill and everyone's a better engineer. So, that's one version. The other one that's pretty popular is people decide they have some shared mediums, like a wiki, airtable, etc. And they uh they have a scale that says, "Hey, put more data in there over time." So, these are cool.
+
+Um and they work as long as your your agents have those tools and also some trajectory incentives to really like get data out in and out of of these shared silos. Um I think the next version of this that a few people are working on is like you have a sweeper AI. So, this actually if there's one good idea in this talk that I think works really well is this. It's a sweeper AI. So, you have an AI inside each private silo.
+
+An AI has a policy about what has to stay in the silo. And then it also has a description of all the shared spaces that you have. And at the end of the day, it looks at new information in the silo and it puts it in the public spaces. Well, public, public to your company. So, this is the same as the personal wiki that you all have AI building for you at the end of the day so that I can know your goals and your friends and all that stuff, but it's at the company level.
+
+Um the hard part is how do we pick what private information is okay to to share and to put it in shared silos. And I think there's two approaches. There's the ask a human approach. So, this is like the LLM comes up with a list of things to contribute and then it asks the user, "Hey, are you okay with me putting this in the shared space?" And you read it. You're like, "Yep."
+
+Saved you a bunch of time. Right? I mean, you weren't going to do it otherwise. Uh I think the other version is you actually ask the LLM to enforce a policy. And I think that actually is where things are going to go very, very quickly. Um and I think in the next 6
+
+months we'll have a bunch of systems where companies have trusted an LLM with a policy to automatically surface more and more information that otherwise would have been private into a public space. If you're like at a Fortune 500 enterprise company, unfortunately, I don't think that's going to happen for a while, but I think if you look at smaller companies, like 10, 50 person employees, high trust, like low likelihood of something one one doing bad with the data, which really clear to know what data couldn't be shared, basically finance and HR data, you're going to see a ton of this. And the cool thing here is this really improves trajectories of systems on on common work. All right, that was third approach. Fourth approach pretty obvious, use humans as the conduit for information.
+
+So this is like traditional agent to agent. My agent ask your agent, "Hey, who is connected to someone on the finance team at Acme Corp?" You as a human see the request and you're like, "Yeah, I'm okay with that. Go and find the information inside of my email." And then it shows you the result. And
+
+then you're like, "Yes, I'm okay with that result going to the person who asked." The big problem with it is for for any request that has low where it's like only a few people will have the information, you're kind of spamming everyone the request. So if I ask this question to 100-person company, 100 people are being pinged on Slack, being like approves on these requests to like farm your personal network for this for this, you know, for this like the answer to this question. That's not very efficient. Um And so that's why there's a better version of it.
+
+Um which I this is this is very powerful, but uh I haven't seen it in practice much. It's it's a black box approach. I wish I had a diagram for this. Unfortunately for you all, I do not. So here's what this means. The black box
+
+approach is where when you ask a question that can only be answered by looking at information in other people's silos. You have an LLM, the trace of which no one has access to, that gets access to all of the data, and it gets to the answer. Right? Like by say get to the answer, either gets the answer or it's about to do the the the any tool call that's all right. And then it looks at what information did it need to make that tool call, and it only ask the people who own that information for their approval to do the tool call.
+
+So, in the example before that I gave, when I ask 100 people at my company, "Hey, do you know the CFO at Acme Corp?" The request goes to everyone's agents in my company. All of their agents look in their Gmail and their private silos to see if they're connected to the CFO. That happens automatically. No No human is being asked for approval for that to happen.
+
+Then it the agent in the black box ha gets the list of the 20 people who are connected. It looks at contacts from the emails to determine who has the strongest connection. It determines that it's Bob. And then, it just asks Bob, "Hey, Jean-Denis wants you to introduce him to Jane, the CFO at Acme Corp. I know you're well connected to her. Am
+
+I okay sharing that bit of information with Jean-Denis?" And you're like, "Yeah, sure." You click yes. No big deal. The important thing is you have to trust the black box. So, you have to trust
+
+that you can break down all the silos for an LLM that has full access and that doesn't ask for permission until there's this sharing moment or this right step. So, actually, within a company, this is not impossible to do. Uh and actually, your security and compliance team can get okay with it. Um you just have to have You have to be sure that the human in the loop step is correct, and you have to be sure that you're not letting other information go through without last answer. So, you know, like the the nightmare scenarios and things like this are things like uh um Sorry. I'm like
+
+We have plenty of time. I'm almost done. So, it's great. Um the nightmare scenarios with things like this is someone asks a question like, "Are you connected to a recruiter at the other company that you have no business being recruited to as a way for them to find out that you're interviewing somewhere else, right?" So, you know, there are you you still sometimes with a black box inadvertently get an information out that you shouldn't be able to. You have to really think about
+
+how you would build a great system. So, those are the those are the approaches. I think if I were to bet on one that has immediate ROI that we're going to all see in both like open source claw-ish worlds and then like small companies, it's going to be the wiki that's automatically created by AI like the information base that's kept up to date. I think there will be database versions of it, wiki versions of it, and I think more and more we're going to trust LLMs to make the decision about what's okay to share and what's not. There are problems. So, prompt injection
+
+in in the silos can be a real problem. Obviously. So, if you have a silo that has like that's more open and someone can put something bad in there and then that as part of the energetic search you pull it out, you know, bad things can can happen. Uh you can have it's very easy to have a shared wiki that just goes like totally off the rails, you know, like the information there one piece of information there is incorrect cuz LLM made a mistake and then it like poisons it forever. I have a personal wiki that thinks my agent's name is Apex right now, but I renamed my agent a month ago to Ivy. And like somewhere in
+
+memory bank uh uh of my like setup uh Apex lives and so I can't get rid of it. Uh that's fine for Apex. That's a funny one, but it's like much more difficult if it's a really wrong piece of information about your business. Um if you don't have human in the loop for any of the steps, obviously there'll be false and wrong disclosures. You know, sometimes when there's a wrong disclosure of information, someone gets fired. Someone there's a wrong
+
+disclosure, it doesn't matter at all. Sometimes a customer sues you. So, you know, uh you got to be careful. Um and then I think this all sounds nice, but like who approves what, what's logged, what's reversible? The black box idea is really great, but it can't truly be a black box. Someone at your company will want
+
+to audit it at some point. They want to understand what's going in there, right? So, at some level there must be some person in the CISO suite or somewhere that has access to all the data. Um Yeah. So, um what do I think? Well, I do think the
+
+frontier is auto. So, I've said that. I think in coding we used to approve everything. Then we were like, "YOLO, live dangerously." And now the gods at Anthropic have granted us auto mode. And
+
+auto mode tries to figure out when we're maybe being a little silly and it tells us. Well, I think A to A across information silos will be the same way. I think what's going to happen is we're going to get comfortable with low sensitivity information being pulled out and put into common spaces. And then we will have a place that's like human review or always human approved. And then over time what's going to happen is the LLMs will get more powerful.
+
+We will be better at encoding safe policies within them. We'll be better at designing for the really hard areas tools that get the privacy trade-off correct. And it'll just be more and more auto for building shared silos and even sometimes for deciding whether involve a human. So, the example that I have is like if I ask for notes from a weekly recurring call with, you know, a supplier of ours and their finance team, maybe the the LLM's like, "Oh, well, in giving your role, I don't need to ask anyone on those teams for permission. I can just share the notes with you. It's like it's
+
+fine. I they can it can look at the content. It can see what my role is. It can decide from a risk perspective I'm okay with that disclosure." Um and the cool thing about auto, by the way, is if you design your systems that way, it'll scale with model capacity.
+
+So, my encouragement would be like, you need to start if you have agent to agent or or work across silos, which is I think the better way to think about it, definitely define a low sensitivity zone where you're okay with the LLM making a call. And get okay with that. And then magically, as time goes on, it'll get bigger and your system will naturally get more powerful, which is what you you So, you want to be on a beach. That's what you want to do. That's where I want to be. My kids
+
+in Hawaii. Okay, network effects. I've 1 minute. Uh this is the conclusion. So, we talked about five approaches, blah blah blah, trust boundaries, custom tools, shared silos, humans in the loop, and this human in the black box version. Uh I
+
+think this stuff is very powerful. I think the interesting questions a little bit are in within companies, I think this will all work very soon. The big question is where how how how comfortable are we are we with something like an auto mode around privacy? And I think the really interesting question that I don't have an answer for, but I think whoever does this will be wealthier than I am, is if you can think of scenarios where you can get multiple companies to agree to their information silos having a common agent working across them. So, there's like a company that I won't name in in in in somewhere in the world, uh working on like finance stuff where they have a lot of investment banks. And actually the investment banks
+
+there's a benefit to them sharing private data about private companies for purposes of things like lending. And they're starting to look in this direction. Where they're trusting each other's agents to be able to work across what before would have been private information, with agents deciding what can be accessed or not. And it's it's cool. It's very cool. And I think once
+
+you find some use cases across across companies, uh I think that'll be a really good beachhead to to move more in this direction. So, yeah. You know, as a human though, I ask myself, do I trust the future where agents make all the decisions about privacy? I don't know about that. I just think it's a it is for better or worse the direction things are going.
+
+And I just I'm like so good on time. So, I'm on time. Thank you for coming. I again, uh yeah. [applause] Thanks for being here, and
+
+>> [music] >> Mhm.

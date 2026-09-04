@@ -1,0 +1,26 @@
+---
+video_title: "Why size actually matters in coding."
+video_id: 6dmpBh7xFpg
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6dmpBh7xFpg
+video_date: 2026-08-27
+video_description: |
+  Learn to code - https://www.boot.dev?promo=BOOTSTUBE
+---
+First, let me talk about when and why you would actually use insertion sort, and then I'll break down the algorithm step by step. Insertion sort is interesting because it's actually really slow in the average case, order n squared. But, it has a niche use case where it's actually used in the real world because of how fast it is. And that's when the data is already mostly sorted and when the data set is very small. Some sorting libraries will actually use insertion sort when the data set is small enough and fall back to a different algorithm on larger sets.
+
+So, how does it work? Well, it's actually one of the simpler algorithms. We start with an unsorted list of numbers. We'll iterate over each index or each position from left to right. We're going to keep track of two indexes, I and J. I will be the index of
+
+the current number that we're on and J will start at that same position, but it'll actually move to the left. I'll show you in a second. Now, because it's a look back algorithm, we can actually skip the first index. We'll set I and J equal to position one or index one, which is of course the second position. Now, the number doing the swapping will be the number at J and the number at one less than J. I actually has nothing to
+
+do with the swapping. It's just kind of keeping our place in the algorithm. So, we look at the number at position J at the number at position J minus one. And if they're out of order, we're going to swap them and decrement J. If they're already in order, then we can just move on and increment I. And whenever we
+
+increment I, we also move J back up to where I is. It seems really fast at first because I and J are close to the start of the list, so the amount of backtracking J has to do isn't very much. But, you'll notice as I and J get larger and larger, we're going to have to look back through more and more of the list.
+
+Now, here's what a sped-up version looks like on mostly sorted data.
+
+Here's what it would look like on completely random data.
+
+And here you can watch it be really slow on reverse sorted data.

@@ -1,0 +1,108 @@
+---
+video_title: "The Next Game Engine Won't Have a Manual — Arturo Nunez, Nereu"
+video_id: VBCDhRrvlYo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VBCDhRrvlYo
+video_date: 2026-08-18
+video_description: |
+  Ask a coding agent for a camera that follows your character and it will reinvent that camera from scratch, every time, slightly differently. Arturo Nunez's diagnosis is that the context sits on the game engine's vocabulary rather than the game's. Controlling a character in a conventional engine means a mesh, a renderer, an animator, a rigid body, a collider, an audio source, and only then your actual movement logic, nearly all of which is boilerplate that every character in every game already carries.
+  
+  Nereu inverts that. Everything is an asset, and you attach tags describing intent instead of implementation: character, animated, double jump. Systems then query by tag and move everything marked vehicle and drivable, which is Entity Component System thinking lifted from data oriented design. The pleasant consequence is that nothing stops you tagging a building as drivable and dropping it into a Mario Kart style race. The assistant is there to get you unstuck rather than to one shot a finished game, and the vocabulary it expects is the one tutorials already use: press A to jump, press A again in the air.
+  
+  The engineering detail worth stealing is how context gets assembled. Rather than feed the whole scene to a model, he borrows level of detail from rendering. Assets near whatever you are editing arrive with their full tag values, distant ones collapse to a position and a type, and the hundred pieces of grass are simply left out.
+  
+  Speaker info:
+  - https://x.com/arturonereu
+  - https://www.linkedin.com/in/arturonereu/
+  - https://www.arturonereu.com/
+  
+  Timestamps:
+  0:00 - Building a game live by describing it
+  2:45 - Why making games is hard
+  4:27 - Ten years at Unity watching the same struggles repeat
+  6:59 - Powerful engines and LLMs that still do not compose
+  7:49 - The boilerplate behind controlling a character
+  8:45 - Everything is an asset, and tags describe intent
+  9:37 - The asset tag system, and tagging a building as drivable
+  11:21 - How the prompt gets its context
+  14:52 - Level of detail, applied to context assembly
+  16:37 - Getting unstuck rather than one shotting a game
+  17:28 - World models are a different medium
+---
+[music]
+
+>> Hello. Hi everyone. Thank you for being here. Um let's start the presentation. Uh I really appreciate you having interest in in learning more about uh game development. So, today I'm going to talk
+
+about how I think the next game engine won't have a manual and uh at the end you'll see what I mean by by this. My name is Arturo. I'm uh working on this tool called Nereo and uh first I want to show you kind of like how it works today. Uh so you get a glimpse of what I mean by all this. Um So, we we we we can start asking for what we want and describing something like, "Okay, I want to add a robot." Um
+
+okay, so I ask my assistant to help me add a robot. It found some assets that are robots or having tagged as robot or the description are uh a robot. In this case, I want to have a character. It's going to be the character that I will be controlling. Um if I try to play right now, it won't do anything. I still need to tell what I
+
+want. I need to describe, "Oh, okay. I I want this to be uh to move with WASD and I want it to be animated uh have some sort of animation." So, I will describe that to my um assistant uh which is called Bibi, by the way. And I'm saying, "Make this robot move with WASD and animate it as I as I mentioned."
+
+These descriptions are pretty common if you know or if you've played games. You just describe what you want the the thing to to do. And it's language that uh people who play games kind of understand. So, you don't need to to code or you don't need to learn about importing models or anything like that. The focus is on making the game. So, now we have our
+
+character moving. I want to continue describing my game, building my game. So, I want to add some buildings. In this case, we have like a library of assets that might match the description of a building. We could have like futuristic buildings, something like this warehouse or or store.
+
+Maybe we can use a a castle. The idea here is that we can let our imagination go wild. It doesn't need to be you know, like the the the the the perfect game or anything. It's kind of like playing a game, playing with toys, playing with with Legos or or something like that. I'm saying I want it to to to to have some rain. So, I just described the rain
+
+and it will spawn a particle system that's set up or configured as as as rain. The last thing is I want a camera to follow my character. Because if I move around, it will go out of the of the of the view and I won't be able to to see it. So, it added a camera, it configured it, it's looking at my main character and I have a game without knowing how to code or import assets or anything besides just knowing what I want because I I know the the language of of building building games. That's the idea.
+
+So, making games or getting to this point with a a regular tool is very difficult. I I recorded this demo, but you could do this in just a couple of minutes without knowing anything. Just describing. All the assets are there for you. But if you were to follow the traditional workflow, you you will need to know other things. Sorry.
+
+Before jumping continuing, I I want to mention why am I speaking here and you can decide if you you want to to pay more attention or less attention to to myself. I worked at Unity, a game engine company for almost 10 years. So, I saw a lot of people building games and struggling with the same things over and over. At first, it was fun. The challenges were fun, but after seeing them thousands of times, it was like, "Okay, this is not fun. I
+
+don't think people should spend their energy and and and time uh reinventing the same wheel." So, then I I I was part of MongoDB. Then I was learning about more AI topics and how to you know, manage data and all that stuff. And I was helping a startup to manage and handle a version control of assets of of games. So, as I said, I've been I've seen people make games. I've made games and I
+
+think I want to to to to to let more people have fun and and experience the joy of making games without getting frustrated and without you know, spending two three years releasing something, realizing that it's difficult to to to to sell a game. There's a lot of competition. And of course, if you want to do that, I'm not preventing you from doing that, but a lot of people I think it's it's just an a creative outlet making games and the game itself should be the the the thing, right? Like enjoying the process rather than the end product. Okay. So, as I was I was saying before,
+
+making a game requires a lot of skills, a lot of knowledge. It's very it's very difficult. You need to know programming, 3D modeling, rendering, music, animation, and so many other things, you either have a huge team that complement each other, or if it's just you, or you have a small team, people need to wear multiple hats. And honestly, it's very difficult to find someone that's great at game design, and also great at rendering, and great at composition of cameras in real time. So, on top of that, the game has to be fun, right? If If it works and technically
+
+works, if it's not fun, honestly, people won't play it. And I think fun should be for the player, but also for the developers. In recent years, I think it's become more about producing more and trying to sell more, rather than than than the the craft of making games. And I don't think you need to be a a professional game developer to be able to to make games. The same as with with AI assistants to write code, now you don't need to be a programmer to to build whatever you want. The same for
+
+for games. There are other challenges, but that's my my thought. Now, there are powerful engines, Unreal, Unity, and there are powerful LLMs and agents, but I think still it's hard. It's hard because I think we're just building a bridge between two worlds, and it's not optimal, and you still need to know kind of like what to ask in vocabulary of an engine, in the vocabulary of of code. Otherwise, the the the the the LLM goes rogue and does stuff, and reinvents the wheel over and and over.
+
+This is the the point, right? Like, if I say, "I want a camera that follows this character," I've seen the the demos, and the LLM reinvents the wheel every single time. Well, when the result is going to be essentially the the same. Uh, by default, the context is on the game engine uh rather than on the game design part, and I think we should flip that idea. So, in a current engine, if you want to control a character, you need to have a mesh uh uh import a mesh and think about uh so many things, a renderer, an animator, a rigid body, and collider for physics, an audio source, and then you add your movement logic and your game rules. Uh
+
+most of that is just boilerplate that every single game out there has or every character in every single game out there has, but somehow developers need to understand and read the descriptions of those components and what the hundreds of of of of sliders do uh in in in a game. So, I think the the the the the goal should be just to think, "Okay, everything is just an asset. Everything has to be rendered on screen. Everything has physics most of the time uh and you just add tags to describe the intent of those those assets in your game. So, I want this to be a character, to be animated, to double jump." And
+
+this is the language of that we use when we play games, right? Like uh the tutorial tells you, "Oh, press A to jump and press A again while you're in the air to do a double jump." That's that's the language that we should be using. And uh also defining what happens when when a an event occurs. Like in this case, "Oh, when you collect a coin, I want you to increase the score." And uh
+
+of course, the physics and the rendering still happen, but uh we're we're we're building uh on a layer on top to make it more accessible for more people to to build uh games. Um and the engine knows what to do with these tags because these these systems. And this system comes from something that we're calling the ATS or asset tax system. Comes from the idea from game development called the entity component system data oriented design, which means we just describe objects with with components or in this case with tags. And then there are systems that query for all the assets in the in the world and say, "Okay, this I'm going to move all the objects that have the vehicle, the player, and the drivable tag." So, that's how how it
+
+works and all the games can recycle this. In the on the on the right, you see that there's a building. It doesn't have tags, so it's not going to move. But nothing prevents you from adding the the vehicle and drivable tag to your building and then you have a a building that you can put in a Mario Kart style of game. Nothing prevents you from from doing that and as I said like letting your imagination go wild. Uh
+
+the assistant the AI assistant essentially helps you get unstuck. Like if I don't know how to make the car moves, I just ask it and it knows understands like what are the tools available, what are the tags available, and then it applies them to to the to the to the asset that I'm talking about. Uh how it is driven and this is this is pretty common concept from from um agents. You just type your query. You well, we build the the the prompt using context from the scene, but also some extra context based on for example, what type of assets are on your game. If you're using
+
+robots, if you're using something like medieval, etc. We we append that to the to the to the context. We also allow the the user to describe the type of game that they want to to make. So, that's also part of what is is appended into the into the the context. And then the agent just performs calls and appends or removes the the tags. All these tags and all
+
+these systems are built into the the the the engine. We don't have a scripting system in there. That's on purpose. But it's just JavaScript and runs on the on the browser. So, whoever wants to extend, they can. Nothing prevents them from
+
+from doing that. But for most users that shouldn't be the the case. Yeah, all the updates to the scene happen and that's how how it works. Honestly, it's the the the challenging part is the composing games into these tags and into these systems. Because there are a lot of genres, there are a lot of ways to describe the same game, there are things like the mood of the game. Like I want to make a platformer
+
+but that feels like scary. Well, that also touches on things like like the post-processing effects and things like the lighting, etc. So, those those things are the things that we're decomposing to to to drive the the engine. How I'm building this? Well, it's it's the first time that I built something of this scale at this speed and using you know, mostly working with with an AI daily. And I'm sure everyone who uses
+
+Cloud Code or something similar. The way it works is I bring all this stuff that is on my mind and I talk to the to to Cloud and we discuss that part and I go to let's say if I'm focusing on something related to to to lighting, I talk to some friend on the industry who focuses on that and I ask questions and then I bring that in and then we build those tools and I kind of like say I don't think we need this setting. I don't think we need this feature. I haven't seen a lot of users using those things. So, let's get rid of them in order to simplify the the engine.
+
+Uh we build it. Then, as we build, we give uh the definition of the tools to the to the assistant. So, every time uh we add new tools, the assistant knows the the tools that we're we're adding. And um yeah, right now it's it's kind of like still in closed alpha. I don't even know how to call it at this point. But, some people
+
+are using it, giving feedback, and uh then we go back to square one. Um one thing that I I think it's worth sharing also in in in in this presentation is the the way of assembling these contexts because yeah, we're using an LLM mostly. Uh I've used uh also vision models mostly to tag the the assets that we have because it's like six or 7,000 assets. I could not manually tag them all and explain like, "Oh, this is a an astronaut and this is a a knight and this is a castle and this is whatever." I just have the names and the and the and the 3D file. So, I took a screenshot and ran
+
+a a vision model to describe the those. But, it's mostly an an LLM what's uh what we're using. And if we feed the entire scene to the LLM, the context grows a lot. Let's say in this in this scene I think I had like 100 assets at 100 things uh being there. But, most of them are like grass that we could ignore. It doesn't
+
+really make sense. But, uh this is simple like like scene. But, what we're using here to to assemble the context is something that's very well known in in the in the game dev world, which is called level of details, uh which means if I'm close to an object uh or or it's close in inside to to myself, I'm going to render it with a higher quality texture, with a higher quality material, with a higher quality model in many cases. Something that's too far away from the camera, I'm just going to maybe just put a cube and the user won't be able to to tell because it's so far away. So, we're using something similar to assemble the context. In this case,
+
+if the user is editing the game, you can see that maybe well, it's it's it's clicking on the on the knight, right? So, the things that are around it might have a higher priority, so we feed them information about the tags that they they have and the the values of the of the settings on on those tags. Things that are nearby, we just say, "Okay, there's a something that's a player here at this position, but I'm not going to send you the entire entire context in there." Okay? And as as a user keeps moving around and modifies things, then we update that and feed the the assistant with more relevant information about about the game.
+
+Okay, so just to start wrapping up, I I I think this assistant called Weeby should be kind of like the the something that gets people unstuck from making the game. I don't want us to one-shot games that nobody is going to play and I don't see the point in in that. There's in the industry, of course, the need for for games that are one-shotted, but here the idea is that we allow people to make games and experience that and have fun and share that those games with their families and friends and and and that. And of course, that they learn along the way the language of making games, the language of game design, not necessarily the coding or programming. Although people have used it this and say like, "Oh yeah, I can understand now concepts that I didn't understand before of programming." But that was not the the
+
+the initial goal. Um there's another kind of like branch of of engines or tools that are are being used called world models, which are being generated on the on the fly and and some people I think there's another session later talking about these and how games can be achieved with world models. I think that's going to be a different medium even if we call them video games. Uh there are many challenges. Games for instance in these days they have to render 60 frames per second. And doing
+
+that at 4K resolutions in real time uh with a with a world model, I think it's still far away. And on top of that rendering physics and on on well sorry, simulating physics and stuff, it's very difficult, but I think it's exciting what's going on. Um so that's it. If you want to play around, if you want to share this with your kids or friends or or whoever, uh I I can add you to the to the wait list. Um it's honestly it's been very fun to make, but also whenever I want to test something and I just play around and and and bring in uh an astronaut and bring in a dinosaur and make them just walk around, it's it's so much fun. It's uh it's it's kind of like
+
+what got me into game development I think like 20 years ago. And I progressed throughout my career. I started getting like kind of disappointed like, "Oh I don't This is not fun anymore." So I'm having fun again and I want to share that with uh more people. So thank you so much and I'll be outside if you have questions, want to chat more about games or whatever. Thank you so much for your
+
+time. >> [applause]
+
+[music]

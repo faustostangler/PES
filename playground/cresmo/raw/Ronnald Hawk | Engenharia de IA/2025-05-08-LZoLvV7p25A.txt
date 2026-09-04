@@ -1,0 +1,249 @@
+---
+video_title: "Como CRIAR um Agente de IA RAG PERFEITO (5 passos)"
+video_id: LZoLvV7p25A
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=LZoLvV7p25A
+video_date: 2025-05-08
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Aberta por tempo limitado): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  Quer construir soluções de IA Generativa e Agentes RAG que realmente funcionam, mesmo sendo iniciante? 
+  
+  Muitos tutoriais mostram o "pior tipo de RAG". Neste vídeo, descubra o framework de 5 passos para criar um Agente de IA RAG PERFEITO, ideal para desenvolvedores, empreendedores e qualquer profissional buscando aprender IA e construir aplicações robustas. 
+  
+  Aprenda desde a coleta e entendimento de dados, passando por ETL, chunking, embeddings e estratégias de busca como híbrida e HyDE, até testes avançados com "LLM as a Judge" para garantir que sua IA entregue resultados profissionais e supere as limitações comuns.
+  
+  Ao longo do vídeo eu uso python, supabase, langchain e langgraph para criar o Agente de IA RAG
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Vídeos mencionados–––
+  
+  Agente React em detalhes + Langsmith: https://www.youtube.com/watch?v=9bSzZ-9eUkM
+  LLM as a Judge: https://youtu.be/Xr-IWF4GIiU
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:59 O que é uma RAG e qual a importância
+  1:47  RAGs de diferentes tipos
+  3:20 Agente de IA RAG
+  4:12 Passo 0. Entendendo os documentos; criando perguntas e respostas
+  12:12 Passo 1. ETL, chunking, embeddings e estratégias
+  14:07 Passo 2. Testando e melhorando o Retrieval. LLM as a Judge, Hyde e Busca Híbrida.
+  22:22 Passo 3. Testando o Agente com RAG e entendendo o comportamento do Agente
+  29:12 Passo 4. Engenharia de Prompt e mais testes
+  30:36 Você também pode construir agentes profissionais
+  
+  ––– Agência –––
+  
+  A melhor agência de IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #langchain #langgraph  #agentesdeia #python #rag
+---
+Isso aqui é conhecido popularmente como ha, mas a verdade é que esse é o pior tipo de ha que alguém pode construir. Nesse vídeo vou te mostrar o porquê e como construir hags efetivas para diferentes cenários usando o framework de cinco passos que eu mesmo criei. Para você que não me conhece, eu me chamo Hulk e eu construo soluções profissionais. Bora pro vídeo. Antes de mais nada, agora você tem duas opções. Você pode dropar do
+
+vídeo e continuar no mundo cor de rosa dos agentes de inteligência artificial que fazem tudo de maneira mágica. Ou você pode eh ficar aqui comigo e seguir até o fim da toca do coelho. Lembrando que tudo que eu ofereço é apenas a verdade. Então bora pro vídeo. Essa aqui é a representação que tá lá na capa, mas eu queria uma representação aqui pra gente usar no vídeo, tá? E o framework é
+
+composto de cinco passos. Eu vou passar por eles tintim por tintim. Você vai poder acompanhar e ver aonde você tá errando ou onde você nem implementa ainda, né? É, mas mais importante, vamos começar da definição para garantir que todo mundo tá no mesmo lugar. Então, a definição é o seguinte: ah, a usa uma LN e ela aproveita de fontes externas de informação para gerar uma resposta.
+
+Então, por exemplo, vou imaginar que você tem um escritório de direito e você tem milhões de documentos e você gostaria de conversar com esses documentos para achar alguma coisa importante. Então, você pode usar uma reg. Só que o problema é, se você vê a maioria dos tutoriais aqui no YouTube, eles fazem uma reg bobinha. Ah, peguei um documento aqui no Drive, fiz uma anotação no Notepad. E isso não é não corresponde ao mundo real, né? O mundo
+
+real você tem muito dado eh em diferentes formatos, vindo de diferentes fontes muita das vezes. Então é exatamente disso que a gente vai falar e é aí que a gente cria a regra. Beleza? Vamos lá. Se você começar a estudar reg ou já estudou reges esses montes de nome aqui, tá cara? Ah, e a verdade é que tirando esse
+
+cara aqui, todos eles são algum tipo de hag que tentam implementar algo para melhorar o resultado das respostas. E por que existem tantos formatos assim, a receita é simples, porque reg não é um problema resolvido. Hag é um problema que está sendo resolvido agora por todo mundo que tá desenvolvendo e tá descobrindo técnicas. E o que eu trago aqui para vocês, caras, é é o que existe de mais atual no que tá acontecendo. Eu não tô trazendo eh uma técnica que tá batida, por exemplo, aqui no N8N, com uma ferramenta que permite a gente fazer. O que eu tô trazendo aqui para
+
+vocês é a as diferentes técnicas e você tem liberdade para implementar do jeito que você quiser e testar do jeito que você quiser e você pode chegar a essas conclusões. E o que acontece que se sua reg é ruim e você tá usando aquele tipo de reg ali, é porque você tá acreditando que reg é isso aqui, que ele só tem uma entrada e você aperta os botõezinhos ali e ele só tem um tipo de som, quando na verdade reg se assemelha muito mais a um sintetizador é tradicional com diferentes parâmetros, botões e você vai ter que ir ajustando e e tentando adaptar até que isso fique ótimo. O bom disso aqui é que você pode usar eh isso aqui para diferentes propósitos. Então, uma vez que você aprende isso aqui, muito bem, você pode tocar qualquer tipo de som aqui, ah, e e criar com muita liberdade. E se você ficar aqui, você tá limitado a demonstrações de YouTube para sempre. Então, escolha sabiamente.
+
+Então, vamos lá. O que a gente vai fazer hoje aqui é uma gente que reg. Ah, o que seria isso? Ah, se vocês quiserem que eu fale das outros tipos de reg, eh, e eu posso pensar em fazer vídeo sobre as outras. Eh, e esse tipo de discussão aqui mais profunda a gente vai ter lá na comunidade. Eh, o que que é um agente
+
+que reg? É uma um agente. Então você já conhece a gente, eu tenho vídeos aqui sobre a gente. Ah, e a outra ferramenta, é uma ferramenta externa. O que significa? A, ela pode ser um sistema
+
+por si só, tá? Você não precisa usar uma reg com um agente. No caso aqui, a gente tá usando um agente para eh com a reg. E a reg é uma ferramenta desse agente. É só isso. Então, eu posso ter um sistema
+
+de reg, correto? Eh, e eu mesmo posso vir aqui e chamar a reg e obter informação. Então, beleza. Então, a gente vai fazer essa esse agente que reg aqui, popularmente conhecido, tá? Ah, muito bem. Então, a gente vai começar
+
+aqui, cara, do começo, obviamente, que é a coleta entendimento de material. O que que é isso aqui, cara? Eu passo zero. Por que que eu chamo de zero? Porque eu fiz computação e zero para mim é é é não é um que começa, mas tem um motivo maior do que isso que é o antes de você começar a trabalhar de fato, sentar no computador, fazer qualquer coisa, cara, você vai ter que entender isso aqui muito bem, porque isso aqui é uma fonte eh que eu notei depois de ter feito dezenas de ha para as pessoas assim de fora. É, é uma fonte
+
+de muito problema, porque às vezes o material que você recebe, o material que você vai ter acesso, não corresponde a expectativa do cliente da resposta, tá? Então a primeira coisa que você tem que fazer é coletar o material e entender o material. Ronald, como assim entender material? São 1000 PDFs, eu tenho que ler os 1000 PDFs? Obviamente não, né?
+
+Mas você vai ter que ah pegar o material e lê-lo minimamente para você entender a estrutura, tá? você vai entender do que se trata minimamente, eh, e para ter ideia do que tá acontecendo, isso aqui vai te ajudar no debug e também vai te ajudar a conversar com o cliente sobre isso aqui. O que a gente vai fazer aqui hoje é um agente financeiro, então ele tem acesso a report de finanças das empresas e a gente vai fazer com que esse agente nos dê indicações de investimento de maneira decente, baseada no reporte, e não a gente vai precisar mais ficar vendo Primo Rico, sei lá o quê e tal. Então, a ideia da gente é isso, tá? Eh, e o que eu tenho aqui é o seguinte, eu tenho os últimos quatro reports eh da Mélios, tá? Então eu vim
+
+aqui e li, né? Esse assunto de finanças, parará, balanço patrimonial é algo que eu já tenho familiaridade. Então assim, não é um problema para mim criar esse tutorial aqui, mas se você for numa indústria, tiver resolvendo um problema e você não entendeu, você vai ter que resolver. Não caia no conto de que a inteligência artificial resolve tudo. Quem resolve tudo é você usando a inteligência artificial. Então você pode
+
+até usar a inteligência artificial para fazer resumo, mas garanta que você entenda o conteúdo ou o problema que você tá tentando resolver. Lembre-se que a gente tá criando soluções do mundo real, a gente tá tentando resolver problemas do mundo real, tá? Então você tem que entender e solidificar tua base no problema antes de tentar criar a solução. Muito bem, já falei sobre isso. E a segunda questão aqui, cara, muito importante, e sem isso você não deve avançar, não tem como você usar esse meu framework aqui sem isso aqui, tá? Eh,
+
+perguntas e respostas. O que são perguntas e respostas? Baseados nos dados que eu recebi? Quais perguntas o meu cliente lá, o cliente final, para quem eu tô construindo a reg, né? Pro pro cara que vai usar, vai fazer e qual tipo de resposta essa minha reg ou esse meu agente hag tem que fornecer, tá?
+
+Isso é crucial. Se o teu cliente não conseguir te fornecer isso, isso pode acontecer, eh, você cria um algoritmo, né, passa numa LLM e cria as perguntas e respostas. Essas perguntas e respostas, principalmente a pergunta, não pode ser muito óbvia. Qual é o nome do lá? Não, assim não. Vai ter que ser perguntas
+
+mais elaboradas, como se alguém tivesse fazendo mesmo, porque aí você consegue criar testes efetivos. Vou te mostrar aqui o modelo. É bem simples. Eh, cara, onde que tá meu cois? Tá aqui. É um
+
+modelo bem simples, tá? Eh, aqui eu tô usando um CSV e separado por ponto e vírgula. Simples, tá? Eu tenho a pergunta e depois eu tenho a resposta e é só isso, tá? Beleza? Nesse caso aqui
+
+do exemplo, eu criei usando o Gemini, então você pode usar isso à vontade aí, eh, não é nenhum problema. Muito bem, temos as nossas perguntas, entendemos o problema. Vamos sentar agora no computador e começar a fazer. Beleza? O que que a gente tem que fazer aqui?
+
+palavrinha fora de moda, mas que a agente de a ou qualquer solução desse tipo aqui, cara, você vai ter que fazer ETL. Você pode não fazer se você tem um time, uma equipe, você tem um time de engenharia de dados, por exemplo, eles podem fazer isso para você, mas no geral, se você tá fazendo engenharia de ar, que é o que a gente tá fazendo aqui, é bom você fazer, tá? É bom você ter e eh propriedade disso aqui. E o que que você vai fazer? Você vai pegar todos esses documentos aqui, vamos voltar lá pros nossos documentos e você vai quebrar ele em pequenos pedacinhos. Mas
+
+para isso você tem o passo do seguinte, você extrai e pega o documento, você vai extrair o texto desse PDF aqui que a gente tem. É, e depois a gente vai pegar isso e botar no banco de dados, que é onde vai ficar os nossos documentos, e a gente vai consultar. Então, o que que eu faço aqui, ó? Eu tenho os documentos, eu tenho um script para fazer o passe, que é ler esse documento e eh escrever ele de forma parciada em uma estrutura que eu defino. Eu cheguei à conclusão que para mim é melhor usar esse tipo de estrutura aqui. Você pode criar sua, seu
+
+tipo de estrutura. E o que eu faço é para cada página eu crio um Jason válido, tá? Disso aqui eu boto metadado se precisar. H, e todo tipo de documento. Então, por exemplo, eu tenho um cliente que ele me fornece PDF, me fornece doc, me fornece consulta no banco de dados e eventualmente ele me fornece acesso ao datalake dele com diferente tipos de documento. Então eu
+
+vou lá, pego isso tudo, boto primeiro no meu datalake aqui ou na minha estrutura, tá? E a gente chama de camada bronze ou se você é mais antigo no staging, né? processo esse cara e boto ele num formato equalizado. Aqui eu já não me importo como ele era, eu só me importo com a informação. Então você precisa disso para debugar sua solução no futuro. Isso é muito importante, tá?
+
+Então feito isso, você vai fazer de fato o embeding, chunking, embeding. Então a gente aqui tá criando o dado propriamente para criar o chunking. E o próximo passo é criar o embeding. Ronald, o que que é embeding? Eu não faço a mínima ideia. Tem aqui, ó,
+
+memória semântica. E aqui eu tenho uma explicação completa do que é o beding. Então você vem aqui e clica Ronald, eu não sei o que que é um agente. Como que eu construo um agente? Tem aqui, ó, construa seu agente. Aqui tem explicação
+
+e aqui tem o código. Ronald, eu não sei o que que é banco de dados, cara. Tá aqui. Só não aprende quem não quer, tá assim? E se você não, ah, tô confuso, cara. Conversa aqui com a gente. Tem um
+
+agente exatamente aqui para isso, tá? Ele é um agente da biblioteca, ele vai te ajudar a achar o material. É isso. Tá lá, é de graça, tá? Então assim, eu não preciso me estender aqui nesse assunto.
+
+Beleza? Beleza? Então, a gente vai criar um chunk. E como que eu faço isso, tá? Eu particularmente tenho, deixa eu voltar para lá, eu tenho um script e eu vou te mostrar porque eu tenho esse monte de script aqui. Eu tenho esse
+
+script aqui de fazer o setup do banco de dados e eu tô usando Supas, exatamente porque todos os tutoriais aqui que eu fui foliando usa Supase. Então, eu imagino que seja algo familiar para vocês. Eh, eu tenho parte do PDF, que é aquele algoritmo que lê o PDF e transforma ele naquele Jason. E eu tenho um algoritmo, né, um um script, na verdade, é um script para a criação de edgens. E eu executei ele já, né, pra gente não perder tempo demais aqui, pro vídeo não ficar demasiadamente longo. E
+
+ele vai criar esse cara aqui pra gente, tá? Ele vai criar os bedings. O que que esse embeding se parece, Ronald? E é o seguinte, cada página, como eu te falei, é um chunk, correto? Então, o embeding é basicamente isso aqui. Ele vai pegar
+
+cada página daquela ali e ele vai criar um chunk com aquela página ou mais. E aí vai depender da estratégia que a gente tá usando. E esse é o assunto que eu vou entrar agora. Se você reparar aqui, a gente tem o conteúdo, né, o conteúdo e em linguagem natural que a gente conhece. A gente tem o o metadado, isso é importante e para a identificação do dado pela LLM lá no final quando a gente der a resposta. E a gente tem o
+
+embeding, que é a representação vetorial dessa informação aqui. E isso é importante e é assim que vai funcionar a nossa busca e eu vou chegar lá. Beleza? E aqui eu tenho uma outra coluna chamada collection, tá? Essa coluna aqui é o que vai ajudar a gente a testar, porque o que que eu faço na minha criação dos documentos? Deixa eu voltar aqui e eu
+
+vou te mostrar tudinho. Sem filtro. Ah, eu crio para o mesmo conjunto de dados. diferentes tipos de embeding, diferentes estratégias. O que que é uma estratégia, Ronald? Se a gente voltar aqui
+
+no cansadíssimo N8N, deixa eu ver se aqui é ele vai usar essa estratégia aqui, ó, de chunk size, tá? E ele tá usando um recursive charter, correto? Então, o que que ele tá fazendo aqui? É usar um tipo de estratégia, mas a verdade é que existem infinitos tipos de estratégia e se você usar apenas um tipo de estratégia, você tá lascado, porque você não tem como saber previamente qual tipo de estratégia funciona melhor e você vai ter que testar. E é aí que a gente vai começar a usar o nosso documento de perguntas e respostas para testar isso automaticamente. Então, n o
+
+que eu faço lá é é usar diferentes tipos de estratégia. E como que eu faço isso? Hoje eu tenho esse framework aqui, tá, cara? Que eu não preciso de fazer código mais. que o código já tá feito. Então eu
+
+eu crio esse arquivo aqui. Esse arquivo é chamado de ã. E a gente, eu só passo os parâmetros aqui. Eu falo: "Eu quero essa estratégia, essa estratégia, essa estratégia, essa estratégia". Ah, não, eu quero uma outra estratégia aqui. Eu
+
+chego, copio, colo, tá? E boto o nome da estratégia ali e pronto. E tá feito, tá? Então assim, isso aqui é muito superior a qualquer ferramenta de low code. No code, obviamente, porque eu tenho liberdade total. E se você vê aqui, eu
+
+tenho uma estratégia, se você já tá mais acostumado com esse tipo de estratégia, eu tenho uma estratégia aqui que eu mesmo criei, tá? Eh, eu criei essa estratégia porque ao longo do tempo eu descobri que certas para certos problemas ela funcionava melhor. Então, hoje eu tenho esse tipo de estratégia e nada te impede de criar tipo de estratégias ou usar estratégias que existem. Todas essas estratégias aqui tá tão implementadas. Eu só chamei uma função do LCH Chain e tô passando o parâmetro. É só isso. E o resto eu fiz
+
+aqui porque eu conheço o software. Então, tá tudo feito aqui. Eu venho aqui simplesmente ã e chamo esse script aqui e pronto. E ele vai executar e ele cria tudo aquilo lá. Muito bem. Mas você pode
+
+fazer da maneira que você achar melhor ou, enfim, que desejar. O meu foco aqui hoje é te mostrar ideias, tá? Então, muito bem. Criamos o nosso chunk e a gente agora vai testar, cara. A gente vai testar e descobrir, tá? Calma aí.
+
+Qual é meu melhor chunking? Qual é a minha melhor estratégia? E aqui a parte começa a ficar legal, porque eu vou usar um recurso chamado LLM as a judge. Eu mostrei isso aqui no vídeo passado. Se você não viu, eu altamente recomendo. E
+
+o que que isso aqui faz? Vamos deixar rodando e aí eu vou explicando, né? Porque senão é o vídeo vai ficar enorme. Vamos lá. Make ã make test retrieval. Vamos lá. Make test
+
+retrieval. e ele vai começar a executar o teste e ele vai pegar todos eh os tipos de, deixa eu vir aqui. Eh, ele vai pegar todos os caras que estão aqui, tá? Que eu já defini. Você vê que que tem definição. Eu tô falando qual qual qual
+
+coleção eu quero usar e qual o tipo de busca e qual o parâmetro. Todos esses caras aqui, ele vai começar a fazer automaticamente. Então não preciso me preocupar eventualmente, né? Eu só preciso vir aqui e ver o resultado. Antes da gente discutir o resultado em detalhes, eh, vamos, deixa eu explicar ali o que que tá acontecendo desse lado de cá. Eh, o que que é o LLM como juiz?
+
+Eu vou usar uma LLM externa, esse meu sistema, ah, e vou fazer com que ela avalie alguma coisa que eu mesmo gerei. Então, o que eu tô fazendo aqui, nesse caso, é usando uma dessas técnicas, são diversas técnicas, tá? Eh, uma para me dar o score, então ele me dá um valor numérico para eu saber se aquilo tá bom ou ruim. E ele me dá um true ou false, que é falar assim, ó, baseado nesse tipo de resposta aqui, ã, que a gente pegou lá do retrival, ela tá OK ou ela não tá OK, tá? Então, o resultado que a gente tá vendo aqui é basicamente isso, tá? A
+
+gente viu aqui que a taxa de acerto foi duas de cinco, então quer dizer que a nossa reg tá bem ruim, né? ela não tá recuperando. Então eu passei cinco perguntas e baseado na pergunta os documentos que ela recuperou, o retrieval, o R da H tá ruim, tá? Então a gente já sabe aqui que a gente tem que melhorar esse R e a gente vai fazer isso agora. Como que eu faço? Na verdade, eu
+
+faço de um jeito um pouco mais automatizado, mas para o bem do vídeo, vamos ver aqui, tá? A gente tem aqui, ó, o pior performance foi o token 256 e o recursive 256. Então quer dizer que eh os chun chunks pequenos estão performando pior, correto? E o que que eu faço aqui? Ah, esse amante que não é esse cara aqui. Vamos aqui. É o que que
+
+eu faço? Eu vou trocar esses caras aqui e eu vou botar agora que a busca vai ser uma busca híbrida. E aqui eu vou falar que eu vou usar a estratégia chamada hide. Ronald, o que que é isso, né? Que que é isso? Que estratégia? Ô, eu fiz um
+
+curso de agente de e o cara nunca me falou isso. Pois é, caras. Pois é, caras tem um motivo para isso. Correto? Vou deixar isso aqui rodando. O ride é um
+
+pouco mais lento, então vai demorar mais um pouquinho, dá tempo de eu explicar. Beleza? Hide, o que que é hide, tá? É a ideia de fazer uma busca hipotética. Onde você tá inventando isso? Não tô
+
+inventando. Tem um paper, você pode ler, tá? É um paper de 2022. Se você nunca ouviu sobre hi diz que desenvolve ha regará, cara, eh, talvez você tenha que considerar onde você tá estudando, porque isso aqui é já é até velho, né, na indústria e tal. Eh, e a ideia do hide é a seguinte, você faz a pergunta, tá?
+
+Então, a a querer que você fizer, eh, ao invés de você mandar essa pergunta direta para fazer a busca, você vai criar um documento hipotético, por exemplo, o que eu gosto de escrever. E ele vai tentar adivinhar o que eu gosto de escrever e vai pensar lá. E ele vai criar um documento hipotético que deveria estar no seu banco de dados, que deveria estar no seu chunk. E ele vai tentar comparar esse documento que ele gerou. com o documento que tá no banco de dados. Isso funciona maravilhosamente
+
+bem para alguns casos, tá, cara? Tem tem casos que só isso que resolve, pelo menos na minha experiência, mas ele é lento, ele é custoso porque ele vai ter que chamar uma LN, vai ter que gerar um documento que é um beding bem grande e ele vai fazer essa comparação, mas funciona. Eh, e o outro aqui que a gente tem é a busca híbrida. E eu vou voltar aqui e vou explicar também, mostrar para vocês o paper. E existe paper disso aqui também, cara. Aí, ó, busca híbrida. Esse
+
+aqui é mais novinho e ele é bem bom, cara. Eu tenho implementado e tem funcionado muito bem, só que ele é um pouquinho mais complicado de implementar. Eh, vamos lá. O que que é busca híbrida? Basicamente é o seguinte, eh, para toda pergunta que chegar pro nosso agente, ele vai fazer o seguinte, ele vai fazer uma busca normal, tá? Uma
+
+busca convencional. E essa aqui é a busca da reg tradicional. É a reg e naiv. Na literatura isso aqui é conhecido como naive reg. Essa reg do N8N que você vê aí é a é regên, a reg bobinha e tem motivo para isso. Não sou
+
+eu que inventei o nome, caras, esse é o nome de verdade na literatura, tá? Tá assim, eh, eu falei para vocês que eu ia levar vocês no fundo da toca do coelho. É verdade. É reg é boba, tá? Eh, então ele faz a reg boba, né? Ele faz a
+
+recuperação normal de edad eding e ele faz também a recuperação eh em um vetor, em um arreio um pouco diferente. Eles se chamam de busca densa e busca esparsa, tá? Tem uma grande diferença. Então ele baseado no que ele achar dessas duas tipos de busca, ele tem um outro algoritmo embaixo chamado de fusel e ele faz aí a a digamos assim a compilação das respostas e entrega o resultado final. E pode parecer, mas isso aqui é bem mais rápido do que o hi tá cara.
+
+Então esse aqui é um método bem legal e tem funcionado muito bem. Eh, então são esses dois tipos de pontos aqui que a gente tá vendo agora. E o que a gente fez ali é exatamente isso. A gente primeiro rodou a reg N8N, padrão N8N, e agora a gente tá rodando uma reg eh duas regs aqui um pouco mais sofisticadas e uma continua no padrão e original. E vamos ver o resultado. O qual o nosso
+
+resultado aqui? Você se lembra que o recursivo e o token 256 tiveram os piores resultados e era dois de cinco como os outros. Agora a gente botando busca híbrida e botando ride, eh, ele teve 4 de cinco e cinco de a uma diferença brutal, né? E Ronald, por que que você tá usando esse thold de 0,70? É o seguinte, caras, se você começar com threshold muito baixo, eh, qual o risco de sua janela de contexto estourar? Vai
+
+ficar muito ruim. Quanto mais coisa no contexto da do seu agente, pior tende a ser respostas ao longo do tempo. Então a gente começa sempre com trashold bem alto, mais alto possível e se não tiver jeito, a gente diminui. Mas 07 é um padrão legal, tá? Então beleza. A gente
+
+tem aqui cinco de C, tem um rate bom, o que significa que a gente pode assumir aqui pro nosso teste agora rápido que eh a estratégia híbrida funciona melhor do que a standard e que esse aqui funciona melhor do que eh o não hide. Mas como o ride é lento, vamos fazer o seguinte, vamos trocar tudo isso aqui para híbrido e vamos ver no que vai dar. Eh, vamos deixar tudo híbrido. Eh, vamos tirar esse daqui, vamos deixar falso, eh, para a gente poder fazer isso aqui, né, sem muito estresse. Página parará, não. Beleza, vamos rodar esse
+
+cara aqui agora. Eh, vamos limpar aqui que tá uma bagunça, né? Vamos lá. Vamos rodar esse cara aí e a gente vai ver qual é o nosso melhor, quem é o nosso campeão. E quem for o campeão, a gente vai passar pra próxima fase, que é, ah, vamos lá, que é essa aqui. E a gente vai
+
+usar coisas diferentes e a gente vai começar a se ocupar pelo AG da reg, tá? Até aqui a gente tá se ocupando só com R e você vê aí que tem muito, muito espaço pra melhoria só aqui, tá? Beleza? Vamos ver que já deve ter acabado. É, muito bem. E a gente teve aí, ó, Pace Strategy
+
+é a nossa melhor estratégia aqui pro caso. Ele teve um score de 66 e você se lembra lá no começo que o score era de 0.19 e a gente tinha 2 de C, agora a gente tem 5 de C. Então quando você se perguntar, por que minha regra não está funcionando? Porque meu agente é burro, provavelmente é porque a sua recuperação é muito ruim, tá? É isso é um problema
+
+crônico daquele tipo de de estrutura ali da regna e você pode resolver com algum outro tipo de técnica como essa aqui. Então, beleza? Então, a gente já tá safo do retrieve. Agora a gente vai para eh o AG, primeiro do augmented generation. A gente vai começar a gerar, fazer uma geração aumentada, eh, e vai ver se ela tá funcionando bem. Mais uma
+
+vez, Ronald, como que você tá tirando esses números? Como eu expliquei, pega a pergunta que a gente gerou lá, o nosso arquivo de perguntas, e ele vai, baseado nas perguntas, vai olhar os documentos que foram gerados e avaliar, tá? E agora a gente vai usar a pergunta e a resposta e também o agente. A gente vai usar tudo de uma vez para passar o teste final e ver se o nosso agente responde de acordo com a expectativa. Não é a minha expectativa. Se você tá querendo solução
+
+profissional, é a expectativa do cliente. Se o seu cliente for alguém externo, você tem que falar com ele. Seu seu cliente for um um gerente de produto, você tem que falar com ele. Você tem que sentar com ele e entender a expectativa dele. É assim que você cria uma boa solução. Não é da tua cabeça.
+
+Sua ocupação é fazer outra coisa, tá? Eh, no meu caso, eu tenho as duas porque eu tenho empresa, tá? Mas é, se você tá trabalhando para alguém, por exemplo, você, a sua preocupação é fazer engenharia, né? Então, beleza. Muito bem. Então, o que que a gente vai fazer
+
+aqui agora? Nós temos a estratégia campeã. Então, nós vamos usar a estratégia campeã. E o que que eu faço? Eu apago tudo isso aqui. Eu uso o mesmo
+
+arquivo, mesmíssimo arquivo para facilitar minha vida. E eu vou vir aqui no meu make mais uma vez. Cadê meu make? Eh, make é um arquivo, tá, cara? Eh, caras, vocês não é maquiagem, não, é um arquivo padrão que a gente cria e a gente encapsula o script todo. Então,
+
+vez em vez de a gente ter que digitar o script todo, a gente cria apelidos para o script e a gente e e a nossa vida é facilitada. Beleza? Então, vamos limpar isso aqui. Eh, make, eh, test agent. E o que que ele vai fazer aqui é literalmente o que ele faz aqui, cara.
+
+Ele vai chamar o agente como se fosse alguém externo. Então vou imaginar que alguém do WhatsApp chamou a gente ou a gente vai trabalhar na resposta parará, vai fazer o que tem que fazer e vai dar a resposta final. Isso aqui, o start, o end nada mais são do que a entrada e a saída. A entrada e a saída podem ser qualquer interface, cara. Pode ser um site, pode ser WhatsApp. Pessoal adora o
+
+WhatsApp. Quer dizer, pessoa aí no geral adora WhatsApp. Eh, pode ser Telegram, pode ser e-mail, pode entrar pelo e-mail, sair pelo WhatsApp, pode ser o que você quiser, tá? O que a gente tá se ocupando aqui é do agente, tá bom? E o que ele faz aqui? Eu vou mostrar um
+
+exemplo prático enquanto rodam os testes lá pra gente encerrar este vídeo. E a gente vai fazer o seguinte aqui, eu vou fazer aqui no chat para ficar bonitinho, tá? Eh, eu tô fazendo uma pergunta sobre Amélios e ele tem que ir lá e me responder porque é assim que ele eh digamos foi treinado, né? para fazer. Então vamos lá. E eu quero mostrar para
+
+vocês o comportamento desse tipo de coisa aqui no agente. Você vê aqui que ele fez o seguinte. Primeira coisa, ele recebeu minha query. Eh, ele vai bater agora, ele vai começar a girar, né? Ele vai começar a gerar resposta. Ele vai
+
+bater lá com o parâmetro que eu passei. Você viu que eu botei no documento, eh, e ele vai começar a gerar a resposta. E você tá vendo aqui que ele tá chamando documento diferentes vezes, tá vendo, né? Você tá vendo que ele tá chamando documento e ele tá mudando o parâmetro. E eu vou mostrar qual é essa mágica aqui, tá? Eh, por que que ele tá fazendo
+
+isso? Como assim, R? Você começou em 07, agora ele tá diminuindo para 06. O que que é isso? O que que acontece? Esse é
+
+mais um problema de você não ter condições de eh controlar todos os aspectos do seu agente. O que que eu tô fazendo aqui? E eu fiz isso aqui exatamente para mostrar para vocês. O nosso agente, eu vou mostrar um pouquinho de código, cara, senão me xinguem, tá? O que que o nosso agente faz? Eh, no geral, ele tem aqui o nosso
+
+prompt, um prompt. Ah, você tem um arquivo, isso você tem parará, você já conhece isso aqui, tem ferramentas, tem o prompt, tem o modelo e é só isso. E no caso aqui, eu tô usando o O4 Mini. Segundo os benchmarks, ele é um excelente eh um excelente modelo para eh seguir instruções. E o que todos esses modelos fazem, principalmente esses mais modernos e esses de reasoning, eles são eles gostam muito de tentar te agradar e te chegar no objetivo por qualquer meio necessário, tá? Eles vão tentar resolver
+
+o problema. E o que que ele tá fazendo aqui? Ele vai buscar lá na minha reg muitas vezes, tá? E você vê que ele começou com parâmetro que eu passei e depois ele diminuiu o parâmetro. Mas que loucura é essa? E o que aconteceu?
+
+Provavelmente ele não encontrou, tá, o que ele queria e ele foi, ele decidiu por si só diminuir o parâmetro. Aí você fala assim: "Colid, como isso é possível? Eu vou te mostrar a função e você vai começar a entender o que aconteceu aqui, porque o problema da sua ha pode não ser o retrieval, mas pode ser a geração aumentada. Ele pode pegar, na verdade, ali nos testes, mas a sua geração pode estar corrompida porque o seu agente não tá com prompt bem feito, por exemplo, né? E o que que ele tá fazendo aqui, caras? Se você reparar, a minha pergunta
+
+foi essa longa aqui. E a pergunta que chegou na reg, a minha query foi evolução da dívida de 2023. Não foi exatamente o que eu tinha escrito, correto? Ah, e você vai ver aqui que ele vai mudando. Dívida, mé endividamento e ele vai mudando dívida, financiamento, mé caixa, liquidez. Você vê que eu não digitei
+
+isso. Quem tá decidindo fazer isso é o meu agente ou o meu prompt, tá? Então você tem que saber que isso acontece na sua LLM ou que pode acontecer. E por que isso tá acontecendo aqui na minha? Isso é proposital. Por quê? Deixa eu achar a
+
+minha ferramenta aqui. Ã, tools, tools. Tá, deixa eu te explicar como que eu estruturo isso aqui. Eh, é o seguinte, o que que eu faço aqui? Todos esses, eh, parâmetros são literalmente parâmetros em uma função, tá? E o meu agente tem
+
+noção disso porque eu escrevo isso aqui na documentação e eu tô falando que o default é 07. Ah, então meu agente pode tomar a liberdade de vir aqui e trocar o meu parâmetro, tá, caras? É isso, é real, tá? Você tem que saber o que acontece debaixo do pano para você criar a solução direito. Então o que eu faço aqui é deixar ele dar essa liberdade para ele vir aqui trocar o padrão, se ele acreditar que não achou a resposta correta. Ronald, mas como isso é
+
+possível? Porque o retrieval tava retornando todas as respostas. acontece que quando você faz a pergunta, não é a sua pergunta literalmente que ele tá fazendo para fazer a querer ele tá pegando aquela pergunta um pedacinho, tá fazendo o que ele acredita ser melhor e então eh criar a querer então é por isso que acontece dele chamar a ferramenta diversas vezes e ele vai fazer enquanto não estiver satisfeito. Então enquanto ele não acreditar que tem informações suficientes, ele não vai fazer, não vai parar de chamar ah a ferramenta. E o que você pode fazer é duas coisas: retira aquela coisa como parâmetro opcional, né? e faz ali eh hard code ou então você
+
+fala para ele não mudar o parâmetro, tá? O que é mais arriscado porque ele pode não te obedecer e e acontece, tá? Então você tem esses tipos de flexibilidade. Eu gosto dessa estratégia aqui. Ah, o 4 minion para isso é muito bom, mas ele é bem caro. E o que que eu faço? Eh, eu
+
+começo com o melhor modelo que eu sei que funciona bem e depois eu vou abaixando para modelos mais rápidos e melhores. E o que geralmente acontece é o seguinte, eu começo com 4 mini e vou baixando e muit das vezes eu acabo no Gemini Flash porque ele é muito barato e muito rápido. Como isso? Aí eu tenho que melhorar muito o prompt que é exatamente ah o passo final aqui que a gente faz, tá? Que é melhorar o prompt. Então agora
+
+que eu sei que o retrovíel funciona, eu sei que ele funciona com modelo ótimo, né? Com modelo bom, mas é caro. Então eu vou agora num modelo mais barato. E o flash é muito rápido em comparação ao OR4. Ele realmente assim é diferença e absal. Se você for construindo soluções,
+
+você vai entender o que eu tô falando. Eh, tanto para chegar ao primeiro token, tanto para terminar a resposta. Eh, só que aí eu tenho que fazer técnica de prompt avançada. Mas você percebe que assim, a técnica de prompt avançada é o último passo, é a último lugar que eu vou ficar aqui de fato fazendo prompt e testando parará, indo e voltando. Ah, quando na verdade todo o meu meu trabalho eh para criar coisas foi eh através de um método claro, simples, que qualquer um pode seguir e você pode construir coisas assim também, desde que você tenha as perguntas e respostas e as técnicas certas. Ah, eu vou encerrar o
+
+vídeo por aqui, mas antes de mais nada, comunidade Tops, eh, eu tô abrindo essa semana eh para os membros fundadores que quiseram entrar, né, o cara que já tinha se inscrito. Ah, e eu tô abrindo também pro grande público. Quem entrou na primeira leva teve condições especiais. Agora eu tô mudando a condição até para honrar quem entrou eh primeiro, né? E dentro de duas semanas eu vou fechar a comunidade e o que a gente faz lá e o que a gente vai fazer, né, porque, né, eh, tá super no início, eh, discutir essas coisas, cara, construir mundo real, pessoas que constróem de verdade.
+
+Eu sei que somos poucos, estamos espalhados e aqui é o espaço pra gente se encontrar. A ideia é que a gente consiga de fato eh navegar acima eh do que tem aí, né? No geral, eh você sabe que, enfim, a maioria das soluções aí tem problemas de qualidade, eh, talvez muito porque por falta de entendimento. Então, a nossa ideia é reunir a galera que tá construindo, que quer construir, na verdade, né? E pode ser tanto a galera que é desenvolvedora, tanto é a galera de negócio, mas se você é de negócio, você vai se beneficiar, obviamente, de conhecer mais. E se você
+
+é de desenvolvedor, conhecer gente que faz negócio e trocar ideia, porque é assim que a gente ganha dinheiro, né? Então, a ideia da comunidade é exatamente essa. Além disso tudo, lá eu tenho um radar e a mensal que é exatamente eu tenho um workflow aqui no LP que eu crio uma pesquisa como se fosse um deep research ã semanal, eh, e eu leio aqui para mim e tal, para eu ficar antenado e não ficar naquela de tipo isso muda tudo e todo dia procurando notícia, né? Porque isso é péssimo pra produtividade. Eh, só que é isso, só que com os meus comentários.
+
+Então eu tenho algo que me faz automaticamente, então eu leio e boto meu comentário em cima. Então se você quiser saber a minha perspectiva sobre as coisas, eh, do que tá acontecendo, esse é o lugar certo. Eh, também tem o arsenal do construtor, então é exatamente onde eu vou botar snipet de código à vontade lá. Eh, vai ser construindo ao longo do tempo, obviamente não tá perfeito ainda. Eh, e acho que esse código da ingestão, eu vou botar lá, inclusive. Eh, e sessão
+
+gravada bona de produtividade foco, que faz todo o diferencial se você tá nesse meio. Ah, não sei se vocês notaram, mas a ideia de inteligência artificial, a ideia, a galera promete que você vai ter menos trabalho, mas na verdade e o que tá acontecendo é que não existe mais espaço para coisas mais ou menos. Ou você vai ao win ou você vai est fora. Eh, então você precisa de produtividade de foco. Eu chamei um especialista para falar sobre isso. Eu tenho o meu método
+
+de ter produtividade, mas eu posso ser um pouco estranho, sei lá o quê. Então, alguém que sabe ensinar sobre isso, tem uma aula gratuita lá e no futuro a gente vai ter mais coisas lá, principalmente o a galera pediu aí, eu vou fazer um curso eh para quem já é membro eh de Python para II automação. Então vou pegar desde o básico lá e tal, até você conseguir fazer automação IA, né, minimamente com Python de modo que você fique autossuficiente e você aproveite as coisas que estão aí. Eu não sei se vocês notaram, o último comentário é que a Open AI comprou o Windsurf, né, eh, por 3 bilhões de dólares. E se você conseguir ler nas entrelinhas, você percebe que eh Open AI não tá comprando Nem o Make, ela tá comprando um uma coisa que faz código no geral, né, cara?
+
+Esse aqui é o futuro. Eh, e se você aprender básico de Python, como eu pretendo falar também lá na comunidade, é, você vai ter o poder de criar de fato é coisas, como eu mostrei aqui, ao invés de ficar preso a ferramentas eternamente que vão te fazer vão te fazer ficar andando em círculos. Então é isso, gente.

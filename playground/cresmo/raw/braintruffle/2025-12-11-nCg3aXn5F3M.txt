@@ -1,0 +1,206 @@
+---
+video_title: "The Code That Revolutionized Orbital Simulation"
+video_id: nCg3aXn5F3M
+channel_name: "braintruffle"
+channel_id: UCV4Rx1m-9HmtqHET7GjnVOA
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=nCg3aXn5F3M
+video_date: 2025-12-11T14:49:44+00:00
+video_description: |
+  To learn for free on Brilliant, go to https://brilliant.org/braintruffle/ . You'll also get 20% off an annual premium subscription.
+  How a Seemingly “Wrong” Code Flip Changed Space Calculations
+  
+  
+  Exclusive coding tutorials & videos on many other topics
+  https://www.patreon.com/braintruffle
+  
+  
+  Timetable
+  -----------------
+  00:00 The Asteroid Belt Puzzle
+  02:12 Instant Stability Switch
+  07:42 It’s Not About Energy
+  09:14 Phase Space Geometry
+  12:41 Dancing Between Dimensions
+  16:41 When Invariants Break
+  19:28 Staggered vs. Simultaneous Updates
+  23:43 Modern Orbital Simulation
+  
+  
+  Special thanks to my Patreon supporters
+  https://www.patreon.com/braintruffle
+  --------------------------------
+  Alexandros Karypidis
+  Aris
+  augis122
+  Dane
+  Darrell Thomas
+  David
+  Dennis Weishaar
+  Estir
+  FinTech800
+  G Ryan
+  HelpfulFella
+  Houston Lucas
+  Hugh Tyney
+  Ka Lok Lam
+  Ken
+  Laios Cornelius
+  Luis Adame Rodríguez
+  Marac
+  Matthew Chang
+  Matthew Piziak
+  Nandan Shettigar
+  nullstyle
+  Patrick Gibson
+  Peter Lennartz
+  Ruben Fernandez
+  Ruud
+  Ryan Fergerson
+  Sergi
+  TedMeftah
+  Tony Tonglin Zhang
+  Tristan
+  Vincent Xiong
+  whetupaitai gmail com 
+  Youssef Mohamed
+  3ichess
+  ... and all my patrons!
+  
+  
+  References
+  --------------------
+  Modern Long-Term Orbital Calculations:
+  Rein, Hanno, and Daniel Tamayo. "WHFAST: a fast and unbiased implementation of a symplectic Wisdom–Holman integrator for long-term gravitational simulations." Monthly Notices of the Royal Astronomical Society 452.1 (2015): 376-388.
+  
+  Molecular Dynamics Inspiration:
+  Verlet, Loup. "Computer" experiments" on classical fluids. I. Thermodynamical properties of Lennard-Jones molecules." Physical review 159.1 (1967): 98.
+  
+  Wisdom–Holman Integration:
+  (a) Wisdom, Jack, and Matthew Holman. "Symplectic maps for the n-body problem." Astronomical Journal (ISSN 0004-6256), vol. 102, Oct. 1991, p. 1528-1538. 102 (1991): 1528-1538.
+  (b) Holman, Matthew J., and Jack Wisdom. "Dynamical stability in the outer solar system and the delivery of short period comets." Astronomical Journal (ISSN 0004-6256), vol. 105, no. 5, p. 1987-1999. 105 (1993): 1987-1999.
+  
+  Asteroid Reference Data: 
+  NASA/JPL Solar System Dynamics. Downloaded October 19, 2025. Small-Body Database Query, https://ssd.jpl.nasa.gov/tools/sbdb_query.html
+  
+  Deep Star Maps 2020: 
+  NASA/Goddard Space Flight Center Scientific Visualization Studio. Gaia DR2 ESA/Gaia/DPAC, adapted from original
+  
+  
+  Music by Epidemic Sound
+  ------------------------------------------
+  Resolution - Marten Moses
+  Gnomon - Marten Moses
+  Particles - David Celeste
+  Miles - Out To The World
+  Symmetry - Christoffer Moe Ditlevsen, Jakob Ahlbom
+  Distant Heartbeat - David Celeste
+  Aquarius - David Celeste
+  Aquatic Planet - David Celeste
+  
+  
+  This video was sponsored by Brilliant
+  
+  
+  Thank you for watching!
+  Torsten
+---
+This is about a deceptively simple computational trick, a detail that might feel almost pedantic. But look deeper, and it reveals a leap in accuracy, making this possible: A vast simulation of the main asteroid belt, orbiting between Mars and Jupiter, a region with a striking anomaly noticed by astronomers for more than 150 years. If you count the real asteroids by their orbital semi-major axis, certain regions are almost empty. These are known as the Kirkwood gaps. And to demonstrate how these gaps appear, you might calculate the motion of thousands of asteroids.
+
+But the real challenge is following them for millions of years, because only then do you see the gaps slowly emerge. And for a long time, that was simply out of reach. Not just because computers were too slow, but because the algorithms themselves became unstable long before reaching that timescale. Until, in 1991, astrophysicists took an idea that had already shaped molecular dynamics since the 1960s, reaching new levels of precision there, and transformed it into a breakthrough for planetary simulation. And the core principle is so fundamental, you can demonstrate it with a very simple setup and just a few lines of code.
+
+If you take a massive body like the Sun and a tiny one like an asteroid, Newton’s law of universal gravitation will make it orbit in an ellipse, a hyperbola, or, in the special case, a perfect circle. And in that idealized case, you know exactly where it will be, even a million years from now, always somewhere on that circle. So, when ignoring secondary effects like solar radiation pressure, outgassing, or relativity, this circle becomes our reference. If a simulation can’t keep that stable, we certainly can’t trust it for the asteroid belt, where many more planets and effects are pulling at once. So, how would you simulate an object following even such a simple orbit?
+
+We know that velocity continuously changes position, and that acceleration, here given by Newton’s second law, continuously changes velocity. And these changes happen simultaneously, in infinitesimal steps, constantly generating new positions and velocities. In a simulation, you can’t compute infinitely many infinitesimal steps, so you replace them with small, finite timesteps. So, at each timestep, the old position and velocity, plus a tiny change based on those old values, give the new position and velocity. In code, after setting the starting position, velocity, and timestep, you can mimic this with two steps: first, shift the position by the current velocity times the timestep, and then update the velocity using the old acceleration times the timestep.
+
+And this is important: I’m using minimalistic, educational pseudocode, where each line overwrites the previous variable. So, after the first line, the old position is gone. And after the second, the old velocity is gone. So in this version, both updates depend only on the same current state, the old position and the old velocity, exactly as the equation suggests. And if you run it, the orbit spirals outward.
+
+Which is not surprising: larger steps update less often and bring more errors; smaller steps reduce them. It feels like the most straightforward, maybe somewhat naive, implementation of Newton’s equations. Now, there are more advanced update rules that keep the orbit closer to the circle for longer, even with larger steps, but they require more code. Which makes the next observation surprising: there’s a way to remove the spiral and keep the orbit stable without adding a single line of code. If you simply flip the order of those two lines, update velocity first, then position, the asteroid no longer spirals outward.
+
+It stays close to the circle indefinitely. The orbit may be slightly shifted on average, but that can be corrected by kicking the asteroid off a bit differently. What matters is that it never spirals away. In this version, the position update already uses the freshly updated velocity. But that’s not what the original equations suggest, and yet, the result is dramatically more stable.
+
+Which is… telling. Because it’s not just another spiral, say, inward instead of outward. It’s qualitatively different. So why does swapping these two updates, which were supposed to use only the previous values, suddenly lead to stability and give a result you can trust more? And what does that reveal about the rules of motion we must respect if we want to faithfully reconstruct the history of the Solar System itself?
+
+This video is sponsored by Brilliant. More at the end. Now, to clear up the obvious: if we first turn the corner and then move forward, it’s only natural to end up a little closer to the circle. You’re simply anticipating the curve. So that part isn’t surprising.
+
+But what follows should be. If you track the distance from the Sun after each step, over billions of orbits, it stays ssentially flat. The error stays below ten to the minus ten, practically machine precision. So there’s no significant drift, even over absurdly long runs, which is not what you expect from a numerical simulation method. It starts to feel less like we’re calculating an orbit and more like we’re performing a geometry trick.
+
+And as we’ll see, that’s not far off, because it really does come down to the geometry of motion. Now, with an elliptical orbit, an additional effect appears. The asteroid doesn’t spiral away, but the ellipse slowly rotates. Later, we’ll see how to reduce that rotation while keeping large steps. But even without that fix, this orbit matches the true ellipse far better than the original method’s path.
+
+And even after a very long time, when the path thickens into a torus- shaped band, it still doesn’t drift outward. It keeps that long-term steadiness. And that is remarkable. It somehow survives the roughness of the numerics. Because even if we switch to a more sophisticated method, say Runge–Kutta 8, which cleverly blends several test evaluations to predict each step, it can hold the ellipse longer at first, but over millions of orbits, it still drifts away.
+
+Now, you can build extremely high-order methods and use smaller timesteps to chase machine precision, but that requires far more computation. By contrast, our little “flipped” version shows built-in long-term robustness. Even with a large timestep, it doesn’t run away, and the error stays bounded. And it’s that kind of robustness that opens the door to an entirely different class of methods, ones designed not just for short-term accuracy, but for fidelity over millions of years. Now, you might think this stability comes from conserving energy.
+
+But if we compute this simulated asteroid’s total energy, it isn’t constant, as it should be. It oscillates within a narrow band. And that’s what makes this so strange. This simple line flip doesn’t explicitly conserve energy, and yet, it stabilizes the motion. So there must be a deeper property of the motion’s geometry at work.
+
+A property that allows us to model chaotic systems like the asteroid belt, and still see the right kind of chaos — the kind that emerges when something essential about the geometry is preserved over vast timescales. Now, to clear up the next obvious point: any simulator follows the reference more closely when you shrink the timestep. But the pattern of its bias doesn’t change; it just becomes harder to see. That’s why we used large steps: to make the error’s fingerprint visible. Once other planets start tugging at the same time, the perfect ellipse isn’t the truth anymore.
+
+Still, understanding how these errors behave tells us something important. It tells us whether a calculation is trustworthy, whether it respects the properties that should be conserved. And even though the true system’s total energy should be conserved, we’ve seen that it’s not what actually keeps the simulation stable. So then, what properties are doing it? It isn’t just one, but a whole family of them.
+
+So, let’s build a simpler world where we can see the answer. Imagine a single particle moving in a one-dimensional world. Without any forces acting on it, it travels at the same speed forever. And once you know its position and its velocity, you know its entire motion, from where it’s been to where it’s going. So, from a dynamical point of view, this particle really lives in a two-dimensional world: one dimension for its position, and one to keep track of its velocity.
+
+This two-dimensional space is called phase space. And each point in it represents a possible state of the particle, a unique combination of position and velocity. Now, if we add another non-interacting particle, they can share the same position, but you can also think of it as the same particle, just with some uncertainty in its velocity. It could be either at point A or at point B. Now, usually phase spaces are written in terms of position and momentum, momentum being mass times velocity.
+
+But since we’re using identical particles with the same mass, we can factor the mass out and simply work with velocity. If we now place a small patch of many such particles inside the area spanned by these two vectors, we can watch what happens over time. With no forces, the velocity of each particle stays constant, so energy and momentum are both conserved. But for the collection as a whole, another conserved quantity appears. The area of that patch also stays constant in time.
+
+It only shears, never stretches or compresses. And that conserved area isn’t a property of any single particle, but of the ensemble, the entire cloud in phase space. If we now make this particle world a bit larger by adding another spatial dimension, y, we can place more such particles along the y-axis. But since each spatial dimension, x and y, comes with its own velocity component, vₓ and vᵧ, I can’t really draw all four dimensions here. So I give the y-velocity components a tiny thickness around zero.
+
+That means we’re really looking at a 3-D projection of a four-dimensional, hair-thin phase-space patch, with practically no motion into the y direction. Don’t worry about every dimension, just notice what stays constant. And again, as time goes on, the 4-D volume of this patch stays constant because it only performs the same shearing motion, no stretching or compression. If you look at the positions alone, it might seem as if the patch is expanding. But in phase space, we know its total volume is preserved.
+
+And this property isn’t limited to motion along the x-axis. We can add more and more such patches, each preserving its own phase-space volume, and the total volume still remains constant in time, even though in position space it looks like an implosion. And just to be clear: even when patches seem to overlap from above, they don’t actually intersect in phase space. Their velocities point in different directions, so the overall volume is still conserved. And some of you might have heard of it: this is Liouville’s theorem in action, the statement that for certain kinds of motion, phase-space volume is preserved.
+
+But it’s not just that that’s conserved. And to see what else survives, let’s change perspective. Imagine you want to know what this 3-D pyramid looks like from very far above. As you move your viewpoint higher and higher, you eventually look straight down on every point from directly above. The image you’d get is the same as if you scaled its height to zero.
+
+You’re simply forgetting about one dimension. That’s an orthogonal projection. Now, let’s do the same with this 2-D patch in 4-D phase space. It has no thickness or motion in the y-direction and only extends along x with a velocity vₓ. So, if we draw the upward direction as the velocity vᵧ instead of vₓ, it really is zero.
+
+Let’s start by drawing the patch’s shadow on the x–vₓ plane. All we do is ignore the other dimensions. What we see now looks exactly like the phase-space patch from our one-dimensional world at the beginning. If we instead project onto the y–vᵧ plane, the picture looks different. There’s no extension or motion into the y-direction, and that’s how this absence shows up in the projection.
+
+Now, let’s also give all projected areas an orientation, which depends on how the defining vectors are arranged. So, each oriented area can count as positive or negative. If we now rotate the patch, including its velocity components, and watch these oriented areas, each one changes, but their sum stays constant. So far, that’s purely a consequence of 4-D phase-space geometry. But as time goes on, the right kind of forces may cause the patch to turn through phase space on its own.
+
+And in that case, the individual oriented areas may grow or shrink, but together their total — the sum of all oriented areas — remains preserved. You can think of it this way: whatever motion or action flows out of one dimension flows into another. So, to keep things straight: for a one-dimensional space x, we have a two-dimensional phase space, x–vₓ, and the area of that 2-D phase-space patch is preserved. Now, for a two-dimensional space x–y, we get a four-dimensional phase space, x–vₓ–y–vᵧ. But here, both the total 4-D volume and the sum of all oriented 2-D areas are preserved.
+
+You can probably guess what happens in three dimensions: x–y–z leads to a six-dimensional phase space. And again, the total 6-D phase-space volume is preserved, as well as the sum of all oriented 2-D areas, now including the z–v_z pair. But there’s yet another level: the sum of all combinations of oriented 4-D sub-volumes also remains constant in time, which, just like before, reflects the same kind of trade-off we saw for the 2-D areas: whatever motion flows into one pair of dimensions must flow out of another. In a way, total-volume preservation can be viewed as the sum of all oriented highest-dimensional volumes, of which there is only one. So, there is a whole hierarchy of preserved quantities.
+
+And you can visualize them by looking at the phase-space patch and its projections onto different subspaces. And they matter in calculations. For instance, you can design methods that preserve the total phase-space volume, but not the others. Yet, if you want to retain all the benefits that come with true long-term stability, a method that preserves all of them is often superior. These are the Poincaré integral invariants, geometric truths about how patches move through phase space under certain conditions, one example being free motion without forces.
+
+But eventually, we do want to add forces. So how can these invariants help us then? Let’s go back to the one-dimensional case with its two-dimensional phase space. As soon as you introduce a force, it changes the particle’s velocity. For example, if the force is proportional to the negative velocity, the particle slows down and tends toward rest.
+
+A whole patch of such particles would slow together, and at the same time it would compress, which you can see in the color-coded density. The phase-space area clearly isn’t preserved. So, under these conditions, this “phase-space invariant” is no longer invariant. But maybe there are special kinds of forces that do keep it preserved, and if we can preserve those in a calculation, we might keep the long-term benefits as well. Remember how force-free motion was a shear that kept the area constant, simply because the velocities were independent of the positions?
+
+Let’s try a force that acts in a similar, non-squashing way, a force that, at each position, is the same regardless of the particle’s velocity. So it adds to the velocity based only on where you are, without compressing or stretching phase space. For instance, a simple spring force depends only on position. And with such a force, the density stays constant along the flow, and the Poincaré invariants remain preserved, and in 2-D phase space, that’s exactly the area. In higher dimensions, this shows up as volume-preserving twists, complex deformations that never squash the phase-space fabric.
+
+And as long as these invariants are preserved, the flow is called symplectic. And why is that such a big deal? Look back at our asteroid’s force law. In the simplest Newtonian case, ignoring solar radiation pressure, outgassing, or relativity, the force depends only on position. So now we have everything we need to understand why that little line flip, even though it didn’t explicitly conserve energy, had such a dramatic impact on long-term stability.
+
+Because now we can see what that code flip does to the Poincaré invariants. Now, once you start dissecting the code, you might wonder: how can a few lines of code possibly preserve the Poincaré invariants? After all, these invariants describe areas and volumes in phase space, they are properties of infinitely many points all at once. But in a simulation, you never move infinitely many points. You only update a finite number of them.
+
+So how could that ever conserve an entire area or volume? There are actually two tricks involved. Let’s unwind the code to see the first one. And to make it easier to follow, we’ll use the two-dimensional phase space with the spring. In the original code, we first define the particle’s position, velocity, and timestep.
+
+And then, the loop simply repeats three statements over and over again, which we can write out like this: First, the particle’s acceleration is calculated from its current position, x. Then, the new position is calculated from the old position and old velocity. And finally, the new velocity is calculated from the old velocity and the acceleration, which is still based on that same old position. And this goes on and on. Now, if you think of the particle’s state at different timesteps, each one is defined by a position x and a velocity v at that moment.
+
+So even though the code executes line by line, from a dynamical perspective we’re updating an old state, composed of x and v, into a new state in a way that feels simultaneous, because the steps are independent of one another. But what does this actually do to the phase-space structures? Let’s look at a small patch of particles using this code, here with a very large timestep so the effect is easy to see. Once again, the code runs line by line, but the result behaves as if all the shifts happened simultaneously. Now, apparently, the phase-space area isn’t conserved.
+
+It grows larger. With each point spiraling outward at its own rate, there’s simply no reason for the area to stay preserved. So… what makes the little line flip so much better? Let’s flip the two lines and color the variables again. The acceleration is still calculated from a given position.
+
+But now, the velocity is updated first using that acceleration. And then, the position is updated using the freshly updated velocity. So again, we iterate through the loop. But from a dynamical point of view, even though we still move from one state to the next, the substeps must follow one another. You can’t update the position without updating the velocity first.
+
+So it’s not a simultaneous update, it’s a staggered one. But why should that make such a difference? From a dynamical perspective, the position update acts like a shear, just like the one we saw in force-free motion. And the velocity update, which depends only on position, is another shear in the complementary direction. So we end up with a sequence of area-preserving shearing motions that together still preserve the phase-space area.
+
+And even though we’re updating individual points, we’re doing it in a way that, by design, has the preservation baked into the motion. If you think of all these points not as separate particles, but as the same particle’s possible future positions, you’re effectively giving that preservation property to the trajectory itself, for all of time. That’s what leads to the remarkable long-term stability we saw earlier, even though, for large timesteps, the energy isn’t exactly conserved compared to the true physical evolution. And I think it’s fascinating that by changing so little, you can gain so much. Conceptually, it works the same way for the asteroid simulation, but in 1991, scientists built on this idea and developed a technique that set a new standard for orbital calculations.
+
+Now, this code is about as simple as time integration gets. And if we compare this shearing patch with the reference motion, we can see that the simple method is still not very accurate, because it’s a low-order method. With more advanced algorithms, you’d naturally expect much better precision. For instance, a higher-order symplectic method, one that also preserves the Poincaré invariants, would match the reference much more closely at the same step size. But our simple scheme already shows something important: we can improve a method whenever we manage to bake some knowledge about the underlying system into the algorithm itself, in this case, knowledge about phase-space areas and volumes.
+
+Now, independent of that property, there’s another assumption we often make intuitively without thinking too much about it. Once we know a particle’s position and velocity at a given moment, here shown in x–y position space, the naive mindset was to move forward along the velocity vector for a short time Δt, fully aware that the real path is curving away the whole time. That’s why more sophisticated schemes try to anticipate this curvature locally, producing a better next estimate. But they’re still agnostic about the direction of that curvature. In a way, they’re general-purpose methods.
+
+And for many problems, that works perfectly fine. But in our specific case, orbital motion, we actually know how to anticipate. Because what we really want to compute are orbits around a central star, with only small perturbations from the other planets. And in the limiting case without those perturbations, in other words, without the other planets, we already know exactly what the motion should be: a perfect Keplerian orbit around the Sun. So instead of advancing the particle based on a generic estimate, why not move it directly along a curved Keplerian arc?
+
+Then, after each timestep, we can slightly correct that motion to account for the gravitational influence of the other planets, in effect jumping from one Kepler orbit to the next. Compared to our simple code, where position and velocity are updated in a staggered way, this means: the position update follows an exact Kepler step to a new point, while the velocity update shifts us onto a slightly different Kepler orbit. This separation is called splitting. And when it’s done correctly, the Kepler–planet-interaction split itself can be made symplectic, meaning it preserves the Poincaré invariants and inherits all the long-term stability we’ve seen. This is the Wisdom–Holman splitting, the foundation of modern long-term orbital simulations.
+
+And it works beautifully as long as planetary perturbations remain small. And even though close encounters require switching to other methods, the time spent in those regimes is minimal. So most of the time, you stay in this split regime, where you can take much larger steps and still remain precise over vast timescales. Now, you might think: if asteroid motion is chaotic, doesn’t that make precise prediction hopeless anyway? Because tiny differences grow, and over long times, two almost-identical starting conditions diverge completely.
+
+That’s exactly why you step back from a single trajectory and track an ensemble, a phase-space blob, just like we did for the asteroid belt. But with a structurally correct algorithm, that blob spreads for the right reasons, because of the dynamics, not numerical artifacts. The chaos you measure is physical chaos, not a side effect of your timestep. And symplectic integration preserves the system’s geometric invariants at the algorithmic level, which is what gives trustworthy long-term behavior. Once that foundation is in place, you can carefully layer in additional physics, like general relativity.
+
+But it’s astonishing how deep such a tiny code flip can be. And even when someone shows you how it works and it suddenly seems so simple, maybe you feel how I felt for a long time: How would I ever have broken it down like that myself? But that’s really just experience. And the more you approach these ideas like a game instead of a task, the more they start to click. And that’s why learning with Brilliant works so well for me.
+
+Because they know you’re a thinker, they simply help you excel in math and computer science, with visualized, interactive problem-solving and personalized practice. I’ve found that they don’t just tell you how something works; you get hands-on with the concepts until they make sense. If you want to learn this kind of thinking yourself, have a look at Brilliant’s Algorithmic Thinking course. You’ll experiment directly with iterative systems, seeing firsthand how simple rules can generate complex behavior. To learn for free on Brilliant, go to brilliant.org/braintruffle, scan the QR code onscreen,
+
+or click on the link in the description. Brilliant’s also given my viewers 20% off an annual Premium subscription, which gives you unlimited daily access to everything on Brilliant. Thanks for watching, and thank you for your support.

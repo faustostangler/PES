@@ -1,0 +1,130 @@
+---
+video_title: "Which AI startups actually land enterprise contracts? — Brian Lewis, Millennium"
+video_id: 7A65O-0lvKE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7A65O-0lvKE
+video_date: 2026-08-29
+video_description: |
+  For a given internal pain point, Brian Lewis might find 10 to 15 startups worth a look, book two or three demos, run zero or one pilot, and sign roughly one contract for every four pilots. That works out to about 5% of demo calls ending in a signature, which turns out to match published benchmarks. He is on the buying side at a hedge fund, speaking personally rather than for his employer, and the talk is a catalogue of exactly where the other 95% dies.
+  
+  The examples are specific enough to sting. A vendor asked them to self report their own gateway telemetry so it could charge margin on traffic that never touched vendor infrastructure. Integrations that only function if granted read and write access to everything. Features held permanently in beta because the beta terms permit data retention. A team claiming zero data retention that revealed it had their data by mentioning something it could not otherwise have seen. Asked what happens in a breach, one vendor answered that they had not had one yet. His larger argument is that none of this is really an AI problem: a new frontier model lands every 11 days while the architecture underneath is a decade old, and he puts perhaps 60% of becoming AI native on entitlements, integration and change management. Agents inherit whatever foundations you already had.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/brianthomaslewis/
+  
+  Timestamps:
+  0:00 - Sellers and buyers in the same room
+  2:52 - The funnel, and the 5% that signs
+  4:16 - Efficacy: solving the problem, and pricing it
+  5:36 - Pilot windows collapsing from months to weeks
+  6:57 - Security requirements from the buyer's side
+  8:19 - What goes wrong in security, repeatedly
+  9:42 - Reliability, control planes and audit logs
+  11:04 - An outage during a trading day
+  12:23 - Legal, retention clauses and fourth party risk
+  13:44 - A model every 11 days, architecture a decade old
+  15:07 - The unglamorous 60%
+  16:28 - Entitlements, and why agents multiply the problem
+  17:54 - The recipe for each side of the table
+---
+[music]
+
+>> Welcome everybody. Sorry for everybody who was already here and missed the Coinbase guy. I have no idea where he went or why he didn't come. I was actually pretty excited to hear about his his comments. But today I'm going to talk about which AI startups actually win enterprise contracts.
+
+So to begin I thought this was going to be a different audience. I didn't realize this was going to be mostly people on the leadership track. I thought I was going to be speaking to more AI engineers. So maybe just by show of hands, how many of you represent like the engineering or startup or like seller side? And then how many of you represent maybe like the buyer side? Like you're in the
+
+enterprise, you're trying to get these tools in. Okay, so we got a good mix. I'm going to try to balance that out today. I work on product stuff at Millennium, which is a hedge fund. We build a lot of stuff. I can't talk about
+
+any of it. So I'm going to talk about stuff that we we look at and evaluate. It's going to be pretty generic. I tried to make it as interesting as possible while still getting my compliance department to be okay with me doing this. But also need to say legally that I'm speaking as an individual. I am not
+
+representing my company and all opinions are my own. So with that we can dive in. So I ran through this with my parents last week. I don't I grew up not that far from here. And my mom basically said, "Why are you spending your time teaching vendors how to sell to you?
+
+Aren't you busy enough already?" And the real answer to that question is I really like how stuff works. I like seeing stuff come together. My bachelor's degree was in economics. And I really love seeing things just work well. So AI's been really interesting
+
+because it's kind of a whole new paradigm of how businesses are doing work. That's the whole point of this track, this AI native enterprise track. And so even though I don't need more people DMing me on LinkedIn, um I'm actually really excited to talk about this. So, my hypothesis in short is basically at current model intelligence, most of the value available is already being left on the table. Um this is not a hot take for most people, I think who work in enterprise. You've probably seen this
+
+problem. This little stat at the bottom is uh pretty heavily uh repeated for a lot of people who work inside of business circles, and they all kind of like laugh, and they're like, "Yeah, yeah, you know, all these AI tools, how much are they actually doing?" Um and I want to talk about why. So, there's kind of two sides to this becoming gen AI native. Um you have models and products, which are one side, that's the seller side, and then you also have systems and all of what's inside of the enterprise, that's the buyer side. So, that's the
+
+side that I deal with a lot. Um so, we're going to talk first about the seller side, and then we're going to talk about the buyer side. So, per pain point, uh a lot of my job is kind of go around the company and figure out like what are the pain points? Uh what are we trying to solve for? Uh can we buy it?
+
+Can we build it? So, let's say for a given pain point, maybe I identify 10 to 15 startups that look really interesting. Like, "Huh, maybe these guys can solve our problem for us, we don't have to build it." Um of those, after doing a little bit of due diligence on my own, I might schedule two to three demo calls. Of those, we probably will land zero or one pilots.
+
+And of those, probably one in four of those longer term will actually end up with a contract. So, what does this mean? This means about 5% of all of our demo calls actually end up in a signed contract. Um and this tracks with the industry. I had no idea that this was actually a benchmark, um but it turns out that there's quite a bit out there that indicates that this is really similar across the board.
+
+So, I want to talk about what enterprise ready actually means from the inside, uh because we have a lot of startups that tell me what enterprise ready means, and And we go through all of our requirements, and then we have a very different idea of what enterprise ready actually means. Um so we're going to talk about what breaks down and why. So 40% of this is efficacy, so just value, uh commercial issues. Then there's a lot that dies in security. There's other things that die in reliability, and then there's some stuff that dies in legal.
+
+So we're going to start with the requirements that we put forward and then some of the things that we've seen go wrong across various AI companies that we work with. So our requirements for efficacy, maybe unsurprisingly, the product actually needs to solve the problem. Um that seems pretty clear, but that's not always super clear. Uh the next one is pricing models that need to reflect real value. Clear demonstration of integrations on day one, not a hypothetical.
+
+And we define the success criteria, not the vendor. So things we've seen go wrong, uh vaporware in short. Um we've had a lot of startups who come in, they pitch us an idea, uh and it's something that our platform team can rebuild in about 6 weeks. So this is not a knock, uh this is actually just what's going on in the industry everywhere, um on all sides of the equation. Um sometimes it's actually better for us to build, and sometimes it is still better for us to buy even if we could rebuild.
+
+Upside down pricing, so this one's crazy. Um We had a startup just recently tell us, "Hey, um we know that all of the LLM traffic that we're using for our wrapper is passing through your LLM gateway, but we want you to report your gateway telemetry to us so that we can then price a huge margin on top of that, even though none of it's running through our infrastructure." Um that did not work. Another one is promises in demo calls, but no ETAs after 2 months. Um this is pretty common. Um
+
+not a lot to say here. Um and then repitching features we've already declined. So if you're a salesperson, um my best advice to you is listen to your customers. It's not novel, but uh it still seems to be a struggle for some. Uh it's really just better to address the things that we've asked for. So, the
+
+other thing I want to point out at the very bottom of this slide is the pilot window collapsing. So, uh I've been at Millennium for a little over 2 years, and when I started, a lot of these pilot timelines that people were used to were like, "Oh, maybe we'll run a pilot for 6 months." And then, not that long after that, it was like, "Oh, maybe we only need it for 3 months." And anymore, it's like, "Maybe we can do this pilot for 2 weeks." Uh because it's just accelerated so rapidly.
+
+Um so, then moving on to security. Uh this is a huge one. I'm not a security expert, but I do run kind of frontline defense on talking to a lot of startups about security. And so, these are a lot of the things that that come up over and over. Uh ZDR. So, this is a really hot topic.
+
+Obviously, a lot going on with Fable, uh mandatory data retention requirements, uh and then a whole other battleground around customer-managed encryption keys. So, ZDR is always best, of course. If that's not possible, customer-managed encryption keys and, with a big parentheses, that don't break the product. Um there are a lot of things that people are like, "Oh, yeah, it's fine. It'll work with customer-managed encryption keys."
+
+And then, it breaks the product. Uh so, that's a big product uh issue that we have to work through with people. Other requirements, bring your own gateway. We prefer to route all of our own traffic through our own gateway and BYO infrastructure. Uh we would prefer to host it in our own cloud infrastructure and have something that's deployable in our systems.
+
+This is another really big one. Um SCIM-tied RBAC. So, for all of you who who get that jargon, um it's really important that we can tie our AD groups or other permission and entitlement groups to role-based access control. We want to make sure that we don't just turn on features for everybody across the board. A lot of people don't think about this when they're designing their systems. They're
+
+like, "Oh, this is a great feature. We should just turn it on for everybody." Um when you work at a a enterprise, that's not something that people want to do. Um there are usually different groups who should have different access at different times, and most of all we want it to be configurable via API. Um for smaller companies, we want to see at least one real security hire. So, this
+
+is something that's really important. We know that security is not the first thing that people hire for. Um but in the age of AI, this is a very real problem, and we need to make sure that the startups we're working with actually have somebody who can understand what's going on from the security standpoint. Uh so, some of the things we've seen go wrong, um outright people just sending data to their vendors, uh cloud servers, and not following any of what we've asked for. Um this has been a problem in pilots. Uh thankfully,
+
+all of our pilots run non-production data. Another one, like we kind of talked about, um read write all default scopes. So, there's a lot of really cool tools out there, integrations, features. They're really flashy. You can click a button, and it'll integrate with everything. And then you get a little
+
+bit deeper and find out the only way that it'll work is if you literally give it read write all to everything, uh which is a huge problem. Another one, uh kind of along the same lines, all or new beta features on by default with each release. So, if you're an enterprise, you don't want everything just turned on with each release. Um so, being able to control that, and then the line that we hear a lot, which is we'll get you the security architecture diagram next week. Uh we do weekly check-in calls during a pilot, and then we hear this over and over. Uh it's not usually a great sign.
+
+Uh the question that we often have our CISO end up asking, which is um what are you going to do if there's a breach? And we get this response, well, we haven't had a breach yet. Uh with the subtext of we don't know what we would do if we did. Um okay, reliability, this is another one. So, a control plane that actually works.
+
+We want to see every admin setting available via API. We want to see audit logs on config changes. So, if there are five different people who are given admin access and somebody accidentally changes something or does it because uh maybe it was really late at night and maybe they had too many drinks. Uh we actually want to see what happened. Uh we want to be able to control the rollout on these changes.
+
+Uh we want to see real SLAs and a reachable support engineer. That goes a very, very long way. So, uh things we've seen go wrong, a lot of apps that are rapidly prototyping, they're shipping so quickly that they are maybe shipping updates multiple times a day and there's a really attractive little button that says relaunch to update and it happens across 3,000 people. We have no way of tracking what's going wrong. Maybe then like SSL certificates break in one of the new releases and then we have no way of tracking because everybody's on a different version um and we have no way of being able to deploy at scale. Um that's really
+
+challenging. No documentation versioning. So, support articles with new terms or risks that are not actually in the legal contract but show up in the website somewhere in a random support page and then we have no way of tracking what they were before versus after and it just says updated yesterday. All of these are real examples, by the way. I am not naming and shaming. Um I'm
+
+just shaming. So, uh maybe if any of you are familiar, you can put it together. Um core API's down for multiple hours during a busy trading day. Uh that is a really big problem for us because we run production systems. We are trading billions of dollars.
+
+Um this is a really big issue for us. And then lastly, no SLA roadmap or status page. Um the status page is a big one. Okay, last, legal issues. So, we don't want anybody training on our data regardless of what type of feature or product it is.
+
+Uh we also want to see a lot of transparency in the sub processors. Um any fourth-party risk becomes our risk. We want to see IP indemnification with reasonable liability caps. Uh we do not control the models, so if there's output that is IP infringing, we don't want to be held liable for it. So, we have seen in pilots that people claim they have ZDR, they have it legally, but then they find out or we find out later that they actually retain some of our data because they say, "Hey, we were looking at something and we noticed this thing." And we're like,
+
+"How did you notice that? You weren't supposed to have this data." And they're like, "Oh, yeah, you're right." Um so, that's not great. If you say ZDR, do ZDR. Um
+
+next, every feature that is conveniently beta with permissive data retention clauses. So, we've seen some vendors who they will stop releasing new features in general availability. They will only make them beta, and then the beta comes with a secret little clause that says that they're allowed to retain our data, which is a very sneaky way of trying to get our data. We don't like that. Um not great.
+
+Another one kind of similar is fourth-party risk that's tucked away on a random website page that's not listed in the contract. Uh this is a really big problem for us managing risk. So, um it was the best of times, it was the worst of times. As a recap, the best startups have security architecture that actually works, support engineers who respond, an admin API from the beginning, a 90-day plan that deploys into our infrastructure and cloud, and success criteria that we write. The worst AI startups don't have any security architecture diagrams, no path to a support engineer, no deployment control or audit logs, no ETAs, and salesmanship over solid product building.
+
+Um this is really just kind of a recap of like what I have been through over the last 2 years. Um I actually don't think that any of this is novel, um but it is codifying a lot of what I feel like is good and best practice. Um okay, so a new frontier model comes out on average every 11 days, but your architecture might be a decade or more old. So, you've got a bunch of cool new models, there's some amazing capabilities is there, and then you have profitability on the other side of it. And what's in the middle? Maybe it's
+
+your legacy architecture, probably a lot of security and privacy issues, and a lot of change management. Um ChatGPT has only been out for 43 months. There are a lot of companies who are still doing an ERP migration that might have been from 5 years ago. Um so, the timelines are very asymmetric. Uh and I think that sometimes we forget about that.
+
+Um okay. So, my thesis again, half or more of getting to AI native is unsexy and has absolutely nothing to do with AI. Um AI models and products today can't fix your legacy architecture. Although, if any of you are startup people, that's a great one to go for. Um and it also can't run your change management. These are unscientific
+
+numbers that I'm putting up here, but I hypothesize that 40% of getting to AI native is AI models and products. The other 60% is all the other stuff that no one really likes talking about anymore, uh which is like data hygiene, clean architecture, having good integration, strong enablement, and change management. Um I really look at AI as a flashlight, not a band-aid. Um I really think that AI shines a light on a lot of what's already working or not working. It can accelerate what's working really well, and it breaks down very quickly when things don't work well.
+
+Um I don't think that it's a band-aid, and I think that for everybody who's in tech leadership, it's really important to remember that if you have issues in your technology estate, those need to be addressed before trying to plug in AI and just having everything rip. Um it's it's not going to work. Um so, hehehe again, maybe an unpopular message, but I really believe that we all need to start with the boring 60%. I think that's where we all need to start to get to the other side of the road. So, what did we learn as we shine the flashlight internally?
+
+Again, not revealing anything super proprietary, but I do think these are big picture lessons. Number one, entitlements. Entitlements need a new paradigm. Uh there are a lot of people in a lot of large enterprises who are over entitled, under entitled. The entitlements model and how it works and how it's managed, all of that breaks down when you think about agents and how quickly you want agents to work and what you want them to work on and their ability to exercise judgment. Um the entire paradigm just
+
+shifts. Another one is cross-platform integration moved up the stack. So, AI is only as good as what it reaches and we want it everywhere. Uh so, having things that can integrate across platforms is really important uh even more than it already was. Another one is centralized knowledge.
+
+So, this is something that um Emil brought up this morning in his keynote, which is that basically we need thinner agents and a smarter substrate. Um centralized knowledge is really key to that. So, all of your documentation, all your support articles, everything that's going on inside of your company that's making it work, um all of that needs to be centralized and easily consumable. Even better if AI can help write that in real time in a feedback loop. Uh that's something we've been talking about with some of our vendors.
+
+Another one is a separate ecosystem for experimentation. Um some companies may need to get here. That gap between your legacy architecture and where you want to go might be so vast that you actually just decide, "Hey, maybe we need a separate ecosystem to do a lot of this work, figure out what does work and what doesn't and then kind of go from there." Um and that's something that we thought about as well. So, to just put a finer point on the agents and the entitlement thing, uh agents inherit your foundations. So,
+
+I strongly recommend that everybody fix their entitlements if they are not working really well now um because this is something that if you think about the problems that you run into when things go rogue, processes go rogue, people go rogue, agents are going to like 100X that problem. Um so, this is really something that's worth figuring out now. So, to kind of recap uh as I wrap up here, the recipe, if you are one of the people in the first half who are raising your hand on like, "What do I need to do if I'm a startup and I want to work with a really difficult large customer? Millennium's got like 8,000 people. We have very, very tight security, compliance, regulatory requirements.
+
+Um this is the stuff that we care about. And we want to see more startups doing work that allows us to work with them. Um I really view this as like one of the highest bars. We're probably not the highest, um although we're probably pretty close. Um and I think if you can architect your startup to work with companies like this with this kind of architecture, um you're probably going to be able to satisfy basically everybody else.
+
+Um on the other side for anybody who's buying, uh these are the things that I think again that kind of that boring 60% that really deserves a lot of work. Um off entitlements, governance, audit logging, etc. Um these are the things that I think we need to have in terms of systems to get it working on the other side of the equation. So, that's it. Um my only motivation here is to getting stuff working better and having better enterprise grade AI.
+
+Uh that's a QR code to my LinkedIn and I appreciate all of your time. Thank you. >> [applause]
+
+[music]

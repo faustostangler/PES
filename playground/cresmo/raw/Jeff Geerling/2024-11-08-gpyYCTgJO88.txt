@@ -1,0 +1,93 @@
+---
+video_title: "I Control EVERYTHING with this Raspberry Pi"
+video_id: gpyYCTgJO88
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=gpyYCTgJO88
+video_date: 2024-11-08
+video_description: |
+  I set up a Raspberry Pi as a Home Assistant control board.
+  
+  I also set it up to run a CarPlay display on my old Toyota.
+  
+  Thanks to Raspberry Pi for sending the Touch Display 2 for testing. They did not pay anything for this video nor did they have any say in its contents. See my sponsorship policies: https://github.com/geerlingguy/youtube?tab=readme-ov-file#sponsorships
+  
+  Here are some of the products and projects I mentioned in this video (some links are affiliate links):
+  
+    - Raspberry Pi Touch Display 2: https://www.raspberrypi.com/products/touch-display-2/
+    - My 3D Printed Stand: https://www.printables.com/model/1062445-raspberry-pi-touch-display-2-stand
+    - My video on Home Assistant Setup: https://www.youtube.com/watch?v=vTwyInX4KyM
+    - My Pi Kiosk GitHub project: https://github.com/geerlingguy/pi-kiosk
+    - React CarPlay project: https://github.com/rhysmorgan134/react-carplay
+    - Carlinkit USB CarPlay Adapter CPC200-CCPA: https://amzn.to/3UDHwrl
+  
+  Some of the other touch displays I mentioned in this video:
+  
+    - EDAtec HMI Displays: https://www.edatec.cn/en/HMI/
+    - Seeed Studios reTerminals: https://www.seeedstudio.com/reTerminal-DM-p-5616.html
+    - Chipsee 10.1" Industrial Panel PC: https://chipsee.com/product/ppc-cm4-101/
+    - BIGTREETECH Raspberry Pad 5: https://biqu.equipment/products/bigtreetech-raspberry-pad-5
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Control all the things
+  00:30 - Touch Display 2
+  02:15 - Other, better touchscreen options
+  03:23 - Not a tablet replacement
+  04:40 - Home Assistant Kiosk
+  06:00 - Remote control
+  06:37 - CarPlay display
+  08:23 - Not perfect, but useful
+---
+Since Raspberry Pi finally updated their Touch Display, I decided to build a control-everything touchscreen for the studio, and I'm working on adding CarPlay to my car that's now old enough to vote. I'll start by looking at the Touch Display: what's new, and how it works with a Pi 5. Now, this video is marked as sponsored, that's because Raspberry Pi sent me the Touch Display 2. They didn't pay me anything to make this video and have no control over what I'm saying. I never accept paid sponsorship for videos, and my sponsorship policies are spelled out on GitHub, so read more there. The original Pi Touch Display was pretty low-res, at 480p. The new one here bumps
+
+that up to 720p. Both are TFT displays, so they won't win awards for color depth or viewing angles, but they work well enough indoors at least. They kept the price the same, $60 in the US, and that means you could put together a full touchscreen setup like the one I have here for the Pi 5 for around $130 all in. The touchscreen part of the display was downgraded from 10-point multi-touch to 5, but in my testing, especially considering Linux's touchscreen support, it's not a big limitation. The bigger issue, especially if you want to upgrade an existing Pi setup, is the mounting bracket. The new touchscreen's mounting holes have moved. That means any cases,
+
+stands, or enclosures for the original display won't work on this new one. I figured that out pretty quickly after I printed off these little stands and found out they don't fit. So, I designed my own, and printed out a new stand. And this design uses the four mounting screws that come with the touch display so you don't have to find your own. I put it up on printables, so if you want it, grab it from there. The touch display comes with two FFC cables, one for Pi 5 and another one that works with every
+
+Pi generation back to the B+ except for the 0s. To connect it to your Pi, you plug in this power plug into the GPIO and the display cable into the Pi's DSi plug. Then you can mount the Pi directly on the back with the four standoffs in the middle. And after attaching the legs, I have a tidy little Pi all-in-one. Let me power it on by pressing the Pi's power button, and I'll show you what it does.
+
+You might notice when it's booting, the first bit is in portrait. I don't think there's any way to make the boot screen go landscape. Rotation only applies on the desktop. I have it set up to launch right into Home Assistant, and from here I can control almost everything in the studio. Like here, I can turn on and turn off the studio house lights. Before I get to how I made this work, I wanted to point out there
+
+are a bunch of other pre-built touchscreen options, and some of them have way nicer screens. Like over here, there's the reTerminal and reTerminal DM, 5 and 10-inch displays from Seeed Studios. They've built these things up to be HMI, or 'Human Machine Interface' devices, and they cost between 200 and 400 bucks. Chipsee also makes this 10-inch industrial panel PC with a CM4 in it for 300 bucks. On the other side, EDAtec makes 7 and 10-inch HMI devices with Raspberry Pi 5s, and this little box has a Raspberry Pad 5, a touch interface for the CM4 meant for controlling 3D printers. Many of these things
+
+have nice metal enclosures. Some can be flush-mounted or VESA-mounted. A few of them even add on NVMe slots or integrated power over Ethernet. EDAtec even broke out the box on the back of one of their displays and made it into its own little standalone mini PC. So these rugged mounts and enclosures, you're not going to get that if you DIY your setup like I'm doing here. But if you want to build something
+
+fully custom, there are certainly *worse* options. Some of the cheap displays I bought from Waveshare, Amazon, or AliExpress are an absolute pain to get working. The best thing about Raspberry Pi's own screen is it's supported out of the box. That support is baked right into Pi OS, and they've been making touchscreen support a little better every year. Keyword there being "little". You're not going to go build an iPad mini-replacement with this thing. It's not meant for that.
+
+Pi OS includes an on-screen keyboard now, but you might have to go into the Raspberry Pi configuration to enable it. Once it's on, you can either tap on the keyboard icon in the top right, or in some apps, like Terminal, it should come up when you're entering text. Now, the Pi runs Linux, and Linux is not great with touchscreens. And Pi OS only recently started supporting them out of the box. So the keyboard, even simple things like scrolling and right clicks, they kind of work sometimes. I don't want to give you false hope. The keyboard
+
+even covers up things you're typing in sometimes. It's just a frustrating experience. For simple UIs, like a Home Assistant dashboard, it's fine. For other interaction, not so much. Settings for the display are tucked away in the Screen Configuration app. In there,
+
+you can rotate the display and control screen brightness. Both of those things can be configured on the command line, too, like you can run this "wlr-randr" command to rotate the display, and you can save the setting in a kanshi config file. For brightness, you can run this command, echo a value between 1 to 31 to set a brightness level from 0 to 100 percent. That's all well and good, but you probably want to know how I got this dashboard up on my Pi. Well, the first and hardest part is getting Home Assistant configured. I actually made a whole video on
+
+that last year. I set up a Home Assistant Yellow and set up all my studio automation. All my smart stuff is private and local running on this Pi in the rackroom. I have Zigbee smart outlets, a Z-Wave thermostat, AirGradient air quality sensors, and everything is controlled through this dashboard, including the lighting. But that's one thing. Getting the Pi to boot right
+
+up into the dashboard is another. To do this, I used my new Pi Kiosk project on GitHub. The full instructions are in the README, but here's how I set up my Pi. First, I installed 'unclutter'. It lets me hide the mouse cursor, which makes the touchscreen look more like a touchscreen.
+
+Then I created a script on the Pi called kiosk.sh. This script waits for everything to be running, hides the cursor, then launches my Home Assistant dashboard in Chromium's kiosk mode. A script's great, but I also wanted it to run right when I boot up the Pi, and I want to be able to quit it remotely if I need to. So, I also created this systemd service file. It tells the OS how to run
+
+the kiosk script. The last step is to enable the kiosk service so it starts when I boot up the Pi. You can see the whole set of instructions on GitHub, but now that it's all set up, if I reboot the Pi, it'll launch straight into this Home Assistant dashboard. Now, there are a few things I'm also working on, like automatically dimming the screen to save power. But there's another problem when you build something that automatically takes over the whole display. Sometimes you need a way to kind of bail out. If
+
+you don't have a keyboard plugged in, how do you go in and quit the kiosk or update the Pi? Well, one option is to enable SSH and Wi-Fi so you can log into the Pi over the network. Another option is to use the Pi Connect service. So, when I want to quit the kiosk and do other things, I hop over to Pi Connect or use SSH if I'm on my own network, and I run 'sudo systemctl stop kiosk'. That quits the kiosk app, and I can either shut down at that point or do other stuff. You can also use the power
+
+button on the Pi itself, but that could be tricky depending on how you have it mounted. Now, home automation is all well and good, but the main use case I immediately thought of when I saw this thing was CarPlay, or Android Auto if you're not an iPhone user. Here's the thing: I would love to get a new car someday, but I'm really hesitant because every time I see a new car review, I see manufacturers taking away more and more control. Not only are there fewer buttons in the cabin and more touchscreens, the software they're building is all locked down and impossible to integrate with my own stuff. "But Jeff," you're saying, "why would you want to add in a touchscreen with proprietary tech like CarPlay?" Well, here's the rub:
+
+I love using my phone for maps, and it'd be nice to play my music through my car speakers without having to use the junky Bluetooth dongle that I've been using for the past few years. So when I saw the Touch Display 2, I immediately thought of trying to add it to my car as a CarPlay display. And the main way I've seen people do that is with this Carlinkit dongle. It integrates with CarPlay and Android Auto, and using a Raspberry Pi and some open source software, I should be able to make this display work with my car. There are a few hurdles, though. First, I need a way to power the Pi through my car's 12 volt system. Luckily, there are these 12 volt to 5 volt power
+
+adapters made just for this purpose. Second, I need to get the Pi running something like React CarPlay. Third, I need a way to mount the display and my Pi, and a way to get audio out of it into my car stereo. So I'm working on that. I don't have all these problems solved yet. And when will I? Not sure yet.
+
+But there's a bigger issue. Looking at the touch display's safety instructions, it's only rated for 0 to 50 degrees Celsius. That's less than what the inside of my car gets. I've seen it hit over 120 degrees on hot summer days. That's Fahrenheit, mind you. But that's still just over the maximum 50 degrees Celsius. And in the winter,
+
+we get temperatures down to -20—Celsius, that is. See how fun unit conversions are? But the touch display too might not be the best display for every use case, like in a car. And it uses 2 to 3 watts of power. Combined with a Pi 5, that'd be like 5 to 6 watts at idle. Not great for battery
+
+projects. But this is my first time using a Pi touch display. I'm sure some of you have been using the original for a while. What projects are you using it for? Let me know in the comments.
+
+And if 7 inch isn't enough for you, it looks like Raspberry Pi has been showing off this larger 15.6 inch monitor, but it doesn't look like it's a touch screen. We'll see where that goes. Until next time, I'm Jeff Geerling.

@@ -1,0 +1,29 @@
+---
+video_title: "Agentic video understanding in Gemini"
+video_id: ytjgy30Cono
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ytjgy30Cono
+video_date: 2026-09-01
+video_description: |
+  Processing long videos can use a lot of tokens. Learn how to do this more efficiently using our latest agentic video understanding capability available in Gemini 3.7 Flash, 3.6 Flash, and 3.5 Flash-Lite. In this video, Google DeepMind’s Maarten Grootendorst explains how agentic video understanding works, and how  this approach reduces token costs while improving accuracy on the parts of the video that actually matter.
+  
+  Resources: https://goo.gle/4xzZaxJ
+  
+  Subscribe to Google for Developers → https://goo.gle/developers   
+  
+  Products Mentioned: Gemini
+  Speaker: Maarten Grootendorst
+---
+Welcome to this video of Agentic Video Understanding with Gemini. When we have a video that we want Gemini to parse for us to give certain information about, what we generally would do is we would try to split it up into frames. And there are a number of frames extracted from those that we can give to the model. It's a decent way of giving model the context it needs to answer the query that we might have. But here's the thing. If we give the entire video
+
+to Gemini, there will be already more than 100,000 tokens. That's a lot, and there's a lot of information that we really don't need because what if I only want information in frame 900, or a couple of seconds here, a couple of seconds there? Then there's really no need for the model to see the entire video. That means that this naive way of processing is very expensive and there should be a way that we can do this easier and more efficiently. Surprise, surprise, there is.
+
+With agentic video understanding, we don't give the model the entire video. We give the reference to the video and a model can then decide, "Oh, maybe I can use a get transcript function to extract a small piece of information about the video already before I zoom in. It gets this transcript and then it continues on with potentially a new tool call. For example, get frames. Ah, there's this something happening at the five-minute mark and I need to increase the number of frames per seconds to really see what's happening.
+
+This idea of agentic video understanding reduces the cost significantly because it doesn't need to see the entire video. But how does that work? Well, normally you would have this query and video that you give to the model and it gives an answer. With this new agentic video understanding pipeline, what happens is that the model first thinks about which tools it might want to use to process this video. It can use get transcripts like we saw before.
+
+We can use get frames, and again, specify which frames it wants and at which frames per second, which is a great way of getting either a very global or localized perspective of the video. And we can even get the audio. It runs those tools. I mean, this is an agentic loop, and it gets an observation in return frames, for instance. And this information is then given back to the model where it can decide to do another loop.
+
+And then we have this very traditional agentic loop of thinking, acting, observing, and looping until it finally derives at the answer. And what's so great about this technique is that not only does it reduce the number of tokens it really needs, the performance increases because it can zoom in on certain functions and really pay attention to the things in the video that are actually important to the query. And that's how agentic video understanding works with Gemini.

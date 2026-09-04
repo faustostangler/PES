@@ -1,0 +1,97 @@
+---
+video_title: "Hacking Meshtastic with a Raspberry Pi and GNU Radio"
+video_id: 1_lbvqCQnMY
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1_lbvqCQnMY
+video_date: 2025-07-31
+video_description: |
+  Can I decode other people's messages using a Raspberry Pi and some open source SDR software?
+  
+  Mentioned in this video (some links are affiliate links):
+  
+    - Nooelec HackRF One: https://amzn.to/4ojyQUj
+    - Argon ONE UP Pi Laptop: https://www.kickstarter.com/projects/argonforty/upton-one-the-true-raspberry-pi-compute-module-5-laptop
+    - GQRX: https://www.gqrx.dk
+    - GNU Radio: https://www.gnuradio.org
+    - Meshtastic_SDR: https://gitlab.com/crankylinuxuser/meshtastic_sdr
+    - cemaxecutor's video on Meshtastic decoding: https://www.youtube.com/watch?v=L1VgO1OZWbs
+  
+  Blog post with more details on my journey and how to replicate my experiments on a Pi: https://www.jeffgeerling.com/blog/2025/decoding-meshtastic-gnuradio-on-raspberry-pi
+  
+  And here are my daily vlogs from Open Sauce 2025:
+  
+    - Day 0: https://www.youtube.com/watch?v=PQWQQJ_izac
+    - Day 1: https://www.youtube.com/watch?v=95Ec_XZBFMU
+    - Day 2: https://www.youtube.com/watch?v=hD9iNjhIc_w
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Hacking RF
+  01:35 - Setbacks and modding my T-Deck
+  02:57 - GNU Radio for custom SDR
+  05:23 - Monitoring air traffic at the airport
+  06:46 - ADS-B and Meshtastic from 40,000 ft
+  08:56 - Hack the RF at Open Sauce
+  10:35 - Omaha contacts on the return flight
+---
+I'm exploring software-defined radio, or SDR. I'm using this thing to look at wireless signals with my Raspberry Pi laptop, and my goal is to decode other people's chat messages on the public mesh at Open Sauce. Will it work? I have no idea, and I'm still learning a lot. This is the HackRF One, and it's like a programmable radio you can plug into any computer.
+
+And in my case, I'm gonna plug it into the Argon ONE UP. At Open Sauce, people are gonna be chatting using an off-grid text message network called Meshtastic. When you use SDRs, you'll spend a lot of time looking at this. It's called a waterfall display, like a waterfall of all the wireless signals around you. And when I send a message, I set up the receiver here to show all the invisible data it sees with its antenna.
+
+And there it is, all the stuff that makes up a single Meshtastic message. There's a lot you can do with SDR, even on a tiny Raspberry Pi. I'll get to other use cases like monitoring airplanes and hacking into my weather station in the future. But for now, I'm hoping to see the messages in the waterfall, but I also want to decode them. Our eyes just see a bunch of blips on the screen, but hidden in there are encoded digital messages.
+
+They're encoded using a protocol called LoRa, and some people have been hard at work reverse-engineering the protocol, enough that I should be able to read some messages. Except, I haven't been able to yet. My original plan was to cram this screen, a Raspberry Pi, and this radio in a mini-rack and put it on display at Open Sauce, but I'm not ready for that. So instead, I'm going to bring the Pi laptop in the SDR and see if I can decode Open Sauce's mesh. Now, I might have gotten further on this project, except two big distractions hit.
+
+First, our AC died last weekend. It was kind of fun watching all my Home Assistant dashboards go crazy, but that AC problem ate up four days. Then when I got back, someone on Discord asked if I had added GPS on my T-Deck and, I mean, why not go down another rabbit hole? Oh, and you're probably wondering what a T-Deck is. It's this thing. It's a completely off-grid,
+
+portable texting device. You can talk to people miles away through Meshtastic without any internet or even a mobile phone. Pretty neat. And one use case for Meshtastic is, if you're out hiking, it can get a message out with your position and keep you in touch with people even where texting might not work. And with a GPS module, I could send someone my coordinates and use the built-in maps functionality to see exactly where I am with no internet at all.
+
+And so I spent half a day working on putting GPS into my T-Deck. I soldered up this $10 module and secured everything with some Kapton tape. I mean, it looks a little ugly, but if it works, it works, right? And besides, all that mess is tucked away inside the case anyway, and I documented how I did all this in a blog post, so if you want to see the details, go there. After that little detour, I flashed the special Open Sauce firmware on my T-Deck, and I tested my SDR setup again. And I realized the settings for Open Sauce are way different than the
+
+normal settings. There's more bandwidth, there's shorter message bursts. You know, originally I thought it'd just be cool to show a waterfall display of this stuff, but I wound up learning a lot about SDRs and an open source radio project called GNU Radio. I had heard of it before. It's like Lego, but for SDR. Pen testers, government agents,
+
+wireless pros, everyone uses it. It lets you say, "I have this radio and I want to decode something with it, and you can plug things together and make that happen. You can use it to analyze signals, spy on things, or even build your own little transmitter. But it's definitely daunting. Especially the first time I opened up this. This is a project
+
+by a cranky Linux user. No, seriously, that's Josh's username. His Meshtastic_SDR project includes a bunch of GNU Radio Companion scripts. At a broad level, up here at the top are some variables that define the signals we're looking at, and how to look at them. Then, over on the left, this is saying we have a HackRF One radio plugged in as the source. It's going to give us a radio signal,
+
+a stream of data. Then we can process it different ways. Now, the original scripts just split that stream out into a bunch of different Meshtastic frequencies. But I just wanted to focus on two frequencies. First, I want to see how the default Long Fast frequency works. Then I want to see how
+
+the one they're using at Open Sauce works. Both of them are similar, but the default Long Fast frequency uses less bandwidth and takes longer to send a message. Short Turbo at Open Sauce is wider bandwidth and can send a lot more data in a short burst of time. The reason Open Sauce is using Short Turbo is you can have more people chatting in a small area like the San Mateo Convention Center, and it won't overload the mesh—well, at least that's the hope. I should be able to see how busy the mesh is when I bring this whole setup to San Francisco later in this video.
+
+But I've been testing it a bunch here in the studio, and after I watched Cemaxecutor's video about decoding Meshtastic messages, I started messing with the project. After a bunch of tinkering, though, I still haven't gotten any messages decoded. I can run the Python script that's supposed to work, but for some reason right now, it's not. The distractions like my AC dying and my Discord friends giving me new rabbit holes definitely wasn't helping though, so I'm still working on it. And I've learned a ton about GNU Radio.
+
+I've also learned how much of a newbie I am at RF. But I'm happy to learn, because there are so many fun things you can do with radio once you learn how it all works together, especially if you have more specialized equipment like this GPS-disciplined oscillator and a nice USRP SDR. But I've got less than 24 hours to go until I leave for the airport, so right now I just gotta pack up all this stuff and see what happens at Open Sauce. Luckily, I'm bringing my dad with me and he knows a lot more about RF. Maybe he and I can work together on this and get the software and the hardware working together, and maybe we'll do some fun experiments on the plane.
+
+While we were waiting at gate E18, I popped open the laptop, plugged in the HackRF, and started messing around. The first thing I did was load up dump1090, basically a set of SDR apps you can use to track airplanes using ADS-B data. That's broadcast out over frequencies around 1090 MHz, and I was able to track any plane that was north of my position. Why not south? Because from inside the building, I had a clear line of sight to the northern parts of St. Louis through
+
+the windows, but everything else south of me was blocked off by a big wall and a metal roof. Anyway, I was watching planes take off, and then I would glance down at the screen, and I could watch as their wireless beacon would send altitude, speed, and location data. They do this for a couple reasons. First, so any other aircraft can see where they are, and second, so ground control can track them. Anyway, that was just a fun distraction while I was sitting at the gate. I also wanted to make sure my Meshtastic rig was working,
+
+so I pulled out my T-Deck, made sure it was getting an accurate GPS position, and sent out a test message on Long Fast. It looks like there are at least 10 or so nodes online up around North St. Louis, and I was able to get my messages out pretty easily. Anyway, it was time to board the plane, and of course it's a Boeing, and once we got up in the air though, I set up my experiments again. And yes, both of the flight attendants who walked by asked me about it. Luckily, I think
+
+it was more curiosity than suspicion. But anyway, one thing I hadn't thought about before this was how being inside a metal can, the airplane, and having a transponder very close by which had a very strong signal, I might not be able to set up Dump 1090 to see other planes besides the one I was on. I mean, it was pretty easy to track our own plane, except I had to keep updating the location manually since my laptop didn't have GPS. Every once in a while, a few other aircraft would pop in, but no matter how we held the antenna and I set the gain settings, we couldn't get more than four or five other planes at a time. I think the best thing about using Dump 1090 on an airplane was I don't have to watch the dumb chat popup cycle through on Southwest's built-in flight tracker.
+
+And before switching gears over to Meshtastic, I popped open GQRX to see what the ADS-B data looked like on a waterfall, and, well, it looks like there are a bunch of well-defined channels for the data. that maybe we can explore more in the future. But I hopped over to Meshtastic, and the main thing I wanted to see is if I could get some long-range contacts, since I was so high up in the air. The 900MHz band that Meshtastic uses really likes to have a clear shot between devices. The wavelength is about 33cm, so walls, trees, pretty much anything with mass will reduce or attenuate the signal.
+
+If you go way up in an airplane, well, you basically get a line of sight to a huge part of the country. Even with my antenna sitting on the tray table in the middle seat, we could pick up nodes about 100 miles away from our flight path up in Denver. Unfortunately, since the airplane is a big metal can and we didn't have a window seat, the signal wasn't as good as it could have been if I had stuck the antenna in a window. I sent out a few messages, but besides this one cryptic message that looks like it was garbled, I didn't get any responses. When you're messing with RF, there are so many variables to consider.
+
+Like we tried a number of orientations for the antenna, and even extended it a bit to see if that made much difference. But I think the biggest issue was I didn't have the window seat, so I couldn't get a clear shot down to earth. So I decided to pack up the radio until we got to Open Sauce. And after gawking over things like a walking coffee table and this mesmerizing infinity mirror thing, we headed to the Meshtastic booth. They had a ton of radios on display, and there was a router node mounted high up above the show floor serving everyone at the event.
+
+I got to talk to the folks at the booth and found out one of them had set up this neat little telegraph display. You send it a DM on the mesh, and it prints it out on the thermal paper right away. But getting down to business, I plugged the HackRF into my laptop, and could see the Short Turbo mesh was really busy here. Every once in a while I'd see some activity on one of the other frequencies, but mostly there were these tiny blips relaying messages and no data all around the Open Sauce show floor. And I noticed at one point something was sweeping across the entire band.
+
+That's this thing that's kind of stepping up through the waterfall. Maybe someone from a three-letter agency was trying to scan for illegal transmissions. I don't know. But before I headed off to the rest of the show, I moved over to the WiFi band, and look at how busy that is! There were multiple 2.4GHz networks, plus I'm sure a thousand devices
+
+using Bluetooth were probably also polluting the frequencies quite a bit. But with all this noise, I'm just amazed how good modern devices are at getting any connection through at all. And seeing all this data, it's interesting to see how smaller channels and band hopping with Wi-Fi 6 and Wi-Fi 7 can really help things. Anyway, my main mission to decode people's messages at Open Sauce on the Pi laptop was a bust. I could see the traffic, but I couldn't get anything decoded. As a consolation prize, I did find this neat booth showing off 'ADSBee', a little ADS-B decoder
+
+that runs on a Raspberry Pi Pico using its PIO. Maybe it's something that I could explore a little bit more later when I'm looking at ADS-B traffic. I have a few Open Sauce vlogs up with more of my experience there, but for the flight home, my dad and I got a window seat. That way, I could put the antenna right up against the window and get less attenuation from the airplane itself. And that helped a lot. Like, we were immediately picking up more nodes.
+
+And after sending out a few pings, we actually got responses from someone in Omaha. And back home the next day, I got two separate confirmations that I made contact with the ground. First, SQMinion on BlueSky mentioned that he got a direct contact from his repeater. Then later, Reddit user hackersarchangel also got a ping. It's really cool to have these tiny radios able to transmit over such huge distances. Right now, I'm still trying to learn GNU Radio
+
+enough so I can mesh from my computer, and understand how the protocols work a little better. Subscribe here and on my other channels for more radio content, and until next time, I'm Jeff Geerling.

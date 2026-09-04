@@ -1,0 +1,213 @@
+---
+video_title: "The Manipulator's Sneaky Math to Beat Chaos"
+video_id: -jF9gW2r_bk
+channel_name: "braintruffle"
+channel_id: UCV4Rx1m-9HmtqHET7GjnVOA
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=-jF9gW2r_bk
+video_date: 2025-04-24
+video_description: |
+  Why you always lose to market manipulators and what to do about it
+  To try everything Brilliant has to offer—free—for a full 30 days, visit https://brilliant.org/braintruffle/ . You’ll also get 20% off an annual premium subscription.
+  
+  
+  Exclusive content for this video
+  https://www.patreon.com/braintruffle
+  --------------------------------
+  +3 coding tutorials
+  
+  
+  Timetable
+  -----------------
+  00:00 FOREX Case
+  02:25 Market Simulator
+  08:27 Random Dynamics
+  15:39 Self-Trading & Price-Setting
+  20:28 Manipulation Cycle
+  24:22 Hidden in Plain Sight
+  
+  
+  Special thanks to my Patreon supporters
+  https://www.patreon.com/braintruffle
+  --------------------------------
+  Daniel Altmann
+  David
+  Davide Degavi
+  Houston Lucas
+  JayT
+  Luis Adame Rodríguez
+  Matthew Piziak
+  nullstyle
+  Patrick Gibson
+  Ronald Guida
+  Trym Erik Nielsen
+  Vladyslav Fediukov
+  ... and all my patrons!
+  
+  
+  Music by Epidemic Sound
+  ------------------------------------------
+  Serendipitous - Marten Moses
+  New Plan - Out To The World
+  On My Side - Farrell Wooten
+  Illusory Overlap - Jay Varton
+  Loose Sails - Pulsed
+  
+  
+  Disclaimers
+  --------------------
+  This video’s goal is to promote transparency and informed decision-making by helping you understand and identify manipulative tactics in the markets. Never engage in market manipulation. Stay informed and act ethically.
+  
+  The content in this video is for informational and educational purposes only and does not constitute financial advice or recommendations. I am not a licensed financial advisor. Always consult a professional financial advisor before making investment decisions. The information presented is based on my own opinions and interpretations, and accuracy cannot be guaranteed. You are responsible for your own financial decisions.
+  
+  This video is not affiliated with or endorsed by the Financial Conduct Authority (FCA). FCA publications are referenced under fair use for educational purposes, with permission where required. Links to the referenced FCA publications:
+  https://www.fca.org.uk/news/press-releases/fca-fines-five-banks-%C2%A311-billion-fx-failings-and-announces-industry-wide-remediation-programme
+  https://www.fca.org.uk/publications/business-plans/2024-25
+  
+  This video was sponsored by Brilliant
+  
+  
+  Thank you for watching!
+  Torsten
+---
+This... is a market simulator that we're going to build in this video. And we're using it to see and understand trade-based manipulation in action.
+
+Unlike fake news, this manipulation exploits specific trading patterns seeming legal at first glance as it involves no blatant lies. And this isn't just a story about smaller, less-regulated markets. The foreign exchange market, the largest financial market in the world, was traditionally believed to be too big to manipulate, which turned out to be a costly mistake. Discovered in 2013, a handful of traders orchestrated what became known as 'The FOREX Case', siphoning away hundreds of millions for years. Thankfully, we're not completely helpless.
+
+With some math and financial forensic tools, we can spot the manipulators. And here is our protagonist, who wants to take a chance in the market by trading shares of a rocket company. And, just like many of us, they all have a hard time making good predictions. So they buy and sell randomly. And for now, our friend is lucky … winning most of the time.
+
+Not every trader can be that lucky, though! But they still believe in the fairness of the market, trusting that everyone has an equal chance. Then, out of nowhere, some new players show up. And they're not just winning sometimes; they're consistently beating the odds. How are they doing it?
+
+At first, it seems like these bad actors might just be better at predicting the future. But here's the twist: in a market driven by randomness, there shouldn't be a reliable way to predict the future. So… how are they pulling it off? And even more interesting, the market still looks mostly random. The bad actors blend in almost perfectly.
+
+So, what I want to build with you today is a way to measure and expose this manipulation. Let's break this down and see how this fraud works because market manipulation isn't just about numbers moving on a screen. This video is sponsored by Brilliant. More at the end of the show. Quick disclaimer: I'm not a financial advisor, and this video is for educational purposes only.
+
+Always do your own research. The price movement we just saw, comes from a real simulation I built. And here's how it works: Every day, people come to the market to trade shares. Not everyone is ready to trade, though some folks are just observing the market. The others are placing orders.
+
+Take this buyer, for example. This person wants to buy 70 shares at 53 dollars each but wouldn't mind a lower price that's the maximum price this person is willing to pay. And, as I mentioned earlier, they trade completely randomly. So, their order prices could be higher or lower yesterday's market price. Think of these buy orders as coming from a probability distribution.
+
+And this randomness in the simulation is a great proxy to mirror a fair market one where everyone has an equal chance. Here, no one knows what's going to happen, and that's fair. Now, the shares must come from someone namely the sellers. This person might want to sell 50 shares at 45 dollars each, but wouldn't mind a higher price that's the minimum price at which this person is willing to sell. And these sell orders also come from their own probability distribution.
+
+Now, let's set a single market price for the day. Some people are very satisfied with this price, while others may skip trading altogether. So, how is the price actually set? One way is to maximize total satisfaction; the extent to which orders are over-fulfilled. To calculate it: all the buy and sell orders are lined up.
+
+And the ideal price, the one that brings the most satisfaction, lies somewhere in this overlap. Here, it's not a unique price. Any price within this range achieves the same maximum satisfaction. But picking the middle ground is a practical choice. And this price range also determines the day's trading volume; the number of shares that change hands.
+
+So, if we set a different single price, one side would be more willing to trade while the other would be less willing; reducing overall agreement. As a result, fewer shares are traded, since both sides must be satisfied for a deal to happen. This method is called auction pricing. In real-world markets, it's often used at the start of the trading day to match all the overnight orders to a single, opening price. During a continuous trading day, orders are often instantly matched against each other leading to multiple prices in the short time frame.
+
+But that's a story for another time. Here, I assume a single trading moment at each day using auction pricing. And this is what the full market simulation looks like. We start with setting up the order price distributions. In reality, buyers and sellers might have different expectations, leading to different distributions.
+
+But for today's video, I don't really need this degree of freedom, so I'll use the same bell curve for both, centered around yesterday's market price. This represents the idea that people expect their orders to be filled within a familiar price range. After all, it worked yesterday, so they hope it will work again today. From these order curves, the market determines the current day's price and trading volume, which we track over time in a graph. And with that, the simulation loop is complete.
+
+Today's market price becomes the starting point for tomorrow's price distribution and the cycle continues. New order curves generate new prices and volumes, and the market evolves step by step. As a result, the market moves randomly, making it impossible to predict in a useful way. Since each day's price distribution is centered around the previous day's market price, there's no way to know if prices will rise or fall. Now that we have the simulation running, let's see what it tells us.
+
+One obvious fact is that markets don't operate in isolation. External events like breaking news are constantly reshaping expectations. So, these distributions shift as people's expectations evolve. For example, when good news arrives, a company's true value may be higher than what's reflected in its current stock price. And as more and more traders become aware of the news, they anticipate that competition will eventually drive prices higher.
+
+To simplify our simulation, these random traders skip the waiting game and instantly adjust their expectations to the new price level. And just like that, the market price adjusts almost immediately. And as rational beings, we tend to think ahead. If we believe a company will continue delivering good news, we might anticipate future price jumps. And to benefit from these future price jumps, buyers must act quickly, before others bid the price up further, or they risk missing out.
+
+This again creates competition, driving prices even higher almost instantly. In other words, it's not just today's news that drives stock prices, but expectations about all future news also get baked into the price immediately. But here comes the next twist: to make this market really hard to manipulate, we feed no additional information to the traders. They ignore all news and rumors about the future. So, really, no one can manipulate these traders with faulty information.
+
+They're as unpredictable as it gets. Ok, so far, we've created a fair market where randomness rules. Buyers and sellers act unpredictably, and prices reflect their combined random expectations. But what if there are there invisible forces subtly influencing the direction of these random movements? And could this cause certain price levels to be avoided, creating soft barriers in the market?
+
+Well, let's see what the simulation says. Imagine running simulations for 500 days. It's surprisingly easy to spot patterns that look like order. But of course: in this scenario, it's all random. Yet, not all patterns are meaningless.
+
+And recognizing these patterns helps us understand how markets function and where limits emerge naturally. For example, running the simulation a million times shows which price levels are rare. This symmetry won't tell you exactly how to trade, but it does offer insights into the overall shape of the market. Let's do this for two hypothetical markets: In the first market, traders place orders based on the price distribution and a uniform volume distribution. So, the volumes could range anywhere from 0 to the maximum trade volume, each with an equal probability.
+
+Most importantly, they have unlimited wealth to back all their trades. This means they can always afford whatever volume they want to order at any price, buying and selling completely randomly. As a result, the orders the traders can offer are independent of the absolute price level. And this means that the typical daily price changes, derived from the order curves, are also essentially independent of the absolute price level. Each day acts like an independent experiment, detached from the past, and then stacked on top of the previous days.
+
+The prices in this market follow what's known as a "Gaussian random walk," with an expected price change of zero. And even if the real market price suddenly spikes, we've learned that each trading day operates independently from the previous ones. And so the forecast shape remains unchanged. There's no external force pulling the price back down again. You're essentially running the same prediction again, just at a new price level.
+
+In such a random walk, it's likely for prices to eventually reach arbitrarily high or low values over time; here on a logarithmic price scale. Now, contrast this with the second market, where traders are limited by their wealth. Here, the forecast shape differs significantly. Why? It comes down to the trading rules.
+
+In this market, traders can't borrow money to buy shares, so their buy volumes are limited by what they can afford. When prices get too high, their ability to buy decreases sharply. They simply get fewer shares for the money they're willing to spend. Selling, however, is less restricted. They can place sell orders for any portion of their holdings at virtually any price, regardless of whether anyone buys.
+
+These sell orders could be wishful thinking. This introduces an asymmetry: as prices rise, the volume of buy orders shrinks due to the lack of money, while sell orders remain here unaffected. If prices drift too far from the center, this asymmetry creates a natural pull, nudging them back. We can see this more clearly when we examine the theoretical limit. Here, we assume an infinite number of traders placing buy and sell orders.
+
+This blends individual actions seamlessly into the overall system, which gives smoother curves and reveals the market dynamics better. Now, comparing this to the Gaussian random walk of the first market, where the shape of the order curves remained independent of the absolute price level, we clearly see the additional price nudge in the second market. Prices still fluctuate randomly, but now they orbit a sort of gravitational center. Over time, these fluctuations settle into a band. In theory, prices could rise indefinitely.
+
+But it becomes increasingly unlikely, given the order asymmetry. This is a fascinating observation! The rules governing how our people can trade effectively create practical, soft limits on price movements. At least when no one is talking about it. In reality, any publicly known price limit is quickly exploited and disappears.
+
+But assuming for a moment this limit holds, then this it, what it means: When our traders keep adding new money to their trades, they are injecting new funds into the market, and a statistically significant trend channel forms. And think about this: At no point does the simulation instruct the market to form channels. This pattern emerges naturally as a result of the market rules and the traders' order behavior. And this trend is different from the trends in a Gaussian random walk. Those trends were just coincidental and lacked real significance.
+
+Even if we add a drift to a Gaussian random walk, it won't produce this kind of band channel. That's worth investigating. But not today. Because there are some more useful price movement patterns I want to show you. For example, increasing the number of traded shares, the volume, makes prices less volatile.
+
+Why? Well, few orders make choppy order curves which generate on average bigger price jumps. More orders make smoother curves and average out to smaller jumps. Here, I've rescaled the volume in the diagram to better fit the order curves within the screen. So, with a lot of orders, say, a million, the price barely wobbles.
+
+Sure, prices can still shift if expectations surge suddenly, but they don't fluctuate wildly. Here's what this means in real life: When you see a massive price jump, it doesn't necessarily signify major news. It could be fewer people trading. Fewer trades make bigger jumps. And if you want to put these jumps into context, you can draw a band showing what's "normal" at various volume levels.
+
+I share the code in my tutorials so you can see how these factors influence market movements. So, these patterns highlight how trading behavior shapes randomness. And in the toughest market imaginable, the Gaussian random walk, you cannot make predictions that can be exploited which ties back to our initial question. How can you reliably win in a market where everyone else acts completely at random? Imagine yourself in that situation.
+
+To win every single time, you'd need to know something about the future. But there's our problem: you can't predict what everyone else will do. It's all random. So, if predicting others isn't an option, what's left? The only variable that can shape the future to your advantage...
+
+is you … Winning isn't about predicting the market anymore, it's about taking control. And control means more than just reacting faster, it's about dictating prices and shaping how others perceive market trends. And this hints at the level of influence required to make it happen. It might seem like an obvious realization, but I wanted to point it out because it's so important. In the next section, we'll explore the mechanics of this control and see how deliberate actions can distort a random market.
+
+So, what would it take to nudge a market's price in your favor? For instance, let's say you bought some shares, and now you want to artificially increase the market price. The first step is simple: I enter the market and say, "I'm buying 600 shares at 55 dollars each!" Remember, the buyer curve shows how much people are willing to pay at various prices. So, when we slot my order into this buyer curve, the market price takes a step up.
+
+In other words, my order adds more demand at a higher price point, justifying a higher market price. By adjusting my order, tweaking the price or the volume, I can influence the market price. All it takes is placing enough volume at higher price levels. But there's a catch: this 'strategy' comes with a cost. I can't just talk about buying these shares.
+
+I actually have to buy them to cause a price shift. And that's incredibly expensive. My action moved the price, but at full cost. Still, I shouldn't expect anyone's sympathy. This tactic is usually considered illegal since my intention was to mislead other traders.
+
+And if the goal is to exploit other traders anyway, there are ways to achieve more impact for the cost, and we don't even need to spread faulty news for that. So, how can we manipulate the market price without footing the bill? At first glance, if we place a big buy order, we'd end up paying the seller 600 shares times whatever the market price will be. To break even, we need to get that money back somehow. The trick is to sell the same number of shares right back, to ourselves.
+
+This practice is called self-trading. But here's the interesting part: we're not just moving shares from one pocket to another in secret. Instead, we're doing it publicly: From the left pocket, through the exchange, into the right pocket, making it look like legitimate market activity. By itself, self-trading doesn't magically change the market price. It simply shifts supply and demand.
+
+The point is perception. Faking higher volume creates the illusion of a liquid market. Which is great because, in real markets, traders often see high volume as a signal that something big is happening, like breaking news. But remember our catch: in our simulation, this fake volume doesn't influence anyone. Our traders act randomly, ignoring these signals entirely.
+
+And that's what makes this problem so challenging. If perception alone won't work, we need to directly influence the market price; a strange concept when most traders take prices as given. These are price takers. To manipulate the market, we have to think like price setters. And here's how it works: Imagine a small stock where daily volume is usually low.
+
+Placing a buy order of 600 shares at $55 and a sell order of 600 shares at $55 creates the illusion of high activity. As we increase the volume, we pay more but still lack full control. But when the buy and sell orders overlap, we reach a tipping point. Every trade within that range is effectively self-ordering at a zero price difference. This enforces the intersection of the curves which gives us control of the market price.
+
+And once we have control, we can set any price and volume we want, pushing it high enough to overcompensate for any initial costs. We've successfully hijacked the market's pricing mechanism. This is called monopoly power in a stock market, where 'buying the whole market' lets you dictate prices. It's similar to how a company with a product monopoly can manipulate supply to raise costs. In real markets, this tactic doesn't just distort the price.
+
+It can also trick traders into believing it's genuine activity. It's particularly easy in smaller, less regulated markets, where the initial cost is lower. So, as you can see: With trade-based manipulation, one can distort signals like price and volume and trick traders into making poor decisions. So, our friend should watch for one unusually large buy and sell order at nearly the same price. That could be an attempt at manipulation.
+
+Alright, so our friend here is running low on funds, just like the rest of the 'good' traders. It's time to step in and help them out by cracking their opponent's moves. We're going to walk through one complete manipulation cycle, to really understand it. And then we'll figure out how to blend these moves seamlessly into the noise of the crowd. Let's take a closer look at how the whole scheme works, here in a market that follows a Gaussian random walk.
+
+And to better see what's happening, we track the manipulator's money, shares, and the relative wealth compared to the rest of the market. That's the total money you hold, plus the market value of your shares, compared to what the other traders have. So, first, the scheme starts with buying as many shares as possible without drawing too much attention. The goal is to stay under the radar while gradually building up your position. So, in the graphs, we see money slowly being converted into shares.
+
+Then comes the price manipulation. This involves using self-trading, where you partly buy and sell shares to yourself, to gain control and nudge the price upward. Here, I took a rather obvious approach to demonstrate the mechanics. But you can make it less noticeable, nudging the price up by a small percentage. It won't work every day.
+
+Some days, you might not have full control, or the market could move unpredictably. Well, that's part of the gamble. As a manipulator, I wouldn't say you are in a position to complain. During this phase, you're also buying more shares to maintain control. Finally, once the price has been inflated enough, it's time to sell.
+
+The goal here is to offload your shares quietly, cashing in on the inflated price without causing too much disruption. By the end of the cycle, you've gone from having no shares and a million dollars, to holding no shares again, but now with a larger amount of 1.7 million dollars. You can see in the relative wealth graph that we've managed to take a significant slice from the other random traders. This is a form of the classic "pump-and-dump" scheme.
+
+What makes the method here stand out is that it's entirely trade-based. We don't issue fake news. We just control the price with self-trading. To show it works on average, let's imagine the same situation without manipulation. You buy shares for the same amount of money over the same period but don't artificially inflate the price.
+
+Many simulations show that the non-manipulated version consistently underperforms compared to the manipulated one, proving the scheme's effectiveness. What's particularly troubling is that even when people aren't trading randomly, like in the final phase when they start selling alongside you, it's still possible to predict their behavior and factor it into your plan. In fact, if the scheme works in a completely random market, it works even better when traders follow predictable patterns. Now, where does the manipulator's profit actually come from? There's one driving factor that makes this whole scheme possible: the assumption that tomorrow's price is likely to be close to today's price.
+
+If traders didn't rely so much on recent price trends, meaning they wouldn't simply accept the inflated price level, this kind of manipulation wouldn't be possible. You might think that basing trades more on fundamental factors, like a company's performance, sounds like the rational approach, and you'd be right. But it only works if everyone does it. Markets are inherently driven by participants outbidding one another, fully aware that they are trading at irrational prices. This, in itself, is also a fundamental factor: the human factor.
+
+That said, our self-trades here are still easy to spot. And exchanges could simply ignore these orders, or regulators might investigate them. So, let's figure out how manipulators manage to blend into the crowd. Because, you can't investigate, what you don't know about. By now, you've probably spotted the trick: it's not a crowd of people moving the market.
+
+It's one person pulling the strings behind the scenes. The idea is to scatter coordinated self-trading orders across the market, making them look like harmless activity, except they're not. These trades still carry enough weight to nudge the price where the manipulator wants it. If we spread these orders out more smoothly, the manipulation becomes much harder to detect. There are still some unusual dents in the order curves, but now they're more subtle and could go undetected.
+
+Now, how could manipulation be concealed even better? First, we need to learn how to quantify it. There are several ways to go about it: The idea is to identify irregularities in the order curve shape. To achieve this, we can exemplarily standardize the curves to fit a 0–100% volume range and the expected un-manipulated price range. Then we run multiple simulations without manipulation to establish a reference for normal market behavior.
+
+This creates a band of order curves, helping quantify what counts as "unusual" behavior. And as we have seen for price setting, manipulation has a tell. You'd expect unusual behavior in both order curves. There are several ways to assign numbers to this unusual behavior to estimate how much manipulation is happening. If you're interested, my coding tutorials dive into building the simulation and running these tests.
+
+Also, on a related note, we are looking into an intriguing connection between wealth distribution in markets and the statistical mechanics of an ideal gas. Both systems have conserved quantities like total money, shares, or energy. And as traders or particles continuously interact, they naturally settle into equilibrium distributions. In that sense, you can loosely think of a market as having a 'money temperature,' which offers an interesting perspective on markets. But for now, let's go back and see how the amount of manipulation varies across different scenarios.
+
+Here are three distinct price jumps, but not all of them are caused by manipulation. For example, this jump right here? That's a genuine market reaction to positive news about the company. We can simulate this with our traders reacting to what is called a sentiment curve. Think of the sentiment curve as a signal reflecting the market's collective belief about a company's future.
+
+Positive news can shift the curve upward, representing increased confidence of investors. With fresh money injected into the market, both the trading volume and price drive upward. Compare that to a random price jump caused by low trading volume. Here, the sentiment curve stays flat. Nothing external has changed.
+
+However, if we had inflated the volume with self-trading without actually price setting, it would have looked more like news than noise. At least on the surface. A price jump accompanied by increased volume seems natural for good news. But self-trading leaves a trace, making it detectable in the manipulation graph. One important note: this graph isn't proof of manipulation.
+
+Patterns like these occur naturally. Eventually, it's about identifying traders with repeated suspicious behavior. And only when more instances stack up does it trigger further investigation. Now, what happens when we go for price-setting? That's the pump-and-dump method.
+
+The sentiment stays flat. There's no real news driving the price. So, all the activity is fake. And here's the thing about fraud detection: it's a constant cat-and-mouse game. Let me show you an example.
+
+Instead of pushing the price with a simple, obvious distribution that leaves dents on the graph, we can disguise the manipulation further. By crafting a carefully-shaped manipulator price distribution, we make the final order curve look completely normal. It's just… shifted. What does that mean? It means we've essentially faked an entire market at a different price and volume level.
+
+That's about as deceptive as it gets. The complicated part? It comes with a huge initial cost and you have to guess what the original price distribution will look like. If you guess right, this kind of manipulation can be undetectable, at least from the order curve shapes alone. Things get even trickier when manipulation pairs up with real information.
+
+Not fake news, but reliable information. Take positive sentiment, for instance. It's natural to expect the market to go up when good news breaks. But how much of an increase is reasonable? Only one of these markets here is free of manipulation.
+
+The others amplify or downplay the news. So, how can you tell, right off the bat, which one is genuine? Each one aligns with the truth to some degree. The main takeaway is this: when 'someone' gains monopoly power over the market, the market can't function as it's supposed to. It becomes a losing game for everyone else.
+
+And if that 'someone' isn't you, then no matter how sharp your predictions are, you're likely to fall prey to the manipulator. You might be thinking, "Well, these frauds don't really happen no longer in the big, regulated markets where my retirement funds are parked." And you'd be mostly right! Nowadays these markets are monitored by oversight teams equipped with far more advanced financial forensic tools to keep the game fair for the rest of us. In a way, this video is a nod to their work.
+
+But as more people dive into less-regulated markets, maybe there's wisdom in not taking every price. When a deal looks too good to be true, well, you know how that usually goes. But every once in a while you do get lucky and find a deal that works in your favor. Take this one: If someone offered to teach you math, data analysis, programming, and AI, that's the volume, in just a few minutes of hands-on learning a day, that's the price, that'd be a solid trade! Well, that's Brilliant.
+
+And what I like about Brilliant is that they don't just throw information at you. They help you figure things out for yourself. Every one of the thousands of lessons is interactive, letting you solve problems while playing with concepts. It's an intuitive approach, and for me, that's what makes learning stick. If today's video got you curious about market trends and data patterns, have a look at the new data science courses.
+
+With real-world datasets from Airbnb, Spotify, and more, you'll learn how to spot trends and make smarter decisions. To try everything Brilliant has to offer for free for a full 30 days, visit brilliant.org/braintruffle/ or scan the QR code onscreen, or you can click the link in the description. You'll also get 20% off an annual premium subscription. Thanks for watching, and thank you for your support!

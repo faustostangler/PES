@@ -1,0 +1,64 @@
+---
+video_title: "The Dumbest AI Security Flaw"
+video_id: LlN_9H_4l9c
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=LlN_9H_4l9c
+video_date: 2025-05-17
+video_description: |
+  Join up and get everything you *actually* need to start hacking like a pro 🎓💻✨https://cyberflow-academy.github.io/
+  
+  Educational Purposes Only.
+  
+  langflow — a low-code platform for building AI agents — accidentally allowed anyone to run arbitrary Python code on their servers through a “/APIV1/validate-code” endpoint. This wasn't just a theoretical bug. This was active Remote Code Execution (RCE), exploited in the wild, and flagged by CISA. The cause? langflow tried to validate user-submitted code… by executing it. Including Python decorators, which get triggered immediately. If you’re building anything AI-powered and letting users submit code — even for validation — sandbox it like your life depends on it.
+  
+  In this video, we break down exactly how Horizon3.ai found the vuln, how the attack worked through AST parsing quirks, and why trusting AI blindly is a fast track to getting pwned. Whether you’re a dev, hacker, or just love watching million-dollar startups get humbled, this one’s for you.
+  
+  #ai #cybersecurity #remotecodeexecution #python #hacking #langflow #startups #infosec #technews #ethicalhacking #rce #exploit #ast #lowcode #openai #developers #devsecops #bugbounty #malware #programming
+  
+  
+  https://horizon3.ai/attack-research/disclosures/unsafe-at-any-speed-abusing-python-exec-for-unauth-rce-in-langflow-ai/
+  
+  https://github.com/langflow-ai/langflow/blob/1.2.0/src/backend/base/langflow/utils/validate.py
+  
+  
+  → Email: cyberflow10@gmail.com  
+  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+Okay. Let me paint you a picture. You're building a startup. You just raised $10 million from a guy in a Patagonia vest named Chad. Your pitch deck said “AI” 47 times and had a photo of Iron Man because you’re “disrupting intelligence.” Naturally,
+
+you slap GPT into your app, add a few flowcharts, and boom — you're now an “AI automation platform for enterprise data agent workflows.” Whatever that means. And that's kinda where Langflow comes in. Langflow is one of those low-code tools that makes it look like you're doing something very technical when you're really just drawing colorful boxes that say “call OpenAI” and “query MongoDB.” Basically, it's like a visual scripting tool for building AI agents — drag-and-drop your way to God mode.
+
+Now here's the part that made me laugh out loud: they had an endpoint — an actual exposed API endpoint — called "/APIV1/validate code". Sounds harmless, right? Just a nice little validation step, check that the code is legit, make sure you're not uploading a script that turns your server into a crypto miner. Except they forgot one tiny thing. When you're validating user-submitted Python code, you don't actually want to run the code. And yes. Yes. That is what they did. This endpoint accepted
+
+Python code and then parsed and evaluated it on the server with no sandboxing. No input sanitization. No isolation. Just straight-up running arbitrary Python code on the backend. Langflow’s code literally parsed the Abstract Syntax Tree — you know, that thing Python uses to break down your script into pieces before execution — and then it walked through the import statements and function definitions to check if everything matched the expected API structure. Because Langflow wanted to be sure the code played nicely with their agent system.
+
+That sounds smart. Like, in theory. But here's where it all goes off the rails: in Python, defining a function doesn't just store the function. If there's a decorator on that function — you know, that little "@something" line above the "def" — that gets executed immediately during definition. So, a malicious hacker could just write something like: And Langflow, in its noble quest to “validate” the code, would evaluate that function definition — and boom. The decorator runs. Payload delivered. Hacker is in. No need to even call the function.
+
+That's how Horizon3.ai found the vuln. They uploaded a script with a malicious decorator, got Remote Code Execution (RCE), and popped a shell on the backend. What’s worse? They found that while the container showed the user wasn’t root… the group ID was root. And yeah,
+
+that’s still very, very bad. Group-level access can still be enough to mess with things like "/etc/", shared memory, logs, processes — all kinds of fun stuff. And this wasn’t some theoretical “we could have done it” attack. This was in the wild. Like, CISA issued an alert. Real hackers were exploiting this.
+
+Langflow did patch it in version 1.0.0. Credit where it’s due. But honestly, the fix was just them finally sandboxing the code and making sure it doesn’t execute decorators during validation. Which is… again… something you should’ve done from day zero.
+
+If you’ve ever built any kind of system where users can submit code — even a CTF, a code judge, a playground, whatever — you know the first rule is never run untrusted code directly. Not on your machine. Not even on your cousin's Raspberry Pi. You isolate it. Docker it. Jail it. Burn it in a fire.
+
+The wildest part? Just looking at the Langflow validation code — like the actual formatting, the weird comment spacing, the chunky indentation — it looks AI-generated. I can’t prove it, but it has that “ChatGPT wrote this at 2AM while hallucinating a job at OpenAI” energy. You know what I mean. This is what I mean when I say: AI isn’t the problem. But throwing AI at everything
+
+without understanding what it's doing absolutely is. You can’t have AI write half your backend and then be shocked when it forgets security 101 like “don’t run stranger code directly on prod.” That’s not even security 101 — that’s common sense. Imagine I’m performing surgery. But the entire operation is led by an AI assistant that says “insert scalpel into eye socket.” If I blindly follow that because “the model knows
+
+best,” it’s not the AI’s fault. It’s mine for trusting it without checking the math. That’s what’s happening here. AI is being treated like some magic Oracle that doesn’t need supervision. And that’s a problem. Because AI doesn’t know
+
+context. It doesn’t know edge cases. And it definitely doesn’t know how hackers think. So what’s the lesson here? If you're building an AI tool — or integrating AI into your product — great. Do it. It’s cool. But please,
+
+for the love of root access, make sure there’s a human who actually understands what’s going on behind the scenes. You can’t automate your way out of accountability. And if you’re a hacker watching this — always, always check how AI tools handle code input. Because 90% of these startups are sprinting to MVP and skipping over the part where they secure their endpoints. And if you know how to trigger Python quirks like decorators during AST parsing? You’re already two steps ahead.
+
+Anyway, go patch your stuff. Go build cool things. And go check out Langflow v1.0.0 if you’re curious. But uh… maybe don’t upload any decorators, alright?
+
+If you like chaotic deep dives like this, smash that sub button. If you didn’t, blame the AI. Peace.

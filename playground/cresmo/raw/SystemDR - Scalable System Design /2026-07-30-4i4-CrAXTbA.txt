@@ -1,0 +1,66 @@
+---
+video_title: "AI for Debugging: Using ChatGPT, Claude & GitHub Copilot to Fix Bugs in Traditional Codebases."
+video_id: 4i4-CrAXTbA
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=4i4-CrAXTbA
+video_date: 20260730
+video_description: |
+  Website Link: systemdrd.com
+  Discover how AI-powered coding assistants like ChatGPT, Claude, Gemini, and GitHub Copilot can dramatically improve software debugging and maintenance in traditional codebases. In this tutorial, you'll learn practical techniques for using LLMs to identify bugs, explain error messages, refactor legacy code, generate unit tests, optimize performance, detect security vulnerabilities, and automate code reviews. We cover AI debugging, prompt engineering, software debugging, code review, Python, Java, C++, JavaScript, VS Code, GitHub Copilot, LLM output validation, static analysis, AI-assisted programming, software engineering best practices, and production-ready development workflows. Whether you're a software engineer, backend developer, DevOps engineer, AI developer, or programming student, this video will help you leverage generative AI to debug faster, write cleaner code, and increase developer productivity while maintaining high code quality.
+  #chatgpt  #githubcopilot  #aiprogramming  #softwareengineering  #debugging
+---
+Welcome everyone. Today we're talking about AI for debugging. Specifically, how large language models are being wired into real debugging workflows, not just used as a chatbot you paste an error into. Debugging is one of the highest leverage places to apply LLMs in software engineering, but it's also one of the easiest places to get burned by a confident, plausible-sounding wrong answer. So, this talk is about the difference between AI writes code and AI fixes code. The one requires grounding
+
+in a system that already exists, with constraints the model can't just invent its way around. By the end of this session, you'll have a mental model for a debugging loop that actually works in production, a reference architecture you can build from, and a clear sense of where this technology still breaks. Let's start with why this matters. By most developer experience surveys from the last few years, roughly half of engineering time goes to locating, understanding, and fixing defects, not writing new features. That number is directionally stable, whether you're at a 10-person startup or a company with a 10,000-person engineering org.
+
+There are three reasons debugging resists easy automation. First, context is scattered. A single traceback touches functions, configs, and dependencies spread across dozens of files that a model never sees by default. Second, errors compound silently. The root cause and the failure point are rarely the same line of code. So, surface-level
+
+pattern matching produces patches that look right and aren't. And third, trust requires proof. A generated fix is only useful if it can be verified, compiled, and tested before a human ever has to read it. Optional audience touchpoint. Ask how much of the room's own week goes to debugging versus building new features.
+
+Keep those three challenges in mind, because the The of this talk is essentially about solving each one. Retrieval solves scattered contexts, reasoning quality solves non-local root causes, and verification solves the trust gap. Here's the single mental model I want you to leave with today. Treat the model as one stage in a closed loop, not a one-shot oracle. The loop has five stages. Signal, it
+
+starts with something concrete, a failing test or a captured exception, not a vague bug report. Retrieve, pull only the code history and dependencies relevant to that specific signal. Reason, the model forms a root cause hypothesis, not just a surface-level pattern match. Patch, it produces a candidate diff scoped as small as possible. And verify, that diff gets compiled and tested in a sandbox before anyone, human or system, trusts it.
+
+Here's the part that matters most. If verification fails, the loop doesn't just stop. It reenters at the reason stage with the failed test as new signal. That loop back is what turns this from a pipeline into a system that actually improves its own guess over multiple attempts. Teams that skip the loop back and implement this as a straight line tend to plateau around 30 to 40% first-attempt fix rates.
+
+Adding retry with failure feedback is usually the single highest-leverage change a team can make. Let's translate that loop into a concrete architecture. Four lanes, left to right. Ingest turns a CI failure or exception into a structured object, a parsed stack trace clustered by similarity, so you're not duplicating work on the same underlying bug. Retrieve combines symbol graph lookup, precise and structural, with vector search over the repo and recent Git history, since the most recently changed code is disproportionately likely to be the cause.
+
+Reason is where the model actually operates. Root cause analysis, ranking competing hypotheses, and synthesizing a patch. And verify is non-negotiable. Sandboxed test execution, static analysis, and regression diffing against the pre-patch baseline. One design constraint worth calling out, the retrieve stage needs to return function and dependency level context, not whole files. Most production systems
+
+under invest here because whole file context is easier to implement, but it runs into context window and precision problems fast. Symbol graph first retrieval consistently outperforms naive embedding search for this particular job. Let's make this concrete with code. A minimal but complete implementation of the loop we just walked through. The function takes three explicit swappable dependencies, a structured test failure, a repo index for retrieval, and an LLM client. It starts
+
+by calling repo.retrieve to pull the top eight most relevant context objects for the failure stack trace. Then we enter a bounded retry loop capped at max attempts so a stuck agent can't burn unlimited tokens. Each iteration asks the model to propose a patch, then critically runs that patch through sandbox.run_tests.
+
+That's the verification gate. Nothing returns as a success unless tests pass and there are zero regressions. If verification fails, we don't discard that information. We augment the context with the failure log so the next attempt reasons over what specifically went wrong, not just the original error. That's the loop back from slide three written in code.
+
+And notice the last line. If we exhaust all attempts, the function explicitly escalates to a human. That's the line most first draft implementations skip. Without it, agents either loop forever or silently return their best guess as if it succeeded. Now that we've seen the mechanics, let's talk about how much autonomy to actually grant this loop in production. Think of
+
+it as a spectrum, but I'll show you the two practical endpoints teams choose between. Suggest only keeps a human as the final gate. It's safer, but bounded by reviewer bandwidth, and it's the right call for anything production facing or security sensitive. Autonomous patch with a test gate removes the human from the merge decision, but shifts all the risk onto test suite quality. This only works where coverage is genuinely strong.
+
+Look at the observed numbers. Suggest only sees high accept rates, 60 to 75% because a human is filtering out the weak suggestions before merge. Autonomous mode trades that filter for speed. Higher throughput, but a higher revert rate on weaker test suites. The right choice isn't a team preference, it's a function of blast radius.
+
+Teams that grant full autonomy in payments or off code specifically to save review time are the ones who show up in incident postmortems later. Even with the right autonomy tier chosen, there are failure modes that show up regardless. These are the four that surprise teams once the initial excitement of it works wears off. Plausible but wrong patches. The model finds a fix that makes the failing test pass without addressing why the state became invalid in the first place.
+
+Context window starvation. In large monorepos, retrieval can miss a cross-service dependency, so the model reasons confidently over an incomplete picture. Flaky tests as false confidence. A patch passes because the test suite is non-deterministic, not because the fix is actually correct. And security blind auto fix. An agent
+
+purely optimizing for green CI can introduce an injection or off bypass pattern that no test happens to cover. The single most common reason teams pause an auto fix roll out is discovering weeks in that their passing test suite had gaps the agent was quietly exploiting to make tests green, not to make the software correct. Let's ground this in a real category of shipped product. Modern error monitoring and code review platforms, Sentry, Sentry, GitHub's Copilot Workspace, and similar agents attach an LLM directly to a captured exception. That means the agent already has the stack trace, breadcrumbs, and the diff before a human even opens the ticket.
+
+The flow is four steps: capture, localize, propose, review. Capture attaches the exception, breadcrumbs, and release diff automatically. Localize is where the symbol graph and retrieval techniques from earlier do the real work, walking the call stack to the most probable root frame. Propose opens a draft pull request with the patch, its rationale, and the affected tests, and review keeps a human as the gate. The engineer approves, edits, or dismisses, and the agent learns from that outcome.
+
+Early adopters report the clearest wins on well-scoped single-service exceptions with decent test coverage. Multi-service or infrastructure-level bugs still largely fall back to a human debugging session, which lines up exactly with the failure modes we just covered. This next slide is the one that separates a practitioner's mental model from a beginner's. Beginners treat the LLM as a single-shot patch generator. Paste the error, take whatever diff comes back. The frontier
+
+pattern instead gives the agent tools. Run tests, scrape the repo, read git blame, execute a debugger, and lets it take multiple reasoning and action steps, each grounded in a fresh observation rather than the model's first guess. Here's the hard-won lesson. Verification quality bounds fix quality. An agent with a weak or A test suite will confidently ship regressions, no matter how capable the underlying model is.
+
+Investment in test signal and sandboxed execution infrastructure pays off more than swapping in a larger model ever will. And here's where this is heading. Agents that write a new regression test reproducing the bug before attempting a patch at all, turning tests pass into this specific bug is now provably covered. That closes the plausible but wrong failure mode we talked about a few slides ago. Let's distill all of this into five decision rules you can take back to your team.
+
+One, retrieval precision beats context size. Feed the model the right eight functions, not the whole file tree. Two, verification is the product. A patch without a passing non-flaky test is a suggestion, not a fix. Three, scope autonomy to blast radius.
+
+Auto merge in low-risk internal tools, suggest only near off, payments, and shared state. Four, design for the retry loop deliberately. A failed verification is a new signal, not a dead end. And five, treat test coverage as infrastructure. Your debugging agents only get better as fast as your test suite does.
+
+If you revisit this list six months after rollout, that last one, coverage as infrastructure, is usually the constraint teams underestimated most. A few pointers for anyone who wants to go deeper on their own. I won't read every line, but I'll call out two worth prioritizing. SWE-bench is the standard benchmark for measuring how well an LLM agent can resolve real GitHub issues end to end. Useful for evaluating any agent you build or buy.
+
+And Meta's SapFix paper is a great primer on the guardrails a real production-scale automated repair system needs. Beyond that, SWE-agent from Princeton NLP is a practical, inspectable, open-source implementation of the retrieve, reason, verify loop we covered today. Sentry, Sear, and GitHub Copilot Workspace are the shipped tools from our case study. Worth trying hands-on. And the tool use documentation from the major model providers is the fastest path to implementing the agent loop from the code slide yourself.
+
+To close with one sentence, LLM debugging works when it's built as a closed loop with grounded retrieval and real verification. And when autonomy is scoped to the cost of being wrong. If you're taking this back to your own team, start with suggest only mode on your most well-tested internal service. It's the fastest way to build trust in the system before extending its autonomy further. Thank you.

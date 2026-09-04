@@ -1,0 +1,103 @@
+---
+video_title: "The Mini NAS has arrived! (mini homelab)"
+video_id: 8VBnxEQKG3o
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8VBnxEQKG3o
+video_date: 2025-07-04
+video_description: |
+  Mini NASes are coming out at a rapid pace. Do any of them have the right balance between IO, power, and noise to fit in my mini homelab?
+  
+  Mentioned in this video (some links are affiliate links):
+  
+    - Aiffro K100: https://www.aiffro.com/products/all-ssd-nas-k100
+    - Beelink ME mini: https://amzn.to/4lvu6Zv
+    - GMKtec G9: https://amzn.to/3Tb9Kso
+  
+  Equipment I used for testing / measurement:
+  
+    - Kingspec NX 2TB NVMe SSD: https://amzn.to/46e83BW
+    - ThirdReality Zigbee Smart Outlet: https://amzn.to/4emI25t
+    - Reed Instruments R8050 Sound Level Meter: https://amzn.to/4nmHsZB
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Three mini NASes
+  00:50 - Fast NVMes and a hot G9
+  01:22 - Aiffro K100
+  03:12 - K100 BIOS, performance, thermals
+  04:39 - Beelink and inside baseball
+  06:22 - Beelink ME mini
+  09:02 - ME mini BIOS, performance, thermals
+  11:39 - Comparisons and final benchmark results
+---
+I've been looking for a mini NAS to help me shrink down my homelab, and I thought I found the perfect one in this G9 from GMKtec. But putting it through my torture tests, I found it couldn't keep things cool unless I took the whole thing apart and added more airflow. At the end of my video on it, I said Aiffro reached out and asked if I wanted to test their K100 mini NAS, and so here that is. And in the same week, Bee-link apparently launched their new mini NAS, this ME mini. So in this video, I'm going to put all these mini NASs through their paces, and try to pick one for my downsized homelab later this year.
+
+Just getting the base specs out of the way, all three of these are built on Intel's N100 or N150 chip. For NAS purposes, both chips are about the same. They all have 2.5 gig ethernet for up to 300 megabytes per second of network copy performance, and they all have multiple M.2 NVMe slots.
+
+And before we get started, even the slowest NVMe drives are going to be way overkill in terms of copy speed for that network performance, but that's not the point here. The point of these things is to give you fast, low =-latency storage in a tiny footprint. And all three of these deliver on that, more or less. But of course, the G9 had cooling problems, not giving any airflow to some of the hot chips and not giving enough airflow to the SSDs. GMKtec's been in touch, and supposedly they have a design revision that fixes some of that, but I haven't been able to test it yet, so I'll stick to what I said about it in my previous videos.
+
+But the Aiffro K100 looks like it's all metal and has a lot more ventilation. Does that solve the cooling problem? I'll get to that, but first, I wanted to mention that unlike the G9, there's no built-in eMMC drive. So if you want to install Ubuntu on here, you either have to take up one of the four NVMe drives with the OS install, or install Linux on a USB stick. So with a smaller box comes some trade-offs.
+
+Also the G9 was about $185, but the K100 is $299. So already, we're comparing a little bit of apples and oranges. But that higher price might be worth it if it can perform. And unboxing it, I already see a lot more ventilation holes on this case, so hopefully that'll help. It also comes with a standard USB-C power supply, which is nice.
+
+You won't accidentally fry something if you reuse their power adapter to charge other stuff. You can also just power this off a battery, which might be useful for travel or maybe even if you don't have a UPS. Getting into the K100 was a little more annoying. These rubber feet are a little tricky to remove, and because of how you have to squish them off, I don't think the adhesive will last more than a few teardowns. And that's annoying because you have to tear it down to get to the drives.
+
+There's no SSD access door like the G9 has. But once we're inside, I do see some good things and some bad things. The NVMe heatsink isn't connected to the metal casing directly, which means the drives can only really dump their heat into the metal plate, and that's it. But I do like how it's clearly labeled which side is front, and how it has these little keyed bits to help you install it the right way. Pulling out the motherboard, at least there's a lot of ventilation for the CPU side of the board. And something that was missing
+
+on the G9, the heatsink on here also covers some of the hot VRMs and probably a few of the other critical chips. That'll hopefully help with stability. Installing SSDs is easy enough, though there was only one thermal pad included. If you want to add more drives, you need to buy a set of thermal pads, too. Another letdown was the BIOS. There's not much you can change, but at least they let
+
+you set it to boot when power is restored, and you can switch between three performance profiles. I installed Ubuntu, and one funny thing I noticed is the Aiffro logo they have that shows up during boot is a little bit too big. It's not a huge thing, but that, along with the bare bones BIOS, just makes it feel like this box is missing a little polish. But the proof is in the pudding, and this thing ran perfectly stable. Temps were in the 50 degrees Celsius range the whole time.
+
+In terms of noise, it was pretty quiet, mostly hovering around 36 to 37 dBA in my non-scientific testing. Running my network copy torture test, I was seeing about 280 megabytes per second both ways, whether I was copying terabytes of video projects or benchmarking with Blackmagic Disk Speed Test. Overall, I'm happy with everything about this, in terms of it being a 4-bay NAS. Despite the strange cooling setup for the drives, it kept them around 50 degrees under load and had zero problems with stability or throttling. Now, the major downsides with this box are the price and the fact that you don't have internal eMMC storage. Part of my requirement is I need at least 6TB of usable space for my homelab.
+
+So a RAIDZ1 array would need 4 2TB SSDs to do that. And this one can fit those, but one of them would need to run the OS, so I'd only have 4TB of usable space. The alternative is to buy a USB thumb drive and run Linux off there. But then you have a less stable boot drive that sticks out the back, and I don't know if I want to do that. But when Bee-link emailed me a few weeks back, they said they basically solved all those problems. They don't just have 4 NVMe slots, they have 6. And they don't require an external
+
+power brick, they have one built-in, just like on my Mac Mini. And their cooling setup uses a central heatsink tower design, kind of like Apple's old trashcan Mac. Except, in this case, it's not using any custom motherboard risers, and it's a much, much more reasonable price. it was intriguing. Enough so, I agreed to have them send over a review unit.
+
+Now, a ton of other creators have already reviewed this thing, and I have to give you a little inside baseball. When I told Beelink I was interested in checking it out, their first email back mentioned their 10% commission referral program, as well as some stipulations for review that I would never agree to. I published my policies for review samples and affiliate programs on GitHub, and luckily they agreed to them, and dropped their stipulations. The only affiliate program I'm part of is Amazon affiliates, which might give me 2-3% commissions when you use one of my links in the description. But if I did participate in one of these affiliate programs, I could earn 4-5 times as much in affiliate sales. But I'd also be tempted to prefer one vendor over another in case that vendor has
+
+an affiliate program and the other one doesn't. So, I don't play that game. Now, why am I saying all this? Two reasons. First, because I like to be 100% transparent in how I review products. And
+
+videos with a grain of salt. Even if I'm less biased than some creators who don't disclose anything, that doesn't mean I'm not biased. Do your own homework, especially before you spend hundreds of bucks on your homelab. And GMKtec originally offered a commission too, which I of course declined, but Aiffro didn't, and so I tend to give them a slight bonus for that. Anyway, onto the ME mini. This thing comes in at $209, at least during their
+
+pre-sale, so I'll put it maybe at $250 or $300 once it's for general sale. It has built-in eMMC storage for a boot drive, which, as I mentioned earlier, means you can use all six NVMe slots for your mass storage. But the strangest thing I noticed about the ME mini is what's on top. I noticed while I was unboxing it, there's roman numerals for a clock face on here. Not sure why, but I mean, I'm deep down in a timing rabbit hole right now, so I can appreciate a little extra horology on my NAS.
+
+When I actually unboxed the unit, though, the clock bit is just embossed in it, so it's harder to see unless you get the light at just the right angle. But one strange thing about the unboxing here, compared to all the other ones, there was no wall wart. There's just an AC cord, which is great. That means this thing can just plug into any AC socket. Honestly, if you're not going to use USB-C, having an internal power supply like Apple does with their Mac minis is the next best option. Anyway, looking around the ports,
+
+the ME mini has almost all the same ports as the K100, but it drops one USB-C port and puts one of the USB-A ports on the front. But flipping it over to the bottom, I have to wonder. The first thing you're gonna do is take it apart to install some drives. So why, just like the K100, do they put these silly rubber covers over the screws? Just on here, leave them out. They're
+
+adhesive, so they're kind of annoying to remove anyway, and they serve no functional purpose on here. Like, why are you doing this? But I love the overall design otherwise. Inside, there's a central heatsink tower with a big fan at the top. The bottom has the motherboard with a bunch of M.2 connectors. There's those six NVMe slots, of course, but there's also
+
+a standard M.2 WiFi card with an Intel WiFi 6 chipset installed. And anytime I see a power supply cover telling me not to take it off, you know I have to take it off. And yes, there's a power supply in there. Interestingly, only one of the little thermal pads on the back of the PCB makes contact with this metal plate. That's going to be a recurring theme here. Because
+
+while it's nice the NVMe slots each have thermal pads pre-installed, what's not nice is the main one here with their pre-installed Crucial drive only made contact in the middle on the storage controller chip. Now, does that chip get the hottest out of the whole thing? Yes. But would it be nice to have more thermal contact? Also yes. But spoilers, the drive didn't overheat in my
+
+testing, so I guess that and the fan is good enough. I'm going to install my four KINGSPEC drives. And wow, this is the first time I actually noticed this. Installing them backwards, there are three different PCB design revisions going on here. Now, this is the same NVMe drive, bought off the same Amazon listing, and there are three different versions of it. You definitely get what you pay
+
+for with SSDs, so make sure you test the drives you buy if you care about performance and you're trying to save a little money. It came with Windows 11 pre-installed on the built-in drive, but to have a completely even playing field and maybe don't tell Bee-link I did this because this was one of the things they wanted me to not do, I yanked out the Crucial drive and installed Linux on the internal eMMC and used it with the Kingspec drives. Booting it up, the Bee-link logo is a nice size compared to the Aiffro, and the BIOS is a welcome improvement too. Every feature I can think of is exposed almost to the point where it's a little overwhelming. But I got Linux going and started testing. And this system does run a little hotter. The CPU starts pushing 60 degrees Celsius under
+
+load, but the nice thing about this thermal design is it just stays there. Using S2E, I was able to run this thing at turbo boost clocks continuously, and it had no trouble keeping up. It also had no trouble keeping the network connection almost maxed out. I think because of the PCI Express limitations with such a low-end chip, something had to give, and write performance at least suffers a little here. Now, I'm also writing to a 4-drive array instead of 3 drives like the K100, but I could only write at about 230MB/s. Reads weren't affected, though. I could read about
+
+10MB/s faster on here than the K100. The CPU isn't really stressed, so I think this is a bottleneck writing through the PCIe bus. It's not much of a bottleneck, though, and it's still fast enough for me. I only point this out because on here, you only get one lane of PCIe Gen 3 for five of those six slots. On the K100, it gives you two lanes on every slot for almost double the bandwidth per drive.
+
+You can debate whether you want more slots or more bandwidth in the comments, but I think the best thing about this system is it's almost inaudible. It's not silent, but it's definitely the quietest of all the Mini NASes I've been testing. The big fan on top certainly helps. Unfortunately, I can't show you exactly how *much* it helps, because I was running all these tests on the hottest week of the year, meaning all the building AC units were going, keeping the noise floor in here higher than the actual noise coming out of the fan on the unit. Which is to say, it's pretty quiet. But even with the fan, unlike the K100, which was pretty cool to the touch, the ME mini
+
+does get a little warm on the outside. What's crazy is, most of that heat seems to radiate out around the bottom, where the motherboard is. The fan was usually blowing very cold air out the top, so maybe they could find a way to get a little more heat off the CPU and out the top. I don't know. But which one of these should I put in my homelab? My main requirements are it should
+
+be small enough for a mini rack, have at least 6TB of usable space, and not crash. That last bit rules out the G9, at least the version I reviewed. And if it weren't for that second I'd probably stick with the K100. But because it only has 4 drive slots and no eMMC, I'm not sure if I want to boot off a USB stick for my OS drive. But let's get a little more scientific. The G9 wins on price, though the ME mini isn't too
+
+expensive either. But I have to add a caveat that $209 is a pre-order price, so that could and probably will go up. The K100 is definitely charging a premium for the tiny size and metal case here, but it's also got a great balance of I/O, cooling, and features for a tiny portable solution. And looking at network file copy performance, the K100 is also the Goldilocks there too. Not too fast, not too slow, but it's definitely consistent. The ME mini is definitely
+
+slower for writes, due in part to its slower PCI Express layout, but all three of these NASAs will perform fine. Well, the G9 only if the new cooling is as good as my hacked-up solution. But finally, power. And I'm gonna have to throw out the G9 results. I mean, something was wrong with this system in the first iteration, and it might also be related to that 19V power adapter. But the K100 is also able to suck down a lot less power, since, of course, it has fewer
+
+features like no WiFi and fewer NVMe slots. So, in the end, the GMK-Tech is left in the dust on everything but price. If they send me one with upgraded cooling, I'll benchmark it again, but for now, I think I'd recommend the K100 if you need compact size or slightly better drive performance, or the ME mini if you need more expansion or just want to run more stuff on it besides just storage. What will actually end up in my homelab? Honestly, I'm not sure yet.
+
+But if I can find a good deal on 4TB drives, I'm kind of leaning towards the K100. Until next time, I'm Jeff Geerling.

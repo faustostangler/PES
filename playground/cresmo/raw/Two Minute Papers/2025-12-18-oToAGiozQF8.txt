@@ -1,0 +1,55 @@
+---
+video_title: "Game Physics Just Jumped A Generation"
+video_id: oToAGiozQF8
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=oToAGiozQF8
+video_date: 2025-12-18T07:42:21+00:00
+video_description: |
+  ❤️ Check out Weights & Biases and sign up for a free demo here: https://wandb.me/papers
+  
+  📝 The paper is available here:
+  https://wanghmin.github.io/publication/wu-2022-gbm/
+  
+  📝 My paper on simulations that look almost like reality is available for free here:
+  https://rdcu.be/cWPfD 
+  
+  Or this is the orig. Nature Physics link with clickable citations:
+  https://www.nature.com/articles/s41567-022-01788-5
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Benji Rabhan, B Shang, Christian Ahlin, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Steef, Taras Bobrovytsky, Tybie Fitzhugh, Ueli Gallizzi
+  If you wish to appear here or pick up other perks, click here: https://www.patreon.com/TwoMinutePapers
+  
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  X/Twitter: https://twitter.com/twominutepapers
+  Thumbnail design: Felícia Zsolnai-Fehér - http://felicia.hu
+---
+This brilliant technique lets you simulate squishy things and ultra detailed cloth at real-time speeds. Finally, yes! That means richer, more responsive worlds in games, film tools and more that were simply not possible before. Imagine having this in computer games in real time. Wow. Yes, you can simulate squishy things up to
+
+a 100 thousand vertices in real time. Or you can go up to half a million vertices, at which point, it is still interactive. You know what’s crazy? Well, almost nobody is talking about it. So, what can it do, and then of course, how?
+
+Well, squishy balls are amazing with it. Of course, this is not a simple sphere with a texture. No sir! It is covered in many little bristles that deform and collide with the ground as it rolls. This one pushes 700,000 vertices. All
+
+simulated perfectly and not real time, but at interactive rates. God have mercy on my soul. And in the cloth examples? The layers slide over one another perfectly. Achieving this level of friction and contact stability in real time has been a longstanding Grand Challenge in computer graphics. Also, video game characters could
+
+have clothes that are so much better than what we have now, it’s not even funny. Wow. And it is so fast, of course, it gives us the possibility to interact with it in real time. This piece of text behaves like a true elastic material you can tug on. Twist it, pull it, smash it. Zero problems, the simulation is still stable and accurate. So good!
+
+Okay, so how does this do all this magic? Well, get this, no AI is used here whatsoever, only human brilliance. Let’s dive in. Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. Dr. Carroll.
+
+Although I see you Fellow Scholars using Dr. Papers these days. Should we use that? Okay, imagine that you have a gigantic net, made out of thousands of rubber bands. Now, you pull one corner, and oh my, the entire net stretches. 700,000 knots. I took the liberty
+
+of generating extra visuals for you to make sure you get a feel of the problem. Now trying to calculate exactly how every single knot in that net moves all at once…that just takes too much time, even for a powerful computer. What this technique does instead is it chops the net into thousands of tiny squares. It then hands each tiny square to a separate little worker, that is a GPU core and then it says, “Okay, you just worry about this one piece”. And because the pieces are so small, the workers can figure out the physics for their square instantly and even more importantly, they do it at the same time. This is super fast. There is only one problem. It doesn’t work.
+
+Of course, if everyone only looks at their own tiny square, the net would fall apart because nobody knows what the neighbors are doing. To fix this, this paper says let’s hire a manager! This is just one little manager that sees the coarse version of the whole net. So this manager sees everything that is going on and says, “hey workers, we are stretching to the right”. And then, every worker can adjust its tiny little square to match this overall motion.
+
+And the result is that you get this incredible accuracy everywhere, while the problem can still be cut up into small pieces. Now, if you would eavesdrop on two research scientists talking about this, this is what they would say: you first do Domain Decomposition with Multilevel Additive Schwarz Preconditioning, this is the cutting up into small pieces, and then, the worker’s lightning-fast pre-calculation work on these small squares is called One-Way Gauss-Jordan Elimination. Admit it. That sounds amazing, right? Love it.
+
+Now, this is still not perfect. I’ll tell you what it can’t do in a moment. Now get this, the researchers give it all away for free. The technique is described in the research paper, with the source code available for free for everyone. Wow. Thank you so much! I can’t wait to
+
+rent a GPU at Lambda and see it go nuts. Now this was published 3 years ago. And I don’t see anyone talking about it. Everyone should be talking about it! I almost feel like these research papers are like endangered species. I'm trying to save them. Nobody else does that, so if you
+
+wish to help save a paper today, subscribe, hit the bell icon and leave a really kind comment. Now, limitations. One, if we build a multi-material object with 8 different stiffness values, the algorithm’s efficiency drops greatly. This is because stiff regions need more time to solve, and the manager only sees a coarse net, so it would need a lot more time for that. Two, it is working great for 700k vertices, a net with that many little knots. But if you had a few million of them, it would
+
+not scale as well, and previous techniques would probably be better for those cases. But man, all this is now possible through human ingenuity, and it was made by brilliant scientists by hand before ChatGPT even existed. Free research and code for everyone. Millions of scientists around the globe making life better for us. How cool is that? But people just don’t talk about these. I hope this video helps a tiny bit.

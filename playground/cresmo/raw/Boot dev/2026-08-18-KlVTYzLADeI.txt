@@ -1,0 +1,136 @@
+---
+video_title: "Your SSD is supposed to fail"
+video_id: KlVTYzLADeI
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KlVTYzLADeI
+video_date: 2026-08-18
+video_description: |
+  Learn to code - https://www.boot.dev?promo=BOOTSTUBE
+  
+  In 1956, IBM's RAMAC stored about 4 megabytes in a cabinet that weighed over a ton — and for the next fifty years the fundamental design of the hard drive barely changed, even as CPUs, RAM, and networks got thousands of times faster. This video covers how spinning disks actually worked, how NAND flash replaced them by trapping electrons in a tiny insulated pocket, and why a ~9,000x jump in random reads quietly invalidated a lot of the software assumptions we inherited from the disk era.
+  
+  Timestamps: 
+  
+  00:00 The click of death 
+  02:48 The first hard drive 
+  04:27 How a hard drive actually works 
+  06:02 Latency: seek and rotate 
+  07:58 2x vs 9,000x 
+  09:52 Flash memory and NAND 
+  12:48 Inside an SSD 
+  14:56 Cheaper, denser, faster 
+  17:46 What it means for your code 
+  19:48 The catch: SSDs forget 
+  21:31 Outro
+  
+  Sources: https://www.boot.dev/blog/news/why-hard-drives-didnt-change
+---
+Hear that sound? It's the sound of death. Specifically, your data dying. If you use computers in the late 90s, I apologize. I should have given you a trigger warning. And if you have no idea
+
+what I'm talking about, there was a time when that rhythmic clicking sound meant that your entire semester's homework or all the records for your small business was about to go up in smoke. Okay, that's enough clicking. This thing that looks like a GameCube and a floppy disk reader had a baby is an Iomega Zip Drive. And back in the day, your school projects, design files, and work documents would all live on this. It held 100 megabytes at launch, which sounds pitiful now, but in 1995 that was a lot, especially compared to the standard 3.5 inch floppy disk, which
+
+held just over a single megabyte. One single Zip disk held about as much data as 69 floppies. But if your Zip drive started clicking, things were about to go terribly wrong. The click of death was so infamous that some Iomega customers even sued the company in 1998, claiming the drives were damaging their cartridges and making it impossible to recover their data. Iomega disputed how widespread the problem was, but the sound stuck in people's heads because it was sort of a visceral representation of just how fragile the data storage could be. Specifically, the fragility of
+
+magnetic storage. See, back then your files were accessed by a mechanism that feels particularly analog compared to today. And if that mechanism failed, which happened quite often, looks like you won't be filing those tax returns on time. Now, to be precise, the Zip drive wasn't exactly a hard drive, but it had hard disk-ish design ideas packed into a floppy-like cartridge. And for decades, computers improved in every direction except one. CPUs measured work in
+
+nanoseconds, RAM answered queries in tens of nanoseconds, and networks went from slow telephone-based modems to cable broadband. But hard drive storage still had to wait for a tiny mechanical arm to move across a spinning plate. In the 2000s, the component that made your computer feel slow more than anything else was the hard drive. It's why a relatively cheap SSD upgrade could make a 7-year-old gaming rig feel completely new again. And if you're a developer, it's why certain database optimizations that you absolutely had to know about back in 2005 are just no big deal today.
+
+So, in this video, we're going to answer three questions. One, how did the hard drives of old actually work? Two, how did the eventual replacement, flash storage on SSDs, store a new bit without any physical movement? And most importantly, what do the massive drive improvements of the last 20 years mean for the way good software is written? By the way, if you like these technical deep dives, please do like and subscribe to the channel. It lets us keep making
+
+these weirdly specific computer history videos. Now, to understand the evolution of the hard drive, we need to start with its ancestor. In 1956, IBM introduced the RAMAC 305, the first commercial computer system built around random access disk drive. Its storage unit, the IBM 350, was 5 ft tall, 6 ft wide, weighed over a ton, and had 50 24-in platters spinning at 1,200 revolutions per minute. The thing was massive. And
+
+the storage capacity? Almost 4 MB if you convert those old 6-bit characters into modern 8-bit bytes. For comparison, one uncompressed 4K frame from the video you're watching right now is roughly 25 MB, about six times more data. So, just imagine if you wanted to store this whole video on RAMACs, you'd need a lot of real estate. But however ridiculous it seems today, RAMAC did solve a real problem in the '50s. Before disks, data
+
+usually lived on punch cards or magnetic tape or, you know, paper. Now, magnetic tape is great if you want to read stuff in order. It's not great if you want to update user 825's full name right now. You have to wind through the tape until you get to that exact record. It's like fast-forwarding to find that one scene in your old VHS of The Princess Bride.
+
+>> You got a very good arms. >> The big breakthrough with RAMAC was random access. Instead of walking through every record in sequence, the machine could move a read-write head straight to the part of the disk where the data lived. Kind of like picking up the head of a phonograph and moving it up or down an inch. For commercial disk storage, that was brand new in 1956. It
+
+gave businesses a way to pull up one account, one invoice, or one inventory record directly. But, it's that same breakthrough that created the bottleneck that then haunted computing for the next 50 years. Let me explain. You've got a physical plate with data encoded on it spinning thousands of times per minute. The disk has tiny magnetic regions on its surface, and depending on the magnetic direction of each, they're interpreted as bits, ones and zeros.
+
+Above the plate, there's a read-write head mounted on a movable actuator arm. The head can detect and make changes to the direction of those magnetic fields without actually touching the plate. That click of death you heard earlier, that's the sound of the drive trying and failing to position its head over the right spot on the disk. The click itself isn't the original problem. It's the actuator snapping through a recalibration motion after the drive fails to complete an operation, usually because either the disk media or the drive mechanism is damaged. See, modern
+
+hard drive heads ride on a cushion of air created by the spinning disk, floating unbelievably close to the platter. In the original IBM 350, the heads rode about 800 microinches above the surface. A microinch is 1 millionth of an inch. So, this head floated 0.0008 inches above the plate without touching it. Today, we use nanometers to measure
+
+the distance in hard drives. The microinch is irrelevant because it's just too big. But, to blow your mind, the IBM 350's heads flew 20,000 nm above the disk. Today, we've shrunk that distance to just a few nanometers, thousands of times closer. Still, IBM's tech was brilliant engineering, especially for the '50s.
+
+But, the first big problem was latency, the time between asking a device for some data and actually getting it back. To read data, the drive has to do two physical things. First, the arm has to seek to the right track. Then, the platter has to rotate until the correct sector passes under the head. Computer architecture classes today still teach disk access around these mechanical costs because the mechanical delay in reading the assets from disk was by far the worst bottleneck when you loaded up a new session of Age of Empires. The IBM
+
+350 could take hundreds of milliseconds or nearly a full second to pull or write data. Even much later, hard drives still commonly lived in the millisecond world for random access. Harvard CS 61 notes, give 12 milliseconds for an external hard drive and about 4 milliseconds for a 2020 era high-end disk drive. To a human, 10 milliseconds feels instant. But, to a CPU, 10 milliseconds feels like an eternity. At 4 GHz, roughly the
+
+speed of a modern iPhone CPU, that's about 40 million clock cycles. Your CPU could have done 40 million simple instructions in the time it sat waiting to load the orc peon's voice line. That's why old computers feel slow in specific ways. Open Photoshop, go get a coffee. Launch StarCraft II, better take a quick bathroom break. You
+
+aren't waiting for the CPU to think, you were just waiting on data from disk. Sure, hard drive companies did improve the engineering, platters got smaller, tracks got denser, and caches got smarter. But, those are small incremental changes. The fundamental problem stayed the same. A motor spun a disk and an arm hunted for the right spot. It wasn't until the Windows Vista
+
+>> [laughter] >> and Windows 7 that things really started to change. You could take the same machine, same CPU, RAM, operating system, and swap only the storage drive and it felt like a whole new machine. See, in the last 20 years, high-end CPU clock speeds have gone from about 3 GHz to 6. They've just about doubled. There have been other improvements, to be fair, but raw clock speed has honestly not improved that much. But, what about
+
+data storage? In 2004, Storage Review tested Western Digital's 10,000 RPM Raptor and measured one random read taking 7.8 ms. Two decades later, this solid-state drive is rated for 1.2 million random reads per second.
+
+That's not twice as fast. That's going from about 128 reads per second to 1.2 million. A 9,000 X improvement. The primary reason, as you probably already know, is the solid-state drive. No
+
+platter, no flying head, [music] and no clicking. Just chips. But, if a hard drive stores bits by changing the magnetic direction of tiny regions on a spinning plate, how does an electronic chip store a file even when the power goes off? It would be really bad if you unplugged your computer and all your files got wiped. To answer that, we're going to Japan, to the tiny electrical trap that replaced the hard drive. But,
+
+before we do that, if you're the type of person who notices when software feels slow and wants to know why, listen up because boot.dev is 25% off. Performance isn't just about writing clever code, although at boot.dev we will teach you to write better code. There are tons of fundamentals that every serious developer needs to know about. Network
+
+requests, database indexes, memory layout, and they all play a big role in building non-AI slop software that doesn't completely suck. And we teach those concepts with practical hands-on courses in Python, Go, TypeScript, C, and more. So, if you want to understand what your programs are actually doing, give boot.dev a try and use code bootstube for 25% off your first year of a membership on an annual plan. Now, back to Japan. In the 1980s, Toshiba
+
+engineer Fujio Masuoka helped invent flash memory. He presented his flash memory design in 1984, which prompted Intel to develop NOR flash. That's N O R. Then in 1987, Masuoka and his colleagues presented NAND flash, N A N D, at IEEE, the Institute of Electrical and Electronics Engineers International Electron Devices Meeting. Good lord.
+
+That word, NAND, is on almost every SSD spec sheet. NAND flash, 3D NAND, TLC NAND. So, what is NAND and what is flash? First, flash. With flash memory, data is stored in tiny transistor cells.
+
+Each cell has an insulated pocket where electrons can get stuck. If electrons are trapped there, the transistor won't conduct current and is a zero in binary. If they are not, it does and it's a one. Just like the bits stored in the magnetic regions of the spinning disk drive. But this was a big deal because those electrons stay trapped even when power turns off. That makes flash
+
+non-volatile memory, unlike RAM, which forgets everything when the power dies. Flash actually remembers it. Next, the NAND part stands for not and. It's one of the basic logic gates computers are built from. A NAND gate takes two binary inputs and gives one output. It's the
+
+combination of an and and a not operation bundled into one. An and is a bitwise operation that only outputs one if both inputs are one. Zero and zero is zero, zero and one is zero, one and zero is zero, but one and one are one. NAND just does the opposite. Zero and zero is one, zero and one is one, one and zero is one, but one and one are zero. So, if
+
+A and B are both one, AND says one, then NOT flips it to a zero. And in every other case, AND says zero and NOT flips it to a one. NAND flash got its name because its memory cells are connected in long series strings that resemble the series transistors in a NAND logic gate. But, it's the actual structure itself on the circuit board that makes them great for storage. To put it as simply as possible, a five-cell NAND series string looks something like this. While a
+
+five-cell NOR architecture looks more like this. The NAND version is denser per cell, which makes it better when you're trying to store as much data as possible. It takes less silicon for the same amount of bytes. NOR was better for reading individual memory locations quickly, but it's slower to write and erase. In a simple SLC NAND, to read the bit in a cell, the chip turns the other cells in the series string on with a higher pass voltage so they can conduct no matter what they're storing. Then,
+
+checks whether just the selected cell lets current flow. If it does, it reads as one, and if not, it reads as zero. So, no arm moves and no platter rotates. That's what solid state means, no movement. The drive just asks a grid of transistor cells, "Which of you are holding electrons?" So, why didn't flash
+
+immediately kill the spinning disk hard drive? Well, flash had one itsy-bitsy problem. Writing damages it. Every program and erase cycle stresses the insulating layer that lets flash trap charge in the first place. Hard drives can rewrite the same physical area again and again and again, but use flash cells enough and they become unreliable. So,
+
+how do you build a hard drive replacement out of cells that slowly die every time you use them? The answer is a bit weird. The SSD presents one simple version of itself to your operating system, then does something much messier underneath. From your operating system's point of view, an SSD looks like a normal block device. The OS says, "Write this kilobyte to block 123." And later
+
+asks, "Give me back that kilobyte from block 123." The SSD returns the data. Easy. But not on the inside. The SSD controller actually keeps a secret map called a flash translation layer. To the
+
+operating system, block 23 is one stable address that never changes. But the controller may physically write that data somewhere completely different, then update its private map so future reads still work. And it does this because flash can't behave like a normal hard drive. Flash writes in small pages of, say, 4 to 16 kilobytes, but erases in larger blocks made of many pages, up to 64 to 256 kilobytes. If one tiny page changes, the SSD might have to copy the still valid pages in the block somewhere else so it can free up that block to make the changes. This cleanup, which
+
+happens after the changed data is written elsewhere, is called garbage collection. Not to be confused with the type of garbage collection that Python or JavaScript runtime does. And because individual cells wear out, the SSD uses that translation layer to physically spread new writes out across the drive, so the cells age more evenly, while still providing stable virtual addresses to the operating system. So, the SSD is physically simpler than a hard drive because it has no moving parts, but logically, it's actually way more involved. It has a whole little computer inside it while it's pretending to be just a disk. Which brings us to the next
+
+problem. That little computer could be expensive. In 2008, Ars Technica reported OCZ's MSRP of $1,099 for a 64 GB solid state drive, or about $16 per gigabyte. Our World in Data puts 2008 hard drive storage around $120 per terabyte, or just about 12 cents per gigabyte. Inflation-adjusted for spinning disk hard drives, it's about 1/100 of the cost. Today, in a May 2026
+
+disk prices spot check, the cheapest internal 3.5-in hard drive I found was a bit over 4 cents per gigabyte. While the cheapest internal SSD I found was just a bit over 31 cents per gigabyte. So, SSDs have gotten absurdly cheaper in the last two decades, but hard drives are still about eight times cheaper than even that. For years, manufacturers made flash cheaper by packing more bits into each cell. But as each cell stores more
+
+states, the threshold voltage gaps get narrower, and performance and lifespan get harder to preserve. So, how did engineers solve this? Imagine you're planning a city on an island. You can't keep expanding outwards, so you have to build up. 3D NAND did exactly that. It
+
+started stacking memory cells vertically. In 2013, Samsung began stacking 24-cell layers to break through planar scaling limits. This is one of the reasons large SSDs became cheap enough for normal people to afford. But of course, there's still one more bottleneck. After flash got cheap and dense enough, the drive itself wasn't the most limiting part. The connection [music] to the
+
+computer was. Most early consumer SSDs connected through SATA, or Serial Advanced Technology Attachment. SATA was designed for disk drives, which made sense when that was all that anyone used. But once SSDs started providing data at a far lower latency, that old storage interface became a problem. The replacement for SATA was NVMe, Non-Volatile Memory Express. NVMe was
+
+designed for SSDs attached over PCI Express, the same high-speed connection family used by GPUs built for high-bandwidth and low-latency storage access. AHCI, the host controller interface commonly used with SATA, was built around one command queue with up to 32 commands. NVMe supports tens of thousands of queues, each with tens of thousands of commands. A command is just a request from the computer, like read 4 KB from address 1056, or write this KB of data to address 5004. And queries are just waiting lines holding those commands. So, multi-core
+
+CPUs can keep tons and tons of requests in flight, and be getting responses back as fast as the SSD can provide them. Something that was impossible with a single queue and 32 commands. And once storage became hundreds of times faster, many legacy software assumptions started to break [music] down. So, let's talk about databases. You know, the kind that power servers for little-known websites such as YouTube, Instagram, and Wikipedia. But, it's not just the little
+
+guys, even massively popular websites like food.dev use databases on their backend. For decades, database design had to respect the hard drive. Sequential reads were fast. Random reads were slow. If a database read all the
+
+rows in one table from front to back, the hard drive could stream data really fast once the head was in position. No more head movements, just disk rotation. But, if an index caused the drive to jump from record to record, the arm had to seek again and again. Postgres is a popular open-source database that's been around since the '90s, and that limitation can be seen in its implementation. See, a database index is a data structure that algorithms can use to make looking up a certain post by its ID much faster. Like, tens of thousands
+
+of times faster. But, with spinning disk hard drives, in some cases, they could actually be a trap. The index tells the database exactly which rows it should read, but if those rows are spread out physically all over the disk, the drive spends its time hunting around with the actuator arm. So, sometimes reading a larger chunk of the table in order is actually faster. SSDs changed that math.
+
+Random read-heavy workloads got more attractive. Caches, logs, compaction strategies, and storage engines had new, mostly better tradeoffs. If you have an old gaming PC, upgrading from a hard drive to even a cheap SATA SSD is one of the lowest cost ways to make it feel way less miserable. It won't usually raise your average frames per second much. That's mostly GPU, CPU, and RAM. But, it
+
+will cut down on loading screens and improve startup time. It's really worthwhile to learn which pieces of hardware most impact your daily usage. For storage drives, loading and startup times are the big ones. By the way, leave us a comment below with the first computer you owned that actually had an SSD. Or, if you're still booting from a hard drive in 2026, tell us why. Okay,
+
+so SSDs are great, but that brings us to a final misconception. People hear no moving parts and translate it to nothing can break. No. Flash stores charge, like electrical charge, and charge leaks. A powered-off SSD does not hold data forever. SSD retention expectations are
+
+actually tied to real-world conditions, like temperature, workload, and wear. Under the JEDEC industry standard, a client SSD only has to retain data powered-off for 1 year at 30° C once it's reached the end of its rated life, a figure Western Digital lays out in its own endurance white paper. That doesn't mean every SSD forgets your files after 1 year, but it does mean flash data retention is not infinite, especially after wear. SSDs trade mechanical decay for electrical decay. With a hard drive, data can die because a head touches the platter. With SSDs,
+
+data can die from natural causes. So, what do you do? The answer is very simple. Make backups. And, guess what sort of storage is great for rarely used, massive-scale data storage?
+
+Spinning disks. Backblaze, which buys hard drives by the literal truckload for cloud storage, tracked hard drive costs falling from over 11 cents per gigabyte in 2009 to about 1.4 cents per gigabyte in 2022. So, they still treat hard drives or HDD's as their economic workhorse for bulk storage. Cold backups, archives, surveillance footage, and giant media libraries mostly still use physical disks. But, for
+
+latency-sensitive computing, the layer you work with every day, whether it's on a server in the cloud or your local gaming rigs, SSD's have mostly won. If you want to understand more about how your computer and the software that runs on it works under the hood, go make a free account on boot.dev. And if you like your trial of our game-like lessons, use code bootstube for 25% off your first year on an annual plan.

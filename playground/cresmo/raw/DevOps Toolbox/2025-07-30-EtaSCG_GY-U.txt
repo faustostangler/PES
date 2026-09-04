@@ -1,0 +1,79 @@
+---
+video_title: "Is Gemini CLI Worth The Hype?"
+video_id: EtaSCG_GY-U
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EtaSCG_GY-U
+video_date: 2025-07-30
+video_description: |
+  Everyone's on to Gemini, the hype is unreal, so I tried it myself.
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.omerxx.com/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.omerxx.com/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+The paradox of choice is a psychological concept suggesting that the more options we have, the less satisfied we feel with our decision. This occurs because having too many choices requires more brain effort. And this leads to decision fatigue and regret. However, here's an example. What if while trying to pick potato chips on the supermarket aisle the next time, you find one bag from a really good brand you like, but it's free? Not only it's free, it's delicious. Would this
+
+kill your decision-m right there and then? I feel the same is happening with CLI coders right now. Cloud CLI was the first, but then OpenAI released something similar. Then AWS and late in the game along came Google with Gemini. But Google knew they were very late. So not only they were the
+
+only ones to fully open source the tool, they made it pretty much free. And you know what they say about Google giving you products for free, right? But is this while obvious a good enough answer? Is this really why everyone go crazy around Gemini? or are we just hearing about it all of a sudden because someone wants us to. So, I took it for a spin. But I wanted to push things, not just
+
+a tic-tac-toe game. I wanted to see if I can go full SOA. Is that the right way to pronounce it? You know, the dude getting five full-time remote jobs in the Bay Area startup simultaneously. Can I build myself something that would allow me to work like five seniors? I mean, Soham did fall behind
+
+with his PRs, having to make false, I mean, a war zone claims. And in all seriousness, while this is a funny task, I'm also going to let Gemini do some agentic work and build something I couldn't. We'll get there. Okay, let's see if the hype is real. So, as mentioned, Gemini CLI is fully open source. It's a CLI written in Typescript, which is kind of funny if you consider Golang came from
+
+Google and probably the first choice for anyone building a CLI, but whatever. It can be installed or run directly with npx, which is pretty cool. A bit like Nyx. So, I'm going to use that today. It suggests gemini.md file for guardrails and general context and we'll touch that. But for now, let's
+
+build. I'm going to start simple. I need help with building a small application that connects to GitHub. I do appreciate that a model asks before doing, but granted, this is Gemini Pro and it's just the current model used by the CLI. Do note there's context that on my free tier isn't endless and we're going to see the point where it runs out of tokens soon. So, we're after a production
+
+ready autonomous code review agent. There's a long prompt I built here to customize the PR title and address common issues. If you're interested in the entire thing, comment below. For now, let's let it run. It starts with a plan without me even having to ask, which I then approve, and asks for the GitHub repository and branch to monitor for changes. As with other CLI utilities,
+
+it needs permissions to perform different tasks, much like Amazon's Q developer, which I've reviewed in the video up here. And there we have it. In order to work properly, it requires a GitHub token and an open API key. It's funny how a Gemini model running inside Gemini CLI eventually builds an agent that runs with OpenAI, isn't it? Let's give the agent what it needs. And don't bother copying the tokens. They're gone by the time you're seeing this. Or
+
+are they? Yeah, they're gone. After quite a lot of back and forth with Gemini, and I mean a lot, we reached a proof of concept. So, Python main pie. It deleted its own previously non-functional branch which created a review, pushed it, and suggested a pull request. Not 100% what I asked,
+
+but a great start. A quick look through GitHub has my PR quite dull in changes to say the least. This is a common frustration I see with models like that. When you throw more than one task at them, they never seem to comprehend or follow everything. So, like with a toddler, with lack of a better option, I repeated myself. running again on a new branch over to GitHub. And
+
+yes, well, not exactly what I had in mind, but nevertheless, a good start with a long list of review items from hard to read code through edge cases not being handled, lack of error handling, and more and more. Mind you, the actual reviewed code was part written by cursor. So, draw your own conclusions. Anyway, this is not enough for me. How about we test its agent capabilities? So
+
+I picked up the idea on a cloud subreddit where the user had come up with this prompt to see whether the tool can actually create a separate parallel task. How does it handle the concept of sub aents like you'd expect in platforms like NA10 yield partially sub aent documents serving as logs and then combining everything to one large analysis. While Gemini did come up with something, it was how should I put it? I think I'll just show you. It goes like this. I want five agents
+
+reviewing source files in parallel. They should focus on potential bugs, security vulnerabilities, and best practices. But now we provide steps. One, divide up the workload evenly between sub aents. Two, have each sub agent write their final analysis on a separate file. Lastly, a
+
+few bash commands to concatenate everything into a master analysis file and go through the sub aents markdown files and empty their content. This gives you a good indication of how the instructions are followed. Are the files there? Do they have any content? And what's the master analysis file like? After a few seconds of thinking it had located all Golang files, it started
+
+working on the log files with permissions to read, write, and create. At least according to Gemini, it runs in parallel. 50 seconds in and it hits a bunch of self-made errors with non-absolute paths, which it fixes. I let it write files to new paths, and we're at the final stages of concatenating the files into one and then emptying the rest out. Let's see how it went. The master analysis file
+
+is here. Over 200 lines of potential issues, DB connection management suggestions, hard-coded chrome schedules, some more hard-coded values, etc. All in all, great review. Honestly, I feel like any developer can learn and improve their code just by reading this review. Sub agent files are empty as instructed, and I must say I'm quite happy with that. So, not bad work from Gemini,
+
+or should I say Gemini 2.5 Pro, which applied my instructions directly to a smalls size codebase, came up with a review, followed tasks, and as we've seen, pushed it to a branch. But this brings up a huge question. For the agent to comment on a GitHub PR, it needs to access GitHub as me. How can I let my agent do that? The old way is terrible. I could give it my password or
+
+maybe a personal token and then save that secret directly in the code. That's a massive security hole just waiting to be exploited. How do I make sure this agentic flow doesn't lose touch with reality and do things it shouldn't? Instead of giving my personal agent a password or token, I'm going to let the agent request access to GitHub on my behalf. First, I'll do a quick setup in the Ozor dashboard to create a new application and configure it to connect to GitHub. Now that I have
+
+the API, I'll give Gemini agent my Oz domain and client ID. But notice not the client secret that will be saved behind in the environment. The last piece of the puzzle is GitHub's API which in order to access Ozero needs to have configured. Under APIs, we create a new one adding api.github.com
+
+as the identifier to work with. Once created, there's a set of instructions that are already applied to the code. Now I'll ask the agent to start the process of commenting on that PR. Watch what happens. The script runs and instead of just working, it's asking for my permission.
+
+It'll pop my browser and look at this. It's a standard secure consent screen that Ozero hosts. It says I need to login with a user and password that's created in Ozero. Then the application is requesting to access my GitHub account. I'm in complete control. I'll click accept. I'm
+
+redirected. And now back to the terminal where the agent can continue. It has the access it needs. So what just happened? The agent initiated the request. I securely proved my identity and
+
+gave my consent to Ozero. And then Ozero handed a short-lived secure pass directly to the agent that can now use GitHub. The agent never saw my password or any permanent secret. And the best part, it will get a new fresh token every time it needs to run. I don't have to manage tokens.
+
+I don't have to store secrets in my code. And my agent can now securely access GitHub to finish its work. Before summing things up, I feel obligated to reiterate the concept of guardrails for general work with models on a codebase. To save both tokens and hours of anger management courses, use a MD file. Gemini accepts gemini.md, which can be referenced globally on home/.mini/gemin.
+
+And while global instructions are great, getting specific is always better. I use this prompt to come up with a boilerplate telling it the context is an expert developer that's required to analyze the directory and create the file. Naturally, it would come up with the very basics with overview where general things are, what libraries are used, and this saves time of coming up with the same context in every new conversation. But it's your job to enrich it with specific instructions. Where to read the schemas, how to create a DB connection or read the user's name instead of making up its own systems, which I see every time it runs. Okay, so how do I feel about the CLI? Well, let me be
+
+honest here. And this doesn't have to do with one CLI or another. It doesn't even have to do with a model or a provider. These tools can do a lot. They're great at front end if you need simple work. They're okay with backend if you can break down the tasks and chew them for them. However,
+
+and I have to be honest here, they're terrible with DevOps architecture. Here's a hot take for you. It feels to me like whoever hypes these has either never coded a feature, let alone a project with these AI tools, or just has something to gain or lose from doing it. I see the value. I really do. But I say it in the way that I see it. It's not there. It can't live without a thorough
+
+review, which begs the question, is it actually improving efficiency and time? Gemini is a beast. There's no doubt. Unfortunately, this isn't a trend you can count on. And by the time this video goes out, there's probably three new crazy announcements. So, take my humble opinions with
+
+a pinch of salt. But you know what doesn't go away? Something that enables you to work with Gemini or Cloud CLI is always there. And the more you improve it, makes everything else better. That's right, your terminal. Here's my setup from scratch to a productivity beast.

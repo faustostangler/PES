@@ -1,0 +1,19 @@
+---
+video_title: "MLOps Explained: From Model to Production"
+video_id: 20amBj2Uksk
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=20amBj2Uksk
+video_date: 2026-08-29
+video_description: |
+  Website Link: www.systemdrd.com
+  Building a machine learning model is only the beginning. Learn how MLOps, ML pipelines, CI/CD, automated testing, MLflow, Docker, Kubernetes, model monitoring, data validation, and model versioning help transform experimental machine learning projects into scalable, automated, and production-ready AI systems.
+---
+This is the reference [music] architecture we'll refer back to for the rest of the talk. Six layers, and in most organizations, each one is owned by a different team. Sources, >> [music] >> event streams, application databases, third-party APIs feed raw data in, and this [music] layer is almost always outside the ML team's direct control. That's exactly [music] why the next layer matters so much, the feature store. An offline store serves bulk [music] historical reads for training, and online store serves single row lookups under 10 milliseconds for real-time [music] inference.
+
+Both are populated by the same transformation code. So, the feature computed for training [music] and the feature computed for serving are provably the same value. Orchestration, a DAG scheduler like Airflow, [music] Kubeflow Pipelines, or Argo Workflows owns retries, backfills, and scheduling. This is what turns run this script when you remember into [music] this one's every night at 2:00 a.m. and
+
+pages someone if it fails. Train and registry. >> [music] >> The train cluster produces a model artifact, and the registry stores it with full lineage, which code commit, which data snapshot, which hyperparameters, so any [music] production model is traceable back to exactly how it was built. Serving splits into an online [music] API for real-time predictions and a batch score for offline scoring. Most production [music] systems need both.
+
+And observability closes the loop. Drift detection, quality monitoring, and automated alerting feeds straight back into sources for the next training cycle. [music] Let's zoom into one piece of this, the train stage, and look at what production quality training code [music] actually looks like.

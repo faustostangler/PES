@@ -1,0 +1,67 @@
+---
+video_title: "Stop Debugging Docker Containers the Hard Way"
+video_id: wowLWDe3vL4
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=wowLWDe3vL4
+video_date: 2026-08-25
+video_description: |
+  Catch real bugs before they ship with Momentic: https://momentic.plug.dev/w2sOkAr
+  ---
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Do you know the embarrassment of doing the same thing for years only to have a junior dev sit next to you with a puzzled look asking, "Aren't you just restarting the UI container instead of killing the entire Compose stack every single time?" Well, I'm doing my best not to get there. Not because of the embarrassment, of course, but because I'm a professional. Docker, for instance, never ceases to come up with new, better options. And much like Git, Kubernetes, and others, the sea of subcomands grows to an impossible list of options no one's able to track. But sometimes we're all just missing out.
+
+So today I'm going to show you seven different hidden Docker commands to help you start, build, and analyze containers. The last one comes up with a web UI to dig even deeper. Let's get into it. I'm sure the docs aren't new to you, but did you actually ever stop to think about the paste in which the list on the left gets updated? Did you even once just skim through to see how much beyond docker ls push or pull you have there? I know I didn't. Some commands like buildex are an entire
+
+new world of subcomands on their own and deserve their own video. But today we're going through a carefully handpicked list of actually useful commands you probably hadn't heard of. The first and there's a good reason why it comes before all others is a way to initialize any containerbased project. If I create a new directory, literally empty, and run Docker in it, get this. We'll get all the goodies we'd expect to have and probably craft ourselves as the project grows. A Docker
+
+file, of course, an ignore file, which if you're still not using, check out my Docker file mistakes video and get started. But then a compose file to wrap things up for local use, and yes, a Docker readme file. First, a wizard. We pick a language, which is also on a fuzzy searchable list. Nice.
+
+Then the version which it insists on, a path, a port, and let's go. All created. We're even being alerted that a go module isn't present yet. So, let's check them out. The Docker file doesn't only comes parameterized with arguments, proper mounts, and commands for our picked environment, but also comes with a multi-staged process to make things even linear when building for production using an Alpine image. for example, literally creating the Linux user to make things
+
+safer during runtime and copying the binary and running the server. If you've seen my Docker file mistakes video, you probably already know I'm a big fan of DROless over Alpine. There are a few good reasons for that. One of them is actually that it would take more time to build and run your containers. So consider that and check the video for more information. This is another good
+
+place to stop and remind everyone that while this was created by Docker themselves, they don't have the full context of what you're building. By the way, the same is true for AI agents. And I've shown before how trying to improve things by making them lighter or safer would actually result in something that can be hurtful in the long run. Moral of the story, kids, I read the code. Yes, that my friends is now officially controversial. Good. Now that's established. You know how you
+
+build a project and keep getting stuff you don't want baked into your container like the annoying DStore file. N's secret files which god knows why you have these. How about instead of ignoring each file name and path at a time, we just let Docker take care of us with a beautifully crafted ignore file. And lastly, compose readym made to run based on our container and preferences and also comes with a boilerplate code that you can uncomment below should you need a Postgress for example. And who doesn't need PG these days? Our project is initiated now so it's
+
+time to move files around. Now, I'm not sure how familiar you are with the next command, but even those who have seen it probably don't know its other capability. I'm talking about copying, I mean Docker copying. I have an Alpine image running, which by the way, you can just tell it to slick for infinity. I've been using a weird tail command over DevNull for years. Anyway, exit in
+
+and create a random JSON file. Call it test JSON. Now, Docker can copy files around in and out and between containers. But what happens if I stop the running Alpine and then I'll literally reference it while copying my test JSON from the stop Alpine to my live who am I demo container and what do you know the file is copied. Here's another unknown docker command for you to actually see whether the change was executed or not. Docker diff, which is actually an alias for Docker container div,
+
+will show changes over files and directories on the container file system. C next to a file means it was changed, while A stands for added, hence the root change because our test JSON was just added. This is extremely useful when debugging container images and changes made to them when working locally. I can't tell you how many times I started a container, made sure it's running, then SCP the file in or out, or create an amount to share files, then exit again to see the files added or changed. It all still works, but Docker just lets you work smarter. Speaking of optimizing
+
+your setup, we spend a ridiculous amount of time optimizing the tools we use to write code, especially now with tools like call code and cursor. But there's another part of the workflow that needs to keep up. Yes, testing. And that's where Momentic, the sponsor of today's video, comes in. Momentic is an AI native end-to-end testing platform. Instead of writing and
+
+maintaining a bunch of flaky test scripts, you can describe what you want to test in plain English. And Momentic can build and run those tests for you. But the really interesting part is what happens after that. As your application changes, Momentic can automatically adapt its tests, re-resolving elements when the UI changes, recovering from failures, and keeping the test suite from becoming another thing your engineering team constantly has to babysit. And it fits into the kind of the AI first workflow a lot of us are already using. You can work with Momentic directly
+
+from all coding agents through an MCP, run the tests as part of CI, and use it to verify the code you're shipping. So rather than AI helping you generate more code and leaving you with even more tests to maintain, Momentic is essentially trying to automate that verification layer as well. Check Momentic in the description. Now back to the video. Okay, so you can init copy diff. But
+
+what if you still require some troubleshooting and want to actually trace what's going on like understanding whether an image was pulled or why didn't is there a network issue etc. Docker events, similar to Kubernetes events for those who know it, runs automatically in follow mode on the upper pane. Then let's restart a running container and the event immediately shows up with a unique shot, timestamp, image, and everything you need to pinpoint even in a heavy loaded system. Start it again and the event for that follows. Now, you may only want to filter specific events instead of getting bombarded with too much information. So, grab the type of an event, maybe a file name,
+
+and even the format you'd like it to be presented in. Without a heap of information, there we go. Unix time, action, and name. Simple and easy to follow. Now, with that debugging capability, you can start looking further into containers. Most people know that you can Docker top to
+
+see resources in news. If you didn't, well, there you go. But much like in Kubernetes, you can now Docker update a container, changing its resources according to what you've seen in the top monitor. It's important to note though that you can't change the memory limit upwards without killing the container and it should be smaller than the already set limit. Either make it smaller or don't touch it at all. And the Alpine container is updated. If it's storage you're actually after,
+
+rather than the CPU or memory utilized, docker system, which I personally only ever use to prune my dangling images and volumes, it has a df command much like any other unique system. Docker systemd with a verbose flag. And you can tell every image and how much space it's using, as well as containers and the local volumes. Before concluding, I want to show you something new that's actually currently hidden behind an alpha subcomand because well, it's an alpha. Docker compose alpha comes up with some experimental options and these are unbelievably useful. You can
+
+generate a compose file from existing containers rather than doing the opposite. Run it and save the output where it'll analyze your project and run the implementation for you. To be fair, some of you are wondering why not an AI agent, but we've already established that can come up with lots of slop and mistakes. And you can actually publish your application, which will get Docker to package everything as an OCI artifact and push it to a Docker compatible registry. Once you have that, someone can run it directly, which is another thing I actually didn't know. By running
+
+Docker Compose, providing a remote file using OCI as the protocol. So effectively you can publish a stack whether privately or publicly and have your colleague or anyone really to compose run the same stack on their machine. No copying files, no flaky instructions. Here's the compose file in a DM and then pull the images and change the settings. Just go. Up to this point, you got way more Docker
+
+debugging capabilities than the average engineer. But with Docker Buildex, which I mentioned briefly earlier, there's a whole new world of options opening up. Buildex is an extended suite of capabilities using build kit. If you want to hear more about buildex specifically with build kit, comment below. For now, I want to make you aware of the next which becomes extremely relevant when crossbuilding images for different architectures and operating systems. Lastly, I'd like to show
+
+you something very cool that provides a hidden web UI that lets you analyze Docker builds even further. If we build xx build an image using build kit, we can run buildx history ls to see recent runs and whether they succeeded or failed. But if we add the trace command, check this out. A locally served web UI shows up. It's taking you down the specific operation on every millisecond through what's taking time. With a visual bar chart, you can explore commands,
+
+filter them, analyze your slowness, or even change the visual, building a map of downstream actions that you can read and learn from on how your build node is performing. You can play around with more options like a flame graph and other stuff. This is all based on the famous tracing project Jagger. I definitely recommend you check out. Right, so you're an expert Docker debugger, but what about the steps that comes before that? Docker files are the basics, and if you get them wrong,
+
+well, the rest is already clogged with waste or unnecessary overhead. Check out this video next to make sure that your Docker files are spoton. Thank you for watching. I'll see you on the next

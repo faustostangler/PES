@@ -1,0 +1,55 @@
+---
+video_title: "Develop Chrome Extensions with DevTools for agents"
+video_id: H5poN8Q4cuk
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=H5poN8Q4cuk
+video_date: 2026-08-27
+video_description: |
+  Setting up extension tools for Chrome DevTools for agents allows your coding agent to interact with and debug Chrome Extensions. With the tools enabled, your agent can install an extension from disk, open popups, and click specific elements to verify functionality. Watch the demo to see it in action and understand how the Chrome DevTools Protocol, Puppeteer and the W3C WebExtensions Working Group play into it.
+  
+  Chapters:
+  00:00 - Introduction to Chrome DevTools for agents
+  00:29 - How to configure the extensions flag
+  01:10 - Demo of an agent installing an extension
+  01:32 - Understanding the required tools and commands
+  01:55 - Examples of related developer content
+  02:30 - How the Chrome DevTools Protocol powers agents
+  03:02 - Benefits for Puppeteer and web standards
+  
+  Resources:
+  DevTools for agents: Setup →https://goo.gle/dta-setup
+  
+  
+  Questions? Find us on LinkedIn:
+  https://www.linkedin.com/in/oliverdunk/
+  https://goo.gle/chrome-for-developers
+  
+  Watch more DevTools Tips → https://goo.gle/DevToolsTips 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome #WebMCP
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome,  Chrome DevTools,
+---
+Let's talk about how to let your coding agent install Chrome extensions in this special episode of Developer Tooling Tips (on tour) from India at I/O Connect Bengaluru. DEVELOPER TOOLING TIPS TUTORIAL ON TOUR You can use Chrome DevTools for agents to let your coding agent install and debug Chrome extensions, and while Matthias is away, I'm going to show you how. Let's talk through when that might be helpful as a developer and how to get it set up. Once you've built a Chrome extension, either by hand or using a coding agent, you need to test it in the browser. Agents often have a way to access the browser out of the box, but their capabilities are often limited.
+
+Chrome DevTools for agents has additional tools enabling your agent to control extensions, too. Learn how to set it up through this link. With DevTools for agents, we want to be very mindful of used tokens in the context window. As a result, we don't enable the tools specific to Chrome extensions by default. After installing, find your mcp_config and add the --categoryExtensions flag.
+
+That'll get you ready to go. With everything set up, let's take it for a spin. I built this to-do list extension to keep track of everything I want to do while I'm in India. Let's ask my agent to install the extension, open the pop-up, and check off the task to film Developer Tooling Tips. And away it goes.
+
+How did this work? Using the install_extension tool, our agent can load the extension from disk into Chrome. Then, using the trigger_extension_action tool, it can open our extensions pop-up. Finally, using the more general take_snapshot tool, it can access the contents, allowing it to check that everything loaded and find the button to complete the task. It can then interact with the button using click, finishing the process.
+
+If you want to see examples of using this to build something, we have some great content on the channel. Check out Sebastian's video from I/O Connect Berlin to see a full recording of a workshop he gave on this topic through this link. It's a brilliant resource. I'm so glad we get to share it more broadly. Keep an eye out for an upcoming episode of Developer Mode, where Melica shows how to use Chrome DevTools for agents, along with Modern Web Guidance to stay dry in rainy weather.
+
+There's still no sign of Matthias. I know you're here for the technical details, so let me tell you a bit about how all of this works behind the scenes. Follow me. We built Chrome DevTools for agents on top of the Chrome DevTools Protocol. This is the underlying protocol used by Chrome DevTools and tools like Puppeteer to control the browser.
+
+Last year, after exposing new extension-related capabilities in the Chrome DevTools Protocol, we were able to launch new features in Puppeteer to make it easier to install extensions in automated tests. Now, we've been able to directly expose those same capabilities in Chrome DevTools for agents. The great thing here is that any work done on any tooling is likely to benefit the rest of our tooling ecosystem. If we add any new capabilities to Puppeteer, say, pinning or unpinning an extension, we'll be able to add that to Chrome DevTools for agents at the same time. The same should be true the other way around.
+
+This is also directly helping with our work in the W3C WebExtensions Community and working groups to make extensions more compatible across browsers. The web-platform-test project is a test suite shared by browsers to make sure they behave predictably. Using these new capabilities supported by Chrome, we're adding web-platform-tests for the extension APIs. Finally, some extensions content in Developer Tooling Tips. I hope I can bring you more in the future, but to recap, install Chrome DevTools for agents to give your agent the ability to install and debug Chrome extensions.
+
+It only takes a few minutes, and it's a total game-changer. Matthias will be back with more tips soon. Until then, from India, thanks for watching. A POWERFUL WEB. MADE EASIER.
+
+WATCH MORE

@@ -1,0 +1,73 @@
+---
+video_title: "NVIDIA’s AI Finally Solved Walking In Games"
+video_id: _uo7CXd33Uc
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_uo7CXd33Uc
+video_date: 2025-12-21T14:46:29+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  📝 The paper is available here:
+  https://research.nvidia.com/labs/toronto-ai/trace-pace/
+  
+  📝 My paper on simulations that look almost like reality is available for free here:
+  https://rdcu.be/cWPfD 
+  
+  Or this is the orig. Nature Physics link with clickable citations:
+  https://www.nature.com/articles/s41567-022-01788-5
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Benji Rabhan, B Shang, Christian Ahlin, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Steef, Taras Bobrovytsky, Tybie Fitzhugh, Ueli Gallizzi
+  If you wish to appear here or pick up other perks, click here: https://www.patreon.com/TwoMinutePapers
+  
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  X/Twitter: https://twitter.com/twominutepapers
+  Thumbnail design: Felícia Zsolnai-Fehér - http://felicia.hu
+  
+  #nvidia
+---
+You’re probably looking at this and are thinking: “I’ve seen little 3D people walking on grids”. Nothing new here, right? But have you seen this? Oh yes! So, you are absolutely right, these walking movements don’t seem anything new. We have plenty of games already with moving characters. So what’s new?
+
+Now, you see, in most computer games, these NPCs are essentially floating capsules. The game code moves the capsule, and an artist plays a "walk cycle" animation on top. And, yup, here’s the problem. If the speed doesn't match perfectly or anything unexpected happens, the feet slide on the ground. This makes for these glorious moonwalking bugs. Or worse.
+
+But, we don’t do that around here. Not in this paper. Here, they have these little agents that are not capsules, but are actually physically simulated. So, they are not just little recordings being played over the capsule. That means…whoops! That’s
+
+right. These characters have about 20 motor-driven joints, and if they don’t control them correctly, well, this is what happens. Jesus Christ that must have hurt. Now, continuing…hey! Oh my goodness, this is even worse. However, look! Not everything is lost. If you teach them well,
+
+they can still get up. I’ll tell you how it’s done in a moment. And it only gets better and funnier from here. Why? Because with this system, they can learn many movement types from scratch. No sliding feet or
+
+moonwalking bugs. Although when they go slow, they look a little constipated. In this case, instead of going slow, I recommend running like this! Much better. Hope you make it there in time, little AI.
+
+Now, in most games, to have a crowd avoid each other, we usually write strict rules saying that “If neighbor is close, turn left." Does it work? It does, but this creates very robotic, stiff, and predictable crowds. But here, I feel like this AI-based technique creates something that looks a bit more organic. And as a result, it can also deal with a bunch of different body types as well. Short, tall,
+
+plump, not a problem. I love how the realism of this system makes them all move a bit differently. So cool! Now, because the pathfinding is generative, their little brains imagine the route ahead - so they don't just bounce off walls like confused Roombas. They actually weave through clutter with a smooth, predictive flow that feels surprisingly human.
+
+Now, as good computer graphics researchers, let’s put them to the real test. Terrains! And this is where the magic happens! Since they are physically pushing against the world, they naturally adjust their movement for stairs, and slopes. Even rocky paths work, and the best part is that no special "stair animation" is needed here - this is just pure physics and learning at work.
+
+How the heck does it do all this magic? Well, Fellow Scholars, meet the brain and the muscle. Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. A technique called Trace is the brain here. It uses a diffusion model, similarly to the
+
+tech behind those AI image generators. But here, it doesn’t dream up images, it dreams up paths. Now this brain doesn’t just draw a line for a path like in most games, it imagines. Yup, it imagines the future and predicts where open space might appear in the future, and updates its guesses as the environment changes. Loving this.
+
+Now, we are not nearly done yet. We also need the muscle. This technique is called Pacer. Now the muscle doesn’t care at all about plans. It just looks at the line in front of it, and is trying to move its joints to stay on it without eating dirt. So this is why here,
+
+we don’t have a canned animation. Nope. Here, it is running a live simulation where joints are fighting gravity every single frame. And you need to do it 30 times per second. Crazy.
+
+But now here is where the real magic happens. Here, the brain and the muscle, they actually talk to each other. If the muscle is about to slip a rock, it says “holy crap, help me!” and the brain says “okay, okay”, and plans a new, safer path. This constant bickering between the dreamy brain and the struggling legs is one of the keys to success here. Hilarious.
+
+But this still doesn’t work. Yet. Don't think for a second that this "muscle" came out of the box knowing how to walk. No sir! The scientists had to put this AI through a digital boot camp that would make a marine cry. At first,
+
+this AI is a bit like a toddler on ice. It has no idea how to use its knees and keeps faceplanting. To improve this, the researchers use something called Adversarial Reinforcement Learning. Essentially, they have a "Discriminator" - a judge. The AI tries to move, the judge looks at it and says, "That doesn't look like a human walking, that looks like a glitching ragdoll. Do it again!"
+
+Now, over billions of attempts, the AI learns that if it stiffens its leg properly, it stays upright. And billions is probably a conservative estimate here. Why? Because they trained more than 2,000 humanoids in parallel for 3 days to achieve this. So it finally also learned that if it swings its arms just like that, it looks natural. It is literally evolving the ability to walk, purely to please the judge.
+
+And it all just happens naturally because the physics of the world demands it. Beautiful. And I want to take a moment to appreciate just how clever the brain really is. We are used to diffusion models making images from noise, right? You start with static, and out comes a cat or something. Now, here, they start with a noisy,
+
+squiggly line - absolute chaos - and the model denoises it into a smooth, logical path. But here is the kicker: just as you prompt an image generator, they can guide the diffusion to force agents into social groups, effectively telling them to walk side-by-side. Now, I hear you Fellow Scholars asking, Károly this is cool, but why do we need this? Games work fine! And I think that is a fair point. For your average shooter game,
+
+this is not needed at all. But think bigger. For instance, think about self-driving cars. When we test autonomous vehicles in simulation, we need pedestrians. But if those pedestrians follow simple, perfect rules, it looks too robotic, and the car learns to drive in a world that doesn't exist. However, real humans are messy. Some don’t pay attention to what they are doing,
+
+and some simply don’t care. If a self-driving car only trains against hardcoded video game scripts, it’s going to panic the first time it meets a real human. Now this system allows us to fill a virtual city with thousands of agents, all behaving slightly differently, but all of them physically grounded. We can tell them to "walk aggressively," or like a constipated hippo, and they will generate unique, messy, realistic data that helps train safer cars. So it’s not just graphics - it’s a safety simulation too.
+
+And we get all of this for free, not just in the paper, but the source code is available for all of us for free. That’s amazing. Subscribe and hit the bell if you wish to hear more like this.

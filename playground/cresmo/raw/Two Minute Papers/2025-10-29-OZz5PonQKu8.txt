@@ -1,0 +1,73 @@
+---
+video_title: "They Said It Was Impossible… Weta FX Just Solved It"
+video_id: OZz5PonQKu8
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OZz5PonQKu8
+video_date: 2025-10-29T17:57:43+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  Guide:
+  Rent one of their GPUs with over 16GB of VRAM
+  Open a terminal
+  Just get Ollama with this command - https://ollama.com/download/linux
+  Then run ollama run gpt-oss:120b - https://ollama.com/library/gpt-oss:120b
+  
+  📝 The paper "A unified multi-scale method for simulating immersed bubbles" is available here:
+  https://alexey.stomakhin.com/research/unibubbles.html
+  
+  📝 My paper on simulations that look almost like reality is available for free here:
+  https://rdcu.be/cWPfD 
+  
+  Or this is the orig. Nature Physics link with clickable citations:
+  https://www.nature.com/articles/s41567-022-01788-5
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Benji Rabhan, B Shang, Christian Ahlin, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Steef, Taras Bobrovytsky, Tybie Fitzhugh, Ueli Gallizzi
+  If you wish to appear here or pick up other perks, click here: https://www.patreon.com/TwoMinutePapers
+  
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  X/Twitter: https://twitter.com/twominutepapers
+  Thumbnail design: Felícia Zsolnai-Fehér - http://felicia.hu
+---
+Wow! I got goosebumps! Here is one of the best research works of the entire year. I think. It is about simulating bubbles and it is so beautiful, I am out of words. But only for a second,
+
+because I want to tell you all about it. Just look at this. This is not reality, this is a computer simulation with a new research work, and I am so happy that I can show it to you. You see, it seemed very likely that I can’t. It was mainly done by Weta FX, an absolute powerhouse visual effects company, and I’ve been in contact with the authors of the paper, and…I am delighted to say that we are in the clear and I can show it to you and tell you all about it. Happy, happy day.
+
+Now imagine pouring a glass of sparkling water. Millions of bubbles rise, collide, merge, and burst. It’s like a tiny orchestra underwater. Now imagine trying to recreate that in a movie or a simulation. The problem is that you can either make the big bubbles look great, or the tiny misty ones look great, but never both at once. Artists must fake it
+
+with two different systems, and when the two meet, everything breaks. This research work finally fixes that - one simulation that handles everything from a single bubble to huge blobs. Now, there is this existing work that can do bubbles in simulations. This one treated everything as particles, allowing splashes to turn into foam and foam back into water. And it is so simple, I mean, what? I had to read this previous paper twice to even start to believe that such a
+
+simple technique could really work at all. Yet, working this well, goodness! You see, normally, to be able to simulate the formation of bubbles or foam, we would need a ton of computation. Instead, the paper forfeits that and goes with the notion that bubbles and foam appear at regions where air gets trapped within the fluid. On the back of this knowledge, they note that wave crests are an example of that, and propose a method to find these wave crests by looking for regions where the curvature of the fluid geometry is high and locally convex.
+
+Both of these can be found through very simple expressions. Finally, air is also trapped when fluid particles move rapidly towards each other, which is also super simple to compute and evaluate. The whole thing can be implemented in a day and it leads to superb fluid animations. So we could do all this 12 years ago, and it looks fantastic, so what is the problem? Yes, it works, but it only works for surface foam and sprays - once bubbles go underwater and start merging or breaking apart, the method completely falls apart. So, previous method, bubbles around
+
+the surface, sure. But bubbles deep underwater, not a chance. No sir! It could never do this scene that the new method can do with ease. Goodness - look at this. When the character exhales, you see
+
+a mix of these beautiful small and big bubbles, and not only that, but they are able to coalesce, and separate as they truly would in reality. I can’t believe what is going on here. Wow! Previous techniques couldn’t even come close to this kind of quality. The new one simulates a stupendous number of particles in these scenes, and not only that, but it does this really efficiently. What is this view? Well, this shows a sparse
+
+grid of 3D tiles around the bubbles, it is a really incredible showcase of adaptivity, in other words, how it focuses the computation only to the parts where the real action happens. The bubbles are the orchestra, and the grid is the stage, lit only where the players are. But it gets even better. It can even mix bubbles, sand and water in the same scene. Oh my goodness.
+
+Just think about it, the density of a sand particle compared to a bubble is 1,500 times to one, and it can simulate them dancing together. Whoa. Heavy sand is sinking. Light bubbles are racing upward, and water is swirling between them - and this just takes one, unified simulator. Everything checks out here man. This is going to change everything.
+
+Now, I absolutely loved this little parameter study, this shows how bubbles of different sizes rise through water. The smallest, 3,4,5 millimeter bubbles go up smoothly in straight lines. Easy easy. Now, look - medium-sized ones start to wobble and as we increase their size some more, they separate and change shape as they rise. And if we go above 18 millimeters, that’s when the magic happens.
+
+These bubbles move in a wild, chaotic way, twisting and breaking apart into smaller ones. It’s the same physics we see in real life - and this simulation captures all of it perfectly. We also have one really cool study with surface tension, I’ll show it to you soon. So, I know, I know, you’re asking, Károly. Now tell me, how does it work?
+
+How is all this magic possible? What arcane knowledge is behind it? Well, behind it, there is lots and lots of beautiful mathematics, I’ll try to decode it for you Fellow Scholars, but it’s not always easy. Sometimes, a formula has so many subscripts and superscripts that it makes my head spin. But I think I got it. I’ll try my best. Let’s dive in. Dear Fellow Scholars,
+
+this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. Dr. Carroll. Okay, so this was the particles-to-grid velocity transfer with surface tension correction step. It sounds pretty spicy, but it’s actually beautiful: it describes how each
+
+bubble particle’s motion is blended into this grid you see here. But that’s not all. It does it while taking into account how pressure and surface tension push and pull on the bubbles. In simpler words, it’s like translating the chaotic movements of millions of little musicians into one smooth orchestra score. Each little bubble plays its note, and this equation ensures that when all their motions are combined, they create one perfectly synchronized flow.
+
+Incredible. However, one limitation of this work is that when bubbles get too small or too few, the orchestra starts losing instruments - the music becomes thinner and less detailed. But overall, this is so good, it also won best paper award at the Eurographics conference. Of course it did, I mean, look at this. Now, I promised the surface tension study, so here it is. On the left,
+
+you see that with no surface tension, the bubbles break apart so easily and scatter into chaos. As surface tension increases toward the right, the bubbles hold together more tightly. Things get a little more stable. In simple terms: more surface tension means bubbles stick together better, less tension means they fall apart. Surface tension keeps our little orchestra in tune. You see,
+
+sometimes tension makes things hold together a bit more. Excellent life advice right there. Now, runtime, a small diffuse bubble column runs close to interactively, while a huge scene with the overturning barrel takes about 22 minutes per frame. It’s a long time, but all this happens on just one machine. Not a render farm.
+
+And yet, nobody talks about these works! They’re the endangered species of computer graphics, and yet they create the physics behind some of the most beautiful movies. And nobody knows. Nobody knows about these! So, save a paper today, like, subscribe, hit the bell icon and leave a really kind comment so this maybe gets a chance to get recommended to other Fellow Scholars by the Youtube algorithm. Thank you so much.
+
+I got goosebumps here seeing these results, and now I hope that you do too. So, bubbles rising, they grace the airs, all of them in perfect layers - subscribe to Two Minute Papers!

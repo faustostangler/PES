@@ -1,0 +1,181 @@
+---
+video_title: "Domine Seus Dados, Domine seu Agente de IA (RAG)"
+video_id: 0tnjqwBiWik
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=0tnjqwBiWik
+video_date: 2025-07-24
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Lista de espera aberta): https://www.rhawk.pro/comunidade
+  
+  
+  ––– Descrição –––
+  Quer construir soluções com IA Generativa que vão além de simples chatbots e realmente resolvem problemas do mundo real? 
+  
+  Neste tutorial completo sobre RAG (Retrieval-Augmented Generation), você vai aprender o segredo para dominar seus Agentes de IA: dominar seus dados. 
+  
+  Acompanhe o passo a passo de um processo profissional, desde a ingestão e indexação de dados (usando Python e LangChain) na sua máquina local, até a criação de um banco de dados vetorial (Vector Store) e a automação completa na nuvem com Kestra e Supabase. 
+  
+  Este guia é perfeito para desenvolvedores, empresários e iniciantes que desejam entender como alimentar LLMs com informações privadas, avaliar as melhores estratégias de "chunking" e construir sistemas de IA robustos e escaláveis. Deixe de lado as "caixas pretas" e aprenda a controlar a informação para construir o futuro da IA.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução 
+  0:41 Afinal, qual a importância da RAG?
+  2:34  Prestando atenção na indexação
+  3:03 Apresentando o framework e solução
+  5:32 Desenvolvendo a VectorStore no Postgres Local
+  15:43 Fazendo deploy da solução: Supabase + Kestra
+  20:22 O caminho para o sucesso em soluções de IA
+  
+  
+  ––– Agência –––
+  
+  A melhor consultoria em IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #agentesdeia #python #rag #langchain #kestra
+---
+Quem controla a informação controla o futuro. Mas antes da informação existem os dados. Fazer bastante dinheiro com IA não é sobre caixas pretas, é sobre dominar o processo de geração de informação. E é exatamente isso que você vai ver no vídeo de hoje. Você vai entender como transformar dados em informação para a sua LLM e o porquê. Eu
+
+vou te mostrar o passo a passo que eu sigo desde a implementação local, desenvolvimento local, né, a criação da solução na minha máquina até a automação completa, colocando isso na nuvem, é, de modo que a gente não fique naquele funciona na minha máquina. Então, bora pro vídeo, OK? Mas antes de começar a entrar na parte técnica, vamos falar um pouquinho aqui sobre a reg e por que ela tá aqui, tá? Ll tem dados de treinamentos limitados em alguma data. Em algum momento eles param de eh coletar dados em tempo real, dados do mundo, tá? e treina o LLM. Então, se
+
+você perguntar alguma coisa eh precisamente de hoje e a sua LLM não tiver acesso a uma ferramenta externa para pegar as informações de hoje, o que vai acontecer é que ela tende a alucinar. Ela vai te responder com convicção de que de fato algo aconteceu, só que ela de fato tá inventando. A regra é um meio de mitigar isso, tá? Um outro método, uma outra importância da regal chance de você fazer dinheiro de fato, que é o propósito aqui no final das contas, né? eh você eh oferecer soluções de reg, seja paraa empresa que você trabalha, né, e você ganhar uma promoção, eh, ou seja se você é um empresário, OK? Então, você pode pegar
+
+uma um conjunto de dados privados que a LLM não tem acesso, você vai fazer essa reg, né? Eh, primeiramente um banco de dados. Você vai pegar esses dados todos, vai botar num banco de dados de maneira que uma LLM consiga consultá-los e dar a resposta baseada nos dados que você forneceu e não nos dados eh de treinamento apenas, tá bom? Então essa é a importância da reg. É disso que a gente tá falando aqui. Eu fiz um
+
+primeiro vídeo sobre reg aqui no YouTube. Se você não não conhece, eh, não viu, eh, te recomendo ir lá. E a motivação dele foi mostrar um processo de ha de ponta a ponta. E por que que eu fiz isso? E por que que se chama reg?
+
+Porque a maioria dos vídeos, a maioria não, todos os vídeos que eu vi, na verdade, aqui eram demonstrações muito simples e triviais, eh, que não correspondem ao mundo real. Então, se a gente tá aqui para fazer dinheiro, eh, eu queria mostrar para vocês algo como se parece no mundo real, algo como um time de desenvolvimento faz e não como eh uma brincadeirinha de fazer reg, né? A ideia é fazer dinheiro, então eu mostrei algo eh que se parece com uma reg do mundo real, beleza? E nesse vídeo de hoje aqui, a gente não vai se preocupar necessariamente com essa reg, né? Eh, são três letrinhas eh com objetivos distintos ali. A gente vai se
+
+preocupar que com o I, que seria a ingestão ou mais tecnicamente conhecido como indexação. A gente vai criar, a gente vai passar pelo processo de criação dessa nossa memória. A gente vai criar um banco de dados passo a passo bem bonitinho. Você vai entender todo o processo a partir de agora, tá? O que que acontece aqui? Você tá vendo aí
+
+minha solução toda e tal? O que que a gente acontece aqui? E o que que a gente vai fazer? A gente vai é extrair dados desse repositório aqui, é do, tá? A galera tem me perguntado, Roland, o que que você acha do agno? O que que você
+
+acha do agno? Então, vou imaginar que eu queira estudar agno agora, tá? E eu vou estudar de fato para fazer um vídeo para vocês e dizer o que eu acho. Eh, e aí geralmente todos esses repositórios têm um docs, OK? E esses docs estão formatados nesse formato de arquivo aqui, ou tão no formato MDX ou tão no formato MD. Guarda essa informação aí. E
+
+o que a gente vai fazer é pegar esse arquivo com o nosso script. Nós vamos botar num banco de dados, tá? E a gente vai usar um scriptinho Python aqui localmente na minha máquina. A gente vai pegar esse script Python e vai botar na Vector Store, que seria o banco de dados final onde nosso agente vai consultar. Aqui, se você não tá acostumado com essa figurinha, ela é o símbolo do post gray.
+
+O que significa que eu vou rodar um post gray local, mas lá na nuvem, lá em deploy, eu vou rodar no Supas, que é o banco de dados que todo mundo ama, tá certo? Então beleza, né? O banco de dados não, o serviço, né? Porque o banco de dados continua sendo poster, tá? E aí no final a gente vai rodar teste para ver qual é a melhor estratégia até esse ponto. É assim que um mundo real
+
+funciona, tá? É, e é assim que um time de desenvolvimento vai funcionar. Então você precisa ter ciência onde estão e os gargalos. E eu vou explicar para vocês tintim por tintim o por que a gente tá fazendo isso. Ah, Mronald, mas um caso de uso que eu tenho não é é Markdow, é Jason, é uma API, é o o que for. Nesse
+
+vídeo aqui, para não ficar extenso demais, eu não vou cobrir isso, mas nesses casos aqui, principalmente nesse framework que eu tô usando, o desenvolvimento, né, ou esse passo eu chamo de um pré-processamento. E o que que você pode fazer? Isso é uma uma recomendação legal, você equalizar e os seus arquivos antes para um formato único, porque aqui você vai ter vantagens quando você fizer isso aqui na estratégia de gestão que a gente vai falar. Existem diferentes meios para você fazer isso. Eh, a Microsoft tem esse pacote aqui chamado Market, que converte vários formatos de arquivo em MD. Então, você pode tentar. Dito isso,
+
+bora pro código, né? Vamos ver aqui como é que isso se comporta. Eh, vamos lá. Beleza. Então, o que que a gente tem aqui? Como você viu lá no meu diagrama,
+
+a gente tem três passos fundamentais, né? A gente tem a extração, a gente tem o processamento e a gente tem eh o evaluator, tá? E cada passo desse tem a sua importância, é a única. A gente vai executar eles aqui e eu vou explicando para vocês eh o o que que ele faz, o que que ele não faz, como que ele tá estruturado. Beleza? Então, eu executei
+
+aqui na minha máquina, é um script Python bem simples, tá? Onde eu passo a URL de onde eu quero, tá? Pegar o documento. Eu tô falando quantos documentos eu quero pegar e finalmente eu tô passando a tabela, a tabela ao qual eu quero escrever o D. Beleza? É só
+
+isso. É só isso que tá acontecendo aqui. Se você vê aqui, cara, tem uma coisa chamada plugins, tá? E essa é uma ideia bem comum quando a gente desenvolve e frameworks ou software, que você reutiliza o código. Você não faz todo o código ao mesmo tempo, sempre é o mesmo, o mesmo. Você faz uma vez e reusa ele
+
+para sempre. E é por isso que eu consigo ser tão efetivo criando solução. Eu consigo ser tão rápido, porque várias coisas eu já tenho pré-construídas. Se você tá acostumado com N8N, por exemplo, lá tem plugins, só que lá você tem que esperar alguém fazer um plugin para você e ficar rezando: "Pelo amor de Deus, o novo plugins lançou". Aqui você senta e faz seu plugin rapidamente e reusa para sempre. Então essa é uma grande
+
+vantagem. E então hoje em dia com IA, né, com Vibe Coding, se você fizer isso, documentar bem, cara, tu vai fazer muito mais rápido, é do que é antes. Beleza? Então a gente vai extrair o dado como a gente fez aqui. Então dados extraídos, armazenado na tabela stage parará. R,
+
+onde tá essa tabela? Essa tabela tá local. A gente tá rodando aqui local e eu vou pegar ela aqui agora, tá? Essa aqui é a nossa tabela. Vou dar uma atualizada aqui só para você ver. Stage
+
+em YouTube. E aí, tá aí, a gente pegou dois documentos lá do da lista como previsto. E aí você vê que é o R content seria o conteúdo do jeito que ele é no MD, tá? O que a gente faz aqui é armazenar o conteúdo como ele é. Beleza?
+
+Por que que a gente quer fazer isso? Por que que a gente quer armazenar o conteúdo do jeito que ele é? Pode ser que nossos próximos passos falhem, pode ser que a gente tenha uma melhor ideia, pode ser que aconteceu um bug no processamento. Existem várias razões paraa gente querer guardar o dado como ele é logo no começo, tá? Então, a gente fez isso aqui. Eu faço uma conversão de
+
+conteúdo para MD e aqui eu tenho alguns metadados falando de onde veio o dado, eh, de onde as coisas vêm, etc, etc. só para controle interno. E isso aqui é fundamental se você de fato tá criando algo para fazer dinheiro, porque eh eventualmente alguma coisa vai sair do trilho e você precisa ter track total e vamos torcer para que nunca nada algo saia do trilho. Mas se pode acontecer é seu sua função como líder ou como desenvolvedor garantir que tenha como, né, mitigar qualquer problema. Então essa é a função desse dessa etapa aqui.
+
+Então a gente fez essa etapa, show de bola. Agora a gente vai fazer os chunks. E enquanto faz o chunk, eu vou explicando para vocês. Deixa eu botar aqui. Botei para rodar. Vocês estão
+
+vendo aí que tá rodando o Proxess. E eu vou explicar o que que tá acontecendo aqui. Vamos voltar para lá. Chegamos aqui, botamos o nosso arquivo no stage. Como você viu, deixa eu dar um zoom aqui. Como você viu, o stage tá
+
+aparecendo com isso aqui. Beleza? E agora a gente vai botar o nosso arquivo lá na Vector Story. Mais uma vez a gente tá usando o script Python localmente. Você vê que tá tudo local. Tô rodando
+
+tudo aqui na minha máquina. O que é afinal, Ronald? Uma vector store? O que que é um vetor? O que que é uma semântica? O que que é uma busca
+
+semântica? O que que tudo isso? Se você tem curiosidade de ler sobre Rock Pro, tem um artigo sobre memória semântica, você vai lá ler o que te custa nada, né? Então tá lá. Basicamente é o seguinte, caras, a gente vai pegar o nosso arquivo grandão. Você viu lá todo aquele arquivo
+
+e agora a nossa missão é dupla. A primeira a gente tem que quebrar esse arquivo grandão em arquivos pequenininhos, tá? Em arquivos menores. Por que que a gente faz isso? Se você viu lá meu vídeo de contexto, eh, aquilo tem uma importância enorme. Às vezes
+
+você pode pegar um documento muito, muito grande. Vou imaginar que você pegue lá, cadê meu livro de banco de dados que eu tenho aqui, um livro grandão, tá? Eu vou imaginar que você pegue aquilo tudo lá e aquilo seja a sua extração. Você não quer, na hora que chamar sua LLM, por exemplo, quero criar uma tabela, você não quer passar todas as DLLs, você não quer, pô, ver como que ele escreve no disco, você só quer saber de fato como criar uma tabela. E é exatamente esse motivo. A gente vai
+
+quebrar em chunks para criar valores semânticos mais significativos para LLM. Isso vai ficar mais claro à medida em que a gente andar aqui. O que que a gente vai fazer com isso? A gente vai quebrar em pequenos pedaços e esses pedaços não são determinados. E é aqui que tá o pulo do gato, tá? Vamos ver
+
+aqui uma parada. Seguinte, esse aqui é um método de fazer chunking. Esse esse processo é chamado de chunking. E existem muitos métodos para fazer chunking, tá, caras? Existem diferentes métodos. Você pode escrever o seu
+
+próprio método, ninguém vai te impedir, ok? E o que eu faço tudo aqui, caras, é chamar cada estratégia dessa ou cada tipo de estratégia dessa aqui, OK? E falar para ele fazer, tá? E como que essa estratégia é definida? Basicamente, caras, eu só tô usando tudo que Linkchange já fornece, tá? Eu tô usando
+
+eh cada um desses aqui são eh funções lá do Linkchain e eu só tô fazendo ela ficar genérica a ponto de eu conseguir reutilizá-la toda vez que eu for fazer uma reg. Caras, é assim que você ganha velocidade mais uma vez, é tendo, e plugins, é tendo coisas reutilizáveis, e de modo que você consiga acelerar seu processo. Então, rodamos aqui tudinho e aqui você vê que ele fez o que tinha que fazer, né, caras? Ele foi lá, ó, e você vê que os chunks são de tamanhos diferentes, curiosamente, né? Então, exatamente o que a gente quer. A gente
+
+quer diferentes eh perspectivas do dado pra gente poder testar, beleza? E aí você vê aqui qual foi o tamanho do chunken, parará. E por último, mas não menos importante, agora a gente vai rodar a avaliação, tá, caras? O evaluator. O evaluator é bem rapidão, a gente não precisa muito se preocupar. E
+
+aqui eu vou mostrar para vocês que eu criei um evaluator, caras. Eu tô usando no Evaluator, eu tô usando algumas coisas aqui do arco da velha, tá, caras? Como eh similaridade de cosseno, eu tô usando, né, pit learning, são coisas da velha guarda, digamos assim, eh mas que são úteis quando a gente tá lidando com o vetor. Pelo seguinte, vamos voltar aqui pra nossa apresentação. O que é um vetor, tá? O
+
+que que acontece? Deixa eu dar um zoom aqui, tá? Vou imaginar que a gente o nosso texto aqui, eh, foi criado os chunks e, e de fato foi criado. Vamos lá ver. Eh, os chunks estão aqui, tá? Esses
+
+são os chunks do nosso texto. Vamos ver aqui. Calma aí. Aqui, ó. Esses são os chunks, tá? Eles foram criados. E se
+
+você ver aqui, notar eh tiver um olhar mais atento, para cada e arquivo eu tenho diferentes estratégias. Ó, eu tô no recursível. Se a gente vier aqui descendo pro mesmo arquivo, eu tenho e um outro tipo de estratégia e por aí vai. A ideia de transformar aquele texto cru em um vetor é exatamente para extrair significado que a gente consegue manipular matematicamente ou aritmeticamente, tá? E o que que acontece? Vamos imaginar que a gente
+
+tenha feito aqui uma reg de frutas, verduras e tal ou palavras em comum. E é basicamente isso que que vai acontecer. Por exemplo, futebol tem uma relação pequena com banana, correto? Mas banana tem uma relação grande com maçãs e é exatamente isso que a gente tá fazendo aqui agora. Percebe que a gente não envolveu LLM em momento nenhum desse nosso desenvolvimento aqui. E a galera
+
+fica afobada, vou fazer meu agente, vou fazer meu agente e Open Aa e L. Cara, tem um trabalhão para tu fazer antes sem nada, bicho. Sem isso aqui, teu agente nunca vai ficar bom. Teu a gente regra, essa aqui é real. Se você não prestar atenção nisso aqui, se você falar assim: "Não, eu jogo lá e Deus abençoa, torço para que Deus abençoe, mas você tá girando uma roleta." E a gente é
+
+profissional, a gente não quer ficar girando roleta e contando sempre com a sorte. Eventualmente a gente agradece quando a sorte acontece, né? Mas a gente precisa dominar porque uma vez que a gente domina, a gente consegue fazer processos que são repetíveis. Esse é o meu objetivo aqui, é te levar a ter sucesso o máximo possível. Se você ainda não entendeu nada que eu tô falando, lembra do filme Interestelar, quando o Cooper tá lá no no multiverso, aquela loucura toda e ele tá tipo numa biblioteca e tem vários vários lugarezinhos, tá? Eh, para ele entrar,
+
+pensa nisso como nosso chunking vetorizado, nosso embeding. Ele é como se fosse um arreio multidimensional, eh, que tá além do eh três dimensões. Aqui, como a gente tá vendo nesse gráfico, ele tá tem muitas dimensões e ele pode entrar ali. Então, esse arreio aqui, né? Esse vetor é um vetor denso, complexo, tá? Então a gente consegue
+
+resolver isso com a boa e velha matemática. E nesse caso aqui o que a gente faz é um cálculo chamado similaridade de cosseno. Se você tiver interesse, recomendo aí. Mas você não precisa saber disso de cabeça, obviamente. Roland, tem como fazer isso melhor? Tem como fazer melhor, sim,
+
+caras. Tem técnicas avançadas de construção de vector store. É a que eu mostro mais gosto aqui é a chamada de Cobert. E finalmente a gente vai e faz o teste aqui, como eu mostrei para vocês, né? E o teste rodou, tá? E é um teste
+
+que eu criei. Os critérios são meus, baseados nos minhas experiências e nos meus gostos. Existem teste testes mais eh eh determiniscos, digamos assim, eh que eu falei lá no outro vídeo, mas esse aqui é o primeiro teste que eu gosto de fazer, então é por isso que eu tô compartilhando aqui com vocês. E no final a gente tem o ranking das estratégias. A gente usou cinco estratégias lá para fazer o chunk, né?
+
+estratégias diferentes. Então, vou imaginar aqui que a gente ficou satisfeito com a nossa estratégica, a estratégia número um, que seria a estratégia de semantic splitter, que é um tipo de criador de chunking. Então, a partir de agora a gente usaria ele para prosseguir com a nossa regra. OK? Estamos satisfeitos? Vamos botar isso na
+
+nuvem. A gente vai fazer o seguinte, a gente salva o arquivo aqui na nossa máquina, igual tá aqui, e a gente vai comitar ele. A gente comitou lá no GitHub, tudo certo? Então, vamos lá. É, ele tá aqui no GitHub, igual você tá vendo aí, tudo certo? Beleza? O que que
+
+a gente vai fazer agora é usar uma ferramenta, né, que eu já apresentei aqui para vocês chamada Castra. Com essa ferramenta a gente automatiza coisas tipo NN, vai da só que muito melhor. E a gente faz o código Python na nossa máquina, né? Então eu faço o código lá na minha máquina, subo pro GitHub, por exemplo, e aqui eu crio o flow. Eu posso criar aqui manualmente, né, aqui no no visual, se eu quiser, tá? Ou eu posso simplesmente
+
+usar aqui o emo, tá? Hoje em dia eu uso muito mais o emo, tá? Mas quando eu tava começando, eu usava muito essa parte visual aqui para criar as caixinhas e tal. Mas é basicamente o seguinte, ó, cara. Eh, chama esse script, depois chama esse script, depois chama esse script no momento do dia determinado. É
+
+isso que tá acontecendo aqui. E se você notar, né, eu tenho algumas variáveis de ambiente. No começo lá a gente tava rodando todos esses caras aqui, eh, usando a variável de ambiente local, que era para escrever no meu banco de dados local. Só que agora eu não quero escrever no meu banco de dados local, né? Eu quero escrever no banco de dados na cloud. E tudo que eu tenho que fazer
+
+aqui é passar variável de ambiente, como a gente faz ali no ponto end. E se você notar aqui do meu lado, todos os arquivos do meu desenvolvimento estão aqui, exatamente aqui. Então a gente consegue ver esses caras aqui também, que é exatamente o que a gente tá usando aqui. Ah, Ronald, como que gerencia a dependência no nosso script? Como ele sabe qual pacote tem que instalar? A
+
+gente declara aqui muito convenientemente. É bem legal, sinceramente. É bem legal. Tá beleza? Show de bola. Tá aqui tudo no lugar. Eu
+
+já executei porque vai demorar um pouquinho, mas a gente vai ver os logos das execuções, tá, caras? Vamos lá. Ele executou e ele vai ficar exatamente assim. Você vê que demorou bastante para processar aqui, né? Demora mais ou menos 1 minuto e demorou 3 minutos total, tá?
+
+O que eu quero mostrar aqui para vocês, na verdade aqui na topologia fica mais legal. A gente consegue ver aqui tudo que acontece, né? Passo a passo dentro do Castra. A gente consegue ver eh as saídas em geral. E se você lembra aqui na saída aqui no final, ficou esse coisa horrível aqui, né? Isso aqui tem um
+
+propósito aqui dentro do Castra, tá? Que que a gente vai fazer? A gente vem aqui em outputs, tá? A gente vem aqui em valuate, eh, e a gente vai ver aqui o qual é a melhor estratégia. O que acontece quando a gente usa o CRA, a gente pode ir passando variável ou arquivo de um de um arquivo, por exemplo, p JPEG, sei lá, de um script pro outro. E a gente também pode passar
+
+variáveis. Essas variáveis no final aqui, que são esses caras aqui, a gente, por exemplo, poderia mandar por e-mail, a gente poderia mandar um alerta aqui, eu uso slack, então muitos processos que eu tenho automatizados, no final ele processa tudo e me manda um alerta e principalmente quando eu tenho erro, né? Quando eu tenho erro, eu não fico esperando e o cliente me avisar que teve erro, que não tá funcionando. A gente faz de maneira proativa. E é assim, caras, é assim que a gente constrói soluções profissionais. Eu já rodei
+
+aqui. Então, a gente vai lá eh no no nosso bom e velho Supase. Deixa eu só ver qual o nome da tabela aqui final. E a gente vai ver os dados lá, tá, caras? Vamos lá. A gente vai ver aqui o dado
+
+apresentável, é, na nossa tabela final. E pronto. E aí, tá? você tem todas aí, eh, tem a estratégia, tem o chunk, né, que são a representação pequena do texto e a gente tem o embeding do chunk processado. A partir daqui, a gente pode adotar uma dessas estratégias como a vencedora e passar a desenvolver de fato o retrieval e a geração aumentada. E aí
+
+você pode vir lá no meu outro vídeo de reg e ver como você pode fazer isso e implementar teste e fazer eh tudo de maneira eh consistente ou de modo que você domine o dado que você tá trabalhando. Se você não se importa em lidar com o dado, eu tenho uma má notícia para você, provavelmente as suas soluções serão ruins. E por que você deveria se importar com dado? Ll maravilhoso, mas ele é um material sensível. Eu falei aqui de engenharia de contexto, é o que eu falo no canal indiretamente o tempo inteiro. E esse é o único jeito de fato
+
+de você em um processo não determinístico, que é quando você pede para LLM fazer alguma coisa para você, é esse é um dos melhores jeitos de controlar o output, OK? Dando dado relevante no momento relevante. E você faz isso se você for mestre em transformar dados em informação. Beleza? Show de bola. Esse era o vídeo de hoje.
+
+Espero que você tenha curtido. Espero que você tenha aprendido algo aqui, que algo tenha sido útil para você, que isso te ajude aí no no que tu faz. Eh, se tu tem empresa, se tu quer fazer uma startup, se você trabalha para alguém, né? Ao contrário do que as pessoas falam, hoje eu empreendo, tá? Mas eu acredito que não tem nenhum problema de você trabalhar para alguém. Eh, tudo é
+
+momento da vida, tudo é objetivo de cada um. Eh, você pode fazer bastante dinheiro trabalhando para alguém. Eu fiz bastante dinheiro trabalhando para as pessoas, OK? Obviamente você vai ter que se destacar, você vai ter que ficar bom. E é exatamente que eu tento te ajudar aqui para cortar o caminho. Você tá na
+
+comunidade, você pode baixar o código todo e eu vou fazer uma aula explicando esse tipo de projeto aqui, eh, tanto do ponto de vista de desenvolvimento de software, né? Então, eu vou entrar ali como engenheiro de software, eh, e vou, eh, falar das abordagens que você pode, eh, ter a partir desse projeto, tá? E eu também vou abordar do ponto de vista de gerente de projeto, tá? ou sei lá, empresário. E aí você vai entender eh onde você deveria tomar cuidado, tá?
+
+Quanto tempo isso vai demorar, quanto isso vai me custar, eh qual é o custo real de criar uma solução assim? É só assim que você vai ganhar dinheiro, cara. Tem muita galera querendo empreender e ah, acreditando que eh vai botar R$ 1 e vai receber 1000. Eh, sem saber onde tá botando esse R$ 1. Cara, o maior risco que você pode correr é não saber onde você tá botando teu dinheiro ou teu tempo. Então, né, considere
+
+aprofundar seu conhecimento. Você vê que assim, não é aqui no vídeo, né, eu não entrei num conhecimento técnico explícito e se você pretende fazer negócio com IA, tua alternativa é dominar isso aqui, pelo menos na teoria, saber de aer o que tá acontecendo, qual é o processo, qual é o custo, quantas pessoas você precisa no seu time. Porque o que acontece é o seguinte, caras, muitos líderes de a ou que querem ser líderes de A e que não tem nada a ver com a área e não tem nenhum problema, você pode aprender ao longo do tempo, eles pegam, montam um time e sobrecarregam uma pessoa lá que fica tomando chicotada, tentando resolver tudo, porque o líder acredita que o liderado vai fazer tudo eh de maneira mágica como ele viu um cara lá na no YouTube. Beleza? Então, eu tô aqui para equalizar eh essa questão e trazer um pouco de realidade pro mercado, porque já chegou a hora, caras, o tempo tá passando, a indústria tá evoluindo e quem quer liderar o futuro precisa acordar. Quem quer ficar na
+
+brincadeirinha do do eh fique rico apertando um botão, né, enfim, pode ficar aí porque eu e uma galera estamos movendo pra frente. Beleza? Show de bola. Você tem interesse na comunidade, dia 11/08 eu vou abrir novamente a inscrição lá. é um lugar muito legal que eu tenho e orgulho de fato de fazer parte. É porque foi uma ideia aqui de
+
+vocês, caras, foi uma ideia aqui de que veio de vocês me assistindo aqui, a caba que eu criei e me dá um trabalhão manter, mas ao mesmo tempo tem sido muito satisfatório. Beleza? Então estamos junto. Até a próxima.

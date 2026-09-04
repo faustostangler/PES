@@ -1,0 +1,161 @@
+---
+video_title: "Como usar APIs no n8n: Tutorial Completo para Iniciantes"
+video_id: hYeQifquQ4o
+channel_name: "Well Pires "
+channel_id: UCOu9pKHv94bFeRy5vzB-b1Q
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=hYeQifquQ4o
+video_date: 2025-11-12T17:41:07+00:00
+video_description: |
+  🔥 Minha Comunidade de IA: https://www.aimakersclub.com.br/
+  📚 Meu Curso Gratuito de N8N: https://youtu.be/dw5OmezRLoU?si=5wANK0VtPepcr398
+  💼 Me Contrate para Automatizar sua Empresa: https://calendly.com/wellpires/discovery-call
+  
+  Já ficou emperrado na hora de construir uma automação ou Agente IA no n8n porque não sabia usar o node HTTP Request e conectar uma API no seu workflow? Nesse tutorial, eu vou te explicar o que é uma api, quais são os métodos de api, como ler documentações de api e como usar essas API's de forma prática no n8n. Espero que curtam o vídeo!
+  
+  
+  VPS da Hostinger usando o cupom WELLPIRES para obter + desconto (por tempo limitado): 🔗 https://www.hostg.xyz/SHHIz
+---
+E aí pessoal, Welpires aqui e nesse vídeo eu vou trazer para vocês uma aula valiosa sobre um conceito do N8N. E sendo bem franco com vocês, se eu tivesse um mês para aprender somente um conceito dentro do N8N, eu vou ser bem transparente. Esse daqui seria o único conceito que eu iria investir 99% [música] do meu tempo, porque ele traz 99% dos resultados que você consegue com N8N. Eu tô falando do conceito de APIs. Eu vou explicar aqui para vocês nessa aula como dominar a documentação de APIs para você integrar o seu N8N com qualquer aplicativo. Isso porque a gente faz
+
+projetos de agentes de IA no N8N ou projetos de automação de IA dentro do N8N, grande parte do nosso dia a dia ficar integrando sistemas entre eles para criar um grande sistema inteligente que converse com todas as plataformas e entregar algo realmente de valor para as empresas ou se você é um empresário, construir realmente algo de valor pra sua empresa, fazer tudo que você investiu funcionar em um lugar só. Beleza? Então fiquem até o final que eu vou trazer esse conceito totalmente alavancado para vocês. Então se você quer finalmente dominar o conceito de APIs e construir qualquer coisa dentro do N8N, fica ligado comigo que eu vou te explicar isso em poucos minutos e de maneira muito leve. Beleza, pessoal? Eu
+
+quero começar essa aula aqui fazendo uma introdução a esse slide. Isso porque [música] a gente tá falando de uma aula técnica. Então é muito justo que a gente passe antes pela teoria. Isso porque quando você tá dentro de uma faculdade de engenharia, por exemplo, grande parte das suas atividades é estudando coisas teóricas. Isso porque você não quer ser o responsável, meu Deus do céu, por construir um prédio que vai desabar no seu primeiro mês sendo engenheiro.
+
+Então, bem, se você quer ser um engenheiro de automação sólido e não colocar, não comprometer as atividades, as operações de uma empresa ou da sua própria empresa, ah, vamos seguir primeiro nisso daqui. Vai ser uma breve introdução teórica sobre o conceito de API. E eu vou explicar isso daqui fazendo uma referência à cultura. Então, vamos lá. Eu utilizei esse filme aqui de referência, que é o filme do Bastados em Glórios, onde a gente tem uma cena caricata, uma cena icônica, na verdade, para ser mais preciso, onde a gente tem esses três personagens, obviamente, e eles estão todos tendo um problema de comunicação por conta da linguagens dele. A gente tem esse infiltrado aqui,
+
+o Brad Pitt, que ele só consegue falar inglês, mas ele tá se passando por um italiano. E a gente tem essa espiã que está falando múltiplas línguas, mas nessa ocasião específica aqui ela tá falando em alemão. Para convencer finalmente esse daqui que é o vilão alemão. Então essa mulher aqui é uma infiltrada e ela sempre tem que fazer a ponte entre a comunicação desse infiltrado com o vilão final para atingir um objetivo. E o que que eu quero refletir isso no mundo das APIs?
+
+Uma das APIs nada mais é do que uma linguagem. A API seria então essa espiana aqui que tá falando múltiplas línguas e tá fazendo uma conversa entre nós clientes e o servidor que a gente quer fazer uma requisição de API. Então, se eu quero pegar uma informação, eu quero pegar um material daquele servidor, por exemplo, uma CRM, por exemplo, uma ferramenta de gestão de projetos, ah, eu sou esse cliente aqui e eu só vou conseguir receber algo que eu pedi. Então, como que eu vou, por exemplo, pedir um cachorro quente, sendo que eu vou falar cachorro quente em turco e a pessoa só entende cachorro quente em aramaico, fica impossível desse cara me trazer um cachorro quente. Então, a gente precisa da documentação de API, que é essa pessoa aqui que instrui a linguagem pra gente conseguir pedir um hot dog. Por exemplo, quando
+
+você tem um cardápio no restaurante, você consegue ler ali o que você tá querendo e isso torna possível que a gente consiga pedir comida em qualquer país que tenha um cardápio. Só se for um prato com uma pronúncia muito difícil, mas esses caras são bem treinados. Eu falo os garções para conseguir entender as diferentes pronúncias do mesmo prato. Torna-se quase impossível você não conseguir pedir um prato quando você tem um cardápio bem documentado. A mesma coisa é com uma API. Quando você tem uma
+
+API bem documentada, fica quase impossível você não conseguir pegar o que você quer. Então vamos lá. Eh, na parte de aplicação técnica de uma requisição de API, esses daqui somos nós clientes e a gente tem esses métodos que seriam o os pedidos, as maneiras que a gente pode fazer um pedido. Então, uma carne, a gente pode fazer uma carne bem passada, uma carne mal passada, esse tipo de coisa. Ahã. E como eu falei, o a
+
+API é a linguagem que faz o garçom pegar aquele pedido e passar pro chefe, pro chefe fazer o pedido e trazer pra nossa mesa. Então a gente utiliza, a gente tem esses pontos aqui para saber como que a gente vai pedir e a linguagem que a gente vai pedir. Então, bem, ah, a gente pode utilizar de JZON, XML ou HTML para falar com esse garçom e dizer: "Olha só, eu quero pedir carne". E você explica sua carne através de uma linguagem em Jon. Aqui eu tô falando como se fosse o idioma. Vamos supor que no mundo técnico
+
+é assim que os servidores se conversam. Então, eu tô falando, tô explicando a descrição da minha carne em Jzon. Eu quero uma carne ã mal passada e eu quero ela junto com um molho páre e eu quero acompanhando fritas e arroz com brócolis, esse tipo de coisa. Então o Jzon, ele detalha tudo isso, é mais ou menos o idioma que a gente vai falar para detalhar tudo isso. E eu vou me corrigir aqui, eu quero falar que esse get, post, delete são os tipos de pedidos que a gente pode fazer. Pense
+
+numa maneira macro. Vamos falar que essas linguagens aqui são a maneira micro e a gente tem essas maneiras macro de fazer o pedido. Vamos supor que você pode pedir massas, mas você também pode pedir sobremesas, você pode pedir bebidas e esse tipo de coisa. Então, a gente tem aqui essas separações de macro e a gente tem aqui as linguagens pra gente poder detalhar o nosso pedido. Então, eu posso fazer um pedido macro com uma massa e detalhar minha massa com a linguagem HTML. Então, vamos supor que
+
+eu vou pedir uma carne em turco, mas eu posso pedir uma bebida, que é um post, vamos fazer essa analogia, em aramaico, que é o Jon. Vamos colocar assim. Ah, e finalmente a gente vai ter aqui esse triângulo, que não é um triângulo do amor, mas logo logo vocês vão se apaixonar por isso, passando isso diariamente, que é a tarefa diária de um desenvolvedor de automações, um engenheiro de automações, como você prefere falar. OK? Agora vamos lá. Como
+
+que se parece finalmente o cardápio na hora da gente fazer esse pedido para essas aplicações. Veja bem, a primeira coisa de todos é você tem que entender aonde que você vai encontrar o cardápio da sua automação, da sua requisição API. Ah, 99% dos cardápios estão disponíveis online. Não precisa ir muito longe, você vai direto no Google. Mas eu quero compartilhar com vocês algumas experiências. próprias que eu tive, bem
+
+particulares, estando dentro das trincheiras nesses últimos 2 anos e meio fazendo automações. Bem, algumas alguns projetos que eu trabalhei com ferramentas bem bem pequenas, eu não queria falar pequenas, é difícil estimar o valor de mercado de alguém, mas algumas APIs mais desconhecidas ou não tão convencionais assim que eu utilizei nesses 2 anos e meio, algumas delas não eram muito públicas. H, seja por questão de acessibilidade mesmo, o aplicativo não queria dar para qualquer um essa API, ou seja, por tamanho mesmo do aplicativo, que era um aplicativo pequeno e não conseguia aparecer no Google a documentação API deles. Então, em alguns casos, você vai ter que falar com o suporte da ferramenta e é quase garantido que eles vão te passar isso, porque toda ferramenta tem uma documentação API de verdade. ah, em alguns pequenos casos de 1%, elas podem não ter. Então, sempre antes de você
+
+entrar em um projeto de automação, verifique no Google se essa ferramenta que você vai fazer o projeto tem uma documentação API. E por acaso, se você é um engenheiro de automação como eu e não encontrar essa AP aqui, ã, entra em contato com a pessoa que você vai desenvolver esse projeto, a empresa que você vai desenvolver esse projeto e fala: "Olha só, ah, pra gente começar esse projeto, a gente precisa de uma API, de uma documentação de API, senão não vou conseguir integrar essa solução dentro do N8N. por favor, fala com a central de suporte do seu aplicativo para passar a API pra gente e a gente com a API em mãos consegue desenvolver esse projeto e estimar um tempo para fazer esse projeto. Isso daí se chama fase de descoberta. E eu falo sobre essa fase de descoberta em vários vídeos aqui no meu canal do YouTube, onde eu ensino vocês a fazer esses agentes de eu até tenho uma comunidade onde eu ensino vocês a vender os projetos de em 90 dias, mas eu vou passar aqui pra próxima etapa da documentação. Eu deixei um
+
+vídeo no card aqui com curso gratuito para você se tiver já interessado em vender automações de a passar logo para lá, OK? E como se parece esse cardápio? essa API documentada. Bem, eu trouxe aqui de exemplo uma API muito bem documentada de um aplicativo grande expressivo que é o Apollo.io. Eu acho
+
+que ele é o maior a maior API, o maior aplicativo pra geração de leads no mercado B2B. E se você não é do mercado B2B, provavelmente você vai surtar com esses termos. É um termo bem específico do mercado, mas veja bem, ah, vamos supor que eu sou vendedor de seguros. E eu tenho que vender seguros para uma empresa ou então eu tenho que vender cartão de benefício. Vamos lá. Eu tenho
+
+que vender vale refeição, eh, vale transporte. Quem consome isso geralmente são empresas, né? Funcionários de empresas. Então, eu tenho que chegar em empresas. E como que eu consigo o telefone do dono dessa empresa? Ã, como
+
+eu consigo e-mail do dono dessa empresa, esse tipo de coisa? O apolo. Isso. Eu não sou ã afiliado dos caras, mas eles são os maiores do mercado e realmente tem resultados muito sólidos com essas listas, por isso que eles são os maiores. Então, bem, eu utilizei aqui o Apolo. Como exemplo de uma API bem
+
+documentada e eu quis frisar na cabeça de vocês que essa imagem vai ser muito comum no dia a dia de vocês. É importantíssimo que vocês entendam esse conceito, por exemplo, de get, post, delete, que é a maneira macro de você fazer esses pedidos, porque simplesmente como eles explicam o que a gente pode fazer com tal requisição. Então, por exemplo, eu quero criar um contato dentro da minha lista de leads do apollo.io. Eu vou fazer uma requisição no método post. Eu tinha mais
+
+uma vez mostrado para vocês esses quatro métodos de fazer requisição e basicamente essa é a maneira que a gente conversa com o nosso garçom. E o que o nosso garçom vai conversar com o chefe de cozinha é tudo através de um HTTP request, um HTTP response. Como eu tinha falado, existe a linguagem que a gente fala com garçom e existe a linguagem que o garçom fala com o chefe. Eles falam através de HTTP request e a gente fala através dos métodos. Eu já falei que os métodos têm a linguagem da programação, que é o JZON XML, e a linguagem do tipo de requisição que você quer fazer.
+
+Então, eu vou explicar aqui para vocês cada tipo de requisição. Por exemplo, eu vou começar pelo post. Ah, a gente tem aqui essa opção de criar um contato. A gente tá postando uma informação no sentido literal da coisa. A gente tá enviando uma informação pro sistema que a gente tá integrando. Então, a gente tá
+
+enviando uma informação pro apolo.io. Nesse caso, é o nome do lead que a gente quer subir na lista. A gente vai até enviar mais informações, por exemplo, o nome do lead, o e-mail do lead, o telefone do lead, senão não seriam coisas eh de valor, né? a gente não iria conseguir fazer nada com esse lead se a gente só tivesse o nome dele. Então, se
+
+você quer enviar o Joãozinho pra sua ah lista do apolo.io, você vai falar isso pro N8N e o N8N vai enviar isso através de um http request pro apolo.io. Agora, dentro dessa http request, se você tá enviando só o do Joãozinho, ele vai colocar só o nome do Joãozinho, esse tipo de coisa. Agora, se você quer enviar uma lista de pessoas e é aí que entra o grande valor alavancado das automações de A, é você conseguir fazer múltiplas tarefas repetitivas e manuais, você vai colocar basicamente variáveis.
+
+Isso por você tá com a lista de 500 pessoas e você quer extrair o nome e o e-mail dessas 500 pessoas. Então o nome e o e-mail dessas 500 pessoas muda de pessoa para pessoa. Então se é algo que muda de pessoa para pessoa é uma coisa variável. Beleza? Então você vai enviar só a variável. Então pense que você tá
+
+enviando variável nome, variável e-mail. E essa variável nome, variável e-mail é o que a gente vai enviar na nossa HTTP request. Na verdade, o o garçom vai enviar na HTTP request, o N8N vai enviar na HTTP request. Só que a gente tem que deixar isso montado porque a gente é o cliente e a gente é o garçom. Só as coisas estão acontecendo no por baixo dos panos, sei lá, como você quiser interpretar. As coisas estão
+
+acontecendo por trás quando a gente aperta o botão do N8N. Mas a gente tem que deixar tudo montado por nós mesmos. Só que fica muito fácil quando a gente usa essas analogias e a gente começa a interpretar essas documentações. Agora, ah, eu vou utilizar uma outra API aqui pra gente fazer o sistema GET, interpretar agora a linguagem get. Eu tô utilizando aqui a API de do instantly. É
+
+uma ferramenta para disparos de e-mail. Então, por exemplo, se você tem uma operação B2B, igual eu falei, você faz uma lista de e-mails com Apollo. E você pega essa lista de e-mails, envia pro instantly e dispara mensagens para esses e-mails. Faz muito sentido essas duas ferramentas conversarem e você pode fazer elas duas conversarem através do N8N. Então você tem um sistema comercial de vendas automatizado. Isso daí é uma
+
+das grandes belezas. Então veja bem, a gente, eu vou trazer aqui um exemplo de listar e-mail. Eu quero listar um e-mail específico da minha lista. Eu quero listar um cara que, pô, ficou aqui na minha mente esse cara e eu quero pegar mais informações dele. Eh, eu quero verificar o número de telefone que eu coloquei nele, esse tipo de coisa.
+
+Então, eh, eu tenho que encontrar aquele lead e eu vou pegar ele através do e-mail dele. Ah, isso daí é uma requisição get. E geralmente essas requisição get você quase não dá nenhuma moeda de troca. Nesse caso aqui do instantly você tá dando uma moeda de troca porque o N8N e as ferramentas elas fazem o que você conversa com ela. Lembra? Se você pedir um hot dog em
+
+aramaico e o cara só entende turco, ele não vai saber o que te dá. Então aqui no cardápio, ele tá especificando para eu puxar esse e-mail e as informações que estão associadas a esse e-mail, você tem que me passar o e-mail. Então a gente passa o e-mail nessas requisições get geralmente com a HTTP que fica dentro do HTTP request. E eu vou passar nisso agora mesmo para vocês, fazendo alguns testes dentro do N8N. Beleza, galera? Tô
+
+aqui com a tela do N8N aberta pra gente ir direto pro campo de batalha e fazer primeiro o teste dessa requisição HTTP utilizando o módulo get, o modo get, perdão. Ã, então vamos lá. Deixa eu pegar aqui um HTTP request. Ele já tá no modo get. Para isso funcionar, ele já cria aqui para mim um trigger, porque eu preciso desse trigger para ativar o meu cenário dentro do N8N. Toda a tomação
+
+parte de um gatilho. E vamos lá. Ah, eu vou utilizar um API bem simples, que é o API justamente para esse método didático que eu tô apresentando para vocês, que é a API do Jason Place Holder. Eu vou me conectar com os servidores do Jason Place Holder. Eu vou me conectar com esse aplicativo que tem o servidor.
+
+Então, vamos lá. Ah, aqui tá a documentação do Jason Place Holder, uma documentação bem pequena e ela tá num formato diferente da documentação que eu mostrei para vocês. Por conta de ser um aplicativo de um tamanho bem menor, menos expressivo no mercado. Obviamente essa API vai ser menos documentada, mas eu vou esforçar aqui um pouco do meu cérebro minimamente para conseguir trazer isso aqui para vocês. E a gente já fala aqui try it. É, você pode
+
+utilizar o Google Translator aqui para traduzir a página e você entender melhor essas essas documentações, mas ele já explica aqui diretamente para mim as rotas. Ele vê, ele tem essa rota de get/posts e ele tem aqui uma HTTP. Como eu falei para vocês, a as HTTP request elas sempre precisam de uma URL. Que é um HTTP? é um endereço do nosso servidor.
+
+Lembra? Todo, todo site, todo sistema precisa de um endereço, sabe? Então, se você vai até um site, pense no site como se fosse uma empresa, literalmente. Tipo, pô, eu vou na minha clínica de alergologista. Essa clínica ela tem um endereço. Na
+
+internet, as empresas, o endereço das empresas são site delas. Então, bem, ã, pros aplicativos isso também funciona. Então, o endereço que eu vou pegar a requisição é esse daqui, mas com uma especificação para vocês. Eu vejo que depois do ponto comom tudo é adicional. todo o endereço de website, todo o endereço digital que seja um site, eles terminam com ponto comom ou ponio ou esse tipo de coisa, mas geralmente termina com o ponto final, com o que tem depois do ponto. Depois do
+
+ponto, quando tem essa barra, eu já tenho essa experiência de que isso daqui é onde eu já tô montando a minha requisição HTTP. Por exemplo, aqui no Jason Place Holder, eu vejo que tem o barrapch. Então, na verdade, esse exemplo que o Jason Place Holder tá trazendo para mim, barra todos/1, é, na verdade só um exemplo fictício. Eu tenho que tirar isso porque a URL base ela termina com poncom. Isso daqui em todos os aplicativos. Em alguns casos podem
+
+terminar com ponto iio ou com qualquer outra coisa, mas depois do ponto é onde termina. E o endereço da requisição que você quer, você tem que pegar com o barra. Então você tem o endereço da empresa, mas eu quero ir no consultório um da clínica alergologista para pegar o meu fichário com Dr. Paulo. E cara, fui bem específico, na verdade. Eu nunca fui
+
+atendido por nenhum Dr. Paulo, mas o último alergologista que eu fui, eh, ele conseguiu resolver um problema bem sério para mim. Na verdade, não foi um alergologista parando para pensar, foi um otorrino laringologista. Ele fez um grande milagre para mim. Ele me deu uma injeção e eu consegui ficar sem espirrar há três semanas. Isso é uma loucura.
+
+Enfim, um salve pro médico que me atendeu. Eu não lembro o nome dele, infelizmente, mas ele merecia um buquê de flores. Ã, OK. Então, vou pegar aqui esse endereço bem específico depois dessa descrição bem específica que é o jzonplaceholder.typecode.com/posts.
+
+typecode.com/posts e eu vou querer pegar a informação que tá lá dentro desse consultório dessa clínica alergologista. Beleza? Vamos lá. Vamos executar esse workflow. Você pode
+
+vir aqui clicando nesse botão ou clicando aqui. Eu vou clicar por aqui mesmo, só pela coisa. E ele me trouxe 100 itens. Cada um desses itens é um post. Igual aqui na requisição, ele me disse que traz 100 posts. Então vamos
+
+tentar o barracments aqui só pela coisa mesmo. Barra comments. Clicar aqui para vocês. E ele trouxe 500 comentários. Veja que beleza como é a requisição HTTP. Deixa eu mostrar aqui
+
+para vocês, né, como funciona essa requisição HTTP que eu apresentei. Ã, tem algumas requisições, todas as requisições HTTP, na verdade, a gente vai pegar um endereço específico da coisa através da URL. Então, por exemplo, essa daqui do Instantly, eu voltei para vocês porque ele pede, ele descreve aqui as informações que a gente precisa nessa HTTP. Ele fala que a gente quer o e-mail. Então a gente vem ã API, a gente coloca a base URL, que é http http 2/API.installant.aiaii.
+
+Você vê que eles não termina com ponto com, eles terminam com ponto AI. Mas depois do que tem no ponto, a gente já vem pro barra barraapi/V2. Não são todos que tem barrai. Ah, mas enfim, é algo específico e tá documentado na documentação API deles. Então você bota barrapi/v2/emails.
+
+E aqui tem um uma interrogação assigned to. E vai ter as informações aqui que a gente precisa dentro da documentação. Ele explica cada parâmetro que a gente precisa pegar e colocar aqui nessa URL. Beleza? Aqui, nesse caso, foi uma API bem mais simples, mas fiquem ligados com isso, porque, por exemplo, imagina que eu tô querendo fazer agora uma consulta pra minha API na minha CRM. Eu
+
+quero fazer uma consulta na minha CRM. Eu quero pegar o telefone específico de um lead que tá lá na minha CRM. Então, CRM é um uma maneira visual de você ver as operações que tá nas suas vendas. Então, por exemplo, quantos leads falaram comigo esse mês? Qual o telefone desses leads, esse tipo de coisa. Então vamos lá.
+
+Vamos supor que eu tô vindo na BI fictice aqui. Eu vou deixar o mesmo nome, Jason Place Holder, ou não, vou colocar e Cleanicorp, Clinicorp de clínicas odontológicas.com/API/V1/one.
+
+E daí eu venho aqui e coloco eh lead igual. E eu coloco aqui o telefone do leado. Beleza? Eu consulto esse lead através do telefone dele. E vamos supor que quando eu executar esse passo, eu recebo o telefone desse lead e todas as informações desse lead através disso daqui. Essa é uma maneira de fazer
+
+através do cat. Quando a gente faz isso através do post, eu vou mostrar para vocês que fica um cabeçalho mais documentado. Se eu pudesse encontrar uma outra palavra para descrever isso, fica um cabeçalho mais montado pra gente. Beleza? Então vamos lá agora para um HTTP request no método post. Eu vou
+
+pegar aqui o HTTP request, vou colocar no método post. E aquela coisa que eu falei para vocês é mais como se você tivesse colocando uma moeda em troca. Aqui no post você vai colocar mais moedas em trocas. Então, deixa eu pegar uma outra API de exemplo. Eu vou utilizar essa API aqui do Weather API. É
+
+uma API para eu localizar o clima em diferentes cidades do mundo. E é uma API bem escrita, apesar de ser uma API gratuita, que não tem tanta expressão. Na verdade, eu tenho que ser justo. Os caras tm muita expressão. Muita gente utiliza o Weather API. Não
+
+sei trazer casos específicos disso. Eu nunca usei em um caso específico. Mas pro fim didático desse vídeo, eu quis mostrar aqui para vocês eu destrinchando um API real. Então vamos lá. A primeira coisa é getting started.
+
+Você precisa criar uma conta e encontrar a sua chave API dentro da sua conta. Então, eu tenho a minha conta criada aqui e já na página inicial ele traz a chave API pra gente e ele fala quantos créditos a gente tem para usar essa chave API, que são bastante. Dá para você testar bastante os conceitos e destrinchar sobre isso, mas ele fala aqui que a gente precisa, é obrigatório uma chave API pra gente fazer essa autenticação com os aplicativos. E pra gente inserir a nossa chave API, a gente só precisa de um parâmetro chamado keâmetros nada mais são do que as peças dentro desse quebra-cabeça, que é um HTTP request no método post. Eu quero começar da mesma maneira que a gente começou o método get. A gente sempre precisa de um
+
+endereço. Então a gente tem que saber aonde que a gente vai cobrar, aonde que eu quero pegar a informação agora. É naquela clínica alergologista que tá naquele endereço ali da rua Aurora XY Z. Não, agora eu quero ir para outra empresa. Eu quero ir para pro sei lá, para um restaurante. Eu quero ir para um
+
+restaurante. E daí, qual é o endereço do restaurante? Eu já falei para vocês que no digital uns endereços são as URLs. Então, a gente tem essa URL aqui, né? Todo site tem uma URL, todo aplicativo tem uma URL e a base URL da Weather API.
+
+Essa daqui eles já deixam pra gente, o que é muito prático. Então é mais uma URL que termina com poncom e ele tem o barra V1. E depois desse barra V1 é onde a gente vai no endereço mais específico da coisa. Então eu fui naquele restaurante, mas eu quero aonde? Eu quero ir no na administração, eu quero ir na cozinha, eu quero ir no galpão, aonde que eu quero ir. Eu vou mostrar
+
+aqui para vocês aonde especificamente eu quero ir. Eu quero pegar o clima atual na tradução literal esse current weather aqui, o clima atual e o método API que eu tenho que utilizar, o endereço da minha API que eu tenho que utilizar esse barra. O barra sempre indica endereço, tá galera? Então quando você vê um barra, sempre pense em colocar na URL, beleza? Eu vou mostrar outras peças aqui desse quebra-cabeça e você vai começar a entender naturalmente onde se encaixa cada peça. Sempre que
+
+você tem o barra, essa peça ela se encaixa lá na URL, ela complementa a URL base. A URL base te leva pra empresa, mas o o cômodo específico daquela empresa que você quer consultar fica dentro dessas barras. Beleza? Então vamos lá pro N8N. Eu vou aqui barcurrent.jzon.
+
+Ele já presume pra gente, ele já sugere que a gente vai utilizar a linguagem Jon, como eu passei lá atrás para vocês. Daqui é algo que tem que ficar memorizado na cabeça de vocês. Isso é algo que vocês vão passar diariamente nessa profissão de ah engenheiro de automação. E agora no nosso quebra-cabeça, cada automação tem uma maneira específica de lidar. Eu vou mostrar aqui para vocês.
+
+Ã, ele passa pra gente esse request parameters aqui. Ele fala request parameters. Em algumas documentações que a gente viu, deixa eu mostrar para vocês, a gente tem o body parameters. Então são as variáveis que a gente vai enviar no body ou então as variáveis que a gente vai enviar no request. Eu já expliquei para vocês o que são as variáveis. Então, por exemplo, eu quero,
+
+eu tenho uma lista de 500 pessoas, eu quero pegar os 500 e-mail. Esses e-mails mudam de pessoa para pessoa, então é uma variável. Essas variáveis aqui dentro do http request do Apollo. A gente enviaria no body. Então, a gente pegaria aqui o body e colocaria e-mail. E aqui a gente
+
+colocaria o e-mail. A variável e-mail, seria Jzon. Seria assim com o Apollo.io, mas no caso aqui do weather API, ele pede um request. Então esse request parameters aqui a gente na verdade envia nesse sendy parameters, OK? É algo específico que você tem que
+
+saber. Então, a gente precisa enviar o primeiro parâmetro que é aqui, e ele indica pra gente que é onde a gente coloca a nossa API key. Isso é maravilhoso, tá muito bem escrito. Então, vou pegar minha API key, vou copiar, vou colocar aqui nesse parâmetro ke eu vou adicionar um outro parâmetro que é esse parâmetro Q, OK? É simplesmente Q que eu tenho que colocar. E aqui ele dá uma descrição do
+
+que a gente vai colocar. Por exemplo, eu posso colocar um nome de cidade ou então eu posso colocar um CP, mas esse CP aqui, pelo que eu tô vendo, ele aceita dos Estados Unidos, do Reino Unido, do Canadá, esse tipo de coisa. Você pode colocar um endereço de IP, seja IPv4 ou IPv6, esse tipo de coisa. Eu vou colocar simplesmente uma cidade, porque é bem mais simples de eu procurar uma cidade do que um IP. Então, deixa eu colocar aqui Recife, que é onde eu tô.
+
+Vou executar isso e voá. Eu consegui receber. Então veja, eu enviei algumas moedas de troca para esse cara. Eu enviei aqui, eu enviei o Q, literalmente a letra Q, ã, com as variáveis aqui. Bem, como isso daqui não é só uma variável, isso aqui é algo definido. Eu
+
+literalmente aqui coloquei Recife. Se fosse uma lista de cidades de 500 cidades, eu colocaria só a variável, por exemplo, Jzon. cidade. Isso se tivesse alguma coisa aqui no meu N8N que tivesse várias cidades. Então, deixa eu abrir aqui um edit field.
+
+Se eu tivesse aqui cidade e só, por exemplo, eu colocasse Recife, Manaus, Alagoas, blá blá blá, esse tipo de coisa. Aqui, ó, eu tenho uma variável cidade. Óbvio que eu montei essa variável aqui do jeito errado, mas eu só queria abrir o cérebro de vocês, abrir a mente de vocês de que bem se eu tivesse várias variáveis aqui, várias cidades, eu colocaria aqui, ó, nesse cidade. E veja que ele fica Jzon. cidade. Eu só quis
+
+antecipar a maneira que eu arrasto os bloquinhos, sabe? Então, bem, deixa eu voltar aqui para Recife. Agora eu vou colocar Salvador. Vamos ver se a gente tem Salvador Bahia. Salvador Bahia. OK. A gente tem a
+
+latitude, tem a longitude, tem todas essas informações aqui de a temperatura em Celsius, a temperatura em Fahrenheit, esse tipo de coisa. Mas bem, é assim que a gente lida com o HTTP Request e com conceitos de API dentro do N8N. Galera, se você gostou desse vídeo, muito obrigado por ter ficado até aqui. Dá um like nesse vídeo, por favor, e se inscreve no canal para receber mais vídeos tutorial como esse. Se você se interessou por esses temas de automação e agentes de IA N8N, você provavelmente também vai se interessar em vender esses projetos de automação de I. E é por isso
+
+que eu tô deixando aqui um curso gratuito de 2 horas para você se entender sobre esse assunto e começar a monetizar, fazer seus primeiros R$ 3.000, R$ 5.000 vendendo projetos como esse. Beleza? Tchau tchau e até a próxima.

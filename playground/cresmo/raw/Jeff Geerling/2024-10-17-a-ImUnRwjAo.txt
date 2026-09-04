@@ -1,0 +1,79 @@
+---
+video_title: "4K Gaming... on Raspberry Pi!"
+video_id: a-ImUnRwjAo
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=a-ImUnRwjAo
+video_date: 2024-10-17
+video_description: |
+  Yes, it is possible. But can it play DOOM?
+  
+  Yes, it can, at 4K and on Ultra. Check out more details about how this was achived in my blog post:
+  
+    - https://www.jeffgeerling.com/blog/2024/use-external-gpu-on-raspberry-pi-5-4k-gaming
+  
+  Here are the parts I used in my setup (some links are affiliate links):
+  
+    - Pineboards HATs: https://pineboards.io
+    - Lian-Li SP 750 SFX PSU: https://amzn.to/4eIzzsu
+    - JMT M.2 to Oculink PCIe Dock: https://amzn.to/3BBQkHG
+    - SFF-8611 OCuLink PCIe Gen 4 Cable: https://amzn.to/4eQtxGm
+    - AMD Radeon RX 460: https://amzn.to/3Ub7ked (cheaper on eBay though)
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - 4K Gaming and more
+  01:06 - Hardware
+  02:47 - Why AMD Polaris generation?
+  03:59 - Time to Recompile Linux
+  04:59 - The fun part: Games!
+  06:06 - Other GPU benchmarks
+  06:38 - Hardware accelerated transcoding
+  07:27 - Why do this?
+---
+After I saw Pineboards had a Pi 5 playing SuperTuxKart in 4K with an external GPU last month, I decided it was time to set up my test rig and see how the AMD GPU Linux kernel patches were doing. The last update I posted was almost a year ago, but the only demo I had running would freeze halfway through, and there were tons of errors. Since then, GitHub user Coreforge improved the stability of the patch to the point where GLMark2 runs flawlessly, and a lot faster than the Pi's internal GPU. And he's also gotten a bunch of games working, too. I set all this up for a live stream in early October, but I figured a full video would be good. We're finally to a place where an external
+
+GPU on a Raspberry Pi 5 is actually useful. I never thought I'd say that way back when I was over the moon just getting console output through a tiny VGA chip, but here we are getting 60fps at Ultra 4K resolution in Doom 3. And newer games like Doom Eternal can work, too. And sure, gaming's neat, but a lot of home labbers and media center folks want to know, what about GPU video transcoding? And what about AI and LLMs? Well, buckle up. Let me show you everything I know. First, hardware. There are a
+
+few different routes you can go to physically plug a graphics card into a Pi 5. My preferred setup is this JMT external graphics card stand that uses an OCuLink connection. OCuLink is just a different way to route PCI Express signals, and in this case, it comes with an M.2 to OCuLink adapter. This extra cable I bought gets me from the GPU to an M.2 slot. So next up, I need a Pi HAT that converts the PCIe FFC connection
+
+on the Pi 5 to an M.2 slot. And I chose the Pineboard's HatDrive! Bottom. This whole setup, excluding the graphics card, costs about a hundred bucks. If you want to save some money, you can skip the external stand
+
+entirely. The uPCIty Lite has an open-ended x4 PCIe slot and lets me mount the graphics card right on top of the Pi. I tried that at first, but the whole setup is a little shaky, so I like that HAT better for smaller PCI Express cards. Either solution takes care of the physical connection, but most graphics cards have a separate power connection, too. And so does the graphics card stand. So you also need to give it
+
+more power. The Pi's built-in PCIe connection only outputs up to 5W, and PCI Express slots need up to 75W, on top of the external PCIe power connector. So I'm using this Lian-Li 750W power supply, and I can plug its power connections into the card and the GPU stand like you see here. This GPU stand has a little power switch to tell the power supply to turn on, just like a PC motherboard has a power button. But if you don't have that, like if you're using the uPCIty Lite, you'll also need one of these things. This plugs into
+
+the ATX 24-pin connector and lets you fake the power button connection. Switch it on, and the GPU gets power. You have to do that before you boot up the Raspberry Pi, though. But now the slot's powered up and connected to the Pi PCI Express bus. I have an AMD RX 460 card, but why this card in particular? After a few years testing
+
+different cards, we settled on Polaris generation AMD graphics cards. They're new enough to use the open source AMD GPU driver in the Linux kernel, and old enough the drivers and card details are pretty well known. We had some success with older cards using the Radeon driver, but that driver isn't supported anymore, and the hardware it works with is kind of weak. And Nvidia cards aren't easy to deal with because despite open sourcing some of the driver code, a lot of things are still missing. So we settled on the RX 460 4GB as a good baseline. It's new enough to be useful, old enough to be cheap, and uses PCI Express Gen 3, which is perfect for the
+
+Pi 5. But to tell the Pi 5 to get those Gen 3 speeds, you need to edit the firmware config.txt file, and add this line, forcing the Pi's bus to go faster. You still only get one lane of PCI Express, but that's enough for a lot of use cases. And now, with everything plugged in at Gen 3 speeds, you can actually see the card if you use a tool like lspci, but it won't output anything through its HDMI port. That's because
+
+Raspberry Pi OS doesn't include graphics card drivers, at least not yet. So—and I have a shirt for this, redshirtjeff.com—it's time to recompile the Linux kernel! Raspberry Pi has a pretty good guide for this process, but in the middle of it, right after you clone the Linux kernel, you have to apply our patch with all the changes in this pull request. Right now, the patch works on the latest 6.6 Linux kernel,
+
+but hopefully we can keep it working on newer versions, too. Coreforge also has an optimized library for the memcpy function. Without it, a lot of things will be buggy or slow. I have a whole guide for this, and the settings you need to tweak, so go check that out on my blog. The last thing you need to do is install the AMD graphics firmware and reboot. And at this point, the Pi should be able to output the display
+
+through the graphics card. If not, you can use SSH, UART, or just plug in your monitor back into the Pi itself. But once I had it running, there were two bugs I ran into some of the times. Like, I had to tell Wayland to use software rendering for the mouse cursor. And sometimes, if the system booted up too fast, I had to restart lightdm to get the external GPU to be used instead of the Pi's internal GPU. But once you have
+
+it all working, now comes the fun part. The Pi 5 supports 4K on its built-in GPU, but when you use it that way, it's a little laggy. With the RX 460, I get a smooth 60Hz at 4K. And if you install a game like SuperTuxKart, you can play with all graphics settings maxed out at 4K. It gives me 15-20 FPS at that resolution, but I can get 60 by just dropping a couple settings down. The Pi 5's integrated GPU can barely manage 1080p. I also installed Doom 3 and
+
+got a solid 60 FPS at 4K Ultra settings. Looking at nvtop, it shows the GPU wasn't actually fully loaded, so Doom could probably go faster. It's just been a long time since I've hacked around in these older game consoles. And again, if I switch to the Pi's internal GPU, it struggles even on lower settings at 1080p. I couldn't get Steam installed yet, but CoreForge said he even got Doom Eternal and other modern games running. And I know from my testing on my giant Ampere dev workstation, a lot more games are playable
+
+on ARM processors now than even just a year ago. The folks behind FeX and Box86 are doing amazing work, and Valve's also invested a lot in Linux compatibility with Proton. Outside of gaming, I also ran GLMark2. On the Pi's integrated GPU, I got 1800. On the RX 460, I got 2383. That's 30% faster.
+
+Now, getting into other use cases, one downside to the Polaris generation of cards is AMD ended support for their ROCm tech, the software that lets you run compute stuff like AI models. But with only 4GB of VRAM, it's not really that compelling for large language models or AI training anyway. That could be interesting on a newer card, but I'm not as interested in that as I am in video transcoding. I run Jellyfin to manage my video library. Hardware-accelerated video transcoding means you could have a 4K file on the server, but stream it out to your phone at 720p or 1080p if you're out on the road and you don't have much bandwidth. Software transcoding is okay on the Pi with some video formats, but it burns
+
+up a lot of CPU and usually leads to buffering. Jellyfin can take advantage of Linux's built-in hardware video encoding using the VA-API, or Video Acceleration API. The RX 460 supposedly supports up to 10-bit H.264 and HEVC encode and decode, but so far I've had some trouble getting it working. If I run the vainfo command, I get this error message. But on Coreforge's Pi, vainfo shows support for H.264, HEVC, VC1, and MPEG2, so I'm
+
+currently stuck trying to figure out what's not working on my end. But here's why I'm excited about that. A lot of people have an old graphics card laying around, or maybe they have an old server running eating up 100 watts of power for their media library. If you could grab one of these old graphics cards cheap, drop it on a Pi and transcode video, that makes for a decent, low-power, quiet ARM box you could use as a NAS or a media server. And external GPUs could also have other benefits. Apps like OBS or
+
+Blender might be able to use the GPU for additional processing horsepower. And multi-monitor setups could go even harder with multiple GPUs, though the Pi's PCIe bandwidth is pretty limiting there. But outside all that, I've been running this configuration for a couple weeks now, and it's pretty stable. There are still bugs, like Chromium's UI freezes sometimes. But I just installed Firefox instead, and it doesn't have any issue at all. So my best guess is Chromium might be trying to use GPU acceleration by default,
+
+and fails there. But it'd be awesome if we can get the AMD GPU driver to support all generations of AMD GPUs. The PCI Express Gen 3 x1 bus speed is a limiting factor, but there are plenty of use cases where that's enough. Besides, it's just fun to push hardware to its limits. I've learned a lot about PCIe, arm64, the Linux kernel, and AMD's drivers already. Until next time, I'm Jeff Geerling.

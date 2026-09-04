@@ -1,0 +1,127 @@
+---
+video_title: "Deep Dive Into Android: How GrapheneOS Is Locked Out"
+video_id: EJKwrzURvFI
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EJKwrzURvFI
+video_date: 2025-07-09
+video_description: |
+  The Android hardening project GrapheneOS is locked out from modifying the OS of a Google Pixel, something that has been key to it's unique goals. Is this truly the end? In this video, we will actually study the Android architecture and build process in detail to show the pieces that involve GrapheneOS and other pieces that involve CalyxOS, iODEOS, LineageOS. Is Android hardening now an impossibility?
+  
+  ----------------------------------
+  BraX3 Privacy Phone is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://brax.me/home/rob Store for BytzVPN, BraxRouter, De-googled Privacy AOSP Phones, Linux phones, and merchandise
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+If some of you are expecting this video to be a drama or a feud between me and the Graphino OS community, you can run along now as that is not what this is about. Graphine OS and previously others like it like Klex OS are specific builds of modified Android that were focused on privacy and security. And they were able to accomplish this on pixels because Google allowed open access to the code of a Google pixel. But as many of you have heard, Google locked the source code down on pixels starting with Android 16. The effect of this is to basically stop the prior approach taken by Graphine OS and Kix OS in building their versions of Android.
+
+While this is a negative milestone, it doesn't stop everything and certainly doesn't prevent making privacy and security focused Androids. It doesn't stop all custom ROMs either. Lineage OS still flourishes. Graphine OS is sticking to its prior methods so far, but it doesn't have much of a choice because of their different goals on a pixel. I will take a very detailed approach here and that is really the distinguishing characteristic of this channel. We'll do a deep dive into the
+
+Android architecture and build process. I will warn you that this is a very technical discussion of the Android architecture. If you have some knowledge of flashing custom ROMs or are a user of these custom ROMs or are interested in graphine OS, this will be important for you. But even if you're not technically savvy to this level, the conclusions here are extremely important as it provides a road map to privacy and security versions of Android for the long haul. Stay right there.
+
+By the way, this is such a complex topic that it is possible that I got some parts wrong. Unfortunately, a lot of pieces here were not openly documented. So there is a little bit of OENT required. If so, just tell me in the comments nicely and I'll make sure to spread the word as this is likely going to be a multi-IDE topic. Today I'm specifically focusing on graphine OS because unlike all other custom ROMs, they took a different approach and that makes them unique and allowed them to make specific claims about hardening Android against cyber attacks. Just to
+
+state this openly, the mentally unstable leader of Graphino OS has spent his time attacking others and me in particular. I don't care about his attacks or the lies he spreads about me. But forgetting his attacks and the negative cult he cultivates, it is in fact a boon to the privacy and security community that there is a project that focuses on finding ways to make our phones more private and secure. Graphine OS is great as a project. I've spent a lot of time examining the source code changes and if some other developer on some other custom ROM agrees with the security or privacy benefit of what has been documented then those changes could be easily applied to another project. This
+
+is the great benefit of an open-source approach. But what truly differentiates Graphine OS is that instead of just changing portions of Android called the Android framework, which is typically the only thing changed by other custom ROMs, they change the actual low-level code in the Android device itself. And this means accessing the Linux layer and deeper parts of the Android source code. These modules are typically written in C. And I appreciate that as I have coded enterprise systems entirely in C in my career. Unfortunately, Graphino has
+
+relied on Google maintaining their behavior of releasing the complete source code of Android for the Pixel. But now Google changed. Google could have deliberately made this decision to cut off Graphine OS and Kix OS. Maybe it's because of other reasons. We don't know, of course. But the end result is
+
+that the Linux level source code in Android is now inaccessible on pixels. The effect of this on graphin OS is that while it can still make changes to the open source called AOSB or otherwise known as the Android framework, low-level device code can no longer be altered on a Google Pixel. This has so many effects including killing features like verified boot changing the libcy libraries or low-level Linux functions and various other changes disabling features of device drivers that graphine OS utilized. Most of these features relate to the hardening of Android against cyber attacks but typically do not affect the privacy benefits. By the way, the main privacy changes to Android which relate to removing Google spyware are mostly in the Android framework and can be changed by all custom ROMs including Kix OS, EOD OS and Linux OS. And this is why other privacy
+
+focused OSS are not affected as much. Before I get into a complete explanation of that, let me tell you the basics of the Android architecture and its build process. Android architecture. This chart shows the architecture of Android. The green layer encompassing several modules is called the framework and that is basically the source code available if you look into the source code of Android open-source project AOSP.
+
+This framework supports the Android apps, those included in AOSP and those created by thirdparty developers. At this level, the apps are often downloaded as APK files. And apps at this layer are developed using Java or Cotlin. The apps are divided into two groups. System apps are pre-installed on your device and third party apps are downloaded from Google Play Store. By
+
+the way, later on in the release process, Google overlays those system apps with its own proprietary versions and that's where all the Google spyware is shown in red. There's a layer called the Android runtime or art that converts the Android app code into fast executing code that can execute functions made available by the framework. So Android apps can only run code that calls the framework functions. There's no direct access to the hardware. Everything has to go through the Android runtime and each app is granted permission by the framework. In order to access hardware
+
+like the screen, the touch interface, the microphone, speakers, camera, sensors, cell service, internet, the framework connects to the low-level functions provided under Linux itself. The Linux section is in yellow. But before the framework can talk to Linux functions, there is a translation layer and this is called the hardware abstraction layer or HAL which I show in purple. HAL's job is to communicate directly with Linux drivers and Linux functions to make it available to the framework layer. This layer is built using an interface that Google called HID L interface description language or now AIDL Android interface definition language. The purpose of this language
+
+is for an OEM or a vendor making the SOC system on a chip like Qualcomm or MediaTek to compile a layer to communicate with Linux level drivers. By standardizing this communication method but allowing it to be developed separately, it creates a consistent translation layer but allows for independent updates since this is actually created by the OEM. Some functions in the framework can talk directly to Linux functions using HAL but not connected to a vendor. And I presume some framework functions can call Linux directly without HAL if they're stable and never change like the C library functions. Now let's talk about the Linux layer which I show here in yellow. In essence, from here all the
+
+coding is essentially standard C as used in Linux. Linux is independent of Android but is part of the Android device build. to make Android run on an Android compatible device. It has a standard Linux kernel which is currently Linux 6.1 and that is used on the new versions of Android device manufacturers. For example, those that
+
+make touchscreens, fingerprint readers, Bluetooth radios, GPS radios, speakers, microphones, cellbased band modems and so on write their device interface code in C. Typically those device drivers used in laptop and desktop computers are submitted to Linux itself and Linux Torv valves gets to integrate them into the base Linux kernel that Linux users know as mainline Linux. However, plenty of device manufacturers do not mainline their drivers. That's the lingo that says they don't submit their drivers upstream for inclusion into the Linux kernel because sending it to Linux means the device driver has to be in source code format because of course once they do that then the internals of how their devices work are exposed to competitors. For this reason the Linux installed in Androids is actually made up of two sections. First, you get the mainline
+
+Linux kernel which includes standardized drivers which by the way can still be modified by Google with newer changes called upstreaming. And then the second section of Linux is where the OEM proprietary drivers are installed in and these are all compiled modules and are closed source. This is standard on all Androids. Now the purpose of explaining all this to this degree is to show you where the open- source code is. The entire Linux distribution including its libraries and mainline drivers are all open source but not by Google. They are open source from
+
+Linux itself. And this is something that Google has to abide by since it is tied to their use of Linux and the GPL license. The actual AOSP is also open source by Google, which as I said is really only the Android framework. And as I said, the vendor layer includes only binary executable code from the OEM. And these are never open source, even on current pixels. Now, the last
+
+layer of the Android architecture is the bootloadader, which I show in gray. The bootloadader is a piece of code that actually starts the OS and initializes Linux. Well, this is standardized on many x86 computers, for example, using core boot. On Android, each OEM creates their own bootloadader and this is integrated into the Android ROM. The bootloadader is not open source.
+
+Android partitions. The theoretical architecture I've just described gives you a big picture of how things are connected. But now let's enter the real world. I will start backwards here and start from the knowledge base of someone flashing a custom ROM. We will bring you to the physical reality by showing you how these translate into the actual content you see on an Android storage device which is made up of partitions and files.
+
+Though in the end everything ends up as thousands of individual files on an Android device. The standard way they are installed are in groups of files segmented by partitions and further directories. Some of you have experienced using the ADB, Android debug tool provided by Google, which allows you to replace the OS image in the Android storage. Typically, a person installing a custom ROM would put the device in fast boot mode and then you use ADB to flash the image to the device. First you would allow replacing of the ROM image using an option OEM unlock on the current version of Android. Then you would use
+
+some tool provided by the bootloader or you replace the bootloader with a custom one like twerp. You put the device in something called fast boot mode and then using a compatible tool you either flash a complete image onto the device or depending on the device you store segments of the OS as separate partitions. Just to give you a view of this, these are the separate partition images typically available when you install Lineage OS. I'm just giving you generic names here for some of the partitions as each OEM may change this. And I also show you the associated flashable image associated with it.
+
+This kind of organization actually was thought out over time and has evolved from the early versions of Android. The reason for this separation is to allow owners of each partition to update their sections independently. The system partition is what actually contains the Android framework. So this is the actual result of compiling the Android open-source project by itself. Another term for this is a gsi or generic system image. And this isolation
+
+of all things framework related to this one partition allowed a standardized Android to be installed on multiple devices simply by replacing a stable framework image and then tweaking the behavior of the framework for a specific device using XML files called overlays. This is actually how much of Lineage OS is made. So the only thing modified by Lineage OS is the framework. This is an important distinction that we'll come back to later. Now, just to leave theory for a moment, using ADB, I will show you the different directories.
+
+To give you a complete big picture of how one creates a complete image for an Android device, I will describe what is called the build process of Android. Some of this is assembly of the modules and binaries and some of it actually creates executable code which is called compiling. If I were a manufacturer of a phone, I would have access to all the source code needed to create a build. And today this is done via Git repositories. I believe there are approximately 8,000 Git repositories tied to Android, meaning there are 1,000 separate projects, some from Linux, many from Google, and some from the OEM. And
+
+there's a standard procedure for creating a list of related projects that need to be included in the build rather than get complicated in identifying specific agents like KAS, Sung, Ninja or Make Files and BP files etc. The complex structuring of a thousand projects making up Android means that something assembles a complete list called a manifest. And then you specify what you want to build as an end product. And then your device will clone all the git repositories with all the latest code. And then this is clone on the machine that will build the project using the manifest as a procedure map. and several
+
+hours later you have your flashable image. So in a big picture sense the only people who can build a complete flashable image are those that have access to all the thousand or so repositories. And in the case of graphine OS it also includes access to their own repositories which are added to the build process and replaces the applicable repositories provided by Google. The new reality is that those relying on this build process needs access to the pixel repositories beyond just the framework. The framework is always available in AOSP. For those
+
+interested, the actual git repositories for AOSP are in android.googles.com and I can show you that here. But without complete access to the entire collection of repositories, graphine OS cannot do a complete build of the entire image. Now the reason this is not important to Lineage OS is that Lineage OS does not actually build the entire Android for each device from source. My
+
+understanding is that Lineage OS takes the original flashable image files like DTBO. Vendor image, OEM. image and simply replaces the system.image file which as I already said is the Android framework or Android generic system image gsi. They just extract these images from an existing phone without rebuilding them.
+
+So those files are original from the manufacturer and then when the OEM updates them, Lineage OS just updates their copy and then they flash it back to the device. However, in order to allow this, depending on the OEM, they may need to replace the bootloadader or boot. With some open version like twerp, T twwrp and the device boots like normal. Those using EOD OS, Klex OS and even Ubuntu touch are taking all the image files from Linage OS and basically are reconstructing all the standard images coming from the OEM and then replacing system.image.
+
+This approach by lineage OS creates some differences from the graphine OS solution. First, the vendor or Linux portions are never modified on Lineage OS. Second, because it is not built together, the signatures of each image will not match what is originally noted by the vendor and this leads to the problem of verified boot. Thus, Android devices using this method cannot be bootloader locked since the modules are no longer original and those using Linux OS will encounter some scary message to that effect which we all have ignored. This is not a problem of any build process that has the entire source code repositories since the signatures are part of the build. But the Linux OS
+
+hack will not allow this. And as I already said, Linage OS and other oses based on it are just modifying the Android framework and not the underlying Linux code or HAL. Assuming a bootloader is unlocked, Linux OS will work using the method I described. Many phone models of course never unlock their bootloader and an example of that is Samsung. What it means for low-level code changes.
+
+This has profound implications for Graphen OS. I believe it is the only open-source project currently in existence that modifies code outside of the Android framework. Graphino has modified Linux libraries directly by changing the standard C library functions with the intent of hardening the tools against buffer overruns and so forth or clearing memory every so often. Graphin OS could modify the drivers provided by the vendor in vendor related partitions but it was for example possible for certain drivers to be intercepted and disabled at the Linux level so that those drivers are not active. For example, Graphine OS modified the build so that the USBC port only enables charging when the phone is locked or if some new sensor is added to the phone, it would be possible to disable that sensor at the Linux level.
+
+So, Graphinobuilt features would be important for high security level individuals like Snowden types and honestly I commend them for it. Tal OS though they use the same full build process as graphine OS did not in my observation modify low-level Linux code. So it doesn't affect them much to go with the Lineage OS approach of just modifying the framework. So it sounds like Klex switched to integrating Linux OS in their build process to fill in the blanks on pixels. This appears to be their solution as Linage OS is now referenced as a source on their website, though it will affect their previous verified boot claim, which I presume will be removed for Android 16 and up. This is also what was
+
+originally done by EOD OS, so it matches what Kix OS appears to be doing now. Since the hardening claims of graphine OS are tied to modifying Linux source code for Android, then that claim can no longer be possible moving forward, at least not on a Pixel. It would seem that those interested in Android hardening will have lost a choice. All is not lost. Well, some may describe this situation as an obituary not just for graphine OS but any other phone project that may believe in hardening the phone software beyond just the Android framework. Let
+
+me reveal why the doors are just opening if people want to do it. To demonstrate this, I will describe our relationship with EOD OS and also currently with Ubuntu touch. The difference here is that we have the source code for the complete Android compile of a Bra 3 phone. And the final OS image we create for this is called Lunar OS. For some of you with a BR 2 phone, this was called BAO OS which was just a fork of Lunar OS.
+
+EOD OS made modifications to AOSP or the framework. But instead of using the Linux OS method of taking files from the OEM and adding a framework, our dev team actually takes the EOD OS repository and adds it to the build process, thus combining Lunar OS and EOD OS. Let me repeat that. The Lunar OS and EOD OS are merged with EODS replacing the entire system partition during build. This means that the final result is a complete EOD image for flashing Android on Brax 3 and appears as a manufacturer authentic code complete with verified boot and lockable bootloadader. We will
+
+be doing the same with Ubuntu touch as well and whoever else wants to port their AOSB variant to BR 3. So the base code which has the Linux kernel and all the associated code that was available on pixels is also available on Lunar OS. The dev team is organizing this now, but the end result should be that other parties could integrate hardening code in the Lunar OS repository which is open source and as I said has all the code previously available to graphine OS and then these hardening changes can then benefit a larger community and it will not be a dead end. Obviously any hardening of the non-framework related code on Lunar OS gets automatically integrated into builds of EOD OS, Ubuntu touch and so on. Now the days of graphine OS for pixels may be numbered. They can keep
+
+going with the source code available from Android 15. But going forward it becomes more difficult. Community developers though who are interested in helping a larger pool of people can still be able to contribute to an Android hardening project just on a different device. So the future is still open. If you want to port your AOSB based project to a Bra 3 or any other future device we make then you are welcome and feel free to contact the team at bratec.net.
+
+I expect that there will be more devices available to this project in the future. So stay tuned folks. While other channels sustain themselves via sponsorships, we are actively sustained solely by this community. Thank you to those who provide financial support directly to us through Patreon, locals, and YouTube memberships. We have also taken the approach of actually creating an organization you can trust by creating products that support your goal and ours of achieving privacy and offering it with the best possible service at a reasonable price. And this
+
+is how we chose to sustain this channel. For those interested in the Bra 3 project that is handled by the site brac.net and you can see the current status of the project there which currently started shipping. We have other products that you will find in our community area on Brax May. There are over 120,000 users that are part of our community that discuss security and privacy issues in a safe environment.
+
+Many of you believe in us and so this community is growing. Some have been involved for more than 10 years. In our store though, you will find products like Doogle Pixel phones, Bra Virtual Phone, BR Mail, and BiceVPN. These are an essential base to building your personal privacy and of course support the creation of content on this channel. Thank you for watching and see you next time.

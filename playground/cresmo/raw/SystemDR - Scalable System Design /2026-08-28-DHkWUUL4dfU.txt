@@ -1,0 +1,26 @@
+---
+video_title: "5 States Every AI Agent Request Hits"
+video_id: DHkWUUL4dfU
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=DHkWUUL4dfU
+video_date: 2026-08-28
+video_description: |
+  Website Link: www.systemdrd.com
+  Lesson: https://aiamastery.substack.com/p/day-13-advanced-tool-orchestration 
+  Full course: https://aiamastery.substack.com/
+  Every tool-orchestration request moves through five states — INITIALIZING to MONITORING — and it's the same multi-dimensional model AWS Lambda uses at massive scale. Here's the mental model before you write a line of code. 
+  #AIAgents #SystemDesign #AgenticA
+---
+Here's the mental model to hold before you look at any code. Picture orchestration like conducting a symphony. Every tool is an instrument and it has to play it precisely the right time at the right intensity while someone is constantly listening for wrong notes. Concretely, every request your orchestrator handles moves through five states. It starts initializing where security contacts and resource allocation get set up. Then it moves to
+
+orchestrating where your tools actually run in parallel inside resource limits you've defined. From there it goes to validating where every single tool output gets checked for security and quality. Nothing skips this step. Then synthesizing where the validated outputs get combined into one coherent result. And finally monitoring where metrics, cost, and security events get logged for later analysis. The part that trips
+
+people up. This isn't a simple success or failure flag. You're tracking execution status, security posture, resource utilization, and cost all at once. The same multi-dimensional state model AWS Lambda uses to manage millions of function execution simultaneously. And when a tool fails validation, the system doesn't just crash. It steps back
+
+to orchestrating with a circuit breaker tripped for that specific tool so the rest of the pipeline keeps moving. Let's break the orchestration engine into its four components because each one earns its place. First, the tool chain manager. Think of it as your traffic controller. Every request passes through validation, then execution, then verification, and no tool runs without going through all three stages. Second,
+
+the parallel execution engine which manages concurrent tool calls under resource limits. This is architecturally the same pattern Stripe uses to process thousands of simultaneous payment transactions safely. Bound concurrency, not unlimited fan out. Third, the security validator, which runs input sanitization, output verification, and anomaly detection on every single tool interaction. This is what stops your research agent from being exploited through a malicious search result or from returning content it shouldn't. And
+
+fourth, the cost tracker, which meters API calls, compute usage, and processing time in real time. At production scale, you need granular cost visibility, not a bill you discover at the end of the month. Put together, a request flows through six stages: ingestion, tool selection, parallel orchestration, validation, synthesis, and a monitoring update. And every one of those stages is doing real work, not just passing data through.

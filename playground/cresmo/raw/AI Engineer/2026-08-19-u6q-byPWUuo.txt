@@ -1,0 +1,127 @@
+---
+video_title: "From Ambient Documentation to Clinical Intelligence — Chaitanya Asawa, Abridge"
+video_id: u6q-byPWUuo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=u6q-byPWUuo
+video_date: 2026-08-19
+video_description: |
+  Clinicians call it pajama time: the roughly two hours a day spent writing visit notes after work has finished. Abridge started there, and within two to three years the documentation product alone reached 300 of the largest health systems in the United States. Chaitanya Asawa's framing is that everything in healthcare sits downstream of a single conversation between a doctor and a patient, and that the administrative machinery got built around that conversation rather than out of it. The notes are high stakes in both directions. They are the basis of billing, and they are the context the next clinician inherits.
+  
+  The engineering problem he stays with longest is evaluation, because clinical decision support leaves almost no gap between generating an answer and checking one. Sudoku is hard to solve and trivial to verify. Here, a verifier good enough to trust would already be your generator. Their approach abandons the idea of a single correct answer, since many different responses can be right. Two physicians independently write rubrics describing the elements a good response should contain, a third adjudicates those into one rubric, a fourth runs quality assurance, and only then does a judge score responses against those elements. Separate judges cover safety, adversarial boundaries and tone. On cost, at a run rate near 100 million medical conversations a year, they decompose the note into its sections and post train smaller models per section rather than running frontier intelligence over everything, betting that a dataset nobody else holds plus a narrow enough problem can outrun the frontier's rate of change.
+  
+  Speaker info:
+  - https://x.com/c_asawa
+  - https://www.linkedin.com/in/casawa
+  
+  Timestamps:
+  0:00 - Reading the room, and hearing from clinicians
+  2:08 - Why healthcare gets dismissed as a technical domain
+  2:59 - From robotics to search to healthcare
+  5:25 - Costs that only go up, and a productivity paradox
+  6:14 - Closures, thin margins, and clinician burnout
+  7:04 - The note after every visit, and pajama time
+  7:56 - Why documentation was the wedge
+  8:48 - Everything is downstream of the conversation
+  9:38 - Asking about trials and placing an order by voice
+  10:27 - What context the system actually reads
+  11:27 - Quality, latency and cost on hard mode
+  13:08 - Evaluation as the operating system
+  13:57 - Encoding clinician judgment into judges
+  14:48 - Contextual clinical decision support
+  15:38 - When the generator and verifier gap collapses
+  16:27 - Four physicians to build one rubric
+  18:05 - Cost at 100 million conversations a year
+  18:56 - Smaller models per section of the note
+  19:49 - Catching orders spoken during a visit
+---
+[music]
+
+Thank you so much for everyone being here. We're going to get started in a second. Um, but before we get started, I am curious. How many of you currently work in the healthcare industry in some shape or form? Oh, that's amazing to hear. Uh, how many of you are clinicians
+
+by training? Okay, a couple. How many people in the room are engineers? Okay, awesome. Um, and then how many people have heard of a bridge before?
+
+Okay, awesome. Uh, well, I'm going to let you hear actually from our users to start off on a little about a bridge. [music]
+
+Full day of 22 patients out by 4:30 p.m. [music] Notes done. That's nice. When I think about a bridge, I think the thing that comes to mind is it's really a cornerstone of how I practice medicine today. Um there's just no way um I would
+
+do a clinic or see a patient without using. I can be present throughout my clinical encounters. I don't have to think about um oh wait, did I get that? Do I need to write that down? Because I know a bridge has my back and has everything ready for me.
+
+A bridge makes me feel free because I can really look at a patient, really listen, and not have to be thinking about what do I need to put in the computer.
+
+[music]
+
+Fire. [music]
+
+Our marketing team produces really good videos and so they always hype me up. Um but the goal of this talk for me and I know that we have a lot of engineers in the room. My my goal is to talk about healthcare as a domain at least I felt in the past that there was a lot of stigma around maybe the technical problems weren't as interesting in healthcare and it is true in some ways there's some parts of healthcare that might not be as tech forward a lot of things run on fax machines for example um but I want to give exposure throughout this talk of two things one a bridg's journey from clinical documentation to clinical intelligence and what that looks like um and then two I want to expose you to some of the technical ical problems we work on um and that have to be that are truly frontier AI product uh problems that have the highest stakes. A little about me, my name is Chaitana. You can call me Chai. Um my career has
+
+always been in AI companies and startups. I first started as in research engineering at a company called Vicarius uh which his goal was actually to develop AGI but they took very different methods. They wanted methods inspired by neuroscience and probabilistic graphical models. um and they concretely worked on robotics. uh then I started working at this company called Glean because I faced this problem in my workplace itself. How uh like information
+
+scattered all over the place context is everywhere and it's so key to decision-m and Glean was building basically the chat GPT for your workplace as about six and a half years as one of the earliest engineers as we went from 10 people to over 1100 people and work with some of the largest companies all over the world. Um but that journey was amazing. I love that product. I love that company. I love the people there. Um,
+
+but I've actually always really been interested in healthcare. I remember a decade ago cover of Nature magazine was AI to detect skin cancer. I was like, wow, is someone interested in AI? That was amazing. At the same time, I went to the hospital for something and I remember seeing, oh, coming back, it was a really minor thing, but I remember coming back and looking at the bill and I was like, I'm not really sure what exactly I paid for. Um and so there's
+
+these known problems in healthcare and I'll talk about some of them access to care and cost and then we had these amazing solutions. So I was like why don't we bridge these things together. Um and remember this is about a decade ago. Um and so I actually started this seminar where I invited speakers who were physicians, researchers, entrepreneurs to to talk about the space and what I learned was while there was really really cool technology very little of it made its way into the clinic at that time. And so again my my journey went a different way but as I as I peaked my head out 10 years 10 years later then actually our technology has gotten better than ever as everyone knows and the AI wave as it's taken over the whole world has also influenced healthcare and as you as you saw towards the end of that video a bridge in the matter of two to three years got its way into 300 of the largest health systems uh in the United States Kaiser Mayo John Hopkins Sutter and so forth and maybe maybe you visited some of these hospital systems And once you're inside the hospital systems, you realize there's so so much more you can do. And I'll talk
+
+about that journey that we've had. I specifically work on um lead our engineering teams for clinical decision support and our agentic experiences that the technology is now enabled and how we can bring that to healthcare. But first maybe maybe some of the problems that inspire us as a company at a bridge. One, one of the things that we've noticed uh or many people econom e economists have noticed over the past few decades is actually in many other industries you actually see the cost of a good go down and that's because the productivity has increased. But in healthcare we actually see administrative costs have only gone up over the past few decades. Um and
+
+productivity hasn't necessarily increased. Um and a lot of our problems in healthcare we solve with labor but even that we cannot actually keep up. So there's this bit of this like productivity paradox you might have heard of like Balo's cost disease and it's part of partially because technology I think hasn't fully touched healthcare as much as it's touched other industries to increase that productivity [clears throat] a few other problems you know hospitals are shutting down margins are actually razor thin for many health systems of course some patients have massive uh medical uh debt and then we actually and the problem that's another problem that's very near and dear to our heart is that we hear all the time that doctors are burnt out and they actually often don't recommend it as a profession to uh to their children. So what we started as as a company was working on clinical documentation. So the idea here if you're not familiar with it is at at the end of every patient visit the the clinician must create a note. Uh our typical format is
+
+the SOAP note that has a couple different formats like what's the chief complaint of the patient and a few other sections and then what's the assessment plan? what do we do with this patient? You have to do write this after every single visit and there's some different variations on this depending on specialty. Um, typically clinicians end up often doing it takes like two hours a day to write just write these notes and you often do it what's known as pajama time after work itself. Uh, and that's a common source of clinician burnout spending all this time outside of work and it's not the most fun part of the job. However, these documents are
+
+actually extremely high stakes because these clinical notes are often used as a basis of billing but also uh which is of course financial things are high stakes but also have clinical impact and the reason for this is because these prior not these notes are used for the next clinician or as you switch health systems they use they provide context to the clinician of the uh patient's longitudinal medical record. So it's actually really high stakes to get this right. Um we started here because we it's a known pro a pain point that's existed for many many years but finally the technologies caught up to do really really high quality medical notes that's actually personalized to the clinician. This was an amazing wedge into healthcare industry which has typically been technology reticent because it led to they actually care a lot about getting these notes high quality and right. it led to higher doctor satis sat provider satisfaction and such they could actually see more patients um and it can actually help create a higher record um that helps prevent uh as it relates to billing auditing and other reasons. So we started there just this
+
+product alone scaled to 300 hospital systems but I want to show you a little about where we're going next and um and the core thesis of the company is that everywhere in healthcare is everything is around the conversation so we started over here with the conversation to clinical note everything else is downstream of that whether you it relates to billing whether it relates to things like clinical trial matching or whether it relates to clinical decision support It's all about the conversation, that sacred doctor and patient conversation, and we've just built all this administrative machinery around that. But how can we bring it back to that conversation and actually automate some of that uh administrative machinery? So, to give you a tactical example of what this looks like, um, and I'll play this video
+
+of where where we're going from here. >> We've been building a solution that allows the physician to interact with a bridge directly by using their voice. Hi, ABridge. Is Nathan eligible for any clinical trials? He may be eligible for the abridge HF study. He remains symptomatic despite
+
+maximal therapy and most screening criteria are already met, but an updated echo cardiogram is needed to confirm his ejection fraction and complete eligibility assessment. >> All right, please order that echo for him. >> Done. Confirmary echo ordered. >> And then when I'm done for the day, I can just ask a bridge, hey a bridge, can you prepare my charts for tomorrow?
+
+And a bridge is working for me. pause right there. One of the things that you'll you'll notice is that we are thinking about how to uh revolutionize the entire visit uh for a clinician from previsit how um earlier in the we have suggested discussion topics. Here's things that you can talk about uh with your patient whether they're clinical or more billing related. Um we have after the visit we actually create everything for you. The patient visit summary, the
+
+actual clinical note and we actually pend orders as you might have seen. We're able to use we we're able to do this all by reading all this context. We have access to all of the EHR context. So we know everything about the patient, the prior labs, the prior notes. We have access to the live conversation between the doctor and the patient. That's where
+
+the quoteunquote debugging happens in healthcare where you learn about what the patient is facing now. Um and then we have access to world's medical literature that we can ground and clinical guidelines that we can ground all of our work in. So
+
+I want to I want to switch now given the context of where we're going as a as a product. I want to switch into some of the key technical and engineering problems we face and inspire you on some of the what I think are very much frontier AI challenges. So if you've ever worked on an agentic product before, the regardless of vertical, um the three KPIs that tend to matter are quality and then latency and cost. In healthcare, I feel that we're actually playing on hard mode for all of these three KPIs. This is a highstake scenario, especially when you're doing something like clinical decision support. You have to be right because
+
+the downside is extremely high when you're wrong. When I used to work glean, you know, while I love that product, I could be wrong and it would have been fine. Maybe we answered a question incorrectly, but in healthcare, if we answer something incorrectly, there's actually consequences and we entirely lose our trust. So quality needs to be absolutely high. And I'll talk a little about how we keep that bar high. And
+
+then latency and cost also really matter for us when you're live in the conversation. You can't uh with latency, you can't act on information too late, and you have to act on the also at the right time for it to be useful. And then finally, cost at the scale we're we're doing this at. Um and and as an interesting aside, it actually relates to our we have a motto inside the company that our goal is to save lives, save time, save money for uh for the hospital system and for the healthcare industry as a whole. And it actually I think it's funny that it really maps to the three KPIs that you care about in any agent product.
+
+So talking a little about quality, how do we keep that bar high? For us, we really treat eval as the operating system, the lifeblood of the of the company. This starts from internal benchmarks and offline evaluation. Before we develop any product, you know, whether we're talking about clinical trial matching, clinical note, clinical decision support, coding, we start with a robust set of internal benchmarks. This is pre-eployment. And then we test
+
+that against you know things that we've actually seen in the wild. Then we have a staged roll out. We know that we need to make contact with reality reality. Not everything offline will perfectly represent what happens in practice. And so we slowly roll it out. Uh maybe it
+
+starts with the alpha group of clinicians that we trust and under the understand the stakes. We rely to beta. Maybe there's AB testing at scale. And then even after it's fully rolled out, you always need continual monitor. Again, the stakes are really high. And
+
+you cannot get away with just being like a prototype that you just ship out there and be like, "Yeah, I mean, I tested on a few cases and it works." How we do this is we always have expert calibrated LM judges. So we have clinicians embedded throughout the entire company. The clinicians are are domain experts but not all of us are clinicians. I'm not a clinician. So how can we the rest
+
+of the company still move fast is by encoding that clinician judgment into LM judges. You know I think a really great evaluation system has a property that it reflects the behaviors that you want in your product. At the end of the day, we are making a product for clinicians and sue who best other than our clinicians to actually create our judges that represent what they want. And those judges once you have that create a feedback loop so that anyone whether you're a clinician or not can actually uh hill climb and learn from that. We also have a lot of online signals whether how you're editing the clinical note and your typical thumbs up, thumbs down uh and star ratings and other free form text. So this is a general
+
+framework we use for our for all our products. I want to deep dive into the product that I work on which is clinical decision support. So to give you an example of what clinical decision support looks like and specifically we're building something novel which is contextual clinical decision support. Maybe a provider asks a question like hey does this patient meet the criteria for fibrill neutrifinia. Um and so what we have to do here is actually a lot of context is underspecified in this question. where so the first thing we're
+
+going to do is we're actually going to pull from the EHR data previous previous lab values then using that context we're going to uh use the uh uh we're also going to use the live conversation and we're going to use clinical guidelines and medical journals to com use as the reasoning sources for combining all this context to actually answer the provider's question now but I want to focus on evaluation again the stakes are really high here we we really can't get this wrong. So how do you tell whether or not an answer is correct? And sometimes I I and this is a case where the generator and the verifier gap is really small. What I mean by this is in some problems in AI such as like Sudoku, it's really really hard to generate a solution to Sudoku, but it's extremely easy to verify it uh once you do have the solution and that makes uh that makes it much easier to hill climb against and build a valuation for. But in a case like this, the generator and verifier gap is really small. If I had a
+
+really really good generator uh verifier then that would just be my generator itself. So how do I create a reference that isn't just a language model itself and ground itself so I have trust. So what we do is we tackle this by having many many different signals. Uh we have a clinical quality judge which I'm going to dive deep into and then we tackle from uh we have many signals from a boundary and adversarial judge. We have a clinical safety judge and we also have judges that re represent product as aspects like tone and style and that matters a lot as well for AI products.
+
+So all of these are different signals that try to get a piece of this like really really hard to measure problem and guarantee it in the way that we want the product to be. So diving into the clinical quality judge. So again I said the generator verifier gap is really small here. So what we need is we actually need human references to tell are we generating the right thing? But you can't just create a human golden response because there is a lot of variability in the potential responses.
+
+So what we did is we took a lot of real clinical cases. We had independent physicians create a rubric. So this rubric said elements of what we wanted in the response. So it's not here's the exact response because again there's many infinite possible responses but a good rubric elements that what a good response would look like. And then we had a separate physician that actually adjudicated it. brought these two
+
+independent rubrics together, created a final rubric, and we actually had a fourth clinician do QA on these rubrics. Once you have these rubrics, and here here's a sample rubric looks like. Here's actually a question. I mean, there there's more context in the case itself. You have a rubric of what are the elements that a response should look like. Now, we can actually have an LLM
+
+judge that compares our agents responses to these rubric elements and does some basic semantic match to tell, hey, is our model performing well as we continue to hill climb? Whether it's our agent architecture, our models or search ranking algorithms. I want to talk a little now about cost and latency. Two other really really hard problems for us. So we do this as we said in that intro video. We do this
+
+on the live in the conversation and we do on the run rate of 100 million medical conversations a year. How do we do this in a way that doesn't really break the bank for us? So one one place that this problem comes up or is is actually in generating the clinical note. So when you're generating the clinical note, there's many different sections to it. There's a history of present illness, past medical history, and there's the assessment and plan. So
+
+one of the core insights for us is rather than say using a foundation model to generate all of this is we can actually break decompose this problem into simpler smaller workflows. Healthcare is actually many specific workflows. You don't need you know fable five to actually solve all of your clinical notes. we we don't need frontier level intelligence for every problem. So we actually post-train a lot of smaller models for different problems such as different actually even to the granularity of different sections in the clinical node and that lets us use much smaller models because it's a more specific problem and at uh at much cheaper costs and latency and we have this data flywheel that we have this unique data set of 100 million medical conversations a year and as far as we know one else has such a large data set.
+
+So our key insight is having a right to tr win in training models. There are problems where the quality is already maxed out and so you should train models then to reduce quality and latency. But there are other problems where the quality isn't maxed out and people say oh the frontier model will just general roll you. Our key insight is we can actually potentially beat the rate of change on the frontier model if we have the right to win by having the right data that they may not have and the focus on a problem that they may not be focusing on. And that lets us still maximize quality.
+
+Another uh problem that I'll quickly touch on is invisit orders. So uh do doctors really aren't a big fans of pending orders, but often they'll mention orders during the visit itself, medication or non-medication orders. So what we have is while we're listening in the visit, as the clinician says order, we actually ceue it up in the background uh and let them actually sign it off in the EHR. But you can imagine if we did this in a very naive way, like every few seconds are just listening for orders, that would really break the bank. Um, and so a lot of our tricks are like how do we find the right events in the conversation to actually trigger heavier models that will actually do the order matching because you need to match the order. Not just is the order said, but
+
+does it match and references orders that are approved by the system and are relevant to the conversation. So we have a number of different gates that are cheaper and faster that let us trigger actually larger models and hand off to them for actually doing the endto-end work. Um but the last message this was of course a very quick talk but the message I want to leave you with is healthcare is a domain that needs frontier AI and actually puts it to the test at uh higher stakes. In the past I as an engineer myself was weary about working in healthcare. Does does like does healthcare technology actually work?
+
+Well a bridge has proven this. at scale for sure and as hopefully I gave you a taste of some of the frontier problems that we work on. So thank you so much. My name is Caitana again you and feel free to connect with me at Twitter or LinkedIn. Thank you. [applause]

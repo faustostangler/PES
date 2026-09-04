@@ -1,0 +1,108 @@
+---
+video_title: "LANGCHAIN ou LANGGRAPH.  Qual usar? (Guia definitivo)"
+video_id: 95P8eGRAeGg
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=95P8eGRAeGg
+video_date: 2025-06-12
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Lista de espera aberta): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  Quer construir soluções com IA Generativa mas está em dúvida entre LangChain e LangGraph? 
+  
+  Este guia definitivo é para você, desenvolvedor, empreendedor, ou profissional buscando aprender mais sobre Inteligência Artificial, mesmo sendo iniciante! 
+  
+  Entenda as diferenças fundamentais entre o sequencial LangChain, ideal para pipelines e integrações com LLMs, e o flexível LangGraph, perfeito para criar agentes IA complexos, fluxos cíclicos com gerenciamento de estado e funcionalidades como "human-in-the-loop".
+  
+  Explore casos de uso práticos e entenda quando utilizar cada framework – ou como combiná-los – para desenvolver aplicações com LLMs mais poderosas, observáveis e robustas, preparando-se para dominar estas ferramentas essenciais e levar seus projetos de IA para o futuro.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:22 Um pouco da história do Langchain e Langgraph
+  1:31 DAG x StatefulGraph
+  3:58 Humano no Loop e Time Travel com Langgraph
+  5:22 Langchain como base para outras ferramentas
+  6:05 Agente React no Langchain e Langgraph
+  7:15 Usando Langchain e Langgraph juntos
+  9:00 Casos de uso do Langchain e do Langgraph 
+  11:47 Langgraph com interface visual
+  13:12 Outros frameworks para LLMs
+  
+  ––– Agência –––
+  
+  A melhor consultoria em IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #langgraph #automação #langchain #python
+---
+Nesse vídeo eu vou te mostrar a diferença entre Shin, Leng graph e o caso de uso para cada um deles. E e o final do vídeo você vai entender exatamente porque o Langraph tá aqui e por ele veio para ficar. Se você não me conhece, eu me chamo Ronald Hawk e eu construo soluções profissionais de automação IA. Bora pro vídeo, tá? Esse essa essa representação visual que eu fiz aqui para vocês é basicamente a natureza da diferença entre os dois. Mas
+
+se você não tá entendendo o que tá acontecendo aqui, o que que Leng graph, o que que esses caras estão fazendo aqui, o que que é esse papagaio, é o seguinte, há mais ou menos uns 2, 2 anos e meio, 3 anos, já não sei mais essa altura do campeonato, é, a Open AI revelou pra gente aí a IPI da do GPT, né? Então se tornou viável construir aplicações usando LLM, já que a gente poderia só consultar uma IPI e começar a construir, né? Em cima disso surgiu uma necessidade de ter certa flexibilidade no uso dessas API. E é exatamente aí que o Lengin entrou. O Lengin chegou, né, e se tornou rapidamente uma das bibliotecas principais quando o assunto são LLMs, tá? E o L graph seria e um
+
+spinoff ou uma evolução do LCH chain, como a gente vai ver aqui, eles são da mesma empresa, então a empresa primeiro criou o LCH chain, e eventualmente ela viu a necessidade de criar o LG graph. E eu vou explicar o porqu e aí você vai entender é se você deve usar um, se você deve usar outro ou se você eh pode combiná-los, né? Então vamos embora, tá? Pra galera que é de dados, tá tá tá tá acostumado com isso aqui por conta do airflow, né? né? Se você fizer um
+
+pipeline de dados, você tem a ideia de fazer, né, um pipeline sequencial, né, algo que só vai paraa frente, nunca vai para trás. Essa seria a natureza do L chain ou do ponto de vista de arquitetura, eh, seria essa cadeia, né, você encadear promptes. Então, você poderia chamar uma LLM, aí depois você pode chamar outra, depois você pode chamar outra. E isso é muito interessante. Isso tem diferentes casos de uso, sempre teve. Eh, e isso fez com
+
+que o Langen ficasse muito famoso, além de outras facilidades que o Langchenin oferece, como eh conexão com fontes de dados externas, splitter de documento. Então, Lchain, de fato, é uma biblioteca muito rica e que vale a pena ser conhecida, né? Mas o LG graph tem e uma grande diferença já aí de cara, que é o seguinte, com LG graph, você consegue eh manipular eh esse esse fluxo eh de uma maneira diferente, né? Então, ao invés de você ter uma DEG, eh, como a gente tem aqui no Linkchain, a gente começa com essa ideia de grafo eh acíclico, né? Você pode fazer um grafoíclico, o que seria, você pode, eh, por exemplo, sair ali do ponto D e voltar pro ponto A, se você quisesse. Nada te impede de fazer
+
+isso. Você começa a ter controle total do fluxo da sua informação, do fluxo do seu dado, tá? E ele alcança isso e com uma ideia de straight full graph, que seria basicamente o seguinte, é ao invés de você, eh, por exemplo, se aqui no no Lengchain, se você quisesse passar uma informação de A para C, é, você teria que passar essa informação para B. Aqui a gente trabalha com essa ideia de estado. E basicamente todos esses nós aqui t acesso à informações desse estado, né? Então é um estado global,
+
+digamos assim. E não só isso, eles não só têm essa a ideia, a a informação a esse estado, como também eles podem alterar esse estado. Eles podem alterar de diversas formas. Por exemplo, ele pode fazer um update, né? Então, trocar a cor ali de vermelho para azul, como ele pode fazer uma adição. Então, ali
+
+agora a gente vai ter vermelho e azul, eh, por exemplo, né? Então isso começa a tornar as soluções interessantes. Além do que isso aqui pode ter um esquema definido, então isso aqui pode ser é uma string, mas isso aqui pode ser um boleano, etc. etc. Tá? Então, os estados
+
+trazem pra gente algumas características importantes e eh fundamentais agora no na nossa indústria, que é primeiro humano no loop. Eh, o que seria o humano no loop? Seria a IA ou a nossa solução, né? O nosso fluxo, ele avança, né? Ele faz o que tem que resolver. Ah, e em
+
+algum momento ele para, ele salva o estado, o estado tá lá, tá? Eh, e ele manda uma mensagem pro humano, pode ser um e-mail, pode ser uma mensagem eh no Slack, pode ser um WhatsApp, por exemplo, qualquer coisa do tipo, eh para perguntar: "Olha, eu fiz essa operação aqui, você confirma, você tá feliz com isso? Eu posso prosseguir aqui no meu grafo". E você pode falar: "Não, pode falar sim, por exemplo." É, então o mano loop é algo que vai ser tendência nos próximos anos e é algo muito interessante de fato, porque você combina o melhor dos te dois mundos, né?
+
+Eh, human no loop, checkpoints. Então, a cada passo, eh, você tem tudo registrado e isso beneficia uma outra técnica chamada Time Travel. H, então toda vez que você tá usando algo, se você, por exemplo, ah, não, a versão dois tava melhor, ah, não, lá no passo B, eu quero voltar para lá, eh, você tem essas opções usando L graph. Então, a gente começou a ter eh uma brincadeira aqui muito mais interessante. Por exemplo, se você já usou alguma ferramenta como Lovable Ballow, Raplet ou alguma coisa do tipo, o Raplet é desenvolvido com L graph, é lá você consegue voltar pro estado anterior se você quiser. E é
+
+exatamente assim que eles fazem. Então, beleza. Agora você já entendeu a diferença fundamental? É, tem uma tensão aqui que a gente vale a pena dar para o LCH Chain. Eh, e o L chain se tornou tão tão importante que ele foi o fundamento e ele se tornou o pai de diversas soluções aí, como o flow wise, o Leng Flow e até mesmo o agente de A do N8N.
+
+Então, se você usa o N8N, já usou o N8N, é, o que ele faz ali é implementar um agente do link chain, tá? Então, ele tem essa característica aqui. E aí você pode botar eh ferramentas, eh você pode dar uma eh ll, você pode dar uma memória. E esse foi exatamente a motivação principal de ter sido criado L graph, né? Eh, além do fluxo sequencial, ah, eles notaram assim que com essa solução aqui do agente do LC Chain, eh, eh, seria um pouco difícil de fato construir soluções muito flexíveis. E essa ideia aqui do agente
+
+React aqui no LCHIN é altamente comprometida por questões de memória. E eh uma das coisas mais importantes para construir soluções de a com LLM é a questão da observabilidade. É muito importante a gente ter ideia do que que acontece a cada passo da nossa LLM ou da nossa solução e isso aqui dificulta demais. Eh, então, eh, o Link Graph surgiu, eh, com esse propósito aqui de, tá, eu consigo fazer um agente como esse, exatamente usando o gráfico. E aqui a gente tá vendo aqui um um agente React, é exatamente, eh, o primeiro cara aqui é simplesmente uma chamada de modelo. E nesse modelo a gente fala
+
+assim, ó, modelo, você tem ferramentas e você pode acessá-las. É, e quando você tiver satisfeito, você pode sair desse loop e ir para outro lugar. E aqui fora desse outro lugar, pode ser qualquer outra coisa, tá? Pode ser ele mandar um e-mail, pode ser ele chamar um outro agente, pode ser, sei lá, consultar o banco de dados e as possibilidades se tornam infinitas quando você tem esse tipo de possibilidades, o que fez com que, eh, a criação de agentes se tornasse eh mais moderna a partir que a gente consegue combinar essas duas ideias. E e hoje o que existe mais moderno é usa-se LChain para integração.
+
+Por exemplo, eu preciso integrar no banco de dados, eu preciso entregar e integrar com uma LLM, por exemplo. É, a gente continua usando Lchin como base por conta de todas as bibliotecas ali, todas as ferramentas que ele oferece e que são muito boas para operação dentro de cada nó. Então você pode pensar assim, a gente usa o Lengin dentro de cada nó, só que para construir o grafo e para gerenciar os estados dele ou para gerenciar para onde ele vai, nós usamos L graph. Então essa aqui é uma combinação de fato que dá super poderes hoje para a criação de agente. É muito porque isso facilita demais eh a criação de soluções flexíveis e robustas. Ah, e
+
+além disso tem uma outra uma outra ferramenta chamada Lusmith, que eu não falei aqui, tá? Mas ela complementa o LAN graph, então seria aí um trio, um trio perfeito, tá? Se você não sabe o que eh agente React, não ouviu falar, quer implementar isso aqui, lá na HCK Pro a gente tem eh tem uma explicação aqui, tem um tem um blog lá, é com o código todo, com a explicação paraará. E aqui a gente tem o agente React, você vê que é bem simples a ideia dele, bem parece com a ideia ali do do Link Chain. É só que isso aqui, ao invés dele exportar algo pronto em que você não pode mexer, ele exporta para você um grafo, tá? O que significa é que você
+
+pode pegar esse gráfico que ele exportou agora e botar um outro gráfico pro plugado nele ou pode estender ele de alguma maneira. O que torna isso aqui muito interessante é você pode vir aqui ler e e entender passo a passo o que se de fato se a gente faz ou você pode vir aqui baixar o código e rodar aí na sua máquina. Todas as instruções estão aqui, beleza? eh, avançando eh em casos de uso. Eh, e Ronald, a gente não usa mais Lchain, a gente só usa L graph. E aqui
+
+eu te mostro que não, eh, e eu continuo usando Langcha puro em algumas situações. Ah, aqui o que você tá vendo é uma automação e eu preciso de alguma LLM no meio dessa automação em algum momento e eu continuo usando LCH. Eh, por que isso, né? Automações muuit das vezes t chamadas longas, seja para um sistema externo, por exemplo, você precisa fazer um cálculo mais robusto num banco de dados, eh, ou você precisa esperar uma resposta eh que possa demorar. Eu, nesses casos em que eu tenho essas características e eu tenho um caminho muito linear, eh, que você tá vendo aqui é um grafo do Castra. Vídeo
+
+passado eu falei sobre o Quester, então você tem interesse, dar uma olhada. É, e é assim que eu faço a automação, é hoje. Então, basicamente é tudo o código Python com yemo, basicamente isso é e um nó aqui é o nó do LChain. E e basicamente eu preciso só chamar uma LLM aqui para verificar um texto, tá? Então ele vem aqui, faz a chamada e depois ele segue. Eu não preciso eh verificar
+
+estado ou coisas do tipo ou fazer essas coisas que são mais interessantes para L graph. Eh, e eu uso LCH aqui diretamente, eh, sem precisar usar a a estrutura toda do LRAP. É, do lado de cá é algo que eu uso diariamente aqui, que é exatamente a estrutura de um deep research. Obviamente pode ter variações eh de modelos, mas exatamente essa estrutura aqui. O que que é o deep resource? Ou seja, você foi aí na no
+
+chat GPT, tem um botãozinho lá de pesquisa profunda ou no Gemini também tem. E ele tende a seguir exatamente essa arquitetura aqui. E eu posso fazer isso no L graph, já que todos eles usam algum algum tipo de solução que precisa de flexibilidade. Todas as soluções modernas vão precisar de flexibilidade. Elas não conseguem eh serem desenvolvidas em ambientes totalmente rígidos, porque o mundo real, né, requer flexibilidade, obviamente. É. E o que
+
+que a gente faz aqui? Eu recebo a querer, por exemplo, faça mim uma pesquisa de blá blá blá blá blá, tá? Então eles pega essa minha query aqui, eh, e quebra ela em diferentes pedacinhos, e ela atualiza meu estado, tá? Ela vai na internet e busca a informação. Então, ela faz diferentes queries, faz diferentes buscas, ela não faz uma busca só. Então, ele vai pra
+
+reflexão e a reflexão avalia se a busca que ele fez é suficiente para responder a minha pergunta. E se ele achar que não, ele volta para fazer a pergunta e ele fica nesse loop aqui até ele acreditar que tá pronto. E quando ele tá pronto, com todas essas informações colhidas da internet, n ele vem aqui da dá isso aqui pro pro último trechinho, pro meu último nó. Faz o cálculo, né? O cálculo não, ele cria o o relatório e me dá o relatório no final. E a resposta
+
+final é essa. Nada te impede de construir eh uma solução baseada em Langraphic que seja visual, já que a gente tem flow e parará parará e provavelmente no futuro próximo vai existir. É, esse site aqui é é o da própria LC Chain e eles oferecem esse construtor de Langraph visual, tá? Aí você pode chegar aqui, você pode botar outro nó, pode trocar os nós de ordem, pode fazer o que você bem entender. A questão é eh ele vai gerar isso aqui oco, e ele vai gerar um código aqui para você que você pode baixar, tá? E
+
+basicamente o que você precisa fazer agora é preencher tanto os estados. Então aqui a gente tem uma classe com o estado. A gente pode botar eh os estados que a gente quiser. Esses estados tão aqui a coisa começa a ficar muito interessante. A gente pode botar ferramenta, já que a gente tá falando que tem ferramenta, a gente pode criar um router, que seria, tá? Se isso,
+
+se o valor que tá aqui no estado é esse, vá para cá. Se o valor que tá no estado é aquele, vai para lá. É. Ou a gente pode botar, por exemplo, uma LLM aqui para decidir qual, para onde ela vai. Então, tudo isso se torna muito flexível e a coisa aqui já tá bem pronta e bem adiantada. Então você pode passar a
+
+brincar com isso aqui, eh, e pegar o golinho. Eh, ele também fornece código em Typecript, se você preferir rodar nessa modalidade. No futuro eu vou fazer um vídeo de como você pode executar isso aqui, porque ele pode ser um pouco intimidador, eh, para quem não conhece, tá? Então, eu recomendo fortemente, se você nunca brincou com isso aqui, é, baixa o código, lê aqui que tem bastante explicação. Eh, e se você quer se aventurar aqui, baixa lá, eh, que vale a pena, é, brincar e conhecer. É, espero
+
+que você tenha curtido esse vídeo. Eh, esse aqui é o futuro dos agentes. Obviamente existem outros frameworks, né? Você pode perguntar e Ronald Cre AI e sei lá, Agno, parará, parará. É, ao longo das minhas pesquisas de e desenvolvimento, eh, eu julguei que o LG graph e o L chain me atendia melhor, mas de fato de vez em quando eu brinco com os outros aqui e eu posso trazer vídeo deles se assim for pertinente pra gente, né? Eh, então, basicamente é isso.
+
+Espero que você tenha curtido. Fica por aqui se você gosta eh de desenvolver com IA, né, de criar soluções, que o canal aqui é basicamente sobre isso. Eh, eu trago, né, conteúdo técnico, conteúdo de negócios, a gente mistura tudo isso. Eh, e o objetivo é fazer com que a gente cresça, eh, com que o mercado evolua. O mercado tá deixando de ser o que era há dois anos atrás, eh, e tá evoluindo tanto o mercado de automação, tanto mercado de inteligência artificial, de maneira geral, as soluções agora têm uma exigência diferente do que tinha quando a gente estava na infância. Agora a
+
+gente tá começando a mudar de patamar e é disso que eu falo aqui. Então, beleza, até a próxima, galera. Valeu,

@@ -1,0 +1,162 @@
+---
+video_title: "This Fixes Claude's Biggest Problem (Karpathy's Method)"
+video_id: 4hIvG849w4Y
+channel_name: "Austin Marchese"
+channel_id: UCFeFVytEkT8kaqPCJZGFswg
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=4hIvG849w4Y
+video_date: 2026-09-01
+video_description: |
+  Granola is the AI notepad for professionals in back-to-back meetings.
+  Try Granola for Free today! https://go.granola.ai/austin-marchese
+  
+  In this video, we solve Claudes biggest problem, it's memory and how it always forgets. 
+  
+  But the key is we arent starting from scratch. We use Karpathy's method along with the current architecture of Anthropics "Dream" feature so anyone can solve this problem. 
+  
+  By the end you'll have your own AI memory system that reads your session history, cleans up your Claude Code memory and CLAUDE.md, and runs on autopilot every week.
+  
+  Create your own Dream Skill: https://www.buildpartner.ai/b/dream
+  
+  Timestamps:
+  (0:00) - This Fixes Claude's Biggest Problem
+  (0:47) - Part 1: How Karpathy Sees The Memory Problem
+  (4:27) - Granola, the AI meeting assistant
+  (6:10) - Part 2: Enable Your Memory System
+  (8:00) - Part 3: Building The /dream Skill
+  (8:38) - Skill 1: /session-analysis
+  (10:28) - Skill 2: /improve-memory (and Rules)
+  (12:25) - Skill 3: /send-results
+  (12:54) - Packaging It All Into /dream
+  (15:58) - Part 4: Why Boris Cherny's Advice Is Misleading
+  
+  What to watch next ⤵️
+  How to build a self-improving system: https://www.youtube.com/watch?v=2fc0NX9vIJ8
+  10x your Claude Code projects, Karpathy's method: https://www.youtube.com/watch?v=yfeHoOkn2TI
+  Never get stupid AI responses again: https://www.youtube.com/watch?v=Dza_WDoTzRQ
+  
+  --------
+  FOR INDIVIDUALS:
+  Free 5-day AI playbook (what I used to build a $25M+ startup): https://austinsnewsletter.com/dream
+  Use BuildPartner to build 10x faster with Claude Code (try free): https://buildpartner.ai/dream
+  
+  FOR BUSINESSES, Ways to work with me:
+  Apply for my Executive AI Coaching Program: https://www.theincubator.xyz/apply/dream
+  Want to build a SaaS product without hiring a CTO? https://www.theincubator.xyz/eng/dream
+  --------
+  
+  LINKS MENTIONED IN THIS VIDEO:
+  Anthropic's official Dreams documentation: https://platform.claude.com/docs/en/managed-agents/dreams
+  
+  If you're new here, I'm Austin Marchese. How I got here...
+  16: First business (SAT Math Tutor)
+  22: Graduated Stevens Tech, 4.0, College Basketball, software engineering job at JPM
+  23: Bitcoin ATM company + building algorithms for a professional gambler (fun story)
+  24: Started creating content, grew 100k+ followers, built first agency, The Incubator
+  25: Scaled agency to 15+ team members, $75K/M while working full time
+  26: Quit my job, joined a startup called IYK
+  27: Became COO of a $25M+ tech startup, worked with Ed Sheeran, Chance the Rapper and more
+  28: Built a $20M+ real estate portfolio in the background
+  29: Transitioned from IYK, re-launched The Incubator, grew it to a 6-figure biz in 30 days. Now building BuildPartner.ai
+  29: Became one of the biggest Claude Youtubers, with multiple videos over 500,000 views
+  30: Completed an Ironman and just getting started...
+  
+  To everyone who's spending time learning and putting the work in, cheers. Anyone can make comments from the sidelines but not everyone can build...
+---
+Andre Karpathy, the former head of AI at Tesla, recently joined Anthropic to fix Claude's biggest problem. This is Claude's ability to remember past conversations and not make the same mistake twice. So, I decided to dig deeper and see exactly how Karpathy thinks about this issue. And it turns out the solution is actually quite simple, and it already exists in Claude. It's their feature dreams. And the
+
+reason that you've never heard of it and never used it is that it's only for enterprise companies. So, how can you recreate this feature yourself? Well, in this video, I'll provide a simple step-by-step overview of how you can create your own version of dreams so Claude never makes the same mistake twice. But before we do that, we need to get a deeper understanding of the problem and how Karpathy thinks about it. And then at the end of this video, I'll cover something that the creator of Claude code said that relates to this topic that is extremely misleading. And
+
+if you listen to him, you will waste time and money. So, getting into part one, the problem, how Karpathy sees it, and the fix. To restate the issue, one of the biggest problems people face when using Claude is that they repeat themselves over and over again, and Claude continues to make the same mistakes. So, here's how Karpathy thinks about it. And if this sounds too complex, don't worry, I'll simplify it right after.
+
+>> I feel like when I'm awake, I'm building up a context window of stuff that's happening during the day. But I feel like when I go to sleep, something magical happens where I don't actually think that that context window stays around. I think there's some process of distillation into weights of my brain. We don't have an equivalent for all that in large language models. They're always like restarting from scratch where they were.
+
+>> Now, in this interview, he mentioned two problems. The first one is that Claude often starts from scratch without any context. This is a problem that you're pretty familiar with. But the second problem is he discusses the process of taking short-term contextual information and storing it into long-term contextual information that AI won't forget. And he compares this process of taking short-term memory into long-term memory similar to how a human brain works. When
+
+we sleep, we dream, and we bring short-term memories into our long-term memories. So, how do you solve these two problems? Well, the first problem, Claude starting from scratch, you've likely already implemented solutions to help with this. The simplest version is having a single long-running chat for a specific task, and this is something that I often do. I have a pin chat, one of them's for accounting, so whenever I'm talking about my finances, I go directly there. This is a simple
+
+solution, but it does help. A slightly more advanced version is you leverage a claw.md file, which gets loaded at the start of every new conversation to teach key concepts to the system. And we'll cover that more in a little bit, as well as this rules feature that you likely haven't heard of. Or the most advanced solution, and you may be familiar with Karpathy's own concept of this, which is LLM knowledge bases. And this is the
+
+process of where you ingest files into your local system to help teach it how you operate. Now, this is a concept that I've covered at length on my channel, and one video has over 780,000 views. So, if you search Andrej Karpathy Claude on YouTube, I'll be one of the first videos there. Or if it's easier, I link that video below, and that'll go through the LLM knowledge bases. Now, that's the first problem, and we're going to dive into that more in a little bit. But how
+
+do we solve the second problem of taking the context that Claude got during the day, and then saving it so it's long-term memory, so it doesn't forget it in the future. Now, looking back at Karpathy's interview, he hinted Claude needed some sort of dream state where it takes your current short-term memory, cleans it up, and then distills it into long-term memory. And after doing some research, it turns out that this already actually exists in Claude. Now, I mentioned this earlier, but there is a dream feature. And so, on screen, you can see the documentation for how it works, but in plain English, it does three key things. The first is it takes
+
+your existing memory plus up to 100 of your past session transcripts, reads all of it, and builds a brand new reorganized memory. Then, if there are any duplicates or things in your past memory, it'll merge them and clean it all up. Then, it'll look for any memories that contradict each other, and then pick the winner. One thing from their design structure is that you can also steer the dream. They have an instructions field where you can tell it what you want it to focus on, and what you want to preserve. Okay, so technical
+
+stuff aside, how should you actually think about this? Essentially, it just looks at what you did, analyzes it, and cleans up your Claude memory so it's smarter and fresher the next day. And the reason that you don't know about this and why you haven't tried is that it runs through the API, which costs extra on top of whatever you pay, and it's designed for companies running teams of agents, not necessarily for me and you, which are not these massive enterprise companies. Unless you are running an enterprise company, in which case email me, it is linked in my bio, let's have a conversation. But anyway, so what we're going to do is recreate this Dreams feature ourself, so we can have the same exact functionality without being an enterprise company.
+
+Before we solve that problem, at the end of the day, these systems are only as good as the data you provide them. And the best way to get high-quality data is through call transcripts, which brings us to today's video sponsor, Granola, which I am absolutely pumped about because this is a tool that I've been using for almost a year now, and it is a key part of my AI stack. So, Granola is an AI notepad that transcribes your meeting straight off your computer's audio, so that no bot has to join the call. And then during the call, you can jot notes down directly in the interface, just like you would normally do on a notepad. The ability to transcribe calls without a bot joining is such a game-changer, and it's what got me to first use it. But all the
+
+other features are why I continue to use it every single day. The first is that when I take client calls, I will take notes on specific things they said that stood out to me. Then Granola takes that and drafts a summary with those notes in mind. The second, and this is a feature that I didn't know I needed until I used it, is their recipes. A recipe is Granola's version of a skill that allows you to systematize a specific task. And
+
+they have pre-built recipes, but my personal favorite is one I created called key focus area. It analyzed my transcripts and identifies what parts of a business could most use AI. I then use this as part of my follow-up, and I do this after almost every single sales call I have. So, over time, I'm enhancing this recipe. Third feature is that every call becomes something I can actually query on during and after it.
+
+So, one thing I'll do is when I'm sitting on a call, if a prospect says an industry term that I'm unfamiliar, instead of just pretending I know what they mean, which I used to do, I'll ask Granola in chat, and it gives me a definition on the to And then after the call, I'll use Granola's MCP to connect directly with Claude Code, which lets me make more informed decisions and identify the real problems my customers and clients are facing that I may have never actually realized or addressed. I personally recommend Granola to basically everyone I work with, so I'm excited to partner with them and offer my community 100% off their first month. So, click the first link in the description to get that all set up. You are going to be happy that you did. Part two is enable your memory system. The
+
+first part of creating a dream-like state is making sure we're properly saving memories into our system. So, if you're on a recent version of Claude Code, they have a memory feature that is on by default. If you want to look at the setting, open your terminal and in whatever folder you're working on, type Claude and then {slash} memory and you'll see the configuration details. This feature stores memory files on your computer, so let's actually go and look at these. And the reason that we're doing this is it will help us understand how we should set up our own dream-like system to complement our existing memories. So, when you look at the
+
+memories folder, you'll have a memory.md file, which is just a file that points to other files. And then on those other files, that's where the details of the actual memory sits. So, on the left you can see the memory.md and this is really just a reference file. And then on the
+
+right, you can see an actual memory that's associated with it. So, the general structure that they have is a parent memory.md file and then sub files with all the details about what it wants Claude to actually remember. But, that's just part of your Claude's memory. The next thing is your Claude.md file. Think
+
+of this memories.md and your Claude memories as things that just happen in your day. And then Claude.md is the equivalent of what you decide to write down on paper so you don't forget it. And if you haven't created a Claude.md file yet, don't
+
+worry, we'll create it in the next section. But, the key with both this memory.md and the Claude.md file is they get loaded in at the start of every session. So, what that means is if you start a prompt and you say, "Hey, this is Austin." it'll also see all of your
+
+memory context and all of your Claude.md context. Simply put, it's like copy and pasting both files and putting it at the start of the prompt that you just sent. On screen, you can see a table from Anthropic stocks comparing these two features and how they relate. So, you now have a deeper understanding of how this all works, which is necessary for the next part where we'll create a dream state. Part three is to start dreaming.
+
+Going back to what Karpathy mentioned earlier, the beauty of how people sleep is that humans just automatically remember things. It just happens for them, right? We've all experienced this. We're all humans. So, what we want to do is create a system that analyzes our history, reviews our memory and claw.md
+
+files, and suggest improvements automatically, a lot like a human sleeping and dreaming at night. To do this, we're going to create /dream, an orchestration skill, which is a fancy name for a skill that calls multiple skills. Creating this actual dream skill is very simple, but first we need to create the three skills that this will reference. The first is session analysis, then improve memory, then send result. So, let's start off by creating session analysis. For each of these, I'm
+
+going to walk through the prompt that creates these because it's important to know what's going on, but don't worry to take any screenshots or anything. You can just use the buildpartner.ai plugin and run /buildpartner:build space dream, and we'll walk you through this step by step. And to get that plugin, that is linked below. So, what this skill does is it looks at your entire conversation history, which it has access to because Claude code automatically saves your conversation history to local files. Currently, the
+
+memory feature we were talking about before just decides what's important, but this looks at your entire conversation history. It reads the raw record of what you actually did and pulls out patterns your memory missed. This is a gold mine for information about how your system can start learning better. Then at the end of the skill creation prompt, we also take in an argument called dream. By passing in this argument, it will create an overview of the most useful memories, which will then bring into the next step of this process. The reason that I did
+
+it like this is that you may want to reuse this same skill in other skills in the future. For example, if I want to see where I'm spending my time, I add an argument, and the one that we're going to use is dream. So, once you create the whole thing, you would write {slash} session analysis space dream. And it tells the skill that you want to analyze it for memories that you want to bring to your long-term memory, which will format it in a way that we'll use in the next step of this process. And the reason that I added as an argument instead of the default is the session analysis skill I may want to use for other workflows in the future. For
+
+example, if I wanted to see where I'm spending my time, I could add another argument called time analysis. Then I would write {slash} session analysis space time analysis, and it would look at this information in a different way. This doesn't necessarily have to do with this specific build, but I want everyone who watches this channel starting to understand skill creation best practices. So, once we set up that skill, we're going to take the output of that and pass it through the {slash} improve memory skill. What this does is it looks at your memory and your claw.md
+
+files, as well as the analysis from the previous step. Much like the existing dreams feature that Anthropic already built, it'll merge any duplicates, and it'll fix any contradictions that exist in these files. It'll then suggest upgrades to your claw.md files, so it follows the exact format that Anthropic uses for their memory files that I covered earlier. This is a way to keep your claw.md file light, and all of the
+
+details actually live in separate subfiles. Well, now, one of the problems with just having memories and using a claw.md file is that this is a global configuration for your project. But, we really want to get more specific where needed. And this brings us to something I literally just found out about when I was researching this video, which makes a ton of sense to me. So, there's a
+
+concept called rules, where you can have specific memories or instructions that only load when you're working on a specific part of a project. So, for example, if I have a project called my life, and then within that I have an accounting folder, I can have specific accounting rules file that only loads in when I'm working on my accounting stuff. Then, let's say I have a wife folder, you could have wife rules in there that are only specific when you're working on things with your wife, which is probably a very extensive file. Again, these are local rules you don't want to make global because it'll cloud the contextual window. If you're working for things in the wife folder, that doesn't necessarily care about the things in the accounting folder. So, zooming out,
+
+essentially what we're doing is we're looking at all of our conversation history and identifying places to improve the system. And some of those things are obvious, but some of them are not as obvious. So, what we do is we create a file called memory improvement overview. And this is where it'll document any of the changes it'll auto-approve, and then it'll flag anything that you as the human has to improve for your system. Think of this like Claude identifying ideas that it thinks you should fix, but you're the one who's finally signing off on it.
+
+This is the final human sign-off that makes sure that the system is going in the direction that you want. Then the last skill that's needed is send results. This is personally how I prefer setting up all of my automations. I have a company automations channel within my Slack, and that's where all of my automations go. I prefer having things all in one place, so I know where to look and I get updated when they run.
+
+So, for you, this message can be wherever you want. This could be your Telegram, WhatsApp, email. The key here is having an output that's easily accessible and something that you'll review. Here's a prompt that you could fill in based on where you want the results to be sent. So, at this point we created {slash} session analysis, {slash} improve memory, and {slash} send result skills. Now, we have to take
+
+these three skills and package them all together into the orchestration skill, which is dream. On screen you can see the prompt that actually creates this dream skill, and there are three things to call out. The first is I tell it to review the output from the last time it ran. This is so that it applies any changes before it runs the next iteration. I then add an argument for mode, which has one mode for full analysis and another for apply fixes.
+
+I'll dive into why a little bit more when we automate this actual skill. And then third, in the skill itself, you'll see that I reference each of the skills that we already created. To reiterate why we do this, each of the sub-skills I reference can be used elsewhere in your day-to-day. Session analysis, you could use the data for other things. Improve memory, you may want to just run this manually yourself and send results.
+
+Other automations you build will use this skill, so you don't need to reinvent the wheel and you can actually scale out systems. This is really where my software engineering background comes in. You design systems based on functions or self-contained logic that you can reuse across your entire system. That's what we're doing here so that we can set the foundation for system that can scale. Now, when we package this all up and we actually run the scale, you can see the output. It shows the things
+
+it automatically approved and then it shows me the things that I need to make a call on myself. And at this point, you can very easily run it manually. Just {slash} dreams and then I'll grip it and rip it. But how can we actually automate this? You don't need to complicate this.
+
+This is actually very straightforward. Go to Cloud Desktop, click code, routines, and then local. And then within that actual routine, just reference the {slash} dream skill and then set the cadence for whatever you want. Personally, I set it for weekly on Fridays because I'm just too busy the rest of the week. So, once you hit save, let's say Friday at 8:00 a.m., it'll run
+
+this dream skill every single Friday. You can do it every night. It's really up to you. But there is a problem at this point. The original dream skill will create an overview of changes that I then have to go and review manually.
+
+So, if we just have this run on Friday, it will wait until the next Friday to apply the changes. And that means I'm waiting a week with stale data that I know is an issue that is just sitting there not getting fixed. So, what I do is on Saturday, I have another routine {slash} dream apply fixes, where it'll go and just look for this file and apply fixes automatically for me based on the feedback. So, Friday will run dreams and then Saturday will apply fixes. You can do this at whatever cadence you want, but this is the structure that works for me. Now, we are going through a lot of
+
+nitty-gritty details there, so let's take a step back for a second. At this point, we've established our baseline memory system and created a dream state that will automatically improve for us. And over time, it's going to start bringing those short-term memories into long-term memories so you stop having to repeat yourself. Which brings us to a statement from the creator of Claude code, Boris Cherney, that I don't agree with. He tells you essentially to delete everything we just created, which I'm going to dive into, but first, as a thank you to everyone that supports to this channel, I give away a Claude Max subscription every video. And this
+
+video's winner is Neons. They're building a language learning app. Shout out Neons, and shout out everyone who supports this channel. Now, to enter the next giveaway, I'm genuinely curious, what is everyone watching this channel do for a living? Let me know in the comments, and I'll try and point you in the direction of a video on my channel that's helpful for you. Everyone
+
+watching, you're the goats. Subscribe if you haven't, and if you have, appreciate you turning on those post notifications. And that brings us to part four, don't be misled. So, Boris Cherney, in a recent interview, he was asked how he deals with this exact problem that we covered, and his answer went viral. >> Every 6 months, delete your Claude MD.
+
+Delete your skills. Delete your hooks. See what the model does, and it might surprise you. >> Now, he's telling you to delete everything essentially, and I don't think he's lying, but there's a lot of nuance here that people need to understand versus just reading the headline. Boris is using Claude for coding, and Claude's models are actively getting better and better at writing code. That's entirely the truth. And so,
+
+what he's saying is that if you have guidance in your project that previously helped Claude solve problems, that guidance might no longer be needed. And that makes sense to me, right? The model got better, would have gotten that right anyway. But that's not really what we're doing in this video. The majority of what your memory in Claude.md and your
+
+skills are doing is directing Claude in the route that you want it to go. It literally would never know otherwise. For example, for the dream skill, let's say you deleted it. How would the model know what you wanted it to do? How would the model know the output file format you wanted to review? What we're doing
+
+is we're guiding Claude in the direction we want versus being overly prescriptive in how to do it. Now, there is a lot of nuance here, and I may make a whole video on this topic about the do's and don'ts and what Boris is actually saying, which if you are interested in, you can let me know in the comments. But, Boris's high-level point is the same end goal that we have. Get the most out of Claude. And in today's video, we covered Claude's biggest problem. It's
+
+not that it doesn't have a memory. It's that there's no one saying what it should and shouldn't forget. So, if you want to build exactly what I covered here, there is a link in the description where my free plugin buildpartner.ai will walk you through setting it up step by step. Now, once you do set it up, the problem that you'll realize is that this just references your prompt history for data. All of
+
+your other data lives out in the external world, and that's how you take it to the next level. So, to solve this problem, go check out this video where I walk through setting up all those external connections step by step so that you can create a self-improving system. I'll see you over there. Peace.

@@ -1,0 +1,137 @@
+---
+video_title: "This tiny computer changes EVERYTHING"
+video_id: X4blR5Ua3S0
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=X4blR5Ua3S0
+video_date: 2024-11-27
+video_description: |
+  The Rasbperry Pi Compute Module 5 is here.
+  
+  Find out more on Raspberry Pi's website: https://raspberrypi.com/products/compute-module-5/
+  
+  Here are some of the resources I mentioned in this video:
+  
+    - SBC Reviews GitHub: https://github.com/geerlingguy/sbc-reviews
+    - Full test data for CM5: https://github.com/geerlingguy/sbc-reviews/issues/58
+    - My blog post with ALL the graphs: https://www.jeffgeerling.com/blog/2024/raspberry-pi-cm5-2-3x-faster-drop-upgrade-mostly
+    - Level2Jeff video on CM5 Cooling: https://www.youtube.com/watch?v=2AMarD7ftpQ
+    - Level2Jeff video on CM5 Development Kit: https://www.youtube.com/watch?v=pu5PlXzqRLI
+    - Sharp Commercial Display powered by CM4: https://www.youtube.com/watch?v=-epPf7D8oMk
+    - Replacing an Apple TV with a Pi 5: https://www.youtube.com/watch?v=3hFas54xFtg
+    - Turing RK1 Cluster: https://www.youtube.com/watch?v=h6zt8KeXFdA
+    - EDAtec's CM5 Active Cooler: https://www.edatec.cn/en/ac/
+    - CM4 in Formlabs Resin Printer: https://youtu.be/cbm03jtWWL0?t=2851
+    - Raspberry Pi pi-gen-micro: https://github.com/raspberrypi/pi-gen-micro
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - CM5 is here
+  00:38 - What's new?
+  02:12 - How much does it cost?
+  02:33 - CM5 IO Board
+  03:41 - CM5 Hardware
+  05:01 - Thermals and Upgrades
+  05:42 - Performance
+  07:08 - The elephant in the room
+  08:16 - CM5 projects
+  08:35 - 5 and 10 Gbps Networking
+  09:26 - SATA storage server
+  10:02 - PTP Time Server
+  10:28 - CM5 Carriers - improving on the Pi 5
+  11:07 - CM Stick carriers
+  11:37 - AMD GPU support and 4K gaming
+  12:13 - Commercial display (an instant 4K upgrade)
+  12:52 - Compute Blade
+  13:25 - Extreme PCIe on Mini ITX
+  13:52 - The first CM5 Pi Cluster!
+  15:13 - A better value than the CM4
+---
+This tiny computer changes everything—except for maybe the most important thing, the form factor. This is the Raspberry Pi Compute Module 5. It's smaller than a credit card, and I already have it gaming in 4K, running a Kubernetes cluster, and even controlling my TV. The Compute Module 4 was hard to get for years. It launched with quite possibly the worst timing in computing history, leading to insane scalper pricing. It was so useful, though, that Raspberry Pi sold every single unit they made,
+
+and they're inside everything, from commercial 3D printers to IP KVM cards that let you control your computer anywhere. I even used one to bring this broken Sega Game Gear back from the dead. This new version was announced early this year, and the biggest question was, is it a drop-in replacement? Yes—for the most part. I've been testing it in tons of Compute Module boards, you can see a bunch of them here, and it's been awesome seeing a 2-3x speedup just dropping in this new module.
+
+It boots up in seconds, it has USB 3 instead of USB 2, and it's compatible with PCIe Gen 3 instead of Gen 2. The CPU is 2-3x faster, RAM is 3-4x faster, Wi-Fi is faster, storage is faster, it's basically a Pi 5 but without the plugs. Most CM4 cases and accessories still work with it, there's just a lot more bandwidth. The big advantage to a Compute Module versus a normal Pi 5 is modularity. Let's say you don't care about USB, but you want to build a device with two 2.5G network ports.
+
+You could put two USB to 2.5G Ethernet chips on a board, drop the Compute Module 5 in there, boom, tiny 2.5G router. And you still get PCI Express to play around with. The CM4 only had PCIe Gen 2 for 5 gigatransfers per second, and its built-in USB bus was limited to USB 2, that's just 480 megabits. The CM5 works at PCIe Gen 3, at least in my testing, and that bumps it from 5 to 8 gigatransfers per second.
+
+And through the RP1 chip, it adds on two independent USB 3 ports, going from 480 megabits to 10 gigabits. I kinda wish they made a Pro version though, with more pins, because there's actually more bandwidth hiding away inside this RP1 with nowhere to go, because there's only 200 pins on the bottom. Radxa added on an extra set of pins on their CM5 version for just that purpose, and we'll talk more about that later. The other big question is, how much does it cost? And for that, I defer to the official price sheet.
+
+But in broad terms, the 8 gig model is the same price, the 4 gig model is 5 bucks more, and the 2 gig model is 10 bucks more. They're dropping the 1 gig model entirely, adding eMMC options up to 64 gigabytes, and if the silkscreen is any indication, we might get even more RAM and storage in the future. Along with the CM5, Raspberry Pi is selling an updated I/O board for 20 bucks, with a few helpful changes. First, there's a power button, with the same behavior as the Pi 5. This would've saved so much time debugging graphics cards on the CM4.
+
+Then there's a new tiny fan header, the same one on the Raspberry Pi 5. Companies like EDAtec already have active coolers for the CM5, and I'll test some cooling options on my second channel, Level2Jeff. On the port side, they got rid of the 12V barrel jack for power, and now they just use USB-C. They also dropped down to two multipurpose camera/display ports. Each one has four lanes of MIPI bandwidth, just like the Pi 5.
+
+There are still two full-size HDMI ports, an Ethernet port, and two USB Type-A ports, but these ports are upgraded to USB 3 speeds. There's a microSD card slot that only works on light Compute Modules without eMMC, and finally an M.2 slot, with a little LED that blinks when you're using it. This is nice because probably 99% of people buying these things would just plug in storage here anyway. On the CM4, you had to use an awkward adapter card, but that's not required anymore.
+
+Maybe we could see built-in M.2 on the Pi 5 someday? Or, if not, maybe we could hack it using the Compute Module. That's foreshadowing...
+
+But that's the I/O board. It's just one of hundreds of ways to run a Compute Module. The CM5 is the star of this show, so let's take a closer look. You know, the feature that'll make the biggest impact for me, since I use a lot of Compute Modules, is the new silkscreen up in the top corner. It has resistors for the RAM and storage sizes, so the specs are right up top.
+
+But there are three major changes up here, besides the new BCM2712 system on a chip. First, on models with built-in storage, the eMMC chip was moved from the top to the bottom of the board, to make way for the RP1. This is the little PCI Express chip that's on the Pi 5, handling most of the I/O, like GPIO, USB, camera, display, and Ethernet. Down in the bottom left, there's a new power circuit, the exact same one from the Pi 5. So the CM5 can handle USB-C power delivery straight into the board.
+
+And for full power, you can supply up to 5 amps like on the Pi 5, but it'll run on less than that if you underclock the SoC a little. Finally, there's the same Wi-Fi and Bluetooth chip on wireless models, along with selectable antennas. The PCB antenna actually performed better in my testing than the cheaper external antennas I tested, but it won't work at all if you're inside a case, which is why there's an external antenna jack. Finally, there's an LPDDR4x RAM chip. The RAM is technically ECC, but not the same kind of ECC RAM you'd find in a server.
+
+It just corrects for bit flips on the chip and doesn't report back anything to the OS like a server would give you. Now, this new CM5 is pretty jam-packed up top, which means a heatsink is almost a necessity now, unless you have a lot of airflow. Raspberry Pi is selling their own passive heatsink, but I've found most CM4 heatsinks will still work on CM5, as long as they're flat. But overall hardware-wise, there's nothing on here that you won't also find on the Pi 5, except for maybe the EMMC. The magic happens with carrier boards. But before we get to those,
+
+I ran some benchmarks. And good news: assuming you have a heatsink at least, you can expect almost all the same numbers as a Pi 5 with the same amount of RAM. Not only that, Raspberry Pi made some quality of life improvements, too. Like now, on here, you can edit the EEPROM to do things like change the boot order without having to use another computer to do it. I'm going to run through these benchmarks quickly, so check my blog if you just like staring at graphs. Right off the bat, the most refreshing difference is it boots up about 4 seconds faster. If you're building an
+
+embedded device, boot time matters a lot. And if you really care about it, Raspberry Pi released a tool called pi-gen-micro that lets you build more efficient and quicker booting OS images. Once it's running, the CPU is almost three times faster. And it's also 1.5 times more efficient, according to my high-performance LINPACK testing. And of course, I had to test recompiling the Linux kernel. The CM5 obliterates the CM4,
+
+it's more than three times faster. Video encoding is also about three times faster. I tested x264 transcoding, both at 4K and 1080p resolutions, using Phoronix. A lot of the speedups are helped by the faster LPDDR4x RAM on the CM5, which I tested using tinymembench. I told you I was going to fly through these graphs!
+
+But all these speedups consume more power, at least at full blast. The CM5 uses almost twice the power flat out. But at idle, the CM5 uses a tiny bit less. I measured 2.3 watts at the wall. And if you're
+
+deciding on which CM5 to buy, more RAM is better, at least if you're looking for raw performance. You can save some money with less RAM, but don't expect the performance numbers on a 2GB model to match the 8GB model. The built-in graphics on this thing are also a lot faster. Just testing with GLMark, I saw the score jump from about 750 to 1916. It's not nearly as fast as even an older graphics card, but any improvement is welcome, especially if you're doing things like running 4K displays. But now, you might have noticed
+
+there was a third module in most of these graphs, except for that last one. That's another CM5, this one that's made by Radxa. It uses a Rockchip SoC, which is a monster in its own right, beating the Pi on almost every benchmark, including efficiency. The elephant in the room here is all these other Compute Module clones. Because of the Pi shortages, every SBC maker on the planet built their own version of a Compute Module. Though, some work better than others. A lot are faster than the Pi,
+
+but pricing is usually pretty similar when you compare RAM and relative performance. The big difference between the Pi and all the others, though, is support. I've posted a bunch of videos about how other SBCs could become Pi killers. I mean, the hardware is often there, they just lack support. A big part of that is the breadth of options you have for the Pi, which may or may not work on other Compute Modules. And if you want to try, you can expect to debug hardware and OS issues yourself.
+
+Like, I couldn't get a valid GLMark score on the Radxa because I couldn't get an OS image to boot and use the built-in GPU in time for this video. It's often a frustrating experience. I regularly test these other compute modules, though, and I post all my test data and experiences in my sbc-reviews GitHub repo. With performance out of the way, we get to my favorite part of this video. I've spent a ton of time in the past four years making Raspberry Pis do things that they were never meant to do.
+
+And I'll carry on that tradition with the CM5. First off, here are projects I already built with just the CM5 IO Board. Like, for networking, I tested 5 and even 10 gigabit network adapters. For 5 gigabits, I have this IOcrest adapter. It slides right into the M.2 slot, and since it's so new, I had to
+
+download the R8126 driver from Realtek and install it. But with that driver, I can get a full 4.7 gigabits on the CM5. But PCI Express Gen 3 goes faster. Can we get 8 gigabits of networking? I have this other M.2
+
+NIC, and this time it's a 10 gig adapter made by InnoDisk. I had to recompile the Linux kernel to get its driver working, but once that was done, I noticed I could only get about 6 gigabits. That's great, but why not 8? Well, this is a limitation of the CM5's PCI Express bus. It only gives us one lane to play with. Cards like this 10 gig adapter expect two lanes for full speed. So we can get past the 5 gigabit
+
+bottleneck on the CM4 now, but only just by a little bit. The nice thing is, a dual 2.5 gig build is a lot more realistic on the CM5. Switching gears from networking to storage, I plugged in this 6 port SATA to M.2 adapter, which also just slots right into the IO board. And unlike the other two adapters, I didn't
+
+have to install any driver. But I did need to tweak a couple settings to get hard drives and SSDs to work reliably. Once I did that, I tested one of my ridiculous 8TB SSDs and a more reasonable 4TB hard drive, and, well, the SSD worked great, but I did get some errors with the hard drive. I'm going to chalk that up to the cheap Molex power adapter I was using, though. But the big thing is, these projects all keep you under 200 bucks all in, and might even fit inside the official CM5 Development Kit Raspberry Pi is starting to sell.
+
+Another project you can do without adding anything extra is setting up the Pi as a high-precision time server. Just like the CM4, the CM5 has built-in PTP hardware timestamping, so if you wanted to build the most precise time server in your entire neighborhood, serving up PTP and NTP to your whole homelab, that's easy! I've been tinkering with time here at the studio, and a Time Lord who works here in St. Louis actually challenged me to a duel. No, I'm not even kidding. We'll see where that goes next month.
+
+But the Compute Module thrives being used in carrier boards. I've covered tons of these on my channel already, and there are at least hundreds to choose from for whatever computing project you can dream of. Starting off with this. Waveshare built a little carrier that basically solves my two biggest gripes with the Raspberry Pi 5. Slap a Compute Module 5 on here, and you have a Pi 5 with full-size HDMI and an NVMe slot on the bottom. This board, along with all the other ones you see here, were designed for the CM4.
+
+So this SSD worked on the older version, but only got about 420 megabytes per second. On CM5, it gets an instant speed boost to 800 megabytes per second if you bump the PCI Express bus to Gen 3. And this, this thing's the most handy tool for anyone who deals with Compute Modules with eMMC. If you want to quickly flash one or debug it, you just stick the Compute Module on it and plug it into your computer's USB port. And it works perfectly with the CM5. No hardware changes were needed. One little stick that I had trouble getting
+
+working is the CM4 TV stick. It let me jack a Compute Module right into the back of a TV or monitor, but it seems like the USB-C power input on it didn't like the Compute Module 5. So not every carrier is going to work right out of the box, some might need a fix. But external GPUs work great, at least if you're talking AMD. I've been testing AMD 400, 500, 6000, and even the latest 7000 series cards on my Pi 5, and they all work great on here too. I just swapped in the CM5, and it's actually a little less janky since the M.2 slot is
+
+built right into the I/O board. I can imagine a video titled "My GPU is the Computer" or something, if I can build a dock that sticks the Compute Module underneath the graphics card. We'll see. But I installed Pi-Apps, used it to install Box86 and Steam, and then launched Portal 2, and it was giving me smooth 4K Ultra gameplay, just like on the Pi 5, except with a little cleaner setup. Switching gears to the display side of things, I upgraded my smarter-than-a-smart-TV by swapping out the CM4 for a CM5. This Sharp commercial display costs
+
+a bit more than your average TV, but as I showed in my video a couple years ago, it's better in every single way, especially in how it has a Pi built right in. The CM4 worked great at 1080p, but choked on 4K. The CM5? As long as it's encoded in HEVC or H.265, 4K at 60fps plays back butter smooth. If you want to see more of my
+
+media playback testing with a Pi 5, check out my video where I replaced my Apple TV with a Pi. It's worse for streaming services, sure, but for local playback like you'd do on a commercial display like this one, it's been great. And the Compute Blade. Who can forget the Compute Blade? First of all, I wanted to mention, it's still not shipping. At least, not in the US. Apparently it's been stuck in regulatory hell.
+
+But a tiny bit of consolation to any backers, myself included, it works perfectly with the CM5. The one problem I found is the custom heatsinks don't fit, because they're not flat. They have cutouts for the CM4 chips, but they don't work on the CM5. One board that had a little more trouble, though, was the MirkoPC, the first CM4 carrier board that I tested. I think there's a power issue, but I'm hoping Pineboards will whip up a new version soon. The Seaberry Pi is probably one of the most
+
+radical Compute Module carrier boards I've ever tested. And in good news, it works! I can plug in up to 12 PCI Express devices on a little mini-ITX motherboard. But in bad news, the switch chip on here is so extreme, it might not work for NVMe boot. But that's not a big deal, because there's worse news. After the first production batch, Alftel stopped selling it, because it's a little niche.
+
+Maybe we'll see a comeback, but maybe a design that's a little bit less ambitious. But now we come to one of my favorite things to do with Compute Modules, and that's clustering. This might sound ridiculous to some people, but the Pi was a big part of my move from being a web programmer to being a back-end infrastructure engineer. Tinkering with Pis let me experiment with networking and provisioning, and ultimately led to me using Ansible. Anyway, I took three CM5s and put them on this mini-ITX Super 6C board from DeskPi, along with three SSDs on the bottom. Using my
+
+cluster-pi playbook, I installed Kubernetes and ran a web application on my cluster. It's certainly a lot faster than the CM4 was. I didn't get enough time to test Ceph storage with NVMe, but I intend to do that, too. Now, the CM5, even with six of them combined together, still isn't going to hold a candle to the current king of SBC clustering, the Turing RK1. That little module is a monster, with 32 gigs of RAM per node. I did a whole video on that thing last year,
+
+so go check that out if you want to learn more. But those modules cost a bit more, too. You get what you pay for. Extrapolating my 3 Pi cluster numbers, I could get close to 200 gigaflops with six CM5s if I used the bigger 8GB models. Just four RK1s with 32 gigs of RAM each gets 224 gigaflops. That's a pretty big delta. The CM5 could maybe close
+
+the gap a little with a 16GB model, but who am I kidding? The market for Compute Module clusters is admittedly tiny. But it is a fun way to learn infrastructure. But tying up the CM5, Raspberry Pi kept the price the same for the 8GB model. Those start at $75 for the Lite version. For 4GB,
+
+they're going up $5, and for 2GB, it's up $10, from $35 to $45. They're dropping the 1GB model from the lineup, and in reality, a lot of applications choke with less than 2GB of RAM, so I'm not surprised there. When the Compute Module 4 came out, it changed literally everything, including the form factor. That meant everything built for the CM1 and CM3 had to be redesigned, and it made a lot of people pretty angry. Luckily, this time they kept the same form factor, meaning for most things it's a drop-in upgrade, where you get 2 to 3 times faster performance, and at least for the larger models, the same price.
+
+Check out my other videos on Level2Jeff, and until next time, I'm Jeff Geerling.

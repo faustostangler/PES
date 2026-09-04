@@ -1,0 +1,109 @@
+---
+video_title: "AI Tries to Simulate a City"
+video_id: W7YrcdcqYsY
+channel_name: "Simulation Sandbox"
+channel_id: UCWNXIhwz9haaoQ5ulbFrsnw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=W7YrcdcqYsY
+video_date: 2025-11-22T02:29:55+00:00
+video_description: |
+  Gemini 3.0 Pro vs GPT-5.1 Codex Max on complex simulation challenge with agentic coding. 
+  
+  # Chapters:
+  0:00 Introduction
+  0:44 Bird Flocking Challenge
+  1:52 Gemini 3 Pro: Bird Simulation
+  3:07 GPT-5.1 Codex: Bird Simulation
+  4:17 City Challenge
+  4:43 Gemini 3 City: Simulation
+  5:46 GPT-5.1 Codex: City Simulation
+  
+  # SETUP
+  I used the Gemini/Codex CLI with no other tools and the models started with empty repos. 
+  
+  The models:
+  Gemini 3.0 Pro via the Gemini CLI tool.
+  GPT-5.1 Codex Max (extra high reasoning) via Codex CLI.
+  
+  (I tried using Gemini via Antigravity but I couldn't get it to stay on track long enough, and rate limits were far too lo) 
+  
+  # PROMPTS
+  Here are the prompts I used: 
+  
+  # Bird flocking task specific prompt:
+  "Your task is to build a visually stunning 3D bird flocking simulation. It should be set in a serene, detailed nature scene with vegetation, trees, and whatever else you want to add. The birds should be detailed and flock realistically. Make sure the flocking dynamics look beautiful and realistic. You should be able to swap between a general view, and ‘bird view’ where the camera is following behind one of the birds for an immersive view. Each element should be detailed and realistic as you can."
+  
+  # Extra prompt requirements (used on both tasks)
+  "It should also include controls to look around and explore the simulation, and a GUI with controls for the main simulation parameters. The main animation driver will be ThreeJS. You must install everything yourself here, and you can install/use whatever other dependencies you want. 
+  
+  Testing:
+  1. You must test your simulation runs correctly with no errors in a browser. 
+  2. You must take screenshots of the simulation from different angles. Systematically verify every element/requirement is visible as intended. 
+  3. When everything is verified as working correctly, use screenshots to iterate on the ‘look’ and aesthetics. What parts could be improved or fixed?
+  
+  Use the testing/screenshots to iterate and improve it based on what it actually looks like, and to verify and tune the complex dynamics and behaviour. Install/use whatever you need for testing. 
+  
+  The goal is to make it as aesthetically beautiful and interesting as you can. Don’t stop to ask for permission etc. Do not stop until the project is built, run and tested with no errors, and design, aesthetics, and dynamics are checked and iterated via screenshots."
+  
+  #City task specific prompt:
+  
+  "Your task is to build a visually aesthetic procedural city simulation. The city should have the following:
+  
+  -Buildings
+  -Streets with sidewalks, traffic lights, etc
+  -Trees, vegetation, parks, etc.
+  -Animated people walking around the city
+  -Cars driving around in traffic
+  -Other details important in a city you must think of yourself, you will be checked for level of realistic detail you include. 
+  
+  Each element should be detailed and realistic as you can. E.g. model the cars and people etc. You will be checked each of these is present, working, and the level of detail. "
+  
+  #Review Step Prompt 
+  (this was repeated 4 times to each model after they finished the first version).
+  
+  "Continue with refinement stage. Systematically check, verify, and improve every aspect of the simulation. 
+  
+  Don't add any new features, just use testing/screenshots to refine and improve what is already there. 
+  
+  Use screenshots as a strategic tool for actually verifying aesthetics, dynamics and functionality. Assume the simulation is full of visual and functional issues that need to be spotted and fixed. Look for things that are wrong and need fixing. Also look where visual improvements can be made. You should do many tests and take many screenshots to verify all of the following:
+  
+  - The overall visual implementation. Does it look as intended by the design/code?
+  - The detail of individual animation elements. Is each element present and correct?
+  - The correctness and functionality of the simulation. Do the functional parts actually function correctly?
+  - The dynamics of the simulation. Does the simulation evolve over time as expected?
+  
+  Don’t consider this a quick patch or checkup. It’s an opportunity to really find out what needs improving in your simulation over multiple iterations, and systematically improve it. Commit changes as you go."
+  
+  The models spent around 10-20 minutes building, and 15-20 minutes refining each simulation.
+---
+In this video, I'm going to push the two smartest AIs to their limit. Gemini 3 can create beautiful one-shot scenes, like this one it created to introduce itself. And I'll be comparing it to GPT 5.1, or more specifically GPT 5.1 Codex Max (Extra High), but that's not quite as catchy. For really
+
+difficult tasks, these are apparently the two best AIs in the world. So, I'm going to test them on complex simulation tasks that require planning, testing, and iterating over time. The first is a bird flocking simulation set in a beautiful nature scene, and the second will be a full city simulation with people and traffic. First is bird flocking. It has to be a 3D simulation with realistic bird flocking behavior. I want it set in a beautiful nature scene with vegetation,
+
+trees, and any extras the model wants to add. I also want a bird view where the camera follows a bird to see what it's like to be in the flock. It has to use ThreeJS, which is the most popular JavaScript animation library. If you've seen some of my other videos, you know the models are pretty good at animating with it. They can use any other tools they like, and it has to have basic controls for looking around the simulation. That's a lot to get done all at once. So, I'm going to use
+
+agentic coding tools to let the models work for a long time on the task. I'll use Gemini 3 with the Gemini CLI and I'll use GPT 5.1 Codex Max with the Codex CLI. Both with maximum reasoning. The models have to run the simulation themselves to test it and take screenshots to view what their simulation actually looks like and see what can be improved. And I'm going to ask that every element
+
+is as detailed and realistic as possible. I'll add the full prompt in the video description if you're interested. This is Gemini 3's bird flocking simulation. We can see straight away the birds are flocking in a pretty realistic way. And the nature scene looks like a foggy river delta with 3D terrain, trees, rocks, and transparent streams. Although, if you look closely,
+
+the trees don't actually touch the ground. It's quite a big world, and the birds explore a lot of it if you let it run. But they do get caught in these circles. It has the controls we asked for to tune the simulation parameters like how close the birds like to fly to each other and their speed. And if you mess with it, you can get some weird behaviors. The bird view is exactly what I wanted,
+
+but can be a bit shaky and sometimes breaks. But here we can get an idea of how the simulation works. Each bird is flying around independently based on some rules like when to turn towards or away from nearby birds. And the flocking behavior you see is emergent from these individual bird rules rather than being programmed in at a high level. Gemini didn't bother to make the birds interact with the environment and they go straight through the trees and the ground. But overall,
+
+I'm pretty impressed with Gemini getting this on its first try with no intervention from me. GPT 5.1 Codex's bird flocks seem a bit more fluid and natural, but a few seconds in, they do go flying out of the world and into the abyss, but they do eventually come back. The trees meet the ground correctly for this one, but the water feature is nowhere near as good as Gemini's. The bird mode is very smooth and looks great when the birds are actually flying over the world. And the birds do
+
+hit the ground on this one, which is a bit weird, but I guess more realistic than Gemini's birds, which go straight through the ground. We have the simulation controls similar to Gemini's, which includes bird ground clearance, but even with that all the way up, they still sometimes hit the ground. If you play around with the controls, you can get some weird flocks. I found this lonely bird and managed to catch the moment. It detects a nearby flock and turns to join it.
+
+Codex's birds were much nicer to play with than Gemini's, but Codex also made the biggest mistake of letting the birds fly off the map. To me, they both did really well with different pros and cons, so I'm going to make the next challenge even more difficult to see if they can handle it. The next challenge is to build an entire city. I want it to be a 3D simulation in ThreeJS. It has to have buildings, streets, vegetation, parks, and other things that should go in a city. It needs to have
+
+people walking around and cars driving around with realistic traffic interactions. I'm going to use the agentic coding tools again to let the models run and test their code, take screenshots, and iterate based on what they see. Here is Gemini 3's city. It took a few tries. It built a couple of cities that just didn't work, and it could clearly see they didn't work from the screenshots, but it just didn't care. And even after I asked Gemini to fix it, it just pretended that it was
+
+fixed. But eventually it built this city which has cars and people walking around just like I asked. These parks are scattered around and each one is a bit different. The people have a little walking animation and they walk on the sidewalks although some of the sidewalks are missing and they use the road crossings but they do not care for red lights and they walk straight through cars. The cars do drive on the road and stop at traffic lights but the rules are a bit strange.
+
+Like this car is driving on the right and then switches to the left. After about a minute, this causes the entire city to get backed up while cars wait for someone on the wrong side of the road to move. You can also change the time of day and nighttime has a very different vibe. But overall, I'm going to say this is a pretty good job from Gemini 3. Codex's city looks okay from a distance, but is full of weird issues. Half of the streets are oriented the wrong way and
+
+things just seem to be placed randomly. Like trees are in the middle of the road and traffic lights don't point the right way. I thought the cars were driving sideways at first, but the lights and everything are on the right way, so they are just very wide. The traffic only really functions for about 10 or 15 seconds. Then the cars just seem to stop and never start again. The people are also nowhere near as good as Gemini's. They kind of just float around and
+
+have no walking animation. Overall, I'm going to give Codex a fail on this one. There are just too many issues. I gave it a couple of tries, too, because Gemini had a couple of failed attempts. It was much more reliable than Gemini at getting it working, but it just couldn't get it much better than this. I think the main issue is it just doesn't look at the screenshots properly,
+
+so it just misses obvious glaring issues right in front of it. Even though I love Codex and use it everyday, I'm going to say Gemini wins this comparison. It did struggle with the agentic coding more than GPT 5.1 Codex, but its spatial reasoning is on another level. Thanks for watching. I'll put the full prompt and process I use in the video description. Cheers.

@@ -1,0 +1,59 @@
+---
+video_title: "Conectar Credenciais Google ao N8N em 6 minutos"
+video_id: TNfOJa1gku0
+channel_name: "Well Pires "
+channel_id: UCOu9pKHv94bFeRy5vzB-b1Q
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=TNfOJa1gku0
+video_date: 2025-11-24T16:26:17+00:00
+video_description: |
+  🔥 Minha Comunidade de IA: https://www.aimakersclub.com.br/
+  📚 Meu Curso Gratuito de N8N: https://youtu.be/dw5OmezRLoU?si=5wANK0VtPepcr398
+  💼 Me Contrate para Automatizar sua Empresa: https://calendly.com/wellpires/discovery-call
+  
+  Aprenda a conectar os aplicativos do Google ao N8N de maneira prática e direta ao ponto!
+  
+  Nessa aula você irá aprender em menos de 6 minutos a conectar seu Google Sheets, Google Agenda, Gmail ao n8n; criar uma conta no google cloud console e criar autenticação oAuth para integrar ao n8n. Espero que curtam!
+  
+  
+  VPS da Hostinger usando o cupom WELLPIRES para obter + desconto (por tempo limitado): 🔗 https://tag.gs/Well_Pires_
+---
+E aí, pessoal? W Pires aqui. Sejam bem-vindos a mais um vídeo do meu canal. E nesse vídeo eu vou fazer o vídeo mais direto ao ponto possível para você aprender a conectar suas credenciais do Google dentro do N8N. Então, se por acaso você quer automatizar o Google Agenda, o Google Sheets, o Google Drive, XYZ, você vai conseguir aqui no N8N resolver essa solução em um tempo recorde, porque eu vou ser totalmente direto ao ponto. Ou seja, eu tenho aqui
+
+uma automação já com o N8N aberto. Eu consegui cadastrar o meu Google Calendar aqui dentro, mas obviamente você tá nesse vídeo é porque você quer ver o processo acontecendo passo a passo. Então vamos lá. Primeiro de tudo, a gente vem aqui em create new credential. Quando você pega qualquer node, né, qualquer, ã, aplicativo do Google aqui dentro do N8N, você vai cadastrar sua credencial. E aqui onde a maioria do
+
+pessoal dá PAN, porque aparece esse client ID e esse client secret. Você não sabe exatamente onde pegar esse client de esse client secret, porque o Google só te pede um login de e-mail e senha quando você cria a conta do Google. Onde que eu pego o meu ID e o meu client secret? Bem, o N8N ele é muito solícito quanto a isso. Então ele traz aqui uma documentação pra gente de como fazer isso passo a passo, mas ninguém quer ler isso, ninguém entende direito esse documento. E se você tá nesse vídeo é
+
+porque você tá querendo uma demonstração visual mesmo de alguém te dando esse apoio. Então, bem, o que você vai fazer é, primeiro de tudo, abre esse documento, não para ler ele, mas vem aqui, ã, onde tem esse pré-requisito, create a Google Cloud account, porque você realmente precisa disso para fazer acontecer. E aqui na parte superior direita da tela é onde você vai fazer o login nesse console com a sua conta do Google. Isso daqui é gratuito para fazer e você pode utilizar com qualquer conta sua do Google, mas uma vez que você tá logado, você vai aparecer uma tela como essa daqui, que esse daqui é o Google Cloud Console. Eu já tenho uma conta logada, mas eu vou criar uma aqui do zero com vocês, um projeto do zero de integração com N8N. Então venho aqui
+
+novo projeto, vou colocar demo YouTube 24/11. Ahã. Vamos criar isso daqui. Vamos esperar finalizar. OK. Criado. Deu YouTube 24/11.
+
+Cliquei lá. Eu vou voltar aqui pra tela inicial, né? E eu venho direto em API serviço, porque é aqui que eu vou consumir a API do Google Cloud, Google Sheets, qualquer API do Google. Mas primeiro de tudo, eu tenho que vir em tela de permissão OALF, que é basicamente onde a gente vai pegar essas informações aqui. Como você pode ver, OALF, tá? O método de integração que a
+
+gente vai fazer do N8N. Bem, já vem direto aqui para Vamos começar. Deixa eu tirar esse negócio. Ã, o e-mail de suporte é o próprio e-mail que você vai estar criando a sua conta no Google Cloud Console. Você, ah, eu tenho que dar um nome pro app, eu vou colocar N8N.
+
+Vou avançar. Eu coloco como externo, porque vai ser uma integração externa. A gente vai integrar o Google Cloud fora em um aplicativo externo, ou seja, o N8N. Eu venho avançar dados de contato, vou colocar ã o e-mail que eu quero fazer a integração da minha agenda. Então, por exemplo, o seu Google Agenda tem que tá cadastrado em um e-mail. Ã,
+
+eu vou colocar aqui o e-mail que tá cadastrada a minha conta, né, que eu quero fazer a integração. Eu dou um avançar, concluir e continuar. Vou colocar em criar e vamos esperar isso daqui funcionar. OK. Agora a gente precisa criar um cliente half, que é basicamente o que vai trazer pra gente aquelas credenciais de ID do cliente e chave secreta do cliente, que é o que ele pede aqui dentro do N8N. OK? Vamos aqui em criar
+
+cliente ALF. Ah, esse tipo de aplicativo vou colocar como aplicativo da web. nome, eu vou colocar Wpires mesmo, meu próprio nome aqui em URLs de redirecionamento, olha só como as coisas batem. É basicamente isso daqui, a tradução literal do OL redirect URL, que o N8N passa pra gente. Eu vou simplesmente ah alimentar isso daqui dentro do Google Cloud Console. Vamos
+
+criar isso daqui de uma vez por todas. Ah, vamos criar. E ele dá aqui pra gente o ID do cliente. O ID do cliente está sempre disponível na aba clientes. Ah, eu vou pegar esse ID do cliente, eu vou trazer aqui pro N8N cliente ID. Ele já
+
+aparece aqui o sign with Google, mas a gente ainda não tá pronto para ir, porque o que a gente precisa, na verdade, é publicar isso. Enquanto tiver restrito a usuários de teste, a gente não consegue integrar isso dentro do N8N. Então, o que eu vou fazer é ã tirar de teste para produção. A gente faz isso vindo aqui em público alvo, aqui no painel lateral esquerdo. Eu vou clicar em publicar app, confirmar.
+
+OK. Agora eu vou voltar para pegar a minha secret aqui, chave secreta do cliente. Vamos clicar. Aqui, client secret. Vou colocar demo YouTube 2411, só para ter tudo certinho.
+
+Vou salvar. Ele deu aqui credencial salva como sucesso, mas a gente precisa fazer esse signin aqui para dar certo. Eu vou escolher a conta que tá integrada a minha agenda do Google, que eu quero fazer essa automação. E olha só, isso daqui é mais um lugar que as pessoas dão pan, mas você já fez 99% da parte. não trave por aqui. O que você vai fazer é
+
+clicar aqui em avançado e clicar aqui em acessar o seu N8N. Vai tá o RL aqui do seu N8N. Dependendo se você colocou ele numa VPS ou não, você vai selecionar tudo aqui e você vai continuar. E vou lá. Credencial conectada com sucesso.
+
+Parabéns. Mas não finaliza aqui agora esse vídeo porque tem mais um passo importante para você fazer isso daqui dar certo. Bem, o que é esse passo? Você vai vir aqui na sua no Google Cloud Console, você vem paraa parte inicial e vem em API e serviços e você vem direto na biblioteca para você habilitar as aplicações que você quer usar. Então, por exemplo, se eu quero usar o Google Calendar API, eu venho aqui em Google Calendar API, vou ativar essa API dentro do meu Google Calendar Console. Você
+
+pode fazer isso com mais de um API, você pode fazer com quantas você quiser. Então, bem, estou ativado aqui. Agora eu posso usar o meu Google Calendar lá dentro do N8N. E por que que você usaria o Google Calendar? Bem, tem agentes de IA que eles são responsáveel por fazer agendamentos, reagendamentos, cancelar consultas. Isso daqui é o caso de um
+
+agente de a para clínicas médicas, que você pode vender esse tipo de projeto por mais de R$ 5.000. É o que eu tô fazendo há 3 anos e é isso que eu ensino o pessoal da minha comunidade a fazer. E a gente tem dezenas a essa altura do campeonato, talvez centenas de cases de sucesso dessas pessoas que conseguiram vender esses agentes de A por mais de R$ 5.000. E você pode ter ele totalmente de
+
+graça, esse agente de IA aqui. Basta você seguir a nossa página da AI Makers Pro no Instagram e enviar um ADM pra nossa página escrito clínica, desse jeito aqui que tá na tela que você vai receber esse template aqui de agente de IA. Beleza, pessoal? Então, foi isso. Vamos testar aqui de uma vez por todas esse agente de IA. Não o agente de A,
+
+mas o Google Calendar funcionando. Bem, você vê aqui o node foi executado com sucesso, tudo verdinho, mas não trouxe nada porque não tem nada na minha agenda. Mas a integração foi feita com sucesso e era isso que eu queria ajudar vocês. Então tamo junto pessoal, valeu.

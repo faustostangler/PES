@@ -1,0 +1,100 @@
+---
+video_title: "I fixed the perfect Mini NAS!"
+video_id: TlsIuA8rBRg
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TlsIuA8rBRg
+video_date: 2025-04-25
+video_description: |
+  The GMKtec G9 was not perfect. So I fixed it. But is my fix good enough?
+  
+  Some of the things I mentioned or used in this video (some links are affiliate links, I earn from qualifying purchases):
+  
+    - My earlier video on the G9: https://www.youtube.com/watch?v=M_Ft8OAPQ3g
+    - GMKtec G9 N150 4-bay NVMe NAS: https://amzn.to/4cuGRzY
+    - KingSpec NX 2TB NVMe SSD (DRAM-less): https://amzn.to/42Kr4IP
+    - FNIRSI FNB58 USB-C interactive power meter: https://amzn.to/42vrxA1
+    - Noctua 120mm USB 5V Fan: https://amzn.to/4iA6jpn
+    - Noctua fan desktop 3D print: https://www.printables.com/model/511959-adjustable-perfect-desktop-fan-stand-for-120-and-1
+    - Topdon TC004 IR Thermal Camera: https://amzn.to/4lL3B39
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - I thought it was perfect
+  00:56 - Basic thermal improvements
+  01:33 - Downgrading PCIe
+  02:46 - A severe underclock
+  04:31 - USB-C 'Power Brick'
+  07:24 - Another $400 of testing
+  09:29 - Storage catch-22
+  10:22 - Hot Chips
+  11:21 - That's gonna be a no from me
+---
+In my last video, I said the GMKtec G9 was almost a perfect mini NAS. But that "almost" was based on hopes and dreams. Why does the G9 look like *this* now? Because I fixed all the problems! How? You're
+
+not going to like it. There's one thing I want my NAS to do, and that's have rock-solid reliable storage for my network. Network Attached Storage: that's the name. This thing would completely kill itself and reboot any time I copied more than a few gigabytes. That's not good, and so I said I wouldn't recommend it, even though physically it's the perfect size for my mini rack.
+
+But so many comments had suggestions for ways I could mod the thing or get it running stably, so I thought I'd give it another shot. I retested everything. I took every one of your suggestions to heart. I tested different SSDs, I yanked off the back cover and blew a fan over them, I underclocked the CPU, I ran the drives at ancient Gen 1 speeds, I even tested just how bad the power adapter is, and spoiler alert: it's bad. But let's start at the top.
+
+I did the easiest thing first. I bought four M.2 NVMe heatsinks and installed them. Then I left the back of the case open and blew this giant Noctua fan over everything. I ran it in toaster mode so all the hot air would go up. I even put a piece of
+
+Kapton tape inside to separate the CPU cooling zone from the SSD area. Even with all that, it's still locked up after about 40 gigs of files copied over the network. But it did pass my 10 gig disk benchmark. The whole time, the drive temperatures were in the 30 degrees Celsius range, so it was more stable, but even with the drive temperature sorted, it was still crashing under heavy load. So next, I kinda hacked the system to run all the drives at PCI Express Gen 1 speeds.
+
+These are Gen 4 drives running in a Gen 3 system, but even with Gen 3, a tiny chip like the Intel N150 might get a little stressed pushing through all that data at gigabytes per second. So I ran this script to downclock the PCI Express bus down to Gen 1, which means each drive would get about 400MB/s to play with, about a third of the Gen 3 speeds. I ran Blackmagic Disk Speed Test to make sure I could still saturate the 2.5 Gbps network connection. And that worked, at least. But would the network copy torture test work?
+
+Well, finally... yes! I copied 40GB of files back and forth with Samba to and from my Mac.
+
+The copy would only progress one way at a time, but eventually the whole thing finished, and the system didn't crash. So this was progress. With a massively upgraded cooling setup taking up half my desk and downclocking the drives to their minimum performance spec, I could finally copy files without issues. But if I want any chance at getting this thing to run in a mini rack, I have to figure out how to do all of this without that massive external fan. If I can't fit a big fan underneath, what else can I do to keep this thing cooler? The other option is to severely underclock the CPU.
+
+The N150 has an 800MHz base clock, but Intel has a lot of turbo modes and performance settings in the BIOS that lets it run way faster, at least until you hit thermal limits. Then it clocks down a little, like to 2 or 3 GHz, and runs like that until it gets a chance to cool down again. Well, I won't bore you with all the details, but first I tried just setting all the fans to run at max by manually overriding the fan controls in the BIOS. But it was still throttling, and the file copies locked up the whole system. So next I went in and turned off all the turbo.
+
+I basically told Intel, "Screw it, I'm okay with getting Raspberry Pi 4 levels of performance. Just don't overheat. And you know what? Early signs were good. With the CPU slower and the SSDs running at Gen 1 speeds, the total system power draw was down to 14.6 watts instead of 19.
+
+So really quick, I ran Geekbench just to see how much performance I sacrificed. And the answer? Pretty much all of it! It's brutal. If there's one way to get an Intel CPU to run slower than a Raspberry Pi, it's to disable all the turbos.
+
+And even with that, the exterior of the case was still hitting like 50 degrees Celsius, to make it uncomfortable to touch. The thermal design of this box is just not good. But—hear me out—the file copy worked! I could copy tens of gigabytes over the network, and it never crashed. So, if you basically turn this into a Raspberry Pi 4 and set the fans to maximum loudness, well, the drives still reached up into the 50s, but you can at least get 2.5
+
+gigabits of file copy performance. It's a bit of a pyrrhic victory. My next test with the drives was to order up a set of native PCIe Gen 3 drives, a set of KingSpec SSDs someone said they had working in the comments on my earlier video. So, I ordered four of those off Amazon, sinking another $400 into this project. While I was waiting for the drives to ship, I switched gears to the G9's power supply.
+
+I mentioned in my first video, this box has a USB-C power jack, but it didn't look like it had PD or "Power Delivery" support. That's how most modern devices negotiate a voltage when you plug them in, so they don't overload things and catch on fire. This AC adapter just lists 19 volts at 3.42 amps, and there's no indication it's actually using PD to negotiate. I would have tested this for the first video, but frankly, I was just too frustrated with my other testing to even try that out.
+
+But this time around, I pulled out my little USB-C power meter to check. This lets me inspect all the stuff going on behind the scenes when you plug in a USB-C power source. When I plugged in the GMKtec power adapter, it showed 19 volts as expected, but the D+ and D- pins reported a MediaTek protocol being present, called PD-MTK. So, maybe the power supply does supply PD, but it only offers like 19V? That'd be weird, but maybe it has a safety built in so it won't just output 19V even if the device doesn't support it. To test
+
+that, I took one of my Raspberry Pis and plugged it in. And that was probably a bad idea. I noticed the power LED would light up and then kind of die off, and it kept doing that. Then, a few seconds into that, I started smelling some magic smoke, so I knew something was up. I pulled out my thermal camera and look at that! Some circuit over by the USB port turned into
+
+basically an infrared light bulb. It was pumping in enough juice at 19 volts to heat that corner up past 160 degrees Celsius. That's not good. That means this power adapter will just pump in 19 volts whether the device you plug it into takes it or not. Lucky for me, it looks like the Pi still boots up with a normal power adapter, but that's more on Raspberry Pi for choosing components that can take like three times their current ratings. Not all electronics are designed that way, and some will
+
+just burn up. So, the 19V adapter is bad for other things, but what if I try the reverse? What if I plug the G9 into a standards-compliant power adapter? My little Anker GaN charger does 20V at 65W, so in theory that should work. But when I plugged it into the power port, it booted to the GMKtec splash screen, but it wouldn't continue booting into Linux. When I used the other port, the one
+
+labeled "Type-C", it actually booted up cleanly. So, I don't trust this power setup at all. I've resorted to putting this giant label on the power adapter because I don't want it to fry any more of my electronics. Companies who use the USB-C plug have a responsibility to consumers. At minimum, this charger shouldn't fry your device. I mean, getting back to the Raspberry Pi, sure,
+
+They use a weird standard with up to 5 amps at 5 volts, but at least their power adapters are regular USB-C PD, so you can use them with anything. This thing, assuming I don't use it to kill some more of my electronics, is just going to be e-waste once the G9 is gone. Apparently, in this case, power brick means it bricks anything you plug into it. But anyway, after the smell of magic smoke was gone, the four new $100 NVMe drives showed up. These are KingSpec NX series drives. They run at PCIe Gen 3x4, and I bought 4 at 2TB,
+
+so I can still have my 8TB NAS, or 6TB with parity. I installed the drives and was trying to initialize a ZFS pool, but then I noticed two things. First, one of the SSDs has a completely different controller inside. They're all DRAM-less, meaning instead of a fast cache on the drive itself, it relies on the system RAM for caching. But seeing one of the four I bought have a different controller inside didn't inspire much confidence. The second thing I found was one of these drives just wouldn't work.
+
+Like, I could see it with lspci and even lsblk, but when I went to format it or use it with a ZFS array, it would show all these errors. So I pulled it out of the G9 and plugged it into my Mac, and no, still nothing there. Again, it's recognized, but it just won't format. So I went over to Amazon and set up a replacement. Meanwhile, digging deeper into the logs, it looks like these drives also don't have valid SUBNQN fields. A lot of times, cheap NVMe drives aren't imprinted with
+
+unique identifiers, and if you ever move which slot these are plugged into, ZFS will forget which one is which. It's never fun to see "may cause data corruption" in a message about one of the drives you just paid $100 for. Have you ever worked on a project that just seemed cursed? So anyway, after all that, I benchmarked the three drives that still worked. I ran my 10-gig benchmark, and wow, it took forever. This is just a theory, but if you have to rely on system memory for the
+
+SSD cache, that means more data has to go through your CPU. And if you have the CPU throttled to make it not overheat the drives, then that means everything on your system is slower. And you can see, the iozone process is getting bottlenecked by the CPU, and that results in performance across the array that's barely better than a single drive on its own. So, I reset the BIOS, went back to all the CPU performance defaults, and tried again. This time, the CPU was still bottlenecking the writes, but reads had a little breathing room, showing a 4x performance gain. The moral of the story is, cheap, DRAM-less NVMe's need fast memory
+
+access or performance goes out the window, so you have to run the CPU a little harder. But SSDs *with* DRAM cache use too much power, apparently, so on here you have to underclock everything. Anyway, I was about to throw in the towel, but Amazon delivered the replacement KingSpec drive. I installed it, got a new 4-drive ZFS array setup, and ran my tests. And it worked! With my tweaked fan curves keeping the CPU down in the 70s instead of the 80s,
+
+I was able to run my 10GB benchmark, copy files to the G9 over the network, and even copy files to and from the G9 at the same time. I did notice something funny. Two of the drives were in the 40s, and two in the 60s. I remembered that YouTube commenter mentioning *his* KingSpec drives ran in the low 50s. So, I guess another takeaway is, if you buy cheap drives, don't expect consistent performance drive to drive. Especially when it comes to thermals. And that reminded me. I had pulled
+
+out my thermal camera and noticed something I missed last time. The hottest temps weren't actually the CPU or the drives, or even the exhaust vent. It was inside the box where there's no airflow back under the plastic cover. So, that is why this looks like this. I disassembled the whole thing, I ripped off the metal case, and found out they didn't even thermally bond anything to it.
+
+This is the one part of the case they could use as a heatsink! But with the exoskeleton gone, there's no way to secure the M.2 drives, so I jerry-rigged the thing together with some kapton tape. I had noticed that this ASMedia chip was in the super hot area, so I put a little heatsink on it. And, running without the case, this little box can finally breathe!
+
+The fan only had to run at low speeds, the drive all ran under 50 degrees, and everything was stable. But on the thermal camera, I still saw a hotspot over on this IC, so I stuck on another heatsink, and what do you know? Playing a game of "spot the hotspot", I was able to get this system running much more stably. So, in conclusion, I don't know, do I really want to run something held together with kapton tape in my rack? I'd much rather GMKtec just design this whole case better.
+
+Right now, it literally cooks all the important chips, except for the CPU. With a little better cooling design, they'd have a winner, as long as they keep it under 1.75 inches tall. Now, here's a little audience participation. I'm guessing after they saw my video on the G9, someone at Aiffro reached out and asked if I'd want to test their K100 NAS. It looks a lot like the G9,
+
+except it's all metal with an integrated SSD heatsink. Should I take them up on the offer? Let me know in the comments. Until next time, I'm Jeff Geerling.

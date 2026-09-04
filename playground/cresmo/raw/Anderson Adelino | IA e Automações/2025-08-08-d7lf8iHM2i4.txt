@@ -1,0 +1,105 @@
+---
+video_title: "O Segredo para NÃO Perder Tokens com o Limite de Mensagens por Usuário"
+video_id: d7lf8iHM2i4
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=d7lf8iHM2i4
+video_date: 2025-08-08
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=d7lf8iHM2i4
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  ⏰ TIMESTAMPS:
+  00:00 - Introdução e o que vamos construir
+  01:06 - Configurando a tabela no Supabase
+  01:45 - Estrutura do template N8N
+  06:05 - Testando o limitador na prática
+  
+  ✅ O QUE VOCÊ VAI APRENDER:
+  
+  Criar limite de mensagens personalizável (50, 100, etc)
+  Reset automático diário às 00h0
+  Controlar tokens e evitar spam
+  Integração N8N + Supabase + Evolution API
+  Lógica de verificação de usuários novos/existentes
+  
+  🛠️ FERRAMENTAS UTILIZADAS:
+  
+  N8N (Automação)
+  Supabase (Banco de dados)
+  Evolution API (WhatsApp)
+  OpenRouter (Modelo de IA)
+  
+  🔔 SE INSCREVA para mais automações incríveis!
+  👍 DEIXE SEU LIKE se este vídeo te ajudou!
+  💬 COMENTE suas dúvidas ou sugestões!
+  
+  #n8n #supabase #evolutionapi #whatsappautomation #chatbot #ia #limitador #automação #andersonadelino
+---
+Fala, automatizador Anderson aqui. Se você quer colocar um limite de mensagens para cada usuário que fala com a sua IA, esse vídeo aqui é para você. Então, basicamente é isso. Você quer limitar os usuários a teru, por exemplo, 50 mensagens por dia, 100 mensagens por dia. Chegou nisso aí, ela não responde mais. E sempre quando for meia-noite
+
+reseta. Perfeito. Então você consegue ter um controle bem interessante, né? você consegue controlar seus tokens, você consegue evitar spam, beleza? Então é isso, o template vai ser disponibilizado gratuitamente para vocês na minha comunidade, tá bom? Então aqui
+
+no comentário fixado tem um link para você acessar a comunidade, só ir lá, se cadastra na comunidade e você vai ter acesso a esse e a vários outros templates que eu sempre tô disponibilizando gratuitamente para vocês, tá bom? Então vamos lá, chega de enrolação. Esse aqui é o nosso template, tá? Você vai ver que ele é bem simples. A questão do controle eu uso basicamente 100% no super base, tá bom? E vamos
+
+começar por ele, tá? Vamos começar aqui pelo Super Base. Aqui é a tabela do Supase. O nome da tabela que eu coloquei aqui foi limitador, certo? E basicamente a gente tem aqui duas colunas, são fundamentais, que é o remote de ID, que é o o número de telefone da pessoa, né, através do Evolution API, e a quantidade de mensagens essa pessoa já mandou, tá bom? que é um numérico. Anderson, eu
+
+preciso criar uma nova tabela para poder colocar isso aqui. Não, você pode usar a mesma tabela que você utiliza hoje em dia. Se você já tem uma IA aí no Super Base, só precisa colocar uma nova coluna, tá? Chamada mensagens, é, ou então quidade de mensagens e tipo numérico, beleza? Então é essa alteração que você precisa fazer. Por fins
+
+didáticos, vamos manter essa tabela aqui. Então, vindo aqui para o template novamente, tá? Eu vou estar utilizando o chat aqui do N pra gente eh confins didáticos, pra gente conseguir que estar conversando com a IA e fazer as limitações, mas aqui tu pode colocar o seu web hook lá do Evolution mesmo, tá? Sem problema nenhum. Beleza? Então vamos
+
+lá. Começando aqui, vou mandar mensagem pro usuário. Aí eu consigo setar aqui o limite que eu quero. Beleza? Então pode colocar aqui 50, 100. Isso aqui são 100
+
+mensagens que o usário pode mandar para responder, tá? Pra gente não enrolar muito tempo aqui, eu vou deixar três, beleza? E aqui eu passo o remote de ID, só que no meu caso eu tô passando o session ID, né, que é o ID da do chat. Mas aqui tu vai passar o emote de ID lá do Evolution API, beleza? Se você tá usando Evolution aí, beleza? Depois eu
+
+vou verificar se o usuário tá lá na minha base de dados lá no Superabas, tá? Eu faço um get passando como condição o remote de ID. Se ele tiver, vai aparecer as informações dele aqui. Senão o JSON de output, aqui no output, ele vai ser vazio, tá bom? Claro que você vai ter que vir aqui em settings e marcar essa opção aqui. Se você fizer isso aqui, aí
+
+ele vai ter saída. Se não, se não tiver isso aqui marcado, se tiver desmarcado, quando ele fizer o get e tiver nenhuma informação lá dentro referente ao que tu passou, vai sair nada. E aí o fluxo para. Eu quero que o fluxo continue, só que com as informações vazias. Beleza?
+
+Show de bola. Então ele vai verificar o usuário aqui. Ele vai verificar se tá vazio ou não, né? Até coloquei aqui como é novo, porque se tiver vazio, então significa que o usuário é novo e aí nesse caso ele vai subir para registrar o usuário. Se o usuário é não é novo, ele já tá registrado, ele não vai subir para cá para registrar, ele vai descer e verificar o limite dele para poder passar. Beleza? Então a gente tem essa
+
+bifurcação aqui, OK? Então aqui na parte do filtro, basicamente eu vou pegar a quantidade de mensagens que veio lá do do Sopa Base, tá? verificar o usuário e vou ver se é menor do que o limite que eu estabeleci lá dentro do edit field, né? Essa parte aqui de limite. E aí se bater com o que tiver lá, show de bola.
+
+Então ele vai seguir, senão ele vai ser barrado. Beleza? Show de bola. E aí independente de onde veio se usário é novo ou velho, vai chegar a mensagem aqui no agente. O agente ele vai responder, tá? Aqui não tem nenhum
+
+prompt nele, não, tá? É um agente simples com a memória simples e o modelo 4.1 mini, tá? Eu tô usando aqui o o nó da Open Houter, beleza? depois que o a gente respondeu, né, respondeu o usuário, ah, mandou lá pro pro cara no Evolution, enfim, aí ele vai precisar atualizar lá no Supase. E para fazer
+
+essa atualização, eu coloco um nó do Super Base da comperação update, beleza? Filtrando como condição o remote de ID do usuário. E o e o que eu vou atualizar é o mensagens, a quantidade de mensagens eu vou utilizar fazendo o quê? Pegando o número atual e somando mais um, tá? Então você pode ver que eu venho aqui, ó, eu peguei lá do verificar usuário.
+
+Peguei a quantidade de mensagem, vamos supor que tinha dois, sejam duas, aí eu vou lá e mais um, então eu tô somando e aí ele vai atualizar de dois para três, entendeu? Se for cinco, ele vai atualizar para seis. Se for 10, vai atualizar para 11. Tá? Mas Anderson, o que que é isso aqui que tu colocou?
+
+Essas duas barras aqui, né? Por que que tu fez isso aqui? Essas duas barras, ela traduzindo, ela seria ou por exemplo é isso ou isso. Para isso que serve essas barras aqui. Por que eu coloquei esse esse cara aqui? Porque esse verificar
+
+usuário que eu vou pegar eh do usuário lá, né? Esse verificar usuário, ele é aqui, só que ele só vai conseguir pegar de fato e vai funcionar se o usuário já tá cadastrado, porque senão vai est vazio. Então não tem mensagens para ele pegar, então vai dar erro. Então todo novo usuário iria dar erro ali, entendeu? Então o novo usuário eu não vou pegar aquela informação aqui, eu vou pegar a informação aqui no registrar o usuário. Então se o usuário for novo, eu
+
+vou pegar a informação de registrar o usuário. Se o usuário for velho, eu vou pegar a informação de verificar o usuário. Beleza? Então é por esse motivo. Então é isso. Eu vou pegar do
+
+verificar o usuário ou caso não tenha eu vou pegar do registrar usuário, entendeu? É basicamente isso aqui. Vamos testar na prática. Vamos ver se o negócio tá funcionando. Ah, já ia esquecendo, né? Aqui embaixo a gente tem
+
+aqui uma outra automaçãozinha que é basicamente um cronômetro que sempre quando for meia-noite ele vai ativar e vai resetar os limites, tá? Então isso aqui é um é um update também super base, onde como condição eu vou passar aqui a quantidade de mensagens tem que ser maior igual a zero, ou seja, todo mundo. Eu filtrei todo mundo e vou atualizar todo mundo. Atualizar o quê? Mensagens para zero. Beleza? Então todo dia que
+
+quando for meia-noite ele vai resetar. Agora sim vamos testar na prática se tá funcionando tudo certo. Vou abrir aqui o chat e vou mandar um oi. Beleza? Oi.
+
+Como possoar você? Então ele veio, registrou o usuário e depois que registrou o usuário, ele atualizou aqui para um. Atualizou para um. OK? Então vamos continuar conversa. Como você
+
+está? Tá escrito tudo errado aqui, mas vamos lá. Ele verificou o limite agora. Tá vendo, ó? Verificou que tô no limite.
+
+Mandou pra IA. A Ia respondeu, ó. Oi, estou bem. Obrigado perguntar. E você como está? E atualizou para dois. Eu vou
+
+colocar aqui. Estou bem. Passou novamente, atualizou para três. Que bom saber disso. Se precisar de algo, só falar. Eu falar o seguinte, vou mandar
+
+um outro oi aqui, tá? E agora barrou. Por que que ele barrou? Porque eu passei do limite. Eu já mandei três mensagens para ele e o limite que eu coloquei ali foi três. Certo? Se a gente for olhar
+
+aqui no super base, olha só. Olha só. Tá aqui três mensagens. Tá vendo? Então passou do limite. Ah, Anderson, mas se
+
+outra pessoa chegar aqui e mandar mensagem, funciona? Funciona. Olha só, eu vou vir aqui e vou resetar. Eh, eu vou reiniciar, né? Vou vou pegar um outro session ID. Então, é como se eu
+
+tivesse simulando que eu peguei um outro número e tô conversando com por outro número, né? Sou outra pessoa. E se eu mandar um oi aqui, olha só. é uma nova pessoa, registrou o usuário e deu tudo certo. Se eu vir aqui no Superabase novamente, agora a gente tem dois usuários cadastrados, um três mensagens que tá no limite e outro com uma mensagem. Beleza? Perfeito. Então vamos
+
+supor que bateu ali meia-noite e os limites resetaram. Então ele resetou, atualizou dois usuários. Se eu vi aqui agora no Supas e atualizar, é só zero mensagens cada um. Então eles podem voltar a conversar. Beleza, pessoal?
+
+Então basicamente é isso aqui que eu queria mostrar para vocês, tá? Isso aqui vocês podem avançar, né, tal? Vocês podem depois personalizar mensagens, ah, seus limites foram resetados ou então quando o usuário bateu o limite, uma mensagem chegar para ele, eh, seus limite esgotou. Então, assim, você consegue personalizar, você consegue fazer mais coisas a partir disso aqui. Beleza? Então, se gostou desse vídeo, se
+
+esse vídeo te ajudou, deixa seu like aí, se inscreve, tá pessoal? Vai me ajudar demais. E é isso, estamos junto, te vejo nos próximos vídeos. Valeu,

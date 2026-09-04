@@ -1,0 +1,84 @@
+---
+video_title: "NVIDIA’s New AI Just Made Real Physics Look Slow"
+video_id: M8s_cS-aH5w
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=M8s_cS-aH5w
+video_date: 2025-11-05T16:53:55+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  Guide:
+  Rent one of their GPUs with over 16GB of VRAM
+  Open a terminal
+  Just get Ollama with this command - https://ollama.com/download/linux
+  Then run ollama run gpt-oss:120b - https://ollama.com/library/gpt-oss:120b
+  
+  📝 The paper "Neural Robot Dynamics" is available here:
+  https://neural-robot-dynamics.github.io/
+  https://github.com/NVlabs/neural-robot-dynamics
+  
+  📝 My paper on simulations that look almost like reality is available for free here:
+  https://rdcu.be/cWPfD 
+  
+  Or this is the orig. Nature Physics link with clickable citations:
+  https://www.nature.com/articles/s41567-022-01788-5
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Benji Rabhan, B Shang, Christian Ahlin, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Steef, Taras Bobrovytsky, Tybie Fitzhugh, Ueli Gallizzi
+  If you wish to appear here or pick up other perks, click here: https://www.patreon.com/TwoMinutePapers
+  
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  X/Twitter: https://twitter.com/twominutepapers
+  Thumbnail design: Felícia Zsolnai-Fehér - http://felicia.hu
+  
+  #nvidia
+---
+You are going to see many insane things in this video, because this research paper is jaw dropping. It is teaching a robot to dream, yes, and dream so vividly, that these dreams are going to start coming true. True insanity. Okay, so I bet you saw many of these videos of robots doing these really impressive acrobatic things. Parkour, flips, dance routines, you name it. These are really making the rounds in the media these
+
+days. It looks like we suddenly jumped a hundred years into the future, right? Well, not quite. But very few know that these are not the hard problems. Really? Why? Well,
+
+because these all happen in controlled environments. Every step is known in advance. Yup. This is easy. The really hard problems are the mundane, messy ones.
+
+Handling and grasping small or deformable objects. Now that is hard. And it gets worse: doing it with new objects, on new surfaces, under unseen lighting… that is nearly impossible. These demos are super impressive, but they contain none of the real challenges, so they can be even hand coded. They don’t need the robot to adapt to new or changing situations.
+
+So, in short, kung fu, easy-peasy, but being useful is nearly impossibly hard. I don’t need you guys to do kung fu, get out of here. I want you to fold my laundry instead, thank you very much! Okay, but how? Well, scientists typically train a robot in a simulation before deploying it into the real world. It’s like learning inside of a video game. Imagine a self-driving car,
+
+first you are in a game, and when you drive safely for a long time, you get a good score. And then you can you proceed into the real world. But only then! Sounds good, right? But whenever I visit incredible robotics labs around the world, I always come back with one conclusion: things works really well in a simulation, and when moved to reality, things break like crazy.
+
+Until this incredible new work appeared. It sets out to solve two really tough problems: one, perform predictions over thousands of simulation steps. It needs to see forward into the future, quite far in fact. I am already getting hiccups. Then, two, generalize across different tasks, environments, and different robot morphologies. So something that is basically impossible. I don’t think this is going to work.
+
+So, example. Here is a reference simulator, this is based on physics. All hand written equations. Tested to hell and back and trusted. It is super precise, however, here is the problem: it is painfully slow, and it gets even worse. It is brittle! If you change the shape of the robot,
+
+add a new environment, you have to retune large parts of the setup… by hand. Yuck! So, get this crazy idea, scientists wrote an AI that looks at lots and lots of this kind of footage. Frame after frame, it studies how the world works. And later, this AI says: I’ve seen enough examples of how physics behaves. So now, let’s skip the equations, and I’ll just tell you what happens next.
+
+And even better, they gave it the perfect name: NeRD, neural robot dynamics, well played. So NeRD is a neural physics solver. So, how good is it? I mean, if it does not give you similar results to the real physics simulation, it’s not very useful, is it. So let’s compare, and…whoa.
+
+Cartpole balancing is a classic task, not that hard, but it absolutely nailed it. If it looks like a copied version of the real simulation, that’s when it’s good. Okay, let’s look at some pendulums, come on man, these are idealized conditions. It’s not even touching the ground. Let’s try that.
+
+Okay, good. Now you get to graduate to…robots! Sort of. Let’s try a spider. Let me try to explain this, because this absolutely blew my mind. The blue spider
+
+is running in the traditional, accurate physics simulator. And the orange one, now hold on to your papers Fellow Scholars because that is where the insanity begins. This robot learned to walk inside the AI’s imagination. And then we drop it into the game. And…wow, look at that! They behave not exactly the same,
+
+but very similarly. Can you believe this? This imaginary neural world works perfectly in practice. No retraining or fine tuning is necessary! So, spider walking, checkmark. What about spinning? Both are super cute,
+
+and doing super well. Wow! Okay, so, let’s bring in the big guns, the real challenges! First, we generate some data. Okay, wow, what is this chaos? Is this some kind of joke? How
+
+is this useful for anything? Well, all of these red robots are running the physics simulator, and make sure that all kinds of movements and torques are being simulated. Now, the NeRD AI is watching these frame by frame. Okay, now you get your own robot, and…holy mother of papers! The controller trained inside the imagination of NeRD can move the robot, and it is super cute. Look at that bobbing. Love it.
+
+And as this robot arm works really well too, now is the time for the ultimate test. To put the NeRD robot out there in reality. Remember, this is where everything breaks. It is supposed to touch these red points, and…it not only works, but it makes it look easy. I can assure you this is not what I saw when I went to these labs all around the world. Not at all. This is really
+
+challenging! Bravo! And I am just sitting here smiling, and saying…this is why we do science. So how does it do all this crazy magic? Well, I’ll try my best to explain.
+
+Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. Dr. Carroll. Welcome to episode 1000.
+
+The paper describes in detail how NeRD learns to predict the next change in the robot’s state. First, it applies motion, but it does this in the robot’s own coordinate frame. Then, in the next formula, it transforms it back to world coordinates. Okay…so what does that mean? The robot learns physics the same way you would learn to move through a dark room. You only feel changes relative to yourself, so you turn left, you go forward,
+
+then you figure out where you ended up in the room afterward. That is so cool! And here’s something that made me fall off the chair. They fine-tuned this AI on real-world cube tossing data. Here, a cube is being thrown, and it hits the ground, so what’s so interesting about that? Well,
+
+NeRD matched it better than the physics simulator called Warp that created it in the first place. The student just beat the teacher. And it is faster than the teacher too. What? How is that even possible? Well, imagine that simulator is a physics teacher who sits in
+
+a room, thinking about an idealized world. But the NeRD AI is the student who went outside, slipped on the ice, and learned from it. It is not just book smart, it is street smart too. That is the magic of artificial intelligence. Absolutely incredible, wow. What a time to be alive!
+
+Now, this is still not perfect, not even close. For instance, NeRD still hasn’t been tested on very complex robots like humanoids, so I’d love to see that. And if you wish to hear about more papers like this, because I don’t see a lot of people talking about this. Make sure to subscribe, hit the bell icon, and leave a kind comment. It helps you get more recommendations like this. Better papers, better life.

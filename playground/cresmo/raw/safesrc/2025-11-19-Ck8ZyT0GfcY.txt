@@ -1,0 +1,88 @@
+---
+video_title: "CULPA foi do RUST? CLOUDFLARE explica o PROBLEMA de ONTEM com MUDANÇA em BANCO de DADOS e UNWARP"
+video_id: Ck8ZyT0GfcY
+channel_name: "safesrc"
+channel_id: UCWFmlmegFcu6lvAmeBtV3cg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Ck8ZyT0GfcY
+video_date: 2025-11-19T13:41:34+00:00
+video_description: |
+  Mais informações: https://safesrc.com
+  
+  Quer ajudar?
+  
+  Doações em Bitcoin: bc1qk67xsekuhfweu3c5pwqraj9vrgs8h4jhyyuxtd
+  
+  Referências:
+  
+  https://blog.cloudflare.com/18-november-2025-outage/
+  
+  https://forbes.com.br/forbes-tech/2025/11/falhamos-com-nossos-clientes-e-com-a-internet-em-geral-diz-cto-da-cloudflare/
+  
+  https://x.com/dok2001/status/1990791419653484646
+  
+  https://x.com/LundukeJournal/status/1990957849372209235
+  
+  https://blog.cloudflare.com/20-percent-internet-upgrade/
+  
+  https://x.com/AstraKernel/status/1990981248982950208
+  
+  https://stackoverflow.com/questions/36362020/what-is-unwrap-in-rust-and-what-is-it-used-for
+---
+A Cloud FLIR lançou aqui o diagnóstico dela, né? Ou seja, ah, o postmem que eles chamam, né? Ou a investigação. O que que causou o problema ontem na Cloud Flir que derrubou um monte de site no mundo inteiro, era um erro bastante estranho. Então, uma uma alteração no esquema de um banco de dados de implícito para explícito e isso causou todo o drama. Mas associado a isso
+
+também parece que teve o uso de um wrap em hust. Unwrap é parte do tratamento de erros do Hust, né? Tratamento de exceções do Hust. E isso tá gerando uma crítica muito grande. Recentemente, a Cloud Flir recreveu parte do código dela em Hust, passou de C, de C para Hust e o erro deu justamente no tratamento de erros do Hust. Vamos entender. Esse caso
+
+aqui é bem curioso. Eu sou Ricardo Albuquerque. Esse é o Safe Source e essa notícia foi sugerida por Ologa, operador Schumlerger e várias outras pessoas. Eu agradeço a todo mundo que sugere notícias lá no nosso site, no safesource.com.
+
+É safesrc.com. E agradeço também a você que tá assistindo o nosso vídeo. Se você gosta do nosso conteúdo, por favor, deixa o seu like, se inscreva aqui no canal, né? Bom, ontem todo mundo foi afetado pela falha na Cloud Flir, né? ficou fora do
+
+ar vários vários momentos e subia, voltava, caía de novo, voltava, uma coisa realmente infernal, até que finalmente eles conseguiram resolver depois de algumas horas de investigação, né? E bom, eh eh esse essa era a tela que você recebia. Eu fiz já vídeo sobre isso ontem e agora a gente tem a descrição aqui efetiva de qual foi o problema, né? Bom, como é que foi a investigação deles, né? Eles perceberam um fato curioso que você tinha eh um comportamento de ida ida e vinda. Ou
+
+seja, isso daqui não foi que eles estavam corrigindo coisas, não, tá? Isso aqui foi o comportamento natural do bug. Eh, o sistema funcionava, depois dava dava erro, né? Aqui ele tá normal. Repara que até às 11:30 ele tava normal, né? Eh, 11:30 no horário de Londres, né?
+
+No na horário universal, né? Aí começou a ter problema, depois passou a funcionar, aumentou o problema de novo, não sei que lá. Em determinado momento passei, parece que consertou, voltou a dar problema, voltou a consertar, voltou a dar problema e em determinado momento lá pelas 13 horas aí a coisa e deu problema o tempo todo, né? Passou a dar erro o tempo todo, né? Eh, às 14:30 foi quando eles consertaram o problema e daí você teve uma diminuição e gradualmente a coisa foi eh voltando à normalidade, né? Então, essa foi a questão toda, eh,
+
+eh, foi o comportamento que eles começaram a investigar. A primeira coisa que eles descobriram é que isso estava sendo causado por um arquivo de configuração muito grande, né? Então, eles têm um arquivo de configuração que é gerado a cada 5 minutos automaticamente por um servidor que faz justamente a configuração de ataques de botes, né? Lembra? A CDN, ela é a CDN, né? que é o a Cloud Flir, é um sistema
+
+que entre os objetivos dele tá justamente resistir a ataque de Botnet. Então existe toda uma lógica interna de inteligência para configurar o sistema contra ataques de botnets e e tem essas informações sobre onde os ataques estão acontecendo, não sei que lá. Então ele tem esse arquivo de configuração que ele distribui pelos vários eh servidores deles, né? Eh, e aí o que eles descobriram foi isso. De repente, esse servidor começou a ter uma esse esse arquivo de configuração começou a ter uma um tamanho muito grande e esse tamanho muito grande dava o erro no chamado FL2, que era o código que deveria fazer essa checagem interna.
+
+Aqui, ó. Eh, nós estamos e migrando o nosso tráfico para uma nova versão de nosso sistema proxy, conhecido como FL2. Ambas as versões foram afetadas pela questão, mas o impacto foi diferente, né? Então, eh, ou seja, o que o impacto foi justamente nas versões mais novas que usam Hust. Isso que deu o problema.
+
+Por quê? Porque a versão mais antiga ela dava erro, mas ela dava um erro gracioso, como é o correto, né? A versão em Hust, que é a versão mais nova, dava o problema. Aí eles foram investigar porque que o arquivo de configuração tava sendo gerado tão grande, porque esse arquivo de configuração não é uma pessoa que mexe nele, não. É um próprio, ele é gerado pelo sistema, né? Por que que o
+
+arquivo tá gerando tão grande? Bom, e aí eles descobriram o seguinte, eh, eles têm o no banco de dados que é usado para construir esse arquivo, né? Eles têm algumas instâncias ali dentro. O que que o que que é uma instância? você tem e eh eu tô tentando traduzir pro pessoal que é leigo, que nunca trabalhou com banco de dados, mas é é como se tivesse vários bancos de dados dentro da mesma máquina, né? E aí o que que acontece? A query que
+
+é e essa esse esse sistema usava para pegar as informações e criar esse arquivo era essa query aqui, ó. Ele pegava select name type de system.cums. System é uma das instâncias do banco de dados, a instância do sistema que tem as informações sobre o próprio sistema, né? E aí ele perguntava eh todas as colunas de uma tabela chamada HTP Recash features. Mas repara, essa essa tabela
+
+aqui é essa é em tese acessível para todas as instâncias, né? Só que algumas dessas instâncias eram implícitas. Ou seja, quer dizer, que quer dizer isso? Elas só são acessadas se você botar o nome da instância. Você teria que colocar o nome da instância. No caso era
+
+R0 p o a a tabela. Se a instância é explícita, você não precisa botar o nome dela, né? Então aqui, ó, o que aconteceu foi isso aqui, ó. De já que os usuários já tinham acesso implícito às tabelas na no R0, nós fizemos uma mudança às 11:05 para fazer esse acesso explícito de forma que os usuários pudessem ver os metadados dessas tabelas também. Só que a querer que estava sendo feita pelo negócio não considerava esse tipo de coisa. Eles deveriam ter incluso também
+
+eh eh eh separado as tabelas, as instâncias corretas, implícitas e explícitas. O resultado é que agora essa query retornava uma enorme quantidade de de informações a muito além das informações que eram necessárias. Isso acabava duplicando um monte de informações no tal arquivo de configuração. O arquivo de configuração ficava monstro e isso deu problema. Ou seja, o problema todo, a coisa que que eh que foi o gatilho pro problema foi justamente o fato de que alguém foi lá e resolveu. Ah, não, vou tornar esse
+
+negócio aqui explícito no banco de dados. Uma configuração de tabela no de instância no banco de dados. Não é tabela, é instância, né? Eh, eh, uma instância tem várias tabelas dentro dela, cada tabela tem várias colunas. Então, a instância seria a parte central do banco de dados deles lá, né? Isso que
+
+teria causado o problema. Mas de novo, não foi só isso. Raramente esses problemas tem uma causa só, vocês sabem, né? Sempre tem uma conjunção de fatores. Porque teve um outro aqui, ó. Ele tá
+
+dizendo aqui, ó, e aqui e retornava a coluna da feature tal da tabela HTP requests na default, que era que deveria pegar mesmo. E aí também retornava na R0 porque agora ela é explícita, então agora ela também aparece no metadado. Então, ou seja, duplicou todos os os números aqui e acabou gerando esse problema todo, né? E isso daqui também explica o comportamento de ida e vinda que você viu aqui nessa nessa coisa. Por quê? Porque essa mudança tava sendo
+
+propagada pelos bancos de dados, né? Os bancos de dados, vocês sabem, eles são replicados e eh quando você faz uma alteração desse tipo, você altera no principal e aí com o tempo ele vai sendo replicado pros outros bancos de dados e coisa e tal. Então, dependendo de qual instância do banco de dados, de qual eh eh máquina do banco de dados o pessoal tava lendo essa o o robô tava gerando esse arquivo de configuração, ele tava correto ou ele tava errado? Então assim, dependendo a cada 5 minutos é gerado esse arquivo de configuração, dependendo de onde o Click House, que era o programa que eles usavam para isso, dependendo de onde ele pegasse essa informação, eh eh ela tava correta ou tava errada. E aí gerou esse comportamento aqui de idas e vindas, né?
+
+até que a propagação chegou para todo mundo, aí começou a dar o erro direto. E isso e a dificuldade é essa, esse tipo de erro em que a coisa funciona às vezes, às vezes não funciona, é o mais difícil de você conseguir resolver no final das contas, né? Mas no final das contas aqui, quando ficou todo mundo com a mesma com a mesma característica, ficou mais fácil de identificar o problema e corrigir o problema, né? Mas não foi só essa história, não. Eh, você teve o problema do Hust. Olha só o código que
+
+eles botaram aqui, né? como a gente falou, ah, esse código FL2 é o código que lê esse arquivo de configurações em cada uma dessas máquinas aí da da eh da Cloudfare, né? Eh, como esse arquivo tava muito grande, ele dava um erro, mas o problema maior é que ele usava o unwrap aqui, que é o mecanismo de tratamento de erro do Hust. Eu confesso para vocês que eu nunca programei em Hust, então não tenho um conhecimento muito grande, mas pelo que eu pude observar, isso é um ponto que muitos programadores de Hust tm problemas, tá? Porque e o tratamento de erros, né? Você tem o tratamento
+
+tradicional do C, que é com Trycat e é o mesmo no Java, em outras linguagens e coisa e tal, mas aqui eles tiveram um mecanismo diferente. A função, ela pode retornar a tipo correto daquela função ou pode retornar um código de erro. E aí você usaria unwrap para pegar essa informação. Só que isso é é uma coisa que dá muita confusão, nem sempre funciona e gera problema. E foi aparentemente exatamente o Onewrap, que já é uma feature meio e eh digamos polêmica no Hustado esse essa que causou esse problema, né? Então e isso foi a a
+
+explicação deles pro problema. Eh, o problema de todo foi a questão da mudança no banco de dados. Agora, no final das contas, por exemplo, o Lunduk Journal, né, que é um um cara que fala sobre segurança da informação também, sobre código e coisa e tal, e que e que é um crítico ativo dessa atividade que muitos muitas empresas estão fazendo nesse momento de portar código C para Rust, porque supostamente o Hust é mais seguro do que o C e ele é crítico disso porque ele acha que acaba piorando a situação, é melhor, se se o código tá funcionando, é melhor deixar ele quieto lá, esse tipo de coisa, tá? Eu eu não vou entrar nesse nesse mérito porque o fato é que realmente o Rust tem segurança em termos de gerenciamento de memória melhor do que o ser, mas também é verdade que você mexer em qualquer código você arrisca introduzir problemas, né? E aparentemente foi isso que aconteceu. Esse código e eh eh Hush
+
+foi o que gerou o problema, porque o os antigos que ainda estavam em código C também dava um erro, mas dava um erro gracioso e não gerava o problema que foi feito ali, né? Então aqui, ó, aqui tá a reportagem aqui da Cloud Flir em setembro, foi há poucos dias atrás, setembro desse ano, eles e fizeram a o porte do FL2 para Hust aqui, ó, o FL2, que é justamente a a situação da e o o o item que deu problema, foi portado para Rust a partir daí, né? Então essa é a a ideia. Eh, então o pessoal tá criticando muito isso, né? É lógico, já já criou toda uma briga, porque tem o pessoal que gosta do Rust tá dizendo que não, que pô, o problema foi que o cara fez a merda ali no código Rust. É verdade, mas
+
+de novo o código tava funcionando, aí portaram e parou de funcionar. E, né, esse é o problema, né? Ou seja, a crítica aqui não é a crítica ao Rust em si, é a ideia de que é uma boa ideia você pegar um código antigo que está funcionando e portar para uma linguagem nova, supostamente para melhorar a segurança, sendo que, né, e só a atividade de você portar o código pode introduzir um monte de problemas, né? Enfim, eu não vou entrar nessa seara, até porque eu não conheço Rusth, nunca programei Rush, então não me sinto qualificado para dizer isso. Eh, eh, de qualquer forma, saibam que está havendo esse dilema, está havendo essa acusação aí nessa nesse propósito, né? O CTO, né,
+
+o chefe Technical Officer, o Sr. Dani Knest, tá fez um tweet pedindo desculpas, falando que não tem, olha, não tem como medir palavras, né? Hoje mais cedo nós falhamos nossos consumidores e a internet como um todo, quando um problema na Cloud Flir impactou grande parte do tráfego que confia em nós e não sei que lá. Um pedido de desculpas. A questão toda é que que eles vão fazer para evitar esse tipo de problema daqui pra frente, né? E
+
+dito isso, um o a notícia positiva. Aparentemente não foi um ataque, foi realmente um erro, foi só o pessoal fazendo burrada. Isso é melhor ou é pior? Eu não sei não. Obrigado por assistir nosso vídeo até o final. Tem
+
+alguns links para você nos ajudar aí na tela e também na descrição desse vídeo.

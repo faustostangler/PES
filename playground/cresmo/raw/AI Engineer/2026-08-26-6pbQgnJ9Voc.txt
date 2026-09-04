@@ -1,0 +1,130 @@
+---
+video_title: "Knowledge Systems: The New GTM Stack — Jeffrey Wang, Exa"
+video_id: 6pbQgnJ9Voc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6pbQgnJ9Voc
+video_date: 2026-08-26
+video_description: |
+  Over a week off, Jeffrey Wang built an AI clone of himself. He analyzed 760 of his own emails to derive his voice, down to averaging 18 words and signing off with best rather than sincerely, then turned hundreds of past decisions into evals to calibrate the agent's judgment against his own. Anyone at Exa can now ask Jeffbot to draft a Slack message. Wang cofounded Exa, a search engine for agents, and his framing is that go to market is now an AI engineering problem. The product versus distribution argument he treats as settled: you need both. Underneath, go to market is a data problem, which means keeping a live model of your world agents can act on.
+  
+  Two interfaces and two agents make it concrete. An ICP dashboard classifies effectively every company in the addressable market, with anticipated spend attached, built by running Exa's embeddings over the web. Request Lens fires when something meaningful happens to a customer: a signup, a surge in searches, a sudden stop. The go to market team runs about a dozen agents in Slack against internal data. Wang closes on three principles: agent first requires API first, since agents cannot reach data without a programmatic interface; not everything should be a chatbot, because a consistent UI you learn once still beats a generated one; and buy versus build is a false dichotomy where what matters is whether the system is arbitrarily customizable. In the Q&A: Jeffbot reads and writes only when Wang calls it, and can only draft for anyone else.
+  
+  Speaker info:
+  - https://x.com/jeffzwang
+  - https://www.linkedin.com/in/wangzjeff/
+  
+  Timestamps:
+  0:00 - Exa, and why engineers should care about go to market
+  2:56 - Go to market is a data problem
+  3:58 - A live model of your world that agents can act on
+  5:18 - The ICP dashboard: classifying your whole market
+  6:59 - Request Lens: alerts when something matters
+  7:41 - A dozen agents in Slack, and the go to market spend
+  8:22 - Jeffbot: cloning yourself from 760 emails
+  10:19 - Agent first means API first
+  12:01 - Buy or build is a false dichotomy
+  13:36 - Q&A: security boundaries and the FDE model
+---
+[music]
+
+>> Hey everybody, I'm Jeff. I guess I was introduced, but I'm the co-founder of Exa, and today going to give a talk on turning go-to-market into an AI engineering problem in the spirit of this AI engineering fair. And just a quick show of hands just to like understand the audience, like raise your hand if you're a technical. Okay, great. Okay, so I kind of oriented this talk around like go-to-market as presented to to engineers. So, happy
+
+that I did that. Cool. So, first just to like ground the ground like what what Exa is cuz it's sort of relevant inside of this presentation. Exa is a Exa is a search engine for agents. Think like agents are really smart, but they don't have access to the web. We're
+
+like this web MCP web tool that agents can access. We power Cursor, we power Cognition, we power a lot of the AI ecosystem at this point. And before we start, I also just want to like talk about, you know, especially to the technical audience, like why should you even care? Like why should you care about go-to-market? I guess this audience cares about go-to-market cuz you chose to go to this go-to-market talk, but I think there's this like funny narrative right now, which is like people are like, "Oh, like product is the only thing that matters."
+
+Or "Distribution is the only thing that matters." And there's all sort of like all sorts of like Twitter flame wars like like oh, is Glean going to succeed because they're really good at distribution, but they're like what what the heck is their product? And then and other people are like, "Oh, the like the the product needs to be super good cuz agents you know, agents shop for the product, so they'll shop the for the best product." And so, my view and my experience in the last few years is that you just kind of have to do both. Like I think you have to get product right and you have to get go-to-market right. Like
+
+you got to build this thing, it's got to be good, and then you got to get it into people's hands. If you don't do both things, then you don't have a company. So, that's kind of my view on the matter. And I I say like a really funny thing also is like as a technical person when you start a company or you start some some sort of project, like very much so the bias is like, "Hey, I'm going to just build the thing. I'm going to make it really really freaking good, right?" Like that's kind of like the
+
+bias you have as like an engineer. That's the bias we had when we started X.ai and we were like honestly pretty bad at go-to-market. Like we >> [laughter] >> we were not doing enough marketing, we were not doing enough sales. Um but I think the cool thing about about um go-to-market particularly in 2026 is you can treat go-to-market like an engineering problem and particularly an AI engineering problem. And so I
+
+think that's like a super exciting thing. Like it's like more fun for engineers than ever to do go-to-market cuz you can automate things. You can you can do so much as one person and uh etc. Also um I want to make this interactive. If if anybody has questions at any point, please please ask cuz I'm aware there's a lot of talks and I don't want to bore you.
+
+Cool. So um cool. So so the hypothesis I have is if you're an engineer or or if you're anyone, you can treat go-to-market like an engineering problem. So first, I guess like what does what do go-to-market teams do? So I have like a laundry list of things here of things that go-to-market teams do, but here are a few. Like one is you got
+
+to research like your customer, right? You got to research your targets. You have to find out information about your about targets. You have to find the right people at particular companies. You have to build POCs. Um there's like a just a
+
+ton of stuff you have to do, right? Um so you know, I'm not going to I'm not going to list everything here, but like what is the grand unifying theme? Well, go-to-market is a data problem, right? So you have all you have this like entire world of uh of of what your product does and then and this entire world of like all your potential customers and you're just going to like learn and figure out what your world looks like. And so this is my this is my uh proposal. It's a data problem and we
+
+have to solve from a data perspective. Cool. So okay, so what is data that is relevant? Uh I propose that you need basically a live model of your world that agents can act on. And so, what does that mean? Okay, well, one is you
+
+have a ton of internal data, right? There's all this information that you know about your customers, about people that are at your company, uh data about how people use the product. That's like internal data that you know. And then there's all sorts of external data, right? Like there's over 60 million companies in the world, and there's like billions of people, like over a billion that are on LinkedIn, for example, and all sorts of stuff are is is like happening every day, right? Like
+
+there's all this news. And so, when you're building like this data go-to-market system, um it's important to keep in mind just like all the different sources that exist and and and uh and are available to your agents. And cool. So, I'm going to like go through, hopefully pretty fast, just all the different components of what we've built at Exa. And just for like context, uh I've been really passionate about this for a long time. So, like Exa was
+
+launched in uh the middle of 2023, and so we were post-GPT-4. And GPT-4 was really incredible, cuz it could actually, even then, even though it's way worse than like Fable or whatever, like it could actually just automate entire parts of go-to-market. And so, from the beginning, I've been thinking about our go-to-market from from a very, very uh AI agent-first perspective. And so, we're going to go over two interfaces that we have that help us, and then two agents. Cool.
+
+Cool. Okay, the first is what we call our ICP dashboard. And the ICP dashboard is a product that we have internally that answers the question, like what is our world? Like what is the world of customers and use cases that we care about? And what we actually do is we go ahead and use Exa, and again, Exa is this like uh arbitrarily powerful search engine for AIs essentially. And we just classify
+
+basically like every possible company that is inside of our total addressable market. And I kind of blurred out some of the details on like how much money we make from each category and stuff like that. But yeah, we have like categories like model providers, AI coding platforms like say Cursor, go-to-market intelligence tools. And this makes up our TAM and we have an understanding of literally like almost every company within those segments. And then for each of those companies we can deep dive, right? So here's the
+
+example of SpaceX. We can see how much annual spend we could anticipate them to have then all this like metadata about the company. So we have a list of all the companies and then a ton of data about each company. How do we do this? Again, we're able to do this because Exa is this search engine. We take the internet, we crawl
+
+it, we train we train embeddings to do web search really well. And so basically from a technical perspective you can think about Exa as like embeddings over the internet. And when you have embeddings over the internet you have this like arbitrarily powerful semantic filtering and slicing and dicing of any type of data that you want. And so we use that to generate this this like gigantic list of potential ICPs. Cool. Next, we have a tool we call
+
+Request Lens. Request Lens, what is Request Lens? Well, it's basically a system where anytime something significant happens with any of our customers, we're alerted. Someone signed up, someone used a ton of searches, someone stopped using searches, someone showed up that we really really care about. All these things are signals that we are notified about and that our team can act on.
+
+Cool. So those are the two interfaces that we have and then I'll go over two types of agents that we have. So one is coding agents. So our go-to-market team is crazy crazy crazy deep on agents. So like like our our our engineering team uses a lot of agents, but our go-to-market team is like like you could look you could look at some of their like devin spend and like other agent spend. It's really freaking high. And
+
+that's because everybody on our go-to-market team is constantly asking agents about our customers. Uh we have like like account executives that build demos for our customers. Like it's just this crazy ecosystem where we have like maybe a dozen different agents inside of our Slack and anybody can use any of them. They all have access to tons and tons of our internal data. And uh yeah. Anytime
+
+we want to dig deeper on account, anytime we want to make a demo, etc., we depend heavily on agents.
+
+Cool. And then I want to talk about another really cool agent that I'm pretty proud of. We call it Jeff Bots. Uh or I call it Jeff Bots. Uh Jeff Bots is an AI clone of myself. Uh as much as
+
+possible. So, what is it? Well, basically this winter break uh I'm sure a lot of you spent that break playing with Opus 4.5. And I was no different. So, I was in Puerto No, I was
+
+in Mexico. I was in Mexico and I would I had a week off. And so, my goal with that week and with Opus 4.5 was to uh just try to make a digital clone of myself. And so, I did things like analyze like 760 of my emails to figure out what my email voice is. Like, oh, I use 18
+
+words on average per email and I like to end emails with best and not sincerely. Like all all that type of stuff, right? So, I made like a like a voice for myself. And then I also made a decision-making framework. So, I made like a decision-making framework where I analyzed hundreds of decisions I've made in the past.
+
+And I I analyzed them and I created evals. So, I actually created evals from those decisions and calibrated this agent system to behave like myself. And then finally I gave it like read and write access to all the data that I personally have. And there's a cool advantage to this because like I basically have access to every single system at the company uh cuz I'm in the the the nice seat of of having that and so like um yeah, this thing has access to like everything. And basically what happens is anybody at the company can use Jeffbot to create drafts of Slack messages that are basically like answers or decisions that are made. And this is
+
+a huge great thing. Like our go-to-market team uses it to like draft emails, for example. Cool. Um all right, so those those are the systems that uh that we have at at Exa. It works pretty well. Our go-to-market team is very
+
+lean, but very productive. Um and so yeah, I just want to cover like lastly just a few principles um principles I have around what it means to be an agent-first company. So firstly, to be agent-first you must be API-first, right? So like all these systems that we built, whether they were those whether it was those agents or whether it was those GUIs that we have, like if there did not exist really good APIs on top of any internal and external data we'd be we'd be out of luck, right? Like you need to create really good APIs. If
+
+you don't have really good APIs your agents are not going to be able to have data access. So you can think about this as MCP, CLI, whatever, right? Like it doesn't really matter. Uh you just need some interface that's programmatic. Secondly is like I I think there's like still this mistake in the agent world which is made that's like hey, does everything need to be a chatbot?
+
+Uh I think the answer is no. Like I think I think both GUIs and chatbots are are both super useful and have their own benefits. Like uh I don't know how many people in this room have thought about dynamic user interfaces but like yes, dynamic user interfaces are amazing. Like yes, technically AI can just produce a new UI for any use case that you have. Like just to answer a question, it could produce like an HTML markdown file, right? But I think there is something
+
+really nice about being able to visit the same consistent UX for the same use cases over time so that you can like learn how to use some tool. Um so yeah, I think like having crystallized UIs and then also arbitrarily powerful flexible chat agents are both important components of being agent first. And then finally, uh you know, there's this question like, "Hey, should you like shop for like Salesforce or should you like build your own CRM or something, right?" I actually think this is like a false dichotomy. It's like like there it's not a choice. Like we
+
+don't live in a world where the choice is between purchasing SaaS and building things yourself. Like the way I like to think about it is like you should just be using something that is arbitrarily customizable, right? Like whether you like obviously if you build something yourself, then it's arbitrarily customizable cuz you can write code and make it better at any given point. But also if you procure SaaS, um if you can make that SaaS work on your behalf and be arbitrarily customizable, then that works too, right? Like you don't need to build this like GUI and like have a proactive roadmap as to like what features would make really great sense inside of some system. Like
+
+if you can arbitrarily customize the system, even if it's a system you've purchased, then you're like pretty good, right? So like for example, we use Salesforce. Like we use Salesforce at X.ai and uh it's great because uh it's a really good good database. It's made a lot of amazing choices around what sales should look like, choices that we don't want to make ourselves. And then it
+
+exposes MCP. So all of our agents have access to Salesforce MCP. Works really well. Our team uses it every day. And so yeah, I think infinite customizability um is is really the highest order bit.
+
+Cool. Um that's that's all I had. Uh Yeah, does anyone have any questions? >> Oh, we have time for a few questions. Okay, coming.
+
+>> Hey, um so you said you uh took all your past decisions. Can you elaborate a bit about that? What What artifacts are those? Usually people don't save like their decisions. Is it Slack? Is it email? Is
+
+it other other artifacts? >> Yeah, good question. I looked at decisions I made within Slack and email. I mean, a surprisingly large amount of everything that goes on a company is is is on Slack, right? So like if you just read like a ton of Slack history, like you can definitely find hundreds of decisions that you made in the past.
+
+>> Awesome. Quick question uh over here. Uh so your go-to-market team, what's the split between uh are they just all like AI cracked or do they also have like the domain expertise, too? What's the split between technical and non-technical? Because obviously you need them to like know how to do marketing, sales, etc. But then do
+
+they also are they also upskilling in terms of using AI systems? Are you handing them tools or they building their own? >> That's a very good question. So our go-to-market team is comprised of like there's there's account executives which like run the deals. There are like sales like SDRs that help with uh demand generation.
+
+And then there are separately they're separate like a FDE org. So forward deployed engineering organization. And what I'll say is that like everyone that's Okay, everyone that's uh not not in FDE is like has learned how to use AI really well. So like the answer is like they're not vibe coding. They're not generally with you know, in some there's some exceptions.
+
+They're not generally vibe coding these interfaces that we have. Um but they're using the tools really really well. And like we make sure that we have training sessions and like just make sure that people really understand how to use these tools. And then this funny we have this funny thing which is like our four deployed engineering organization is actually the one that like does a lot of the maintenance and feature building uh of these AI systems. And so they're both running deals and like like supporting deals um but then also making everything smoother by like doing sales but then also building the sales system. Like it's it's kind of
+
+it's kind of a funky thing we have going on. Yeah. >> How do you think about uh different security? >> Oh. >> Hey. How do you think about different uh
+
+security boundaries within your enterprise? What do you What you said suggested that you've got Jeffbot which had runs with all of your full privileges and then it's available to everybody which suggests that there's one security level and everyone can see everything all the time. Is that what you're going with or is there some uh other guardrails in place? >> Yeah, that's a good question. We we pay pretty special we we pay pretty careful attention to guardrails. So for example
+
+um in the case of Jeffbot um when I use Jeffbot and I call Jeffbot has access to a ton of systems and it can for example do reads and writes. However, when anybody else calls Jeffbot all can do is draft messages and also I don't give Jeffbot permissions to all of our MCPs and tools in the case where other people call it. And so in short it's like pretty it's pretty well defined or we we we do pay some care to the security. Yeah. >> Okay, last question.
+
+>> Um, can you can you share the origin story of the FDE team? Did that just happen organically or did you intentionally do it? I'm just really curious like how that came to exist. >> Yeah, for sure. I mean, uh my my philos- my my hypothesis on this is like, once upon a time the FDE role didn't really exist. Like, Palantir
+
+started calling some people FDEs, but it that was really it. And what tech companies had was like solutions and sales engineers. And then, like account executives. >> I was a solutions engineer. >> Got it. Yeah, yeah. The thing The thing
+
+that I think has changed is that um because of AI, as like en- as a technical person that is supporting revenue generation, you can actually not only support the revenue generation, but then very easily build the tooling to smooth everything over. And make your own life easier, make the lives of AEs easier. Like, because of AI, this is just possible now. Like, that's like two Before that was like two jobs, and now it's like one job. Um in theory. Like, now when our team
+
+grows, like right now it's about eight or nine FDEs, like what will will it scale such that everyone does everything? Probably not. But, at least right now that's what we have, and I think that's a really good working model to get pretty far. >> Eight out of how many? >> Uh eight Oh, eight of like how big is our go-to-market org?
+
+>> Or eight You have eight FDEs, and the size of the company right now is how many? >> Oh, the We're about 115 people. >> Okay. >> Yeah.

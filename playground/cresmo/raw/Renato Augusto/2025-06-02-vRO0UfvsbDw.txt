@@ -1,0 +1,233 @@
+---
+video_title: "CACHE-ASIDE: Escalabilidade, Performance e Arquitetura de Software pra Mandar Bem na Entrevista!"
+video_id: vRO0UfvsbDw
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vRO0UfvsbDw
+video_date: 2025-06-02
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  📚 Leituras Recomendadas:
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  📚 Domain Driven Design: Atacando as Complexidades no Coração do Software - https://amzn.to/3Bmr3RV
+  
+  Fala, pessoal! Renato Augusto aqui de novo, e no vídeo de hoje a gente vai falar sobre um dos gargalos mais comuns — e perigosos — em sistemas web: o excesso de consultas no banco de dados.
+  
+  Sabe aquele cenário em que sua aplicação começa a receber muitos acessos ao mesmo tempo, e de repente o banco de dados começa a ficar lento, a aplicação começa a engasgar e tudo parece travar? Pois é. Em muitos casos, o vilão não é a infraestrutura — é a forma como os dados estão sendo acessados.
+  
+  E é exatamente por isso que hoje eu vou te mostrar um padrão arquitetural chamado Cache-Aside: uma técnica extremamente simples, mas que pode aumentar consideravelmente a performance da sua aplicação, aliviar a carga sobre o banco de dados e ainda te preparar pra entrevistas técnicas que envolvem system design.
+  
+  🚀 O que você vai aprender neste vídeo? | CACHE-ASIDE: Arquitetura de Software, Escalabilidade e Performance Na Prática
+  
+  ✅ O que é o padrão Cache-Aside e por que ele é tão eficaz
+  ✅ Como sistemas web acabam sobrecarregando o banco com as mesmas leituras
+  ✅ Por que consultas repetidas derrubam a performance e criam gargalos invisíveis
+  ✅ Como interceptar essas leituras e servir dados com muito mais velocidade
+  ✅ Quando faz sentido usar esse padrão — e quando ele pode virar um problema
+  ✅ Cuidados que você precisa ter ao lidar com cache pra não criar inconsistência
+  ✅ Como esse padrão pode te destacar em entrevistas técnicas de arquitetura
+  
+  💡 Por que assistir?
+  
+  🔹 Você vai entender como reduzir drasticamente o tempo de resposta da aplicação
+  🔹 Vai aprender uma técnica simples que pode te salvar em ambientes de alta carga
+  🔹 Vai sair do vídeo com clareza sobre quando e como aplicar esse padrão
+  🔹 Vai fortalecer sua base arquitetural e se destacar em entrevistas técnicas
+  
+  🎯 Quem deve assistir?
+  
+  👨‍💻 Desenvolvedores que estão enfrentando lentidão e gargalos no banco de dados
+  📚 Estudantes que querem entender padrões arquiteturais com aplicação prática
+  🏗️ Arquitetos e devs sêniors que desejam reforçar seu domínio sobre estratégias de performance
+  
+  🔥 Curtiu o vídeo? Deixa o like, se inscreve no canal e ativa o sininho pra não perder os próximos conteúdos! Quer apoiar meu trabalho diretamente? Considere se tornar membro do canal!
+  
+  📩 Ficou com dúvida ou quer compartilhar sua experiência? Comenta aqui embaixo! Eu sempre leio tudo e respondo sempre que possível.
+  
+  #ArquiteturaDeSoftware #systemdesign #backend #programacao
+---
+Imagina que você tá numa entrevista técnica para uma vaga de programador e o avaliador vira para você e manda o seguinte cenário para você resolver. Vamos supor que o sistema em que você trabalha começou a receber um volume muito alto de acessos simultâneos. No começo, tudo funcionava muito bem, mas conforme o número de usuários foi aumentando, a aplicação começou a ficar muito lenta e todos os usuários começaram a reclamar. Depois de muito investigar, você descobriu que o banco de dados está sendo bombardeado com consultas repetidas para buscar sempre os mesmos dados. E que foi esse acesso de consultas que acabou transformando o banco de dados no principal gargalo do sistema, prejudicando a performance da aplicação inteira. O que você faria para
+
+resolver esse problema sem trocar o banco de dados e sem depender de upgrades na infraestrutura? Esse tipo de pergunta técnica é mais comum do que você imagina e é exatamente aqui que muita gente trava. Mas quem conhece a arquitetura de verdade sabe exatamente que tipo de solução aplicar nesse cenário. E uma das soluções mais simples e mais eficazes para resolver esse tipo de problema é conhecida como cash Aside Pattern. E é exatamente esse padrão que eu vou te ensinar no vídeo de hoje. Fala
+
+pessoal, Renato Augusto aqui de novo e dessa vez para te ensinar na prática o padrão arquitetural conhecido como Cash Aside Pattern. Esse é um dos padrões mais simples de ser implementado, porém muito poderoso quando o assunto é lidar com gargalos no banco de dados e também com performance e escalabilidade de aplicações web. E o melhor disso tudo é que esse padrão vai fazer você brilhar nas entrevistas técnicas, porque você mostra que sabe como otimizar sistemas de verdade resolvendo problemas de performance com soluções arquiteturais maduras. Então, pra gente não perder mais tempo, bora pra tela e vamos entender quais são os problemas que esse padrão resolve, como que você consegue implementar ele hoje ainda no teu sistema e quais são os cuidados que você tem que ter ao lidar com cash no dia a dia. Bora lá. Bom, então vamos lá. Vamos
+
+direto ao ponto aqui, vamos direto ao que interessa pra gente entender como que funciona esse padrão conhecido como Cash Asside, quais são os problemas que ele resolve, como que a gente consegue implementar ele no nosso dia a dia. Então, já te adianto que a gente vai olhar para código também e principalmente quais são os tradeoffs que a gente precisa fazer pra gente colocar isso aqui em funcionamento, tá? Então vamos lá. Qual que é o problema que a gente precisa resolver aqui, tá? Acho que esse diagrama aqui já é muito claro, mas a gente vai fazer o seguinte, a gente vai fazer uma pequena simulação aqui, que é o seguinte, vamos imaginar que a gente trabalha, que a gente foi contratado, né, como arquiteto ou como programador pela empresa Shop Greeds, que é uma empresa do segmento de e-commerce. Então ele vende produtos
+
+online ali. E a nossa missão aqui é apenas cuidar dessa plataforma, é desenvolver os novos módulos, é botar ela para funcionar, é manter ela funcionando ao longo do tempo e também preparar ela para lidar com picos de carga como possíveis Black Fridays. Beleza? Até aqui mistério nenhum. E aí, vamos reparar um detalhe aqui no front end, que é o seguinte. Aqui no front end
+
+dessa aplicação, a gente tem aqui, ó, as categorias em destaque. Então, a gente tem seis categorias em destaque aqui. Então, o que eu quero que você entenda aqui é o seguinte. Essas categorias aqui, elas estão armazenadas lá no banco de dados. Então, toda vez que alguém acessa o nosso front end aqui, o front end faz uma requisição lá na nossa API, no nosso back end. E o nosso back end
+
+precisa fazer uma consulta no banco de dados e retornar quais são as categorias em destaque, beleza? A nossa aplicação, ela pode ter n 300 categorias, mas o pessoal de produto, de venda, lá do marketing, na telinha de cadastro deles lá, eles escolhem quais vão ser as categorias que vão estar em destaque, seja nessa semana, no mês, tanto faz. Esse é o cenário que a gente tá inserido, tá? E qual é o problema dessa situação aqui? Vamos imaginar que tá vindo uma Black Friday por aí e a gente vai precisar lidar com picos muito alto de requisições simultâneas, de vários clientes querendo comprar e por aí vai.
+
+Então o que que acontece? Toda vez que alguém acessa essa nossa página, o que acontece é que aquele bloquinho lá do front end, para ele ser alimentado com as categorias que estão destaque, o front end precisa fazer uma requisição na nossa API. E a API, por sua vez, vai acabar espancando o banco de dados com um monte de select. E aonde que tá o problema disso tudo aqui? O problema tá justamente no banco de dados. Por quê?
+
+Porque ele é o elo mais fraco dessa relação. Porque toda operação que a gente faz no banco de dados consome recurso. Principalmente os bancos de dados relacionais, eles precisam lidar com atomicidade, com a consistência dos dados, com isolamento, com durabilidade, sem contar que eles precisam lidar com índice, transação, bloqueio. Então, não é tão simples assim você entupir teu banco de dados com um monte de selects e achar que ele vai te responder num tempo hábil. Não é assim que funciona, até porque o banco de dados ele tem um número de conexões simultâneas que ele consegue aguentar. E aí quando você
+
+entope o banco de dados com um monte de operações, o que ele vai fazer é criar uma fila de atendimento. E aí, como ele não vai conseguir atender todo mundo num tempo hábil, o que que vai acontecer? A API vai ficar esperando a resposta aqui do banco de dados, não vai ter a resposta num tempo hábil e vai começar a retornar time out lá pro front end. O que vai acontecer? A aplicação vai acabar ficando fora do ar. Por quê?
+
+porque o banco de dados abriu o bico, pediu água e não aguentou lidar com essa quantidade exagerada de requisições. E geralmente é esse cenário que vão te passar em algumas entrevistas, é esse cenário aqui que vão te dar para você poder resolver. E aí, como que a gente resolve esse cenário aqui com o padrão Cash Asside? Lembrando, existem outras formas da gente resolver isso aqui. A gente poderia cachear os dados lá a nível de front end, mas isso aí envolveriam outros tradeoffs. A gente
+
+poderia envolver outras estratégias aqui que não vem ao caso, mas a mais comum é a gente implementar o Cash Aside, que é uma técnica extremamente poderosa, muito simples de ser implementada, que tu vai aprender hoje ainda. Beleza? Então vamos lá. Como que a gente resolve essa situação aqui, já que os nossos clientes aqui estão entupindo a API com um monte de requisições para esse end point aqui, para buscar as categorias que estão em destaque. Que que a gente precisa fazer primeiro? A gente precisa aliviar o
+
+banco de dados, a gente precisa liberar ele, a gente precisa requisitar o banco de dados somente quando for muito necessário. E como que a gente faz isso? Implementando uma camada de cash entre o banco de dados e a nossa API. Então, o que que eu vou fazer aqui? Eu vou duplicar esse nosso diagrama aqui. E aí
+
+a gente vai fazer o seguinte. A partir de agora eu vou nomear isso aqui para cash Asside. E a gente vai começar a fazer a nossa implementação aqui. Então vamos lá. Que que a gente precisa fazer primeiro aqui? Primeira coisa que eu vou
+
+fazer é anular essa conexão com o banco de dados. Então o que que a gente vai fazer aqui agora? É o seguinte. Eu vou buscar aqui uma imagem do Redis. Vou pegar o ícone dele aqui e ele vai ser o mecanismo que a gente vai utilizar para fazer o cacheamento desses nossos dados.
+
+E para você que ainda não sabe o que que é o Redis, o Redis basicamente também é um banco de dados, tá? Só que ele opera a nível de memória RAM, ele não opera a nível de disco, como é os bancos de dados tradicionais aí, como post, gris myle e por aí vai. Então o rediz ele é muito mais rápido do que um banco normal, porque ele tá a nível de memória RAM, então ele vai ser muito mais rápido. E aí para você tirar onda naquela entrevista, para você meter aquela bronca, eu vou te explicar porque que ele é mais rápido. Eu tô com uma imagem aqui que mostra exatamente isso, tá? Ela mostra exatamente quais são os
+
+níveis de velocidade ali, dependendo da camada que você tiver lhe dando. Então, repara, quando a gente fala de HD, aquele descão magnético, a gente tá falando de tempos de resposta de até 10 msundos, tá? Em média 10 msundos ali para tu buscar ou inserir um dado básico. Quando a gente fala de insert lá num postre da vida, ainda no HDzão, a gente tá falando de 1 msundo de tempo de resposta. Então, beleza, até aqui tranquilo. Quando a gente fala de
+
+leitura de dados no SSD, a gente está falando de 100 microsegundos, tá? 100 micross muito mais rápido do que 1 mso e muito mais rápido ainda do que 10 ms. Beleza? Quando a gente fala de rediz, ele tá quase lá no topo da cadeia alimentar. O que que acontece? O Redis,
+
+como ele opera a nível de memória RAM, e a memória RAM é extremamente rápida, a gente tá falando de 100 Nanosundos, isso é muito mais rápido do que 100 microssos, do que 1 mso, do que 10 ms é por isso que o redis é extremamente veloz. Então não dá para comparar o redis com SSD, com HD, com qualquer outra coisa. E não é só o redis que opera a nível de memória RAM. Tem outros mecanismos aí, tem outros bancos ali que também operam a nível de memória. Beleza? Então vamos voltar aqui pro
+
+nosso diagrama. Deixa eu apagar essa imagem daqui. E como é que a gente vai resolver esse problema aqui do banco de dados? Tá? Já que não faz sentido a gente ficar espancando o banco de dados para pegar esses dados aqui que mudam muito pouco e depois a gente vai falar sobre o tipo de dado que é interessante você cachear. Que que a gente vai fazer?
+
+A gente vai simplesmente a partir de agora requisitar esses dados no redisc. a gente não vai mais bater no nosso banco de dados, a gente vai bater primeiro no redisc. E o que que acontece quando a gente fala de bater no redis? A gente tá falando o seguinte: a minha aplicação, a minha APIzinha aqui, o meu código, ele vai simplesmente receber a requisição do front e repassar essa requisição lá pro Redis. Na verdade, não é repassar, ele vai consultar o Redis.
+
+Redis, existe esse dado aí, existe essas categorias em destaque aí dentro. O redis vai responder. Quando o redis responder lá paraa nossa aplicação, que que vai acontecer? Nossa aplicação, o nosso código vai olhar a resposta e vai verificar, existia esse dado lá dentro ou é nulo. Se for nulo, aí o que que eu tenho que fazer? Aí sim eu vou lá no
+
+banco de dados buscar os dados que eu tô precisando. Inclusive, vou até apagar esse fogo daqui porque não faz mais sentido. O banco não está mais pegando fogo, tá? Então, a terceira, o terceiro caminho é ir no banco de dados e buscar esses dados quando eles não são encontrados no redisco. Vamos recapitular isso aqui. Frontend mandou
+
+uma requisição pra nossa PI. Nossa PI vai buscar lá no cash do Redis. Beleza, Redis? Existe esse dado aí? Existe essa tal dessas categorias em destaque aí dentro? O Redis, logicamente vai
+
+responder que não. A gente acabou de instalar ele lá no servidor, então acabamos de subir uma instânciazinha dele no Docker. Não vai existir dado nenhum no Redis. do redistro tá vazio e aí ele vai responder que não, não existe dado nenhum aqui. Aí sim a gente vai lá no banco de dados, tá Renato? Mas aí não
+
+mudou nada, é agora que entra a estratégia. Por quê? A gente vem no banco de dados e busca esses dados das categorias em destaque. Com esses dados em mãos, a gente não vai devolver pro front endora, a gente vai simplesmente criar uma cópia desses dados dentro do redis. E aí o que que vai acontecer?
+
+Depois disso a gente devolve pro usuário que solicitou. Beleza? Isso foi o ciclo de uma requisição. O que que vai acontecer com a próxima requisição? A próxima requisição vai chegar e o nosso servidor, a nossa API vai receber essa requisição e vai bater lá no redis. Ô
+
+Redis, existe essa tal dessas categorias em destaque aí dentro? E o Redis vai responder que sim e vai entregar os dados. E aí quando Rediz entregar os dados, a gente devolve pro front end. Então o que que aconteceu? A comunicação com o banco acabou. A nossa API não
+
+busca mais esses dados no banco de dados. E calma que isso aqui não é a solução final. Parece muito perfeito, mas calma. A gente já vai entrar mais a fundo nessa situação aqui. Só que por hora, o que eu quero que você entenda é que se a gente anulou pelo menos momentaneamente a comunicação com o banco de dados aqui e a gente tá lidando agora com o cash, com o redis a nível de memória, olha só o que que acontece. a
+
+gente para de espancar o nosso banco de dados e agora a gente tem uma performance muito maior, muito superior na nossa aplicação, porque todo mundo que solicitar esse dado das categorias em destaque, esse dado tá armazenado agora na memória do computador, na memória do servidor. E aí o que que acontece? Entra aquele tempo de resposta que eu te falei de 100 nanosundos. Então é muito rápido, vai ser muito rápido, isso vai melhorar aí muito a experiência do usuário, isso vai melhorar aí muito a performance da nossa API, beleza? Só que como nem tudo são flores, o que que acontece? A gente tem alguns problemas
+
+que a gente precisa lidar com essa situação como um todo. Por quê? Porque a partir de agora todo mundo tá batendo na nossa PI e a nossa PI tá devolvendo o dado lá das categorias em destaque lá pro front end. Beleza? Para você entender um pouquinho mais a fundo, todas as outras operações, os outros ends continuam acessando o banco de dados, tá? Isso aqui só está funcionando
+
+para nossas categorias em destaque, porque nesse end point em específico, e eu vou te mostrar isso a nível de código, a gente decidiu por cachear essas informações. Então a gente implementou aqui o cash asside, que seria meio que um cash do lado, cash ao lado aqui, que é basicamente essa imagem aqui. Beleza? Agora todo mundo está recebendo os dados do nosso cash. Só que como eu falei, nem tudo é perfeito. O
+
+que que acontece se amanhã ou então hoje à noite ainda ou daqui a pouco ou agora, pessoal de produto for lá no nosso front end, lá no frontendzinho deles, né, onde eles fazem o gerenciamento das categorias e trocar essas categorias aqui, que que vai acontecer? A gente vai ter alguns problemas. A gente vai ter uma inconsistência de dados. Por quê? Porque o pessoal foi lá e disse que, cara, TV e áudio e desktop, laptop não tá mais em alta. Chegou aí o inverno, a
+
+gente vai vender produto de inverno. Então vamos botar que as categorias em destaque são agora as categorias ali de produtos voltados pro inverno. Beleza? Só que quando eles alterarem isso lá no na telinha de crude deles lá e essas informações forem persistidas no banco de dados, o que que vai acontecer? Isso não vai refletir aqui no front end. Por
+
+quê? Porque a nossa API continua buscando do cash e a informação, a atualização desses dados lá na telinha de crude do pessoal do produto acertou o banco de dados. Lá não tem nenhum tipo de interação com cash. Eles inseriram a informação no banco de dados porque é o banco de dados que tem que armazenar, persistir as informações. O redis aqui tá a nível de cash. Se o servidor
+
+reiniciar, os dados da memória RAM são voláteis, eles vão ser apagados e não tem problema nenhum. Isso aqui é para dados transitórios, dados voláteis. Mas a persistência dos nossos dados, quem tem que fazer é o banco de dados. Então, temos notoriamente um problema. A gente precisa de alguma forma, toda vez que os dados forem atualizados no banco de dados, que eles sejam atualizados no cash também, ou pelo menos que eles sejam invalidados no cash. E a gente vai
+
+falar sobre isso um pouquinho mais a nível de código. O nome disso é invalidação de cash, tá? Mas para você já entender aqui a solução como um todo, aquele dado que a gente colocou aqui dentro a primeira vez, o que que vai acontecer? A gente vai criar um mecanismo para invalidar esse dado depois de algum determinado tempo. Logicamente existem outras estratégias para invalidar esse cash, mas basicamente a gente vai fazer ele inspirar automaticamente. E aí quando
+
+ele inspirar, quando chegar uma requisição depois que esse dado inspirar, ele vai deixar de existir na memória e aí vai acontecer aquele ciclo de novo de bater no cash, não encontrar o dado, retornar vazio e aí a nossa API bater lá no banco de dados. Quando ela bater no banco de dados, ela cria uma cópia desses dados e armazena no redis e todo o fluxo continua se repetindo, todo ciclo, né? Então, beleza, entendido isso aqui, vamos pro código, vamos implementar isso aqui na prática, porque eu acho que se não tiver claro até aqui, vai ficar mais claro quando a gente olhar pro código. E vamos implementar isso aqui e tu vai sair daqui entendido sobre cas e como que você resolve não só esse problema, mas como que você também se sai muito bem nas entrevistas, principalmente as entrevistas que vão te perguntar sobre esse tipo de problema, sobre performance, sobre gargalo no banco de dados e como que você consegue fazer a resolução desses problemas. Beleza? Bora pro código e vamos entender
+
+como é que isso aqui funciona. Vamos lá. Bom, então vamos lá. Vamos direto ao que interessa. Vamos entender código aqui.
+
+Vamos ver como é que a gente consegue aplicar esse padrão aqui no nosso dia a dia, no teu sisteminha aí também para tu melhorar a performance e lidar com gargalos de banco. Mas antes vai aquele recado de sempre aqui, tá? Tudo que eu te ensino aqui nesse canal é completamente agnóstico e independente de linguagem de programação. Então tu vai conseguir implementar isso aqui em qualquer linguagem, qualquer framework. Por quê? Porque isso aqui é padrão
+
+arquitetural. Isso é princípio de arquitetura, isso é fundamento. Beleza? Inclusive, eu tô até tentando dar uma variada aqui. Ultimamente eu tenho trago PHP, já trouxe Python, também trouxe Goleng aqui já no canal. Hoje a gente
+
+vai ver JavaScript aqui com uma aplicaçãozinha bem básica, tá? Com Node aqui, com express bem básico, que é para todo mundo conseguir entender. Esse conteúdo aqui é para abarcar todo mundo. Aqui a gente não faz diferença de ninguém. Se você é novo, se você é iniciante, tá chegando agora, se tu já tá calejado, todo mundo vai conseguir entender isso aqui. Beleza? Então vamos
+
+lá. O que que a gente tem aqui? A gente tem um arquivinho de rota aqui que simula um controller na nossa aplicação, tá? E logicamente eu poderia estar utilizando um ORM aqui, poderia estar utilizando algumas coisas mais avançadas, só que a ideia aqui, mais uma vez é que todo mundo consiga entender. Então o que que acontece? Essa nossa
+
+rota aqui, esse nosso end point, né, de categorias aqui, o featured aqui, é justamente para simular aquele end point que a gente viu lá no diagrama. E o que que tá acontecendo aqui dentro desse end point? Basicamente ele tá fazendo aqui uma busca no banco de dados, tá selecionando o ID, o nome e a imagem aqui, a URL da imagem fictícia, logicamente da tabela de categorias onde o is featured, né, que é se essa categoria está realmente em destaque for igual true. Logicamente essa relação aqui poderia ser em duas tabelas, poderia ter uma tabela pivô, alguma coisa mais rebuscada, mas mais uma vez isso aqui é conteúdo para abarcar todo mundo, beleza? Então vamos lá. A gente
+
+tem basicamente aqui um select sendo feito no banco de dados todas as vezes que chega uma requisição nesse end point. Show de bola. E o que que acontece depois? A gente tá retornando a resposta para quem chamar. Então o que que eu tenho aqui? Eu tenho aqui um
+
+Postman, tá? Postmanzinho aqui bem básico, que toda vez que eu bato lá, ele me retorna esses quatro registros aqui, essas quatro categorias fictícias. E da onde que tá vindo essas categorias aqui? Basicamente estão vindo daqui, ó. Eu vou abrir aqui o banco de dados. Eu tenho
+
+duas conexões aqui, uma comg e uma com redis. E aqui no PSC que eu vou abrir, a gente tem a tabelinha aqui de categorias. Essas categorias aqui, logicamente, mais uma vez, são fictícias e a gente tem aqui quatro categorias que estão marcados como true, tá? No featured aqui. Então, essas quatro categorias são as categorias que estão em destaque, que teoricamente apareceriam lá no nosso front end nas categorias destacadas. Show de bola. Se
+
+eu vier aqui e mudar e botar mais umas duas aqui para true, que que vai acontecer? Eu vou salvar aqui e eu vou voltar lá no Postman. Quando eu faço a requisição novamente, agora ele traz mais duas categorias aqui. Show de bola. Então, a gente tem seis categorias aqui sendo buscadas lá do banco de dados e que estão sendo retornadas pelo nosso end point. Show de bola. Mistério
+
+nenhum. Aplicaçãozinha super simples e tá tranquilo. Agora vamos voltar lá e vamos entender aqui quais são os problemas. Por quê? Porque se a nossa aplicação agora começar a receber uma carga muito alta de requisições, quem vai sofrer é o banco de dados. Então o
+
+banco de dados vai ser espancado e não vai conseguir atender esses selects com maestria. Que vai acontecer mais uma vez, ele vai criar aquela fila e não vai conseguir atender todo mundo. Então, como que a gente implementa um casinho aqui? É extremamente simples, cara. Tu vai ver como é que isso aqui é fácil.
+
+Vamos lá. Como que a gente vai implementar isso aqui? Eu vou basicamente fazer o seguinte. Eu vou criar uma variável aqui chamada de cash key e vou nomear ela como as categorias que são destacadas, tá? Isso aqui vai ser o ID, tá? vai ser como se fosse um
+
+ID no banco de dados lá do redis pra gente poder identificar o que que a gente tá armazenando lá dentro. Calma que tu já vai entender. Então, com isso aqui criado, o que que eu preciso fazer agora? Eu preciso simplesmente começar a lidar com cash. E para lidar com cash, eu tenho aqui na minha pastinha de configs aqui, eu tenho aqui uma conexão com o redis sendo configurada.
+
+Logicamente na sua linguagem você vai ter aí uma biblioteca que já faz isso. É bem tranquilo, tá? Lidar com cash, ter algum objeto que manipule cash na memória para você já tem para todas as linguagens e todos os frates, tá? Inclusive, a nível de curiosidade, o Rediz, ele utiliza um protocolo chamado RP, que significa redis serialization protocol, que é extremamente mais rápido do que o próprio HTTP. Então, se você já tá na dúvida aí de tipo, cara, eu tenho que instalar o Redis na minha máquina, no meu servidor mesmo que tá a aplicação, ou eu posso jogar isso num servidor externo, posso fazer tipo uma arquitetura distribuída ali com cash? E
+
+sim, você pode, você não precisa comunicar a tua aplicação pelo protocolo HTTP, utilizando HTTP para poder fazer a comunicação com o teu servidor de cash, você vai utilizar o protocolo RP, que é o Red Serialization Protocol, que é muito rápido, cara. É muito rápido. Então, já respondendo a dúvida que eu sei que muita gente vai ficar, você não precisa ter o Redis instalado no seu servidor. É uma boa prática você distribuir ele se você tiver falando de microsserviços, mas isso é um tema para outro vídeo, tá? O ideal aqui é que você saiba utilizar apenas o cash Asse. Show
+
+de bola. Então, eu tenho aqui o meu redis client aqui sendo montado, tá? A gente passa aqui uma conexãozinha. Esse rediz aqui é por causa do docker, tá? Então eu não vou botar aqui local host, eu vou botar redis aqui porque é o nome do contêiner Docker que tá rodando. Tema
+
+também pro outro vídeo, mas cara, isso aqui é extremamente simples, tá? Isso aqui é básico, isso aqui não tem mistério nenhum. Beleza? Então o que que eu vou fazer? Eu tenho que basicamente importar esse cara aqui dentro do meu arquivo, tá? Então vou chamar ele aqui
+
+de redis e vou chamar o redis aqui dentro. Beleza? Com esse objeto do rediz aqui dentro eu já tenho uma conexão configurada, então eu consigo fazer algumas magias aqui. E qual que vai ser a primeira coisa que a gente vai fazer lembrando lá do nosso diagrama? Chegou a requisição no nosso end point. Que que a
+
+gente precisa fazer? A gente precisa consultar o cash. Então, que que eu vou fazer? Vou criar uma variável aqui, vou dar um get aqui e vou mandar ele procurar o cash key. Então, o que que acontece aqui? A gente tá criando
+
+uma variável que tá pegando, tá chamando rediz e tá fazendo o seguinte: Rediz, manda para mim, busca aí para mim, por favor, todos os registros aí ou o valor que tá vinculado a essa chave aqui, ou seja, essas categorias em destaque aqui, beleza? Busca para mim aí. Que que a gente tem que fazer depois? A gente simplesmente faz um if aqui para verificar se isso tá preenchido. Se isso aqui estiver preenchido, significa que esse dado aqui existe no cash e que o cash retornou. Então, o que que eu vou
+
+fazer a partir de agora? Eu simplesmente vou retornar os meus dados lá pro front end e fim de papo, não vai nem chegar a entrar nessa linha aqui. Então, como é que a gente faz isso? Eu vou retornar aqui com Jon, vou fazer um passe aqui das categorias e pronto, fim de papo acabou. Buscamos os dados no cash e retornamos eles se encontrarmos ele no cash. Agora, o que que acontece? Se ele
+
+não encontrar o dado no cash? Ele simplesmente não vai cair no IF e aí ele vai buscar lá no banco de dados esses dados. E aí, o que que tem que acontecer depois que ele busca os dados no banco? A gente tem que criar uma cópia desses dados dentro do cash. Então, o que que a gente precisa fazer? A gente precisa
+
+chamar o rediz aqui e dar um set. E nesse set aqui, que que a gente faz? A gente passa o cash key e as categorias que foram buscadas lá, que estão em destaques, que vieram aqui do banco de dados. E depois a gente retorna isso pro front end. É simples assim, não tem mistério nenhum. Qualquer linguagem,
+
+qualquer framework vai funcionar dessa exata maneira. Lógico que não está finalizado. Por quê? Porque a gente precisa ainda lidar com aquele lance da invalidação e tudo mais. Mas vamos entender como é que isso aqui tá funcionando. Vamos lá. Eu vou voltar
+
+aqui no Postman, tá? E aqui a gente tem seis categorias que estão em destaque. Vou subir um pouquinho mais isso aqui para ficar visível. Quando eu chamar isso aqui a primeira vez, ele deu um erro. Agora, por que que deu um erro?
+
+Deixa eu validar aqui o que que aconteceu. Ah, ele deu um erro por causa disso aqui, ó. Tem que chamar o string aqui, ó. Beleza, entendido isso aqui. Vamos voltar para lá, pro nosso Postman e fazer a requisição novamente. Beleza?
+
+Trouxe aqui seis dados, seis registros aqui. E aí, que que a gente vai fazer agora? Mais nada. Vamos chamar de novo esses dados aqui agora, por mais que você não perceba, estão vindo do cash, tá? Por quê? Porque a primeira vez que a
+
+gente consultou, ele bateu aqui e não encontrou no cash. Então, ele buscou no banco de dados e salvou no cash depois e retornou. Agora, quando a gente vai de novo lá, ele tá agora vindo do cash. Por quê? Porque esse dado já existe no cash.
+
+Quer ver como é que esse dado existe no cash? Vamos lá. Eu vou fechar aqui a conexão com Postigres e vou abrir aqui a conexão com redis. Deixa eu atualizar isso aqui. Beleza? Então, tá aqui, ó.
+
+featured categories. Beleza? A gente tem todos os dados que foram salvos aqui dentro, tá? Que foi o retorno lá do banco de dados. Só que aí a gente vai entrar naquele problema que eu te falei.
+
+Por quê? Porque se eu vier aqui agora no banco de dados mesmo, no Postgrid e atualizar aquela tabela lá, atualizar aquela aquela lista de categorias, eu vou fazer o seguinte, essas seis aqui eu vou tirar, eu vou botar tudo para falso aqui e a gente vai botar só duas categorias em destaque. Vou deixar só essas duas aqui em destaque. Vamos ver o que que vai acontecer. Acabei de salvar lá no banco, tem duas categorias aqui em destaque. Vamos lá no Postman e vamos
+
+atualizar. Quando eu vou no Postman, o que que tá acontecendo? Ele não tá buscando aquelas duas. Por quê? A gente atualizou o dado no banco. Só que esses
+
+dados aqui estão vindo do cash e isso é um problema. Então vamos voltar no código aqui pra gente entender. Olhando pro código aqui o que que tá acontecendo? Ele só tá batendo no cash e retornando. Então a gente precisa de alguma forma invalidar esse cash que tá armazenado aqui dentro do redis. E
+
+existem diversas formas de invalidar cash. Inclusive invalidação de cash é uma parada que às vezes é polêmico, às vezes traz uma certa dor de cabeça e tal, mas a forma mais simples da gente invalidar esse cash aqui é a seguinte, ó. Eu vou trocar esse set aqui por 7x. E esse 7X é um outro método desse objeto aqui do redis, só que ele aceita mais um parâmetro. Qual é o parâmetro que ele aceita? É o de tempo. Então eu vou
+
+passar aqui 10 segundos. E esses 10 segundos é o tempo em que esse item aqui vai ficar armazenado dentro do cash. Depois de 10 segundos, ele vai sumir automaticamente da memória. Ele não vai estar mais lá. Então vamos entender como que isso impacta a nossa aplicação. Eu
+
+vou apagar esse cash daqui porque logicamente como ele não foi marcado aqui com nenhum tempo de inspiração, ele vai ficar aqui infinito e a gente nunca vai conseguir chegar na linha de baixo. Então eu simplesmente vou dropar esse dado aqui e fim de papo. Vamos lá. Quando eu bater agora no Postman, o que que vai acontecer? Ele vai bater no cash e não vai encontrar dado nenhum. Então
+
+ele vai buscar o dado do banco de dados. Vamos lá. Trouxe aqui as nossas duas categorias que foram atualizadas lá no banco. Beleza? Que que aconteceu nesse momento? Ele veio aqui, não encontrou no
+
+cash, buscou no banco de dados e armazenou ele aqui dentro do cash com tempo de inspiração de 10 segundos, tá? Então o que que vai acontecer aqui? Como já deve ter passado os 10 segundos, ele não vai ter atualizado lá. Então eu vou fazer o seguinte, eu vou botar para 20 segundos aqui e a gente vai fazer de novo essa consulta, tá? O Cash já inspirou, provavelmente. Vamos consultar
+
+aqui, deixa eu atualizar pra gente consultar e você vê que não tem mais dado nenhum no Cash. Então, mais uma vez, se eu voltar no Postman, ele vai buscar do banco de dados porque não existe Cash. Eu vou fazer o seguinte, eu vou consultar aqui agora, ele vai buscar no banco, vai armazenar no cash e vai retornar o resultado pra gente. Só que eu vou rapidamente lá no banco de dados e vou alterar o valor. E aí tu vai entender porque isso aqui é interessante. Ó, vamos lá. Beleza. Foi e
+
+buscou. O que que eu vou fazer? Eu vou voltar aqui no nosso código, vou na tabela de categorias e vou atualizar aqui, ó. Vou botar para true. Vou botar para true aqui também e aqui para true.
+
+E vou salvar. Vamos voltar lá no nosso post, mano. Você vai entender o seguinte. Consultei. Só tem duas categorias. E aí eu vou ficar
+
+consultando aqui. Olha o tempo de resposta, ó. 14, 15. Eu vou ficar consultando. Ó lá, ó. Pronto, atualizou.
+
+Então o Cashirou automaticamente depois de 20 segundos e agora ele conseguiu atualizar esses dados. Então, com esse essa técnica aqui de invalidação é conhecida como TTL, tá? Esse segundo parâmetro aqui que a gente passa é conhecido como TTL. Esse TTL significa time to leave, que é o tempo de de vida dele, tá? É o tempo que esse dado vai ficar sobrevivendo lá no cash. Isso aqui
+
+é muito interessante em diversos cenários. Então, por exemplo, nesse cenário onde, cara, é um dado do front end, não é um dado tão sensível, não é crítico, não tem importância se demorar um certo tempo ali para atualizar, a gente pode usar aqui um TTLzinho tranquilo. Recomendo que você dê uma estudada em outras técnicas, eu vou trazer aqui no canal. Inclusive, não existe só o Cash Aside, tá? Existem outras estratégias que fazem uso do cash aqui, só que com um outro formato para resolver outros tipos de problema. Então
+
+eu vou trazer esse tipo de conteúdo aqui no canal, mas eu espero que até aqui você já tenha entendido a importância do cash, como que a gente invalida ele e como que a gente brinca com ele aqui, utilizando um simples postm aqui, simulando que seria o nosso front end. Bom, aqui vão algumas considerações para você levar em conta na hora que você for mexer com cash. Primeira delas, não saia por aí feito maníaco querendo implementar isso em tudo quanto é lugar. Por quê? Quando a gente fala de cash, você tem que sempre lembrar que o cash está sendo armazenado na memória do computador, ou seja, na memória do seu servidor. E quando a gente fala de
+
+memória, memória é um recurso muito escasso. E quando você começa a armazenar muita coisa na memória do seu computador, o que que vai acontecer? as aplicações, ou seja, o código da sua API, que também está rodando na memória, vai começar a competir por recurso e isso não faz o menor sentido. Então, toma cuidado com que tipo de dado você vai jogar na memória do seu computador. Eu costumo dizer que tem três características que um dado tem que ter para você armazenar ele no cash.
+
+Primeiro, o dado tem que ser muito requisitado. Ele sendo muito requisitado, já é um primeiro fator para você considerar armazenar ele em cash. O segundo fator, esse dado não pode ter a necessidade de ser consistente o tempo todo. Por exemplo, você não pode armazenar dados de saldo bancário, de conta bancária dentro do cash. Por quê?
+
+Porque você viu que tem um delay. Imagina se você faz um Pix, mas o saldo continua lá travadão, parado. Você faz um Pix de R$ 1.000, tinha R$ 1.000 na conta e depois que o Pix foi, continua os R$ 1.000 até o cash expirar. Não faz
+
+sentido isso. Então, toma cuidado com esse tipo de informação que você fica transitando dentro do cash, porque Cash não foi feito para isso. Cash foi feito para você armazenar dados que não tenha a necessidade de consistência quente, ou seja, de uma consistência forte. Esses dados podem sim ter uma certa consistência eventual, que é assim que a gente chama, quando o dado não tem essa atualização em tempo real. E segundo, ele precisa sim ser um dado que é muito requisitado. Uma terceira característica
+
+é que tem que ser um dado que não mude com tanta frequência. Imagina, você tá ali cacheando um dado que muda a cada segundo. Não faz menor sentido você fazer isso. Então, tem que ser um dado que não muda com tanta frequência, tem que ser um dado extremamente requisitado e tem que ser um dado que possa ter uma consistência fraca, ou seja, que não tem necessidade de consistência forte, aquela consistência quente. Atualizou no banco, eu posso sim ter um delay, não tem problema nenhum. E quando a gente
+
+fala de invalidação de cash, existe N estratégias. Tem LRU, MNU, tem WR through, tem um monte de estratégias para você invalidar o cash, tá? Cabe é você dar uma olhada. Se deixar nos comentários, eu vou trazer vídeo aqui sobre system design, sobre arquitetura mais alto nível e logicamente que abarcando todo mundo, porque esse é o propósito aqui do canal. Se esse vídeo te ajudou e você aprendeu, considere se tornar um membro exclusivo aqui do canal, apoiando essa produção exclusivaça de conteúdos que eu trago para você semanalmente. Se ficou
+
+qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tiro um tempo para te responder. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve.

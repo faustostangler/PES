@@ -1,0 +1,131 @@
+---
+video_title: "Exposed: The Google Botnet – The Web Tracks You with a Single ID"
+video_id: 3rm4AZ24AbI
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3rm4AZ24AbI
+video_date: 2025-12-03T17:00:12+00:00
+video_description: |
+  I've tried to explain the Google tracking system to you all for so many years but this time, instead of theoretical talk, we will show an actual demonstration. I will prove to you that Google can track every click in some 3rd Party website that is not a Google site. This means the surveillance capability of Google is out of this world. Incredibly sophisticated. Let's show you with code.
+  
+  ----------------------------------
+  BraX3 Privacy Phone is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+Imagine waking up to discover your browser has been secretly enlisted in a cyber army tracking your every click, scroll, and search all without your knowledge. That's the chilling reality of a botnet, a massive network of hijacked devices turned into remote controlled zombies by hackers. But what if I told you a similar setup exists right under our noses, powered not by malware, but by tech giants like Google? Using your browser as the unwilling tool, they track your every move across sites with a persistent ID you never agreed to. And you shouldn't wonder why Google knows your every preference, idea, opinion, [music] and connection.
+
+People, you are also vulnerable. I call this the Google botnet, and this isn't a traditional botnet of malware infected computers, but a vast army of web servers willingly embedding Google's code, turning visitors like you into data sources for a third-party empire. I've tried explaining this for years, but today we deep dive into the tech straight from Google's code to show you exactly how your behavior is harvested. No theory, just proof, and I'll reveal why my go-to solution, browser isolation, blocks it flawlessly. This is privacy warfare 101.
+
+Stay right there.
+
+Our approach. Today I will not bore you with a lot of theoretical talk. What I will do instead is demonstrate to you exactly how things work. To accomplish this, I had to write some code to show you the detail. Well, those who are very techy can repeat the demo itself and examine the data more closely. If you're not super
+
+techy, just grasp the main concept, which I will state at the end of each section. I'm just trying to show you that there's proof to this, not fud. The basic tools for this demonstration is a website I built just for this demo, which I will leave with original credentials for short while after I release this video. But after that, I will delete the Google credentials, so if you're watching this video later on, it may not function completely as shown. This website is brax.live.
+
+Next, I will demonstrate this using two browsers. The first browser will be Chrome, and the other browser will be Brave. Let's get started. Let's start with the Google ID. I'll state it directly now. The problem
+
+is the Google ID. When you log in to Google on a browser, your Google ID is translated to a bunch of identifiers that are obfuscated by Google to be anonymous. The idea is that third parties cannot directly translate these identifiers to your original Google ID, which is typically some Gmail email address. However, let's make it clear that Google made these anonymous identifiers, so they're able to use it to identify the original account. Let's look at a Chrome browser that's been logged into Google.
+
+We'll actually start from google.com to make this clear. What we're going to do is look at the cookies on this computer. To do that, I right-click on the browser and click on inspect. This will launch dev tools, and we're going to use it a lot today. We'll click on the
+
+application tab, and then you'll see a cookie section where we select www.google.com. There are several Google domains here, and it doesn't matter which one you pick. The Google identifiers will be the same. Look at these cookie values.
+
+Secure 1PSID, SID, HSID. These are Google's master keys to your account. They're anonymized, so they don't look like your email address, but Google can reverse them to your original Google ID. Let's switch to Brave now, and again using google.com as the website. Here, I did not log into
+
+Google. And using the same procedure, I look at the cookies and look at the list for www.google.com, you will see that the values secure 1PSID, SID, HSID are missing. So clearly, when you do not log into Google on a browser, the browser has no trace of the Google identifiers.
+
+If you're trying to duplicate this, make sure that before you start, you clear cookies on Brave. This is in case you've logged into Google on it in the past. Let's summarize for the non-techies. If you don't log into Google, Google ID identifiers are not on your browser. Google IDs on one browser doesn't transfer to another browser.
+
+The botnet demo. To demonstrate a website that behaves like it's part of a botnet, I made a webpage on brax.live, and here it is. Just to summarize what I'll be showing you here, basically, this is a webpage that includes the standard features installed by most websites, which is Google Analytics, Google Tag Manager, and Google AdSense. I'm not going to demonstrate or install Google AdSense since there are no ads here, but the concept is the same. You can look at the
+
+source code of the demo anytime you want as I will leave it up. Even if you're not a techy, I will just scroll through the source code using the view source option, and I will highlight each particular module we're discussing. The embedded Google website. This is the secret that allows a lot of the surveillance that we're talking about, and this is specific to only a few companies, notably Google and Facebook. But I'll focus only on Google here. If I look at the dev tools for
+
+brax.live, you will see that not only can I see the cookies for brax.live, there are also cookies for google.com. You may not know this rule, but for security, only the owner of the domain can see cookies for that domain. Given
+
+this rule, you may ask, how is it possible that google.com is showing this is brax.live? The reason is that brax.live has an embedded google.com
+
+site inside it, a website within a website, and the website creator willingly put this in there. The technical term for a website that is in another website is called an iframe, and I will show you the iframe in the source code, and here it is. But what's interesting in this iframe is that it is sized to be 1 pixel by 1 pixel large. In other words, it is an invisible Google website. It won't interfere with the appearance of the main site. When there
+
+is an embedded website within a website, the cookies from both websites become accessible. This allows the google.com identifiers to be within the scope of brax.live. Normally, a website can only access cookies from its own domains. To
+
+summarize for non-techies, because third-party websites embed a hidden google.com website inside their website, then these websites can read the Google identifiers that are found in cookies. The CID. Now, I will show you the final identifier that is used by the website to pass your identity to Google. Aside from the iframe, Google JavaScript is embedded into the website. JavaScript is
+
+the programming language used for websites by browsers. And I will just show you several areas where various scripts are purposely embedded on the website per Google's instructions. So again, this is Google's JavaScript.
+
+One of the first things that the Google code does is take the original Google identifiers from www.google.com and translates that into something the third-party website can use to identify you. This is all anonymized, so that third-party websites can't track the internet, only Google can. The identifier is called the client ID or CID, and you will see it as a cookie on brax.live. So basically, Google knows
+
+what's that is, and it is an anonymized version of your Google ID. This is what the cookie looks like. And the last two parts become the CID that can be translated by Google to your real Google account. If you're logged into multiple computers or multiple browsers or multiple tabs, and these have a Google ID, for example, an Android phone, an office computer, and a home computer, and possibly with multiple tabs, then these devices will have different CIDs, but at the Google end, Google can link it back to your original Google ID. I want to also bring up another point.
+
+On Androids, even if you don't log in to Google on a browser, the Android is logged in to Google and the alternate identifier is called the Google advertising ID or GAID. This is a device-level identifier and is typically used on Androids. These are also passed through the browser and basically provide the same functionality as the CID. For the non-techies, the summary here is that websites obtain an anonymous client ID that will identify you on their websites to Google. The bombshell, the botnet calls home.
+
+Now, let's proceed to the bombshell of this video. When I say Google can track every click on the website, I mean that literally. So, to demonstrate this, I have a button here that can function as any click on some website. Again, understand that Google JavaScript code is embedded in this website. Let me resize this and open up the dev tools here. What I'll do is show you the
+
+network traffic when a button's clicked. We'll leave the network tab open because we're going to capture network traffic from this website. Now, we're going to click on my click me button. And there you go. You will see the response. But, look here on the network
+
+traffic that says collect. Let's look closely at this. It's a pretty tiny text, but I'll highlight the relevant portions. Look for the CID and there it is. That identifies you specifically. There's a TID and GTM and
+
+those are the website identifiers for the Google Analytics and Google Tag Manager. >> [snorts] >> The rest show the particular details of the click itself and you can see it is very detailed and includes the main text of the window and even the specific label of the button. Now, let's repeat this same exact test on Brave. And you can see that on Brave, which has no Google ID, the collect event fails and cannot send anything to Google. For non-techies, whatever you click on on a non-Google website is seen by Google and collected by Google servers, but only if there's a Google ID.
+
+Before I continue, if you find that I've given you special information, please subscribe to this channel and check out our other privacy solutions at the end of the video. The fingerprinting backdoor. For this demonstration, it becomes clear that a direct match of a Google ID is only possible when using a logged-in browser. But, depending on the browser, two separate browser sessions or tabs can be correlated via browser fingerprinting. The clue that this is happening is if you examine the CID on the click me and two operations reveal the same CID, then it means the two sessions have been connected by browser fingerprint.
+
+This is the reason why I don't accept using privacy windows or isolated tabs or any such thing. It's just not guaranteed to be safe. The best solution is still using separate browsers. The browser isolation strategy explained. Now that you've seen the technical mechanics, let's explain how we put this to use. You could contain the Google
+
+tracking if you understand what's going on. The strategy is based on the expectation that we can't escape Google, that some part of our internet traffic is going to involve Google. When you log in to Google on a browser or device, that device will tie an identity to a cookie, which will then be readable by all the websites that have Google code. Depending on the country, this could be up to 80% of all websites. So, the strategy I've taught for a decade now is called browser isolation. Or really, you
+
+can rephrase it to mean, let's isolate the Google ID. If the Google ID is on a single browser and that browser never goes into any Google website, then there is zero traffic that would identify any click to Google from a third-party site. Google already knows what you're doing on a Google platform like YouTube, so there is no extra information. So, to apply this to a privacy strategy, you should have two to three browsers always active. I recommend using Chrome for Google. It reminds you that it is Google
+
+because it is owned by Google. Then, you can bookmark the common platforms you use on Google to remind you what it's for. So, mine is bookmarked, for example, to YouTube and Google Earth. Then, all the other websites I commonly visit are on my second browser, which in this case is Brave. I will never, never, ever log in to Google on Brave.
+
+And you can easily verify that it is not logged in to google.com and looking at the cookies to see if you see the Google identifiers on there. The third browser is made for the occasions where you would like to visit a Google site like YouTube, Google Earth, or Google Maps without logging in. By keeping it separate from the Brave browser, which never goes to Google, we keep all the cookies clean. It will not necessarily kill browser isolation to go to Brave and visit YouTube without logging in, but this third browser is there to block potential browser fingerprinting. So, to summarize for the
+
+non-techie, three browsers, Chrome, Brave, Firefox. >> [snorts] >> Chrome for Google, logged in. Brave for anything else. Firefox for Google, not logged in. If you prefer to use three different browsers than what I stated here, that's fine. Except, I wouldn't use Chrome at
+
+all for any non-Google function. Other than that, use any three browser combo you want, but this is the combo I personally use. Default browsers. To prevent problems with browser fingerprinting and leaking the Google ID, you should not make Chrome the default browser. The device default browser in this example is Brave or it could also be Firefox. The reason for
+
+this is that many email messages may contain links to websites, especially Google websites, and then you click on it and it will launch the website. If the link is to Google, it is possible that some ID may be attached to the link that may tie it to you based on the email information. So, having a different default browser prevents accidental revelation of your identity. Mobile. On mobile, as I already mentioned, the Google ID isn't based just on your logins to Google apps or Google websites using the mobile browser.
+
+On Android and iPhones, the alternate identifier is the advertising ID, which is then matched to your login to Google on those devices. This means that by default, an Android or iPhone will always identify you to Google and thus we're back to every click being tracked when you're using a production phone. The solution is to use a privacy phone like a Brax 3. Brax 3 and pretty much all other de-Googled phones have no Google login. They are running a variant of Android Open Source Project, AOSP, which has no Google code in it called GSM.
+
+So, I just caution you that if you do browser isolation on a computer or mobile, but you don't pay attention to the kind of mobile device you have, then you will not have solved the problem completely. Final thoughts. The Google botnet isn't sci-fi. It's live and depending on where you live, it will be embedded in up to 80% of all websites and you can see how this works live on brax.me live. There's a similar
+
+Facebook botnet, but I don't choose to do isolation on Facebook. Unfortunately, Facebook is more dangerous, so the only option is to not be on it or on any meta platform. The Google botnet is a nasty surveillance system, but we can be safe from its prying fingers with this strategy. Three browsers, Chrome, Brave, Firefox. Google only on Chrome. Brave as
+
+the default browser. Use a de-Googled phone. Folks, I'd like to invite you to visit our community site brax.me, which has a growing community of privacy enthusiasts. There, people from various walks of life and beliefs converge together in the mutual support of privacy issues.
+
+Please join us. We created products in our brax.me store for the purpose of defending our privacy. Do you want a pseudo-anonymous phone number that can be used instead of your very public phone number? That's Brax Virtual Phone.
+
+Do you want an email address that removes IP addresses and allows you to create unlimited email identities with aliases? That's Brax Mail. Do you want a VPN you can trust instead of the big Eastern European conglomerates that dominate the VPN business? That's Bytes VPN. We have other products and services like various de-Googled phones and OS flashing services. The very successful
+
+Brax 3 phone is also available for pre-order on its second batch. The first batch has been sold out. Information about that is on braxtech.net. Thanks also to those who donate to us on Patreon, Locals, and YouTube memberships. You are all appreciated.
+
+See you next time.

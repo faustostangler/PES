@@ -1,0 +1,163 @@
+---
+video_title: "My Raspberry Pi has a better GPU than Apple's M4 Pro"
+video_id: 7Qx_bdFSSuc
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7Qx_bdFSSuc
+video_date: 2024-11-15
+video_description: |
+  Go to https://surfshark.com/redshirtjeff for 4 extra months of Surfshark at an unbeatable price!
+  
+  The Pi 5 can now game at 4K Ultra, with Ray Tracing: ON.
+  
+  Check out my blog post for the complete guide to setting up your own AMD 7000-series graphics card on a Pi:
+  
+  https://www.jeffgeerling.com/blog/2024/amd-radeon-pro-w7700-running-on-raspberry-pi
+  
+  The music used in this video is from LOOK MUM NO COMPUTER: https://www.youtube.com/watch?v=TSto0i0M2M8
+  
+  Here are the devices I used in the video (some links are affiliate links):
+  
+    - AMD RX 6700 XT: https://amzn.to/3UOyQOX
+    - AMD Radeon PRO W7700: https://amzn.to/40MXNxO
+    - OCuLink M.2 to GPU dock: https://amzn.to/4hQxCg0
+    - OCuLink cable: https://amzn.to/3YMXIHT
+    - Pineboards M.2 HAT: https://pineboards.io/products/hatdrive-bottom-2230-2242-2280-for-rpi5
+    - Raspberry Pi 5 8GB: https://www.raspberrypi.com/products/raspberry-pi-5/
+    - Acer Nitro 27" 4K monitor: https://amzn.to/4hLBDlN
+    - Lian-Li 750W SFX PSU: https://amzn.to/3AKIefE
+  
+  Here are some of the other resources I mentioned in the video:
+  
+    - Action Retro (you should definitely subscribe lol): https://www.youtube.com/ActionRetro
+    - Pi PCIe issue for RX 6700 XT: https://github.com/geerlingguy/raspberry-pi-pcie-devices/issues/222
+    - Pi PCIe issue for Radeon PRO W7700: https://github.com/geerlingguy/raspberry-pi-pcie-devices/issues/680
+    - AMD ROCm for Arm64: https://github.com/ROCm/ROCm/issues/3960#issuecomment-2454902588
+    - Valve working on Steam for Arm: https://www.tomshardware.com/video-games/pc-gaming/steam-likely-coming-to-arm-chips-with-support-for-hundreds-of-windows-games-valve-testing-arm64-proton-compatibility-layer
+    - Nintendo's Switch sales: https://www.nintendo.co.jp/ir/en/finance/hard_soft/index.html
+    - Nvidia Raspberry Pi driver support: https://github.com/NVIDIA/open-gpu-kernel-modules/discussions/725
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Can it run Crysis?
+  01:13 - Rapidly improving Pi drivers
+  02:11 - Steam Decks and Switches
+  03:20 - Doom Eternal... 4K RTX On
+  04:37 - How I afforded this video!
+  05:32 - More Doom Eternal
+  05:47 - Crysis Remastered
+  06:20 - Red Dead Redemption 2 (and Steam Link)
+  07:03 - Obduction
+  07:26 - Forza Horizon 4
+  07:44 - Portal 2 (I'm still alive)
+  08:35 - Halo 3 (MCC)
+  08:56 - SuperTuxKart uplift
+  09:27 - Over 7000!
+  09:52 - Gaming on a PRO Workstation card
+  10:06 - Burning watts with Gravitymark
+  10:26 - Blender and OBS - Hardware transcoding
+  11:42 - Battlestation Pi
+  12:39 - LLMs and GPU Compute
+  13:50 - Can Intel get a W?
+  14:31 - Use cases
+---
+This is a Raspberry Pi 5. It's a $50 Arm computer that runs Linux and idles at 3 watts. Can it run Doom? Of course it can! Here's Doom Eternal in 4K.
+
+"I wonder if this can play Crysis?" Well, actually, yes! In 4K! And it even runs in Can It Run Crysis mode! I hooked up my Raspberry Pi 5 to external graphics cards, and right now I'm testing AMD 6000 and 7000-series cards like the RX 6700 XT and [Radeon] Pro W7700.
+
+Progress on the AMD GPU Linux driver is fast and furious. Coreforge and other testers have gone from "kinda works" to games in 4K Ultra in just a matter of weeks. Multiple generations of AMD GPUs work now. Features like hardware video transcoding work now. And before you ask, no, we don't have acceleration working for LLMs. I asked AMD and they said
+
+ROCm support won't be coming to Arm. Or RISC-V for that matter. At least not soon. But there might be a way to work around that. But how does this work? *Why* does this work? And what does this mean for a possible Steam Deck on Arm?
+
+And have I gone completely out of my mind? Well, yes, but if that's not apparent already, you should probably subscribe. We do some wild stuff on this channel. In October, I covered the exact details for getting an AMD RX 460 working with the Pi 5. I showed off Doom 3 running at 60fps and SuperTuxKart at a playable 48 [16 at 4K max]. Go back to that video or my blog post for all the
+
+setup details. But today, I wanted to show how far we've come in just the past few weeks. Coreforge worked on adding support for the 6000 series cards, and I spent a bunch of time playing with my RX 6700 XT. And then GitHub user martinx72 started testing with a 7000 series card, and all of a sudden, I found myself in possession of a Radeon Pro W7700, and the past few weeks have been pretty crazy. Why do I have this workstation card? Subscribe and find out! I have more in mind for it than just the
+
+Raspberry Pi. It might have something to do with System76's new 128-core Arm workstation. But that brings me to the point. Before I get into gameplay or into hardware transcoding—I mentioned that works now, right?—I wanted to get to *why*. Why am I so invested in this dumb idea of getting graphics cards
+
+running on a Pi? Well, there are a few reasons. First, the fun of it. It's fun to make hardware do things it was never intended to do. And if you like seeing that, go subscribe to Action Retro! [Hi Sean!]
+
+Second, I want to make old hardware useful again. Using a brand new workstation GPU on a Pi is overkill, and there are more bottlenecks than a Coke factory. But getting full Arm support means we can make more used graphics cards useful again. Useful for what, though? Things like a transcoding server for your homelab, or someone's first casual gaming PC. I mean, this thing does run Portal 2 smooth as butter
+
+at 4K max settings. That's not Cyberpunk with ray tracing, but it is something. And who says the latest games are better anyway? Old games are often more fun and don't take 7 hours to download. And I think that's also why there are rumors Valve is working on Steam for Arm. Not every game needs the
+
+latest AMD X3D chip in a $3,000 high-end gaming rig. A lot of games just need a good enough GPU and a good enough CPU. And Arm for mobile makes a lot of sense. After all, Nintendo uses an Arm CPU on the Switch. And over 140 million sales later, I think it's safe to say that decision has served them well.
+
+Anyway, enough chitchat. Let's get to gaming in 4K on a Pi with AMD GPUs. It's super easy to install Steam on the Raspberry Pi nowadays. Pi-Apps means it's barely an inconvenience. It's funny, the thing that's the slowest, as usual, was just downloading the game files. Seriously, why are modern games hundreds
+
+of GB? They don't look *that* much different from a decade ago. But the first game I fired up was Doom Eternal, because the eternal question for any computing device is, "Will it run Doom?" And I already proved Doom 3 ran great at 4K, so what about the newest version? Doom 3 was from 2004. Doom Eternal is
+
+from 2020, and it's still considered a modern AAA game. Well, it runs, and at 4K. It's certainly playable at 20 or so FPS, but a little frustrating. I could bump the resolution down to less than 720p to get over 30 FPS, but it's kind of crazy, the CPU is such a bottleneck compared to the GPU, I could run about the same at 4K as I could at 1080p. And even turning ray tracing on, that only bumped it down a little bit, to 12 FPS. Showing the nvtop utility at the same time as htop, you can see the GPU at 4K wasn't even
+
+being stressed out. The CPU was constantly hitting 100%, and system RAM usage was also high. A lot of modern games aren't made for 8GB of RAM. They're also not made to be light on the wallet. How do I pay for all these games? Surfshark! They've been a great partner for all my PCI Express experiments,
+
+and I'm happy to recommend them if you need a VPN. I've talked a lot about my private WireGuard VPN. It lets me log into my own servers here at the studio from anywhere in the world. But you know what my VPN *can't* do? It can't make me look like I'm in the Netherlands. Or Germany. Or Singapore. Or—well, you get the idea.
+
+That's a useful feature to bypass dumb content geo-restrictions, or maybe access a website from the US at all if you're in the EU. Surfshark has some other useful services, too, like using a dedicated IP for your browsing so websites don't keep flagging you for being so sneaky. And they have Surfshark Alert, an identity protection service. And Alternative ID, to make it so you can sign up for stuff without companies stealing all your personal info. And that's just scratching the surface. Right now,
+
+from Black Friday to the end of the year, they're running a special deal. Go to surfshark.com/redshirtjeff for 4 extra months at an unbeatable price. I started testing Doom Eternal at the default Pi 2.4GHz clock. I wanted to see if an overclock would
+
+make it work any better. So I went up to 3GHz, and I could get 25fps sometimes, but the system was a little more crashy, so I dropped it back down for stability. Next up, I had to see if Crysis runs. Not only for the meme value, but this is Crysis Remastered, a 2020 update of the old CryEngine that would literally make your PC cry if you tried maxing it out. Can a Pi 5 run Crysis completely maxed out?
+
+Well, yes, but that really cut down the performance. Running at 4K on low settings, I could get 20-30fps, and that's certainly playable. Crysis actually maxed out the GPU a few times, but it was still bottlenecked, mostly by the Pi's CPU. Overclocking, I could push a few more frames, but it would also start crashing more. So again, I gave up on that idea. Next up, I tried running Red Dead Redemption 2.
+
+It's a pretty demanding game, and has a built-in benchmark that's useful for getting a performance baseline. After waiting almost a full day for the 120GB download, I launched it, only to find out the Rockstar Games Launcher locked up. I let it sit for hours, and it never finished launching. At least, not that I could see. I'm not sure why you sell a game on Steam, then add in your own launcher on top of it, but here we are! Not one to give up so easily, I decided to turn on my streaming PC, and I used
+
+Steam Link to stream it to the Pi. All I had to do on my Pi was run "sudo apt install steamlink," then I could connect to it. Is this cheating? Well, sorta. I mean, not every Pi owner's gonna go buy a separate $3,000 gaming rig to run the games that don't work yet.
+
+But as a palette cleanser, I moved on to Obduction, a puzzle game from the same studio that made Myst. It ran great on my Ampere workstation, so I knew it should at least run on Arm. With the Pi's smaller CPU, it wasn't butter smooth, but I was able to get 30 to 60 FPS with no jitters at 4K on high settings. 1080p mostly felt about the same, so I think the CPU is still the bottleneck. But I was encouraged by this result.
+
+I went ahead and downloaded Forza Horizon 4, which I had also run on the Ampere, but alas, I was killed this time by the Pi's lack of RAM. It launched to a black screen, but that was just because Microsoft had another annoying login thing I had to get through while the menu was showing. But watching the system usage, the CPU was pretty much maxed out and the RAM was completely full. So I moved on to Portal 2. This is one of my favorite games, and it ran absolutely flawless on the Pi 5.
+
+Every once in a while there was a tiny stutter as something loaded in, but it honestly played better at 4K maxed out on this Pi than it did on the Mac I used to play through it the first time years ago. It actually played well enough I got sucked back in and probably played through 20 levels before moving on. I maxed out every setting, and even at 4K I was getting butter smooth rendering. Now compare that to the Pi's internal GPU. [Pi's internal GPU] It wouldn't even let me play at 4K.
+
+In fact, it almost drove me mad just trying to click quit. But once I set the desktop resolution down to 720p, it did play, but it was extremely choppy. In this case, having an eGPU takes the Pi from something that can kinda emulate the look of an older game to something that dominates even the best PCs from back when the game launched. To round out my favorite games from the before-I-had-kids era, I played Halo 3 as part of the Halo MCC, and it ran pretty well, though it could get a bit choppy at times, especially when there was a lot going on. To complete the vibe, I pulled out my Xbox 360 controller and connected it to the Pi with Bluetooth.
+
+That worked perfectly, and if I could get just a few more frames, I'd probably spend a few hours playing with all skulls on. But finally, ending my 6700 XT testing on a high note, I launched a modern open source game, SuperTuxKart. First, here's what it looks like at 4K on the Pi's internal GPU. "Unplayable" would be charitable. You'd have to wait like a year for it to render a single lap.
+
+But on the 6700 XT, it's around 100 FPS at 4K, and even smoother than Portal 2. Now on the RX 460, this game only got about 16 FPS, so the uplift going from a 2016 GPU to a 2021 GPU is huge. But the 6700 is *so* yesterday. We're on the AMD 7000 series cards now, and it'd be awesome if we could get a Pro Workstation graphics card running on the Pi 5. Well, we can! I retested everything with an AMD Radeon Pro W7700.
+
+This is a mid-range workstation card with 16 gigs of ECC VRAM, meant for things like rendering CAD models or running large language models. But that doesn't mean we can't game on it. I tested SuperTuxKart, of course, and got a casual 111 FPS, which is the maximum frame rate I've ever seen in that game. I installed Minecraft and tested that out in 4K, and it got 60 FPS all day. But like I said, this isn't made for games.
+
+To bypass the Pi's slower CPU, I ran Gravitymark, which Coreforge mentioned is a better test of just the raw GPU performance. And even with the Pi's puny bus, I got a score of 30,000 at 1440p. That was the only test that I've run where the card's fans actually ramped up all the way. It was pulling all 150 watts while it was rendering 200,000 asteroids. Outside benchmarks, though, what about apps like Blender and OBS?
+
+Well, Blender I can't get to run on ARM Linux at all yet, so stay tuned. But OBS runs just fine, and after installing the mesa-va-drivers package, it picked up the graphics card right away for GPU-accelerated encoding. That doesn't mean things are perfect, though. I mean, it works, but I think there might be a bandwidth issue between the Pi's CPU, the single lane of PCIe Gen 3, and the Pi's system RAM. If I tried streaming at 4K or even 1080p, it would get a little choppy.
+
+The screen was still rendering fine, it's just that there was a lot of dropped frames in OBS's recording. But if I dropped down to 720p, I could stream at 60fps and game at 4K at the same time. That did affect game performance, but it was still giving me about 50fps in SuperTuxCart. This video you're seeing right now was all straight off the graphics card in OBS on the Pi. I didn't have to use an external recorder like I normally do.
+
+Now, how does that translate to FFmpeg, Plex, and Jellyfin? Well, if you compile things yourself, you can bask in the glory of mostly working hardware transcoding. There are still some errors sometimes. The big problem is, until like this week, Coreforge and I are the only two people who've ever tested this setup. So most of the packages shipped with Pi OS and most of the software ecosystem only expects to use the Pi's internal GPU.
+
+Apps that ship with the Pi, like VLC, use the iGPU to decode video streams, meaning I can only play back two 4K streams at a time. Oh, did I forget to mention I can get *six* external monitors going on this Pi? If you have SponsorBlock, you might have missed that bit. But with six displays, if you want to play multiple 4K videos at the same time, that might or might not be doable with more patches. But I can certainly run all six displays at 60 Hz for things like status dashboards.
+
+For the first time, you could actually build a decked-out battlestation with a single Raspberry Pi 5. And yes, that little tiny display over here is also running at 1080p. I just don't have enough old monitors to show you six full-size displays. In fact, I can run more displays off this single Pi 5 than a brand new M4 Pro Mac Mini. Take *that*, Apple!
+
+And yes, there are a full six full HD monitors going right now off this single Pi 5. Two are plugged into the Pi directly, and four are plugged into the DisplayPort connections on the 7700. One other feature a lot of people ask about any time I post about these cards is support for LLMs, or Large Language Models. You can run your own local AI chatbots thanks to projects like Ollama. And these libraries even support hardware acceleration, like with CUDA or ROCm.
+
+But like I said, AMD isn't going to support ROCm on ARM. At least, not soon. I can run small models like llama 3.2 1b or 3b right on the Pi's CPU. But so far, I can't run larger models on Arm.
+
+Or, well... at least not on a Raspberry Pi. [angry server noises] Subscribe if you want to see how fast this thing goes!
+
+It's an AmpereOne with 192 CPU cores and 512 gigs of RAM. I've been testing it for the past month, and, well... it certainly gets rid of all the Pi's bottlenecks!
+
+But closing out LLMs and GPU compute, Nvidia actually has full support for arm64. They even make their own arm64 computers, like the Jetson and their high-end data center servers. But so far, they haven't shown any interest in getting their drivers working with the Pi. I opened this discussion in October, but so far I haven't gotten any response. I'd love to see if CUDA just works out of the box on Pi like it does on Ampere, but so far I run into this pesky "RmInitAdapter" error every time I try.
+
+And what about the wildcard, Intel? Intel's been pretty much a dumpster fire for the past year. Maybe their new "Xe" open-source driver can get one of their Arc cards working on the Pi. Well, GitHub user martinx72 is testing it out again after I failed last year. We'll see where that goes.
+
+There *are* downsides to running an eGPU on a Pi: There's not enough RAM for a lot of high-end use cases. And the CPU also can't keep up sometimes. PCI Express bandwidth is limited. And the default BAR space limits slowed on cards with more than 8 gigs of VRAM. Other platforms like Snapdragon X Elite and Apple's M-series solve all those problems, but Apple seems content to only support their own GPUs, and Microsoft hasn't shown any interest in eGPU drivers for Windows on ARM.
+
+Where does that leave us now? Well, the use cases for an eGPU are limited, but growing, especially as all the little driver quirks get fixed. If you want to build a 6-screen battle station with a Pi, it's actually pretty stable in that configuration. Just don't expect to run 6 AAA games at the same time and stream it all with OBS. Until next time, I'm Jeff Geerling.
+
+[Gibberish] I think it's safe to... We could make some used graphics cards...
+
+Using a brand new workstation GPU... They're running a special detail...
+
+I knew it'd at least run on... [Gibberish] Oh man. I pulled out my Xbox controller and...
+
+That's my slow clap processor. [thanks for watching!]

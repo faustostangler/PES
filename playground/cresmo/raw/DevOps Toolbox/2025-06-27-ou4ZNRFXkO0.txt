@@ -1,0 +1,89 @@
+---
+video_title: "JJ With Git is My New Favorite Workflow"
+video_id: ou4ZNRFXkO0
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ou4ZNRFXkO0
+video_date: 2025-06-27
+video_description: |
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.omerxx.com/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.omerxx.com/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  JJ is an open source improvement on top of Git - https://jj-vcs.github.io/jj/latest/.
+  It's a standalone VCS but also fully pluggable to Git.
+  My last video attracted heat so this one is all about clearing the air and showing a workflow that I personally use, with other Git collaborators, on Github, with missing details from the last video.
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Is there another version control system like Git, but better? One that lets you keep going as you did, but in a far easier, smoother workflow that makes working with changes a breeze. JJ is a better version control system. It offers full compatibility with Git. You can run alongside it, and we'll see exactly how in this video, but despite that, it created a huge drama. This is going to
+
+draw some fire for the analogy. But what the hell? We engineers don't always like changes. That's a human trait. When Bitcoin came out, it was called a scam.
+
+Then they said it's going to die on its own. Now the US government buys it. And no, I'm not saying they're the same. I'm not trying to say that if you like one, you should like the other. I am suggesting, however, keeping an open mind. Git started in a similar way. It
+
+was better, fresh, more sensible, but it was a change and it took some time. Jiujitsu or JJ is an open- source project aiming to solve the flaws in Git and make it better. I made a video that was received with mixed emotions and I mean hate and tech drama. Here's my first terrible mistake from that video. JJ is wrongfully attributed to Google and I'm the first to blame in doing so.
+
+We'll touch that hot potato as well, but in short, it isn't. And I'm still getting furious comments on the other video mentioning that JJ is a standalone project run by an open-source contributor group and you can happily use it even if you work with users running on Git on GitHub. It doesn't matter. It's there to help. And this is what this video is all about. So, the
+
+million-doll question, why add another tool to your workflow, especially when Git is so established? I'll put it in the very short sentence, the way I see it. JJ aims to let you focus more on your code and less on wrestling with the VCS. And my goal here is to show you exactly how. Before we dive into the actual workflow, here's what JJ is trying to achieve, why I use it, and why you'll also see people like Mitchell Hashimoto, founder of Hashior and the author of Ghosty Terminal, and Scott Shakon, founder of GitHub, implementing JJ in their projects and workflows. JJ
+
+aims to be fast and abstract the user interface from storage concepts. In simple words, what this means is that instead of using commits and branches, which are still very much available to you if you want them, you just use a chain of changes. Every time you work on a new subset of code, whether a feature or a small part of it, you create a new JJ change. You can describe the change, leave it empty, add a description afterwards, and basically just work without thinking of how changes are shaped. There's no git index or what git calls a staging area. Added a file, it's
+
+added to JJ. No need to worry about it. Oh, and remember the branches. JJ calls this branchless workflow. But it doesn't actually mean you can't branch out. It
+
+just means you don't have to think about it. Want to start working from a commit that isn't at the top of the chain? Just start a JJ new change and give it the head to work with. With this, you can start rocking JJ without thinking too much. But there's more, much more. You
+
+can undo changes, abandon them. There's auto rebates and conflicts that don't stop you from working and we'll get there. But for now, let's assume you like to give JJ a try like I did, but I have a team member working with Git on GitHub with pull requests and everything. How do you start and what does it look like? After installing the command line, of course, with your preferred package manager, go to your repo. If you're a single dev and would
+
+just like to move from Git to JJ, you can start with JJ in it. But if you're like the most of us collaborating on a git project, you can add the d-colocate telling JJ this is also a git repo allowing both to live next to each other and communicate to create dimension branches, pull requests, commits and others. JJ has bookmarks instead of branches which are as their name suggests a marker that pinpoints a change. To track a remote bookmark, we run JJ bookmark track and in this instance we'll tell it to track main at origin which is my remote main git branch. Running JJ is like running JJ log showing a GitHad bookmark to main on top of which we have an empty undescribed change meaning I'm working on something but still hadn't described it or created any changes. When I am
+
+making a change like on my readmi file for example running JJ status or st in short shows m next to the readmi saying that this is an existing file that was modified. If I touch a new file, by the way, the status would say A next to my file name, suggesting it would just add it. No staging area, no need to get add, just work, create the file, and keep going. This is part of what JJ had in mind when thinking about abstraction. No messing about with deciding whether to add a file or not like Git makes you do.
+
+In the 1% cases where you actually don't want a file track, simply add it to your ignore file that JJ knows and respects, and that's it. But in the vast majority of cases, files are there because they need to be, and you don't have to worry about them. One point of friction removed. Hey, super quick message. This video isn't sponsored by anyone. So, why
+
+don't I sponsor myself? I have two workshops you'll find in the description. One is around building a second brain with Neovim and Obsidian, and the other is quick start Kubernetes workshop for people who don't have the time, but do want to get their hands dirty and figure out what everyone's talking about. That's it. Thank you.
+
+Back to the video. Oh, and before moving on, warm recommendation. Add carpace to your workflow for autocomp completion. Not just for JJ, but for everything else. I described it in my workflow video if you'd like to check out that.
+
+Now, JJ comes with a commit subcommand that you can use that just autocreates a bookmark. You'll note that now the parent commit is changing readme. This is also how my prompt from Starship that tracks my Git work environment sees the current state. But JJ actually created a new change on top automatically because the previous work was committed. Now to push I can run JJ get push. Then I don't
+
+have to but I will for verbosity add dash C and the target change will be our parent commit. In JJ the at sign means this change and at minus means the previous one. So we're pushing the previous change. Don't worry this isn't the standard way. It's an option. I'll
+
+show my far easier workflow in a bit. GitHub understands the protocol, recognizes the new branch, and suggests the pull request link, which we can now use to open a PR. And don't worry about forgetting to describe or making unintended dangerous git moves. JJ has got you covered. For example, when pushing the current new change that has no description, we're getting rejected.
+
+Note that JJ figured there's no assigned bookmark, so it did that on its own and then prints both an error and a hint to fix. something that's common in Rust projects which enjoy the same thing from the compiler. Pushing the parent commit however works as expected and there's our diff in the open PR. I mentioned earlier that I don't actually use JJ commit to create my commits. I use bookmarks directly which is personally more convenient and straightforward. JJ
+
+bookmark create bar- r and then at minus r stands here for rev set and the at sign we mentioned earlier and a minus refers to the previous change. Then when running JJ bookmark list, we can see the main branch which we tracked at the start, a couple of autocoms created by JJ when we committed and also our bar on top. But I don't even do that. I don't use dash r and point to the parent change. I point to the current one. And
+
+if necessary, JJ comes with a JJ bookmark move command that I can use to move a bookmark should I want to commit another tip. That's how flexible this thing is. If you do decide to take on JJ for a spin, I highly recommend the docs. And for this topic specifically, the bookmark section. I'll cover everything shown here and a few extra tricks like tracking a remote to prevent fetches, autotracking, and more. To view
+
+currently tracked bookmarks, which are in a way a translation of remotely tracked branches, run the list command with-tracked, then unttrack it by providing the full name at the remote, which is the origin in this instance. Lastly, something we've all experienced with git conflicts with JJ. They're not extremely different in nature, but very much different in how they're handled. JJ helps you resolve them, but it does something absolutely mind-blowing to anyone who had to make changes in Git history. Let me show you. So, here's my
+
+side project which I've been working on for 3 years and have recently introduced JJ2 living next to Git. You'll note that the current working copy has a bookmark saying dispute polls and there's a conflict right next to it. I'll make sure Nvim is configured. That will be useful for the next bit and then run JJ Resolve. But, oh no, it doesn't work.
+
+This is one of JJ's rough edges, which you don't get to see playing around, not on real use cases, but it's not all that bad. Let's tell it to resolve something specifically. JJ status shows the list of changes and a bunch of unresolved conflicts on the bottom. Here's, by the way, a downside of not having a Git index. My Reddis dump got introduced to the changes when it shouldn't. So, let's
+
+just remove it. Now, for the conflicts themselves, JJ marks them kind of like Git does, letting you know more easily what belongs where, but it also adds a bunch of spacers with an extra character, which can be annoying to some. It helps differentiating and understanding what's going on to me. I can fix it here, but what I can also do is run JJ Resolve and the file path, which is then thrown into the JJ resolver. I've shown this one on the first video, but it's just a simple toy that lets you work using your mouse or keyboard and takes a little getting used to. F opens the folded code where you
+
+can both review the changes and decide what goes in and what stays out by marking or unticking the lines on the left. This is done by hitting space either on a given line or an entire section. Super easy to work with when you have small conflicts that fit in the screen, but for those who take more, I'll go with new. Remove the unnecessary lines. fix the indentation and save. JJ
+
+knows that because the next time I try to resolve the file, it tells me that there are no conflicts and in fact it's gone from the conflict list. By the way, if you've listened earlier and took care in, you'll also figure out it helps by completing possible conflicted files. Let's check another one, a smaller conflict. When you feel you've sorted things, there is no need to remove markers or indent lines. Hitting C or using the mouse to confirm checks out from the file and the conflict is gone.
+
+Similarly, we fix the rest of the conflicts until everything's sorted and we're good to go. Now, here's something cool. I don't actually have to do anything at this point. Conflicts resolved. Cool. I'm still at the working
+
+copy, which the bookmark still points to. Running JJ push moves the bookmark automatically, as you can see, and pushes it. My dispute pol on GitHub just got updated with the recent changes as if I've been working on the branch the entire time. Another thing that makes JJ so appealing to me is the fact that I can move back and forth in time like it was nothing. Let's create a new change and call it making changes. For the sake
+
+of simplicity, I'll keep it clean for now. The JJ tree has the parent commit which is where our bookmark/branch points to. And the main branch is below that. I can just edit existing changes, but I cannot touch already committed and push changes. So if I try to edit main that has a change starting in M, I'd be rejected from doing so. So instead,
+
+let's jjedit R, which is the parent commit of my current change. And just like that, the add sign moved one space down where I can now view and make changes in the history of my project. Let's change the log line in main.go adding an exclamation mark. I'll save the file and JJ edit the tip of the tree starting with X. And just like that, I'm
+
+back. Changes are now visible like it was nothing. Anyone thinking about going back in time, killing baby Hitler, going back to the future, and seeing how the world turned out? No, just me. Anyway, let's make this harder by adding a line saying some other error and then going back in time where this change wasn't made and adding another different line called another log line. Now, naturally,
+
+when going back to the future, there's a conflict easily resolvable with JJ Resolve showing another log line and some other error. We can choose one or none or both. Let's go with another log line. Confirm with C. And there we go.
+
+I'm literally holding myself not to keep going here because these simple workflows have so much more to them. So, please do comment below and tell me whether you'd like to hear more. With JJ under your belt, version control is fun again. But if you don't fully control your ID with muscle memory and all the bells and whistles, that's just another painoint in your workflow. Here's how I made Neovim smooth, easy in a perfect coding environment.

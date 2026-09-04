@@ -1,0 +1,133 @@
+---
+video_title: "Crie Agentes de IA (Sem ser Refém de Frameworks)"
+video_id: KqPUG2wfLDg
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=KqPUG2wfLDg
+video_date: 2025-09-04T15:20:26+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade  https://www.rhawk.pro/comunidade
+  –––Consultoria –––
+   A melhor consultoria em IA do Brasil: https://simplework.ai
+  
+  ––– Descrição –––
+  Quer criar seus próprios agentes de IA e construir soluções com IA Generativa, mas se sente refém da constante busca por um novo framework? 
+  
+  Neste tutorial completo, desmistificamos o processo e mostramos o passo a passo para você construir um agente de IA funcional do zero, utilizando apenas a API da OpenAI. 
+  
+  Você aprenderá os conceitos essenciais por trás de um agente ReAct, incluindo o uso de LLMs, ferramentas (tools) e memória, entendendo a arquitetura fundamental que a maioria dos frameworks apenas abstrai. 
+  
+  Ideal para desenvolvedores, empresários e iniciantes curiosos, este guia prático oferece o código e a lógica para que você ganhe autonomia e a confiança necessárias para desenvolver projetos de IA customizados e eficientes, sem depender de ferramentas complexas.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  Playlist Negócios: https://www.youtube.com/playlist?list=PLk6saMUFiINl-TQpZjq6isCdhw8eZ7c9P
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:28 Agentes de IA, Workflows e frameworks
+  4:26 Explorando o agente sem framework
+  12:32 Quando usar frameworks
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  #inteligenciaartificial  #iagenerativa #agentesdeia
+---
+Eu sei que você tá procurando sempre um novo framework de agente G na esperança de que sua vida seja mais fácil. Mas se eu te disser que você não precisa de frameworks, principalmente se você precisa de algo rápido. Nesse vídeo eu vou te mostrar o que você precisa para criar agentes sem frameworks e como fazer. Bora lá. O que a gente vai construir aqui e eu vou fazer a demonstração é exatamente de um agente que tá rodando aqui na minha máquina.
+
+Tem essa parte que é o front end. Ah, e tem o back end, que é de fato onde tá o agente, e eu vou mostrar ele para vocês, vou mostrar código e tudo mais. Mas antes de a gente entrar nesse detalhe, eh, vamos para explicações que são importantes, tá? Eh, vamos definir as coisas certinho para ninguém ficar em dúvida. Vamos lá.
+
+Agentes, tá? Comumente tá todo mundo acostumado com a palavra agentes, mas essa nossa área se divide em dois eh principais temas, agentes e workflows, tá? a gente pode substituir eh o workflow por sistema agêntico, mas você pegou a ideia, tá? Agentes vão focar muito em autonomia, então se a gente tá acostumado eh com o chat, como a gente tá fazendo aqui, eh ele tem um nível de autonomia maior, principalmente quanto mais a gente dá ferramenta e a gente pode diminuir o nível de autonomia dele. Eh, e sempre visa aumentar o nível de confiança. Então, o que a gente vai
+
+fazer hoje é um agente React, tá? O que que o agente React tem? Ele tem um LLM, obviamente, né? Ele tem eh ferramentas, acesso a uma ou mais ferramentas e ele tem acesso à memória. Por que ele tem acesso à memória? Llão stateless, o que
+
+significa? Elas não guardam estado nela mesmo, ela não guarda memória nela mesmo. Então a gente precisa de um jeito ah que ela recorde a nossa conversa ao longo do tempo. Beleza? Esse é o nosso agente React. Ah, Ronald, o que que são
+
+workflows, né? Eu tenho um monte de vídeo aqui sobre workflow, tá? Eh, mas basicamente a gente começa a fazer coisas eh um pouco diferentes com LLMs, né? A gente começa a encadear LLMMs uma atrás da outra, a gente começa a verificar erro no meio do caminho, a gente faz com que ela verifique a resposta, por exemplo. Esses são todos os padrões eh que existem. Esse padrão
+
+aqui do router, que é muito famoso por conta do GPT5. Agora, eh, existem diversos padrões e esses padrões não são isolados em si. Eh, a gente pode usar um agente React e combinar com um padrão desse aqui, por exemplo, ou a gente pode combinar vários padrões desse para criar uma solução. Então, quanto mais sofisticada for sua solução, eh, eventualmente você vai usar um ou mais desses padrões, beleza? Mas eu sei que tá todo mundo preso na no chat, né? É o
+
+grande caso de uso até aqui, eh, provavelmente. Então, vamos focar nele aqui. Mas você poderia criar qualquer outro tipo eh de agente, realmente, é, sem framework nenhum. Obviamente existem por e contas, mas vamos focar aqui eh no que a gente vai fazer, tá? E como ele vai funcionar, como ele funciona, tá?
+
+Nós temos aqui o nosso querido usuário. Eh, o usuário vai mandar uma mensagem, ele vai bater aqui numa API, tá? E essa API é a nossa API, é como o nosso back end, tá? Como o nosso agente que a gente tá construindo aqui, se comunica com front end. Então esse front endia ser uma aplicação web como essa aqui, mas ela poderia ser, sei lá, o WhatsApp, por exemplo, beleza? Show de bola. É, e a
+
+gente tem aqui o nosso agente, como falamos, ele tem acesso eh a um banco de dados para guardar as informações e tal, e ele tem acesso à ferramenta, que no nosso caso aqui é uma busca web. Beleza? Em tudo aqui a gente tá usando o GPT5 e a gente tá e tirando proveito das capacidades agênticas do modelo e também tá tirando proveito da API e da Open A direto. A gente poderia fazer isso com qualquer modelo virtualmente. Se a gente não quisesse usar a API do Open, AI, a gente poderia fazer uma chamada direto no curl lá, tá? Então, né, o seu é o
+
+limite se a gente quer customizar a e fazer na mão. Mas eu imagino que a gente quer uma coisa rápida, a gente só usa lá eh a API do response e constrói em volta disso. Beleza? Esse cara aqui, ó, eu coloquei framework. Eu vou explicar tudo, vou explicar o código aqui e tal.
+
+E a gente depois vai voltar aqui que eu vou te explicar que, na verdade, o framework às vezes é isso aqui, às vezes é isso aqui. É, e eles variam entre eles. Beleza, show de bola. Tá bom. Então, a gente já viu aqui eh que ele responde, né? Ele responde em streaming.
+
+Vamos aqui eh qual me eh explique como está o tempo em Teresóis agora, beleza? E se você notar aqui, eh, a resposta tá vindo em streaming, né? Eh, então ele vem eh ali token por token, né? assim que o token é gerado, eh, e ele tem uma busca web, como eu informei. Então, isso aqui é só para provar vocês que ele não tá tirando informação, né, do nada, ele tá buscando na internet. Show de bola. Já vimos como
+
+funciona, já vimos a arquitetura, já vimos a ideia principal, agora a gente vai ver o código, tá? Eh, vamos lá. Beleza, tá? É, esse aqui é um mono e se você tá lá na comunidade e esse código todo tá lá disponível para você, eí pode ser um bom ponto de partida se você precisa fazer algo rápido, já tá tudo feito, você vai ter que só trocar, sei lá, o prompt, beleza? Se você pegar a response API para fazer um um exemplo, por exemplo, é, você vai ver isso aqui, tá? Eh, essa seria a
+
+estrutura básica aqui. Eh, você passa uma pergunta, vai dar a resposta, você passa alguns parâmetros ali, eh, e você vai ter uma resposta aqui na tua linha de comando. Se você quisesse fazer isso interativo, né, que a linha de comando ficasse sempre aberta, você teria que botar um loop ali, né, um while true, por exemplo, né, e chamando a IPI, enquanto o usuário fizesse pergunta, ele ia lá e dava a resposta. Beleza? Mas você não teria uma memória necessariamente. Eh, response API dá uma
+
+possibilidade de você botar eh chamar eh a última a o passar o ID da última chamada e você teria ali uma memória simulada, mas você teria não teria controle nenhum, o que é péssimo, eu não recomendo, tá? Então essa aqui é a estrutura clássica de uma chamada é da Open AIW Response API e a gente tá usando o GPT5 nano aqui. Show de bola. A gente tá usando e reasoning effort low e a verbosidade low. Se você não conhece, eh, vale a pena dar uma olhada. Você tá
+
+na comunidade, tem aula disso lá, beleza? Show de bola. Tá bom? Então, vamos lá. Que que a gente faz aqui, tá?
+
+Para que o nosso agente fale com o mundo real, e essa é uma grande dificuldade que as pessoas têm eh em relação a agente. Eh, existe a parte onde a gente tá preocupado com a lógica do agente, né? E existe a parte onde a gente tá preocupado com a comunicação com o mundo externo, tá? Existem frameworks que se preocupam só com uma coisa. Eh, e existem frameworks que se ocupam com todas elas, n? E uma dessas features às
+
+vezes são pagas ou não e tal. Então essa é uma grande diferença que você tem que ter em mente. Mas nada impede de, por exemplo, eu pegar esse meu código aqui, botar uma abstração, botar uma classe, botar lá na no pacote lá pip install e hk framework. E aí eu poderia falar: "Olha aqui, meu framework, ele é muito rápido, ele é muito fácil de usar, ele teria literalmente uma linha, porque eu só tenho aqui uma opção, tá? Mas nada impediria de eu fazer isso. Beleza? Show
+
+de bola. Existem aqui algumas configurações de core, só para falar com o meu cara, beleza? PI normal. E aqui o que tá que nos interessa? O que que nos interessa aqui? A gente eh, como eu
+
+falei anteriormente, a gente tá guardando as informações num banco de dados e para que a minha eh LLM, né, que meu banco de dados também saiba de onde vem a conversa e qual conversa ali recuperar, eu preciso de um identificador único. E nesse caso aqui eu tenho um conversation ID. Então, toda vez que eu tiver uma nova conversa aqui, vier aqui e clicar em uma nova conversa, esse meu front end vai mandar esse conversation aí de novo, é, para essa minha API e ele vai guardar lá no banco de dados. Então, o meu banco de dados vai ter um conversation aí de novo. E aqui, eh, por exemplo, se eu mandar uma nova mensagem, ele vai obter esse mesmo conversation aqui sempre e é assim que ele vai saber quem tá conversando com quem e de quem é a mensagem. Beleza,
+
+show de bola. Tá? Vamos voltar aqui. Eh, eu passei a data aqui, né, só para o nosso prompt ter uma referência do que tá acontecendo. E você vê que o meu prompt aqui é extremamente simples, né, né? Não tem nada demais aqui no meu
+
+prompt. Ah, e se você não conhece isso aqui, tá? E tem algumas coisas interessantes aqui na API da Open AI, no GPT5 especificamente, né, que é a instrução de uso de ferramenta. Esse modelo ele eles chamam isso aqui de Igners, tá? Então, o modelo pode ser muito ávido a usar ferramentas ou menos ávido a usar ferramentas. E o método de
+
+controlar isso, eh, você pode controlar isso através e do reasoning effort, ah, e também exatamente dessa descrição aqui, eh, dentro do teu prompt, tá bom? Então, mais uma vez, tá na comunidade, tem aula lá. Eh, outra coisa que a gente faz aqui, deixa eu lembrar aqui, é pegar o histórico, né? Então, a gente tá pegando o histórico no banco de dados. A gente tá dando um fet, tem uma função ali em cima que a gente pega o histórico no banco de dados. E o que a gente vai
+
+fazer aqui é quando chegar a nossa vez de passar o prompt lá eh pra nossa LLM, a gente vai passar eh o prompt, né, do sistema. E se você tem um olhar mais atento e tá vendo que aqui é o role é developer, é porque essa IPI da Open AI eles trocaram é recentemente essa função aqui. Antigamente era SIS Messenger, né? Sis prompt, agora eles chamam de developer. Eu não gostei muito da alteração, mas as coisas são como são.
+
+Mas todas as outras LLMs continuam usando o sistema antigo, mas tanto faz. Beleza, show de bola. Tá? Então o que a gente faz aqui? A gente passa esse prompt, tá? Com essas diretrizes aqui, a
+
+gente tá falando só que ele é um assistente de pesquisa, tô passando a data e tô passando a instrução. E aqui você vê que eu falo para ele ser menos ávido. Ele eu falo para ele pesquisar muito superficialmente sobre qualquer assunto quando eu perguntar eh e me dar resposta. Esses parâmetros que a gente tá usando aqui, basicamente é me dê a resposta mais rápido, né? E a gente tá usando a verbosidade low. O que acontece
+
+quando a gente usa modelos reasoning? É, principalmente a gente pode ter uma latência grande na hora da resposta. Aí, como a gente tá construindo um chatbot, a gente não quer que o nosso chatbot demore 30 segundos para responder o nosso usuário, né? Eh, se a gente eh tem casos de uso como esses aqui, eh, esses aqui, vamos lá, esses casos de uso aqui, onde a gente sabe eh que o problema pode ser demorado, de repente a gente quer, é, por exemplo, quando a gente tá usando um avaliador aqui e a gente precisa de uma investigação maior na resposta gerada anteriormente, eh, vale a pena a gente usar um reasoning maior, é, para ele ir passo a passo, né, até tomar uma decisão certa, mas nesses casos de chatbot, a gente só quer a resposta eh imediatamente. Então é por isso que a gente tá usando isso aqui, né? E
+
+finalmente a gente tá usando aqui uma tool, correto? É, a gente tá usando a tool simplesmente para eh dar ao nosso agente, né, ou a nossa LLM uma forma de se comunicar com a web. Então, a gente tá fazendo aqui tudo de uma vez, eh, o agente, a LLM, a gente tá dando uma tool e a gente tá dando virtualmente memória. E é assim que funciona, caras, quando a gente usa lá um um framework qualquer e a gente bota lá eh memória, eh, o que ele vai fazer por debaixo dos panos. É exatamente isso que a gente tá fazendo aqui agora. Beleza? Não acredita em mim.
+
+Tudo bem. Você pode vir aqui, a gente v aqui no banco de dados. Aí eu acho que a tela tá cortando aqui. Calma aí. É, deixa eu diminuir um pouquinho aqui para vocês.
+
+Beleza, tá? A gente vem aqui no banco de dados. É exatamente como tá lá. Aí a gente consegue ver aqui todo o meu histórico de mensagem. Vou rodar aqui para você e e pegar a última mensagem que a gente mandou lá. Eh, me explique
+
+como está o tempo. Parará. Você pode ver tudo aí. E tá tudo aí. Interessópolis agora. E aí tá a resposta. Aqui a gente
+
+tem aquele nosso ID. Então, toda vez que o nosso agente entrar aqui e pela aquela tela, né, ele vai vir buscar o ID. Aqui eu tenho todas as funções lá na minha IPI, né? E aqui a gente vê os tipos de roll, né? Se você não sabe o que é isso aqui, esse é um dos problemas e essa é uma das coisas que você precisa ter para construir sem framework, né? Com
+
+framework também, na verdade. É, você precisa entender quais são os papéis, você precisa ter ouvido o que que é isso. O que que mais você precisa? Você precisa entender a diferença entre é um agente React e um workflow. e quando usá-los, você precisa conhecer os padrões. E é exatamente assim, caras,
+
+que vocês constróem soluções de verdade. Mas Ronald, os frameworks não serve para nada. Você sempre mostrou aqui vários frameworks pra gente, é, você sempre comenta que usa L graph e de fato eu uso e eu acredito que os frameworks são muito úteis, mas a realidade é que estamos num momento do mercado em que todo e qualquer framework, não importa qual deles frameworks de agente, eles estão na sua infância. Então, toda hora você vai ver, cara, alguém aparecendo falando assim: "Esse framework aqui é o melhor". E acontece que a gente não consegue nem ter uma discussão madura, por falta de conhecimento geral, é, do que de fato o framework tá fazendo aqui.
+
+Alguns frameworks estão se preocupando só em fazer isso aqui, tá? Outros frameworks estão preocupados em fazer os dois e tem framework que só tá preocupado em fazer workflow, tá? Tem framework que só tá preocupado com isso aqui, beleza? E aí você que se vire para fazer uma IPI e botar no mundo externo. Você que construa uma IPI na frente. Tem
+
+framework que tem isso aqui, só que de repente ele vai cobrar por esse extra mais, né? Como é o caso do Leng graph. O Leng graph ele te dá isso aqui, né? Muito bem, com workflow, com agente, etc, etc. E eles têm o LF cloud, né, que você literalmente só programa ali o teu agente, eh, bota só uma um arquivo de configuração, manda lá pra cloud deles e faz o deploy. Acontece que o deploy é
+
+extremamente caro e custoso e tudo bem, né? Eles têm que dar um jeito de ganhar dinheiro com a empresa deles. Cabe a você saber dessas coisas e optar pela sua conveniência. Inclusive, cara, se vocês estão procurando ideia de startup, essa aqui é uma ótima ideia, cara. Se vocês conseguirem criar é isso aqui, tá?
+
+um Verscel de agente, tá? Que a gente faz o código do agente, né? E tem uma maneira fácil e barata de fazer deploy, como é o Versel, por exemplo, para Fantend. Cara, tu tem um mercado enorme aí, eh, e me manda mensagem que eu vou ser o seu primeiro cliente, porque realmente é algo que é uma festa que tá faltando no nosso mercado aí, tá? É, outras considerações, cara. Quando que
+
+você vai usar um framework? Eu aconselho você usar um framework hoje desde o dia um pelo seguinte, essa nossa área e é uma área que tá em constante movimento e como eu disse, todos esses frameworks estão em movimento. Não existe um campeão, mas existe uma clara tendência. Por exemplo, se você hoje for lá no LinkedIn e botar lá Lchain developer, vai vir uma penca de vaga, correto? É, se você botar de repente outro framework, vai vir pouquíssimas vagas. E
+
+é exatamente isso que eu bato na tecla aqui, cara. A gente não precisa ficar refém de framework. Eh, o framework é uma ótima oportunidade da gente olhar todos esses padrões já implementados muuit das vezes e fazer engenharia reversa. Algumas vezes você vai notar que, pô, é mais cômodo eu ficar realmente no framework pelo seguinte, é, existe um padrão de mercado, outras pessoas conhecem o framework, é mais fácil de eu contratar gente que conhece o mesmo framework, etc, etc, etc. Eu não preciso explicar um framework que eu criei aqui na minha empresa ou criei aqui individualmente para um outro desenvolvedor conseguir trabalhar. Isso
+
+é uma ótima alternativa. Outro motivo ótimo para você usar o framework exatamente agora é conseguir observar os padrões que eles que eles implementam, né? E empresas eh que são donas desses frameworks, tem muitos desenvolvedores trabalhando, tem muita feature o tempo inteiro saindo e a gente não consegue fazer tudo muito rápido ao mesmo tempo, né? Então a gente consegue ver o que ele implementa, faz a engenharia reversa, adquirir aquele conhecimento e você faz a escolha. Eu vou com framework ou vou sem framework, eu monto alguma coisa customizada ou não monto uma coisa customizada? Mas no fim do dia, caras,
+
+nada disso vai te salvar. A única coisa que vai te salvar é o conhecimento. Beleza? Então assim, hoje temos uma gama enorme de frameworks. A maioria deles não tá nem na versão, digamos assim, 1.0. Se eu não me engano, Lang Graph vai
+
+entrar em versão 1.0 lá pro pro mês de outubro só agora, entendeu? Então, eh, se você se sente perdido em todo esse meio e tá sempre procurando framework, tá sempre procurando milagre, a melhor eh o melhor conselho que eu tenho para te dar é busca esse conhecimento aqui que é o sólido, né, que é o firme, eh, e as coisas vão começar a se encaixar. Se você tá vendo esse vídeo até agora e a gente ainda tá em 2025, n? E você tá vendo em 2025 ainda, acredite, você é um pioneiro nessa área. Você é um cara, um
+
+dos primeiros caras que tá tendo interesse de fato em construir coisas sólidas. De repente, você já passou pela, eh, aquela primeira fase inicial da IA, já se decepcionou um pouco, já brincou um pouco com N8N, viu que o negócio eh você precisa de ter mais eh opções, né, na hora que for construir, eh, e você é um dos primeiríssimos. Hã, e você tá numa ótima hora para, eh, de fato começar a aprender isso aqui, eh, e implementar, porque seja se você tá vindo de um ambiente no code, low code, etc., no fundo você tá fazendo software. Tudo isso aqui é software e software tem as suas particularidades, né? Engenharia
+
+de software existe por algum motivo, né? Né? Senão teria um outro nome, de repente não seria engenharia. Então é isso por hoje. Espero que você tenha aproveitado, espero que você tenha tido ideia de como você pode construir eh agentes de sem usar framework. E se você
+
+até quiser eh criar um framework, eh você pode criar um framework, cara, e aí você lança aí e vai falar que o teu framework é o mais rápido, é o mais sinistro, etc, etc. Eh, e se você eh tem ideia de construir esse serviço aí que eu te falei da IPI, eh me avisa, porque realmente é você se você conseguir financiamento, principalmente isso aqui seria muito maneiro. Beleza? Então, estamos junto até a próxima.

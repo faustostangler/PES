@@ -1,0 +1,92 @@
+---
+video_title: "How to build an AI-Native Health Company — Dan Feng, Maven Clinic"
+video_id: WJRdLNhrsLQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WJRdLNhrsLQ
+video_date: 2026-08-19
+video_description: |
+  Implementation used to be the expensive step, so teams spent weeks settling requirements before anyone wrote code. Dan Feng's observation is that the cost moved. Building takes minutes now, and arguing is what is expensive. Planning at Maven Clinic changed to match. A one year view survives only as direction, assuming models will handle whatever you need by then, while real commitment runs two to four weeks. Long requirement documents gave way to a page or two meant to be argued with. The awkward casualty is the three to six month plan, which he treats as close to unplannable when nobody knows what models will do by then.
+  
+  The rest is what breaks at that speed. Engineers who once wrote hundreds of lines a day now write thousands, so review had to change rather than scale. Engineers self certify which pull requests need a second reader and stay accountable either way, requests are capped near 500 lines, and large features are stacked into several. The failure he names is the rubber stamp, which buys false confidence rather than none. On reliability he refuses a single bar and sorts failures into tolerable and not. A scheduling action that fails one time in 10,000 is survivable, since the user clicks again. A reimbursement claim is not, because asking for $50 and receiving $200 is an escalation in either direction, so several models read the same receipt and it proceeds only if they agree. Integration tests run many times rather than once, since passing a nondeterministic system on one attempt proves very little.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/dan-feng-2bb5703/
+  - https://www.mavenclinic.com/
+  
+  Timestamps:
+  0:00 - Who here is already AI native
+  0:51 - Maven Clinic, and starting the journey two years ago
+  1:29 - Tractors do not replace farmers
+  2:08 - Adopting internally, then building it into the product
+  3:25 - Early adopters, the majority, and the reluctant
+  4:04 - Meeting engineers on whichever tool they moved to
+  4:43 - Why senior engineers stopped delegating implementation
+  6:03 - The blurring line between product and engineering
+  6:42 - Rewarding it in performance reviews
+  7:21 - When building is cheap and arguing is expensive
+  8:00 - Dream big for the year, commit for the sprint
+  9:16 - Why three to six month plans became the hard part
+  9:56 - Starting with the lowest risk coding tasks
+  10:36 - Pushing it to the whole team
+  11:13 - Code review when volume goes up tenfold
+  11:54 - Self certifying, capping size, stacking changes
+  12:34 - The rubber stamp problem
+  13:57 - Deciding which failures are acceptable
+  14:35 - Claims, where the tolerance is zero
+  15:54 - Automated evaluation plus human spot checks
+---
+[music]
+
+It's time we can get it started. Uh I'm Dan. I'm from Maven Clinic. Today we will share the experience how we transition from a traditional technology company to AI native company. Before I started I would like to do a little exercise. Raise your hand if you think
+
+you are already AI native company. Okay, we saw a few. Raise your hand if you thought about it but hadn't start the journey yet. Okay, we saw a few. That means most of us is in between. Hopefully this talk
+
+can help you with that one. Um, so Maven Kika is the largest digital hand platform. We are focused on women and their families. So we specialize in like maternity, fertility, parenting, menopause. We start our AI journey just two years back. And this moment we build
+
+something called a maven intelligence. It's a orchestration nature across all our product to enable AI for everybody in this company and for our clients. So AI is here and improving every day. I think adopting it is not optional. Even you choose not to your competitors will do. This is a code I heard like a couple
+
+years back. I would like to share here again like tractors want to replace farmers but the farmers who can operate the tractor will replace the ones who cannot. Hopefully everybody here will become farmers who can operate your tractors. That's a goal. So first of all I don't think there's one single definition what it means by AI native and more importantly there's no predefined playbook you can just follow and bingo you become AI native for us it really come down to three parts one is internally we adopt AI tools whenever it's possible it can be as simple as like generating your daily summary managing your meeting create a Jira task anything you need to do day manually you should think about to say can I use AI to do it whenever you want to ask other people to do something for you you should say with I can use AI to do it a lot of leaders in fact today at maven include our CIOS say oh they use AI too to solve those task by themsel now instead delegate to other people that's for internally externally we want to build AI into our products achieve two goals there one is really focused on into our user experience.
+
+Second maybe help us reduce our operational cost like a like AI based like chatbot is really good example. It's 247 always available can help our audience issues help our customer instantly. It's way better and cheaper compared to human agents. Certainly and I think is more important we need to think about culture process the way we work how we can change it so we can maximize what AI offers for us. I will touch it more on the following slides.
+
+So when we come to adopting new technologies there's always like group three groups of users. One there's some early adopters right for them we don't need to do too much. Only thing we need to do is enable the tools for them and encourage them to share what they learn with the company. And what we need to really focus on is the one in the middle. That's a majority. We should
+
+build a shared infrastructure for them. Build easy to use tools for them. Just make the adoption as seamlessly as possible. More importantly, we should really listen to them. Get feedback consistently improving. For example,
+
+last year most of folks and maven they are using cursor. This year a lot of them switch to cloud codes. For us we need to support both. We need to meet where they are just make feel they comfortable to use it. And for and all the places you always have a few slow adopters. They always have concerns
+
+worries for the new technologies. For them we just should meet where they are understand what's their concern is but more important we should be crystal clear with them where the company is heading to. So AI is really good and execution if we know what we want to do. So this change how we should hire new people and how should we reward it. We used to the way we used to work is we have a senior engineer or sense the problem come up with solution and dedicate to other engineers for implementation. So we can
+
+uh work on in parallel and be faster. But these days we found NASA and NAS engineers would like to dedicate implementation work to other people because they already figure out how to solve the problem. They just use AI to solve it instantly. Dedicating to other people means more overheads and way less efficient. That also means like when you have a new people you want to make sure they can solve the problem independently. They pretty much has to
+
+work as a traditional technical need level. We can we cannot afford other people dedicated implementation task for them. Also when we hire new people we should think about what we are looking for. We definitely want to look for somebody genuine interest in AI. the domain is moving so fast. We want them
+
+keep learning also helps the team to stay on track. Secondly is with AI engineers can do way more than they used to do. The boundaries between PM and engineers is getting blur blurry. We found like engineers who really understand the product in fact they can have more way more contribution than the traditional engineer who only focus on software sides and this is what we are looking for and those deep understanding of a system the ability can handle complicated ambiguous problem is also very valuable. This is where AI knockoff when we hire new people. This is also
+
+the people we are interesting bring on board for people we bring in. We want to reward them in the proper way. Even in our performance re review, we start to ask okay what you have done for AI sites. We definitely want to reward people who leverage AI to multiple their impact. Although this is impact for everybody and the company.
+
+So now we have the right tools we get the right tenant in the place and we need to change how we work to maximize the benefit of AI. The we used the way we used to work is say okay we spend the weeks sometime is the months to flesh out the business requirements finalize the design and then do the implementation because implementation can be really expensive if we didn't get the other part right at the beginning. It's it can be very costly to change it later. But in fact we never get the things and right at the beginning anyway for any our big project with AI building is super fast it's probably couple minutes you can get it done argument is really expensive one so we should really think about what's the best way can work how can we dinner fast it's still okay you can think about what do you want to deliver in one year you can assume AI models can do anything you want in one year based on that one really dream big to think what you can do in one year but it should only serve as inspiring inspiring and directional what we really need to focus on is what we want to deliver in the next two to four weeks right what we want to get the PMS and designer is say okay tell me what I needed in this sprint and the engineer will focus on and get it released if and end of sprint if not Meanwhile and the PMS they have time to flesh out the next batch of the requirements. If and under this sprint they say no what we decided two weeks ago is wrong it's totally okay we can we switch the gear get it fixed quickening that also means like we prefer people not to write pages or pages PRD or TDD anymore we p prefer them to write just a short one or two pages that one is really serve as communication so we can iterate on it the really awkward part is the midterm goals those like three months six months it's very hard to plan these days the reason is I don't know what AI models will be capable in three months there may be multiple releases already so we prefer not to focus on this one but this one can maybe make it not very easy for most of folks who who has been in this domain for a long time because traditionally we get used to have a quarterly planning or we plan it for six months but it's our job to get used to the new AI error and learn how to work it efficiently.
+
+So I want to talk about the coding and software development a little bit more here. AI coding tools is probably the most successful AI application and it's really good and implementation. So you probably heard a lot of people say okay I have this AI tools now I can even use my phone to implement software and automate every stage if they feel comfortable do that it's totally okay but you don't have to what I'm trying to say here is and Maven this is our journey how we adopt those AI tools we started with the lowest risk task like starting with writing united documentation those things are very easy to verify And the risk is supernome. By doing that one, we build confidence and we start to construct our own rules, scares and build our god rares and then we push to the whole engineer team say now you should use this AI coding tools for all the tasks when they choose not to is the time we really want to learn say why you don't do it and at this moment we pretty much use the AI coding tools to do all our implementation. engineers really focus on reviewing, architecturing and evaluation.
+
+[snorts] So and with AI coding tools we are writing so much code these days code review becomes really challenging. So for good engineer used to they probably write hundreds of less code every day. These days they can easily write like thousands. If we keep do the code review as we used to do we won't be able to keep up. We also tried the multiple like AI coding review review tools. It helps
+
+a little bit but we don't feel comfortable 100% rely on them yet. We still found the feedbacks from our engineers are very very valuable. That means we need to really change the way we are doing code review to meet where we are now. And couple things we have done. One is we allow engineers to self identify with still need code review. If
+
+they think this PR is simple enough, I feel very confident. I don't need anybody take a look. I'm we're fine with that one. We leave them merge, but we still hold them accountable. And uh if they do want code review, we want them stay with the best practices. For
+
+example, each PR shouldn't have more than 500 lines of code because nobody can do a meaningful code review with the ones has like thousands of lines code. And we also enabled like stank the PR. What it means is that for big feature and the engineers can bring break it into multiple PRs where people review the PRs and they can keep working on it. One thing we really want to avoid is a rubber stamp we call it means like people submit a code review you cannot really do anything to it. You just say blindly prove it. this is the worst case
+
+we should really avoid because that's just give us false confidence. We think we reviewed it, it's good and we release it. Meanwhile, we should keep working our AI coding review tools because we are think that's the future. So at this moment we use AI tools pretty much assistant on each step of our software developments. Our goal is it will be automate the whole life cycle from end to end from designing implementation until it's fully released. More
+
+important, we want the AI tools be able to monitor the live traffic and be able to catch the issue early and automatically fix it. That's what we are still working on and we are not there yet. The last thing I want to touch a little bit for this presentation is about reliability. So what it means is like for the traditional software it does what we implement there no more nos but for the gen solutions hallucidation is there we cannot ignore it and there completely eliminating them is can be very costy sometimes is not necessary either. So the way we should do is really have a holistic solution even from the beginning. For example, we can
+
+start with identify which failures is acceptable, which ones are not acceptable. For our AI system, for example, we have the functionality to help our customers to schedule appointments. If we fear one out of 10,000 ply, it's okay. I'm not say it's a good experience, but users usually can just connect the button again. we will reschedu for them probably it's okay but if we help user to like submit their reimbursement claim we cannot tolerate a failure because if people ask of $200 we issue them 50 or they ask 50 we give them 200 each case where cost of esculation right away for those cases we have to put in actual stamps for example when we receive their receipt we will use different models to review the same receipt We only move forward if the results from different models agree with each other. If we really have trouble to
+
+figure it out which one is right is it's okay to tell the customer say trouble to process your stuff. Do you want us to get you connect to a human agent? We will move from there. That's accept the solutions and also we should have a rigorous process to release our software. For us, we have like hundreds of integration tests for which pretty much covered all the use cases we know and we are keep adding to the integration test sweet and when we run the integration test not only pass once is not good enough anymore because the ARM can do different things. So for each
+
+test case we run it many times we consistently require a high pass rates like for example 90% for all the time and more important [snorts] and uh after we launch the software we have our auto evolve system evaluate carefully evaluate each conversation we have predefined a lot of rubrics what we think is good what is bad and then we will generate results we will re review the school. Besides this one, we also have a dedicated group. Their job is manually review those conversations. We will spot check our conversations. That helps us to say whether we need to come back to improve our systems or our rubrics is too strict or too loose and we need consistently improve it. When we
+
+launch new features, that's a time we say not spot check probably not enough. we really want to re review like say 20% and we can do it. This whole process [clears throat] make sure we feel really confident whenever we reach something although we know hallucination is there and pretty much I have for today and I can stay here to take up quins and if you have other things you can reach out to >> [applause]

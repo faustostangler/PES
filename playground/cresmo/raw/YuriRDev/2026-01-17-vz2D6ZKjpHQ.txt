@@ -1,0 +1,73 @@
+---
+video_title: "H4CK3ANDO GOLPES do TikTok 😡"
+video_id: vz2D6ZKjpHQ
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vz2D6ZKjpHQ
+video_date: 2026-01-17T16:09:37+00:00
+video_description: |
+  Nesse vídeo eu hackeio e explico aqueles golpes extremamente chatos do tikoteko..
+  ESSE VÍDEO É EDUCACIONAL - NÃO REPITA ISSO EM CASA.
+  
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 O melhor host para seus projetos: https://squarecloud.app/
+  👉 Thumb feita por https://www.behance.net/nez6vi
+---
+Se você tá usando TikTok nesses últimos dias, já deve ter percebido uma quantidade absurda de vídeos divulgando golpes, aparecendo toda hora. É loja com desconto absurdo ou falando que você tem dinheiro para sacar. E o pior não é nenhum golpe em si, é o fato de que essas coisas continuam passando pela verificação do TikTok e chegando nos usuários finais. Nesse vídeo, eu vou te mostrar como que eu consegui invadir um desses golpes. Eu literalmente briguei com o golpista no código em tempo real.
+
+E vocês vão ver como que esses golpes funcionam por trás e porque no final das contas a internet ainda é uma terra sem lei. Começando pelos famosos TikTok shops falsos. Se você não sabe, dentro do próprio TikTok tem uma aba oficial de loja, tipo um marketplace mesmo. Você compra produtos, paga dentro do app, tudo normal. O problema é que começaram a surgir vídeos com descontos completamente absurdos, tipo o iPhone por R$ 300. E quando você vai acessar o
+
+link é redirecionado para um site fora do TikTok, só que com o mesmo design. Para fingir que você não saiu do aplicativo, o Mork me mandou uma mensagem no Discord com um desses sites. O site é igualzinho ao TikTok Shop mesmo, onde você escolhe seus produtos, coloca seus dados, paga, tudo funcionando. E o interessante é que esse site foi feito 100% com React, o que significa que todas as rotas estão no código fonte. Então é só abrir o source, procurar por admin, que você acaba encontrando a página de administrador que ele tentou esconder com admin Fênix.
+
+Entrando nessa página, tem um formulário de login com um texto falando que a senha padrão era admingo 23. E não, eu testei, só que essa não era senha atual. Indo no código e procurando o que deveria acontecer quando a requisição de login fosse bem-sucedida, ele coloca no local storage a chave admin logado como true e um token aleatório também. E se eu manualmente colocar esse admin logado como true e recarregar a página, a gente consegue acessar o panel admin. Olhando aqui, em 7 dias teve um total de R$ 30.000 faturados. Quando eu vi isso,
+
+eu pensei que talvez isso seja uma loja legítima. Eu percebi que eu não tinha provas o suficiente para afirmar que isso sim era golpe, até eu olhar pro lado e ver que esse site armazenava cartão de crédito em PL Text. Passando por esse painel, tem muitas funcionalidades, desde editar item, criar item novo, mas também tem exportar o banco de dados. Mas o principal são esses scripts de tracking, onde dá para embedar qualquer código JavaScript aqui. Se você já viu algum vídeo meu, sabe que dá para fazer. [música] Eu consigo
+
+colocar um código qualquer na página. E nesse caso, eu vou colocar um que deleta todo o conteúdo do site e no lugar bota essa imagem de aviso. Mas dessa vez não vai ser só isso. Nesse código eu vou ver se a pessoa que tá acessando a página é admin e eu consigo descobrir isso vendo o local storage. Se for admin, ele vai ser redirecionado para um grabber que coleta o IP, localização e a webcam. vai
+
+aparecer o pop-up de permissão para ele e ele deve negar. Mas vamos ver o que vai acontecer agora. Quando alguém acessar essa página, vai ver esse aviso aqui. Mas se você for administrador, vai ser redirecionado para um outro site. Depois de alguns minutos, o Grabber me mostrou que alguém de Toronto, Canadá, acessou o site, obviamente VPN. Só que
+
+algumas horas depois apareceu um acesso de Hortolândia. Eu posso estar errado, mas que tipo de VPN tem uma conexão com a Hortolândia? Esse aqui deve ser o acesso real dele. Mas não acabou. Agora começa uma briga épica entre eu e o golpista VB Code, ele tirou meu script do site e quando eu fui tentar adicionar outro, agora ele tava validando se eu tô passando winner html ou document. Ou
+
+seja, eu não posso escrever isso. Só que para burlar isso, eu ofusquei o código em base 64 e executei um EVAL que funcionou por 10 minutos. Depois ele tirou o script de novo e bloqueou que eu usasse o EVAL. Então eu bypassei com o function e ficou assim por algumas horas. Mas é óbvio que ele não tinha desistido ainda. Ele bloqueou os keyword
+
+function, mas eu ainda tinha uma carta na manga. Olha que legal. JavaScript é tão esquisito em si que existe um site chamado JS que quando você passa um código JS, ele meio que ofusca, só que dessa forma aqui. Quando eu fui testar colocar esse código, ele deletou completamente a funcionalidade de script. Então, com o XS, entre aspas, corrigido, só me resta a opção de mudar todos os produtos da loja para golpe, assim, evitando que o pessoal compre.
+
+Rodando um script rápido para isso, todos os produtos foram poluídos e depois disso, o golpista tirou o deploy do ar e esse site não voltou até agora. Durante todo esse processo, esse cara ficava voltando os backups do banco de dados e eu baixei cada um deles. E uma coisa interessante é que um desses backups parecia ser o de teste, onde tinha um telefone, CPF e o nome de uma única pessoa que deve ser do golpista testando o sistema. O CPF, o telefone não tem como confirmar, mas o nome a gente sabe que é Daniel e a cidade Hortolândia. Agora vamos pro segundo golpe. Esse é o
+
+mais simples que existe, o famoso pague para liberar o saque. Mexendo pelo TikTok, você acaba se deparando com vídeos do tipo: "Tiktok fiz a boa com esses três car". E logo depois aparece um popup falando que você completou suas tarefas semanais e que tem dinheiro para resgatar. Se você tá na internet há mais de três dias, já sabe que é golpe. Mas ainda assim, se você for nos comentários, tem um monte de pessoa falando que funciona mesmo, agradecendo e por aí vai, mas estranhamente você não consegue comentar. Logo de cara, já dá
+
+para entender que essas contas que postam ou comentam nos vídeos não são diretamente do golpista, são simplesmente bots ou contas roubadas. Então, nem adianta investigar isso aqui. Eu comecei a salvar todos os vídeos e os links que apareciam para mim e depois de poucos dias eu já tinha mais de 30 sites diferentes. Bom, chega de contexto, vamos ver o que que dá para explorar aqui. Os links levam para uma página visualmente idêntica ao do TikTok, mostrando o saldo que você supostamente tem como se fosse uma página oficial. E
+
+quando você faz todo o fluxo para pedir para resgatar o dinheiro, no final ele te redireciona para uma página de pagamento de uma gateway qualquer. Vocês vão ver eu falar sobre gateway bastante aqui. Se você não sabe o que que é, é um sistema que processa pagamentos. É isso que vai gerar sua chave Pix para você pagar. E acredite, se quiser, quando você faz o pagamento, você é levado para uma outra página falsa da Receita Federal para fazer outro pagamento, depois outro, depois outro, chegando até cinco pagamentos para no final, obviamente você não receber nada. E você
+
+já deve ter imaginado que todos esses links mandam para páginas idênticas, até o código fonte ao mesmo. A única coisa que muda é o gateway de pagamento. E esses sites são extremamente simples, completamente estáticos. É HTML puro, não tem back end, não tem lógica do lado do servidor. Na prática, o sistema em si não faz nada, ele só te mostra uma informação. Agora me fala como que
+
+hackeia isso aqui? Não tem end point, não tem requisição, não tem superfície de ataque. Tentar invadir isso aqui é igual tentar hackear uma imagem. Qual que é o sentido? Para ter alguma coisa, pelo menos. Vamos procurar no GitHub
+
+para ver se tem alguma pista do que que a gente pode explorar. Procurando por um trecho aleatório do código fonte, me retornou seis repositórios, basicamente idênticos, só que um me chamou atenção. Esse aqui, em vez de ser HTML puro, tinha um pouco de PHP. E se tem PHP, pode ser que esse código aqui não seja uma página estática. No repositório tem um arquivo chamado payments.php, que faz
+
+conexão direta ao gateway de pagamentos. E como golpistas geralmente não são muito bons de tecnologia, esse aqui acabou deixando as chaves da gateway expostas no código. E coincidentemente essa gateway chama Ghost Pace, que parece ser uma referência ao Gateway Ghost Pay, que se você não conhece, os donos foram presos ano passado, que de acordo com a polícia era uma gateway usada para dificultar a identificação de fraudes. Um dos problemas aqui é que essa Ghost Pace não tem uma página inicial, só tem o painel de login e não deu para achar a documentação. Não adianta ter a chave de API se eu não sei usar API. Como esse gateway é claramente
+
+uma white label, provavelmente alguma outra gateway deve ter a documentação igual. É só procurar pelas rotas que o cara usa no código que a gente deve encontrar e funcionou. Com isso, deu para encontrar algumas rotas, como por exemplo, quanto dinheiro o cara tem na conta, listar as últimas compras feitas e dá para ver que tem muita gente caindo nisso até agora. Só que principalmente vê quem que é o responsável pela loja. Só que nesse caso a gente sabe que isso aqui deve ser um laranja. O que eu tava
+
+procurando aqui era uma rota de reembolsos, cancelamento de pagamentos, qualquer coisa que desse para devolver o dinheiro de quem caiu. E eu acabei encontrando essa rota na documentação de uma outra gateway. Só que na hora de mandar essa requisição, a função não estava ativa. Infelizmente a única coisa que dá para fazer é assistir. Então, por que não tentar invadir as gateways que os golpistas usam? Isso aí
+
+já não pode. A maioria dos golpes acontecem em gatway pequenas ou novas que estão desesperados para ter clientes e não fazem o que direito. Atacar essas gateways, além de ter uma chance enorme de seu sistema legítimo, pode atrapalhar as vendas de pessoas legítimas. Esse aqui é o limite legal. E como que o TikTok deixa esses anúncios circularem?
+
+Como que isso passa despercebido pelo time de anúncios? Eu não posso explicar como que eles bolam o sistema, porque ainda tá funcionando e deve funcionar por um bom tempo. Resumindo bastante, quando algum funcionário do TikTok clica para ver o link, ele vê um site normal, tipo receita ou alguma lojinha, mas quando você clica, aparece o site do golpe. E um ponto interessante é que não são só anúncios pagos que aparece esse link, também tem criadores de conteúdo que foram pagos para fazer essa publicidade. Esse sim dá para rastrear quem são e legalmente ir atrás. Pera,
+
+então é isso, não tem o que fazer. É, não tem superfície de ataque para atacar o sistema. Esse golpe é uma coisa tão ridícula que mesmo se fizer um ataque DDS ou a própria hospedagem de se ligar o site, eles só podem aparecer com novos sites idênticos em 2 segundos. Você já deve ter ouvido essa frase aqui. A internet não é uma terra sem lei. E na
+
+verdade é sem lei, sim. É inviável às autoridades ou qualquer um ir atrás dessas pessoas. Pensa comigo, esses golpes precisam de quatro coisas para funcionar. O domínio, a hospedagem, gateway de pagamento e os anúncios. O domínio eles compram por criptomoeda ou cartão clonado. A hospedagem é de graça.
+
+O Get pagamentos é associado com laranja e dá para fazer saque via criptomoeda. E os anúncios também são comprados com cartão clonado. Nada tem relação com golpista. A única coisa que dá para fazer é rastrear as criptos. E a gente sabe que não é tão fácil assim. E a
+
+culpa disso tudo são os gateways novos e amadores que operam no Brasil movimentando milhares de reais sem mesmo ter um CNPJ. Claro, o TikTok também tem culpa nisso. Eles não tm uma validação que presta. Mas nem tudo tá perdido. Você pode ajudar a acabar com isso. Sendo que você
+
+vê esses golpes, não pula, gasta 10 segundos denunciando vídeo. É rápido e com reporte suficiente o golpe vai cair. Você pode fazer a mesma coisa reportando pros gateway de pagamento, que podem congelar o saldo dessa pessoa. Para você descobrir o gateway que tá sendo usado, você pode copiar o código Pix que eles te mandam e lá mesmo aparece o nome da empresa responsável pelo processamento de pagamentos. [música] E é só pesquisar no Google e entrar em contato. Mas no
+
+fundo a gente sabe que essas pessoas não vão ser pegas. A internet é sim uma terra sem lei.

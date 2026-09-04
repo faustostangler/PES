@@ -1,0 +1,97 @@
+---
+video_title: "When Infrastructure Gets Hacked"
+video_id: VE1wM4oIh8Y
+channel_name: "Practical Engineering"
+channel_id: UCMOqf8ab-42UUQIdVoKwjlQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=VE1wM4oIh8Y
+video_date: 2024-09-17
+video_description: |
+  A few interesting stories about digital security for infrastructure
+  
+  Digital systems interact with every aspect of our daily lives and basic needs: water, electricity, sanitation, public health, transportation, and more can all be seriously disrupted by someone or some group, anywhere in the world, if we let our guard down. With great computer power comes great computer responsibility. And just because many of these industrial control systems are only used or understood by a small number of people, security through obscurity just isn’t realistic anymore.
+  
+  Watch this video ad-free on Nebula: https://nebula.tv/videos/practical-engineering-when-infrastructure-gets-hacked
+  
+  Signed copies of my book (plus other cool stuff) are available here: https://store.practical.engineering/
+  
+  Practical Engineering is a YouTube channel about infrastructure and the human-made world around us. It is hosted, written, and produced by Grady Hillhouse. We have new videos posted regularly, so please subscribe for updates. If you enjoyed the video, hit that ‘like’ button, give us a comment, or watch another of our videos!
+  
+  CONNECT WITH ME
+  ____________________________________
+  Website:         http://practical.engineering
+  Twitter:           https://twitter.com/HillhouseGrady
+  Instagram:     https://www.instagram.com/practicalengineering
+  Reddit:            https://www.reddit.com/r/PracticalEngineering
+  Facebook:      https://www.facebook.com/PracticalEngineerGrady​
+  Patreon:         http://patreon.com/PracticalEngineering
+  
+  SPONSORSHIP INQUIRIES
+  ____________________________________
+  Please email my agent at practicalengineering@standard.tv
+  
+  DISCLAIMER
+  ____________________________________
+  This is not engineering advice. Everything here is for informational and entertainment purposes only. Contact an engineer licensed to practice in your area if you need professional advice or services. All non-licensed clips used for fair use commentary, criticism, and educational purposes.
+  
+  SPECIAL THANKS
+  ____________________________________
+  This video is sponsored by Ground News.
+  Stock video and imagery provided by Getty Images.
+  Music by Epidemic Sound: http://epidemicsound.com/creator
+  Tonic and Energy by Elexive is licensed under a Creative Commons Attribution License
+  Source: https://www.youtube.com/watch?v=U6fBPdu8w9U
+  Video by Grady Hillhouse
+  Edited by Wesley Crump
+  Produced by Ralph Crewe
+  Graphics by Nebula Studios
+---
+This is a water tower, or as the pros would say, an elevated storage tank. Pretty common here in the US, especially in flatter areas where there’s no nearby hillside to build a ground-level tank. I have a whole video about how these work. In the most basic sense, a water tower is a buffer between the ever-changing demands for fresh water in a distribution system and the high-service pumps at the treatment plant that like to run at a constant rate. The level in the tank is a key measure of performance. If it’s high, pressure in the system is good, and the pumps
+
+can shut off… unless someone has messed with the computer system that controls that relationship. In early 2024, that’s exactly what happened in Muleshoe, a small town in the Texas panhandle. A citizen noticed water spilling out of the elevated tank and reported it. When the city went to investigate the problem, they didn’t find a stuck valve, malfunctioning sensor, or broken pump contactor. The water tank was overflowing because of a deliberate attack by a hacking group linked to the Russian military Some water was wasted, but ultimately, no one was hurt, and nothing was damaged in the attack. Muleshoe was probably just a victim of opportunity. Having grown up in the Texas
+
+panhandle, I think I’m safe saying that most towns there aren’t necessarily considered high value targets for international criminal campaigns. But that’s the thing with cyber security these days. It’s not just for the organizations with big secrets and lots of money. Even in tiny west Texas towns, critical pieces of infrastructure are run by computers, and a lot of them are connected to a network, making them vulnerable to bad actors. I’m not a security expert; I’m just a civil engineer. But, I’ve worked on a lot of projects where
+
+digital systems interact with infrastructure, and I’ve collected some really interesting stories about how that can go wrong that I thought would be fun to share. So let’s peek behind the control panel and talk about them. I’m Grady, and this is Practical Engineering.
+
+Once upon a time, everything from the power grid… to drinking water distribution systems.. industrial manufacturing… to oil and gas…, dam operations, and more was run without the aid of computers. Calculations were done manually, and engineers carried slide rules. Decisions were made by skilled operators, valves were opened and closed by hand, wear and tear was measured by human eyes, and so on. It’s easy to see the opportunities for digitization. If you’re
+
+not relying on a person for everything, you can be more efficient, reduce the chance of error, and improve safety by not requiring workers to be so hands-on. And there are quite a few ways to computerize the control of industrial processes like operating a pipeline or a water system. One of the most widely used is called SCADA or Supervisory Control and Data Acquisition. This is a fairly standardized architecture used in a wide variety of industries like manufacturing, oil and gas refining, and most of the utility systems we rely on like electricity, water, sewer, traffic lights, and more. Let’s look at an example of a basic municipal water system to see how it works.
+
+Getting fresh water distributed to a city is a big undertaking that requires a lot of equipment, including valves, tanks, pipes, pumps, chemical systems, and more. Some of these will include sensors to take some kind of measurement, such as the water level inside a tank or the flow rate within a main line. Others will include actuators, devices that can do something like turn on a pump or open a valve. All the devices connect to one or more remote terminal units or RTUs. All the RTUs are then networked to a central supervisory computer that sends control commands and collects the data. This computer normally
+
+includes the Human Machine Interface or HMI. This is where an operator interacts with the system, and they’re usually set up as simplified diagrams of whatever’s being controlled. Systems like this can be programmed to maintain certain conditions and automatically adjust equipment to keep everything running smoothly and as expected. Automated systems never get bored of doing the same thing over and over again, they don’t need to sleep, and they don’t mind being exposed to hazardous chemicals. For example, let’s look at the high service pumps and water tower. These are often configured in a lead-lag system with multiple
+
+pumps for redundancy and reliability. When the level in the tank drops below a set point, the lead pump turns on. With smaller demands, this will fill the tank to the upper set point, at which point the lead pump turns off. But under higher demands, the lead pump might not be enough. If the level continues dropping while the lead pump is running, a lag pump with a lower set point will kick on. With both pumps running, the tank will fill,
+
+eventually reaching the upper set point and kicking both pumps off. If you want to see an example of this in action, check out my Practical Construction series where I embedded on a construction site of a sewage pump station and documented the process from start to finish. That’s a basic example, but you get a sense of how useful a SCADA system can be. You don’t have to manually control the pumps or be on site to check the tank level. And you can change those set points. Maybe during seasons when demand is low, you don’t want the tank full all the time,
+
+because the water spends too much time in there where its quality can degrade. You don’t have to hire an electrician to reconfigure a control panel or put a technician in a dangerous spot to adjust floats in the tank. Any trained operator can just change the values in the HMI. They’re designed for simplicity, and in fact, I’ve always thought they often look a lot like old video games. There’s something really nostalgic about the basic graphics HMI’s are often designed with. It’s easy to forget that they’re connected to real systems, often large and complex systems,
+
+where the stakes are high if something goes wrong, which is exactly what happened in Muleshoe. According to security researchers, Muleshoe’s SCADA system was breached by a group called the Cyber Army of Russia Reborn with a portal set up so the city could have remote access. On January 18th, they posted this video supposedly showing them manipulating the HMI’s of two small Texas water systems. Judging by the haphazard clicking around, it seems that the hackers know a lot more about gaining access than they do about how water systems work. Most of the video seems to be someone clumsily navigating screens and changing values at random. Nevertheless,
+
+they managed to change a setpoint on one of Muleshoe’s booster pumps, leading it to stay on even after the water tower was full, and eventually causing it to overflow. Ultimately the attack was pretty harmless, but it could have been worse. A similar event happened in Oldsmar, Florida in 2021 when a hacker reportedly changed the sodium hydroxide feed in the water treatment plant from 100 parts per million to 11,000. The event brought huge national attention to the issue of information security for critical infrastructure. Two years later, the FBI concluded it probably was an employee mistake and not an actual intrusion, but it was still a strong reminder of the type of havoc that could result from a SCADA system with poorly secured remote access.
+
+Even further back than that, a SCADA system controlling sewer works in Maroochy Shire, Australia was hacked by a disgruntled ex-contractor, releasing thousands of gallons of untreated sewage into parks and waterways in 2001. And really, there’s no telling how many similar attacks have happened across the world. A lot of them don’t make the news, and even though they’re often investigated by authorities, the details aren’t released for fear of sharing potential vulnerabilities that aren’t patched up in other systems. It’s a constant arms race happening mostly behind the scenes. Hackers are constantly probing systems for vulnerabilities, especially ones that are previously unknown (called zero-days, because that’s how long they’ve been known about when exploited). But access
+
+to industrial control systems isn’t the only digital threat to infrastructure. In May of 2021, the Colonial Pipeline Company, owners of the largest refined petroleum pipeline in the US, was attacked by another Russian group called Darkside. They didn’t gain access to any pumping or control systems. Instead, they installed ransomware on the billing computers, locking the company out, and stole sensitive information, threatening to release it if the company didn’t pay. Not knowing the extent of the threat, the company shut the pipeline down. Over the next six days, a gasoline panic struck the eastern US,
+
+with gas hoarding emptying out more than 12,000 filling stations. A state of emergency was declared, and rules governing tanker trucks were relaxed to allow for more fuel to travel by road. With FBI oversight, Colonial paid the ransom, 75 bitcoins, or about 4.4 million dollars at the time, within hours of the attack. But the tool provided by the group to unlock the system was so slow, that they ended up using mostly their own backups to get the billing system back online.
+
+Some of that ransom was eventually recovered, but it took six days to get the pipeline started up again, and there’s still a ten million dollar reward out for information leading to key leaders of the group. So how did they do it? Really it wasn’t very sophisticated. An employee was reusing a password that had been leaked in a database from a prior breach. They just logged into Colonial’s VPN with purchased credentials.
+
+That’s all it took to take down one of the US’s most important pipelines for six days. Again, with that kind of access, it could have been a lot worse. And one thing you’re probably thinking is, “why would you have the ability for remote access to critical systems like this at all?” Is it really worth exposing yourself to the entire world of nefarious actors, just to save a commute to the HMI? And, actually, a lot of critical systems don’t have an outside connection. They’re air-gapped. But even that’s not a foolproof system.
+
+One of the first, and maybe well known, examples of infrastructure hacking, especially an example designed to cause permanent physical damage, is STUXNET. Although the details are pretty murky, STUXNET seems to have been developed by the US and Israel as a military-grade cyber weapon. It was a worm, first reported in 2010, that specifically targeted SCADA software on Windows computers. Stuxnet famously exploited four zero-day vulnerabilities to spread and interact with SCADA systems. If a computer didn’t have the target software, it would just do nothing except replicate. But when it found a computer with SCADA software and some very specific motor drives
+
+connected, it would send a command to rapidly speed up and slow down the motors while faking sensor data so that the SCADA system wouldn’t shut down or throw an alarm that something was awry. Those specific motor drives were pretty much only used in gas centrifuges used to enrich uranium so it could be used in nuclear weapons. It’s pretty clear what the worm was designed to target, and it did work. STUXNET reportedly destroyed around a fifth of Iran’s nuclear centrifuges, and probably shortened the lifespans of many more. And it was introduced to the facilities’ networks not through a remote connection (the system was airgapped) but from an infected USB drive.
+
+And that really is the key to all this. Your cybersecurity is only as strong as one employee’s willingness to plug in a USB drive or reuse a personal password at work or click a deceptive link in an email or hold the door open for someone following behind them. And most of us are guilty of doing these things. At least, every once in a while… But, these days, no matter who you are or what you do, you probably use some kind of digital device in your life. And so whether you’re the operator of a tiny water system in rural Texas or manage the largest gasoline pipeline in the US, you also kind of have to be a cybersecurity expert too. The stakes are high. Digital systems
+
+interact with every aspect of our daily lives and basic needs: water, electricity, sanitation, public health, transportation, and more can all be seriously disrupted by someone or some group, anywhere in the world, if we let our guard down. With great computer power comes great computer responsibility. And just because many of these industrial control systems are only used or understood by a small group of people, security through obscurity just isn’t realistic anymore. It’s funny, we don’t really notice a lot of this infrastructure or put that much thought into how it affects us until it breaks down. That’s definitely true for water systems. Earlier
+
+this summer, a major water line in Calgary broke, resulting in a month’s long water crisis while they try to figure out not only the repairs on that line, but also the implications the break has on the rest of their water infrastructure. And, to complicate matters, the repairs have resulted in injuries and delays even while water consumption continues to grow. This story was reported on by over 25 news outlets, with most of the reporting coming from the left. And if you look at the headlines, you’ll notice that most are pretty similar to each other, regardless of political lean. But if you dig deeper into the articles, you’ll see that framing changes considerably. Left-leaning outlets tended to focus on the
+
+urgency and severity of the water crisis as well as the impact on local communities, while right-leaning outlets focused on the logistics, repair process, and technical details. This level of insight is only possible thanks to today’s sponsor, Ground News. Ground News is a website and app that aggregates major news stories and adds context to make reading the news easier and more effective. Every story comes with a quick visual breakdown of the political bias, factuality, and ownership of the sources, all backed by ratings from independent news monitoring organizations. One of my favorite features is their Blindspot Feed, which shows you stories mainly covered by one side of the political spectrum: stuff you might totally miss if you only follow a few main sources for your news.
+
+Obviously, infrastructure is important to me, and what I read about in the news shapes the way I share information with you and the way I look at the world. Journalism has a lot of power over us, and Ground News hands some of that power back to you. Reading the news this way just pulls you back a little bit, helps you remember that there are limitations and biases in all media, and gives you the best chance to get all the facts. If you’d like a more transparent media landscape, they’re offering a huge discount right now at the link in the description: 40 percent off the Vantage subscription, which includes unlimited access to all their features. That’s ground dot news slash practicalengineering or just click the link in the description. Thank you for watching, and let me know what you think!

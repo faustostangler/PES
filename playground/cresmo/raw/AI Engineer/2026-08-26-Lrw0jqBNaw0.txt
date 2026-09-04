@@ -1,0 +1,111 @@
+---
+video_title: "The Death of Developer Advocates — Stephanie Jarmak, Sourcegraph"
+video_id: Lrw0jqBNaw0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Lrw0jqBNaw0
+video_date: 2026-08-26
+video_description: |
+  Ask an assistant to compare code intelligence tools and Sourcegraph comes up 65 percent of the time. Describe the actual pain instead, that you keep breaking downstream services when you change shared libraries and cannot see all the consumers, and it comes up zero percent. It suggests your developers write a wiki page. Stephanie Jarmak ran that experiment. The gap between shopping and hurting is invisible without measuring it. Jarmak, an astronomer a year ago with no commits, now has 12,000 and maintains an open source multi agent orchestration framework under the title agent advocate. The talk title belonged to their manager, an actual developer advocate, who submitted it then went on vacation rather than deliver his own eulogy.
+  
+  The argument is that developer relations is not dead, its audience changed. An agent reads your docs, calls your API, hits your errors and recommends your tool: a user whose experience is worth instrumenting. Jarmak built a benchmark of hundreds of lifecycle tasks, ran agents with and without Sourcegraph's code navigation tool, then read the traces. In one, the model assumed a parameter name that did not exist, failed, recovered from the error text, and burned a turn on something a clearer tool description would have prevented. Buyers judge a tool on tokens and latency now, not only on whether it works. The rest is practical: get into the MCP registries, keep content fresh because stale material compounds, cut the distance to adoption, and treat it as a curb cut, built for one user and clearing the path for everyone.
+  
+  Speaker info:
+  - https://x.com/sgjarmak
+  - https://www.linkedin.com/in/stephanie-jarmak
+  - https://www.sjarmak.ai/
+  
+  Timestamps:
+  0:00 - An astronomer, an agent advocate, and a borrowed title
+  2:51 - What changes when developers stop working alone
+  4:19 - The agent as a user, and as a recommender
+  5:36 - Benchmarking agents with and without your tool
+  6:40 - A whole turn burned on a guessed parameter
+  7:42 - Generative engine optimization, and a 65 to zero gap
+  10:29 - Why stale content compounds against you
+  12:12 - Be where the agents are, and cut the friction
+  14:54 - What still holds: enablement, community, feedback
+  17:02 - The curb cut argument
+---
+[music]
+
+>> Hi everyone. Sorry for the start with technical difficulties and all of that. Uh, we made it to the end of this track. Super exciting. Thank you everybody for sticking it out this long. Um, are there
+
+any developer advocates or devrel people in the audience? Raise your hand. Yeah, okay. So did you come to like throw tomatoes at me cuz I'm talking about the dead now. Okay, so it's not going to be all doom and gloom like that. Um, a bit of like backstory
+
+in this. Um, I'm a research scientist. So last year I was an astronomer. Um, and I just sort of like wound up. I didn't know what GTM was or any of that.
+
+I just sort of wound up in this. Um, and I submitted like a bunch of boring sciency eval talks that were unceremoniously I I assumed thrown into the trash uh, for this conference. But my manager, who is a developer advocate, he put in, you know, the death the death of developer advocates, which is, you know, appropriately buzzworthy and hypey. And so so that was great. But his title is developer advocate, so it didn't really necessarily make as much sense for him to be coming up here and giving his eulogy. So we brainstormed like
+
+maybe I would dress up as like a robot and like a maul him and attack him on the stage or something like that. Um, but then it just like logistically it was going to be hard to do that. Uh, so he just went on vacation. Uh, so I'm here uh, as the agent advocate uh, to talk about this sort of like new role and uh, try to advocate for it and uh, convince all of you that we should all be agent advocates to help uh, in this new era. So uh, zooming out a little bit and going back uh, in time a bit because uh, I was trying to talk about developer advocates to somebody at the conference yesterday and their eyes like glazed over they had no idea what I was talking about. So
+
+just to sort of talk about what what this thing is that I'm saying is dead. Uh so back in the '80s, right? It was called like software evangelism where one would go forth and speak the good word of the product and bring it out there. But then fast forward to the 2010s or so, that's when developer advocacy advocacy started to become a thing where now instead of having this single trajectory of the communication pathway, now it's a feedback loop and a two-way street where you have these people with very deep empathy for developers who understand them and speak their language and could understand um what their needs were um and then bring that back to the product. And then um these developers, right? Fast forward
+
+even more, they have so much influence within their company and basically become these like kingsmakers. Uh and so the developer experience became a very important aspect of the go-to-market sort of strategy. Um but now in 2026, uh developers are no longer working alone and what it means to be a developer is completely changing. Um and so our role, right, as developer advocates um developer in developer relations, we're relating to developers. And so as the role of developers fundamentally changing, so must then does the role of the developer advocate.
+
+Um so in this slide I'm just kind of talking about the other users, right? So what's happening uh with DevRel uh outside of the agent. So most of the talk is going to be talking about the agent as a user. But I also did did want to bring up, right, that engineers they're becoming like these orchestrators of these fleets of agents, um babysitters and whatnot of these things. Um and their job, like all of the job postings and whatnot, there's language is continuously changing, right? They're
+
+um expected to have this AI fluency. Um and at the same time, there's also, you know, people like me, like uh non-engineers, right? I was a research scientist. I had like zero commits on GitHub last year, and now I have 12,000, and I'm like an open source maintainer for multi-agent orchestration framework. Like, we have so much like capability now with all of these agents, and now anybody with these agents can use dev tools, essentially.
+
+So, you have this whole other persona and ICP uh to potentially be relating to and um having empathy with when you're there using your product. So, let's talk about now this whole new user that we have in the form of an agent. Um so, an agent is somewhat unique, right? In the sense that it is both the user of your tool in a very similar way to the developer. It's going out reading your docs, but it's just reading them differently cuz it's a machine. Um you
+
+know, it's calling the API. It's encount- it's ha- has its own frustrations with how it's encountering errors and recovering from them, right? But then it's also a recommender of your tools. Um but somewhat similar, right? To developers in the way that they are also recommenders of your tools in a more organic, bottom-up way. Um
+
+so, the whole, you know, basis for DevRel, right? Is to encourage that bottom-up adoption. But now the adoption and the recommendation system, a lot of it's being driven by the agent itself. That is either, you know, maybe servicing your product directly through like ChatGPT or Claude, like directly in a Q&A sort of environment, or it's, as we had heard like in some of the previous talks where the speaker asked folks like, "How many of you have just let your agent install a library for you?" And like, there were many hands went up, right? So, there's this like
+
+recommender of tools where basically it's just installing these like frameworks and things um directly and embedding them into the workflow um and sort of working with the developer um in that taste. So, I know it's late for numbers. You don't have to read them or anything like that. Um so, I have a couple different concrete examples for measuring these seats, right? Cuz I am a data science scientist nerd person. Um so one of my
+
+first projects when I was uh working on this um uh when I became an agent advocate was to build um a benchmark called CodeScaleBench. And so I developed hundreds of tasks that were reflective of the software development life cycle. And I basically unleashed these agents with and without um our product tooling. So I work at Sourcegraph and we have a code navigation MCP tool. Um and the point of that was to understand, okay, how is our tool helping the agent do the work that it's, you know, going to be doing. Um and when it isn't working
+
+well, why isn't it working well? So that we can then go in and actually fix that. Um so I have thousands and thousands of these traces. And I I as we have heard in like the previous talks, like now we have these amazing logs of data for like these really tight feedback loops where you can see exactly where it's breaking down and then go in and fix it. Uh so this one specific example here was um when I was looking at how it was like using a read tool. Um and the model had
+
+the these expectations based off of its like biases from how it from its training data of what it expected for a particular um command um that would be available within the tool. And there's nothing in our description uh that would have like led it to believe otherwise. So it tried to use like read line instead of start line or something like that. And then it ended up failing, but then at least the error told it why it failed. So it was like, okay, that that was a good part of it.
+
+So it was able to fix itself. But then it's burning right an entire turn just failing. And you could just go in and fix that um aspect of like how it's interacting with the tool. And this is really important, right, to gather that feedback um and understand the friction that like now your new agent user is having with your tool because it's the way that um different organizations are going to be evaluating your tool, right? In terms of not just is it working well, but like how many tokens is the agent dealing with to work with your tool? And
+
+how fast is it? Um so this is, you know, really an important aspect of the role is measure um, how these users are using it. The other side of it um, is like the recommendation layer, right? So, the uh, GEO instead of SEO. So, the generative engine optimization.
+
+Um, and I didn't mention it before, but in the previous slide um, I had a GitHub repo. Like, there's two different toy projects that I put together. At the end of the talk, there's like a QR code with a link that you can send your agent to to like have access to all this. So, don't worry about like taking screenshots All of all of the data will be released to you. Um, so anyway, back to this. Um,
+
+I set up a little experiment, right? To see how uh, these different chatbots and agents and whatnot were recommending our product or like mentioning it at all. Um, and so there's a, you know, process to that cuz you have you want to understand like, what is your ICP actually doing when you would want your product to be surfaced? So, there was a bit of a gap that I found. Um, if I had designed some of these prompts around somebody who like was actively shopping for this sort of code intelligence sort of tooling and doing a comparative sort of thing, then our product was ending up being recommended like 65% of the time. Um, but what I
+
+found was the arguably like the more typical use case and where we'd want to be showing up for people when they're encountering a specific pain or have a specific need where our product could serve them better, uh, zero mentions, right? So, in this particular instance, um, I put in a prompt that was like, we keep breaking downstream services when we change shared libraries because we can't see all the consumers. And you know, our one uh, part of our product is being able to have this observability layer to like see across all the repos. So, we'd want uh, some level of like attribution or recognition from um, an agent to say, "Hey, you could use something like this." But instead it said, uh, "You could just have your developers make a wiki page or something. Um
+
+but with this, you know, we wouldn't know that without running these sorts of experiments um and getting this sort of data. So, what this leads to is like then you can have a hypothesis of okay, maybe the messaging that we're putting out there isn't uh attributing some of these pains and use cases clearly enough for the agents to be picking it up. So, we have uh like a content campaign in the works to um make changes to our website and then we can directly measure whether that has like an actual lift and not necessarily in the form of like anything that was baked into the training data, but then how uh the agents that are using those like web search tool calls, how they are then interpreting um the information about your product. So, you know, there are just some um different ways that you could think about guiding the agents um to help support like the servicing, the discoverability of your product and this user finding it um at their moment of need, right? Um so, for example, um this whole field is moving so fast.
+
+Uh so, I mean, training data is always going to be stale. Actually, in the um GEO pilot study that I did, the data that I was showing there, that was using Claude Sonnet 4. It's very old um obviously and I just today, this afternoon, ran it with 4.6 thinking that okay, surely it's going to it's going to be better. It's going to know like improved information about our product, but uh so, in the previous model, it kept pitching Cody, which was like one of our older products. Um but if I when
+
+I uh ran it again, it it pitched Cody even more, right? Cuz like now you have all of these like old models like uh outputting content that then is like compounding in the internet. So, you have to figure out like how to bury all of that uh noise with your true signal. Um and the way that some folks are working on that is as we've heard from other people like these LLMs at TXT uh sort of pages, right? So, you have more authoritative sources of truth that you're hoping to direct the agent to.
+
+But, they still need to be using the tools and using real-time information and provenance to be able to give accurate answers about your product. You also want to give like the agent something to quote, right? They they they want to bring something that they can really sell to the to the user, right? So, you want current examples and keep everything up-to-date. Like, even if your stuff hasn't changed in 2 years, which would be shocking.
+
+Even if it hasn't, like keep everything up-to-date and fresh because that, you know, part of that is how they have their relevance algorithm. And they also really really like charts and FAQs and things like that. And you also want to make sure your product is where the agents are, right? You're going to market. So, go go to agent market, right? So, make sure you're in the
+
+marketplace in the MCP registries, everywhere that you would expect an agent to be able to easily find you. And also make sure that you know, that whole you reduce as much friction as possible for an agent or and developer to go from finding out about your tool to embedding it in their workflow. Because if an agent realizes your tool requires like three different demos and emailing sales reps and stuff, they're never going to say, "Hey user, like here's what you should do, but FYI, you're going to have to do all this other stuff." It's like not going to happen. And then also make sure that you are covering that those pains, right?
+
+Because that's how a user is going to be most like in their time of need, right? That's going to be the best opportunity for your product and your service, right, to be surfaced to them. And so, you want to make sure that there's enough content out there on the internet for the agent to like be aware of that and make those connections for you. And so, right, there's this like ongoing question of what even the heck is DevRel and advocacy and now now this agent advocacy thing, right? So like where does it fit? Where does it go?
+
+Like is it engineering? Is it product? Is it marketing? It's like yeah, yes, yes. It's all of those things. And and
+
+with the rise of agents it hasn't gotten any clearer, right? Those seams haven't gotten any clearer. If anything though, everybody's role with across the organization has gotten fuzzier. So that actually helps in a lot of ways. Um and but you can sort of split it up and think about it in terms of like these different flavors, right? And you can
+
+mix and match depending on whatever skills and abilities various employees have within your organization and whatever the product needs at a given time. So you have like the engineering flavor, right? And those are folks that are partnering directly with the engineering team to make these interfaces for how the agent is talking to your product like through the MCP server and building out these evals and the instrumentation. Then you have the product flavor. So those are folks that are going to own the end-to-end agentic experience, right? And so translating
+
+these evals to bring it to the product team and like having the agent experience rubrics how they're encountering all of that content. And then you have the marketing flavor, right? And that should be the folks that are really owning that pipe gen and how the agents are like entering the funnel and finding out about your product and then bringing the developers along with them by surfacing those recommendations. So I know I you know said the death of developer advocates. But the core right of DevRel still holds. It's just you
+
+have a change in your audience. So it's still extremely important to do enablement, right? It's just the type of enablement is a bit different. You're educating developers now who are have a completely different type of job where they're orchestrating these fleets of agents. And you're also educating agents, right? So you're having to put
+
+out content that is machine readable, has like agent friendly APIs, all of these things to make it as easy as possible to use your product both for human developers and for the agents that they're using. And community is also more important than ever, right? Um having that human-to-human connection um where developers can come um and uh bring their agents also into the loop, right? So that's another component um that needs to be considered uh when you're building these different communities because there's all these questions, right, of privacy and like data concern as well. If people are like bringing their Claude's and whatnot like into the Discord and they're like uh recording all of the conversations and everything like this. It's just like a
+
+new thing they have to think of as a community builder. And then there's the feedback loop, so you're still uh responsible for bringing the voice of the developer who's using the agents back to the organization, but then you can also uh basically spin up like thousands of these agents to perform experiments on them and experiments that you can't really like do as easily with the developers who don't want to maybe talk to you that much. Um and then credibility, right? So you need to be earning credibility both from human developers. Um so like don't like not using Claude's slop at them, right? Then tell your AEs to stop that
+
+as well. Nobody Everybody knows what it is and nobody likes it. Um and but then credibility like actually Claude loves its own slop uh for whatever reason. So there's a bias, right, from agents of their own content. So whenever you're making like agent-facing content, as long as it's structured, you can have as many m dashes and whatever as as it wants. Um but it's just a completely
+
+different sort of uh credibility landscape, humans versus agents. So what I'm advocating for here, right, is like building out a curb cut. So curb cuts were built for wheelchairs, like built for a specific user to use them. Um but now everybody, you know, benefits from that, right? Anybody with wheels, right, strollers and um suitcases and all of those things. So my argument is
+
+that by serving the uh agents, uh the human path gets cleared, too. There's just, you know, there's just one more user in the room now, but they are still serving the human on the other end, and we're all working together on this. So, for, you know, DevRel, one quick thing that you could do like right away is point a coding agent at your docs, and then looking through that transcript and start developing your agent experience report. And then if you're more on the GTM side, start like developing some of these experiments with the GEO, putting together those prompts, and looking at the mentions versus recommendations. And I made this whole talk agent legible, right? So, there's a QR code there, as
+
+well as a couple different toy repos that have some templates for you to get started. And that's it.
+
+>> [music]

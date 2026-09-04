@@ -1,0 +1,136 @@
+---
+video_title: "Crie MULTIAGENTES de IA com Google ADK e LangGraph (Template pronto)"
+video_id: YLVvZDip27s
+channel_name: "Ronnald Hawk | Engenharia de IA"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=YLVvZDip27s
+video_date: 2025-06-19
+video_description: |
+  ––– Recursos & Educação –––
+  Tenha acesso a conteúdo gratuito e exclusivo : https://www.rhawk.pro/
+  Comunidade (Lista de espera aberta): https://www.rhawk.pro/comunidade
+  
+  ––– Descrição –––
+  Aprenda a construir soluções poderosas com IA generativa e domine a criação de Agentes de IA e MULTIAGENTES de IA, mesmo que você seja iniciante! 
+  
+  Neste vídeo, fazemos uma comparação detalhada entre LangGraph e o novo Google ADK (Agent Developer Kit), mostrando como criar workflows de IA com múltiplos agentes (supervisor, gerador de ideias, refinador). 
+  
+  Descubra as diferenças, veja um review prático e entenda qual framework pode ser melhor para seus projetos. Ideal para desenvolvedores, empresários e profissionais que buscam aprender mais sobre IA e automatizar processos, com template pronto e todo o código disponível para você começar agora mesmo!
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  1:01 Entendendo a estrutura do Google adk e do Langgraph
+  2:12  Arquitetura de Sistemas Multiagentes
+  3:04 Detalhes da documentação do Google adk
+  6:19 MultiAgentes com Langgraph
+  9:09 MultiAgentes com Google adk
+  12:23 Revisando o resultado do Langgraph
+  13:16 Tentando outra técnica com o Google adk
+  ––– Agência –––
+  
+  A melhor consultoria em IA, Automação e Analytics do Brasil: https://simplework.ai
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  #inteligenciaartificial  #iagenerativa #agentesdeia #langchain #langgraph #adk
+---
+Isso que você tá vendo aqui é um sistema multiagentes feito com Lang graphic, um framework que eu domino, que eu conheço bem. E do lado de cá é o mesmo sistema, um sistema muito parecido feito com o Agent Developer Kit do Google. É um framework novo, eu não conheço ele muito a fundo, então o que eu fiz foi estudar ele e tentar criar uma solução parecida para eu ter ideia, tá? Ao longo desse vídeo, você vai ter a minha opinião sobre o framework, vai ver o que que eu acho, você vai poder chegar a sua própria conclusão vendo esse meu review aqui. E se você desejar, todo o código desse projeto, tanto do LG graph quanto do ADK, tá disponível lá na ROCK Pro para download. Você vai lá, baixa, eh,
+
+segue as instruções, tem um RIDM aqui, eh, segue as instruções principalmente eh, para a questão do ADK, porque ele não é tão simples de executar, tá? Então, né, presta atenção aqui, mas tá tudo explicado, beleza? Então bora pro vídeo. Vamos ver aqui como que tá estruturado isso aqui. O número de linhas é bem parecido, só que a grande diferença aqui é que no com com graph eu tenho que importar e algumas bibliotecas a mais, tá? Então é basicamente isso,
+
+mas o número de linhas foi bem parecido. E o que que a gente tem aqui? A gente vai usar o modelo Gemini 2.5 flash para todos eles, para todos os agentes. E nós temos três agentes aqui, tá? a gente tem
+
+um supervisor e a gente tem outros dois agentes. Um desses agentes é responsável por gerar ideias, então eles seria a nossa força criativa e o outro seria por refinar essas ideias, tá? Então os promptes deles estão estruturados dessa maneira. Se você quiser ler um promp tal, são prompts bem simples e é só pra gente fazer um teste mesmo, é, tá lá no código, tá? E do outro lado aqui é exatamente igual. a gente tá seguindo
+
+esse mesmo essa mesma ideia, três agentes, um supervisor e e dois trabalhadores, digamos assim, tá? Beleza? Beleza, tá? Não tem muito mistério, declaramos um agente, depois declaramos outro agente e aí falamos para o agente eh central que ele tem dois amiguinhos aqui que ele pode trabalhar. E você vê aqui que no ADK ele é bem semelhante também, né? Eh, você
+
+declara os agentes e passa aqui os agentes que ele tem para trabalhar, tá? Mas eu notei coisinhas interessantes ao longo do tempo aqui. Antes da gente entrar na comparação, eh, por que que eu tô fazendo o sistema multiagente? Se você não tá muito por dentro desse nosso ramo aqui, essas últimas semanas tem tido várias discussões sobre sistemas de multiagentes. Eh, tem os defensores e tem os detratores. Então, eu quis trazer
+
+isso exatamente hoje para você fazer e chegar suas próprias conclusões, se você deveria ou não fazer um sistema multiagente e principalmente como fazer. Então eu tô te dando a faca e o queijo e você eh se aprofunda aí que é assim que a gente aprende, né? A gente aprende fazendo e o meu dever aqui te dá eh esses horizontes e mas tem um dever que só você pode fazer que é botar a mão na massa e fazer. Beleza? Então o que a gente tá fazendo aqui, né? Sistema
+
+Miaagente existem vários tipos de arquitetura e o que a gente tá fazendo aqui hoje é do tipo supervisor, onde a gente tem teoricamente um cara central e você tem ali e subordinados a ele que só falam diretamente com ele, tá? Beleza? Beleza? Vamos falar um pouquinho aqui da ADK antes da gente seguir. Eh, eu li a documentação toda, então você não precisa ler, mas se você quiser ler, fica à vontade. Eh, coisas que me
+
+chamaram atenção. Eh, eles mencionam que você pode rodar qualquer modelo usando o ADK. Diferente do SDK da Open AI, que você só poderia rodar modelos da Open AI, eles argumentam isso. Mas olhando em detalhes no na documentação, eh, você precisa fazer algumas adaptações para rodar modelos de fora. E, por exemplo, para rodar antropic, você precisa rodar Java, né? O SDK ele tem, né, Python e
+
+Java, então assim, asterístico aqui, tá? eh, integra ferramentas. Então, sei lá, você tem alguma bibliotequinha lá do LChanin. Eu falei bastante do LCH no no vídeo passado e a importância dele. Então, esse aqui é um ponto positivo. E
+
+ele também tem a uma interface, né, pra gente desenvolver, o que é legal também, o L graph também tem, tá? Então, eu vou mostrar também as interfaces aqui ao longo do vídeo, tá? Eh, uma coisa muito interessante, eu não cheguei a usar, que ele já tem dentro dele mesmo, dentro do framework, a possibilidade de você trabalhar com áudio, vídeo, é, sem ter que fazer muito trabalho. É, isso pode ser interessante para um monte de casos de uso. Então, eh, fica aqui, é, em azulzinho. É, e a questão do deploy, tá?
+
+É, como que você vai fazer o deploy? Você fez aqui o código que eu te mostrei, beleza? Mas agora eu tenho que botar isso no ar, né? Eu tenho que fazer com que ele ele fique disponível pro mundo e não só na minha máquina. Então, esse é o deploy, tá? Ele tem diferentes
+
+possibilidades de você fazer deploy. Eh, e o que me chamou atenção aqui é que ele tem esse vertex Cai, que é basicamente o seguinte: você vai fazer um outro arquivinho ali dentro do seu projeto e você vai botar algumas configurações do Vertex e você vai fazer o deploy meio que assim, né, como serviço, né? Você vai usar um agente como serviço e você não vai, é, precisar gerenciar nada na nuvem. Então isso é interessante. É, e você pode também rodar em contêiner e tal, é, sem muito sem muito mistério, tá? Se a gente for comparar isso aqui
+
+com L graph, o L graph também tem isso aqui. Eh, e é até mais fácil de rodar, pelo que eu percebi aqui, do que o esse framework aqui, mas fica como referência para você, tá? Eh, outra coisa interessante, para criar o agente, ele se baseia em uma classe única chamada base agent, tá? E o que eu quero que vocês guardem isso aqui é o seguinte, é que fique bem claro, cara. Assim, a diferença grande entre o Lang Graph e o ADK é o ADK, é porque aqui a gente só cria agentes.
+
+Então, sempre quando a gente falar aqui em sequencial, paralelo loop, a gente tá falando que cada pedacinho, tudo que a gente fizer dentro do 8K é a gente, tá? Tudo é, gente, diferente do Leng Graphic, você pode montar o grafo. E eu também falei bastante do Leng Graph no vídeo passado e eu tenho uma vasta coleção de L graph aqui no no canal, né? Eh, se você não sabe o que eu tô falando, dá uma olhada. Lá na RP Pro também tem e agente L graph puro para você baixar. Então, vai lá e baixa. Eh,
+
+a diferença é essa. Então, lá no no no L graph, você pode de fato construir coisas que não necessariamente tem eh uma agência, né? não tem a gente, você pode construir coisas, sei lá, você pode construir um nó que simplesmente eh seja um download de um dado, por exemplo, de uma maneira bem fácil, sem ser uma ferramenta, você pode criar fluxos muito mais flexíveis e aqui ele só se importa mesmo com o agente. Essas são as diferenças principais, beleza? Então, beleza, agora que você já sabe as diferenças principais, vamos para os nossos agentes. Essa aqui é a cara desse
+
+nosso código aqui, tá? Do LG graph, tá? São três agentes, um supervisor retomando, né, um de refinamento e um de ideia, tá? E é exatamente isso que você tá vendo aqui no Ling graph. Toda vez que você vê esse simbolozinho aqui, significa que a gente tem um subgrafo, tá? Então eu deixei esse subgrafo
+
+aberto. Então vou abrir eles aqui. E se a gente expandir ele de fato, né, expandir ele todo, você vai ver essa estrutura aqui, tá? Se você já viu o L graph aqui outras vezes, cada quadradinho desse a gente pode criar manualmente. E o que a gente tá fazendo aqui, nesse caso, eu tô usando funções pré-definidas que eles fornecem, mas nada impede de eu criar isso aqui tudo manualmente. E o que eu tô fazendo é, eu
+
+tô usando é uma função e tô concatenando subgros. Então você tem uma liberdade total. Se eu quisesse mudar essa ordem aqui e criar tudo na mão e fizesse uma ordem diferente, eu poderia fazer. E o que tá acontecendo aqui é basicamente o seguinte. nosso agente supervisor, ele eh tem acesso a eh esse cara aqui, tá?
+
+Deixa eu deixa eu diminuir esse cara aqui para não ficar confuso para você. É, ele tem acesso a esse agente de refinamento, nesse agente de ideia. E ele também pode ir pro final. Toda vez que você vê uma setinha verde aqui no L graph, quer dizer que é opcional. Ele pode ir para cá, ir para cá ou ir para cá, tá? Mas esses nossos agentes aqui,
+
+eles só podem vir pro supervisor, que é exatamente isso, né? O supervisor vai passar, vai fazer o handoff que se chama, tá? Para ele, ele vai fazer o que tiver que fazer e vai voltar para cá. E o supervisor é que sempre decide para onde ele vai, tá? Se a gente der uma olhadinha aqui no nosso prompt, você vai ver o seguinte: você é um estrategista de negócios eh e especialista em criar eh em criar sistemas que automatizam processos eh e otimizam resultados.
+
+Agora a parte importante. Após receber a resposta do agente, eh, idea agent, sempre use o agent eh, refiner agent para refinar a ideia. Então, o que que a gente fez aqui? O que a gente tá mandando ele fazer é o seguinte, você recebe a requisição, você vai chamar esse cara aqui, ele vai voltar com a resposta, você vai vir nesse cara aqui para refinar e depois você dá a resposta final. É esse o comportamento esperado do nosso agente, tá? Então, eu tenho
+
+aqui um prompt, um pergunta como se fosse um usuário e a gente vai rodar, tá bom? Eh, pergunta simples. Como automatizar o processo de venda do meu serviço de áudio e vídeo? Gere ideia e as refine, já tem automatizado o processo de criação de lead e a entrega de serviço. Então, assim, a o pedido dele tá bem claro e ele tá falando que ele tem que fazer duas funções, tá?
+
+Então, a gente não espera que ele erre aqui. Esse é um teste bem básico pra gente ver se vai funcionar, tá? Então eu vou copiar esse cara aqui porque eu vou usar ele também lá no ADK. Enquanto ele roda aqui, deixar ele rodando. Eh, vamos lá no ADK. Essa aqui é a interface do
+
+ADK. Você vê que já tem uma grande diferença, né, entre a nossa interface lá do Leng Graph. O que eu notei aqui é que essa interface ainda é bem crua, tá? Em relação ao ao Lang ao L graph aqui, né? você vê que é é uma interface bem mais completa, bem mais rica e tal e é melhor para debugar geral, mas ela existe e isso aqui eh ajuda muito a desenvolver. Então assim, perde, mas ok,
+
+sabe? Então vamos executar aqui para ver o que que dá. E aí a gente vai ver como é que ela funciona aqui os resultados. E aí você vê que eu notei também que a primeira resposta dessa interface aqui é bem mais rápida do que do L graph, que é um ponto positivo também, mas não impacta tanto no dia a dia. E aí cara, o que que eu notei?
+
+Se você clicar ali no eventos, ele abre esse cara aqui e a gente vê ali que ele monta um grafo de certa forma, né? E aí o que acontece aqui quando a gente manda essa pergunta, olha que interessante, ele vai no agente planner, né? O planner fala que ele vai fazer handoff para um outro cara, ele vai transferir, tá? Ele fala para quem vai e aí ele fara aqui, né? Ele vai aqui e ele não volta. Essa é
+
+a última resposta dele. Por algum motivo, ele não volta. E eu não consegui identificar baseado na documentação e nas interações que eu fiz aqui. É, como eu faria para ele sempre voltar? Talvez eu teria que definir no prompt, né?
+
+Então eu teria que fazer promptes diferentes para as minhas soluções. E isso é legal, caras, porque é é assim que você consegue verificar as soluções. É de fato fazendo, testando e você tendo experiência principalmente em uma que é a genérica, né? Eh, aqui a gente tá usando o o GII do Google, né? Mas a gente poderia usar qualquer outra. E o L graph é muito
+
+bom, exatamente por conta disso, porque a gente não tá sob eh nenhum fornecedor de cloud de material eh de LLM. A gente tá usando algo que é de fora, estrangeiro. E ele é desde o nascimento feito para ser genérico, né? E nesses casos é muito bom e a gente consegue ter o controle total, a gente consegue ter ele como referência, mesmo que a gente queira usar outro, a gente consegue fazer a comparação. É isso. É
+
+interessante. E aí vamos ver aqui. Vamos fazer um teste. Volte para o agente. Não, planeir agente. Planner
+
+agent. Vamos ver o que que vai dar. Vamos ver se ele vai voltar. Aí, ele transferiu pro agente. Vamos ver.
+
+Interessante. Ó, ele tá rodando ali o monte de evento. Ah, então eu pedi para ele voltar e aí ele vai voltar pro planner. A gente ele me obedeceu quando eu falei explicitamente. É. E aí ele tá
+
+eh voltando lá pro e a ID a gente, vamos ver aqui. Seis e transfer. Aí ele foi pro refinement agent aqui. Interessante, né? É. E aí ele vai lá no no refinement,
+
+vai fazer o que tem que fazer e ele dá a resposta final. Então assim, eu tive que dar um empurrãozinho e é esse cara aqui que dá a resposta final. Eh, ele não tá voltando para cá para dar resposta final. Essa é uma diferença interessante. Talvez tenha algum parâmetro pra gente configurar aqui. Eh,
+
+e o código tá lá, você pode explorar e se divertir, porque no fundo a gente, o que a gente tá fazendo aqui é um laboratório, é um, a gente tá tentando entender como o framework funciona. Beleza? Vamos voltar lá pro pro Langmif, pro nosso pro nosso UI aqui do do Lraph e a gente vai ver como que funcionou aqui. Aqui o que que a gente teve? Ele entrou no supervisor e se a gente abrir aqui, a gente consegue ver tudo que aconteceu, tá? Todos os passos,
+
+o detalhe. tal. Aqui a gente consegue ver com bastante detalhe o que acontece, né? Ele foi pro ID, né? foi para esse cara aqui, eh, ele fez o que tinha que fazer, ó lá, transferido, parará, e, e ele vai começar, ele voltou pro supervisor, como a gente queria, ele foi pro refinemmer, né, pro pro outro agente, tudo automaticamente, e no final ele foi pro supervisor. Então assim,
+
+dentro dessa minha dessa minha brincadeira aqui, obviamente esse aqui se comportou bem melhor, mas pode ser que eu não conheça bem o framework a ponto de conseguir fazer ele funcionar e talvez tenha um jeito bem prático. E pensando nisso, eu tentei um outro jeito aqui que seria com o loop agent que eu mostrei lá em cima. Então deixa eu tirar esse cara daqui agora, né? E a gente vai rodar esse loop agent. E eu descobri que ele também se comporta de uma outra maneira. O que eu
+
+achei meio meio ruim, porque tá vendo esse parâmetro aqui, max interation? Se eu não colocar esse cara aqui, ele simplesmente fica num loop ali até ele querer sair. Então ele pode ficar muitas e muitas vezes, infinitas vezes rodando. E eu não posso literalmente fazer nada. Ele fica ali rodando e eu tenho que só ficar assistindo enquanto ele roda, roda, roda, roda. Deixa eu recopiar aqui
+
+o o prompt. A gente vai lá que eu vou rodar um outro exemplo aqui agora. Então vamos lá. Vim para cá, vou rodar o mesmo prompt ali e a gente vai ver o que acontece. Vamos lá. Então, vamos lá.
+
+Reiniciei o serviço aqui e o ADK de vez em quando faz isso. O serviço simplesmente para de funcionar. Eu não sei muito porquê. É. E aí eu mandei a querer tá? E aí é basicamente ele manda
+
+aqui para um cara e depois ele vai mandar para um outro agente. Eles vão ficar nesse bate-bola aqui, tá vendo? Eh, até ele chegar a minha condição. Eu botei lá o máximo de interação, que são três. Então, ele não funciona exatamente como o a gente aqui que a gente configurou. eh, o loop funciona de uma
+
+outra maneira. Então, de repente, eu deveria que ter posto eh um agente aqui em cima e eu não sei exatamente como fazer isso, eh, para pegar esse esse valor eh e ficar intermediando ser aí o juiz entre eh o refinamento e as ideias, tá? Então, assim, interessante, é uma opção legal, mas sem dúvida nenhuma, se eu tivesse que começar hoje, tivesse que fazer tudo de novo, tivesse que eh pesquisar e aprender, eh, por enquanto, campeão disparado entre todos os outros. Ah, tem sido Lraft, tá, Roland? Por que que você fal lá do Lraft? Você é pago
+
+por eles? Muito pelo contrário, eu gasto um dinheiro considerável lá na cloud deles para hospedar meus agentes hoje. É, a questão é que eu tô trazendo o que eu faço, caras para vocês aqui, né? Não tem fantasia, não tem nada, é, tem trabalho e eu tô te mostrando o trabalho aqui, tá? Então, eu espero que você tenha gostado. Se você quer baixar o
+
+código, ainda não conhece a Rock Pro, essa aqui é a Rock Pro. é o lugar onde eu tenho lá uma biblioteca de conhecimento. Eh, tem várias coisas lá, eh, não só isso aqui. Eh, tem código simplesmente lá de Lraph, tem outros artigos e tal. Então, é um lugar interessante para você conhecer se você ainda não conhece. Então, eh, se você
+
+pretende construir, quer construir, quer ficar perto de quer construir, eh, considere a comunidade também. Eh, as inscrição estão fechadas ainda. A gente teve a primeira turma, que foram os fundadores, eh, e a gente tá construindo uma coisa lá robusta e eu só vou abrir a comunidade novamente assim que eu tiver satisfeito com a qualidade do que tem lá. Beleza? Então, eh, fico por aqui. Se
+
+você gostou desse vídeo, carron faz a comparação com Crew Ai, com Agno, com todo dia tem framework novo, né? Nossa área anda muito rápido. É, deixa o comentário aí, né? Fala o que você achou. É, pega o código, cara. Faz a
+
+brincadeira. É, construa, suja a sua mão, tá? É só assim que você vai conseguir de fato eh tornar o teu sonho realidade. Beleza?

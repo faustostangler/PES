@@ -1,0 +1,17 @@
+---
+video_title: "Find C++ Bugs Faster with Visual Debugging"
+video_id: r5z5KQglEzU
+channel_name: "SystemDR - Scalable System Design "
+channel_id: UCi1BkzqiwN5wChnvt20uBWQ
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=r5z5KQglEzU
+video_date: 20260817
+video_description: |
+  Website Link: systemdrd.com
+  Learn powerful Java and C++ debugging techniques using visual debuggers, GDB, LLDB, IDE debugging tools, breakpoints, stack traces, memory inspection, and thread analysis. Discover how systems engineers trace runtime errors, segmentation faults, crashes, and complex bugs in production-level software.
+---
+Here's a line I want you to remember. The scariest [music] words in an incident channel are "Let me just attach a debugger real quick." Live attach gives you the only view that shows a bug [music] actually happening in real time, but it has real costs. On the JVM, most debugger operations need the runtime to reach a safe [music] point, a moment where every thread state is consistent enough to inspect, which means a single debugger operation can pause the entire JVM, not just the thread you care about. That pause is invisible in your debugger [music] UI, but very visible as a latency spike to every service calling in.
+
+On the native side, a ptrace [music] attached process runs measurably slower, even between explicit breakpoint [music] hits, because every signal round trips through the tracer. Post-mortem analysis sidesteps all [music] of that. A core dump is the operating system's own crash-time memory snapshot, configured with ulimit, typically triggered by a signal like SIGABRT. A Java [music] heap dump captures the entire object graph at a single point in time. Both can be pulled [music] off a production host with essentially zero risk and analyzed later offline at your own pace, using tools like GDB [music] against the core file, Eclipse MAT for Java heap dumps, or Windbg for Windows minidumps.
+
+The standard operating pattern at mature engineering organizations never live attach to a production [music] process during a customer impacting incident unless post-mortem tooling has already failed to explain what happened.

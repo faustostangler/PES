@@ -1,0 +1,334 @@
+---
+video_title: "Arquitetando um Encurtador de URL: O Maior Desafio dos Programadores em Entrevistas de System Design"
+video_id: m_anIoKW7Jg
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=m_anIoKW7Jg
+video_date: 2025-10-28T21:01:08+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  🔗 Link do Diagrama: https://miro.com/app/board/uXjVJ0kAdLs=/?share_link_id=21665465138
+  
+  Fala, pessoal! Renato Augusto aqui de novo 👋
+  E no vídeo de hoje, eu vou te mostrar como arquitetar um encurtador de URL completo do zero, um dos desafios mais cobrados em entrevistas de System Design e Arquitetura de Software — e que derruba muitos programadores despreparados.
+  
+  A gente vai entender como funciona por dentro um sistema de encurtamento de links, passando pela geração de IDs únicos, armazenamento, cache, escalabilidade e boas práticas de arquitetura.
+  Se você quer aprender a pensar como um arquiteto de software e dominar os fundamentos reais de System Design, esse vídeo é pra você.
+  
+  🚀 O que você vai aprender neste vídeo: (Arquitetando um Encurtador de URL: O Maior Desafio dos Programadores em Entrevistas de System Design)
+  ✅ Como funciona a arquitetura completa de um encurtador de URL
+  ✅ Estratégias de geração de IDs únicos com Hashids, Base62 e Redis
+  ✅ Modelagem de dados e persistência eficiente para sistemas de alta escala
+  ✅ Estratégias de cache e performance (Cache-Aside Pattern)
+  ✅ Como evitar colisões, gargalos e pontos únicos de falha
+  ✅ Técnicas de escalabilidade horizontal e particionamento de dados
+  ✅ Como raciocinar como um arquiteto de software durante entrevistas de System Design
+  
+  💡 Por que assistir?
+  🔹 Pra entender o que realmente é avaliado em entrevistas de System Design
+  🔹 Pra dominar os fundamentos práticos de Arquitetura de Software moderna
+  🔹 Pra aprender a projetar sistemas escaláveis e distribuídos do zero
+  🔹 Pra evoluir sua mentalidade de programador para arquiteto
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que querem dominar System Design
+  📚 Estudantes e desenvolvedores se preparando pra entrevistas técnicas
+  💼 Engenheiros e arquitetos que tomam decisões de arquitetura e escalabilidade
+  🚀 Qualquer profissional que queira entender como sistemas distribuídos funcionam na prática
+  
+  Assista também:
+  https://youtu.be/bhw4-Kq_RPs
+  https://youtu.be/9g7twJrXqoY
+  https://youtu.be/vRO0UfvsbDw
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design e carreira tech.
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 🙌
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo — eu sempre leio tudo e respondo sempre que posso.
+  
+  #systemdesign #arquiteturadesoftware #programação
+---
+Um dos desafios mais clássicos, emblemáticos e traiçoeiros que sempre aparecem nas entrevistas pra programadora é se você sabe arquitetar um encurtador de URL, onde dado uma longa, você cria uma curta e toda vez que solicitada a URL curta, você redireciona o usuário paraa URL original. E isso, a princípio, parece ser algo extremamente simples e fácil de se fazer, só que é exatamente aqui, nessa simplicidade que mora o perigo. Isso porque esse tipo de sistema usa os mesmos princípios arquiteturais de grandes aplicações com milhões de usuários, como YouTube, Instagram, Uber e Netflix. E se você se deixa levar pela falsa sensação de simplicidade desses requisitos, você vai acabar fazendo escolhas arquiteturais erradas e se tornando mais um no meio de uma enchurrada de programadores que reprovaram esse tipo de desafio. E no vídeo de hoje eu vou te ensinar que tentar do zero esse encurtador de URL, passando por todos os conceitos, fundamentos e ferramentas que você precisa aprender. E com toda certeza tu
+
+vai sair daqui muito mais preparado para brilhar na tua próxima entrevista. Fala pessoal, Renato Augusto aqui de novo e mais uma vez para falar sobre system design, arquitetura de software e sistemas distribuídos. E o desafio da vez hoje vai ser te ensinar que tetar do zero um encurtador de URL e te ensinar também a solucionar esse tipo de desafio que pode acabar te pegando de surpresa no meio de um processo seletivo. Então, pra gente não perder mais tempo, vamos direto pra tela, porque tem muita coisa pra gente ver e com toda certeza tu vai sair daqui hoje muito mais afiado quando o assunto for arquitetura de software e sistemas distribuídos. Bora lá. Bom,
+
+então vamos lá. Vamos direto ao ponto aqui. Vamos direto ao que interessa, porque como você muito bem já sabe, tem muita coisa pra gente ver. E a primeira coisa que eu vou começar fazendo aqui, tá? Antes mesmo da gente entrar na parte da arquitetura de fato aqui, na parte do system do encurtador de URL, a primeira coisa que eu vou fazer é abrir aqui o Bitly, tá? Ou bit. Como a maioria
+
+costuma chamar, que basicamente é um dos maiores encurtadores de URL do mundo, tá? Existem vários outros, existe o Tin URL, existe vários outros por aí, mas a ideia aqui é te mostrar o funcionamento. Todos eles vão funcionar praticamente da mesma forma. E a ideia é que você entenda o conceito por trás de um encurtador de URL, tá? Então a gente vai fazer o seguinte, eu vou passar aqui um google.com, logicamente simulando que eu
+
+tenho uma URL muito longa aí eu preciso encurtar essa URL e vou mandar ele criar uma URL curta para mim. Beleza? Ele foi lá, ele criou essa URL curta. E aí, se eu clicar nessa URL que ele criou para mim, o que que vai acontecer? Eu vou ser redirecionado, logicamente pra URL original, ou seja, pro google.com, que
+
+foi a URL que eu encurtei. Aí, qual que é a lógica por trás desse encurtador de URL, tá? Você deve estar se perguntando assim: "Ah, mas por que que eu iria querer encurtar uma OURL?" Bom, eu não vou entrar em todas as funcionalidades aqui de um encurtador de URL, nem todas as motivações que você precisaria ter para poder utilizar um. Mas basicamente isso aqui serve para campanha de marketing. Então, por exemplo, se você
+
+tem um produto que você vende em alguma plataforma como Mercado Livre, Shopee, Amazon e por aí vai, você consegue encurtar a URL desses produtos ali e compartilhar com os teus clientes, caso seja uma venda mais direta, uma venda ali pelo Facebook, pelo Instagram, você consegue fazer esse compartilhamento de uma ORL muito mais amigável, que é muito melhor do que enviar aquele trambolho de URL, aquela coisa horrível, gigantesca. Você manda uma ORL muito mais amigável. Além disso, essas plataformas também vão te entregar métricas da tua URL. Então ela vai dizer da onde que vieram os acessos, quantos acessos você tá tendo ali por dia, por hora, por minuto. Você consegue ter toda uma visualização e trabalhar em cima dessa URL específica.
+
+Então isso aqui é uma das funcionalidades, lógico que existem várias outras, mas a ideia aqui é a gente arquitetar esse encurtador de URL, que a princípio parece algo muito simples de se fazer, mas eu posso te garantir que não é. E você vai ver a quantidade de desafios que a gente vai ter ao longo do caminho. Beleza? Vamos voltar aqui pro nosso Miro, tá? o diagrama aqui pra gente começar a entender aqui o que que a gente vai precisar fazer. E a primeira coisa, tá,
+
+isso aqui vale para qualquer entrevista que você for participar. Tudo que eu te ensinar aqui é para te preparar para se tornar um arquiteto de software. Eu quero que você entenda a ideia por trás de uma entrevista, tudo que você precisa entender, quais as etapas que você precisa fazer, independente se é o encurtador de URL ou não, tá? Isso aqui vai te preparar para encarar qualquer entrevista que você encontrar pelo meio do caminho, beleza? Então eu dividi em etapas aqui para você entender, para você conseguir elaborar um raciocínio sobre o problema e conseguir resolver ele. Então a primeira coisa que você faz
+
+quando se depara com uma entrevista, com um desafio ou com um projeto do mundo real, a primeira coisa antes de qualquer outra coisa é entender o problema e estabelecer os requisitos. Cara, sem isso aqui esquece arquitetura de software. Você não consegue arquitetar nada. Você não consegue projetar solução nenhuma se você não tiver requisitos. Por qu? Eu deixei até anotado aqui qual
+
+que é a ideia. Toda arquitetura é feita para atender requisitos muito bem definidos. Sem requisito você não consegue arquitetar nada, porque qualquer coisa que você tentar arquitetar, se você não tiver um requisito bem definido, vai ser baseado no chute. E a gente não trabalha com chute. A gente trabalha com matemática, com exatidão, com aproximações, mas com chute a gente não trabalha. Então guarda
+
+isso pra tua vida. Toda vez que você for solucionar um problema, você primeiro tem que entender o problema. você tem que fazer cálculos, você tem que estabelecer as estimativas e você tem que entender muito bem os requisitos, beleza? Então, como requisito, o que que a gente tem? A gente tem duas categorias. A gente tem os requisitos
+
+funcionais e os requisitos não funcionais. Ou seja, requisito funcional é o que a aplicação tem que fazer. Requisito não funcional é como ela tem que fazer. Basicamente isso, a grosso modo, tá? Então, como requisito funcional, a gente tem o encurtamento da URL, ou seja, a minha aplicação tem que ser capaz de encurtar uma URL. E o
+
+segundo requisito funcional é o redirecionamento da URL. Ou seja, a minha aplicação tem que ser capaz de quando alguém clicar naquela URL encurtada, ela vai receber a requisição e vai redirecionar o usuário para URL original. Beleza? A grosso modo, é isso, muito simples, muito fácil de entender. Esses são os requisitos funcionais. E
+
+falando ainda sobre eles, o que que a gente vai ter na nossa aplicação? Eu criei aqui um exemplinho aqui bem básico para você conseguir entender qual que é a lógica. E aí a nossa aplicação logicamente teria apenas dois end points. A gente tem o endp de encurtamento da URL e o endpirecionamento da URL. No endp de encurtamento, a gente vai receber uma requisição do tipo post no nosso API/V1/shorten.
+
+Aqui esse short seria mais ou menos o ato de encurtar alguma coisa. E a gente vai receber no corpo da requisição um parâmetro aqui chamado URL. E a gente vai passar ou o usuário vai passar uma URL longa aqui. Lógico que aqui eu coloquei o exemplo.com aqui para exemplificar, tá? E como resposta dessa
+
+requisição, a gente vai retornar pro usuário status code 2011 created e no corpo da resposta ali, a gente vai devolver o short URL, ou seja, URL encurtada com o nosso domínio aqui, assumindo que a gente é o beitle, tá? E aí eu vou passar aqui esse short code e basicamente juntando isso aqui e isso aqui se torna a URL encurtada. Beleza? Mistério nenhum, até aqui muito tranquilo. E qual que é a lógica do end point de redirecionamento? Basicamente é
+
+o seguinte, todas as vezes que alguém clicar nessa URL que foi gerada, o nosso servidor vai receber uma requisição, até porque você tá vendo aqui que tá o domínio da nossa aplicação. E essa requisição é só a gente vir na URL aqui, a gente vai capturar esse parâmetro que foi passado aqui, que é o short code, tá? É ele quem vai referenciar uma URL longa no banco de dados, tá? E aí a gente vai no banco de dados, busca qual é a URL longa vinculada a esse short code aqui e retorna uma resposta para quem chamou, ou seja, lá pro navegador dizendo o seguinte: o status code vai ser 301 ou 302, redirecionamento, e a gente vai devolver um header location, mandando o navegador redirecionar o usuário para URL original. Ou seja, quando alguém clica na nossa URL, a gente vai receber a requisição, vai no banco de dados buscar o URL original e vai devolver uma resposta pro navegador dizendo o seguinte: "Olha, redireciona o usuário para esse link aqui, para essa URL aqui, ou seja, para URL original." E
+
+aqui vai entrar já os primeiros desafios que a gente vai ter ao longo da nossa jornada aqui, que é o quê? O status code aqui, repara, 301 ou 302, eles têm funções completamente diferentes e eles impactam diretamente na arquitetura do nosso sistema. Eu vou falar sobre isso aqui no final do vídeo, tá? Você vai entender no final porque eu tô falando isso aqui, mas até o status code de resposta dos seus ends vai impactar na arquitetura final do projeto. Então são coisas que você precisa ter em mente, tá? Então a gente vai voltar aqui daqui
+
+a pouco, beleza? Vamos voltar aqui. A gente já entendeu os nossos requisitos funcionais, ou seja, encurtar e redirecionar um URL. Agora, quais são os requisitos não funcionais da nossa aplicação? Ou seja, como que ela tem que se comportar no dia a dia? Vamos lá.
+
+Primeiro requisito, o sistema deve suportar 100 milhões de URL geradas por dia. Ou seja, meu sistema tem que ser capaz de aguentar 100 milhões de requisições de gravação por dia. Isso aqui já mostra que é um sistema de alta demanda, de alta volumetria de requisições. Beleza? Depois a gente tem o segundo requisito que diz o seguinte: O tamanho da URL encurtada deve ser o mais curto possível. Ou seja, a gente
+
+tem aqui o nosso short code, que é esse carinha que a gente gera, e a gente tem um requisito ali dizendo que ele tem que ser o mais curto possível. A princípio, isso aqui parece muito genérico, mas eu vou te mostrar que não é. E a gente vai ter que trabalhar cálculos em cima disso aqui para chegar nesse consenso ali, para entender qual que vai ser o menor número possível. Depois a gente tem aqui, ó, somente números de 0 a 9 e caracteres de a Z minúsculo e a Z maiúsculo são permitidos na URL. Mais uma vez, nosso short code só pode trabalhar com essa combinação de caracteres aqui. Então, mais um ponto
+
+aqui pra gente se atentar. Para cada uma operação de gravação no banco de dados, haverão 10 operações de leitura. Ou seja, se eu escrevo uma vez no banco de dados, simultaneamente estão acontecendo 10 leituras. E isso aqui é a média da maioria das aplicações. Não são todas, mas a maioria das aplicações na vida real funciona assim. Quer um exemplo?
+
+Fica fácil para você entender se você imaginar que você tá lá no Mercado Livre navegando, olhando os produtos e tudo mais. E enquanto você tá navegando, a aplicação tem que ir num CDN, ela vai num cash, ela vai no banco de dados, ela fica ali buscando dados o tempo todo para te servir. Ou seja, isso são operações de leitura. Agora, quando você efetua uma compra, quando você salva algo nos favoritos, quando você de fato efetua alguma operação, aí sim você está realizando uma operação de escrita. Ou seja, na maioria das aplicações, a volumetria de leitura é muito maior do que a de escrita. E isso também impacta
+
+na nossa aplicação. E é um ponto que você precisa ter em mente, cara. Tem que ter isso aqui em mente. Tem que entender os requisitos muito bem, porque vai ser em cima disso aqui que a gente vai trabalhar toda a matemática ali para chegar num diagrama, para chegar num desenho ali, num sistema design muito mais coerente com isso aqui. Beleza?
+
+Depois, qual que é o próximo requisito? O comprimento médio das URLs armazenadas é de 100 bytes. Então isso aqui, na verdade, não é um requisito, isso aqui é um aviso. As nossas URLs, a gente tem que considerar que elas armazenadas ali no banco de dados, elas vão ocupar o espaço de 100 bytes. Beleza? Também vai
+
+envolver cálculo. Depois a gente tem aqui o penúltimo requisito, que é URLs devem ser armazenadas pelo período de 10 anos. E depois a gente vai ter aqui o sétimo requisito que diz que o sistema deve operar em modo de alta disponibilidade 24x7. Então vamos lá. Baseado nesses requisitos não funcionais aqui, é que a gente vai montar toda a nossa estrutura e toda a nossa arquitetura e todas as escolhas que a gente fizer daqui pra frente, eu vou te mostrar todas elas, inclusive os desafios vão ser baseados nesses requisitos aqui. Sem isso aqui,
+
+mais uma vez, cara, esquece arquitetura, não vai dar certo, você vai se complicar. Então, precisa ter requisitos. Ah, Renato, eu tô no meio de uma entrevista, o que que eu faço? Faça pergunta. Você pergunta: "Qual que é o tráfego diário, tá? Qual que é a
+
+volumetria de tráfego diário? Como que funcionam as operações de escrita e leitura? Qual que é a proporção entre elas? É 10 para um. Como por exemplo, aqui a gente tem 10 para um. Você tem
+
+que fazer pergunta, cara. Você tem que fazer pergunta. Você tem que aprender a fazer pergunta. E com as perguntas certas, aí sim você vai ter os requisitos muito bem estabelecidos e com eles na mão, aí fica fácil a gente arquitetar alguma coisa. Beleza? Então
+
+vamos lá. Qual que é a próxima etapa aqui? Tá? O que que a gente precisa fazer? A gente precisa logicamente calcular em cima dos nossos requisitos.
+
+A gente precisa fazer o quê? Fazer o cálculo das estimativas. Porque sem esses cálculos aqui, esquece, não tem como fazer nada. Então, a primeira coisa que a gente precisa fazer é pegar os nossos requisitos não funcionais, estabelecer os números ali que a gente vai ter que atender e em cima desses números é que vai ser montada a nossa arquitetura. Então, que que eu fiz aqui?
+
+Eu já deixei pronto o cálculo aqui pra gente não consumir tempo aqui nesse vídeo. E a ideia aqui é você entender o seguinte: se as operações de gravação, tá, as operações de escrita no banco de dados, se o meu sistema tem que gerar, ele vai gerar, no caso, 100 milhões de URLs por dia, eu tenho que estar preparado para lidar com isso. E para lidar com isso, geralmente a gente quebra esse número no menor número possível, que geralmente a gente trabalha com segundos, tá? Então o que que eu faço? Eu pego o número de 100 milhões, divido por 24 horas, divido por 60 minutos, que é o equivalente a 1 hora, e depois divido por 60 segundos. E
+
+a gente vai chegar no número de 1160 requisições por segundo, tá? Operações de leitura. Agora, se a nossa proporção é de 10 para um, ou seja, a cada um escrito eu tenho 10 leituras, então a gente pega 1160, multiplica por 10, a gente chega no número de 11.600 e 600 requisições por segundo. Isso é uma volumetria considerável e o nosso banco de dados vai ter que lidar com isso. Só
+
+que não é só isso. Por quê? Se o tempo de armazenamento das URLs são de 10 anos, o que que eu tenho que fazer? Eu tenho que saber exatamente quantas URLs vão estar armazenadas no nosso banco de dados no período de 10 anos. Ou seja, quanto que o meu banco de dados tem que ser capaz de suportar, tá? Quantas
+
+linhas vão ter ali em média no período de 10 anos ali pra gente poder entender esse número. Então é simples, a gente pega os 100 milhões de URLs que são geradas por dia, multiplica por 365 dias, que é o equivalente a 1 ano, e depois multiplica por 10. E o número que a gente vai encontrar é 365 bilhões de registros. Ou seja, o meu banco de dados, além de ter que lidar com 1160 requisições de escrita e 11.600 1600 requisições de leitura, ele ainda vai ter que ser capaz de suportar, ou seja, ele vai ter que ser capaz de navegar essas operações de escrita e leitura num banco com 365 bilhões de registros, que vai ser o equivalente aí a 10 anos de armazenamento. Então, o meu banco não
+
+pode se perder no meio de muitos registros e ele tem que ser capaz de suportar alta volumetria. Beleza? Não para por aqui o cálculo. E o último que a gente precisa fazer é o seguinte: capacidade de armazenamento. Se as minhas URLs no banco, tá, como requisito aqui foi passado, se as minhas URLs são equivalentes a 100 bytes e eu sei que eu preciso armazenar 365 bilhões de registros, então eu multiplico 100 bytes por 365 bilhões e a gente vai chegar no número de 36.5 TB. Então aqui a gente
+
+tem o entendimento de todas as estimativas e em cima dessas estimativas a gente precisa escolher o banco de dados da nossa aplicação. E para escolher o banco de dados, eu já gravei um vídeo, tá? O último vídeo foi sobre a escolha do banco de dados. Então se você não assistiu, vou deixar um card aqui em cima e o link na descrição, dá um confere lá depois. Você não precisa parar essa aula aqui para ir lá assistir a outra aula lá. Você pode assistir esse
+
+vídeo aqui, depois você assiste o outro, mas no outro vídeo eu te ensino tudo que você precisa para escolher corretamente o banco de dados da tua aplicação, beleza? Então, dá uma olhada lá depois aqui. No nosso caso, eu vou escolher o Cassandra. Por quê? Porque o Cassandra, além dele conseguir suportar essa volumetria aqui com muita tranquilidade, esses bilhões de registros, essa quantidade de requisições por segundo, um dos requisitos não funcionais era o quê? O sistema deve operar em modo de
+
+alta disponibilidade. E aí o que que acontece? O Cassandra nasceu para isso. O Cassandra foi feito para baixa latência e alta disponibilidade. E eu ainda consigo controlar os níveis de disponibilidade e consistência dos dados. Falei sobre isso no outro vídeo,
+
+dá um confere lá depois. Então, a gente vai de Cassandra, inclusive é um banco extremamente parecido com bancos relacionais ali, com SQL. Ele é um banco colunar, tá? Ele é um banco orientado a colunas, mas é parecido, tá? Vamos se dizer que é um pouquinho parecido.
+
+Lógico que a essência dele é totalmente diferente, mas a questão de uso aqui pro programador ali, pro usuário que vai utilizar esse banco, é muito parecido com SQL. Tanto que a gente tem aqui as instruções aqui CQL, tá? Que é Cassandra Curage, não é SQL, é CQL. E a gente tem aqui um create table. a gente vai ter aqui o short code, tá? Que vai ser a
+
+chave primária. A gente vai ter uma long URL aqui, que vai ser a URL longa e a gente tem o created aqui, que vai ser a data que essa URL foi armazenada pra gente fazer aquele controle dos 10 anos ali. Beleza? A gente tem aqui o Partition Key, a gente tem isso aqui, são detalhes do próprio Cassandra, tá? Se quiser eu gravo um vídeo sobre Cassandra, deixa nos comentários aí abaixo, que depois eu posso gravar. Mas
+
+basicamente o que você precisa entender é que no banco lá armazenadinho lá na tabela vai ficar algo mais ou menos parecido com isso aqui, tá? Short Code, URL longa e o created edic. Ah, Renato, e por que que não tem o ID aí? Por que que não tem o ID? Porque são bancos diferentes, tá? E esse short code aqui,
+
+logicamente, ele tem que ser a chave primária, tá? Ele vai ter que ser a chave primária, porque só podemos ter um short code para cada URL, beleza? Então, dito isso, que que a gente tem mais aqui? A gente tem um diagrama muito simples, tá? Que basicamente a gente pega uma ORL longa, a gente vai chamar uma função de hash e a gente vai criar um hash baseado nessa URL longa, tá? E
+
+esse hashzinho é esse short code aqui, ou seja, esse código curto que a gente vai gerar, que é o único, tá? E aí a gente vai ter a nosso URL completa aqui. E basicamente é isso, mistério nenhum. Agora o que que a gente precisa? A gente precisa logicamente voltar lá nos requisitos não funcionais da nossa aplicação e definir o tamanho desse H aqui. Por qu? Vamos lá. Lembra que eu te
+
+falei que o tamanho da URL encurtada deve ser o mais curto possível? Então, a gente precisa calcular o quanto é esse mais curto possível, tá? Isso aqui vai envolver cálculo. E quais cálculos são esses, tá? Vamos lá. Aqui a gente tem a
+
+forma de calcular o tamanho do resto, tá? Então, baseado nos nossos requisitos não funcionais, foi dito que a gente só poderia utilizar dígitos numéricos de 0 a 9, letras minúsculas de a a Z e letras maiúsculas de A a Z também. E aí isso dá o equivalente a 62 caracteres, tá? Se a gente somar todas as possibilidades aqui, isso vai gerar pra gente essa base aqui de possibilidades, que geralmente é o que a gente chama de base 62, tá? Você muito provavelmente já deve ter ouvido falar de base 64, tá? Isso aí tem
+
+qualquer linguagem de programação. E o que que é a base 64? A base 64 é apenas a base 62 com dois sinais a mais no final, tá? Você vai poder utilizar sinais. Só que como o RL não pode ter sinal, a gente utiliza a base 62. Então,
+
+basicamente, é isso aqui. Isso aqui é conhecimento bem básico mesmo, bem de base ali dos fundamentos de computação. Isso aqui é bem tranquilo de você entender. Agora, qual que é a ideia, tá? A gente precisa calcular o tamanho. A
+
+gente já sabe qual a base a gente vai utilizar e quantas possibilidades a gente tem, ou seja, 62 possibilidades. Agora, pensa comigo. Se a gente tiver o tamanho de apenas um caracter, quantas possibilidades eu tenho? Eu tenho 62 possibilidades. Por quê? Porque se aqui
+
+o meu hash aqui, o meu short code só tiver um caracter, ele pode ser o A maiúsculo, ele pode ser o A minúsculo, ele pode ser o um, o se, o oito, tanto faz. Então eu tenho 62 possibilidades. Se eu tiver dois caracteres aqui, quantas possibilidades eu tenho? Eu tenho 384 possibilidades, porque são 62 no primeiro e 62 no segundo. E aí você faz ali todas as combinações possíveis, você chega no número de 3844, beleza? Se a gente levar a três, vai dar
+
+238.000, a 4 14 milhões e assim sucessivamente. Só que qual é o número aqui que a gente precisa atender? O número que a gente precisa atender são 365 bilhões de registros. Porque tem que ter 365 bilhões ao longo de 10 anos. a gente
+
+tem que ser capaz de atender isso. E pra gente ser capaz de atender isso, a quantidade de valores ali, de hash que eu tenho que poder gerar, tem que ser igual a 365 bilhões ou maior do que isso. Se a gente elevar a seis, a gente vai chegar ao número de 56 bilhões, o que não vai nos atender. Então, a gente eleva a sete e a gente chega no número de 3.5 trilhões de combinações. E esse
+
+sim é o número que nos atende baseado nos requisitos da nossa aplicação. Mais uma vez, baseado nos requisitos de 100 milhões de URLs por dia, que vai dar o equivalente a 365 bilhões ao longo de 10 anos, o número que vai me atender naquele short code tem que ser sete, porque tem que ser maior que 365 bilhões. Entendeu agora que tudo se resume a cálculo, a matemática, a estimativas e aproximações. Então é em cima disso aqui que você monta a arquitetura do teu projeto e soluciona talvez ali o problema na entrevista, na vida real, tanto faz. Mas é seguindo essas etapas que você vai conseguir chegar em algum resultado aceitável, beleza? Então, até esse momento aqui,
+
+nós já temos o quê? Nós já temos os end point da aplicação, nós já temos o banco de dados muito bem definido e a gente tem aqui também o cálculo do nosso R, tá? O tamanho do nosso short code aqui vai ser de sete caracteres. Beleza? Que que nos falta agora, tá? O que que a
+
+gente tem que fazer agora? A gente tem que, logicamente, definir qual é a forma que a gente vai utilizar para poder gerar esse nosso resto, tá? qual que é o algoritmo, qual que é a tecnologia que a gente vai utilizar para poder gerar esse RH. E é agora que começa os desafios reais de um encurtador de URL, porque tudo daqui pra frente vai impactar na arquitetura. Então vamos lá. A primeira
+
+solução que muita gente costuma utilizar ou pensar em utilizar é usar aquelas funções de hash das linguagens de programação ali, os algoritmos que já vem prontos ali você poder utilizar para gerar esse tipo de hash como CRC32, MD5, SH1. Só que aqui nós vamos ter uma série de desafios. Vamos lá. Primeiro desafio que a gente vai encontrar com esse tipo de abordagem aqui é o seguinte. Esse tipo de algoritmo eles trabalham com a base 16, ou seja, de 0 a 9 e de A a F minúsculo. E isso já se torna um
+
+problema pra gente. Por qu? Lembra que eu te falei que o nosso short code tem que ser o menor possível? Ele tem que ser o mais curto possível. Se eu trabalhar com a base 16, aí nós vamos ter uma dor de cabeça. Por quê? Porque
+
+eu vou precisar elevar 16 a um número muito maior do que sete para poder chegar em um número de caracteres ali, um tamanho de short code que atenda 365 bilhões de registros, justamente porque vão ser apenas 16 possibilidades por caracter. Então o nosso short code vai ficar muito maior. Outro ponto é isso aqui quebra o nosso requisito inicial que era trabalhar de 0 a 9, de a a Z minúsculo e de A a Z maiúsculo, ou seja, base 62. Isso aqui vai quebrar. E tem um detalhe ainda pior nesse tipo de abordagem aqui, que é o seguinte. Aqui
+
+esse tipo de algoritmo, eles podem gerar o mesmo hash para URLs ou para valores diferentes. E isso é um problema no nosso sistema, porque cada short code tem que representar apenas uma única URL longa. Se um mesmo short code representa várias URLs, a gente tem um problema sério no nosso sistema. Isso vai quebrar o nosso sistema, porque o shortcode é o identificador da URL no banco. Então nós não podemos ter essa possibilidade aqui.
+
+Além do mais, o que que acontece? A gente ainda teria que truncar esse valor, porque isso aqui não é uma URL curta, isso aqui não é um short code, isso aqui é um URL longo, isso aqui acabaria com a viabilidade do nosso sistema, tá? compartilhar isso aqui como se fosse um ORL curto é até um absurdo. Então você precisaria cortar esse valor em algum ponto. E quando a gente corta esse valor, a gente aumenta ainda mais a chance de colisão. Por quê? Porque
+
+diferentes hass podem ter o mesmo começo e isso aí geraria essa duplicidade. Ah, Renato, mas aí é só ir no banco de dados verificar se já existe. Já vamos falar sobre isso aí. Tem um diagrama logo aqui embaixo aqui que eu vou te mostrar. Entendido isso aqui, tem mais um detalhe que você pode acabar ficando na mente aí, que é o seguinte: ah, Renato, eu posso simplesmente criar uma funçãozinha lá no meu código, jogar a base 62 lá dentro e pedir para ficar gerando hashs aleatórios ali com sete caracteres para mim. Isso vai resolver meu problema?
+
+Pois é, isso não vai resolver seu problema. Por quê? Porque a chance de gerar hashs iguais, has rash que já foram gerados anteriormente, vai aumentando exponencialmente conforme o tempo for passando, porque você está gerando esse hash ali, você tá gerando o short code baseado em aleatoriedade e não num valor fixo, tá? Você não tá passando uma URL lá para dentro, não vai transformar aquilo ali num r, você tá gerando hashs aleatórios. E essa aleatoriedade, por mais que você acredite assim: "Ah, eu tenho 3.5
+
+trilhões de possibilidades, pô, não vai dar conflito, vai ser muito raro, pior que não. Vou te mostrar agora porque isso não resolve." Vamos lá. Se o nosso sistema tiver que pegar uma URL longa, chamar uma função de hash, gerar um short code, onde exista a possibilidade de colisão de hash, a gente é obrigado a consultar o banco de dados para saber se esse short code já existe no banco de dados. Aí, caso ele não exista, a gente salva no banco. Caso ele exista, a gente
+
+tem que chamar a função de hash novamente, gerar um novo short code e ir lá no banco de dados, consultar de novo para ver se esse novo short code já existe no banco também. Qual que é o problema disso aqui? O primeiro problema disso aqui é que conforme o tempo for passando, a chance de colisão vai aumentando exponencialmente. Ou seja, a cada dia que passa na nossa aplicação aparecem mais 100 milhões de registros. E aí daqui a pouco o que que vai acontecer? vai acontecer que você vai
+
+gerar um hash, tá? Você vai gerar um short code aqui, vai consultar no banco, ele já vai existir. Aí você vai gerar outro, vai consultar no banco, ele já vai existir. Aí você vai gerar outro, aí você vai gerar outro. Daqui a pouco você vai ficar num loop infinito aqui dentro.
+
+E por mais que você continue acreditando que, ah, eu posso, então, pela aleatoriedade, eu vou gerar uma função no meu código, vou embaralhar a base 62 e vou ficar mandando ela gerar short code de sete caracteres, porque eu tenho 3.5 trilhões de possibilidades, muito raramente vai colidir, só que não, isso vai colidir, isso vai gerar colisão até muito cedo. No primeiro dia, na verdade, nos primeiros minutos já vai ter colisão. E quem prova isso é o paradoxo do aniversário, tá? Depois você pode dar uma pesquisada no Google, tá? Eu não vou
+
+entrar a fundo aqui do que que é o paradoxo do aniversário, mas o que que acontece? Esse paradoxo vai provar que com apenas 2.21 milhões de URL geradas já vai começar a ter colisões no nosso sistema. Ou seja, se a gente gera 100 milhões de URLs por dia e a gente tem com apenas 2.21 milhões de URL geradas, a gente já começa a ter chance de colisão. O que que isso significa?
+
+Significa que nos primeiros minutos de funcionamento do sistema a gente já vai começar a ter colisão. Qual que é o segundo problema dessa abordagem onde a gente possa ter a questão da colisão de resto? O segundo problema é o seguinte: isso afeta diretamente os nossos requisitos lá da arquitetura. Por quê? Lembra que eu te falei que operações de escritas são 1160 por segundo e operações de leitura são 11.600 por
+
+segundo. Beleza? A partir do momento que o meu cenário permite colisão de HH, eu estou alterando esse valor para um número que eu não consigo nem mensurar. Por quê? Porque as colisões vão aumentando exponencialmente ao longo do tempo. Se eu tenho 1160 escritas no
+
+banco de dados e 11.600 leituras no período de um único segundo, imagina que 10% das operações de escrita colidiram. Aí olha o que que vai acontecer. o número de transações vai aumentar de leitura, ou seja, eu vou ter que ficar indo no banco consultar ele e aí se já existir, aí eu vou ter que consultar de novo e de novo e de novo. Cara, isso aqui vai trazer um problema que é extremamente difícil de resolver e vai te reprovar na entrevista. Você não pode
+
+consultar banco de dados para buscar dado num sistema desse. Grava isso em mente. Foi por isso que eu te mostrei o que é a colisão de R, para você não cair na besteira de quê? de inventar uma moda dessa daqui, uma solução dessa, seja baseada em aleatoriedade, ou seja, transformando de fato a URL ali num hash que represente ela, mas que haja a colisão do R, cara, você vai ter problema. Então, o que que nós precisamos aqui na nossa arquitetura?
+
+Nós precisamos de uma solução que gere um hash único para cada URL e que não haja a possibilidade de colisão. E aí, não existindo a possibilidade de colisão, eu não tenho a necessidade de ir no banco de dados, porque isso é extremamente custoso. Isso vai trazer problemas pra nossa arquitetura por conta das colisões, entendeu? Agora, então beleza, vamos lá. Qual que é a solução que a gente vai utilizar? A
+
+gente vai utilizar uma solução que é conhecida como conversão de base, tá? Vamos lá. Parece difícil, mas não é. Vem na minha que você vai entender isso aqui. Isso aqui é bem simples de você entender que é a solução que a gente vai utilizar. Que que é conversão de base?
+
+Para você entender a conversão de base, você tem que entender que existem diversas maneiras da gente representar um mesmo número. Por exemplo, se eu quiser representar o número 1 milhão na base 10, por exemplo, utilizar, fazer a conversão dele pra base 10, eu vou colocar 10 elevado 6, que é igual a 1 milhão. Ou seja, 10 elevado 6 é uma representação do número 1 milhão, só que em um outro formato. A mesma coisa acontece com a base 62, ou seja, base 62 vem daqueles 62 caracteres que a gente estava falando lá, que é a base de possibilidades pra gente poder gerar o nosso short code. Então, que que acontece quando a gente fala que a gente quer converter um número pra base 62? A
+
+gente vai pegar aqui a nossa base 62 e vai entender isso aqui o seguinte, ó. Desconsidera a coluna do meio, tá? Esse binário aqui, desconsidera isso aqui, porque isso aqui é apenas a representação do número à esquerda, tá? Do número decimal aqui. Pra gente só vai interessar aqui a coluna da esquerda e a coluna da direita. Beleza? Que que
+
+acontece? A base 62 é o seguinte: o número zero, ele pode ser representado por ele mesmo, pelo zero. O 1 é igual a 1, o 2 é igual a 2, o 9 ig, só que o 10 é a maiúsculo, o 11 é igual a b maiúsculo, o 12 é c maiúsculo e assim sucessivamente até fechar aqueles 62 caracteres. Beleza? Como que eu faço para representar qualquer número que eu quiser dentro dessa base 62? É muito
+
+simples. Você vai vir aqui, continha de dividir, tá? Se você pulou o muro da escola para soltar pipa, aí vai ficar difícil te ajudar. Isso aqui é conta de dividir, cara. Não tem equação aqui, não tem nada. Isso é conta de dividir básica
+
+do primário lá, pelo amor de Deus. Vamos lá. Se eu pegar aqui o número, por exemplo, 11.157, eu quero representar esse número 11.157 na base 62. O que que
+
+eu tenho que fazer? Divido ele por 62. Se eu dividir 11.157 por 62, vai dar 179 e vai sobrar, ou seja, o resto dessa divisão é 59. Depois eu divido 179 por 62, vai dar 2 e aí vai sobrar 55.
+
+Beleza? Depois eu pego o dois. Dá para dividir dois pro 62? Não dá. Então arrasto ele para cá pro resto e fecho a conta. Boto um zero aqui e encerro a
+
+conta da divisão. Beleza? Show de bola. Acabou. É só isso. Não tem mistério
+
+aqui. Agora a gente pega os restos dessa divisão que deu 2, 55 e 59. E é em cima desse resto que você vai representar o número 11.157 na base 62. Vamos lá.
+
+Quanto que é o 2 na base 62? O 2 na base 62 é ig a 2. O 55 tá aqui, ó, ele é igual a tusculo. E o 59 é igual a x minúsculo. Então 11.157
+
+na base 62 = 2tx. E a nosso URL ficaria neste formato aqui. Fim de papo. Acabou. Ah, Renato, mas pera aí, você tá convertendo um número, você não tá convertendo a URL longa. Beleza, a gente
+
+já vai falar sobre isso. Para essa solução aqui, vamos precisar de um gerador de ID exclusivo, tá? E é por isso que a gente vai evitar a colisão de R. Já vamos falar um pouquinho mais sobre isso, mas isso impacta também na nossa arquitetura. O que eu quero que você entenda por hora aqui é como que funciona a conversão de base. Cara, isso
+
+aqui é conceito fundamental de ciência da computação. Você precisa entender o que que é uma base. Base 64, por exemplo, base 62. Você tem que entender o que que é isso. E aí você consegue representar qualquer número. Se você não
+
+entendeu isso aqui, o segredo é o seguinte, é bem simples, tá? Todo o resto da divisão sempre vai ser menor que 62. O máximo desse valor aqui tem que ser 61, porque se sobrar 62, então era possível dividir aqui a esquerda. Então não faz sentido que esse número dos restos aqui seja maior que 61. Se não pode ser maior que 61, a gente consegue representar ele dentro da base 62 aqui. Beleza? Fim de papo. Não tem
+
+mistério isso aqui, cara. Isso é conta de dividir, pelo amor de Deus. Agora, como que isso funciona no código na vida real? É bem simples. Aqui no Python, por exemplo, você vai instalar o Pase 62, salvo engano, lá. E aí você instalando
+
+essa extensão ali do Python, você consegue trabalhar qualquer número, tá? Então se eu pegar aqui o número 11157, eu consigo dar um base 62 encode e ele vai me dar esse 2 TX. Se eu der um decode nele, ele vai me retornar 11.157. Fim de papo, fim de história e acabou. É
+
+por aqui mesmo. Então o que que acontece com essa solução aqui? A gente não tem colisão de rest. Por quê? Porque 11.157
+
+vai ser 2 TX e o 2TX sempre vai ser equivalente a 11.150. 157. Então a gente trabalha com conversão de base e com a conversão de base a gente consegue trabalhar aí sem colisões de hash. Só que para cada URL que nós formos gerar, nós vamos precisar de um ID exclusivo, tá? De um número aqui inteiro exclusivo.
+
+Beleza? É isso aqui que a gente vai precisar entender melhor quando a gente chegar ali na parte do system. Beleza? Fim de papo aqui. Então, qual que é o lance aqui dessa abordagem? Zero colisão
+
+de H. Essa opção depende de um gerador de ID exclusivo e afeta a nossa arquitetura. Como eu falei, não existe solução perfeita, não existe bala de prata. Você como arquiteto precisa ter isso em mente. Beleza? E aí, qual que é
+
+o problema principal dessa abordagem? É isso aqui, ó. É extremamente fácil descobrir a próxima URL encurtada se o ID for incrementado em um. E isso é um problema de segurança. Por quê? Se eu
+
+acabei de gerar o, se o sistema acabou de começar a rodar aqui agora, imagina que a gente botou o sistema no ar agora, qual que vai ser a primeira URL gerada? vai ser aqui o zero, vai ser o ID Z0, vai ser o ID1, vai ser o dois, vai ser o três. Como que a URL vai ficar quando ela for gerada? Vai ficar assim, ó. Um, depois o dois, depois o três, depois o quatro, depois o A maiúsculo, depois o B maiúsculo e assim sucessivamente. E isso
+
+faz com que o atacante, ou seja, alguém mal intencionado, ele vai perceber esse padrão. Se ele for um cara que tem um conhecimentozinho básico de programação, ele vai perceber que isso tá convertido pra base 62. E aí, com um simples código aqui, ele consegue fazer uma engenharia reversa. Ele consegue pegar aqui o número do hash e decodificar ele dentro da base 62. E aí ele vai descobrir qual que é o ID. Se ele descobre qual que é o
+
+ID, ele consegue perceber que aquilo tá sendo gerado de maneira incremental. E qual que é o problema dele descobrir as próximas URLs ou ele conseguir até montar uma base de URL já geradas? O problema disso é que tem muita URL que é privada. Você gera uma URL lá, você criou, encurtou uma URL, aquela URL é de alguma coisa sua que você tá guardando ali, você só tá encurtando. Então, não é interessante que alguém consiga ter acesso a isso. Isso é uma falha de
+
+segurança. E como que a gente resolve isso aqui? A gente resolve esse problema aqui fazendo o seguinte, trabalhando com o conceito de ofuscação da nossa base 62 com RID ID. O que que é ofuscação com hash ID? Basicamente, isso aqui é uma coisa muito simples, tá? Lembra que a
+
+nossa base 62 começava 0 1 2 até o 9, depois A maiúsculo, até o Z maiúsculo e assim sucessivamente, tudo em ordem. Basicamente a gente vai pegar, vai usar uma bibliotecazinha, toda a linguagem tem, tá? Hashid. Aqui você vai chamar o seu hashid, vai criar uma secrety, tá? Você vai criar um salto aqui para ele e vai passar a sua base 62 aqui em ordem.
+
+Que que que ele vai fazer? Ele vai pegar a sua secretar a sua base 62 com base na sua secrety. Ou seja, ele sempre vai embaralhar pro mesmo padrão. Sempre vai ser esse formato, porque ele está usando uma chave secreta sua que você criou lá. qualquer palavrinha que você colocar, ele vai criar um padrão para embaralhar a tua base 62 e desembaralhar ela.
+
+Então, sempre vai ser esse mesmo formato. Um atacante só conseguiria de fato descobrir as próximas URLs se ele tivesse acesso à sua Secret para ele entender o conceito da ofuscação que você tá usando ali na sua base 62 e com isso ele conseguiria decodificar a tua base. Mas sem a Secret, esquece, ele não vai conseguir por você embaralhou a base 62. E agora se eu pego o número 11157 e dou um encode nele, agora é CJ0 e não mais 2 TX. E aí se eu dou um decode, ele volta a se tornar 11.157. Isso quebra
+
+qualquer possibilidade do cara adivinhar a próximo RL. Por quê? A base está embaralhada. Então o do aqui é o C, o 55 é o J e o 59 é o zero. E assim a gente consegue resolver o problema. Só que
+
+lembra que eu te falei lá no início que a gente tinha sete caracteres no nosso short code? Aqui, se você perceber, a gente consegue começar até com um caracter, se você quiser, porque o nosso ID inicial vai ser um, depois dois, depois três, depois quatro, depois cinco e assim sucessivamente. E aí até o caracter 62 vai ser um caracter, depois vai ser dois caracteres até 3844, salvo engano, e assim sucessivamente. E aí o que que acontece? Se a gente seguir por esse caminho, aí a gente continua com uma certa brecha de segurança, porque se a gente só tiver um caracter, por mais que a base esteja embaralhado, ainda continua sendo de zer a 9, de A a Z maiúscula e de A a Z minúscula. Então
+
+ele vai conseguir adivinhar algumas URLs. Para ele fazer isso com dois caracteres, ele teria que testar 3848 possibilidades. Com três caracteres, 200 e tantos milagre lá naquele 62 elevado a algum número. Então você volta lá que você vai entender. Então o que que acontece? Que que a gente pode fazer
+
+aqui? A gente pode começar o ID inicial, tá? O nosso ID inicial, ao invés de zero, ao invés de um, a gente pode começar aqui talvez com 15 milhões, com algum número muito alto, tá? Vamos entender aqui, ó. 62 el 4 dá 14 milhões.
+
+Então eu posso começar com 14 milhões e com 14 milhões eu garanto que ele já vai começar a gerar nossas res ali, o nosso short code com quatro caracteres. Isso aí inviabiliza um possível ataque. Então o nosso ID inicial provavelmente tem que começar a partir de alguns milhões ali pra gente poder ter essa certa segurança e não ficar gerando RL com short code muito curto, tá? Então agora o nosso short code acabou se tornando mais curto, tá? a gente consegue trabalhar aqui tranquilamente com quatro caracteres, com cinco caracteres que não vamos ter problema e não precisa agora esticar pros set e ao longo da base crescendo ali, ao longo das URL sendo geradas, aí esse número vai aumentando até os sete caracteres ali tranquilamente pra gente fechar as 365 bilhões de possibilidades ali que a gente precisa armazenar ao longo de 10 anos. Beleza? Entendido isso aqui, cara,
+
+finalizamos a parte da implementação, entre aspas, tá? a solução do problema do que é um encurtador de URL. E agora eu espero que você tenha entendido que, por mais que pareça simples a solução, você tem que tomar cuidado com aquilo que você está propondo durante uma entrevista. Como eu falei daquela questão do banco de dados, você não pode consultar o banco de dados num sistema desse, porque tem requisitos de alta disponibilidade, são 100 milhões de URL geradas por dia, são 1160 requisições de escrita, 11.600 de leitura. Você não
+
+pode aumentar esse número porque senão a arquitetura muda e assim você entende que é dessa forma que a gente projeta grandes arquiteturas e grandes soluções. Beleza? Entendido isso aqui? Agora a gente vai fazer o seguinte, a gente vai pro nosso system design, tá? A gente vai propor ali um desenhozinho aqui que a gente vai começar, tá? Por aqui e vai
+
+ser em cima disso que a gente vai fazer as nossas considerações finais e entender a arquitetura como um todo desse nosso projeto aqui. Beleza? Então, começando aqui do princípio, tá? mais básico possível. Nós temos o nosso front end aqui, fazendo requisições pro nosso back end aqui, o nosso servidor e a gente tem o nosso banco de dados aqui.
+
+Isso aqui atende o nosso problema? É lógico que não. Por quê? Porque a gente tem 300 requisições chegando simultaneamente por segundo na nossa aplicação. Lembra? 1160 de escrita,
+
+11.600 de leitura. Então, o nosso servidorzinho backend aqui tem que estar pronto para lidar com alta volumetria de tráfego. E para lidar com essa volumetria, a gente não pode escalar verticalmente, ou seja, adicionar mais poder computacional, adicionar mais recurso nessa máquina aqui. A gente tem que escalar ela horizontalmente, ou seja, criar réplicas da nossa aplicação para lidar com essa alta demanda de requisições. Beleza? E aí, qual que é a
+
+ferramenta que a gente utiliza para fazer a escalabilidade horizontal? A gente usa o nosso load balancer, tá? é ele quem vai ficar na frente recebendo a enchurrada de requisições e balanceando a carga aqui, dividindo a carga entre todas as instâncias que a gente tiver, tá? Qual que é o problema dessa arquitetura aqui? Lembra?
+
+Disponibilidade 24x7, ou seja, a nossa aplicação não pode ficar indisponível, então a gente tem que dar um jeito de resolver. E o problema aqui é o nosso banco de dados. Aqui eu parto do princípio que a gente estaria usando um post, um my ciclo, um banco de nó único, tá? Então aqui a gente teria logicamente um problema. E aí eu volto lá no início do vídeo, onde a gente fez a escolha do Cassandra. E um dos motivos de escolher
+
+o Cassandra é que o Cassandra ele foi feito para escalar horizontalmente, ou seja, eu posso criar vários nós aqui e com isso eu consigo escalar de eterno. Meu Cassandra fica muito mais fácil do que escalar um postre, escalar um myic, um oracle ou tanto faz. Não dá para fazer isso nesse tipo de banca. Até dá. Dá para você forçar a barra usando uma aurora da WS com o Tigre por baixo dos panos. Dá para você fazer algumas
+
+mandingas ali, mas no final das contas você vai gastar muito dinheiro, vai ter dor de cabeça. Como eu falei no outro vídeo aqui, esse banco aqui ele já usa um conceito de charging automático, coisa que você teria que fazer na mão lá no banco. Inclusive, se não assistiu o vídeo, vou deixar mais uma vez o card aqui em cima, o link na descrição, dá um confere lá depois. Vou deixar também o link do mapa do arquiteto na descrição, tá? Dá um confere lá depois um guia de carreira completo, onde eu mesmo vou te conduzir do absoluto zero até os níveis mais altos de um arquiteto de software, de um arquiteto de soluções, passando por todos os detalhes ali, tudo que você precisa estudar, tudo que você precisa pôr em prática, te entrega um diagrama completão lá também para você fazer o seu mapa de estudos ali. Vou te entregar
+
+também todo o conteúdo para você poder estudar. Então, cara, dá um confere aí, tá na descrição o link e vamos voltando aqui, beleza? Que que a gente precisa agora? A gente precisa do nosso contador, tá? a gente precisa de um contador único, daquele gerador de ID.
+
+Aí eu te pergunto, será que o meu código que tá rodando aqui, e igualmente ele tá rodando em outras máquinas, se chegar a primeira requisição no sistema e ele gerar o ID 14 milhões, tá? Aquele exemplo que eu te falei lá da gente começar a partir do 14 milhão. Se a gente gerar aqui o 14 milhões aqui, como é que esse cara aqui vai saber que ele tem que gerar o 14 milhões e1? E esse aqui, como é que ele vai ser saber que ele tem que gerar o 14 milhões e2 e esse aqui o três? Como que esse aqui vai saber que esse aqui já gerou o um, o dois e o três e o quatro? Não tem como.
+
+E é aqui que entra o conhecimento de sistemas distribuídos. A gente precisa desacoplar essa função do nosso sistema. E existem n ferramentas para fazer isso. Existe o Snowflake do antigo Twitter. Existe uma porrada de ferramenta. Eu não
+
+vou falar sobre todas elas aqui porque elas trariam vantagens e desvantagens. Traria por menores, que eu teria que explicar com mais detalhes. Mas basicamente o que eu utilizaria aqui é o redis, tá? O Redis, para quem não sabe tem esse comando aqui, tá? o INCR que vem de incremented. E aí, basicamente, é
+
+um comando que você aciona, tá? Você faz a sua máquina aqui, a sua instância acionar esse comando por baixo dos panos e ele vai te devolver um único ID para você poder trabalhar e aí você consegue configurar para ele gerar aqui a partir do 14 milhão. E aí a segunda requisição gera 14 milhão1, depois 14 milhões2, 14 milhões3, 14 milhões4 e assim sucessivamente. Ah, Renato, isso aí não vai gerar race condition, ou seja, várias instâncias ao mesmo tempo acessando ele. Será que ele não vai gerar um ID igual para todo mundo? Não,
+
+o rediz aqui com esse NCR, ele vai criar uma fila caso haja essa condição ali do Race condition. E cada um ele vai atender com um único ID, tá? Ele não vai gerar ID duplicado, ele justamente pra gente não ter aquele problema da colisão do R. Só que qual que é o problema dessa abordagem aqui? O problema, mais uma vez vai lá pro nosso requisito, 24x7, alta disponibilidade. Então nós não podemos
+
+ter apenas uma única instância do nosso redis, porque se ela cair, o nosso contador caiu. Se o nosso contador caiu, o que que vai acontecer? a aplicação não consegue salvar novas URLs, não consegue gerar o short code, então nós teremos um problema. Então para resolver isso, o que que eu faria? Eu utilizaria o rediz em modo de cluster, tá? Ou com
+
+sentinelas ali, que ficaria olhando as instâncias que estão ativas, as que estão inativas, ele sobe uma no lugar, ele faz todo esse comando ali, essa central de controle ali, para não deixar ficar fora do ar e isso garante a nossa redundância e resolve o nosso problema. Beleza? Entendido isso aqui? que que a gente pode fazer aqui para melhorar mais ainda a nossa arquitetura e que vai impactar agora na volta lá naquele 301 e 302 que a gente tanto falou no começo do vídeo. Vamos lá. Aqui nesse momento eu
+
+poderia fazer o seguinte, para brilhar na entrevista você poderia propor aqui uma camada de cash. Por que uma camada de cash? Porque se eu tenho várias requisições aqui chegando para criar uma nova, beleza, a gente cria URL e salva ela no banco. Show de bola. Agora, se eu tenho várias requisições chegando para ler o banco de dados, que que eu posso fazer? Eu posso entender quais são as
+
+URLs mais visitadas e salvar isso numa camada de cash. Por que que eu armazenaria as URLs mais acessadas no cash? Porque com isso eu alivio a consulta no meu banco. Então eu alivio a carga na minha aplicação. Por quê?
+
+Porque o cash está rodando na memória. Ele não roda no disco, ele não roda no SSD, ele roda na memória. E por ele rodar na memória, a velocidade de acesso é muito mais alta. Então, é mais rápido para ele consultar no cash e devolver pro usuário do que ter que ir no banco de dados. Inclusive, tem muita gente que acha que isso aqui é requisição HTTP.
+
+Como isso aqui vai est em outros servidores, você deve est achando: "Ah, eu vou ter que fazer uma requisição HTTP, isso pode gerar latência e tal". Não, cara, isso aqui ele usa um protocolo específico de comunicação e é através desse protocolo que funciona a comunicação aqui entre o driver, tá? O driverzinho que você instala lá na sua aplicação, para ele se comunicar com o redis onde quer que ele esteja. Então é dessa forma que funciona, não teria problemas de latência, tá? E assim a gente finaliza aqui a nossa arquitetura.
+
+Beleza? Só que lembra que eu te falei que a gente poderia armazenar aqui as URLs aqui mais acessadas? Olha o que que acontece. Se a gente pegar aqui o nosso redirecionamento de URL, olha o que que a gente vai ter. Se porventura a gente vier aqui, ó, o usuário veio, acessou a nossa aplicação, foi redirecionado, bateu no load balancer, acessou a aplicação e a gente foi lá, gerou um ORL para ele. Beleza? Quando alguém clicar
+
+nessa URL, vai chegar uma requisição, a gente vai receber a requisição de leitura, vai no banco de dados lá buscar essa URL e redirecionar o usuário para URL de destino. Só que quando a gente redireciona o usuário para URL de destino, se a gente retornar o status code 301 ou 302, a arquitetura muda completamente. Porque o 301 ele move permanentemente a URL. Ou seja, o navegador quando fizer a requisição para mim, eu vou no banco de dados, busco a URL e digo pro navegador: "Olha, não precisa mais voltar aqui. Salve essa informação aí em cash e toda vez que o usuário clicar nessa RL, você redireciona ele diretamente para essa URL aqui de destino. Não precisa voltar
+
+aqui, pelo menos não agora, não, não por um bom tempo. Então você fica aí com a sua RL no cash e toda vez que ele requisitar esse link curto, você mesmo já redireciona. Isso faz com que a nossa aplicação, a nossa arquitetura sofra menos com requisições de leitura. Então, toda vez que uma URL for clicada, eu posso dizer pro navegador de quem chamou o seguinte: "Ó, salve isso aí no cash, não precisa mais voltar aqui. Eu diminuo a quantidade do impacto de requisições na minha arquitetura, na minha aplicação." Isso é muito bom. Mas qual
+
+que é o problema dessa abordagem? O problema é o seguinte: se as requisições de leitura não estão chegando na sua aplicação, na sua arquitetura, como é que tu vai saber qual que é a mais visitada? Como é que você vai saber ali como é que você vai ter a métrica das URLs mais visitadas? Se você está desviando o fluxo para que o navegador do usuário decida quando redirecionar o cara quando ele chamar aquela URL. A requisição não vem mais pro seu servidor e aí você não consegue nem aplicar a camada de cash porque você não vai saber quais as URLs mais acessadas. E detalhe,
+
+se você precisar ou se surgir um novo requisito ali na tua aplicação de que você tem que implementar um painel de analytics para você acompanhar ali as métricas de cada URL, você não vai ter como fazer isso se você retornar o 302, o 301, perdão. Mas é importante que você saiba mencionar isso aqui numa entrevista, porque mostra que você tem conhecimento até do status code que você tá retornando. 301 ele move permanentemente, 302 ele move temporariamente, ou seja, toda requisição que vier vai bater no seu servidor e você vai redirecionar o cara para URL de destino. 301, move permanentemente e fim de papo. Beleza?
+
+Era isso que você precisava entender. Foi isso que eu te falei, que a gente ia bater um papo aqui no final e que muda a nossa arquitetura. Se retornar o U1, a gente não tem por ter aqui a nossa camada de cash. Isso morre pra gente, isso não faz sentido. Então, para ter a camada de cash, pra gente saber as URLs mais acessadas, a gente, com toda a certeza precisaria retornar o status 302. Beleza? Bom, e agora que tu
+
+aprendeu literalmente a como desenvolver um encurtador de URL passando por todos os pormenores, a questão do System Design já sabe todos os princípios e fundamentos de arquitetura de software que envolve esse tipo de projeto. Deixa teu like aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Não esquece de dar uma olhada também no mapa do arquiteto. Vou deixar o link na descrição, guia de carreira completo para te conduzir do zero ao arquiteto de software. Então dá uma olhada aí depois. Se ficou qualquer
+
+dúvida, deixa nos comentários abaixo que eu prometo que eu tiro um tempo para te responder. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve. M.

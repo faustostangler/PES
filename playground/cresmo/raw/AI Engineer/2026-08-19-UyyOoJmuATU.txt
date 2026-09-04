@@ -1,0 +1,120 @@
+---
+video_title: "Healthcare’s Agent Bytecode: X12 as the Harness for AI Agents — Vasant Kearney, Onlay"
+video_id: UyyOoJmuATU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UyyOoJmuATU
+video_date: 2026-08-19
+video_description: |
+  Call the payer, open their web portal, and read their X12 feed, and all three can tell you the patient is covered. You treat the patient anyway, and the claim comes back denied because they were not covered at the time. Vasant Kearney's point is that none of those surfaces is ground truth. A payer's phone system, portal and X12 layer are often built by different teams, sometimes by different contractors entirely, so they can contradict each other and they can just as easily agree on the wrong answer together.
+  
+  His response is to treat X12 as a harness rather than a file format. Models do their best work confined, the way a strict language confines, and X12 already encodes the contract between a provider and a payer. Every stage of the claim lifecycle has an X12 correspondence, from an eligibility check as a 270 through the 999 that acknowledges syntax to the 835 that records payment, so an agent placing a phone call or driving a portal is emitting the same transaction by another route. Everything normalizes into an internal representation held as correct only until downstream evidence says otherwise. Two constraints travel with it. Memory has to live in a database rather than on local disk the way coding agents do it, for logical separation. And a stronger model cannot simply be dropped in, because better on a benchmark is not the same as better inside a system built around the model it replaces. He describes the posture as being AI pilled and AI skeptical at once.
+  
+  Speaker info:
+  - https://x.com/vasantkearney
+  - https://www.linkedin.com/in/vasant-kearney-7b7a48b3
+  - https://onlay.ai/
+  
+  Timestamps:
+  0:00 - Reading the room
+  1:06 - The goal is cost and patient experience
+  1:58 - How we arrived at an execution layer
+  3:06 - Solving handwritten digits does not cash the check
+  4:42 - What gets lost when you flatten a multimodal record
+  6:16 - What the agentic execution layer actually touches
+  7:23 - Why enterprise memory cannot live on local disk
+  7:49 - A better model is not automatically better for you
+  8:31 - Harness, and why X12 belongs in it
+  9:44 - Fifty steps, error propagation, and the cost of pure reasoning
+  11:16 - Memory that helps without steering the user
+  12:36 - The claim lifecycle, transaction by transaction
+  13:29 - A phone call is an X12 transaction underneath
+  14:47 - The schema is public, so agents can look it up
+  15:30 - X12 is a system of rules, not ground truth
+  16:47 - Normalizing to an internal representation
+  19:02 - Be AI pilled and AI skeptical
+---
+[music]
+
+>> Hey everybody. How's everyone doing today? Good. So, this is a bit about my background, but I think it's always really good to learn what the audience background is if it's more on the technical side, which I know this conference is, healthcare side. Let's get a quick show hands to see who Who here is on the healthcare side?
+
+Ooh, wow. That's a lot of you. There's more than I expected. Wow. Okay. Who
+
+here is on the technical does the genetic workflows? Wow, okay. Overlap. All right. As should be expected at this conference. Who here
+
+has models running right now somewhere doing some work? Wow. It's like the whole audience. Okay. All right. So, I know who I'm talking to.
+
+Wonderful. This is the right crowd. So, what is the goal of this? Like if we're working in healthcare and we're doing some genetic workflows, we have to keep in mind the goal. And that goal, at least from my perspective, is to drive the overall cost down. So,
+
+in this talk will be about insurance cost specifically, the cost of of interacting with insurance. Um, but also to improve the patient experience because insurance relates back to the patient and how they experience the whole process. So, let's keep that in mind when we're solving problems. I know that if we're on the technical side, we like to get really experimental with things and get excited about just this the technology itself, but has to be grounded in one of these two concepts. So, a little trip down memory lane just starting from this long journey of AI machine learning and where we are today.
+
+And we're obviously going to talk about the last point, this agentic execution layer. But, we can see this evolution from the neuron convolutional neural networks large-scale unsupervised learning back in 2011 2012. Then, the introduction of attention is all you need, one of my favorite titles for a paper, the introduction of the the transformer. Then, we go into this modern chat interface with these large language models. And then, finally with the Claude codes, the Codexes, and our system internally, and a lot of systems you have open claw, Hermes agent, all all that kind of stuff.
+
+Which really brings into the into the picture this execution layer. So, we're going to be talking about how to do this execution layer safely and reliably in health care. So, let's think back to some of the earlier examples of like getting really excited about some AI technology and then realizing it has all these little bits and pieces which make it a lot more trickier than maybe it is is obvious at first. So, like you have a check and you want to cash it. You want to deposit it into your bank account. Um you might
+
+say, "Oh, we have solved the handwritten digit problem. We can recognize digits from zero to nine." Right? Wow, oh oh, so now we're ready to um deposit this check into this person's account and transfer money. Well, not quite because as you dig in a little bit deeper you see that you have to identify all sorts of characters in the check.
+
+You have to make sure it matches up with all these other pieces of the infrastructure. You have to make sure that it is um that it is um going to the target account that you're interested in. So, parts of this can be thought of as as the harness. Um in claims, we have a similar challenge that there's a lot of these little AI steps involved in fulfilling that whole patient journey of eligibility to getting the insurance company to deposit money in the provider's bank account. A whole bunch of little steps. And we have to make
+
+sure that we're safely doing this, that we're operating like in these tight con these strict confinements. So, another thing that comes up, just sort of setting the stage, is that um multimodal context in comes up very frequently with claims. So, you might have an image and it might seem like at at first for cost reasons or something else that you'd want to take that image and reduce it down to the findings, like here's the anatomy in the image, and maybe even extract some geometries from that anatomy. Here's pathologies. And then you would take that and then combine it with some other machine learning with some other data in a different downstream machine learning model.
+
+Like um EHR. And that might make sense from a cost perspective and also just like model capabilities. Um but in a lot of situations, it you lose context. So, it might be that you're extracting all this information and missing something that relates to some downstream procedure that you didn't that wasn't the upstream model wasn't aware of it. So, that introduces this concept of just multimodal processing. So, uh uh another
+
+place this comes up in healthcare, but not related to anatomy or anything like that, is desktop use. You can see that sometimes, you know, things are buttons or or or, you know, it might have some shapes that are only obvious when you do this multimodal.
+
+All right. What is the agentic execution layer? So, this can this can take on a lot of different forms. It is the ability of this model to take actions. So, it might be you're starting out with um database queries. And let's say it's
+
+just completely open. You're querying the database, you're finding your schema, you're figuring out what this what the data looks like, and then you might even have access to your code. So, then you're querying your code with the respect to your data. Uh and you might actually, in our system or other systems, you might be making insurance transactions. You might be making a phone call. You might be
+
+looking at a web portal. You might be interfacing with an EHR. These are all actions you can take. And some of these actions have right implications. If you're interfacing with different PMSs, you're going to the desktop, you can have at least user logs at the minimum.
+
+Uh and then the next concept is memory. So, cloud code or codex, they use local memory, they write to your desktop. In enterprise healthcare, we can't really do this, so we do memory in a database, just so we have that logical separation. Uh important concept here is that when you're introducing new and improved better models more sophisticated more parameters you can't you can't just replace the model and assume it's going to be better it's different right it's a it's a on certain evals it's a better model as measured by these different metrics but it doesn't necessarily mean it's better right for all the situations that you want it to be better at because of the way you've designed your system so you really have to redo everything from scratch just make sure your evals your testing your validation is all set up so that you can introduce these new models and not break your system.
+
+So this concept of harness different groups have different definitions of this so I'm going to use a super broad definition here which is like all the different nuts and bolts that that surround this agentic reasoning and that is the concept of memory that we discussed the different tools the checks the permissions the handoffs the evals but also in the context of health care and claims it's x12. So just like we have these old school languages or formats like COBOL or other stricter maybe strict languages typescript llms really thrive they work well and when they're confined they have clear limited values that they can predict and x12 is exactly this so it provides this underlying structure this contract between what you're trying to communicate and the insurance company.
+
+So, when you're reasoning in this in this healthcare, your your objective is to do something with handle a claim or research your EHR with respect to claims. It might be that you have like 50 steps or something like that. There's a lot of different steps. And so, you can um you at at each of those steps as you make mistakes, those mistakes can propagate down your system. Um and so, it's very good to have something grounded that can be rejected to. So, if
+
+you have a really strict got guardrails, you can reject something that happens that's incorrect.
+
+So, if you're reasoning over, let's say, the previous example, 50 steps, that and they're multimodal. You're considering and everything like that. That can get really expensive. It can also take a really long time. And folks might not want to wait. You know, it could be too
+
+expensive and people don't want to wait that long. And each time it each step is an opportunity to introduce an error and you can have problems. Um but, if you hardcode your whole system, you say we're you're going to throw out this whole agentic process, you limit yourself or your code can explode to be just unmanageable. So, now all of a sudden, you just have this crazy bloat and you have to have this giant engineering team, which poses its own problems. Um so, what we want to do is strike this balance between what we should be completely free, like um with just pure agentic reasoning and execution, and what is hardcoded.
+
+So, we do that internally with introducing memory, just this uh partner level memory, organizational organized memory and user memory. So, we say if a user, we find people in in multi-site health organizations, they tend to do the same thing day after day. And it might be if they mention a few words, "Oh, they usually do eligibility and they usually do it within this context, they probably mean this." Right? Where another user, they probably mean that. So, we want to be really
+
+careful here because as you introduce memory, you also persistent memory across chats, across days, you also introduce bias. So, maybe that person doesn't want to do the exact same thing that they did yesterday and now you steer them to do the exact same thing they did yesterday. That's a problem. So, you want to strike a balance somewhere in there and you want to make sure that the use any user can break out of this.
+
+So, for folks that are unfamiliar with the whole claim life cycle, it's many steps. So, each step does have an X12 correspondence with it. Starting with the schedule, when let's say you're showing up to the doctor's office before you even show up. That's insurance starts then. Um when you're getting treated, that also relates to insurance, what you you know, the different procedures that you are candidate for depending on your insurance.
+
+Um your documents, sometimes the x-ray itself is the document and you would send proof of that in. Submitting the claim. And then finally getting the payment in the provider's bank.
+
+So, this I think this concept is a little bit I I found it to be obvious in retrospect but let me talk you through it. Maybe you find it's it's interesting or not but if you're calling an insurance company that it that boils down to a transaction an X12 transaction. You'd say hey this is the patient I'm talking about. Great. That's a like an eligibility request a 270. Oh I need to do you're requesting a
+
+claim status or whatever it is you're doing that has an X12 grounding. And that is the whole concept here this this X12 harness. So you call the insurance company you have an agent interact with a desktop you have an agent interact with the browser your imaging system that's a 275 and and and your insurance your bank your ACH so that's not X12 but it's still that structured transaction.
+
+>> [snorts] >> So this is just a reiteration of these different transactions. And the other beautiful thing about it it's not you know it can you ask an agent to do something let's say you're genetically programming or let's say you're just you're you're programming how you know maybe half the companies I spoke with here still program today just everything by hand and they use these clock code or code X4 research. If you look up any of these transactions they're all public. Like this is not the beautiful thing about this is like this is not my schema. If you ask agents to make a schema for you you're going to get like all sorts of stuff. But now if we ground
+
+it in something standard you can look up all of these and you would know just right off the bat my schema. Let's say you're a new engineer coming in, like, you know.
+
+So, X12 is a is a system of rules and it doesn't mean that when an insurance company gives you an X12, it's true. So, that concept is when insurance company tells you something, it's coming from different teams potentially. They can have an engineering team that's It could be even a different company. A different company that the insurance company contracts out designed their web browser, their phone system, or their X12 layer, or their fire. And we have to understand that there's no ground truth. They also within all of
+
+these systems, they can they can all actually agree on the wrong information as well. Like, let's say they all say this patient is covered. All three You call them. You look in the browser and the X12 and they all say, "Yes, this patient is covered." And then you treat the patient, they say claim is denied due to the patient wasn't covered during that time. Um
+
+so, they can all disagree, but sometimes you'll learn some idiosyncrasies of these different payers that some of these systems are more reliable than others. But, regardless of if it originates as an X12 or not, you can boil all those transactions down to your own internal semi-correct X12. Correct until downstream evidence proves it otherwise uh to be incorrect. So, just a little bit more on that. So, and any of the X12, any of the information coming from the insurance company, any time can be wrong. It can
+
+be updated later. So, have fun. This is just an example of what it would look like if you're um in that patient journey. You're you're trying to figure out how much you would pay as a patient up front, and it's very important for your experience going to the doctor.
+
+And then the different treatments that you have in that clinic can oop. Yeah. The different treatments that you have in that clinic can be the evidence that you need. Like you might get a CBCT. Well, that those images and slices of those images might be the evidence that they're asking for.
+
+So, ultimately, if you're delivering that treatment, you're sending that claim, that claim is like a receipt of what you did. I did this, like here's the invoice. Right? Like you send it to the insurance company this invoice, and they would pay you back. So, that is your ultimate like contract of you're saying you did this work, it's sealed um and now the ball is in insurance company's court.
+
+And just a little bit about this progression of the claim from you're sending it, you're getting some acknowledgement, has like the syntax is right with that 999. The status has been updated. Hey, cool, we received it. Um maybe you call them and you verify the status didn't come in. Then you have this EOBs 835 receipt of payment.
+
+And then we're getting to the end of this uh this talk here, but I think that, you know, LLMs, I'm fully AI pilled, right? But we want to make sure that we introduce la- language models, small tiny models in a very skeptical conservative way. So, being AI filled is great, but you should also be very AI skeptical. Like these things, they make mistakes and it's not even you can't even say they make mistakes. Like we make mistakes designing them. We might
+
+set them up to fail. So, we have to be very skeptical of them and we have to use them in a way that's also cost-effective. You can't throw I mean you don't you don't want to use an overpowered over expensive model cuz then if you're going back to if you're reducing costs or not. Let's say it's ends up being super super expensive to deliver one of these routine things that need to be done a thousand times a day. You definitely don't want that.
+
+All right. Thank you very much.
+
+>> [music]

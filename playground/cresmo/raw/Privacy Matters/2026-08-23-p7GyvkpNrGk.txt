@@ -1,0 +1,214 @@
+---
+video_title: "HACKING isn't Hard Once You Understand This (Basics)"
+video_id: p7GyvkpNrGk
+channel_name: "Privacy Matters"
+channel_id: UCVrrEzxFvIDjM0w5a8LKYwg
+channel_category: "Howto & Style"
+url: https://www.youtube.com/watch?v=p7GyvkpNrGk
+video_date: 2026-08-23
+video_description: |
+  TryHackMe Pickle Rick, full walkthrough for complete beginners. By the end of this video you'll have hacked into a practice server, found its hidden password, and taken full control, even if you've never opened a terminal before. Nothing to install, no experience needed, all in your browser.
+  
+  WHO THIS IS FOR: This is a beginner-friendly, follow-along penetration testing tutorial. If you're new to ethical hacking, TryHackMe, or capture the flag (CTF) rooms, and you're tired of videos that explain everything except how to actually hack, this one is for you.
+  
+  WHAT YOU'LL LEARN: In this Pickle Rick walkthrough you'll enumerate a web server, find a hidden username in the page source, pull a password out of robots.txt, log into a hidden command panel, execute commands through the web app, collect all three of Rick's ingredients, and finish with a Linux privilege escalation to root. Every command explained step by step, nothing skipped.
+  
+  Want to ask your questions live on calls exactly like this one? That's what the Hacker Academy is for, link's pinned and below.
+  Join The Hacker Academy (400+ members) 
+  👉 https://bit.ly/4zzyb6H
+  
+  DISCLAIMER: This video is for educational purposes only. Everything shown is performed on a legal, intentionally vulnerable machine we're authorized to test. Never attempt these techniques on any system you don't own or don't have explicit written permission to access.
+---
+Here's a challenge. By the time this video ends, you'll have broken into a practice server on Try Hackme, accessed its login portal, and taken full control, and you'll be able to explain exactly how you did it. No experience needed. It's totally legal, and all you need to get started is your browser. It's a room called Pickle Rick on tryhackme.com.
+
+Yeah, the Rick and Morty one. He's a pickle. The cure is locked in the server and you free him by hacking in and grabbing three hidden pieces off the box. Quick disclaimer, this video is for educational purposes only. Everything shown here is performed on a legal, intentionally vulnerable machine that we have full authorization to test.
+
+Never attempt these techniques on any system you don't own or don't have explicit written permission to access. Open a second tab and let's take it together step by step. And if you want the chance to ask me your own questions live on a call exactly like this, jump into the hacker academy. The link's right below. Let's jump right into it. So, it's not just
+
+about random attacks or instant access like in [music] the movies, right? There's a process that you follow along and it's basically structured problem solving, right? So, I just want to give you a little bit give you guys a little just short analogy, right? So think of every target system as a house you have been hired to break into. Okay? You
+
+wouldn't just kick the front door in. You would study the property first. You would case the house, walk around and check for any doors, windows or winds or whatever you have, right? That is basically the reconnaissance phase. And for us, it starts with active reconcept with the end map scan just right away.
+
+So that's how that's how you can pin that to the the process phase itself. Okay. So the next phase after you have walked around and case the house, you test every entry point, right? You rattle door knobs, check for gaps. This is the vulnerability scanning part. And
+
+from there on, you exploit the weakness. The unlocked window is your way in. So you exploit the weakness and you gain access inside the house. Okay, I'm just trying to lay it out in layman terms here so it's easy for you to follow along. So the phase one is the reconnaissance and enumeration. So
+
+enumeration is basically just uh uh doing mapping just to put it in an easy word. Okay. So that's the first step and for the reconnaissance in hacking you normally have the port scanning and map is used a lot for that. You have service fingerprinting where identify software versions. So if you find an outdated version of a web server for instance, you know that it might have any vulnerabilities that you can directly exploit right away. It's quick win. You
+
+can also do directory busting with tools like go buster to find hidden web pads, right? Like finding a seller door around back. And of course take note during the process as well. All right. When you do find the unlock window, you exploit it.
+
+There are different ways. I'm not going to go into that. And then if you break in and later on once [music] you're inside we're going to come back to this section right okay just so some theory and then some practice and then you can follow along right so from the attack box just before I dive into the room itself again did that analogy make sense for you guys or was it just even more confusing I need feedback from you guys yeah awesome okay so In terms of the target today when we start the lab environment, we can see that all we get for now is the IP address, right? It's this one. Okay, this is the attack box IP address.
+
+This is the attacker, the hacker, and this is the victim or the target. Okay, it says in here as well for some reason. Yeah, you can see it here. So we take this IP address and copy it and then we can start doing the reconnaissance phase, right? So [music] you can do N map, you can just do a basic M map scan. Let's see what that returns just
+
+with N map and the IP address. It quickly gave us the open ports back. Okay, so there are a lot of options here. You have a lot of different flags. You could do like all kinds of custom scans with end mapap but really to be for beginners just to get started it's often enough with just end map and the IP address. Okay. So based on that we
+
+could can gain some information right away that okay on that IP address that that is our target. We can see at least two ports or two doors open into that house. This is the house. Okay. You have the uh port 222 that is SSH secure shell that is basically you could say like a remote access a way to remote access the [music] server to a shell and then you have port 80 that is a web server okay but we can also take it further down we could run for instance N map and then - S capital V for version scan okay let's just see if we can get any more information about the target by adding adding that flag. Okay, so it might use
+
+some more time because it's doing a script scanning. And let me see here. So here you can already compare that without the flag it was faster, right? It was faster, but it didn't give us that much of information. But with the SV flag, we actually got some more version information as well. But what
+
+what's running on those ports? Super useful because here we can see oh okay it's a Apache server and we also get the get the version pretty quickly. It's not 100% always accurate but it's all a good indication right and you could do all kinds of flag if you do like man and map. Okay man stands for manual. It's a command [music] that you can use for a bunch of tools or most of the tools or commands that exists which gives you information about the tool itself. Okay,
+
+so it tells you it shows you an example. It also gives you all the different flags that you can do. Okay, let me see. You can do if let's say ping the ping protocol is disabled normally end mapap might result uh return no results but it could be that it just blocks ping requests right so if you add the dash flag it will just treat all hostes alive and proceed with the port scan right so a lot of stuff I'm not going to dive into all of this but that's just a tip for you guys that if you're unsure that what one command and does you could do let me see if that works echo it just displays a line of text right one useful command or flag also is let's say we want to save save our scan information to a file let's say end mapap scan txt right what that does is that later on when you're actually working and you have a proper process you can save the scan to a file because if you then look at the file here we just got the end mapap output in a file directly. So next time if we don't know what did the scan result actually return we can just cut the end mapap scan file and we get the you know contents of the scan. So this
+
+is also useful. So now we're also touching on to the process and methodology itself that will be really useful for you guys in the long term. Okay. So let's keep moving on for the what command the last command I ran it was this one or let me know what you meant by your question. Yeah. All
+
+right. So let's move on. So based on this we know we have two ports, right? All right. That's fine. Let's start with
+
+the web port because that's a a big attack surface. We can start there to write the scan in the file. Yeah. Okay. Let me explain to you the short view once again. There are different flags
+
+and the flag or the par you can see the parameter to save the scan to a file is this dash O capital N and then you just make up a file name and it saves in your current directory. So from your from the place you launch the end mapap scan it saves in that path. Right? Does that make sense? Yeah, awesome. Let's continue. Just keep
+
+asking questions because that's how we that's what you will learn by. Okay. So, we have a web we have web server. Okay. So, the target was again our target was this IP, right?
+
+Let's just copy that. And another thing that most people get confused by is that when they have the IP address, they sometimes paste it in your real browser. And that won't work because we need to do that from the attack box itself because that attack box is what is connected or linked to our target. Does that make sense? So we will just paste it in here inside the attack box and see what it returns.
+
+Okay. So this box is like a Rick and Morty team lab environment, right? Okay. It shows us a simple page with an image and basically some text and we need to just see okay where do we even start right okay because this is a lot often pretty confusing for people that what do we do from here and how we to not get stuck right that's why it's important to have a process that if you kind of do off track a little bit you can get back to back on track as again So what I normally used to say is that before you think like a hacker, think like a user and think like how an an application is supposed to be used and then think about how can you break that stuff because you don't need to think too advanced in the beginning, right? And something you normally should do is you should check the page source on a website page because that often in includes [music] and gives you a lot of information, right? Let me just give you an example.
+
+Okay, we have the title for the web page. All right, we have some, as you can see, we have some links to different scripts that are running on the web page. That's interesting. Like here you have a jQuery a JavaScript file, okay, that's uh doing something and you have uh a couple of files here, right? And then you have the text itself and let's before we do this, let's just look at the look at the text here as well. It says, "Listen, Morty, I
+
+need your help. I've turned myself into a pickle again and this time I can't change back." That's it's like a team challenge. is and then we get the clue that log onto my computer and find the last three secret [music] ingredients to finish my pick a reverse potion. Basically, we got get hints that there are three pieces of flags that we need to find, right?
+
+So, back to the source again. The giveaway or the trick here is that as you can see here, this is a html tag for a comment. Okay. So often in real websites as well there might be comments there that are not supposed to be there that are may maybe some people have forgotten to take out might sometimes give you like important information about the web server itself the technology that is being used etc. Right? So that's like normal something
+
+you should go check for first because it's a quick win lowhanging fruit and you can try to figure see if there's anything there. And as you can see we have the comment uh here in the page source which reveals a username. Okay. So this is a part of the enumeration that we get told that okay you have something here that might be useful later on right so let's see if we can do something else I'm going to try to teach you some best practices as well let me see uh findings txt let me see if you do like this and then do this do you remember this task did it work no I think it's echo So let me see cat findings. Yeah, as you can see what we just did here is that let's say you you have a lot of different information that you are collecting during the the task or challenge or the pentest. Here you can
+
+see what I just did. I just put that information into this file called findings, right? With this this operator here to kind of append. So if we do a new line it should actually let's test it should append the next line. So if you do test here test it should not cat findings as you can see it added the line test. So if you don't
+
+have this double this double operator it will overwrite. Okay just pro tip made that mistake many many times. So lessons to learn from that. So just use that as a you could say easy to document if you want to use this terminal to do that. Was that useful guys? Just let me know because then I I
+
+know if I should give you tips like that or not. Yeah. Also another tip that like you just saw. Let's say you have a lot of uh clutter for instance on your terminal and you want to clean it up. What you could do is you can just type clear and it just pushes all of that up and gives you a clear one and you can just go back to the commands again later on. Okay, let's move on. So from the web
+
+web page we got this one. That's a solid clue, right? This will be useful. But another thing that you guys might not have noticed or maybe you did is that we see something here that the image itself this image we could do this open image in a new tab and you can see the path URL path right so that's also visible in the source as well there's a folder called assets and then you have the wick and moti page [music] so one thing you could also do is that okay are there other images or what else can I find in the assets folder And as you can see, you have some more interesting files as well, right? So for instance, this one.
+
+Ah, interesting. So you have another image here, right? It's not on the first page. So you know that there is another image that exists, but yet you do you do not know where or what your URL path, right? Let's move on. So
+
+we have [music] the username that we can use and then we like I mentioned okay afterwards when you gain a lot of experience you know that okay what things do you need to should you check low hanging fruits to see if there is something interesting so we have exhausted exhausted the first page we could go and try to look at this there's a gif here see we can find resources just by manually browsing here there's not always a open directory like this. But this is just to let you guys try to understand. And then you have another one. Okay. Interesting.
+
+Another place that you normally should take a look is the robots.txt file. Okay. Are you guys familiar with the robots txt? Explain to me what it does in the chat for you if you guys know.
+
+Okay. All right. Let me just see if we can have let me just try to give you an example. Yeah, kind of. They use it to hide stuff, but it's let me try to [music] give you a proper example, right? Let me
+
+see. Okay, let me give you an example. This is a good example. So, basically on the web you have a lot of different type of crawlers or bots. Let's say search engine Google for instance, they use [music] they crawl the web, every website that's out there and index what they can find by based on a bunch of stuff, right? But the robots.txt
+
+file is made specifically for these crawlers and bots like this. Okay? because that text tells the the crawler what not to index or what link not to follow if they find it and if there are private pages or private directories they should not be visible on Google for instance does that does that make sense so let me show you a quick interesting thing not sure if this will open but facebook.com for instance Okay, so we're not on on internet here, but let me see if I can just put it here then. Okay, facebook.com also had a robots.txt file,
+
+right? So they have a lot of information here. This information or this code word this allow means that if you are a robot, you're not allowed to uh browse these folders or these pages on Facebook automatically. it will stop because that's how the bottles work. But at the same time, you guys can see that this is interesting. You might find some paths
+
+that normally you wouldn't know job application or whatever that Facebook is telling these crawlers don't index this stuff because it's not supposed to be known or public for instance. That's why we use that's why we try to look at this file to see if there are interesting pages or directories that we [music] can look further into. Okay. Also, it does it says if the there's a Discord bot, it cannot do that. If there's this, it cannot do that. Just to give an example.
+
+So if you go back to this one now and go to the robots .txt file, we just get some random string, right? Because and that's interesting. But what is that? We don't know. But it's interesting because
+
+it could be a password. It could be something else, right? So what we could do is we could just do some maybe let's see echo maybe password or we could just say because if you have done the 7-day challenge you know that it is a password we could do it like this and then we could what just happened we could just do remember to have double arrows there like this I'm just trying to repeat a little bit of the command so you understand what I'm doing here. Okay. So then you have the password and then you have the username and then you have it all in one one place. So you
+
+don't have to keep digging around on the web page itself. Also a welcome objectee. I see that you're joined us. Just let me know in the chat if you have any questions as well. Appreciate interactive sessions. All right. Okay.
+
+So let's say now we have a user and we have a password. Right. What what attack surface exists that we know of that where we could [music] use these credentials? Let me know [clears throat] what you guys think. Yes, the login page, but we haven't discovered the login page yet. Okay, so
+
+I'm going a little bit broader than the the sevenst step challenge because that was how you would normally do it just to get you up and running. But if you remember the end mapap scan, right? Let's read that again. Just wait. Let me just see if I don't Let's read the end mapap scan again. Was it what was it
+
+called? Okay, we have the web server and we have the SSH port. Okay, like I mentioned, that is a remote login way to remotely log into the server. So if you were to try to log in there, what you could do is the way to do that is you just have the username where let's see the username if you want to copy. Do you guys do you know how you would copy something in terminal without breaking what you're doing? Let me know
+
+because if you just do Ctrl C, it won't work. Okay, you can just do control shift C and V and that that that will work. So that's really afterwards I think I'm going to do a class on how to uh be pro proficient on the terminal and how to navigate it and then you could also actually feel okay you can move around the terminal without any stress right so I'm going to do that would that be useful yeah control shift and then c or v right to copy you do normally you just do ctrl c but add shift button first as well Right. So if you would were to SSH into that server that this is the terminal the command format you you write SSH and then you put the username at the host or the target and then normally it should ask for credential. Let me see is not known or let me see. I'm not really sure if
+
+that is a username. Will that work? Let's root that. Okay. So, it looks like SSH has been disabled. It has been
+
+disabled to that you can loging in just by a password. So, they using public keys that we don't have anyways. Okay. But that could be one way in I if we didn't know better, right? So, let's go back to the web page again. So, we know
+
+that we have now have a a set of credentials. We have a username and we have the password. But where do we use it? Right? So like I mentioned in this this slide deck here, one way to do to map the house is called directory busting. Okay. So this basically means
+
+that you have a program that tries a bunch of different to see which one actually exists. Right? So if there is a hidden page that we don't know about because of course we wouldn't know if there isn't any link then it will try a bunch of stuff and it will show those to us. Okay. So we can do that. We can do
+
+that using a bunch of different tools. Again you can do a lot of different tools for the same job but I'm going to go for the gold buster one. The one you the one you did in the challenge. Okay. So this is the command for that one. Let
+
+me just see. Let's see. Yeah. Yeah, for sure. So if you guys are following along, you could use this command itself. Just
+
+remember to replace the IP address of the target, right? For some reason, it don't doesn't want to zoom in here, but yeah, whatever you guys can see, right? So, doesn't want to let me see maybe it's maybe it's the command itself. Let me see. No, it doesn't want to. But
+
+anyways, it doesn't matter. So, let's just keep going because this is the tool. It's called go buster. Again, you can use man for check out the flags etc. But this just tells us we we put the there flag you could say or or parameter that means that we want to use that tool in the to do [music] debusting or try to figure out the directory of web pages the map folder on the web page itself.
+
+Okay. Then you have the dash u that's just basically the URL right or the target IP address for in our case. Do you guys want to guess what the W means in the chat? Let me know. It could it could have been. But do you guys do you
+
+remember that I mentioned that what we are doing here is that we are going to give this tool a list of possible words and it is going to throw all of them to our web web page. So the dashw here actually is the path to the word list it is going to use because in the attack box as well you have a bunch of preloaded word lists and not all of them will work but you have to do some testing here. So you could just let's say you open one of these. This is actually the contents of that file. So as you will see let me see if it opens.
+
+Do you see it's just a list of different web [music] pages like in right now we see PHP files or txt files that are that that happen to be on a web server. So it will try all of these and see if it finds something. Okay, that's what the this w that is the path to the one word list that it will use. Okay, let's just run it. Okay, we are running it uh directly wrapped medium medium direct medium files probably will be the correct one here. Okay. So, what happened in just a
+
+few seconds? It tried to kind of it tried 17,000 different files or paths in the URL and found these to be interesting. Okay. And again here we can go and deep dive into the different status codes etc maybe for a later later time. But which one?
+
+Normally the the 200 ones are interesting. It means that page or that path actually exists, right? We already know the robust exists. If we didn't, but we did a go buster straight away, then we could go and browse this, right? And also we see we have the /lo.php.
+
+We have the portal.php. It looks like a redirect. And then you have the index file. The index file is this just the main page [music] we see right okay cool so now we know that there is a valid page okay that's called was it portal dot php cool and here we can see that this page that we actually the path we found for this image it exists on this page you wouldn't know beforehand right okay are you guys following along Or am I going too fast? All right. All
+
+right. Okay. So, here we have a username and input in password field and we have a login button. Right. We could try again lowhanging fruits first. Right. We
+
+could try admin admin. See if that works. It didn't. If people have set it up with default credential, that might have worked, right? So then we would just have been in logged in and that would be like uh serious vulnerability report, right? We could use Do you guys
+
+know what else we could use to try to log in or bypass this login page beside the credentials we know we have that might work other than that? Yeah, SQL injection correct. That's something we should try, right? So sometimes the application just breaks by if you add a apostrophe right there if it's vulnerable because then it it means that it reads your input directly. Right? So
+
+there are a bunch of different things you can test in terms of SQL injection. We're not going to dive into that. But that's that's correct. That's one way. But in this case, we [music] know that we have a set of credentials, right? Let
+
+me see if he can get those. Which what was that again? Or we can just do it manually. We know that we have this username. All right. And we
+
+know that this is some strange string that might be a password. And look at that. We just hacked into the login page. You could say, okay, you have bypassed the login page. So now you're in another page that have the portal. Okay, you have a commands
+
+tab, you have the potions. Only the real Rick can view this page. Okay, so this is the third image that we found previously. It sits here. Okay, you have creatures blah blah blah. Okay,
+
+so this is denied. That's interesting. So that means it might be checking something. Let's see what happens if we open the link in new tab or yeah let's see okay so it's basically say there we can go do the same thing again we go to the page source do we know what it does no but we might be able to read that file rate later on that's we can look into that but we have a commands tab right you guys mentioned SQL right SQL injection and then that's basically uh you could say uh command for the database beneath and in this panel that we have this is another vulnerability it's called OS command injection [music] basically what is happening here is that we can access the underlying server operating system through this panel. This is a huge weakness, right?
+
+Because that means that not only have you access the web server or web login, we can actually run commands on the server that's running this page. Okay. So again, this is Linux OS commands injection. So you could do just test see if you can list what's in here, right? And look at that because the command to list is ls, right? List directory. or
+
+list files and we could do more commands. We could see okay we could say who am I see what user do we have access as now this is a dedicated user or service user for the web server right so we are not a root yet but we are this user called this is a standard name for a web server user okay I'm just trying to simplify things for you guys here as well so you can just kind of get the gist what else commands what all Uh, other commands do you guys want to run to try to figure out? What can we do here? Any other commands you guys want me to run? You could Yeah, you could do list and you can do details. You could see more about who
+
+the owner of the file is, etc. All right. And then you could see permissions on the file here. I'm not going to go into this now, but this is also important. Understand what can we do? Can we read? Can we write? Can we
+
+execute the files or and who can do what? Right. You could also do pwd print working directory. This shows us as that user currently is in this folder on the Linux box. Really useful information when we will continue to figure out where what we can do here. So
+
+let's just keep it simple for now. We list there the files and here you can see the first ingredient. It says here, right? And normally you would use a command like cat. Okay, cat. You could do cat and then you
+
+could just paste the file name and see if it works. And it says it's disabled. So they have some kind of filter that is blocking our command. Right? But let me show you something else because if you did the challenge, let me see what happened now. Let me just make
+
+sure the room itself has enough time. It has at 1 hour uh whatever. Okay. Do you recognize these folders here? Right. Let
+
+me see. Do you recognize some of these files? Because yeah, you these are the files that we already know exist and we have browsed to them. We have browsed to the robots file. We browse to the portal page. We
+
+also browse to the index file. What did and the assets folder, right? Basically, one way one way to of course [music] figure read this file is to figure out what command is not blocked that you could use to read the file. But another easier way is to just copy this file name and then just paste it here because it's we know where it is located because it's located in the same folder as the other files, right? But this would be very difficult to just guess because it's like a custom word. So it
+
+wouldn't be in any word list. Does that make sense? because so you can read the first flag directly without bypassing the filter. So that's just to give you an idea about when you are in the in here and you're trying to browse what you can do you need to understand okay where am I what can I do what access do I have what permissions do I have so that's a good loop to keep reminding yourself before you move on right okay we have another file here okay we can try to see what does that one say so we have the first flag here for just by the Wait, you can just copy that and then submit that into the room and you would have done the first one. Okay, what about the other ones? We know that we have another
+
+file that's called clue.txt and see we can read that as well. Look around the file system for the other ingredients. All right, so this tells us that somewhere let's see where are we? Remember we we are in this path right somewhere on the the server there are other files hidden and normally when you're doing this type of pentesting or capture the flag or labs there are a couple of core places you would want to look and that's let's say if you ls when I do ls and then just the the for forward slash what I see what what that means is that okay run ls s on that directory.
+
+Okay, so we say that show me the contents of the root directory. Basically the first big folder you could say, right? And here you have a bunch of stuff and you have the root folder here and then you have the home folder here about a bunch of stuff. The home for f folder could be interesting because this means that this is normally the users folder, right? So we could say let me see what's in there.
+
+Interesting. So now we are building on on this and we can go see within Rick's folder and there you have the second ingredients. All right. But what you can't do here is that you cannot you could do that probably maybe you could read the files directly through the URL using another technique called path reversal but we're not going to go test that out for now but that might work but we can do the intended way for now right so we have the we know where this one is right so this one is placed in this folder and then you have in Rick's folder you have this file and then I just put it in these quotes because there's a space so that that's another trick that you cannot if you just try to copy this this space will break the command and it won't work right but let's see can we just read this file again we can try to cut it says it won't work and then you could try to figure out Okay, what commands are blocked? Right, let's see. Do we have any other information
+
+that we can try to figure out what's blocked? Deny the PHP. Let me see. There's another page. There's another way to figure that one out. I'm going to show you guys later
+
+on. But you can do different commands to read a file. And one of them is cat, right? Another one is less that that one you got introduced to in the challenge itself. You can run that one and you get the third command.
+
+Okay. And then if you do that then you would know that we have the second ingredient right now. You can just take that and paste that in. But we also want to look for the final ingredient. Right. And before I
+
+jump into that, let me just jump to the theory back quickly because once you're here, you have a gained initial foothold as it as you you also say, you need to figure out what now. So you have the user level access low-level shell you could say, but then you try to figure out how can you increase that permission level and become root or system. So you have full control over the entire server and basically can do anything you want administrator access. Right? So this is the the these four bullet points. Does this make sense?
+
+Also welcome address. Just let me know in the chat if you have any question. So let's go back to this one. Right? So we know that we need to figure out a way because okay before we do that let me show you something else.
+
+We know that we also have a root folder right that is the normally where they find a flag in these type of challenges. Where is it? I can't see it. There it is. Right. What happens? Let's see what
+
+what exists here because you cannot see it. Right. Because we don't have the permissions. So we do another trick that is we try to list out what commands can we as the W data user run as p sudo basically as the root user right and this is very telling that this user that we are may run the following commands and we can run all commands as pseudo so basically it means you could say it's like a impersonation or it's like a I run as administrator type of function that runs that command that normally wouldn't be allowed but we have permission to do that based on this policy right here. What if you do that then we do pseudo and then do ls/root.
+
+Does that work? What did I do now? Sudo slashroot. It does. Okay. So here you can see that
+
+with that permission level we can actually read the third file itself and then that you could do by just then doing sudo super user do and do ls/ or you could do then less slash root/ third.txt. If I didn't mess this up it should work. And there you have the third ingredient right. So this is all the three ingredients.
+
+And if you don't then go back to the room itself, you will be able to paste this in and complete the room. Was this useful? Did you walk through like this? Yeah, of [music] course. Like I mentioned in the beginning that there are many ways you could do this and think like a user first before a hacker, right? Because you don't need to jump to
+
+terminal and do all of this stuff because you need also to browse a web web page. Like there are a bunch of different ways to normally solve a challenge and that's what also cool because then you can test different things the different paths you maybe some other that even weren't intended by the developers of the challenge because I was interesting to see what why if we can command disabled let me see [music] where can we figure out let me just see here one moment if you can find the blocked pages. Let me just see. I can't seem to find the the patch, but there is a file that checks for the commands and then you can figure out exactly what commands are actually blocked. Yeah, but I can't seem to find that right now. But that's we that we can do
+
+in another session as well because then you could see okay, how do you know to try less, right? because there are a lot of other other ones as well. So you could do I think there are not tail or yeah so I'm not going to go into that for now. Let me see if you guys let me know if you have any questions. Let me just read through your question. Now is
+
+the time before we wrap it up. So just ask all your questions. I should have one question from each of you guys so we know that you guys are active. The pseudo command to get the third ingredient. Let me just show you. So
+
+this basically what you do is you say super user do use this command with ad administr administer rights or roots rights because we cannot read root folder or files normally right that's why and then you use a less command because cat is disabled and then this is the file name itself right or you cannot see my screen sorry let me just if you just look it like this this is the okay use admin mean admin rights you have as the w data user use the less command And because CA is disabled. And then this is basically just the file pad itself to the file. And then you get the third ingredient. Right? >> Look at that. You just went from a plain
+
+login page to running your own commands on that server. That took me months to figure out on my own. Breaking stuff with nobody to ask. You don't have to do it that way. Inside the Hacker Academy, I run live calls exactly like this one where you can stop me, ask the dumb question, and watch it click in real time. Links in the description. All
+
+right, back
