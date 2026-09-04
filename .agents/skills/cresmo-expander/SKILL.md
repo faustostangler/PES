@@ -85,6 +85,7 @@ Mandatory for Pass 1 & 2: Iteratively review and expand the veracity and complet
 ## Conducting Textual Conceptual Expansion
 Use deep causality to replace abstractions and bridge gaps across the main body and supplementary notes.
 Anchor the narrative in realistic empirical elements: exact figures, precise statistics, confirmed dates, proper names, and verified real-world cases researched and validated on the web.
+If the YAML frontmatter provides references and complimentary info, consider them and follow those links to expand the translation
 Prevent combinatorial explosion: preserve the narrative spine of the text.
 Transfer secondary or tangential expansions to informative footnotes at the end of the text.
 
