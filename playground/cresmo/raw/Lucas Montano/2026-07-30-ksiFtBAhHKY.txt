@@ -1,0 +1,129 @@
+---
+video_title: "por que alguns conseguem e outros não?"
+video_id: ksiFtBAhHKY
+channel_name: "Lucas Montano"
+channel_id: UCyHOBY6IDZF9zOKJPou2Rgg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ksiFtBAhHKY
+video_date: 2026-07-30T15:30:20+00:00
+video_description: |
+  ✨ Se tu faz reunião, tu precisa do Perssua: https://perssua.com/downloads
+  
+  ✨ Entre pro meu Stupid Button Club https://stupidbutton.club/ 
+  
+  - Mentoria 1:1 com Lucas Montano
+  - Acesso Premium do Perssua pra sempre;
+  - Mock Interview;
+  - Acesso a comunidade VIP no Discord;
+  - Treinamentos sobre como integrar IA no teu pipeline e mais;
+  - Encontro Presencial Anualmente
+  
+  Da uma olhada no meu site pra mais links, lá tu encontra tudo que precisa saber sobre o que tenho feito e onde estou:
+  http://lucasmontano.com/
+  
+  Quer criar um SaaS ou é Tech Founder?
+  https://forms.gle/wE7Z5itySSmyV3E98
+---
+Hoje eu tenho um questionamento que eu quero trazer para ti. Por que que algumas pessoas conseguem vibe codar um produto, um jogo e outras não? Em poucos prompts? Será que isso é uma questão de bom senso? Será que isso é uma questão de detalhe técnico ou confiança no modelo que tu tá utilizando? Então,
+
+recentemente esse jogo viralizou lá no Twitter. Eu não sei o quanto daqui o Alex fez um rage bait, né? Mas ele falou que o Opus 5 fez o snowboarder test em um shot, né? Então é basicamente um simulador aqui de snowboard. Ah, pelo que entendi, o modelo fez impar com fable, não tinha nenhum defeito visual e acertou tudo aí na no primeiro passe, né, na primeira implementação, ah, incluindo a física do deslizamento. E
+
+ficou bem bom, cara. Para de ver aqui, ó. Tá tá tá bonito o jogo. Aí o Sarang postou o seguinte, esse aqui foi o Fable 5 para mim, um one shot, né? Então, o primeiro jogo aqui que tu protótipo, né, jogável que tu consegue fazer. Aí eu
+
+fico me questionando porque daí eu também vi isso aqui na timeline ontem que é o The Prime criou um jogo usando o Opus 5 também no Max F o enfim não usou o Fable, ele usou o Oppus 5 oito prompts gastou mais ou menos aqui sei lá quantos 1 milhão de token de cash 70 milhões de cash read a 72 milhões de tokens no total eu acho que é 117 é isso. A maioria do dinheiro foi gasto tentando fazer a parte do corpo e do swing ali do jogador não parecer insano. E esse aqui foi o resultado, né? Provavelmente ele utilizou 3JS para fazer, mas tu bate ali na bolinha com mouse, eu acredito, e lá tá a física da bola e tal. O fundo tá bem zoado. É, então, então qual que é a
+
+diferença, cara? Como é que a gente como é que a gente entrega em um prompt isso e a gente entrega em oito prompts isso? Por que que será? Será que é é o modelo que foi treinado com mais exemplos de jogos de snowboarder? Qual que é a situação? Então eu vou tentar ver se eu
+
+consigo construir isso aqui, confiando um pouco mais no modelo, então esse joguinho do Golf, mas eu vou tentar usar algumas coisas um pouco diferente. Eu vou usar o o chat EPT e eu quero testar um recurso dele aqui que é o voice mode, que é o Mega Brain. Esse vídeo aqui ele não tá sendo patrocinado pela pela Open AI, MVP Golf, mas é só o primeiro exemplo que eu peguei de alguém na minha timeline ali. Eu quero replicar para ver se tem alguma diferença, tá? Eu vou começar confiando 100%, então eu vou dar acesso total ao meu computador. Turn on, full access. E
+
+vocês já vão entender o porquê, porque eu não quero encostar em nada. Ou esse vídeo vai parar de gravar porque do nada o GPT vai destruir o meu computador ou tudo no fim vai dar certo. Então vamos começar aqui. Vamos ver como é que funciona isso aqui. Aí ó o aí. Vamos
+
+ver. Acho que agora vai. Oi, tudo bem? >> Oi, tudo joia? Como vai?
+
+>> Tudo bem. Olha só cara, eu quero construir hoje um jogo, tá? usando uma engine da Unreal e é um jogo de golf. A questão toda é que eu vou usar o meu trackpad ou meu mouse para fazer o swing do jogador e quando o jogador bater na bola, a bola precisa viajar, né, no para, enfim, um jogo de golf. E tem alguns pontos principais que a gente precisa focar aqui, que são os objetos, o cenário e os atores desse jogo. Então,
+
+por exemplo, o jogador é um ator ou ele começa, o jogo começa em 2D na lateral, controlado pelo mouse, como eu falei. E só que quando a bola começa a viajar no ar, eu quero que o POV, que o ponto de vista seja da bola viajando no ar até que ela toque no solo. Quando ela tocar no solo, volta a ser ã 2D, tá? Então, pra fazer a a a puer ouvir da bola, a gente precisa, enfim, com que a gente tenha a posição observável da bola, né? A gente conseguir falar de fazer tipo um um bow camera rig nessa bola. Beleza? Ã,
+
+o que mais? Os atores principais do nosso sistema, então vai ser o golfer, o jogador, né? Vai ser a bola, porque tu precisa da posição, da velocidade, uma coisa importante, colisão, o kick, a parada, a física envolvendo isso, tá? O que mais? Hã, basicamente é isso, tá?
+
+Tu pode começar com uma interface bem simples e depois a gente vai itterando. Ah, faz o setup de tudo que tu precisa para rodar um real engine. Tu tem acesso total aqui, então se precisar baixar alguma coisa, ah, tu pode fazer. Beleza. >> Entendi. Vou ver a melhor forma de
+
+montar isso tudo para ti. Já deixei encaminhado o projeto do MVP com foco no protótipo jogável. >> Só que assim, ó, tu começou a criar um work tree, só que a gente tá numa num projeto aqui, numa pasta que não tem nada, né? Então não tem Git instalado. >> Boa, entendi. Vou confirmar o ambiente e
+
+ajustar o plano. Confirmei. É uma pasta vazia sem repositório. >> Cara, eu não sei como que vocês conseguem usar Mega Brain. Eu vou eu vou cancelar aqui. Ah, tá. Agora
+
+>> verifiquei que o Unreal ainda não está instalado nessa máquina. Vou checar e te digo como seguimos daqui sobre Work Tre que ficou openente. Quer que eu cancele ou deixo seguir enquanto configuramos o projeto nesta pasta? >> Cara, eu acho muito lento, tá ligado? Muito lento. Então vou copiar meu
+
+prompt, fazer o mesmo prompt. Vou colar aqui sem o Mega Brandin. Deixa eu abrir o terminal pr dar um git enit aqui. Aí, vamos ver. Bom, enquanto ele vai construindo ali, eu quero falar para vocês sobre criação de produtos e o estágio do teu desenvolvimento do teu projeto, tá? Quando eu falo que produto
+
+não necessariamente precisa ser um SAS, pode ser um jogo, pode ser um até uma uma empresa de serviços, né? Hoje em dia uma coisa que tá muito alta muito alta agora é empresa de serviço, né? A demanda por software, por incrível que pareça, tá aumentando, cara. Se tu par pensar, a IA ainda escreve código. Então a gente tá vendo pessoas que não são da área de tecnologia vai bicodando soluções. Essas soluções estão usando o
+
+quê? Código, tá? A Ia tá escrevendo um script em Python, tá escrevendo um script em JavaScript e enquanto isso continuar acontecendo, a demanda por software vai aumentar. Então também tem agora uma galera que tá transformando serviço em produto. Então tu tem uma software house e basicamente tu cria uma orquestração de agentes, tu cria um um produto que replica soluções para um mesmo problema e tu oferta isso e vende como se fosse um serviço, né?
+
+Literalmente tu liga. Eu, por exemplo, se tu tiver construindo algum algum software para restaurante, cara, tu liga pro restaurante e tenta vender. E tem uma galera fazendo muita grana assim. Eu acho que aquele boom do site, sabe? aquele boom que a gente teve lá no início da web, onde tu entrava em contato com os comércios locais da tua cidade, oferecendo para eles saírem do livro amarelo para ir pra internet. Tipo
+
+assim, tu não quer um website do teu da tua vídeolocadora. É mais ou menos isso que tá acontecendo agora, só que com a IA. Então, deixa eu me hidratar aqui. Deixa eu mostrar para vocês os estágios de um framework que eu tô bolando aqui pr como quando eu falo framework, tá? Eu não tô dizendo framework JavaScript, eu tô falando basicamente ah, tentando replicar o que eu fiz em outros produtos que eu criei. Então, se tu preencheu o
+
+formulário que eu mandei nos últimos vídeos aí do canal, lá no fim do vídeo, eu expliquei sobre eles, tu deve ter recebido um e-mail essa semana e esse e-mail eu tava testando esse framework aqui que eu tô que eu tô bolando, tá? Que eu vou executar aqui com mentorias um a um lá dentro do Stuper Botton Club a partir de agosto. Então, qual que é o estágio um que eu vejo a maioria de vocês? Eu até twitei sobre isso. Pros mais de 1000 techounders brasileiros que eu perguntei, né? 67% de vocês ainda não
+
+colocaram produto no ar. 31% colocou e fatura menos de 5.000 e 1,7% passou de 5.000. E é basicamente o que eu tô vendo aqui no primeiro e no segundo grupo é que não é falta de técnica, tá ligado? é
+
+falta de definição do teu produto, do que que é ele estar pronto. Então, por isso que eu tô bolando isso aqui. Então, estágio um, o estágio zero aqui antes do um, seria uma ideia validada, que seria validar o problema com clientes reais, né? Então, tu faz entrevista, tu faz waight list, tu faz uma pré-venda, mas tu basicamente vende. Interessante que isso aqui é o estágio zero, cara. Então,
+
+o que significa que essa galera aqui do 67% tá antes do estágio zero, que eles nem tm ainda algo no ar, ninguém consegue pagar por aquilo. O estágio um, tu tem um produto onde um estranho consegue usar. Então, nesse estágio aqui, tudo bem tu entrar em contato com amigos, tu entrar em contato direto com alguém que vai ser o teu beta tester, mas nesse estágio aqui seria alguém aleatório cair no teu produto e ele conseguir utilizar. O estágio dois seria ter conseguido faturar R$ 1.000 de clientes reais, né? estágio 3 é tu ter
+
+recorrência. E aqui no estágio 3 é importante porque para te ter recorrência tu tem que identificar os teus canais. Então até aqui, cara, para ti é meio que pessoas individuais uma a uma aparecendo e usando o teu produto, mas vai chegar um momento que tu vai ter que pensar em canais de distribuição. Então, por exemplo, no PSUA, meu maior canal de distribuição é o YouTube. Um outro canal, vou colocar aqui, que seria o Instagram, que seria daqueles cortes virais que a gente tá fazendo, né?
+
+basicamente umas sketchs. E para essa sketch funcionar também duas coisas precisam funcionar. São alguns bots que a gente tá mandando agora em DM, mas também a gente precisa ter um SEO bom, porque o SEO é tanto para pessoas orgânicas, não orgânicas, né? Umas pessoas que estão caindo em palavraschaves, nossa, que depois também pode ser usado para tráfego pago. Mas isso aqui é importante também porque muita gente cai no vídeo, não tem um link ou cai no story, não tem um link, vai procurar no Google e tu tem que estar bem ranqueado, né? Também temos
+
+afiliados, né? outro canal de distribuição aí. Muitos de vocês podem ter aí os mais diversos canais de distribuição. Deixa eu dar uma olhada aqui no que que o o Sol tá fazendo. Já criou 1600 linhas de código, tá no passo 5 de cinco. O primeiro protótipo tá
+
+pronto. Eu vou colocar um objetivo para ele agora, que é instalar tudo que precisa, rodar o jogo e testar para ver se ele tá funcionando, tá? Esse aqui seria o meu segundo prompt para ele. Daqui a pouco ele vai começar a usar o meu computador, então vamos agilizar aqui. Depois comenta aqui embaixo qual estágio tu tá, mas o estágio três então seria tu achar uma forma recorrente de girar a receita. No estágio 4, tu já tá
+
+faturando R$ 5.000 a pelo menos 2is meses seguidos. E no estágio 5, tu tá faturando já 100.000 d aqui são dólares, na verdade, né, que é um faturamento aí de 8.300 por mês é corrente. Tu viu que tem um
+
+gap gigante aqui, né, do estágio 4 pro estágio 5, porque, pessoal, quem fatura hoje R$ 5.000 por mês poderia estar faturando 20, poderia estar faturando 50, porque normalmente se tu tá faturando, por exemplo, vamos estar aqui 5.000€ tá ou por mês, se tu chegou nesse valor e tu conhece o teu canal de distribuição e tu fez track de tudo e tu tem uns números, tu sabe quanto que custa para te adquirir um cliente. Se tu já tá tendo essa receita recorrente por 3, 4, 5 meses, já começa a conseguir calcular o teu LTV. Então, normalmente, o que te impede de chegar num valor maior recorrente é manter o K baixo enquanto tu aumenta os leads que são frio entrando na tua na tua plataforma, né? Então, como que tu vai fazer isso?
+
+Por exemplo, para mim o YouTube eu considero como sendo um lead quente, né? Tu já me viu aqui várias vezes, tu sabe quem eu sou. Muitas vezes tu viu eu construindo então tu era, digamos assim um possível usuário que tava aquecido, que tava quente, tu sabe do que eu tô falando, não preciso te explicar o que que é o persua e por aí vai. Então talvez a minha base de partida ela foi, na verdade foi mais baixa do que isso aqui, né? Mas em termos de em reais, que ali eu tava pensando em mais SAS a nível global, mas se tu for parar em reais, tá ligado? O ponto de partida vai ser os
+
+teus leads, teus leads quentes. Só que aí tu vai chegar num valor de CAC que ele não é 100% correto no primeiro, segundo, terceiro mês que tu tá faturando. Porque o maior desafio é tu manter o teu CAC baixo enquanto tu consegue atingir alguém que nunca ouviu falar de ti. No momento que tu tem essa fórmula pronta e tu chegou em 5.000, a diferença de chegar em 50.000 é
+
+basicamente reinvestir dinheiro, tá ligado? Pega o caso bem aí famoso da nossa da nossa bolha, né? caso lá do Antônio, do Real Oficial. Pô, o Antônio ele ele twitou essa semana que ele tava tá gastando R$ 100.000 por mês em EDS e tá tudo no cartão de crédito pessoal dele. Então assim, né, ele já achou a
+
+fórmula. Então a diferença entre ele faturar 50.000 e 100.000 por mês é ele conseguir manter o CAC baixo. Isso vai exigir criatividade marketing dele e reinvestir de alguma forma, né? E e se o
+
+teu LTV tá tá saudável, se teu se a tua precificação tá saudável, o teu cash flow ele vai ele vai fluir? Cara, olha só, ele tá abrindo para mim aqui o Epic Games e aí eu não tenho conta na Epic Games. Eu acho que ele vai criar conta para mim. Isso. Deixa eu ver o que ele tá fazendo. Eu vou ter que intervir aqui
+
+porque eu vou ter que criar minha conta na Epic Games. Feito. Fiz o login ali na Epic Game. Agora ele tá rodando para mim aqui a Engine Unreal para nós. Unreal Engine. Aí, ó, temos a primeira versão
+
+do nosso jogo. [risadas] Vamos dar uma [roncando] olhada como é que ficou. Visão da bola. OK. Caiu no espaço. Ó,
+
+ele fez o P. Eu vi. Bacana. Vamos lá. Vamos pro segundo prompt agora para ver se ele consegue ajustar o o ambiente. Na
+
+verdade, ainda tá no primeiro prompt, né? Eu tava me metendo nos testes dele porque ele que tá rodando agora ali, ó. Vocês conseguem ver aqui, e tá testando o jogo. Então, deixa ele terminar o primeiro prompt porque ainda não tá pronto, digamos assim. Agora sim, finalmente ele chegou na primeira versão, primeiro final do prompt. Falar
+
+para ele rodar o jogo para mim. Eu não vou considerar isso aqui como sendo prompt, né, gurizada. Ele vai iniciar aqui para mim o script de que ele escreveu para rodar no Mac. Ó, aí jogo iniciando, tá? Dei a atacada, bolinha no ar, quando ela ela cai.
+
+Ó, eu acho que agora ele precisa simplesmente construir um mundo ao redor daquilo ali. Então, é isso que eu vou fazer o prompt para ele agora. Aí, então tô pedindo para ele construir um mundo ao redor daquele 2D, né? Não é para ficar flutuando no espaço e ter uma experiência imersiva no jogo do golf. Vamos ver o que que ele vai construir para nós aqui. Aí, ó, segundo prompt.
+
+Vamos ver o resultado. Fez aqui. Pum. Foi, pô. O jogador tá se teletransportando real lá pr para onde tá bola. Caiu. Caiu no abismo. Cara, eu
+
+acho que o seguinte, ó. Enfim, a gente poderia inteirar isso aqui até ficar bom visualmente, mas tem uma coisa que eu quero tentar fazer agora. É assim, ó. Eu pedi para fazer uma integração do jogo com o meu celular, então consigo jogar com o meu celular. Vamos ver se funciona. Basicamente vai ser um https
+
+temporário, um servidor local no Mac UDP, somente aqui no local host direto para um real. Então nenhuma porta do jogo vai ficar aberta na rede. O servidor descarta pacotes inválidos e aplica um token de sessão embutido no Q code. Vamos ver se funciona, cara. A página do servidor já tá criada. CR Code
+
+já está protegido por um token aleatório por execução e o Node valida e reduz os dados antes de encaminhá-los ao Unreal e não grava a telemetria. Vamos ver o resultado. Funcionou, tá? O iPhone tá conectado ali. Agora tô fazendo movimento com a mão aqui. Ele tá mexendo
+
+ali, tá? Mas gente, olha só, o microfone tá aqui, então eu preciso falar aqui. Errei a bolinha. [risadas] >> [roncando] >> E tudo isso ele tá usando basicamente o acelerômetro do meu celular através do Safari e tá conectado então por essa esse túnel aqui dentro da minha rede. Bom, então chegamos aí no final com três promptes. A gente criou um jogo com
+
+Unreal, melhoramos ali o universo do jogo e conectamos ele no celular para que a gente pudesse usar o acelerômetro para fazer o movimento da bolinha no jogo. Então qual que é a meu conclusão que eu chego disso tudo, cara? Depende muito do conhecimento que tu tem sobre criar jogos. Aqui o Mega Amador fiz em três promptes. Eu acredito que poderia ter sido tudo em um único prompt, principalmente se eu tivesse dado os assets. Então, por exemplo, eu acredito
+
+que um jogo como esse aqui, o cara forneceu as imagens ou usou alguma referência ou pelo menos disse da onde que ele deveria pegar. No meu caso ali, o Sol, o GPT, ele criou, né, o mais básico possível, usando os componentes gráficos, padrões. Mas é isso, isso faz parte do teu prompt, o que importa mo tu colocar ele em loop. É o que eu tenho feito, coloca o go, não é nada complicado. E aquele teu único prompt, na verdade, vira 20, 30 prompts, porque o modelo vai fazer teste end to end, vai verificar se o jogo tá funcionando e vai ficar iterando até chegar no resultado final que tu tem que ter bom senso para criar. Bom, aqui tá quanto foi
+
+utilizado. Foi utilizado basicamente 67% do contexto. Eu não sei quanto de token de input ou output também não me interessa, porque basicamente eu tô utilizando aqui a minha subscription do GPT. Quando eu iniciei o dia, eu tava com 96% do meu uso semanal e agora eu tô com 91. Então, construir o jogo naquele momento que ele tava, gastou 5% do meu limite semanal de uso. Se tiver uma boa
+
+alma aí, quiser fazer o cálculo de quanto que é esse 5% do cap semanal e quanto que custaria chamando API, eu super agradeço. Mas comenta aqui embaixo, cara, o que que tu tem notado que é a grande diferença entre uma pessoa vai bucodando produto e outra pessoa vai bucodando mesmo produto. É bom senso, é saber colocar um bom prompt, é saber pedir as coisas em loop. São 37 pon MD e 42 skills e connectors. O que que é? Não esquece de se hidratar
+
+e eu te vejo no próximo vídeo. Se tu gostou desse vídeo e tu é um engenheiro de software que quer começar ou crescer o teu próprio negócio ou carreira, eu tô organizando mensalmente agora uma live privada e gratuita, tá? onde eu vou compilar tudo que a gente tem discutido lá dentro do stupido Button Club, também tudo que eu aprendi nesses últimos anos, empreendendo e trabalhando como um engenheiro de software. Então eu coloquei o link aqui na descrição, na verdade eu vou colocar ela bem no fim da descrição, só para quem ficou até o final desse vídeo saber, né? Basta tu colocar o teu e-mail lá e eu vou te mandar o o link da live privada assim que a gente entrar no ar.
+
+Só colocar o teu teu e-mail aí que eu te mando o invite, beleza? Yeah.

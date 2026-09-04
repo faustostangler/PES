@@ -1,0 +1,97 @@
+---
+video_title: "Anthropic acabou com o Handshake"
+video_id: aLdQ793Yi_g
+channel_name: "Lucas Montano"
+channel_id: UCyHOBY6IDZF9zOKJPou2Rgg
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=aLdQ793Yi_g
+video_date: 20260811
+video_description: |
+  VPS da Hostinger: https://hostinger.com/br/lucasmontano
+  cupom LUCASMONTANO
+  
+  
+  ✨ Se tu faz reunião, tu precisa do Perssua: https://perssua.com/downloads
+  
+  ✨ Entre pro meu Stupid Button Club https://stupidbutton.club/ 
+  
+  - Mentoria 1:1 com Lucas Montano
+  - Acesso Premium do Perssua pra sempre;
+  - Mock Interview;
+  - Acesso a comunidade VIP no Discord;
+  - Treinamentos sobre como integrar IA no teu pipeline e mais;
+  - Encontro Presencial Anualmente
+  
+  Da uma olhada no meu site pra mais links, lá tu encontra tudo que precisa saber sobre o que tenho feito e onde estou:
+  http://lucasmontano.com/
+  
+  Quer criar um SaaS ou é Tech Founder?
+  https://forms.gle/wE7Z5itySSmyV3E98
+---
+Lembram quando lançaram o MCP e a gente entrou numas noias de que a gente não ia mais precisar implementar REST ou qualquer API request? Agora as IAS iam se comunicar uma com as outras, todas através de MCP. Pois é, esse futuro não veio. Ou talvez ele demorou, assim como o Q Code demorou. Vocês lembram disso? O
+
+Q Code não era famoso, cara. Quando lançaram demorou muitos anos pra gente de fato começar a utilizar. Então, precisou de várias iterações na tecnologia. E a Antropic semana passada ela divulgou uma mudança bem forte no MCP. Então agora para quem tem interesse sobre model context protocol, a Antropic tá matando o handshake do MCP, obviamente. Então basicamente o teu
+
+servidor remoto, ele é só um post que roda em qualquer máquina. Uma das coisas mais complicadas que tinha de implementar o MCP e hospedar ele é que os MCPs eles eram stateful. Stateful é quando uma aplicação ela armazena dados de contexto entre requestes. Então tu tem múltiplos usuários fazendo requestes e essa tua aplicação, ela pode ah segurar em alguns estados, né? Por isso que a gente fala que é stateful. No
+
+caso, a mudança principal do MCP vem nisso agora, então a especificação do protocolo, ele passa a ser no seu core stat, o que facilita pra gente fazer deploy e escalar em servidores remotos. Eu nem sei se Antropic tá utilizando isso, mas recentemente no Cloud Desktop App eles divulgaram que agora tu consegue rodar aquelas tarefas do teu coworking cowork, né, que eles chamam na nuvem. Então o que eu quero te mostrar nesse vídeo, eu quero falar um pouco dessa mudança e eu quero implementar o MCP com vocês. Eu vou est fazendo isso na minha VPS lá da Hostinger que tá apoiando esse vídeo. É onde eu hospedo a maioria dos meus projetos e onde eu também faço vários experimentos como esse aqui de testar uma nova tecnologia.
+
+Porque eu não sei tu, mas eu essa eu eu acredito que essa é é a forma mais fácil que tem de tu aprender algo novo. Então, alguns alguns dados atualizados aqui. MCP superou 400 milhões de downloads mensal aqui do SDK, quatro vezes mais este ano e hoje, enfim, já é um padrão aí da indústria, né? O MCP então tá movendo de uma especificação de protocolo bidirecional stateful para uma especificação mais simples de request response. O que significa é que os servidores de MCP agora podem ser deploiados serverless e também numa infraestrutura de ed. Isso simplifica a
+
+experiência de construir um MCP server para o cloud e escalar o uso dele, né, e a adoção. Então, é como eu falei para vocês, o problema do QR Code, se vocês não lembram lá do início, de qualquer nova tecnologia, protocolo, é a velocidade que tu consegue fazer com que as pessoas adotem essa nova tecnologia. Então eu vejo com muito bons olhos essa mudança. O cloud agora tem 950 MCP servers e MCP apps fazem com que o servidor consiga renderizar ah interfaces interativas, né? Inclusive eu tô a fim de lançar o MCP do PSUA pro cloud, porque os usuários daí vão conseguir, por exemplo, manipular suas sessões, buscar informações através desse MCP. Então, basicamente, a gente
+
+tem um novo método aqui sendo chamado server discover. Tem uma leitura bem importante aqui. O servidor ele é obrigado a implementar, tá? Então o cliente só chama quando for necessário e ele vai servir aqui para anunciar, por exemplo, a versão, as capabilities, né, do que que ele suporta, a identidade e por aí vai. Se tu não chamar ou mandar direto uma com versão errada, por exemplo, o servidor ele vai te retornar com um erro de versão. Agora, por que
+
+que isso importa para quem paga um servidor, cara? Acho que essa frase diz muito aqui, né? Remote MCP server effectively become standard HTP end points which scale cleanly with enterprise workloads. Então, basicamente, tu não tem mais aquelas sessões no teu protocolo de MCP e nem o protocol specify durable object. Então, lembra assim, quando tu tava seguindo a especificação do protocolo, tu tinha que ter uma camada de de sessão. Essa camada
+
+de sessão, ela exigia de ti, sei lá, um redis da vida, um sticky session, um session store. E tudo isso é gasto, né? Tudo isso até te impede muitas vezes de rodar numa num. Então, deixa eu te mostrar o quão fácil é tu fazer um deploy agora de um MCP. Caso tu tenha já tentado fazer isso antes, tu sabe que tinha algumas dores. Como eu falei, para
+
+fazer isso eu vou utilizar a Hostinger, que é parceira aqui do canal. E lá eu tenho um plano de KVM2, que é o plano mais popular deles. E junto da infraestrutura que tu precisa para construir o teu projeto, tu vai contar com proteção conta DDS, firewall alimentado por IA, snapshots em tempo real e também backup semanal automático, tá? Caso tu precise fazer aquele grande rollback. Se tu tem o teu projeto rodando aí no Docker, tu consegue com toda a facilidade do mundo fazer o deploy dele numa VPS da Hostinger.
+
+Inclusive eles tm Docker Manager gratuito incluso. Então só escolher o melhor plano para ti de VPS na Hostgar e implantar o teu aplicativo Docker. Confere um link que tá aqui na descrição para obter desconto. Tu consegue com o meu cupom Lucas Montano 10% de desconto extra do que já tem lá no site. Agora vamos entrar aqui numa parte mais técnica desse vídeo que é sobre os headers. Porque a gente precisa entender
+
+primeiro como que a gente vai fazer para rodar isso aí no nosso Indenex. Então agora todo post ali ele é obrigado a dizer uma única coisa no header, qual método ele é e qual recurso ele quer. Então pensa no que o teu proxy conseguia fazer antes, tá? Basicamente chegava um post nele. Esse post vai chegar lá no barra MCP e ele pediu uma única coisa, né? Me listas tools, que é basicamente o
+
+que a gente espera que o MCP devolva para um agente, né? Quais são as ferramentas que ele tá expondo? E isso aqui, cara, podia segurar tua conexão, sei lá, 40 segundos. Na verdade, o Milista Tools deveria levar milissegundos. Ele não deveria nem levar segundos. Só que tu Nex não tinha como
+
+fazer isso sem abrir o body, porque tu não sabia se alguém tava pedindo para listar as tools ou então pedindo para rodar uma tool, que aí sim, rodar uma tool, tu pode fazer até chamadas externas, né? Por exemplo, eu já criei um MCP onde tu consegue autenticar por o ALF no Google. Então, dentro do PSUA agora, a gente aceita o usuário fazer anexação de documentos vindo do Google Drive. E para fazer isso, eu usei o MCP para integrar com a gente que faz essa parte de requisição, de autenticação, né? Então, toda vez que eu batia no NGNX, basicamente a gente não sabia se a gente estava pedindo para listar as ferramentas ou para de fato rodar uma tool. E isso tem um impacto forte,
+
+porque as regras que tu tem de, por exemplo, API rate limit, ela tinha que ser única. digamos que tu quer permitir que o cliente, que o cliente possa bater no teu MCP e perguntar quantas são as tools, quais são as tools que o teu MCP suporta. Tu quer que ele possa fazer isso a cada 3 segundos, mas tu não quer que ele chame, por exemplo, uma tool de autenticação a cada 3 segundos. Tu quer ter um time out, um rate limit diferente, porque ninguém vai fazer autentificação a cada 3 segundos se não tiver tentando hackear uma conta, por exemplo. Então, antigamente isso não era possível. Agora isso tá tudo no header,
+
+entendeu? Então, basicamente, tu tem um MCP request header e tu consegue passar para ele o método e qual recurso que tu quer. Essa é uma é uma outra tecnicidade que muda bastante a forma que tu vai implementar teus MCPs. Agora tem uma outra frase aqui lá no change log da Antropic que é importante a gente ler juntos, tá? Eles dizem aqui: "Servers that need crossc state to use explicit e server minted handles passed as ordinary to arguments." Traduzindo aqui pro nosso
+
+português o dia a dia, imagina que tu chega no bar ou no restaurante e o garçom vai vir e vai te entregar uma comanda com um número. Eu sei porque eu já trabalhei de garçom, sabia disso? Enfim, tu pega aquela comanda e tu sai com ela. Com aquela comanda, qualquer garçom do bar consegue vir te atender, porque o teu state, o teu estado, ele tá na tua mão, ele tá no número da tua comanda. Ele não tá na memória do garçom dizendo assim: "Não, aquele gurizão lá de camisa preta, ele, deixa eu ver aqui nos meus pedidos, é o número três." Não,
+
+a comanda tá comigo com o número três, então qualquer garçom pode vir e marcar na minha comanda o que eu estou consumindo. Então, o estado agora ele tá na mão do cliente, ele não tá mais com garçom, que no caso seria o teu MCP. Então, era isso que a sessão do MCP Stateful impedia. Antes só o garçom que te atendeu primeiro sabia quem tu era. Agora imagina que tu tem um MCP hospedado num servess numa ad function e tu pode chamar ele diversas vezes. Ele
+
+não tá te amarrando ou fazendo um handshake para manter uma conexão contigo. Toda vez que tu chama ele, tu passa a tua comanda e ele sabe quem tu é. Então ele não precisa manter uma sessão no MCP sobre ti. Então agora o servidor ele vai fazer um cunhamento dessa tua comanda, ele vai fazer mintagem do teu número e ele vai te entregar e ele vai voltar isso como um argumento normal na próxima chamada que ele fizer, entendeu? Então o estado da tua sessão, ela sai do da parte de transporte do protocolo e ela vira só mais um dado. E aí, claro, a gente tem
+
+aqui uma mudança de segurança, né? Porque agora a comanda passa pela mão do cliente. Se ela for um número simples, o cliente troca o número ou compra na conta de outro cliente. Então, por isso que agora a gente precisa assinar a nota ou a comanda, não sei como é que tu chama. Então, claro, eu não preciso te ensinar isso porque isso já tá lá no protocolo. É para isso que um protocolo
+
+serve. Então, se tu abrir o site modelcontexprotocol. pesquisar por esse trecho aqui de multiround trip requests, lá tu vai ter a sessão de server requirements e nela basicamente vai te explicar tudo como funciona. Então, servers must treat request state as anta controlled input server must protect its integrity e aqui eles estão falando de ou então, enfim, é as formas que eles vão manter o teu número, a tua comanda segura. Tem três coisas importantes, né, que é quem é o dono, o prazo de validade e para que ela foi emitida. Então, quem é o dono vai
+
+garantir que uma comanda de uma pessoa não vai parar na mão da outra. O prazo de validade vai permitir que uma comanda de ontem não abre uma conta de hoje. E para quem ela foi emitida é importante porque sem ele a comanda que o o por exemplo, se tu tá fazendo um e-commerce e tu tem um MCP, imagina que tu faz uma chamada, tu emite essa comanda aqui que vai controlar a sessão agora ou melhor o teu estado da da aplicação. Se tu emiti comanda para fazer um checkout, por exemplo, tu não pode usar ela para adicionar um item no teu no teu carrinho. Então, se tu não colocou não colocar para quem que ela para que que ela foi emitida, tu pode estar gerando duas assinaturas iguais para dois propósitos diferentes. Na documentação
+
+eles chamam isso de identificar a requisição que tá originando, né, aquele aquele pedido. Agora, se não tem handshake e a gente não tem essa conexão, tu pode agora est se questionando, né? Como é que o servidor pergunta algo pro usuário sem ele tá segurando essa conexão? Isso deveria exigir um stream aberto. Talvez tenha passado despercebido para ti quando eu falei dessa parte, né, do M round Trip requests. Então, lê o diagrama comigo. O
+
+cliente ele chama o servidor, ele passa o ID e os parâmetros de requisição. O servidor ele vai precisar mais informações sobre requests. Ele pede essas informações adicionais. O cliente ele busca essas informações e manda os parâmetros novamente. Quando o servidor tem informação suficiente, ele volta com resultado para aquele ID. Então ele não
+
+segura mais a conexão, mas ele pode sim te responder: "Eu preciso de mais informação, tu não me mandou tudo que eu preciso". Então, no momento que ele faz esses requests, são requests diferentes, entendeu? Esse request morreu, ele não ficou sendo segurado. O ID dele é um, o ID do segundo é dois. Novamente a gente tá falando aqui de um simpl um simples post stateless e se falhar, cara, se falhar, tu manda de novo, só faz o retry. E lembra que ali no início do
+
+vídeo eu falei sobre Antropec, né, falando dos 400 milhões de downloads do seu SDK. Cara, tu pode usar o MCP TypeScript SDK, por exemplo, mas agora que é só um post, um request e um response, pode fazer manualmente num único arquivo. Ficou ainda mais fácil tu criar um MCP. Então tu não precisa esperar, por exemplo, uma nova versão do SDK, que quando tava escrevendo aqui o roteiro desse vídeo ainda não tinha saído. Tu não precisa esperar caso não tenha saído para implementar esse teu MCP stateless. Tu pode fazer na mão, aí
+
+vai ser um único arquivo. Tem outras formas de começar. Por exemplo, lá no próprio GitHub da Hostinger, tu tem o Remote MCP Server, que eles mostram lá como criar um SEO checker para rodar remotamente no teu site, saber se o teu SEO tá bom. Tu também pode usar, por exemplo, o Meta MCP com, tu instala ele com um clique lá na Hostinger e dentro dele tu tem diversos MCPs. Então ele é basicamente o MCP Server Proxy. E se tu
+
+quiser fazer tu mesmo, tem seis coisas que mudaram basicamente. A primeira delas é que o handshake acabou. Por quê? Porque tu não precisa mais manter uma conexão. Toda request agora descreve o que ela tem por si só. O server discover
+
+passou a ser obrigatório no lado do servidor, mas ele é opcional do lado do cliente. Tu tem dois headers novos agora e isso deixa tanto o teu enginex, se tiver utilizando o teu o teu gateway, o teu rate limiter, eles deixam eles trabalhar sem precisar abrir o body. Então, pra tools diferente, tu pode ter configurações diferentes. Ao invés de tu ter um estado sendo mantido pelo servidor, agora tu tem comandas na mão do teu cliente. Então, cada request virou um request único. Tu tem ainda
+
+interatividade com o servidor e o seu cliente, porque o servidor pode retornar pedindo mais informação e se algo falhar, um retry teu vai cair em qualquer nova instância da tua adunction. Além disso, tem um detalhe importante. Como tu não precisa mais manter uma sessão, tu pode manter se tu quiser, né? Então tu pode ter um Redes rodando ou um session stick, tu pode ter tudo isso, mas tu não é obrigado agora pela especificação do protocolo. Então isso garante que tu pode simplesmente implementar um round robin burro lá na VPS. Tu não precisa ter mais nada, tá
+
+ligado? E esse era o objetivo desde o começo dessa modificação da Antropic. Eu acho que o que eu quero que tu leve desse vídeo aqui, eu sei que muitos de vocês não acreditam em MCP, né? Assim como eu também fui discrente do QR code. Hoje eu ando pelas ruas vendo vendo QR code em tudo e todo mundo utilizando.
+
+Até mesmo quando alguém transmite algo, né? Como sei lá, o Casé TV transmitido da Copa, ele botava lá o QR code na tela. E eu acho louco, tá ligado? Porque a gente falava: "Essa ideia nunca vai funcionar". Então o MCP, que foi aquele protocolo que nasceu parecendo uma IDE tão complexa, mantendo uma conexão viva entre client servidor, tendo que ter todo o estado no transporte, uma máquina cuidando de um cliente, tudo isso agora, essa complexidade vai embora. Agora ele
+
+fica atrás de um load balancer, bota um um round robing burro lá na tua VPS e tu tem o agente então servindo as chamadas para as ferramentas que o cliente precisa. E essa é uma mesma correção que a web faz há 20 anos atrás. Então, é incrível como a gente continua, quando a gente lança um novo protocolo, uma nova tecnologia, a gente continua cometendo os mesmos erros. Mas me conta nos comentários, cara, tu já criou o MCP? Tu quer mais esses vídeos um pouco mais técnicos aqui do canal? Ou eu posso
+
+voltar a falar do hype da IA? E para empreendedorismo, bota no YouTube aí, Lucas Montano, ou melhor, Techfounder Lucas Montano, que eu tô postando uns vídeos lá sobre essa jornada de empreender de novo no digital. Um forte abraço, não esquece de se hidratar e eu te vejo no próximo vídeo.
