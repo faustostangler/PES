@@ -1,0 +1,229 @@
+---
+video_title: "Building a Salary Predictor Part 2: Model Training & Feature Importance | Stack Overflow 2023"
+video_id: OS2xRBNeNqM
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=OS2xRBNeNqM
+video_date: 2025-11-04T14:00:42+00:00
+video_description: |
+  In this video, we train and evaluate a linear regression model to predict developer salaries using the cleaned 2023 Stack Overflow Survey data from Part 1. You'll learn how to interpret model performance, analyze feature importance through coefficients, and understand where the model succeeds and struggles. This session focuses on extracting actionable insights about what actually impacts developer salaries—from technical skills to role types and company characteristics.
+  
+  What You'll Learn:
+  What You'll Learn:
+  - Handling multicollinearity in correlated features (experience metrics)
+  - Training linear regression models with scikit-learn
+  - Interpreting model coefficients to understand feature impact
+  - Analyzing residual plots to identify model weaknesses
+  - Evaluating performance across different salary ranges
+  - Identifying controllable factors that boost salary (skills, roles, tools)
+  - Understanding model limitations and next steps for improvement
+  
+  Recommended Prerequisites:
+  - Watch Part 1 (data cleaning) here → https://youtu.be/d7WzK1Wn1yg
+  - Machine Learning in Python → https://www.dataquest.io/path/machine-learning-in-python/
+  - Familiarity with pandas, NumPy, and basic data manipulation
+  
+  Access the Project: https://app.dataquest.io/m/950
+  
+  #MachineLearning #Python #DataScience #SalaryPrediction #FeatureEngineering #DataCleaning #StackOverflow #TechCareers #DataAnalysis #PythonProjects
+---
+All right, today's agenda. I'm going to introduce the project for our new folks, but we're not going to spend a ton of time analyzing the data set or preparing the data for modeling because that was the focus of last week. I will recap what we did though. So today we are focusing primarily on building the model and interpreting and explaining what results we get from that model. And we will end with some Q&A. So if you have
+
+questions, please do use the Q&A and I'll look at that towards the end. Uh here we go. So what are we doing with this project? This project takes a giant real world data set from Stack Overflow. Stack Overflow is a very popular website used for developers to kind of ask questions of each other, say, "Hey, I'm trying to do this syntax thing. Who can
+
+help me out?" And I bet that a lot of you have actually encountered Stack Overflow when you are working on your own coding projects. Every every year, Stack Overflow sends out a developer survey with lots of questions about what technologies are you using? Um what kinds of projects are you working on? And the question we're going to focus on today, what's your salary? And
+
+we're going to take all of the survey responses and try to build a machine learning model that can predict developer salaries based on all of their other survey responses. So with that in mind, let's dive into the data quest app. This is the project interface and let's spend uh 5 to 10 minutes here recapping what we did last week. So this is the code that was written last week. You can see we have our import line with pandas, numpy, mapplot, lib, seabour for data analysis. And then we have sklearn,
+
+scikitlearn, which we're going to be using today for our machine learning model. And if you do want to use this project locally, you totally can. You can download the survey data from here on the side panel. If you rightclick and click download, that survey data is for you. Uh it's also available via Kaggle, which is where I found this data set, but we slimmed it down because the original data set has almost 90,000 rows of data, which depending on your computer might slow things down. And the reason
+
+we slimmed it down was because our target variable, which is converted compensation yearly, so the salary only had 48,000 nonnull values. So the other kind of half of the data set wasn't going to be useful for our specific machine learning project. And using this slimmed down data, we then did a lot of work last week saying, okay, how can we take this is still a lot of rows to work with. How can we take this and trim it down even more? And so we dropped a lot of columns that were missing too many values.
+
+And even after we dropped columns with more than half of the values missing, we still had some columns with a lot of values missing. Industry, for example, is missing 42% of its values. Um, and let's see. I'm trying to scroll through in a reasonable way for us. Um [snorts] we also want to just kind of do some exploratory data analysis here. So for
+
+our target variable, which is our yearly compensation, um we can see that we might have some outliers to account for. It's in scientific notation right now, but we can see our maximum value is a huge salary. This is in US dollars, by the way. Um it's the values are from all over the world but this column is com normalized to US dollars to make our lives simpler. So we did a little bit of salary exploration looking at our maximum values and then our bottom salaries our minimum values one US dollar per year. Uh we did
+
+some data cleaning here because these are were definitely incorrect values. So we basically cut off our salary, removed everything lower than 10,000 USD and removed everything higher than 500,000 USD. Um, [snorts] kind of an arbitrary number there. So, this was an opportunity for you to play with slightly different mins and max values. And this is something that we're going to need to be mindful of today.
+
+We have a quick distribution of salary. And we can see that without a log transformation, salary does have a pretty substantial tail, which means that we're going to have some skew in our mean versus our median. And sometimes, especially when we're working with linear regression, that's the model we're going to be using today. [snorts] Linear regression can be very sensitive to skew because we want a straight line. And this is going to be more challenging to get a straight line with. So we could
+
+consider a log transformation of our salary and then we can see the distribution is fairly normal. So keep that in mind. Keep that in mind. Um then we did a lot of transformations on our string columns because this data set if we scroll back up to look at the first five rows we can see there are a lot of string values for example um how do you learn to code books physical media colleague friend there's a lot of string values and machine learning is based on calculations and calculations have to be done with numeric values. So what are we going to do with all of these non-numeric values? We had to
+
+clean them up. And we're going to clean them up in a couple different ways. The first way that we cleaned up was I'm scrolling because we we uh we did an exploration here, but it didn't pan out. So here's where we really do convert all of the string values into numeric where what we're doing is for every single language they've worked with we're splitting it out and saying have they worked with that language yes or no. So you can see that we're accounting for the language Rust, Go, Scala, Cotlin, Swift, Python, JavaScript, TypeScript.
+
+All of these different languages and tools are now going to be their own column in the data set, which before they were all kind of clustered into a single value for what tool have you worked with. And now we can see um we have some correlations with salary
+
+and we do still have some categorical variables that we are going to either one hot encode ordinal and ordinal encode or um cluster. So we did some ordinal encoding for age where because age clearly has a smaller value and a greater value we ordinal encoded them. For employment we and uh for employment we clustered. No that's not employment. For employment we clustered a little bit.
+
+And here we go. We're almost to where we left off. So let's take a look at the head of our data set after we did a bunch of cleaning. So year is code. We have a numeric value here.
+
+We have all of our tools has Rust has Python. So on and so forth. For country, we expanded that out. Instead of the value being the country name, now we're saying, is it this country? Yes or no.
+
+Is it this country? Yes or no. And we also created an other column just to limit the number of country columns we had. And we actually have to do one more thing because if you'll look here after we did all of our data cleaning and data transformation, we have some null values remaining. And in machine learning, null values are a big problem because if we are trying to calculate, for example, if we're trying to calculate distance between two values and one of those values doesn't exist, the model doesn't know what to do with that. So we must account for all
+
+nulls. And luckily for us, the nulls remaining here are a pretty small number. So, we're going to go ahead and drop anything that's null here and take a look at our remaining data.
+
+Me open my Q&A panel just in case we have anything. Okay, now we're doing good. So, yes, I went through that very quickly, but because I want to spend the majority of our time today on the machine learning modeling component. So, what are we doing here? We are dropping our null values and then we are printing a lot of information just so that we can synthesize all of the work we did for cleaning in one nice output cell. So what do we
+
+have? What is our shape of our data set after dropping null values and cleaning and everything? We have about 15,000 rows of data. Now remember from Kaggle the original data set had almost 90,000 rows and when we dropped nulls on our target variable for salary we had what was it 48,000 rows. So we have lost a substantial amount of data for our purposes today. I think that's
+
+fine but this is something that we want to acknowledge. We want to acknowledge it here and we also want to acknowledge it for any stakeholders or end users we share this with. So, I think this project has phenomenal potential for a portfolio piece, but you must account for this. Um, if you do like a recap cell in your Jupyter notebook, if you're talking about this in an interview, talk about why. Why did we drop so many rows? What
+
+was the purpose? And the purpose here was to ensure that we had non-null data. We had enough data. This still was a phenomenal amount of data to model on. Um, but it could have potentially introduced things like selection bias. Was there
+
+something inherently different about rows we dropped that had null values compared to rows that we kept because they didn't have null values? Maybe. And maybe you want to account for null values in a different way. [snorts] We have 76 columns. And the reason the column count is so high is because of all of the boolean columns we created uh from one hot encoding.
+
+Um, this is a little misleading, but after the reason it says we're retaining 97% of the data is because it's based on this final step where we removed nulls, but we've removed nulls a couple times prior to this. All right. So, our data set is clean. Now, we are ready to model. And when I am working on um projects [clears throat] for myself before I polish them for a target audience, I do like to write markdown cells just to signal to myself where the next stage begins. So I wrote
+
+ML modeling as a markdown cell here. And now let's dive in. Because we have a target variable that is numeric aka salary, linear regression felt like a very good starting point [snorts] for this project. So let's separate our independent variables from our dependent variables. So x is going to be everything that everything that isn't salary and y will be just salary.
+
+print the shape to make sure sure that works. Fantastic. And there's one more thing we want to account for. We want to start looking at correlation with our target variable and also double check for something called multi-olinearity because we don't want any column to have too much weight and multi-olinearity could cause issues with our model. So what are we doing in this cell? We are
+
+simply looking at correlations of our independent variables with our dependent variable. And because we have so many columns, we're going to look at the top 20 and the bottom 20 correlations. And when I say bottom 20 correlations, uh they're still potentially strong correlations, but they're strong negative correlations. And a quick visual here because visuals can make it easier to look at relationships than numbers can sometimes. So our top 20 positive correlations with salary. So country United States.
+
+So if you as a developer said you worked in the United States, that has a 60% correlation with salary. So if you're in the United States, potentially your salary is higher. It looks like years code uh professionally also has strong correlation. So does work experience and years code. Now interesting thing to point out all three of these are talking about years of experience.
+
+Um and all of the correlations are about 30%. This is the first red flag to me that we might have a multiolinearity issue. So what do we have for negative correlations? Um our top 20 negative correlations, these ones are fairly weak. 3% that's almost no correlation. But the strongest
+
+negative correlations once again look like they're countries. So the top positive correlation was a country. The top negative correlations are countries. Uh so it seems to me that country is a pretty strong indicator of salary. So I'm curious if that's going to hold with our model as well.
+
+And a quick visual here, top 30 features by correlation of salary. We can see very clearly um the strongest correlations are the years as well as the countries a little bit of what size your organization is. So because I had some red flags about our years variables, years code, work experience, years code professionally. Let's check let's check for some multi-olinearity. And to do that we are going to look at a heat map. I really like heat
+
+maps. And we can see that highly correlated feature pairs. So this is saying this isn't looking at our dependent variable. This is just looking at our independent variables with each other. So if something is correlated with another independent variable, it's almost like it could be double counting the same idea for our dependent variable and potentially giving it more weight than it needs to.
+
+So years code professionally. So um for example, I've worked with Python professionally for X years versus Python just as a hobbyist for X years. So years code professionally and work experience very very highly correlated. This is almost a onetoone. Then years code professionally with just how many years code also an insanely high correlation and the last or there's not the last um professional coding and age high correlation work experience and years code high correlation. So we can
+
+see the heat map especially really makes us stand out and we want to account for this. So, we're actually not done with data cleaning. The final step we're going to take for some data cleaning is to remove some of these columns that are clearly correlated with each other because we don't want them to overweight our model. I always try to tell you parts of the project where there are judgment calls versus hard and fast strict rules. And the judgment call I made here was to remove many many of these columns. But as a
+
+next step, you could consider removing fewer. What happens if you remove fewer? Does your model get stronger? Does your model get weaker? Um, so keep that in mind as we remove our next point here.
+
+So I decided to remove years code, work experience, and age because they're all very correlated with years code pro. So when we look at this now we can see that our column count reduced and [snorts] now let's recalculate correlations just to just to see.
+
+All right. Um, and fairly similar results to before, but the big difference is year's code pro is the only correlation in the 30s now, whereas before we had all of the different multicolinearity variables in the same component. So now that we're confident our data set is prepared as much as possible for modeling, let's go ahead and do that.
+
+We are recreating X and Y based on our final data frame that removed those columns. And we are creating a train test split. If you're newer to machine learning, train test split is a method from the scikitlearn library that splits your data for you randomly. Set a random state just for reproducibility. I picked 42. Um, and
+
+it's going to create a set of training data for you and a set of testing data for you. And this is important so that you can create your model with your training data, but also test if your model works with data it's never seen before. So that's what's happening here. We're creating four things at once with a single method.
+
+And um another thing if you do want to experiment test size you usually want to keep it 30% or less because we have a lot of data points. I went with 20% of our data allocated for testing. So that you can see here our training set has about 12,000 rows and our test set has about 3,000 rows and they both had the same number of columns. So now we're going to create our model. This line of code uses the linear regression function that we imported from scikitlearn.
+
+And notice none of our data is actually in this line of code. What's happening here is we are simply creating the object for linear regression and we're calling that model. And then we are using the object we created model and we are telling it now fit our specific data to it. And we're using our X train data. So our independent variables and then our Y train data which is our independent variable.
+
+And when that runs the model has everything it needs to create linear regression. And now we are going to predict. We're going to predict from our training data and then we're going to predict from our testing data and then finally we are going to evaluate. I'll do the evaluation in a separate cell. So let's run that. It's doing its
+
+thing. And isn't it wild that because of the scikitlearn library, this is all we need. This is machine learning done. um all behind the scenes right now, all under the hood, but we have successfully created a linear regression model that predicts salary. But to what success rate? That's
+
+what we're going to uh try out next. So evaluating your model performance. So what are we doing to evaluate our model performance? The first thing we're doing is well on the data it was trained on, how does it do? because if it's seen the answers, it should do pretty well with prediction, right? That's the hope. So,
+
+we're going to look at how it performs with training data and then we're going to look at how it performs with test data. So, data it's never seen before. Does it do similarly? Does it do worse? Does it do better?
+
+Uh, and we'll start with that for now. Okay. So, let's look at our model performance. So our training set data our R squar score is about 55%. Which uh might seem kind of low. What
+
+does this mean? This means that our model can successfully account for about 55% of variance in salary. If we randomly guessed someone's salary knowing nothing about them, that would be 0%. And if we knew for sure what their salary was, that would be 100%. So our model, it's doing okay. And I say okay because
+
+we used realworld messy survey data. And salary is a very tricky thing to predict because of factors like negotiation skills and things that can't necessarily be quantified from a broad developer survey like this mean absolute error. So what does this mean? Mean absolute error is basically how far off from prediction to actual value our model was in general. So in general our model is off by about 30,000 US which you know that's a pretty substantial difference in salary but um we're going to investigate this a little bit more. The good news for our model is
+
+our training set metrics and our test set metrics are very very similar. So we can see our test set R 2 is 56%. Our test set MAE is 30 $31,000. So this is a good thing. If our training metrics and our test metrics were very very different from each other, um this could potentially mean that we are overfitting our data. uh when you if
+
+you've ever gone to Kaggle and looked at the competitions that they do for machine learning sometimes I think overfitting is a big problem because if we had uh an R squar score of 99% for our training data and a test set score of 56% that means that our model has memorized the answers to our training data but if it's giving something new it has no idea what to do with it. So the fact that our metrics are similar, that's good from an overfitting concern perspective. All right. So the next thing we're going to look at is this is a little bit of a black box at the moment. Sure, we're saying our model performs this this well, but a stakeholder wants to say what's the so what? Why
+
+should I care about this model? what is it going to do for me? So, what we're going to do now is we're going to look at the coefficients. If you remember way back from middle school and high school mathematics, y= mx plus b is slope intercept form for a line. And in y= mx plus b, I'll just very quickly y = mx + b while we're talking about it. This is the equation.
+
+M is a coefficient and that's the slope of your line and it determines how exactly the line is tilting. And coefficients, if they're larger, it's more impactful. If they're smaller, it's less impactful. So, we're going to look at the coefficients for our model because that's going to tell us what are our most impactful features. And here we go.
+
+Um, by the way, we were looking at the absolute value of coefficients just so that we can see the largest impacts overall, whether they're positive or negative. And we can see here very similar to our correlation exploration a moment ago, country is a huge indicator, a huge factor in determining your salary or predicting your salary which is interesting. Um, and we can see here that a lot of the countries have a pretty strong negative coefficient with this. The exception being the United States. And uh, there's a couple potential reasons for this. My
+
+hypothesis is that tech areas like Silicon Valley where you have really really big big salaries that's probably impacting this. Um, but the thing about country being the top impactful features, if we were trying to tell someone recommendations of how they could try to get a better developer salary, it's not easy to move what country you're in. So unfortunately of our top 10 most impactful features, nine are country, which isn't very informative for someone who's looking to improve their finances. You could be a CEO. Being a CEO would help your salary. But
+
+we're going to explore, okay, what can we actually do to impact salary? Um, and we'll do that in a moment. But just a little bit of housekeeping for our linear regression model. Let's make sure linear regression is a good fit. And we're going to look for residuals.
+
+And residuals are sort of the difference between the actual value and the predicted value. And we want residuals to have no pattern. So we can see in this graph here um this red dotted line is our linear regression line. And we can see that for low and mid-range salaries, our salaries are pretty well clustered on the red here. But where it starts failing pretty spectacularly is our higherend salaries.
+
+So a next step could be to create two separate models or maybe even three separate models for different brackets of salary. Maybe these higher salaries here um just need a different model compared to these salaries. The good news though is our res residual plot is looking pretty decent for residuals. We're not seeing a big pattern and that's what we want. [snorts] All right.
+
+So, because country isn't a great next step for people looking to improve their salary, let's look at more coefficients. and see if we can pull out country and determine if there's anything different. So looking at our positive coefficients. So positive coefficients will increase your salary. So we talked about the US, we talked about being a CEO. Um
+
+Switzerland also has a very high cost of living. So this makes sense. But there are some gems here. So here, if you are an engineering manager, that's going to be positively impactful to a salary. If you're a mobile developer, that's positively impacting. Um, and then we
+
+get into some specific languages. So if you work with Terraform, Rust, Kubernetes, TypeScript, Go, React, AWS, Cotlin. Uh these are all positive impacts on salary. So we could start to potentially form some recommendations. Maybe our recommendation is if you work with cloud computing, if you work with um mobile development, Cotlin is Android's mobile development language here and we can see here mobile development that's positively impacting salary. Now, what
+
+about negative coefficients? What potentially is not helpful for boosting a salary? Um, country we talked about if you're part-time employee. Um, now this is interesting. Oh, if your industry is higher education. So, if
+
+you're a professor of programming, probably not helpful for your salary. Um, if you work in wholesale. Interesting. This one's interesting, too. Your employment. If your employment
+
+type is full-time and freelance, that's a negative impact on your salary. But interestingly, full-time is also a negative impact. So, I'm curious if there's any positive impacts on the employment variable or if it's all negative across the board. Um, so we're starting to get more concrete recommendations that aren't just country. Uh, but you know what could be interesting?
+
+Let's get even more granular. Let's look at coefficients by category. Because we started to do that here, but if you're getting this ready for a portfolio, asking your end user to pick apart this level of detail, it's a little little cumbersome. Is it going to run? Oh, I think I ran the same cell. There
+
+we go. Okay. So, this is kind of giving an absolute impact number to our coefficient categories. So, we have our country coefficients. So the US, Switzerland, India, Poland, all of the countries we have, uh, according to our model can impact your salary by about $34,000.
+
+The skills, the absolute impact about $4,000. So if if you have a particular skill set, that can boost your salary a bit. The type of developer type of developer you are has a pretty substantial impact. about $12,000. And then what industry um you're in has an impact as well. So
+
+this if I was a stakeholder, this would be very interesting to me. Um all right. So remember this picture of actual versus predicted salaries and how the model seemed better at predicting lower and middle salaries than higher salaries. Let's explore that a little bit more.
+
+And what we're going to do is we're going to have actual, predicted, and error, which the error is just going to be the difference between the actual and the predicted, but we're looking at absolute value of that so that it doesn't um kind of undo positive and negative errors. And let's look at some buckets or some bins for our salary ranges and see what the errors by salary range are. Don't worry about this warning. Um, Jupyter notebooks like to tell you when things will in the future be an issue. Um, we could hush this and I would encourage you to do that in a portfolio, but for now it's okay. So, error by
+
+salary range. Um, so if your salary is less than $50,000, it looks like we're going to have an error of about $23,000. If it's 50 to 100,000, we have about 22.5,000. Now, here's where it's really interesting. If the salary is larger
+
+than 200,000 USD, the error is huge. Wow. The average error is 100,000 USD. um which if your salary is 201,000, you're off by half. But this supports the picture that we saw where once we start getting above 200,000, the model's doing worse here.
+
+Uh sorry, I see your question. What does average error mean here? So average error means what is the actual value of the salary or what's the difference between that and the predicted value. So if your actual value is 100,000 but the model predicts 50,000 the error will be 50,000. Um, and so our example here is if the actual salary is 200,000 and the model predicted 100,000, the error is 100,000, right? So off by
+
+about half or more um or less, but that's where the average comes in, right? So this could be an area to substantially improve your model by pulling out the salary range. And this could lead to sparser data for this range especially because we can see the count of values here. you'd only have, you know, a couple um and this is on the test data actually. So, because this is test data values, you might want to give a caveat that by splitting out our data for our higher earners, sparse data might be an issue.
+
+But if especially if you kept low and mid earners all in the same model, I don't think sparse data would be an issue because you would have 12,000 rows of data still, which is more than enough to train a linear regression model. All right. Um, so the final thing that I want us to really hit home for our end users in this project is creating a visual of skills and factors you can control because countries have very very different costs of living. They have um just lots of factors that an individual person can't really control. So if we remove country from our impactful feature list and just visualize everything else, what recommendations can we make here?
+
+And now we have a really nice bar graph showing skills and factors that you can control to increase salary. And we can see how much it could potentially increase your salary in this uh graph. And we see that your what developer type you are has a really really big impact on salary. And we did talk about this. We talked about mobile developers for example. Um and we talked
+
+about the languages and tools that have a positive impact on salary. So this is what the the so what of this project is um yes our model wasn't perfect. 55% R 2 value isn't great. There is room for improvement. And actually in some of my recommended next steps, one next step in particular that I know off the top of my head will improve your values substantially. Sorry if you
+
+can hear my cat. [sighs] She's uh she's singing for us. Um, [laughter] okay. I think she's gonna calm down now. So, if you are following along with uh the solution notebook, you'll see that we have some key insights at the end. And
+
+I'm not going to copy and paste those over just because it's not going to play very nicely copying and pasting from the GitHub file to here. But I do recommend doing this in any project that you do. You did the code. You made the graphs. But most people who are going to be looking at your project aren't going to read your code. They're going to look
+
+for the so what. And the key insights is the so what. You're going to say everything that you've learned so what. And I also do recommend especially for this model giving some of the limitations. Um, for example, we lost a lot of our data here. We started with 90,000 rows
+
+and ended up with what, 17,000. So, account for that. Just acknowledge it. Um, and there are a couple other limitations. For example, in the model that I created here with us today, I capped our salary at $500,000, but there were salaries into the millions, 2 million, 7 million, I think, was one of the largest salaries. So
+
+maybe it was an artificial cap that had a bit big impact. That's something that you could explore um or at least acknowledge in your um findings. So some concrete next steps for you, try different models. This is my big recommendation. Even if you're not familiar with a ton of other models yet, um test some out.
+
+There is a model that does better than linear regression. There is feature engineering. So if you do want to stick with linear regression, are there interaction terms that you can add? For example, maybe continuing to talk about my developer um example, maybe if you have the has Cotlin and you're a mobile developer, you you multiply those terms together, maybe the prediction power is better, maybe it's worse. Um and then we talked about this two separate models by salary range. So I do
+
+think that there's a good chance this improves our model pretty substantially. Uh so those are a couple ideas for next steps. Of course I think that this project has lots of room for playinging and exploring and fine-tuning. So I am so so so curious what you can do with this project. Um, and if you do take this project further, take it in a different direction. Please let me know.
+
+I'm so curious because this is a new project. I'm going to write myself a note here that the data quest community page is not currently active for it, but in about an hour it will be. I promise. Uh, but if you finish this project, share it in the data quest community and tag me. I'm anna_straw and I want to see I want to see what you did.
+
+Okay, now let's get to some Q&A. So, if you have any questions for me, please do pop those into the question and answer box and I will answer those now. All right. Uh, instead of dropping years code, I'm reading the first question here. Instead of dropping years code, work experience, and age columns, could we instead construct a novel feature for them like a ratio?
+
+That's an interesting idea.
+
+Um, some maybe like I'm not sure how much it would add though. Like I'm assuming you're thinking like some kind of average like if you do years professional plus work experience plus age divided by three. um and then use that as the uh years average column maybe. Um but I'm assuming that the reason we have pretty strong multicolinearity here is because the values are very similar to each other. So [snorts] I don't know, test it out. My
+
+assumption is it's not going to make a large difference compared to what we found. I think a larger difference to what we found was keeping more than one of these columns so that it has a higher weight. And [clears throat] Mark asks, "What's the difference between the MAE and the RMSE?" That's a good question. Let me dust off my metric brain for a minute.
+
+Um, you'll actually see here in my code, I had this commented out because I was experimenting with it and my code wasn't working. So, [laughter] that's a real developer moment for you. Um, but there there is a method here. And so the root squared error is better at being um sensitive to big big numbers. So this could actually be an interesting metric to look at for [snorts] our large salary values.
+
+And I bet that the RMSSE would support the finding that our model is worse with larger values than it is with small to medium values.
+
+And Lakshan asks when the MAE is close to zero, is it a good model? Well, it depends. I think that's the answer for a lot of machine learning topics is it depends because where are we looking at our MA mae here? Um the smaller your MAE, the better it is at predicting the close to correct value. But we do need to be mindful of overfitting. So it's always something
+
+you should be mindful of. So our model would be better if the MAE was smaller. But if the MAE was zero, I would be very nervous that our model was overfitting, especially if there's a difference between the training and the test. So I would say when MA is close to zero on training set and test set, then it's a very good model. But you also want to account for your other metrics as well. Um,
+
+so how's that for an answer? Uh, Jensen asks, "What is usually the end goal of a project? Is it a good model or insights?" I would say it's a bit of both. Um because at the end of the day I'm assuming that most people are looking to a learn a new skill with machine learning and then b a lot of people that use data are looking to change jobs, change careers and um build a portfolio. And adding this to a
+
+portfolio is a very very strong indication that you understand the machine learning workflow. And even if the model results aren't wow, you know, like if you are working at Amazon for example and you're getting um predictions of where are values for predictions? I keep losing them. Uh uh here we are. Um in a production environment, these probably wouldn't be good enough values to incorporate, but I think the model's decent. It's a great
+
+starting point and the insights you gain from this could be shared with a stakeholder. Like if you were to work at Amazon for example, I don't know why I think my brain saw AWS a few minutes ago and here we are. Um if you work for Amazon and say that there are specific languages that impact salary that would be very very intriguing for someone to know. So Jensen it is a blend of both. A good model is phenomenal. It always
+
+feels good to have a model with high accuracy without overfitting, but the CEO of a company isn't going to care about your model being 88% accurate versus 89% accurate. The CEO is going to know what that means for them. And Amita, kind of a good follow-up question here. How to generate businessfriendly narration of the results. So I think that this is a great opportunity to incorporate AI actually.
+
+Um always having you be the executive and AI AI being the assistant. But you can um even copy and paste your Jupyter notebook findings into an AI LLM model. I always read an AI LLM and say what is the TLDDR? what is the summary of this notebook and it will give you a very very nice cell. My trick for putting in Jupyter notebooks into an LLM. By the way, we have I'll show you
+
+this and then we'll wrap up. If you are in Jupiter and you rightclick, you can open with and you don't want to say notebook, you want to say editor and you get the raw output of your notebook that you can copy and paste. Most models will not like this though because you can see, look at this. This is one of your visualizations. And if you are trying to copy and paste this for an LLM, this is going to eat up all of your tokens. So you can go ahead
+
+for images and just kind of this is just my workflow. I just delete those. I don't save it in my notebook, but I just delete them for the time being. Um I go through and do that. And then I ask the LLM to give me the TLDDR.
+
+So tips and tricks. All right, that does take us to for our time today. Thank you all so much for joining. I appreciate it and I hope you learned something. This session will be on YouTube on Monday, so you can keep an eye on your emails for the link to that.
+
+And I hope everyone has a wonderful weekend. Uh, I'll catch y'all next time. Bye, everyone.

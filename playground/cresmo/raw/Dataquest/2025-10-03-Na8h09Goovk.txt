@@ -1,0 +1,312 @@
+---
+video_title: "Your First API Project: Analyzing Financial Data with Python (Beginner-Friendly)"
+video_id: Na8h09Goovk
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=Na8h09Goovk
+video_date: 2025-10-03T17:00:11+00:00
+video_description: |
+  In this video, Dataquest’s Director of Curriculum, Anna Strahl, will guide you through how to retrieve and analyze financial data using Python and the Nasdaq Data Link API—perfect for learners looking to develop skills in data-driven finance.
+  
+  You’ll take on the role of a financial analyst and learn how to access real-world economic datasets, transform raw JSON data into pandas DataFrames, and visualize trends over time. This project will show you how to work with APIs, clean and explore time-series data, and extract insights that matter in investment and business contexts.
+  
+  This session is ideal for learners with intermediate Python skills who want to gain confidence using APIs and build finance-focused portfolio projects.
+  
+  What You'll Learn:
+  - API Integration: Use Python and the requests library to query and extract data from the Nasdaq Data Link API
+  - Data Wrangling: Convert JSON responses into structured pandas DataFrames and clean the data for analysis
+  - Trend Analysis: Visualize economic indicators and identify market patterns across time and regions
+  
+  Recommended Prerequisites:
+  - APIs and Web Scraping in Python for Data Science → https://www.dataquest.io/course/apis-and-web-scraping-in-python-for-data-science/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-exploring-financial-data-using-nasdaq-data-link-api/
+  
+  Video chapters:
+  00:00:00 - Intro
+  00:04:30 - Using the API Key
+  00:17:50 - Working with JSON
+  00:21:48 - Data cleaning
+  0:39:33 - Visualizing the data
+  00:52:04 - Audience Q&A
+  
+  #pythonprojects #Python #DataScience #apiproject
+---
+Okay. So, what are we doing today? We are going to introduce the project. What is it we're doing today? We're going to load some data. We're going to clean our
+
+data for analysis. And then we have some really fun visuals today. And then I think for this project, we may actually have time to show you how you can put it on to GitHub using a GitHub gist. And we will end with some Q&A. But I always give this disclaimer.
+
+Why do this project by hand if AI can do it faster? We get asked this all the time. And the reason is we're all here to learn, to practice our fundamental programming skills, to practice our debugging, to create a portfolio. All of these things are goals. And if AI accomplishes these things, you're not really going to meet your goal. And if you're wanting to put
+
+this in a portfolio, which I think it has potential to be a portfolio piece, but if AI does all your code for you, you're not going to be able to pick apart and explain your your the nuances of your code. And AI does get things wrong. I was actually working with Claude Anthropic's sonnet model to kind of test some of my code yesterday and there were a couple lines that it did not have the right context on and it when I tried copying and pasting into my Jupyter notebook, I got an error. So, I had to know enough about my code to debug what was happening. And if I had skipped all of the steps and let AI do it from the start, I wouldn't know what I was doing.
+
+And Pier in chat says, "AI is not always 100% correct, even with debugging." 100% correct. 100% correct. AI doesn't have uh the same understanding and knowledge that you do. So you you at the end of the day are the final expert in your coding project.
+
+So today we are going to use the NASDAQ data link API to pull financial data and use that financial data for some analysis. Uh so if you do want to follow along today, you need to sign up for an API key, which hopefully you did before the webinar. If not, you can do it right now. It's free. It should be pretty quick. Um, but you do
+
+need to have that key. And the table we're going to be looking at in particular is the myrrh F1 data table, which contains detailed financial information such as balance sheets, cash flow statements, and income statements. There are a lot of different indicators in the table we're going to see today. And we'll talk about some of the specific indicators when we load our data. And we are going to try to answer some questions specifically about something called EBIT TDA margin which we'll define in a moment. Um,
+
+and look at it over time and by country to see if we can see any interesting patterns in those two ways. Now that hopefully everybody has API access. Um, and if you don't, this will be recorded and shared with you, so you can follow along there. Um, but API keys are basically like the key to a house. The data that we're using is free for us to access, but we need to tell NASDAQ that we are the ones accessing it so that if anything nefarious or malicious were to happen, they would be able to trace it back to our key. Right?
+
+So, this API key, if you do accidentally share it with somebody, it's not going to be the end of the world. But in general, API keys, like you wouldn't want to leave your house key lying on the sidewalk surrounded by people because you don't know who could pick it up and use it. So, today I'm not going to show my API key just to kind of keep that level of privacy. But if I were to accidentally expose it, it wouldn't be the end of the world. I could request a new new API key and this one would get defunct just like if you were to re key the lock on your house.
+
+Okay, so coming into our Jupiter Lab notebook here, the first thing we always do is import the libraries we're going to use. So we're going to import requests, which is how we are going to interact with the API endpoint directly through our Python environment. We're going to import JSON because that is the format in which our API data will be received. And then for data analysis, we have pandas and mapplotib.pipplot.
+
+Um, we actually are also going to import seabor as sns. And then I have one additional import statement here that we're going to set up. So, import config. I had a note here that says this is actually not a an external Python library. This is a local file that we create. And so, in your
+
+panel on the side of Jupyter Lab, if you're following along, you need to click the plus button and you want to create a Python file, which is in the other category. You can see that I already have a config.py file. But here's what we're going to do. We're going to create a variable named API key, right? And then it's going to be
+
+set to a string of your particular API key. So API keys are usually something, you know, like this. Make sure you close the string. And then you're going to save this file and rename it. Excuse me. Um, so rename
+
+it. And you're going to name it config.py. Um, but because I already have that, I'm not going to do it. You can see it here.
+
+I'm not going to show you the contents because it does compa contain my actual API key. So let's go ahead and run this cell. If my shortcut for running cells in Jupiter is shift enter and we can tell it ran successfully because we see a one in the corner here. Where is this learning path? Um let me share the link to you in chat. This brings you directly to the
+
+project that I'm in right now. You are are uh also welcome to use your own Jupyter notebook or you can use Google Collab.
+
+Excuse me. All right. So, we have imported config here. And a quick security note. Technically, when you're working with API keys for production environment especially, you would want to use environment variables. But because we're working
+
+within the data quest environment, we're working in Jupiter and at the end of the day, our API keys for NASDAQ are to a free resource. So the security isn't of the utmost importance. Um, we can store our API key in a Python file like this just to separate it a little. But if you are going to put this project in a portfolio on GitHub, first of all, do not include your config.py file in your GitHub repository um because that will include your API key. And if you do decide to
+
+make this project something more production ready, you would want to convert this into something external like an environment variable. But let's go ahead and load our API key. And here's how we're going to do that. So, because it's going to kind of be a global variable, this is pretty common for working with API keys, we're going to capitalize it in our Jupyter notebook. And in order to actually pull our API key from our config.py file,
+
+here's how we do it. We say config API key matches the variable name from that file. And I could print out this variable, but that would kind of defeat the purpose of the security step we took. So instead, I'm saying let's just show that we've printed uh we've loaded the key successfully. And we have in fact done that.
+
+Okay. So now we are going to get into the two cells that involve directly accessing the API endpoint. And I remember when I first started learning about APIs, I was very intimidated by them. I didn't quite understand what they were and how they worked. So this line of code, you don't need it for your project, but I included it in my solution notebook as a demonstration visually of what an API endpoint is. And
+
+so we're going to be working with an API endpoint very similar to this directly from our notebook. But I want to show you that we can actually open a new tab and see the contents of this API endpoint in our browser. And in fact, if you're on Chrome, we can pretty print the output and kind of see our nested JSON formatting here. So when we're working with an API endpoint, this is what we're doing. We're going on the internet to find some data that is being provided by in this case NASDAQ.
+
+So if APIs are intimidating for you, think about this. Think about this. We are accessing data, right? So we don't need that for the project. I just wanted to include that as a brief visual demo.
+
+But here is what we're actually going to be pulling from. It's this time it's the data tables instead of the metadata. And we're looking directly at the MR F1 table. Um, and technically you could copy and paste this into your browser and see all of the information, but this is going to require your API key. And I encourage you to read the documentation for this NASDAQ data table endpoint. Uh if you are
+
+curious to see how you can put your API key in, but for privacy, I'm I'm not going to do that and I encourage you not to do it just for some security best practices. So, we've just stored a URL to a variable and now we have to add some parameters. So, our parameters, it's in a dictionary here. And we're going to say what our API key is and that's where we're using our API key variable. And then q opt per page is basically going to tell NASDAQ how many rows of data we want to pull in this particular request. Because we're experimenting and
+
+we're testing to see if our connection is successful. I'm going to drop it to two. Just say show us two rows of data. That'll be enough to get us started. And notice actually if I run this right now it ran. And in fact if we print
+
+API URL that's just the link right and if we print parameters it's just the dictionary. Kindly zoom in the screen a bit. Sure thing Lydia. Thank you for letting me know. All right. This should hopefully be
+
+better. Um, so none of this is actually talking to the API yet. This is just preparing us to talk to the API. So to talk to the API, what we want to do is use the Python requests library. And this is Python's way of saying, hey, we're going to be working with an API and we want to get the data provided from this URL.
+
+And this is what I want us to do with it. And remember, our parameters here are saying, yes, here's our API key. We can unlock this. And then we only need two rows of data returned. And we're going to put it in JSON format because that is what the API endpoint is providing the data in. And
+
+Tam's here, how do you get the URL? Great question. Um, this comes from the other hurdle of working with API endpoints documentation. So, um the truth is every single API endpoint uh has a slightly different structure and slightly different documentation and figuring out how to pull what you want from different endpoints in my opinion is the most hard or most challenging part. Um, but that this is how I found it for the NASDAQ API that we're using is in parameters. Uh, I
+
+found that there is this formatting where it's data.nasd.com/api3datables and then the publisher and the table. Um, that's where we got the myrr and the f1. So if we go from this to this, right?
+
+data tables F1 and theJSON is because it's in the JSON formatting. So, one thing AI is actually very very good at is especially if if your LLM has internet browsing capabilities. If you copy and paste your API documentation link into an AI um chat and say, "Hey, I'm trying to pull from this API endpoint. What exactly do I need to structure my call as?" it's usually pretty good about it.
+
+And if it's not 100% on the spot, it can still get you pretty close to um what you need. So, this is a huge recommendation I have for using AI to support your coding project. Uh wrong tab. There we go. Um, so right here we are storing all of the data we're calling from the API into a variable named JSON data. So we're
+
+going to print this. However, if you are having your per page uh anything large here, this is going to throw an error and we'll see that in a moment actually. So shift enter to run this cell. And we can see our output. It's not very prettyl looking output because it is kind of this raw JSON formatting. Uh not pretty printed. So
+
+one of the steps we'll take today is to clean this up into a much more human readable and human usable format. Um, but if we, for example, remove parameters here and try to run this, we're going to get an error because we're told a valid API key is required to retrieve this data. Please check your API key and try again. You can find your API key under your account settings. So I wanted to show you this because including the API key is necessary.
+
+Uh Kevin, why do we have to format it as JSON? Doesn't the API already return it as JSON? Uh yes, but we have to tell Python what it is it's looking at. and Canari how to process the JSON data uh as JSON doesn't have a strict schema. That's true and these are good in real time questions but if you have larger questions please do use the Q&A for me but this goes directly into our next cell so I'll talk about it. JSON is very
+
+flexible in that you don't necessarily need to have one key and one value and a dictionary type setting. So you do need to kind of peek under the hood and see what is the structure. Uh you can also reference the documentation for this and AI does help with this step as well. For example, if you copy and paste this sample output into AI and say, "Hey, how can I structure my formatting to get just the rows of data here? It is two rows and they're big rows because there's a lot of sort of meta data included here uh that we're not going to need. It's all junk for our
+
+purposes. So let's try to parse visually what's happening here. So we have from our endpoint we know we're looking at data tables and actually the first key in our JSON output is saying this is the data table and then it's nested within data table we see the next thing is data. So there's a data key and then in the data key I'm noticing that we have a list of lists and our first list where does it end here. So we have one list of data here and this looks very promising for our actual row of data because I'm seeing things like Deutsch Bank. Um I'm
+
+seeing Frankfurt like this is signaling to me that it's a row of data we're going to need. So how can we think about how can we we want to have this row of data translated into a data frame. Right? So if we think about how to work with dictionaries, we reference dictionaries by keys. So we had the data table key and within the data table keys value we had a data key and within the data keys value we have our lists of values. Right? So
+
+let's start pulling that information out and we're going to put it into a nice pretty pandas data frame. So what I just explained verbally is what this line is doing. We're looking at our JSON data. We're looking at the data table key. And then within it, we're looking at the data key. All
+
+right. And then notice we don't have column names really nicely present in this JSON output. So we need to have column names for our data frame. And our columns name our column names are going to be for every column we're looking at for the name. That's where these things are down here, right? Uh for every column in
+
+our JSON data variable looking at data table and columns. All right. So now that we have our data rows and our column names, we're going to take those two pieces of information and turn it into a dataf frame using Panda's PD.ATA frame method. And let's go ahead and take a look at the data frame.
+
+Look at this. We have human readable data rows. And we can tell they're the same thing as our JSON raw data because Deutsche Bank is here. I'm seeing Frankfurt here. Remember, those were the values we kind of picked out from in here.
+
+So, there's a couple things I want to do in this same cell. The first one is I'm noticing that we have a report date column. And very likely report date is not actually going to be registered as datetime. And because we are going to be working with some analysis over time in our visualization, we want to make sure that our report date is in fact in datetime. So to do that, we're going to use pandas to datetime method. And we're
+
+just reassigning back to report date the report date values from datetime. I'm including including errors equals coercing values. And then if we try running this, we'll see it's the same output. The report date even looks the same, but under the hood, we now have it in a much better formatting. Okay, I'm going to pause and scroll back up because we've done a lot of testing with two rows of data, but we want more.
+
+We're trying to do a data analysis project and two rows of data, not quite enough. So, I'm going to change this to 10,000. And here's the limitation of us using the free version of the NASDAQ API is 10,000 rows is all we get. If you want to pay, my understanding is that you can access much much more data if you pay. And the data you can access goes up to basically current time. Whereas these 10,000 rows
+
+we're going to look at today cover from 2011 to 2015 or so, which is a great starting point for developing this financial model. um a lot of value to be gained still and especially for free. But if you are hoping to gain current up-to-date financial information, you'll have to invest a little bit in this API unfortunately. But if I try printing our JSON data variable now, how many rows of data is it going to load for us? 10,000.
+
+which is not going to work. And if you are following along with my gist, you'll notice that there's an error there. And it's because I forgot to account for this. Let's run it and break things. It's thinking.
+
+And here we go. Uh it says the data rate is exceeded. So requests.get tried calling the API. The API tried doing what we wanted to do, but because we asked it to do so much, it broke. So,
+
+we're not going to print this. And it should, cross fingers, load successfully. There we go. Now, it's loaded successfully. We have 10,000 rows of data. And
+
+uhoh, I just made a mistake. Not a big mistake, but my mistake was I forgot I was using df.ad here. And so when I ran the cell now, it tried to render 10,000 rows of data. But luckily for us, uh because it's all stored in Jupiter now, we're not having to to call the API anymore. So that's
+
+why we didn't get an error here. But I was worried that pandas would get grumpy at us. It just cut off the data. But we can see we have 10,000 rows. I'm going to delete this just uh let's do the head method here.
+
+Uh, and we can see that we have more data loaded in. I always like looking at the info method to get a quick glance of our data. And yeah, we can see 10,000 rows. We see that report date that we converted to datetime is successfully converted to datetime. Um, we have a lot of columns here and a lot of these aren't going to be valuable for our analysis today. for example,
+
+address 1 2 3 4, phone number, fax number, website. We're not going to need that. So, we are going to remove many, many, many of these columns um to focus just on the columns we want. But I'm going to point something out. From this point forward, when we converted things to a data frame, we're not working with an API anymore.
+
+The API's job for this analysis is done. So if APIs have been intimidating for you, I think this is a really important point to understand. APIs get the data and then you do your data thing. And the data thing is something that many of you I think have been working on for some time. So this from now on the project should should be pretty familiar.
+
+Um, so let's do some pandas data analysis here. And to do that, we're going to start with some cleanup. For cleanup, I made a list called necessary columns. And I decided to keep the report ID, the report date, report type, amount, long name, country, region, indicator, and statement. Um, and then our data frame is going to be our data frame, but just the necessary columns. And look at the head
+
+to ensure our trim has worked. And it has worked. I can see that these are all of our columns now. We're doing well. Uh, I see a couple troubleshooting things in chat and I'm really happy you're helping each other out. If you are continuing to have
+
+troubleshooting issues, please let me know in the Q&A and we'll do some troubleshooting towards the end. All right. But if we look at our data, there's still some stuff we can clean up here. Here's what I'm noticing. Uh, first of all, because we're working in Python, we want to rename some columns to use snake case, which means report ID, report underscore date, report underscore type. Uh, what else do I want
+
+to change? Long name looks to be the company name. So, we're going to clean that up and rename it to something like company. Country is a country code, which could be fine if you're very well versed in country codes, but I'm not. So, we're going to reassign country values to actual country names.
+
+Um, and those are the big cleanup things we're going to do for right now. So, I created a dictionary called country mapping. Didn't copy my C here. There we go. Country mapping. And the countries I
+
+have in this dictionary are the countries present in our particular 10,000 rows of data. If you extend this analysis to cover different data, you're going to need to add more countries here. Um, this is something else AI can be very helpful with. I basically gave AI a list of all of the distinct values, uh, and said, "Hey, can you make this into a dictionary for me, and it saved me all of these lines of code that to write manually." Um, and of course, I then verified that all of them were correct.
+
+So, now we're going to replace country values with the values from our mapping dictionary. and peak that it was successful and we can see now that Deutschbank is no longer the country DEU it is now the country Germany which is correct all right continuing here let's rename our columns
+
+to rename our columns we're going to say dfc columns equals and this is basically saying the names of our columns should be and And then we have the names of all of our columns in snake case. Notice that we're also using company name instead of long name. And if we wanted to look at the head again just to ensure our column names have taken effect. Okay. Yeah, this is looking much cleaner.
+
+Much cleaner. And I'm doing things a little out of order here. I should have done this before we updated our column names, but let's look at the country value counts just to see if we've accounted for all of the country acronyms or short names. And yeah, we can see we have the United States of America. We have 3,200 instances. Cayman Islands,
+
+interestingly, a lot of instances. Um, and we don't have any more abbreviations left. All right. So because our analysis is going to focus on the indicator column, I wanted to see what values we actually have present in the indicator column and this is where my non-expertise in finance is going to show. I tried to do some research about the names we will be using but many of these things a financial analyst would be very familiar with me bless. So, um,
+
+if you have questions about specific indicators, I'll do my best, but mostly what we want to focus on is EBIT, DA margin. This is where my solution deviates slightly from the current data quest project. Current dataquest project looks at where is it? um acred expenses turnover, which from my understanding is kind of how well does a company handle ongoing debt. And it's a really good indicator to kind of get company health, financial health.
+
+But I decided not to follow this for a couple reasons. The first reason is there's 139 instances available in our 10,000 rows of data. which isn't a ton. Uh it's, you know, a little over 1%. And unfortunately, the 10,000 rows is split between many indicators relatively uniformly, but EBIT TDA is the most representative or the most represented in our indicator column. So I did a little googling and
+
+said, okay, is EBITDA something that's valuable for some kind of financial analysis? And it turns out yes, it's sort of similar to net profit. So after company expenses, what is their profitability? But the nice thing about EBITDA is it does not account for country taxes. It is just basically taking the raw good material costs and the difference in the profit. That is what
+
+is being measured here. And so to compare across different countries, this is a very very good indicator. If you are not comparing across countries, for example, if you want to focus specifically on, I don't know, Cayman Islands or Japan, one of our big uh highly represented countries here, you could instead do something like net income because the taxes will be more uniform in the same country. But because we're looking across countries, that's why I decided to continue our focus with the EBI TDA margin. So let us create a slice of our data that is looking just at that indicator.
+
+And uh for best practice, I'm going to add in a dotcopy here. It's not strictly necessary, but this is basically going to create a copy of our data frame, meaning that any um any transformations we make on our filtered data frame won't inadvertently affect our original And so what we're doing here is we are creating a data frame where our original data frames indicator is equal to our EBIT TDA margin. And now let's take a peek and we can see yes our indicator column is everything EBI TDA margin across the board. So now that we have just the slice of data that we are looking at, let's look at the describe method to see if we can start getting a picture of what's being described here. Report ID. If we were being very
+
+thorough in our cleaning here, we would want to turn this into a non-numeric data type because it's an ID number. It doesn't have any inherent ordering value. um and having a mean or mean and median of a report ID is nonsense. So we're not going to look at that. Similarly, we're not going to mind report date. I guess we could
+
+acknowledge that the minimum report date is December 31st, 2010 and the maximum report date is December 31st, 2015. But what I wanted to focus on is the amount. So this is the actual amount of the margin we're looking at. And we can see our mean value is -353. Our median value is 17.
+
+But even more interestingly is our first quartortile is 13 which tells me our mean is currently lower than our first quartile which immediately indicates to me that we have some extreme outliers. um because usually a mean and a median are closer together. The fact that the mean is less than even that that's that's concerning. Um so I did some investigating and I always encourage investigation when we're in this analysis process to try to figure out what's going on with your data. So I wanted to sort our values from our filter data frame by amount. And remember, our filter data
+
+frame now has under 300 rows of data. So displaying this isn't going to be a problem. Okay. Wow. I'm seeing the problem immediately. There are three rows of
+
+data in our data set that are like quadruple and quintuple negative digits compared to everything else is between - 26 and positive 47. So there is one company that is an extreme outlier in our data. I did a little bit of googling to say okay what's going on? Because remember this data is directly from NASDAQ. So you would expect there not to be inaccurate data or a data quality issue. Um
+
+so if you do a little Googling on IMUP Ltd, it turns out they were actually acquired in 2014. So, I guess something odd is happening with this company's data for this data set, but the acquisition in 2014 signals to me that maybe all of these numbers are being influenced by that. And because there's kind of a clear indicator of why the numbers could be so so funky, we're going to remove imuep ltd from our data and then reook at our describe method.
+
+So that's what I'm doing here is basically saying our filter data frame is going to be everything where the company name is not equal to IMOEP Ltd. Uh for a little bit of thoroughess I did investigate to see if there were any additional rows for IMOEP that were in the normal range and there aren't. There are only these three rows for IMOEP. And now if we look at the describe method, we can see that our mean is 18, our median is 17. This is what I was expecting, right? This is what I was expecting. Um,
+
+we do have a minimum that's negative, but that's fine. Some companies are going to have negative profit values. Um, okay. So our data is ready for some visualization, right? Our variables are cleaned. We accounted for
+
+outliers. So now let's see some pretty pretty pictures. And the first thing I always recommend doing when you're working with a numeric variable like amount is looking at the distribution. So I know I just plopped a lot of a lot of code. So let's go through it line by line. plt.figure.
+
+Remember plt is working with mapplot lib and um we are setting our fig size. Then because we're looking at distribution I decided to do a histogram here. And for our histogram we are looking at the amount column. And I set 30 bins which gives us a pretty nice looking histogram. And for best practice we have our x label is our margin. Our y label is the number of
+
+content companies and we have a title. So let's render this. All right. Uh let me zoom my screen out just a smidge. There we go. So uh we can see this is a
+
+relatively normal distribution with a central peak and some tails. What I found interesting about this and if you were presenting this to an end user or some kind of stakeholder, what you could note is that where is the central part of this distribution is at a positive value. The majority of companies um have a margin that looks to be like between 15 and 20%. Which makes sense because if the mode was at zero, that would sort of indicate that 50% of companies were unprofitable. And the incentive to continue being a company after you're unprofitable is not great. So
+
+over time, it's kind of a natural selection of companies to just be profitable, right? So um it makes sense that our margin which remember is is profit uh without accounting for taxes. So having a positive profit here makes sense. All right. So just to kind of continue looking at the distribution, I wanted a little bit more granular information about the median value here. Um so I decided to
+
+include a box plot as well. kind of looking at the same information. If you were doing a portfolio piece, I don't think I would include box plot and histogram, but that's just me. So, our box plot shows the same story. We can see that our median value here, which is this yellowish line, does have a profit margin at about 18%.
+
+Uh, and the majority of our data is profitable between like 13 and 25 26%. So, this is kind of showing where the majority of our instances fit. Now, for this next visualization, we're going to look at box plot again, but now we're going to separate it out by countries. Do countries have similar levels of profitability for countries uh or for companies present in our data set? We're going to see. And
+
+because we're wanting to see lots of box plots within the same chart area, I'm going to use Seabor here, which is a wrap. It kind of fits on top of mapplot lib if it's a new library for you. And it just allows us to show lots and lots and lots of chart data easily. You could do the same thing with mapplotib, but it would take many, many more lines of data or more lines of code. So, we're going to do sns.boxplot
+
+and set our country as the x value and amount as the y-value. We have our x label as country, y label, title, and x tick. This is just to make things a little bit more readable. And we have our values here. Um, oh, I forgot my figure size. That's why it's
+
+looking kind of funky. Let's try this again. There we go. That's a little nicer. So, we can see now we have different countries along the bottom. Um, Canada has a very high
+
+median profitability here, 40% profitability. I was interested in the Cayman Islands because that was one of the countries that was most present in our data set and it looks like kind of hovering around a similar margin to our overall data. Uh, are there any countries that are negative profit here? Hong Kong is looking negative. Chile, Spain, and Italy. So, there's kind of
+
+some interesting stories to investigate here, but do keep in mind we're working with a very, very small slice of data. This is not at all representative or indicative of countries company profitability as a whole. So, this can be a starting point but not an end point. All right. Now, our final graph is going to look at the profit margin over time.
+
+Are there any trends that we can see about years that are more profitable than others? And we have a very, very cool graph to show us this. We're going to have a layered line chart. And so we're going to have our time trend um data which is going to group our amount of profitability by the report date and it's going to group them with the mean of the amount. So let's visualize that we have we're going to use object oriented notation for a mapplot lib in this one because it's slightly um slightly more complex what we're trying to do and we are going to use the time trend grouping from here right and the index of that will be the group names which is the dates and then our values will be our y values And what happens if we show this?
+
+Here's what we get when we show this. And we can see time across the bottom, profitability across the y- ais, and we have these massive peaks. The reason we have these massive peaks is our data is actually reported quarterly. So, it's not that there are valleys like sharp valleys like this. um it's just looking at the instances of when this data was reported. So to
+
+give a little bit better overall picture, I wanted to add a trend line that's kind of smoothed. So, our smoothed data is going to look at our time groupings using the rolling method looking within three and we're going to look at the mean of that. And then on the same plot, we can tell it's the same plot because we're still referencing it by ax, we're going to use our smoothed dates and our smoothed values. And we have a label for this to show it's the three period moving average. Um, and one thing I didn't mention before is alpha.
+
+This parameter is saying how like strong the coloration is on the line. So alpha value of one would be full color. The smaller the alpha, the more faded the color appears. So, when we run this, we'll see now that our smoothed values are much bolder and brighter because we didn't set an alpha value. Um, I just realized we're at webinar time because we had a little bit of technical difficulties at the beginning. I'm going
+
+to stay to answer questions. This is very nearing the end of the project, but if you do need to hop off, I want to honor your time and thank you for joining. Uh, hopefully you learned something today. Um, all right. Let's continue because we're nearly done here.
+
+Yeah. Thank you everybody for attending if you need to hop off. All right. So, uh, I'm just the final thing we're doing is adding in our labeling, our best practices for visualizations. I'm adding a grid just to make it a little easier to parse the line graph.
+
+And now here is our final visualization. We can see our EBITDA margin over time. And we're told it's smoothed to account for variations. And in general, it's interesting that it our margin hovers between 20 and 25% on average going back many years except for 2012. There's something interesting happening in 2012.
+
+So, a next step I have for you is do some investigation. Did something happen in 2012 to cause this issue or is it a data quality issue? Um, there's a lot of questions that this brings up and we only really discovered this question because of our visualization. Um, so that is the end of what I wanted to show today. And I want to just reiterate that look at how much code we were able to do. We were able to play with so much
+
+data here. And the only thing we needed to know APIs for was this one line of code. So let this be your call to action. The APIs might seem maybe intimidating. Maybe I'm projecting. Maybe everyone
+
+else thinks APIs is simple, but I remember being very intimidated by them. And I think if somebody had told me that this is all I need, it'd be a much more approachable thing. Um, okay. So, very quickly, next steps, and then we'll get into some Q&A. So, compare two different indicators. So, we
+
+looked at the EBITDA margin. Maybe look at net profitability and compare that to the margin we looked at. Maybe do look at the what's it called? Um the solution notebook, the official data quest solution notebook uses it. Um acred expenses turnover. So this is the
+
+the debt handling, right? Maybe compare profit margin to debt handling. Um, maybe look at just a single country. Look at the Cayman Islands. Um, look at the United States. Look at Japan. One of
+
+the countries that has lots and lots and lots of data and do a deep dive. Maybe you can also do a company comparison tool. Build some kind of function that takes two countries or two companies names and shows their information side by side. I also recommend if error handling and user input are words you've heard and haven't practiced much, you can always add error handling to any project you do to make it more production ready. Uh it's really good practice. And also there are other
+
+financial APIs available. A couple that I did a quick search for, Alpha Vantage and Fred, both have financial information about the stock market, I believe. So, if financial data is interesting to you, check these out.
+
+Um, all right. Now, let's get into some Q&A. So, at this point in time, I'm going to be looking at the question and answer box. So, please do ask your questions there. All right, Venot. Um, I believe you got
+
+the account sign in signup link. Um, if not, please let me know. Garrett says, "You noticed earlier there seem to be a few APIs, but you only see one API key. You're assuming the single API key works for all APIs from NASDAQ." Yes, I believe that is correct. Um, it's sort
+
+of like to go back to my house key analogy. You might have many different doors in your house. you know, you have your front door, you have your side door, um you have your garage door, but they all use the same key. And that's sort of the same with API keys. Uh which is another reason to keep them secure is one key can unlock a lot of things.
+
+All right. All right. Anonymous attendee asks, "What is Q opt page?" Great question. Q opt.per page is one of the required
+
+parameters for our API. Um, if we go to our documentation here, we can actually read the description. And this isn't me copying out the answer. It's me trying to emphasize that API documentation is essential to familiarize yourself with and knowing how to read it and where to read it. You're going to need to know this for any API project you do. So, Q opts per
+
+page. Um, I guess it's not required, interestingly. Huh. I wonder what happens if we don't include it. Let's test it. Um, and it
+
+says the number of results per page that can be returned to a maximum of 10,000 rows. Larger tables will be displayed over several pages. Okay, so it basically is how many rows of data are we requesting from the API endpoint? Um, but now I'm curious what happens if we remove this. Let's just comment it out and then run this cell.
+
+API key is not defined. Oh, it's not defined. Oh, that's the solution notebook. That's part of the problem. Okay, let's try this.
+
+Oh, it's thinking a long time. And apparently it ran. How many rows did it run though? JSON data.info info.
+
+Oh, right. We haven't uh converted it into anything valuable yet. So,
+
+okay.
+
+Yeah, it looks like it kind of defaults to 10,000 if I'm reading this correctly. So, that's interesting. I guess it's not a required parameter, but if you want to have something different than 10,000, you'll need to include that in your parameters. Um, and Garrett, interestingly, you don't need to take the comma off here. Um, dictionaries are flexible enough to allow for a comma at the end.
+
+um of the final row that to kind of prepare a dictionary for more keys and values.
+
+Uh Allison, did you miss where we are using your own APIs? You keep seeing links, but you do not see where we use the API to get links. So the API key I have stored in a separate file. So I stored it in a file that I named config.py which is in my same Jupiter environment.
+
+Uh that's another frustration sometimes if you're new to working with multiple files to keep your life as easy and sane as possible for your programming project. Having all your files in the same directory or subdirectory will it it will just save you a thousand headaches I promise. So um if I had my config file like in lost and found which I shouldn't do but if I did for example uh this this would not work as well. Uh and Allison you did that and it did not work for you. So let's check out what your config file looks like. So I have a file
+
+named untitled.py where I have a nonsense API key. So this value uh actually not an API key. Um, and now in my notebook, if I import import untitled, great Python best practices here. Import untitled.
+
+And then we have a cell just to test things out here. If we do print uh untitled API key, oh my goodness, we can see the value in there. Um so those are the things that are necessary. It needs to be stored in api file, not api, not ipy nb file. you you you need to put the name of your PI file in your imports and then your variable name from that file needs to be um the file name dot variable name.
+
+So give that a try. Could be there's a debugging issue. uh you forgot the API key in front and using it as a variable in Jupiter is fine um for this project but do be cautious when you're working with paid API keys or you are putting your code online for others to view your API key should not be present okay oh we have so much so many questions and I want to keep nerding out about this project but let me Okay. Uh Garrett, I see your question about are there best practices for where to store the pie file in the directory? So um I just recommend keeping everything in the same area in the same directory. Um if you are
+
+putting this in a GitHub repository, you'll want to create a git ignore and not include your config.py PI file. Um, but really best practice would be environment variables. And Audi, can we do this in Visual Studio Code? Yes, I did all this in VS Code um to test it out. So, yes, if you
+
+have VS Code set up, go for it. You could also use Go Google Collab. Thanks again. Yeah. Um, because I'm nerding out and enjoying answering questions, I will stick around to answer more, but I know we are way over time and completely understand if you need to hop off. I will include all
+
+of the Q&A in the YouTube video. So, um, if there's a question that you want answered, if you need to hop off, you'll get a solution um, in the YouTube video hopefully. I'll stick around for just I don't know, six or seven more minutes here.
+
+An hour of talking needs more water.
+
+All right. An anonymous attendee asks, "How do you handle missing fields in JSON? If the table expects the field, how should you code it? Best practice for me to share?" Um, I don't know if I quite understand the question because JSON is very flexible in how it renders. And really, my big advice here
+
+is to do a small snippet of the data. Look at it. look at how it's formatted and then figure out what you need from there. So that's what we did to figure out we're looking at the data table and within the table data table we're looking at the data but more than that if we come down further after data table data right data table data data we have data table columns and that's where our column names are for our data. So, um, as long as you have that level, um, I think you shouldn't run into many issues with JSON missing values from APIs.
+
+Um, and then I think I saw another question. I don't know if it was in Q&A or chat, but it was about missing values and null values. And looking at our info method for all of our 10,000 rows, we can see we have some null values, but not a ton, especially not a ton on the variables we ended up using. For example, our indicator column, all entries are present in our amount column. Oh, where's our amount column? Here. Again,
+
+we're we're not missing any values. So, for the very particular analysis we decided to do, null and missing values weren't a factor. Um, and where it does look like there's a lot of missing values was in address information, which yeah, not very valuable for this data set. Kevin helped you get over your anxiety dealing with APIs as well. Nice. Happy
+
+to hear that. And genuinely AI is a phenomenal resource for understanding how to work with API documentation um and help you get set up for success with your API calls. All right,
+
+looking at our Q&A here. Joyce has a great question that I probably should have mentioned in my um work here. What is best practice framework to documenting these processes when working on personal projects? Um, I really recommend using markdown cells and code comments in a Jupyter notebook, especially if you are considering adding it to any kind of portfolio or repository that will be public facing and something you're using to demonstrate your skills to others. Also for your future self, uh, I left this comment to my future self because did I try to pip install config? Yes, I
+
+did. Um, which was really not what I should have done because it's based on a Python file that I own, not not a Python library. So my future self will appreciate this comment so I don't accidentally pip install something that doesn't exist. Um so Joyce, all of your thought process, write it down whether it's in a short code comment or a markdown cell. So, for example, if I were to make my project here ready for a portfolio, um I would probably add a markdown cell here saying something about um maybe explaining this. So I would link to the
+
+parameters page and say um API endp point formatting documentation can be found here and then link to the um page where I found it. This will help my future self if I need to reference the documentation and not have to click around a bunch of different documentation pages. And then also um just helps anyone, right?
+
+[Music] Um, okay.
+
+Uh, EO asks, "Some of these API keys require subscriptions and are there limits to the data being retrieved?" Yes. So, the NASDAQ API doesn't require a paid subscription, but it does have limits. And if we look at the documentation, we can actually see some of the limits here in our Q opts per page. Uh, we have 10,000 rows available at a time. Um, and then in our side
+
+panel, I do believe that there's information about rate limits. Yeah, there we go. And here is where you can read about the ins and outs of what is available to you for your API key with your API calls. Um, all right. So, we are way over time, but I've had a blast. Thank you all for
+
+sticking around and asking phenomenal questions. Um, if you could please fill out the link or the survey that is uh provided in a link. Um, it helps me know what to do the same differently and also I look at it to see what topics people want. APIs was a very commonly requested topic for a webinar which is why I decided to do this particular project. Um, the next project will be in a couple weeks, so check your email and the recording for this particular video will be provided within the next 24 hours or so. Um, hope you all have a
+
+lovely day and I'll catch you all next time.

@@ -1,0 +1,258 @@
+---
+video_title: "Build a Salary Prediction Model: Cleaning Messy Survey Data with Python (Part 1)"
+video_id: d7WzK1Wn1yg
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=d7WzK1Wn1yg
+video_date: 2025-10-24T14:01:12+00:00
+video_description: |
+  In this video, we guide you through building a machine learning salary prediction model using the 2023 Stack Overflow Developer Survey. You'll work with real-world survey data from tens of thousands of developers worldwide, transforming messy, multi-select responses into features ready for predictive modeling. This session covers the critical data cleaning and feature engineering steps that make or break ML projects—from handling missing data to encoding high-cardinality categorical variables.
+  
+  What You'll Learn:
+  - How to clean and prepare large-scale survey data for machine learning
+  - Strategies for handling missing data and deciding what to drop vs. impute
+  - Techniques for investigating and filtering outliers in salary data
+  - Feature engineering approaches for multi-select columns (skills, tools, tech stacks)
+  - Encoding strategies: ordinal encoding for rankings, one-hot encoding for categories, and grouping high-cardinality features
+  - Real-world tradeoffs in data preprocessing decisions
+  
+  What's Next: Part 2 (next week) will cover model building, evaluation, and interpreting feature importance to find what actually impacts developer salaries.
+  
+  Recommended Prerequisites:
+  - Machine Learning in Python → https://www.dataquest.io/path/machine-learning-in-python/
+  - Familiarity with pandas, NumPy, and basic data manipulation
+  
+  Access the Project: https://app.dataquest.io/m/950
+  
+  Coming in Part 2:
+  - Linear regression model training
+  - Model evaluation (R², MAE, residuals)
+  - Feature importance analysis
+  - What skills and factors actually impact salary
+  
+  #MachineLearning #Python #DataScience #SalaryPrediction #FeatureEngineering #DataCleaning #StackOverflow #TechCareers #DataAnalysis #PythonProjects
+---
+All right, so let's dive straight in. We are going to be using Stack Overflow's developer survey to predict developer salaries. And if you're not familiar with Stack Overflow, it is a really common tech hub where people can um ask their tech questions, answer other people's tech questions, and it's a really, really great resource to help you debug and to learn new programming concepts and ideas. And every year, Stack Overflow sends out this survey to people that use their site and puts together a pretty phenomenal report of the information. We are going to be looking at the 2023 data from them. That
+
+was the most recent data I could find that um I I believed in the data source. The data source is directly from Stack Overflow's Kaggle page. So, um, it's very valid data and and yeah, we're going to use machine learning from this survey data to see if we can predict a salary based on different factors like um, location and years of experience and tech tools. What tech tools are kind of correlated with higher salaries? We're going to find out.
+
+Okay, so let's dive straight in. We are here in the Data Quest app in our brand new project. Like I said, uh brand brand new, launched an hour ago, and this project is going to be free for you guys for the next week. Um and then it will be a premium project. So if you would like to complete this for free, you have until next Friday to do so. Um okay. So the
+
+very first thing that we're going to do is load our libraries here. And I'm copying and pasting from my solution notebook so I can save some typing time. And we have pandas, numpy, mapplot, lilibb, and seabour kind of as our data analysis and data visualization libraries. And then we have scikitlearn um library imports for our train and test our linear regression model and then a couple of metrics that we'll use to evaluate how our model's performing. Let's go ahead and shift enter on my keyboard. Make sure that runs.
+
+Okay. And it has run successfully. Now let's read in our data set. So I'm just creating a data frame called df. And you'll notice um the survey name if you want to work locally by the way um in the data quest app if you rightclick the CSV here you should be able to download it um or you can download it directly from Stack Overflow on their Kaggle page. Um but you'll
+
+notice here that it says slim. The original data set includes almost 90,000 rows of information which is too many to work with in a very quick way. So to keep things streamlined for you, we removed about half of the rows and about half of the columns from the original data set that were um that had null values for our target variable and also had columns that weren't necessarily related to salary prediction because remember the Stack Overflow developer survey asks a ton of questions that aren't necessarily about salary. Some of them are about how often do you use Stack Overflow? Um, what are some technologies you want to work with but haven't worked with yet? And those types
+
+of things um aren't useful for this analysis. So, if you do decide to download the data set directly from the Kaggle page, be aware that you're going to need to do a little bit more data cleaning than I'm going to need to do here. So, taking a look at our info method. It's my favorite way to get a overview of data sets. We can see that we have 48,000 entries and right now we have a total of 33 columns and main branch age, employment, remote work, um years of coding, what languages people have worked with, uh going down AI tools that people have worked with, uh how much work experience they have, what professional technology, I think that's what that is um that they're using, what industry, and And then our target variable is down here at the bottom.
+
+Converted compensation yearly. So this is our salary and converted comp yearly is normalized to US dollar. Developers from all over the world answered this survey. Um, but just so that we don't have to account for exchange rates, we're going to be using the Stack Overflow provided USD conversion here. Um, and we can also see our data types. Our data types, we
+
+have a lot of objects and objects don't play nicely with machine learning because we need everything to be numeric in order to calculate. we're going to use linear regression and um in order to calculate how different things interact together, we need numbers. So, a lot of our data cleaning steps today are going to be dealing with objects and how can we make them fit for machine learning. Um because we have so many rows even after this is the slimmed down data set. We're actually going to not look at the df.head method yet. You're welcome to do
+
+that if you want. Um but we're going to actually just start with things like this. Look at how many uh non-null values there are for a dev have worked with compared to the 48,000 rows in our data set. We have a lot of missing values here. And maybe we actually have more columns to drop before we work on any data type conversions. So
+
+in our next cell here, we're going to calculate what is the percentage missing for for each column in our data frame. And we can see here that we have two columns that are missing more than 50% of their values. Uh we have AI debubbed have worked with an AI tool currently using missing 71% and 60% of valid data points here. Ah, that's a lot of data missing and machine learning missing values don't don't work. So these are going to be rows or columns that we drop. Um you
+
+could consider some kind of imputation method but imputation on something missing more than 50% of data is not a great idea. So, these are going to be dropped. And in fact, there's a couple more columns we're going to drop.
+
+And I'm going to do a big copy paste here, but we'll go through line by line. So, columns to drop. This whole cell is just reducing the number of columns we're going to be using. Uh, Benjamin, yes, your basics notebook should be empty. Um, basics is where you do your work.
+
+So, if you do look on the side here, you'll see I'll expand it out. You'll see that that the solution notebook is available for you to reference. Although I caution you to not do that. Start with basics.ipb um as the area where you write your code and peek at the solutions if you get stuck or need a reference.
+
+Uh, okay. So, we are going to extend the number of columns we're dropping here. Learn code online, your personal operating system that you're using, a couple of metadata columns uh that aren't necessary for predicting salary. We're getting rid of a couple more columns with high missingness values as well as office tools. Uh, so think of like Microsoft Word, great office tool, but probably not super indicative of salary. And I am
+
+going through this kind of quickly. And the reason why is when we have 48,000 rows and 33 columns, that's a lot of data for our model to try to calculate on. So we're reducing things a bit to make it easier on ourselves and easier on our model. So I'm calling our data basically. Um so now we're dropping our columns and we are reassigning to a data frame called df_cle.
+
+So let's take a look at what we have now. So we dropped 12 columns with this columns to drop code here. And we have 21 remaining columns. And let's take a quick overview of what these are. So main branch, age, employment, remote work, your education level, how you learn to code, and then some experience levels here, what developer type you are, what your organization size is, so if you're working for a very small company or a very large company, what country you're located in. Uh and then these ones are
+
+going to be where we have to spend the majority of our data cleaning time because in the survey people had check multi select. Uh so they said okay I've worked with Python I've worked with SQL I've worked with JavaScript I've so these are going to be semicolon separated lists and we're going to need to figure out what to do with these. Um what operation what operating system you use professionally. um and work experience industry and then our target variable here. All right.
+
+Now let's look at the head of our data frame. Okay. We have our remaining columns and we can see a lot of string values here. Education level, bachelors, some university, some college, how to learn to code, kind of some semicolon separated lists here. Uh dev type, we have senior executive seuite works for a small company. It
+
+looks like languages people have worked with. Um, so the main thing I'm seeing from this doad method is that we do in fact have so so so much string and object type values that we need to take care of.
+
+All right. Um, and because missingness is important for machine learning, let's continue our missingness search and not just looked at things that have 50% or more missing. Um, let's just see anything that has missing values. So, industry work experience and then our worked with multi selects, they do have some pretty substantial missing values here. So, we're going to need to address those.
+
+Um, and then let's also look at our data types. Like, how many string object data types are remaining? Wow, we only have two float data types out of 21 columns right now. Uh, it's that's a lot to clean up. We got some cleaning to do.
+
+All right. All right. Um, let me skip that.
+
+No, I'm not going to skip that. We're going to do that. Okay. So we're going to look at how many unique values there are because sometimes in machine learning we can use one hot or dummies to convert um a column into multiple columns with boolean values. So is remote true or false? Is hybrid true or false? And
+
+those would each be a column. But that only works if it's a small number of unique values. So for some of our key columns here like country, what type of developer they are, education level, unemployment, let's just see how many unique values there are using the n unique method. Uh oop, I was on the wrong cell. Let's run this cell. There we go. Okay. And we
+
+can see that country has 171 unique values for one hot encoding. That's way too many because we do not want to add 171 columns to our data frame. Uh that would probably make our machine learning model cry. Dev type 33 unique values still is probably too much for using dummies here. So uh another candidate that we we can't use that method on.
+
+I'll have to figure out a different strategy for converting dev type into numeric values. But education level, education level has only eight unique values, which is not too many. Um, we're not going to do one hot here, but we are going to use some ordinal encoding, which we'll talk about momentarily. And then employment 14 unique values. Uh, probably too many for one hot as well.
+
+Okay, now this is I think the most controversial line of code that we're going to write today.
+
+Uh because we started with so many rows in our data set, I'm being relentless in how much data I'm removing. If you want a next step for this project, go ahead and flag this line as an opportunity to do some further exploration because I decided, look, we have 48,000 rows. We're just going to remove anything that's null. Any row that has no values, get rid of it. So, my homework for you is consider, are there imputation methods that you can use here? Um, is there nulls you can
+
+handle in a different way? Uh, I bet there are, but for my purposes, I decided to just drop anything that was null. And luckily, we have a pretty decent amount of data remaining. We have 16.4,000 rows, um, down from our original 48,000.
+
+And I I caution about this just because it could have introduced some kind of selection bias. For example, maybe someone who completes the survey fully with no missing values, maybe they are fundamentally a different type of person than someone who leaves missing values. And so we're missing salary information from the people who had the null values. That's very possible. But for this project, I decided to address it verbally and in my um end notes for my notebook, but continue on with it this method. And Ben, I'm seeing
+
+another question from you in chat. Would you mind sharing those questions in the Q&A box instead of the chat so I can address them towards the end? Okay. So, now that we have a clean, cold data set, let's look at some summary statistics. We're still kind of on our exploratory phase. We're cleaning up as
+
+we go. And let's look at the describe method for our target variable, our compensation, yearly salary. And our summary statistics are kind of ugly here because the the numbers are so large. They're showing in scientific notation. There's a workound to fix this, but I decided to just leave it as is. Um, so we can see that our minimum
+
+salary is $1 and this is annual salary. So that's a little suspicious to me. Our maximum salary is pretty staggering, $10 million, uh, which feels like it's probably an outlier to me, especially considering our mean and our median are different by about $2 million. Is that right? 2 million. No, that's too much. Um, no.
+
+Let me scientific notation convert here. Regardless, our mean and median are pretty off. I haven't had all my coffee yet. My apologies. Um, but we can see our salaries. And we did a quick count
+
+here to show our very, very large salaries and our very, very small salaries. Very large salaries. I kind of ar arbitrarily picked over $500,000. We have 51 rows that are above $500,000 and,00 rows that are below $10,000. Um, I picked these numbers arbitrarily.
+
+You could experiment with these and try different cut offs. But the main goal of what this step is is removing our extreme values to help our model understand the majority of our data points better. Okay. So, let's look at our top and bottom salaries just cuz especially the this maximum and this minimum are kind of weirding me out. So, we're going to check the extreme values here.
+
+So, our top 10 salaries uh we have 10 million from New Zealand, 7 million from Canada, a couple more millions from different places around the world. And you know what? These are very likely correct real salaries. These are self-reported though. It's a survey. So
+
+people are just giving their their own salary information. Um so if I were to redo my code, I might consider a higher cutoff than 500,000 to keep some of these larger values in play. And then our bottom salaries having a US dollar compensation of of $1 per year seems like an an issue to me, especially because these people are saying they're full stack developers with lots of years of code. This is likely a question misunderstanding or just a data entry error. So, we're going to remove these values.
+
+Um, and this is another area where if I were to go back and redo this, I might set a more generous threshold because, as we'll see momentarily, big chunk of code incoming. Don't panic. It's mostly for a visualization. Um, when I cropped our extreme values here and reassigned it back to our DF model, I think that the minimum cut off was too severe because um, our mean and median values are closer together now. But we can see in our visualization here that the skewed salary distribution looks like it should have a natural continuation still below $10,000.
+
+So that's another area I would recommend um doing some more experimenting than what I did and just to see if it could potentially be normally distributed if we log transformed our data. That's what this graph on the right is showing. Um, log transformations are really useful if you have skewed data like this. And we could see that yeah, in general, the majority of salaries are kind of clustered in the center with some extremes towards the edges. Um, for linear regression modeling, this is something to keep in mind that log transforming your data can potentially help your model understand what it's dealing with better.
+
+Okay, so we're starting to get a very good picture of our data here. Um, but you know what's still nagging at us? If we scroll back up to our head method, we still have a lot and lot a lot of object types to handle. And the object type we're going to handle right now applies to several columns at once. It's the have worked with columns. So we can see
+
+here language have worked with this first person says HTML CSS JavaScript and Python. Um this next person person says bash and go and these are all semicolon separated and that is the same for language database platform webframe and tools. So a very quick simple hypothesis of how to clean these columns is okay what if the number of tools you have listed so this is 1 2 3 4 5 6 7 tools versus five tools maybe the number of tools is correlated with salary wouldn't that be nice very quick easy search and count for semicolons
+
+Um, so another big chunk of code incoming, but what we're doing here, and this is an example of how AI was very helpful in uh, creating the solution for this project is all of these rows of code are pretty repetitive. I just told AI to write it and it did a very good job. um just for languages, databases, platforms, web frameworks, tools, and tech. Boom. It was done in a couple seconds. Um so what are we doing? We're
+
+counting the number of semicolons that are present in a cell and we're adding one to it because semicolons will always be one less than the list length. And this only works because we removed all of the null values. If we hadn't removed the null values, we'd be introducing potentially an extra number for people who said they hadn't worked with any tools. Uh so we're doing that for every one of our have worked with columns and creating a new column for it. So instead of web frame have worked with now we're going to have a new column called the number of web frames that they've worked with.
+
+And we are also going to do a total number of skills that adds all of the the individual numbers together. And we're going to do a quick correlation. So looking at our output here, number of languages, um, min value of one makes sense because we removed all of our nulls. Max value of 41. Someone's worked with 41 programming languages.
+
+Wow. Um, and then our mean and our medians across the board seem relatively fine. Pretty close together. Nothing outrageous here. Um, which tells me that we don't have any extreme outliers.
+
+And then our total skills distribution. Um, pretty similar story there. Now, correlation. This is saying how correlated is the number of tools with your salary. So testing our hypothesis a little bit here that the more tools you know the higher your salary is going to be and vice versa. And
+
+not stellar results. The number of tools has the highest correlation with 11% which is still a very very very weak correlation. And unfortunately, if this was how we decided to handle our um object column type conversion, we're losing so much granularity because we don't know what the exact tools or languages are that um are influencing salary. We just have a number. So, I left this part in to show you my exploration.
+
+But this is not the what's the word I'm looking for? um not the strategy that we're going to end up using. The strategy that we're going to end up using is actually looking back at our original have worked with columns and looking at some of the top values. And we're using a method called explode here combined with splitting on those semicolon separators. And let's just take a peek at what are the value counts for some of our top results.
+
+And we can see here that language have worked with the top results by far JavaScript, SQL, HTML, CSS, TypeScript, Python. Um, some big heavy hitters here. And then Swift and Groovy, Lua, smaller values. Um and then databases, Postgress, MySQL, Reddus are kind of the top results here. Uh top platforms, AWS, Azure, Google Cloud. So our cloud
+
+computing platforms here. Um and so this feels like it's more granular, but potentially really really valuable because at the end of the day, we want to know what influences higher versus lower salaries. And this feels very rich for providing information to our end users, right? And this is another spot where you have some creativity and flexibility. I went with, as you'll see, I went with several different languages and tools to build into my model, but yours might be different than mine. So
+
+the following cell is not the only way to do this. And another big chunk of code incoming. Trying to decide how much. Okay, we're just going to do this. Uh, this was phenomenally helpful to get AI support with.
+
+Don't panic. Basically, what we're doing here is we are adding new columns. That's a boolean value of does this row say that they have used Rust? Yes or no. Does this row say that they've used Go?
+
+Yes or no. Scala, Cotlin and Swift, yes or no. Python, JavaScript, TypeScript, yes or no. And so on and so forth. And you can see that this is so much text that I would have had to manually type and it would have been really tedious, really timeconuming. But AI was able to
+
+do all of this based on the languages I told it to use and just there was the code in one go. Right? So we're doing that um we're creating about 30 new columns here and that's okay because these columns are going to be numeric boolean values right that um our machine learning model will be able to handle very very well.
+
+All right. And now we're are going to look at some correlations just to see like is this method any better? Uh spoiler, it's not. But I think the value is better. So what are we doing here? We are creating a new
+
+correlation um matrix. We're going to print the correlations and then we're dropping the original have worked with because they're object types. they're not going to be useful for our machine learning model. And then we're also dropping our hypothesis of just adding up the number of tools um because the correlations there weren't very strong. Okay, now let's look at the correlations here. So based on our new boolean has
+
+this skill or not columns, the highest correlation with salary is Terraform followed by AWS, Kubernetes, Go, Rust, Python. Um and we are getting like none of these are very very strong correlations. Some of these are in fact negligible correlations. Um but you don't necessarily need to remove or keep a feature which is a column just strictly based on correlation with the target variable. So, I decided to keep all of these in my machine learning model because it does give our model a lot more information. Um,
+
+and just a quick little summary here. We can see now our feature types. We have integers, objects, and floats. We still have objects. We do still have objects. We'll take
+
+care of those next. In fact, let's take a quick peek at what those objects might be looking at the info method. So, we have all of our new columns here that are all integers. Great. But our um starting columns, age, employment, we haven't taken care of those yet. So,
+
+that's up next. Um, so we're going to pull out our object types and call them categorical columns. And we're going to look at the number of unique values for each of those to see if there are one hot um encoding opportunities. Okay. Okay. Okay.
+
+Lot of output here, but all very useful output. So we have two unique values for main branch. Whether you're a developer by profession or you just write some code sometimes. Um this is going to be a great candidate for converting into a boolean. Age has eight unique values.
+
+And we can see that there's some kind of ordering here, right? Someone who's under 18 is younger than someone who is 18 to 24 is younger than and so on and so forth. So, we're going to do some ordinal encoding for this. Employment, we have 10 unique types, but we see a lot of overlap. So, there's employed full-time, and then there's employed full-time and independent contractor. Um, and so we're going to
+
+clean this up a little bit, too, just to have fewer combinations. Remote work, great candidate for one hot ad level, eight unique values. But there is once again some kind of ordering here where primary elementary school is going to come before secondary school which is going to come before associate and so on and so forth. So we're going to ordinal encode this as well. Learn to code 554 unique values.
+
+Holy smokes that's too many. And I made the decision to just drop this column because it's a lot of parsing. Um, and I just didn't think it was going to be super super valuable for our model. Years of code is 52 unique values, but we can see that in general they should be a number. So, this one is most likely an object column because of something like um under a year of experience or unknown or something like that. So, we're going
+
+to coersse this column to be numeric so that anything that isn't numeric is just going to turn into a null. Same thing with years of code. 51 unique values. They should be all numeric. Uh dev type 33 unique values. Um,
+
+we're going to consider what we want to do with this. We could one hot this, but it's a lot of columns. Or size is another one for ordinal encoding because there's a hierarchy. If you have 2 to nine employees, that's going to be a smaller value than 10 to 19 and so on and so forth. Country 140 unique values.
+
+We are going to keep the top n values and then cluster the rest into a group called other. And then we're going to one hot this um operating system 947 unique values. That's too many. So we're going to figure out what to do with this. Um and then AI select three unique values. That's okay. Industry 12 unique
+
+values. That's okay. So, we have a plan now for how to turn all of our object columns into numeric. So, I'm going to share the code for each of those one at a time. So, we're going to drop the learn code and professional operating system columns because they were they were just too fragmented for us to have a good strategy to transform.
+
+The next one we're going to ordinal encode our years, our age, our education level. And I thought we were also ordinal encoding org size. Um, I did this a little later on. I don't know why. Going to go ahead and add that in here.
+
+Um, yeah. So all of these are going to get ordinal encoded where the smallest value is going to correspond with the smallest amount and so on and so forth. If someone said that they prefer not to say we're going to assign them to the median value here um and the median value is 25 to 34.
+
+Um okay so after ordinal encoding what was our next method? We're gonna simplify with a little bit of mapping here. Okay. And our simplification is we're going to simplify employment because remember employment had a lot of different types. Um but we're basically going to use a if statement to say um if it's null unknown and there shouldn't be no values but you always want to like have that catch all and then we're going from biggest to smallest. So next thing we're checking
+
+for is if they say they're full-time we're going to say that's their answer. and if they don't have um or if they're full-time and independent because those two things kind of are different and important together. And then we're going to look just at full-time and then if they're not either of those, are they a contractor? And after that, are they part-time? So, we're simplifying um based on importance here and then mapping.
+
+And then finally we are going to be one hot encoding a couple of our values
+
+that had small numbers of unique values. And I'm using Panda's get dummies method for this.
+
+And then for our numeric columns like age and number of years of experience we are using PD2 numeric method and coercing any errors which will cause us to have some null values that we need to take care of. Okay. And now for our high cardality with um dev types. Remember we had like I think 33 different types of developer. We're going to just keep the top 10 here and group the rest as other kind of similar to what we're doing for country. Um,
+
+which will be here. So, we add 140 unique country values. We're going to keep the top 15 and group everything else as other and then get dummies for each of these kind of reduced complexity variables. I know this is a lot. I know this is a lot.
+
+We're doing a ton of data cleaning here. Ton of transformation.
+
+All right. And now just a couple print statements at the bottom so that we can get a very good log of all the work we did here. Okay. So simplified employment, we now have just four different unique values. Um numeric columns check. Everything is
+
+looking great for our years of experience. Um column types. This is great. We don't have any more object column types. Everything is numeric. We are doing
+
+great. Remember I said we're going to introduce some null values um when we coerced our errors. So here they are. We have a handful of null values we'll need to take care of. Okay, so let's go ahead and drop those null values.
+
+We have done a ton and I want to address questions. So, we'll pivot to that now. Um, Christian, you're really interested in this data transformation. Me, too. It it it was so fun for me when I was kind of creating this project to start with 90,000 rows of survey information, which survey information is like the most dirty type of data you can get because it's just people sharing, right? And um
+
+it was very fun to go through. So because there was so so much cleaning we had to do let's let's pause here and next week stay tuned for an email about next week's webinar um we'll do the machine learning component um where we talk about correlations we have a little bit of m multicolinearity we have to talk about um and then their model results which you know what are pretty exciting so yes I will pause for questions. Now, let's start with the Q&A. So, if you do have questions for me, pop those in the Q&A and I will start looking there. Okay. Um, Timothy asks, "Where can you
+
+get the slim data set that was asked pretty early in the webinar?" So, I do hope that um I answered that in the data quest app. You can see survey results under slim here. You can download those. Um but basically what we did from the original data set.
+
+Uh I can I can show you my code for that actually. I knew what columns I wanted to drop so I had AI help me with that. Um,
+
+basically the slim data set removes nulls from our target as well as uh response like survey metadata stuff, redundant comments, comp compensation columns, aspirational tools that aren't actually indicative of what someone is already working with. things about Stack Overflow, how people feel about AI rather than what they're actually doing with AI, and then some kind of oddball questions here. Um, so hopefully that answer Timothy, you got it. Awesome. Um, then Timothy's followup, are the salaries in the same currency? Yes. Um,
+
+I always am a huge advocate of going to the data source to learn about your data set. So, this is the Kaggle page for this survey. And you can see um they have schema information. They have the actual survey uh questions that were asked if you want to take a look at those. And then the read me gives a little bit of explanation about things as well. So um
+
+the target variable we're using is everybody's individual compensations converted into US dollars
+
+and Braharia asks is there any other way to deal with outliers instead of keeping some cut offs for salaries? Yes. Yes, there are better ways to deal with outliers for potentially better ways to deal with outliers. Um, you could do some kind of calculation. The name is escaping me right now. Um,
+
+but I would consider on your non-trimmed data looking at like a box plot and seeing if there's anything kind of outside of your like IQR in intercortile range that would be easy removals. Um, so yes, cutting out layers off by an arbitrary cut off there there are definitely better ways to handle it than that.
+
+Uh, Tamir, I'm seeing your question. You're getting an error with it a key error. Learn code and opsis professional use not found. Um, so sometimes when you remove columns in a Jupyter notebook, so for example, I'll look at my cell4 where I dropped a bunch of columns. If you rerun this, let's do it. Let's see what happens.
+
+Um, I'm shocked that didn't break. Um, but usually when you rerun uh dropping after you've already dropped, you get an error saying, "Oh, we can't find that column to drop because it doesn't exist anymore. You've already dropped it." So rerunning can cause an issue. Maybe that's what happened. Let
+
+me know. Oh, I just see your followup. Never mind. You figured it out. So, what I do in those situations, by the way, is I just restart my entire kernel with the double arrow here. And that resets
+
+everything to its original state and will have all of your cells flow one to the next. And Bargavi asks about get dummies. So yes, I can spend a little bit more time on the get dummies method because it's it's so important for understanding in machine learning. Um, okay. So here's what I'm going to do.
+
+I'm going to
+
+we're going to look at the head of our data frame and
+
+yeah country. Um so we use the get dummy method on our country column here. And so what is happening when we use get dummies is it's taking the individual country names uh from one column and expanding them out sideways. So each country has its own column. So Italy has its own column, Netherlands has its own column, everything we clumped together in other has its own column column, Poland, so on and so forth. And the great thing about this is
+
+we get to keep the information of what the the value is for that row of information. So this person their country was United States and everything else is false because their country value was United States. So we still get to keep the information that they live in the US. Um but true is a value of one, false is a value of zero. So we have converted a single column into many columns making each one numeric. Um hopefully that made sense. I
+
+think this visual is very helpful. So you can see that every single row only has one true value for country. Um, and if you don't see a true value, it might be cut off here in the dots, but country will only have one true value. One true, one true. Um, and that's the main principle of get dummies.
+
+And Budu asks, "How do you study the concepts discussed in this analysis as a beginner?" I highly recommend I mean I'm biased, but I highly recommend DataQuest's machine learning course. So I can show that to you. Nope, that's not going to do anything. There we go.
+
+And if we go to our dashboard I have the dashboard in um it's in the data scientist path I think version 2.7 is the most up to date and in section 8 machine learning in Python um these introduction courses introduction to supervised machine learning introduction to unsupervised machine learning are phenomenal um because it doesn't actually start with scikitlearn. It starts with what are the concepts that scikitlearn used to build their methods. So that's my recommendation. I can share a link to the first one I mentioned in chat.
+
+There we go.
+
+There you go, everyone. Okay, we have a couple more questions. I think we're going to end right on time today. Um
+
+um if we drop columns Hok asks if we drop columns that are nulls after training our model can we use it on incomplete inputs that may have some null values nles do not work well with machine learning. So that's why my final step here after we did create some nulls in our numeric coercions, that's why I removed them. Um because machine learning when it's trying to calculate the interactions between different values, if it sees a null, it doesn't know how to calculate on something that's missing. Um so you do have to take care of those null values.
+
+Uh Benjamin asks, "Without looking at the solutions notebook, would you recommend a beginner to use generative AI tools to learn how to complete data prep-processing, etc., drop high value columns?" I would not. Um, I highly recommend or I highly caution against using generative AI to help you understand the workflow of a data project until you understand what the workflow is yourself. because as I was writing this project and using my AI assistant to help me generate the code, it came up with some bananas ideas like um and I had to push back against it and say, "Hey, that's not a good idea. Um
+
+that's going to lose a lot of our data. That's going to um create bias, etc., etc." and I wouldn't have known it was incorrect if I didn't have my foundation in the data process burst. So if you're a beginner, I think AI is most valuable for if you get a trace back error. So
+
+for example, if I'm just going to make an error on purpose here, uh if you get a trace back error like this, copy and paste this into AI and say, "Hey, what's going on? Why is my code breaking? Explain it to me. And that's going to get you the foundational skills you need to then later down the line um use AI as a heavier hand. And Emma, how do you get access to the YouTube video? I need to process that
+
+today. And once I do, we'll send you an email with the YouTube link and it'll be within the next 24 hours or so. Okay, we had questions. We're ending just a couple minutes after, so I'm going to call it on time. So, thank you all for coming. I do apologize. We had
+
+to split this last minute into a part two, but the project was just too good to keep in one part, right? Um, so stay tuned to your inbox for an invite to part two, and this part will be up on YouTube soon. In the meantime, you have a week to play and explore with a brand new data quest project. So, go check it out. Look at the solution code. Use some
+
+AI to explain the syntax parts you don't understand. Um, and come prepared with lots of great questions for next week. Um, yes. Thank you everybody for tuning in. I do hope to see you back next week.
+
+All right. Bye everyone.

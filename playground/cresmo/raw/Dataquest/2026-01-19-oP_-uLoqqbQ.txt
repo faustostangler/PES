@@ -1,0 +1,269 @@
+---
+video_title: "Learn Python OOP by Building a Text-Based Game | Garden Simulator Project Walkthrough"
+video_id: oP_-uLoqqbQ
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=oP_-uLoqqbQ
+video_date: 2026-01-19T18:05:33+00:00
+video_description: |
+  In this video, you’ll step into the role of a Python game developer to build an interactive text-based game called Garden Simulator. With guidance from Dataquest’s Director of Curriculum, Anna Strahl, you’ll apply your Python skills to create a game where players can plant, tend, and harvest virtual crops, all from a Jupyter notebook.
+  
+  You’ll learn to use object-oriented programming (OOP) to design plant classes and game logic, implement error handling for smoother user interactions, and add randomness to make gameplay more dynamic and fun. Whether you’re brushing up on classes or exploring how Python powers real games, this project is a perfect addition to your portfolio.
+  
+  This session is ideal for beginners and intermediate learners who want to apply foundational Python skills to a real coding project.
+  
+  What You'll Learn:
+  - Design a class-based game using OOP principles in Python
+  - Create interactive gameplay loops with user input
+  - Use error handling to manage invalid user actions
+  - Add randomness to simulate foraging and plant behavior
+  - Organize and structure your code for reusability and readability
+  
+  Recommended Prerequisites:
+  - Python Basics→ https://www.dataquest.io/path/python-basics-for-data-analysis/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-garden-simulator-text-based-game/
+  
+  Video chapters:
+  00:00 - Intro
+  02:55 - Creating the Plant class
+  10:40 - Using inheritance for subclasses
+  14:36 - Creating the Gardener class
+  25:19 - Defining the select_item function
+  29:12 - Building the main game loop
+  39:54 - Audience Q&A
+  
+  #pythonprojects #Python #oop #pythongaming #objectorientedprogramming
+---
+This is the data quest project lab and today we are building a gardening simulator game using object-oriented programming in Python. So, I think that especially if you're on the newer side to object-oriented programming or you just want a good refresh, this project is a phenomenal way to refamiliarize yourself or familiarize yourself with these types of concepts so that you understand all of the OOP terminology and how to use it. And I also want to make sure that you're in the right place in order to get the most out of this webinar. I think that you should feel pretty comfortable with Python basics or Python foundations like loops, um, methods, dictionaries, and functions. So, loops in particular, I'm not going to spend a ton of time about the ins and outs of how they work. We'll talk a
+
+little bit more about methods and functions. Um, obviously methods because that's OOP at its core and dictionaries is a key part of this project as well. And having a little bit of familiarity with OOP already will make the content more digestible today. But if you're brand new to it, I still think that you can get a very very good kind of crash course in object-oriented programming through today's walkthrough. So we're going to dive straight in here. First,
+
+we're going to introduce the project. What is it that we're doing today? We're going to then build our classes and then create our main game loop. And like I mentioned, we will end with some Q&A. So, our project brief. In this project,
+
+we're going to be creating a textbased game, meaning that there's not going to be any um user interface or graphics that we're creating as part of this game. It's all text based. And the players of this game will be able to find new seeds, plant them, and then harvest those plants when the plants have grown up to full maturity. And we're going to be doing this like I've mentioned with OOP. So, let's dive into the data quest interface. Here I am
+
+in the garden project and we have a Jupiter lab set up for us here. And we only need to import one library for this project, the random library. And games are interesting when they have a little bit of unpredictability to them. So, we're going to use random for generating different types of seed for our player when they are looking for seeds. Um, I'll have some next step ideas where maybe you won't even need random at the end, but for now, we're going to import this and dive straight into our first class.
+
+So, if you're new to object-oriented programming, defining classes is sort of like defining blueprints. So, the class definition itself isn't going to do anything until later on. So, we're going to be authoring a blueprint to start to tell Python what is a plant in our game. And more than what is a plant, what characteristics do plants have? And what can plants do? And characteristics
+
+are going to be our attributes. And what can the plant do? That's going to be our methods. or if you're familiar with functions in Python. Methods are functions but that are specific to a class.
+
+So let's start with our attributes. So what qualities or characteristics do plants have? I'm going to copy a code block and then we'll talk about it. And we are defining our init method. This is a special method in OP that initializes all of the attributes um for our class. And you can
+
+see we are including three parameters here in our init statement. Self, name, and harvest yield. So name will be the name of the plant. Harvest yield will be how much plant gets harvested. For example, if you harvest a carrot plant, maybe you get one carrot out of it. If you harvest a tomato
+
+plant, maybe you get 12 grape or 12 tomatoes from it. Um, but this first one, self, I remember first of all when I was learning object-oriented programming, I was very very uncomfortable with it. I didn't understand the why of why it existed or the how. And self was one of those concepts I just had a hard time wrapping my head around. But the best way I've heard it described is self is telling Python about a specific instance of this class.
+
+So remember I said this is the blueprint. When we then want to actually create a plant, self is that specific plant. So we need to say for every specific plant we create, that plant will have a name. That plant will have a harvest yield. That plant will have this. So we can initialize
+
+multiple versions of this plant that will each have their own self, right? Um, so now let's talk about our attributes. So every plant will have a name and a harvest yield like we talked about. And then every plant also has different growth stages. So we are specifying a list of growth stages here.
+
+First seed, then the plant will sprout, then the plant will be mature, then the plant can flower, fruit, and then be harvest ready. Um, not every plant has all of these things, so we will address this in a moment. But for our general plant blueprint, these are the growth stages we're going to list. The next one is what's the current growth stage? Now, because we don't have any plants actually planted right now, everything is going to be a seed. And the first
+
+growth stage that indicates seed will be this um index of zero. And then the final attribute we're going to set is whether or not the plant is currently harvestable. And if the plant is a seed, it's not currently harvestable. So we're going to have this be a boolean value of false. And this is our plant in it method. All the
+
+attributes we're going to use. So next up, what can a plant do? We've said what characteristics a plant has. Now what can a plant do? Well, number one, a plant can grow. So we're going to define
+
+a grow method. So when we want to have a plant grow, we're going to say, you know, tomato.grow and then the the plant should be able to do something. Maybe the attributes change a little bit. And so let's talk about it. So the first thing that
+
+happens is the current index is going to be found from our growth stages attribute. That's our list up here. And we're going to grab the current index of the current growth stage. So remember up here we set our current growth stage to seed. So this is all using some kind of clever indexing to help this grow method understand where we are with our growth stage.
+
+And then we have our logic. So if the current growth stage is the last growth stage available, that's what the negative one means as a reminder for indexing. And negative one is the last thing. So, if it's at the final growth stage, we're going to print information for our game player and say that the plant is already fully grown. There's nothing more we can do with it.
+
+It can't continue to grow and it's not going to cycle back through to become a seed again because that's not how plants work. But if it's not already fully grown and we're going to know that if the current index is less than the total available growth stages, then we are going to increment the growth stage by one. So it hops over to the next thing in the growth stages list. And after it has done that growing by ratcheting up one in our growth stages list, if it then equals harvest ready, we're going to change our harvestable attribute to be true. And that means that we will be able to harvest it. So this is our grow method
+
+for a plant. And we're going to have one more method for a plant because what else can a plant do in our very kind of simple starting point for our game? Of course, plants can do lots of things. They can grow, they can die, they can need water, all of these different things. But for simplicity, we are going to say a plant can also harvest. And if a plant harvests,
+
+it means that the harvestable attribute is set to true. And once it's harvested, we want that attribute to be set to false. And if it is harvestable, we want to return the harvest yield. So if we harvest a tomato plant, we want to get returned to us 12 that there are 12 tomatoes being harvested. And if it's not harvestable, we don't want anything to be happening because the plant isn't ready yet.
+
+So this is our plant class. We have the blueprint for a general plant now. But and I just ran that cell um so that it is stored in our system. But because we want to garden with lots of different types of plants, we're going to now use some inheritance, which is another OOP concept, to create child classes from our parent plant class. So what this means is that we are creating a new class and I'm going to make a tomato. This is a
+
+blueprint for all tomato plants in this game. But here's the difference. It is going to inherit everything from our existing plant class. And when I say everything, it's going to inherit all the attributes. It's going to inherit all of the methods. So that even though
+
+this is only three lines of code, we are getting to reuse everything we've already written. So we do need to still define our init method and say self right for every single individual tomato. Here are the things for that individual tomato. And this is the one thing that is a little bit different when we want to inherit from a parent class. Super in it.
+
+This is telling Python, hey, I don't want to rewrite all that code. take everything from the parent class and bring it over here, please. And we're telling it the name and the harvest yield because those were necessary from our parent class definition. And this is it. Now we have tomato that has everything. It has everything. It
+
+has all the growth stages. Um, it's currently set to harvestable is false. uh currently set to seed for that blueprint. Great. Let's do a couple more. Now, the next one
+
+is going to be lettuce. Going to make another child class. And same setup here. Um but for the harvest yield, I thought that lettuce would have less harvest than a tomato. I just made these numbers up.
+
+Um but there's one problem. If the lettuce child class is inheriting everything from the plant class, let's look at our growth stages in the plant class. Seed, sprout, mature, flower, fruit. Lettuce doesn't fruit for the purposes of our gardening game. So we are actually going to override the existing growth stage attribute that we inherited and say that for this particular subclass or child class, we're only going to have these four growth stages.
+
+So even though we brought everything down from the parent class, now it has a new information for this particular thing, but everything else is still going to reference the parent classes information um and pull from there. And just to fill out the game a little bit more, I'm going to make one more class here for carrots. And once again, I am overwriting the growth stages because carrots don't really fruit for a gardening game. So now we have three different types of plants. If you want, you are welcome to pick more plants, um, more Chad classes, different types of plants than me. This is just
+
+for my demonstration. So the next thing we're going to do, if you're following along with my solution code, we're actually going to skip the next code block for the moment and go to creating the gardener class. So let's start with that. And we are initializing class gardener. Notice there's no parentheses here. Um
+
+because this is a another parent class. It doesn't have anything. it's inheriting from. So we don't need to reference anything else with it. And the gardener class is going to represent the player. What can the player do? They are
+
+the gardener in this game. And before we do our init method, we actually have a kind of funky line of code. Plant dict is a dictionary of our blueprints um where the key is a string of our different types of plants but the values are our classes. So we have our tomato class, we have our lettuce class and we have a carrot class. Notice that I have not included parenthesis here. If we
+
+include parenthesis, it will create a tomato, a specific individual tomato. And that's not what this dictionary is supposed to do. This dictionary is saying here are the blueprints available to our gardener. We can make tomatoes. We can make lettuce. We can make
+
+carrots. So keep that in mind for when we'll use this in a moment. Now let's create our init method. Um, so once again, we need self always, always. And we're going to have our gardener have a name, and the name attribute will be initialized that way.
+
+And we'll have two different empty things for our attributes. Here we'll have a list of planted plants. So, what is already in the garden? Right now, um, we don't have anything planted, so it's an empty list. And then our inventory.
+
+Does our gardener have any seeds available to plant basically. And that's all of the attributes that our gardener needs. So now what can our gardener do? Well, we want our gardener to be able to plant things. So let's go ahead and create a plant method.
+
+So to begin with our plant method, we're going to initialize a variable um for a selected plant. And this is going to look at the player's inventory. This right here, this is a placeholder. We have not created this function yet, but we will. Um, I kind of went back and forth when I was think planning this webinar of the best way to incorporate different items um or or different parts of the code. And for now, we're going to
+
+create a select item function, but we haven't done it yet. So once the player has selected an item, we need to check is it in their inventory and do they actually have at least one of those things in their inventory? And if they do, we're going to decrement or decrease the inventory item by one. And if the item after that decrease would be zero, like they don't have anything left in the inventory, we're going to delete that item from the inventory to keep the inventory clean. Then here's the funkiest line of code in the whole project in my opinion. Let's
+
+explain it. We are referencing the plant dict that we created here. And we are looking for the key that is the selected plant to give us a plant dict value. Then these parentheses mean that we are initializing an actual object of one of these values. So um to visualize this basically what this will I have a new keyboard. Sorry. Um
+
+uh no no no no. This is what this line of code will translate into once all of the logic happens. And the parentheses are here. This is a dictionary reference to this dictionary. And the values will now get initialized with the parenthesis.
+
+And um we didn't want to include the parenthesis here because that would put specific tomatoes, specific lettuce plants, specific carrot plants in this dictionary. Um and and we don't want that. We just wanted to have the blueprints here. And then once we know which blueprint to use, we say, "Okay, now make that plant." I in my opinion, this is the most complicated line of code in this project. So if you have more questions
+
+about it, please let me know. Um and we can keep chatting about it during the Q&A section. All right. So now that we've created a new plant, we have a tomato plant for example, then we are going to add that new plant to the list of planted plants. We now have this thing that is planted in the garden. And always trying to have
+
+a little bit of a text user interface for our game player. We're going to say that the gardener has planted a plant. And if they don't have that plant available to plant, we also want to tell the user that and say, uh, they don't have any of this plant to plant. Okay, so this is our plant method for our gardener. What else can the gardener do? The gardener can also tend.
+
+And so the tend method for our gardener is going to go through every plant in our list of plants that are already planted. And if the plant is harvestable, we want we like nothing can happen to that plant. It's at the end of its growth stages. So we need to print to our game player that the plant is ready to be harvested. But if the plant isn't yet harvestable, it needs to increment to the next growth stage. If
+
+it's a seed, we want it to become a sprout. If it's a sprout, we want it to become mature. And in order to make that happen, we're going to call the grow method for our plant. This is a little confusing because technically, oh no, I'm sorry, I misspoke there. Um, and the grow method, remember, is from our plant class. So all of this logic
+
+will happen here. That's kind of cool, huh? Um, and then we print for our game player that the plant is now this next growth stage. So what else can a gardener do? He he or she can grow. He or she can tend. Um,
+
+and he or she can also harvest. So here's our harvest logic. And so once again, we have not yet defined the function called select items. So we'll do that. But once a player selects the plant that they want to harvest, we're going to call that a selected plant. And
+
+if the selected plant is in fact harvestable, then we're going to look at the inventory. And if there's already that item in the inventory, so for example, if we're harvesting a tomato and they already have tomato in their inventory, we want to add to that existing pile. And if they don't already have that in in their inventory, we're just going to place that into the inventory as a new item. Um, and then we do want to remove the plant from the list of planted plants because once we harvest it, it's no longer planted. And having um some kind of fail logic in games is important because players might try to harvest something that isn't harvestable and we need to tell them that.
+
+And the last one we are going to add is using that random library. Our last method we're going to do is using the random library that we um imported at the beginning of the code and forage for seeds. In order to help our gardener get new seeds, I thought that a very simple way to get them the seeds they needed was to forage for seeds in the woods or something. So using random.choice, we have a list of all plant types. Um,
+
+have we defined this list yet? Not yet. This is another thing that we will define momentarily. But that's the seed. It's going to pick randomly from a list of all of our different seed types. Say that's the
+
+seed. And if the seed's already in the inventory, increment it by one. And if it's not already in the inventory, set that equal to one. and present that information to the game player. And that's our gardener class. Our
+
+gardener can now plant things, tend things, harvest things, and forage for seeds. So the select item function that I said will be a placeholder, we now want to add that logic in. So before the gardener cell, I'm going to add a cell above it. My shortcut for this is the keyboard letter A. If you have a cell selected and click A, it will create above a new cell. And we are going to define
+
+a function. Notice this is not in a class. Sometimes you just need a helper function. Um and it's not going to be object-oriented. So select items.
+
+[snorts] The first thing that we're going to do is with the items argument, if the type of the item is a dictionary, we're going to turn that dictionary into a list. If the type of the item is already a list, we're going to keep it a list. And if it's not a dictionary or a list, we want to have some failsafe logic just in case our game player tries to hack the game somehow. And the reason we are looking for lists and dictionaries um is we do have where am I looking? We do have different types of things that we're going to need to be able to select. Sometimes we're going to select
+
+from a list. Sometimes we're going to select from a dictionary. The next thing that we're going to do is to print out the items. So, for every item in the item list, we're going to try to say the name of this item. Um, and if that doesn't work, then we're just going to say the item itself could.
+
+This is going to help us account for dictionaries and for lists. Um, I do want to touch on something here for those of you who are a little bit newer to object-oriented programming. This is polymorphism potentially. And what polymorphism is is we have used the name attribute in every class we've defined so far. So as a reminder in our plant class, we have self.name.
+
+tomato, lettuce, and carrot all inherit that self.name. Our gardener also has a self.name. So, we are technically referencing any list item that has a name attribute here. So, this is really powerful um
+
+to kind of work seamlessly between classes.
+
+So we're print we are getting the item list or dictionary. We're printing those items out. And then the final thing we're doing with our helper function here is getting the user input. So while true, we are going to ask the user for their input using the built-in Python input function. And then we are going to try to convert the user input into an integer. And if the integer is in a
+
+valid range, meaning it's larger than zero and less than the length of an item list, we're going to return that list item. Um, and if their input is not valid, we're going to tell them that. And this is our helper function. Okay, we are doing great. We are right on time.
+
+Now, let's begin putting all of the pieces together. We've done a lot of individual building blocks, our classes, our helper function. [snorts]
+
+Now, let's build our main game loop. Before we build our main game loop, I have a little bit of housekeeping code to include here. The first bit of code we need to have is a list of all of our plant types. And the next one is a list of valid commands for our game player. So what can our game player do?
+
+Um, a lot of it's the same as what our gardener can do because our gardener class represents the game player. So our game player can plant, they can tend, they can harvest, they can forage, but they can also ask for help or quit the game. So these are more kind of metagame commands. And we want to print a welcome message for our game player. So mine says, "Welcome to the garden. You will act as
+
+a virtual gardener. Forage for new seeds, plant them, and watch them grow. Start by entering your name." And so we then ask the game player for more input. And we say, "What is your name?" And that will be the gardener
+
+name. Now all those classes that we spent a lot of time creating, we are finally getting to the object specific part of object-oriented programming where we are calling our gardener class we created using our gardener name we just asked for input and creating a gardener object. This right here represents our specific gardener for this specific game.
+
+Okay. And when I run this cell, we can see all of that text print. And now it's asking for my name. I'll go ahead and enter Anna. And it says, "Welcome, Anna.
+
+Let's get gardening." Now, for the main game loop, I'm going to copy and paste all of this at once, but don't panic because it's very satisfying. All of the work we've done so far is going to click into place with this main game loop. So while true, we are going to prompt our game player for a player action by asking what would you like to do? And because we're working with input and players can sometimes use funky um typing. Maybe
+
+they capitalize everything. Maybe they like to account for variations in typing. We're going to use the lower method to make all of our input text lowercase so that it matches our command list. Then if the player action is in our valid commands list, we're going to go through our different methods. So if the player has asked to plant, we're going to take our specific gardener object that in my case I named Anna, right? That's the name of it in
+
+the attribute. We're going to use the plant method. If the player says tend, our gardener object will use the tend method. If the player action is harvest, our specific gardener will harvest and forage. Our gardener will forage. So this right here
+
+is referencing our entire gardener class. So look at all of this code that is now in action but in a very very concise bit of conditional logic. Um and then for our kind of metagame information if a player types help we're going to display that list of valid commands for them. And then because we are in a while loop, we always always always want to make sure that we have a stop condition. So that's why if they type in quit, we print goodbye and break the loop so the game ends. And if they type something wrong,
+
+we want to tell them that too. Okay. So when I run this cell, our game will start. Shift enter. And it says, what would you like to do? Well, I want to see that
+
+list of commands. So, let's type in help. And we can see now the list of commands here. So, let's forage for seeds. And it says Anna found a carrot seed.
+
+Remember, it knows my name because of the input in the previous cell. So, Anna found a carrot seed. Let's forage again. Let's see if we can get a few different types of seeds here. And I found a tomato seed. Fantastic. Um, so
+
+let's plant our seeds. And when we plant, now we have two options presented to us. Um, we have carrot and we have tomato. So, select an item. I'm going to say one. So, Anna
+
+planted a carrot. Um, let's plant our tomato as well. And look, now we don't have carrot in our list of items because it was removed when we planted that carrot. And Anna planted a tomato. Let's tend the garden. And we see carrot is now a
+
+sprout. Tomato is now a sprout. Let's tend again. Carrot is not mature. Tomato is not mature. Let's tend. The carrot is
+
+harvest ready. The tomato is not harvest ready. So I'm going to harvest the carrot and we've harvested a carrot. So, I quit the game because uh our work here is done. Um so, this is the beginnings of a very very cool garden simulator game, but it's obviously a little simplistic. So, I have some suggestions
+
+for next steps for you. So, a good simple next step if all of this was interesting to you, exciting to you, but kind of feels at your level of understanding, including a way for a player to view their inventory with a get inventory method is a very good concrete next step. I think that figuring out how to create this method should take you not a ton of time because it's going to be similar to a lot of the work that we've already done. Um, and that way if a player forgets what items are in their inventory while they play the game, like we did here, um, they can use an inventory method and see what's available to them. If you want to take this game slightly further, you can instead of foraging for seeds, you can introduce some kind of currency. Maybe you can buy or sell
+
+items, buy seeds, and seeds can have different point values, add a value attribute to your plant class. Um, the reason I didn't include it in the guided project is this does have a bit more complexity to it. Uh, you need to have buying and selling methods. you need to have uh attributes related to value and um just a little bit beyond the scope of this particular project for our webinar today, but I I think it'd be a really cool thing to add. Another thing you can consider adding is pests and challenges because right now our gardener simulator has no um what's the word I'm looking for?
+
+There's no negatives to it. The gardener gardens, the plants grow, everything's perfect, everything is lovely. But games are often more fun when there's actually a little bit of challenge. So if you have pests, maybe there's a random event using that random library again where every time you click tend, there's a 2% chance that a plant will die or a plant won't grow. and they'll have to tend it again. Or uh maybe you have random
+
+weather events that affect plant growth. You can also incorporate some kind of time system. So it'd be very cool. You know, in my little test here, I just spammed the word tend over and over and over again. Tend tend tend tend. And the the plant
+
+grew in about 3 seconds. So adding some kind of timing system to limit the amount that a plant can grow. That could be interesting. Um or you can add in some randomness here where when you click tend maybe a plant grows, maybe it doesn't. That could be interesting too.
+
+And if you've ever played games on Steam or um PlayStation, there's achievements and it's always fun to get little achievements. So maybe you can reward players for reaching certain goals. So, if they plant 50 seeds, you can have a fun little um message that pops up to them. So, as a game player myself who likes this type of game, these are next steps I think would be fun. And if you do create any of these next steps, please, please, please share it with me in the data quest community. You can get to the
+
+data quest community by going to the help toggle in the guided project and going to view community posts. I don't know if this one has any yet. Okay, a little bit of little bit of post, but you can share your project here. And then to tag me,
+
+Anna_strol, and I would love to play your garden simulation game. Um, so I think that's it from me. At this point in time, we have a bit of time to answer any questions. So, if you do have questions, go ahead and put those into the Q&A box and I will answer those for you. David, want to say thank you for creating this webinar and teaching us.
+
+You're welcome. I hope it was valuable. Um my colleague in chat is sharing um a feedback link. If you do have feedback for me, positive, negative, neutral, I would love to hear it. Also, if you have projects that you would like to see, the feedback panel is a great way to tell me what topics or specific projects you are interested in.
+
+Okay, Nema has a question. Could I go back over the lack of parentheses again when setting up the gardener plant dictionary? Yes. Where was that? I think it was higher up. Here it was. Um,
+
+so the plant dictionary here, um, it's creating a list of blueprints. So, or or if you're a cook or a baker, you can also think of this as collecting a list of recipes. So, for example, um uh let's just say cookies. So, if you want to make cookies, look at the cookie recipe. If you want to make cake, what do you do? You look at the
+
+cake recipe and not um and then if you actually want to make cookies, this will make a specific cookie. If you want to make cake, this will make a specific cake. So, this dictionary is collecting those blueprints for us. Um, hopefully that makes a little more sense. I do think that if OOP is newer to you, th this is where to spend your time trying to understand. Um,
+
+parenthesis versus no parenthesis in OOP. How can two little characters make such a difference? Well, they do. They really do.
+
+Um, David asks, "Is growth stage hiding or replacing the play parent classes? How does that work? Slightly confusing." Yes, great clarifying question. So this is talking about the child classes and how in our lettuce and carrot child classes we reassigned growth stages. I think the
+
+easiest way to think about this is similar to variable reassignment. So if I have a variable named X and I assign it to one and then print X and then I have a variable named X and I assign it to two and print X. X now has a new value. X doesn't even remember that it used to be one. It's a separate thing. It's
+
+completely changed its vibe. So the same thing is happening when we reassign attributes after inheritance. Um, so lettuce and carrot, they have no idea that they were ever something different. Um, you could also think about it this way when we Oh, sorry if my microphone just popped. I hit it by accident. We can
+
+also think about it this way. We could copy and paste all of this information. Um, here and super init almost of not having to copy and paste all this. Um but if we copy and paste all this and then we reassign growth stages from this to this because code goes from top to bottom. It now sees growth stages only as this not as this. So hopefully that um
+
+helps explain how the inheritance can be overridden. That's the official term of what's happening here. I'll give a little note of that. And Demetrius asks, um yeah, David, it's not hiding it, it's replacing it. Exactly. Exactly.
+
+Um, Demetrius asks, "Where do we use polymorphism?" Technically, we don't use polymorphism. Um, in this project, I highlighted it as a concept that um is sort of almost referenced here, but not exactly. Um, polymorphism is when the same name the same name is used in multiple classes. Um, so you can call it on multiple things. I'm trying to think of
+
+a built-in Python example of polymorphism and my brain is struggling. So, I'm going to ask AI, can you help me think of a an example of polymorphism from native Python?
+
+No, no, no. That's not what I want. AI. No. Okay, it tried.
+
+No, I mean like from existing classes.
+
+Okay. Yeah, that's the one I was thinking of. Length. Um, so going to my example cell here. Um, yeah, Shere AI sometimes gets it right the first time, sometimes not. So the
+
+length function um
+
+can be used with different types of um Python objects. So this is a list object. Um this is a string object. And oh I didn't tell it to print both of those. There we go.
+
+And then um and so now we can see that the same type of method is being used in two different ways. So this can be really powerful when you are creating multiple types of classes but they have um methods or attributes that are named the same thing. [snorts] So Demetrius, to recap, we didn't specifically use polymorphism in this project, but this is as close as we get to it because our plant has a name attribute and our gardener has a name attribute. So there is a little bit of wiggle room there.
+
+Um, Alexander, is it possible to add a function like tomato as a value into a library? Um, I'm not sure I understand. Oh, into a dictionary. Gotcha. Thank you. Um, yeah, you can totally add a
+
+function as a value into a dictionary. So, kind of similar to the concept we were talking about here. Um, where for example, this is me spitballing and brainstorming, so it might not be 100% sound, but I'm almost wondering if you could refactor valid commands to save some repetition in our game loop. Uh if you had something like this instead, what if we had I'm going to comment it out just so that my code doesn't go bananas. Valid command and then you have it as a dictionary and plant um the value is um gardener.pl plant
+
+or something like that. Like that could be interesting. Um and probably a little bit more aligned with clean code. But but yeah.
+
+All right. Looking at our time. If anyone does have a couple more questions, let me know. But I think that we have done a pretty thorough job of talking about the ins and outs of OOP. And speaking for myself, I know that once I was able to see OOP in this gamified context, um it really helped the whole concept click for me. So I hope the same is true
+
+for you. Um, if OOP has ever given you trouble, I remember it was such a huge like aha moment when I realized that the there was a difference between this and this. I was like, what? What are you saying? Um, there's your attribute, there's your method, there's your object. Just and
+
+gaming helped that out. This is a good project. Thank you. I'm I'm glad you think so. Um, so thank you all for joining. I really appreciate it. I love
+
+the questions. I love the um engagement in chat and stay tuned. In about 3 weeks, we're going to have another webinar. So please um please attend that one. I always like having people to chat with. And in the
+
+meantime, give me feedback on this webinar using the feedback link so I know what you liked, what you didn't like. And do ask me for recommend or recommend new project ideas because um I want to make sure that we are covering topics that are interesting to you. Thank you Anna inspired how I transitioned. Hope you can do that. I hope so too. I believe in you. Looking
+
+forward to our next project. Yes, David. Enjoyed the webinar. Look forward to the release of the video. Yes. Um, I
+
+will work on getting that uploaded to YouTube very soon. Okay, have a phenomenal day everybody. Stay safe, stay happy, stay healthy, and do some fun coding. And I'll catch you all next time. Bye.
+
+Oh, says he has a great question that I'll kind of answer as people tune out. Um, how long did it take to understand this concept? I had to learn it twice. The first time I went through the motions, went through the lesson, felt like I knew about this concept, oop, but no way did I feel like I could implement it. The second time I went through it, uh, I had a little bit more understanding of just programming. I
+
+felt more comfortable defining my own functions. Um, I used the dot notation like this a little bit more regularly so that once I saw OOP, I was like, "Oh, that's what's happening there." Um, so if you don't get it the first time, don't panic um, you might just need a little bit more time and you can always revisit content um, to get more out of it the next time. Okay. And after that, I'm really saying bye now. Bye
+
+everybody.

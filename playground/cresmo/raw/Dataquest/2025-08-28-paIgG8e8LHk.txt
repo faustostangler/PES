@@ -1,0 +1,309 @@
+---
+video_title: "Build and Deploy a Chatbot App Using Streamlit and OpenAI | Dataquest Project Lab"
+video_id: paIgG8e8LHk
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=paIgG8e8LHk
+video_date: 2025-08-28T23:40:59+00:00
+video_description: |
+  In this video, Dataquest’s Director of Curriculum, Anna Strahl, will show you how to transform your “Sassy Chatbot” into a fully functional web app using Streamlit, giving your AI assistant a user-friendly interface ready for public use.
+  
+  You’ll take your existing Python chatbot and bring it to life by integrating it with a clean, interactive UI. Along the way, you’ll learn how to manage user inputs, display chatbot responses, and add customization features like persona selection and message temperature. 
+  
+  This project is ideal for learners who are ready to build real-world tools using Python and Streamlit.
+  
+  What You'll Learn:
+  - Web App Development: Use Streamlit to create an interactive chatbot interface.
+  - Chatbot Integration: Connect existing chatbot logic into a front-end experience.
+  - Custom User Settings: Add options for users to adjust persona, temperature, and message length.
+  - User Interaction Handling: Build a real-time chat experience with user input and chatbot responses.
+  
+  Recommended Learning:
+  - Developing a Dynamic AI Chatbot course: https://www.dataquest.io/course/prompting-large-language-models-in-python/
+  - Access the Project: https://app.dataquest.io/c/170/m/903
+  
+  See the walkthrough solution: https://github.com/acstrahl/streamlit_chatbot_demo
+  
+  Video chapters:
+  00:00:00 - Intro
+  00:03:08 - Project brief
+  00:07:36 - Setting up the interface with Streamlit
+  00:18:59 - Initializing session state
+  00:28:06 - Adding chat input to the interface
+  00:36:22 - Deploying the app publicly
+  00:44:49 - Audience Q&A
+  
+  #Python #streamlit #aichatbot #aiprojects #OpenAI #dataquest
+---
+So, welcome to the data quest project lab. My name is Anna Straw and I am the director of curriculum here at DataQuest. Today we are going to be working with an AI chatbot to build a frontend webfacing app in Streamlight. So, let's introduce each other. So, like I said, my name is Anna Straw and I am the director of curriculum at DataQuest. So,
+
+I make sure that all of our content is up to date and we're building new content. That should be very exciting. Some stuff should be rolling out soon. So, keep your eyes open in your email for that. Uh, but before this, I actually was a high school math teacher for eight years before transitioning to being a self-taught data analyst. And I
+
+used Data Quest when I was trying to make that transition. So, if you are a career switcher like myself, it can be done and I hope that you find your dream job, too. Now, I do want to make sure that you're in the right location. So, in order to get the most out of today's webinar, you don't need a ton. You just need familiarity with some Python foundations, loops, methods, dictionaries, functions. A little bit of
+
+familiarity with what an API is will be helpful. Um, but apart from that, I think that today's content should be pretty digestible for you. And I say this at the beginning of every single project lab because we always get act asked about it. Why are we doing this project if AI can do it faster? Well, AI gets things wrong confidently wrong. Especially when I was prepping
+
+this webinar session, I was working with chat GBT to try to see if there was any um ways I could streamline my code, make it more learner friendly. And sometimes chat GBT didn't have the correct understanding of the streamllet methods I was trying to implement or it would make up streamllet methods or it would pull deprecated streamlit meth uh methods so that when I tried running the code chat GPG suggested it didn't work. So AI can be helpful. Use AI as an assistant, but it's not going to replace you. And really, this project is about learning at the end of the day. Okay. Uh so
+
+today's agenda, we're going to introduce the project. We're going to review a function that is already written. Then we're going to build our streamllet layout and talk about session state which in my opinion is the biggest hurdle for understanding in streamllet today. Then we're going to add a chat interface and functionality. And depending on time I do really want to launch this publicly so that you can see that workflow for your own chat bots.
+
+And we will end with some ideas for what you can do next with your chatbot and some Q&A. Okay, so what are we doing today? We are building a web application with a tool called Streamlit for an AI powered chatbot that has different personas. So when we say different personas, maybe the chatbot can reply in an angry tone or a silly tone or a sassy tone. and we'll have it in our interface so that our end users can actually change the persona mid conversation.
+
+We'll also affect some things like temperature and token budget and also we're going to in our user interface have a button to clear the chat reset chat history. So, okay, we're we're cooking. We're cooking. Um, we're going to dive into the actual code itself and I'm going to be working locally, but I do want to show you that you can do this completely in the data quest platform. So, if you want to do that, here's how.
+
+It's the normal data quest interface and in your script.py file here, you can import streamllet. Oh, what's as st that's the standard abbreviation and then we can write our streamlet code here. And then if you would like to render this in the stream environment, we're going to click run and deploy down here. It'll take a few moments and then you can actually visit your deployed application and we can see our text is showing up here from this endpoint. So
+
+that is it. It's awesome the fact that you don't need to work with the command line at all. Especially if you are on the beginner side of things, I highly encourage you to use this environment. However, for presentation purposes, going from this and toggling to this back and forth, I thought would make for a little bit of a jarring experience. So, instead, I'm going to be working in a sidebyside panel this way. Uh I am
+
+using VS Code here on the left hand side and I have my Chrome browser on the right hand side which is where our local app will deploy to. Okay, let me get my starter code pulled up here.
+
+And if you're following following along with the solution code, I'm starting with the starter code.py file, and I'll explain why. Okay, so I'm going to copy that over into my app.py file that I have in my VS Code. Um, let me expand this just a little bit.
+
+Okay, so this is all code that was actually written in the last project lab webinar and it's the part that connects to open AI. Um, works with a little bit of OOP to set up our open AI client. Defines a lot of uh functions here to limit token counts and deal with lengthy conversation history. But that's beyond the scope of what we're doing today. So I'm going to keep all of these uh get encoding count tokens total tokens used collapsed because we don't need to see that content today. But the chat function we
+
+are going to modify slightly to work with streamllet. And the main thing we need to know from the starter code is it returns a reply. It returns a reply from an assistant who is going to be the LLM responding to your prompt or your question. Okay. Uh, a couple other things.
+
+We are starting with OS which helps us get our open AI API key. We are starting with the open AI library and tick token is our library to help us count tokens. So now that our starter code is in place, let's start modifying it a bit for streamllet. And the first thing we're going to do is import streamllet as ST just like I demoed in the data quest environment. And this is this is just like if you've worked with pandas before or numpy, pandas is pd, numpy is np for streamllet, it's st.
+
+Okay. And Here we go. All right. I'm going to scroll all the way down to the the bottom here. And we're going to start very very simple.
+
+I'm going to kind of segment my code here with a comment that says here's where the stream lit code starts happening. And the first thing is we're going to add a title. So st remember that's our streamllet library. And streamllet is is super super nice in how it works. It uses something something called streamllet magic where we don't need we don't need to assign this to a variable. We don't need to tell it to
+
+render. This is automatically going to render for us as a title named sassy chatbot. That's what I've decided to call my chatbot. So let's go ahead and save this. You'll notice the white dot up here changed. And now let's check
+
+this out in our local development interface. So in order to start a streamllet app locally, we have to write streamllet run and then the name of the file. So my file here is called app.py. And then we click enter. It's going to
+
+think for a minute. And there we go. I had that pop open in the wrong tab. Uh but now we can see our local URL, our network URL and Sassy chatbot is rendering over here. Now what happens if we ch or we change our title?
+
+What if we call it sassy chat? Remember we have to save this and when we save it, notice in our web interface, we get a rerun button. The way Streamllet works is because we're developing this tool uh locally, it doesn't automatically render things unless you tell it to render. So, if we manually click rerun, it's going to update to our new title. And if we make another change and save it, we'll see the options populate up here again. I'm going to toggle on
+
+always rerun so that we don't have to manually click it anymore. Now, if I change it and save, it's going to automatically render the new thing in the side here. Okay. So, let's start building out our UI. And for our interface, we have a title in place. We're going to make this kind of
+
+similar looking to the chat GBT interface where there's a panel on the left hand side and there is a main chat interface in the large area. So let's make the lefth hand panel with a streamllet method called sidebar and sidebar once again right after st. But the cool thing about the sidebar is that we can actually string a regular streamllet method along to sidebar and it will render that in the sidebar. So now that we have that, let's save it and see what happens. And we can see now we have an options uh sidebar that is collapsible. So all of
+
+this is happening in Chrome. All this is happening in Chrome. I'm going to pause for chat really quick. We thought you could follow along on the code. Uh you should be able to. There is
+
+a GitHub link with all of the code being shared and you can work in the data quest environment and have the exact same thing happening. You'll just have to toggle between the data Quest environment and the web application that's rendering. If you have a question um along with that, Rebecca, please let me know. Okay. So to demo how the sidebar can can change. For example, if we do SD sidebar
+
+and we want to just write some text, we can say that we want the text written in the sidebar by stringing right on the side here. Um and we can say this is a demo. Now if we save this, our write method displays under options. Um, one important thing to note about Streamlit if you're a beginner is it renders in the order that your script has it. So I believe if we remove our header and put it below, right, look at the order changes in our panel here. So that's something important to
+
+know. You do need to keep your order correct. Okay. So, a couple things we're going to add to our sidebar is we're going to add some sliders. And for a slider, it's it's going to let us drag a button on a range of numbers. And this is going
+
+to help us set um or have our users set a number of tokens to use in their chat. So here I'm setting my range from one token to 250. And this is the default value. It's going to set itself to 100 when the application starts. And this is the slider method. So let's save this
+
+and see it. And we can see now in our lefth hand panel a slider with a drag and drop and some numbers. Um but nothing is happening yet. it doesn't know this number because it's not saved anywhere. So, we're going to save this into a variable. And we can do this in
+
+this same line of code where we're going to take our slider and just say that it is going to result in a variable named max tokens. All right. And if we save this, the slider still renders. And let's go ahead and display max tokens. And you'll see here in our main panel cuz look I for ST right here I didn't put sidebar. So it's displaying in our
+
+main panel. When we drag our tokens now, this number updates because that's our max tokens value that is stored in our max tokens variable. All right. So, we're going to do the same thing for our chat temperature. So, I'm going to copy and paste. Now, we're saving this
+
+to a variable named temperature with a slider named temperature with a range from 0 to 1 and a default value of 0.7. And now we can see this rendering in our environment as well. Let me get rid of this line. We don't need that anymore.
+
+Okay. All right. So, because this is a chatbot that I want to be able to take different personas, we are going to add that to our sidebar as well to a variable named system message type. So, if you're new to working with LLMs, you can set a system message that changes the way that AI will reply to you. And we are going to use a select box in our sidebar this time that's titled system message. And I'm going to
+
+give it a tupole of three options. We have sassy assistant, angry assistant, and custom. And now when we save this and look at our rendered environment, we have our system toggle and we have sassy assistant, angry assistant and custom. And we can go ahead and click on those and the value will be stored to system message type. But custom, you'll notice like nothing happens yet. So, wouldn't it be cool to
+
+have a custom message that your end user can write their own system message and it changes in your chatbot? So, we're going to have it populate a text box for us when custom is selected. And we have a little bit of logic to help us do that. And I'm going to collapse this a little. We don't really need to see the terminal much for the rest of this project. Just
+
+know that our streamllet app is still running. Okay. So in this logic, what we're doing is we are saying if the system message type that is selected from our select box drop down is sassy assistant, we are going to change our chat system prompt to match. Right? Uh, and the capitalized system prompt variable is defined up here from our starter code.
+
+But for our custom select box option, we don't just want it to assign the word custom. So instead, we are going to use sidebar text area and say enter your system message in this text box and save that to our system prompt. This is just really cool feature of Streamlit where you can do the Streamlit magic. It will automatically render and save to a variable within a conditional statement. It's very cool. So,
+
+control save. And now we can see um let's do a stright here just so we can see the system prompt. All right. So if we click sassy assistant, we see our system prompt is you're a sassy assistant that is fed up with answering questions. If we change it to angry assistant, you are an angry assistant that likes yelling in all caps. And then
+
+for custom, enter your custom message here. So let's say testing 1 2 3. And Streamlab gives us this little reminder. Press control enter to apply. And we can see now we have a custom system prompt created from our sidebar.
+
+Okay, so far so good. Now we are getting into something called session state because here's the thing. We set our custom message here, but when we rerun this, it doesn't have persistent memory. Streamlit reruns every single time you interact with the environment. And for a chatbot that we want to have like remember older messages, this is not going to work. So we're going to work
+
+with something called streamlits session state. And what we're going to do is we're going to initialize a new thing we want Streamlit to remember no matter whether we run our app or not. And so the way that we tell session state we want it to know something is by saying if this thing isn't in the session state, add it to the session state. And we are actually not just saying add it. We're saying add it with these values.
+
+And because I'm very visual, let's go ahead and take a look at what what is session state. If we were to peek at session state in our streamlin app, let's see. I think this is a way to do this. Actually, we don't need to do that. Let's just do session state this way.
+
+Okay. And now we can see this kind of dictionary JSON looking thing. And this is our session state. So it is going to preserve messages here. And it has a system message. And it says enter your
+
+own custom system message here. So,
+
+we are going to add two more things to our sidebar and then get into our actual chat interface. Right. Right. Right now, we're working on the sidebar interface. We're doing this brief little detour to session state for a moment.
+
+And here is what we're going to add. We are going to add some buttons to our sidebar just because remember over here the control enter isn't super user friendly if we want to apply a new system message. So we're going to add a button. Buttons are my favorite thing about working with applications because it feels so interactive. And the button is going to be called apply a new system message. And if this button is clicked,
+
+right, if this button is clicked, our messages session state item, the first value is going to have a new system prompt assigned. And this is kind of a cool streamlet feature I wanted to include. There is a streamllet method called success where if the block runs successfully, it will tell us. So let's take a peek at this now. Save the app.
+
+And what happens now if we press Sassy Assistant and apply new system message. So now we see here's our success item. It says system message updated. And now we see that our content in our session state has updated as well. We can do the same thing. Angry assistant
+
+system message is updated. And we can see the content is for our angry assistant. And now we can do the same thing for our custom system message. Uh I'm just going to type some nonsense here. Apply it. And we can see the
+
+nonsense is now our system prompt. Okay. And the final thing we're going to add to our sidebar, and then I'm going to collapse it for a minute, is we are going to add a reset button. So this reset button is going to empty our chat history. Shashank, I have not forgotten about ST spinner yet. We have
+
+not gotten to modifying the chat function yet. Um that will be next. So a reset button isn't going to do anything now because we only have a system prompt in our session state. But this will give us a reset button here. And once again, we have a success um method that tells us the conversation is reset. Okay. But now to Shashank's
+
+question, we do have code earlier that we need to modify. So, if we scroll back up to our chat function that was present in our starter code, we're going to make a couple updates here now because right now this doesn't interact with Streaml at all. And the way we're going to do this is instead of just appending to a messages dictionary, we're going to make messages equal something in our session state.
+
+like this. The very first line in our chat function is going to say messages equals what's in our session state for messages. And this isn't a problem that we're defi or we're using this messages before. We've defined it down where is it down here because we haven't called the function yet. We're just defining the function. So, it's not
+
+actually running yet. Okay. And then, if you did join me for the last webinar, I put enforce tokens towards the bottom and I just uh realized I didn't want to. So, I'm moving enforced token budget a little bit earlier up here. I don't know why there's a red squiggle.
+
+Um Oh, it's a space a space issue. Okay. And now to Shashank's question, let's add the spinner. And this is completely optional. This is completely optional.
+
+If you don't want to include the spinner, this code will work completely fine as is. The only thing that must change is adding the session state here. But I'm going to wrap our response in a spinner. And this is just a little bit of information for our end users to know what's happening while our message is being sent to the Open AI API while we're getting the response back to us. It can sometimes take a couple seconds to maybe a couple minutes depending on what model you're using.
+
+And so giving a spinner that says thinking no helps your end user know that the application isn't just dead. And I see a couple questions in chat about tokens and temperature. Um, I'll try to address those towards the end, but if you have questions about that type of thing, the last project webinar, uh, which is recorded on YouTube, talks a lot more about actually the ins and outs of the LLM. Today is really, really focused on the Streamlit part of things.
+
+Okay. So, I think there was one more thing I wanted to change here. That's right. That's right. There was one more thing I wanted to change here. Um, just
+
+to make it so that our tokens and our temperature actually change from message to message, we are going to define our temperature and our tokens in our function definition here where we're going to say temperature is going to for now equal the default temperature which is set up here. And same thing for max tokens. Um, and that's just going to give us a little bit more flexibility with the temperature changing. Okay, I'm looking at my code just to make sure everything should be working as we want it to. Okay, now's when the magic starts happening.
+
+Our sidebar is done. We're going to collapse that for a minute. Just looking at our main portion where we want the chat interface to be right now. Now, there's no way to interact with anything. We can't type anything. We
+
+can't see AI's response. So, first thing we want to do is interact with the AI. And we're going to do it this way using a walrus operator in Python, which is a fancy operator that is just a little bit more convenient. Um, but let me show you it. It's doing the same thing here as a something that you already know. Um,
+
+so let me copy that here. So, these two things do the exact same thing where we're going to set a prompt variable that's going to use Streamlit's chat input widget to prompt a user to type. And let's not look at this for a second. If there is a prompt from the user, meaning the user has typed something, then we are going to call our chat function and use our temperature that's from our slider and our max tokens that's from our slider. The walrus operator does this same thing but in a slightly more Pythonic way where we don't need to have a separately defined variable for first. We're
+
+actually defining the variable within the if block that says if if there's any typing there is a prompt and put the typing in a variable named prompt. So because it is more Pythonic I'm going to keep this. And now if we save this it's a subtle difference but look at our sassy chatbot interface here at the bottom we have a text box. Now, does anything happen when we type? It's thinking that's our spinner, but nothing is getting added to our session state.
+
+Is that accurate?
+
+Did I miss something? Let me
+
+let me debug here.
+
+I think that all looks okay. Oh.
+
+Ah, okay. Um, I was a little worried there for a second. It wasn't doing what I thought it should. It was just it wasn't showing because there was no new um information to have stream rerender the environment. Okay, so we can see that our message hi populates. But obviously this is not a
+
+very nice looking user interface. This is just taking a peek under the hood at our session state. So what we're going to do is we're going to display using Streamlit's chat message here. So for every message in our session state for messages except not the system prompt because we don't want to include a system prompt we are going to use the chat method to display the role. So who's saying what and then we're going to use markdown to display the content.
+
+And now when we save this and run it we actually don't need to see our session state anymore. We can see that we have this chat interface and we actually have little icons for our different users. And this is kind of a just cool thing that Streamlit has where if you are specific in your role names. So for example, using assistant for the AI and using user for your user, it'll give a little person icon for the user and a little robot icon for the assistant. Okay. Um
+
+so this should I keep pressing uh control save h. So, at this point, um, let's reset the conversation using our button. See if it works. Conversation reset. Fantastic. So, let's
+
+go ahead and use the Sassy Assistant. Apply our new system message. System message is updated. And now, let's do a little bit of testing. So, if we say hi, and press enter, it's thinking. And then
+
+we see, oh, hi there. What do you want now? Uh, what about what's up? It's thinking. Not much. Just
+
+waiting for someone to ask me something interesting. What's up with you? And if we say hi again. Hello again. This is this is what I was hoping for that it would acknowledge I've already asked it hello or said hello because this is a quick way to see that it is in fact retaining history.
+
+So, what about if we want to switch the persona? We apply a new system message and then let's say hi again. And immediately we can see that the tone is different. Seriously, are you just going to keep saying hi over and over? Get to the point already. What do you want? And
+
+this is because our angry assistant assistant prompt is you are an angry assistant who likes yelling in all caps. There is a small catch here. And the small catch is that the system prompt as we've written it is the first and only system prompt in our session state for messages. So, if we go back and apply sassy assistant now and say hi again, sometimes it didn't happen this time because that's the ways work, but sometimes it's going to stay yelling but in a sassy tone because it sees that previous responses were yelling and it's going to know that context. So I I recommend potentially as a next step giving a warning saying that when you switch system prompts you should reset the history.
+
+But that's kind of a next step like refactor modification. Uh next thing we want to check is max tokens. So for those of you asking about tokens, what happens when we drag the slider all the way down to one? What? Tell me a story.
+
+And the reason this is happening is tokens is more or less similar to a word count. So when we drag it all the way to one, the rest of the message gets cut off and we can only see the first thing. So if you do decide to make an application on your own, I highly recommend setting a small max tokens limit while you're developing and especially if you push this live to the world at large. Uh, this is connected to an API key that you own. And there are ways to authenticate users, but setting a small max token range is a easy way to make sure that if anyone stumbles onto your app, they're not going to have much malicious work they can do with it.
+
+Um, okay. I'm looking at our time and I think we have just enough time to talk about how you can actually deploy your app to so anyone can see it because right now we are local meaning you can't access my sassy chatbot unless you are on my computer but if we click deploy and go to the streamlit community cloud um oh I need to push this to GitHub so I have my streamlet set up to connect with my GitHub account. So, I'm going to actually come over here, look at our terminal, and close this by pressing control C. And instead of connecting to app.py, I'm going to connect to final.py, PI
+
+which is in fact um in my GitHub already and it's going to be the same code that we wrote together. But now if I click deploy and go to the streamlink community cloud, it can already see in my GitHub repository there is a repository or in my GitHub account there's a repository called streamllet chatbot demo. In the main branch we're going to use this file. And for some advanced settings um you will need to provide a secret. And I created a secret specifically for this webinar and I'm going to remove this as soon as it's done.
+
+But this is kind of a way for Streamlit to see your API key in a very secure way. And now all we have to do is click deploy. And now this URL is live publicly. If I copied this into the webinar chat, all of you would be able to click this and interact with my sassy chatbot. Um,
+
+just how it is, right? Um, and you know what? I'm going to go ahead and do that. I am removing my API key. I'm going to close down this app after the webinar, but if you want to verify that this is live and you can interact with this, go ahead and click that link. Oh, I just
+
+shared that to panelists. Let's send this to everybody. There we go. And you can verify that that is now live. It's a web application that we wrote in Python with a few lines of code. Right?
+
+Okay. So, if you are interested in this deploying option, there's a couple things I want to point out to you from my GitHub repository. So in this repository you'll notice two important things. One is a requirements.txt file.
+
+Streamlit needs this to know what to render. So we used three main ones. OpenAI, Streamllet, and Tik Token. Um Irres, do you need a paid account to have API keys for hosting in GitHub? I'd have to pay for hosting. So, you do need
+
+to have an account with OpenAI, which is where you get the API key from. Um, Together AI has a free option that's very it it's slow, but it's 100% free. But yeah, you are doing the costs for this API. Um, but GitHub should be free. If GitHub is paid, uh that's well beyond the scope of what's needed for this level of application.
+
+Um so yeah, the only thing that's paid for is the open AI API key. But the model that I'm using here, GPT4.1 Nano, uh that's why I didn't mind sharing my link with you there. This is pennies. in all of my dev testing for the past couple weeks, I think I owe 1 cent to OpenAI with this model. So,
+
+it it's a very good one for this type of development work. Um, but yes, you must have a requirements.txt file. And then I'm gonna show this. I you shouldn't show this to anybody, but Streamlit works really well with something called secrets. And it's very
+
+similar to environment variables, which is why in my final.py here, I said either use st.cs or use my operating system to get this open AI API key. and in a streamllet folder in secrets.l.
+
+That's where I have my API key here. And then if you're newer to git, I've included mystreamlet where my secrets is held in my git ignore file. And a git ignore file means that this will not get pushed into my repository. And that's important because otherwise I could accidentally push my API key into a public repository where anyone can see it and that's just a huge big security no. So those are some of like the small things that you'll need to actually have your API key connect with your application here.
+
+All right. Um, so that is the end of my project walkthrough. So let's talk about some next steps and then have a little bit of time to answer some questions.
+
+Okay. Okay. I've got many, many, many tabs open here, so my apologies. Okay. So next steps. Uh, so Streamllet's
+
+really cool. You can do so many things with Streamlit, but if you want to continue working on your chatbot Streamlit app that we started here, um you can consider cool features like maybe you can have your end users upload a file and then Streamllet can use that file as context for your chatbot. Or maybe you can integrate other APIs for richer responses. So maybe you can do something kind of aentic here and connect to OpenAI. Um maybe you can connect to something like web scraping. There's a lot of things
+
+you can do here. Uh this next step launching your application publicly via Streamlit Cloud. I do encourage you to do this. I really do. I think it's valuable to work with a repository in this way and then you can share your project and get some bragging points that you have written your own web application for a chatbot and then you can also specialize your chatbot's knowledge. So sassy chatbot is very fun
+
+to chat with. I agree. But maybe you're looking for a job and what if you gave your chatbot in the system prompt all the context for a company and a role that you are applying for and then you tell your chatbot that its role is to act as a practice interviewer. and you can kind of build your own interview prep chatbot with a couple modifications to the app that we created today. Okay, so now let's look at some questions. As a reminder, if you have
+
+questions for me, please do use the Q&A panel. And now I need to find where I put the Q&A panel. It's around here somewhere. There it is. Okay,
+
+so Kieran asks, "What is temperature? How to decide the number of tokens required? Do you need to train this chatbot?" Great questions. Great questions.
+
+Okay, so what is temperature? Temperature affects the quote unquote creativity of your chatbots replies. um the higher the temperature, the more variability there will be in its answer. It can get a little wacky sometimes, a little crazy, a lot more AI hallucinations where it's very confidently wrong. The lower the temperature, the more predictable the response is, but also kind of the more boring the responses. Um, I don't know
+
+how effective temperature is with the 4.1 nano model I've been using because I haven't gotten a huge variation in temperature with it. But that is something for you to consider um when you set your parameters. I find that with most models, something close to 7. Something between 6 and 7 is a good sweet spot for most temperature use cases.
+
+For tokens, it depends on what you want your chatbot to do. Because mine is a very very quick instance of I just want to see a reply. That's why my token budget is so small. But when I am developing outside of this project, I usually keep my token budget set to under 2,000 tokens, which remember roughly about 2,000 words because that allows the AI response to give a lot of output. But remember, tokens correlate with cost. So the more
+
+tokens that are presented, the higher your cost is. So that's also a consideration. And Kieran, your final question, do you need to train this chatbot? Nope. All the training is done from Open AI because we are pulling directly from their pre-trained model.
+
+Okay. Um, Tuloop, Tulope, hopefully I'm pronouncing your name correctly. Could you get some guidance on how to replace the AI provider using an open AI compatible API? Like what parts of the code you want to use? Venice API which is open AI compatible but you're not sure how to go about the changes. So if it's open AI
+
+compatible, really the main thing that you should need to change here is the model. And also your API key in your environment variables will most likely have a different name. So that's where I would start. Really just this line of code and this line of code. If it's still not working, you may want to investigate um here in the response variable.
+
+I've heard from AI. So what does it know? But that the completions endpoint is losing a little bit of steam to what is it? The responses end point. So, if you're having issues when you try to connect to the Venice AI API, uh that those are the three places I imagine you would need to investigate.
+
+Okay. Talleloop. Uh how do you configure your secrets if you fork the repository? Yes, if you are fork if you fork my repository, you will need to add your own subfolder here. Streamlit and then within it have a file named secrets.toml
+
+and this is where you would put your API key.
+
+Hopefully that I think that's uh all you should need to do there. All right, Shashank, when will the else system prompt equal you are a helpful system or you are a helpful assistant run? Um, where is that in my code? Ah, um, honestly, this is just a little bit of error prevention. I don't think this is necessary because there shouldn't be any opportunity for it to ever run. So if
+
+you remove it, that's probably fine. It's kind of kind of like try except error handling just for system prompts. But honestly, most LLM APIs, their system prompts are this anyway. So if it doesn't get a custom prompt from you in one of ours here, it's probably going to be this anyway. Um, Anthony says, "For a better user experience, you think max words is better than max tokens?" Yes and no. Um,
+
+because tokens do not always equate to. It's not one to one. So, I don't know if Streamllet has the capability of adding like a little question mark icon. It seems like something they would, but I would recommend keeping the word tokens, but maybe giving an explanation as to what it means. Um, because if you've ever worked with the anthropic playground, I think Open AI has a playground. They use this terminology.
+
+And as AI becomes more and more part of our everyday lives, I think tokens is a word that is going to become more and more common to know. An anonymous attendee asks, "Can you learn Streamlit on data quest?" Yes, you can. Yes, you can. Let me show you.
+
+So, we have a generative AI fundamentals in Python path and the final course in it is learning Streamlit. Um, it goes all the way from getting started with Streamlit, um, with things like the button that we talked about, kind of going very very basic from the beginnings. Um, and then it goes all the way through working with session state and building the AI chatbot. Um, if there's interest in more streamllet, that would be great information to have because another use for streamllet is um, a lot of data visualization dashboarding. So, I've always wondered if that would be a cool thing for the platform, but I digress.
+
+All right. Uh, so looking at time, I'm going to pause just for a moment. If you do need to hop off, I'm going to honor that time and thank you for coming. We have a couple more questions left, though. So, I'm going to stay for 10 more minutes answering questions. Um,
+
+but I do want to honor your time if you need to leave. Have a wonderful rest of your day. All right. Anonymous attendee asks, "If you're going to build your own project portfolio, what is your best advice for working from your GitHub or build it from scratch?" Well, it depends on what level of project you're going for.
+
+I'm always a proponent of starting from scratch if it's feasible and attainable for you. uh just because it's going to give you a more intimate understanding of how all the code works. Um so yeah, I I mean forking is great for kind of experimenting, exploring, using it as a playground, but writing it from scratch is going to feel more satisfying.
+
+Um, an anonymous attendee asked the chatbot version is old and getting responses from 2023. Yeah. And the reason for that is because the model we're using is based on where is the model? I want to visualize it for you guys. GPT 4.1
+
+um that was it was trained in April of 2025 the particular variation I'm using um but remember when LLMs are trained they're trained on the the internet up until a certain point and then the training happens. So depending on what point this model was trained up until, it only has knowledge up until then. So um that's why grain of salt and especially with this teeny tiny little model that's pennies for use, um I'm not surprised that its context is a little outdated.
+
+Okay.
+
+Anonymous attendee asks, "Thanks for the explanations about temp. Sure thing. Will have risks nations?" Yes. Yes. Will
+
+guard rails or using more advanced models help? Will this increase costs? How can this be deployed in other cloud platforms? Um, lots of questions. Okay. Um, so I'm
+
+going to pick the guard rail guard rail questions for now and then come back if we have more time. Unfortunately, LLMs at the end of the day are based on statistically picking the next most popular word, right? And that means it doesn't know whether it's right or wrong. I think models are getting better at thinking. If you've worked with GPT5, it has a thinking mode where it's going to evaluate its own response against, hey, does that pass does that pass like the sniff test? Um, but ultimately at at the
+
+end of the day, your human understanding and expertise should should be the final guard rail. um someday maybe but LLMs still do not have the intelligence that we have. Uh but if you do use a more advanced model with these capabilities it will increase costs. I think in general models have gotten cheaper, at least kind of chap completionbased models, but if you're not careful, the cost can add up if you're not if you're using a fancier model than what we're using here. Uh, Nwen asks, can you have two different chat bots interact with each other so they can catch and validate each other's answers? Yes. And that is
+
+heading very much towards um agentic chat thinking where you kind of um have different levels of chatbot. Maybe you'll have like kind of the the CEO chatbot that gets the request and says, "Oh, this request is best for the chatbot that can do web searching web search chatbot. Go search the web." And then it goes goes and does that and reports back. So, um, Agentic AI is really cool, a little bit newer and, uh, well beyond the scope of what we can cover right now, but if that's something you want to do, definitely check it out and there there may be data quest content on that soon.
+
+Um, okay, Shashank asks, "Are Streamlit apps scalable to production grade or not? What's my experience when the apps know Streamllet fails to handle user traffic? Uh, so I've actually not used Streamllet in a production scale. Um, I know that Streamlit and Snowflake partner together. So if you wanted to do something more production scale, I would recommend um potentially looking into the Snowflake option. I see it's for enterprise, so
+
+there probably would be costs associated with that, but Snowflake does have a free trial. Um, that's good for a month. Um but I was actually talking to a colleague a few days ago about Streamlit and he says that for clients he builds some streamlit applications add some user authentication so it's public but only to them u or only accessible to them and depending on I I think production but small scale large scale production go look at streamlit with snowflake Anthony asks, can you deploy to Streamllet using Docker? I don't have experience with that. So, I'm trying to think if that is feasible. Um,
+
+potentially. I think that gets into database connections which I know streamlink can connect to databases. Um so my answer is probably but I'm not sure.
+
+Okay. Pri asks are thoughts on learning data engineering in 2025? Very important. Very very important. Um yeah, data isn't going anywhere and data is just getting larger and larger and larger larger and someone needs to take care of all that data. So enter data
+
+engineers. Matthew asks any insights on adding audio to this chatbot listening and responding like 11 Labs or other options? An 11 Labs integration could be really cool. Maybe instead of just having a option to type to your chatbot, it could listen and do some kind of um autopopulation that way. I have not worked with that API myself, so I don't know. But if you do
+
+that, please share it in the data quest community and tag me because I want to see it. That sounds really cool.
+
+And Anna Jose asks, "Is there a manual guide that you can follow to do this from start to end?" Why, yes, there is. And it is. Let me look at all my tabs here. Data Quest app.datauquest.io.
+
+Um, you can get to it a couple different ways, but if you go to projects, it's in the guided project section. And if you type in Streamlit in the search bar, uh oh, it should show up here.
+
+Maybe it's not all projects. Let's go to all projects. Might not be a guided project. There it is. No, I think I just found something I need to fix after the webinar. So, after this
+
+webinar, if you go to projects and uh type in Streamlit, it should work. But if you go to the dashboard and go to the learning path and you find the um or the catalog and you go to the generative AI fundamentals, the very very final thing in the entire path is going to be a walkthrough guided project. that can share that to you. And in fact, I'll go ahead and share that link in the chat.
+
+Let me find my chat here. Oh, no. I can't find my chat. I'll type an answer to you.
+
+Um, okay. Omar asks, "Where can you find the record of this session and all other stuff?" Um, yes, this will be on YouTube live in the next 24 hours and we'll send you an email about that. And what will be covered in the next session? That's a great question and I should know the answer to this.
+
+There is an answer. Uh the next one is going to be on machine learning using uh decision trees and keep an eye on your email for that as well. Okay, we are at time. So, thank you everyone for attending. I really hope it was valuable for you. Um
+
+I had a blast talking about Streamlit. I always like talking about Streamlit. And if you could please fill out the feedback survey, it helps me know what goes well, what could go better. And if you do have ideas for sessions you want to see, definitely share your ideas there because I always look to get inspiration for the upcoming webinars. Thanks again everyone for joining and I'll catch youall next time. Bye.

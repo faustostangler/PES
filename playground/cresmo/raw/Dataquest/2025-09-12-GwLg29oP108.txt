@@ -1,0 +1,305 @@
+---
+video_title: "Predict Employee Productivity using Decision Trees [Start to finish project walkthrough]"
+video_id: GwLg29oP108
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=GwLg29oP108
+video_date: 2025-09-12T14:00:28+00:00
+video_description: |
+  In this video, Dataquest’s Director of Curriculum, Anna Strahl, will guide you through how to use decision trees and random forests to predict employee productivity—skills essential for applying machine learning to real-world business problems.
+  
+  You’ll take on the role of a data scientist at a garment factory, working with a real dataset to identify what conditions help teams work more efficiently. During the session, you’ll clean and explore the data, build predictive models using scikit-learn, and learn how to present your findings to a non-technical audience.
+  
+  This session is ideal for learners who are comfortable with Python and want to deepen their skills in machine learning modeling and communicating data-driven insights.
+  
+  What You'll Learn:
+  - Predictive Modeling: Build and evaluate decision tree and random forest models in scikit-learn
+  - Data Preparation: Clean and preprocess real-world productivity data
+  - Feature Importance: Identify which workplace variables drive team performance
+  - Insight Communication: Explain model results in business terms for a non-technical audience
+  
+  Recommended Prerequisites:
+  - Decision Tree and Random Forest Modeling → https://www.dataquest.io/course/random-forest-modeling-in-python/
+  
+  Access the Project: https://www.dataquest.io/projects/guided-project-a-predicting-employee-productivity-using-tree-models/
+  
+  Video chapters:
+  00:00:00 - Intro
+  00:01:50 - Exploratory Data Analysis (EDA)
+  00:14:00 - Data Cleaning
+  00:19:18- Machine learning data prep
+  00:24:40 - Building the decision tree
+  0:32:30 - Visualizing and explaining the model
+  00:43:20 - Evaluating the model
+  00:50:00 - Audience Q&A
+  
+  #MachineLearning #pythonprojects #DecisionTree #Python #DataScience
+---
+Hello, my name is Anna. Welcome to the data quest project lab. And today we are doing some machine learning with decision trees. So by the end of this webinar, you're going to have an answer to a an employee productivity question for a a garment company. And with 85% accuracy, we're going to be able to predict a productive day versus an unproductive day. in this particular factory and
+
+that's that's pretty great predictive power for a little bit less than an hour of developing. Okay, so today we are going to learn what is this project about. We're going to look at the data set with a very very very quick exploratory data analysis. Then we're going to prepare our data for modeling. We're going to model and then we're going to explain our results. And
+
+I think that's really where a lot of the decision tree value is going to be gained is in that final result explanation. All right. So our project brief today, we are going to make a predictive model for a garment factory. We have a lot of data about days of productivity um for different teams with different variables. We'll look at the variables in a moment. And the decision makers for
+
+this garment factory want to know what factors influence a day's productivity. >> Yeah. >> So that's that's the main thing and by the end of today's webinar we will have 85% um accuracy in our predictive power. Okay. So let's go ahead and get into our data quest environment. Here I am in the
+
+project itself. You could work locally with uh Jupiter, Google Collab, either one is fine in order to get the data set. Uh the CSV is available via data quest and you can uh download it here. So Shy, hopefully that answers that question. Um and I'm going to go ahead and collapse this side panel just for now and let's dive in here. Okay, I have my
+
+notes on the side so I can kind of copy and paste cells and I will be working through the gist that is being shared by my colleague. First line is I'm going to import our data analysis libraries. So pandas and mapplot lib shift enter to run this. And everything loads successfully. Great. And now I'm going to start the
+
+exploratory data phase. I'm going to denote this with a markdown cell uh with a level two header. That's the two hashtag symbols here and EDA for exploratory data analysis. Reading in our data set. This part I I'll stop just for a second. I'm going
+
+to go pretty quickly through a lot of this. Um, so when you are doing this project on your own, please spend about triple the time on the exploratory data analysis phase that I'm spending. That's my caveat. But I will try to explain as much as I can to make sure we're all familiar with the data that we need to be modeling. So let's take a look. This is the head. We can see we
+
+have rows with date quarter. I'm going to stop here. Quarter in this case is not a quarter of the year, not the traditional fiscal quarter. It is actually a quarter of a month. So quarter 1 corresponds with week one of a month. Quarter two is week two of a
+
+month. So on and so forth. So uh be be mindful in this data set about that department. It looks like the garment factory has a couple different departments. Typo here. Um, not a big
+
+deal, but I'm going to fix it later. We have the day of the week, the team number, the targeted productivity. So, how much do they think or how much productivity they do they want from that day? And then at the very end, we also have actual productivity. And then we have a little bit um SMV stands for standard minute value. So,
+
+Let me scroll here so we can see that it's it's the time allocated for a task. So how long are things taking? WIP stands for work in progress. So are there any works in progress left to work on? If there is any overtime in minutes, if any incentive in dollars has been given, and this is a local currency, so I'm saying dollars because I'm American. It's it's just going to
+
+come out of my mouth, but it's a money number here. Then the amount of idle time if there were like production issues, if things had to get shut down for a bit. Similarly, if there's any idol workers is idol men and then number of style changes, how many different things um got swapped out that day. If they had to make a long sleeve shirt, for example, and a short sleeve shirt, that would represent here. And then how many workers there are. So that is the
+
+variables we're working with. Now, let's get a little bit more information. Dataf frame.info All right. So, we can see that we have a couple object data types which for machine learning we're going to need to be very mindful of and address in a little bit. Looking at some other things
+
+from ourinfo work in progress wip has a lot of null values. About looks like half of our values are null for WIP. So, we're going to remove that. it's it's not going to be a hugely valuable piece of information for what we're doing. Um, but other than that column, there's no null values which is great for machine learning.
+
+And because we have some object type kind of like string variables, I want to look at the value counts of those so we can get a idea of the distribution. So our department value counts, we actually have a data quality issue. First of all, we see that typo in the word I'm assuming the word is sewing and it was misspelled here. And then finishing. Why do we have two different rows with count for the word finishing? Well, if
+
+we investigate a little more granularly by using the unique method on the department, we can see that finishing has a hidden space in some of the values. So, we're going to need to clean this. We're going to need to combine finishing with a space with finishing without a space. Okay, let's look at our other object value counts just to see if there's anything that we want to fix. Here's one we want to fix. Quarter five has 44 values. And
+
+in a quarter system, how can we have a five? What's happening here is because each quarter is a week of the month, if a month has more than 28 days, it's allocating it to quarter 5. So January 29th, quarter 5. And that's not really valuable for what we're looking for. Uh so for data cleaning we are going to actually just move all quarter five values into quarter four.
+
+All right let's continue looking at our objects for day. This one looks very normal very normal. Kind of evenly distributed. One thing to note is there is no Friday present but that's not not a big problem. Um the data set ranges from January to March of a single year.
+
+So missing a day of the week, we can make an assumption that maybe it's a day off. Um but even if it was just missing data, it wouldn't have a huge impact. And spoiler alert, day is not going to be an important indicator for our predictive capability. So now that we've looked at most of the value counts for our object types, let's look at our describe method for our numeric variables. Um, so describe is great. It shows us
+
+mean, median, min, and max. And a couple things I noticed here. Um, overtime, overtime, max value. This could potentially be an outlier we want to consider, and we'll look at it a little bit more in a moment. Uh but this is one I want to keep an eye on because if the mean value is 45 4600 and the median value is 39 36 or 3900 or so and the max value seems much much larger than that. Another one I want to
+
+point out is actual productivity. The data set describes actual productivity on as being on a scale of 0 to one. So our max value is more than one. And this could cause potentially cause some problems. So for a couple reasons, I decided that we're going to make a um classifying decision tree today rather than um a regression decision tree. And so this is
+
+actually not going to be an issue because how we're going to classify is is a day productive or not. It's a binary productive or not. And the way we're going to measure that um is comparing the actual productivity number to targeted productivity. And if actual is equal to or greater than the target, productive. If it's less than the target, it's not productive. So because
+
+of that binary we're going to create, having values that exceed one isn't a problem we need to consider. Um, okay. So if we want to investigate that a little bit more thoroughly here, uh, actual productivity greater than one, we have a lot of values. Uh but scrolling over we can see that the targeted productivity in those cases like like I was saying that's how we're going to address this potential issue here. I tried to investigate like why there are values greater than one but unfortunately the data set source which is from UCI great data set resource by the way um it it doesn't have information about how it's calculated so we just kind of have to make our best educated guess here um and we did have one column with some null values so let's just take a peek at the null values for our WIP work in progress column. And uh I'm not seeing
+
+any like trends here necessarily. So we're just going to we're going to remove that column from this data set. Uh if you wanted to explore whether or not it was valuable, that would be a really interesting next step. And okay, because we have investigated our objects, we've looked at our describe method. I like seeing a distribution for our numeric variables as well because I think it gives us a lot of information. So I'm using the
+
+histogram method just on the entire data frame. And luckily for us, pandas is smart enough to just create a histogram for all of our numeric variables. So looking here, uh, team is actually not really numeric. It's just a number to identify a group. So this is not valuable. Targeted productivity. Um
+
+nothing wildly um alarming there. Work in progress. We're going to remove that. So that's fine. Um incentive looks really skewed. like
+
+there isn't a ton of data points without or a ton of data points with an actual nonzero value, but we're going to keep it. We're going to keep it because uh it turns out to be really important. But idle time and idle men, I'm not seeing even the slightest hint of a bar at nonzero values. So, we're going to actually count to see how many non-zero values there are for those and probably drop them. Same for number of style changes. Although this could be another
+
+interesting next step for you. If you keep it in your data set, what happens? And actual productivity, it's kind of normally distributed. That's interesting. Okay. So, let's look at the
+
+idle time and idle men to see how many are not zero. 18. 18 instances in each case where idle time and idle men aren't zero. These are very very small numbers because our data set has 1,200 rows in it. So we're going to remove these columns.
+
+So we have a lot more information about how to proceed with data cleaning and uh data prep for our modeling. So let's go ahead and start the process for that with data cleaning. This is a markdown cell. I'm going to call it data cleaning. And the first one just because it really bothers me. Let's fix the typo in our
+
+department as well as fixing the hidden space in some of the instances of finishing. Uh this this does not have any impact on our final on our final um data set. So if you don't want to fix a typo, don't do it. But now if we look at our value counts, we can see there are just two departments, sewing and finishing. and the finishing values have condensed into that category. Uh, next thing we're going to
+
+do is drop all the columns that we decided we didn't need. So, I have a bunch of comments here just to kind of give a little descriptor of of what's happening. Um, by the way, if you are doing this project to present it in a portfolio, a lot of what I've done so far is just raw code with a verbal explanation to you. I highly, highly, highly encourage you to create markdown cells with all the types of things that I'm saying to explain your thought process. Um, the reason I don't have that in mind is just because of the walkthrough nature of it.
+
+Um, so we're dropping the date column partially because it's such a short time frame, right? We only have January through March data of a single year. So it's not really going to be able to predict anything for us. We're also removing idle time, idle men, work in progress, and number of style changes. And just taking a very quick peak to make sure our row dropping has applied.
+
+So here is our current data set. And now because quarters represent just a number, we already know it's a quarter from the title. We don't need quarter here. So let's change that. Oh, actually first we're going to merge quarter 5 into quarter 4 because of the the odd um setup.
+
+All right. Now we have four quarters. And now we're making it numeric. And now we have quarter 1 2 3 4 with our values. Okay. Like I said, I'm trying to
+
+go through um some of this kind of quickly so we can focus on decision trees. And final step here that this was a gotcha for me. Um in the output here in the value counts it shows that the data type is integer 64 but we actually need to convert it into an integer within our data frame um because otherwise it's still stored incorrectly. And now we can see it is in fact stored as an integer. Okay. So the next thing we're doing is
+
+the number of workers variable is currently a float. If we scroll back up here, number of workers. This row says that the number of workers is 30.5. Workers should be discreet uh because they represent people. And maybe there's
+
+an explanation for this like someone had a half day, but that's way too granular and too much an assumption for our data. So, we're going to make this column an integer so we only have whole people. And then a little bit more data cleaning here. We're going to change productivity to round it to two. So that um targeted productivity, which is only rounded to two places, is matching here.
+
+So it's going to be a little bit easier to compare values. All right. All right. Next thing we're doing, remember how I said we're making a classification tree? We are needing to give our target variable. And here's what we're doing.
+
+We're saying a new column called productive is going to be where our actual productivity is equal to or greater than our targeted productivity. And then let's take a quick peek. This DF sample is similar to DF head for this particular case. Um, but it's not going to give us the first X rows or first N rows. It's going to give us just a random pull throughout the data set, which is nice if you are concerned there is any um patterning you don't want to get fooled by. And now we
+
+can see here our productive column, the first value is false. Let's make sure that works. Actual productivity 0.41. 41 did not meet the targeted productivity.
+
+So this column does look like it is um displaying and calculating correctly. Okay, data set pretty clean data pretty clean data set at this point. But now we are going to get things prepared for machine learning. So markdown cell here because if you do look at our data, we have some columns that aren't going to play well with machine learning models. Machine learning models are mathematically based and how can we mathematically calculate on a word finishing. So we need to change
+
+everything into numeric values. And for department luckily we only have two values. we have finishing and sewing. And when we have two values, we can make it um basically boolean where instead of calling the column department, we're going to ask a question and say is the department sewing and then the value will say true and if it's not sewing, it's false. And then we know it's finishing, right?
+
+So here's what that conversion looks like. We're going to rename because we do want to make sure that we keep information about which department is or is not present. So we're calling it depth sewing and then we are replacing finishing with false and sewing with true. And now when we look at it, we have turned a column into numeric values. Uh so the next one we need to do is work on the quarter column. This is a gotcha.
+
+This is a gotcha because you might think to yourself, well, quarter is already a number. We're good. But does it actually represent meaningful numbers? Is quarter 4 times the value of quarter 1? No. And especially because in this data
+
+set, a quarter represents a week of a month. So we can't leave this as is and we need to treat it like a category rather than a number. And when we have categorical data, we're going to use PD.get dummies. So, what's going to happen is it's going to drop our quarter column and create four new columns that have a prefix and then the value of the the cell. So, it'll be Q_1,
+
+Q_2, Q_3, Q 4. And let's see what happens. Uhoh. What do we got? couldn't convert nonfinite values.
+
+Oh. Oh, I ran the wrong cell here. Let me restart my kernel. If you try to run a cell more than once when we're data cleaning, um it's going to be looking for information that doesn't exist. And so it'll throw an error. There we go. So
+
+notice that our um our quarter column is missing and it's replaced at the end of our data frame with Q1, Q2, Q3, and Q3 R4. And you'll notice that each row has exactly one true value. So this shows us which quarter this row is part of, but in a series of ones and zeros that machine learning can calculate on. So we know that this one, this row is quarter 4. This one is also quarter 4. This one is
+
+quarter 2. And so on and so forth like that. Um we're going to do the same thing now for the day of the week.
+
+So using get dummies we're going to drop day and add which day of the week true or false is it. So for example Monday sat we don't need to worry about the order of these but we can see that this value would be a Thursday because Thursday is true and everything else is false. Um, and we're going to do the same thing with team because team is another gotcha numeric looking. Where is it? Ah, here it is. It has a number value,
+
+but it's not a number that has like greater than less than value. So, we're going to make it categorical um and use get dummies here. Luckily, the team number is small. So when we get dummies on the team, we add 12 new rows that indicates which team that row of data is for. So if we do take a peek at our data now, everything's numeric. Everything's
+
+numeric. Remember, true and false in programming is technically under the hood zero or one. So it's numeric. And this means we are ready to build a machine learning model. So I'm going to create a new cell just to indicate a new transition in our model or our project. So let's call this
+
+building the tree. And because we're working with machine learning now we need to import some machine learning libraries. So we're using scikitlearn um and we're going to from model selection import train test split and then from our tree we're going to import decision tree classifier and also plot tree because one of the great things about decision trees is you can actually see the tree and the decisions being made. Um, actually before we get into the nitty-gritty of code for decision trees, let's explain what a decision tree is. A decision tree is very similar to the concept of a flowchart where you ask a question. Is it this thing? And if it's
+
+yes, you go this way down the flowchart or down the branch. And if if no, you go this way down the branch. And by the bottom of the flowchart or decision tree, you have the answer for that particular set of questions. So just yeah that that's a decision tree. Um and a couple things decision trees always start with a single question and always only have two branches a true branch and a false branch. There will not be more
+
+branches. And then the number of questions asked or the number of nodes in your tree can vary or change. But the very bottoms are called leaf nodes. Um and and that's where our predictions will be. Um so with that in mind, let's dive in.
+
+Uh oh, this shouldn't take long to run. Okay, there we go. Okay, so we are needing to split our data into our predicting variables and our target variables. And this is just kind of standard machine learning notation where capital letter X is going to be all of the things we want our model to see to try to make a prediction. And so that means we're going to remove any columns from that that are going to be um what we're aiming for our targets.
+
+So that's X. And then Y is going to be just the target. What are we trying to predict? And then scikitlearn's train test split is going to create four variables for us for our um x training data, our x test data, our y train data, and our y test data. And so this is creating groups where some of our data we are saying model use this to learn. But we don't
+
+want to give it all of our data because we do want to preserve a little bit of our precious data to test the model and ask the model did you really learn what is good for this type of data even if you've never seen the data before. So training is what we give the model to learn. Test is what we're going to evaluate whether our model's any good. Um and then test size. This can vary.
+
+You usually want it like between I don't know 15% and 30% depending on the size of your data. I chose 20% here. Um shuffle true. This is important for this data set because our data set is in order of date and shuffling will help ensure that we're not introducing any chunking bias into our training versus testing data. and a random state just helps us with reproducibility.
+
+Let's go ahead and get that loaded. Now, what we're going to do is we are going to instantiate our tree. This was a little confusing for me when I started machine learning in Python. Um, this line of code tree equals decision tree classifier max depth random state. Notice that none of our specific data set information is in this line of code. What this line of code is
+
+doing is it it is creating the machine learning um starting point. It's saying we're making a decision tree now and that decision tree is called tree. Then this line of code is actually giving our tree our data set. And notice we're using our X train and Y train data. So let's go ahead and run this.
+
+Um, uh, Harsh Kumar, great question. I will address that one now. Why did I choose a depth of three? So a depth of three, this is, uh, how many questions are we asking or how many questions will the tree ask to make a decision? Um, and three is kind of a good starting point for not being too computationally complex because every layer you add, the machine learning model needs to calculate that. And if you have a large
+
+data set or a lot of questions that the model has to ask, it will take a long time. So three kind of takes the computation issue off the table and also takes the overfitting issue off the table. Um and we'll talk more about overfitting as we go, but the best analogy I've heard for this is over if you overfit your model, it's like the model has memorized the answers for a particular test instead of actually learning the material. So if it's given a different test, it has no idea what to do. So that's overfitting where it will know the training data perfectly, but new test data that it hasn't seen before, it's not going to perform well. So you could set the depth
+
+to 100 and it will have an individual branch for like every possible combination of questions. But if one thing changes in your test data, it's going to going to mess up. So, um, that's why I picked three. Feel free to explore with it, but three actually works pretty well for our particular model here. All right, so our tree is trained. This this line of
+
+code is wild. It does so much under the hood, but we have a decision tree. Ta webinar over. Just kidding. Just kidding. Um, so we need to actually see
+
+if our model's any good, right? So let's predict. We're going to give it our new novel data here and see if it predicts the right values. And we're going to call this why bread. Um, Hikari, great question. Could you
+
+put that in the Q&A, please? I want to make sure we address that during the Q&A portion. All right. So, now we have everything. Now, we want to visualize and evaluate the tree.
+
+And just because it's kind of a new stage of our Let me give that a header. There we go. Okay. Um so we're going to evaluate our tree and that means we need to use some metrics and accuracy score. So from scikitlearn we're going to import accuracy score and then we're going to print the accuracy of our test values versus our predicted values. Um
+
+so basically what actually happened versus what our model said was going to happen. And we see accuracy of 0.85. Um so what this means is if we trying to think of the best way to explain this um if there are 100 instances this model will predict 85 of them accurately. If you give it a 100 days of is this day productive or not productive it's going to know 85 of those days correctly. Yes,
+
+this day is productive. No, this day is not productive. So, you know, there's still room for error, but a machine learning model, um, this is actually really, really, really good because if we had accuracy of like 100% where this model was perfect, once again, we could be risking overfitting. So, I haven't ever experienced this, but if we got an accuracy of like 99% or 100%, I'd be like, "Oh, no. That's not a good thing." and I would go back and
+
+retrain my model with different parameters. Um, okay. So now we get to visualize our tree. And remember our scenario here. We are working for a garment company, right? And trying to help them
+
+understand when a day is productive versus not productive. And decision trees are visual for stakeholders who don't even know Python or machine learning. Um quick little visual here where classes of our tree this is kind of like our predictions. This is productive true or false. But if we display our tree right now um we can do that actually. Hopefully
+
+this is a good demonstration. If we display this right now, um, look at our leaf nodes at the bottom here. We don't have great information about what the actual prediction is. So if we know that the order is false true, then we can actually assign class names to our plot tree and say unproductive, productive, and then it's going to correctly say that false goes with unproductive, true goes with productive. Um, and let's see here. Anything else to
+
+explain? Feature names is going to go from our predictor columns. Filled equals true. That just fills in our rectangles here. Rounded is just whether you want a rounded rectangle box or not.
+
+Uh, proportion equals true helps us see the proportion of um of samples and font size. It's font size. This gets rid of a little bit of uh output junk that we don't need to visualize. Actually, we can take a look at that. I think this will work. Yeah, you see this? If we
+
+don't set the plot tree equal to something, we get this like text output before our tree, and we don't want to see that. So, this is just kind of a little hack to get rid of that. Okay, so here's our decision tree. Here's our decision tree. Um, and so let's talk through this. This at the
+
+top, this is our starting node. This is the first question that our decision tree asks. And what it asks, let me uh I'm going to click this to be a little larger here. The first question it asks is, is there an incentive given to workers on this day? But not just is there an incentive, is the incentive less than or equal to $22?
+
+If that is true, we're going to follow the branch this way. If it's false, we follow the branch this way. And um let's talk through the different vocab words here. So the first line is our question jinny. That is impurity versus purity. So
+
+how many are um unproductive versus productive? Those are all blended together right now because this represents our entire data set. So Jenny is saying that all the rows here, they're blended. They're blended with a proportion of 37.9% being in one class and and the other one. Um
+
+hopefully that made sense. Samples is how much of our data set is represented here. And because this is our starting question, it's 100% of our data set. Um and then the value is um the split between our classifications and then our class. So if we were just asking this one question, it our model would predict that things here are productive because most of our data points are productive.
+
+Um so let's go ahead and trace this down. Let's imagine that there was an incentive or um this the incentive was $22 or less. So we're going true. The next question our tree has decided is important is SMV. So this was our standard minute value. So
+
+how many minutes are allocated to a task? Right? So is the time allocation less than or equal to 3.92 minutes? And a decision tree the lefth hand branch always is going to represent true and then the right hand branch is always going to represent false. And you can
+
+see from our first branch up here, it kind of gives us a hint. So if this is true, we follow the branch this way. And then it asks, is the number of workers less than or equal to 8.5? If that's true, we follow it down and it thinks that um the prediction it makes here is that the class would be unproductive.
+
+Um but there's one branch I want to follow in particular because if you're presenting this to stakeholders, you can show this to them and just like I've done with you now, you can break down what's happening. Maybe not going into quite as much granular detail about um the jargon, but you know talking them through a question and saying okay on a particular day in the factory is an incentive offered yes or no. Um and in particular I want to point out this branch. Look at this particular branch. If we trace down to smv less than or equal to 31.155
+
+jinny here very small and small jinny means that the um there's less blending which is good. It means that this branch is going to be um much better at correctly classifying productive versus unproductive. And then if we trace this way down, if the SMV is less than or equal to 3.92, look, Jenny is getting even smaller. So, it's even more um powerfully predictive.
+
+And then down here in this branch, this productivity branch is is so so cool. Very small genie. The samples, this represents nearly half of our data set. 47.2% 2% of our data set is in this particular leaf right here and it's classifying things as productive. So for
+
+a stakeholder who's asking about what makes a day productive or not, this what leads to this is how I personally would start that conversation with them. So I would tell them well first of all are they being given an incentive yes or no and it looks like incentive is pretty important for predicting productivity. And then is the time allocated less than half an hour? And then it looks like if um the time allocation is actually too small, then then it's not productive. So there's kind of a sweet spot for time allocation where you kind of want it to be between 30 minutes and 5 minutes. And
+
+then incentive and that sweet spot for time allocation pretty likely to be productive. Um, so that's our tree. That's our tree with some really great things. And, um, the final thing I'll say is all of these nodes reference only a couple of our variables, incentive, SMV, and then this one leaf over or not leaf, um, this one note over here uses the number of workers. So it's it seems like if you're trying to predict productivity, we have that list. Incentive SMV, maybe number
+
+of workers, but a little less important there. So think of all the noise we started with. We started with the department. We started with overtime. We started with the number of workers and we were in team and in quarter and all these different things. And we were able
+
+to say, "No, no, no, no, no, no, no. We don't need all that. If you want to know a productive day, incentive SMV. But is this good? Is it good enough to feel confident in that conclusion?
+
+We found accuracy, but this is just one metric on one tree. So to really feel confident in our model, we are going to look at a couple more measures. We're going to look at a confusion matrix. Um, and a confusion matrix, I have a little cheat sheet in my gist and I'll include it here as well. Confusion matrix always follows this um allocation. So, how many true
+
+negatives did our model predict? So, basically um how many unproductives were actually unproductive and this corner is how many true positives. So, how many productives were actually productive? And then false positives is what does it say is productive but actually is unproductive. And then the opposite, what did it say was unproductive but was actually productive. And these two
+
+corner values here, the false positive and false negatives, this is where the model isn't perfect. And um depending on the type of work you're doing, a false positive or a false negative could be really really impactful. Like imagine medical data. If you have a bunch of false negatives in medical data, you are missing diagnosis and that's a huge problem. So this is always a good thing to be aware of a confusion matrix.
+
+Um now we're going to look at a couple other metrics. precision, recall, F1 score, and then accuracy. We already calculated accuracy. I'm putting it here just for um for keeping all of our metrics in one spot. So, we have precision, which is 88%, recall 93, and F1 of 0.9. Um, and I'm
+
+looking at my gist right now, and unfortunately my image didn't load. So, let me really quickly grab that for us.
+
+[Music] I guess I deleted it from that notebook. I'm going to drag and drop my image over in a markdown cell and it's going to be really big, but hopefully we can still talk through it. So this is just a quick image I found from Google images of the formulas for each of these scores. Precision is going to be our what's actually positive versus what was calculated to be positive. Um recall is positive values over what should have been positive values. And then F1 score is a
+
+combination of precision and recall. So, the fact that all of our metrics are close to 90%, that's really, really, really, really good. Really good. This is great for a model we didn't really have to tweak that much, right? Um, but another way that we can feel really confident in our model is by doing some cross validation.
+
+And what cross validation does is it takes a bunch of different samplings of our data set and makes sure that the tree works regardless of which sample is being used. Um and so we can see all of our scores. I chose to do um 10 folds here. So basically using 10 different configurations of our data and that's the accuracy scores for our 10 folds here. And then the mean of those accuracy scores is 0.82. So a little
+
+lower than our 0.85 accuracy from earlier, but still really really really good. It looks like the lowest accuracy we had was on this fold uh 72%. But even that even that's decent for machine learning. Um and then this is kind of doing the same thing cross validation but allows us to see our other scoring metrics. So this
+
+time we can look at precision, recall and F1 across 10 different iterations of our data. And once again the average of those folds um values really good. So so far all of this is proving to us that our model is not overfit. It is um predicting pretty well regardless of the test data that it's using. Um but one final thing we can do is a random forest.
+
+And what a random forest is is we made one decision tree that followed a certain set of questions with a certain set of cuto offs. Um but a random forest makes dozens of trees. In fact, the default value is a hundred trees and it creates different decision trees and then looks at the accuracy score for each of those individual trees. Um and we can look at accuracy this way as well. Okay. And look at this. Um accuracy
+
+given a 100 different trees 85%. So all of these evaluation metrics are reconfirming that this tree here is something you can feel very confident sharing with stakeholders um to give them actionable insight. And that that brings us to the end of our project. So, um, I I ran a little longer than I wanted with the walkthrough part, but I do want to do Q&A. So, I will stick around to address some questions, but I do know that we're almost at the end of time here. So, if you need to hop off, I
+
+totally understand and want to thank you for joining. So, um, and it will be recorded, including the Q&A. So, if if you need to head about your day, I understand. Um, but yeah, I'll stick around for 12 minutes or so to look at some Q&A right now. Thanks. You're welcome. You're welcome,
+
+everyone.
+
+All right. Uh, and reminder, if you do have questions for me, please put them in the Q&A box, and that's where I'm going to be looking from this point forward. Okay. Tushar asks, "What are these different types of DTS?" I'm assuming that means data types when we were looking at the info method.
+
+So, Dtypes. Yeah, Dypes. Um, pandas inferred data types in a data frame here. integers and floats uh I believe will always default to 64 here. But this is all going to be based on whether a value um in all of your cells is strictly an integer with no decimal or if it's strictly a number with a decimal point in it. And that's going to be designated
+
+as a float. But if neither of those conditions are met, it's going to classify it as an object. and object. Um, if we peak comparing to our actual data here, date uh defaults to being an object because it includes slashes, right? Um, our strings default to object as well. And there are
+
+modifications you can make to this. For example, when you read in your CSV, you can tell it a column to read in as a date. Um and you can also read in string columns as um categoricals. This is this honestly categoricals if we were working more on analysis and not planning to convert these into um dummies anyway and the data set was really large, converting these to categoricals would be a good option. Um, but object is just Python's way of saying, yeah, there's something not numeric here.
+
+Okay, Tammy asks, um, what are the benefits of using a regression decision tree model comparative to a classifier decision tree? And Tom in chat, great timing. Um Tom says regression is used to predict continuous numerical values and classification is used to predict discrete data categories. Yes, that is a very good um kind of general description of the two. For decision trees, it is a little interesting because if we go back to our decision tree visual down here, that scroll took longer than I thought.
+
+we still need to put things into a bucket. Um so even with regression in decision trees, our leaf nodes, our decisions down here will represent a range of values. So if we had kept this as a regression tree for example um if we kept it as a regression tree we would use actual productivity as our target variable what we're trying to predict but we would get to predict um a range of values. So potentially a leaf would say um productivity between 0% and 10%. The next one might say uh 11% to to to 20%.
+
+And you would set buckets that way. So it would represent um continuous variable with numeric values but still give you a range. So Tammy, hopefully that answers your question. And I totally forgot to talk about next steps. Uh let me transition real quick. Next steps. My first next
+
+step is actually to do this project, but with a regression tree instead of a classification tree because a lot of the steps are exactly the same. It's just that one subtle difference of how you are approaching your target variable. Um, another interesting idea is still kind of treating it as if a classification problem, but instead of just saying productive, true, or false, um, you give it categories like very, um, oh, my my zoom boxes are covering the values I put. Um, very insufficient, insufficient, satisfactory, so on and so forth. Um so this could be an interesting way to approach the problem as well.
+
+Okay. Um Hikari um so in the end when we have an accuracy of 85% or 0.85 then it is good since it's not over one. So I think that this was a mis um or confusion between different numbers. So 0.85 85 represents our model's
+
+ability to correctly predict productivity. Whereas um the not over one is our raw data values for actual productivity when I mentioned that we had a couple that were over one. Um which if you do decide to There we go. If you do decide to make a regression model about this, this would be something I would at least make a caveat about in like a markdown cell or something. Um, so yeah, something greater than one here, completely different metric than accuracy of 0.85.
+
+Hopefully that clarifies. If not, please let me know.
+
+Oh, DT equals decision tree. Okay. Okay. Um, so what are the different types of decision trees? That's that's a um the question we've kind of been talking about with classification versus regression. Um, there's many many other
+
+kind of nuances there. Um, but those are kind of the main buckets. Um, so in the data quest course for decision trees actually highly recommend taking a look at that. It goes into a lot of detail about um the different types of decision trees and different metrics you can use to calculate your trees. Um so check it out.
+
+And Cuml, can you also use linear regression for this? Um or would it not be the best fit for this type of data set?
+
+Potentially. um potentially trying to think based on our uh yeah, I think this could be a good candidate for linear regression. The trade-off would be that you wouldn't have information to give to your stakeholders, right? Um that's really one of the big big big benefits of decision trees. Um yeah, I mean you'd have different information to share with them, but this this uh is a very specific way of giving that information to stakeholders. Um I'm
+
+also wondering if linear regression would be more sensitive to some of these very very imbalanced variables. uh for example an incentive is very skewed and regression or linear regression models could be a lot more sensitive to that. Decision trees are great um at being less sensitive to skew. They still can be sensitive to skew but less so than other models. And if you do decide to try linear regression, please uh share your project in the data quest community because I'm curious to see.
+
+Um okay, I'm looking at time, looking at questions.
+
+Uh, so Rich asks, "What type of cross validation are you using? Kfold, stratified, CA fold." Uh, I'm using the default, which what is the default? That's a good question. I wonder if Chandran is the answer because I can't think of it off the top of my head. So,
+
+what is the default um method for um we were looking at cross validate from sklearn selection. You could also look at the documentation, but
+
+I thought it would give us the method. What's what's it called? Um,
+
+what's the followup like? Kfold using Rich's words. Let's see. Okay. Yeah, that that that's uh what I assumed it would be. Kfold is
+
+the default and by default cross validate uses Kfold K-fold with five folds. Um, but we specified um, well, we we specified 10 cross validation folds here, but I'm curious if there's an additional parameter hidden in there. I don't know.
+
+Huh. Interesting question. I'm going to keep looking into that because I'm curious. All right. Um, so we are at well we're 10 past we're 10 past when the webinar was supposed to end. Um, so if I didn't
+
+get to answer your question, please do tag me in the community. I'm going to head to the community really quick to point you to that. Um, you can get to the community directly from the guided project and then you can add a new topic. And if you add a new topic, go ahead and tag me in it. Please, please tag me in it.
+
+And no, I have to select the category. Okay, Q&A is fine. Um, you should follow the formatting there, but if you do anna_stril, then I will see your message and gladly reply to you there. But now we must say goodbye for the day. So, thank you all for joining. I hope
+
+you learned something and um enjoyed the experience. Uh, link to the community. Great question. Here is the link and this this link leads directly to the guided project section. Um, please do fill out the feedback survey that's being sent around. It helps me know what
+
+went well and what I can do better. And if you have ideas for future webinars, please let me know. I'm actually looking to plan the next webinar. So, I will be looking at recommendations from that survey and going with what people want to see. So, have a lovely day and hopefully I'll catch youall next time.
+
+Bye, everybody.
