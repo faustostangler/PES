@@ -29,7 +29,7 @@ from cresmo_shared import (
 from export_cookies import ensure_cookies
 
 # --- CLI & Pipeline Defaults ---
-DEFAULT_DAYS: int = 365
+DEFAULT_DAYS: int = 365 * 2
 DEFAULT_WHISPER_MODEL: str = "base"
 DEFAULT_MAX_WORKERS: int = 5
 DEFAULT_KEEP_AUDIO: bool = False
@@ -56,10 +56,8 @@ Examples:
 """
 
 
-def main() -> None:
-    # Ensure fresh Netscape cookies file is active and present for ingestion & yt-dlp
-    ensure_cookies(output_file=DEFAULT_COOKIES_FILE, verbose=True)
-
+def build_parser() -> argparse.ArgumentParser:
+    """Construct and configure the argument parser for Cresmo CLI."""
     parser = argparse.ArgumentParser(
         description="Cresmo Unified Entrypoint CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -138,7 +136,13 @@ def main() -> None:
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
 
-    args = parser.parse_args()
+    return parser
+
+
+def parse_cli_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse command-line arguments and apply default fallbacks."""
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
     if not args.command:
         args.command = DEFAULT_COMMAND
@@ -156,6 +160,15 @@ def main() -> None:
         args.force = getattr(args, "force", False)
         args.isolate_context = getattr(args, "isolate_context", DEFAULT_ISOLATE_CONTEXT)
         args.restart_server = getattr(args, "restart_server", DEFAULT_RESTART_SERVER)
+
+    return args
+
+
+def main() -> None:
+    # Ensure fresh Netscape cookies file is active and present for ingestion & yt-dlp
+    ensure_cookies(output_file=DEFAULT_COOKIES_FILE, verbose=True)
+
+    args = parse_cli_args()
 
     if args.command == "sync":
         run_cresmo_ingestion(

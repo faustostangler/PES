@@ -28,7 +28,7 @@ from cresmo_shared import (
 )
 
 # --- Ingestion Defaults ---
-DEFAULT_DAYS: int = 30
+DEFAULT_DAYS: int = 365 * 2
 DEFAULT_WHISPER_MODEL: str = "base"
 DEFAULT_KEEP_AUDIO: bool = False
 DEFAULT_MAX_WORKERS: int = 1
