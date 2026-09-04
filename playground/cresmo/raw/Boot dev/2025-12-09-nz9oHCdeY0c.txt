@@ -1,0 +1,22 @@
+---
+video_title: "Find the commit that broke everything"
+video_id: nz9oHCdeY0c
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nz9oHCdeY0c
+video_date: 2025-12-09T15:01:39+00:00
+video_description: |
+  Learn Git on Boot.Dev- https://www.boot.dev/courses/learn-git
+---
+Git bisect is yet another git command that does sound quite intimidating to the uninitiated, but once you learn how it works, it is actually quite simple. Get bisect allows you to find a commit in which introduced a bug really fast. And it does this by using a technique called binary search. Let's just pretend that we have a branch that has many commits on it. Our latest commit contains a bug and a 100 commits [music] ago does not contain the bug. How are
+
+you going to find when the bug was introduced? Well, you could go step by step through it until you find where the bugs at. But that would be tedious if it takes a couple minutes per try. It could take all afternoon or multiple days. But since commits are ordered by time in which they are merged, we can actually pretend they are an ordered array and do a binary search across it. So this is
+
+how git bisect works. Let's pretend that we have a known state that is bad and a known state that is good and we have a bunch of commits in between all of this. We'll call it x amounts of commits. If we test the middle commit and let's pretend we found this middle commit is good, we know that all of this is good. In other words, we've cut our space in half. We have x / 2 minus one left
+
+commits to check. And if we repeat the process, we can continue on finding smaller and smaller regions to go check for our commits. If we find one of these are actually bad, then we know that all of this direction is bad. And we repeat this process until we're able to find a singular commit. That is the commit in which the bug was introduced. If x was a
+
+thousand, it would approximately take us 10 checks to find the bug. And using git bisect is really simple. You set the good commit, you set the bad commit, you say start, and it will start doing that exact same process of cutting the known space in half, asking you if this commit is good or bad. If you answer good, then it knows all the commits earlier are good. If you answer bad, it knows all the commits that are ahead are bad. This
+
+can save you days of searching.

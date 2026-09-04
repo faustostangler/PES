@@ -1,0 +1,26 @@
+---
+video_title: "Your code is doing too much"
+video_id: h7EmrFyTCmw
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=h7EmrFyTCmw
+video_date: 2026-01-17T15:01:15+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+What if I give you this 5x5 grid and I ask you to figure out how to get from the bottom left to the top right by way of the optimal path? Sounds simple, right? Just take the diagonal. Sure. But let's make it more interesting. What if
+
+each square has a different cost? And I want you to take the lowest cost route. All of a sudden, I have dozens of possible paths to check. Make the grid 10 x 10. Now there are tens of thousands of paths to check. and make it 20 by 20
+
+and there are literally billions of options. An algorithm that checks every single one is going to be way too slow for any practical use case. Enter dynamic programming. It's an approach to writing algorithms that avoids wasting work. And to use it on a problem, that problem needs to have two things. One,
+
+overlapping subpros. And two, an optimal substructure. I'll explain. Going back to our grid, say I calculate the cost of this path going straight up to the top, then all the way over to the right. And its total cost, summing the numbers, is 37. Then say I go calculate the cost of
+
+this other path goes straight up, then to the right a little earlier, then up one tile. Its total cost is 33. But in both paths, I actually summed part of the route. 2 + 9 + 0 + 8 twice. I did a bunch of addition again. That's an
+
+overlapping subpro. Both paths share that partial computation. So to save time, I can actually reuse that result instead of recalculating it from scratch. Dynamic programming algorithms keep track of the results of subpros, then use the optimal solutions to those subpros to solve the larger problem. And there are two basic approaches when it comes to actually writing a dynamic programming algorithm. One, memoization
+
+or topdown. Memoization basically means caching. We write the algorithm as usual, but instead of recalculating the cost or the results of every subpros every time, we store the result in some sort of cache. For example, a simple nested dictionary in the case of our grid. And then number two, tabulation or bottom up approach. Instead of solving
+
+the problem recursively with a cache, we build a table of known results iteratively, we actually build out every single result to all of the subpros, filling in every result as we go. Now, if all the sub problems in a larger problem need to be solved to get the right solution, tabulation is usually more efficient because we can pre-allocate memory and fill out all the answers to all the sub problems as we go. But if only some of the subpros need to be solved to solve the overall problem, memorization is usually better because we only need to store what we actually need in a sort of lazy loaded fashion.

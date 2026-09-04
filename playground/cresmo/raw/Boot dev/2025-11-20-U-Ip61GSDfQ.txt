@@ -1,0 +1,26 @@
+---
+video_title: "Size doesn't matter (growth does)"
+video_id: U-Ip61GSDfQ
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=U-Ip61GSDfQ
+video_date: 2025-11-20T15:00:56+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+Big-O notation only cares about the theoretical slowdown of an algorithm as its input size grows. It doesn't actually care about how long, like in seconds, this algorithm's going to take to run. So, when I say if a linear time algorithm takes 1 nanosecond to run with an input size of 1, then it will take about 10,000 nanoseconds to run for an input size of 10,000. Like, that is true. But, whether or not it actually takes 1 nanosecond on an input size of 1 or 1 full second on an input size of 1 is actually completely irrelevant to Big-O. All we care about
+
+is the proportional change from one item to 10,000 items. We don't care about how long it actually takes. And when I say we don't care, I mean we don't care as computer scientists doing this theoretical exercise. Of course, as software engineers, we care. No one cares if the Big-O of your website's load time is constant if it actually takes 5 seconds to load. That's a
+
+terrible experience. So, as software engineers, we do care about constants. But, when we're doing Big-O analysis, we don't really care. We just kind of brush it aside. We hand-wave it away. Say you
+
+have a function running in production, and it takes 5 seconds to run on an input size of 10,000. Then, you benchmark it again on an input size of 10 million, and it still just takes 5 seconds to run. Well, that's actually a constant time algorithm. The run time isn't being affected by how big the input size is. But, whether or not 5 seconds is actually tolerable by your users is up to your users, I suppose.
+
+But, why this matters is that 5 seconds in Big-O terms, we just don't care. We don't say, "Oh, it's order five because it took 5 seconds." We just say it's order one because it's constant. So, that constant can always just be reduced to one. Let's take a look at another concrete example. Here, we've got a
+
+function called sum. Takes a list of numbers, iterates over all the numbers, summing the result as it goes, and returns it. This is fairly obviously an order N algorithm. Now, this is interesting. Let's say we take another function. This
+
+one's called triple sum. It iterates over every item in the input once, summing the items as it go. But, this time, it does it again and again. So, just looking at this function, you can tell this function takes three times as long to run as the first one. Instead of looping over the input once, we're doing it three times. So, if the first
+
+algorithm is order N, wouldn't this one be like order 3 N? And the answer is yes, but we don't care. We're doing Big-O analysis. Constants don't matter. So, that three just reduces to a one, and we get order N again.

@@ -1,0 +1,20 @@
+---
+video_title: "Did you know this about docker?"
+video_id: XOLtuz_k0wQ
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XOLtuz_k0wQ
+video_date: 2025-12-19T15:01:10+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+Docker is used for all sorts of things, but I want to quickly run through how it's often specifically used in the deployment pipelines for web applications. Now, what I'm going to show you isn't how it's done in every single company out there, but most modern companies using Docker to deploy web apps do something like this. At least in my experience. We use Docker and Kubernetes for our backend here at boot.dev. So, I'm actually giving you a
+
+real world example. This is what we do. Step one is to write or update the application code. We use Go here at Bootdev, but it obviously doesn't matter. You can write your app in whatever programming language you want.
+
+Step two is to commit the code to Git. Step three is to push the commit up to your shared version control host. This might be GitHub, for example, or GitLab. And then to open a pull request to merge your new change into the production branch. Step four is to merge the pull request. So your changes are now in the
+
+production branch. At boot dev, we use main for production, but there's lots of conventions here. Step five, and ideally this is automated, but it doesn't have to be. A new Docker image is built from the latest commit on the production branch. And step six, the new image is pushed to a container registry. This
+
+could be DockerHub, Google Artifact Registry, or AWS Elastic Container Registry. Step seven, your production environment, whether it's a VM, a Kubernetes cluster, or just an old computer running in your closet, well, it pulls down that new image and starts a new container from it. And then it shuts down any containers that were running older versions of the image. Again, this process won't be the same at every company, but it's a solid set of basic steps for getting your Dockerized application running in production.

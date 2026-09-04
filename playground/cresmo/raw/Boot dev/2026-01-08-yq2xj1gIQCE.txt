@@ -1,0 +1,26 @@
+---
+video_title: "Why I use Type 99% of the time"
+video_id: yq2xj1gIQCE
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yq2xj1gIQCE
+video_date: 2026-01-08T15:01:55+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+One of the most frustrating things in all of programming, at least to me, is when I have two very similar ways to accomplish effectively the same thing in Typescript. The type keyword and the interface keyword are often used interchangeably to give defined structure to an object. For example, this type and this interface describe essentially the same object. So, which should you choose? First, the bottom line, I prefer the type keyword 99% of the time. And there are a few reasons
+
+for that. Number one, I already use the type keyword for a ton of other things like creating unions or function types. So, it feels natural to keep using the same construct. Number two, there's no declaration merging with types. And this is a big one. If you define two
+
+different types in Typescript with the exact same name, TypeScript will actually throw an error saying you've already defined that type. And that's probably what you expect. Interfaces are a bit odd. You can define multiple interfaces with the same name and TypeScript will silently merge them all into one larger interface at compile time. So this TypeScript code actually results in this. And 99% of the time
+
+that's not what you want. You probably just forgot that you already defined that interface. And using the type keyword would have prevented that unexpected merging bug. Now to be fair, there are two times when I'll use an interface over a type in real world code. And the first is I actually do want that declaration merging. I know I
+
+said this is rare, but it does happen. The most common example, at least in my experience, is when you need to augment a global type like the window object. That object already exists globally. But let's say we have a script that adds a property to it. Declaration merging actually allows us to do this. We can
+
+declare a new type and add it to the existing window interface. And this only works because we're merging into the window interface that already existed that we actually don't even have control over. So now TypeScript knows that window.google has the type Google. This is actually code that we use in production at Bootdev to add the signin with Google feature. This wouldn't work
+
+with the type keyword because you can't augment the built-in window type with it, but you can merge into it using an interface. Really, the only other time that I might prefer an interface is when I'm extending it. With the type keyword, you use an intersection to add properties to an existing type like this. But with interfaces, the syntax is just a bit different. We use the extends keyword like this. Now, they both work
+
+just fine, but interestingly, the TypeScript wiki actually suggests preferring interface extends over intersections because it's just a bit safer and compiles a bit faster, which helps keep tooling performance snappy. So I do prefer type in most cases just with those two little caveats.

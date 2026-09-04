@@ -1,0 +1,20 @@
+---
+video_title: "Stop manual code reviews. It's 2026"
+video_id: qlYskEkbCEY
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qlYskEkbCEY
+video_date: 2026-01-21T15:01:35+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+If you're worried about AI taking your programming job, then this might be hard to hear, but computers are actually better at reviewing code than humans [music] are. At least when it comes to a very specific type of code review. I'm talking about the low-hanging fruit of code review. Syntax mistakes, stylistic issues, and formatting preferences. Things that computers are way better than humans at checking. I'm not talking
+
+about fancy LLM-powered code review products. I'm just talking about programs like compilers, linters, and formatters. If you spend any time reviewing your team's code for these types of issues, you're wasting your time. Continuous integration should be handling all this kind of stuff for you automatically before [music] your pull requests are ever sent to a human. Continuous integration is a fancy DevOps word for an automated process that guarantees a set of code changes, usually the changes in a pull request, don't introduce certain kinds of problems into the main branch when they're merged. And yeah, part of it is
+
+about saving developer time. It's an automated review. But it's also about correctness. If I give you a thousand lines of Go code with a single missing closing bracket, you as a human almost certainly won't notice that mistake. I trust the Go compiler more than I trust your eyeballs. Sorry. So, let me give
+
+you a concrete example of a real CI or continuous integration pipeline [music] that we use at Boot Dev. First, a developer creates a pull request with some changes from their feature branch into main, which is our production branch. Then our CI pipeline automatically runs using GitHub Actions. First, it checks out the code, the results of the would-be merge. Then it runs the Go and TypeScript compiler, runs the unit test suite, runs the formatters, the linters, and checks that our database migrations are valid. And
+
+if any of those checks fail, the pull request on GitHub gets a big red failed message. And the developer goes and reads the problem and then has the chance to fix their pull request. And this all happens before the pull request is ever sent to another human for actual code review. You know, they can look over [music] it for more subtle bugs or poor architectural decisions. And that means that it saves the human reviewer from wasting their time with all this stuff that's very easily automated.

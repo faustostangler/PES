@@ -1,0 +1,30 @@
+---
+video_title: "The algorithm that made binary trees usable"
+video_id: 3iAi-lrWucU
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3iAi-lrWucU
+video_date: 2025-11-25T15:00:11+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+So, regular old binary trees have a problem. They have no built-in protection against unbalance. If you insert an ordered list into a binary tree, you'll end up with a single branch in your tree, which is no better than a linked list. Your efficient order log in lookups degrade right down to order n. But, a balanced tree is a fast tree. And
+
+by balanced, I just mean it's about as wide as it can be. It doesn't have these super long branches that take forever to iterate down. So, how do we keep our binary trees balanced? Well, the red black algorithm, or the red black tree data structure specifically, solves this. Here's the big idea. When items
+
+are inserted and removed from a red black tree, we have one little extra step. Take insertion, for example. After inserting a new item into a red black tree, we have a fix step. And in the fix step, we check the state of the tree, and if it's starting to become unbalanced, we perform a rotation, which is basically is just where we take the longer branch of the tree and fold it back into the rest, which flattens the tree as a whole. Now, first of all, don't let the colors red and black confuse you. They're really just a
+
+boolean value that we attach to each node, true or false. The only reason we use the words red and black is so that it's easier to draw out and visualize. The idea is that every node in a red black tree has this extra bit of data, its color. And we use those colors to know if the tree is sufficiently balanced or not. There are just a few simple rules. First, each
+
+node is either red or black. Second, the root is black. Third, all nil leaf nodes are black. Fourth, if a node is red, then both its children must be black. And fifth, all paths from a node to any of its descendant nil nodes, the bottom of the tree, must go through the same number of black nodes. Now, that last
+
+rule, that all paths from a node must go through the same number of black nodes to reach the bottom of the tree, that's the ticket. When a branch starts to get too long, we rebalance the tree by performing a rotation to make sure it still follows the rules. So, let's focus on the rotation. That's really the most interesting part of a red black tree. Now, rotations can work both right and left, but let's look at a left rotation.
+
+A right rotation is just the mirror of it, anyways. So, first, we start with this tree. Four is the pivot, and two is the pivot's parent, and these are really the nodes that we're rotating around. First, we update the pivot's left child reference to now point to what was its parent, two. Next, that left child that we just orphaned, three, we make it the right child of the old parent. And
+
+that's it. We're done. Let me show that to you one more time. Now, it's important to understand this actually happens inside of a tree. So, here's a visualization of the exact same thing happening inside a larger tree.
+
+And here it is again, one more time.
+
+[Music]

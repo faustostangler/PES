@@ -1,0 +1,26 @@
+---
+video_title: "HTTP responses can be way bigger than you thought"
+video_id: 6q0LY1W95OY
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6q0LY1W95OY
+video_date: 2025-10-22T14:00:11+00:00
+video_description: |
+  @ThePrimeTimeagen 
+  
+  Learn back-end development - https://www.boot.dev
+  
+  Like & subscribe for the algo if you enjoyed the video!
+---
+Let's pretend you have a server that receives a request and that request wants to download a file. But the file you need to download is 10 GB big. That's a big file. You can't just simply load that all into memory, be able to calculate out the check sums and be able to send it out easily because remember we need something like content length. You need to know exactly how many bytes are coming down. And what if you don't
+
+even know how long this file is? What happen if you're receiving it from another server or a different protocol that doesn't even specify the length? You need a way to be able to send down data in such a way that you don't have to specify the length up front. This is called chunked encoding. And chunked encoding is actually a relatively trivial form of encoding where each HTTP body contains how many bytes are in the body and then the data bytes. And now
+
+it's your job to reassemble each one of those chunks. Another kind of neat thing about chunked encoding is at the end you can provide what is called trailers. Trailers allow you to add extra header fields at the end. You have to specify what header fields you would like to add at the end to begin with. So that way you can't have just infinite trailers at the end. But let's say that you want
+
+five different trailer fields. You could have them all appear at the end and they'd all be a part of the headers. If you've ever wondered why headers are asynchronous, well, this is why. To run through the basics of the chunked encoding algorithm, it's pretty simple. You're going to have your status line.
+
+You're going to have your headers. And then you're going to have a body in which is going to have a hexadesimal number that is going to be the amount of bytes that this message contains. So you're going to have another registered nurse right here. Then you're going to have your data and you're going to receive multiple of these style of messages where you're going to keep on sending more and more of the data down. And eventually at some point you're going to receive a message that is going to have a zero for the length which is going to contain an empty data field.
+
+This is the last and closing chunk of a chunked encoding. That way you don't need to know how much data you have. You simply need to just be able to keep on receiving data and storing the data in an appropriate manner. [Music]

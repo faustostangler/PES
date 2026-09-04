@@ -1,0 +1,18 @@
+---
+video_title: "Should you git reset, or revert?"
+video_id: FrjJFO-0prE
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FrjJFO-0prE
+video_date: 2025-12-18T15:00:33+00:00
+video_description: |
+  Learn Git on boot.dev- https://www.boot.dev/courses/learn-git
+---
+When do you use revert versus reset? Well, they're actually quite different operations, so you just need to understand them fundamentally, and it will become obvious when you use one versus the other. Whenever I use reset, it's because I want to be able to take a commit, undo that commit, make some edits, and recommit. And in the case of get reset heart, I actually just want to throw away that commit. This means I'm working on my own branch, not on a branch everybody else uses. I'm able to
+
+edit the history and get it into the way I would like it to be. Whereas a revert is more for the public branch. What this means is that you have a problematic commit and you need to be able to remove that commit. But you could never do that to a public branch cuz it's going to break everybody. So instead you make like an antimatter commit, right? This
+
+commit contains changes A. This one reverts changes A. And this also has the added benefit that if you want to go back in time, you can go back to A and actually fix the bug and then reintroduce A along with its bug fix. Now, I find that I revert when I'm on a larger team because often you're in this position where somebody needs this change to go out such that a new customer feature or a new AB test that's high priority has to get out, but your changes have broken the build and we're not discovered until we released into production. So, we need them out right away. There is no waiting. There is no
+
+waiting to fix forward. So therefore, you simply revert your commit, fix the change, create a new commit with the fixed code and all the changes back in, and then next release your code can go out and hopefully it's not broken. But if you find yourself reverting a lot, it's likely because you have a pretty unhealthy process. Your CI/CD is not up to snuff, your tests aren't quite there, your automation is no good. Production is the ultimate place to test, but it should not be the only place you test.

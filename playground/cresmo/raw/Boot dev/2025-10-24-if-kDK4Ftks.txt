@@ -1,0 +1,24 @@
+---
+video_title: "CI tests it. CD ships it."
+video_id: if-kDK4Ftks
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=if-kDK4Ftks
+video_date: 2025-10-24T14:01:26+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+  
+  Like & subscribe for the algo if you enjoyed the video!
+---
+Look, I outright refuse to work on web projects that don't have continuous deployment. I just won't do it. This is 2025. Look, if you don't want CI pipelines that automate some of the review process, fine. I can deal with that. But, you want me to manually SSH
+
+onto your server to build and deploy to production? I'm out. Okay, so what is continuous deployment or CD? It's just an automated process for deploying new code to production. And believe it or not, for a long time it was considered best practice to just send code changes or the final build artifacts to a human, usually a system administrator, for them to manually deploy to the company servers. These days, that's usually
+
+considered unhinged behavior. Best practice today is that when new changes are merged into the production branch, usually the main branch, a new automated build and deploy process kicks off. No human intervention needed. Here's a concrete example of how we do continuous deployment today at boot.dev. First,
+
+some new changes are merged into main, our production branch, usually through a pull request. That kicks off a GitHub Actions workflow. It, one, checks out the new code. Two, builds the new compiled versions of our app. We have several different services. Three,
+
+builds the new Docker images that contain the updated versions of the app. Four, contacts our Cloudflare Pages app and instructs it to use the new front-end assets. Five, contacts Kubernetes and tell it to use the new Docker images to start up our new back-end pods. And six, waits until all the updated services are deployed and healthy. Then successfully completes the GitHub Actions workflow. We deploy to
+
+production 10 to 20 times a day, sometimes even more. If we didn't have a good CD pipeline in place, we'd be wasting tons of developer hours every day doing the same old routine just to deploy our app. And actually, to be honest, if it was manual, we'd probably just deploy less often, maybe like once a week. And that, many studies have shown, leads to actually having more bugs, fewer features, and just overall lower team velocity and code quality. Deploy often when you can.

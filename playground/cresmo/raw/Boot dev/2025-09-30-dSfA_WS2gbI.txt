@@ -1,0 +1,28 @@
+---
+video_title: "ThePrimeagen broke my servers"
+video_id: dSfA_WS2gbI
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=dSfA_WS2gbI
+video_date: 2025-09-30T14:01:07+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+  
+  Like & subscribe for the algo if you enjoyed the video!
+---
+The primogen crashed my servers, Lane. Brought down boot.dev the other week, Lane. See, he was live streaming his Git course and over 2,000 people logged on to boot.dev at the same time, Lane. And
+
+I'm ashamed to say it, but a bunch of people started getting 504 timeout errors. boot.dev down? Now, of course, this happened due to my own skill issues. Did you actually make the thing go down? Um specifically, my auto
+
+scaling in Kubernetes was not configured correctly. Ooh, yeah, great idea. Great idea, everybody. Ping boot.dev. Go
+
+quickly. Of course, I happened to be watching the live stream at the time. So, I manually scaled up the pods from eight to 16 and we were so back um just a couple minutes later, but it should have been automatic. And now it is. See, there are two ways to scale an app, vertically and horizontally. Vertical
+
+scaling means giving a pod more resources. For example, maybe a web server uses half a CPU core and 1 GB of RAM to handle around 1,000 requests per second. If we want to be able to scale up to handle 2,000 requests per second, we might need to double the resources. So, say a full CPU core and 2 gigs of RAM. The problem is vertical scaling only works until it doesn't. You can only add
+
+resources up to the maximum that a single node can provide. And for many apps, there's more traffic than a single machine could ever hope to handle, even with hundreds of gigs of RAM and a 128 core CPU. So, horizontal scaling is a usually the better approach. Instead of giving a single pod more resources, we just run more pods because pods can be spread across as many nodes as we want. So, there's not really an upper limit on how much traffic a horizontally scalable system can handle, at least if your pockets are deep enough. The good news
+
+is that Kubernetes can automate horizontal scaling for us with an aptly named horizontal pod autoscaler or HPA. An HPA watches the metrics of your pods like CPU or memory usage. And when the usage goes above a target threshold, the HPA increases the number of pods. If usage goes down, it removes some pods. Its goal is to keep resource usage around a stable target. For example, on
+
+boot.dev, we target about 60% CPU utilization. If the average utilization creeps up to 80%, it starts spinning up new pods, the load gets distributed, and average CPU utilization falls back down towards that 60% target. drops down to say 30%, the HPA actually kills off a pod or two, saving us some money, and traffic is routed back to the remaining pods, which brings utilization back up to the target. [Music]

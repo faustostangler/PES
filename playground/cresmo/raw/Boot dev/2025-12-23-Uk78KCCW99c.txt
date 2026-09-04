@@ -1,0 +1,26 @@
+---
+video_title: "Is your S3 bucket leaking right now?"
+video_id: Uk78KCCW99c
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Uk78KCCW99c
+video_date: 2025-12-23T15:00:57+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+So, you might be familiar with using AWS S3 for cloud storage, but do you know how to run it securely in production? Let's go through a simple setup. First, how do we run our application locally? Well, S3 is a cloud offering. You can't really run S3 locally. So, we're going
+
+to need a way to connect to S3 from our machine. I like to run my code before I run it in production, at least most of the time. There have been a few times where we don't need to talk about that. So, first, the best thing for you to do is to have separate environments for testing and for production. Some companies call this staging and production or dev and production, but the point is you should have different accounts. Not every company does this.
+
+Some companies do reuse one account for staging and production. It's probably not best practice, but just just know that some some do do that. Once you have the AWS account, you're going to need an IAM user in that account. Then, you'll use the AWS configure command to get your user's keys on your local machine. Next, you'll add your user to a group. You're working
+
+with in a company, so this would typically be a group like developers, which is just an arbitrary name. Then, you'd make sure that that group has a policy giving it access to the resource you need, in this case an S3 bucket. And of course, the best practice is to only give yourselves the permissions that you actually need. That way, if your keys are ever compromised, the attacker has minimal access. Now, the last thing that you can do here for an extra layer of security is actually add an IP source list. It's basically a firewall that
+
+only allows access from your IP address. This way, an attacker would not only need to steal your keys, but would also need to somehow get onto your home network. And with all that, you should be good to run locally. But, what about when you run in production? Well, the code, of course, shouldn't have to change between local development and production. Just the keys should change.
+
+The AWS SDK is smart enough to pick up your keys from where it stored them on your machine with the AWS configure command, at least when you're running locally. But, when you're running in production, one of the best ways to do this is to use an IAM role instead of an IAM user. So, just like before, we'd create a new IAM role. This time, we'd probably name it after our application because we're authorizing as the application, not as an individual user or developer on the team. So, for example, if my app's named Tubely, I might name it Tubely app. Now, this
+
+time, we actually give that role a policy where it gets access to the resources that it needs, like the S3 bucket. Now, how do we give our code access to that role? Well, it's actually really easy, and it happens at the infra- structure level. So, our code needs to be running within AWS for this to work, but if you're using S3, you're probably running within AWS. Let's use a very basic example, like an EC2 server, an EC2 VM. We add the IAM
+
+role to the EC2 server in the AWS console. Then, when we install and run our code from that virtual machine, the SDK can pick up those keys that it needs from the virtual machine itself. Now, we don't need to manage the keys ourselves. It's a lot more secure. [Music]

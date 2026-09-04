@@ -1,0 +1,24 @@
+---
+video_title: "The math that keeps your DMs private."
+video_id: 6JPdUDiPyw8
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6JPdUDiPyw8
+video_date: 2026-01-16T15:00:23+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+Hey, welcome to the interview. So, uh can you go ahead and explain Rivest-Shamir-Adleman to me, please? I'll see myself out. RSA, you know, the asymmetric encryption algorithm that's been keeping you safe on the internet for the last few decades. It's a really cool algorithm that, while I obviously don't recommend implementing it yourself in production, it actually is simple enough that you can implement it yourself for learning purposes. So,
+
+let's go over how it works. First, the thing that makes RSA so useful is that to send secure messages to someone, you don't need them to give you their private key. Instead, they give you their public key, and you use that to encrypt the message, and then only the holder of the private key, them, will be able to decrypt it. This is why you're able to have a securely encrypted connection between your browser and some random website on the internet that you've never visited before. So, how does it actually work? Well, the whole
+
+trick is in the math, specifically prime numbers, modular arithmetic, and something called a multiplicative inverse. You start by picking two really big prime numbers, like really big, around 2,000 bits each. Let's call them P and Q, because that's what everyone else calls them. You multiply those together, and that gives you N. N is part of both the public and the private key. Next, you compute Euler's totient,
+
+which is P minus 1 times Q minus 1. Now, we need two exponents. The first one, called E, is usually a small number, like 3, 17, or you know, 65,537. That's part of the public key. Then you choose a D so that E times D is congruent with 1 modulo Euler's totient.
+
+In other words, D is the modular multiplicative inverse of E. D and N together are the private key, and E and N together are the public key. So, how do we actually use them? Well, to encrypt a message, we take our plain text, convert it to a number, you know, binary, M, and just compute M raised to the E mod N. That new number is the cipher text, C. And to decrypt,
+
+we just do the reverse. C to the D mod N. And that gets us back the original message. Now, the crazy part is that the math guarantees this works because of the way those inverses line up in modular arithmetic. If you've got P and Q, it's easy, or at least it's fast enough, to compute. And if you don't,
+
+trying to factor N back into P and Q is basically impossible once those primes are large enough. There are just way too many combinations to try. Now, interestingly, RSA is actually getting a bit dated. It's still used, but ECC, elliptic curve cryptography, has become the more popular algorithm for asymmetric encryption recently. It's faster and more secure, even with smaller key sizes.

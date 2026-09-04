@@ -1,0 +1,24 @@
+---
+video_title: "You deployed your site, and no one can see it"
+video_id: 3Zu8VNRLVIs
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3Zu8VNRLVIs
+video_date: 2025-11-07T15:00:08+00:00
+video_description: |
+  Learn back-end development - https://www.boot.dev
+---
+Oh, you can't connect to your website running in Kubernetes. Look, you probably don't understand the relationship between pods, services, and the gateway API. Pods in Kubernetes can be destroyed and recreated at any time, and their IP addresses change constantly. So, connecting to them directly is usually a terrible idea. That's why services exist. A service is
+
+basically a fixed address within the cluster that you can hit directly and then it balances any of those incoming requests to a group of pods as they spin up and down dynamically. For example, if I have a service named web and I run cubectl get service web-opl
+
+with some internal IP address. Now cluster IP is just the default service type. It exposes an internal virtual IP that other pods can connect to. And there are a few other types of services as well. Node port which opens a static port on every single node in the cluster so that traffic from outside can come to the inside. There's also the load
+
+balancer which creates an external cloud load balancer and then routes traffic from it to your service and external name which frankly is of course has to be like special different one but basically all it does is map the service to an external DNS name. Now each type kind of just builds on the previous one. Node port is a cluster IP with the addition of the opened node ports and a load balancer by default also allocates node ports and creates an external load balancer. External name is the special one that doesn't do any of that stuff. It just just deals with the DNS. Okay,
+
+so services give us stable connectivity inside the cluster and a few basic ways to expose traffic from the outside. But when we want more advanced routing from the outside world, we use the gateway API. The gateway API is a newer Kubernetes standard that generalizes and modernizes how traffic enters a cluster from the outside world. So, it's how you actually expose a website on the internet. It's made up of resources like gateways, HTTP routes, and TCP routes. A
+
+gateway represents the entry point, usually backed by something like EngineX, and the routes define how traffic that hits it should then be handled. For example, a gateway might listen on port 80, and then an HTTP route might forward traffic for boot.dev dev to a specific internal service that handles those requests. Now, if you're a Kubernetes enjoyer, you might be wondering how the gateway API relates to the older ingress API. And look, ingress is still widely used, especially in legacy clusters, and it's going to be supported for a long time, if not forever. But the gateway API can do
+
+everything that the ingress API could do and also supports more advanced features, in particular, traffic that uses protocols other than just HTTP.
