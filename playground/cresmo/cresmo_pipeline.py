@@ -50,9 +50,10 @@ from cresmo_shared import (
 
 # --- Polling & Timing Defaults ---
 DEFAULT_TRAJECTORY_TIMEOUT_SECONDS: int = 15
-POLL_MAX_ATTEMPTS: int = 1000
+POLL_MAX_ATTEMPTS: int = 300
 POLL_SLEEP_SECONDS: float = 1.0
 POLL_DISPATCH_TIME_BUFFER: float = 1.0
+POLL_FALLBACK_INTERVAL: int = 30
 
 
 # --- Payload & File Size Thresholds ---
@@ -194,7 +195,7 @@ def is_valid_enriched_markdown(file_path: Path, min_bytes: int = MIN_VALID_OUTPU
             or "Informacoes Complementares" in content
             or "Complementary Information" in content
         )
-        return bool(has_header and has_complementary)
+        return has_header and has_complementary
     except Exception:
         return False
 
@@ -211,7 +212,7 @@ def is_valid_atomic_xml(file_path: Path, min_bytes: int = MIN_VALID_OUTPUT_BYTES
             "<notas>" in content and "</notas>" in content
         )
         has_nota = "<nota>" in content and "</nota>" in content
-        return bool((has_xml_tags or has_nota) and len(content) >= min_bytes)
+        return (has_xml_tags or has_nota) and len(content) >= min_bytes
     except Exception:
         return False
 
@@ -314,8 +315,8 @@ def execute_stage2_expander(
         send_agent_message(prompt, session_id)
 
         pass_completed = False
-        # Poll for Option A direct file write
-        for _ in range(POLL_MAX_ATTEMPTS):
+        # Poll for Option A direct file write with periodic Option B trajectory fallback
+        for attempt in range(1, POLL_MAX_ATTEMPTS + 1):
             if (
                 enriched_file.exists()
                 and enriched_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
@@ -324,6 +325,16 @@ def execute_stage2_expander(
                 print(f"  ✓ [Stage 2 {pass_label} Success] Enriched text updated -> {enriched_file}")
                 pass_completed = True
                 break
+
+            # Option B: Periodic check for agent textual completion in trajectory every 30 attempts
+            if attempt % POLL_FALLBACK_INTERVAL == 0:
+                content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+                if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
+                    enriched_file.write_text(content, encoding="utf-8")
+                    print(f"  ✓ [Stage 2 {pass_label} Fast Fallback Success] Saved enriched text -> {enriched_file}")
+                    pass_completed = True
+                    break
+
             if _is_quota_reached(session_id):
                 dispatch_time = time.time()
                 send_agent_message(prompt, session_id)
@@ -394,8 +405,8 @@ def execute_stage3_atomic_notes(
     dispatch_time = time.time()
     send_agent_message(prompt, session_id)
 
-    # Poll for Option A direct file write
-    for _ in range(POLL_MAX_ATTEMPTS):
+    # Poll for Option A direct file write with periodic Option B trajectory fallback
+    for attempt in range(1, POLL_MAX_ATTEMPTS + 1):
         if (
             xml_output_file.exists()
             and xml_output_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
@@ -403,6 +414,15 @@ def execute_stage3_atomic_notes(
         ):
             print(f"  ✓ [Stage 3 Success] Atomic XML generated -> {xml_output_file}")
             return xml_output_file, True
+
+        # Option B: Periodic check for agent textual completion in trajectory every 30 attempts
+        if attempt % POLL_FALLBACK_INTERVAL == 0:
+            content = fetch_trajectory_response(session_id, TAG_XML_OPEN, TAG_XML_CLOSE)
+            if content:
+                xml_output_file.write_text(content, encoding="utf-8")
+                print(f"  ✓ [Stage 3 Fast Fallback Success] Saved Atomic XML -> {xml_output_file}")
+                return xml_output_file, True
+
         if _is_quota_reached(session_id):
             dispatch_time = time.time()
             send_agent_message(prompt, session_id)
