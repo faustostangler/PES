@@ -17,10 +17,12 @@ ISB_DIR = SCRIPT_DIR.parent / "isb.ai"
 if ISB_DIR.exists():
     sys.path.insert(0, str(ISB_DIR))
 
+import downloader
 import sync_channels
 from cresmo_shared import (
     DEFAULT_BRAIN_CSV,
     DEFAULT_PLAYLIST_FILE,
+    DEFAULT_RATE_LIMIT_LOG_FILE,
     DEFAULT_RAW_DIR,
     read_playlist_urls,
 )
@@ -40,8 +42,10 @@ def run_cresmo_ingestion(
     model_name: str = DEFAULT_WHISPER_MODEL,
     keep_audio: bool = DEFAULT_KEEP_AUDIO,
     max_workers: int = DEFAULT_MAX_WORKERS,
+    rate_limit_log_file: Path = DEFAULT_RATE_LIMIT_LOG_FILE,
 ) -> None:
     """Execute Stage 1 raw ingestion pipeline."""
+    downloader.RATE_LIMIT_LOG_FILE = rate_limit_log_file
     playlist_urls = []
     if playlist_path.exists():
         playlist_urls = read_playlist_urls(playlist_path)

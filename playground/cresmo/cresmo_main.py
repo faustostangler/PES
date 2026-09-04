@@ -31,7 +31,7 @@ from export_cookies import ensure_cookies
 # --- CLI & Pipeline Defaults ---
 DEFAULT_DAYS: int = 365
 DEFAULT_WHISPER_MODEL: str = "base"
-DEFAULT_MAX_WORKERS: int = 1
+DEFAULT_MAX_WORKERS: int = 5
 DEFAULT_KEEP_AUDIO: bool = False
 DEFAULT_ISOLATE_CONTEXT: bool = True
 DEFAULT_RESTART_SERVER: bool = False

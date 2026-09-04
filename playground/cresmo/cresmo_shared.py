@@ -20,6 +20,7 @@ PROCESSED_CRESMO_LOG: Path = CRESMO_ROOT / "processed_cresmo.json"
 DEFAULT_PLAYLIST_FILE: Path = CRESMO_ROOT / "playlist.txt"
 DEFAULT_BRAIN_CSV: Path = CRESMO_ROOT / "brain.csv"
 DEFAULT_COOKIES_FILE: Path = CRESMO_ROOT / ".yt_dlp_cookies.txt"
+DEFAULT_RATE_LIMIT_LOG_FILE: Path = CRESMO_ROOT / "rate_limit_log.json"
 
 BRAIN_DIR: Path = Path(os.environ.get("ANTIGRAVITY_BRAIN_DIR", Path.home() / ".gemini" / "antigravity-ide" / "brain"))
 

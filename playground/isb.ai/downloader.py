@@ -15,40 +15,72 @@ import yt_dlp
 from helper import apply_cookies_to_ydl_opts, fetch_url_content
 
 
+def _is_native_sub_url(url: str | None) -> bool:
+    """Validate that subtitle URL is native and not an on-the-fly machine translation."""
+    if not url:
+        return False
+    # Strictly reject on-the-fly machine-translated subtitles that cause HTTP 429
+    if "tlang=" in url:
+        return False
+    return True
+
+
 def find_subtitle_url(info: dict, preferred_ext: str) -> tuple[str, str] | None:
     """Search for a suitable subtitle or automatic caption URL matching the preferred extension.
 
-    Prioritizes:
-    1. pt-BR, pt-orig, pt, pt-PT, en, en-US in manual subtitles
-    2. pt-BR, pt-orig, pt, pt-PT, en, en-US in automatic captions
-    3. Any language code starting with 'pt' or 'en'
-    4. Any language code at all that has the preferred format
+    Strictly prioritizes the native spoken audio language (*-orig, video audio language)
+    and completely filters out on-the-fly machine translations (tlang=) which cause HTTP 429.
     """
     subtitles = info.get("subtitles") or {}
     auto_caps = info.get("automatic_captions") or {}
 
-    preferred_languages = ["pt-BR", "pt-orig", "pt", "pt-PT", "en", "en-US"]
+    video_lang = (info.get("language") or "").lower()
+    is_pt_video = video_lang.startswith("pt")
 
-    for source in (subtitles, auto_caps):
-        # 1. Search in exact preference order
-        for lang in preferred_languages:
-            if lang in source:
-                for fmt in source[lang]:
-                    if fmt.get("ext") == preferred_ext:
-                        return lang, fmt.get("url")
+    if is_pt_video:
+        ordered_langs = ["pt-orig", "pt-BR", "pt", "pt-PT", "en-orig", "en", "en-US"]
+    else:
+        ordered_langs = ["en-orig", "en", "en-US", "pt-orig", "pt-BR", "pt", "pt-PT"]
 
-        # 2. Search for any key starting with 'pt' or 'en'
-        for lang in source:
-            if lang.startswith("pt") or lang.startswith("en"):
-                for fmt in source[lang]:
-                    if fmt.get("ext") == preferred_ext:
-                        return lang, fmt.get("url")
+    # 1. Search in manual subtitles in preferred language order (never tlang)
+    for lang in ordered_langs:
+        if lang in subtitles:
+            for fmt in subtitles[lang]:
+                url = fmt.get("url")
+                if fmt.get("ext") == preferred_ext and _is_native_sub_url(url):
+                    return lang, url
 
-        # 3. Search for any key at all that has the preferred format
-        for lang in source:
-            for fmt in source[lang]:
-                if fmt.get("ext") == preferred_ext:
-                    return lang, fmt.get("url")
+    # 2. Search manual subtitles in any language
+    for lang, formats in subtitles.items():
+        for fmt in formats:
+            url = fmt.get("url")
+            if fmt.get("ext") == preferred_ext and _is_native_sub_url(url):
+                return lang, url
+
+    # 3. Automatic captions: Prioritize explicit original tracks (*-orig)
+    orig_keys = [k for k in auto_caps.keys() if k.endswith("-orig") or k == "orig"]
+    # Sort so video language's orig comes first
+    orig_keys.sort(key=lambda k: 0 if (is_pt_video and "pt" in k) or (not is_pt_video and "en" in k) else 1)
+    for lang in orig_keys:
+        for fmt in auto_caps[lang]:
+            url = fmt.get("url")
+            if fmt.get("ext") == preferred_ext and _is_native_sub_url(url):
+                return lang, url
+
+    # 4. Automatic captions matching preferred language order without tlang
+    for lang in ordered_langs:
+        if lang in auto_caps:
+            for fmt in auto_caps[lang]:
+                url = fmt.get("url")
+                if fmt.get("ext") == preferred_ext and _is_native_sub_url(url):
+                    return lang, url
+
+    # 5. Any automatic caption track without tlang
+    for lang, formats in auto_caps.items():
+        for fmt in formats:
+            url = fmt.get("url")
+            if fmt.get("ext") == preferred_ext and _is_native_sub_url(url):
+                return lang, url
 
     return None
 
@@ -244,11 +276,20 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
     ogg_file = output_dir / f"{video_id}.ogg"
     return ogg_file.resolve()
 
+import os
 import random
 import yt_dlp
 from helper import fetch_url_content
 
-RATE_LIMIT_LOG_FILE = Path(__file__).parent / "rate_limit_log.json"
+_CRESMO_DIR = Path(__file__).resolve().parent.parent / "cresmo"
+_ENV_RATE_LIMIT_LOG = os.environ.get("YOUTUBE_RATE_LIMIT_LOG_FILE")
+if _ENV_RATE_LIMIT_LOG:
+    RATE_LIMIT_LOG_FILE = Path(_ENV_RATE_LIMIT_LOG).resolve()
+elif _CRESMO_DIR.exists():
+    RATE_LIMIT_LOG_FILE = (_CRESMO_DIR / "rate_limit_log.json").resolve()
+else:
+    RATE_LIMIT_LOG_FILE = (Path(__file__).resolve().parent / "rate_limit_log.json").resolve()
+
 _GLOBAL_429_ATTEMPT = 0
 _ACCUMULATED_BLOCKED_TIME = 0.0
 
@@ -291,6 +332,13 @@ def set_base_backoff_quantum(quantum: float) -> None:
     _BASE_BACKOFF_QUANTUM = max(0.001, float(quantum))
 
 
+def apply_preventative_pacing(min_delay: float = 1.0, max_delay: float = 2.5) -> float:
+    """Apply polite stochastic delay with uniform jitter to prevent CDN IP burst rate-limiting."""
+    delay = random.uniform(min_delay, max_delay)
+    time.sleep(delay)
+    return delay
+
+
 def calculate_backoff_delay(
     n: int,
     base_quantum: float | None = None,
@@ -328,6 +376,8 @@ def log_rate_limit_telemetry(
     """Record rate limit telemetry event to JSON log file for empirical analysis."""
     if log_file is None:
         log_file = RATE_LIMIT_LOG_FILE
+
+    log_file.parent.mkdir(parents=True, exist_ok=True)
 
     entry = {
         "timestamp": datetime.now(UTC).isoformat(),
@@ -445,7 +495,7 @@ def get_youtube_audio_or_transcript(
         observed_latency = 0.0
 
         for _ in range(attempts_for_this_video):
-            is_429 = False
+            has_429 = False
             for fmt_name, lang, sub_url, parse_fn in candidates:
                 try:
                     start_time = time.perf_counter()
@@ -456,9 +506,11 @@ def get_youtube_audio_or_transcript(
                         transcript_text = transcript
                         break
                 except Exception as e:
-                    if (isinstance(e, urllib.error.HTTPError) and e.code == 429) or ("429" in str(e) or "Too Many Requests" in str(e)):
-                        is_429 = True
-                        break
+                    status_code = getattr(e, "status", getattr(e, "code", None))
+                    if status_code == 429 or "429" in str(e) or "Too Many Requests" in str(e):
+                        has_429 = True
+                        print(f"  ⚠️ Rate limit (HTTP 429) hit on candidate {fmt_name} ({lang}). Trying next candidate...")
+                        continue
                     else:
                         print(f"Warning: Failed to parse {fmt_name} subtitles ({e}).")
 
@@ -475,7 +527,7 @@ def get_youtube_audio_or_transcript(
                 reset_429_state()
                 return transcript_text, None, video_id
 
-            if is_429:
+            if has_429:
                 delay = calculate_backoff_delay(
                     n=_GLOBAL_429_ATTEMPT,
                     base_quantum=_BASE_BACKOFF_QUANTUM,
@@ -491,7 +543,7 @@ def get_youtube_audio_or_transcript(
                     total_blocked_sec=_ACCUMULATED_BLOCKED_TIME
                 )
                 print(
-                    f"  ⚠️ Rate limit (HTTP 429) hit fetching subtitles for '{title[:30]}...'. "
+                    f"  ⚠️ Rate limit (HTTP 429) persisted across all candidates for '{title[:30]}...'. "
                     f"Waiting {delay:.1f}s for reset (global 429 streak: {_GLOBAL_429_ATTEMPT + 1}, total blocked time: {_ACCUMULATED_BLOCKED_TIME:.1f}s..."
                 )
                 time.sleep(delay)
