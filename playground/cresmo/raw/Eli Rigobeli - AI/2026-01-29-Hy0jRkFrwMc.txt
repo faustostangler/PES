@@ -1,0 +1,232 @@
+---
+video_title: "A forma MAIS FÁCIL de configurar o OpenClaw (ClawdBot) de forma “SEGURA” no PC (Docker)"
+video_id: Hy0jRkFrwMc
+channel_name: "Eli Rigobeli - AI"
+channel_id: UC1aW5Cdw3hOmygxAQI2O9oQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=Hy0jRkFrwMc
+video_date: 2026-01-29T15:30:10+00:00
+video_description: |
+  ⚠️ Aviso importante sobre segurança
+  Este vídeo tem foco educacional e de aprendizado.
+  Apesar do uso de Docker e boas práticas de isolamento, não utilize este setup com contas pessoais ou sensíveis, a menos que você saiba exatamente o que está fazendo.
+  
+  ❌ Não conecte:
+   - sua conta pessoal de e-mail
+  - contas principais de redes sociais
+  - contas bancárias ou serviços financeiros
+  - qualquer conta crítica ou de produção
+  ✅ Utilize este ambiente para:
+  - aprender sobre agentes de IA
+  - gerar imagens e áudios
+  - testar automações
+  - estudar fluxos, integrações e comportamento de agentes
+  - experimentação em ambiente isolado
+  
+  A ideia aqui é aprender e explorar, sempre com atenção à segurança.
+  Segurança não é apertar um botão — é entender o contexto e usar a ferramenta com responsabilidade.
+  
+  🧠 Observação final
+  Cada pessoa é responsável pelo uso que faz das ferramentas apresentadas neste vídeo. Se você pretende usar agentes de IA com dados sensíveis ou contas reais, estude mais profundamente segurança, isolamento e boas práticas antes.
+  
+  ⚠️ Importante: este agente possui capacidade de executar comandos no ambiente em que está rodando.
+  Quando corretamente isolado (como demonstrado neste vídeo), o impacto máximo de um erro é o próprio ambiente se autodestruir, sem acesso a dados externos, diretórios do host ou contas pessoais.
+  
+  🔥Se inscreva para receber novidades:
+  https://links.elirigobeli.com/lista
+  
+  📄 Download do AQUIVO e passo a passo com COMANDOS:
+  https://links.elirigobeli.com/clawd-no-docker
+  
+  📌 HOSPEDAGEM VPS NA HOSTINGER
+  → Use o CUPOM: ELIRIGOBELIAI (10% OFF)
+  → https://links.elirigobeli.com/hostingeropenclaw
+  
+  @elirigobeli
+  
+  Você precisa assistir estes vídeos 👇🏻
+  Crie Apps: https://youtu.be/U4XNeOAsoq4
+  O Agente que Cria seu App na Loja:  https://youtu.be/9V9dYm0To1w
+  Dinheiro com Saas: https://youtu.be/Cfh8IvTLo54
+---
+Nesse vídeo eu vou te mostrar uma das formas mais seguras e simples de instalar o Cloud Bote de graça. Isso mesmo, sem gastar nenhum centavo. O Cloud é, sem dúvida, o melhor agente que você pode ter em 2026 para trabalhar 24 horas por dia, 7 dias por semana para você. Ontem eu fiz esse vídeo mostrando um passo a passo super completo de como você instala ele em uma VPS, mas nem todo mundo tem uma VPS disponível ou um computadorzinho velho em casa para instalar ele. É por isso que eu vou ajudar você a instalar no seu próprio computador, mas sem correr o risco de zoar seu computador inteiro. Ele vai
+
+rodar no seu computador, mas na verdade dentro de um contêiner usando o Docker. E você também não vai gastar com inteligência artificial. Nós vamos usar modelo gratuito e também tem uma dica muito legal no final. Mas já sabe, se esse tipo de conteúdo faz sentido para você? Se inscreve no canal e deixa o seu like. Isso me ajuda bastante. Inclusive,
+
+a gente tá quase batendo a meta dos 100.000 inscritos. Bora pro vídeo. Primeiro, vamos entender uma mudança que ocorreu. O Cloud Bot mudou o nome pra Mbot. E isso aconteceu por conta da
+
+Cloud, na verdade por conta da Antropic que criou o Cloud e que faz parte dos melhores modelos que nós temos hoje no mercado. Só para você ter uma ideia, o Cloud Code é um dos modelos mais utilizados para programação com IA. Então, para não confundir o Cloud Bot com Cloud, segundo esse tweet deles aqui, a Antropk pediu que mudássemos nosso nome por questões de marca registrada. E eu tô explicando porque provavelmente eu vou falar Cloudbot em 99,9% das vezes, mas o Molbot pode aparecer também, tanto no logotipo como na URL e por aí vai. Agora podemos ir paraa instalação e o primeiro passo é instalar o Docker. E aqui vale uma explicação
+
+rápida caso você nunca tenha utilizado o Docker. Você tava navegando no seu YouTube e de repente se deparou com um vídeo falando: "Automatize tudo". Você clicou para assistir N8N. Imagina apertar um botão e deixar grande parte das suas tarefas funcionando no automático. Você gostou da ideia?
+
+Começou a aplicar e descobriu que tinha uma série de passos ali para configurar esse tal de N8N. Você precisava de um servidor, precisava instalar o un 8N, banco de dados, API do WhatsApp e uma série de outros programas. E você levou um tempo considerável para instalar tudo isso na sua VPS. E é assim que funciona para qualquer aplicação ou ambiente de desenvolvimento que você tá criando. Mas certo dia você quer mudar de servidor, como que você faz? E é aqui que entra o
+
+Docker, porque com ele funciona da seguinte forma. Você vai ter o Docker instalado aqui na sua máquina. Nesse docker você vai poder criar vários contêiners. Então vai ter aqui, ó, o contêiner do N8N. Então ele vem para cá, vai ter o contêiner do banco de dados.
+
+Às vezes vamos usar o quê? O post greas ou outro banco de dados. Vem para cá. E assim para outras aplicações também. OK?
+
+Isso daqui pode parecer a mesma coisa, mas não é porque cada contêiner desse daqui, ó, ele tem os seus próprios arquivos de configuração. É como se fosse um mini sisteminha dentro. E isso facilita muito na hora de replicar. É um ambiente isolado que tem tudo que a aplicação que tá nele precisa para rodar. E isso daí não se mistura com as outras aplicações dentro do sistema. E
+
+também não interfere aqui, ó, no seu sistema principal. Outro detalhe é que você consegue configurar se esse contêiner aqui, por exemplo, vai conseguir enxergar esse daqui ou se um contêiner conseguir enxergar dados no seu computador. Então você consegue também proteger melhor o seu computador. Isso daqui é o básico para eu explicar como que vai funcionar agora o cloud no contêiner. Então aqui tá o seu PC, que nesse caso eu vou utilizar um Windows.
+
+Nós vamos instalar o Docker nele e dentro do Docker nós vamos ter um contêiner do Cloudbot. Então é muito mais difícil o Cloud Bot conseguir estragar alguma coisa aqui, ó, no nosso PC. A gente consegue deixar ele isolado, mas no processo vai ficar bem claro como que tudo vai funcionar e vocês vão curtir. Então vamos lá, vamos instalar o Docker. Para fazer o download do Docker, você vai acessar Docker.com, vai passar
+
+o mouse aqui em download Docker Desktop e escolher a versão do seu sistema. No meu caso, download for Windows AMD64. E vai salvar o arquivo no seu computador. Vou abrir aqui o executável. Aqui tá perguntando se pode adicionar um atalho no desktop. OK. Descompactando. Agora é
+
+clicar em fechar e reiniciar. Aqui é o termos de uso falando que se eu for uma empresa eu tenho que pagar por ele. Vou clicar em aceitar. E aqui ele tá falando que eu preciso pressionar qualquer tecla para instalar um subsistema do Windows para Linux. Eu vou apertar um enter. Ele
+
+vai pedir permissão aqui. Eu dei um OK e ele vai instalar. É como se ele instalasse um mini Linux dentro do meu Windows. Pronto, instalou. Agora a gente pode fechar e se você quiser você pode criar uma conta, pode colocar aqui como trabalho ou pessoal, mas eu vou clicar aqui, ó, em pular. Agora ele tá
+
+reclamando aqui que o Windows subsystem for Linux está desatualizado. Eu vou copiar aqui, ó. Mas antes de tentar executar no terminal, pra gente atualizar, eu vou dar um try again, tentar de novo. Abriu essa janela aqui, ó. Welcome to WSL, mas eu vou fechar.
+
+Pronto, parece que tá tudo OK aqui. E a gente nem precisou usar aquele comando que nós copiamos. Agora é criar o contêiner. Então agora com Docker instalado e zerado, vamos começar a instalação. O primeiro passo vai ser você fazer o download desse arquivo aqui. Ele chama Docker File. O link vai
+
+est na descrição. Esse arquivo é a receita do nosso contêiner. É tudo que vai precisar ali na imagem pra gente instalar a aplicação. Não é aplicação ainda. Eu até poderia colocar aqui mais informações para ele já começar instalando a aplicação inteira, mas não faz sentido nesse tutorial. Aqui, por
+
+exemplo, eu falo para ele utilizar como base o Ubunto 2204. Mas detalhe, isso daqui não é o sistema completo, tá? É o mínimo necessário pra aplicação rodar. Aqui eu só evito dele ficar perguntando se pode instalar os pacotes. Eu deixo ele fazer tudo direto. Aqui, ó, eu
+
+preparo o ambiente já instalando algumas coisas que eu sei que vai precisar, como por exemplo, Curve, Git. Inclusive, eu vou colocar aqui, ó, para ele já instalar o Vin, que é um editor de texto que a gente vai ter que usar mais à frente. Aqui eu configuro o diretório padrão do contêiner. Aqui eu falo que a imagem espera utilizar essa porta aqui. E você vai entender mais à frente. E
+
+aqui eu falo que quando iniciar o contêiner, ele só tem que abrir o terminal, que no caso é um bash. Você vai colocar esse arquivo dentro de uma pastinha no seu computador. Aqui tá minha pastinha com esse único arquivo lá dentro. Eu vou clicar com o botão direito aqui e vou selecionar abrir no terminal. No meu caso, abri o porshell.
+
+Se você não tem instalado, é só instalar. No vídeo anterior, eu explico com mais detalhes esse processo, mas é bem simples. Repara que ele abriu nesse diretório aqui que eu chamei de Cloudbot 2. Se eu der um de, o que que eu vejo? Eu vejo a lista dos arquivos lá dentro e só tem o Docker file. Agora nós vamos
+
+criar uma imagem desse contêiner usando esse Docker file. Você vai digitar esse comando Docker espaço build espaço men- T espaço cloudbot, que foi o nome que eu dei, espaço ponto e enter. Agora é só esperar ele criar. Pronto, terminou. Se a gente abrir o Docker e clicar aqui, ó, em imagens, nós temos uma imagem aqui, ó. Tá vendo? Cloudbot. O contêiner ainda
+
+não tá rodando e eu não quero rodar por aqui, eu quero rodar pela linha de comando também. Eu vou limpar aqui para não misturar os comandos. Agora você vai rodar esse comando aqui, ó, Docker Run, só que ele tem algumas configurações de porta, de nome. É só colocar do jeito que tá aí e apertar o enter. Pronto, foi bem rápido, ó. E agora aqui no Docker,
+
+vou entrar aqui em contêiner, ó. Olha só, tá até verdinho aqui, porque ele tá rodando. Foi iniciado, ó, há 26 segundos. Aqui tá a configuração das portas, mas eu quero acessar o terminal dele. Eu vou clicar nesses três pontinhos, open terminal. Aqui a gente
+
+tá no terminal. Eu vou listar aqui, ó, ls - l/ estrutura do Linux aqui, ó, aquele ambiente do punto que nós criamos. Mas eu não quero ficar mexendo nesse terminal, eu quero ir lá pelo pshell. Quando nós executamos aquele comando para rodar o contêiner, nós já entramos nele. Se eu der aqui, ó, um ls espaço men- L barra também para listar, eu vejo exatamente aquele conteúdo que nós vimos anteriormente. Então, nós já estamos
+
+dentro desse mini sistema, vamos dizer assim, com tudo preparado para rodar o Cloudbot. Agora é instalar ele. Então, aqui no site do Cloudbot, que agora é Modbot, tem o comando aqui, ó. No meu caso, eu tô numa máquina Windows, então ele já tá mostrando Windows. A gente vai clicar aqui para mudar para Mac ou Linux e pegar, ó, esse comando aqui, ó. Tem um
+
+botãozinho aqui, é só copiar, colar e apertar o enter. Começou a instalação do Mebot. Motebot instalado. E aí ele já começou aqui a parte da configuração. Eu vou fazer mais rápido. Assista o outro
+
+vídeo depois que tá mais detalhado. Vamos lá. Ele tá perguntando se eu aceito os riscos aqui. Eu vou colocar y agora tá perguntando se eu quero fazer o onboard aqui de forma manual, né? Ou o quickstart. Eu vou colocar quickst. E
+
+agora tá perguntando qual modelo eu quero utilizar. É o cérebro do nosso agente. E tem todos os modelos aqui, ó. Se a gente selecionar a empresa, vem um monte de modelos dessa empresa. No vídeo anterior, eu mostro como usar configurando a Open AI. Se você já tem
+
+uma conta do plano Plus, eu recomendo demais você ir por esse caminho aqui. Mas como a proposta aqui é fazer no plano gratuito mesmo, nós vamos utilizar a Open Houter. Eu vou clicar aqui, ó, em Open Houter. E aqui ele tá pedindo a API da Openouter. Eu vou clicar de novo e aqui eu tenho que digitar API.
+
+Openhouter.aiai é um site que tem um monte de modelo e você consegue usar esses modelos nas suas aplicações com uma chave de API só. E o modelo que nós vamos utilizar é esse daqui, ó, o Z.Aai GLM4.5 Air 2. Free. Vou clicar aqui, ó, e tem
+
+mais informações do modelo. E aqui é o seguinte, eu testei alguns modelos free e não funcionou. Então, pode ser que quando você for tentar usar esse modelo, eu não sei quando você tá vendo esse vídeo, ele não vai estar disponível também, mas aí você procura um outro modelo free. Em todo caso, existem outras duas formas para você rodar um modelo de forma gratuita. Uma delas é usando uma aplicação chamada Olama. Se
+
+você quer entender como funciona, dá uma olhada nesse vídeo aqui do meu canal que explica como rodar uma IA no seu computador. Nesse caso, a gente utiliza modelos menores de código aberto, só que eu já vou te avisando, você vai precisar de placa de vídeo e mesmo assim ainda pode ser que o computador fique engasgando um pouco e demore para responder. Já a outra solução eu vou falar no final do vídeo que eu acho que é bem mais interessante. Então vamos criar nossa API na Open Houter. Eu vou criar minha conta clicando aqui em signup. No meu caso, eu vou entrar com a
+
+conta da Google, mas você pode criar com seu e-mail. Vou aceitar os termos, clicar em continuar e pronto, conta criada. Agora eu vou clicar aqui nesse menu KISS e vou criar uma chave de API. Vou dar um nome para ela, cloud bot. Vou clicar em create. Vou copiar a chave e
+
+vou colar aqui na configuração. Eu vou dar um contrl shift V e vou dar um enter. Agora ele tá perguntando, beleza, você já colocou a sua chave aqui da Open Houter, qual modelo você quer? Eu poderia sair procurando aqui, ó, em todos esses modelos, mas o que que eu vou fazer? Entrar com o modelo manualmente. Vou dar um enter. E aqui eu
+
+vou digitar o modelo. Aqui na página do modelo, eu vou copiar, vou apagar esse alto aqui, ó, e vou dar um conttrl V. Então, ficou desse jeito. Vou dar um enter. Agora ele tá perguntando se eu quero configurar uma aplicação de entrada, como por exemplo, Telegram, WhatsApp, para eu conversar pelo celular. Esse processo tá muito bem
+
+explicado no vídeo anterior, então eu não vou fazer aqui, mas eu fiz nos meus testes, funcionou normalmente, beleza? Usando o Telegram também. Então é só aplicar o que eu expliquei lá no vídeo anterior. Nesse caso aqui, eu vou selecionar script for now e vou dar enter. Daqui pra frente eu também expliquei no vídeo anterior com muito mais detalhes. Aqui eu vou fazer rápido.
+
+Configurar skills. Yes. Show home brew install command. Yes. Gerenciador de pacotes pro node que eu quero usar. NPM.
+
+Aqui as dependências de algumas skills. Eu vou selecionar skip for now, enter. Google places API key, no local places, no. Gemini API pro nano banana para gerar imagens, não. A PI da Openi para gerar imagens, não. A PI da Openi para
+
+gerar áudio, não. A PI da Eleven Labs para gerar áudio? Não, também. Beleza? Aqui sobre os hooks, eu vou habilitar essas três opções que eu também expliquei melhor no outro vídeo. Vou dar
+
+um enter. E pronto, toda a configuração aqui do onboard foi feita. Repara que nessa sessão aqui, ó, do dashboard, ele tá mostrando uma com a porta e também um token. Você vai salvar esse token que tá aí. Beleza? Nessa sessão, ele também
+
+explica como que você faz para configurar, caso você queira que ele procure ou pesquise as coisas na internet. Você vai ter que usar uma API aqui de um navegador chamado Brave, que eu expliquei no outro vídeo também. Por padrão, ele não vai pesquisar na internet. Beleza? Só que não tá rodando.
+
+Como que a gente faz para rodar ele agora? Para rodar o gateway dele, a gente vai executar o seguinte comando, ó. Cloudbot, espaço gateway, menos, menos porta e passar esse endereço de porta. Todos os comandos vão estar no arquivo que eu vou deixar no link da descrição. Vou dar um enter. Pronto, tá
+
+rodando. Mostrou aqui algumas configurações. Uma delas, ó, é o modelo que tá utilizando. Beleza? Agora, como que eu converso com o gente? Se você já
+
+assistiu o vídeo anterior, você lembra que tem ali umas três formas no mínimo, né, que a gente configurou o Telegram, mas também tinha o TUI, que é o terminal user interface, e tinha a parte web. Primeiro a gente vai conversar com ele pelo terminal. A gente precisa abrir uma nova guia do Power Shell. Então ele tá rodando aqui, certo? Eu vou clicar aqui nesse maisinho, abrir uma nova guia e eu preciso entrar de novo dentro desse contêiner e é esse comando aqui, ó.
+
+Docker espaço execot, que é o nome que eu dei para ele, espaço bash. Tô dentro do contêiner, ó. Vou limpar aqui, ó, só pra gente ver qual que é o comando que eu rodo para executar o terminal user interface. Eu vou colocar aqui, ó, cloud e vou dar um tab. Ele preencheu, tá? Eu
+
+vou dar um enter. Ele não vai executar nada, mas ele vai trazer as opções aqui. Ele mostra vários detalhes, ó. E eu quero rodar exatamente esse daqui, ó. Ti, terminal user interface. Então, eu
+
+vou fazer aqui, ó, cloud espaço t UI e enter. E aqui ele iniciou o agente. Repara que ele mostrou até o modelo que tá configurado. Eu vou falar aqui para ele oi e vou enviar. Então, ele tá pensando. O modelo gratuito sempre
+
+demora um pouquinho mais também. Olha só, ele falou: "Oi, tô online". Você vê que demora um pouquinho mais para ele responder por estar no plano gratuito? É o que tem, mas dá para conversar e fazer bastante coisa aqui. É lógico que talvez bata num limite lá na Open Houter depois. Ó, aqui na Open Houter, se eu
+
+clicar aqui em crédito, repara que eu tô com zero créditos aqui, mas eu vou clicar aqui, ó, em ver uso e o custo, ó. Todas elas aqui com 0. Beleza? A gente tá conversando ali com a gente de graça, mas eu quero acessar aqui a parte web. Lembra? tinha toda uma interface legal
+
+lá na web pra gente mexer. Como que faz? Nesse caso, a gente pode criar um novo terminal aqui e entrar no contêiner também ou matar essa aplicação aqui, ó. Não quero mais falar com você. Eu dou um contrtrl C, aí eu dou outro contrl C e pronto, matei aqui o terminal user interface. E agora eu consigo executar
+
+um novo comando. Olhando na listinha aqui, ó, o que nós queremos é esse cara aqui, ó, dashboard. Abrir aqui, ó, o painel de controle, a interface de usuário, com o seu token atual. Bom, então eu vou colocar cloud bot espaço dashboard e enter. Agora repara que ele me mostra de novo a URL e o token, certo? Só que ele falou que não
+
+conseguiu detectar aqui, ó, um ambiente de interface para ele poder mostrar o dado. Aí ele dá a solução, né, que, ó, é o seguinte, você pode fazer o SSH túnel, que foi o que a gente fez no vídeo anterior, que tava rodando aonde? Lá na VPS. Nesse caso aqui, eu não vou acessar via SSH, nós vamos fazer diferente. Mas por que que ele tá fazendo isso? Porque
+
+se eu copiar essa URL aqui com esse token e colocar no navegador, vai dar esse erro aqui, ó. Lembra que eu falei que o contêiner tá isolado lá? O que acontece é que aqui no meu computador Windows, eu tô executando o local host. Eu tô executando uma URL que é do Windows. Aqui quando eu coloco essa URL, eu não tô falando para acessar o contêiner lá dentro do Docker, aquilo lá tá isolado. Então, então eu preciso
+
+fazer uma configuração para quando eu executar essa URL ali no meu navegador, ele também identificar a porta que tá rodando lá dentro do contêiner. Como que a gente vai fazer isso? Aqui no contêiner, ó. Tá vendo? Tô no Porsell aqui, consigo digitar, tem um arquivinho, ó. Vou dar um CD para voltar
+
+pro usuário. Vou listar o conteúdo do diretório aqui, ó. Só que eu vou mostrar arquivos ocultos. LS espaço- la. Aqui, ó, tem uma pastinha chamada cloudbot.
+
+Começa com ponto, significa que tá um arquivo oculto. Então eu vou dar um cdcloud. Ó, comecei a digitar, digitei o tab para completar. Vou dar um enter. Vou dar de novo l espaço - la para mostrar tudo.
+
+Repara que tem um arquivo aqui de configuração. Na verdade tem outros arquivos, mas eu quero editar esse cara aqui, ó. Cloudbot.jonjason. É bom sempre fazer um backup. Já tem um
+
+backup aqui, tá vendo, ó? Ponto back, mas eu não vou fazer backup, não. O que que eu vou fazer? Eu preciso usar um editor de texto que não tem interface. Eu não consigo abrir ele aqui, tá? Então
+
+eu vou usar o VIN que a gente instalou lá no começo, lembra? Até tem como na hora de rodar o Docker, ele já vim com isso daqui configurado, mas vamos fazer manualmente aqui para vocês entenderem, tá? Então, nesse caso aqui, ó, eu vou dar um vin e vou digitar cloudbot.jon. Vou dar um enter. Entrei aqui no arquivo
+
+de configuração. Repara que tá mostrando o modelo que eu tô usando. Também tem o token do gateway. E aqui, ó, em porta tem esse bind aqui, ó, que tá loopback. O que que eu vou fazer? Eu vou mudar
+
+ele. Esse loopback aqui, ó, ele tá fazendo o serviço não aceitar a conexão do computador. É configuração de rede, então a gente só precisa mudar aqui para ele conseguir acessar. É lógico que tem várias outras formas de configurar isso aqui melhor, tá? Mas esse é um jeito de fazer funcionar. Que que nós vamos
+
+fazer? Como a gente tá no editor aqui que não é de texto, a gente vai precisar fazer o seguinte, ó. Eu vou digitar I para inserir. E aí eu vou começar a navegar no arquivo, ó, como se eu tivesse no arquivo, tá? Não é com o mouse, eu tô aqui com o teclado. Eu vou
+
+vir aqui onde está loopback, vou apagar tudo e vou trocar por l. Agora eu preciso salvar. Quando eu apertei o i, eu fui pro modo insert e aí eu consegui alterar. Tanto que aqui embaixo, ó, tá escrito insert. Que que eu vou fazer? Eu vou dar um ES. Aí eu
+
+saí do modo insert, sumiu o insert aqui e agora eu vou sair. Eu vou clicar dois pontos. Aí ele aparece dois pontos aqui, ó. Eu vou clicar W para salvar e Q para sair e vou dar um enter. Pronto, eu alterei o arquivo. Como nós alteramos
+
+uma configuração, agora a gente precisa reiniciar o serviço do Cloudbot. Eu vou voltar nessa primeira aba, lembra que tava rodando aqui, ó? Vou dar um contrtrl C. Eu matei aqui o gateway, ó. Lembra que a gente rodou aqui, ó, Cloudbot, gateway e passei a porta.
+
+Então eu matei, não tem nenhum serviço do Cloud Bot rodando. Vou rodar de novo e vou abrir a URL de novo, tá? 127.0.0.1.
+
+Só que aqui na porta, ó, eu vou mudar, não é a porta que ele passou para mim, é essa porta aqui, ó, que a gente já configurou na instalação. Então eu vou mudar pra 18790. Quando a gente colocar ela lá dentro do contêiner, ele vai redirecionar pra porta 18789. Então eu troquei aqui para 18790 já com o meu token também e vou dar um enter. Olha que legal, entramos aqui na parte web, mas ele tá mostrando um erro aqui, ó. Falou que tá desconectado do
+
+Gator porque precisa fazer um pareamento aqui. Aqui onde a gente rodou sempre vai ter uns logs, tá vendo? Aqui, ó, tem um Google Chrome aqui tentando acessar, mas ele não está autorizado. A gente vai autorizar agora esse computador que eu tô usando. Então, eu vou pra minha outra guia aqui, que já tá com contêiner aberto, ó, sem matar a aplicação. Aqui
+
+tá rodando a aplicação, o gateway. E aqui, ó, eu também estou dentro do contêiner que a gente acabou de editar o arquivo Jason, lembra? Eu vou executar um comando aqui e aí não interessa em qual diretório que eu tô. Eu vou até digitar aqui, ó, CD para sair desse diretório. Vou dar um clear para limpar tudo, porque a gente precisa executar um comando para ele listar os dispositivos que estão pendente de autorização. Olha
+
+só aqui, ó. Esse aqui é o ID que eu preciso aprovar. E agora eu vou executar o comando para aprovar ele, que é esse aqui, ó. Cloudbot espaço devices espaço approve espaço e esse request ID aqui, ó, eu vou trocar ele todinho por esse ID aqui, mas ele precisa estar entre aspas duplas. Então eu vou colocar uma aspas dupla aqui e a outra aqui no final.
+
+Enter. Dispositivo aprovado. Agora é só acessar de novo no navegador. Só de voltar aqui no navegador já tava funcionando. E agora é só conversar. Oi,
+
+tudo bem? Oi, tudo bem? aqui. Obrigado. Estou aprendendo sobre como funcionar como assistente. Vamos continuar com as
+
+perguntas importantes. Qual nome você acha que eu deveria ter? Como você prefere que eu seja? Qual emoji você acha que combina comigo? Então é o seguinte, uma vez rodando agora no Docker, no ambiente mais controlado, é brincar para ir descobrindo e ver como que funciona. Quebrou, deu pau, não tem
+
+problema, é só instalar de novo. Lembrando mais uma vez que ele tá assim no ambiente mais isolado ali, você viu ali que ele pede permissão para conseguir acessar por esse dispositivo aqui. Então já é bem interessante isso. Outro ponto importante é você não montar dispositivos do seu computador, um HD, um pen drive, para ele ter acesso. Segurança, pessoal, não é assim, ó.
+
+Apertei um botão e tá seguro, não. Quanto mais conseguir se proteger, ó, melhor. Tá. Mas e no dia a dia, como que você vai fazer? Você vai abrir aqui o Docker, ele vai tá parado aqui, certo?
+
+Ó, não tá verdinho. Aí, para facilitar, ó, você dá um start aqui para não ter que usar a linha de comando. Beleza? Clica aqui nos três pontinhos, ó. Eu dei o start aqui do lado, né? Cliquei nos
+
+três pontinhos, abrir no terminal. E aqui no terminal você vai rodar esse comando cloud bot, espaço gatory, espaço menos porte e passar a porta. Enter. E pronto, tá rodando. Mas você também poderia ir pelo PowerShell, tanto para iniciar como para executar outros comandos. Olha só, a interface web já tá
+
+rodando normal. E sobre a outra dica que eu ia dar para você usar de graça, vamos dizer assim, provavelmente usando esse modelo aqui que a Open Houter vai ficar meio lento. Em algum momento você vai falar: "Não dá para usar isso". Uma dica é você criar uma conta nova na Google e usar créditos que eles te dão de graça lá. E não é pouco não, tá? São 300. Ah,
+
+antes assiste o outro vídeo para você entender melhor essa interface, para vincular o Telegram, entender como que vincula o WhatsApp. É bem interessante. Mas voltando aqui, para ganhar os créditos, você vai acessar essa URL, console.cloud.google.com/freetrial.
+
+Você vai cair nessa tela aqui. Repara que aqui em cima, ó, ele tá mostrando. Comeceu teste gratuito com $ em crédito. Ah, eu vou ser cobrado. Não se preocupe, você não será cobrado se seus créditos acabarem. Aqui ele tá falando para
+
+acessar as configurações e ativar aquela autenticação em duas etapas, tá? Aí depois você faz isso, mas você vai vir aqui em começar gratuitamente, vai preencher com os dados aqui. Cartão de crédito, pode ser um temporário, já falei, eu costumo usar aqui cartão de 24 horas, passou as 24 horas, expira. Ele falou que não vai cobrar, mas eu prefiro fazer assim porque aí não cobra mesmo. Mas vai ter que configurar um cartão de crédito, não tem jeito. E aí você vai
+
+poder pegar uma API K. Aí na hora de escolher o modelo aqui, ó, você vai vir em Google. Aí tem três opções, né? Tem o Geminia Piki, que é o que a gente vai fazer. Tem o Antigravity, tem vídeo aqui no canal falando sobre ele. É muito
+
+legal essa plataforma para criar programas, tá? Dá uma olhada no canal. Tem também o Diminis Cali, que é a IA também pra gente criar códigos com command line através da linha de comando, não é o caso. Esses dois aqui, ó, ele faz o Oalf, que é uma autenticação que ele passa o link igual ao que eu fiz no vídeo anterior lá na Open AI. Só que por a gente estar num docker aqui num contêiner, pode ser que precise configurar de uma forma diferente, dê algum erro aí. Mas é
+
+interessante porque você consegue vincular ele ao seu plano do antigravity. Porque se você já paga algum planinho extra no Google, seja para aumentar o seu espaço do Google Photos, do Google Drive, você já faz ali parte de um plano inicial, de um plano pro de desenvolvedor. Então você conseguiria usar a sua cota também mais uma vez, igual a gente fez no vídeo anterior da Open AI, mas nesse caso aqui, ó, eu vou selecionar Gemini API Key e ele pede o API do Gemini. Aí você vai pesquisar por Google AI Studio, vai entrar nesse site e aqui embaixo, ó, tá escrito Get API, clica aí. Você vai clicar nesse botãozinho aqui em cima, ó, criar chaves de API. vai dar um nome
+
+para ela e aqui você vai escolher um projeto, só que nesse caso não tem nenhum projeto criado ainda lá no Google Cloud Console, onde a gente colocou os dados do cartão, se tivesse um projeto já ia aparecer aqui. Nesse caso, eu vou clicar em criar projeto. Eu vou dar um nome para esse projeto, pode ser o nome que você quiser, e vou clicar aqui, ó, criar projeto. Detalhe, você já tem que ter feito lá o pagamento para ter os $00 e criar projeto. Agora, se você for lá no Google Cloud Console, você vai ver que foi criado um projeto lá, tá bom?
+
+Você poderia ter criado o projeto lá também. Primeiro criou o projeto, ó, selecionou aqui, vem em criar chave e pronto, ó. A chave tá aqui. É só eu clicar aqui, ó, para copiar nesse copy aqui. Vou colar a chave, dar um enter. E
+
+aí eu vou escolher o modelo. No meu caso aqui, eu vou colocar o 2.5 flash e vou dar um enter. E daqui pra frente é seguir o que a gente já fez. Lembrando que cada modelo vai cobrar de um jeito.
+
+Aqui no Google Studio, ó, se você clicar em Playground, na lateral aqui, você consegue selecionar o modelo. Eu vou filtrar aqui, ó, Gemini 2.5 Flash. E aqui ele mostra quanto que ele cobra, ó. O preço aqui, ó, é por cada 1 milhão de tokens. Ele tá falando que o input é 30
+
+centavos de dólar e o output 2,50. Mas conforme for utilizando lá de graça dos seus créditos de $, você vai vendo como que ele tá utilizando esse saldo. É isso aí. Eu acho que esse aqui é o primeiro vídeo rodando no Dorker no mundo, talvez, porque eu procurei e não achei ninguém. Falei, vou fazer pro pessoal do meu canal porque eles merecem. Já sabe,
+
+né? Deixa o like, comenta, vale o comentário, vale o like e se inscreve no canal para não perder outros vídeos como esse. Eu espero que você tenha gostado, que esse vídeo tenha te ajudado. Eu sou Ele Rigobell, muito obrigado por assistir e até o próximo. Ciao.
