@@ -1,0 +1,22 @@
+---
+video_title: "The Simplest Way to Supercharge Your AI Agents (Skills)"
+video_id: 4FuiPsiBnYg
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4FuiPsiBnYg
+video_date: 2026-02-01T14:58:26+00:00
+video_description: |
+  Most people overload their AI agents with tools they'll never use. Anthropic's skills solve this with progressive disclosure - instead of dumping everything into the context window upfront, your agent discovers capabilities only when it actually needs them. 
+  
+  Layer 1: a simple description. Layer 2: the full skill.md instructions. Layer 3: referenced docs. Simple, elegant, and exactly how agents should work.
+  
+  Watch the full video where I cover how you can build skills into your own AI agents here: https://www.youtube.com/watch?v=-iTNOaCmLcw
+---
+It hasn't been that long since Anthropic released skills to the world and it is one of the most important advancements in AI recently and honestly one of the biggest reasons it is so important is because of how beautifully simple it is and that is the motto of anthropic. The simpler the better. We want to give our agent a lot of different capabilities to supercharge them but we don't want to overwhelm their context window. Agents are very prone to being overwhelmed when we give them a lot of information through our tools, conversation history, the system prompt, everything goes in the window. And so other methods like MCP servers, the problem there is we're giving a ton of tools upfront to the agent even if it never needs to use them in a specific conversation. That is bad.
+
+So the beautifully simple power of skills is the idea of progressive disclosure. Instead of giving all the tools up front to our agent like MCP servers, we are allowing our agent to discover the capabilities over time as it actually needs them. And so the only thing we're giving to the agent right away in the system prompt is the description of the capability or the skill. And so in this case, as an example, we have a PDF processing skill. So we're just telling the agent, hey, you have this capability if you need it.
+
+If the user actually asks you to do something with PDFs and then if the agent receives that kind of request and it wants to leverage the capability, then it'll read the skill.md. So the skill.md, this is the main file that drives any skill that you'll see from anthropic and all the ones that we'll go over with our custom implementation here. And so this has the full instructions for the capability. Now
+
+it's starting to load in the context. It's the second layer of progressive disclosure, right? like the description is layer 1, this is layer two, and then there are some other documents oftentimes that the skill that MD will reference. This is the third layer progressive disclosure. So, we're just discovering more and more context over time as we actually need it for the task at
