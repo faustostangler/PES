@@ -1,0 +1,156 @@
+---
+video_title: "I modded a 30-year-old GPS Time Server (Telstra should've)"
+video_id: CivRNW0b1H8
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CivRNW0b1H8
+video_date: 2026-09-04
+video_description: |
+  Timing is everything.
+  
+  More about Telstra's GNSS timing-related outage:
+  
+    - https://hackaday.com/2026/08/27/australias-nationwide-phone-outage-was-an-embarrassing-failure/
+    - https://www.abc.net.au/news/2026-09-02/telstra-outage-review-findings-known-network-issues-not-priority/107106588
+  
+  Some of the projects I built, contributed to, or used:
+  
+    - Jimmy Paputto GNSS HAT: https://github.com/jimmypaputto/gnsshat
+    - Densitron LCD: https://github.com/geerlingguy/densitron-lcd
+    - Time-Pi Fan Control: https://github.com/geerlingguy/time-pi/tree/master/fan-control
+    - Time-Pi Chrony Dashboard: https://github.com/geerlingguy/time-pi/tree/master/chrony-dashboard
+    - TrueTime Pi Mounting Bracket: https://www.printables.com/model/1832259-truetime-pi-mounting-bracket
+    - Right-angle HDMI and USB-C Adapter: https://deskpi.com/products/deskpi-kl-p24-raspberry-pi-adapter-board
+  
+  And here's the EEVBlog forum thread on the TrueTime XL-AK: https://www.eevblog.com/forum/projects/symmetricom-truetime-xl-dc-gpsdo/msg6292664/#msg6292664
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - A ticking Time bomb
+  01:33 - Two big problems
+  04:11 - The plan
+  04:45 - Teardown
+  06:49 - A Pi and a GNSS HAT
+  08:51 - Old batteries
+  10:56 - A closer look at the HAT
+  13:40 - Hacking the Densitron LCD
+  14:51 - Designing a mounting bracket
+  16:54 - dupont too tall
+  18:24 - Retro PLA and almost forgot the LED
+  19:38 - Learning a new old skill
+  21:25 - Wire wrapping
+  22:09 - As excited as I'll ever be
+  22:52 - Three more projects in four more days
+---
+This box is a ticking time bomb. Or at least one like it. Telstra found that out the hard way earlier this year, when basically all of Australia was left without cell service for 12 hours. I actually need a vintage time server for my NTP timing demo I'm putting on at VCF Midwest, and I figured this looks perfect for the era. This is the second project on my list of tasks to complete before VCF, and seeing as I have less than two weeks now, I'm not sure I'm going to get through this list.
+
+But I can't just use this as is. This was decommissioned for a reason. It was built in 1995, back when GPS was still in its first era, or epoch. It probably has newer firmware on it to deal with GPS rolling over to a new era in 1999, but that's not the main problem I have. But first, what is this thing, and why do I need a GPS unit for an NTP timing demo?
+
+Well, I'm going to show how NTP time was distributed over the internet in the early days, using some old Macs. And to distribute time, you need to know the time. And in the early 2000s, when the Xserve I'm going to be using as my NTP server was running, you'd use something like this. It looks at GPS satellites, gets a precise time signal from them, and the network admins would use that time signal over a serial connection and distribute it across a network. Back then, NTP was just one way time was distributed.
+
+On the back of this thing, there's an iRigB port and some other outputs. This box was probably used for, like, military timing or industrial control, and they didn't use NTP for timing. They had dedicated cables just to carry the time signals. That part's not as useful for me, but I was hoping to just drop this in, plug in a GPS antenna, and plug the serial output into the Xserve. Unfortunately, it's not that easy. There
+
+are two problems with old GPS timing gear like this. First on the back, see that 'down converter required' [sticker]? Back in the 90s, antennas weren't quite as advanced. They didn't have modern RF amplifiers built in, and because cables are lossier at higher frequencies (like GPS, which is 1.5GHz), engineers in the 90s used a trick: they shifted the RF frequency on the cable down to like 50MHz.
+
+That let the weak GPS signal ride all the way back to one of these time servers, but it required a special converter. Also, those antennas use 12V for power instead of the 5V that most devices provide nowadays. So if I just plug in a modern GPS antenna, first of all, it'll probably burn out because these are only built for 5 volts. But, secondly, since there's no frequency downconverter, the box won't know what to do with the 1.5 GHz GPS signal a modern antenna will put out.
+
+But that's just the first big problem. The second one is harder to solve, and it's the GNSS rollover bug. I mentioned in 1999, GPS rolled over to its second epoch. What does that mean? Well, this is probably what got Telstra. You see, US GPS satellites count
+
+time by weeks, starting at week zero. That was originally on January 6, 1980. The data field for GPS weeks was a 10-bit integer, and that means it's only good for up to 1,024 weeks. The engineers putting together GPS in the 1970s probably weren't thinking about software running 19.6 years later. Modern GPS actually uses 13-bits, so we won't have
+
+to deal with this for modern gear until 2137. But that doesn't help this thing. This TrueTime XL was built in 1995. And in 1999, exactly 19.625 years after GPS launched, the satellites rolled over from week 1024 to week 0.
+
+This thing's warranty expired in 1997, but TrueTime and other companies actually sent out firmware upgrades for some of these so they could keep ticking another 20 years. And I think you can even override the year field manually. That way, a company like Telstra with old boxes could put off upgrading and keep going past April 2019 when the second epoch ended. But these boxes have batteries inside to store the override settings, like that year. At least, it would store it as long as it holds a charge.
+
+Unfortunately, 30 years is a really long time for a battery, and one reboot later, a box like this will start thinking it's back in 2007. If the network trusts that time coming out of the box, all of a sudden all your computers start thinking it's the past, and things like security certificates will start failing. That brings down network services, and suddenly you have the Australian Prime Minister on the line and a whole country in panic. But even with all that, this box could still be useful if all I needed was an accurate pulse per second. Timing signals that don't have the date in them are still gonna work okay, but I wanted the date and time.
+
+So to do that, I'm gonna replace the guts of this thing with this: a Raspberry Pi with a GPS HAT. It'll work pretty much the same, except this thing should be good for decades, and I can get an even more accurate version of the network time for free since the Pi has built-in hardware timestamping for both PTP and NTP. So that's my goal today. I don't know if this video will end in victory or disaster, but let's tear into this thing and make a game plan. I like a couple things about this that I'd like to preserve.
+
+One is the screen up front. It's a two-line LCD, and I think it's relatively standard. It's older. It's an older standard, but it checks out. And I think that we can get that wired into the pie.
+
+I might or might not have time to try to wire up this and make like an interface where you can switch between time and GPS information and NTP and things like that. That might have to wait just because I don't have time to think about what I want these all to do. But yeah, let's get this taken apart and see what's inside.
+
+Oh, this is interesting. Over here, which is where the power supply is, you can see things have gotten a little warm and toasty over here. That's typical for a power supply. But one thing I noticed is there's no fan or ventilation on this thing at all. There's literally like four holes here.
+
+and there's nothing else to let air into this case. So things kind of just cook in here. I don't know if that's the most intelligent thermal design, but obviously this got hot and I don't see anything. There's a little bit of discoloration over here, but this definitely got warm and I don't think I'm going to use this power supply. I thought maybe I could do that, but I don't know if I trust this.
+
+The caps on it look okay, although it does look like these two might. I don't know if they're bulging or not, But I think I'm going to leave that be and not use this power supply. I was originally thinking that I would try to redo things in here, but looking online on the EEV blog forums, this stuff over here would require a lot of hardware hacking to make it potentially work. And potentially meaning there would still be issues and I still would have to figure out the antenna down conversion thing. So I think I'm not going to do that.
+
+But I don't want to spoil the innards of this thing in case someday I did want to come back and redo things. So what I noticed from the back, and I'm glad that I see that this is the case here, there was a space here for like another expansion in addition to this card. I don't know how that would work because there's no other expansion header or anything on here. It'd be great if I can fit this Raspberry Pi over here. This is the one I've been setting up with this Jimmy Paputto L1 GNSS HAT.
+
+Jimmy Paputto makes a few of these. I've been testing the TimeHAT on another Pi that's running in my studio right now, but this was another one that I saw online that has all the things that I need, like PPS and a really good timing-related chip from u-blox. This is the simple one that just does more positional data, but it's the NEO-M9N is on this one that I'm going to be putting in here, and I think that this will fit right here. So I'm gonna, I'm actually just gonna, well, I'll shut it down really quick. Okay, so that's shut down.
+
+And this I have wired up to the GPS antenna that's outside the building, which is a very good quality antenna signal. And at VCF, we should be having one of those. I'll talk more about that in a future video. But I hope, I think that this will fit within that footprint. And you can see, I'll show you what it looks like on the back.
+
+There's this little bracket that is screwed in that could be perfect for this. What I'm going to try to do is take off this this little bracket, take that off, measure it and then do a 3D CAD design where I could mount the pie inside of here with its ports facing out like that. And then that way I literally would not have to modify anything. How's the Z height on this? Yeah, so this if I can get it to this height so I could just set it here and have some way to fix this, then this this is the tallest part of this board and that would fit underneath the top of the case.
+
+The one concern I have is these GPIO pins would be coming up pretty close. And if I want to use this display up front, this has this little ribbon cable connector. I was thinking of making like a little adapter card. The problem is that I don't know if I can tap into these. I might have to like have a 90 degree header or something like that.
+
+I don't know what I'll do, but that's something for me to figure out once I have a mounting solution for this. One other thing that I noted was that there's a battery in here, and I just saw that it's right here. It's from Bipower, Lithium BL7PNS6, which is a strange one that's kind of...
+
+it's soldered into some pins in a strange way that would make it very hard to change out. But it says 3.6 volts, 750 milliamps. I wonder if we're still getting power on here. So I'm going to grab out my little multimeter and we'll see what we get.
+
+Yeah, we're getting 3.63 volts. That's 3.6 volts. And if I can keep making contact.
+
+This battery, I wouldn't rely on it. It's been 30 years at this point, and that battery is probably shot when it tries to carry too much load. So I think that Telstra might have had a battery that was good last time they checked it, but the battery went dead. And so some settings like the year override or how it gets its time, like turn off the GPS and get network time, there's probably an override in the Symmetricom server they used, that was probably broken and it lost that setting when when somebody rebooted that that particular time server then part of the network got the wrong time and then everything started going bad after that. But yeah, don't rely on 30 plus year old technology as the backbone of your timing infrastructure and this is a lot of people say like why do you care so much about time? Well time is essential to so many things in computer networking that you don't think
+
+about and it's usually something that's simple because you always have internet and you always have NTP but if that goes down how are you getting your time and how do you know it's accurate and how do you measure it and all those kind of things so that's part of why i like this the other part is it's just fun this is a densitron 4022bg-ct and that's upside down so you can't see that as easily unless you flip over your screen but then it'll auto rotate but yeah this uh we're just going to and see if I can build a little breadboard adapter over here that I could plug this into and then get the connections out. But we're going to do all that. The other part of this is this guy. This is the Pi that I've built up. This is a Pi 5, a 4GB Pi 5. You don't need a 4GB Pi 5. Save some money and get a 1GB if you're going to replicate this.
+
+Because it's actually, the Pi is a great deal for a little time server like this, even with the pricing as it is. You can get a 1GIG Pi 5 for $44. These hats are the most expensive part because they have these modules that are expensive by themselves. This one has a super capacitor over here to hold over some battery power. And this one gives you a GPS antenna input, and then it spits out all of the data over GPIO pins.
+
+But it also has USB output straight from the module, so you can plug that into your Pi and use it that way. Or you can use a software library that Jimmy Paputto puts out to get the time information through the GPIO header. which is what I'm doing right now. There's other features for this too, like there's a geofence relay, so you can probably set inside this card like if this pie goes out of a certain area, it can turn on a relay. So that's interesting. I'm not going to use that feature. These are used for,
+
+I think, like drones and other devices that need their positional data. We don't care about position, we care about timing. There's in fact a better timing version of this hat that I do not have that has the Neo M9T, I think, or M10T. They're timing related one that gives you even better timing accuracy, like sub 30 nanosecond, which is crazy. This one gets you like 30 to 60 nanoseconds. And then the whole solution, because this is running Linux, is probably not going to
+
+give you more than like 100 to 120 nanoseconds on average. But I set this up using crony using the configuration that they put out on their GitHub. And then I have it running as a time server for NTP. I don't have any PTP stuff running on here because I don't need it for like 20 plus year old computers. They didn't have PTP back then.
+
+And I'm gonna have this set up and then I have a dashboard that's monitoring everything so I can see how the timing statistics are, how many clients are connecting. But this won't be the primary server for the actual old Macs in the booth. This is gonna be the master time server like this guy is and it will get time from GPS, but the Xserve is actually going to be the one that is distributing that time to all the old Macs and to the entire show network. We're going to get to that hopefully in another video, if I can finish this project in the next day or two, and then we'll get to the Xserve in a future video. So right now my goal is to get this mounted into this little area so that I can have this as a standalone little time server. So first I'm going to model this out and try to get it 3D printed
+
+into a bracket here so I can plug things in, and we'll see if that all works. If not, then this next little build montage bit will not look so good, but we'll see. I realized after I was editing this video that I didn't show you any of the part between when I was working on the 3D mount for the Pi itself and this adapter board that I used to try to get the Pi's GPIO to control the Densitron LCD on the front of the thing. So I soldered up this little protoboard, I was going to do a breadboard, but it was getting a little complicated, and it was easier just to solder this thing together. But I put a potentiometer on it, which is way oversized because I don't have any surface mount ones.
+
+The only ones I have are in kits that are already soldered down, and they use lead-free solder, and they're very hard to get off cleanly. But anyway, I got that going, and the first time I plugged it in, I actually started burning the Densitron chip because I did it in reverse, and it probably didn't have great protection on it. But now it's working, and I proved that I could control this thing with the Pi. Now, as a full disclaimer, I used Claude to help me with the code for this because I'm not that familiar with ancient LCD controls. But basically, this just sends some data to the screen to display two lines of text, and I think it's 16 characters wide, which is not that much space to work with.
+
+But anyway, back to the rest of my installation of the Pi. I've been making a ton of progress on this. My goal is to make this whole system all self-contained with the pie inside and everything else. And the first step was building this little tray, which I do need to make a couple adjustments here. It's not a perfect fit yet, and a couple of these things like the standoffs are in the wrong spot.
+
+But this was my first full version of it. And I started printing these in white. I used to print these things out of black because I had a ton of it. But I print them in white because you can just draw on it and say like, oh, do this, move something here, put the standoffs here. And I have a few versions of this.
+
+When I'm making design, this is something that actually some viewers on another video mentioned, like just print off like a part of it, slice it out and print it off quickly so you can get reference for like, are these holes in the right spot? So my first print, I just measured this using a caliper over here and the holes were off by like 0.25 millimeters. So I just adjusted those and then I didn't need to do another print of this. was fine but i i printed i think this was the next one i just wanted to get the reference for where i put the pi i found out that the pi was too far this way so i moved it over a little bit and i i knew where these were because i can get a cad model of the pi 5 and put that in my software but i didn't have a cad model of this little board so i kind of guessed where these ports were and they were not there they were a little off so then that was this version which is very close but i still need to adjust things by like a half millimeter here and there and then i'll have the gps antenna on a little jumper wire going to here so that i can plug gps in the back and my goal is to get everything out the back here and the cool thing about this is i can put this stuff in with the pie and this is like a resto mod i'm i'm putting in like a new engine inside this thing and all i need to do to switch back to the old stuff is i unplug this and i plug it in here and plug in the box and and now it's driving everything the way it did since 1995.
+
+This board right here, I'm going to need to make some modifications. The next big thing I need to do besides trying to fix the height of this thing so that it fits in here, maybe I just cut this proto board here. Or I could get a...
+
+These are the only pots that I have. I probably have some more in a kit somewhere, but I don't have any flat surface mount ones. That would probably be a better idea, in fact, just to save on height on this thing. But I don't like these DuPont pins, especially for something that I'm going to be transporting up to Chicago. I don't want to be sitting there debugging one of these little jumpers going bad.
+
+So I'm going to do a technique that I've never done before, but used to be very common. I need a shorter pin. I need shorter connections because this GPIO header here fits inside this case. If I go like this, it fits inside fine, but you'll notice the pins will stick through the top, and we can't have that. So I'm going to do wire wrapping.
+
+I don't have the tool for it. I don't have the actual 30 AWG cable that's used for it. But I'll show you how that works when we get to that point. But right now I'm just going to work on finishing up the rest of this build, getting this thing tuned in so that it fits perfectly. And yeah, so that's next on here.
+
+We'll see if we can get that done tomorrow. And maybe I'll get this video done before the end of this week because I only have like the days, I'm counting on the days now and I'm still on project two of five. Interesting, just taking off the cover, which I did this morning, this cover insulates the pie and really reduces the jitter from temperature swings from air just coming in there. Another thing that I did on here was I added an official RTC battery to hold over time when I shut everything down and transport it. So it should be within a couple seconds, probably less than a second if I'm just transporting it over a day.
+
+But I also reprinted the mounting bracket in retro platinum PLA, which looks amazing. If I actually cleaned this thing, it would actually like match it perfectly. You can see from this overhead shot that it like matches the inside paint almost perfectly. It's kind of a beige color that was used on Macs for a while. And it looks like TrueTime used the same color here, but it fits perfectly. It's it fits in there so nicely.
+
+I'm glad I spent the time to kind of remake the model a few times to make it fit. And then I also decided to make the status LED work. When I got this all put together, I was like, oh, this LED is just blank. It would be nice if it did something. So it's red when there's no signal, like when you first turn on the Pi, and it turns amber if there's a 2D fix, but usually with a good antenna, you're going to get a 3D fix pretty quick, and it turns green. But I wired that up using just some jumpers
+
+into the cable that came over from it. I was just doing this really quick. I wasn't even thinking about it too hard and i forgot to put on the resistors so i wound up doing the resistors as the first thing that i actually wire wrapped resistor leads are thin enough at least these resistors that you can use the wire wrapping tool as if it's 30 awg cable and i just wrapped it on there and this this was the first time i ever tried this tool it was really cool like i never thought about this but when you use a wire wrap it will put so much force on the corners of these GPIO pins that it effectively like welds the wire to it and supposedly these connections are gas proof and they're lower resistance than even like soldering the connections. I never knew that and I increased the jank factor by just shooting the butane torch from the Hacksmith lightsaber right into the mix here to put on some heat shrink tubing to protect things. But yeah I put those two resistors on, I snipped them, I tied the wires into them, and I did solder those connections just because I don't want that coming out if there's some bumps on the road or whatever. But yeah,
+
+that part worked fine. The LED is not that hard of a connection, but this connection was a little bit more difficult to make sure I got everything right. But I stripped back all the cables. This tool is really neat. You just strip the wire with the tool. There's like a little thing that you slide
+
+the wire into and you pull back and it strips the little insulation right off of there. And then you stick it over the pin and twist, twist, twist for a little bit until it's connected. And that's it. Once I got those GPIO pins on, I switched over to the prototype board. I basically redesigned this.
+
+I ran to Micro Center and I was like, surely they have a little surface mount potentiometer. And they do, but it's in a parts kit that has like 400 other parts. So I bought that parts kit just to get that potentiometer. And now I have a bunch more random electronics parts that I will put into my random electronics bin. But yeah, I got the board rebuilt.
+
+I made it flat now so I can set it down on the base. And you'll notice that I also marked the ground and power because I did not want to accidentally reverse those again and burn out that LCD on the front. But yeah, it's kind of, I don't know, it's a little bit relaxing to just do this. Use this wire wrap technique. You don't have to solder.
+
+There's no fumes or anything, and the connections are really solid. But I put it together. And when you do this, the potentiometer has to be like all the way down, I think, or all the way up one or the other. And it's a very short amount of range that you get to get the contrast on the screen. But it worked. It wasn't burning up the screen. So that was good. And I let the pie boot up here.
+
+And this is about as excited as you'll ever see me get on camera. I'm an introvert. So I don't do things like say, yeah, or whoa, I just kind of like, yeah, that worked. That's cool. And yeah, So there it is. It starts up in local time mode, but then when it gets a 3D fix, it will show that
+
+and how many satellites it's using on the screen up to 99. I don't have that many characters, but yeah, this was the first time I ever did wire wrap, and reading the history, this was like how they did computers back in the day. A lot of boards were done like this, like the whole thing. They didn't have custom PCBs. You couldn't just go to PCBWay or whoever and print one in a couple days. So a lot
+
+of a lot of boards especially prototyping were that way but yeah it looks great and the last step of course for here in the studio I don't do this at home my home workbench is a mess but I clean up my workbench because I have more projects to do and I have videos to make so I can't just leave the workbench in that state and have it be constantly growing so I cleaned it all up and I brought out project number three which will be the next video which I'm thinking is like less than a week away, which I don't know if I'll get that done. But anyway, yeah, project number three, get this Xserve G5 working. Anyway, until next time, I'm Jeff Geerling.
