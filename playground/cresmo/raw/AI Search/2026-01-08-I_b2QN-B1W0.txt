@@ -1,0 +1,257 @@
+---
+video_title: "New #1 open-source AI video generator is here! Fast + 4K + audio + low vram"
+video_id: I_b2QN-B1W0
+channel_name: "AI Search"
+channel_id: UCIgnGlGkVRhd4qNFcEwLL4A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=I_b2QN-B1W0
+video_date: 2026-01-08T03:14:39+00:00
+video_description: |
+  LTX-2 full installation tutorial. How to use LTX-2 in ComfyUI with low vram. Best open source video generator. #ai #aitools #aivideo #veo #sora
+  
+  LTX-2 official repo: https://github.com/Lightricks/LTX-2
+  ComfyUI LTX-2 - download nodes here: https://github.com/Lightricks/ComfyUI-LTXVideo/
+  Download LTX-2 models here: https://huggingface.co/Lightricks/LTX-2/tree/main
+  Use this Gemma version instead - it’s WAY smaller https://huggingface.co/unsloth/gemma-3-12b-it-bnb-4bit/tree/main
+  LTX-2 loras: https://huggingface.co/collections/Lightricks/ltx-2
+  
+  If you don’t have ComfyUI, see this tutorial first https://youtu.be/g74Cq9Ip2ik
+  
+  0:00 LTX-2 intro
+  0:44 LTX-2 open source specs
+  3:14 How to install LTX-2 in ComfyUI
+  6:44 Full vs distilled workflows
+  8:06 Distilled lora 
+  9:15 Downloading models
+  13:31 Text to video workflow
+  15:15 How to use on low or no VRAM
+  18:45 How to use loras
+  21:05 Image to video
+  25:41 How to use controlnet
+  34:55 V2V detailer
+  
+  
+  Newsletter: https://aisearch.substack.com/
+  Find AI tools & jobs: https://ai-search.io/
+  Support: https://ko-fi.com/aisearch
+  
+  Here's my equipment, in case you're wondering:
+  Lenovo Thinkbook: https://amzn.to/4jWeKwH
+  Dell Precision 5690: https://www.dell.com/en-us/dt/ai-technologies/index.htm?utm_source=AISearchTools&utm_medium=youtube&utm_campaign=precisionai#tab0=0 
+  GPU: Nvidia RTX 5000 Ada https://nvda.ws/3zfqGqS
+  Mic: Shure SM7B https://amzn.to/3DErjt1
+  Audio interface: Scarlett Solo https://amzn.to/3qELMeu
+---
+This is now the best open-source video generator you can use, and it does it all. It has audio natively builtin, plus it can do up to 4K in resolution, and it's completely free, so you can use it for unlimited times offline. And surprisingly, you can even run this with super low VRAM, even as low as like 2 GB. This is the one and only LTX2, and finally, they released the models to this. So, in this video, I'm going to go over how you can set it up. I'm going to
+
+show you how to use text to video, image to video, how to use Loras, plus how you can use this with very low VRAM. Plus, I'm also going to show you how to use ControlNet to control the exact composition of your videos, as well as how to use their built-in upscaler. Let's jump right in. First, let me give you the specs of LTX2. This is pretty much the first good quality open-source video generator with audio natively built in.
+
+That means you can prompt any character to speak out any dialogue you specify. >> Welcome to Rosies. What can I get for you today? >> Hi Reddit. Time to sell your kidneys and buy new GPU and RAM sticks.
+
+>> Or it can also do sound effects and other stuff. >> Well, hello there little bunny. Fancy a tag. Winner gets dinner. >> Winner get dinner. And the awesome thing
+
+about this is you can generate over 10 seconds of video and up to 20 seconds without it degrading in quality or consistency. >> Did I ever tell you what the definition of insanity is? Insanity is making 10second videos with almost no VRAM. WAIT, WAIT. THIS VIDEO IS ACTUALLY 15 SECONDS. WHAT THE?
+
+>> FOR other state-of-the-art open- source models like one 2.2 2 or Hungan 1.5. Usually the quality and consistency goes down after you pass 10 seconds. Another really awesome thing about this is it's actually crazy fast. Like this is
+
+actually faster than one 2.2 as I'll show you in a second. Here's another crazy thing about this. It already has controlNet support. That means you can take a reference video and transfer attributes like edge or pose or depth of the reference video onto your new generation. So, this gives you ultimate
+
+control over the composition or movement of your output. Another really nice thing is they've already released the documentation on how you can train your own fine tunes, also called Loras, with this. If you're not familiar with the term Laura, these are basically smaller fine-tunes of the model for a specific use case. For example, you can get it to generate specific characters like this or specific artistic styles like this type of anime or you can get it to generate different like camera movements or actions or visual effects. So, they've already released the code on how you can train your own luras for LTX2.
+
+And the awesome thing is if you look at this independent leaderboard by artificial analysis, LTX2 is indeed currently the number one open-source model out there, far exceeding one 2.2. All right, enough demos and specs. Let's go over how you can install LTX2 on your computer so you can use it for free and unlimited times offline. So, here's their official GitHub repo. And down
+
+here, it does contain some instructions on how you can run this with some raw code. However, it's not too intuitive. So, what we're going to use instead to run this is a graphical interface called Comfy UI. If you haven't heard of Comfy UI, this is the most popular platform for running open-source image and video generators offline. And this tutorial assumes you already have Comfy UI installed. If you don't, see this video
+
+for a full installation tutorial. Anyways, back to here. They very conveniently released this repo called Comfy UI LTX video, which contains all the instructions and some pre-built workflows. So, you don't need to build anything out from scratch. So, let's jump right in with installing this here.
+
+It says you need a CUDA GPU with at least 32 GB of VRAM, which is not actually true. In this video, I'm going to show you how to run this. Even if you have as low as like 2 GB of VRAM, as long as you have enough RAM on your computer to run this, it's still going to work just fine. All right, so here are all the instructions. First, before we even open up Comfy UI, it's worth updating to the latest version first.
+
+So, as you can see here, I'm using the Comfy Windows portable version, which is the recommended version because it keeps all your packages and dependencies contained in this separate folder so it doesn't conflict with existing Python stuff you have on your computer. Anyways, I'm going to double click into this update folder. So, you can either click on this one, update Comfy UI, which will update it to the latest version, or you can also double click on this one, update Comfy UI stable, which would update it to the latest stable version. I would actually try this one first just to be safe. And this is going to automatically pull the latest updates and update Comfy UI for me. All right,
+
+afterwards let's press any key to continue, which will exit this window. All right, after that's done, let's go ahead and open up Comfy UI. Now, once you load this up, notice that over here in templates, if you click on video, you should see these default LTX2 workflows from Comfy UI themselves. However, these workflows are actually not recommended, especially if you have low VRAM because they're actually a bit slower than the workflows from this Comfy LTX video repo. So, I'm actually going to use this one instead. So, next, what we need to
+
+do is click on the manager button. So, I'm going to exit out of here and then click on manager. And then here is where I can search for LCX video. And you'll need to install this one, Comi LTX video. And if you've installed this from a while ago, then you can also press update to update to the latest version.
+
+All right. After you've installed those nodes, if you go in your Comfy UI folder in custom nodes, you should see this Comfy UI LTX video folder. And also, if you click on templates, you should also see that Comfy UI LTX video folder over here. So, if you click on this, notice that here they provide six workflows which you can use. These correspond to these six workflows on the same GitHub repo. So here they offer two image to
+
+video workflows. One is using the full model and one is using a distilled model. And then they also have two texttovideo workflows as you can see here. Again, one is using the full model and one is using a distilled model. And then they also have this video upscaler workflow as well as this controlNet workflow which is actually pretty cool.
+
+I'll go over this in a second as well. First, let's start with text to video. So, you might be wondering what's the difference between texttovideo distilled and texttovideo full. Well, let's actually open both of these up. All right, so it looks pretty similar. Here
+
+is the full workflow and then here's the distilled workflow. You can see the structure is pretty much the same. Now, what's the difference between the full one and the distilled workflow? First of all, for this full one, you need to load one of the full models. The full model is a bit better quality, but it does take a bit longer to generate. So, I'll
+
+link to this official Hugging Face repo in the description below. And if you're using the full workflow, you'll need to use one of these three models. The full non-compressed version is 43 GB in size. So, you'll need at least this much in VRAM or RAM in order to run this. And then they also have a more compressed FP8 version, which is 27 GB, and even an FP4 version, which is 20 GB. Again, it
+
+doesn't matter if you don't have this much in VRAM, as long as you can fit this in your RAM. I'll tell you how to do this in a second. So, let's say I'm going to download this FB8 safe tensors. And this goes in comfy UI in models and then in checkpoints. Let's click save.
+
+All right. Afterwards, let's press R to refresh your model list. And then on this dropdown, I can select the safe tensors that I just downloaded. Now, in this workflow, you can also optionally select to load this LoRa, which you can find over here. This is like over 7 GB in size. And this is a distilled lura
+
+which allows you to run the workflow in fewer steps to generate the video faster. So if you do want to use the full workflow then you can also download this lura and this goes in comfy UI in models and then in luras and then afterwards let me press R to refresh my model list again. And then down here I can select this Laura. All right. So if you decide to actually add this Laura, you can reduce this step count and generate this way faster at the sacrifice of some quality. Over here in
+
+this samplers component, you can click on this button to expand it. And over here, you can now set this step count from 20 to like four all the way to eight steps. So it's basically going to like speed up your generation by like two to four times. Now, I'll go over how to install these components in a second, but that's the main difference between the full workflow and the distilled workflow. So, for the full workflow, you need to input one of the full models, which would take more time to generate, but you can also add a distilled Laura to make your generation a bit faster.
+
+Now, if we head over to this distilled workflow, again, just a reminder, I'm showing you this one over here, LTX text distilled with Laura. This is what you get. And notice that here it's missing that distilled Laura from the full workflow because we don't need it. So all we need to do is download one of the distilled checkpoints. This basically allows you to generate a video a bit faster using fewer steps at the sacrifice of some quality. The nice
+
+thing about this distilled model is it's basically these two things merged into one. So moving forward, I'm going to just show you how to run these distilled workflows using a distilled model. just to make this a bit simpler. But the rest of the settings are the same, even if you choose to run it with the full workflow. I'll link to this hugging face repo in the description below. And you
+
+can either choose one of two distilled checkpoints. We have this full distilled one, which is 43 GB, and then we have this distilled FB8 one, which is 27 GB. So, I'm going to download this one, and this goes in comi in models, and then in checkpoints. Back to here. Let me press R again to refresh my model list. And
+
+then let me click on this dropown and select this distilled FP8 one which I just downloaded. The next step is we also need to download this upscaler because how LTX2 works is really quickly if I open up this sampler component. It's actually generating a video in two passes. In the first pass it generates a lowresolution video and then it uses the upscaler to basically upscale this during the second pass. So anyways, that's what this upscaler component does. Now, very conveniently, they
+
+already provided a link for you to download this upscaler. So, simply click on this link and here you need to download this spatial upscaler which is around 1 GBTE in size. Let's click download and this goes in comi in models and then in latent upscale models. You can see I already have this here. Let me press R to refresh my model list again.
+
+And then down here we can select this one which we just downloaded. Now here is where we upload a clip file which will basically convert our prompt into something the model understands. Now by default this uses Gemma 3 12B which is an extremely bulky model. If you click on this Google Gemma 3 link and you click on files and versions notice that this is 24 GB in size which is pretty huge. So, if you use like this Gemma 3 model in addition to even a distilled FP8 model, which is 27 GB in size, that's way too much memory. So, you
+
+could use this full Gemma 3 model, but what we're going to do instead, just to help you save on VRAM, is to use a more quantized version of Gemma 3. So, I'll link to this page in the description below. This is a 4-bit quantized version of Gemma 312B by Unsloth. And if you click on files and versions, this is only 7.8 8 GB which is a lot smaller.
+
+What you need to do to download this quantized Gemma model is to actually go in comfy UI and then in models and then text encoders and then at the top here type in cmd to open this folder up in command prompt and then what you need to do is type in get clone and then I'm going to copy this URL and then paste it in here. And if it's your first time running this, then it should proceed to basically clone all these files and folders that you see here into a folder called Gemma 3 in your text encoders folder. Now, for me, because I already have this, it's going to say that this already exists. So, that's how you would install this quantized Gemma 3 text encoder. All right. So, going back to
+
+our distilled text video workflow, let's press R again to refresh my model list. And then over here for this Gemma 3 model loader, I can click on this dropown and then select this one, Gemma 3, and then model one of two. All right. And then for the LTXV path, it's basically the same as the model I selected up here. So for me, it's going to be this one, distilled FB8 since we're using the distilled workflow. And
+
+then same with this one down here. Let's set this to distilled FB8. And that's pretty much it. Next, here is where we can specify the width and height of our video. Let's keep this relatively small at like 720p. So, it's going to be 1280x
+
+720, but you can set this to like a larger resolution if you want. And then for the length, this is basically how long the video should be in frames. The frame rate here is 24 frames per second. So, 121 frames is roughly 4 to 5 seconds. And that's pretty much it. Now
+
+over here is where I can enter a positive prompt. So let's select all and then I'm going to paste something like this. Live stream video of a female influencer. Very sad expression. She says in a very sad and crying tone, AI never sleeps and I can't keep up anymore. Then she bursts out crying. Now
+
+all the models and this prompt and all your parameters are going to be fed through this sampler component to basically generate your video. So let's actually click on this button to expand that hidden workflow which looks like this. Again, this basically generates your video in two passes. The first pass is a lower resolution video and then it would use the upscaler model to basically enhance the video further. So let's exit out of this by simply clicking here again. And that's pretty
+
+much it. That's how you can generate a video using a text prompt. Let's click run. All right, so it was actually pretty quick. LTX2 is actually faster than 1 2.2. too. And here's what I got.
+
+>> AI never sleeps and I can't keep up anymore. >> It's pretty good. So, it follows my prompt exactly, including the dialogue that I specified. And she does burst out crying in the end. And by the way, this is a save video node. So, this output is
+
+automatically saved in a video folder in your Comfy UI's output folder. So, that's how you can do texttovideo with LTX2. Now remember at the beginning of this video I told you that you can even run this on 3 GB of VRAM or even lower. How exactly do you do that? Let's go over this right now before we cover anything else. First of all, let's
+
+calculate the total size of everything. So like I said, this distilled FP8 model is 27 GB in size and then this spatial upscaler is around 1 GB in size and then this Gemma 3 quantized version is let's say 8 GB in size. So the total size of everything is roughly 36 GB. Now you don't need to have 36 GB of VRAM to run this. But the total size of your VRAM plus normal RAM has to be like over 36 GB to fit everything. So even if you
+
+have low VRAM, like 2 GB, as long as you have like 30 something GB of RAM, then you can still run this. And here's how to do so. First of all, here's a really quick fix that can instantly help you fit this with even lower VRAM and also speed up your generations by a bit. Credits to KI, which is the guy behind one video rapper, for suggesting this. What you need to do is go in Comfy UI and then in Comfy and then look for LDM and then lights and then look for this embeddings connector.py file. Now, you
+
+can rightclick and either edit this in Notepad or whatever text editor you want. For me, I'm going to open this up in VS Code. So, here's what the file looks like. And you can press Ctrl+F to search for hidden states and then equals torch. And you should see this line. What you need to
+
+do is replace this line and paste in this new line which looks like this. I'll add this line of code in the description or a pinned comment. So, you can just copy and paste it into here. Afterwards, simply press Ctrl S to save this file. And just by doing this, it should help you fit LTX2 with even lower VRAM. Here's another tip. Here's the
+
+file which you would use to start up Comi. So, what you can do is rightclick on this and then click on edit in Notepad. And you should see something like this. The last line here should be something like this. Now, if you have low VRAM, what you could do is add a parameter called d--reserve-v.
+
+And then you would add a number, let's say four. And what this means is it's going to always keep 4 GB of VRAM free. And this prevents Windows or other apps from fighting Comfy UI for VRAM. And it's going to offload everything else to your computer's RAM. Now, if you have even lower VRAM, let's say under 4 GB, then instead of just reserve VRAM, what you could do is to write dash- no VRAM, which is going to force all offloading of your models into your RAM. So, again,
+
+you're going to need like over 30ome GB of RAM in order for you to fit everything. But if you do have that much RAM, then you'll still be able to use LTX2 using this method. So, afterwards, just press Ctrl S to save this file. And then you can open up Comfy UI again and you should be able to generate videos with this even if you have low VRAM. If you want to make this a bit faster, here's another tip. Right now, it's
+
+using this Gemma 3 text encoder to actually enhance your prompt before plugging it into the video generator. So, you can also click on this node and press Ctrl +B to bypass this if your prompt is good enough. And this again just helps you save a bit more compute and generate videos a bit faster. All right, so we've covered how to do text to video and we covered some acceleration or optimization methods. Next, let's also go over how to use luras in this workflow. So, here is
+
+where you can add loras to this. Like I showed you earlier, they've already released the code for you to train your own Loras or basically fine-tuned models yourself. If you're not familiar with the term Laura, this is basically a fine-tuned model that can help you generate any action or character or art style or VFX. By the way, this is the power of open source is that the community can just generate a ton of Loras for different use cases and you can plug and play them into here to really control what you want the video to contain. So, for example, for LTX2, they've already released a few Loras for you to play around with. You can control
+
+the camera movement using one of these Loras. So, for example, let's try this dolly left one. So I'm going to click on files and versions and then over here let's click download. And this goes in comfy UI in models and then in Lauras. Let's click save. All right. So
+
+afterwards over here let's click on each of these and then press CtrlB to unbypass them. And then down here is where I can select the Laura that I just downloaded which is over here. Notice that this one is connected to the first pass of the video generation which generates a lower resolution video. And then this one is connected to the second pass which upscales the video further. So you actually need to load your Laura two times, one for each pass. So for the
+
+second one, let's again select this dolly left safe tensors file. All right. Now here's where I can control the strength or how much influence the Laura should have. So let's set this to something like8 and also 8 over here. And then here it gives us some tips on how to prompt this. So, we need to
+
+explicitly mention what should come into view on the left side. So, back to my prompt, let's add something like a dolly left shot with her dog coming into view on the left side. Let's click run. All right, here's what we get. >> AI never sleeps and I can't keep up anymore.
+
+>> And there we go. It indeed makes the camera dolly left, showing the dog on the left side. So, that's how you can add to your workflow as well. All right, so that's text to video. Next, let's go over image to video. So again, I'm going
+
+to click on templates. And then for LTX video, you can see two different image tovideo workflows. This one uses the full model and this one uses a distilled model, which runs a bit faster. So again, for me, I'm just going to go with the distilled workflow. And everything is quite straightforward. For the first
+
+card, we need to load up all these models, which should be the same as the texttovideo workflow. So, if you need some guidance on how to download these and where to download them, watch the previous section. Anyways, for me, I'm going to click on each of these dropowns and select the ones that I've just downloaded. And then for Gemma 3, I'm going to select this 4-bit one, model one. And then for this LTXV path, this is just selecting the distilled model up here. And then same with this one down
+
+here. All right. So after that is done, here is where you would specify the width and height. So again, just to make this a bit faster, I'm going to set this to 720p, but this could go up to like 4K in resolution if you want. And then batch size. Here's the number of videos
+
+you want to generate at once. For the length, this is how long you want the video to be in frames. So 24 frames per second divided by 121 frames is roughly 4 to 5 seconds. And then here is where you would upload an image to use as the starting frame. So for example, let's try this image. And then let's actually
+
+do a trickier prompt. I'm going to get her to speak in an Indian accent and say, "I've been using this lotion every day and my skin has never felt this smooth or hydrated. It honestly feels amazing." All right. And then afterwards, again, for me, I'm just going to remove or bypass this enhancer node to make it generate a bit faster.
+
+And that's pretty much it. That is image to video. So, let's press run and see what that gives us. All right. And here's what we get.
+
+>> I've been using this lotion every day and my skin has never felt this smooth or hydrated. It honestly feels >> very nice. Let me drag this over here so you can see the prompt and the input image as well. Everything remains very consistent and she does speak out this dialogue in an Indian accent. Now, the end there kind of got cut because I only set this to like four to five seconds.
+
+But if I extended this longer, then it would give her enough time to speak up the entire dialogue. Very nice. Next, let's try another example. So, I'm going to upload this image of a woman singing opera. And then here for the prompt, let's put an opera singer singing passionately with string orchestra in the background. And then for the length
+
+this time, let's actually set this to a bit longer, like 200 frames. and see what that does. Hope it doesn't kill my GPU, but it should be able to handle this. All right, so that was again surprisingly fast. That did not take long at all. And here's my video. So,
+
+let's play this.
+
+Now that is absolutely brilliant how it's also able to handle opera plus you know the verbto plus the string orchestra in the background all looks super consistent throughout this entire video. This is really good quality and definitely the state-of-the-art open- source video model you can use right now. Next, let's try another example. So, this time, let me upload an anime image. And let's see if it can speak Japanese. So, the guy should say this,
+
+and the girl should say this. And this time, let's set this back to like four to 5 seconds because that's all we need. And let's press run. And here's what I got. Let me actually drag this over here so you can see the prompt as well.
+
+>> All right. So, there are some errors with the dialogue. I think the dude spoke this correctly, but for the girl, this part was wrong. And then I think the last part was also kind of wrong. So, it doesn't seem like it could speak Japanese quite well. Now, as with the
+
+previous workflow, here is where you can also choose to add loras to this if you want. So, for example, let's just unbypass both of these. If you want to, for example, add that dolly left Laura that I showed you previously, you could use this Laura and make sure again that you set both of these to the dolly left Laura and you connect one to stage one, which generates the lower resolution video. And then you connect this other one to stage two, which is like the upscaled version. So that sums up how you can do image to video with LTX2.
+
+Next, let's go over how you can use ControlNet to upload an existing reference video and control the composition of your output. So, let's click on templates again and then I'm going to scroll down here and click on this comfy UI LTX video. And then here we are going to select this I see Laura all distilled workflow. So, here's what it looks like. Let's go over this workflow really quickly. So, here is
+
+where we would upload a reference video to control our final output. For example, let me upload this video. Let me just play this for you first. So here's what the video looks like. And then here we can choose to extract three different things from the video. The
+
+first thing is canny or basically the edge of this video. And it's going to basically apply that edge map to guide our output. And then the second option is depth. So instead of detecting the edge of the video, it's going to detect the depth of the video to guide your output. And then finally, instead of depth, you can also use this one to detect the pose of your reference video and apply that to your output. So, let's
+
+go with pose. I'm going to actually press control and select over these two nodes and bypass them. I'm also going to select this one and bypass them. All right. So, here is where you can choose to either do text to video or image to video. So, if you only want to input a
+
+text prompt, then you should set this to true. And here's where you would enter a text prompt. However, even if you set this to true, note that here it says you should always upload an image just as a placeholder anyways. So, I'm just going to upload a random photo. This is not going to be used. And then here is where
+
+we can specify what our video should be. For example, let's try something like a man in a suit walks through a quiet coyoto street at night. And let me just drag this node down here like this. It's basically going to take this video and extract her pose and set that as the pose of this man in a suit walking through Akyoto street. Next, again, just to make this a bit faster, let's set the height to 720 and the width to 1280, but this can go higher resolution if you want. And then afterwards, here is where
+
+we can click on this icon to expand the workflow. By the way, if you don't see anything on your canvas, click on this button down here to fit the workflow into your current view. So, once you load up this workflow, you might get this missing node message. I can't, for the love of God, find how to actually download this particular node. So, what I tend to do is just delete this node because I don't need it to enhance my prompt anyways. And then, just to make
+
+this a bit faster for this enhanced node, I'm going to click on it and then press Ctrl +B to bypass it. Again, you can do this if you're confident that your prompt is good and detailed enough. And then over here is where we need to plug in our models to use this. So for this first checkpoint, we are just going to use the distilled model which we just downloaded, which is this one. And then next, we need to download a pose Laura in order to use this. So I'll link to
+
+this page in the description below where you can download this Laura, which is 654 megabytes in size. Let me click download. And this goes in Comfy UI in models and then in Lauras. Let's click save. And then afterwards, let me press R to refresh my model list. And then
+
+over here in the dropdown, you should be able to see this pose Laura over here. So let's select this one. And then afterwards here, we need to select the upscaler model which we downloaded before. Pretty simple. And then here we need to select the Gemma 3 model 1 which we downloaded before. And then here we
+
+just need to use the same distilled model which I selected above. And then same with this audio VAE. It's just the same distilled model. All right. Afterwards, that's pretty much it.
+
+There's one more setting here that you can tweak, which is this strength model. So this basically determines how much influence you want the pose of this reference video to have on your final video. So here, if the strength is one, then it's 100%. This is the strongest. If you want it to have less influence, you can set this to a lower value. Let's
+
+say like 0.8. And then afterwards, this is going to get plugged through a regular generation process, which is quite similar to, you know, the text to video or imagetovideo workflows that I showed you before. In fact, if you click on this button, it would expand a workflow which looks like this. Now, note that here you might get a missing node error for this node when you run it for the first time. So this requires
+
+that you have comfy control net auxiliary installed. If you don't simply click on manager and under missing you should see this. If not you can click on in workflow and then make sure you click on this and install it or update to the latest version. So afterwards this pose estimator node should work. Now here you can choose to detect multiple features.
+
+You can choose to detect her hands which I actually don't need. So to save some compute let's disable this. Yes, I want to detect her body, but no, I don't need to detect her face. So, let's also disable this. And that's pretty much it.
+
+So, this again goes through one pass and then another pass to generate the video. So, let me go back to the original workflow. And then one last thing I forgot to do is to unbypass this save video node. So, you can actually save and preview the video. And that's pretty much it. Let's press run. All right. And
+
+here's what we get. Indeed, this is a man in a suit walking through a quiet coyoto street at night. and he is following the pose of my reference video. So that's how you can do pose to video. Now instead of pose, let's try another one. This time let's try cany.
+
+So what I'm going to do is hold down controll drag over these two nodes and then press ctrlb to bypass these nodes. And then up here, let's hold down control again to drag across these two nodes. And then press ctrl +b to unbypass them. So here it's basically the same thing but instead of pose right now we are doing canny and let's put something like a woman with blonde hair wearing a red leather jacket walking in a jungle. And again for the width and height let's set this to 1280x 720. Now here's the thing. If we do a
+
+canny edge extraction of this not only is it going to extract the edges of the character but also everything in the video. So including the trees and the ferns. So once I plug this through Cany, it's actually going to generate a video with pretty much the same composition as we see here, but it's just that the woman would have blonde hair and wear a red leather jacket instead. Anyways, let me expand this subgraph. And then again here for this bypass enhancer, I just can't get this to work. So let me just
+
+get rid of this. And then also bypass enhancer over here. And again over here, we need to load all the models that we downloaded. So again, here I'm going to choose the distilled model that I downloaded. And then here, instead of the pose Laura, this time we need to download the Canyura. So I'll link to
+
+this page in the description below where you can download this Canny Laura, which is 654 megabytes. Let's click download. And again, this goes in Comfy UI in models and then in Lauras. Let's click save. And then afterwards, let me press R to refresh my model list. And then
+
+over here I can select this canny control Laura from the drop down. And then over here it's the same models as before. So I need to select this upscaler plus this Gemma model one of two plus the distilled model that I downloaded. And then it's the same distilled model down here. All right. So
+
+that's all we need to do in this workflow. But there's one more additional thing for Cany. So over here on the sampler node, if I expand this workflow, notice that here we also get a missing canny node. So this at least for me doesn't exist. So if I double click anywhere to insert a node and I search for canny, what I get from the comfy UI control net auxiliary is this canny edge detector instead of this canny. So what
+
+I need to do is actually replace this node with this one. So let me just reconnect all the inputs and outputs of this node onto here instead. So this image input is from here and this image output also goes to here. And then let me follow this really long blue line. This goes all the way to here.
+
+Dependencies. So let me drag this over here like this. And then let me drag this node back over here. And then I can proceed to delete this missing canny node and replace it with this one. And that's pretty much it. All right. So
+
+that basically fixes all the errors that I got for this canny workflow. So let's go back to the parent view and then press run. All right. And here's what I got. So because this is doing a canny edge map, it's also detecting the edges of like the tree trunks and the fern leaves and everything and generating a video with all those details. But it's
+
+just that now we are changing her hair to blonde plus the leather jacket to red. So those are a few examples of how you can use this I see Laura workflow to upload a reference video and extract either the edge or depth or pose of your video to control your output. All right, final thing I want to show you which is the final workflow. Again, if we click on templates and then down here in LTX video, there's also this V2V detailer, which is essentially a video upscaler. So, you can upload like a lowresolution video, and it would add more details to your video. So, this first node here is
+
+where I would upload a video, which I want to upscale. Let's try this one, which is only like 426x 240. So, the quality is pretty blurry. And then afterwards, here is where we would load our models. So for Checkpoint here, it doesn't seem to use the distilled versions. So you'll need to go over here
+
+and download one of the full non-distilled versions. For me, I'm going to download this FP4 one, which is the smallest. So let me click download. And this goes in Comfy UI in models and then in checkpoints. All right.
+
+Afterwards, let me press R to refresh my model list. And then here for this drop down I can select this FP4 one. And then for the model loader here we need to download this detailer Laura which is 2.6 GB in size. So I'll link to this page in the description below or pinned comment as well. Let's click download.
+
+And this goes in Comfy UI in models and then in Lauras. Afterwards let me press R to refresh my model list. And then down here I can select this detailer Laura over here. And here is where you can control the strength of this Laura. So right now it's set at 100%, but if you don't want it to add as much detail, you can set this to a lower value. And
+
+then for this Gemma 3 model, it's the same as before. We are going to select this one, model one of two. And then for the LTXV path, it's the same as this model up here. So I'm going to select this FP4 one, which I just downloaded. And then it basically gets passed here to upscale the video. So, here is where
+
+you would specify the largest size or basically the largest side of your video. So, in our case, because this is a horizontal video, it's basically going to set the width of this to 1920 pixels. And those are basically the two main settings you need to be aware of. Now, you could tweak the rest of these settings further, but I just tend to leave it at the default. And that's pretty much it. Let's press run. All
+
+right. And here's what we get. So, you know, it's not great at upscaling. There are definitely a lot better options. I've introduced a ton of dedicated upscalers on my channel before, but this is another option for you to add more details and upscale your lowresolution and blurry videos. Anyways, that sums up
+
+all the workflows that they offer right now. Again, LTX2 is an extremely powerful model. It's currently the number one open-source model out there. It's so good with dialogue and even handling accents and different artistic styles. It can do up to 4K in resolution plus over 10 seconds of video and everything remains consistent. Best of
+
+all, you can even run this with like almost no VRAM. You don't need an expensive CUDA GPU to run this as long as you have enough RAM. And this is blazing fast. Like for me, this is faster than 1 2.2. Anyways, that sums up
+
+my video on LTX2. Let me know what you think of this and if you run into any errors. In fact, I'm sure you're going to run into a ton of errors. Definitely let me know in the comments below. Be sure to paste the exact error message that you get and I'll help you troubleshoot as much as possible. As
+
+always, I will be on the lookout for the top AI news and tools to share with you. So, if you enjoyed this video, remember to like, share, subscribe, and stay tuned for more content. Also, there's just so much happening in the world of AI every week. I can't possibly cover everything on my YouTube channel. So, to really stay uptodate with all that's going on in AI, be sure to subscribe to my free weekly newsletter. The link to
+
+that will be in the description below. Thanks for watching and I'll see you in the next one.

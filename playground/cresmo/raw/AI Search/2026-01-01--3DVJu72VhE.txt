@@ -1,0 +1,183 @@
+---
+video_title: "Long continuous AI video is here! Free & open-source"
+video_id: -3DVJu72VhE
+channel_name: "AI Search"
+channel_id: UCIgnGlGkVRhd4qNFcEwLL4A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-3DVJu72VhE
+video_date: 2026-01-01T03:30:06+00:00
+video_description: |
+  Stable Video Infinity v2.0 Pro installation tutorial. Consistent long AI videos. Free & offline #ai #aitools #aivideo
+  
+  Thanks to our sponsor Genspark. Sign up today and get free credits, plus unlimited AI chat and image generation with Pro. https://www.genspark.ai/?utm_source=yt&utm_campaign=theAIsearch
+  Jan 1–7 only: Get 40% off any Annual plan—save $100 on Plus Annual or $1,000 on Pro Annual. @genspark_ai⁩  
+  
+  Sources in order of mention
+  SVI main page: https://github.com/vita-epfl/Stable-Video-Infinity
+  ComfyUI tutorial: https://youtu.be/g74Cq9Ip2ik
+  KJnodes: https://github.com/kijai/ComfyUI-KJNodes
+  SVI 2 Pro workflow: https://github.com/user-attachments/files/24359648/wan22_SVI_Pro_native_example_KJ.json
+  Wan fp8 models: https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/tree/main/I2V
+  Lightx2v models: https://huggingface.co/lightx2v/Wan2.2-Distill-Loras/tree/main
+  SVI 2.0 Pro models: https://huggingface.co/Kijai/WanVideo_comfy/tree/main/LoRAs/Stable-Video-Infinity/v2.0
+  CLIP: https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/tree/main/split_files/text_encoders
+  VAE: https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/tree/main/split_files/vae
+  GGUFs https://huggingface.co/QuantStack/Wan2.2-I2V-A14B-GGUF/tree/main
+  
+  0:00 SVI 2.0 Pro intro
+  0:33 Demos and strengths
+  3:42 Install KJNodes 
+  5:27 SVI 2 Pro workflow
+  6:40 Downloading all the models
+  11:24 Genspark
+  13:16 How to use SVI 2.0 Pro
+  17:34 Common errors
+  19:23 How to add loras
+  21:17 GGUFs for low vram
+  
+  Newsletter: https://aisearch.substack.com/
+  Find AI tools & jobs: https://ai-search.io/
+  Support: https://ko-fi.com/aisearch
+  
+  Here's my equipment, in case you're wondering:
+  Lenovo Thinkbook: https://amzn.to/4jWeKwH
+  Dell Precision 5690: https://www.dell.com/en-us/dt/ai-technologies/index.htm?utm_source=AISearchTools&utm_medium=youtube&utm_campaign=precisionai#tab0=0 
+  GPU: Nvidia RTX 5000 Ada https://nvda.ws/3zfqGqS
+  Mic: Shure SM7B https://amzn.to/3DErjt1
+  Audio interface: Scarlett Solo https://amzn.to/3qELMeu
+---
+Finally, we have an AI that can generate long videos that are actually consistent and coherent. This is free and open- source and uncensored, and this can run with low VRAM. The tool is called Stable Video Infinity, and they just released version 2 Pro, which is actually really good and seamless. So, in this video, I'm going to show you how to install this so you can run it offline for free and unlimited times. And don't worry, I'm going to show you how to run this even if you have low VRAM. Let's jump
+
+right in. Note that Stable Video Infinity isn't new. In fact, I covered them way back when version 1 was released. But back then, the quality wasn't great, so I didn't really do a full tutorial on version one. However, this new version 2 Pro that was just released is actually really good, as you can see from some of these demos. Now,
+
+here's how it works. It actually uses Alibaba's one 2.2, which is currently the best open-source video model. It's also the most uncensored, and it uses it to generate multiple clips of 4 to 5 seconds each, which is the optimum duration, and then it would glue all these clips together to create your final long video. The trick here is that each clip has to continue seamlessly from the previous clip. And SVI version
+
+two is able to do this very well. Note that if you try to use one by itself, you could set the duration to longer like 20 or 30 seconds. But after like four to five seconds, the video starts to deteriorate quite significantly. Now, in the past, there are various tools that can use the last frame of one clip as the first frame of the next clip and so on and so forth. And then it can also stitch them together just like stable video infinity. However, in the past,
+
+you would often run into two main flaws. The first one is that the transition isn't very seamless. So, you can easily tell when one clip switches to the next clip. Another major issue is that the longer the video, the more errors and noise and distortions you get, like by 20 or 30 seconds, the quality just starts to degrade considerably and the consistency just goes out the window. And that's why you need stable video infinity. This new version solves all
+
+these problems that I just mentioned. You can see as I play some of these videos, it's really hard to tell when we actually switch from one clip to the next clip. The transition is very seamless. Note that here it says, "This new version 2 Pro produces more dynamic and natural motion. Plus, it kind of has a memory of all the characters and things in the scene." So, even if you
+
+pan away or cut to another scene and then you cut back, the characters and everything else in the scene have the same appearance. Everything is just a lot more visually consistent as you can see from some of these examples. Here's another great example of this where we can hard cut from clip to clip, but the character and the scene remains the same across the entire video. All right, so those were some quick demos of Stable Video Infinity version 2 Pro. Next, let me show you step-by-step how to install and run this on your computer. It's free
+
+and open source, and this even works with as low as 6 GB of VRAM. Also note that I'm going to show you how to run this using Comfy UI, which is like the most popular platform for running open-source image and video models. If you're not familiar with Comfy UI or if you don't have it installed yet, definitely see this installation tutorial first. I'll link to it in the description below. Anyways, from here onwards, I'm going to assume you already have Comfy UI. Now the first step is we
+
+need to install these KJ nodes by KI. If you already have KJ nodes installed previously, feel free to skip to the next section. I'll link to this page in the description below. And here are all the installation instructions. So first in Comfy UI, notice that I'm using the Windows portable version, which is the recommended version to install. We need
+
+to head over to Comfy UI and then custom nodes. And then at the top here, simply type in cmd to open this folder up in command prompt. And then afterwards, we just need to clone this repo. So at the top of this page, simply click on this green code button and then copy this URL. And then back in my command prompt, I'm going to type get clone and then paste the URL in here. Now, if this is
+
+your first time installing this, then basically what this function does is it will automatically download this KJ nodes folder in your custom nodes folder. And if you open this up, it's going to contain all the files and folders that you see in this GitHub repo. Now, if you're like me and you already have this installed previously, then you don't need to do this step because it's just going to say this folder already exists. Now, the next step is to also install all the dependencies that these nodes require. So I can exit out of this command prompt. And next, let me head back to
+
+the root Windows portable folder. And then again at the top here, simply type in cmd to open this folder up in command prompt. And then I just need to copy and paste this line over here like this. And it should proceed to install all these requirements if you don't have them already. And then afterwards, you should see this line again with no error messages. And that's basically how you
+
+can install KJ nodes. Next, we can proceed to open up Comfy UI. So, let me open that up really quickly. All right. After opening up Comfy UI, the first step is to actually click on manager and then click update Comfy UI to well make sure your Comfy UI is up to date. So,
+
+let's click on update and then click restart. All right, after restarting, the next step is to download the stable video infinity workflow. Now, currently the workflow is quite hidden. So, in fact, I'll just link to the workflow file in the description below where you can download it directly. But basically, I'm going to use this link over here.
+
+So, once I click on it, it's going to prompt me to download this JSON file, which you can save wherever you want. I'm just going to save it in my root comi folder. All right. Now, the nice thing about Comfy UI is you don't actually need to build any nodes and noodles yourself from scratch. You can just drag and drop a pre-built workflow onto your interface. So, I'm going to
+
+take the JSON file that I just downloaded and drag and drop it onto here like this. And here's what we get. Now, this might look super complicated to you, but don't worry. I'm going to go over everything step by step. Before we start even running this, we need to download some additional models for this to work. So, basically, in this blue
+
+section, we need to make sure we have all these models downloaded. So, let's go over each one. First, we need to download one 2.2. And note that you need to download two different variants for this to work. There's going to be a high
+
+variant and a low variant. And at least for this workflow, you do need the imagetovideo version. So I'm going to link to this page in the description below where we have some slightly compressed FP8 versions of one 2.2. So in this folder, you just need to look for one 2.2 and then image to video. And
+
+then for me, I'm going to go with this E4 one. So note that I need to download this high one and this low one. Note that each of these is 15 GB in size. So if you want to use this FP8 version, then you need like 16 GB to run this. But don't worry, I'm also going to show you later in the video how to run this even if you have lower VRAM. Anyways,
+
+for me, I'm going to click download. And this goes in comfy UI in models and then in diffusion models. And then I'm also going to select this low one and then click download. And this also goes in comfy UI in models and then diffusion models. Let's click save. All right. So
+
+after I downloaded that, let me press R to refresh my model list. And then over here I can select the dropown and select the one that I just downloaded which is one 2.2 I2V high over here. So the top section is for the high models and then the bottom section is for the low models. So again I'm going to click on this dropown and select 12.2 to ITV low
+
+for this one. Now, the next step is optional, but it's very recommended that you download this light X2V Laura, which basically speeds up your video generation by like four to five times. So, I'm going to link to this other page where you can download these light XTV Loras. So, on this page again, we look for 12.2 I2V and there's going to be a high version and a low version. So,
+
+let's download both of these. Note the size of them over here. So I'm going to download the high one first. And this one goes in Comfy UI in models and then in Loras. And then I'm going to do the same for the low-noise one. So let me
+
+click download. And this also goes in Comfy UI in models and then in Loras. Let's click save. All right. Afterwards, let me refresh my model list again. And
+
+then down here I can select the one that I just downloaded which is over here. High noise light XTOV. And then down here, I'm also going to select the low-noise version, which is this one. All right. Now, the final step is to download the stable video infinity version 2 pro models. And again, these
+
+are broken down into a high version and a low version. And you do need to download both. So, I'm going to link to this page in the description below. And here is where you can download both the high and the low models for version 2 Pro. Notice that the size of each of these is 1.23 2 3 GB. So, let me press
+
+download. And this goes in Comfy UI in models and then in Loras. Let me do the same for the low versions. So, I'm going to click download. And this also goes in models and then Loras. Let's click save.
+
+All right. Afterwards, let me press R to refresh my model list again. And then over here, I can select this SVI version 2 Pro high. And down here, I'm going to select this SVI version 2 Pro Low. And then afterwards, we need to download two additional things. If you've been
+
+playing around with one, then you should already have these files. But if you don't, let me show you where to find this clip file. So, we need to download this UMT5 XXL FP8. And this is located in KI's one video company folder. If I scroll all the way down and click on load more files, you can see that this clip model is all the way down here. And
+
+this is 6.7 GB in size. Let's click download. And this goes in Comfy UI in models and then in text encoders. And then afterwards, we also need to download the VAE if you don't have this already. Note that this uses 1 12.1
+
+instead of 12.2. Anyways, this is also located in the same folder. So you can download one of these two. This one is slightly more compressed at half the size. So I'm going to select this one.
+
+So let's click download. And this goes in comfy UI in models. And then in VAE. Let's click save. All right. Afterwards,
+
+let me refresh my model list again. And then for this clip text encoder, I'm going to select the one that we just downloaded. And then for VAE, I'm going to select this one which we just downloaded. And that's pretty much it. We've now loaded up all the models that are required to run this workflow. I've
+
+been exploring a ton of different AI tools, but one of the most powerful platforms you can use is definitely GenSpark, the sponsor of this video. This is becoming the all-in-one AI workspace unicorn. Capable of handling research, reports, slide decks, full website builds, automations, and even phone calls. Here are a few wild things I've had it generate. You can use this AI developer agent to even create full stack apps or websites. For me, I'm just
+
+going to go with a simple one and then prompt it to create a beautiful interactive CRM dashboard that offers insights into sales, customer engagement, and marketing campaigns. Look how beautiful this is. Everything is interactive and everything just works. Or instead, I can use this AI designer agent to easily create marketing assets. For example, I can drag and drop these product images onto here and get it to make flash sale posters like this. It's able to really
+
+quickly create a ton of different posters without me having to manually design anything. Or I can use this AI slides agent and get it to create a slideshow on the top tourist destinations in Thailand. And here's the slideshow. Everything looks beautiful and it's factually accurate. Plus, they just added some new features, including an AI inbox where you can get AI to manage your email. For example, I can
+
+easily get AI to reply to vendors using natural language, or I can create AI agents to run scheduled tasks automatically. They also added an AI teams feature, so you can easily invite team members to chat and work on projects together. This is the most powerful agentic AI platform you can use. Definitely give GenSpark a try. It's free to sign up and you get free credits to start. Plus, you get
+
+unlimited AI chat and AI image features for Pro and Plus users. The link will be in the description below. All right, afterwards, let's go over how to run this workflow. So, here is where you would upload an initial image to use as the first frame. For example, I'm going to upload this image of a girl studying.
+
+Next, it goes through this node where we set the width and height of your final video. So note that even if my original image is this size, if I leave it at 640x 640 and I set this to crop, then it's basically going to crop this into a square, as you'll see in a second. And then afterwards, it gets plugged through this first component to generate the first video, which is roughly 4 to 5 seconds. And here is where we can enter a prompt. So for example, let's get her to look at the camera and smile. In
+
+fact, each block here is just a compressed loop to generate a video with one. I can click on this button to actually expand that workflow. And if I zoom in a bit, here is the basic, you know, imagetovideo workflow using one. Anyways, here are some additional settings you can play with such as the length of the video. So, right now this is 81 frames. You can also play with the
+
+CFG, which determines how creative or how literally the AI should follow your prompt. Now to go back to the parent workflow, all we need to do is click up here. So basically this uses one to generate like a four to 5second clip and then this gets passed on to the next block which again uses one to generate the next clip. So next let's get her to drink a glass of water. And by the way, note that these two outputs are connected to these two inputs. So,
+
+what's going on is it's basically taking some samples from the last clip to guide how the next clip should generate the video. Anyways, this is the second clip. Next, we can just repeat this again to generate the third clip. And here, let's get her to stand up and then walk away. And then afterwards, it's basically going to glue these three videos together to generate your final video.
+
+Note that we need to break this up instead of just generating a 15-second clip at once because that's going to take way longer and way more compute. If we break this down separately into just clips of 5 seconds each, then it's actually a lot more efficient. Anyways, let's press run. All right, here's what we get. So, notice that first she does look at the camera and then she smiles and then next she drinks this glass of water and then she stands up and walks away. Notice that it's very seamless.
+
+Like, it's really hard to tell when it transitions from one clip to the next. And that's the beauty of this new SVI version 2 Pro. Everything is just a lot more natural and seamless. Now, if I drag this output node over here, note that again, because I set this to 640x 640, it's basically going to crop this original image into a square. And the output of this video is 640x 640. If you
+
+want to keep the same dimensions, then you can enter the dimensions down here, which is like 1365 by 768. Now, one thing to mention is that the default workflow only has these three modules. So, it basically generates three clips and then glues them together. What if you want to generate more? Well, you can absolutely do that. And here's how. First, let's
+
+disconnect this last node. And then, let's just move this all the way over here. And you can basically copy and paste as many of these as you want and string them together. So for example, I'm going to hold down control and then drag across these nodes and then press Ctrl + C and CtrlV to paste these over here. And let me drag this over here.
+
+And then next I just need to connect the samples output from the previous block to this new block. And then do the same for this extended images output. And that's pretty much it. So you can continue stringing as many of these blocks as you want, but after you're done, make sure you string this extended images output to this video combined node like this. And in theory, I mean, you can create videos that are over a minute long, and that would take like 12 of these blocks. But again, stable video
+
+infinity can handle this very well. It's able to preserve the consistency of the scene, and this new version 2 pro makes the transitions very seamless. All right, next let's go over some additional things that you need to be aware of when you use this workflow. First of all, let me cover some common errors that you might encounter. Now, here for these two nodes, notice that for this sage attention setting, it's set to auto. So, if you don't have this
+
+acceleration method called sage attention set up, it should just automatically not use it. But in case you do see some error about sage attention or triton, then you can explicitly set this to disabled like this. Make sure you do the same for both the high and the low nodes. Another common error that you might see is that it's missing this one imagetovideo SVI pro node from KJ nodes. That means that either you have not installed KJ nodes, in which case you can refer back to an earlier section of this video where I go over how to install KJ Nodes, or this might mean you have an older version of KJ Nodes, in which case you would need to update it. And it's really easy to do
+
+so. All you need to do is click on manager and then click on custom nodes manager and then search for KJ Nodes up here. And you'll need to update or install this one. So after installing or updating KJ nodes, once you restart or refresh your page, you should no longer see a missing node message. And then another common error you might get is something about not installing PyTorch 2.7.1 and then not being able to use
+
+FP16 accumulation. I'm guilty of this. I've been procrastinating and I haven't installed PyTorch 2.7.1.
+
+So in that case I would need to set this setting to false like this. And make sure you do the same for this low node as well. And this should help you bypass that error message. Now next because this workflow is using one which is the best open- source video generator you can use right now. That means you can leverage all the awesome Loras and plugins built for one. For example, you
+
+can go to Civot AI and search for loras that are compatible with 1 2.2. And as you can see here, there are a ton of different Loras you can choose from for whatever effect or camera motion or character or artistic style you can think of. For example, there's one that can help you create retro anime. Another one that can create furry videos.
+
+Another one that can create faceless gods out of all things. This Laura is for throwing objects at someone's face. Or you can use this lura to get someone to have an emotional breakdown. By the way, if you're not aware already, want is very uncensored. So there's also luras for every fetish or position or action that you can think of. Let's just
+
+leave it at that. Anyways, if you want to add additional luras to your workflow, well, you just need to add an additional Laura loader node for this high section and this low section. So to do that, you can just click on one of these and then copy and paste it. And then basically put this in between here. And then I'm going to connect this output to this input. And then this
+
+output to this input like this. And then here is where you can select the high version of your Laura. And then we also need to do the same for over here. Now, here's a quick shortcut. I can also just hold the Alt key and drag this node to instantly duplicate it. And again, let's
+
+put this at the center here. And then connect this output to this input. And then this output to this input. And then here is where I can select the low version of my Laura. And if you want to add additional Loras, you just need to string another pair of Lura loader nodes over here. All right, so that sums up
+
+how you can use this workflow with this FP8 version of 1 2.2. But like I showed you before, even this FP8 version is like 15 GB in size. What if you have even lower VRAM? Well, fortunately, this workflow also works with some even more compressed versions of one called GGUFS, which can fit on lower VRAM. So, let's
+
+go over how we can use these GGUFS in this workflow. I'll link to this page in the description below by Quanstack where they have created some GGUFS for 12.2 image to video. So, here, notice that again, because it's 1 2.2, you need to download both a high noise and a low-noise model. Let's click on high
+
+noise first. And then here you can select from all these different versions. The most compressed is Q2 and this is only like 5.3 GB. So you can even fit this comfortably within like 6 GB. Or if you have 8 GB, you can run
+
+this Q3 one. If you have 12 GB, you can run like Q5 or Q6. So for me, just as a quick example, I'm going to download this Q6 one, which is 12 GB. Let's click download. And this goes in comfy UI in models and then in unit. So that's the
+
+Q6 for high noise. I also need to go back a folder and download the Q6 for low noise. So let me scroll down here and then download this one. And this also goes in comfy UI in models and then in unit. Let's click save. All right.
+
+Afterwards let's press R again to refresh our model list. And then here's how you would use these ggufs. First, double click anywhere on the canvas and then search for unit. And we need to use this unit loader. So, let's click on this. And by the way, if you don't have
+
+this unit loader, you'll need to click on manager and then click on custom nodes manager and then search for gguf. And you'll need to download this one, comfy ggf by city 96. After installing that, you should be able to use this unit loader node. Anyways, in the model dropdown, I'm going to select the high noise one over here. And this node is basically going to replace this node.
+
+So, I'm just going to connect this over here, which should automatically disconnect this one. So, that's the high noise one. I also need to do the same for low noise. So, again, I'm going to double click anywhere here and then type in unit and select this one. And then in this model dropdown, I'm going to select the low-noise one and then again connect the node over here, which should automatically disconnect this one. And
+
+that's pretty much it. The rest of the workflow is the same as before. All right, so that sums up my review of stable video infinity version 2 pro. If you're looking to generate long continuous videos of multiple clips of a series of actions or scenes, this is currently the most consistent and efficient option. Definitely give it a try and let me know what you think. And
+
+if you run into any errors during the installation, welcome to paste the error message in the comments below and I'll try to help you troubleshoot as much as possible. As always, I will be on the lookout for the top AI news and tools to share with you. So, if you enjoyed this video, remember to like, share, subscribe, and stay tuned for more content. Also, there's just so much happening in the world of AI every week, I can't possibly cover everything on my YouTube channel. So, to really stay uptodate with all that's going on in AI, be sure to subscribe to my free weekly newsletter. The link to that will be in
+
+the description below. Thanks for watching and I'll see you in the next one.
