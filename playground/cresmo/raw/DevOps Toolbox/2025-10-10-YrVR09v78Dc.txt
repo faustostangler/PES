@@ -1,0 +1,96 @@
+---
+video_title: "You've been parsing JSON Wrong"
+video_id: YrVR09v78Dc
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YrVR09v78Dc
+video_date: 2025-10-10T13:30:28+00:00
+video_description: |
+  Airia provides a unified, model-agnostic platform that connects to enterprise data, streamlines AI operations, and enforces AI security and governance. Start your free trial today: https://airia.com/register/
+  ---
+  
+  JSONs are great at moving data around between applications, but for humans it can be a nightmare to read.
+  But it doesn't have to be, JQ is a programming language made specifically for that: parsing JSON.
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Have you ever felt completely lost inside a giant text file? Wait, let me make this scene even worse. What if all that text was actually unparsed JSON? You open it up, your screen is just a wall of brackets and quotes. You know, the answer is buried in there somewhere.
+
+Trying to find it is literally the definition of finding a needle in a hay stack. I remember this one time I was staring at a massive log file from a server. Thousands and thousands of lines of nested JSON. All I needed to do was to find one specific request ID we knew for a fact caused some issues. It was so large online JSON parsers froze trying to handle it. I spent hours scrolling and
+
+ripping my way through different parts of copy text. My eyes started to hurt and I felt like I was getting absolutely nowhere. Over the last decade, I probably wasted hundreds of hours doing exactly that. Here's a fun fact. According to research, your brain can only really hold about four pieces of information at one time. When you try to manually track nested data,
+
+you're forcing your brain to do something it just isn't built for. Now, most people think you have two bad options. either search manually and get a headache or waste time writing scripts to parse the file. But that's not the whole story. There's one tool that lets you speak the language of JSON directly from your command line. JQ. But jQ isn't just a tool or a CLI. It's a fullblown language.
+
+It's a combination of SED GREP and AWK but for JSON. I'm not just talking about finding a value. I'm talking about filtering, manipulating, and bending any JSON data to your will with a single command. I'm going to show you how to use JQ to make you feel like you have superpowers. JQ, as we already established, isn't just a command line utility. It's a very high level
+
+programming language handling JSON, which just for context stands for JavaScript object notation. But as most of you probably already know, is used by most web systems and a default way to send and receive data using REST APIs. JQ was first released on October 2012 by Steven Dolan attempting to create the famous Unix utility said but for JSON there's a Go implementation called Go JQ which also extends JQ to support YAML there's another way to do that and much more we'll get there another port obviously is written in Rust because you can't have a tool that isn't rewritten using the Krabland Jack goal is to be faster and more correct whatever this means last but not least since JQ is a programming language after all JQJQ is a JQ implementation in well yeah I should print that on a t-shirt. JQ is a lightweight and flexible command line JSON processor as they put it like said but for JSON data if you've noticed the URL is JSON lang and though their page doesn't mention it jq is a programming language a very much specific naroscoped highle one but a language nevertheless if somehow you don't already have jq installed there's binaries for download available for every package manager in existence and it works like this in front of you there's a Jason describing the best startup team I know of led by Richard Hris There are some startup information location and a team holds the array of team members. Now mind you this JSON is already pitified by Neovim and then saved into a JSON file with nice structure.
+
+JQ takes a reference in this case dot is entire object and the file to read or stream to input. We get a color-coded JSON output nice but not life-changing. And this is where the language kicks in. Let's get the team for example. This is an array of members. Just by asking for team,
+
+we get the list surrounded by arrays brackets. But jq comes with an iterator. Empty brackets is basically asking for all objects and there they are one after the other. But here's where it gets fancy. First, we can ask for a specific object as one would imagine in an array, which is nice. However, leaving the index clear and then asking for a name, for example, gets the iterator
+
+to extract only relevant names from each object in the array of team members. One notable hidden feature which is especially useful when scripting with jq is stripping the result from surrounding quotes using the rod data flag like so. Now before moving forward let's make it clear jQu takes any kind of input stream or files you can echo raw JSON then pipe it over to jq and you get a parsed structured color-coded data always. This becomes even more critical when fetching raw data with curl like the jq projects commits from GitHub for example. This nasty unreadable information can be sent to the tool and voila. As mentioned, go as deep as you like. Take the first item and
+
+restructure the keys with your own object like a message holding the commit message or a name holding the commit.com.name. Is your company's AI a tangled mess of different tools and systems? That's what they call AI sprawl. And it makes everything more complicated, less secure, and
+
+much slower. But there's a simpler way. Meet area. They've built an enterprise platform that brings all your AI together in one place, making it easy to manage and use. With area, teams can build AI agents fast. They have no code tools and pre-built templates, so anyone can create a solution,
+
+not just engineers. But for those who do code, area also supports custom Python development. So, everyone can build their agents their way. Here's the best part. Area is model agnostic. That means
+
+they don't force you to use one AI model. You have the freedom to pick and switch between the best ones for each job, saving you money and improving performance without having to rebuild anything. Plus, area connects directly to your company's data and systems. This makes sure your AI has the right information while keeping it secure. Once you've built something great, you can share it with the area community. Browse readymade agents and templates and jump start your next
+
+project with ideas from other builders. Stop the prawl. Get your AI under control with area. Visit area.ai to start your free trial. Now, back to the video. JQ comes with some useful flags. We've seen
+
+minus R for raw input, removing all surrounding notation. Hyphen C for compact compresses the structure back to its condensed line form. As with other languages, when addressing an array, you can select rangebased elements. But JQ's real power is its internal functions. A useful one is the length of objects, which is nice, but you haven't seen selection yet. With select,
+
+we can do all sorts of stuff such as picking the team members whose salary is over 115K and boom, Garedon is off the list. Flipping the operator does what you think it would. There's of course also the usual operators of equal not equal to work with when selecting and filtering. Now, of course, this is a simple example. Take this to the world of application logs or load balancer access logs. If you ever had the pleasure to search through one and you start realizing the
+
+power of this thing, I can't even begin to tell you how many hours I managed to burn on slicing and gripping longjent files as if they were raw text and banging my head with frustration. So far, we've just selected a few objects. What if we want to clear unnecessary data? I mean, seriously, think about the power of it. Check this out. I can select the team's list, but delete the
+
+skills to clean the result. Much better. Want to clean further? Just pipe it on and delete more keys. Okay, that's rather simple. When things get more complicated, especially when scripting,
+
+jq allows you to set arguments. For example, we can define that n is for dh. Then select a name from the team where it matches the parameter n. But what if you're unsure of the structure and need to explore it a little? Keys gets you well the keys of an object which can also be applied to a nested item like a list. Now remember the structuring option. Let's use the pi piper team
+
+to build an object. I'll use a new key called person for the name. Then a skill would be they can do and pick a skill but only the first one on every list. And there I have pairs for team member and skills. The has function will return a boolean based on the existence of a key. So start her up
+
+isn't part of this JSON but startup very much is if we want to select only team members who have the coding skill on their tool belt. We can use whatever is indexed for that. And while code isn't exactly there, Java is the mesh's superpower. Okay, this is child's play. Let's run a realworld scenario with a proper humongous JSON file like you've all once seen before. This is a stream of
+
+logs thankfully structured in JSON but completely unreadable. Grapping this thing for a specific message is quite literally looking for a needle in a hay stack. Sending them to Jake without touching is already miles better even if you're grapping things. However, if we dig in starting from noticing we're looking at an array of messages. We start with 6,52 lines. Now, yes, it's not the
+
+amount of messages. Still, check this out. We'll get the first object keys. Inside details, there's another nested object. Let's say we want all the lines with latency larger than the arbitrary 4422 just because it's the first element on the left. Got it? Now, let's count. We're at 858. And again,
+
+not objects. There is a way to count the objects themselves by piping a real countable data set, like an array, to the length function. reading everything, typing the length gives us 500 objects of log lines in total. However, running it after the latency gives us a weird long list of sixes, which is the number of keys in each object. Not quite what we need. An easy fix is to
+
+wrap the result in list brackets like so. Now, the length will count the number of returned objects, 66 of them. Often times, especially with logs, you'd want to filter a log level. So, just like we plucked Jared from Pi Piper earlier, this time we use the comparison operator for warning lines or errors. Miles better than grappling error like I probably done thousands of times in my life.
+
+We've already established the fact that this is a programming language and as such it recognizes regular expressions, mathematical operators, and results. It can have parameters and assignments which we've used earlier. It even has comments and conditionals. Since you can grab all of it in the docs, I want to talk to you about the elephant in the room. More like three elephants to be honest. The first is JQ ports. As with many other utilities, JQ is popular enough to have forks
+
+that are also quite popular, noticeably in Go and Rust. Let's start with the first. Go JQ is a pure JQ implementation in Go. Installable through all popular package managers and basically used like jq with a few minor differences. You'll find all the usuals, but here's what caught my eye.
+
+JQ ers are not very friendly to say the least. Go jq aims to reconcile this with friendly explanations pointing exactly where the problem lies and hints heavily to help you fix the prompt. The other reason one may consider to opt for go jq is the standard yet missing yl support from jq itself. Add yl input to the flags and there we are a parsed output. You can keep quering as normal like there's no difference. And you've probably noticed all of this was sent back as JSON.
+
+So if you're also interested in the output, add the YAML output as well. And there it is. There are a few other differences to consider all listed in the project. But I don't use Gojq. I could, but I find it much easier to use the other elephant in the room, YQ, a parser for, well, you guessed it, a very popular project, which by the way also handles JSONs, XML, CSVs, toml, and others, which are all relatively new. Not quite adhering to the Unix philosophy like JQ,
+
+but that's beside the point. It was originally a jQ for YAML and a quick look at the usage tells the story. Same syntax, concepts and everyday use. So you can pick it up without thinking too much. It parses the data, color codes like JQ would, can iterate objects, use advanced functions like delions and chain further queries just like its spiritual father would. Now before moving to the
+
+grand finale, there are two small utilities that not enough people know, especially JQ users, and it's a shame they don't. JQP is a toy written in Go and essentially build jq into a dynamic UI that makes jq quering so much easier. It takes JSON in std in from where you can freely query an object, go further and further again backwards or change the query. No command line reruns. The object is always visible in front of you on the left pane. Simple but genius. Its sibling Brun built by a
+
+really cool pug bounty hunter who happens to love go by the name Tom Hudson comes in where you either don't have time for jQ or just need to flatten the data and it does exactly that. Throw JSON in and it lays flat in greable entries, hence its name grappable JSON. A poor man's jQ if you will. I still very much am using jq in scripts, automation servers, CI pipelines and every once in a while when I need a quick extraction. However, I don't use Go JQ or YQ or Gron. And some of you can
+
+probably guess why. So, finally, here's the last elephant in the room, Nushell. And before I'll show you just how big of an elephant Nushell really is, especially when talking about JQ, I will remind you that I have a couple of videos discussing the basics, advanced features, but also pros and cons, and when you should consider adopting it. It is still, despite some drawbacks, my local daily driver, but it's not for everyone. Here's the gist of it. When you open a JSON file
+
+with new shell, you literally get the keys in a table. It'll even suggest the nested objects for you to further query. Pipe it to the next function like get team and the output is already structured in a table. Need a filter? Well, the syntax can't get any easier than this. Where salary
+
+is adding an operator and a comparison target. It can convert to and from JSON, YAML, and any other format you can think of. One important caveat. While Nell is awesome, it's not a full-blown programming language. You can't do anything you want with it like you can with JQ and it's made to make your life easier when working with data. Just to prove this point, a quick rement mention to
+
+JQJQ. Yeah, the JQ in the power of three project. JQ is an absolute JSON superpower. But if you find yourself using it almost every day, I'd take a serious look at new shell on this next video. It's a shell for data reads JSON natively as well as other formats and puts it into a querable structure that makes it a breeze to read. Thank you for watching and I'll see you on the next

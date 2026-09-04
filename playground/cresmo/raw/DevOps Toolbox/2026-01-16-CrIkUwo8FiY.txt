@@ -1,0 +1,92 @@
+---
+video_title: "This SQLite Fork is SO GOOD (and it’s open source)"
+video_id: CrIkUwo8FiY
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CrIkUwo8FiY
+video_date: 2026-01-16T14:45:03+00:00
+video_description: |
+  Write code, manage infrastructure, deploy, and more – all in GoLand: https://jb.gg/tnhf2z
+  @JetBrainsTV 
+  ---
+  
+  libSQL is an open source fork of SQLite that can be distributed, comes with dev utilities and lots of goodies!
+  - https://github.com/tursodatabase/libsql
+  - https://turso.tech/
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+SQLite, the most widely deployed database and my personal favorite of all times, but it has two major problems. One being just file on disk, it's not really scalable. I mean, it can handle scale, don't get me wrong, but if you want to cluster, shard, or distribute it, that's not really straightforward. The second problem, which is more of a controversy, is that SQLite famously does not accept external contributors, nor does it adhere to a code of conduct. The project's founder chose a religious text instead. They now call it code of
+
+ethics, citing the Bible. Whether you find this amusing or genius, to some this poses a challenge. Well, LibSQL is a fork of SQLite that is both open source and open for contributions. But more importantly, in my opinion, is that LibsQL is built for replications, meaning distribution and scale. Even better, it offers LibSQL server, a remote access similar to Postgress or MySQL supporting a bunch of languages out of the box. Its core is written in C
+
+and the new features like the SQL server are written in Rust. The company behind it, Turo, is also working on a complete rewrite in Rust called Limbo, but that's for another video. They also have their own dropin replacement for SQLite utilities, making the process way nicer. Okay, lots to unpack here. Let's get into it.
+
+[sighs and snorts] So, Torso, previously named Limbo, is a process-based SQL database compatible with SQLite, which is already exciting. It's written in Rust and declared as the next evolution of SQite itself. But we're here for what enables Torso under the hood. Lib SQL, a fork of SQLite, making it truly modern. It allows for embedded replicas. But what got me
+
+really excited is the LibSQL server, also known as SQLD that makes it remotely available just like all other databases. [music] I have an app in production with a few hundred daily users running on SQLite on disk. One of my biggest annoyances is not being able to serve the data to other services, extracting analytics and other features. With lip SQL, I can create read replicas with almost zero effort. But I'm getting ahead of myself. There are many other
+
+surprising benefits. This is my project using SQLite. Using the good old SQLite utility comes back with the data as we know it. Time for an upgrade. After installing TSODB, you're going to have the TSODB CLI which can be dropped in and used similarly but comes up with a ton of extras. If I run TSODB and fit it
+
+the file, there's already a hint of something else. DOT manual comes up with docs and every run sends a hint like the change data capture mentioned here. Just by starting to type SQL, you'll see some color coding. No completions, which could be nice, but nevertheless an improvement. The good stuff are coming next. Data comes back in. Wait for it, a
+
+table, column names included, a color separators, and a pleasure to use. I've dropped this into every SQLite local work since finding it out. Running tersp with a new file name will create a DP inside. We can now create tables, other users, Alice and Bob, and read them as if Nell is running inside SQLite. Reminds me of the excitement when I first started playing with Nell last year. There are videos on the channel if
+
+you're curious. Nicer SQL statements are nice, but check this one out. Tiso DB can encrypt DBs out of the box. It's still experimental, but with a locally generated hash, adding the experimental encryption flag and a cipher key. Everything works the same until we try to reopen it. To make sure data is
+
+secure, I'll create a table of secrets. Then add some sensitive information and confidential data like a good hacker. The data is set. Let's leave the shell and try to come back. Not sure why this is a Rust compiler that sends the error instead of a proper message.
+
+Nevertheless, the DB is locked. We've all had those adrenaline ops moments. It's 2 a.m. production is failing, and you're frantically switching between your editor, a dozen terminal tabs, and browser windows just to find which YAML manifest is broken. If you're used to
+
+Nevim and TMX like I am, you know the value of staying in the flow. But we're not all terminal fanatics, and you have to acknowledge a great standard solution when you see one. That's why I've partnered with JetBrains Goland. While it's a known top tier Go IDE, it's actually a complete DevOps environment that bridges the gap between writing code and managing infrastructure. Instead of a scatter tool chain, Goland gives you a unified workspace. You've
+
+got native support for Kubernetes, Docker, Terraform, and Helm. Right out of the box, you can refactor services with smart assistance and then immediately validate Kubernetes manifests or Terraform configs with schema aware autocomp completion. It even handles Python, Bash, and YAML. So, you aren't jumping between tools or different parts of your stack. You can run and debug containers, monitor CI/CD pipelines, and use the integrated terminal all in one place. The goal here
+
+is adrenaline ops, taking the stress out of the firefighting by giving you more confidence and control over your deployment life cycle. It's about catching misconfigurations with static analysis before they hit production, saving you time and late night headaches. If you're looking to minimize context switching and make your DevOps workflow faster and safer, check out the link in the description to try Goland. Now, back to the video. Running the same command with a proper key opens the data that can be now read normally. If we
+
+check the local files, there's both databases and a wall file. I touched wall in the SQite video that you can see up here. Wall is write ahead log. This lets SQI list transactions and maintain data integrity. This is a secret sauce making SQI performant enough for modern applications. This lets the busy writer
+
+keep doing its work while maintaining a buffer on the side so that we can append changes to it. Every LibSQL DB is making well the default behavior and this enables replication which we'll see later on. But before scaling you know what other modern feature can we now use with lib SQL vectors. We can create an F32 blob which is a math fingerprint allowing the database to understand not just what the data is but what it means as in context. The type is a 32-bit float and the blob holds a binary object basically compressing data efficiently.
+
+The vector method creates an array of dimensions. In this instance, how much action is in this movie? How much comedy? And lastly, how much drama? So the Matrix movie, for example, is 0.9
+
+action, 0.1 comedy, and point to drama. With these, we can compute proximity. So scary movies, for example, will help a model understand what to look for. And since the numbers are stored in a binary, it can compare millions of rows in milliseconds. Selecting for vector
+
+distance when looking for 85 action 15 comedy and 2 drama gets the closest to the metrics and die hard. No need for a separate vector DB. You can enjoy SK light with modern AI model based applications. Even with these, this is still not good enough for me to get really excited. The one game changanger for me personally is the scalability feature. Lib SQL allows for replications
+
+and SQL D server meaning I can distribute read replicas. This means I don't only have full tolerance but more services reading my SQLite data on other instances. Honestly, it sounded too good to be true. I couldn't believe either and had to see it for myself. Check this out. I'll start by creating a primary
+
+SQLD server by running the libql server image from Turso database. As config, I'll send SQLD node of type primary and a gRPC port, which is what replicas use for communication. Once running and logs look like they're okay, it's time to roll up our sleeves. We expose the ports. This basically creates a listening service making communication easier. HTTP is nice but again for
+
+communication internally we need gRPC. So making sure that's also surfaced. Now let's attach a shell into the primary database and this is key with lib SQL. If we look into the default database on the machine at the end of the day we're looking at an SQLite file on disk. It can be opened with SQLite tooling like so. This took me some time to learn. The
+
+communication for SQLD servers will not propagate correctly if you manually treat this as a traditional DB to properly record actions and trigger the distribution of data using while you must use libq SDK. If I were to create tables and insert data, they won't just magically appear somewhere else. You know what? Let's take a closer look. We'll create the replica pod. Same
+
+libsql server but this time SQLD node of type replica [music] and SQLD primary URL to tell it where to read from. The gRPC path for SQLD primary and port 501 is taken from our earlier exposed command creating that URL. Now here's a simple test to start creating a test table above in our primary DB. Looking below at the split with a replica at the same path there's not even a DB file nothing just empty meta store. LipSQL has no way of knowing anything happened if we're working under its feet. In
+
+comes a little Golang app using the lipsql golline SDK from toert database. You don't have to speak Golang to understand. All it does is creates a hardware table, inserts a MacBook M3 Max into it, then confirms it's actually there and prints it. Next, we read from the replica, but given the eventual consistency, we'll keep testing for 10 seconds. In a loop, we'll select the same entry on the read replica pod. If
+
+it's there, we'll break the process and print replication. Okay, good enough. Cool. Let's test it. We have both the primary on localhost 8081 and the replica on 8082. We'll create these two
+
+addresses in just a second on my machine. Logs are good for the replica. Let's create the port forward, which in Kubernetes language means a temporary tunnel. 82 will send to the replica 81 to the primary. Do note that we're using the HTTP ports here. GRPC is used for
+
+intercluster communication while HTTP is used to speak to the different servers using the SDK. Everything set, go run and primary item is there. Replica item identical replication. Okay, mission accomplished with zero effort. SQLite distributed. What's more interesting
+
+that us using lib SQL SDK triggered all replication. So if I get in the replica server again and physically read the database, we're going to see something super interesting. I now have the hardware table, but also our table from earlier created without triggering while operations. With our small app running, it collected everything and replicated it to the RID replica. Before going away, one option in the Tricity BCLI caught my eyes. MCP starts an MCP server
+
+for your database. And this got me thinking, could I really just speak to my database in natural language by simply running this little switch? Let's put its name to the test. Too DB DB file MCP. Let's add the MCP to my local Gemini. Provide the DB path. Of course,
+
+we're running in yellow mode because why not set a toddler with permissions to drop my database. Gemini confirms it can see the MCP and the DB file. So, let's read all workout by user one. Simple, I know, but just a test. And boom, gets this a table with everything in my agent. I hope you see the potential. I
+
+can now analyze my database, ask whether certain statements and queries are possible, and improve them using simple language. That's pretty damn cool. And if you're thinking, "Well, I can do that without an MCP." You're not wrong, but the entire point is fitting the model with tooling and APIs to make things faster and easier. This means saving tokens and not killing your context window, especially with large databases.
+
+If you like this, I urge you to go back and watch the SQLite video explaining in detail why it's such a powerful weapon. Thank you for watching and I'll see you on the next one.

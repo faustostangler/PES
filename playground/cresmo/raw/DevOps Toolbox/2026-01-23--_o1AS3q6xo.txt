@@ -1,0 +1,90 @@
+---
+video_title: "The Holy Grail of Developer CLIs"
+video_id: -_o1AS3q6xo
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-_o1AS3q6xo
+video_date: 2026-01-23T14:30:01+00:00
+video_description: |
+  Teleport unifies identities: humans, machines, and AI. 
+  Try Teleport for free to secure AI in production infrastructure: https://fandf.co/4qDPoqv
+  ---
+  
+  If you hate the classic "it works on my machine" but love simplicity, check this:
+  While others use makefiles,  direnv, or even devbox (creating yet another nix hole), there's a modern, open source, highly popular replacement for everything.
+  - https://mise.jdx.dev/
+  - https://github.com/omerxx/dotfiles
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: 
+  https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes: 
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+You know how sometimes people join a project and then there's an environment setup guide. You set envirs install dependencies, lock in the very specific node version it uses and then you learn the make file commands. What if this was just one command? That was the promise of many tools and most people just like I did believe that a mix of Docker, make Nix are the only way to go. I was wrong. All of these tackle one problem and miss others. Even dev box
+
+that I truly admire ends up wrapping around mix which you have to have installed and that comes with its own hoops to jump through. There's a reason why I made this video. Miz for mism plus is everything above but a whole lot more. Envir in place shells running utilities like nix and a task system so freaking amazing. It doesn't only replace make task or j it's a great CI system of its own. M is tiny lightning fast written in Rust and has its own registry. It can plug into secret
+
+managers. And while it did try to cover the essentials, if you go through the features, it just keeps getting better and better. It does what others fail to achieve. We'll go from simple yet awesome basics all the way to beast mode running Miz remotely. Let's go.
+
+Everything starts with a curl. In M's case, the author was kind enough to get a dedicated domain where m.run run fetches an install script pip2 sh and we're good to go. I always like to take a good look at the help list as over the past year I found some amazing features sometimes undocumented which I wouldn't have touched otherwise but worry not the Miz docs are actually fantastic 23,000 stars on GitHub don't lie a beautiful website covering the options integrations cookbooks and a surprising how I use Miz which left me quite puzzled I must say we'll get there later Dicki is the author's name and by the way I don't know if that's a joke or a serious take but he has an advice advisory board. Maybe with AI writing the code, devs are now sitting on boards. Anyway,
+
+Miz version gets you the release architecture and stuff like that. But the very first thing you'd want to try is the inline shell. Miz exec python 3. And please ignore the double exit command. I'm actually surprised it went through. Add a double hyphen to separate the command you like. In this
+
+instance, a Python shell. And cool. Just to prove it works, my local Python is 396, whereas in miz, it's 142. All the major languages can be found in its registry like your Noode.js for example, but the registry is literally called DevTools and for a good reason. It offers a huge list of utilities
+
+to enjoy. It's hard not to compare every single detail here to Nyx. So, let me start by saying this. One major selling point of Miz is not having Nyx as a back end at all. Not a wrapper, not a backend, nothing. It's doing its own thing. Now, this fact has some drawbacks. Nick's packages, as
+
+far as I know, is by far the largest repository of installable tools. So, you may not find everything you're looking for, but I'll throw another spoiler alert to the letter the author left on how they're using it. It shouldn't be a problem. You see, Mr. Jeff actually believes that options like Homebrew for Macs or other installers for Linux or Windows do a better job for global installation than either this or Nyx. Miz, I should remind, is built for you to handle project environments, even CI,
+
+not your operating system. And that's an important distinction. All that said, you can still find some pretty niche utilities. I don't have Yazi locally, but a single Miz X Yazi as if it was always there. Yazi is fantastic. By the way, if you're not using a terminal explorer, you're going
+
+to love it. What about editors? Helix, which I should probably dedicate a video at some point, is happily loaded by mis as well. One of the biggest hurdles to developer velocity isn't just managing your runtime, it's managing your access. Most of us are used to the legacy authentication dens jumping through hoops with hardware tokens, rotating long live passwords or wrestling with a complex secret vault that honestly just adds more engineering toil. That's why I want to talk about
+
+today's sponsor, Teleport. Teleport is a modern vault-free PAM solution. Instead of just building a better box to hide your passwords in, Teleport eliminates the need for longived credentials entirely. They use infrastructure identity. This means your access is based on shortlived certificate tied to your actual identity. You get just in time permissions for your entire stack.
+
+SSH, Kubernetes, databases, and even web apps, all unified in one place. Because it's identity based, there are no static API keys or passwords left lying around for an attacker to find. It's a complete pivot from outdated models of the past to a modern security approach that actually feels like it was built for engineers, not against them. You get a centralized audit trail for every session, and your team gets to stop worrying about credential rotation and start focusing on shipping code. If you're ready to move beyond the vault and simplify how your team accesses infrastructure, check out Teleport's vault-free pan. Head over to the link below to learn more. Thanks for Teleport
+
+for sponsoring the channel. Now, back to the video. Okay, that's standalone shells, which are great for single uses, tests, and everything else. Let's start setting up a real one. Miz use in the context of a project usually starts building a list of relevant dependencies and tools. Let's use
+
+node 24 that adds it to a local mistoml file. If you don't provide a target, a nice toy will pop, offering a fuzzy search and select. A little buggy if you ask me, but I always leave room for the option that it's me and my hipster shell and configs. Anyway, randomly selecting AI chat here, which it appends to our tomal file as well. Now, the entire point in having a list of version pin tools is so that you can activate the shell with them. Here's another important distinction. When
+
+we have an activated shell with Miz, as you'll see in just a sec, we get everything autoloaded. Envir configs and our utilities configured. If you're thinking about dur than a couple of things, there's a video on the channel covering dur if you're after envir only, which is great, but if m taking that off your table, I don't see a reason why you keep it around at all. Moreover, the doc state quite explicitly that you may not want to have both running on the same project at all. So keep that in mind. Lastly, if we're comparing things to Devox,
+
+well then Devox integrates with Diren, and it does not happen by default, which means you'd have to have Nyx installed, Devox on top, and then Duran if you like the automated behavior. And honestly, who doesn't? Also, for the hipster neutral users like myself, you'd be happy to hear that it's also supported with Miz, unlike Devbox where my pull request is still standing 3 months with nothing but thumbs up and likes. So Miz just does things out of the box supporting bash elvish fish and yes new since nil doesn't support the concept of eval this makes things trickier but miz got you covered you can add these to your config after a bunch of playing around I settled on this line which you'll find in my files repo if that's of interest once that's in place we get a world of new options to start the error message when looking for a non-existing tool is a bit different but before we dive into that let's go back to my repo or Yazi is part of MI tol and what do you know inside the repo Yazi runs if it wasn't clear already just as we load the shell tools we can set environment variables and other options nodeenth for example isn't defined on my system but in my repo it says production because that's the setting in mml you can set another pair of key value inside it and the second the file is saved the shell has my value ready and just to be sure it isn't present outside so it's fair to say that we have both debox and dear killed in one go, which is a good place to introduce the one flag to that command that can potentially kill Nyx. Now, I say potentially and I mean it because I don't think I'll be using it all that often. Mainly
+
+because I have a bad NYX trauma trying to manage local packages with it, which created a mess I'm still dealing with to this day. Anyway, let's talk about global packages. Miz use global is like setting a new dependency tool which can also be pinned with a version but on a global scale meaning the system miz calls the packages that manages these shims. When you run miz activate which basically activates the path and miz starts managing it it loads the tools through its many packages. So adding that node globally tells us both that the local one will override what we've set globally which is great. That's the hierarchy we expect. And second is that node 2413
+
+added to the global miz config. If everything was configured properly, which node comes back with a shims path and the version we just added, 2413. Okay, let's talk about the cool thing that really makes miz different. We talked about how devbox requires nyx and ny is well not my personal favorite these days. I don't hate it. I made a couple of videos around it and I think it's great,
+
+but for me with my stack and environment, it doesn't work well. So Miz comes with its own repository. Every time you run Miz Exec or run, it fetches a tool available from a large list of core options, but it can use other backends as well and quite a long list. Aqua, GitHub, GitLab, Pipex, npm, Go Cargo, and yes, even Net. So you can go misuse AWS CLI or prefix it with Aqua and it'll fetch it from there. Want to use JJ inside of Git and watch my most controversial video to
+
+date. Jiujutsu is available through Miz as well. Cool. So far basics, but honestly child's play because the next section is in my opinion one of Miz's biggest selling points at least for me in my DevOps hat. Miz comes with quite an incredible task system. So your make file or task or just for
+
+the modern users is also included inside. But it's not just included. This system is so elaborate and comes with so many great options. It can literally function as your CI system and it comes ready for you to run it in your release process. Let me show you. Tasks are defined in the same miz toml file.
+
+You can start simple by adding something like build which will run go build for us. Once set, we can mis run build. And there we have it. Binary built and ready. Already have some scripts? No
+
+problem. M can run file task using standalone shell scripts. Create a miz task directory and add executable inside. Echo will be a simple script that well echo is a string. Mis run echo. Great.
+
+It also has preset envirs to help you debug and template your automation processes available in all scripts run by miz. Running tasks less will pop a list of available commands which is already fantastic. Thinking about the 300 line make file I keep reading at work. That's great. Let's push the difficulty upwards. We can add another task by make it hidden so that it doesn't overload
+
+our list. Clim will depend on clean cache and will be the only one of the pair to show when listing. Running commands isn't limited to a single line and we can add aliases. So now mis run t tests and tells us it's done. Simple but powerful when your release needs more than a few configs. You can set
+
+the directory to run in and other options. And if this already looks like your standard CI config, it's for a good reason. Miz has a doc section dedicated to CI guiding you through creating a runner, bootstrapping, etc. If you run on GitHub actions or GitLab, you are covered. You can even generate a GitHub action as well as a dev container config from the miz generate command for those of you who are about to dismiss it for the lack of a templating engine. Meet Miz
+
+templates using Terra, a Rustbased Ginger 2 for those who know it, allowing interpolation, references, replacements, and conditionals. Everything you need. I'll stop here and send you to the docs to get even more stuff out of it because it really is a holistic solution to your environment. Imagine that not only you get rid of works in my machine or welcome to the team here's how to set the environment see you next week. It just does everything out of the box isn't dependent on nyx and hell the same commands can work locally and in CI you can literally run the release process on your machine onetoone to proof test it. Incredible. Miz goes even further. As any
+
+environment, you need secrets. Miz has integration for secrets using soaps or age. I don't want to go too deep. Please comment if that's of interest, but both options are fantastic. If you happen to have a remote secret manager like most of us, FNOX or FNOX from the same author can help you integrate with these and may be a fantastic topic for its own video one day. There's a cookbook with
+
+cool features, including a new Vim option, which I haven't tried yet. You'll find tips and tricks and even paranoid mode to lock down Mi, making it harder to compromise. But beyond all these, I want to spend a few seconds discussing this document. How I use Miz by the author. To put it short, he uses Mac with fish. Big on homebrew and enjoys it. He doesn't use Miz activate. Not sure whether
+
+because he needs to constantly test Miz and that interferes or something else. And he almost uses nothing on top. No special plugins, no funky configs, all vanilla. It's quite strange to read, but I think it shines a light on how sometimes there are systems that we can configure and tinker with forever, but even their creators did not intend for them to become as big. Many are probably contributions or feature requests, but it's always fascinating to hear about the setup of the creator. With that in mind, I do urge you to check out Duran and Devbox. If you're
+
+actually big on nicks or would just like a simple battle tested tool for Nvars, check these out.

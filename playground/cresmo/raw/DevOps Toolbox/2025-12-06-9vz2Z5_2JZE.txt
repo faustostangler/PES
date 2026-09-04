@@ -1,0 +1,80 @@
+---
+video_title: "What They Never Told You About MongoDB"
+video_id: 9vz2Z5_2JZE
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9vz2Z5_2JZE
+video_date: 2025-12-06T14:30:07+00:00
+video_description: |
+  Get started with Atlas for free today to enjoy MongoDB: https://fandf.co/3Kkxedz
+  ---
+  
+  For the longest time I ignored MongoDB thinking it’s a not durable, chaotic beast that cannot be controlled and loses data. Boy I was WRONG.
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Do you know what MongoDB stands for? Humongous. Yeah, 9 million reads, giants like Google, Facebook, Cisco, Expedia, eBay, just to name a few. I've been in the software industry in various roles for over a decade, and whenever someone suggested MongoDB, I'd almost instinctively mention what I perceived as fundamental problems. It loses data, it's not asset compliant, it's schema-less chaos. Oh, yeah, and the
+
+elephant in the room, is it closed source? Well, not only none of these are true, and quite the contrary, MongoDB is one of the fastest most flexible options when it comes to databases, appealing to both brand new teams or the ones on the other end of the spectrum, running humongous amounts of data and a tsunami of requests. Now, cards on the table, as you've seen, I've been covering quite a few databases recently, and when I got to MongoDB, I was quite fortunate that the company behind it agreed to sponsor the video. Thanks, team, for supporting the channel, and with that out of the way, let's dive into MongoDB, the most underrated beast of databases. >> [snorts] >> MongoDB is source available, and yes, we are touching that hot potato in just a second. It's cross-platform document
+
+database. It was first released in 2009 [music] by a team called 10gen, which morphed into what we know today as MongoDB Inc. Less than 10 years later, it became a publicly traded company and is doing not bad, but that's for a different video. Oh, yeah, the hot potato. In 2018, a year after the IPO, they changed the license from AGPL 3 to SSPL, and if you're like me, and this doesn't mean much, it basically means you can still use it for free to build commercial services, too, but what you cannot do is resell it as your own product. Or, if
+
+you do plan to offer MongoDB as a hosted service, you must open source all the software used to provide that service, not just the database itself, but your entire service stack. Are you thinking what I'm thinking? Cool. Say what you want, that's all the open source I need, but we can keep debating that in the comments. Let's talk about power for developers. There are a bunch of MongoDB
+
+packages. A CLI for Atlas, a free GUI for local data, and we'll get to them later, but the most important utility for any MongoDB developer is MongoSH, the MongoDB shell. Verify the installation and start working. Being that source availability is the easiest way to explore MongoDB is using a local container mapped to the classic port of 27017. An easy user and password can be provided through envars, and we're running. MongoSH with a simple endpoint
+
+gets you a shell. You can show the databases, which are currently the three default that come with any fresh deployment. MongoDB is easy. You start a new DB by simply saying use followed by a name. In MongoDB, a database is not actually created until it gets some content, which explains why we still see three names here. Now, we'd like to
+
+create what most users coming from traditional databases call a table, which in document DBs are called collections. But just like any database, MongoDB registers the metadata, but doesn't create it until there's data to push. We do that by running an insert query with a JSON-compatible data object. It natively stores document in a binary JSON format called BSON. Think of BSON [music] as JSON's plus extras. It
+
+keeps JSON's flexible document model, but adds efficient binary encoding and more data types like dates, decimals, and object IDs. Dates are specifically important here, as JSON doesn't support them, while BSON's date follows ISO 8601, which is crucial for developers who often struggle with it. This type is not only convertible, but also far more efficient for querying and indexing. Now, because data is stored in BSON under the hood, MongoDB can index fields deeply inside documents, query from them quickly, and return the results as JSONs when you read them. It's worth clarifying that this is not MongoDB's storage, but rather the driver that does the recoding. In short, it's built
+
+around BSON for speed and richer types, while still feeling like JSON for developers. Now, given the freestyle document structure, I can literally push whatever. Maybe just one field of a name works. Want [music] the structure, just push it. Let's push something that resembles an actual post stored on disk with title, body, and even likes that it got. Nice. We can also insert many and
+
+group a bunch of objects in one go, like so. And to finish it all with a select star from post compatible, we'll run a simple find method on our collection, returning all objects. You will note that I have my original single field object pushed here on top, not minding the rest of the pack, which are completely different. You can obviously filter and query further, so an SQL where clause looks like this. Find, but add the field we're looking for, like this, with articles under category.
+
+There's two important things to clear about collections of documents. First, about collections and document shape. In MongoDB, you typically query a single collection of documents. Instead of doing multiple joins like in a relational database, users join to purchases, join to products, document databases encourage modeling related data together, especially when it's accessed together. MongoDB supports joins using lookup. They are not
+
+uncommon and very much have a place. That said, they are quite slow, so it's best to model weight when possible. The second thing, you might be watching thinking this is the schema-free chaos I thought it was. And while you can enable schema validation, which is even useful in some cases, most teams choose to run the validation on the application side and let the server handle more critical parts. The important takeaway is that MongoDB lets you choose. You get schema
+
+controls when you need them with the flexibility to adapt when requirements evolve. Now, about that SQL select star, when you want to select certain fields, you run the same find statement, whatever your search is, and then another object defining the fields selected, like title and date, where one stands for a booleanic true. You may have noticed that IDs didn't care whether we asked for them or not, so we'd have to explicitly tell the uninvited guest that it's off. The cool thing about it, something that's hard to get with SQL, is excluding rather than just including. So, I can also get all posts without their categories, which comes in handy very often. What you
+
+cannot do, however, is both include and exclude, unless this is the ID field. When you want to be specific, just be specific with the search terms, and the exact same works for making changes, like updating a post by setting three likes to the post named post title one. You'll also note that the matched count is zero, telling us basically nothing got updated. But switching to an existing title both matches one and modified one. Right, simple stuff so far. Upsert is
+
+update or insert an object if it's not yet there, which might sound small, but it's extremely nice to have. Deletions are no different than the rest of the actions and follow the same concept. You can delete one, which is probably the safest, or many when it makes sense. Okay, cool. Basics out of the way, now let's talk business. Another classic
+
+myth is how it loses data because it has no durability and occasionally drops write events. Now, without appealing to authority and saying Microsoft, Toyota, and Verizon use MongoDB, I'll just acknowledge this. [music] In the very early days, and I mean pre-version 2, around 2011, the default write concern was zero, which meant send and forget without waiting for acknowledgement. While this was done for speed and winning benchmarks, it was obviously dangerous and is very much no longer the case, but I'll prove it. A great utility is the ping, similar to the Redis ping pong when you need to verify an instance health. Then, we can send admin commands
+
+asking for the default read write concern. [music] Now, in a single-node replica set, majority equals one, so majority writes always succeed. Let's build a simple local cluster with Docker network for our nodes using net. We'll start one, configure a replica set, and let it run. Okay, let's add two and three to the same replica set, and now, pay attention because this command initiates a replica set with an array of members using all the containers we just created. We get
+
+an ack, and MongoSH sends us to the new DB cluster. RS status gets the replica set of three nodes, where the first one is primary, then secondary for the followers. In our cluster, the first thing on a fresh deployment I'll do is ask for the default read write concern, which is write majority by default and not zero, as many people think. Now, into data, we'll insert a node object I just made up, and we'll add a write concern majority explicitly, which is, of course, acknowledged. If I try to run the same with zero for the concern, I'm getting immediately rejected. Now, check
+
+this out. I'll kill three, leaving us with two-thirds of the cluster. My object gets inserted again, and I can find it. Then, I'll kill two as well. Back to a single node, insert one with majority, we'll catch the error, which is a cool thing MongoSH can do, and we're told that this is not the primary anymore. Restarting other nodes,
+
+check these out, and objects are there. Right is only successful if acknowledged by the primary and also replicated to the majority of nodes, so two of three, three of five, et cetera. If the primary dies, a new primary is elected from the majority that already has the right. Okay, now the second biggest myth, I know I had the misconception of, too, is thinking MongoDB is not asset compliant. Well, it's important to mention up top that MongoDB became asset compliant for multi-document transactions in version 4.0, released in June 2018, while
+
+single-document operations were already asset compliant before this point. Let me show you the classic Alice and Bob bank transfer example of asset database demo. Making sure everything is gone, then inserting Alice and Bob accounts with balances. Now, we want to create a transaction. This is the DB transaction, which won't end until we tell it. Call,
+
+we'll hold the bank users collection so that we don't actually ship the commands, but rather hold them until we're done. This is the first most important part of asset, atomicity of actions. Both operations need to either succeed or fail together, and this is critical for any bank and any transaction. The only way it gets sent is if we commit the transaction, and there we have the objects updated. Scalability, check. Durability, check.
+
+Atomicity of operations, check. The last one, though, is the toughest one to crack. It's a schema-less chaos. Well, I've heard and said the same thing thousands of times. The second you use documents where there's no schema, it gets messy and unmanageable. Well,
+
+that's [music] total Not only you can apply a schema, MongoDB can auto-detect it for you. And there's a validation mechanism if you'd like to enforce that. You can manage it on the app level or the DB level or just both. But, let's not pretend the criticism is totally wrong. Yes, if you never define or enforce a schema anywhere and let every service write whatever it wants, you have a problem. That's not a MongoDB
+
+problem, that's discipline, [music] at least in my opinion. The easiest way to show schemas in MongoDB is in Atlas, a free-to-start platform where you can set a remote server to play with. Sign up, log in, and create your first database, which is immediately accessible not only from the UI. Here is my local Mongoish connecting 10 seconds after deployment. If I insert some data, the cool thing about the web interface is that you can find your database and collections, then query them with ease. Prefer a local
+
+network but still want to go in Compass? It's available for all platforms. Just throw in the connection string and credentials and enjoy. Now, for the schema in Compass, I can open a collection, for example, my Netflix example data set of movies and have it analyze the schema. And check this out, not only the fields but also a histogram of usage and appearances. This is cool
+
+but again, for someone who comes from a relational database, I want to see the enforcement. So, I have my collection of users here where I can apply a schema validator, making sure both name and age are present for all documents. It's accepted by the server, so when I send the 30-years-old John in, Atlas takes it but without an age, MongoDB refuses the document and tells us exactly why. Mission accomplished? I think so. Every
+
+single myth and misconception I had are now busted. Does it magically replace any other relational DB? No, but [music] it sure is built with both simplicity and ease for teams starting out >> [music] >> as well as huge high-traffic enterprise-grade production workloads. But sometimes you actually do need a relational database. If you ask for a battle-tested beast that can actually also hold documents among many others, I'd suggest Postgres. [music] Check this
+
+video next to see some wild things it can do. Thank you for watching and I'll see you on the next one.

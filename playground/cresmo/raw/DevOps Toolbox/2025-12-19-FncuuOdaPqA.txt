@@ -1,0 +1,79 @@
+---
+video_title: "Traefik Is Probably The Best Docker Proxy I've Ever Used"
+video_id: FncuuOdaPqA
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FncuuOdaPqA
+video_date: 2025-12-19T14:30:16+00:00
+video_description: |
+  Start FREE with Incident.io: on-call, incident response, and status pages—built for fast-moving teams: https://fandf.co/4pkWqQg
+  ---
+  
+  Most people think Traefik is "Just another proxy for Docker."
+  This couldn't be further from the truth.
+  While others are stuck manually reloading config files, Traefik is automatically generating SSL certificates, load balancing microservices, and watching your orchestrators for changes *without a single restart*.
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+There's no shortage when it comes to application proxies, but if you're one of those who likes simplicity and great user experience out of the box while still requiring performance and safety, traffic is really hard to beat. It's not the absolute fastest. It's not rigged for load balancing only. But if you look at the entire package, I can't see a competitor. It natively integrates with Docker, Kubernetes, ECS, Nomad, or any server really, making your life simple. It has too many extensions to count, middleware to bend requests to your will,
+
+and an interface making the experience a breeze. And that's something I can't say about the elephant in the room, Engineix. Let me show you how I set it up in seconds. proxy to backend applications, add encryption, and even use it as an ingress controller. In times when EngineX is being retired from Kubernetes as an ingress, and no, there are no security issues with it. On the contrary, we'll get to that later, Traffic was a quick
+
+enough to show a seamless transition, making it a great alternative contender. Similar to EngineX, Traffic is an open- source backed by its own company. The first major version was released 10 years ago, so it's not new to the game. Written in Go by Emil Vogue, who built it because he thought other options were not well suited for dynamic environments, which if I may, is spot on. And I'll show you exactly why. Many users saw the appeal of traffic, and in 2020, they crossed
+
+the 3 billion downloads mark with over a 100 available supporting plugins, making it one of the most popular options in its category. Like many similar proxies, traffic is easily configurable in endless ways. The most popular is a config file, and we'll get there, but starting here in a small compose file already shows the flexibility of adding provider and some entry points through process flags. We'll expose HTTP and an AT80, you'll soon discover why, and expose the Docker socket for traffic to be able to identify Docker processes and expose them. Docker compose up and a few seconds later on port 8080, we get a wonderful interface. I've always seen this
+
+as one of traffic's biggest selling points. You get instant visibility into the server with zero extra work. While we don't have much configured yet, there's already a layout of routes, services, and middlewarees monitored. A router shows status, rules of access, and other important information. And don't let this upgrade button on top deter you. Traffic is not only an extremely popular open
+
+source. I just caught it last week again on the daily GitHub trending list. And not for nothing. I can say with confidence this server lives up to its promises. I've used it dozens of times in high load production environments, proxying and rerouting mainly, but also with the Kubernetes ingress controller when the top priority was clarity and ease of monitoring and configuration.
+
+If there's one thing traffic excels at, it's user experience. Next to HTTP, you can obviously add TCP and UDP routes and services and add specific middleares like IP allow list or rate limitation of simultaneous connections. But that's nothing compared to the plugins. I mean, there's really no end to this page that extends traffic with cache, geoblocks, IP whitelister, Google's OIDC, which I almost always use to access my back office. There's Cloudflare, Capture, Robots DXT, and if you dig deep enough, you'll even find a plugin that controls your cloud resources. If you
+
+hit install on any of them, you get a quick yad to add or a CLI flag to paste. Pretty damn simple. In production environments, the most frustrating moments aren't the bugs themselves. It's the time loss switching context. Hopping between Slacker and GitHub trying to piece together what's broken, who owns it, and why. That's where Incident IO shines. Built for engineers who are allergic
+
+to chaos, and love clarity. Yeah, not for those of us who thrive on adrenaline rush, debugging at 2 am. This platform ties together incident management, postmortems, and even my personal favorite, real-time status pages. The magic, it's Slack Native. Declare an incident in a single command, and the platform automates role assignments, notifications, and documentation, all without leaving your space. Need to update stakeholders during a crisis? Trigger a pre-built
+
+status page in seconds. But it doesn't stop there. It interacts with all DevOps systems. Jurro ticket autogenerated from incidents and their AI workflows already flag patterns in alerts like recurring failures tied to specific services. While competing tools focus on checklists, incident IO treats crisis management as a feedback loop because resolving a problem isn't the end, right? You don't want the same root cause resurfacing in two ways under the same damn moon.
+
+For teams using traffic or any modern proxy stack where traffic failures cascade fast, this platform buys you time to debug, time to communicate, and most importantly, time to avoid making the same mistake twice. Huge thanks to Incident.io for sponsoring the video and supporting the channel. Now, back to the video. Since we've started traffic with the Docker provider, I automatically get a route to my local Grafana running container. To actually proxy to it, I'll have to add a rule.
+
+Many people confuse this visibility to an actual proxy path, and that's a common mistake. Thinking host Graphfana allows you to browse to HTTP Graphana. If I change the local host file, making sure Graphfana ends up in the local network, I can then browse to Graphana at port 3000, which unsurprisingly works. But HTTP Graphana will hit traffic. So there will be no error to begin with, but then it'll hang and eventually time out. To create a proper proxy, we need to
+
+do some plumbing. I'll add who am I container as another example. But this time, it's not just a container. It also has a label saying traffic rule with host who am I.lohost. The beauty here is that
+
+traffic will pick this up on its own and that's why it works so well in dynamic environments. Contrary to our previous graphana, this one has a rule used by routers listing who am I. Host. So let's use that as is. And there we have it. Lots of information I would rather you don't see
+
+proxied through traffic. I want to further stress how important this feature is. Kubernetes users are probably aware of the concept with many other platforms including Prometheus and the likes. You deploy an application, add a label, and someone, you don't care who, is scanning those labels, and if it matches the rule, it gets picked up and updated in the configuration without you having to lift a finger. Basically making something out of thin air and just yelling, "I'm here." Traffic
+
+hears you and aligns. More about Kubernetes in the description. We're not here for that. We're here for proxing. So now that we've learned the label concept, let's add Graphfana as well. Same
+
+deployment as earlier, but with a label. That label points to Graphana localhost. And there it is in the browser through traffic. Awesome. That's all great, but one of the greatest powers of traffic is making encrypted communication aka SSL aka HTTPS accessible to everyone. It really
+
+doesn't get any simpler than this. I'll go ahead and create my own certificate that no one trusts for the demo and create a simple TLS certificate pointer to those two files. This is only done for convenience. You can put that wherever you want. For the traffic config, we'll remove the insecure flag that is just done for verbosity. You don't have to use it as it's already set
+
+by default. We'll point to the certificate pair path. Add port 443 and mount the certificates. Real pros add the readonly mount permission just for finesse. We'll add dashboard TLS and make sure our applications are set accordingly with their own labels. Moment of truth. HTTPS.
+
+That's a good sign. There's a risk of my newly created certificate not being trusted by anyone, which is understandable and it's not trusted because it's self-signed. Fine. Nevertheless, we're in. Same goes for the other services. Just this simple change used to be a nightmare with
+
+proxy servers. You'd have to change the entire config, create your own chain of certificates by combining them into one file, then securely add it to the server and wait to see what happens. By the way, to make things even simpler, you'll find an Acme configuration to automate the certificate process with auto renewals. If you were wondering, then yes, let's encrypt is easily integrable. But there's a catch. You can't really run highly available cluster. So for that, unfortunately,
+
+you'd have to use traffic enterprise. Keep that in mind. The next big traffic concept is its middleware. If you've ever built a project with ExpressJS, the idea is similar. You basically add a modular filter to handle requests going through like redirecting SSL. It can handle XSS and so on.
+
+Here's another common middleware which is another thing I hope you're not running in publicly facing services. Running basic authentication with salted credentials allowing a nice login to a service you'd like to be kept more protected. And now for the main event, traffic as your ingress controller. While this isn't a new thing with recent news about Kubernetes retiring Engineix as an ingress controller and again no it's not due to security issues but rather the lack of constant maintenance to the controller and some other features like running ad hoc snippets that SIG security is not happy with. Politics aside the traffic team jumped on that wagon head first offering the incredible feature of natively supporting existing engineix annotations making your transition pretty much seamless. Using traffic as an ingress is as simple as it gets.
+
+Firing up a local mini cube to support us on this short journey. Adding the traffic head and repo and its dedicated namespace with the traffic load balancer set up. I can mini cube tunnel or port forward to reach out to it. But we're not here for the fancy dashboard. We want ingress. So who
+
+am I takes the traffic annotation set with a rule for who am I. That's it. We apply the rule, make sure it's accepted, and everything looks good to go. Now local isn't a known DNS on my machine. So we'll make sure to send the application.local to my home IP port forward the service from my local
+
+AT80 to Kubernetes ingress port 80 and all that's left is to curl with the configured header and we get 200. If I remove hyphen I I will fetch the actual data. Mind you this is a who am I service running inside a container and there's a forwarded server header below indicating we routed through traffic. By the way there's a dedicated video to curl on the channel if you're interested. Traffic is the absolute best package when it comes to all the points mentioned above. But if you need a
+
+beast that is more flexible in injecting snippets, load balancing, or sheer speed as a web server, where the above isn't as critical, you probably want to get some engineic sweetness. Check this video next and thank me later. With that, thank you for watching and I'll see you on the next

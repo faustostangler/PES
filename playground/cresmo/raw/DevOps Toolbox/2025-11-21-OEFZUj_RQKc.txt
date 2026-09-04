@@ -1,0 +1,101 @@
+---
+video_title: "Wait... Nginx can do WHAT?!"
+video_id: OEFZUj_RQKc
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OEFZUj_RQKc
+video_date: 2025-11-21T14:45:01+00:00
+video_description: |
+  DNSimple is a developer friendly, rich API DNS system!
+  Start your 30 day FREE trial here: https://dnsimple.com/devopstoolbox
+  ---
+  
+  Most people think Nginx is "Just a web server".
+  This cannot be farther form the truth.
+  Not only it's a load balancer handling 1M req/s, it can cache, proxy, manipulate requests on the fly and even stream media!!
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+The internet runs on many engines, but Engineix is the monster hiding in plain sight. Beyond the unbelievable performance, this battle tested hero is mostly known as a web server. But that doesn't even scratch the surface. Engineix is a beast that can serve as an API gateway, content cache, load balancer. It can rewrite requests on the fly, stream media, and even serve as a mail proxy. And yes, it's probably the best reverse proxy ever built. It's not for nothing that on
+
+the last survey on April 25, EngineX came first, serving over 33% of web servers on the internet. For proportion on this list, Cloudflare is third. NO.js is fifth and only serves a fraction. Docker found that Engineix was by far the most commonly deployed technology in Docker containers and since 2012, it's a core member of Open BSD. Popularity contest aside, Engineix
+
+can serve over 10,000 simultaneous connections with an extremely low memory footprint. And I did put that claim to the test. We'll get there. Today, we're going from simple to wild with a few surprises I never knew existed that would make any users workflow as smooth as coconut oil. Born in 2002, Engineix was built by Igor Cisoev and was originally designed to solve an old problem known as C10K or 10,000 requests per second. Back in 99, this threshold was a big
+
+deal and Engineix was there to help. But then it outgrew its original purpose. So much so that in 2011, Igor and his partner Maxim founded Engineix Inc. raising capital to provide commercial support. On 2019, F5 acquired Engineix for $670 million. And a year later, the founders left F5
+
+with a mini drama during which Maxim created a fork of himself by the name Free Engineix, criticizing F5. Other members of the core team created their own fork in 22 which is actively maintained and serves as dropin replacement. Let's dive and see what it's all about. Install Engineix if you don't have it locally. This will become handy fairly often after this video. Now
+
+engineix config famously lives under etc or nested under a path such as mine here in homebrew. This is where engineix.com waits for instructions. The engineix conf holds different modules controlled by directives. If you're running a simple web server, you'll need the event directive even if empty. And HTTP is the main directive where we'll usually configure the web behavior. If it's empty,
+
+trying to launch will usually respond with what's missing. So an empty event directive is enough for us to start with all the defaults. Now I had already added an index html file to the default path so that when we query local host at port 80, we're served with that. And there it is in the browser. Oh, hi Mark. Oh, hey Johnny. What's up? Now,
+
+as mentioned, HTTP is where the interesting bits go. We'll start simple, picking a different port, which is always a good idea, not keeping local HTTP busy. Then sending the server's name and adding a path. Let's use /temp and add a common try file instructing 404 response if the URI or URI/index doesn't exist. This is a nice fallback or fall through system that lets you precisely configure the behavior. Since there's nothing on /temp, we get the expected 404 page from
+
+the server. If we add an index, refreshing gets us the file. So far, easy work. But what happens when you want to serve some requests but proxy others to your backend or API or anywhere really? This is where proxy pass comes in, which is probably one of the best things is known for, a reverse proxy, something that intercepts and forwards requests and returning responses as if it handled them itself. So, we've got our engine server running, routing traffic, load balancing,
+
+etc. But all of this is useless without a solid DNS server that shoots the traffic at you. If you've ever handled infrastructure, you know DNS is the most sensitive piece. That's why manually fiddling with DNS records every time you spin up a new service is a huge pain and a source of drama. That's where automation comes in. And that's why I'm excited to present this video sponsor, DN
+
+Simple. If you're using infrared code tools like Terraform, and you should be, DN Simple is made for you. Not only the entire platform is built for and by developers, their Terraform provider makes managing your DNS records incredibly simple. You can define domains, records, and services right in your code. When you deploy your infra DNS settings are automatically configured along with it. No
+
+more manual entry, no more typos, just seamless automated DNS management. Now, you may think, well, that's no different than other DNS providers. So, I'm here to say yes, it is. If you've ever touched a DNS system, you probably know how unintuitive it is and how bad the APIs are. Not here. DN Simple is built around their API. Create an account using this link and get
+
+started hosting your DNS with DN Simple's 30-day free trial. Oh, and wait, you have to get this. Thanks to DN Simple for supporting the channel. Now, back to the video. There are a few options here. We can proxy all requests going into /secret and forward them to another server. will configure
+
+below listening on port 8080. To make it simple, the first block will listen on AT80 serving the welcome screen while secret is a path that leads to another back end. In this instance, something listening on another port. Run engineix call at80 and we get a welcome page. If we head over to the secret path, there it is. Obviously, that's a simplification, but imagine the power of this
+
+function. I could have called the script or an external process and list as many paths as I want, controlling how they're served, what's passing through, and manipulating the response on its way back. For the sake of proof, let's have it call an external service by listening with netcat on the proxied port, calling secret now, and poof, an incoming request from NIL and a bunch of headers. Awesome. Now, you're probably thinking, that's great, but what happens when I have issues or simply want to monitor incoming traffic? This is exactly what error log and access logs are used
+
+for. Make sure the written into a path you know. Pro tip when replacing text that includes paths use tildas separators to make your life easy. Once set will tail both error and access logs and call the server. Check out the registered lines both an access entry with IP timestamp code and user agent and in this instance connection refused registered in the error logo. Now proxing all
+
+those things is very cool. But the next thing takes matters to a whole new level. Engineix, believe it or not, is also a powerful cache on many levels. Imagine serving static content. Instead of hitting the back end again and again, you can serve cache from the disk. That's rather
+
+easy. But what about other requests? You can make it cache sub millisecond responses so that when the scale of thousands actually hit the server, you can reduce the client's latency and protect other services. So in a way also a small CDN. Check this out. Proxy cache enables it on the path
+
+and uses a name my cache to define the scope which needs to be defined above later. The validity line sets 10 minutes for upstream responses with HTTP status 200 or 302 instead of the default lifetime setting. This can be adjusted below for response code. There are additional options like adding the header to make sure it's passed onto the client. Let's start by setting all of these. And since
+
+Engineix can send requests anywhere, we'll use HTTP bin to get a dummy response and store it. Curl- capital I gets you the headers only. There's a curl video I recommend on the channel if that's of interest. Look at the last header. The cache status says miss. This is the first time we're
+
+asking it, so it makes sense. We'll call it again and boom, hate. We can call it again and again and again. All hates. Pair the config. It'll stay there for 10 minutes until refreshed. Okay. Okay.
+
+web serving, reverse proxing, caching. But man, this thing gets even better. Sometimes responses are just huge and those big packets hurt everything. Latency, network, and cost. So a natural solution is compression, and engineix is a monster compressor. GZIP on added to all
+
+back ends or some pick the level of compression. Six is a sweet spot. Decide what to compress and even pick the threshold from which packets are handled. Now calling the large JSON endpoint with gzip header returns content with gzip under content encoding. The same request with no header isn't gzipped on its way back. But what about the size? Well, the compressed version is 400 bytes.
+
+While the one that isn't is more than 30 times larger. Crazy, isn't it? So you can proxy, serve, cache, and compress. But there's an elephant in the room we need to talk about. something is extremely well known for mostly in the DevOps and Kubernetes communities. Can you guess what it is?
+
+Yes. Engineix is one of the best load balancers on Earth. If you go to its docs under load balancer, you'll see every communication protocol you can think of under load balancing. Starting from a simple HTTP upstream as shown earlier can hold a number of backend servers. This to engineext means that everything inside the backend server scope is well a backend server and it'll roundroin between the list with incoming requests. And while roundroin is the default,
+
+you can choose a bunch of other methods like the one with list connections or an IP hash for sticky sessions or just a random pick. Let's do that and test things locally with two backends on 8181 and two. We're expecting incoming AT80 traffic to be distributed among them. loop through one since netcut is done after the first request. Same for the other. Then we call AT80 backend path and
+
+there is one request to AT82 and the other one to AT81 and again and again. This is where you add your strategy when needed. Just pick one or will get mad. Additionally, each backend server can be given a health check configuration with attempts and timeouts as well as wait when making decisions where to go. Okay, how about we load test this thing to see if it lives up to the hype.
+
+A small K6 script for load testing aiming at the C10K problem with 10K RPS. We'll run that for 60 seconds and send everything to the locally served Engineix on port 8080. It's a simple test but nevertheless a valid one. I'll leave a lin config with an index and let K6 start loading the system. But I fast forward this. You'll note there's not a single error. That's not always the case. I did
+
+run many tests here and I do usually get a few failures, but never more than 0.1% at this rate. Results are in over half a million requests with an average of 10K per second. Engineix is a wild beast. At this point, you're probably thinking there's nothing else this thing can do.
+
+But friends, I'm sorry. There's more. There's much more. Are you also wondering how many AWS services I just covered or killed with one technology? Here's another one. How about serving as an API
+
+gateway? Not only by manipulating requests, but also request limiting and throttling. Set a zone with number of requests per unit of time and rate and you've got that covered too. Cool. But there's something every load balancer with an API gateway functionality needs. SSL termination. Worry not.
+
+Engineix can and probably should listen on 443 to serve HTTPS requests. Tell it where the certificates are held, protocols, ciphers, everything required, and let it run. I'll create a local certificate and build a small Python back end to tell me whether it can read unencrypted requests after it went through the load balancer on 443. This will be our sanity check. Now paths are ready. Engineix started the back end is ready to serve. Engineext by the way will check whether
+
+the config file syntax and functionality are okay. https at localhost Safari says the connection is in private and the reason for that is just I signed my own certificate which no one trusts but nevertheless it's there visit the site and hello from the unencrypted back end amazing SSL terminated successfully okay that's enough right wrong what about streaming has a module for streaming media it can configure the movies buffer size limit the rate stream from a certain point because the beta is always indexed but instead of demoing that let's talk about the most common way engine is deployed in the while containers. Docker found in 2018 that the most deployed technology by a large margin through docker hub is engineix. It has endless flavors just on the official repo but there's a bunch of other great repos for engineix forks and flavors like bit nami Ubuntu rancher VMware Intel CircleCI and more. When you run it, you can use Engineix latest or go smaller with Engineix Alpine or push things even further with Engineix Alpine Slim respectively. These start at
+
+172 megabytes, then 53 for Alpine and a whopping 12 for Alpine Slim. For all that functionality, this is absolutely wild. We can run it, make sure it's up and accepting requests. There's a reason, of course, for the size. Latest comes with all the common dependencies like OpenSSL, ZIB, etc. which is great for dev and staging environments, but I'll usually pick Alpine
+
+for production, which still has essential libraries, but only what's extremely important and a minimal version of each. The slim version of that removes everything, not even man pages. And while it's probably the safest option as far as security goes, it might make things hard if you're not used to stripped containers with no shell and adding libraries you know for a fact are required. I promise a surprise. Engineix is great, but you don't get much as far as visual experience go. Engineix UI is an open-source yet another web UI for the famous system. 10,000 stars and a super
+
+nice dashboard with system metrics, load network, disk IO, served requests, per connection metrics, processes, and more. You can also visually see the listed sites or backends, physically edit configs, and view the access logs conveniently from your browser. While I'm a big graphana user, I think this one bits it with its features. And for those of you who play a lot with Engineix config or trying to learn it, the playground is a great online utility for that. It's a bit by Julia Evans, which is a very cool engineer I've been following for years. She makes these little comics
+
+which I have on my shelf probably since 2019, and I love them. Add your config to the playground, run it, and read the output. I think that's a lot for one session. Engineix is one of the most important building blocks of the modern infrastructure and is extremely versatile. Once you master the server, it's time to master the client. Carol is just as impressive client
+
+for requests and much like EngineX, it does 10 times more things than you know. Check this video next to learn all about it. Thank you for watching and I'll see you in the next one.

@@ -1,0 +1,96 @@
+---
+video_title: "I Was Wrong About Redis."
+video_id: hcabxEvM7KU
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hcabxEvM7KU
+video_date: 2025-11-07T14:30:42+00:00
+video_description: |
+  Sevalla is a no-limits, all-in-one PaaS with global performance and usage-based pricing. 
+  Get $50 credit to start and test it for free: https://sevalla.com/?utm_source=prettyprinted&utm_medium=Referral&utm_campaign=youtube
+  ---
+  
+  Not only Redis is the fastest database overlooked by everyone on the planet, it has so many capabilities it's mind boggling. 
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Reddis is known as the in-memory key value store, but I'm here to say otherwise. It's way, way beyond that. Not only it's lightning fast given the use of memory, it actually comes with a set of features making it an excellent candidate for your next project that may very well replace your traditional data store. I don't think anyone here hasn't heard of Reddius. But do you actually know it can store documents, index objects, activate real-time persistency on disk, and function as the fastest database you've ever seen? You can use Reddis as cache. But
+
+what if your cash is a beast and you're only using 10% of it? I spent over 100 hours inside production systems with Reddius under real low. What I saw changed my mind. Most people think cash equals fast, database equals safe, but Reddius can do both. So today, I'll take you from the basics to show you how it was built with all of that in mind all the way to a full-blown demo of user authentication flow with Reddis as our database. Let's go. [Music]
+
+So, Reddius is the fastest data structure server according to them which can mean many things and it recently added to its readme the fact that it's a lightning fast document and vector query and if vector DB tells you anything is that Reddius is thinking of AI like every single company on earth but we need to rewind a little when you get ready from your favorite package repo you get a bunch of things the most useful pair are ready server and reddis cli the client The easiest way to start a local server is by running Reddis server with the demonized flag set to yes to make sure it doesn't hold a running shell session. If not told otherwise, Reddis always famously listens on 6379. Netcat approves the port is open and listening so it's time to work. But Radius actually thought of people having to net trying to see if Radius is alive or not. So the CLI has a ping command which gets a lovely pong back if things are okay. Now the first command you learn about
+
+radius which is always the last one you want to use in production is keys. If it takes a star it brings back all stored keys on the server. Use set with a key followed by a value to store anything. And a common pattern which already suggests data structure that can be used beyond just a key value cache is this pattern using columns user colon ID column email and a value stored successfully. Using Dell, we can delete an entry. And a common radius pattern is setting keys with expiration
+
+if it is in fact used only to store short-lived information. This is done with extl in seconds. If I set three, get it immediately. The information is still there. And a couple of seconds more and poof, gone like the wind. Starting to get the feel that this is beyond just disposable information.
+
+You need to put some work in to make sure data evaporates. It doesn't just happen. Here's another default behavior that will help understand what British has become. If I open another session, shut down the server, then reconnect and get the keys. What do you know? There's something stored.
+
+And indeed, DevOps Toolbox is in gone. How is that even possible in an inmemory only system? Well, Radius comes with persistency by default. The most common option isn't a full-blown data persistency, but a dump file that is updated occasionally, mainly on server shutdowns, but not only. Trying to read this dump is not human readable structure but a binary although it does show the data we have in an extractable strings. Keep that in mind when you build in for around radius thinking what
+
+attack vectors the system exposes. The more common way reddius is found is inside a container. So let's run a reddis docker container but replacing the pore so that there's no local conflict to show how persistency behaves on a system like kubernetes. the server is empty, set a name, then kill the container since we didn't create a Docker volume or any disk persistency. The next time the same container is started, there's no data. And this is critical to understand. The
+
+common way to solve this, as mentioned, is simply by mounting a volume to the path. With pods, whether in Podman or Kubernetes or any other container system, you just mount space to the path, either from the host or attached by disk, and make sure the dump is secured. But this dump, as you probably already understand, isn't the best way to make sure data stays intact. There's a far better way, but I'm getting ahead of myself. Let's cover a couple more basics and then dive in. I'm taking a quick break for a word from today's sponsor. Tired of hitting walls with
+
+your hosting platform, artificial limits, surprise builds, and juggling five different services just to deploy your app? It's time to break free. Meet Savala, the all-in-one trickery-free platform as a service from the infrastructure experts at Kinsta. They combine the best features of modern platforms into one seamless experience. With Savala, you get unlimited collaborators and unlimited parallel builds. Deploy your apps, databases, and static sites on a global network powered
+
+by Google Kubernetes Engine and Cloudflare. There are no fixed plans, just transparent usage based pricing. You only pay for what you use. It's the developer experience you love with the enterprisegrade security and performance you need. Stop compromising and start building. Experience
+
+the Heroku successor that's built for today's development teams. Visit savala.com to deploy your first application for free. That's svala.com. You also get $50 worth of credit to start and test
+
+the platform. So, make sure you don't miss that. And now back to the video. Now that we understand basic persistency, setting, getting, and deleting or expiring data, we can talk about two options that don't leave much room for imagination trying to understand what the system is all about. A hash or h set in radius is what you think it is, a map of keys and values. So back to our user example,
+
+we can now set a user with ID and keep adding pairs like email and the address and name and a string and so on. And if created at doesn't scream database at you, I don't know what will. Now hash get all with the initial key we set which is user and ID1 brings all the data back in pairs. We can also get specific and ask for the same key with a field like email. And note that ready CLI has a nice suggestion module running in the back with ghost hints. Just like with deleted sets,
+
+hdell removes the entire hash and we can use the increment by preceded by h. So update our hash with a user one and a login count to be one. I don't know if you remember or not, I never added a login count. Doing that both added the key and incremented it by one, making this document writing incredibly easy to work with. And at this point, this thing is a full-blown document DB. But that's not all. Sets are an unordered bunch of data under a single key. A bucket of
+
+unique members with no association or ordering. This allows us to keep a long set of usernames for example so that when we want to check for the existence of a user when they login or register for example we can check the set. Bob for example is not a member. If we try to add Alice again we're given a false response since all set members must be unique. Smembers will get the entire set back but this is mostly unnecessary. Now while this is the more efficient and resource-like
+
+option if you do need order sorted sets are ideal for leaderboards ranking time series like indexes and range queries by rank or score. Z adds user login to gains for example and five as value and user one as the member response one but we can add a few in one command adding 12 for user two and eight for user three. Now we can increment user one login by one which totals to six. Z range returns well the range of a set between the start and stop values in this instance from the very first to the very last. By the way, Rev range will reverse the result. Now we really have
+
+to understand the basics and at this point we have enough to build a persistent data system with all the bells and whistles of a database. Indexing sets, hashes, all the goodies with the speed of memory storage. But there's one little thingy we don't yet have to make this a true data store. And that's true persistency. While the dump file is great, it's not enough. But worry not, introducing
+
+AOF or append only file. For those of you who are screaming now, just like wall by SQLite, absolutely. Why do you even need something else? Well, RDB is a point in time snapshot. Here's my file written 11 minutes ago. If I set a new key and val, the file isn't updated on its own. If I
+
+shut down however both the file is updated and reflected in the key. Now of course if the shutdown was not graceful and it would happen abruptly this data would be gone. You don't need to be an expert to understand that this isn't reliable enough. Running config get save will output the file save settings. What you see here are pairs actually. If one key changes in 3,600
+
+seconds or 1 hour update the file. If 60 changes over the span of 5 minutes save and so on. So with large enough volumes, you get better snapshots. But this is still not good enough for databases. By default, append only isn't activated and append f-sync is set to every second. What does
+
+that even mean? AOF will make sure every write operation is logged so that if the server crashes, these rightes can be replayed to restore the state as is. No time gap, immediate backup. And this is already persistency we can trust. Config setup and only. Yes. set it in place and we can start
+
+enjoying real database capabilities. The other setting, append fync, is actually a subconfig of a configuring how often these logs are flushed to the disk. Every second is good, but always is the strongest and naturally the slowest if that's a concern. Now that we've established both structures and persistency, it's important to stress that you can trigger background save of the dump on demand and fetch the last save timestamp, but these are durable means of persistency. Okay, we've configured the system. Now let's run a small durability test. Set critical data with something
+
+important and also a hash of user 999 and an email address. Immediate shutdown, restart, and the data persists. Same with our hash. Yes, I know this isn't a load test of production with hundreds of thousands of entries. But you've seen earlier how a simple key was relying on the sole existence of one dump file that was either saved or not. This time we have something else inside
+
+the append only dear which unless configured otherwise will live in the same path as the server was started from. There are a few files. The RDB file as earlier is mainly a binary that's hard to read. Data can be extracted but in a way we can't really understand. The increment file however with AOF is the interesting bit. Every write operation gets appended and can easily
+
+be replayed by Reddis if needed. Lastly, we have a policy that holds references to the files and sequences. If you're thinking now, well, this is probably not very storage efficient, you're right. But if you actually want an in-memory database that gives you the speed but reliability, too, this is the way to go. Another often brought up problem is indexing, a common pattern from databases. With Reddius, it's totally doable. Check this. We want to find a user by email.
+
+We've seen the trick briefly earlier, but setting user email with an address and one, then another one with two creates a simple secondary index. We just mapped OMR to use ID 1 and Alice to use ID2. And while Reddius doesn't have a really secondary index system, this adds a deterministic key that results in an O of one lookup operation. Getting this email comes back with the integer it was given. We can always go ahead and get all the hash of user one like so which can be compared in SQL to select all from users where ID equals one. Here's what you never want to do. Keys to get all
+
+the users is always a bad idea. The last problem people talk about is well what about acid? No, not that acid. You know database acid where a is for atomic operations. You're always in fear of a race condition when writing to the same key. We've seen a solution for SQL in the SQL light video.
+
+But can Reddit handle this? The simplest way to start is using NX, which stands for non-existing. So if I create a new user and add NX, it'll only get created if it's new, which is a good start because trying to set the same email address, even with a different value, it fails and returns nil. But this is not a complete solution. Here's a race condition simulation as proof. We tell
+
+Reddis to watch the race address for changes. If it's modified by anyone before we run exec, it will abort. Multi starts a transaction like SQL and will only execute on exec at the end. Now we make the change that is cued not performed yet. So before executing let's open another competing session where we just set the same address with a value of 999. Back to the first shell
+
+different value set and exec comes back nil. This sorts the race condition if it's handled properly. Got a nil back? You know for a fact it was changed and can either retry or give up. Now, let's run a summarizing real life scenario demo with everything we've learned. User registration
+
+and user login like any system has. We have a new user called Eve, and that's her email. We can tell she's not in the system because it comes back nil. She wants the username Eve, which is also not a member of the set. So, we're good to go with that as well. We watch the email for changes
+
+and start on multi-transaction. Create a hash with her details. Add the user to the set in the process so that it's registered in the system and exec. Job done. The next time Eve wants to login, we check her user. She's in the set of members. Good. We'll get the user by email. Then get the
+
+password from the hash. Yes, it won't be in clear text. We're not savages. This is just a demo. Then increment her login count and login time and return the hash to the user at the end.
+
+There are so many more options here, but it's not the point, or at least not the point of this video. Let me know if you want more advanced features, because Reddis can do so much more. If you're convinced yet, even if you're not, please leave a comment below. But before you go, I can't be 100% honest about Reddius without mentioning its rival Valky. Now, I did make a Valky video, and you'll see it in a second here. But in short, after Reddius was made closed source,
+
+AWS and friends forked it and create Valky as an open source which AWS actually offer as a service for cheaper. Surprisingly or not, Radius reversed the decision and Radius is now back with its open- source license, but Valky still claims to be the more performant option. Everything we've seen today is relevant to both systems alike. So, with that in mind, let's go ahead and check out the full Valky video next. Thank you for watching and I'll see you on the next

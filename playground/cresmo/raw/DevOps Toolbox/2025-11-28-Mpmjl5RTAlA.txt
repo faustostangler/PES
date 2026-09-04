@@ -1,0 +1,95 @@
+---
+video_title: "I replaced Docker with THIS."
+video_id: Mpmjl5RTAlA
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Mpmjl5RTAlA
+video_date: 2025-11-28T14:30:15+00:00
+video_description: |
+  Get start for free with Graphite, the next generation of code review: https://graphite.plug.dev/AkETyz9
+  ---
+  
+  Most people battle with local dev environments for no reason at all.
+  For years I've been hacking it with Docker, then Nix, virtualenv and others.
+  These can get extremely annoying to work with especially when building apps.
+  Not with Devbox!
+  This thing sets you up with packages, servers, shells, scripts - the WHOLE DEAL!
+  
+  - My Nushell support for devbox: https://github.com/omerxx/dotfiles/commit/5a429a1ceb93d5f48a0bb14ec144f3a3550aa15c
+  - PR: https://github.com/jetify-com/devbox/pull/2743
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+You know why you're here? Because reproducible environments make you tick but too much friction makes you sick. What if you could throw out npm, RVM, Nixen, and even Docker containers, which are all great for some use cases. But when it comes to local environment, you want to be zen. After 12 years, I finally found something that ticks all the boxes. Devox is all of the above,
+
+but more. A CLI that lets you easily create reproducible, reliable dev environments that also comes with a bunch of plugins, making different environments a breeze to manage. Is it all sunshine and rainbows? Almost, but not quite. Let's talk about it.
+
+[groaning] Devox, not to be confused with the Windows people devox, is not a Nyx rival if we're being honest, but rather powered by Nyx and the Nyx package manager, the largest of its kind in the world. There's a NYX video in the channel if you're interested, but it's not for the faint of heart. Devox is on GitHub with over 10,000 stars, written Go, and has many contributors. If this wasn't clear, Nyx is the power behind DevBox, which wraps it beautifully. I've done a few Nyx videos in the past, some diving in, some going back the way I entered because it didn't quite make sense to my workflow. I always wanted to
+
+go back to the freedom of a blazing fast reach package manager and customized on demand shells. To put it bluntly, Nyx is just too much hassle to achieve that, at least for me. Beyond Devbox, Jedify, its initial creators are also the makers of Nyx Hub, which tells you something about their Nyx affinity. Nixhub is basically a Nix package repo made for Devbox. Before jumping in, I highly recommend the Devox docs. They're simple and
+
+straightforward. Although, if I'm honest, the entire thing is pretty easy to use and get into. So, let's do that. As always, everything starts with a curl. Run say yes approval for pseudo since we are after all installing Nyx related system with access to local pin.
+
+You'll then be invited to the docs or their discord which I haven't yet tried, but it's good to know there's a live community around. Devbox real power is its project specific configurations. Let's create such a project. Carbase autocompletes here as always helping us to get started. So there's the first step devbox in it. Now we have a
+
+devbox.json file and this is where it all starts. This has a few things. First the schema with a standard configuration, an empty package list which we're about to fill, some shell hooks and scripts. Let's put a pin in those two and come back to them later. A
+
+simple devbox shell starts well a devbox shell ensuring packages are there but there's nothing really to take care of at the moment. We can however using starship see an impure Nyx shell running currently. So yeah Nyx is more than just the engine here and it doesn't only mean that you're enjoying its capabilities. It also means that you need to have it installed properly. If you have an old broken Nyx installation and expect DevOps to behave, you're in for an unpleasant surprise of a couple of hours of frustration. Don't ask me how I know.
+
+Big bang PRs are killing your velocity. Bloated diffs, slow reviews, merge drama. It doesn't have to be that way. Graphite is a modern code review platform built around stack diffs. Small sequential pull requests that land cleanly in order. You break a feature
+
+into focus changes. Reviewers see exactly what changed at each step and you merge continuously without the end of branch chaos. Here's how it looks in practice. [music] Install the CLI in it once and start working on stacks. GT off. Create your first change. Then GT
+
+submit. Next, need to sync. GT app [music] keeps the whole stack rebased and clean. Graphite tracks your stack. Open PRs in order and shows a clean diff per layer. Reviewers focus on intent,
+
+not noise. Smaller diffs ship faster. Conflict rates drop and quality goes up because every step is reviewable and reversible. If your team builds in branches, but wants to ship in stacks, [music] try graphite. Link in the description with a quick start and sample stack that you can copy into your workflow. Now, back to the video. Devbox
+
+sets you in, and a simple exit pulls you back. Now, let's use it. But first, we need to set up version control. And since I'm a special snowflake, I'll run JJ getit init. If you want more about JJ, the video is up here. If you want to
+
+cast, the comments are down there. Now, let's add the devbox JSON to our version control. Then start adding packages. The first important command is search, which uses the Nyx hub we've seen earlier and comes back with a bunch of options. Rip [music] Grip, for example, has a lot of versions stored. The latest of which is
+
+15. Let's add version 13 for reference. [music] Devbox says it's added, but what does that even mean? My local RIP rep says 1411. The devbox JSON says 13, which we've just added. So, Devbox
+
+shell, RG version, and voila, 13. RG version literally comes back with two different versions. Same machines, no containers involved, same configured shell. And yet, this functionality was achievable by virtual M and the likes, Docker containers or well, Nyx shells. [music] non as easy, organized, and structured as devox. But wait, there's
+
+more. Devbox list comes back with current packages in the project. Or you can change it yourself directly in the file. Finding the path on the two different splits also comes back with different settings. Homebrew for the local host below and devbox nicks path above. The banger here is the [music]
+
+fact that this is a dot file contained within a project and is unique to it. Cool. Any package of any version set specifically for a project I'm working on. dream setup. But what am I going to have to start a shell, then kill it, remembering whether I did or didn't on every project? Sounds like a nightmare.
+
+There is, however, one utility that some of you may already know that's entirely made for that. Setting the environment while you're in a project and offsetting it when you're not. Dire. [music] I made a video about it over a year ago, and sorry for looking sick. It was 4:00 a.m. But anyway, Darren is fully
+
+integraable with Devox. Check this out. Drev following the 12 factor app which is another video you can find on the channel sets you up as you enter a path. Its premise is uncluttering your profile by not having to set all these environment variables and other settings globally when they are project specific. And as mentioned devbox has a dur integration to automatically activate the shell and packages when you navigate there on your project. Run devbox
+
+generate dur and voila loading. Envirrc using devbox and even a welcome devbox message from our hook. Now, if you're a neutral user and watching this, don't get frustrated if you can't get it up. >> That's what she said. [laughter] >> There's a short snippet required on your config and nf new so that dear end plays nice. It's on my files repo. After that,
+
+you're golden. There it is in action. You find your deer and that's pretty much it. Rip Grep is using the project specific older version as proof. What if you want a global package like npm install-g or go install for the gophers?
+
+Essentially enjoying mix packages on your global machine. Devbox is not only for well dev boxes but can also help out here. I don't have ranger the two explorer installed locally but devbox global ad ranger does the trick. One caveat and this is again to shell specific that devbox global shellen is expected to run every time you start a shell to plug debox global. Once that's in place for bash users you're good.
+
+Ranger is installed on a share devox global path available across the system. Running Ranger pops it up. Opening files, recognizing color-coded syntax with bat, and overall a pleasure to use. Oh, and neutral users, don't give up. I've got you covered. Asked open code
+
+with cloud to plan and execute a neutral extension for the same purpose so that the shell hipsters can also enjoy nyx packages. I mean, it should be obvious. More about open code in a dedicated video on the channel. I've forked the version here on GitHub, which is also extending PR to the dev books team, but I can't guarantee anything. You can fork mine for the time being. Then go build
+
+hyphen o devbox cmd devbox and then you'll find a new local binary that has the format flag takes neutral as value and outputs a new script. Two steps left. Copy that binary to your local path bin [music] or whatever other global path you like. Then use it directly by saving it to devbox new which can then be sourced. And there you have it. Ranger is known through devox
+
+global path on [music] new. Extremely nerdy but I'm happy. All that's left is to grab the snippet that adds preserve stack as is. Add it to your config new. Save start a new shell. Done. [music]
+
+Now, for those of you who've seen the script section and couldn't tell what it's for, if you're used to npm run on a project or a tune run, for example, on a global system, Devbox brings the same functionality but project specific while not being framework or language dependent. So, if I do something like echoing a line, Devbox run do something sends that. A more practical example would be building a go binary without having to remember the flags and so on. The box run build and a binary was just born and runs successfully. Thinking about a make file? Yeah,
+
+exactly. Only integrated into your end of setup without having another file. And who likes make file syntax anyway? But here's probably my favorite devbox feature, plugins. Ever had to change Postgress versions or change Nix configuration files or set up radius differently for different repos? I have
+
+way too often. Devbox come with a list of common plugins and if you don't find what you're looking for, you can easily create your own. Adding engineix, for example, is done like any other package. But the twist is that all of its config files derived from a template including an index file will all live in a dot file within the project. Devox addictix then devbox services start engineix and you have a custom engineix started from local path. Devbox and devox.de are
+
+added. The dot directory holds your bin and nix virtual end facilitators. Not critical if you don't care. But devbox.d holds your enginex conf and your index to serve. It's critical to add that if
+
+you want any changes, change the template, not the conf file directly, unless you want to change the port 10 times and bang your head trying to understand why it resets itself. Anyway, engineix web port is the envir in charge of that which is a great point to show off the env block setting environment variables for our processes just like the so engineix port set to82 start engineix get the html that shows the index we've updated locally. Do note that similar to docker devbox services ls with list running services while devbox services app will start them and launch a process compose which looks like the love child of k9s and docker compose showing processes and metrics and [music] logs. I do encourage again a thorough look in the docs including the JSON reference both because they're great and easy to read but also prevents loops like I had thinking I'm an engineix genius losing an hour of my life chasing a port. With Devbox under your tool belt you're unstoppable. And
+
+if you're still wondering about how I use Nyx, but more importantly, when I stopped using it and why, you may want to watch this one next to prevent yourself from doing the same mistake. Thank you for watching and I'll see you in the next

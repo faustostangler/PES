@@ -1,0 +1,94 @@
+---
+video_title: "Give me 12 minutes and I'll make you a REGEX WIZARD"
+video_id: XLC7HGZx-2Y
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XLC7HGZx-2Y
+video_date: 2025-10-24T13:30:39+00:00
+video_description: |
+  Try Warp Pro free with 2,500 Al credits-no card required: https://go.warp.dev/devops
+  ---
+  
+  Regular expressions always seemed like this cryptic unreasonable language to master.
+  I'd copy-paste from stackoverflow and gave up on even trying to read the result.
+  BUT it doesn't have to be, it's just pattern matching, and spending 10 minutes is enough to cover everything you need.
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Ever felt like regular expressions are this impossible secret code only experienced seniors get? For the longest time I used to feel lost. Every time I needed it, I'd Google my way. Not surprisingly, finding a stack overflow to my very very specific need. I'd almost never look at the code and when I did, none of it made sense. I knew the
+
+computer saw some logic, but I just couldn't. Until I found a fast way to crack it. And to be honest, it's simpler than I thought. Understanding regex gives you superpowers. Not only it makes scripting way more powerful, but also teaches you how machines view text patterns. There are risks, however, real
+
+danger when it's used improperly. We'll get to that. So, in this video I'm going to show you the simplest patterns that make regex finally click in and how to use it safely. By the end, you'll feel like you can handle almost anything it throws at you. Or should I say, feel like a regex expert. Let's go.
+
+>> [music]
+
+>> Used by all programming languages alike, regex is a pattern matching system that originates in 19, wait for it, 51. [music] 1951, the mathematician Stephen Cole Kleene came up with a way to formulate language using math in an attempt to build early artificial neural networks. 17 years later, regex would become the most popular choice for pattern matching with the rise of text editors. IBM then added it to the ed, a Unix editor, which is the spiritual father of vi. Adding regex to ed eventually led to the popularity of one tool everyone knows today, grep. And if
+
+you didn't know, well, I didn't, grep is actually a global search for regular expressions and print matching lines. Many tools then adopted the use like sed, awk, expr and later on vi and emacs. Not all use the same regex flavor, but the basics are similar. During the '80s, it was then adopted by Perl, which eventually led to its use in PostgreSQL. I made a PostgreSQL video covering that and more. If you're
+
+interested, it's up here. Today, regexes, can you say that, are widely supported in all languages, text editors and literally built into the syntax of so many tools. Knowing how to read and write it is especially important in a time where we're all slowly transitioning into glorified code reviewers written by, you know who. Let's start from using no syntax at all. Regular expression is just string matching, so hello something as input with hello as the search term brings it back. Now, I'm using ripgrep here to
+
+show off regex rules. I'll also add sed later, which is more common, but less easy on the eyes. There's a full ripgrep video on the channel that you can watch later. The first syntax to know with regex is the use of anchors. The most known two are carrot, marking the start [music] of an expression, and dollar sign, marking the end of it. Here, we're
+
+searching for h e, which are specifically at the beginning of input. Just for clarity, looking for the same term while the input starts different will not yield a result. Dot is the anchor for one character. Here, we accept results with c, then any single character followed by t. When we do want to define a set of optional characters, we use square brackets. Then, we can
+
+take a range. Here, we allow all uppercase letters between a and c, which means a, b, and c included. We can also negate a character by using carrot inside the brackets, searching for all words with at that don't start with c. Tweaking that character, even if just the case, will come back different. [music] A couple of words about general grouping and brackets. Parentheses are used to
+
+define a scope and a precedence of operators like the famous gray gray with either a or e. We'll get back to this example later. Curly brackets are mainly for count. For example, three inside curly brackets means the preceding item is matched exactly three times, no more, no less. But, this can be used [music] for min-max using a comma, like so. This
+
+would be between three and five, or we can omit the requested minimum or maximum. Okay, anchors and the other basics out of the way, let's talk about repetitions. Color or color, the spelling mistake depends on your side of the pond, but if we decide to accept everyone, we can add a question mark next to a character, meaning we expect zero or one occurrences, hence accepting both words. Plus, however, is the next step, asking for one or more of a character, which will not take a word without u. So, question mark for zero or one, plus for one or more, and by more it means more, two or infinite. And
+
+then, we have a wild card star, zero or more, basically any count. Ever wondered why stars are called wild cards? That's right, regular expressions. [music] There you go. Both learning regex and building general common knowledge. Okay,
+
+let's go back to plus. Remember, one or more, as long as it's there. What if you're only after digits? There are a few ways to do that. An easy one is to use d as a special character when preceded by an escape character, backslash. Here, we accept digits only,
+
+one or more, regardless of which digits they are. While d is for digits, w is for, can you guess? Correct, words. Words are space separated strings including letters, numbers, and underscores. [music] Throw an exclamation mark in there and it's off.
+
+Same with any non-underscore sign, whether a suffix or separating a word in the middle. When you want to add a space to your expression, use backslash s. >> [music] >> Hello space word is good. By the way, backslash capital s negates this. We'll see a use case later. And of course,
+
+this can be combined with operators we've seen earlier, like accepting one or more spaces. You may be surprised to learn that there's an or operator, too, like finding either cat or dog or both, of course. Remember our color with and without u from earlier? What about gray? We can look for g r y and accept either a or e by enclosing them in parentheses.
+
+Now, it wouldn't be as elegant, but the color can be solved similarly by adding o or o u equally. Regex can look boring if you don't understand real daily use cases. So, how about we put all tricks into action starting from email sanitization. You know how those login pages not accepting your email until you provided a real one? Well, there it is.
+
+Let's say there is a text holding valid email addresses. Hyphen o here ensures only matched non-empty parts on a separate line and a long quite daunting expression. [music] Test first, mission accomplished. Before breaking it into pieces, a quick edge case like no domain suffix or >> [music] >> no at sign, both work well. Now, let's break this down. Starting from the first
+
+brackets, we accept all characters a-z, upper and lower case, all number digits, and a few special characters allowed. The plus sign means any number of the letters is allowed. Then, it has to be followed by a single at sign. And moving over to the domain section, which is more restrictive on the allowed signs, followed by a dot, which is noticeably preceded by an escape character, making it an actual dot letter rather than a regex sign. The domain suffix is only lowercase letters and has to be at least two characters in [music] length. So,
+
+devops toolbox123 and these signs at more signs, even hyphens.co is accepted. This feels like pushing the limits, but it works. First part done. Now, let's enforce a strong password.
+
+There is my strong password passing validation, whereas a seemingly stronger phrase gets rejected. Let's debug how it works. This expression [music] is a bit more intimidating. Since it has more complex features, we'll use a special flag that can handle it. In a nutshell, this is a Perl compatible regex specification, basically an API for a set of C functions that are more extensive when it comes to regex. These
+
+are required in more complex situations like this one. There's more about it on this page for the curious cats here. While we can't go one by one, we can also ask a nice language model to help out. But, that's quite boring and you can do it on your own. Let's make it interesting with a terminal I covered before. Let's put it into action with
+
+Warp, where we can now just pop a terminal and tell it what you want. A quick [music] installation and we're ready. So, let's build a demo page that sanitizes emails as well as passwords. It gets to work breaking everything down to tasks and a few minutes later we have a project ready with code to approve. It can even index the code base to build up the context properly, but this is unnecessary at the moment. There's an
+
+internal editor to help us view and analyze the login sanitation. So, the email regex is broken down to a few sections, but this one is quite expressive. So, let's ask Warp to break [music] it down. And while Warp is warping, we can start. Okay, so we have a step-by-step guide to the email validation, but you know what? Let's
+
+jump into the demo instead. Check this out. Proper address works. As you may recall, one domain suffix character will not go through. With password, we have a minimum of eight characters enforced by a block of regex strings starting with eight. [music] At least one uppercase
+
+and one lowercase enforced by square brackets. Same with numbers and special characters, which [music] are specifically defined one by one. Lastly, no spaces by defining the start carrot and the dollar sign to end it, and between them a backslash and capital s, which ensures non-whitespace characters allowed. This brings to mind the classic password [music] game. If you're extremely bored, just thinking about the regex behind this one breaks my brain.
+
+Go check it out and thank me later. We can play around further trying to break the validation, but it seems to be doing a great job. If you like this code to be pushed publicly, just comment below. And a big thank you to Warp for sponsoring the channel and helping making these videos sustainable, as well as a bunch of other open source projects [music] on GitHub. Okay, we're over the basics and even complex parts, but you can't go through regex in the terminal without mentioning sed, the Unix stream editor and the default utility when it comes to regular expressions. Sed with e flag
+
+[music] takes expressions. It'll work without the flag as well, but this one interprets regex in their modern extended format, so keep that in mind. One of the most common is switch or find and replace expressions indicated by the first s, then [music] slash separators between a pattern to find, a replacement to switch, and flags to determine how it runs. For example, let's replace the word hello, but only in the beginning as indicated by the carrot, with hi. Or, let's mask some digits by finding any number and replacing that with hashes.
+
+Any of the previous methods we've learned earlier will be parsed and recognized by said, making regex an amazing skill to have, allowing you to find or replace over any text [music] with ease. It works with the color example, it works with the animal example, which is a great example for how you can add surrounding pairs to code, or taking file paths and restructuring them in any way, which is one of the more useful cases I had to deal with back in the old system admin days, where we had to clean log files literally every evening. But, showing said without mentioning SD is another unfair take. SD is another Rust alternative, making a familiar Unix utility modern and accessible. It helps in many ways, but my favorite one is deprecation of separators and sensible defaults. So, replacing cat with dog is
+
+just SD cat dog. [music] I mean, too simple to be real. You can find it on GitHub, and like all other alternatives, it's not a full-blown replacement to its predecessor, but rather a small alternative that only handles search and replace. It does, however, handles all expressions in their modern form, and is extremely valuable when testing these locally. To show that, we'll take a Doe, John, and pass [music] that through an expression that grabs all characters before a command and space combination, [music] then grab the rest of the characters. Do
+
+notice the parentheses surrounding both sections. The first will be addressed as one and the second two, which we can then reverse in order by printing dollar two and then dollar one, and we get a John Doe. Sometimes SD will hang a bit, and by hang I mean an extra 10 milliseconds. Nevertheless, you feel it's been processing. Now, this isn't just an SD or said or any other utilities problem.
+
+Regex can be a real issue in application. Analyzing expressions can take an extreme toll on a system, especially if done many times concurrently, and I've seen large systems ground to a halt by a bug we started in a way too complex regex, spiraling CPU into madness. Consider that, and don't go crazy with expressions. If you have to, though, test the performance with every change. Take this tip from someone who suffered for weeks before finding the root cause.
+
+Simple replacements, of course, are nothing to worry about. SD knows all the operators, including or statements. And now that you know that, for all the Neovim users and even the occasional Vim enjoyer, Vim lets you use the exact same said [music] syntax internally, either by running on selected text and then adding S with the separators and everything, or running globally. By the way, one said flag we haven't touched is C followed by G. This means running on all occurrences, but confirming them with the user. So, if we replace T with
+
+X, it'll ask for permission one by one. To take the entire buffer into context, after entering the command mode with colon, use percent [music] to mention the entire buffer, followed by a switch expression, and play around. Feeling like a regex expert already? Good, especially if you're using Neovim or Vim daily or occasionally, pair your new power with Vim motions and become a real text master. Thank you for watching, and I'll see you on the next one.

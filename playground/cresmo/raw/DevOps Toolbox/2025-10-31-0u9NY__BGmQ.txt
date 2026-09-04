@@ -1,0 +1,80 @@
+---
+video_title: "Jack Dorsey Is Quietly Winning the Open Source Agents War"
+video_id: 0u9NY__BGmQ
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0u9NY__BGmQ
+video_date: 2025-10-31T14:30:00+00:00
+video_description: |
+  Try goose out: https://fandf.co/4mIFLV4
+  
+  Goose is Block's (Jack Dorsey - Square, Cash App etc) coding agent.
+  Not only it comes with a bunch of game changing features it ships as a CLI, a Desktop app and even a hidden locally served web app. 
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+I have a very low tolerance for fluff, especially when it comes to AI. But when something offers an open- source userfacing terminal interface that also comes with a desktop version, not tied to one model or another, I'm in. If you've watched this video on the channel, what I just said may sound very familiar for a good reason. Gus is an open-source agent runs locally, built by the team in Block. And when Jack keeps tweeting about it, yes, I know he made it. I need to check what's up. In times
+
+when a developer who I consider the most credible source describes how it kind of vioded a feature in Ghosty using Zigg with an agent like the one I'm showing today, I must give it a go. Goose is written in Rust, works with any LLM, comes with tons of extensions, easy to use UI, superb docs, and some features I haven't seen before. It runs locally, fully open. What's not to like? Before diving in, card on the table. This video
+
+is sponsored by the project, but again, it's open source and completely free. When I started this channel, this is exactly what I had in mind for DevOps Toolbox. Open source, widely adopted, easy to use, and solves a problem. With that out of the way, let's look at Goose, the agent that delivers. With over 20,000 stars written in the crab lang, which is often associated with performance and hype, but don't tell anyone I said that, Goose is quietly gaining traction without the buzz around it. It comes from a well-established
+
+home and is very much not about the models you can use, but about the agentic approach to tasks. The web page has an incredible easy to follow documentation. And what stood out for me with this entire project are these two things. First, the ability to break down complex [music] tasks. And second, and probably more interesting, its extensibility. Now, naturally, it's
+
+open- source and runs locally, which brings to mind Open Code. And you're welcome to check that video up here. But something Open Code for sure doesn't have is this. [music] Goose comes in two flavors, a CLI and a desktop application. Now, you can already guess which one I'm going with first, but be prepared for a small surprise at the end. Everything starts with curl. And
+
+while it's running, I invite you to check the curl video on the channel later. With goose installed, it automatically pops itself up and ready to run. You'll note that it comes with a doconfig/goosepath by default, like all of us. File nerds love to see, and [music] it first asks for a provider. Since I saw this tweet by Jack Dorsey, I wasn't only intrigued by why this combo works. I actually
+
+never played with Quinn before. So why not give it a go through open router which is the one option out of a long list. Quinn 3 coder as a model and we're ready to work. Just typing goose will pop the tool with a new session. The UI is pretty limb if you compare it to others, but this isn't a bad thing necessarily. I'll show you why in a
+
+minute. The help commands lists available options from configuration, which we'll touch in a second, MCPs, sessions, projects, even scheduled jobs, which makes agents even more automated and can start on a schedule. For debugging purposes, the information lists config [music] paths as well as sessions and logs. To jump back into a session, run session list, pick a name, and attach to it by running the session hyphen n with a name and provide the session. Just goose or goose session will start a new session with empty context. If you've stopped earlier when
+
+you saw the help menu wondering about the magical web command, well, at first I missed it, too. But Goose comes with actually three interfaces. A CLI, a desktop version, but also a web interface you can run and explore if a CLI is too raw while a desktop version is over the top. They probably vibe coded this thing in the weekend with goose, so why not? Before running some tasks, this video covers the agent rather than the model. Many times people
+
+confuse the two. And while I will be using Quen to explore Goose, the agent takes care of breaking the tasks, managing the context window and token bank, iterating until success, and utilizing feedback and other mechanisms. It is also, of course, in charge of utilizing MCPS or extensions and all utilities around the model. With Gus, this is all running locally, but once the task is formatted and leaves the agent, it is then sent to an LLM for processing. So the responses and quality of them while somewhat dependent on how the agent chewed them before moving them over is largely a result of the model in use. Okay. So within a local project on
+
+a branch I'm working on, I'm asking Mr. Goose to look at the changes and provide a code review. The first thing it'll say that it can't really access my code as no extension was enabled. And the first extension you always want goose to have is the developer tools. Basically access to the shell and other utilities like git etc. goose configure add extension
+
+will pick a built-in one and while all of these seem exciting we'll pick the developer tools to enable it also asks for a timeout for any tool command that tries to run in the background back to our session the app row remembers the last prompt which now runs the shell access and can start exploring the repo and performing the task at hand I shared before how happy I am with the goose dogs these come with so many guides tutorials and a step-by-step instructions and it's a breeze to work with one cool thing you'll will find there are goose hints. Essentially a hint file that holds general instructions for the agent. By default, it'll live underconfig goose and agoose hints file as a name. The file can hold preferences like choice of language, framework, package managers to work with, etc. I'll create one as an example and make it pick Golang by default when writing from scratch and other patterns from the docs. This is something you'd
+
+want to constantly update based on personal preferences and feedback. Back to our code review. the agent is done saying it's ready to merge, but would perform some changes if it had the chance. Let's give it that [music] chance and go back to the docs to see what these extensions are all about. Some of these can be the dev tools we've seen earlier, but also a built-in memory for persistent context. These are built
+
+into goose, but beyond the community has Chrome dev tools, browserbased Blender. You'll find so many great systems to integrate. And funny enough, the one that caught my eye is the YouTube transcript plugin since I want to automate some of my personal work, and it's been really hard so far. So, I'll use that to show you how extensions work. In this instance, we'll first have to run the MCP. Running it directly will
+
+install and run it in the first time, but we don't really need that at the moment. We'll let goose handle the heavy lifting. Goose configure add extension, a name, and a command to run. That's basically it. This is stored in config goose config.yaml. Under extensions, we
+
+can find the added config, including available tools, en keys if needed, and lots of other options. The next time you run it, you'll see the extension starting. Basically, meaning it's starting the MCP in the back. And then I can ask for one of my recent videos transcripts to be fetched. Not only works, it even went ahead and provided a summary and a takeaway point. Although
+
+not my intention, it's nice to have. I'll let it summarize a tweet that I can post. It creates some tasks and descriptions. I don't fully understand, but there's a tweet. Let's head over to X, paste, and maybe next time. An even
+
+cooler feature in Goose and similar to open code, but also different is recipes. It lets you define a prompt, model, and a bunch of options. But the cool thing is the ability to parameterize them and use sub aents later. While not mandatory, I went ahead and created recipes directory in the goose config path and added my trip planner there. [music] Now, we'll hardcode North Italy in 4 days because I just came back from there. Yes, it was
+
+absolutely stunning. And this also happened. Long story another time. Anyway, a recipe is run with goose run double-end recipe and a file. Note that it's starting the transcription extension, which doesn't make sense in this context. And this is why it's
+
+usually better to list them in the task or toggle them off in the options. Anyway, there it goes, fetching rest countries. Did you know there's a legit API for that? That's nice to know. It then moves on to Wikipedia. Maybe not
+
+the target I'd pick, but let's let it have its go. And there it is. Total estimated budget, attractions, tips, where to land, eat, drive, have dinner, and sleep. If anyone tries this, please come back and tell us. I'll even read a fancy version with Lazy Vim's markdown preview where I discovered the model is patting itself on the back, calling its own report wonderful mix of natural beauty and experiences. [music]
+
+If you go deeper on these recipes, you can configure specific permissions, extensions, and even parameterize the session. For a parameter to actually work, you'd want a double pair of curly brackets around them. then provide them in the line using the param flag. Now, this could be a recipe style of work or something else, but as part of the task, I noticed a sub agent sent to do part of the work. It's hard to understand why or what exactly. Nevertheless, the agent
+
+distributes some work even without being instructed to do so. It is an option. We'll touch how in a sec. Now, I wanted to talk about the persistent context extension that comes with goose, but this project just caught my eye. Cogni is memory for agents also available as a goose community extension. It can take a
+
+set of instructions telling it what to keep in memory and when. The cool thing about Cognney is how it gives AI agents a durable searchable memory layer that is simple but powerful. It ingests messy context, turns it into structured knowledge by sharding it into chunks, [music] then using graphs. Then it exposes API so agents can recall, reason, and plan across sessions. Because it's open source, you can self-host, inspect the pipeline, swap vector stores, and tune the retrieval to your domain. I'm
+
+assuming no one is going to go this wild to begin with, but the features are there. You'd need an open AI key set as two envirs if you're using this extension. Then install Cognit locally and configure the extension [music] itself. Goose can run easily in the Docker container. And if the first thing that comes to mind when you see this is that it can run in CI, well, we think alike. The people at Block made it even
+
+easier by listing a GitHub action. If I must be honest, it needs a bit of syntax fixing to work, but it configures an action with Goose, adding the model to use, asking it to comment on PRs wherever you wanted to. Now, an even cooler thing about Goose and probably the single feature that caught my eye the most is sub recipes, allowing you to build your own team. Back to the trip instruction, we can configure a subre recipe to go fetch the weather things to do and bring them back as context to their parent. The way you do that is configuring them in a sub recipe array instructing the parent to use them and obviously configure them as a standalone recipe files. If we focus on the things
+
+to do recipe, it has logic saying if weather context is available, make changes based on that and become even more accurate with the result. [music] Now, the doc suggests that you can literally tell the model whether things should run sequentially or in parallel. And by adding this type of wording, it triggers the system to break down the process based on your preference. The sub recipes and the ability to run in parallel baked into the agent is quite unique and super cool to have. Compared to open code, I'm not sure I've seen such a feature, and in larger missions, this can become a dealbreaker. With that
+
+in mind, the last thing left for us to explore is the desktop version of Goose, which you've probably already forgotten. After installing and approving a bunch of system permissions, you get a nice lin UI with chat and results, including the token monitor and other information, I'll use the UI to build my dream agent. I must say it did quite a good job. Unfortunately, the Quen model took too long, more than expected, especially given the already installed extensions. And since it took that long, I stopped it halfway and we'll probably try again with a less hungry model later on.
+
+That's it for Goose. Before deciding whether this is your new coding agent, despite all the great features it comes with, I highly recommend checking out the open-source in this video next. Especially if you're a NEOM user, you'll find a nice surprise in the end. Thank you for watching and I'll see you on the next

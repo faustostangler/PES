@@ -1,0 +1,96 @@
+---
+video_title: "Nginx Has a BIG Problem.."
+video_id: acJBNVTW42I
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=acJBNVTW42I
+video_date: 2026-01-30T14:30:06+00:00
+video_description: |
+  Trigger.dev is the open source platform for building AI workflows in TypeScript. 
+  Start building now: https://fandf.co/3KNDUkS
+  ---
+  
+  Angie is a fork of Nginx, founded and actively developed by *core team members* of Nginx leaving F5 after the acquisition.
+  It's powerful, feature rich, and packs so many goodies I was shocked I haven't found it earlier.
+  - https://github.com/webserver-llc/angie
+  - https://github.com/omerxx/dotfiles
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: 
+  https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes: 
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Engineix is the absolute goat. It's basically the engine of the internet. And if you're in DevOps, it's probably your best friend. But let's be real, the Engineix we're using today isn't exactly the same project we fell in love with years ago. See, back when Engineix was sold to F5, things got corporate. It
+
+wasn't just a business deal. It was a mess. The original founders and the core developers, the people who actually built the engine, ended up walking away. Since then, it's felt like many useful features started getting starved. While useful stuff got locked behind a massive plus payw wall while the open source version just kind of sits there adding more fuel to the fire. Engineix was
+
+recently retired from Kubernetes as an ingress controller. I must be honest here and say that it doesn't point to any issue but PR-wise not great. Remember some of the core team members leaving? Well, they teamed up together and came out with NG [singing] >> their own engine for >> a literal drop in replacement closer to the community, richer in features, and maybe, just maybe, a future rival to the king. [music] >> When [singing] will disappear?
+
+>> You can keep your existing configs, but you suddenly get the pro stuff for free. We're talking about built-in dashboard, monitoring API, dynamic upstreams without needing to reload a native end-to-end HTTP3 that actually works from client to server. It's got so much enterprise level power packed into an open- source tool that it honestly feels like it should be illegal. So, today we're going to put that thing to the test and see if this is finally the upgrade we've all been waiting for. Let's go. [music]
+
+If it wasn't established already, NG is and was made as a drop-in replacement for EngineX [music] conceived by core Xdevs to venture beyond the earlier vision. Nice way of saying we're going to make everything free. The readmi has the instructions and the 90% left below are features that Engineix does not have. End to end HTTP3, built-in TLS certificate support, exposing metrics, dynamic upstream updates, session binding, and it goes on. I'll leave the reading for you. head over to its
+
+website where the docs don't disappoint and provide much more details. And yes, they have a pro version of their own. NG Pro is the commercial version different from Engineix. NG's model is mostly reliant on customers requiring professional support and functions for deploying highly reliable applications in a corporate environment. I have no idea what this means, but I care more about what it doesn't mean. It seems
+
+that NG doesn't have any special abilities behind a payw wall, and that is a great start. If you're migrating from EngineX, there's a simple guide instructing you, making sure all the configs are on the right paths and that you don't miss anything. As usual, as a Mac user, I'll use Homebrew, but NG is available everywhere. Once ready to run, I'll quickly check the help menu where NG has the old style simple group of switches and flags, and it doesn't take much beyond that. NG's config file usually lives under etc or in homebrew's case opt homebrew and then etc where my current confile is configured to use port 8083. The rest of it are generic
+
+options you already know from engineix and if you don't you can watch my engineix video up here. Now you can use homebrew to run ng but the best way to start a server is by simply running ng with nothing else. No news is good news here meaning my config file is valid. We can now head over to the local host at 8083. And what do you know? Welcome to
+
+Engineix. I was also partially surprised by the welcome header not saying ng. It will, don't worry. But to make sure we've got the right server curl with headers, there's a curl video on the channel as well. I highly recommend it.
+
+There's the ng server header and version. If you've ever fought with 404 timeouts or tried to hack together a chron job for a task that takes less than 10 minutes, you know exactly how painful that can be. That's why I'm stoked to have Trigger Dev sponsoring this video. They're an open- source platform that basically gives you TypeScript code superpowers instead of you having to worry about managing complex infra. TriggerDev lets you build longunning workflows and AI agents directly in your existing codebase. The
+
+best part is how it handles the messy stuff for you. Things like automatic retries, persistent cues, and scaling up whenever you hit a spike. So whether you're doing heavy lifting like video processing with ffmpeg or building a complex agent that needs to chain a bunch of prompts together, it just works. You can even stream those AI responses back to your front end in real time without the usual headache. What I really appreciate, and I think you will too, is that it's properly open source and built specifically for the TypeScript ecosystem. It's a much
+
+friendlier alternative to things like temporal if you want something that feels native to your current stack. If you want to stop babysitting your infrastructure and actually focus on building cool features, go to trigger.dev. It's free to get started. So check them out and see how it fits into your own DevOps toolbox. See what I
+
+did there? Now back to the video. To stop a running server, you send a signal to it with hyphen s. This kills the server which has stopped serving. So just like engineix, ngconf has events and HTTP serving endpoints. You add
+
+locations and pages to serve, error codes, and all the usual stuff. The cool thing I like here is after changing the port, there's a reload signal that we can send to NG. Simple but powerful. Now, check this [music] out. Engineix Plus has a live activity monitoring, which is a very simple dashboard if we're honest. Probably can be vioded in
+
+a weekend. Now, check out NG's, which you get on the open source version. Looks familiar. That's a demo from NG's website. We'll set up our own in a sec.
+
+It'll let you drill down into servers, locations, upstreams, and other options. The project is called console light and it's open source on GitHub yarn install and you can run it locally. To avoid any confusion, at least one that I had, ng doesn't ship with the console, at least not by default. I read an explanation that it's more of an attempt to keep things light when shipping, keeping containers and the binary small. I don't think they have any reason to misguide anyone. It is open source and free to
+
+use after all. The thing is, not all the containers they ship are the same. Some are lin versions and some are packed with features. Don't worry, we'll get there. Just don't expect the dashboard to pop immediately when you run it if you're used to caddy or traffic for comparison. So, pulling the official
+
+Docker release and running it on AT85 with the local default 80 for the container. And boom, service is available. But get this, finally, it's welcome to ng we're seeing here. Let's exec in and see what it looks like from the inside. To keep things light, NG made this an Alpine based container still shy of the 300 megabytes. But
+
+despite that, Vim isn't part of the package. So meet APK, the Alpine package manager if you weren't familiar. Now we can change the config, add the / [music] console path. Don't forget trailing slash when navigating. And there we are.
+
+NG's console up and running. A cool addition is the VS Code like small editor showing NG's conf. Not directly editable. Don't know whether that's because something I configured wrong, but it's still nice. You can see the console/ API we added, which augments something called status. This is Angie's
+
+JSON monitoring endpoint showing everything you need from server information through connections, HTTP endpoints, caches, and more. So, shall we move over to the big boys field? Let's talk about HTTP 3. So when we talk about HTTP3, we really want to talk about quick, the protocol that uses UDP and finally replaces TCP to get rid of the head-inline blocking. This problem describes the inefficiencies of TCP which were necessary to create dependable communication and Quick came to solve this. This makes the web feel
+
+much snappier, especially on flaky mobile networks. Now you might ask, doesn't Engineix already do this? Well, kind of. and Unix took years to bring HTTP3 to their mainline version and even then they mostly focused on the connection between the user and the server. This is where NG steps in. It
+
+handles HTTP3 end to end. This is how it works. We'll start an NG container that listen on 443 both on TCP and UDP. I'm mounting an SSL certificate. Don't worry, we'll see how to automate that process as well later. And let the
+
+container start. Now we exit in and look at the config file. You'll note a listen line that uses quick on 443. Then the use of the certificate mounted and if everything goes well, we should see ng serving on HTTP3. Now since ng has a P1 in the container, we can't just reload it as easily. We would have to kill the
+
+first process. [music] I'm not sure why it was done this way, not using tiny or something of that sort. Please comment if you know, but we can also run ng minusd to test the loaded config, which looks fine. Important note about trying to speak HTTP3 to a server. If you take a close look at my default curl version, the one that comes with my machine doesn't have HTTP3 on its supported features. But
+
+curl does have a way to do that. It's just still experimental and requires us to download a newer version. I'll reinstall another curl and use the full path to make sure I have the right one which now has HTTP3 mentioned in its list of supported features. Good. The next step is to add the HTTP3 flag to the request. Now check the logs out. NG
+
+is serving on HTTP3. We can see the handshake server certificate identified, though unverified of course because it's self-signed all the way to the established connection. Job done. [music] With quick under our belt, the next piece is actually something doesn't do at all, leaving us with more hoops to jump through. Something that already comes out of the box in so many other routers like Traffic and Caddy and now, NG. I'm talking about automating TLS
+
+certificates with Acme support. Of course, NG comes with a built-in module for automated certificate acquisition. What a beautiful way to describe it. There's also support for all the familiar validations like HTTP, DNS, etc. I'd like to use Let's Encrypt, and it wouldn't really work without a real domain here. So, I just learned about
+
+Pebble, an official mock from Let's Encrypt, which is a small certificate authority like Boulder from Let's Encrypt as well. There's a big warning so that no one even thinks of using it in production since it evaporates every run and makes up keys for every issue. So, you've been warned. Another small warning if you're actually using Pebble. There's no good container built for it and you'd have to clone, build, and run it locally if you want to play with it.
+
+It's not a big deal, but I thought I'd save you the time trying workarounds. So, this is my compos file running Pebble on top. I'll show you the mounted config in a sec. And below we have our ng server mounting acme data which you'll also see and a config file to run for the server. So first off pebble we have it listening on all interfaces and we provide a certificate and a key to use. That's the important bit. The conf
+
+file is as following. We have the acme client path where generated certificates will be stored. Then adding to the client a ca in this case it's pebble in the endpoint we've configured earlier. And below we have our server name example.com. And finally enabling Acme
+
+inside the server compose app. Acme is available. Let's run something like asking for the API status on HTTPS using our domain. Nice. NG tells us it autoprovisioned the certificate.
+
+Remember the Acme data we've mounted with our compos file earlier. Here are the generated certificates it created and stored on our volume. So will I keep NG? I'm a bit torn here. On one hand, it's a total drop-in replacement for Engineix and comes with all the plus features for free. I know for a fact it
+
+comes from a good home. So, it's a plus side on this and the known performance of course. It's just that most times I can't really tell whether the performance is enough to consider Engineix or NG over something like Traffic, my favorite web server to date. I highly recommend watching this video next to learn more about it. With that in mind, thank you for watching and I'll see you in the next one.

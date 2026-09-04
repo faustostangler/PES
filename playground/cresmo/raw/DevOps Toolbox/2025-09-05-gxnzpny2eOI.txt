@@ -1,0 +1,81 @@
+---
+video_title: "12 DevOps BEST Practices in 12 minutes"
+video_id: gxnzpny2eOI
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=gxnzpny2eOI
+video_date: 2025-09-05T13:30:45+00:00
+video_description: |
+  Supercharge your security with Twingate: https://twingate.plug.dev/lbHxbJI
+  ---
+  
+  12 Factor Application is a set of guidelines to make any app, ready for production in modern environments. If you want to keep you SREs / DevOps or just yourselves from waking up at night, and smoothing out the process of shipping and tackling issues - 12 Factor is my number one stop for everyone.
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+According to research, 73% of companies say technical debt is holding them back. Outdated systems cost an average of 15 million per issue arising from bad architecture, lack of agility, and manual human error leading to production failures. These are mostly non-complicated, simple problems with fairly simple solutions. Yet, so many engineers and leaders seem to ignore basic practices. It's time to flip the script and build better housing for your applications. But what
+
+makes a good app? Or more precisely, what makes a modern app environment? Let me tell you a secret. It's not the one that has the fewest bugs. The best code can still be wrapped in a junk server, slow environment with hard to configure parameters, and provide an awful experience. It
+
+works on my machine is still a common excuse when later the same code fails to run in production. But what if there was a better way? What if instead of a vague demand to make it better, you had a clear set of guidelines, an instruction manual for building applications made for the modern era? This is the unreasonable effectiveness of the 12 factor applications. But I made it even simpler. You don't have to know all 12. You're probably implementing six of them without thinking
+
+about it right now. So today, we're diving into the essentials, the ones that matter, the blind spots. By the end, you'll have a clear playbook to make your application scalable, portable, and resilient. The 12 factor app concept was introduced in 2011 by developers at Heroku. Back then, the top tier application deployment platform. And yes, I know what you're thinking.
+
+14 years ago, last updated in 2017. Not much of a modern list, is it? Well, not only the majority of it is very much relevant today. It was recently made open source by the team aiming to modernize certain parts to bring it up to date. Huge organizations like into it, firm believers and adopters are contributing and assisting and beyond updates. We're soon going to see a new factor
+
+added. More about that in the end. So, while the 12 factors start with codebase and dependencies, allow me to skip these. If you're curious, feel free to check these out. I'll move over to config and pop over to GitHub where it was recently updated. Config is everything that makes an app
+
+behave and communicate in a certain way and will vary between different environments like staging, production, and local use. Config varies, code doesn't. Things like database endpoints, cache addresses, credentials to work with providers like off cloud services or the Twitter API, for example, should all be separated. This is my guestbook application with a Reddus instance, which I'm using Valky for instead. More about Valky in the video above. You'll note that
+
+the address for the app is configured in an environment variable called radius endpoint. The code holds a check to see whether such an envirable is set and either uses it or falls back to a same default such as local host. Once ready, I can sign the guest book and the entries registering on screen indicate a cache holds them in the back. To make a change, there's no need to update the code or build it or create a new container whatsoever. All that's required is a simple environment variable update. Let's change the port, reset the app, and what do you know? The
+
+logs say that we're missing a ready instance or that the address provided is wrong. Either way, it can load. Now, just having this message here is another one of the 12 factors on its own. I'll let you guess which one it is. We'll get there soon. But for now, back to our config
+
+where I can fix the port and basically change the addresses based on the environment, cloud, resource, region, whatever. None of these require rebuilding the application. Any other variable that's environment specific goes right in here and should be read in the code. All of these become 10 times more important when running on an orchestrator. This isn't a Kubernetes video.
+
+I have a bunch of those on the channel, but the concept stays the same. Use end variables that can be configured everywhere. You don't want to make anyone open up your codebase combing through your code only to find that you've hardcoded local host at 6379. Side note, you have no idea how many five coders I've seen complaining about this issue specifically try to deploy to production while looking for the Postgress at localhost not realizing what's going on and ending up listening to the cursor suggesting they load Postgress on the same container. What are you going to do? Now this is a great point that explains the next factor backing services you know radius
+
+instances databases rabbit MQs. A 12 factor app addresses these as attachable resources, meaning they're separate, loosely coupled. The code makes no distinction between local and third party services. Each service is a standalone resource that can be scaled on its own or simply replaced without ever having to worry about the application. This means I can delete my application pod and radius keeps running. Then the application gets replaced by the system around it
+
+and the database doesn't care. And if you're using Kubernetes like me and want to keep this communication safe, today's sponsor, TwingTate, now offers a fantastic solution. Twing is a modern zerorust network access solution that's replacing old school VPNs. It provides faster, more secure access to your private resources without the headache of port forwarding for all of us working with Kubernetes. Twing recently released their open- source Kubernetes operator. It simplifies
+
+access management and secures your entire cluster, allowing you to control who has access to what right down to the command level. To install it, check the docs covering everything you need, which will send you to the operator repo. We'll grab the helm install command, not before setting local values file, which you'll be required to add the API key you got from the platform, too. The file is pretty much straightforward and tells you exactly what's optional and what isn't. A quick Helm install and we're ready to connect. Grab the Twingit client, install, open, authenticate,
+
+and we're in. So whether you're managing a complex production environment or just want to securely access your HomeLab projects from anywhere, Twing makes it incredibly simple and secure. You can get it set up in minutes and stop worrying about open ports and complex VPN configurations. Secure your network the modern way. Click the link in the description below and get started with Twing for free and see how easy secure access can be. Now back to the video. Another important concept,
+
+and this is one of those things you have to read between the lines, is that loosely coupled systems require you to think further. If Reddis or the database aren't available at the first time, as a developer, you want to implement a retry loop around that resource, preferably in an exponential backoff that increases the wait time after failures. While your service isn't fully available, don't crash things immediately. Let the user have an indication even if not fully operable. The next factor, number five on the original list, is build, release, and run. What's
+
+critical in this factor is strictly separating build and run processes so that on failure to run there's no need to rebuild the software and push a new release. And while this may sound trivial to some, the number of scripts I've seen coupling the two processes is mind-boggling. Now, there's another critical aspect to this factor, and this one is controversial, so hold on to your chairs. On a 12-factor app, it is impossible to make changes to code at runtime since there is no way to propagate those changes back to the build stage. Yes. No saging into server fixing
+
+bugs while it's running. H I'm sorry. Wrong password. You're sitting here trying to hack Ginyang's password instead of doing your actual work. I mean, you have one underpowered laptop, so you know, you should have the answer in 9,000 years. My personal interpretation for
+
+this factor beyond the obvious is having a CI in place. Continuous integration automated for every build. There's the code probably waiting on a pull request. Once approved, it gets merged and automatically build starts. This ends up in a binary for release. In containerized environments,
+
+this would include packaging things in a container and building the code would be described in a Docker file or a container file with the instructions creating the release. Then we'd have to put that package somewhere. In this instance, pushing it to a registry and then and only then making it run. A GitHub action, for example, will show a number of jobs that together create a pipeline. build which builds Go in a container and pushes it, testing the result by running it and deploying to Kubernetes where the container will run based on the instructions the container file holds. If we look at the pipeline running, it shows all the steps where we can drill down,
+
+see what worked, what didn't, read the logs and learn whether it took too long or anything out of the ordinary. And then there's a process factor running the application as a single process, a single script, or like here calling a binary that does its thing, not a chain of commands or any prerequisites. The 12 factor app never assumes that anything cached in memory or on disk will be available on future request or job. Chances are high that a future request will be served by a different process. If you're thinking of sticky sessions, well, these are a violation of 12 factor and should never be used or relied upon. I'll touch another factor which you'll think
+
+we already covered and we kind of did. There's a broad overlap in some of these. Disposability is a byproduct of running a single process and decoupling backing systems. A 12 factor app should expect getting terminated all the time. Processes are also expected to start quickly and shut down gracefully by listening to sigm which is a graceful terminal signal and clean up its mess before going to sleep. This can be returning a job to a queue, closing a DB connection or returning
+
+a response to an open request if possible so that it's not kept hanging. For a web process, this can mean stop listening on a port and refusing additional requests. As a developer, you're expected to think about it and adjust. in this code by Kelsey High Tower demoing the 12 factor app. And please ignore that it's Golang here. The language doesn't really matter. The code
+
+listens to incoming signals and actively closing ongoing operations before getting shut. Before our last factor, there's one that's also a love child of previous factors. DevOp parity suggests keeping dev staging and prod as similar as possible. The more these are similar, the earlier you catch bugs and configuration mistakes. Potentially this means using the exact same backing services as much as possible. a similar load and a similar deployment process. Also, since we already
+
+mentioned separation of build and run processes, you'll have deployed the exact same artifact only with different configuration, which you guessed it is another factor we already mentioned. Ladies and gents, we got to the log section. So, I want to look at this code. This is written in Golang, but the language doesn't really matter. This line right here is important. You see that line right
+
+there? Starting the application. You ever launch an app and you're like, what the hell is it doing? Yeah. log what the application is doing. But more importantly, do not log this into a file. In the
+
+past, it was common practice to log strings into a file that can be later read and queried. Modern applications running on containerization systems use std out. The std out channel gets collected by default. Modern systems are designed around that concept. Say what the application is doing and communicate with your ops team by keeping this concept in the back of your mind. Lastly,
+
+before wrapping up, I did briefly mention a newer factor not yet released coming up soon. Identity is an open PR factor ready to be merged. Adding the identity factor while removing admin processes as well as a few other updates. The idea is having short-lived keys when authenticating with backing services with minimal necessary scope also known as list privilege access. This is an important addition making sure we don't only create separation similar environments and configurable applications but also narrow down the attack vector by keeping permissions to the bare minimum.
+
+Mastering the 12 factors prepares you to the world of containerization, but doing it properly. If you're taking your first steps in Kubernetes, I suggest doing two things. One, hitting the video on screen to learn whether you actually need it. And two, checking out my course on the first Kubernetes steps as an introduction. Thank you for watching and I'll see you on the next

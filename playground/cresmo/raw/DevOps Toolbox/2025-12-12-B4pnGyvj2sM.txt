@@ -1,0 +1,73 @@
+---
+video_title: "Stop Paying for Tunnels. Use Open Source Instead."
+video_id: B4pnGyvj2sM
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=B4pnGyvj2sM
+video_date: 2025-12-12T14:30:18+00:00
+video_description: |
+  Sevalla is a no-limits, all-in-one PaaS with global performance and usage-based pricing. 
+  Get $50 credit to start and test it for free: https://sevalla.com/?utm_source=prettyprinted&utm_medium=Referral&utm_campaign=youtube
+  ---
+  
+  FRP (fast reverse proxy) is an open source letting you maintain your own tunnels.
+  It's also wrongfully identified as a malware on many machines, and you can understand why.
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Do you know the feeling when you need to share a local service with a teammate or open your own self-hosted home lab servers to the internet, but then you remember you're stuck behind your home router? Security studies show that most home server hacks happen because of bad port forwarding. It's a fact. If you open a port, bots will find it in under 5 minutes. So, you find a service like this one or that one, but you realize the server isn't yours and all the premium features are locked unless you spend some cash. I replaced years of hacky solutions to this
+
+issue with this single trusted open- source, which is one of the most popular projects on GitHub. But here's the thing, you don't need a static IP to reach your server. And you definitely don't need to open dangerous ports. You need to dig a tunnel. This is FRP. It stands for fast reverse proxy,
+
+and it lets you control the traffic by reversing the connection. It's faster, it's safer, and it costs nothing other than the server you probably already own. FRP will dig your tunnel and keep both ends under your control. Today, I'm going to show you how to set it up in 5 minutes so you can access your home lab or local services from anywhere in the world. Let's dive in.
+
+People often get confused about what a reverse proxy actually is. Well, let's start with just a proxy or a forward proxy. This is a server that sits in front of a group of client machines. When those machines make requests to services on the internet, the proxy server intercepts those requests and then communicates with web servers on behalf of those clients like a middleman. Now, a reverse proxy is a server that sits in front one or more servers intercepting requests from clients. This is different from a forward proxy where the proxy sits in front of them. With a
+
+reverse proxy, when clients send requests to the origin server of a website, those requests are intercepted by the proxy server. It will then send requests to and receive responses from the origin server. Why? Well, load balancing to start, protection from attacks, caching, SSL termination. These are all common use cases. With that in mind, let's take a look at FRP. Over 100,000
+
+stars mean something. FRP is not only popular, but also heavily sponsored and documented. As one would expect, it's available for all platforms. But there's a big catch. Once you unpack it and try the binary, you'll find frc and s for client and server. But trying either would pop this.
+
+Most operating systems think it's a malware due to its nature. Some antiviruses would delete it immediately, and Mac OS is especially annoying. I can see you smiling behind the screen, arch users. Not even the casual right-click open helps here, so we need the big guns. XTR checks for assign attributes to files like unverified potential malares. So we need to take it out
+
+of quarantine and we need to do that by removing that attribute. Now we can start. FRP takes ini or toml or whatever option you like really for a config file. I'm taking a quick break for a word from today's sponsor. Tired of hitting walls with your hosting platform, artificial limits, surprise bills, and juggling five different services just to deploy your app? It's time to break free. Meet
+
+Savala, the all-in-one trickery-free platform as a service from the infrastructure experts at Kinsta. They combine the best features of modern platforms into one seamless experience. With Savala, you get unlimited collaborators and unlimited parallel builds. Deploy your apps, databases, and static sites on a global network powered by Google Kubernetes Engine and Cloudflare. There are no fixed plans, just transparent, usagebased pricing. You only pay for what you use.
+
+It's the developer experience you love with the enterprisegrade security and performance you need. Stop compromising and start building. Experience the Heroku successor that's built for today's development teams. Visit savala.com to deploy your first application for free. That's svala.com. You
+
+also get $50 worth of credit to start and test the platform. So, make sure you don't miss that. And now back to the video. Now, important distinction. The reason you see both server and client here can be a bit confusing. So, the server is the authority through which you tunnel a publicly
+
+accessible IP address in a box that serves as a gateway. If you're using Cloudflare or Enrog, you're outsourcing that bit to the service, both trusting them, but also probably paying for what you use. For this reason, I'm using an AWS EC2 as my gateway to be able to expose my own home network. And yes, AWS is another enterprise, but you need to cut your losses at some point, folks. And no, I don't think they read my server logs or access it in any way. Different discussion.
+
+With that in mind, we can create a client for the FRRPC on my machine as this is what we're going to expose outside. We have to provide a public IP of a remote server to work with as well as a port and you probably want to at least have some kind of authentication. Now, the proxies is where the interesting bit goes, making FRP a small load balancer. This resembles EngineX a lot. I've made a video covering it from the basics where you can find a similar setup telling the server what goes where with type of connection ports etc. Okay, local setup done. Now let's configure the
+
+server. My AWS VPS will serve all addresses. Bind the same port, configure the O and also configure a web server. We'll see that in action in just a bit. First step, FRPS with the server config and we're running. Local client with FRPC config starts up and starts the local proxy. Moving
+
+over to our server, check this out. New proxy MAC HTTP 9000 over TCP is successful. So, connection established. Now, about that local proxy to a web server on port 9,000. Let's actually create one to see if I can throw requests at it from the internet. Get this, but focus on what I'm doing
+
+here. from my local shell. I'm sending a request while authenticating to the remote server's IP on port 7500 to the API proxy TCP path. And look at that FRPS tells us it knows the proxy lists a name and some other information and that it's online. In case this confuses anyone, this server beyond authentication is meant to be restricted. Yes, the address is public, but it shouldn't just accept
+
+requests from anyone. This would be sub ideidal. You can obviously get that information through the web or parse nicely when building automation around it which also reveals additional options like rate limit or load balancing features like grouping clients sending health checks and attached plugins. So local web server app remote curl and boom rerouted directly back to our Python honeypot experiment is officially successful. Now about that web server. Since
+
+I am serving my local directory, if I hit that IP and port on my browser, I'd be able to well browse my local files. If you're hearing and seeing red alarm lights thinking about a remote shell, yes, I was worried about that too. This goes to say that while this thing is extremely useful, with great power comes, you know, but also this makes me think how many hackers worldwide just set up a public server, then pop little FRP clients on vulnerable networks, then route themselves through whatever they want. Can you now see why it's always marked as a dangerous malware and deleted by antiviruses? But for more or rather less malicious use cases like serving a local self-hosted graphana for example, I can now run it locally then update the config tol file to find it on local port 3000. That's it. Same IP server and port now sends us to the local client proxing the
+
+request to a local graphana. That's useful. But what if you want the most useful port of all? SSH exposed through that relay server. This is the local client on my Mac sharing SSH as a proxy to the local port 22. I'll move over the O config to the server on the right and let it run. Once
+
+started, let's fire up the local client. Both the server and the local log approve. So, we're now proxing. Next step, SSH. The config says I'll get to the SSH port if I use port 6,000 on the FRP server. I'll start by gently knocking on that door with net cut. And okay, someone's not happy
+
+behind the door. I can find the port, meaning the server is okay, but the client says connection refused simply because there's no SSH running. I want to be the cool kid and use the terminal, but Tim Cook says no. So, if you're on a Mac, because if you're not, I can see you gloating all the way here. Anyway, under share settings, you can turn on remote login, which is simple words for SSHT. Okay, another knock. And we're good. I can even SSH to local host from my computer,
+
+which is cringey, but works. Let's try the real deal. I'll try to SSH into my own box through a remote server. So, SSH user at IP with a proxy port. And we're in. It doesn't look like much.
+
+Maybe the unbelievable terminal motion speed can suggest I'm routing myself through Oregon right now to view my own local files, which is kind of hilarious if you think about it. Okay, I think that proves the point. And yes, I remembered to shut SSA down. Thank you. All the above, including lots of examples, are on the project's readme, and I'm curious to hear if anyone found some creative ways to implement FRP on their network. Let me know in the comments below. So, you can
+
+tunnel your way through like a real hacker. But to actually serve your precious applications, you probably want a framework to make self-hosting a breeze. Check this video next to see how open source solved that pain as well for good. Thank you for watching and I'll see you in the next
