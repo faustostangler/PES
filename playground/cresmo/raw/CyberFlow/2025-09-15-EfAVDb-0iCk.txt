@@ -1,0 +1,88 @@
+---
+video_title: "The Best Way To Learn Reverse Engineering"
+video_id: EfAVDb-0iCk
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=EfAVDb-0iCk
+video_date: 2025-09-15T14:23:36+00:00
+video_description: |
+  Join The Family:💻👩🏻‍💻https://cyberflow-academy.framer.website/
+  Check Out The Courses We Offer: https://cyberflow-academy.framer.website/courses
+  
+  Educational Purposes Only.
+  
+  In this video, I’ll walk you step by step through the exact process I use to crack binaries, uncover hidden passwords, and understand how malware hides its logic — even if you have zero programming or cybersecurity experience.
+  
+  We’ll start simple with strings, move to objdump disassembly, and finish inside IDA, where you’ll follow the control flow graph to locate the exact function that checks your input. You’ll learn how to:
+  
+  Extract ASCII strings and identify useful clues
+  
+  Disassemble binaries into readable assembly with objdump
+  
+  Analyze functions and control flow in IDA or Ghidra
+  
+  Understand the Application Binary Interface (ABI) — how registers like RDI, RSI, and RAX move data
+  
+  Trace comparisons and reconstruct a hidden password from machine code
+  
+  Recognize how malware obfuscates logic and hides secrets
+  
+  Build a repeatable workflow to reverse any binary
+  
+  By the end, you’ll crack a real password and understand how to think like a hacker — not just copy commands, but actually read and understand assembly code.
+  
+  
+  #hacking #ethicalhacking #bugbounty #cybersecurity #hacker #pentesting #infosec #cyberattack #hackingtools #sqlinjection #metasploit #cyberflowsacademy
+  
+  → Email: cyberflow10@gmail.com  
+  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+In this video, I'm going to teach you the exact repeatable way to tear a binary apart, find the secret data, and automate the boring plumbing so you finish reverse engineering challenges in minutes instead of days. And yes, once you know this, everything basically becomes open-source. We'll go from tiny C programs to assembly patterns, use the tools that actually speed you up, and the debugger tricks nobody tells you, and finish with a one-click workflow that grabs the flag while you sleep. So stick around. Reverse engineering is not mystical detective work. It's just
+
+stubborn curiosity with better tooling. At its core, it's bottom-up archaeology. You're handed a blob of bites, and your job is to figure out the human intent behind the machine noise. That means understanding compilers, registers, calling conventions, and the tiny habits every programmer and compiler leave behind. Start simple. Compile a tiny C
+
+program. Open the binary. Look at the hex. then open it in a disassembler. You'll see how three lines of C explode into dozens of assembly instructions and a parade of machinetes. That explosion
+
+is your textbook. Learn to read it. Learn what move, add, call, push, return actually do, and why a compiler turns int C= A plus B into a sequence of moves, register loads, an add, and a store. Do that enough times with small examples, and the patterns stick. Then you'll stop freakishly guessing and start recognizing. Use the right tools,
+
+but don't worship them. GDB will always be the king of low-level debugging, but it's raw and punishing. Add Pone DBG, GEF, or PA, so it stops feeling like medieval torture. For nicer UIs and quick navigation, IDA and binary ninja give you decompilation and graph views that make complex binaries survivable. Remember, decompilers lie. They're chefs
+
+who try to recreate the recipe from the finished dish. Useful hints, but not the original source. Treat decompiled output as pseudo code that needs verification. Disassemblers are onetoone. Decompilers are educated guesses. Use both. Rename
+
+functions. Comment obsessively. Propagate your hypothesis through the file. The IDE should start to look like your brain. When you get a challenge or a suspicious binary, do this every single time. Run file to learn the
+
+format. Run strings to sniff for obvious constants. Run the binary in an isolated VM or container so you don't regret your life choices. Then load it into your analysis tool of choice. Static analysis first. Skim functions, find suspicious
+
+calls, trace the control flow, and identify interesting globals or arrays that might hold secrets like flag in CTFs. If the code manipulates an array and you see it passed into a print function inside a loop, you can be almost certain that the real data is assembled at runtime. That's when you switch to dynamic analysis. Set break points. Run and inspect registers. If
+
+the assembly loads the address of flag into RDX and never touches it again, get that RDX value and read memory. Know your debugger commands. Cold, DR, PXW, DB, DC in radar, GDB plus X/S, and info registers in GDB. These are your reflexes. Practice with CTF style problems, but don't treat them like trophies. Use beginner reverse
+
+challenges to learn the habits of compilers and opuscators. Then slowly ramp complexity. Focus on repeatable skills. Reading assembly flow, spotting constant folding, recognizing standard library calls, reconstructing loops, and using breakpoints to confirm hypothesis. Automate boring parts. Write scripts to
+
+extract strings. GP for common sis call patterns or dump memory regions. Learn to generate minimal test programs. Write the C that you think produced a snippet of assembly. Compile it and compare.
+
+That feedback loop is the fastest teacher. Don't skip dynamic analysis. Static tells you the plan. Dynamic tells you the state. Memory inspection, registers, stepping instruction by instruction, and using srace, lrace to see sys calls are how you confirm that your theory matches reality. Use regar 2
+
+or r2 with minus d and minus aa for full analysis when you want a debugger that's actually built for reversing. Use breakpoints smartly. Set them right after loops or before exits to snapshot the final state and then print the memory at the pointer registers you found. If you can't find a symbol, follow the registers. Compilers often leave the pointer in a register right before a print and that gives you the address without hunting down symbol names. Don't assume the decompiler is
+
+correct. Verify by stepping through the assembly. Always analyze binaries in an isolated environment. And if malware is even remotely possible, disconnect the VM from the network. Learn the basic Linux tooling. file, strings, object,
+
+dump, read, elf, s trace, and ltrace. They are tiny, fast, and indispensable. Finally, mindset. Be patient, and greedy for patterns. Reverse engineering is less IQ and more pattern hunger. The
+
+first few times, everything will look like chaos. Then you'll start spotting compiler fingerprints, common loop structures, and where the program builds its secrets. Practice every day with tiny exercises. Write a function, compile it, disassemble it, and ask yourself what the compiler did and why. Read other people's writeups. Reproduce
+
+their steps and then do it without the writeup. CTFs are a sandbox and a road map. Use them. In the pinned comment, you'll find a complete checklist I made that kills all the guesswork. It covers VM setup must have tools, the first 10 commands to run, where to drop breakpoints and why, which registers to watch, how to sanity check a decompiler, and a road map of tiny labs that build reflexes fast. If you want to skip years
+
+of smashing your keyboard and questioning your life choices, my reverse engineering course gives you the cheap codes, hands-on labs, step-by-step videos of me bullying binaries, and a private Discord where even how do I open IDA gets answered. And Cyberflows Academy isn't just about tools. Look, I know you can learn hacking online for free. That's how I did it. I crawled through scattered writeups, sketchy forums, and hundreds of tutorials until it finally clicked. You can absolutely
+
+do the same. But if you want a shortcut, an organized, personalized path that actually gets you from zero to pro without wasting years, that's what we built the academy for. You'll get every tool you'll ever need. And I don't just teach theory. I show you every single way I personally make money from hacking. Still working today. Bug
+
+bounties, freelancing gigs, building pentesting services, and even YouTube. And people are already winning with it. One guy pulled his first $1,000 bounty within a month. another scored a long-term freelance contract. And I've even seen people spin up YouTube channels around hacking that are actually growing. It's $30 a month, but
+
+for those of you who stuck around to the end, you can get 50% off with the code cyber50. That's $15 to unlock everything. Join if you want the shortcut. Don't if you're happy grinding it out. Either way, keep hacking, stay secure, and have a wonderful day.

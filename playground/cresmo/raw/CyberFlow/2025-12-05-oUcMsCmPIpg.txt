@@ -1,0 +1,79 @@
+---
+video_title: "How People ACTUALLY Get Hacked in 2025."
+video_id: oUcMsCmPIpg
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=oUcMsCmPIpg
+video_date: 2025-12-05T14:30:52+00:00
+video_description: |
+  Join The Family:💻👩🏻‍💻https://cyberflow-academy.framer.website/
+  Check Out The Courses We Offer: https://cyberflow-academy.framer.website/courses
+  
+  Educational Purposes Only.
+  
+  If you’ve ever wondered how people ACTUALLY get hacked in 2025, this is the most accurate, realistic breakdown you’ll find.
+  This video walks you through 10 real attack vectors hackers use every single day  and how penetration testers ethically replicate the same attack chains during security assessments and bug bounties.
+  
+  No “don’t use password123.”
+  This is the complete guide to modern attack paths: credential stuffing, phishing, CVEs, MITM attacks, browser extensions, persistence, privilege escalation, supply chain exploits, and more.
+  
+  If you want to understand hacking like a real pentester, this video gives you the exact tools, commands, and techniques professionals use in real engagements.
+  
+  #hacking #ethicalhacking #bugbounty #cybersecurity #hacker #pentesting #infosec #cyberattack #hackingtools #sqlinjection #metasploit #cyberflowsacademy
+  
+  → Email: cyberflow10@gmail.com  
+  
+  0:00  Intro
+  0:43  Credential Stuffing & Password Reuse  
+  1:44  Phishing Campaigns & Social Engineering  
+  2:41  Exploiting Unpatched Vulnerabilities  
+  3:46  Man-in-the-Middle Attacks on Public Wi-Fi  
+  4:29  Browser Extension Exploitation  
+  5:22  Exploiting Disabled Security Controls  
+  5:47  Session Hijacking & Cookie Theft  
+  6:34  Supply Chain Attacks Through Dependencies  
+  7:29  Persistence Mechanisms After Compromise  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+Welcome to the definitive guide on how people actually get hacked in 2025 and more importantly how you exploit these exact vulnerabilities when you're pen testing. This isn't about telling you don't use password 123. This is about understanding the real attack chains that compromise systems so you can identify them, recognize them, and exploit them professionally. We're going to walk through 10 actual attack vectors that hackers use every single day with the tools, techniques, and procedures you need to know if you want to get into penetration testing or bug bounties. And before we get started, if you want to actually learn this stuff properly with real labs and step-by-step courses, join our private community. First link in the
+
+description. More on that later. Credential stuffing and password reuse. Here's how this attack actually works. Hackers obtain credential dumps from breached databases. You can find these
+
+on sites like have I been pwned or for sale on dark web forums. They load millions of username password combinations into tools like Sentry MBA or OpenBullet, which automate login attempts across multiple websites. If someone uses the same password for their Gmail and their bank account, reaching one gives you access to both. The success rate is around 2%, which sounds low until you realize that's 20,000 valid accounts from 1 million attempts. As a pen tester, you can simulate this by using tools like Hydra with wordlists generated from previous company breaches. The command is hydra -L
+
+usernames. t xt -P passwords.txt service: //target. This tests if employees are reusing compromised credentials, which is a critical finding worth thousands in bug bounties. Fishing campaigns and social engineering. 68% of data breaches start
+
+with fishing and here's why it works so well. Tools like GoFish let you create realistic fishing campaigns that track who clicks links, who submits credentials, and who downloads malware. As a pen tester, you'd clone a legitimate login page using tools like HTTrack or Social Engineering Toolkit, then host it on a domain that looks similar to the real one like of microsoft.com. You send emails using SMTP servers that spoof the from address making it look like it came from IT.
+
+When users enter their credentials, your server captures them in plain text. You can test this ethically by running fishing simulations for companies, which is a massive market right now. The technical skill is understanding SMTP headers, HTML cloning, and credential harvesting. In a real engagement, you'd report who fell for the fish and recommend security awareness training, which creates ongoing revenue. Exploiting unpatched vulnerabilities.
+
+Here's the reality about patching. The 2025 SAP NetWeaver vulnerability CVE-2025-313241 had proof of concept exploits available within 48 hours of disclosure. Any SAP system not patched in that window was vulnerable to unauthenticated remote code execution, meaning you could take over the server without any credentials. As a pen tester, you need to monitor CVE databases and security advisories constantly. Tools like Nessus and OpenVAS scan for known vulnerabilities, but the real skill is manual verification. You'd use Metasploit to
+
+check if a vulnerability is actually exploitable, not just theoretically present. The command is use exploit/multi/http/ your_exploit, then set RHOST target, and exploit. Understanding CVE exploitation is literally the foundation of penetration testing because you're proving that unpatched systems equal compromise. Bug bounty programs pay the most for findings on critical infrastructure that's running outdated software. Man-in-the-middle attacks on public Wi-Fi. Public Wi-Fi attacks are
+
+criminally easy and incredibly common. Here's the technical breakdown. You set up a rogue access point using a tool like Wi-Fi Pineapple or just a laptop running hostapd with a name like Starbucks Free Wi-Fi. Victims connect to your AP instead of the legitimate one. Now all their traffic flows through your machine where you run tools like Wireshark to capture packets or Ettercap to perform ARP spoofing, which intercepts traffic even on encrypted networks. As a pen tester, this
+
+demonstrates why VPNs are mandatory on untrusted networks. You document exactly what credentials or session tokens you captured and provide evidence that company data was exposed. Browser extension exploitation. Browser extensions have insane permissions and most people install them without checking. As an attacker, you'd create a seemingly useful extension like an ad blocker or productivity tool, then submit it to the Chrome Web Store or Firefox Add-ons. Once approved, you push
+
+an update that turns it malicious. The extension can now intercept form submissions, capturing passwords, inject JavaScript to steal session cookies, or redirect users to fishing sites. The technical implementation uses chrome.runtime API for background scripts that run on every page. From a pen testing perspective, you'd audit which extensions employees have installed and test if any are known malicious or have excessive permissions. Tools like CRX
+
+Cavinator analyze extension permissions and flag risky behaviors. If you find employees using sketchy extensions, that's a finding you include in your report because it represents a credential theft vector. Exploiting disabled security controls. When users disable antivirus or firewall, they're essentially removing all defensive layers. As a pen tester, you test this by attempting to execute known malware samples on the target network using tools like Metasploit's meterpreter payload. If Windows Defender is
+
+disabled, your payload executes without resistance and you get a reverse shell with full system access. Session hijacking and cookie theft. Here's an attack vector most people don't know exists. When you log into a website, it gives you a session cookie that proves you're authenticated. If an attacker steals that cookie, they can impersonate you without needing your password. This happens through XSS
+
+attacks where you inject JavaScript that sends document.cookie to your server. As a pen tester, you'd test for reflected or stored XSS vulnerabilities. If the site doesn't sanitize input, your script executes and exfiltrates cookies. Tools like Burp Suite make this easy with its repeater function to test different payloads. Session hijacking is a high
+
+severity finding because it bypasses authentication entirely. You demonstrate the impact by showing you can access the victim's account, perform actions as them, and potentially escalate to admin access if they have elevated privileges. Supply chain attacks through dependencies. This is advanced but crucial to understand. Modern applications use hundreds of dependencies from NPM, PyPI, or other package managers. Attackers compromise
+
+popular packages by either hijacking maintainer accounts or creating typosquatted packages with similar names. When developers install the malicious package, it runs code that steals environment variables, installs backdoors, or exfiltrates source code. The 2025 NPM attack on the popular Axios package affected thousands of applications because developers blindly updated without checking the package integrity. As a pen tester, you'd audit the software supply chain by reviewing package.json or requirements.txt
+
+and checking if any packages have known vulnerabilities using tools like Snyk or OWASP Dependency Check. Finding supply chain issues in a client's codebase is a massive finding because it affects every application they build. Persistence mechanisms after compromise. Once you've compromised a system, you need persistence so you can come back even after reboots or if your initial backdoor gets detected. Common techniques include adding SSH keys to authorized_keys, creating scheduled tasks or cron jobs that call back to your C2 server, modifying startup scripts, or installing rootkits that hide at the kernel level.
+
+As a pen tester, you document every persistence mechanism you installed and verify the client can detect and remove them post-assessment. This tests their incident response and shows how real attackers maintain long-term access. If you like the way I break this stuff down and you actually want to learn hacking the right way, then check out CyberFlows Academy, my private community. Inside, you get full step-by-step courses on ethical hacking, bug bounty, web hacking, OSINT, Python, C++, and reverse engineering. Plus a private Discord where you can ask me anything and learn alongside people already getting insane payouts. You also get all my cyber docs,
+
+the cheat sheets, workflows, recon templates, OSINT checklists, exploit notes, and practical challenge-based labs that actually force you to apply the skills. Plus the $1,000 playbook that shows you how to make your first grand from hacking. And we include all my tools and setups so your machine is ready from day one. If you want all that, courses, labs, playbooks, everything, it's in the first link in the description. See you inside.

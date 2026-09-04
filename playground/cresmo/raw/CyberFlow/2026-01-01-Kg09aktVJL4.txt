@@ -1,0 +1,94 @@
+---
+video_title: "I Automated My Entire Bug Bounty Workflow"
+video_id: Kg09aktVJL4
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=Kg09aktVJL4
+video_date: 2026-01-01T15:00:38+00:00
+video_description: |
+  Join The Family:💻👩🏻‍💻https://cyberflow-academy.framer.website/
+  Check Out The Courses We Offer: https://cyberflow-academy.framer.website/courses
+  
+  Educational Purposes Only.
+  
+  bug bounty hunting can pay extremely well, but only if you stop wasting time. most hackers lose opportunities because they do recon manually: running subfinder once, scanning ports by hand, clicking through subdomains one by one, and repeating the same process every day. that’s not hacking, that’s busy work.
+  
+  in this video, i break down a real-world bug bounty recon automation workflow used by serious hunters. you’ll learn how to automate subdomain discovery and monitoring, port scanning and service enumeration, vulnerability scanning, screenshots, and tech stack identification, all chained together so recon runs 24/7 while you sleep.
+  
+  this isn’t about installing tools or copy-pasting commands. it’s about methodology. how to think about recon like an attacker. how to catch new assets the moment they appear. how to move faster than everyone else competing for the same bugs.
+  
+  we walk through:
+  
+  automated subdomain discovery using multiple sources
+  daily monitoring to detect new assets instantly
+  smart port scanning instead of loud full scans
+  nuclei for known vulnerability detection
+  visual recon with screenshots to spot high-value targets fast
+  tech stack identification to focus your attacks
+  a real bug bounty scenario that led to a critical finding and a $5,000 payout
+  
+  automation doesn’t replace hacking, it replaces wasting time. the hackers who win bug bounties aren’t smarter, they’re faster. this video shows you how.
+  
+  Resources:
+  
+  subfinder: https://github.com/projectdiscovery/subfinder
+  amass: https://github.com/owasp-amass/amass
+  assetfinder: https://github.com/tomnomnom/assetfinder
+  crt.sh: https://crt.sh
+  httpx: https://github.com/projectdiscovery/httpx
+  nmap: https://nmap.org
+  nuclei: https://github.com/projectdiscovery/nuclei
+  eyewitness: https://github.com/FortyNorthSecurity/EyeWitness
+  wappalyzer: https://www.wappalyzer.com
+  
+  ⚠️ for educational purposes only. always hack legally and ethically.
+  
+  #hacking #ethicalhacking #bugbounty #cybersecurity #hacker #pentesting #infosec #cyberattack #hackingtools #sqlinjection #metasploit #cyberflowsacademy
+  
+  → Email: cyberflow10@gmail.com  
+  
+  Thumbnail inspo: crin 
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+Bug bounty hunting can make you thousands per month if you do it right. But most people waste 80% of their time doing manual recon that should take five minutes. Manually running Subfinder. Manually running Nmap. Manually checking each subdomain. Then wondering why
+
+they're not finding bugs. Let me show you how to automate literally everything so you can focus on actual hacking instead of running the same commands for six hours. ## MAIN CONCEPT Three things you're going to automate. Subdomain discovery and monitoring. Port scanning and service enumeration. Screenshot and tech stack identification. Chain these together and you
+
+have recon running 24/7 finding new targets while you sleep. I'm not explaining installation because you have Google and it's straightforward. Focus on the methodology not the setup. Let's start with subdomain discovery. You're watching tutorials and they tell you run Subfinder on target. Get list of subdomains. Cool. Then what. Run it again tomorrow manually. Check if
+
+new subdomains appeared. This is stupid. You're supposed to automate monitoring. I take Subfinder and instead of running it once I make script that runs it every day. Saves results to file. Compares with yesterday's results. If new subdomain
+
+appears sends me notification. Now I know immediately when company launches new asset. New assets mean untested attack surface. Untested means bugs. But Subfinder alone isn't enough. I also run Amass. And Assetfinder. And crt.sh scraping.
+
+Each tool finds different subdomains. I chain them all together. Remove duplicates. Now I have complete subdomain list. This script runs automatically every 24 hours via cron job. I wake up to new targets without doing anything.
+
+Now I have automated subdomain discovery. But what about scanning them. Can't manually run Nmap on 500 subdomains. Takes forever. So I automate that too.
+
+## SCANNING AUTOMATION Take those subdomains my script found. Feed them into another script that runs httpx first to check which ones are actually alive. No point scanning dead hosts. Then take alive hosts and run Nmap on them. But not full port scan on all of them. That's slow and loud.
+
+I run quick scan first. Just top 1000 ports. Takes two minutes per host instead of twenty. Save results. If I see interesting port like 8080 or 8443 or anything unusual then I do full port scan on that specific host. This way I'm not wasting time scanning
+
+every single port on every single host. Smart scanning not brute force scanning. Script also runs nuclei which checks for known vulnerabilities using templates. Maybe there's exposed Git config. Maybe there's Apache version with known CVE. Nuclei finds these
+
+automatically. I get notification if it finds anything interesting. But I don't know what each subdomain actually looks like. Maybe it's admin panel. Maybe it's API documentation. Maybe it's login page. Can't tell from
+
+port scan. Need to see it. So I automate screenshots. ## VISUAL RECON Script takes all alive web servers and feeds them into EyeWitness. EyeWitness screenshots every single one. Generates HTML report with all screenshots organized. Now I can visually browse
+
+hundreds of subdomains in minutes instead of manually visiting each one. I see admin panel screenshot. Immediately interesting. Click it. Start testing for auth bypass.
+
+Also run Wappalyzer or BuiltWith API to identify tech stacks. Script tells me which sites run WordPress. Which run Django. Which run custom frameworks. This matters because WordPress has different attacks than Django. Now I know exactly where to focus.
+
+Last step make sure doing it properly. Beginners just spam tools and hope. You're supposed to understand what you're looking for. Forgotten subdomains. Outdated software. Dev environments left public. Automation finds these before anyone else.
+
+## REAL SCENARIO I'm hunting on a program. My monitoring script runs. One morning I get notification. New subdomain appeared. staging-api dot target dot com. I check EyeWitness screenshot. It's API
+
+documentation left public. No authentication. I can pull user data by ID. IDOR vulnerability. Critical severity. Five thousand dollars. Found it because automation caught it instantly.
+
+Without automation I would've found it late or not at all. Automation makes you faster than competition. Speed wins bug bounties. Automation doesn't replace hacking. It replaces wasting time. Automate repetitive tasks. Subdomain
+
+discovery. Port scanning. Screenshots. Let your brain do the real work. That's how you win.
