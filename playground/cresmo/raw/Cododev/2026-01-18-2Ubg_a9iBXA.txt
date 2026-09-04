@@ -1,0 +1,210 @@
+---
+video_title: "Error Handling | Cpeak, a Journey to Infinity"
+video_id: 2Ubg_a9iBXA
+channel_name: "Cododev"
+channel_id: UCEygwyqjUUMj6TOnxMsDjjQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=2Ubg_a9iBXA
+video_date: 2026-01-18T20:16:06+00:00
+video_description: |
+  In this video, we will set up an automatic synchronous and asynchronous error handling system for our framework. 
+  
+  Full Playlist: https://youtube.com/playlist?list=PLCiGw8i6NhvqsA-ZZcChJ0kaHZ3hcIVdY&si=xIOyVIid88WjbcDp
+  Follow Cpeak on GitHub: https://github.com/agile8118/cpeak
+  
+  Starter code: https://github.com/agile8118/cpeak-code/tree/main/02-error-handling/starter/cpeak-app
+  Finished Code: https://github.com/agile8118/cpeak-code/tree/main/02-error-handling/starter/cpeak-app
+  
+  www.cododev.ca
+---
+In this video, we're going to talk about error handling in our framework. Now, here I've got a bit of code. Please download the starter code from the resource section down below. I have created a GitHub repository in which I'm going to push all the code that we're going to write for this video series. All right, here in this code, I am connecting to my database, which is the URL shortener application database. And
+
+then, if you scroll down, we've got a few routes. All right. So here in this one we're making use of that database. Now you don't need to do this. So if you want to run it yourself just comment out all these sections where we're doing something related to Postgress. All
+
+right. I just want to demonstrate how we're going to do this error handling. So we've got three routes. One is right here /hello which returns a synchronous error. All right. Now not all the time.
+
+Let's just go ahead and see this in action. So here in the CP app I'm going to say node actually I'm going to use nodemon and then sourceindex.js. All right I've got the application running on port 8020. I'll open up postman and here I have navigated to localhost port 8020. And then if I go
+
+into /hello here I can specify something in that query parameter. All right. So in the URL parameter I'm going to specify my username. So like this I'm going to say username is Joe. And if I go ahead and send it, it just returns back a message that says welcome Joe. Now here we're
+
+also doing a bit of check. We're saying that if we don't have the length, so if I go ahead and omit this username and I send it, I'm going to get an error that says username is required. But this is something that we expect. So here back in the terminal, nothing has happened yet. And here in the code, if you take a look here, this is the check that we're doing. All right, so the
+
+server is still running despite getting an error. But what if I go ahead and completely emit this username option? So, we're not going to have this parameter anymore here. I'll go ahead and send it. And now it says could not get response. Taking a look at the
+
+terminal, we can see that our application has just crashed. All right. And my app is now totally down. because if I try to send another request with the username added again, we're not going to get anything. Now, the problem is quite straightforward to find out here that if we don't specify any username, this is going to be undefined.
+
+So, if you take a look right here, this is actually going to be null. And then it says cannot read this property length of null. All right. Well, that's expected. So, we can easily fix this by also checking that the username is not null. But the point that I'm trying to
+
+make is that in the real world things can get messy. You can't always take care of every single little detail. Sometimes you might forget a thing or two. And it'd be terrible if your whole application goes down as soon as one of those rare cases happens. Now here, if you take a look at this code, so here we've got a synchronous error and here we've got an asynchronous error. So I'm going to go ahead and
+
+demonstrate this route as well. So here in Postman I'll go into URL. So all that this route does is that it's going to check my database the URLs table and see if a given URL with a particular ID that I'm going to specify exist. And if it does exist, I'm going to get the real URL and then the shortened code and I'll get it back here in this response. Don't worry if you don't know anything about SQL. The point is that we're just
+
+now going into our database. This could have been anything else like reaching out to an API or doing a file system operation, but we're doing something async. Now, let's go ahead and take a look at this. So, here I need to specify an ID. And if I do that, well, actually, I need to restart the application. So,
+
+let me do a save. And now I'll go ahead and send that request again. So here we get this real URL and also a shortened code. All right. So I can try it with different ids and it's just going to work fine.
+
+All right. Now I have added in a huge amount of data to my database. So if I go ahead and take a look at my URLs, I have about 10 million records. And so I need to Okay, what I'm trying to demonstrate is that I'm going to put something here that does not exist. So if I put maybe 12 million, so three zeros and then another three. Now this
+
+URL does not exist. All right. And I get this error that the URL was not found. Still everything is as expected. We're trying to find this URL. And we
+
+got a message back that the URL was not found. Right? Fair enough. It's all good. But what if I put something bad here? What if I go with something very
+
+big? something that's not a valid Postgress ID. Now, if I go ahead and send it, well, looks like that the app crashed again. And this time around, our error is that this value is out of range for type integer. All right, let me try it again. But this time, I'm going to
+
+just submit a piece of string. Well, again, application crashed, but now we're getting a different error that the syntax is invalid for a type integer, right? So, we're getting different codes for different errors. Now, ideally, what you want to do is to sanitize all your inputs. Whatever user submits, you want to make sure that it's correct, right?
+
+So, I need to have a function that is maybe called validate ID. All right. And this grabs an ID and makes sure that it's a valid Postgress ID. And if this is valid, then and only then we're going to proceed with the rest of the operations. All right. But
+
+again, the real world can get messy. There could be a case where you're not going to take care of that. And again, it would be terrible if your whole application goes down as soon as something bad happens. Now, just a side note, you are not able to probably run this because you need to get your database set up. Just play around with this other one. All right, I've added
+
+this one, which is fetch external data. You can just imagine that this could have been any other async operation. Let me just show that to you as well. So, I'll go into slash data and it accepts an input. Whatever I submit, it's just going to say status success received this data. But if you do submit value
+
+nine, it is going to hang up. All right, we're going to get an error that value 9 is restricted. Right? So we just want to simulate an edge case, something that if it does happen, it is going to throw an error. Right? So this promise that we
+
+have will be rejected if the value submitted is nine. All right? So play around with this if you don't want to set up a database. Now let's try to think about how can we handle these errors that can happen at any point of time. Now something that you could do is to wrap everything in a try catch. So all your route handlers
+
+will be like this. So you put the error right here and then you can check the error code or the error message. Sometimes you might be expecting an error and you want to return a good response back to the client saying that maybe that record was not found or maybe your input was not okay. But sometimes still you want to handle the edge cases. What if the database goes down and the promise gets rejected?
+
+You don't want the application to go down. So in these cases we can just send a 500 error. So I say res.status with the status code of 500 and then I'll send a message. I'll say error internal server error. All right. So
+
+this means that we tried our best but something bad happened on our side. Again, not a good practice in this case because we need to validate the ID and maybe tell the user that the ID is not valid. But also, you don't want to be verbose with your error messages because attackers can learn about your database, about your structure. So you want to return an error that's good enough but does not expose too much information about your database. So if there's an edge case that you are almost guaranteed that the normal user would not hit, it would be good to return a generic error message in that case because you're almost guaranteed that in a rare case like that, someone is trying to mess with your server. For now, let's go with
+
+this. All right, so this is what you should do. You should wrap around all your awaits and a try catch. If you've got a promise, you should also handle the rejection. All right, so I'm going to go ahead and try it again. So here
+
+I'll go with URL and then ID this one. All right, I've got my server running. Apparently I don't have an ID like that. There we go. And now I'm going to submit again out of range. All right, there we
+
+go. Now we get this error that says internal server error. And our server is working just fine. Now, one problem that we have right now is that our developers would have no idea that something went wrong. So, it would also be nice to have a separate logger that we're going to maybe a function called log and pass this error to that so that we're going to log it somewhere so that in the future our developers can take a look at that error and figure out what went wrong. All right, but you can kind of
+
+imagine that this is getting a little too tedious. Going around and wrapping all our routes in a try catch is just not going to look good and all that we're doing in them is something quite generic. Now, wouldn't it be nice if our own framework were to do this for us? All right, so we might have maybe a function at the end that's going to always kick in. So, I'll say maybe server.handle handle error. So maybe
+
+we're going to call it this. And we're going to have an error object with wreck and rest. And whenever an error happens in one of the routes, it would be quite nice if our framework CP were to catch that error and then forward that error right here to this main handler. All right, this main error handler. I bet that'd be quite nice. So
+
+that if this error happens right here, we're not going to just handle it here. We're going to maybe take a look at what we have and if it's something generic, if it's something that we expect, we're going to return a good message. If it's something that we don't expect, we're going to return a 500 error message. And also maybe our framework is going to expose another argument here. Maybe handle error. We
+
+can call it whatever we want. And whenever we have an error in our application maybe like here we just want to say return that handle error call back and then just give it any sort of an object that we want. Maybe status is 404 and then the error message or maybe message is that URL not found. All right. So it'd be quite nice if we were to have this ability and then handle whatever we have right here in this handle error. So
+
+we're going to say something like this. If you go to the CPM MPM page and you scroll down here, click on error handling, we have this handler. So we can just copy paste it. But let's try to type it out. So I'll say if we have the error and we also have the error status, this means that this is an error message that we expect. All right. So, we want
+
+our user to see it. Maybe we want our front end to see it. The front end might be doing something with this status and message and display another maybe better suited error to the client. Right? So, here I'll just say maybe rest.
+
+With this error status and then JSON and in this case just the error, right? So, error dot message. So this is whatever we submit right here to that. Again, keep in mind we don't have this yet, but we're just trying to figure out how can we accomplish this. We're trying to design a system where we can handle all these errors that can happen. A benefit to this is that now in
+
+our application, we don't need to worry about what sort of an interface to put right here. Should we call it maybe error or error message? or should we maybe not even do an object like this or add more properties? We don't need to worry about any of it. All that we want to worry about now is to dump whatever error happens to this handle error. All
+
+right. And then also we want our framework to dump whatever other error happens that we're not expecting to this handle error again. All right. So we don't need to have this right here anymore. So this would look pretty clean, right?
+
+Think about this for a second. We have this third argument right here that we're going to make use of and it would handle all the errors. And we also want it to be in a way that we don't need to do this try catch. So I'll go ahead and remove it. And then here this handle error is going to kick in. So I'll add in an else.
+
+So whatever other error happens, they don't have this error. status. This is something that we add ourselves. So Postgress errors do not have dot status on them. So here what we want to do is to maybe log it somewhere. So I'll say
+
+console. This error. You do want to log the errors somewhere safe so that your engineers in the future can take a look at them and figure out what went wrong because these are errors that we are not expecting. And [snorts] then we can send a generic error. So status of 500 meaning internal server error and thenjson and then a property called error and say sorry something unexpected happened on our site.
+
+So this is pretty neat. Right now let's go ahead and try to figure out how can we make this work. All right. So I'll go ahead and open up the index.js of CPIC and let's see. All
+
+right. So I'll scroll down here and we want to have this new method called handle error. Right? Again this is on the server object. So we need to add it right here. And we're
+
+going to accept a call back. And then this is the call back that we're going to run at the end whenever an error happens. So let's save this call back somewhere on the object. So I'll say this handle error maybe is equal to this call back. All right.
+
+Now I'll scroll up and find the place where we are calling the route handler which is right here. We're going to find in our routes that method plus the URL and then we're going to call the handler. Right? So here we want to pass in a third argument. This is going to be this callback right here.
+
+Where is it? If I can find that one. All right. So this handle error which we're going to call whenever an error happens. So we're going to have an error object. And
+
+what we want to do at this point is to call this call back. So we want to exit out. All right, with this return, we're exiting out of the handler. And now we want to run this final handle error. Now we saved that call back. So this call
+
+back is saved to our object. If I scroll down right here, so I'll just have to say this.andle handle error with that error object that we just got. All right, so let's do that. So here I'll say this dot handle error and I'll give it the error object and then I'll also need to give it the request and response. Now let's
+
+also make sure that the response is going to be closed. So I'll set the connection header. So set header connection closed so that it's not going to hank.
+
+All right, and that's it. Let's go ahead and give it a shot. Now, we still don't have the automatic error handler, but at this point, this handle error argument should work. All right, so I'm going to go ahead and try it again with this route, and I'm going to send a bad request. Well, not a bad request, but I'll specify an ID that does not exist in my database.
+
+All right. So, here I've got my ID. This is going to give me an out of range. So, I'll go with 12 million again. So, three zeros, another three. And now we get
+
+this error URL not found. All right, that's pretty good. We're now handling all these callbacks. Now as a convention we can say that whenever an error happens somewhere in our route handlers we want to pass that error to this handle error. Now we can call this whatever you want. You can also call it
+
+maybe next and it's going to work just fine. All right. So I'll go ahead and send this again. The only thing is that here we got to call it handle error. So server handle error because this is the method name that we specified right here. Okay. But
+
+that call back you can go with whatever name that you want. But I'm going to go with handle error because that makes more sense. Now this is also what express does as well that you get that next argument and the best practice is to just dump whatever error that you've got to that next and then at the end handle all of them. All right. So here we're saying server.handle error. In
+
+express you would say app dot use and then you know the callback with the error object. All right. But I think calling it handle error makes more sense because we just want to have a single source to handle all the errors and we don't want to do anything else right here. We can maybe add another method that's going to run all the way at the end. But for this one, we want to keep it specific to error handling. All
+
+right, so that's the first problem solved that we want to have this function to make our error handling quite neat. Now the next one is that we want to make sure that our own framework is going to wrap everything in a try catch and handle promise rejections or handle synchronous errors like here. All right. Right. Let's see how we can do that. This is also going to be pretty
+
+quick. So I'm going to scroll up and find that section again where we're calling the route handler. All right. Right here. Now, what's going to happen if I just wrap it around a try catch?
+
+So, I'll do this and then catch error. And whenever an error happens, we just want to do the exact same thing that we did right here. So, we want to close the connection and call the handle error. So res dot set header connection close and then this dot handle error with the error object w and response. Okay, so this looks pretty good. But let's try to
+
+figure out what is going on here. Let's try to figure out if we have an issue with it. Now I'm going to go ahead and try it first with /hello. Remember that previously we had an error that if I did not submit my username. So let me try to show you that pretty quick. So I'll
+
+comment this section again and I'll send a request to /hello and then with username Joe. Now this would work just fine but if I completely get rid of the username my application is going to crash. Okay. Now I'm going to go back right here and uncomment this section. So now we're wrapping around this handler in a try catch.
+
+And now I'm going to go ahead and send this request again. Actually here I'm calling it E. So let me just put an error instead of just E. And now I'm going to go ahead and send it. Now this resulted in an error before. But now if I send it, we're
+
+going to get this generic error 500 and we're saying sorry something bad happened on our site. Now if you go to the terminal, we're logging the error right here, but our application is not down. All right, so I'm can keep sending this request and then at any point that I want, I can submit a username and now it's going to work just fine. All right, so cool. We're now handling that error or any other error that might happen here and we're just forwarding all the errors to this handle error. And instead of our
+
+application going down, we're just going to send a 500 error. All right. Now, this is way better than what we had before. You don't want your application to always go down whenever someone submits something bad. But how about the other case? So, I'm
+
+going to scroll up again and let's try it again with this slash URL. Now, I want you to think about what's going to happen. So, I'll go URL. Let's try to first make sure that it works fine. And now I'm going to just submit a bad ID. And now the application
+
+just went down again. So, it seems like that the try catch did not work. Now again I want you to think about what just happened and why this does not work. It works if we have a synchronous error but if we do put in the async seems like that it's not working. Well it seems like it definitely is not working right now. I want you to pause
+
+the video for a sec and think about this. You got to brush up on your promise knowledge in JavaScript and see why this is not happening. All right. All right. So, I'm going to give you a second to maybe think about this and see if you can come up with a solution and then we'll continue on.
+
+All right. Hopefully, you came up with some ideas. Now, I want to show you what is really going on. Oh, let's try to see what's returning right here. So, I'll say handler result equals this. And then
+
+I'll just go ahead and log it. So, console.log handler result Okay, now I want to first go with the other one. So I'll just copy this one and create a new tab and say hello and then username Joe. I'll send this one. And here I get undefined. All
+
+right. And now I'm going to go ahead and try it with this one. I'm not going to submit anything bad. It's just a good request with a URL that I do have. And now if I send it here, if you take a look, the handler result now is a promise. So this try catch right here
+
+works fine if this is synchronous. But if we have a promise, it's not going to wait for it, right? It's just going to end it. And you can see that the promise is pending. And then this try catch is not going to just catch it, right? So
+
+what we need to do is to await this promise. And we got to await it right here. So we can either use async wait or we can use dot catch. I want to first do the catch. So here what we could do is to say if we have the handler result and the type of this handler result then is a function.
+
+So if we do have the dot then on an object it means that it's a promise right it's our convention in JavaScript. So if this is the case what we want to do is to catch it. All right so handler result catch and then we get the error object and then we want to do what we just did. So I'll just copy paste this code. All right, just closing the connection and then calling our call back with this error object.
+
+All right, so now I'm going to go ahead and try it again. So I'll send something bad. And now if you take a look, we get this generic error response. Okay. And again, we are also logging it. Now
+
+we don't want to log these errors to the console in the real world. What we want to do is to put them into a file system or do something efficient because logging could be quite expensive. And here again we're just logging them. But I'm going to show you the real project right now. Now we also need to improve it right here. But here what I
+
+have added is this logger which is going to log whatever happens to a file. All right. So here if I go into my logs you can see that they're nicely formatted with dates and then I've got the info. Now these are not errors these are just requests but also I've got my errors. Okay so all my errors are now logged right here. So our developers or me we
+
+can come in the future and take a look at all the errors that have happened in a particular time and try to figure out what went wrong and try to fix that. For example, here we've got an error invalid string length and we know where exactly it happened that it happened here in the controllers URL and this exact line so that now we can debug. All right, so this is way better than logging to the terminal but still not ideal. What we want to do is to maybe allocate it to another thread to maybe a worker thread and then buffer these and then write them maybe to a file. All right, so that it's not going to slow down our application. We want to be able to
+
+handle millions of requests coming in potentially per second and this just not going to work for that case but still way better than trying to log to the terminal. All right, so there we go. Now we have this system. So now our developers do not need to worry about wrapping every handler in a try catch and just do something generic at the end. Of course, you got to keep an eye out for errors that you do expect that you really want to handle. Maybe if an
+
+error happens, you just want to try again, right? So you can handle those as well, but sometimes something bad could just happen and you don't want your application to go down. And now our own framework is going to handle it for us. Now this is how it's now done in Express as well. So Express version 4 now also does what we just did about a year ago.
+
+In Express version 3, this was not the case. and you also needed to wrap all your handlers in a generic try catch. But now with Express version 4, you don't need to do that anymore. And also with our framework, you don't need to do that. All right. Now, you got to be
+
+careful though as a developer who wants to use CPE or maybe even Express, you don't want to break the chain of promises. For example, here back in this data. So, let me show you one example. If I go into slash data and then input, I'll give it something good first and then I'll go with nine to result in an error. So right now it works fine. But if I
+
+break the chain of promise and make it so that this function, this callback is not going to return a promise. Now we have a problem. All right. So if I let me put in an immediately invoked function and I'll make this an async one and then I'm going to call it at the end and I'll copy paste this code right inside. All right. Right. Let's go ahead
+
+and try it now and see what's going to happen. So I'll go back to Postman. I'll send this request. And now our application is down again. All right.
+
+Because of this error. Now again I want you to pause for a sec. Try to think about what just happened here. We have an issue with the promise. This callback right now is not returning a promise because we're not making use of the await inside. So if we do that log
+
+again, you're not going to see that. So actually I'm just going to do a log again. So console.log handler result. And now I'll send it over. And here we
+
+can see that well it is still returning a promise because we did mark it as async.
+
+So if you want to handle it, one thing that you can do is to maybe return this. Right now we're returning a promise and if I send it now it is going to be able to handle it. Okay? So keep that in mind. Please do not break the chain of promises. So if you
+
+have a function, make sure that you're doing the await like this, right? Or you're returning that promise so that the CP framework can catch it for you. Now, one last point, we can clean up what we actually have here because we have one try catch here. And we're doing this a few times. All right, so we don't need to also do this catch if we use async await. And we also don't need to
+
+save the handler result. So what we could do to clean this up is to use ESX. So I'll remove this and I'll say await this way. One generic try catch is going to be good enough. And then I'm going to get rid of this part because now we're using a weight.
+
+Now we also need to mark what we have as async. So I'm going to go ahead and mark this one as async. And that's it. Now all we got to do is to wrap it in just one try catch. This is now going to handle both the synchronous handlers and also the async ones. Now here because we are marking
+
+this run middleware as async, this is going to return a promise. So we also got to await this one right here. So I'll mark this one as await and then mark the parent function as async as well. So this right here. And then if I scroll down, we're calling it here recursively. So I'm also going
+
+to await right over here and then mark as async. I have also added this await right here for running the actual middleware. We are not doing any automatic error handling yet. So if something happens in our before each functions, the whole application is going to crash. All right, but it's an easy fix. All we got to do is the exact
+
+same thing that we did right here. I'll leave it up to you to do that and then forward the potential errors to the handle error call back. Let's just make sure that it works fine. So I'll go ahead and send this request. We get this one. I'll also try it with
+
+the URL. So ID this and it does not work. Right? Cool. Right? That's it about this error
+
+handling. We're going to have more lectures in the future on error handling. So this is only a part of it. But think about what we just did and let me know what you think about this pattern having this generic main error handler and then forwarding all the errors to this one. Now I also want you to go to your own projects and maybe express application or next or nest or whatever it is and see how you are handling your errors from the back end.
+
+Are you returning something different each time that something bad happens? Or do you also have a system like this where you can be consistent? And if you have a bad system going on, your errors are all over the place, try to consolidate them. Try to maybe come up with this main handler for your application as well. If you're using Express, it's just like what we just did here. But with other frameworks, you
+
+also have other options to making sure that you have a clean way of handling all your errors. All right, that's it about this video. Thank you very much and I'll see you in the next one.

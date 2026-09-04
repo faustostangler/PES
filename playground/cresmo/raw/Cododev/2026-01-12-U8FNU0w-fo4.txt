@@ -1,0 +1,148 @@
+---
+video_title: "Stop Using CommonJS for Node.js: Switch to ESM"
+video_id: U8FNU0w-fo4
+channel_name: "Cododev"
+channel_id: UCEygwyqjUUMj6TOnxMsDjjQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=U8FNU0w-fo4
+video_date: 2026-01-12T03:21:42+00:00
+video_description: |
+  In this video, we will discuss why we should opt for ESM over CommonJS for new projects. We will also refactor our Cpeak framework to ESM.
+  
+  Full Playlist: https://youtube.com/playlist?list=PLCiGw8i6NhvqsA-ZZcChJ0kaHZ3hcIVdY&si=xIOyVIid88WjbcDp
+  Follow Cpeak on GitHub: https://github.com/agile8118/cpeak
+  
+  Starter code: https://github.com/agile8118/cpeak-code/tree/main/01-switching-to-ESM/starter/cpeak-app
+  Finished Code: https://github.com/agile8118/cpeak-code/tree/main/01-switching-to-ESM/finish
+  
+  www.cododev.ca
+---
+In this video, we're going to talk about why you should use ESM for your new node projects instead of going with CommonJS. So why go with the import from syntax instead of going with the const require syntax in our own framework CE? We will also now switch over to ESM and see the benefits that it offers in action. Now the NOJS module system before used to be very confusing. We were going with CommonJS. So this was the common format
+
+and then at the same time we had the ESM and you know it just wasn't a good experience but now the module system in node is very straightforward very clean. All you got to do is go with ESM and that's it. All right so you don't really need to worry about common GS anymore. Of course if you're working with some legacy code you got to worry about it. But for your new projects you should always try to default to ESM. And there
+
+are a few reasons why. Here in the NodeJS documentation, here's the acmascript modules. This is the documentation for the ESM and this is the one for CommonJS. So here in the ESM, if you scroll down, you can see that this is now the official standard to package JavaScript. All right. So
+
+yeah, this is how you should go about it. Use this export and try to stay away from this common JS as much as you can. If your project right now uses CommonJS, it will be a good idea to switch over to ESM. in an ESM module, it's very easy to also use common JS code, but not the other way around. So, if you don't switch to ESM right now, and if in the future you got to download an MPM module that is ESM only, you're going to have a lot of problems. And a whole lot of the
+
+MPM packages right now are being shipped in ESM format only. So, you got to switch sooner than later. All right. Now, this is also cleaner compared to CommonJS, and we'll see that in a bit. Now, fortunately, switching is incredibly easy. So, here I'm going to
+
+show you how we can do it. So, here I've got an Express app. It's a dummy project. All I have here is my public folder, which inside I've got this simple HTML file. And then here is my app.js. So, let me go ahead and run
+
+this. So, I'll say node source and then app.js. And right here, if I go into localhostport 3000, I'm going to get my index.html.
+
+So this right now is the common JS way of doing it. All right. So we have the const something something equals require something. Now for simple projects for educational purposes it doesn't matter. You can just use it as much as you want.
+
+But whenever you want to go in production just try to go with ESM. All right. Again, I already mentioned one reason is that here, for example, in this common JS file, if we have a package that is an ESM, I'm not going to be able to include it easily. But if it were to be an ESM application, which quickly we're going to switch, we can easily include CommonJS. Now, to switch very straightforward, all you got to do is add in a type module right here. So,
+
+type equals module like this. and then change your import statements. So here change everywhere you've got this const to import this and then change the requires to from all right and drop the parenthesis. We now have our ESM code in place. We have one problem though and that is the underscore_dir name and the file name also doesn't work. Now you know what I'm actually
+
+going to change this a little bit. So, I'm going to copy this and then paste it again. I'll change the name of this to CJS and the other one I'll change it to app.mjs.s.s.s.s.s.s.s.s.s.s Now, you
+
+don't need to do this. Just watch me do it here with this dummy express app. And then we're going to switch over to the CP app. All right. So, again, if you want to switch to ESM, although it's the official standard, you got to give a flag to your application, to your node app, so that it would know that it's using ESM. One way is to just add in
+
+this type module. It's a standard way of doing it. And if you also don't want to do that, you can also go with maybe a flag in the terminal, right? So if you quickly want to set up something, you can do that as well. Or you can also go with extensions. So CJS means common JS
+
+and this MJS means ESM. All right? And here because we are now switched over to type module, we can have both a common JS code and an ESM code. All right. So here I'll change it back to that const thing. So const express express and path
+
+equals require these two and this code right now works just like before but our ESM code here it's not going to work well. So if I go and run this so node appjs it's going to give me an error that this diir name is not defined in an ES module scope. So the thing that's going to come to our rescue is this one. So let's go ahead and log it. console.log
+
+and it's called import.meta. URL. All right. So I'm going to go ahead and log this pretty quick. Now what this
+
+is is the path to this current file. All right. So I'll go ahead and run it again. Here we can see that well if you ignore the error here at the top we have this file equals my path over to this express app and then source app.mjs and it doesn't matter from where I run it.
+
+So let me actually go ahead and comment this out. So if I run it from the express app or if I maybe go into source and then run it from here app.mjs, we're going to get the exact same path. So we don't now need to worry about changing our working directory and getting different results. Okay. So I can now
+
+run the application from my root and still if I go with this and then solve the public path with this import meta URL the app would work just fine. All right. So what we could do is that because it's an actual URL it's well it's not an HTTP URL but it's a URL because it starts with this file syntax. write file colon and then slash slash. So what we want to do is to append this public to this and you know we can't really easily use the path module here because it's again a URL but we can use the URL object that we get right out of the box. So I'll say new URL like this
+
+and then add the thing that I want to append to it. So, we need to go up a folder and then go into public. And now, if I run this, you can see that here the path name is actually what I want. All right. So, this public folder.
+
+So, now we can just cut this out and put it right here in the public path. All right. So, I'm going to change this now to const public path equals this. And then on top of this one, I'm going to grab the path name. All right.
+
+Because again, remember it's a URL object. So now if I go ahead and run this, it will work just like before. All right. All right. We also now do not need that.
+
+All right. So if you compare these two, you can see how very similar they look to each other. So that DRR name is not going to be a problem to you by going with ESM. And well, one quick issue is that this path name doesn't work on Windows. But very quick, easy fixes to go with the file URL to path from the URL module in note. So, let me go ahead
+
+and include that. If you're on a Unix machine, you don't really need to do this unless you have some weird file names like, you know, spaces in your folders or hashtags and stuff like that. All right, but if you want to be extra safe, include this file URL to path from the URL module. And then instead of doing that, get rid of this. path name and then pass this one to this function.
+
+This T here actually should be capital T. So if I run it, it's now going to work just like before. All right, so there we go. A very easy way of switching over to ESM. It's not going to take any time and now you are using this modern feature. Now here's one great
+
+benefit that you can get out of it by switching over to ESM. All right, so I'm going to now switch back to our CP app. So here remember we are are trying to be zero dependency. If you are not familiar with CP just watching this video just think of this like express right so imagine we're at the early stages of developing express and we want to structure our framework right here right so we have this index.js which inside we've got the fundamental features like running the middleware functions and this route logic. So here we've got our
+
+API router and we've got the routes we've got the controller. So just the basic stuff that you have with express or any other node framework. But we don't want to have only this basic feature. We want to have other functionalities like parsing JSON or parsing cookie or something like express session or handling authentication and stuff like that. So how are we going to handle that? Imagine we're going to have
+
+dozens of these utility functions. These are not the core of the framework, but these are functions that you probably would need. For example, something to handle cores. And if you try to put all of them in the framework code, so the way that we're doing this right now, so this parse JSON is our utility function. The way that we're handling it is that we're exporting it here with common.js
+
+and then here in the index, we're importing it. So const parse JSON. You can think of this like body parser in express. And then here at the end in our main CP object, we're adding it as a property on top of it. All right. So if
+
+right here I go right ahead. So here in the source we've got the application. So this would be our CPIC app and this is the code that we would download from npm. Right? So I'm going to go ahead and log the CPIC object. So I'll say
+
+console.log the CPIC. All right. And I'm going to just get rid of everything else. And notice that we're not using this parse JSON utility function or cookie parser or whatever else it could be. Again, we could have close to a 100
+
+different utility functions for our app. So, let me go ahead and run this app. So, here in the CP app starter, I'll say node source and then index.js. All right. So, here's our CP class and
+
+you can see that there is also this parse JSON function. even though I'm not making use of it. All right, so I'm moving that object now into my memory. I'm pulling all that junk in. Well, it's junk in this case because we're not going to use the parse JSON, but you get the point. We're not going to use it,
+
+but it's now sitting there in our memory. It's making this object more complex for our needs and we don't need to have it. We don't need to have extra properties that we're not going to even make use of. Again, imagine we're going to have dozens of utility functions, which is something that we're going to have. For example, we're going to have cores. We're going to have cookie
+
+parser. But what if a developer does not need cookie parser? All right. If we're doing it this way, then they're moving that cookie parser code in their memory as well. We're adding this new property on top of it and it's going to complicate things for him. Right? Again,
+
+we want to be very minimal. We want to be very clean and don't have any extra junk whatsoever. Now, one solution would be to include them as other things. like for example publish another mpm package just for this parse JSON but again that's not going to be very clean we want to have one framework that's zero dependency and has everything that we need to get started all right so we want to have this JSON parsing cookie parsing all of it in one neat package so you say mpm install cp no other junk here in the node modules and you have all the features that you need to start building your application so we don't want to go down that road and another solution would be to maybe include them like other files here. So say maybe const parse JSON equals maybe require and then kind of like this. So go into CPE and
+
+then parse JSON or or something like that. But again, this is also not super clean here in CommonJS. With ESM, we can make it far cleaner than this. And also we can have everything in our own mpm package all in one neat big project and you would only move the code in your memory in your project that you need. All right. So if you don't include that
+
+function, you don't even have to worry about it. It's just sitting right there on your file system. It's not there in your memory. It's not there on the object. You're not initializing it. And
+
+it's just so much cleaner. Right? So let's go ahead and do that first. Now if you want to switch CP to ESM, we also need to switch our own application to ESM because if you go right now to the CP, you can see that we have added a note here that where is it? Let me search for ESM that this is a pure ESM package and your project has to be an ESM1 as well otherwise you cannot use it. Right? So
+
+you're going to see this note on some of the new MPM packages that if you are not pure ESM, you're not going to be able to use their packages. All right? So you're going to have to do this change that we just talked about. So let me go ahead and do it now for this one. So again, very straightforward. Let's add in the
+
+type module. And then here in the index, we need to change this syntax over to the import one. Import this from that. Right? Very straightforward.
+
+Let's see if we need to make any other adjustments. Here we have one more. So import test from this and whenever you have module.exports change them to this export default like that. Right? We've got one more here in the
+
+controllers. So let me also change this one to export default controller. Now if this CP right now were to be an npm package, it would work just fine because in an ESM package you can also download and install CommonJS ones. All right. But because right now it's kind of like inside of this project, we also need to make a few adjustments here. So let's
+
+also change our CP code over to ESM. So here inside of the CPIC index, we're going to have to go with again that syntax. So import this equals this from that. There we go. Same with here where we're including the utility functions.
+
+So I'll say import parse JSON from the util Now, here here's where the magic happens. So, instead of adding a property on top of the object, we're not going to do this. Instead, what we're going to be doing is to export them as they are. So, I'll just say export parse JSON and get rid of this object. And here, this one should also be the default one. So, export default CPE.
+
+Notice that we can do this. So, now if a developer just says import CP like this, it would work. And if they need a utility function, all they got to do is add it right here. So parse JSON, for example. It's very clean. If they don't
+
+include it, it's not going to be moved into their memory. They don't need to worry about adding paths here. They don't need to worry about installing another package. It just works, right? You just add in the utility functions right here. Even if you need like 50 of
+
+them, you just going to keep on adding and adding. And if we have, say, 50 of them and a developer only needs two of them, it's not going to be important for him at all. All right. All the other ones are just sitting right there in the file system. So here we also need to say just parse JSON.
+
+Now let's just change a few more things right here because I believe yeah there we go. We've got this exports dot which is a common JS way of doing it but we don't want to do that. So let's do const parse JSON equals this. And then we're going to now export it like this. So export and then parse JSON. All right.
+
+Now it's going to work just like before. There we have it. We may have an error because it's switching. Although it's easy, you know, sometimes you do get weird errors. All right. So we've got
+
+this error. And here's one downside with the ESM, and that's that you got to always include the extensions. All right. So let's do that here. So controllers, and then test, and then what else do we have? So CP peak also
+
+add in the JS right over here. And let's also you know what add it here. So JS and we don't need it here. So let me just double check if we do have the extensions everywhere. And actually here you know what yeah this is not going to work because we have the CP framework.
+
+So we have to say something like this. So CP/index.js and hopefully all right there we go. So now it's working. And if you take a look at the class, you can see that it's just the CP1 and we do not have the parse JSON or any other utility functions added on top of it. Okay, so yeah, one
+
+quick downside is this dot thing. Now, it's not going to mess up the imports for the developers when we push to mpm. So, let me show you how it looks like in production. So, I'm going to open up the URL shortener app. which is the production application that's built with CPEK. And here I'm
+
+going to go ahead to the index.js, excuse me, I mean index.ts of the server code. And here we can see that we just have to say from CPE, right? And we're still using ESM. And that's because we
+
+have added something into the exports of the package.json. So that's going to resolve to that.js automatically. All right. So here we can see how clean it
+
+is. No matter how many we need, we just add them all right here. And also same with the types, which is something we're going to talk about later on when we're going to talk about switching to TypeScript. But still, even in this case, you can see that we don't need to now install at sign types/ CP. All right, it's again very clean. All you
+
+got to do is say import type from the same package and it would just work. Now again that downside of always having to include it gets a little weird when you are in production but it's only weird at the beginning. I guarantee you that you're going to get used to it. So here in this project this is a TypeScript project and you can see in our include lines we're saying.js. All right even
+
+though we're using TypeScript. So this router.js is actually router.ts. So this could get a little uncomfortable at the beginning but you're going to very soon get used to it. All right. The reason
+
+that this is the case is because Typescript does not mess with your import statements. So it is going to always go with them as they are. And once you build the project in your destination file, you have JavaScript code. All right. So yeah, here that's why you got to include.js because that's
+
+what ESM requires. Now you can use some patching to maybe not do this, but it's it's a little messy. And also if you use a bundler, you also don't need to worry about it. A bundler will automatically handle all of them. That's why you're not going to see this in React. But here
+
+in note, I personally do not like bundlers. They mess with the debugging quite a bit and it's just not a standard way of going about it despite being a good option in some cases, but it's good enough to just go with.js. Now, if you're also only going with development with the TSX, it would also work. So if you're only running with TSX, you do not need to worry about.js
+
+and you can just emit the extensions like before. But once you do build it, that's where things would start to, you know, be problematic. So yeah, try to go always with extensions and ESM and you are going to get used to it in no time. All right, so that's it about this video and ESM. Hopefully you're going to now use ESM in your new projects and try to stay away from CommonJS. And in the CI
+
+framework, we are also going to always stick with ESM and get this very clean structure that we have right now with both types. And also no matter how many utility functions we're going to add, it's going to be very clean. We do not need to move all of them to the memory of the user as soon as they initialize it. And they would only move the part that they actually include and use. Now, you still would see a whole lot of CommonJS code. CommonJS was the standard
+
+for up to a decade. All right. So yeah, you're going to see a lot of them, but for your new projects, try to go with ESF. All right, that's it about this video, and I'll see you in the next one.
