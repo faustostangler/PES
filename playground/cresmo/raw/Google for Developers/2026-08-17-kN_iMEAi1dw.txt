@@ -1,0 +1,75 @@
+---
+video_title: "Build a live translation broadcast app with the Gemini Live API and LiveKit"
+video_id: kN_iMEAi1dw
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=kN_iMEAi1dw
+video_date: 2026-08-17T23:00:36+00:00
+video_description: |
+  Learn how to build a real-time multilingual broadcast app using Gemini 3.5 Live Translate, LiveKit, and Google Cloud Run. Watch Google DeepMind’s Thor Schaeff walk through the open source demo, from setting up translation sessions and managing WebSocket connections to deploying with Cloud Run and exploring the codebase with Antigravity.
+  
+  Resources: 
+  Find the code →  https://goo.gle/4z9lyPr 
+  Dive Into the docs → https://goo.gle/4zgpuOt 
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Products Mentioned:  Google AI, Gemini 
+  Speaker: Thor Schaeff
+---
+Hello willkommen. Zurück Google TV. Hello, everyone and welcome back to Google for Developers account. Today, we're going to take a closer look at the New Gemini 3.5 live translation model that's now available via the Gemini API.
+
+Let's go. This was my fantastic German life, translated by the New Gemini 3.5 live translate model, which is now available on the Gemini API. And so the application we want to build is a really nifty demo, which uses the Gemini API to live translate for our audience into many different languages. So this is using the Gemini API together with live Genkit and Google Cloud Run to deploy an application that can broadcast speech in many, many different languages using Gemini app live translate.
+
+So of course, this demo is open source. So you can find it on the Google Gemini app GitHub account. And the live translate broadcast demo works like this. So here on our broadcasting page we're basically creating an event ID, which is kind of a life Genkit room. And then we stream our audio and you can use our microphone or we can stream our audio from our browser tab, for example, to the live kid room.
+
+In the live Genkit room. We then have this translation bridge. So anytime someone requests a certain language. So if we're enabling the microphone here, our session is now live. And so anytime someone visits our page here and select a certain language to be used.
+
+So for example here they could be listening in Chinese. So what you can see here is that in our application now anytime someone requests that certain language, we set up a new live translate session with that requested language. So if we now were to go and in another tab and we basically go and now we request French, for example. So you can see now in our application a new session is being spun up for French. And so now if we were to go again, and there's another listener that is maybe for example, also wants French, you can now see that we're actually just immediately getting the stream set up.
+
+So you can see here rather than setting up another session. So this was our previous French session. And we're actually now subscribing that listener to that existing session. And so we can see here in our page we have one person listening in Chinese and then two listening in French. And so now if I close this tab here, our session will actually be closed.
+
+So we can see this here on the server. So this is the correct WebSocket closed event. And now you know if these folks drop off as well. So we're getting events from life Genkit. You can see now obviously we still have one French listener.
+
+So we still want that in text. But then when the last listener goes we're also closing that WebSocket. And so this way, with our setup here, which is really neat, we basically make sure that at a maximum have one session per requested target language and then anytime someone joins in, we just subscribe them to that existing broadcast. And so this is a really, really neat demo. And we've actually been using this for presentations.
+
+I've been using this myself for life events. We've been using it for some events where different folks speaking different languages in the audience and people are just really delighted they can use their phone, they can scan the QR code, they pop in their headphones, and they can listen in their preferred language. This is really, really cool. Obviously this is also available on the Google Translate app. But here, this is just a really nifty example to show you how you can integrate it into your own applications.
+
+And so the way we can do this, we can see it here. So, the easiest way is you just follow along the readme. So basically you just need to install the dependencies. And so here we're actually using Next.js for our application.
+
+And the really cool thing is by deploying Next.js to Google Cloud Run we can actually have these long running WebSockets just running on Cloud Run, which is really, really cool. And so we can just follow the instructions here. When we're developing locally, we can actually run live Genkit as a Docker. So live Genkit is really, really cool because it's also open source.
+
+You can self deploy it, but they also provide a really convenient live Genkit Cloud hosted solution. So I would recommend if you're getting started. The easiest way is actually you just set up a live Genkit Cloud account. You can get started for free and then you put in your life Genkit credentials here. So you'll need your API key, your API secret and then your WebSocket URL.
+
+So that is what your application will use to then negotiate the WebRTC protocol handoff. And then it will use WebRTC to broadcast the audio as well, as it will use WebRTC data channels to broadcast the captions. Which is really cool. Maybe we can use our agent here. So I really enjoy using anti-gravity to explore my code bases.
+
+And so what's really cool is that with anti-gravity, I can actually talk to my code. Show me how we are setting up the Gemini app live translate sessions and then broadcasting them to the live Genkit room. And so here we can use audio. So Gemini has really good audio understanding capabilities as well. And so we can now basically talk to our code base.
+
+And it will look up how that is being done. And then we can see that here. So we can look at, how this is done. So we have our architecture overview here. We have our translation session manager.
+
+So we can click on it. And we can see the code that is happening in there. So we have get or create in our translation bridge whether the translation bridge already exists. And then we have this here you can see. So we're basically just calling we're opening a WebSocket connection to the Gemini API using audio.
+
+We want the output audio transcription. So that's how we can get the transcript of what the model has been saying. And then we have our target language code. So anytime someone requests a new language that we don't have a stream yet we'll open up a new Gemini life translation and our audio is just streamed in from our broadcasting page as raw PCM data. And we are then getting the output.
+
+So here we'll get our server content model parts in the publish the translated audio. And then also we get the output transcript text. And then we're publishing that data in publish transcript text. So yeah you can see it. Here's our publish transcription text.
+
+We'll see if it's interim. So we can see immediately show it up. And then when it's final it'll solidify into a full paragraph. We have a transcription event that we're sending with of the target language, the segment ID. And yeah, we're publishing that data to all the participants that are basically transcribing to that specific language.
+
+So this is really neat. It's a really cool setup. Now in terms of deploying it to Google Cloud Run. So what we can do is we can ask again our trusty anti-gravity. So how does the deployment to Google Cloud Run work.
+
+So fire that off.
+
+And so there's a Docker file that is being used. So you can see here. Yeah so we're basically have a Docker file that kind of defines our setup. So we'll install our dependencies. Then we'll run the.
+
+And then we'll publish the app directory and expose kind of our server here. So you can see we're also using the Secret Manager. So that's a Google Secret Manager on Google Cloud Run. So we're pushing up our API keys and our life Genkit key and secret. And then the deployment is literally just running this command.
+
+So allow authenticated is we're allowing public access. You can see here that minimum instances. So we allow it if there's no traffic we allow Google Cloud Run to shut down completely. So in that case, if there's no traffic we're not getting built for anything. And also we have one thing here.
+
+So because we're currently managing all the translation details for that one event in memory, we can't actually go beyond one instance at the moment here. So that is a limitation of the demo. There's some details on this in the readme as well. So if you wanted to scale this beyond, we actually would need to take the state and the translation bridge management out of the memory and deploy a database and manage it there. Then we could scale up the instances.
+
+But in this example in the demo, we're only allowing Max one instance. So we're setting up the CPU and Max concurrent requests so that we're able to have a lot of subscribers get a token issued for the life Genkit room at the same time. So obviously, there is some scaling limitations to this. So if you go beyond 10, 15 active languages, you'll potentially hit kind of CPU limits because each language sets up a long running WebSocket session. So that is something you have to keep in mind.
+
+So in the readme you can find a section that is talking exactly about that. So key design decisions. You can see that here. Architecture and scaling. So this works well for up to 15% to 20 simultaneous languages.
+
+200 to 300 life Cloud, where you can actually go. I think beyond that, as long as you're keeping the simultaneous languages, that is really kind the limiting factor here. So if you wanted to scale beyond that basically probably would break out all the languages into separate rooms, and then you could scale it up indefinitely. But yeah, for this demo, for smaller events, you'll be very, very good with this.
