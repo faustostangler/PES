@@ -1,0 +1,144 @@
+---
+video_title: "Curso de N8N Aula #21: Como funciona o nó HTTP Request na prática!"
+video_id: SxV7sKN5v_8
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SxV7sKN5v_8
+video_date: 2025-12-31T15:01:08+00:00
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=SxV7sKN5v_8
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  📲 Me siga no Instagram para mais conteúdos:
+  https://instagram.com/oandersonadelino
+  
+  Curso de N8N Completo:
+  https://www.youtube.com/playlist?list=PLshnsHwXnYg9xCSXhAnvsUfomHKsOhdfo
+  
+  #n8n #automacao #inteligenciaartificial
+---
+Bora falar sobre o HTTP request. Basicamente esse nó ele é usado pra gente estar fazendo comunicações externas, tá? Basicamente eu quero que o N8N ele se comunique externamente com outros aplicativos, com outros softwares, tanto para passar informações como para buscar informações, tá? Então a gente utiliza um protocolo chamado API, tá? API. é uma forma de comunicação
+
+entre um software e outro, [limpando a garganta] beleza? Então, o HTP request ele segue essa premissa. Então, assim, logo de cara, ele assusta porque a gente tem que ler com documentação, porque cada sistema tem uma forma diferente de passar, mas eu vou te eh mostrar aqui de uma forma que fique simples para você entender, beleza? Espero que você consiga compreender, que eu vou fazer exemplos aqui de requisição como exemplo também de estar passando informações, beleza? Então fica comigo, assiste com calma. Se tiver dúvida, volta o vídeo,
+
+deixa nos comentários aí, tá bom? Então, pessoal, eh o nó do HTP request é esse daqui, tá? É esse carinha aqui. Então, assim, como eu falei, né, ele serve pra gente estar se comunicando com sistemas externos, tá? Uma coisa que tem aqui no N é que você consegue já fazer essa comunicação diretamente por esses nós, ó. Então, ah, eu quero
+
+me, eu quero usar o table. Ah, eu quero me comunicar com Apify, quero me comunicar aqui com Autopilot, quero comunicar com Basil Row, com bitwarden, tudo isso aqui são ferramentas que a gente usa API para se comunicar. a diferença é que essas ferramentas, elas já são integradas diretamente no N. Então, é muito mais simples porque já tá, já é intuitivo o que tu precisa fazer, sabe? a eh o esses nós eles servem justamente para facilitar, né, para facilitar o entendimento.
+
+Então, por exemplo, se a gente pega aqui um nó desse aqui, olha só, é só conectar aqui a credencial e pronto. Tenho aqui o recurso, tenho a operação que eu quero usar, tem uma mensagem e e pronto. É algo simples de fazer, porém existe muitos sites, muitos sistemas que não temos já nativamente aqui no Nend. Então a gente consegue utilizar um HTP request para poder fazer essa requisição, entendeu? Então a gente consegue estar buscando inclusive eh informações de sites, entendeu? Eh informações XML e tudo
+
+mais. Então você vai perceber que o HTP request ele tem muitas funções. Nessa aula eu vou estar mostrar para vocês como que a gente usa o HTP request para poder estar buscando informações de um sistema externo, tá? Via AP PI e também a gente tá passando informações via API. Beleza?
+
+Então eu trago como um exemplo aqui para vocês o BRAP, tá? O BRAP ele é um é um sistema voltado pra gente consultar dados de ações, beleza? O mercado financeiro, então é um API onde eu consigo estar buscando informações do mercado financeiro. Ah, eu quero saber quanto é que tá a cotação da Petrobras, então eu consigo ver aqui. Beleza?
+
+Então ele é bem simples, tá? Esse aqui é o site dele. Quando eu venho aqui clicar BT chave de AP aqui em cima, ó, eu já abro aqui. Então, tipo, não preciso nem criar conta nem nada, tá? Então, por isso que eu escolhi eh por isso que eu escolhi o o Brap. Ele é
+
+bem simples de implementar. Você já podem testar aí para aprender. Eu já tô eu tô com a conta conectada aqui, tá? Mas pelo menos quando tô gravando esse vídeo, não é preciso ter uma conta especificamente para poder eu estar utilizando, certo? Então assim, pessoal, eh sempre quando vocês forem querer puxar informações de sites externos, é essencial que vocês leiam as documentações, tá?
+
+Então, por exemplo, aqui no site do BRAP, ó, tem uma opção aqui chamada documentações. Tá vendo? Essa sessão documentação. Eu quero ler as documentações sobre as ações. Beleza?
+
+Qual que é meu objetivo aqui? Buscar informações de ações, tá? as cotações que eles estão no momento. Então, olha só, quando eu abro aqui, tá vendo? Se quer documentação, ele vai explicar como que funciona, tá? Ó, ele mostra aqui, ó,
+
+que ações de teste sem autenticação. Eu posso usar esses essas quatro aqui, ó. Vale, Magazine, Petrobras, Itaú, tá? Autenticação. Ele vai explicando a questão de autenticação aqui e tudo mais.
+
+Então, a gente vai estar fazendo isso aqui. Antes de entrarmos nisso, eu quero explicar para vocês como que funciona o HTP request aqui por dentro, beleza? Então, logo de cara, você vai ver que existem uma opção aqui chamada método, tá? Uma caixinha para colocar URL, uma caixinha sobre autenticação e três opções aqui, query, heads e body. E vamos lá. Que que
+
+é cada coisa dessa? O método, ele é a forma que eu vou estar fazendo essa requisição, tá bom? Podendo ser essas opções aqui. De modo geral, a maioria das dasas operações, pelo menos aqui no Romain, 99% vai ser get e post, tá? O get, eu vou pegar informações, então vou puxar informações. Por exemplo, lá no BRAP,
+
+quando for puxar informação da Petrobras, por exemplo, eu vou est usando o método get. O post é quando eu quero colocar, quero passar informações, enviar informações daqui do Nen para o site. Existe outros aqui, né? Então, delete que é para excluir, né? O o head é só para checar se existe ou não determinadas requisições.
+
+Eh, o pet e o são, tem a ver com atualizações, tá? O ele vai mudar tudo, vai substituir o pet, ele vai atualizar alguns campos específicos. Eh, então assim, são métodos que a gente nem utiliza, geralmente faz um post e faz um get. Tá? A URL é onde a gente vai estar passando a URL do site, obviamente, mas não somente o URL do site, né? Não vou chegar aqui e
+
+colocar aqui, ó, brap.dev, vir aqui, fazer isso aqui, tá? Botei aqui o métodet e vou executar. Olha o que acontece se eu fizer isso. Se eu pegar esse isso aqui e jogar, cara, funcionou, deu alguma coisa.
+
+Que que é isso aqui? Esse é basicamente todo o site HTML brap. Dev. Então eu fiz uma requisição, tá? Puxando todo o site deles. Então é como
+
+se eu tivesse vindo aqui no no no brap.dev, o site original, botão direito, exibir o código fonte da página. E aí vai aparecer lá o código fonte e eu peguei essa informação aqui. Então serve para você também, por exemplo, tá querendo fazer alguma raspagem, alguma coisa do tipo, tá? Mas isso aqui não tem a ver ainda com fazer requisção via API, beleza?
+
+Autenticação. Bom, essa parte da autenticação é como se fosse um, é como se esse essa, essa API ela tivesse com cadeado, tá? Cadeado com senha. E você precisa ter um acento para poder decifrar e entrar nessa nessa PI específica, tá? Existem várias formas de autenticação, beleza? Tem várias formas de
+
+autenticação. Então, por exemplo, a gente tem como fazer autenticação via basic, barrier, eh, header. Então, assim, tem várias tipos de autenticação aqui que eu não vou adentrar nessa parte de autenticação, tá? Não vem ao caso. Porém, eh, a gente nem precisa exatamente mexer no autent queixo aqui, tá? Porque geralmente essas
+
+autenticações a gente consegue estar passando no header, tá? E o que que é o header? É o cabeçalho. É o cabeçalho da requisição. Então vez a gente consegue estar passando diretamente aqui no header, por exemplo, passando aqui o nome do tipo da senha e aqui a senha, por exemplo, tá? E aqui já funciona,
+
+depende do tipo da API. Vamos ver se na documentação lá como é que funciona no brap. Esses query parâmetros são informações que ficam dentro da URL. Então, por exemplo, vamos supor que o seu site ele tem assim, ó, eh, site.com.br.
+
+Beleza? Só que aí tem umas informações, por exemplo, nome igual, aí tem tipo umas informações, sabe? Aí, eh, e idade, igual. Tô dando um exemplo aqui, geralmente às vezes as ORLs passam assim, passando as informações dentro do próprio da própria URL. Então você consegue estar passando diretamente da ORL dessa forma, como você pode estar como query parâmetro passando aqui o nome dos dos queries aqui, ó, e passando aqui, entendeu? E aí você
+
+pode apagar isso aqui. Então é basicamente isso, tá? Esses queres parâmetros e o body é basicamente o conteúdo em si, tá? Tudo que vai do corpo do da requisição, as informações que precisa passar. Isso aqui fica no bônus, tá? Vamos pra
+
+prática. Ficar só falando aqui não vai entrar na cabeça de vocês, né? Negócio é a gente vir aqui na prática mesmo. Então, ó, um pulo do gato muito bom, que ajuda bastante, ao invés de gente tem que ter ficar lendo tudo exatamente, é você vir aqui, ó, e procurar por ser URL, tá? Aqui no brabo, bem bem de boa. Já tem aqui aqui
+
+do lado, cara. Eh, geralmente tem, tá? Por exemplo, vamos ver aqui o Ki. K é uma plataforma onde eu consigo fazer aquisições no banana, Cream, eh, Sora, V3. Então, por exemplo, eu quero fazer aqui uma requisição com Nano Banana, ó. Cliquei aqui, venho aqui, ó, API.
+
+Aí aqui, ó, que já aqui já é documentação. Se eu venho aqui embaixo, ó, aqui ó, CURL. Então, ó, geralmente as documentações elas têm esse CURL, tá? E para que serve esse URL? Eu venho aqui, copio.
+
+Quando eu copio e volto aqui no N, tá vendo que tem uma opção aqui chamada import? Se eu clicar aqui, dar um contrl V, ó, dessa forma, clicar em importar, olha o que acontece. ele já vai deixar pronto com as informações, a estrutura que a gente precisa. Beleza? Então, veja só, o método manteve get, como tinha mencionado, a URL, ele passou aqui, ó, bra.dev/API/code/
+
+E aqui ele passou, ó, duas ações, né? Passou aqui da Petrobras e passou da Magazine Luía, tá? Como é que eu sei que são nomenclaturas padrões, tá pessoal? Das ações. Mas aqui ele até fala, ó, Petrobras e Magazine Luía, ele passou, certo? Ele passou aí
+
+aqui ele ativou, ó, query parâmetros, né? o nome, todos os nomes range, intervalo, fundamental, dividendes, módules. Aqui ele passou autorization bar, tá? Beleza? O que que é isso aqui?
+
+Vamos ler na documentação. Então, ó, vindo aqui na documentação, vamos procurar a parte que ele fala aqui sobre
+
+os aqui, ó, square parâmetros. Tá vendo aqui? São os square parâmetros. Aqui ele fala sobre token, aqui ele fala sobre o rend. O que que é isso aqui? que ele passou token e o valor do
+
+token foi string. Por quê? Aí eu venho aqui e olho. Obrigatório caso não seja não seja adicionado como head autorization seu token de autenticação pessoal da PRIAP. Como de envio per parâmetros, adicione o token igual ao meu token ao final da URL.
+
+E pode também ser por HTP head. inclui o head autorization ber seu token na sua requisição. Então, ambos os médios são aceitos, mas pelo menos um deles deve ser utilizado. Então, basicamente eu posso ter apenas um isso aqui, posso ter isso aqui, tá? É um outro. Show de bola. Aqui, ó, o range
+
+é opcional, define o período para os dados históricos de preço. Então, ó, existem esses valores aqui, 1D, 5D. Nesse caso aqui, ele passou o range como 5D. Significa que os valores possíveis últimos 5 dias, então ele vai buscar os últimos 5 dias das cotações, certo? Beleza.
+
+Aqui ele passa como intervalo 1D. O que que é isso? Define a granularidade intervalo dos dados históricos de preço. Então ele vai ele vai buscar quais foram as variações, né? Podendo ser a cada minuto, né? A cada um dia, a cada 5
+
+dias. Então aqui é diário, então significa que ele vai puxar eh cinco valores de cada ação, porque de dia em dia durante 5 dias, que é os últimos cinco dias que ele puxou aqui. Beleza? Fundamental, ele passou como verdadeiro, é um valor opcional. se verdadeiro inclui dados fundamentalistes básicos na resposta, como preço por lucro, lucro por ação.
+
+Então, se eu deixasse como falso, ele não ia passar essa informação. Se deixar como true, ele vai passar essas informações. Então, tudo tem dentro da documentação, pessoal, tá? É só a gente vir aqui e ler a documentação [limpando a garganta] direitinho, tá? Ó, dividendos inclui informações sobre dividendos.
+
+Ele botou aqui como verdadeiro também, tá? e os módulos, uma lista de módulos de dados adicionais separados por vírgulas para incluir na resposta. Permite buscar dados financeiros. Então ele vem aqui e passa quais são os módulos que eu quero passar. Ele veio aqui e passou tudo, tá? Beleza?
+
+Aí aqui tem o autorization, tá? Tem ali o autorization, que é a forma de autenticação, tá? Então isso aqui é uma forma de autenticação, nome, autorization, valor, espaço e o token, tá? Beleza? E onde é que eu pego esse meu token, essa minha esse meu minha chave API? Aqui em cima, ó. OT
+
+chave de API. Aí eu venho, pego aqui, aqui tá meu token, clica aqui em copiar. Aí eu venho aqui, ó, e dou um contrtrl V e fica dessa forma aqui, tá? Show de bola. Então, se eu vi aqui dar um executar, o que que vai acontecer? Ele puxou os
+
+resultados. Ele puxou aqui o o ó petróleo brasileiro, Petrobras, tá? E todas as informações dos últimos cinco dias de cada um, tá vendo, pessoal? Então, basicamente é isso aqui, ó. São dois objetos, tá? sendo o primeiro
+
+Petrobras e o segundo Magazine Luía, tá? Então retornou esse Jon aqui completo com todas essas informações, tá? Então é assim que funciona o API. Eu usei um get e busquei informações do BRAP. E como que a gente faria para poder estar enviando informações? Eu posso muito bem
+
+tá usando aqui um HTP request para poder estar fazendo envio de informações e dessa forma teria que utilizar um método post, certo? E para vocês entenderem, ao mesmo tempo que eu tô enviando aqui no HTP request, como também se aprofundar na parte de web hook, eu vou estar enviando informações para um outro fluxo do Night, beleza? Então, olha só, eu vou vir aqui, ó, ativei aqui o e o web hook, beleza? web. O método é post porque eu estou recebendo um post aqui, tá? Então,
+
+lembrando, aqui eu vou enviar, aqui eu vou receber, certo? Aqui eu vou colocar aqui, ó, teste teste. Beleza? Só para ficar mais bonitinho aqui o nome. Show de bola. Não
+
+vou colocar nenhuma autenticação, tá? Então vocês vão observar que sem autenticação eu consegui enviar tranquilamente, tá? deixar aqui a resposta imediata mesmo. Perfeito. Então, ó, vou salvar aqui. Aqui eu vou estar copiando a URL
+
+de teste e vou estar jogando aqui, tá? Eu não vou passar nenhuma informação aqui, só para vocês entenderem. Inicialmente a gente vai se aprofundando. Eu vou clicar aqui em executar teste. Então, ele vai estar aguardando aqui um chamado e eu vou testar aqui, ó. E pronto, workfow,
+
+workflow iniciado. E aqui, ó, ele executou. Então eu fiz um envio HTP request para um outro fluxo, tá? Então olha só, tem todas as informações aqui, certo? Todas as informações. Só que eu não
+
+passei nada aqui, na verdade, né? Então vamos lá. Vamos supor que eu quero enviar informações. Então ativo aqui o body, tá? Então por exemplo, eu quero enviar informações de um cliente, por exemplo. Então ó, nome passar aqui
+
+Anderson idade 25. Beleza, passei aqui informações. Então, ó, vou executar novamente e vou enviar. Então, ó, olha só, body. E aqui no body as informações que foram passadas, beleza? Se aqui
+
+no query eu tivesse passado o seguinte, ó, interrogação, vou chamar aqui de teste igual a teste, por exemplo. Vou executar aqui novamente. Executar. Olha só, no query teste igual a teste e no body Anderson e dade. Então é assim que funciona, tá pessoal? É dessa forma que
+
+a gente trabalha aqui, beleza? No head, é a mesma coisa. Head teste. E aqui teste. Então, ó, se eu vi aqui, executar, executar.
+
+Foi e passei as informações aqui. Beleza? E uma coisa bem interessante aqui no header, o que que acontece? Não passou aqui a informação. Por que que não passou aqui? Porque o head ele é uma
+
+formação oculta. tá geralmente utilizada paraa questão de eh tokens, autenticação e tudo mais. Beleza, pessoal? Então, basicamente é assim que funciona, certo? Essa questão de HTP request, tá, Anderson, mas essa questão de autenticação eu não entendi como é que funciona, é o seguinte, eu vou apagar esse red aqui, tá?
+
+E vamos fazer o seguinte aqui, esse web hook eu vou ativar uma autenticação, tá? Por exemplo, uma autenticação basic. Eu vou criar aqui uma autenticação e o usuário eu vou passar aqui, ó, eh, Zeniton e a senha 1 2 3. Clicar aqui em salvar. Beleza, agora eu tenho uma autenticação.
+
+Beleza? Vai ter aula só sobre autenticação, tá pessoal? Mas eu vou dar um spoilerzin aqui para você. Então, se eu vier aqui no meu HTP request normalmente, como quem não quer nada, né, vou espera aí, de salvar aqui primeiro, né? Executar aqui o teste.
+
+Beleza, eu vou agora executar. Olha só, deu um erro, eu não consegui enviar informação para aquele meu fluxo porque ele precisa de uma autorização. Eu não passei essa autorização. Então, o que que eu posso estar fazendo aqui? Então, o que que eu tenho que fazer? Eu venho
+
+aqui, ó, em autenticação. Vou vir aqui em pré-definido, quer dizer, prédefinido não, em genérico. Venho aqui em basic, tá? E aqui na autenticação, ó, eu vou tá passando. Deixa eu só confirmar que esse foi um basic que eu fiz mesmo, né? Basic al um
+
+basic aqui mesmo. Então, vem aqui, ó. Usuário Zeniton senha 1 2 3. Clica em salvar. Pronto, conectei aqui.
+
+Se eu clicar aqui em executar, ele conseguiu enviar porque eu tô com a credencial ativa. Beleza? Show de bola. Então, pessoal, é isso, tá? Eh, acredito que eu passei assim na maioria dos nós aqui no N. Pode ser que
+
+eu tenha colocado outros nós aí, tá? Acredito que eu vou adicionando outros nós conforme vocês forem pedindo, né? Tem algum nó específico quer utilizar e que tudo mais. Beleza? Então é isso, fiquem por aqui, vejo aí nas próximas aulas. Valeu,

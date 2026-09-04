@@ -1,0 +1,122 @@
+---
+video_title: "Como Criar um Agente IA Multimodal no n8n (Imagem, Áudio e OCR)"
+video_id: sIlTRHLTo-w
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=sIlTRHLTo-w
+video_date: 2025-12-22T21:33:57+00:00
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=sIlTRHLTo-w
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+---
+Fala automatizador Anderson aqui. Nesse vídeo eu vou estar mostrando para vocês como fazer o seu agente A conseguir, além de ler textos, ouvir áudios, ler imagens e também documentos, tá? Em PDF, por exemplo, usando o Evolution HPI. Beleza? Quais são os modelos de linguagem que eu vou estar utilizando aqui? Para eh escutar os áudios e
+
+interpretar as imagens, né? Conseguir ler as imagens, eu tô utilizando o GPT4O, certo? da Openai. E para estar lendo os documentos, eu tô usando o modelo do Mistral, tá? Mas não se preocupa que eu vou mostrar para vocês aqui como que funciona. Esse é o fluxo
+
+que eu trouxe aqui para mostrar para vocês como que funciona, tá? A entrada de saída dele é bem simples. Aqui eu tenho o Hook que vai estar disparando no momento que eh aí a receber mensagem lá no WhatsApp, tá? E aqui no final eu vou est enviando a mensagem novamente para o usuário usando o próprio nói, tá? Se você não sabe como instalar esse nó, daqui a pouco eu te explico, certo? Vou
+
+primeiramente mostrar para vocês aqui como que funciona o fluxo. Daí eu vou tá eh fazendo aqui na prática para vocês verem o funcionamento, tá? Na verdade, eu vou estar fazendo ao contrário, eu vou estar primeiramente mostrando ele funcionando, depois eu venho aqui pro fluxo e mostro o passo a passo. Lembrando que esse workflow, esse template eu vou estar disponibilizando você para vocês gratuitamente lá na minha comunidade, beleza? Vamos lá. Eu tô aqui com o WhatsApp
+
+aberto, tá? Esse é o número que está conectado. Conexão foi feita aqui pelo Evolution API, tá? Então essa aqui é a instância que eu conectei e beleza. Primeiramente eu vou est mandando aqui uma um texto normal para vocês verem que tá ligado, tá funcionando. Então mandei aqui só um
+
+oi e beleza, já me respondeu aqui. Vou mandar agora um áudio. Oi, tudo bem? Meu nome é Anderson. como você está?
+
+Mandei aqui o áudio e beleza, já me respondeu também. Perfeito. Vou est enviando aqui também uma foto, tá? Mandei a foto aqui de de um livro mesmo. Vamos ver aqui.
+
+Beleza, já me respondeu aqui, ó. Então, ele conseguiu também ler a minha imagem. E vamos ver aqui sobre o documento, né? Documento geralmente é o que o pessoal tem mais dúvida. Vou pegar um documento aqui, um certificado que eu tenho aqui desde 2025.
+
+Vou fazer aqui um, vou mandar aqui um certificado de quando que eu era pesquisador lá na UFRN em 2023. Isso aí tá aqui no meu celular, vou est mandando aqui para vocês, ó. Mandei, tá? É um arquivo em PDF, certo? E tá aqui, ó, esse documento é o certificado da sua apresentação, Congresso, científica e tecnologia da UFRN 2023. Aí que ele explica aqui.
+
+Então, ele conseguiu também ler o documento. Beleza? Então, é algo que já tá bem completo, texto, áudio, imagem e documento, né? Por exemplo, o cara vai lá e manda um comprovante Pix, tu vai conseguir fazer com que a consiga interpretar usando esse método aqui. Então, vamos pro flux agora, né? Cheguei
+
+de enrolação, você já viu aqui que como é que funciona. Agora vou te mostrar como que funciona aqui por trás, aqui nessa automação da noite un. Então, ó, primeiro de tudo, pessoal, esse web hook aqui, eu peguei o web hook, tá? Peguei aqui o web hook de produção e coloquei lá no meu evolution, certo? [roncando] Se você não sabe como é que faz, ó, vem aqui em eventos, web hook, coloc aqui, ativo e ativo também aqui, ó, messages upset. Beleza? Dou um save e beleza.
+
+Foi. No momento que ele é ativado aqui, no momento que eu mandou uma mensagem, deixa eu pegar aqui uma execução teste, pegar essa daqui. Eu acho que foi essa daqui que eu mandei o texto. Isso mesmo. Deixa eu copiar aqui para editor.
+
+Beleza. Então, momento que eu mando uma mensagem lá, né, para pro agente lá no WhatsApp, ele vai vir aqui para esse switch. Esse sutch o que ele vai fazer? Ele vai fazer uma um roteamento, tá? entre quatro possibilidades. Ele de ser
+
+texto, pode ser áudio, pode ser imagem, pode ser um documento. Beleza? Se for um texto, então esse message type, que é um parâmetro que vem aqui no webhook, tá? Você vem aqui, ó, message type, então tem esse parâmetro aqui. Se ele for igual a conversation, então significa que é um texto. Beleza? Se o message
+
+type ele for igual a á audio message, é um áudio. Se for igual a image message é uma imagem. E se for igual a documento message é um documento. Tá bom? Nesse nesse meu exemplo aqui foi no momento que eu mandei aquela mensagem lá que foi um foi um oi. Mandei esse oi. Então essa
+
+execução aqui que eu estou mostrando aqui como exemplo. Beleza? Então como é um texto ele vai subir aqui para essa ramificação aqui. Essa primeira que é um texto, tá? Aqui não tem muito segredo.
+
+Eu simplesmente vim aqui no edit field, coloquei aqui mensagem usuário e passei aqui a mensagem, certo? Mensagem usuário, oi. Aí esse oi eu passei aqui para o agente, tá? O agente não tem nada de demais aqui no prompit, tá? Eu só coloquei algumas coisinhas aqui só para não ficar muito texto lá na hora que for, na hora que eu fosse mandar mensagem lá. Então coloquei aqui, ó.
+
+Você é um assistente virtual de Anderson Adelina que consegue ouvir áudios, ler imagens e documentos. Responda com simplicidade e naturalidade. Se o input for em formato YML, interprete como se fosse sua imagem. Não responde em Jon ou MarkD. Sobre isso aqui, esse formato YL e M. Já já te mostro o porquê disso
+
+aqui, tá? Beleza? Aí a que dá resposta, né? Oi, como pode ajudar você? E essa resposta que ela gerou, eu faço o quê?
+
+Venho aqui e mando nesse nó do evolution, tá? O nó enviar texto. Faço aqui o nome da instância, número destinatário e a mensagem, tudo eu arrasto, tá? Nome da instância, número destinatário, eu pego aqui do Hook e a mensagem eu arrasto aqui do output da IA, do agente A. Anderson, eu não sei como instalar esse nodo Evolution, tá? É
+
+bem simples. É só você vir aqui, ó, nas configurações, vem aqui em community nodes, tá? Eu tô usando atualmente a versão 2.1.0.
+
+Aí você vem aqui em install, coloca aqui, ó, N8N traço nodes, traço evoluz, traço API, marca essa opção aqui e clica em instal. Beleza? E aí você vai estar instalando esse pacote igual que eu tenho aqui, tá bom? Beleza. Agora vamos paraa parte do áudio, certo? Deixa,
+
+deixa eu vir aqui novamente aqui nas execuções. Vou pegar a execução que eu enviei o áudio, copiar para o editor para ficar melhor para vocês visualizarem e pronto. Então, ó, já perceba que aqui áudio que foi acionado. Então, primeira coisa que eu faço é chamar um nó aqui do do Evolution chamado obter mídia em base 64. Que que ele faz? Eu passo aqui a minha
+
+instância, tá? e passo o ID da mensagem que vem aqui, ó, o ID da mensagem. E o que que ele vai fazer? Cada mensagem que a gente manda aqui, ele tem um ID específico, certo? Nesse, nesse exemplo aqui, isso aqui foi um o Audi, né, no caso, né? Beleza? O áudio que eu mandei
+
+aqui, ele tem um ID, que é esse ID aqui. Então, eu passo o ID aqui e o que que ele vai fazer? Ele vai obter um código base 64, que é esse cara aqui, ó. É muito grande esse código, ainda se eu for mostrar para vocês aqui em direção, ó, isso tudo é isso aqui, basicamente é o meu áudio convertido em código, tá? Isso aqui é meu áudio convertido em código. Ele transformou aquele meu áudio
+
+em código. Qual o código? Base 64. Por quê? Porque a partir desse código base 64, eu vou converter ele para um áudio de fato, né? Um arquivo binário. Então
+
+eu uso esse nó aqui, ó. Move base 64 string to file, certo? Então ó, eu passo o database 64 aqui no meio arquivo para audio.mp3 e o my type eu coloco como audio/mp3. Então ele me retorna um arquivo binário.
+
+Eu não consigo visualizar, mas eu consigo já fazer um download dele aqui. Agora que eu tenho o arquivo binário aqui no fluxo, eu posso passar ele para esse nó da Open, tá? Que é o transcribe a record. Eu passo aqui o data, ele tem que tá em binário aqui, certo? Coloco aqui a linguagem, nesse caso aqui PT português. E aqui ele faz a a
+
+transcrição. Então ele converte um binário em de áudio em um texto. Nesse caso aqui, ó. Oi, tudo bem? Meu nome é Anderson, como você está? que é
+
+justamente o que eu tinha enviado para ele. Aqui aparece, ó, quanto duração que teve o áudio, certo? Para você conseguir utilizar esse nó, é só você criar uma credencial aqui na Open tá? E é bem simples, só precisa de uma P, tá? Para fazer isso aqui. Então, ó, eh, basta
+
+você vir aqui em platform.com, tá? Coloque alguns créditos aqui para você poder tá utilizando a Open tá? E aí você vem aqui, ó, em create new secret key, coloca aqui o nome da da chave, né? por exemplo, no projeto, coloca default, create secrety. Aí vai vir um código,
+
+você pega esse código e joga aqui na P key, beleza? Sem mistério nenhum. Clica em salvar e pronto, está conectado. Depois que ele transcreveu, agora sim eu tenho um texto, que é isso que eu quero. Aí esse texto eu coloco nesse nó, esse edit field aqui, passando como mensagem usuário. Então você vai perceber que
+
+todos cada edit field desse aqui, o nome da variável se chama mensagem usuário, porque independente de onde passar aqui no input do agente, eu passo jon. Mensagem usuário, beleza? Então fica uma forma mais simplificada. Então aqui, ó, eu passo o áudio, mensagem usuário e aqui eu passo o nome da mensagem. Beleza? Show de bola. Aqui eu até
+
+esqueci de mudar isso aqui, né? Isso aqui é para ser imagem e isso aqui é para ser Isso aqui é para ser documento. Beleza? Agora que você já tem o áudio, vamos pra imagem. Pra imagem, quase a mesma coisa. Eu uso o mesmo nó para
+
+obter o base 64, mesma configuração, certo? A diferença aqui é que na hora que eu for fazer a conversão, ó, deixa eu pegar a execução novamente para vocês verem. Foi essa conversa, foi essa execução aqui. Copiar para editor. Calma, acho que eu peguei errado. Pera
+
+aí. Beleza. Pronto. Ó, ele vem aí converter para imagem. Aqui, ó, ele já converte para imagem automaticamente.
+
+Beleza? Aí aqui eu uso o nó. A diferença é esse aqui. Porque ao invés de eu estar usando o transcript, eu vou usar aqui o analyze image, tá? Que também é o nome da Open modelo e chatto. Test. E aqui na
+
+descrição eu faço o seguinte, ó. Descreva tudo que tiver na imagem, formato YML. Por que que eu faço esse formato? Porque quando eu porque assim, dá para eu simplesmente só pedir para ele descrever tudo, só que ele vai descrever em um texto único, fosse um em um parágrafo único. Aí tu me pergunta: "Tá, mas qual o problema disso antes de eu colocar um parágrafo único?" Porque
+
+dessa forma a IA ela meio que fica difícil de interpretar que aquilo é uma imagem, tá? Ela vai achar que você simplesmente só escreveu a descrição da imagem, que pode funcionar, mas em alguns casos específicos você não vai querer dessa forma. Tu vai querer que a IA realmente saiba que é uma imagem. Então eu colocando em um formato YML, aí eu vou lá no prop da e falo: "Olha, se eh eh a mensagem do usuário forato YML, então considere que é uma imagem". Então fica mais fácil dela conseguir distinguir um texto de um a imagem.
+
+Beleza? O input type é binário porque é um arquivo binário que eu tenho aqui no lado esquerdo, tá? Aqui é o nome do arquivo binário que é data. Beleza? E aqui eu coloco a quantidade máxima de tokens, tá? que eu quero. Coloquei aqui
+
+1000 para também não sair cortando muito e beleza. Então, e dessa forma aqui já me supre, venho aqui na imagem e aí eu já passo aqui o o conteúdo novamente. Mesma forma, ó, mensagem underline usuário, tá? E por fim, eu tenho a parte documento. Vamos vir aqui na execuação novamente. Questão de documento,
+
+pessoal, é é o seguinte. Se você for utilizar apenas um, se você for utilizar apenas um extrator de documentos padrão, tá, do drive, por exemplo, porque aqui tem um do drive que tu pode fazer downloads PDF e depois converter. Só que é um problema, ele só vai conseguir eh captar apenas o que for texto. Se o do PDF forado, tiver tabelas, tiver coisas do tipo, não vai pegar nada. Então já era. Um PDF, por exemplo, não vai pegar
+
+nada. Basicamente um PDF é como se fosse tivesse em branco, porque no PDF com função imagem dentro de um PDF. Então, nesse caso, vai dar problema. E qual que é a melhor IA que eu conheço hoje pra questão de OCR, né, que é isso que a gente chama, né? O CR é isso de você conseguir transcrever um documento, um conteúdo dentro desse documento e você conseguir extrair tudo isso, tá? O CR e
+
+o melhor modelo de linguagem hoje que eu vejo é o mistral. Inclusive esse mistral aqui você consegue usar de forma gratuita, tá? Sem gastar com tokens. Então mesmo processo, base 64, converti para arquivo. Então ó, ele converteu para um PDF, certo? Aí eu venho aqui, ó,
+
+e uso o nó do Mistral. Credencial também é bem simples, só precisa aqui de uma API key, tá? Você vai utilizar aqui, ó, console.mistral.ai.
+
+Faz seu cadastro aqui, vem em chaves de API, criar nova chave, coloca o nome, criar nova chave, aí ele vai gerar um código, tá? Que é API. Aí tu cola aqui, salva e pronto. Recurso: documento, extract text, modelo mral ocr test, tipo documento input binário, que é o que tá aqui aí do lado esquerdo, e o nome é data. E pronto. Olha só, ele já
+
+converteu tudo. Tá aqui, ó. Extractuamente tudo que tá lá dentro, inclusive o que tava lá no no cabeçalho, tá vendo? Algo que não converteria se eu tivesse utilizando o PDF normal. Beleza?
+
+Converteu. Aí eu venho aqui em documento e passo o conteúdo extraído. E o conteúdo extraído vai para IA da mesma forma. Então, independente se é texto, se é áudio, se é imagem, se é documento, eu transformo isso em um texto e mando para IA. A IA gera a resposta e eu mando pro Evolution API. Então, pessoal, esse
+
+é o fluxo, só que não se trata somente de converter eh áudio, imagem, documento, tudo mais, não. Você precisa também, para você ter um projeto robusto, tu precisa ter eh debounce, você precisa ter pausa para atendimento humano, você precisa fazer com que a também possa enviar áudios em alguns momentos. Então tem muitas coisas que você pode estar fazendo para deixar o seu projeto realmente completo. E é para isso que eu criei um curso completo de como tu tá montando um agente de atendimento no WhatsApp no seu notend. Então pessoal, essa aqui é a comunidade tá centad. O template desse vídeo, ele
+
+vai tá aqui, ó, templates educacionais gratuitamente. Só que se você vir aqui mais para baixo, tu vai ver aqui, ó, outros conteúdos, tá? São conteúdos do Plus, conteúdos que só quem faz parte da comunidade Plus tem acesso. Ó, aqui tem alguns cursos, ó. Curso a gente de atendimento no WhatsApp, atendimento do Google, ger de prompt, followup, a gente tem uma automação aqui disparo de de Pix, tá? Muitas automações aqui para
+
+virem que estão em breve que a gente já tá produzindo essas automações, certo? Aqui são aulas semanais que eu trago com algum assunto eh interessante para vocês. Então assim, tá bem completo, tá? Ó aqui, ó, temos as aulas tudo aqui, ó. Ouvindo aulas imagem, documentos SDR e OCR, fraseando mensagens, debounce, registrando lupa base, pausa para atendimento humano, notificando mano quando conclui, grad raios, fallback, prompt, então tem muita coisa muito bacana aqui na comunidade e não é um valor, não é um valor R$ 1.000 para ter
+
+acesso, não, tá? A gente tem dois planos hoje. A gente tem um plano anual e um plano mensal. Então, esses são os planos que temos hoje na comunidade, tá? Temos um plano mensal onde você paga um valor de R$ 57 por mês, tá? Pagou e já tá
+
+utilizando como fora assinatura estilo Netflix, tá? E tem o plano anual onde você pode estar pagando aqui por R$ 403 à vista ou 12 vezes R$ 47. Beleza? E lembrando que esse plano mensal aqui você pode cancelar quando você quiser, tá? não tem burocracia nenhuma, é só cancelar e não vai ser cobrado novamente, tá? Eu liberei esse plano
+
+mensal justamente porque tem pessoas que não tinha condições, não tinha cartão de crédito pagar um valor cheio parcelar, como também não tinha eh um valor alto para poder estar investindo. Então eu trouxe um plano mais acessível, sendo mensal, até porque eu sei que com o mensal vocês vão conseguindo depois e mais orçamento para depois ir investindo no anual futuramente, tá bom? Então pessoal, é isso. Espero que vocês tenham gostado aqui do conteúdo. Se gostou, se inscreve aqui no canal, deixa seu like, comenta se tiver alguma dúvida, tá? Eu
+
+sempre estarei postando aqui conteúdo toda semana para vocês. Então te vejo nos próximos conteúdos, próximos vídeos. Valeu,

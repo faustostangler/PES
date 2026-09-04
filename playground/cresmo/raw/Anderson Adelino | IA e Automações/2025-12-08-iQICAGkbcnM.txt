@@ -1,0 +1,83 @@
+---
+video_title: "WEBHOOK NÃO CHEGA? A solução definitiva usando WebSocket no Evolution API (passo a passo)"
+video_id: iQICAGkbcnM
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=iQICAGkbcnM
+video_date: 2025-12-08T21:00:06+00:00
+video_description: |
+  👉 Acesse a Zenithon Academy: https://zenithonacademy.com.br?utm_source=youtube&utm_medium=video&utm_content=iQICAGkbcnM
+  
+  👉 Entre na Comunidade Gratuita agora: https://grupo.zenithonacademy.com.br?utm_source=youtube&utm_medium=video&utm_content=iQICAGkbcnM
+  
+  ✅ Servidor + Domínio Grátis + N8N instalado automaticamente — use o cupom ADELINO e garanta 
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+---
+Se você está com problema de alguns web hooks do Evolution API não estarem disparando para o seu N81N, principalmente aqueles web hooks de mensagens vindas de Facebook Reds. Então esse vídeo aqui é para você. Fala automatizador Anderson aqui. Nesse vídeo eu vou estar mostrando para vocês a como estarem utilizando o web socket do Evolution API. Uma solução que eu encontrei para resolver um problema que tá sendo muito comum. Eu tô percebendo
+
+que muitas pessoas estão com esse problema, tá? de web hooks que não estão chegando. E por esse motivo trago para vocês um método que até o momento tá resolvendo esse problema. Então, primeiro de tudo, deixa eu contextualizar vocês o que que tá acontecendo. Muitas pessoas estavam relatando, inclusive aconteceu com algum cliente meu também, de que quando o lead mandava mensagem pro WhatsApp vindo daquela mensagem padrão, sabe aquela mensagem inicial que vem lá do meta né?
+
+Oi, teu interesse. Essa mensagem padrão, em alguns momentos ele não dispara o hook lá no então o agente a não responde mais, acabou-se, aquela pessoa vai ficar ali perdida. Se se você não entrar lá de forma manual e responder, já era, não vai estar mais respondendo aquela pessoa. E eu vi que isso tá acontecendo com muita frequência, tá? O problema é porque depois de atualizações acontecidas com o próprio Metareds mesmo, esses web hooks acabam se perdendo, tá? Nesses casos específicos.
+
+E o que que eu encontrei de solução para resolver esse problema? Ao invés da gente estar utilizando web hooks para essa situação, a gente utilizar websocket. Então, se você não sabe o que é Websocket, eu vou te explicar agora. Então, eu vou contextualizar com você aqui. Inicialmente, eh, o normal, na verdade, é que a gente utiliza utilize esse formato aqui, tá? Um formato de web
+
+hook direto, onde a gente conecta a nossa nosso WhatsApp lá no Evolution P através de uma instância e no momento que chega uma mensagem, a gente dispara um evento Message Ups, para web hook, tá? através de uma requisição, ó, htpost para o N. E lá no tem web hook, vai tá recebendo essas essa esses payloads, né, que eh mandando o remote ID, mandando o nome da pessoa, mandando a mensagem, o tipo da mensagem, enfim, aquelas coisas que provavelmente você conhece. Se você procurou esse vídeo aqui, é porque você tá com esse problema, então tu já deve mexer aqui com Web Hooks com Evolution API. Porém, essas mensagens específicas de Metaredads, em alguns momentos os web hooks estão falhando, tá? Porque o
+
+webhook direto ele tem um pequeno problema que basicamente ele só vai ser ativo no momento que ele for chamado. Então eu fiz um desenho aqui para ver se vocês conseguem entender mais ou menos a diferença entre o Hook e Websocket. Eu vou te mostrar o porque o WebSocket resolve esse problema. Então beleza, aqui a gente tem o webhook direto. Mensagem chegou, manda pro Nend.
+
+Simples. No Websocket o que que vai est acontecendo, ó? A gente tem aqui o Websocket client entre o Evolution e o N8N. Então é um client que a gente mesmo vai criar, tá? Esse client vai subir no nosso nossa VPS e ele vai ficar 24 horas por dia ali rodando, tá? E o que que
+
+esse websocket aqui? A comunicação é diferente de um de um bhook que vai estar ali no esperando, não vai estar esperando, né? Ele só vai ser ativado no momento de ser chamado. O Websocket não, o Socket ele fica ali 24 horas por dia, sete dias por semana ligadão, sempre esperando chegar algum evento do Evolution, tá? É uma diferença, né?
+
+Enquanto um hook normal, o que acontece? Eh hook normal, ele vai est lá, ele tá ali dormindo, o Evolution recebeu uma mensagem, ele vai lá, chama o Web Hook, manda o o Web Hook acordar e manda mensagem para ele. Só que tem momentos que pode acontecer do web Hook não acordar e aí esse essa mensagem se perdeu, que é o que tá acontecendo. No caso aqui do WebSock, não, ele nunca vai dormir. O WebSock ele fica 24 horas por dia ali com o olho aberto, sempre esperando chegar essa mensagem, tá?
+
+Então essa comunicação entre o evoluí fica sendo meio que permanente. E no momento que o Socret recebe a mensagem, ele não vai deixar perder nenhuma mensagem vindo do WhatsApp. Todas todos os eventos do WhatsApp não vão ser perdidos que o tá aqui 24 horas por dia recebendo. Aí sim depois que ele recebe ele manda pro aí aqui já não tá mais perigo de perder, entendeu? Então fica essa comunicação aqui. Volpoocket client
+
+vai lá e manda pro night. Aí sim ele manda o web hook, porém já garantido, porque já recebeu o evento que ele precisava. Então espero que você tenha entendido assim essa analogia. Mas beleza, o que que a gente precisa fazer agora a partir dessa informação aqui que eu trouxe para vocês? A gente precisa é subir uma stack desse websock na nossa VPS, tá? No nosso porten aqui, por
+
+exemplo, pode ser no MPEN. também se tu tem, mas no meu caso aqui vai ser no portenha. Eu vou subir um stack que fosse uma aplicação separada mesmo, tá? Eu criei uma uma imagem lá no Docker, certo? Eu criei uma imagem lá no Docker, então eu criei um Websocket client e eu liberei essa imagem publicamente, tá?
+
+Então a partir dessa imagem vocês conseguem estar subindo essa stack sem problema nenhum, porque eu já vou disponibilizar para vocês gratuitamente, beleza? E para vocês terem acesso a isso é muito simples. Vocês vão vir aqui no portinho de vocês, vão clicar aqui em adicionar o novo stack, o nome vou colocar aqui Evolution Web Socket, tá? Deixo aqui em web editor e aqui no web editor eu vou colocar um código, tá? Vou pegar aqui desse bloco notas aqui, ó.
+
+Vou copiar esse cara aqui e vou dar um conttrl V, tá? Esse código aqui eu vou deixar lá pro pessoal que tá na comunidade, né? É gratuito a comunidade, tá, pessoal? É só você entrar lá e pegar ela de graça, tá? Ah, como é que eu faço para pegar isso aqui, Anderson? É muito
+
+simples. Você vai entrar aqui na na comunidade, o link vai ficar aqui no comentário fixado, tá? Tu vai ter acesso a isso aqui, ó. Tem cursos gratuitos e conexões aí aqui em templates educacionais vai tá aqui, beleza? Então, provavelmente vai ser aqui o primeiro, né? Vai tá aqui no lado esquerdo desse
+
+guardios aqui que vai ser desse vídeo aqui que eu tô gravando aqui agora, que não tá aqui ainda, mas vai tá. Beleza, tu vai clicar aí, tu vai baixar lá o código. Show de bola. Aí você cola aqui. Observe que aqui, ó, aqui tá a minha imagem, certo? Acho que eu vou deixar o
+
+o GitHub lá aberto, tá? Eh, se alguém quiser fazer mais alguma alteração, dar alguma melhoria, alguma correção, mas enfim, aqui o que tu precisa fazer é colocar só o RL do Evolution aqui, colocar eh a sua API ke aqui do Evolution, beleza? Esse é o primeiro passo que tu vai fazer. E aqui tu vai colocar o web hook lá doend. Depois que a gente fizer isso aqui, aí você vai ter que liberar umas configurações lá no Evolution. Já mostro para vocês como é
+
+que você vai fazer. Segura aí. Vamos lá. Coloquei lá minha URL e a minha chave API. Tá aqui, ó. Em nome da instância,
+
+eu eu não vou nem mexer porque eu não vou utilizar porque eu vou usar o modo global, tá? Tem o modo global e tem o modo traditional. Caso você queira usar apenas uma instância específica, eu quero global, todos os eventos, todas as instâncias. Então eu só vou vir aqui e coloco como global mesmo, tá? E aqui eu vou colocar o meu hook. Aqui são os
+
+eventos que eu quero enviar pro webook. No meu caso aqui eu só vou querer enviar o evento de UPS, mas tu pode enviar para web hook outros tipos de eventos aqui, beleza? E aqui eu vou passar o meu hook. Então eu tô aqui com flux aqui no N. Vou pegar aqui, ó, esse essa minha URL de produção aqui, ó. Peguei e eu vou jogar
+
+aqui, tá? Ó, joguei aqui. Beleza. Aqui já está tudo certo. É só eu vir aqui embaixo e fazer um deploy, certo? Fazer
+
+aqui um deploy. Perfeito. Enquanto tá subindo aqui, eu vou vir aqui no evolution. Então aqui realmente é a minha stack do Evolution. E eu vou ativar duas opções. Olha bem aqui, ó. Tá
+
+vendo que tem uma sessão aqui chamada configuração do web socket? No de vocês vai tá false, vai tá false aqui e vai tá false aqui. Que que você vai fazer? Você vai ativar o websocket aqui, tu vai ativar aqui em evento global. True, true. Beleza? Pronto. É basicamente só
+
+isso mesmo. Aí tu vai vir aqui em update, eu vou desmarcar essa opção, não quero fazer o repol da imagem, só salvar as credenciais e vou dar um update. E beleza, como é que eu sei que tá funcionando? Eu vou vir aqui em stacks novamente e vou abrir aqui, ó, o Evolution Web Socket, foi aquele que a gente subiu, né? Deu deploy. Ó, já tá
+
+rodando aqui o serviço, ó, 1/ra1, tá? Se eu vier aqui, ó, ó, running, vou clicar aqui nesse botão aqui para ver os logs. E olha só o que tá acontecendo. Olha só o que tá acontecendo, ó. Já tá disparando aqui os web hooks. Tá vendo
+
+aqui? Tem dado um erro aqui no começo porque não tinha ativado ainda o modo global do Evolution, mas agora, ó, preciso nem mandar isso aqui para testar. Alguém já mandou mensagem lá para alguma das minhas instâncias que tá lá conectadas e disparou aqui, ó, um bihook, certo? Outro bh hook. Então ele tá disparando aqui. Beleza? Isso aqui é
+
+só só os logs. Is aqui são só os logs. Para eu saber que realmente tá chegando no meu evolution, no meu N8N, eu venho aqui no meu N8N, tá? Venho aqui em execuções. Aqui são alguns testes de outras coisas que eu tava fazendo. Como
+
+é que eu vou fazer paraa gente testar aqui? Eu vou mandar agora uma mensagem. Aqueles aqueles eventos que estavam aparecendo lá não era de mensagem, eram outros tipos de eventos. Mas eu vou agora mandar uma mensagem aqui para alguma instância minha que tá lá no Evolution. Então mandei aqui um oi.
+
+Beleza. Vamos ver aqui em execuções se já deu certo. Ah, ó, aqui já apareceu aqui em execuções, ó. Já tá aqui. E olha só, chegou aqui tudo certo de forma instantânea, cara. Muito rápido. Muito
+
+rápido. Mandei um oi, ó aqui, ó. Oi. Forma muito rápida, tá? Então sim, o Websock é bem mais rápido do que webook convencional. Claro que aqui chega ock,
+
+depois manda pro web hook, mas mesmo assim, tá? Então é isso, pessoal. Dessa forma aqui, nas minhas operações, eu percebi que as mensagens voltaram a aparecer, tá? Até porque é o meu Boock, como agora ele é 24 horas ali esperando as mensagens, então não tem nenhuma perda, tá? Dessa forma aqui deu certo.
+
+Eu espero que dessa forma funcione para você. Se funcionou, deixa os comentários aqui, tá? Deu certo? Não deu certo? Tem alguma sugestão de melhoria pr fazer?
+
+Aquele mtech tá bem protótipo ainda, ela já funciona modo global e tudo mais, mas se vocês tiverem alguma ideia de como melhorar aquela minha imagem, cara, lisongeado de você poder estar contribuindo ou até eu mesmo se d alguma sugestão de comentário, eu vou lá dar uma atualização lá na imagem, atualizo para novas versões, mas de qualquer forma entra lá na minha comunidade e vai se comunicando lá. Você pode falar com o pessoal pelo WhatsApp, pode falar com o pessoal pelo Discord e vai conversando, fechou? Então vou ficar por aqui. Espero que tenha gostado desse vídeo. Já se inscreve, se não se inscreveu ainda, tá?
+
+Deixa aquele like e é isso. Vejo você nos próximos vídeos.

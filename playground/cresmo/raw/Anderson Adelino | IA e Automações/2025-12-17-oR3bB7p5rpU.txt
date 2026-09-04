@@ -1,0 +1,84 @@
+---
+video_title: "Curso de N8N Aula #07: Como funciona o Webhook na prática!"
+video_id: oR3bB7p5rpU
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=oR3bB7p5rpU
+video_date: 2025-12-17T16:01:22+00:00
+video_description: |
+  🚀 Trilha Completa N8N (8 cursos em 1): https://n8n.zenithonacademy.com.br?src=oR3bB7p5rpU
+  💬 Comunidade Gratuita: https://zenithonacademy.com.br/comunidade
+  🚀 VPS da Hostgator que recomendo: https://www.hostgator.com.br/52675-13-3-12.html
+  
+  📲 Me siga no Instagram para mais conteúdos:
+  https://instagram.com/oandersonadelino
+  
+  Curso de N8N Completo:
+  https://www.youtube.com/playlist?list=PLshnsHwXnYg9xCSXhAnvsUfomHKsOhdfo
+  
+  #n8n #automacao #inteligenciaartificial
+---
+Nessa aula eu quero mostrar para vocês como que funciona o web hook, o not trigger de web hook aqui tá? Eu não vou adentrar muito sobre o nó http request, sobre requisições HTTP, porque tem uma aula, vai ter uma aula só sobre o NO HTP request. Aí lá eu entro com mais detalhes. Aqui eu tô falando sobre o trigger, o nor trigger de web hook, tá? Então, o novo que eu tô falando é esse cara aqui, n web hook. Beleza?
+
+Então, vamos lá. Esse cara aqui, esse gatilho, ele é ativado, né, quando aplicativos externos enviam conteúdo para ele. Eu mostrei para vocês sobre scalle, mostrei para vocês sobre trigs manual, vários triggerss, só que eram triggs que eles só eram ativados dentro do próprio fluxo. As condições eram referentes ao próprio fluxo. Agora, se eu quero que o meu fluxo ele só seja ativado se um aplicativo, uma ferramenta, um site fora do N81N requisitar, além disso, eu quero pegar informações que aquele site me passou, eu vou utilizar um webhook, beleza? Eu vou mostrar aqui exemplos
+
+práticos, tá? não se preocupa com isso. Existe aqui no YouTube N alguns nós gatilhos aqui que tem como eh que são nativos, tá? Que tem esse mesmo princípio de requisão HTP HTTP, que são esses eh on app events, tá? Então, por exemplo, ah, Pify é AWS, eu tenho esses gatilhos aqui.
+
+Prave set, por exemplo, tá? Aqui no, aqui no caso não são gatilhos, tá? Calmaímente. Deixa eu vir aqui. Aqui, ó. Eh,
+
+on event. Pronto. Agora sim. Esses aqui, ó, são aqueles que triggers, ó. Esse aqui, ó. On new appfy event, por
+
+exemplo. Isso aqui é um aplicativo, tá? Apf é uma ferramenta e por padrão ele tem aqui nativamente o nó é do appfy aqui dentrof, certo? Então isso é mais para facilitar a forma que eu vou trabalhar aqui dentro. Só que não é todo aplicativo que tem isso de forma nativa, né? A maioria não tem. Nesse
+
+caso, a gente vai utilizar o [roncando] web hook tradicional. Beleza? Então, primeiramente, eu quero que tu pensa: [roncando] Eu tenho um aplicativo externo, por exemplo, você tem, você vende algum produto, né, um infopruto na Hotmart, né, comfi, alguma plataforma dessas, e você quer que as informações e no momento em que o cara compre um produto seu, você consiga fazer alguma automação a partir disso. E você precisa de algumas informações, como o nome da pessoa, telefone, certo? Ou seja, você vai precisar de um nó de web hook para fazer essa situação, tá? E
+
+é isso que eu vou usar para você, mostrar para você aqui como exemplo, tá? Não vai ser Hotmart Quefi, eu vou est mostrando aqui usando a cact, beleza? Que também é um getway de pagamento. Mas antes vamos falar um pouquinho aqui sobre o nó em si aqui, tá? Vou não vou adentrar muitos detalhes aqui que vou mostrar o que 99% das vezes a gente vai estar utilizando, tá? Então aqui a gente
+
+vai eh selecionar se vai ser uma birook de teste ou uma hook de produção, tá? Isso aqui é o seguinte, a única coisa que vai mudar aqui de uma URL para outra é que aqui vai ter o nome web hook, tá? Ele muda aqui, ó, e aqui tem barra teste. Para que serve isso? Se eu pego o de teste, ele só vai ser ativado no momento que eu tiver, ó, clicando aqui em executar, ele vai ficar aguardando na hora que eu mandar o evento lá da do outro aplicativo para cá, aí ele ativa, tá? É só para testar. Agora, se eu
+
+quiser que ele fique 24 horas ativos, ativo, aí eu tenho que usar o de produção, tá? Ó, observação, pessoal. Não é porque eu cliquei aqui que tá como teste ativado, não é isso não. Que vale. O que vale é a URL que tu coloca lá. Já
+
+mostro para vocês. Método HTTP. Isso aqui é para você selecionar qual que é o método HTTP que está vindo do outro aplicativo, da outra ferramenta, tá? Não vou adentrar muito sobre isso aqui porque vai ter uma aula só sobre HTP request. Então aqui você vai entender mais sobre o que que significa isso aqui, mas 99% dos casos é um post, é quando ele está enviando informações, que é o nosso caso, por exemplo, quando for fazer aqui na CAC, para vocês verem aqui no PEF, é só uma forma bonitinha aqui de eu tá melhorando minha URL, né? Se eu colocar, por
+
+exemplo, aqui, ó, teste, ele já vai, ó, colocar esse barra teste aqui, certo? Não vou fazer isso, vou deixar aqui um valor aleatório, tá? Tá beleza? A gente tem tem também aqui esse responde, tá? O que seria esse respond?
+
+O responde eh são formas que a gente vai estar eh retornando a informação para o outro aplicativo que mandou esse evento, tá bom? As três formas principais são imediato, whenless node finish e using respond to node. O que significa esse primeiro aqui? Ele não vai esperar um retorno para lá, não. Ele só vai ativar e pronto. Ele não
+
+vai ficar esperando a resposta, não. Os outros dois aqui, sim, ele vai ficar esperando uma resposta. When last node finishes significa que ele vai esperar todo o fluxo finalizar e a última informação do nó manda de volta para lá. Também vou dar um exemplo para vocês sobre isso aqui, tá? using o web hook node é a mesma coisa desse outro aqui, só que a gente utiliza um outro nó aqui de complemento que é o respon web hook, tá? E aqui eu eh
+
+informo a forma que eu vou estar fazendo essa resposta, né? Podendo respondendo um para um Jon, por exemplo, tá? [roncando] Beleza? Então aqui o padrão também eu vou est usando imediatamente, que é o que mais a gente vai estar utilizando aqui nesses casos, tá? Pelo menos nesse caso que eu tô falando da cactalmente seria assim que eu utilizaria para fazer uma automação.
+
+E beleza, o que que eu vou fazer? Eu vou pegar essa URL de teste aqui, vou só clicar aqui, vou copiar. E eu vou agora lá para C para vocês verem o que eu quero dizer. Vindo aqui na cactol, pessoal, o que que tá acontecendo aqui? Eh, eu vim aqui na parte de integrações, certo? Aí eu vim aqui em apps, aí aqui
+
+eu eu fui em web hooks, tá? Geralmente eh esses gates de pagamento eles têm essa questão de web hook, tá? Tudo isso aqui que que eu criei aqui são web hooks que eu criei, tá? [roncando] Eu vou adicionar um aqui do zero para vocês entenderem. Vou colocar o nome aqui YouTube [roncando] teste. Na URL, eu vou passar aquela URL
+
+lá que eu peguei, tá? é o RL no qual eu vou estar enviando as informações. Beleza? Aqui eu selecionarei um produto, vou colocar esse daqui, por exemplo. E aqui o evento, tá? O evento é o que que
+
+vai estar ocasionando esse disparo de web hook, tá? Nesse meu caso aqui, vou colocar, por exemplo, compra aprovada. Eu poderia colocar outros eventos aqui, vou deixar só compra aprovada. Ou seja, no momento que o cara comprar esse meu produto aqui, ele vai estar disparando uma requisição HTTP lá para o meu web hook do N8N. Beleza? Vou clicar aqui em
+
+salvar. Vou abrir ele aqui, ou melhor, não vou abrir ele, não. Vou ver aqui os três pontinhos. Aí aqui eu consigo, ó, clicar aqui em enviar evento de teste, tá? Eu fazendo isso aqui, eu vou conseguir eh enviar algo, um teste, né? simulando o que uma pessoa realmente
+
+fez a compra. Vou clicar aqui para eh ficar aguardando. Enviar evento de teste. Vou colocar aqui, ó, compra aprovada. Enviar.
+
+E aqui, ó, disparou já forma automática, tá? [roncando] Se eu abrir aqui esse nó, tudo isso aqui, ó, são informações que vieram lá da cacto, tá? Eles mandam informações de heads e mandam alguns parâmetros, tá? E aqui no body, ó, eles mandaram várias informações. O tipo de evento, ó, compra aprovada, tá? Eh, o nome da pessoa, o
+
+e-mail, o telefone, eh, o CPF da pessoa aqui. Então, ó, tudo isso aqui são informações que isso aqui são informações eh genéricas, tá? aleatórias aqui, mas é dessa forma que a gente começa a trabalhar. Aí a partir disso, eu poderia estar montando uma automação, né? Ah, eu quero pegar aqui o o nome da pessoa. Aí
+
+eu venho aqui, arrasto o nome da pessoa. Então aqui eu já tenho o nome da pessoa no momento que disparar. Aí vamos supor que eu quero mandar uma mensagem pro cara quando ele comprar parabenizando e mandando o link de acesso. Então tem muitas possibilidades, tá? Então é exatamente isso que funciona, né? Para
+
+isso que funciona esse nosso web hook. Se eu vier aqui, ó, em logs, ele mostra aqui, ó, que deu 200. Então, significa que deu certo, tá? Conteúdo enviado. Resposta do servidor de destino. Então,
+
+ó, como eu tava no modo imediatamente, né, imediato, ele só fez isso aqui. Agora, se eu quisesse que chegasse aqui, por exemplo, uma informação específica, aí, o que eu poderia fazer? Eu posso vir aqui, ó, em using respondebook node, tá? E aqui no final eu colocaria o nó respond web hook, certo? E aqui eu quero estar passando, por exemplo, um Jon com o campo chamado response e aqui, por exemplo, teste feito com sucesso, né? Eu
+
+passei dessa forma aqui. No momento que eu ven aqui e reenviar, deixa eu clicar aqui em testar novamente, ó. Reenviar. Olha só, response da forma que eu passei, teste feito com sucesso. Então, eu personalizei a resposta que eu vou estar mandando para a ferramenta, o site que enviou a minha requisão HTTP, tá? Só que
+
+eu não eu não preciso depender de apenas ferramentas externas. Eu posso usar o próprio N para poder enviar HTPs e fazer conexões entre fluxos, tá? também é possível fazer isso. Então, vou te mostrar agora como seria isso. Eu tô com outro fluxo aqui.
+
+Vou clicar aqui e abrir um um trigger manual e vou enviar um HTP request, tá? Não vou entrar em detalhes sobre HTP request, lembrando mais uma vez, vai ter uma aula sobre HTP request, mas eu vou estar simulando também, ó, um post. Vou pegar aqui a minha URL, ó, desse meu web hook. Vou pegar aqui a de teste novamente. Colei aqui. Beleza. Aí aqui
+
+eh, no body eu vou tá passando, ó, em uma informação, ó. Nome tá aqui, Anderson Adelino. Idade 25. Então, no momento que eu enviar essa requisição, ó, aqui já ativou. Aqui já vai dar eu porque não existe mais esse parâmetro, né? Até porque no
+
+web hook, ó, só passou body, nome, idade. Tá vendo? Eu fiz uma requisição HTTP para um web Hook em outro fluxo e a gente consegue também estar fazendo essas conexões entre os nossos workflows. Beleza? Então é isso, Hook. É, tem muitos
+
+detalhezinhos que a gente pode estar mexendo aqui, mas assim, isso aqui já é, já vai abrangerí 90% das coisas que tu vai fazer, tá? Então, por isso eu fiz essa aula aqui dessa forma, falando sobre web hook. Espero que vocês tenham gostado. Próximas aulas a gente vai estar entrando em nós nativos aqui do N20, beleza? Então, te vejo lá. Yeah.
