@@ -1,0 +1,49 @@
+---
+video_title: "Millions of JS devs just got penetrated by a RAT…"
+video_id: o7NYXvYohYk
+channel_name: "Fireship"
+channel_id: UCsBjURrPoezykLs9EqgamOA
+channel_category: "uncategorized"
+url: https://www.youtube.com/watch?v=o7NYXvYohYk
+video_date: 20260331
+video_description: |
+  Mux is the best video API for developers. Get $50 in free credits - https://mux.com/fireship
+  
+  Yesterday, a precision-guided remote access trojan was discovered in Axios, a JavaScript library with over 100 million downloads on npm. But this wasn't your average RAT - let's take a look at how this highly sophisticated attack was pulled off and what to do if you're compromised.
+  
+  #coding #programming #hack 
+  
+  ℹ️ More Info:
+  - https://www.stepsecurity.io/blog/axios-compromised-on-npm-malicious-versions-drop-remote-access-trojan
+  
+  🔖 Topics Covered
+  - What is Axios
+  - Axios RAT attack
+  - What to do if you're compromised
+  
+  Want more Fireship?
+  
+  🗞️ Newsletter: https://bytes.dev
+  🧠 Courses: https://fireship.dev
+---
+If you're a JavaScript developer, I have some bad news. But put down your artisanal soy milk latte and find a safe space to watch this video because it will almost certainly make you cry. I can hardly keep it together myself because yesterday a precision guided remote access Trojan or rat was discovered in Axios, a library with over 100 million weekly downloads on NPM. For over a decade, countless developers have turned to Axios to improve the developer experience when making HTTP requests in Node.js in the browser. But now that
+
+improved developer experience just turned into non-consensual backdoor penetration by a magnum-sized Trojan. The two different malicious versions of Axios were published to the NPM registry that contained a highly sophisticated supply chain attack that compromises developer machines and CI/CD servers. If you use Axios and are running either of these versions, the quick fix is to go into your garage, find a sledgehammer, destroy your machine, fake your own death, and then move to a remote village in the Siberian tundra. And I'm not exaggerating. If your system is compromised, the rat could already have access to your AWS credentials, your OpenAI API keys, and everything else in your .env file. It's a bad one. And in
+
+today's video, we'll break down one of the most sophisticated NPM hacks the world has ever seen. It is March 31st, 2026, and you're watching The Code Report. Over 10 years ago, Axios became extremely popular after it made HTTP requests promise-based instead of callback-based. But now today, every JavaScript runtime supports fetch natively, which in theory should have made Axios obsolete. Yet many developers still prefer to use this third-party library over the native web platform.
+
+Unfortunately, though, optimizing for DX with a third-party library just went horribly wrong. And the scariest thing is that Axios itself contains zero lines of bad source code. Instead of just hard-coding a crypto miner into the package like a noob, the attacker slipped a rogue dependency into the release, it triggered a post-install script, pulled down a remote access Trojan from a command and control server, then wiped its own footprints so everything looked clean after the install. Before we go into details though, let's take a minute to find out if you've been penetrated. First, go into your package.json file and find out
+
+if you have either of these versions of Axios installed. If you answered yes, this package may have run a post-install script to install another package called plain-crypto-js. Then go into your node modules and see if you have this package installed there. If your project tests positive for this package, you can then run these commands from Mac, Windows, and Linux to find out if there's an actual RAT living on your machine, or remote access Trojan. If the RAT file is found, you are screwed. Your system is compromised,
+
+and simply deleting the RAT is not enough. You'll want to immediately roll all API keys and tokens, and follow this guide over at Step Security for more instructions. But, the big question is, how did this even happen? Well, it starts almost the same way every other hack starts. The project maintainer's NPM account was compromised. Normally,
+
+releases are published with a GitHub action, but in the malicious versions, they were published under a ProtonMail address. The attacker obtained an NPM access token to publish these packages, but how they actually obtained it is unclear at this point. In any case, the attacker maintained another package called plain-crypto-js, that looks identical to the legitimate crypto-js package. Most importantly, the bad version of this package contains a post-install script that runs some JavaScript code to install the RAT on your machine. It's called the RAT dropper, and although the code was obfuscated, it Step Security was able to analyze it. The RAT dropper works by
+
+piggy backing on NPM install's life cycle. The script will first detect the system you're running, then reach out to a remote command and control server where it can fetch a second stage payload tailored to your operating system. Once downloaded, it then writes the payload to disk, then executes it to establish remote access, at which point it can steal your credentials remotely and do all kinds of other bad stuff. And then finally, it cleans up after itself to avoid detection. It deletes itself, it deletes the package.json and removes
+
+the post-install script, among other things, so that the end result is running npm audit. It doesn't raise any red flags. And that's the story of how a single npm install turned your machine into a botnet, which really makes you appreciate rock-solid platforms like Mux, the sponsor of today's video. Their highly customizable API is by far the easiest way to host and stream videos in your application. But now, it also gives you building blocks that let you program against your videos. You can use their
+
+API and SDKs to get captions, clips, and other video data to build powerful features like video search and content moderation without having to roll your own infrastructure. Mux also stewards the web's most popular open-source video player, Video.js, which just launched a fully rebuilt version 10 that's 88% smaller and a lot more modern. Companies like Cursor and Patreon use Mux for all their video features, and the free tier gets you 10 videos and 100,000 delivery minutes per month. Plus, you'll get an extra $50 in credits if you sign up today at mux.com/fireship.
+
+This has been the Code Report. Thanks for watching, and I will see you in the next one.
