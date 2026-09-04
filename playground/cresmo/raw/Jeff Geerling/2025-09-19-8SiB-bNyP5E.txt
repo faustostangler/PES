@@ -1,0 +1,195 @@
+---
+video_title: "I regret building a $3000 Pi AI Cluster"
+video_id: 8SiB-bNyP5E
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8SiB-bNyP5E
+video_date: 2025-09-19T14:00:14+00:00
+video_description: |
+  It's been a while. Some Kickstarters take time.
+  
+  What do you think about doing the same thing 10 times in a row, over and over? If that's your jam, build a cluster like I did in this video!
+  
+  If you want to replicate the Compute Blade Cluster, here are all the parts I used (some links are affiliate links):
+  
+    - Compute Blade DEV: https://www.pishop.us/product/compute-blade-dev/
+    - Compute Blade Standard Fan Unit: https://www.pishop.us/product/fansta-1v1-0/
+    - Compute Blade 10" 3D Print Rackmount: https://github.com/Uptime-Lab/compute-blade/tree/main/models/bladerunner
+    - Raspberry Pi CM5 16GB (CM5016000): https://www.pishop.us/product/raspberry-pi-compute-module-5-16gb-ram-lite-cm5016000/
+    - GLOTRENDS Aluminum CM5 Heatsink: https://amzn.to/45YACBV
+    - Patriot P300 256GB NVMe SSD 10-pack: https://amzn.to/4lPJ0JC
+    - GigaPlus 2.5 Gbps 10 port PoE+ switch: https://amzn.to/3UNOwSd
+    - GigaPlus 10" Rack Mount 3D Print ears: https://www.printables.com/model/1215585-unified-10-rack-gigaplus-switch-mounting-ears
+    - Monoprice Cat6A SlimRun 6" Cat6 patch cables (10 pack): https://amzn.to/4fX1gzr
+    - ioplex SFP+ Twinax DAC patch cable: https://amzn.to/47UlPKX
+    - DeskPi RackMate TT: https://amzn.to/3UUjCHP
+  
+  Other resources mentioned in the video:
+  
+    - My older Compute Blade video: https://www.youtube.com/watch?v=rKDGlpnP-vE
+    - Xerxes Pi Kickstarter: https://www.kickstarter.com/projects/1907647187/small-board-big-possibilities-xerxes-pi
+    - Xerxes Pi testing: https://github.com/geerlingguy/raspberry-pi-pcie-devices/issues/753
+    - Unredacted Labs' Tor exit cluster: https://unredacted.org/blog/2025/05/unredacted-labs/
+    - World's Largest Pi Cluster at UC Santa Barbara: https://www.independent.com/2025/04/29/worlds-biggest-raspberry-pi-cluster-is-now-at-uc-santa-barbara/
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - 2 years 2 long
+  00:32 - Another blade
+  01:30 - Unboxing a cluster
+  03:06 - Assembling one of 10
+  06:11 - A bandolier of microSD cards
+  07:16 - Assembling blades 2-10
+  08:16 - Next steps - fans and storage
+  10:17 - Flashing NVMe drives
+  11:00 - Only Fan Units
+  12:45 - They all just... disappeared
+  14:33 - Spending another $200
+  15:45 - Cluster benchmarks: HPL
+  16:23 - Spending another $70
+  17:03 - Framework cluster vs Pi cluster
+  18:12 - AI clustering (down one node)
+  19:26 - llama.cpp is totally RPC
+  20:54 - Exo and Distributed Llama
+  22:09 - Blade (the movie) vs blade (the compute)
+---
+It's always fun when you have to do something 10 times instead of one time. Gives you more time to regret your decision. I just got this box in the mail and it has a set of 10 compute blades. Now, last time I talked about these things was in April of 2023 and that's when I ordered a set along with a mini rack case, some fans, and custom heat sinks for the compute module 4. That whole bundle set me back about a,000 bucks. Since that time, the
+
+compute module 5 came out and more than 2 years have passed. And these custom heat sinks, they're useless on the newer model Pi. And now there's a new kit on the block. This shorter Xerxes Pi. It does the same thing, just with a little different design philosophy and for less than half the price of the Compute Blade. And guess what? It's on
+
+Kickstarter, too. I ordered a set. And to be transparent, both of the companies behind these boards sent me samples either before or during their Kickstarters. That's the reason I'm marking this video as sponsored, even though no money has ever exchanged hands except for me paying a,000 bucks to Uptime Lab for the Compute Blades and 50 bucks to Xerxes Pi, which I haven't gotten any blades back yet for. This video is a tale of two Kickstarters, two Pi clusters. And today, I'm going to
+
+build the biggest Pi cluster I've ever owned, a $3,000 160 GB of RAM Raspberry Pi cluster. I want to see, are these things even relevant anymore? Oh, and I should mention the Compute Blade and all its accessories are available on Pyop now. So, the saying remains, good things come to those who wait. And a fool and his money are soon parted. My goal today
+
+is pretty simple. I want to put together this 10 node Raspberry Pi cluster with uh I bought 10 of these. This was probably an unwise decision for a purchase, but I bought 10 of these CM50160, which is the 16 GB of RAM compute module 5 with no Wi-Fi, I think, and no eMMC. So, basically like the base model with the most RAM. So, we're going to put all these together, put together a 10 node Raspberry Pi 5 cluster, and uh see how it performs. I actually have an ulterior
+
+motive for this and probably by the time you're watching this video, you'll know what that is because that video will probably go up before this video. But uh yeah, here's Oh gosh, there's a lot of these heat sinks, which unfortunately I will not have any use for because I am going to be running compute module 5s and these are customuilt for compute module 4. Here's some blades. And at the bottom, this is our cluster holding rack mount for tenant tracks. Hopefully, this fits a tenant track. I haven't even checked that. The
+
+uh the Xerxes pie is a much shorter board. You can see that there's a a substantial difference right there. And uh yeah, so this one, the Xerxes Pi, might fit your needs better if you need the compact space, but there are some advantages to the way the Compute Blade is designed, and maybe we'll get into those. But at this point, I might time-lapse this, I might not. But let's start building these blades.
+
+I guess for the first one, I won't time-lapse it. I'll let you see how this all goes. in case you want to replicate the setup. And it looks like there's a bunch of stickers in here, too. There's some uh fun little stickers. How wonderful.
+
+We'll put those aside. I have a feeling we're going to have a lot of those stickers today. Yeah. All right. Get these ESD bags out of here. Put the boxes
+
+over here. Okay. So, there's probably directions for this somewhere. And I'm not going to look those up. I'm just going to assume that this guy is a pull tab for up here somewhere.
+
+But the question is, how does this go on? Okay, so the M.2 screw, there's like a little mount here. There's a little screw hole up here that you put the M.2 screw inside of. And then the uh actual
+
+screw to hold an M.2 drive is also included. And uh they have a little screwdriver here too, which means I'm going to have 10 of these itty bitty screwdrivers sitting around after this is done. So that's that. And then these guys, how does this go? Uh there's
+
+probably a guide. I'll look up the guide. Getting started. Here we go. So there is a little link here. Let's get
+
+to it. Okay. Press them firmly together until they latch. Ow. Okay. Well, that's
+
+latched. Oh, I see. Okay. So, this is like a little switch. So, now, oh man, this is going to this is going to take a little while. I'm going to go ahead and
+
+use my iFix it tool kit just because there's a lot of these and it's going to get annoying fast if I use these itty bitty screwdrivers. It's always fun when you have to do something 10 times instead of one time. Gives you more time to regret your decision. Okay, so we got that together. And then there's these little there's these little covers on the screw holes here. You can screw in
+
+the compute module for more security, but uh I'm not going to be doing that. And apparently these little covers, I didn't notice until recently. These are put onto these things. A lot of devices have a little cover on it that's used for the little vacuum pump that holds the device while it's placing it on the pick and place machine. So, a lot of things, a lot of different connectors have a little piece of uh capton tape on it just to provide a flat surface for that. So, interesting tidbit that I
+
+learned and now you know if you didn't know. Let's get out a compute module. There it is. This is a entire computer called That's upside down. An entire computer on a module. It's called a
+
+system on a module. And it uses these two connectors to connect to the board. And this should just work here. Now, I'm not going to use their heat sink. I'm just going to rely on airflow uh active airflow cooling over this thing when it's inside of the uh the rack mount case. We'll see how that works. Um this
+
+is I think these are dev blades. No, these might not be dev blades cuz there's not a USBC port down here. So, when you're putting these together, you want to flash an operating system to either a micro SD card, which oh gosh, I just realized I don't have SD card slots. So, how am I going to boot this thing? I don't have eMMC.
+
+I'm going to have to use NVME drives, which I don't have on me right now. So, I'm going to have to pause on the rest of this assembly. I'm just going to put these together this much. And uh here's what I was going to do. I was going to use this little bandelier of micro SD cards. You can see I used Raspberry Pi
+
+Imager and flashed uh Blade 1 to Blade 10 on these. And I was going to put these into the blades, but I realized I don't have the dev blades, and the dev blades have SD card slots. My blades don't, and I'm going to have to find some NVME storage uh for this and flash it that way. NVME storage is a lot more expensive, but it is more reliable. So, if I'm going to run this cluster for more than a day, that's, you know, that's nice. Anyway, there's our first
+
+blade. I am not going to sit here and do this uh and make you watch the entire thing. So, I'm going to go very fast and speed up and maybe even put in a little background music. We'll see. [Music]
+
+[Music] [Applause] [Music] Well, that was a lot. And uh I'm going to have to pause there because my recorder is under 1 minute of recording time left. So, I'll be right back. Hey, it's me. I'm uh coming from this side of the table, which is a little bit different.
+
+Uh got my pile of the compute blade boxes, pile of the compute module. Well, there go those boxes. And there they are. They're all put together now. And I realized when I was putting these together that two of them, these two are actually dev blades. You can see the
+
+difference is that has a few more features on it. It has like a TPM module. It has a USBC port for programming. has the SD card slot, which I thought that I had on all of these, but I do not. Uh, so I'm going to have to find some NVME drives and put them in here before I start racking them up. And
+
+there's one other part to the system, these fan units. And I think I bought the dumb fan units. They have smart ones and dumb ones. And I'm I'm kind of dumb. I can't even open this box. There we go.
+
+[Applause] There. Uh there's a PCB. There's a space on this PCB on the other side for a little Raspberry Pi uh RP2040 microcontroller for smart fan control. But this one is just the one that like gives power to the fan. And these are the fans are Noctua. So they're not
+
+going to be super loud, but they will be a little louder because I think it just runs them at 5 volts. I think these are 5volt fans. And they just clip into the back of here. So there's one fan unit. So, that's why there's five of those for two uh compute blades. I'm going to try
+
+to find I don't know, maybe I'll just like pull a bunch of NVME drives out of different projects I have going on and flash them for these. That'll be more performant and more reliable than micro SD, but it's certainly a lot more space to take up. And I thought this was just the coolest thing, a little bandelier of micro SD cards, which I will now not be able to use, even though they're all flashed with the host name and everything on them already. Oh well, that was a waste of 30 minutes. But uh it's never a waste when you learn something. I don't know what I learned.
+
+I learned that it's fun to put micro SD cards like this, I guess. So, I did manage to find a number of these uh NVME drives. I think I have 10 here. And my method here is pretty ridiculous. I have this uh little USB little adapter that I can pop one into. And after I flash it,
+
+I take it over here. This is number two. And I stick it on number two. So we'll go down from the top. 1 2 3 4 etc. So
+
+I'm going to do that for these. And then we'll have OS's. And hopefully these all work. I haven't tested all of these NVME drives on Raspberry Pies. Sometimes the PCI Express bus can uh not handle certain drives well, especially higher power drives.
+
+[Music] [Applause] [Music]
+
+[Music]
+
+[Music] So, here's where we currently stand. I uh had some of these blades up and running and then they started disappearing from the network. So, I don't know what's going on. I have my two PoE switches here that I was going to be using. I was going to connect them together using one of these. This is a
+
+DAC, a direct attach cable. And uh then I was going to get the internet into here or the network into here and start clustering them and testing them. That's not going to happen uh before I have this other video project that I'm working on. So, I'm going to have to shove this, which is a little unfortunate. I'm not sure what the problem is, but by the time we finish this video, either none of these will be working or I'll get them all working or maybe some of them will be working. But
+
+that's one of the fun things that happens when you're dealing with many computers. When you have one problem, you tend to have more than one problem. So anyway, I hear my 3D printer going back there for the other project I'm working on. And uh we'll get back to this. I got to clean off my desk because there's a huge mess here and I just don't have time to finish this cluster build before the other cluster that I'm testing it against. So, can you guess
+
+what the problem was? Uh, the problem, well, I mean, the root cause analysis is probably that I was a little too uh stressed and overworked at trying to finish two cluster builds in one day and benchmark them against each other in one day because clusters always turn into more work than you expect. But the actual problem here was that I didn't have the right network cable plugged in on my switch that went back to the main rack. And so I was not able to see the cluster from my main computer even though the port on the switch was showing activity. That was just activity to like its own little local network. So
+
+oops. Um yeah. So anyway, let's get back to the cluster build now. So, long story short, I decided to buy all new SSDs for this cluster instead of relying on a hodgepodge of all the SSDs I found laying around the studio. And that meant paying another 200 bucks for these 256 gig Patriots. I wanted enough storage to
+
+hold a mediumsiz AI model, but not so much I go bankrupt making this video. So, again, I got to take all the blades out, swap out all the drives, put them all back in, reattach the fan units. I mean, at some point, I could probably do this blindfolded. And this time I also decided to print out labels for each SSD so I don't mix them up as easily. The one good thing about NVME I guess is they flash in like 10 seconds instead of 30 seconds to a minute like my micro SD cards. But I put in all the new drives,
+
+reinstalled all the blades, reinstalled all the fans, reinstalled all the patch cables, and booted it back up. And this time with the new drives installed and the network cable plugged into the right port, things actually worked. I could ping all the Pies using Antible. And so I moved on to finally benchmarking the cluster. And I'm sorry in advance to all you index at zero folks. Yes, I started
+
+at blade one. And yes, that means every time I'm running playbooks, the 10th blade is out of alignment with the rest. I'm sure your disappointment is immeasurable and your day is ruined. But onto the higherformance Lindpack benchmark. This is my favorite cluster benchmark because it's the traditional benchmark they'd run on massive supercomputers to get on the top 500 supercomputer list. And after like an
+
+hour, this cluster scored a respectable 275 gigaflops. A single 8 gig CM5 gets about 32. So an 8.5 time speed up for the 16 gig model is pretty decent. But I did notice after spiking to around 140 W of power, the cluster settled in around 105 W during the run. And that made me
+
+wonder, was this thing throttling? Yes. There's not enough air flow without heat sinks to keep the CM5s cool. So, another 70 bucks later, I had these 10 heat sinks, and I got to pull out all the blades again. And the first time, I put on the heat sinks without screws, thinking the thermal pads would just hold the heat sinks on. But after one
+
+fell off, I thought better of it. So, I took them out again, popped the heat sinks off, put in screws, and screwed it all together. Isn't clustering fun? So, finally, it was time for another run. This time with the thermals hopefully in check. And yes, it made a pretty
+
+significant difference. The cluster ran around 130 watts instead of 105. And the end result was about 325 gigaflops, which is a straight 10x performance improvement over a single 8 gig CM5. That's more in line with what I was hoping. And now we get to why I wanted to run all these benchmarks. I know the
+
+framework cluster I built last month is faster. I mean, there's no comparison running 64 AMD Zen 5 cores against 40 puny Pi 5 cores. But could this cluster be more efficient? Or could I get better performance per dollar? Well, yes and no. Four framework desktops running the
+
+Ryzen AI Max Plus chip are almost four times faster than 10 CM5s. But the CM5 cluster is more efficient, even accounting for the two network switches versus the one I used with the frameworks. So, assuming we could cram in a few more PI clusters in a single rack, maybe we just scale up density and we can win in price. Well, no. The framework cluster gives us about 0.14
+
+gigaflops per dollar, while the Pi cluster gives us 0.11. That's not too far off, but that's also accounting for my Kickstarter pricing for the compute plates and not counting shipping costs for either cluster, which can vary depending on the day of the week, especially if you live in the US. So, all things considered, it's not a clear win overall, but having fewer beefier nodes can be an advantage depending on what software you're running. So, next up, I was going to run some AI clustering benchmarks. With 10 16 gig
+
+CM5s, I have 160 GB of unified memory, right? Well, sort of. The CM5 does support Vulcan. So, theoretically, you could run llama.cpp using the iGPU, but in reality, there are quirks since the Pi's Broadcom chip is a little different. And that means I could only
+
+get CPU inference working. And I mean, it works. It's just not fast. Like one of the smallest models that might be useful is Llama 3.23B.
+
+And running on just one node, you can get about six tokens per second. That's slower than most N100 mini PCs. But one thing you can do on here is have 10 separate instances going. Like if you wanted to have 10 completely private small AI models, but that's a pretty niche use case. Also, you could only run 10 at a time if all 10 nodes are working, which around this time I also started having some reliability issues on node 9. It kept shutting down every
+
+time I would run a benchmark. Was it a power issue? Maybe a bad solder joint? I'm not sure. I tried plugging it into different ports using different cables, but it kept flaking out. So, I decided
+
+to drop it out of the cluster, and I'll try to figure out what's going on with it later. So anyway, with nine nodes and no Vulcan, I started benchmarking AI in my PI cluster. And to start off, I tested a fairly large model, the Llama 3.37 billion parameter model at Q4 quantization. Now using llama.cp in
+
+clustering mode, it uses a method called RPC. And the way it's implemented, well, you might already see the issue here. It goes round robin style. Basically, it takes a big model like the 40 gigabyte model that we're testing here and splits up layers on all the different pies. Then it will call out to each Pi one after the other to process the prompt and generate a response. And that's
+
+slow. Like it's actually going to be slower than if you just ran it on a single Pi. Of course, you can't do that. And that's why you cluster them in the first place. Since the model's 40 GB, it can't run on a single compute module.
+
+And that's why we have a cluster. So, it's a trade-off. And in this case, a trade-off that is very slow. Like after a couple hours, I finally got a result for just the prompt processing. Apparently, it crashed out when it tried generating a response. But just looking
+
+at the prompt processing speed, this cluster is like 30 times slower than the framework. I reduced the number of tokens so my benchmark would run on here. And generating just 16 tokens, I got a whopping 0.28 tokens per second. Yikes. At least that's only 14 times
+
+slower than the framework cluster. I was going to try loading up the 60 gig GPT OSS model, but I value my time. I did want to see if either Exo or distributed Llama would run any better. They're more limited in what they can do, but other people with Raspberry Pies seem to get better performance with them, so I gave them both a try. First, with distributed llama, I tried running the same 70 billion parameter model, but found out there's a limit to how many nodes you can throw at it. At least with the way
+
+Dlama works, I had to limit it to eight of the blades instead of 9 or 10, and that let it load the model in. Running it that way, I got 0.85 tokens per second, which, okay, that's not horrible. It's still five times slower than the framework cluster, but if you're that sloth guy from Zootopia, maybe you could live with that. But Exo is supposed to be all fancy and self-aware and self-healing and stuff.
+
+So, I ran it, but it had a lot of janky output just trying to download a model. That didn't inspire much confidence, but I waited for like 2 hours for it to download this tiny model, and all I got were these errors, even if I dropped down to just like two or three pies. So, I gave up on Exo. I was also going to test the Xerxes Pi Blade, but I was told the prototype unit I was sent has a power delivery issue. So, I'll put that on pause for now. I'll drop a link below
+
+where you can follow my testing progress on the Xerxes Pi. Bottom line though, this cluster is not a powerhouse. And dollar for dollar, if you're spending over three grand on a compute cluster, it's not the best value. What it is is efficient, quiet, and compact. So if density is important and if you need lots of small physically separate nodes, this could actually make sense. Like the
+
+only real world use case besides like learning and education is for CI jobs or highsecurity edge deployments where you're not allowed to run multiple things on one server. That's what Unredacted Labs is building PI clusters for. They're building tour exit relays on blades after they found the PI was the most efficient way to run massive amounts of nodes. If your goal is efficiency and node density, this does win ever so slightly. But yeah, for like 99% of you watching this, this is not the cluster you're looking for. And it's
+
+interesting. 2 years ago when I ordered these blades, a company called Gate Works reached out. They were selling a souped-up version of the Compute Blade made to an industrial spec. This G-Blade is around Pi4 levels of performance on the CPU, but with 10 gig networking along with a one gig management interface, but it's been discontinued. It doesn't look like any Blades out there are really lighting the world on fire. And like the Blade movie series,
+
+the Compute Blade is more of a cult classic than a mainstream hit. Now, all this doom and gloom isn't to say this is a bad cluster. I'm going to see if I can get Blade 9 going again and keep this ready for testing at the studio. And it's definitely easier to maintain than the,50 node cluster at UC Santa Barbara, which to my knowledge is still the world's largest PI cluster. Before I go, I just wanted to give a special thanks to everyone who supports this channel on Patreon, GitHub, YouTube memberships, and floatplane. Please consider
+
+supporting my work there if you don't already. And until next time, I'm Jeff Gearling.

@@ -1,0 +1,69 @@
+---
+video_title: "Arduino made a weird SBC"
+video_id: Vz3pD3_CDUE
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Vz3pD3_CDUE
+video_date: 2025-10-31T14:00:54+00:00
+video_description: |
+  Qualcomm and Arduino just launched the Uno Q, and it's... weird.
+  
+  Arduino sent me a review unit to test, after I had already placed an order for a production unit. Both came in the same week, but I still like to disclose if any review equipment is sent for testing!
+  
+  Mentioned in this video:
+  
+    - SBC Reviews - Uno Q: https://github.com/geerlingguy/sbc-reviews/issues/83
+    - Arduino Uno Q: https://www.arduino.cc/product-uno-q
+    - Radxa X4: https://radxa.com/products/x/x4/
+    - Raspberry Pi 5: https://www.raspberrypi.com/products/raspberry-pi-5/
+    - Arduino Yun: https://docs.arduino.cc/retired/boards/arduino-yun/
+    - Electromaker video on Uno Q projects: https://www.youtube.com/watch?v=Zf99bvQbwf8
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - What is the Q?
+  01:08 - Qualcomm Dragonwing and the App Lab
+  01:51 - USB-C all the things
+  02:55 - SBC Performance and efficiency
+  03:57 - Compared to a Pi 5 and Radxa X4
+  04:30 - Edge AI?
+  05:28 - Qualcomm and Arduino and Open Source
+---
+This is a weird board. It's the Arduino Uno Q, the first product born out of Qualcomm's buyout of Arduino. It's like if you married an Intel CPU and a Raspberry Pi Pico. Oh wait, Radxa actually did that with this X4. Arduino even did it before, well, sorta, with their old Yún board, which had Linux running on a MIPS CPU, and then the microcontroller running on an ATmega chip.
+
+But hold on, let's get started by looking at what the heck this thing is. Because it's not quite a Raspberry Pi, but it kind of tries to be. And it's not quite an Uno, but it does a pretty good job masquerading as that, too. Really, it's a tiny computer in the shape of an Arduino Uno with a bunch more I/O than you might be used to. What is it best for? That's a good question.
+
+Maybe robotics, where you need to run a lightweight machine vision model while you control a bunch of servos in real time. Or maybe light industrial controls where you could almost get by with just a microcontroller, but you want to run some remote controls through Linux. Whatever the case, I ran this thing through my gauntlet of SBC benchmarks, then I also tried it out as a hybrid computer plus microcontroller, and I have to say, if there's one word to describe it, it's just... weird.
+
+Starting on the computer side, it runs a Qualcomm Dragonwing SoC. It has some older Arm A53 CPU cores, a tiny little Adreno iGPU, and has 2GB of RAM and a 16GB eMMC storage chip. pretty limiting, but I do enjoy limitations, otherwise I'd stop wasting so much time trying to run graphics cards on Pis. But on the Linux side, you get Debian, and right now only Debian, and the OS it comes with launches you straight into Arduino's new App Lab. The App Lab gives you a unified IDE. Apps can run Python for the Linux side, and Arduino's flavor of C++ for the MCU side.
+
+This means you can have your custom code in what Arduino is calling "bricks" that unify the two sides of the board. The MCU still has access to all these pins on the top, but on the SBC side, you get everything but wireless out of this single USB-C plug, and that includes power, HDMI, USB, everything. There are also these high-speed connectors on the bottom, but so far I haven't seen any boards that use them for camera connections or extra GPIO, and I think there's even some pins that come directly out of the MCU on there. The lone USB-C port being the only connection right now is kind of a blessing and a curse, because I think one intention for this is to be educational. Like, a student would plug this thing in at a table and work on learning robotics.
+
+Except, if you don't have a display with a built-in USB-C hub, now you need a USB-C power supply, a USB-C hub with HDMI, a monitor to plug into that, and a keyboard to plug into that. You can see, even on my desk, things are a bit of a jumble. Compared to a Raspberry Pi, it is nice to have one USB-C cable with display power and I/O if you want that, and I really hope that a future Raspberry Pi 6 might do that. But on the software side, it's nice on the Pi to be able to use GPIO directly in Python instead of having these hybrid Python/C++ apps. But we're getting a little ahead of ourselves. Getting back to the hardware, I ran tests like
+
+Linpack, Geekbench, and more. And besides the limited 2 gigs of RAM being a bit of a pain, the Linux performance was about on par with a Pi 3B+ or Pi 4. This is definitely not going to be like a daily driver for browsing the web or watching YouTube. Most things are a bit slow, like they are on older ARM SBCs, and even downloading and starting the Docker containers App Lab sets up to run the apps you build, it's a bit sluggish. Energy efficiency is decent though, with the board pulling 0.5 watts at idle up to 2-3
+
+watts at full power. However, if you're just using the MCU portion, it doesn't seem like you can just power that without the full Linux stack running. I even tried shutting down in Linux multiple ways, like through the GUI or via SSH, and every time it'll just power back on again, so I can't find a way to just run the MCU and not Linux. I could get my older Uno running at a few milliwatts, but because I have to run the full Linux stack too, the Q needs at least 100 times the power. So battery use will be limited, like with a full Raspberry Pi.
+
+I keep comparing this to a Raspberry Pi too, because this board costs $44 for the 2GB version. That gets you a decent little board, but the Pi 5, which is 2 to 4 times faster at the expense of another couple watts of power draw, this 2GB model is also $45. And then you have the Radxa X4 I mentioned earlier, which is even faster, and it starts at $60. So just taking this thing as an SBC is not a good value. It's not horrible, and I was happy to see most things in Debian work right out of the box, but it's definitely not the best SBC you can buy in the $40-$50 price range.
+
+But this isn't just an SBC, or at least that's the message Arduino and Qualcomm are pushing. This is a device that gives you "modern AI at the edge". But even there, it can only run the tiniest of models, especially if you're talking LLMs, and it runs them slower than most other SBCs in the same price range. And managing apps between Python and C++ is still kind of annoying. It still feels like you're managing two separate things, although App Lab is an improvement over just doing it all on your own like you have to do on the Radxa.
+
+But it's not as easy as on the Pi, where you can just tap into GPIO from anywhere you can run Python. And I haven't been able to test things like CSI camera and DSI display functionality because so far I haven't seen any boards that tie into these high speed connectors on the bottom. Supposedly those are coming, but like with most shields, you'll end up paying another $20, $40, or $50 just to have some of the features you might get out of the box on other SBCs, like USB, Ethernet, camera and display connectors, or built-in HDMI. I guess I just don't see this thing lighting the world on fire. It's nice that it exists, especially if you have an Arduino-centric course or robotics pipeline already, and you want the convenience of Linux for remote access. But after using it for a couple weeks,
+
+I just don't see the value for my own work. And I can't find many reasons to recommend it unless you're already in the Arduino ecosystem. But there's the rub. I think the immediate reaction from many in the maker community to Qualcomm's buyout was "Arduino is dead to me." And I get that.
+
+I kind of feel the same way since so many buyouts result in the long-term decay of what made an company beloved. A lot of people were also wondering if the boards would still be open source, and I'm happy to report that *that*, at least, hasn't changed. The board schematics and design files were up on launch day. Arduino doesn't just stamp their box with 'Open Source is Love' as a platitude. But the bigger question is, can they convince Qualcomm to do the same?
+
+I'm doubtful. I mean, having the schematics is great, but only so far as you could build your own board from scratch. To do that, you need all the main chips. Is the Dragonwing SoC available to buy? Well, it looks like it might be, at least at some point, so that's good. Over on Digikey,
+
+I found this listing for the QRB2210, and it even has a full datasheet, which is more than I can say for the Broadcom chip on the Raspberry Pi. So, who knows? Arduino's strengths are software, community, and support, just like with the Raspberry Pi. So could they make this thing work in the long run? Maybe. The biggest question I have is whether Qualcomm will keep putting
+
+resources into it, or if they just see some faltering for steps and drop it like Intel did with Edison. In conclusion: this board is weird. I have a lot more about my experiences using it, using App Lab, and benchmarks over on my SBC Reviews website, and I'll link to that below. I do hope this isn't a one and done, because it's good to have more players in the SBC game, especially with the support and open source push Arduino is known for. Until next time, I'm Jeff Geerling.

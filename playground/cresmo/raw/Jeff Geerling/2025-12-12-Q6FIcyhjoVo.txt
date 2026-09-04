@@ -1,0 +1,50 @@
+---
+video_title: "Why is Raspberry Pi only selling this in China?"
+video_id: Q6FIcyhjoVo
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Q6FIcyhjoVo
+video_date: 2025-12-12T15:00:58+00:00
+video_description: |
+  Raspberry Pi launched the CM0... in China. Let's take a look at this little stamp-sized Pi.
+  
+  Resources mentioned in this video:
+  
+    - My test data and discussion: https://github.com/geerlingguy/sbc-reviews/issues/98
+    - ED-CM0NANO from EDAtec: https://edatec.cn/docs/cm0nano/ds/
+    - Raspberry Pi CM0 discussion on the Pi forum: https://forums.raspberrypi.com/viewtopic.php?t=386639
+    - Order the ED-CM0NANO-10000 from DigiKey: https://www.digikey.com/en/products/detail/eda-technology-co-ltd/ED-CM0NANO-10000/28263891
+    - Hackster article on CM0: https://www.hackster.io/news/raspberry-pi-unveils-the-18-compute-module-0-but-only-for-chinese-customers-for-now-913bf59ab6cc
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Castellated Computing
+  01:01 - EDAtec's CM0NANO dev board
+  01:34 - Flashing the CM0's slow eMMC
+  02:02 - Chromium runs, but it's not for that
+  02:42 - Why in China?
+---
+This little postage stamp is actually a full Raspberry Pi Zero 2 complete with eMMC storage and WiFi. But you can't get one. Well, not unless you buy this development board from EDAtec or you live in China. This little guy doesn't have an HDMI port, Ethernet, or even USB. But then how do you turn it on? Well, it's a special version of the Compute Module line of
+
+boards. Little Raspberry Pi "System on Modules" they're called. All these Compute Modules are entire Linux computers about the size of a regular CPU that you plug into another board to give it life. And these things are everywhere, like in kiosks, signage, and even some 3D printers. If you just need a little bit of Linux for networking and remote control, these are perfect for that.
+
+And the CM0 is now the smallest version, a little bigger than a postage stamp. But unlike all the other compute modules, the CM0 has castellated edges like a Pico. That way, a company integrating this into their product can just pick and place it and solder it onto their main PCB, instead of working with more delicate board-to-board connectors. But why is this only in China? I'll get to that, but first I want to thank EDAtec for sending both this dev board and a lone CM0 for testing. Without them, I don't think I'd ever be able to show
+
+these things to you. Their development board, the CM0NANO, breaks out every feature on the RP3A0 chip at the heart of the Pi Zero and CM0. There's 10/100 Ethernet through a little USB-to-Ethernet chip, two USB 2.0 ports, full-size HDMI, and USB-C for power and flashing the thing over eMMC. Then there are display and camera connectors, GPIO, and a few other things.
+
+To flash it, I had to switch this switch over here towards the battery slot, then use rpiboot to get it ready. The eMMC on here is so slow compared to what I'm used to with the Pi 5 generation, like on the CM5. But when you go from CM5 to CM0, I guess that's to be expected. Anyway, once it's flashed, it's a full Linux computer, complete with Raspberry Pi's desktop environment. EDAtec has a firmware support package you can install from their package repository, and once that's done, it's just a regular old Raspberry Pi.
+
+Of course, doing things like browsing the web on one of these is almost completely out of the question. The thing only has 512 megs of RAM, which is barely enough to even launch Chromium. I did try browsing around on my website, and it worked, but then when I went to close the browser, just clicking on the X a bunch of times, it took like a whole minute before that actually did anything. But since you have all these interfaces like Wi-Fi, Ethernet, USB, HDMI, and everything else, some products that just want to slap a well-supported Linux environment on top of their product line now have this thing. Do I think companies and makers here in the US and over in other parts of the world would also benefit from having access to the CM0? Yes. Do I think it'll
+
+happen? Doubtful. Like, the Pi Zero 2W itself was slammed pretty hard right after it launched, since this was during the post-COVID chip shortages. The CM0 was just launched right into the memory chip shortages. When Hackster asked Eben Upton about global availability, he was non-committal, and that was back before the RAM shortages really got bad. I followed up asking a Pi engineer about
+
+it, and it sounds like the big problem is this RP3A0 chip that's in both of these devices integrates a RAM chip stacked on top of the Pi's SoC. He said the CM0 would compete with the Pi Zero 2 for LPDDR2 memory, which is in shorter supply these days. And they want to make sure the Zero 2, which is already here and available, can stay in stock for makers and education. The CM0 is targeted squarely at the lower end market, integrated into products built on assembly lines. So because of that, it's anyone's guess if these chips will ever make it out of China.
+
+Well, this one is, but you get what I mean. I'm not going to do a full review of the board in this video because A: it's practically the same as the Pi Zero 2 W, which I already reviewed on this channel, and B: it's not like you're going to be able to get one of these things anyway, at least not for the foreseeable future. I think there might have been a chance before the DRAM manufacturers went all in on an AI cash grab, but for now, stick to the Pi Zeroes that you're used to. Until next time, I'm Jeff Geerling.

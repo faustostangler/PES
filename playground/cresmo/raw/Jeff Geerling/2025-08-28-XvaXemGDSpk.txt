@@ -1,0 +1,71 @@
+---
+video_title: "TrueNAS on a custom Raspberry Pi NAS"
+video_id: XvaXemGDSpk
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XvaXemGDSpk
+video_date: 2025-08-28T14:01:00+00:00
+video_description: |
+  Finally, TrueNAS runs on a Raspberry Pi—or any other Arm server with UEFI support!
+  
+  FULL instructions here: https://www.jeffgeerling.com/blog/2025/how-install-truenas-on-raspberry-pi
+  
+  Mentioned in this video:
+  
+    - Joel0's TrueNAS on Arm thread: https://forums.truenas.com/t/truenas-on-arm-now-available/49160
+    - Links to all the TrueNAS on Arm resources: https://github.com/joel0-truenas/truenas-on-arm/issues/5
+    - My arm-nas GitHub project: https://github.com/geerlingguy/arm-nas
+    - HL15 Arm ZFS server: https://www.youtube.com/watch?v=Hz5k5WgTkcc
+    - Raspberry Pi SATA ZFS server: https://www.youtube.com/watch?v=l30sADfDiM8
+    - Homelabs Pi Storage NAS project: https://homepinas.com/en/
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  The Homelabs Pi Server was sent to me by a member of Homelabs Club for testing, and following my typical policy, I am thus marking this video as 'sponsored'. No money exchanged hands, and nobody had any say in the content of this video besides me.
+  
+  Contents:
+  
+  00:00 - TrueNAS comes to Arm
+  01:21 - The UEFI problem
+  02:03 - Adding UEFI to Raspberry Pi
+  03:24 - Install TrueNAS on Pi
+  05:34 - Real-world Pi NAS - HomePiNAS
+  06:17 - ZFS on Pi NAS
+  06:50 - Should you do it?
+---
+Joel0 in the TrueNAS community created a fork of TrueNAS that runs on Arm, so I thought I'd give it a try. On a Raspberry Pi, I currently run an Ampere Arm server in my rack with Linux and ZFS as my primary storage server, and a Raspberry Pi running ZFS as a backup. My configuration for these Arm NASes is up on GitHub. TrueNAS basically adds a nice web UI and some other conveniences, so I've been hoping they'd support Arm for years now. But it seems the sentiment in that community was always, "Arm servers aren't powerful enough to run serious storage servers," despite myself and many others doing so for many years. But that's besides the point. The question you're probably asking right
+
+now is, why would I put TrueNAS on a Raspberry Pi? I mean, if you watch the channel, you might not wonder that. But I've found numerous times running modern applications that require a lot of hardware on slower hardware is an excellent way to expose little configuration flaws and misconceptions that lead to learning how to run the applications much better on more capable hardware. From my Raspberry Pi Dramble to my Petabyte Pi Project, running apps intended for much more powerful hardware taught me a lot. So maybe running TrueNAS would be a fun learning exercise.
+
+I've done it on x86 servers, but that's boring. It's too easy. I don't learn much when a project goes off without a hitch, and I'm not forced to look closely at some of the configuration quirks. One glaring problem though on a Raspberry Pi is it doesn't have official support for UEFI, a standard way that you boot computers and interface operating systems to device firmware. Raspberry Pi only officially supports device tree-based Linux boot, which is much less standard.
+
+That means you can't just install any old Linux distro on the Pi, you have to use ones built specifically for the Pi. There are good OSs for the Pi, like Raspberry Pi OS based on Debian. But it's not the same as grabbing any ISO, even Windows, and installing it on, like, my Ampere workstation. To get past this restriction, we have to rely on a community project forked from Windows on Raspberry Pi. Specifically, I'm using NumberOneGit's rpi5-uefi fork. To get your Pi 5 to support UEFI, you need to
+
+first update the EEPROM, or the firmware on the Pi, to a version later than the June 9, 2025 beta release. You can check what version you're running with the command rpi-eeprom-update. Typically, to upgrade the EEPROM, you could use Raspberry Pi Imager, run 'apt upgrade', or even use the rpi-eeprom-update utility, but that'll just get you a May 8 version, at least at the time I'm making this video. To get the latest version, you can force your Pi to use a beta version of the firmware. To do that, edit the file in /etc/default/rpi-eeprom-update, and change 'latest' to 'beta'. Then run 'sudo rpi-eeprom-update -a', and reboot.
+
+Once all that's done, you can boot into UEFI. I downloaded the zip file from the rpi5-uefi project, and copied all the files in it over to my Pi's microSD card in the bootfs volume. Then I stuck that back in my Pi and booted it up. If you have a monitor plugged in, you should see a standard EDK2 bootloader screen appear. You can follow the on-screen instructions to get into the menu, or it'll try booting off any valid disks you have connected.
+
+In my case, I went through the menus and set up some options, like the PCI Express bus speed. There are other options also that you can set differently depending on what OS you're trying to install. But after you're done with that, save the settings and reset. Now that the Pi is booting into UEFI, you can install TrueNAS. Download a TrueNAS on Arm ISO from this website. For my test, I installed 25.04.2.
+
+Write the ISO to a USB drive using a tool like Balena Etcher, then insert the USB drive into the Pi and boot it up. It should automatically boot into the TrueNAS installer, but if it doesn't, go into the boot menu and select it manually. At this point, the TrueNAS install should just go off without a hitch. Now, don't try installing it on the microSD card, because you need to keep that set up as the UEFI boot volume. You could install it to another USB drive, an NVMe, or whatever else, just not the main microSD card. When TrueNAS is finished installing,
+
+reboot and unplug the installer. And in my case, the first time TrueNAS Scale booted up, it got stuck booting one of the services that was trying to generate TrueNAS files. I'm guessing it just got held up a little bit since the Pi is a little slower than it's used to, I'm not sure. But to fix that, I logged into the Linux console and started the service that was failing manually, and then after a reboot it seemed to have no more issues. But it did have an issue using the built-in Ethernet. The UEFI firmware for the Pi 5 doesn't support anything through the
+
+RP1 chip, and that sadly includes Ethernet. So I had to plug in this external USB Ethernet dongle. That let the networking work, and now TrueNAS could run its web dashboard. From there, I could see all the settings, it recognized I was running on a Raspberry Pi, but I think it was a little confused, judging by some of the unknowns in the dashboard. Before I try to set up any storage, I should run through the other things that don't work because of the missing RP1 support. You can't use the fan header for PWM fan control,
+
+you can't use camera or display connections, and you can't use any GPIO. Which is a lot. Andrea Della Porta [sorry for butchering that name!] is a SUSE developer, and he's working on upstreaming RP1 support into Linux with some help from Raspberry Pi. But progress has been a little bit slow. But that made me wonder, why doesn't Raspberry Pi consider official UEFI support in the
+
+first place? With or without Microsoft's official blessing, being able to boot vanilla Windows 11 for Arm on a Pi would be nice. Not to mention, any regular Arm Linux distro, including TrueNAS Scale, would just boot right out of the box. I don't know. But anyway, to test things in the the Homelabs Pi Storage Server, which was sent to me earlier this month, and uses a custom CM5 SATA backplane and a 3D printed enclosure for a 6-bay NAS.
+
+I got TrueNAS installed on a CM5 Lite in here using the same process as the Pi5 earlier, but when I installed four SATA hard drives in here, they spun up, but they weren't recognized. Right now, in addition to all the other things that aren't working, the UEFI support only works with one PCIe device. Since the Homelabs Pi Storage Server has a PCIe switched so it can do 2.5GbE and SATA for the hard drives, neither of them are recognized. These devices all worked perfectly out of the box on Raspberry Pi OS, though, so I quickly switched over to that OS to test out ZFS on this thing.
+
+And it works great! I could set up a RAIDZ1 array and get around 250 MB/s copying over hundreds of files on both my Mac and Windows 11. So the takeaway is I can't get TrueNAS going on this box, but it should work fine on simpler builds that don't rely on a PCI Express switch. But that means 4-drive NVMe hats like this one from GeeekPi also won't work with TrueNAS yet, because they also rely on switches. You can only do one NVMe drive at a time, or you could plug them in over USB, I guess.
+
+Because of the current UEFI limitations, I would still recommend running TrueNAS on higher-end Arm hardware like my Ampere server. If you want to stick to an SBC, though, there is UEFI firmware for the RK3588 boards, too. It may offer even more functionality than the Pi, but check the compatibility list. You could also just go the boring route and install TrueNAS on an x86 server, where it's fully supported. But where's the fun in that? Until next time,
+
+I'm Jeff Geerling.

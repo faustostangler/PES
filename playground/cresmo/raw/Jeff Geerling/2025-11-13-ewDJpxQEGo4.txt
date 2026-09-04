@@ -1,0 +1,70 @@
+---
+video_title: "Every Intel GPU runs on a Raspberry Pi"
+video_id: ewDJpxQEGo4
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ewDJpxQEGo4
+video_date: 2025-11-13T15:01:23+00:00
+video_description: |
+  And you don't even have to recompile the Linux kernel!
+  
+  I purchased almost everything shown in this video, however, the Intel Arc Pro B50 was provided for testing by Intel, thus I'm marking this video as 'sponsored'. They did not pay me outside of providing the B50, nor did they have any say in the video's contents.
+  
+  Things mentioned in this video (some links are affiliate links):
+  
+    - Blog post with the latest guide for setup: https://www.jeffgeerling.com/blog/2025/all-intel-gpus-run-on-raspberry-pi-and-risc-v
+    - Blog post on Resizeable BAR support: https://www.jeffgeerling.com/blog/2025/resizeable-bar-support-on-raspberry-pi
+    - Minisforum DEG1 eGPU Dock: https://amzn.to/481EHao
+    - JMT eGPU Dock: https://amzn.to/4oUZ4M9
+    - chenyang OCuLink cable: https://amzn.to/47ZxWWF
+    - Micro SATA Cables OCuLink to M.2 adapter with ReDriver: https://amzn.to/4nTtJse
+    - Lian-Li 750W SFX PSU: https://amzn.to/3JG3Myv
+    - Linux Kernel Mailing List patch for Intel on non-x86: https://lore.kernel.org/lkml/20250715061837.2144388-1-zhangzhijie@bosc.ac.cn/
+    - Raspberry Pi OS Kernel PR for AMD and Intel GPUs: https://github.com/raspberrypi/linux/pull/7113
+    - Full testing and results using the latest patches: https://github.com/geerlingguy/raspberry-pi-pcie-devices/issues/764
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Every Intel GPU
+  00:51 - Physical connections and overcoming PCIe issues
+  01:38 - You don't need to recompile Linux anymore
+  03:09 - Black Mesa (the curse of the blinking cursor)
+  03:55 - Resizeable BAR support
+  04:27 - Performance: Vulkan, OpenGL, llama.cpp AI models
+  05:26 - Compared to AMD
+  05:56 - Partnering with RISC-V to go mainline
+---
+We finally have Intel Arc GPUs working on the Pi somewhat stably. It required overcoming many small hurdles, but it looks like support could land in Raspberry Pi OS if we can get a simple patch upstreamed. And that patch doesn't just enable Intel on Pi, it also makes Intel GPUs run on RISC-V machines and other ARM systems. But if we can get this fixed in Intel's open source drivers, all you'd need to do to use an Intel card on a Pi is install a firmware package. The cards I've spent the most time with so far are the A750, the B580, the Pro B50, and the A310 ECO, Intel's $100 4GB budget card. I've also heard good reports on the A350 and A770,
+
+though I haven't personally tested those cards. Also, the low-end A310 can be especially picky about PCIe-link signal integrity, so it pays to use a solid dock and adapter. In my Pi 500+ video, I had some trouble with graphics cards on this Minisforum dock, but after publishing that video, someone mentioned there's an M.2 adapter with a built-in PCI Express ReDriver that boosts the signal and might work better. So I tried that, and what do you know, all the cards I was having trouble with, including this A310 ECO, now work!
+
+As a quick refresher, to physically connect a graphics card to the Pi, you need an eGPU dock, like this one from Minisforum, or this one from JMT. Then you plug that into the Pi using a PCI Express adapter, like on the Pi 500, I have this M.2 to Oculink adapter with an Oculink cable that goes from there into the dock. Most graphics cards also need a separate power source, so you'll need a PC power supply to power both the dock and, in some cases, the card too. Now, this video has a companion blog post where I'll detail the steps for making a Pi 5, 500+, or CM5 work with any current Intel graphics card.
+
+For AMD, it's even easier and the drivers are even more stable, but I'll talk about that in a future video. The setup is a lot easier now, too. You don't even need to recompile the Linux kernel. And yes, while that means I won't be able to wear my Recompile Linux shirt every day now, it also means more people will be able to test these changes, since they're easier to make. All you have to do is install the patched kernel from the Raspberry Pi Linux repository, and that can be done with 'sudo rpi-update pulls/7113'. Then you tweak a few
+
+settings to make sure the Pi loads that kernel okay, and the specific instructions are in my blog post since I can update that more easily if things change. But right now, the main thing you have to do for the Intel driver is also to force probe all devices, otherwise it'll complain about being on an unsupported system. I mean, I guess Intel didn't expect us to be running their GPUs on single board computers, but it's not like they've been doing great on regular desktops lately. Other than that, depending on the specific card, you need to install the right firmware. Some of the older Arc cards are in the firmware Intel graphics package, while others have newer firmware that you might have to download manually.
+
+Whatever the case, you can check what's happening by running the 'dmesg' command in Linux. That shows you the kernel logs, and you can search in there for any messages from Xe, or X-E. That's Intel's Linux driver name. Again, check my blog post for details. Right now, each card requires something a little different.
+
+But after that, you might boot up and just get a blinking cursor if you plug a monitor into the Intel card. That's because right now, at least, the Intel GPU support isn't built into the version of Mesa that ships with Raspberry Pi. Mesa is a 3D graphics library, and modern desktops will try using it by default for GPU acceleration. You could bypass Mesa and render the desktop on the Pi's CPU, but I prefer to render things to the GPU so the CPU can focus on other stuff. Unfortunately, you have to manually compile a newer version of Mesa if you want this GPU acceleration.
+
+Again, I have instructions for that linked in my blog post. It might be possible to get the right Iris Intel drivers compiled into the version that ships with Pi OS out of the box, but right now, I'm focused on kernel level changes getting those into the PiOS. And some people I'm sure are already wondering about Resizable BAR. Basically, modern graphics cards like to have larger memory allocations to map data between the system memory and VRAM. It helps things go a bit faster, and Intel cards especially can be picky about ReBAR support.
+
+Luckily, the Pi supports resizing the BAR out of the box. But right now the Intel drivers, and actually all the drivers I've used on Arm, don't know how to do that yet. So again, I have a blog post with the details if you really want to go there. But I should note that Resizable BAR isn't required, but it does help with performance. But performance isn't my main concern yet, mostly because there are some quirks we still have to work out, probably having to do with memory mapping in Intel's drivers.
+
+A lot of the driver expects an x86 system, where memory guarantees are a lot different than on Arm and RISC-V, so that's probably where the problem lies. But I mean, you can see how things look a little weird here. Like each of the cards has some rendering artifacts in the GUI, mostly towards the top of things that are rendered on the screen, like windows, menus, and pictures on the web. Sometimes textures on a 3D object load weird when you're using Vulkan, like with this vkmark demo here. OpenGL renders things fine though, so there's full 3d acceleration, it's just something with the memory mapping and the textures.
+
+And because those little memory errors seem to add up over time, it seems like on some cards even things like running AI models with Llama.cpp get a little sketchy when they use more of the VRAM. Smaller models seem to run fine, and they're pretty fast too, but larger models would error out or start repeating their output after a little bit. But overall, the performance on Intel cards on a Pi is summed up pretty well in this GravityMark benchmark graph. They're not going to take home any performance crowns, especially since, I should note, NVIDIA doesn't even show up on this list yet.
+
+But they're not slouches either, especially considering the price and physical size. Right now, smaller AI models perform well, but larger models run into those memory quirks. The B50 Pro paired with a Raspberry Pi could make an efficient Homelab LLM setup, but we really need to figure out how to get the memory issues sorted out. So where do we go from here? Right now, AMD graphics cards work pretty much flawlessly, thanks to Yang Haku and a number of other contributors.
+
+Intel graphics are getting there, and all the stuff for both of these sets of cards is just 23 lines of changes to the Linux kernel. But before these changes will make it into Raspberry Pi Linux, we need to get them into upstream Linux. The Intel changes in particular, since they affect both ARM and RISC-V, are already being worked on in a Linux kernel patch. And to help prod that along, I posted my first ever reply to the Linux kernel mailing list. If I get some time, I'll keep pushing that forward.
+
+The main thing is making sure any changes we make are architecturally sound and work well for all non-x86 systems; not just the Pi. So stay tuned, and make sure you follow any of the cards you're interested in over on my Pi PCIe project. I'll have links to everything I've mentioned in this video below. Until next time, I'm Jeff Geerling.

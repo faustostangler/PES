@@ -1,0 +1,128 @@
+---
+video_title: "$1m server vs $600 router"
+video_id: 3D5q3NWEMZY
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3D5q3NWEMZY
+video_date: 2026-01-02T15:00:06+00:00
+video_description: |
+  HUGE thanks to Patrick from @ServeTheHomeVideo for helping with this test!
+  
+  Links to everything I mentioned:
+  
+    - Mono Gateway: https://mono.si
+    - Tomaž Zaman on YouTube: @tomazzaman 
+    - ServeTheHome YouTube: @ServeTheHomeVideo 
+    - ServeTheHome Website: https://www.servethehome.com
+  
+  Tomaž sent me the dev kit Mono Gateway I am testing in this video, so I have marked the video as 'sponsored' (I also ordered one for myself, prior to Tomaž sending this test unit!). Mono did not offer any other form of payment, nor have any input into this video's contents. See my sponsorship policies here: https://github.com/geerlingguy/youtube?tab=readme-ov-file#sponsorships
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - What is this box?
+  00:58 - 51.2 Tbps in Phoenix
+  02:00 - The Million Dollar Network Testing Box
+  03:33 - From 1.6 Tbps to 10 Gbps
+  06:14 - SFP+ is always upside-down
+  06:58 - Saturating 20 Gbps with real traffic
+  10:13 - Real web traffic and latency results
+  11:55 - Firewall testing next year
+  13:39 - Mono Gateway works
+  14:53 - Specs and happy 2026!
+---
+[Patrick] ...We don't need all the high-speed ports, we just need the 50GB ports that we're going to be running at SFP+ 10GB speeds. [Jeff] Do you think a Raspberry Pi would replace this box anytime soon? [...]
+
+This is the Mono Gateway, a custom-built 10GB router. I was sent this early preview version by Tomaz, who's also on YouTube, and who's been building it in the open for like, wow, two years now. Initially I was interested just because there aren't many compact 10 Gbps routers that fit in 1U in a mini rack. But then I got more interested, because of how the team at Mono has been sharing—sometimes in painful and excruciating detail—every step of their hardware development journey. I'll let you go check out Tomaz's YouTube channel. If you haven't seen it and you're
+
+interested in hardware design, you're in for a treat. But today, my goal is to take this thing with me to Phoenix, and there's somebody there who I know has a really cool way to test this thing, and we're going to see if it actually gets 10 Gbps of throughput or not. Patrick! Hey Jeff! I have this little switch/router and I hear that you have ways of testing these things.
+
+Oh yeah, we do. Have you ever tested something this fast, 10 gigabits? Uh, yeah, we definitely have. I see that there's something weird here that I've never seen before. Well, I don't know what you're talking about, but we do have two things that are pretty interesting here.
+
+So first off, we have a 10 gig 4-port switch, which is the MicroTik CRS-304-4XG-IN. I don't know how I remember that, but somehow I do. And that is a pretty low end switch, it's sub $200. And then underneath that we have the NVIDIA SN5610, which is a 51.2 terabit switch with 64 ports of 800 gigabit ethernet.
+
+That's a little more than this. Yeah. And I've heard that you have a way of testing even that much bandwidth, but I don't have that much today. We do. To do 51.2T, of course, takes a little bit of extra effort as you're configuring this.
+
+But what we do have is we have this over here. This is our Keysight CyPerf box. And if you don't know what Keysight CyPerf is, Keysight is a company that makes a lot of the test measurement gear that is used throughout not just the networking industry but other industries as well. And CyPerf is a tool that allows you to do stateful traffic and do all kinds of different application traffic. So it's a way to test real application workloads on network devices just like that.
+
+So this is just to give a little context. This is the Mono Gateway. It was designed, all custom designed around a MediaTek chip at its heart. And it's supposed to support hardware offload. And what I want to see is whether that can actually achieve like 10 gigabits of routing.
+
+Oh, yeah. So can you show me, like, can we run this thing really quick and test it?
+
+100%. On their high-speed ports, which is always kind of fun. I think this is going to be okay, though, because I've heard of this project, and this looks like something that's pretty cool. What I think we're going to do, though, is we're going to run it on this box, but we're not going to run it on the set because, just to give you an idea, to run this, this is dual 128 cores, 1.5 TB of memory [thankfully purchased before the great RAM shortage!].
+
+Plus, you're going to see that we have over 2 terabits per second, because we can actually generate over 2 terabits per second of network traffic. So we have, you know, plenty of generation capability, but we're only going to be really trying to do 20 gigabits because two 10 gig ports. So my thought is, why don't I show you how we're going to connect this? And then we're going to go put this in the other room and we can actually go run the testing and we can go look at how this performs. Okay, so this is the back of the Supermicro server that we're using for our test suite.
+
+And what you'll see is a whole bunch of different types of network connections. And the reason for that is I just wanted an easy way for our team to go and connect the various devices, whether those are switches or network gateways, and connect them to our giant box, right? Because otherwise you have to go through other switches, like we have other 400 gig, 100 gig, all kinds of switches to connect. But for this, like you don't wanna go through like three switches to get down to 10 gigs. So what we have is a variety of ports, including these SFP56 ports.
+
+Now SFP56, those are the 50 gigabit per second ports, but you can also run 25 gig ethernet. You can run 10 gig ethernet, no problem on them. And so that's what we have here. These are four of the 50 gig ports, and then we have another four that are right here. I see bigger ports too.
+
+Good call! Okay, so this is super exciting. So we have two 400 gig OSFP ports. So if you see these giant things here, they take these huge optics, and these are OSFP 400 gigs, so 400 gigs per port. Now that's important because we have a PCIe Gen 5 server, So PCIe Gen 5 x 16 is 400 gigs.
+
+So that is the idea of, you know, literally just saturating a x16 link like you would have for a GPU or something like that, but just for a network port. And then you'll see that we have two other cards in here, which are brand new. And this might be the first time we're showing them off, which you'll see one here and one here. And these are NVIDIA ConnectX-8 cards, but they're dual 400 gigs. So total of 800 gigabits coming out of each card.
+
+Now, you might be asking, "Hey, if you only have PCIe Gen 5 x16 and it only does 400 gigs, how can you actually do 800 gigs out of a single card?" We had special cables made to be able to go all the way from the cards here all the way to the other side of the chassis so we can steal other PCIe lanes. So these cards actually have 32 PCIe Gen 5 lanes going into them so we can drive those QSFP 112 ports at full speed. I know that's like super dorky, guys, but at the end of the day, it's a lot of work. It took us months to get this box tuned and up and running and all that kind of stuff.
+
+And we're still upgrading it and making it even cooler. But for what we're doing, we don't need all the high speed ports. We just need the 50 gig ports that we're going to be running at SFP plus 10 gigabit speeds. [Jeff] Do you think a Raspberry Pi would replace this box at any anytime soon?
+
+...I mean, it has one lane of PCIe Gen 3! [Patrick's brain reboots...]
+
+I know you love the Raspberry Pi, and I love the Raspberry Pi too. We have lots of them sitting around here. In fact, we have one sitting on set right there. But, no. Okay, so what we're going to do is we're going to plug...
+
+Oh, it's the wrong way first. We're going to plug one of the SFP cables into our WAN. Exact opposite every time. Isn't that amazing? It's USB and SFP.
+
+Wild, wild. And by the way, we are using 25 gig SFP28 cables here, just so that way we don't have a cable issue. But then what we'll do is we're going to plug that into the second port. I'm just going to go right here. Boom.
+
+And then what we're going to do is we're going to go take this whole setup and bring it over to the other room where it's not going to be as loud on set. And then we're going to go and start running this stuff. And we'll show you on the screen how this looks. "A few moments later." So we ran our test and it was extremely loud.
+
+So it's a good thing we didn't have that sitting here, I guess. But it generated all these graphs. Can you explain what we're seeing here? Sure. Okay, so Keysight CyPerf is a way to go and test a number of things.
+
+And we're only using a couple of the features in this. Some of the features that we're using is we have a test that we developed after we got the tool. And it's taking, by the way, months to go and profile these things. So it's not like you just get the tool and you just, you know, everything works out of the box. You have to develop your own.
+
+or they have some pre-canned ones too, but we developed our own set of tests. So that way we can run all of these devices through it. And we're using two of our tests that we use on the STH main site. So if you wanna see other devices tested similarly to this, you can go to the STH main site, things that started in about Q4 of 2025, they will use these exact tests. And what you'll see here is one example.
+
+So this is, we call it the security test setup because this actually has the new security profile, which we haven't shown on the STH main site yet. but we're just using the straight throughput. And what we did was we set up a test where we were testing bidirectional HTTP traffic. So this is not just simple packets that we're just spewing across. We're actually doing HTTP posts, gets, and we're doing that through the device.
+
+And so something you'll see here is our throughput, we didn't necessarily get all the way up to a 20 gigabits, right? We got about 17 and a half gigabits for our, you know, layer four and seven traffic, or two and three, which, you know, is the lower layer traffic, that's at about 18.4 to 18.5 gigabits per second. So overall, pretty good.
+
+Now, I do wanna point out really quickly that when we were running this, we're not necessarily running this with like huge jumbo frames because we are just doing standard HTTP traffic. And so what that means is that there probably is a way to optimize beyond what we have, but we're doing this as a standard so that way we can have the same test for everybody and we have the same test parameters for everybody. It's pretty real, too because most of my stuff isn't using jumbo frames anyway. And exactly, yeah exactly. And web traffic by the way uh like https and http requests are pretty uh pretty prevalent in the industry these days. So uh other things you can see here though is that it also simulates a number of
+
+users. So you're going to see that we peaked at about uh 512 users with concurrent connections and then we also uh you know for our steady state once we got all the way up to that uh you know 17 18 gigabit range we got to 128 gigs. And it's actually testing and seeing what the device under test is doing. So you'll see that the latency which is by the way very good compared to other devices started out and it was well under you know say one millisecond or so but then all of a sudden our tcp latency as we ramped up to those 512 users you can see that we also have a ramp up in terms of our latency. And then we went to that steady state. We were at 128 users and our latency went
+
+down quite a bit. And we also have statistics on this where we can see like the packets per second. We can see, I think we got like 800 and something thousand on this test. I don't remember. So not quite a million. Yeah, not quite, not quite a million, but close. Yeah. And so that's one test
+
+that we did. And then another test that we ran was this one over here. So this test is a lot more complicated. And so if you don't know this about CyPerf, CyPerf again is not just like iperf throughput traffic, which is just like spewing uniform packets at a device or through a pipe. This is actually doing real applications and doing different types of user actions, which is one of the more exciting things for this. So what we have here is a 11 application
+
+mix that we use to test gateways. And the idea was to come up with something that, you know, when you do like, you don't really want to do like 500 applications at once because it becomes just a bear to do, especially in small devices. But we came up with an 11 app mix. So we have things like chatGPT, we're doing Google Drive, Google Sheets, we have some just random web traffic, LinkedIn, Netflix, Office 365, Outlook, and Calendar, Reddit, X.com, YouTube.
+
+And we have a number of these, you know, these 11 apps. And the idea is that we have a mix of these apps and that's what's generating different types of packet sizes, different user interactions and all that. So what you'll see here is that our throughput bit lower go to just over 16 gigabits per second here and then also if you look down here we got to just over 17 gigabits per second so it's about a gigabit per second lower than when we were just doing uh just straight http requests you also see that depending on our simulated users and the connections per second we also saw different latency. One of the cool things that you can also do is you can drill down and see, so for example if a device was having issues with signing in or signing out of a service, you can actually go down and see those metrics if that was a problem. And why that's a thing here is because this also can inject security attacks so as you turn on things like firewalls that gives you the ability to go and see how much of like, you know, malicious browser attacks or whatever are actually stopped by devices. So something that we're going to start doing in
+
+early 2026 is showing folks what happens when we start turning on both the base firewall and then, and then what happens when we start turning on premium firewall features and how many of a set of attacks actually are getting stopped by those? So it sounds like there's like three layers. There's iierf is what I usually do, but it's good for saying like, "this says it can do 10 gigabits. Can it do 10 gigabits in the ideal perfect scenario?" Yeah, most things should be able to, but this is doing like actual web traffic.
+
+And then you're saying you're also going to add on security, which is another layer of if there's an active attack, can the device stop it and not kill itself while it's doing that? And some of the things that we already are seeing is, for example, when you turn on those security features, you might see the latency jump up as the firewall is actually looking at, you know, what are these packet signatures and like what's going on in this traffic, right? So that's something that I think is really interesting and really nobody in the industry does. So this is not a cheap setup, by the way. As you can imagine, one and a half terabytes of DDR5 these days is not cheap.
+
+2 128 gig processors is not cheap. plus all of the NICs, all of the optics, and all the bits that we need to connect this. And then just beyond this box, we have other switches so we can break out and get to different types of ports because you have some NRZ, PAM4, different speeds on wires and all kinds of stuff. So just to be able to do that and manage that we have other switches that we're using. And so this is not a cheap or easy quick thing to set up, but we've been doing it for the last couple months and we're actually getting some pretty cool results. So we got tons of great test data off this thing and
+
+you know initially when i saw this thing a couple years ago I was like, I don't know if they're ever going to finish it. It's so cool to see it here and it's performing. But you're the one that knows I guess I'm used to like one gigabit or five gigabits; is this, is this a good 10 gigabit router, just based on the preliminary performance that you're seeing? Sure. So I think that number one uh this certainly performs better than some of the other devices that we see. I love the fact that it's OpenWRT
+
+and you can also see the impacts of the hardware offload when we were looking at the load while we were running these tests. The CPU utilization was a lot lower we've actually tested devices where that's an issue. So uh I think maybe the best way to answer that question is I've already contacted him and tried to order one of these, yes. And I actually– so this is a development unit that he sent me this is one that doesn't even have the little features that they added to the final development production run, but I also ordered one because I want to put one of these at my house and and put it through its paces there for a while. Yeah this is just super cool.
+
+That's really the reason that we worked with one. Yes. Well, thank you so much for all your testing. And thank you for welcoming me to your place that's a lot hotter than St. Louis right now!
+
+All right, Jeff.
+
+All right. So I'm back in St. Louis. Thank you so much to Patrick again for letting me use your networking test equipment to test this little guy. Before I close out the video, I did want to mention a few specs in case this is the only video you watch on this thing.
+
+It has a four core CPU from NXP in it. I'm not sure if that's the final final one for the production run, but that's what's in these developer units. It has 8 gigabytes of ECC memory inside of it. So, you know, this is, it's a substantial little Linux box. It has two 10 gig SFP plus ports on the back.
+
+Those were the ones that we were testing. This one is routed to the WAN and this one is for your LAN. And then there's also three 1 gig ports. So, you know, these are kind of just a little bonus in case you need another device that's not high speed or anything like that. And then there's three USB-C ports. I know that this one is power and it uses USB-C PD.
+
+I don't remember what this one is for. It might just be a USB 2.0 port or something like that. And then there's UART so that you can get serial data off of here if you need to. So cool to have all those things. Inside there's also M.2 connectors for more expansion.
+
+I think you can do Wi-Fi on here if you wanted to do that as well. I haven't taken the board out because in all my testing I wanted to make sure I didn't touch anything or mess anything up. and at some point I will take this thing apart and take a deeper look and yeah looking at the specs that is a USB C 3.0 port right here and then internally there's some more fan headers it looks like there's even an edge connector here I wonder if that's possibly for mini display port or something I don't know but yeah cool box and I will leave links to everything in the description Um, happy 2026 and until next time I'm Jeff Geerling! [Happy New Year if you're reading this!]

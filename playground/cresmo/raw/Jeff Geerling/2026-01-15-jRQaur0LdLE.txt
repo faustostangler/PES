@@ -1,0 +1,84 @@
+---
+video_title: "AI this, AI that, Here's Raspberry Pi's new AI HAT"
+video_id: jRQaur0LdLE
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jRQaur0LdLE
+video_date: 2026-01-15T08:01:02+00:00
+video_description: |
+  Raspberry Pi's back with a new AI HAT.
+  
+  This time it adds on 8 GB of RAM and the Hailo 10H for $20 over the original.
+  
+  Raspberry Pi provided the AI HAT+ 2 that I tested in this video. They did not pay for the video nor have any say in the video's contents. See my review sample policy here: https://github.com/geerlingguy/youtube?tab=readme-ov-file#sponsorships
+  
+  Resources I mentioned in this video:
+  
+    - Raspberry Pi AI HAT+ 2 ($130): https://www.raspberrypi.com/products/ai-hat-plus-2/
+    - Hailo 10H Product Page: https://hailo.ai/products/ai-accelerators/hailo-10h-ai-accelerator/
+    - Turbo Encabulator: https://www.youtube.com/watch?v=Ac7G7xOG2Ag
+    - llama.cpp on the Pi 5: https://www.jeffgeerling.com/blog/2024/llms-accelerated-egpu-on-raspberry-pi-5/)
+    - Qwen3 30B A3B model for 16GB Pi 5: https://huggingface.co/byteshape/Qwen3-30B-A3B-Instruct-2507-GGUF/
+    - Fujitsu Shrink Detection: https://www.youtube.com/watch?v=flD-WfJ4pUg
+    - Raspberry Pi AI Camera ($70): https://www.raspberrypi.com/products/ai-camera/
+    - Raspberry Pi AI HAT+ (original - $110): https://www.microcenter.com/product/687346/product?src=raspberrypi
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Pi $130 AI HAT+ 2
+  00:58 - AI Turbo Encabulator
+  01:48 - LLM tests and NPU vs CPU
+  02:50 - How useful are tiny models?
+  04:22 - Running Qwen3 30B on the 16GB Pi 5
+  05:28 - Machine vision
+  06:16 - CPU is much worse here
+  06:52 - Software support
+  07:31 - Mixed mode not working for me
+  08:05 - Hard to recommend
+---
+It's another day in 2026, and I have another bit of AI hardware. This is the $130 Raspberry Pi AI HAT+ 2. And no, you're not going to replace a trillion-dollar gigawatt data center with one of these things. Unlike the first version of this HAT, this one has 8 gigs of built-in LPDDR4X RAM. That means this AI processor has enough memory to run large language models. At least, tiny ones. You still can't upgrade the RAM on a Raspberry Pi, but at
+
+At least this way, if you do have a need for an AI coprocessor, you don't have to eat up the Pi's memory to run things on it. And honestly, that's more useful than the silly NPUs Microsoft forces into their AI PCs. But it's still kind of a solution in search of a problem, and I'll get to why later. The other thing on here is the Hailo 10H chip, which is an upgrade from the Ha8lo 8 in the older HAT. This thing has 40 TOPS of INT4 performance for running LLMs, plus it can run computer vision at the same time.
+
+Supposedly; I'll get to my testing later. But hold on, 40 TOPS INT4? The Hailo 8 did 26 TOPS INT8. And looking at Hailo's own product page, it shows this fancier Hailo 10H only does 20 TOPS INT8. So is this, like, slower? Well, the 10H basically adds on 40 TOPS INT4 on top of the 26 TOPS INT8. And
+
+all this AI stuff makes me feel like I'm living in the world of the Turbo Encabulator. "It is produced by the modial interaction of magneto-reluctance and capacitive directance." The HAT comes with mounting screws and a little heatsink, which it needs if you're hitting it hard, because the chip will use about 3 watts of power continuously. The headline feature here is the ability to run LLMs in those 3 watts, saving the Pi's CPU for other things. And this is all running locally, there's no cloud shenanigans, and Sam Altman isn't going to have access to all your deepest, darkest secrets.
+
+I'll test LLM performance first, and get to machine vision after that. I ran all my tests on an 8GB Pi 5 so I could get an apples to apples comparison. I wanted to run the same models on the Pi's CPU as I did on the AI HAT's NPU. They both have the same speed LPDDR4X RAM, so ideally they'll have similar performance. But, as we'll see in a minute, memory speed isn't everything.
+
+The Pi's SoC has a bigger power budget, and it can feed that memory faster to the tune of almost double the inference performance of the HAT+ 2. And even though it's using more power doing it, the Pi is also slightly more efficient, at least for this AI model. I tested every model Hailo put out so far, and compared them: Pi 5 vs Hailo 10H. And yeah, the Pi's built-in CPU kinda trounces the Hailo on everything. The Hailo is only close, really, on this single model, and it is a little more efficient looking at how many tokens per second per watt we get. But looking more closely at power draw, you can
+
+probably see why the Hailo can't keep up. The Pi's CPU is allowed to max out its power limits, which are a lot higher than the Hailo's. But before your eyes glaze over from all these graphs, I have to give a little more context about the tiny models these things are running here. They might be helpful for smaller tasks, like text-to-speech, small translations, or very focused tasks, but you're not getting like Claude Code or Google Gemini with this. Like, I tried with the CPU and the AI HAT+ getting it to build me a tiny to-do list app, and neither one built something functional.
+
+The Hailo model gave me a list, but I couldn't check items off or rearrange them. I asked the Instruct model to sort a list, and it was all sorts of wrong. Running it on the CPU, I got the right answer, but tiny models aren't good at general-purpose AI stuff. It's honestly a bit funny seeing how the model reasoned itself right out of giving a correct answer here. If we were running larger models, they'd fly right through these contrived examples, but small models are only good at very specific things. And I mean, on this task I gave
+
+I said, "Tell me whether it's faster to launch a spacecraft straight to Mars or to use Earth's gravity to assist." The CPU model assumed I was launching from Earth, but honestly, I think the Hailo model presumed it was running on Jupiter for some reason. Anyway, all that to say, even if the Hailo were better than the Pi's CPU at running LLMs, memory and power limitations are really what hold it back from being useful there. And to be fair to the Hailo, their models aren't as optimized. If you fine-tuned your own little model for a specific task like robotics or assembly line work, then it might do fine.
+
+But the 8GB of RAM is probably the thing that holds it back the most. On the Pi 5, you can go up to 16GB, and that's as much as you get in a lot of consumer graphics cards. Because of that, a lot of medium-sized models target that amount of memory. And just a couple weeks ago, someone got a 30 billion parameter model running on the Pi 5: Qwen3 30B A3B Instruct. Now, this video isn't about LLMs, but the way they did it was to kind of compress the model to fit in 10GB of RAM. That means a little bit of quality is lost, but just like
+
+with a JPEG, it's still good enough to ace pretty much all the simple tests that failed on the Hailo. To use it, I pulled out my 16GB Pi 5, installed Llama.cpp following this guide from my blog, and downloaded the compressed model. I asked it to build my to-do list app, and yeah, it's still not going to be a speed demon, but after a little while, it gave me this. I can type in as many items as I want, I can drag them around to rearrange them, I can check off items and they go to the bottom of the list.
+
+It's honestly kind of crazy what you can do, even with free local models and even on a tiny Raspberry Pi. This kind of natural language programming was just a dream back when I started my career. Besides being angry Google, OpenAI, Anthropic, and all these other companies are consuming all the world's money and resources doing this stuff, not to mention destroying the careers of thousands of junior developers and ripping off everyone's content without repercussions... it's kind of neat.
+
+But I don't think this hat is the best choice if you want to run local private LLMs. What it is good for is machine vision processing, and, well, the original one was good for that too. A lot of Hailo's demo apps weren't updated to detect the Hailo 10H yet, but Raspberry Pi had a few apps, so I ran those. Using this rather janky setup with the Camera Module 3, I tested models like Yolo V8, and it ran pretty fast, detecting things like scissors and phones. I pointed it over at my desk, and it was able to pick out things like my keyboard, my monitor, which I thought was a TV, and even the mouse tucked in the back corner of my desk.
+
+This was all going in pretty much real time, which I'd expect coming from a little computer vision processor. And I mean, the problem is, these basic models can also run on the $70 AI camera or the older AI HAT+, which is $110. That's less than the $130 you're paying here. But before we get to why some people might want to pay the extra $20, I ran the same demos on the Pi's CPU. And with video processing, yeah, it's a huge win for any kind of dedicated accelerator.
+
+The Pi is only getting a few frames per second, tops, and it's slow enough you can kinda just read off what's in the frame if you go over and look at the logs in the terminal. The CPU performance can be optimized a little more. I noticed it was only using about 8 watts on the Pi versus 10 on the Hailo, but that was also interesting. I guess because the CPU was more involved getting the video frames transferred over to the NPU and back out to the screen, the Hailo setup used two more watts here than it did when it was running LLMs. Besides their demos giving me errors like "Hailo RT not ready," I was also having trouble getting some of Hailo's CLI tools running, so I think this thing will be a little while before it's fully supported on the software side.
+
+Just like the original AI HAT, there's some growing pains. It seems like with a lot of hardware that has AI in its name, it's hardware first, then the software comes later, if it comes at all. At least with Raspberry Pi's track record, the software does come, it's just... a lot of times with AI hardware, the solutions are only useful in tiny niche use
+
+cases. Like, 8GB of RAM is useful, but it's not quite enough to give this HAT an advantage over just paying for a bigger Pi with more RAM and you can run the LLM on it faster. And I tried getting this to work running vision and language models at the same time. Supposedly, that's what Fujitsu's doing here with this demo detecting shrink at a self-checkout. But like, I don't run a grocery store, so I don't really care about that. The use cases
+
+for these things aren't super broad. And even when I tried getting Hailo's demos running, I was also getting segmentation faults. Or it would tell me the device is already in use, so I'm guessing there are some special things I need to do to get that I was missing here. It sounds like full support in the demos for features like hardware monitoring will come after this thing's for sale, which I've already harped on, so I won't do it again. I think the main use case for this HAT might be in battery-powered robotics, but even there it's hard to say "yes, buy it," because you could just get the AI camera or the original HAT and run an LLM on the CPU if you really need that. I mean, the best way to run LLMs on the Pi is with an eGPU, but now we're
+
+talking about something completely different! And if you just run it on computer vision, the original HAT seems to have similar performance for a little less. In the end, I'm a little confused. I mean, outside of running tiny LLMs in less than 10 watts, maybe the idea with this thing is you run it as a development kit for designing devices like checkout scanners, and maybe they're not even running on a Raspberry Pi? I'm not sure.
+
+But I am sure that, until next time, I'm Jeff Geerling.

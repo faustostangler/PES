@@ -1,0 +1,124 @@
+---
+video_title: "Are you sure that's air you're breathing?"
+video_id: r21lvaw40nY
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=r21lvaw40nY
+video_date: 2025-11-21T15:01:47+00:00
+video_description: |
+  It's a neat, portable Air Quality monitor, full of personality.
+  
+  But is it worth $250?
+  
+  Links to things I referenced in the video (some links are affiliate links):
+  
+    - Air Lab: https://networkedartifacts.com/airlab/
+    - AirGradient One: https://www.airgradient.com/indoor/
+    - Temtop M2000C 2nd Generation: https://amzn.to/3XGbpbs
+    - CO2 study referenced in the video: https://pubmed.ncbi.nlm.nih.gov/23008272/
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - A $250 portable air quality monitor
+  01:14 - Versus AirGradient ONE
+  02:06 - Setting up an AirGradient with Home Assistant
+  05:36 - Setting up the Air Lab
+  07:24 - Air Lab Console walkthrough
+  11:28 - Stale air on a road trip
+  13:02 - Air quality at an indoor convention
+  13:40 - Battery life, Home Assistant integration
+  14:05 - DIY or Buy
+  15:18 - Bonus, the Temtop
+---
+This air quality monitor costs $250. It's called the Air Lab and I've been using it to measure the air in my car, home, studio, and other places over the past few months. And I learned something that happens at least with the air in my car that surprised me. More on that later. Network Artifacts built in some personality. Part of that is the exposed PCB finish and
+
+e-paper display, and another part is the quirky little air professor that's built in, teaching you about air quality. Overall, it's pretty nice. But $250 nice? That's the question I hope I'll have an answer to by the end of this video. This one was sent to me for review, and I'd like to think of it kind of like the Flipper Zero of air quality measurement devices. This quirky guy is Professor Robin,
+
+and he guides you through air quality measurements, or gets out of the way if you want to just read things like CO2, NOx, VOCs, temperature, humidity, and pressure. And it'll log all that data for you wherever you take it. When you're back at your computer, you can plug it in and save that data however you like, so it's not locked down or tied to one company's cloud platform like AirThings. It can publish the air quality data in real time over WiFi to Home Assistant or wherever you want using MQTT, and the software and hardware are definitely polished enough to fetch a good price. But again, how much? Because $250 is a lot. Especially considering I've been deploying these
+
+things around my home and studio for the past few years. This is an AirGradient One, and it costs a little less at $230, but I bought this one to set up in my baby's room to make sure there's enough ventilation in there. I have some here at the studio too, and I feed them all into Home Assistant, where I built this air quality monitoring dashboard using ApexCharts. I even set up an alert if the CO2 level gets too high. Why is that important? If your CO2 concentration is too high, you can
+
+actually have noticeably worse mental function. As someone who's been stuck in far too many stuffy meeting rooms before, I don't even need a study to tell me that. I kind of wish I could have had one of these things with me back then in my bag, and that's, I think, the biggest difference between these two, and it's what might make this worth the extra 20 bucks despite lacking a particulate matter sensor. But before we set it up, for a point of comparison, here's my setup at home. Here at the house I have a few of these air gradient air quality monitors. I have some old DIY versions
+
+and some newer AirGradient One's, and you can scroll over these and see the different air quality for different rooms in the house. And you can see when we're sleeping one of the rooms is less ventilated, so that's something that I want to fix someday, but it doesn't get into any critical levels. But we also can check, like, if we're cooking something, the PM 2.5 goes up a bit. And then I also have humidity and temperature, because those are nice to monitor. I have
+
+little Zigbee things for that around the house. But this is all nice. I needed one more because I'm missing one in one of the rooms that I want to see long-term how ventilation is doing. So I ordered another AirGradient One, and I'm going to set it up just to see how that goes. Now, the newer ones have firmware that's supposed to work with Home Assistant out of the box.
+
+My old ones, I had to write my own Home Assistant integration just using ESPHome, because these use ESP32 devices inside. So I'm going to plug this into my computer, and I have it plugged in. One thing I like about the AirGradient, the design of this, the One version, as opposed to the DIY, is it has the cable routing on the back, so you can have the cable go up or down. It has mounting holes. It has these little stands, these little clips you clip in, if you want to set it on a desk or something.
+
+Most of mine are mounted on the wall, like right here. And then here's the new one with new firmware. And I guess I can connect to it on my phone and set that up. I popped open my phone and connected to the WiFi network, and then it gives you a few quick setup options. Once you give it your WiFi password, it should connect and start displaying the air quality on the display.
+
+Then from there, if you want to connect it to Home Assistant, just pop into the integrations and you can add a new air gradient integration right there. I checked over all the data coming from the unit, and then added it to my dashboard. Since this is a native integration, it even has settings for like the display brightness and LEDs. Okay, so it's sensor. I gotta copy this again. Middle bedroom. This is called sensor.middle
+
+bedroom carbon dioxide. And now we should have it in here. Save.
+
+Now if I go down here. 1050. There we go. Okay. Yeah, it's actually fluctuating quite a bit, probably because I'm gabbing right here in front of it. And when you breathe right into a CO2 sensor,
+
+really affects its values. So I should be able to add it also on the PM 2.5. Save. So now I have that in there as well. I can click done and that's it. I now have this new air
+
+gradient set up and I can go mount it on the wall in that bedroom and I'll have that data as well. So pretty cool and pretty fast setup. There's a lot of different ways to monitor these things, but this is completely open access. I can even hack inside of there and put my own firmware on it if I want. I don't know. I mean, I don't know why people would buy something that requires a
+
+proprietary application on your phone and all that kind of stuff when you can just buy one of these things. And they're not super cheap. You can build one yourself for cheaper. But this, I just bought it and I literally, in like five minutes, I got it 100% set up while I was recording it. Your Now, back to the Air Lab. For $250, unboxing this thing should feel premium. And, to be
+
+honest, it does. Having the built-in display already showing setup instructions is nice and a great way to show off the ePaper display. On the other hand, this being a RAW PCB is an interesting design choice. I mean, to me, that's a cool feature, and I'm okay with that, even for a premium price tag. But the buttons, especially, feel fine, but they certainly don't scream expensive.
+
+But this thing isn't just for looks. It's a tool, and the very first thing it has you do, besides plugging in power, is take it outside for a quick 5 minute calibration. Outside of lab-grade CO2 monitors, even calibrating over 8 days like the Air Gradient 1 does, it's only going to get you to a certain level of accuracy. I don't think we're getting lab-grade on here, and unfortunately, I'm not qualified to tell you just how accurate this thing is, only that it seems to be at least relatively accurate. went down to around 400 ppm, which is around the expected range here in my part of St.
+
+Louis. Then, when I went back inside, it went back up to 700, and that's only maybe 50 to 100 ppm off what my air gradients are saying. I'll get a little more into testing soon, but first, I walked through the interface. One thing I found a little annoying was you have to use Air Lab Studio to configure things like WiFi or MQTT. I mean, I get it, only 6 buttons and a little drag strip makes data entry a bit challenging, But it would be nice to have the option for like a WiFi hotspot for initial setup.
+
+That made the AirGradient setup actually a little bit quicker. But I figured I'd see how Air Lab Studio works, so I fired up Chrome and went to the URL they provided. And in this video you might see a couple slightly different versions, that's because they're still finishing up the overall design, but it's just a web app that uses WebSerial to connect directly to your device. The one downside to that is it only really works with like Chrome or Edge right now. You can create an account, but you don't have to.
+
+If you don't create an account, you can still get to this Air Lab console and you connect. And as long as your device is in pairing mode in Bluetooth, you hit pair. And it should download the data and start showing us the live data. So here's the live data from the device right now. You can see that the levels have been going up and down a little bit.
+
+There's the temperature. It's been getting a little warmer today in St. Louis. And humidity, VOCs, NOx, and pressure. So those are the readings you can get.
+
+You can hover over it and see the instant readings. You can download a CSV and you can also set, I think, like the resolution. You can see the resolution is a little bit sharper down here with all these little spikes. And then it only saves like every five seconds or every minute or something like that. Basically, it saves power and space on the device, not saving every bit of data.
+
+But during a long-term measurement, you can tell it to keep measuring constantly. And I did a few of those. This one, I can't remember what this one was from. It was from the 4th of October. I don't know what that day was, but you can see the levels went up and down.
+
+This was, I went to a couple indoor events. And you can see like at the start of the event when there's fewer people, the levels are a bit lower and they just keep going up over time. And these both were in air conditioned spaces. So, you know, the air conditioner is going, it's bringing in probably a little fresh air, but not much. And this party was in a friend's house.
+
+I set the air lab down on one of their bookshelves and it was going you can see it just goes up and up and up and It spiked up here at about 2300. It wasn't like 20 2000 2500 That's a level where you know, you might feel a little bit of the effect, but it's not that bad So really 4000 5000 is where I if it ever goes above 3000 I can I can tell before even looking at this thing But 2000 you can tell a little bit it might make you a little tired But anyway, we went outside and it was much better. We drove home. You can see on the drive home it went from 900 to 1800 in our car because we had recirculate on and then once we got home it went back down to a thousand or less That's usually 800 to a thousand is where it is in in our house And that's a little bit higher measured on here than on my air gradients. They usually are like 700 to 800 So anyway, that's how that all works.
+
+You can see even their air conditioning probably was running and then it kicked off. And then as people were in the house, you can see the temperature just went up and up. The air conditioning couldn't quite keep up there, I guess. And then this last measurement was I went to a big event. I wanted to see in a stadium environment how that works.
+
+Because stadiums, you know, it's in an enclosed space, but there's a lot of air there. But even in a stadium, the air quality, the air can get a little bit stale over time. This is not much. Now, the scale here is from 400 to 1,200, so we're not even hitting 2,000. But over the course of a Blues game this was, the PPM went up to 1,000, 1,200, something like that.
+
+And probably in different parts of the stadium, the levels would be higher or lower. And then over here, this was, I think what happened was the game was over around this point, and people started leaving. And then, you know, a lot of people were cleaning up their cables. We were backstage basically helping with the studio truck. And people were putting away their cables here.
+
+They got finished with that. And then we walked back to the car. And you can see the numbers go way down pretty quick. And then we got in the car. And my dad and I were in there breathing and causing CO2 to be emitted.
+
+And then I got home. So anyway, interesting things that you can see from doing those short-term measurements in places where you might not have CO2 monitoring before. But like I said, you need to go to their website to get this. It'd be nice. I don't know if they have a self-hosted version of this dashboard, they could.
+
+But if they do, then you could just run it without even having internet access, which would be cool. But this just downloads their little web app, and then the web app communicates directly with the thing. But it's not sending this data up to the cloud. Nothing like that. In using this thing, I realized there are a lot of environments where you might not think about it much, but the air quality could have an impact on your alertness.
+
+Like driving in the car, especially on a long road trip where you need to stay alert for hours at a time. That's probably the worst time to have something like stale air make you feel a little more tired, but based on my testing that could be happening a lot more often than you'd think. And I got the air lab down here. Right now I'm over a thousand ppm already and I have recirculation on so I think for this first leg of the trip at least I'm going to turn this off and I'll see how the air lab reacts to that. I have it in recording mode so I should be able to see how this goes.
+
+So after that first leg, and after a charging stop, the level was down under 500 ppm, which is great, that's almost outdoor air quality on a nice day. But then I decided to turn on Recirculate for a long stretch, for science. And look at this, while I was driving, the level went up to 1500 on the highway, or about 1800 when I was in traffic. So I turned off Recirculate for the rest of the trip, because I kinda like staying alert while I'm driving. I'm guessing even with Recirc on, some fresh air is still coming into the car, and I'm Passing the amount also varies by car, so what I'm seeing here might not be the same on your car.
+
+Anyway, when I got to Chicago, I plugged in the Air Lab and looked at the whole trip, and it's pretty obvious the two legs of the trip where I had recirculate on. You can even see that big spike when I was sitting in stop-and-go traffic for a while. One weird quirk was the long-term measurement data I tried recording was just empty. Working with networked artifacts, we figured out it was a firmware bug, and they've fixed it since then. I mentioned the Blues game earlier, but I also brought this thing inside with me to VCF Midwest up in Chicago. That's where I was going on the road trip.
+
+You'd think, with all that space in such a new building, stale air shouldn't be a problem. But even there, I saw the numbers going up as the day went on. So maybe part of that tired feeling you get after a full day at a convention is made just a little bit worse by the stale air. At least, that's my theory. It's definitely something that I'm more aware of now. I found myself going out of the main hall and getting some
+
+fresh air outside more often, just because I was aware of the numbers. Is it a good idea to get fresh hair regardless? Sure. But you don't know what you can't measure, and I like being able to put some numbers behind my intuition. The battery life is pretty good too.
+
+The first test I did, I got almost 5 full days. I only noticed it was dead when I clicked the buttons and didn't get any response. It does have a tiny battery indicator, but maybe one improvement they could make on this thing is it pops a message on the screen before the battery dies. One thing I didn't test is the MQTT and Home Assistant integration. They put up a guide, and it looks pretty easy, but for me, I'm already covered at home and at the studio with my air gradients.
+
+Bottom line: could you build your own portable air quality monitoring device for less money using the same exact sensors Air Lab uses? Yes. If you have the time and skills, DIY is always going to be cheaper. But when I wore this thing on my badge at VCF Midwest, it got a lot of comments. People were intrigued by the idea of measuring air quality on a small battery-powered device.
+
+And it just looks cool. But I asked every person I talked to about it, "Is it $250 cool?" All but two of them said no. That's the curse of new hardware and a small team. It's impossible to reach the economies of scale that giant corporations do.
+
+So do I think $250 is a lot for this? Yes. But do I think it's too much? No. For me, if you get into a device like this, it's partly for the device, and partly to back the idea.
+
+It's a fun, quirky, and imperfect battery-powered air quality monitor. And it's not cheap, but I can get my data off of it without any cloud tie-in, and the team already has better firmware for it than most commercial products I've used. This one was provided for review and they told me to keep it, so take anything I say with that grain of salt. And maybe a few deep breaths of your wonderful stuffy air. Until next time, I'm Jeff Geerling.
+
+After I finished recording, I forgot, I didn't even mention that I had this guy. This is a Temtop, I forget the model number, M2000C. I bought this a few years back when I was testing CO2 levels in my home before I had the air gradients. And the CO2 monitoring part of it is dead now, unfortunately. But this was, I think, $180 or $160, something like that.
+
+So just as a point of comparison to the air lab there, I was going to mention that there is a market for these things. the market's not insanely large, but that's not out of the price range of one of these things, especially for something that has much more battery life and is much easier to interface with and get data logs out of. So anyway, I was going to mention that because that's why I had that sitting there and I didn't mention it at all. So there you go. One extra minute of bonus content in this Jeff Geerling video. And yeah, still, until next time, I'm Jeff Geerling.

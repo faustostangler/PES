@@ -1,0 +1,61 @@
+---
+video_title: "NIST's NTP clock was microseconds from disaster"
+video_id: ZRB7pjRVVkI
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZRB7pjRVVkI
+video_date: 2025-12-22T16:23:09+00:00
+video_description: |
+  ...but most people would never know.
+  
+  The two posts referenced in this video:
+  
+    - Primary time scale failure: https://groups.google.com/a/list.nist.gov/g/internet-time-service/c/o0dDDcr1a8I
+    - Update on Internet Time Services: https://groups.google.com/a/list.nist.gov/g/internet-time-service/c/OHOO_1OYjLY
+  
+  Also check out the status of all NIST Internet Time Servers: https://tf.nist.gov/tf-cgi/servers.cgi
+  
+  Thumbnail photos were adapted from Wikipedia Commons / US Government Public domain images:
+  
+    - https://www.nist.gov/pml/time-and-frequency-division/time-and-frequency-metrology-and-distribution
+    - https://www.nist.gov/topics/physics/optical-frequency-combs
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - 5 microseconds
+  00:39 - What happened?
+  02:15 - NTP timing and why it doesn't matter
+  03:17 - Timely lessons
+---
+If you were 5 microseconds late today, blame it on NIST. Their facility in Boulder, Colorado just had its power cut for multiple days. After a backup generator failed, their main ensemble clock lost track of UTC, or Universal Time Coordinated. But even if you used the NTP timing servers they ran, they were never off by more than 5 microseconds. Now, 5 microseconds might seem pretty insignificant, but that is significant for scientists and universities who rely on NIST's more specialized timing signals.
+
+But no, you don't need to panic. And yes, they have it under control now. But I thought I'd go over what happened, what it means, and what we can learn from NIST's near outage. The NIST campus, which distributes internet time on six of the most popular NTP servers, lost power last Wednesday. Their power company was forced to cut power because of wind gusts over 100 miles per hour. That's over 160 kilometers per hour in the rest of the world.
+
+Power lines were coming down and they didn't want to risk starting a wildfire in Colorado. And it was too dangerous to let people back in during the windstorm, so the whole place was on lockdown. Now, of course, they have backup generators, and they were working, but apparently one of the generators failed after a couple days. Specifically, the generator that powered the main ensemble clock that's used by the NTP servers. Things were dicey last Friday, and they couldn't get any more staff in to fix it. It got to the point that Jeff Sherman, who posted this,
+
+considered shutting down the backup generators that powered the time servers. That would have prevented them from sending out inaccurate time, which would be worse than no time at all for a lot of things. NTP's designed so that you can have multiple servers that you're looking at, and if one fails, it won't cause you to lose time. And, luckily for NIST, they have another building in their Boulder campus with more clocks, and that building could transfer time back to the one that had the power failures, if that came to that. But yesterday, there was another update.
+
+Power was restored, and apparently there were still some staff on site who saved the clocks. They were able to reroute emergency power after the main backup generator went down. Battery backups, I'm guessing some big UPSs, were able to bridge the gap until they got backup backup power going. When all was said and done, their monitoring showed deviation from UTC was less than 5 microseconds. Seeing all that, Jeff and the team at NIST decided to keep their time servers online. But why would they do that if they were off by 5 microseconds? Well,
+
+time scales are important here. If you're on a Mac like I am, go in the terminal and run this command. This, or a command like 'ntpdate' on Linux, gives back an error bound that shows latency between your computer and the NTP time servers. In my case, it's showing something like 0.035 seconds.
+
+That's 35 milliseconds, or 35,000 microseconds. 5 microseconds isn't going to register too much there. So instead of taking down the servers which could cause more problems, NIST kept them online. But Jeff said NIST time is usually about 5,000 times more accurate. And if you're one of the universities or aerospace companies that relies on NIST for timing, a 5 microsecond difference probably does matter. So they'll be working with those groups directly, but
+
+for most people, they'll never even notice. Jeff finished off the email mentioning the US GPS system failed over successfully to the WWV/Fort Collins campus. So again, for almost everyone, there was zero issue, and the redundancy designed into the system worked like it's supposed to. I was following this closely over the weekend. I have two Raspberry Pi GPS clocks in the studio.
+
+One of them runs my Stratum 0 NTP server, and the other one I have running as a backup for testing. They both run off my outdoor GPS antenna, which is distributed in my rackroom and over here in my studio for time research. It also powers Mitxela's Mk IV precision time clock, which is accurate to the millisecond. So, still, even here, it's not even in the microsecond realm yet. But, like my studio, most places that need precise time these days rely on GPS.
+
+And that could be a problem. I mean, I'm glad redundancies kept GPS from drifting; I don't even want to know what would happen if GPS time goes away! But the main takeaway I think is this: timing infrastructure is kind of fragile. CISA, the Cybersecurity and Infrastructure Security Agency, identified a lot of risk in the US's over-dependence on GPS. So earlier this year, the US announced it's trying to find good alternatives for PNT, or Position, Navigation, and Timing solutions.
+
+I was actually at a meeting at the NAB earlier this year where Jeff Sherman, the scientist who wrote the two updates, was talking about BPS. This Broadcast Positioning System would give us redundancy even if GPS was down. The thing is, even with multiple time sources, there are some places that need more than that. I have two rubidium atomic clocks here in the studio, including the one inside this GPS-disciplined oscillator. That's good for holdover. Like, even if someone were jamming my signal or broke my GPS
+
+antenna, I could still get my time accurate to nanoseconds for a while and milliseconds for months. And that's good enough for me. If I'm being truthful, it's actually overkill, but I'm in the time-nut rabbit hole now, and if you know, you know. But some places do need nanoseconds, for like science experiments, radio, or finance, and they might run their own even more precise clocks. But they still trace things back to NIST, at least most of them here in the US.
+
+So when NIST's disaster response is tested, everyone's watching. Last week, when we were microseconds from disaster, the team at NIST fixed it so almost nobody noticed. Until next time, I'm Jeff Geerling.

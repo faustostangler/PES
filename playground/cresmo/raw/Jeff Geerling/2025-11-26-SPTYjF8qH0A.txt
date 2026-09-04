@@ -1,0 +1,44 @@
+---
+video_title: "Nvidia GPU on Raspberry Pi—it WORKS!"
+video_id: SPTYjF8qH0A
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SPTYjF8qH0A
+video_date: 2025-11-26T23:45:17+00:00
+video_description: |
+  It finally works!
+  
+  Blog post with all the details (and how you can try it): https://www.jeffgeerling.com/blog/2025/nvidia-graphics-cards-work-on-pi-5-and-rockchip
+  
+  And here's the open driver PR I mentioned in the video: https://github.com/NVIDIA/open-gpu-kernel-modules/pull/972
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+---
+Happy Thanksgiving! I'm thankful for having way too many projects and way too little time. This is one of them: a NVIDIA A4000 running on a Pi CM5, but you'll notice that there's no display output. We're working on that. Despite having no display output, it is giving full GPU acceleration for things like AI.
+
+This is loading a model into memory and running benchmarks, and you can see that, you know, we have 16 gigs of VRAM and it doesn't need much for this Lama 3B model, but it's running that and doing it at 121 tokens per second. So pretty fast. And that whole setup is using, let's see, around 160 watts of power. That's using this patch for the OpenGPU kernel modules from NVIDIA. And that. But there have been a couple efforts, one from Yang Haku and one from Mario here, that are
+
+putting the Raspberry Pi and other ARM systems better compatible with Nvidia drivers, so that you could take a board like the Compute Module 5, a Pi 5, a Pi 500+, or even one of my other non-Pi boards like the Rock 5 Model B back there with the RK3588, and plug in pretty much any Nvidia card, at least the newer ones. This is an A4000 and I'm not getting display output. That might be something with this particular card or it might be something else. I'm going to be testing a lot after Thanksgiving's over because here in the U.S. we have everything kind of shuts down for
+
+Thanksgiving. But you might notice that there's also this little setup here. There's just lots of things to test. I've been testing this guy out. I never did a video on it, but the GL-INET Comet, This is the Comet Pro or something like that.
+
+I've been using that with this system to test this card, which I've also been benchmarking against the Raspberry Pi. This is a 32GB AI Pro or AI Pro R9700, something like that. Video on that is coming up too. And once I get this more stable, maybe I'll do a full video on NVIDIA graphics cards on the Pi and test a bunch of them. I have too many. I have too many graphics cards.
+
+And in addition to all the graphics cards, I have too many. There's NVIDIA for some reason, despite everything, I have more NVIDIA stuff going on my benches right now than anything else. This is the GB10, which I've been testing. And I know that some people ask, can it run Crysis? And the answer to that, I'll leave that for the video review.
+
+But actually, I'll tell you now. Yes, it runs Crysis actually incredibly well. Crysis remastered in can it run Crysis mode. Anyway, yeah, that video will be coming up too. And you're probably wondering how that's possible to run Crysis on there.
+
+Well, I showed it on this one in a short video on Level 2 Jeff. If you're not subscribed to Level 2 Jeff, go subscribe to Level 2 Jeff. I'll maybe remember to put a link to it or something. But yeah, that computer is the System76 Thelio Astra, the fastest ARM desktop computer on the planet. However, its CPU cores are not super fast.
+
+It's, you know, it's like, it's a little faster than like a Raspberry Pi 5 per core, but it has 128 cores. So you can kind of smash a Pi that way. but it has a lot more memory. These, these GB10 super chip computers or whatever they're called, that's marketing stuff, but they do have a pretty competent little SoC in it with a CPU that's equivalent almost to like an M2 or M3 Mac. So these are good CPU cores mixed with a really fast GPU, like a 4070 series about? I don't know. Anyway, the the heating system has just turned on and I need
+
+to do some more tests and wrap things up because it's getting to be the end of the day here. But I quickly wanted to mention that this is working after this has been five or almost six years now of work trying to get any graphics card working on the Raspberry Pi. And now we have AMD graphics cards working without a hitch. NVIDIA graphics cards working with, you know, a couple caveats right now like i don't have a screen output and then intel cards i don't have an intel card sitting here sorry about that but intel cards working too and they have a couple glitches but the intel driver is there there's work to get those patches put into the linux kernel this is just crazy like but i i think that one question i have now that everything is actually getting to be stable and kind of easy which is weird for me if i took a card like this and put it on a pie would it perform as well as or as efficient as it would in a system like this with an intel core ultra processor so that's a question that i'm working on answering and that's uh these are fun things now that i actually have them working it's i can actually do things with them and measure them and say whether or not it's actually a good idea it's always been a bad idea but I am one to take a bad idea and see if you can get something good out of it. And right now, the good thing is that we have all three major brands of cards working.
+
+Most of the code changes are due to other people. This is not me doing these things. It's just me integrating stuff. And I rely a ton on the community of people who submit these patches and debug them on their own, and then I can kind of test them on the pie and give my feedback. But anyway, yeah, if you want more information, I'll put up a blog post if you want to replicate the setup, if you want to go further.
+
+I would love to see somebody get the display output working. I'm guessing it's some silly thing that I'm just missing here. But that's it. Until next time, I'm Jeff Geerling.

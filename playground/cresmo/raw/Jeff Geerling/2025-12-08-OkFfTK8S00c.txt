@@ -1,0 +1,113 @@
+---
+video_title: "This is not a Framework Laptop"
+video_id: OkFfTK8S00c
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OkFfTK8S00c
+video_date: 2025-12-08T15:00:52+00:00
+video_description: |
+  It's a Framework 13, but there's no ordinary CPU inside...
+  
+  Resources I mentioned in this video:
+  
+    - DeepComputing DC-ROMA II: https://store.deepcomputing.io/products/dc-roma-ai-pc-risc-v-mainboard-ii-for-framework-laptop-13
+    - All my benchmarking data: https://github.com/geerlingguy/sbc-reviews/issues/82
+    - Framework 13 with AMD Ryzen AI 5 340: https://frame.work/laptop13
+    - SemiTO-V RP2350 GPIO Expansion Module: https://github.com/semitov/rp2350-gpio-card
+    - SemiTO-V MCL Python to MicroPython tool: https://github.com/semitov/SemiTOV-MCL
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - This is not a Framework
+  01:49 - Hardware
+  04:02 - Strange architecture, seen before
+  04:44 - RISC-V in a strange place right now
+  05:28 - How is it as a laptop?
+  07:18 - NPU and a missing 16 GB of RAM
+  08:12 - Benchmarks
+  09:20 - Why so inefficient?
+  10:19 - A trip back to 2009
+  11:49 - It's a Framework though
+  12:23 - Upgrading to AMD
+  13:04 - 6 cores demolishes 8 cores
+  13:57 - Adding 2 more RISC-V cores (via expansion module)
+  14:57 - Final thoughts
+---
+This is not a Framework laptop. Well, it is, but inside it's not. Well, at least it's not a traditional Framework. And even though you should probably be aware of the tech that's inside, I don't think you should buy it. Confused yet? Let's get things sorted.
+
+Inside this Framework 13 laptop is an Open ISA RISC-V processor, not your typical AMD or Intel CPU. This full setup costs just over a thousand bucks and gets you about the performance of a Except, this eats up 25 watts of power at idle, meaning the poor battery life in this thing only lasts like 3 hours. And it uses a bit of tech I don't remember seeing since like… well…
+
+Since this thing, from 2009. And that bit of tech explains the power consumption. But before we get to that, no, I'm not recommending most of you even consider buying this thing. This is a very niche product. It's meant for RISC-V developers and RISC-V enthusiasts.
+
+But I'm still excited to see it for two reasons. One, DeepComputing decided to build a framework mainboard, meaning that unlike other developer kits, after I'm done using it for RISC-V things, I can put the RISC-V mainboard in a 3D printable case and upgrade the laptop so it's not useless in a few years. And two, it has the fastest RISC-V chip I've ever tested, meaning we might someday have three viable CPU architectures: x86, ARM, and RISC-V. But no, objectively, this is not a good laptop. And, if it wasn't obvious, DeepComputing, who sent me this laptop, are not paying me for this video. They did provide the laptop, but they have no say in what I'm
+
+saying in its review. I would like to thank all my Patreon, GitHub, and Floatplane supporters, though, because without your help, I couldn't spend the almost two months that I did fully testing this thing to give you a well-rounded opinion. So let's get started with the hardware. If you've never heard of Framework, they make upgradeable and repairable laptops. This is the Framework 13, their mid-range option, and the build quality is good.
+
+It's not quite Apple premium, especially the keyboard, which is a little mushy, but overall it's a solid laptop. It has four expansion slots that you can stick in a number of different modules, from USB-C ports, to HDMI, SD card readers, or even Ethernet. I tested the USB-C modules and got about 100MB/s for file copies, so not quite the full USB-3 speeds I expected, but at least it's better than USB 2. I also tested an HDMI module in the top right slot, and was able to run a full external display without any issues. The Framework's built-in display is 2.2K, with a nice 3:2 aspect ratio. Inside, it has
+
+a 56Wh battery, which for normal Framework 13 builds would get you 8 or 9 hours of use. But this video isn't about the normal Framework 13 per se. It's fine, and I'd say overall mid-range quality. I want to focus more on the mainboard, the thing at the heart of it, the part that DeepComputing custom-built for the RISC-V CPU inside. Because the CPU on here is a new generation of CPU, an open ISA, meaning the overall chip architecture isn't tied to one or two companies' whims. RISC-V CPUs are already popular in, like, hard drive controllers and
+
+microcontrollers, but they've had a harder time getting into things like SBCs, laptops, and desktops. We'll see why later. But with the framework, getting to the mainboard is pretty easy compared to most laptops. You flip over the laptop, unscrew five screws, flip it back over, and pull off the top cover. The mainboard is up top, with the cooling fan here pulling heat off the CPU using these two heat pipes. That whole assembly can be removed to reveal the chip at the heart of this
+
+thing. Or, I guess I should say the chips, because looking at the underside of the heatsink, we can see two distinct chips are on here. After I clean off the thermal paste, I can see what looks like two identical S-Win EIC7702 CPU dies. Now, I've seen one of these before, in the Hi5 Premier P550 board I tested earlier this year. What it looks like S-Win did here is just slapped two of these chips next to each other on an interposer. And looking at the RAM layout on the motherboard,
+
+it looks like two chips go to one CPU, and the other chips go to the other one. It's a strange architecture, but it's not unprecedented. I mentioned this Dell Optiplex earlier in the video. This thing has an Intel Core 2 Quad CPU, and it was the exact same weird architecture. They took two Core 2 Duo CPU dies and slapped them together. But they had a problem
+
+back then. Those Core 2 Quad chips would burn up a lot of power, and they had some issues when you were using a lot of RAM because cross-die memory access was slower. Did S-Win solve those problems on this new RISC-V chip? Short answer: no. But before we get to that, let me button up the the machine for more testing. I repasted the CPU dies, with, of course, just the right
+
+amount of thermal paste. Then I reinstalled the cooler, put the keyboard back on, and got to testing. Now, this machine ships with Ubuntu 2410. Newer Ubuntu releases like 2510 won't run on it. RISC-V is a newer CPU architecture, and up until the past year or two, a lot of standards for how CPUs should be built were still being formalized. The latest standard, RVA23, is
+
+is kind of the main target for a lot of Linux distros like Ubuntu. The P550 cores inside the S1 CPU on here don't support RVA23, so the version of Ubuntu that ships on this thing might also be the only version that'll ever ship on it. There's also a special version of Fedora 42, but this is one of the main reasons I recommend you don't buy one of these first-generation RISC-V computers unless you're really into the architecture or you're developing software that you want to run on RISC-V. But assuming you're okay with all that, how is it using this thing as a laptop? Well, bringing back another theme from the early 2000s, it's one of those laptops with the fan running pretty much all the time.
+
+"I saw LGR was talking to hundreds of people and I also saw..." And it would ramp up to 100% quite often.
+
+Why is that? Well, the power profile for this complicated dual-die chip is not efficient. The total system power draw is about 25 watts while it's sitting there doing nothing. For a big rack mount server, that'd be great, but this is a laptop. It runs on battery.
+
+Other laptops I own use 1-3 watts at idle, or maybe 3-5 with the screen at full brightness. This thing, even with the screen turned off, is burning through the battery like crazy. I tested battery life through a few charge cycles, and I'd say you could expect 2-3 hours tops. So again, this is not a laptop you should buy if you just want a decent Linux laptop. The regular Framework 13, maybe, but not the RISC-V version.
+
+The screen looks great, but running normal applications on the RISC-V chip is sluggish. Just like an older Pi 4, you can only expect to get like 720p video playback and a slightly choppy UI experience overall. It's not horrible, and it's actually the best experience I've ever had running a RISC-V desktop environment, but that's not saying much. Chromium actually ran a little better on here than Firefox, probably due to GPU acceleration. Like I could get 40 FPS or so on Chromium running WebGL Aquarium, versus 16-17 on Firefox.
+
+A simple game like Super Tux Cart was playable after I turned down all the settings, but it was only getting single digit FPS at 1080p. At least Doom gave me a full 60 FPS at full resolution, but I mean, that's a game from the 90s, so that's not too surprising. I'll keep going back to comparing this to the Pi 4 though, because that was the first ARM SBC where I could use it as a desktop and not feel like it was painful, just slow. But the biggest letdown besides the power draw was how a lot of features on this chip are still not supported. it includes H.265 ENCODE and DECODE, and a modest but decent built-in NPU,
+
+but using those things requires software support, and that's a little lacking. They provided this demo of DeepSeq R1-7B running on the NPU, and it was respectable with like 5 tokens per second. But trying to get other models to run on it was a bit difficult. And if I just ran the models on the CPU, I would get less than a token per second. And even though the system comes with 32GB of RAM, half of it is allocated to the NPU somewhere in the firmware. So,
+
+unless you use one of the few demos that runs on the NPU, that extra 16GB of RAM feels like a waste. DeepComputing did say the RAM might be able to be reallocated, but I wasn't able to get that to happen in time for this video, so for now I guess just think of this machine as having half the RAM that's advertised if you're not going to use the NPU all day. But having access to only half the RAM is only half the problem. Let me show you a few performance graphs, and we'll talk about the other half. First up, Geekbench. It's not a perfect benchmark, but honestly, it's a pretty good match to the
+
+overall feel for these different computers, using them day to day for browsing the web. And like I said earlier, this is the fastest RISC-V computer I've ever used. Just, RISC-V isn't fast, at least not with any of the chips I've tested so far. Now, it is pretty close to the Pi-4's level of performance — the Pi-4 being launched seven years ago, mind you. It even beats it here in the HPL benchmark, which is good.
+
+But the efficiency, especially with the dual-die chip on here, is bad. It's less efficient than the same single-chip CPU, which isn't too surprising since you have to use more power to keep the two chips in sync all the time. But even Intel looks amazing here, with their N100 chip and that Latte Panda Moo up on top. And these are far from the most efficient ARM and Intel systems I've tested. I just wanted to find some modern systems in the same ballpark to give RISC-V the best chance possible.
+
+The graph that really destroys this thing for laptop use, though, is this one. 25 watts at idle is just crazy. But I started trying to figure out why. Why is this thing so inefficient? Why is it burning 25 watts constantly, burning almost four times the power as the single-die version of the P550?
+
+When I ran my Linux Compile benchmark, I started getting a little bit of a clue. How can a 4-core chip with the exact same cores be almost as fast as the 8-core version? Well, a lot of it comes down to memory access. Like, here you can see the DC-ROMA has slower RAM throughput than the P550, but that doesn't explain everything. What does is a specialized measurement of core-to-core latency. That is, how many nanoseconds it takes one CPU core to access
+
+memory from another core. And the graph here is a disaster. For one core on one die to access data from another core on the other die takes almost 2000 nanoseconds. Core-to-core in the same die is only 79. To put that in context, here's the same kind of chart, but for the Raspberry Pi 5.
+
+Since it only has one chip, the core-to-core latency is never over 71 nanoseconds. But let's take a quick trip back in time, and I'm going to show you something even more revealing. If you worked in IT in the early 2000s, you probably wound up deploying and maintaining at least dozens, if not hundreds of these things. Well, probably not this particular model, which was one of the more expensive workstations, but Optiplexes were everywhere. They still are, actually. I spot these guys in random places running critical infrastructure, like POS systems
+
+at restaurants, or random old programs for building controls. Anyway, I wanted to see how the old Core 2 Quad stacks up against this modern S-Win chip. And it's a lot better. Granted, this is a workstation CPU, but back in 2009, Intel figured out how to get two dies communicating at just over 100 nanoseconds. Apparently, we've forgotten how to do that. Because of that,
+
+this almost 17-year-old computer still beats the DC-ROMA II in Geekbench, and in raw HPC compute performance. And, well, not in efficiency, but we're talking about the full system. At least RISC-V can take a small win there. Despite all its warts, this newer laptop does have some advantages from decades of optimizations for everything outside the CPU. But, come on, which box would you rather have if you had to live with Raspberry Pi levels of performance? Well, I guess the Optiplex has its own warts, too. Like, it is big,
+
+and the weird motherboard layout on here means you can only use single-slot GPUs. But the bigger question here is, did I use one little point of comparison as an excuse to buy an entire old PC for some fun? Yes, yes I did. Anyway, I don't want to sound like I hate this machine. In fact, it's the opposite.
+
+As someone who's been following RISC-V for years now, I want to mention the two things I really liked about this build in particular. First, because it's a standard framework mainboard, this laptop won't go to e-waste in a couple years once Linux isn't supported on it. And I like that. It's actually the first framework laptop I've ever tested, and after using it for a bit, I can see why people like 'em. There are nice touches like QR codes inside the computer to help walk you through every step of the process, and all the screws are standard sizes, no pentalopes here.
+
+To see how easy it would be for you to upgrade in a couple years, I installed this AMD mainboard provided by Framework. It's the low-end AMD model, costing around $450. The whole laptop with one of these mainboards would actually cost less than $1,000, which is less than the full DC-ROMA II setup I have. But the teardown process is pretty much the same as earlier, just you have to pop off a number of connectors around the edge of the mainboard and reroute the WiFi antenna cable. But the coolest part of all this is you can take the old mainboard and keep using it. How? Well, you can either buy a $40 Cooler Master case, or you can 3D
+
+print one, like I did. I'll leave a link below where you can find this model. It's not a perfect print, but if you already have a 3D printer, it saves you a few bucks over getting the Cooler Master case. But after I upgraded to the AMD mainboard with its 6 CPU cores compared to the DCROMA's 8, I re-ran all my benchmarks. And the AMD CPU absolutely slaughters the S1 chip in every metric.
+
+Geekbench 6 especially makes it look like the DC-ROMA II and Pi 4 are on a different planet, which they kinda are compared to modern Intel or AMD chips. HPL at least makes them visible on the chart again, and efficiency shows how x86 is still super fast, but not quite stellar for efficiency, at least in comparison to older ARM chips. But a chip that can slaughter the DC-ROMA also kills it in idle power consumption, which is probably one of the most important metrics if you care about using this laptop as a laptop. But I guess I should reiterate, you're not buying the DC-ROMA II if you're looking, like, for the best performance or efficiency. The thing I like about this whole system is it's a modular, future-proof chassis because they partnered with Framework.
+
+On the theme of modularity, one last thing I got to test on this laptop was a new module with two more RISC-V CPU cores, the RP2350 GPIO Expansion Module from SemiTou5 or something, I hope I'm pronouncing that right. It's from a student team at Polytechnic of Turin in Italy. They sent over this little module which is part of their curriculum towards learning CPU architectures. This thing has a Raspberry Pi RP2350 chip on it, which has two Hazard 3 RISC-V CPU cores onboard. It's not going to actually make the DC-ROMA go any faster, but it does add on GPIO capabilities, meaning you can do things like, well, I'm just blinking an LED on here, but you get the idea.
+
+It's a neat little open source hardware design that was supported by DeepComputing and Framework, and I'd love to see these little community projects, especially when they help the next generation learn about computing in such a tactile way. I'll put a link to this below, along with a link to the little Python library they wrote to make it easier to program without having to do MicroPython in the full stack for the RP2350 development. But the DC-ROMA II mainboard, or the AIPC as they're calling it, do I recommend you buy this thing? No. Not unless you're deeply into RISC-V or you're developing stuff and want to test it on real RISC-V hardware.
+
+It doesn't make for a great laptop experience, but this altogether was the best RISC-V laptop I've ever seen. And it's the fastest RISC-V computer hardware I've ever used. Which isn't saying much right now, but it's something. Until next time, I'm Jeff Geerling.

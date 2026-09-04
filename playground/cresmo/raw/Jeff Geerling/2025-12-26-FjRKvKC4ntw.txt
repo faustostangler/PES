@@ -1,0 +1,97 @@
+---
+video_title: "A tiny AI supercomputer for your desk"
+video_id: FjRKvKC4ntw
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FjRKvKC4ntw
+video_date: 2025-12-26T15:00:28+00:00
+video_description: |
+  Let's see if Nvidia's GB10 "AI Superchip" is all it's hyped up to be...
+  
+  Thanks to Dell for providing the two Dell Pro Max with GB10 units for testing and evaluation, along with accessories to get them clustered.
+  
+  Resources I mentioned in this video:
+  
+    - Dell Pro Max with GB10 Benchmark Results: https://github.com/geerlingguy/sbc-reviews/issues/92
+    - Dell Pro Max with GB10 AI Benchmarks: https://github.com/geerlingguy/ai-benchmarks/issues/34
+    - Dell Pro Max with GB10: https://www.dell.com/en-us/shop/desktop-computers/dell-pro-max-with-gb10/spd/dell-pro-max-fcm1253-micro/xcto_fcm1253_usx
+    - DGX Spark has no power LED: https://community.frame.work/t/dgx-spark-vs-strix-halo-initial-impressions/77055
+    - Mediatek on Grace CPU: https://www.mediatek.com/press-room/newly-launched-nvidia-dgx-spark-features-gb10-superchip-co-designed-by-mediatek
+    - DGX OS Release Cadence: https://docs.nvidia.com/dgx/dgx-spark/dgx-os.html#release-cadence
+    - Jetson Nano Ubuntu 18.04 only: https://forums.developer.nvidia.com/t/trying-to-install-ubuntu-20-or-22-on-jetson-nano-2gb/327491/2
+    - CoconutMacaroon's Blender compilation instructions for Arm Linux: https://github.com/CoconutMacaroon/blender-arm64/
+    - FCLC's post on FLOPs: https://bsky.app/profile/fclc.bsky.social/post/3lc4qpte3ys2o
+    - John Carmack's tweet on the 'petaflop': https://x.com/ID_AA_Carmack/status/1982831774850748825
+    - Top500 list for June 2025: https://www.top500.org/lists/top500/list/2005/06/?page=4
+    - Exo blog post on DGX Spark + Mac Studio: https://blog.exolabs.net/nvidia-dgx-spark/
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - It's not a mini PC
+  01:07 - It's not a gaming PC
+  03:06 - It's an Arm Linux PC
+  03:49 - Improvements over the DGX Spark
+  04:28 - Grace CPU
+  05:19 - DGX OS and a concern
+  07:00 - Benchmarks (and FLOPs)
+  08:40 - Dual 200 Gbps networking
+  10:07 - AI on the GB10
+---
+This little box isn't a mini PC. Well, at least not the same as Apple's Mac mini, or even the Minisforum MS-R1 I tested a few videos ago. And it isn't an AI box, at least in the way that some people think. If you just want to run large language models, honestly? The AMD Strix Halo, like the Framework Desktop mainboard that I reviewed earlier this year, gets similar performance for like half the price. And if you want to run huge models,
+
+a maxed out Mac Studio goes faster with more efficiency. This thing is a $4,000 box built specifically for developers in Nvidia's ecosystem, deploying code to servers that cost half a million dollars each. And a major part of the selling point are these built-in 200 gigabit QSFP ports, which, if I'm going to be honest, behave a little strangely. But on paper at least, those ports alone are worth $1,500 bucks. Dell sent me two of their Dell Pro Max with GB10 boxes to test.
+
+(That name just rolls right off the tongue.) But they aren't paying me for this video and have no control over what I say. In fact, one of the main things they said was, "This isn't a gaming machine, so maybe don't focus on that." But that got me thinking... What if I *did*?
+
+Like, Valve just announced the Steam Frame, and it runs on ARM, and supposedly the GPU inside this thing is equivalent to like a 4070, just with gobs of extra VRAM for AI. And Crossover Preview for ARM just shipped using FEX, and that's the same tech that's going to power the Steam Frame. So, of course I tried gaming on here. Sorry about that, Dell. After loading up Steam, which runs perfectly on this little Arm Linux box, I ran Cyberpunk 2077. I played through a bit of the game and had zero problems.
+
+Running the built-in benchmark, I got 40 fps at 1080p with full ray tracing. And if I turned that off and used Steam Deck settings, I got 50. Then, if I turned down the settings a little more, I was hitting almost 100 frames per second. Which was surprising! I ran these same benchmarks on the fastest ARM desktop in the world, the Thelio Astra, and that only got like 30 to 50 FPS.
+
+So next I fired up Doom Eternal, and I was getting 100 to 200 frames per second all day running with ray tracing on and ultra settings at 1080p. There was zero stuttering, and the whole experience gaming on this thing was just as good as my little Windows PC that I have in my rackmount at my desk. And of course, I know you'll ask, "Can it play Crysis?" and the answer to that is yes. Very well, in fact! I couldn't get MangoHUD working on here, so I don't have a framerate,
+
+but it was well over 60fps and more playable than on any other Arm system I've tested so far, including a Mac Studio. Even Ultimate Epic Battle Simulator 2, which kinda slaughters Arm CPUs, was playable at 40-50fps, with thousands of chickens slugging it out against a Roman Legion. So, yeah, gaming on ARM Linux? Maybe Valve is onto something. But no, despite all that, there are tons of games with like kernel-level anti-cheat that doesn't run on Linux at all, much less Arm Linux like this box runs. And while I don't agree with Dell that this isn't a gaming
+
+machine, I do agree that that shouldn't be the focus. This thing costs almost four grand, and for that much, you can build a much more capable gaming system, if that's what you're after. And you can do that even with the RAM prices the way they are today. This machine is built for AI development. But hold on, I just can't talk about that without telling you the real reason I wanted to test this particular model. The thing that got me to look into this isn't the AI chops,
+
+Nvidia's developer ecosystem, or even those fancy networking jacks. The thing that made me interested in testing this is the GB10 chip inside, and GB stands for Grace Blackwell. Blackwell is the GPU architecture that costs tens of thousands of dollars per unit, but the Grace part is the Grace CPU, an ARM CPU that has cores that should be competitive with Apple's or Qualcomm's. That's not the most important part of this platform, especially according to NVIDIA, but it was interesting to me. Why would NVIDIA ditch Intel and AMD and all the compatibility of x86 in their premiere development platform?
+
+We'll get to that right after we also answer why NVIDIA didn't put a power LED on the front of their version of this thing, the DGX Spark. The answer? I don't know. But Dell did, and they fixed some thermal problems designing the box for better airflow front to back. In my testing, I didn't see any thermal throttling, and the things are pretty quiet too.
+
+It was just hitting 42 to 43 decibels maxed out, and that was while it was running in a cluster of two of these burning through 300 watts of power coming from a couple of external PSUs that are also a little more generous than the 240 watt versions that Nvidia shipped. But there's not a whole lot to look at here. Like I said, the main thing I wanted to check out today is the Grace part of the GB10 chip. The Grace CPU has a big.LITTLE layout with 10 performance cores and 10 efficiency cores. It's apparently co-designed by Mediatek and put on the same chip
+
+next to the Blackwell GPU. I think partly because of that architecture, the system's idle power draw is a bit higher than I'm used to for Arm, coming in around 30 watts. And just having over 100 gigabytes of RAM isn't an excuse for that. I mean, otherwise AMD and Apple would both be pumping out a lot of idle power too. But on the power situation, I do like how Dell provides a power supply that gives a little more headroom, up to 280 watts. Not all that power goes into the GB10 chip, though.
+
+There's also those crazy networking ports and all the USB-C ports that can also put out some power, too. In my testing, it seems the chip itself maxes out around 140 watts, which is still a lot of power to feed into this little guy. Anyway, we'll get to performance soon. For now, though, I want to switch tracks and talk about software. Nvidia ships a customized version of Ubuntu with this thing called DGX OS.
+
+Regular Ubuntu LTS versions are supported for 5 years with optional Pro support extending that out to 10 or even 15 years. But DGX OS only guarantees updates for 2 years, it looks like. Which, for a box that costs nearly $4,000, that seems pretty weak. It might not be as big an issue if other Linux distors would just run on this thing, and they may, but this is one downside to this being built on Arm instead of x86. Arm, despite some progress in the past few years, is still not as compatible as, like, x86 platforms. So in a few years, for any features that aren't ported into
+
+mainline Linux, you might have to sacrifice functionality if you want a newer version of, like, Ubuntu or Fedora. The reason I mention this is Nvidia hasn't had the best track record, especially for their more end-user-facing systems. Like, my old Jetson Nano, which I bought a few years after my first Raspberry Pi, which is still supported, still only has Ubuntu 18 support, which is way out of life. And sometimes trying to figure out just what is supported on Nvidia's devices can be a nightmare. Some people have already had luck getting other distros running, but they're still running in NVIDIA's Linux kernel, so if you buy one of these, know that there's no guarantees for ongoing support beyond a few years from now.
+
+But anyway, once you have DGX OS running, you can install practically anything that'll work in Linux. Server software runs perfectly, but there are some desktop tools that are a little more of a hassle. Like, Blender doesn't have a stable release that uses GPU acceleration on Arm, but if you compile it from source, like GitHub user CoconutMacaroon did, you you can get full acceleration. And I already covered games earlier, but in general, just using this box as a little Arm workstation felt plenty fast for all the things I do, from coding to browsing the web and light editing. Anyway, to get some numbers behind my intuition, I ran my full gauntlet of benchmarks, both on a single node and in a cluster with two of them connected together with this 200 gigabit Amphenol QSFP cable.
+
+I'm going to leave cluster performance for a later video, so get subscribed if you want to see that. But as a standalone ARM Linux box, this thing is pretty fast. Geekbench 6 was a little unstable, but I did get it to run, and it was about on par with the AMD Ryzen AI MAX+ 395 system I tested earlier this year, the Framework Desktop. And Apple's two-generation old M3 Ultra Mac Studio beats both, but it does cost quite a bit more, so that's to be expected. And testing with High Performance Linpack, this thing gets about 675 gigaflops.
+
+But wait, that's not even a teraflop! Nvidia said this thing offers a petaflop of AI computing performance, and that's a *thousand* teraflops. Well, look more closely. Nvidia says it's a "petaflop of AI at FP4 precision". HPL tests at FP64, aka double precision, which is used more in scientific computing.
+
+So don't always believe the things you hear in marketing. A FLOP is not always a FLOP. And even that petaflop claim is disputed, at least if I'm reading John Carmack's tweets correctly here. I only tell you the things I can measure, and so far I haven't measured a petaflop, but we'll get to AI benchmarks soon. All that said, I was able to put two of these together and build a tiny Arm cluster that would've made it to the global Top500 supercomputer list all the way into 2005.
+
+This little guy's pretty efficient, too. It definitely beats Intel and AMD with its Grace CPU. Idle power is one area that this falls short, though. Even without the power-hungry networking active, this thing is sucking down 30 watts at idle. That's three times what Apple and even modern AMD can do.
+
+But a huge part of the value of this box is the built-in ConnectX networking. I tested that, and yeah, it's fast. Way faster than I could get for either the Mac or AMD machines on their fastest Thunderbolt ports. But 106 gigabits isn't 200, so is Nvidia lying again? Well no, see, this is a little complicated.
+
+I'm going to have to refer you out to this ServeTheHome article. The way these two ports are built, you're only ever going to get about 200 gigs of bandwidth ports, even though each one is rated at 200 for a total of 400. And the only way to achieve 200 gigabits isn't with normal Ethernet, it's with RDMA. That's the same tech I showed in Apple's cluster a couple weeks ago. That lets things like LLMs work together better when you're clustering multiple GB10s, but it doesn't mean you just get a blanket 200 gigabits, and definitely not 400 gigabits.
+
+But the fact you get basically a $1500 network card built into this tiny computer is part of the overall value of this box. Being able to work with the same clustering tech that you run in Nvidia's so-called AI factories, on a desktop, sitting here very quiet is what it's all about. And from that perspective, if you want to replicate this kind of developer setup on AMD, you'd have to spend around the same amount of money for the MAX+ 395 and a ConnectX card on top of that. A lot of people don't care about RDMA or InfiniBand, but that doesn't mean it's not extremely useful for the people who do. Just like with Apple's new RDMA over Thunderbolt support, this stuff's expensive, but to some people it's not a bad value.
+
+For now on this one machine, I'm just running two models, both of them with Llama.cpp, optimized for each architecture. And for a small model that requires a decent amount of CPU to keep up with the GPU, the GB10 does pretty well, almost hitting 100 tokens per second for inference, which is second to the M3 Ultra. But for prompt processing, which is important for how fast you get a response out of AI models, the GB10 chip is the winner, despite costing less than half of the M3 Ultra. And it's a similar story for a huge dense model, LLAMA 3.1 70B, except here it gets
+
+beat just a little bit by AMD's Strix Halo in the framework desktop. But again, prompt processing is a strong selling point for these boxes. That's the reason Exo's running a DGX Spark as the compute node for a Mac Studio cluster. With that, you could run the DGX Spark, or one of these Dell boxes, and have it handle the thing it's best at, prompt processing, while the Mac Studio's handle the thing they're best at, memory bandwidth for token generation. Anyway, these are just two quick AI benchmarks, and I have a lot more in the GitHub issue I'll link to below.
+
+I'm doing a lot more testing, including model training and how I clustered two of these things in this tiny little mini-rack, but you'll have to wait until next year for those things. Until then, I'm Jeff Geerling.

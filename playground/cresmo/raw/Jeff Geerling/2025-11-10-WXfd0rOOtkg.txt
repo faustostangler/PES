@@ -1,0 +1,88 @@
+---
+video_title: "Arm Homelab-in-a-Box – Minisforum MS-R1"
+video_id: WXfd0rOOtkg
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WXfd0rOOtkg
+video_date: 2025-11-10T16:00:53+00:00
+video_description: |
+  Minisforum just launched the MS-R1, their first Arm workstation PC.
+  
+  Will it bring Arm into the homelab, in a big way? Or will it suffer the same fate as the Radxa Orion O6, let down by a power-hungry SoC? And will a dedicated GPU fit inside this tiny box?
+  
+  Things mentioned in this video (amzn.to links are affiliate links):
+  
+    - Minisforum MS-R1: https://s.minisforum.com/4hRFZbj
+    - MS-R1 benchmarks and test data: https://github.com/geerlingguy/sbc-reviews/issues/89
+    - Radxa Orion O6 review: https://www.youtube.com/watch?v=OMnCqmM-WKo
+    - Abovetop Nvidia RTX A2000 SFF GPU: https://www.newegg.com/abovetop-Model-A2000laptop/p/1DW-00MF-00001
+    - Intel Arc A310 ECO GPU: https://amzn.to/49Q3vn4
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Hardware overview
+  01:47 - Cix's 12-core Arm SoC
+  02:57 - Deeper problems
+  03:55 - 10 Gbps Networking and AI inference
+  04:55 - Installing a dGPU (RTX A2000)
+  06:15 - A BIOS detour and AC Power Loss bug
+  06:50 - Trying an Intel GPU (A310 ECO)
+  07:20 - Installing Ubuntu and getting GPU acceleration
+  08:40 - Arm Homelab in a box?
+---
+"Arm is more efficient, runs quieter." "Arm is going to take over personal computing." This new box, the Minisforum MS-R1, disproves a couple of those theories. It has a new Arm CPU inside—and don't get me wrong, this thing isn't terrible, but I'm disappointed it still has some problems endemic to the Arm ecosystem. The main one? You still have to download a custom Arm OS image for it, for the best experience.
+
+But you can install generic Linux OSes, like Ubuntu, just some of the features aren't fully supported that way yet. What this thing should be is a box that runs Linux and can compete with, like, the Apple M1 or midrange mini PC. But what we're getting is something a little different. Let's get started with the hardware. At first glance, it looks great.
+
+You have a 12-core Arm CPU with a Mali G720 iGPU. There's a full-size PCIe slot, NVMe storage, Wi-Fi 6E, and a ton of ports on the front and back. You have a grand total of 9 USB ports, with two of them Type-C with DisplayPort. There's HDMI, dual 10 Gbps network jacks, and even an old-fashioned audio combo jack so you can plug in a headset. It looks great on my desk, it's quiet, it uses a 19V power adapter, and, well, that thing's a little big, but overall the hardware is some of the nicest of any Arm system outside Apple's walled garden.
+
+And the way you get inside this thing, it's nice. If you're new to Minisforum, watch this. You just pull down this lever and outslides the whole chassis. In the box, it came with some extra adapters for a U.2 drive or a second M.2 drive,
+
+and those can be used in place of the internal Wi-Fi card for even more expansion. And yes, this is a review unit that they sent over for testing. That's why this video is marked "sponsored". But Minisforum had no input into the content of this video, and they didn't pay anything outside of sending a review unit. Now, let's dive into why this machine puzzles me, starting with the iGPU. Using Minisforum's default Debian 12 install, I could run GLMark2,
+
+and it performed well, scoring far above something like a Raspberry Pi. But Vulkan support out of the box was a little touchy. vulkaninfo segfaulted, and VKMark wouldn't run. But GravityMark did, and while the G720 won't bring home any awards, it's about on par with the Adreno 750 in Qualcomm's Snapdragon 8 cx Gen 3. That's the same chip Microsoft used in their Project Volterra 2023 Windows Arm Dev Kit, and that's not the only similarity you'll see between these two systems.
+
+Geekbench 6 cores were also pretty close, coming in at 1336 single core and 6773 multi-core. That soundly beats SBCs like the Pi 5 or a Rockchip, but it's still well under Apple's 4-year-old M1. In other benchmarks, this thing is all over the place. I have two theories about that, which I'll get to. And, you know, in real-world use under Linux, it does feel fast. At least faster than like an SBC.
+
+You can actually watch 4K video on YouTube while you do other things, which is kind of a novelty
+
+dwarfs the competition. And that's not a good thing. But why? Well, I have a theory, especially after testing the Orion 06 and a new RISC-V chip I'll be covering soon. This is a graph of core-to-core memory latency, showing how fast it is for different CPU cores to share memory on the system. Honestly, this isn't horrible, especially when I pair it with
+
+raw memory access speed. Like, you see here, the MS-R1's RAM is pretty fast. But I think the weird CPU core layout is what's causing power problems. Radxa and Minisforum both told me Cix is working on power draw. And looking at this graph, it's easy to see two of these things are not like the others. This is just a theory, but it seems like for stability and to keep memory
+
+access working core to core with the weird CPU core layout, they're having to keep the chip powered up pretty high. Like, 14 to 17 watts is beyond even modern Intel and AMD. At least on this graph, it doesn't look like the Cix chips are getting slaughtered. Anyway, I kept testing. For networking, the onboard NICs provide a full 10 gigs, and the built-in Wi-Fi 6E was good for a gigabit on my network. And with 64 gigs of RAM, one thing this box could excel at compared to an SBC is local AI,
+
+even if it's just on the CPU. I ran a bunch of different models that would fit in memory, and here are those results. This is actually one place where it underperforms the older Orion 06 board that uses the same CPU. The performance inconsistencies are puzzling, but the power consumption is what really kills me. That's an area that Arm is supposed to shine in.
+
+But, I guess it just goes to show you, CPU core architecture and even process nodes aren't everything when it comes to efficiency. Design matters. Apple's M-Series puts everything to shame, but even taking that out of the mix, this thing isn't even as efficient as a Raspberry Pi. Despite all that, it is quiet and the fans keep it cool. The performance profile ramps up the fans to 100%, but that didn't make much difference except making it like 50 decibels here instead of 40 under load.
+
+And if you're thinking about loading it up with AI or even modest gaming, a dedicated GPU is going to get you a lot further, but there are only a few that'll fit in this tiny slot. But for that, Minisforum added ventilation holes across the entire top, so a modded GPU like this one that I bought from Abovetop on Newegg could work and maybe not die from heat starvation. This thing is is a laptop NVIDIA RTX A2000 with 8GB of VRAM on a half-height, single-slot PCI Express card. Installation was easy, though a little finicky. There's a little clip you pull out of the way to get the slot cover out.
+
+Then this card, at least, is about the maximum physical dimension that you can fit inside this thing. But fit it does, and there's a foam spacer underneath that holds it just off the motherboard, so nothing shorts out. Booting the computer back up, I saw the card using lspci, so I know Linux can see it. I wasn't able to install the drivers. I tried downloading the Arm driver from NVIDIA, I tried both driver packages in Debian, and nothing worked.
+
+It looks like the initial Debian image that Minisforum shipped might be cross-compiled, and that made building kernel modules hard. No worries though, I thought this was the perfect opportunity to test flashing Minisforum's custom OS image to a fresh new SSD. I followed their guide and flashed a new NVMe SSD, but then, because I actually was flashing the wrong drive on my Mac, I deleted my backup drive, and so the one that I thought I flashed didn't boot. But that did take me on a detour into the BIOS, so I guess now's a good time to look at that. There are settings for USB, RAM, Power On behavior, and a lot more. It's pretty complete, actually, but I still see a lot of things labeled 'Beta',
+
+so keep that in mind if you buy one of these things. One thing I tested that didn't work is the AC Power Loss setting. You're supposed to be able to tell it to turn on when power's restored, and that's great for something like a homelab where you might not have it even connected to a monitor. but the BIOS setting didn't do anything. I remembered seeing this hardware switch on the board though, and sure enough, that's how you actually control the AC power loss setting on here.
+
+Anyway, since I couldn't get the A2000 going, I switched back to the original SSD and then swapped video cards over to Intel. I installed this Arc A310 ECO with 4GB of VRAM, and it actually fits better than the longer A2000 board. But when I booted up the R1, even though the fan on the A310 spun up, lspci wouldn't see it. That usually means a signaling issue. And, to be honest, I've had that same problem with the same card on a Raspberry Pi, and I'll cover that more in a video coming soon on Intel GPUs and the Pi, so make sure you're subscribed. Anyway, I decided to switch
+
+gears at this point and try out Ubuntu. I was wondering if it'd be as easy as flashing the Arm ISO to a USB drive and installing it—and it was! The funny thing is, since I had reinstalled the A2000 again, when the USB drive was booting up the installer, I had the monitor plugged into the internal HDMI port. At some point, the image on there just froze, but luckily I heard the Ubuntu startup sound through the speaker, so I knew something was happening. I switched the monitor to the A2000's HDMI port, and what do you know, it worked! Ubuntu automatically loaded the right
+
+driver out of the gate. I could install CUDA, and that and nvidia-smi were giving me all the right output right out of the box. So I quickly ran VKMark again, and now it's running smoothly, scoring just over 10,000 on this card. I re-ran my Llama 3.1:3B AI benchmark, and it shouldn't be a surprise, but running on a dedicated GPU is a lot faster. I could get 71 tokens per second on
+
+the GPU, where I was just getting 12 on the CPU. And it's hitting 0.76 tokens per watt versus 0.34, so the efficiency here is also way better. For the larger 8 billion parameter model, Inference went from 5.78 to 34.52 tokens per second.
+
+And to round out my testing, I ran GravityMark, and it was a lot smoother now. The A2000 got a score of 16,679 compared to the iGPU's 3,037. Having a full PCIe slot in here is pretty cool. And coupled with the included U.2 and NVMe adapters, it's pretty clear Minisforum thinks of this thing as a good homelab box. They even
+
+published guides for installing Proxmox and Jellyfin, complete with hardware passthrough and iGPU acceleration. And I mean, if we're just talking expansion options per square liter, this has all other Arm machines beat, including the Mac mini. Honestly, this works fine as an Arm desktop, certainly better than any SBC. But, Intel and AMD exist, and so does Apple for that matter, and that makes this a bad value where it stands today at $400 to $500. Unless you're an Arm enthusiast, you should save some money and get a different mini PC, even one of Minisforum's other MS-series desktops. Or, if you can afford $600, buy the best Arm desktop on the market,
+
+the M4 Mac mini. Of course, that thing can't run bare metal Linux, so take that into account. I like that this exists, and I like that Cix and Minisforum are trying to shake up the Arm desktop market a bit. But it's still half-baked. Can it be fixed and firmware? Will they get all
+
+the drivers mainline so all the features work in every Linux distro. Windows can run on here, but will NVIDIA ever release GPU drivers for Windows on Arm? I don't know. But I do know I'm going to try gaming in Linux on this thing, and then compare it to its big, big brother, the Thelio Astra. Until next time, I'm Jeff Geerling.

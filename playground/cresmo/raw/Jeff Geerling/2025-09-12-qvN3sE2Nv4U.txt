@@ -1,0 +1,180 @@
+---
+video_title: "PIS IN SPACE!"
+video_id: qvN3sE2Nv4U
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qvN3sE2Nv4U
+video_date: 2025-09-12T14:01:24+00:00
+video_description: |
+  The number of Raspberry Pis orbiting the earth is about to increase.
+  
+  Thanks to everyone who helped me make this video, over the past year! I learned a LOT (especially how much I don't know) about CubeSats, Ground Stations, amateur radio for space, and more.
+  
+  Mentioned in this video:
+  
+    - SilverSat: https://silversat.org
+    - Build a CubeSat: https://www.youtube.com/@buildacubesat
+    - CubeSat TEMPEST: https://ethoslabs.space
+    - Tim Fowler's CubeSat Collection on Level 2 Jeff: https://www.youtube.com/watch?v=woO0w92YuC0
+    - Saveitforparts: https://www.youtube.com/@saveitforparts
+    - RASCube: https://www.robinson-aerospace.com
+    - MySat: https://www.mysatkit.com
+    - GASPACS: https://artsci.usu.edu/physics/gas/projects/gaspacs
+    - Mark Rober's SatGus: https://space.crunchlabs.com
+    - Astro Pi: https://astro-pi.org
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Pis in Space!
+  01:14 - CubeSat 101
+  04:08 - Engineering challenges
+  06:48 - MySat
+  07:47 - RASCube
+  08:43 - Build a CubeSat
+  09:16 - CubeSat T.E.M.P.E.S.T.
+  11:04 - SilverSat
+  12:27 - Dave and Leticia
+  15:10 - CubeSat Launch Initiative
+  17:09 - The mission is just beginning
+  18:14 - Why Raspberry Pi?
+  19:49 - Pi security on orbit
+  21:12 - Radio communications
+  22:42 - Tracking sats from Earth with saveitforparts
+  26:16 - What frequency?
+---
+PIGS IN SPAaaAAAce! No, not pigs in space, and definitely not urine. Stay with me here. This is a video about pies in space, specifically raspberry pies. No, not the kind you eat, this kind of Pi! These are cubesats,
+
+satellites that are going to space, or at least the ones I have here are prototypes. But these have one thing in common: they're all powered by either a Raspberry Pi or a microcontroller. They also all have these cool "remove before flight" tags, and there's nothing quite like the feeling of pulling it out to boot the thing up.
+
+There are already Pis in space, like on Mark Rober's SatGus, on GASPACS, and the Astro Pis on the space station. Another Pi is going up this weekend, which is why I'm posting this video today. I'll get to that one at this timestamp, but I wanted to spend some time talking about two things that fascinate me: Raspberry Pis, and putting them in space. In this video, I'm going to cover what makes a CubeSat, who builds and launches them, and how you can build your own space hardware. Then, for a bonus, I'm going to talk to people helping students launch a CubeSat this weekend, and another YouTuber who can help you track satellites like these from your own backyard. So, let's dive in. What's a CubeSat? Well,
+
+it's in the name. I guess I can't put it any better than this guy did. "A CubeSat is a satellite that's a cube." [heh]
+
+But they don't have to be a cube. These small ones are 1U, or 10x10x10 centimeters. You can also find 2U CubeSats like this Build-A-CubeSat, which is 20 centimeters tall. SatGus, Mark Rober's satellite taking space selfies, is a whopping 12U CubeSat. They needed all that extra space to fit a phone, a mechanism to deploy the phone, a camera to take the selfie, a Raspberry Pi to control the phone, and redundant systems for everything.
+
+They've already taken thousands of selfies, and SatGus has me beat. My best Pi might get to 3.4GHz on an overclock, but the Pi on SatGus is whizzing through space at over 16,000 miles per hour. That's 75-70 meters per second for everyone else in the world. But back to CubeSats. Having standards means you can build off existing work for the hard things,
+
+like a space-rated aluminum frame or the complex EPS board. Then you can add in custom parts, like a pie to run experiments, a communications board with antennas and radios, cameras, sensors, and more. And these CubeSats have normal screw-on antennas, but the way these things are deployed, you only get 10x10x10cm. You can't have an antenna sticking out of the top. So they use cool things like flexible tape antennas that pop out once your CubeSat deploys. And the person who designed this
+
+Cube Set came here to tell me more about that. So everybody talks about this like that's the dumbest thing ever. This is brilliant. And the reason it's brilliant is because of this reason right here. Now this isn't a practical deployment mechanism, but essentially what you would have is you would have a monofilament wire fishing line holding these things down. And once you go through
+
+your deployment stage, you would basically dump a bunch of current into some resistors and they would get extremely hot, we call them burn resistors, and they would melt the monofilament wire. And once that happens, you get instant mechanical deployment without actually having any mechanical parts you could fail. And from an antenna perspective, especially this is a 915 megahertz as well, this is an ideal medium. It just works. There are many, many measuring tapes that have flown in space. Besides springy antennas, which by the way, I also found a bunch of these on
+
+CubeSats at OpenSauce a few weeks ago, what else makes CubeSats cool? Well, how about price? In the old days, you'd have to have like $10 million to build a satellite, and like $60 million plus to launch it into space. Today, you can build one of these things, ready to fly in space using just hundreds or thousands of dollars of parts, then you can launch it on a rideshare for, well, like 85 grand, which is a lot, but it's not like $60 million a lot. So most of us won't be launching one of these things into space, unless maybe you can get a grant, but that doesn't mean they're not useful to us. Like with many projects, I love these things for the challenge, the way they break
+
+some of my assumptions, like when I'm working with Raspberry Pis. If you're building a device that's less than 2kg, has like 2 watts of maximum continuous power draw, and needs to be operated remotely even for like just a month, you're immediately going to change your assumptions about how you build something. Like, you can't just run Home Assistant on a mini PC and put it inside one of these things for all the sensors. Even most Raspberry Pi models take too much power. On these things, every square millimeter and every single milliamp has to be accounted for. So to me, these little guys are like Swiss watches of modern electronics. How many sensors
+
+can you fit in one? How much throughput can you get on a tiny radio with a small antenna? Can you get enough power out of tiny solar cells to keep the main flight computer working? How do you control thermals without air? How do you design it so it can recover from a complete power loss. Every step of the way there are challenges, and that's before you even launch
+
+the thing. Someone who I think illustrates this best is Manuel with his Build a CubeSat project. He's working on this thing. He did a weather balloon launch this year, and he's documenting everything that he does on YouTube. His first launch had a lot of little problems, but also a lot of great learning opportunities, especially around redundancy and how to actually get the thing off the launch stand without having problems. But then on top of all those technical challenges,
+
+you're not only dealing with hardware, but also software. And software that, at its core, has to be remotely accessed. And not only remote, but also wireless, meaning anyone else on Earth within range can access it too. So how do you keep it secure? That's something Tim from Ethos Labs is also dealing with, with this, his Tempest CubeSat. This thing is actually made to be not secure.
+
+Like, it has intentional vulnerabilities, and he uses those to teach people different ways to make make their CubeSats more secure. So you have complex hardware, running it in limited space, with limited power and communications, and you want to cram in as much functionality as possible. And you see where I'm going with this. That kind of problem is perfect for small microcontrollers and SBCs that I love testing and playing with every day. Except instead of me worrying about something eating up like 10 watts, these guys are looking at a power budget of 1 watt.
+
+Or less. These problems are hard to deal with, and not everyone has the patience for a completely custom project like Build a CubeSat. So, there are also some small companies building kits to help you learn all these lessons with a little less stress. Like, what hardware do you need to put together for a 100% self-contained CubeSat? And how do you get it certified for flight on a SpaceX rocket?
+
+Well, I'll quickly cover two products that are meant for STEM classroom education: one from the lower end, and one that's based on an actual CubeSat that just flew earlier this summer. The first one is the MySat kit that you can buy from MySat in Ukraine. It comes with a board powered by an ESP32 with a camera, light sensors, an LED, gyroscope, accelerometer, barometer, clock, and a few other boards. And these are all off-the-shelf components you can buy replacements for, or even use them with other hardware, like directly with a Raspberry Pi. The way this thing is put together with 3D prints and nuts and bolts is probably not going to hold up on a rocket launch, but it's not meant for that. It's meant to show you how it's built,
+
+how you can communicate with it, and that sort of thing. It took me like an hour to build, and once I put it together, I tried flashing the flight control firmware with my Mac, but I ran into some issues with Arduino IDE. And that's probably a me problem, and not as much a MySat problem. Plus, the team behind it has a whole war thing going on that they've been dealing with, so I'm going to be patient and try getting this going again later this year. The MySat goes from like $130 for a basic kit where you do 3D printing for your own frame, or up to $300 for a full kit including deployable solar panels, which I don't have on this one. On the higher end, there's Razcube, and Edward
+
+the 21-year-old founder of Robinson Space, sent this over after he saw me posting about CubeSats online. This guy comes from Australia, and Edward's mission is to teach students about space through hands-on building. And I only built this LS version of the Cube yesterday. It's like the little brother to their V2 design down here, which actually flew in space on a Falcon 9 rocket earlier this year. Like mySat, you build the kit with an EPS board for power, a computer board with all the controls, and finally a radio board that ties in GPS and radio communications.
+
+The RASCubes are a little more expensive, coming in around $430 each for these LB kits, and $600 each for the full aluminum V2s. But the price tag on that also covers full lesson plans and resources for teachers. So I love these things. All the people I've talked to on this journey are motivated by the same thing. They all want to take what they learn and share it with others, especially students.
+
+Take Build a CubeSat. For that project, everything is open source hardware, and every part of the journey is being documented on YouTube. One thing that I learned from the first flight test that I never even thought about was how weird it is to have your pie go from overheating on the ground to getting really cold as it gets higher, but then overheating again in the upper atmosphere because there's not enough air to dissipate heat. So you really start to realize some of the crazy physical conditions you're gonna deal with once you're in orbit. Anyway, it's been fun following along through the design, first balloon launch, and now how to fix all the things that went wrong on a second balloon launch.
+
+But let's get back down to Earth for the CubeSat Tempest. The whole reason this exists is to help people learn why security is important, even for a tiny CubeSat. More importantly, Tim Fowler's course teaches people how to secure things like uplinks and flight control systems. "This is a custom CubeSat designed for teaching space as well as cybersecurity concepts in space. All of the sensors, all of that stuff have actually flown in space historically.
+
+And so I'd say we're like 92% flight worthy. Did you design and build this? This is 100% custom. I'd say 100% custom. This is pulled from a couple of different open source and commercial options that are out there.
+
+I just kind of took the best of all of the different components. We pulled the idea with the Raspberry Pi Zero from the AMSAT CubeSat Simulator. To the best of my knowledge, this is the only educational flat sat that actually has two radios. because I thought that was really important to be able to, A, show different modulations and various things like that, but also the ability, you get a classroom of 20-something students, they actually can get their satellites to talk to each other without having actual ground intervention or something like that. This is an intentionally vulnerable satellite. You can hack it.
+
+And if you're interested in learning about the training, if you go to antisyphon.com or antisyphontraining.com, you can actually find it. You can also just search my name. And if you do a search for ICSS, the Introduction to Cybersecurity and Space Systems, you'll be able to find more information about that training. And if you want one of these,
+
+the only way right now to get it is to be Jeff Geerling or take the class. What I found in the CubeSat community is there are so many people like Tim who work in their free time to try to teach about space or engineering or just small slices of things like security using these tactile little cubes that you can build and put next to your laptop on a desk. And it's crazy to think we're to a point where students can build these things, write flight control software, and even launch them into space! And that brings me to SilverSat. This is another CubeSat with a Raspberry Pi on board, and it's launching Net Sunday at 6:11 p.m.
+
+Eastern Time aboard a Falcon 9 rocket. What does "Net" mean, though? Well, as I found out when I visited Florida this summer, that means no earlier than. And in spaceflight, there are a lot of things that'll delay a launch. I was hoping to see my first rocket launch at Cape Canaveral with my son and dad earlier this year, but that was not meant to be. No earlier, then,
+
+means that's a target launch time, but it might be delayed for any number of reasons. Like see this footage of the towers around the launch pad I took? These help direct lightning and static charges away from rockets that are getting ready to take off. Lightning is just one of thousands of things that could cause a launch delay. And there's a lot of lightning in Florida. And the students who built Silversat are no strangers to delays. They were originally
+
+supposed to see their CubeSat launch earlier this year, but the cargo module they were on got damaged during transport, and that delayed them for months. Anyway, I still got to see some amazing sights in Florida, just not a rocket launch. But enough of me talking. I got to talk to two of the adults guiding the students on their first space launch, and one thing I specifically wanted to know was, why did they go with a Raspberry Pi? We'll get to that part, but the whole story of Silversat fascinated me, with the leaders. I'm Dave Copeland. I'm the president of Silversat. I am also one of the
+
+mentors with Silversat. So I'm involved in the sort of the day-to-day working with our students and leading them up through, you know, sort of where we are now. So I'm Letitia Barr. Like Dave said, our three families started this many, many years ago for some perspective. Our kids were in middle school when we first started talking about this. Now our oldest, who were kind of the catalyst
+
+for this project, they're now college juniors. So I work mostly behind the scenes. In the beginning, I was doing a lot of the communication, a lot of the outreach, getting the word out about what these classes that we started with called Satellite 101. Just kind of, they were a one-day workshop where we partnered with a local makerspace to get the word out about what a CubeSat was. We first started working with the idea in 2014, developing it as an organization, getting our 501c3.
+
+We started meeting actually with students in, I believe, the spring of 2017. And then we submitted our proposal to NASA for the CubeSat launch initiative in 2020. Back then, Twitter was still Twitter, and the kids chose to build a CubeSat that tweets from space. When the kids came up with this idea, Twitter was the social media platform that was the most popular, and they came up with this idea. So the idea was that the CubeSat would take a picture, it would tweet it from space, and certainly that's what we hope our CubeSat will do once it's in orbit.
+
+What's the main goal that you have for the kids that go through this program? We had the technical mission, which is to tweet from space. The real mission really is the kids. So it is really sort of throwing them into the deep end of an engineering project and then letting them kind of realize that, yeah, they can do this. Some of these kids just really blossom.
+
+So much of learning comes from what happens outside a school building. And Silversat is project-based learning at its best. They have given up many Saturdays to meet with Dave. They've met, we met virtually during the pandemic. The amount of time that the kids have dedicated to this project is really rather amazing.
+
+And I have to say, I was teaching middle school computer science and engineering during the pandemic. And when we had our final design review, I got to connect with one of my former students. And like Dave said, you know, I knew this student as a seventh grader. And to see where he is now and to watch him present and just the way he was speaking and his passion for the project is really quite incredible. Dave mentioned NASA's CubeSat launch initiative, and I realized I don't know much about it.
+
+And I'm guessing most of you don't either. So I asked Dave more about it. So this is a program through NASA, and it is a yearly competitive program that groups all around the country will submit proposals to NASA for a CubeSat mission. Just to even get the proposal in, you have to go through a decent amount of development work, get yourself set up as an actual team. You have to hold a merit and feasibility review to show that you really could build this thing.
+
+And then if NASA selects you for the program, they will get you into space. That has been a real big boost, I think, for allowing groups to develop CubeSat programs as a whole as educational programs. CubeSat programs like SilverSat use something cool, like putting something in space, to sneak in a bunch of life lessons and engineering. And I think that Dave agrees. We want kids to experience what a real engineering project is like.
+
+We had a group that was working our schedule. There was a working program management that was managing, formally managing our risks, just like you would on a NASA project. So we were able to lay out a schedule and then, you know, trying to work a schedule out around high school students schedule versus working it around full time engineers was a real learning experience. Another thing that we experienced, which is just natural, you know, as kids grow up, as they get older, they do graduate from high school. Yes, the age of.
+
+We're very fortunate that some of our student participants attend University of Maryland and they came back to be part of our final design review and sit and ask questions, which was really fantastic because these were some students who had been involved in the beginning. And so the questions that they asked, you could definitely tell what their thinking was. And I was very glad to have them. And when the rocket blasts off, their mission isn't over. In many ways, the launch is just the beginning.
+
+We will launch to the ISS on a resupply mission. And about five weeks after we get to the ISS, we will get deployed off the ISS. The ISS is in a relatively low altitude orbit. So we'll be in space three to six months, basically, for a satellite of this size before the orbit finally decays and we de-orbit. So during that time, we're operating a mission. We are working with a local amateur radio club to be our ground station. And in fact, one of the teams that we had was designing and building the hardware that's going to go into that ground station.
+
+So once we deploy, we're now in operations. We are scheduling times for students to, if there's a pass coming up on the satellite, to log in, send the commands to the satellite, operate the satellite, set up its schedule, pull down telemetry and trend it. Make sure the satellite's healthy. And I didn't forget, I wanted some juicy details on the hardware, since this video shows off a lot of different CubeSats. I had heard they were launching with a Raspberry Pi and I wanted to know why.
+
+One of the things that's a little bit different about our mission is that when that picture is being posted, it really is the CubeSat doing it. We hand the CubeSat an IP connection. We first have it turn on the payload, and this is really where the Raspberry Pi came into play.
+
+So we will power on the payload, hand it an IP connection, and then we kind of stand back. It handles the logging into Twitter, posting the pictures, everything from there. We don't run the Raspberry Pi all the time, primarily because of power. With a 1U CubeSat, your orbit averaged DC power available to you is, you're limited by how much sunlight can hit a 10 centimeter cube. And it's about 1.8 watts or so.
+
+So we only turn on the Raspberry Pi when we need it on. A couple of different reasons we went with the Pi. Probably first and foremost is that as a learning platform, it works out extremely well. I'm far more concerned about making sure the students can learn something out of all of this than I am about developing a good CubeSat. We can buy our students Raspberry Pis, send that home with them, and they can learn the Pi.
+
+They can learn to program on it and program any code that they write on that directly ports onto our boards. After talking to Tim from Ethos Labs about CubeSat security, I also had to ask how they were limiting the Pi's attack surface, and even if they had tweaked it to kind of limit when someone could attack it, since it's probably the most vulnerable part of the whole CubeSat. When the Pi boots up, we're booting up and starting up really only those processes that we need. And in fact, when we boot up the Pi, it'll boot up into one of three modes. There is the comms mode where, yes, it's a full TCP IP exchange with basically a sister Raspberry Pi that's on the ground station.
+
+Or it's booting up just to take a picture and shut down. Or it's booting up just to run this SS DV mode. So in each one of those modes, we're really just starting up the processes on the Pi that we need for that particular function to run. It is very locked down as to when you could be exposing the IP stack to any kind of attack. We run the SAMD21 microcontroller on our avionics and on our radios.
+
+And one of the things was implementing user authentication on that for when it actually really is receiving commands. So when you're telling the satellite to do something, you're not talking to the PAI. You're talking to the avionics board. You're talking to a microcontroller, and every one of those commands is authenticated. - Once SilverSat pops out of the ISS, the only way it can communicate is through radio.
+
+But I was wondering, there's a lot of satellites up in the sky. How do they get like a frequency to use or that sort of thing? I had heard of AMSAT, which is a volunteer group to coordinate amateur radioactivity on satellites. So is that the group they worked with? - As a club, we're a member of AMSAT.
+
+As part of getting our licenses and frequency coordinations, We worked with the International Amateur Radio Union, who coordinates any satellite that's operating in the amateur radio band. The amateur radio community has been extremely important to the development of CubeSats for years. It's been, you know, the comms link is always a tough engineering problem. Amateur radio has been a good bridge into this sort of technology level as a way of being able to talk to your satellite. And as part of our program, I teach an amateur radio class.
+
+We've been teaching the technician license exam for about three years now and have gotten a number of our students and a couple of their parents now licensed. Well, I just got my technician license and I've been getting into SDRs. What's cool is if you just want to listen to signals and don't want to transmit, you don't need any license at all. You just need like one of these, a $30 USB software-defined radio stick. So I got to thinking, what would it take to track telemetry and other downlink data from Silversat back here on Earth?
+
+That's where I turned to Gabe from Save It For Parts. He's tracked a lot of satellites, and has a lot more experience than I do with listening in on radio signals from space. My name's Gabe, I've got the Save It For Parts channel on YouTube, and I've been doing kind of amateur satellite stuff for a few years now. I have a few videos that are more how-to. I do have one that's very basic about how to track weather satellites, low-earth orbit which is similar to ham radio satellites. I have another video on tracking the International Space
+
+Station, and you can listen to the ham radio repeater on that. So those are a couple kind of introductory how-to videos that I've done. But I do other projects with Raspberry Pis, with old dumpster-dived technology. I tend to reuse a lot of stuff. I would rather go out and reuse some old commercial antenna versus trying to buy a new one, if at all possible. Is it easy to track a
+
+CubeSat and listen in on its signal. It's pretty easy for an amateur radio operator or just an amateur user to do that. Yeah. And you don't even need to have a license, I guess, right? Right.
+
+Yeah. To listen, you don't need any kind of license. You basically just need a simple radio or software-defined radio and an antenna, either something you can build yourself or there are a lot of cheap antenna options online as well. And in terms of that equipment, like what, If you were just trying to do it on the cheap, like, you know, a hundred bucks or less or something, is there any antenna and SDR type thing that you would recommend? Sure. There's for the UHF satellites, a lot of them are on 70 centimeter, which is the UHF ham radio band around 450 megahertz or so.
+
+And there's a UHF Yagi antenna or Yagi Uda antenna. There's one on Amazon. I can send you the link for it that I've been using quite a bit. And I like that. I think it was $30 to $40.
+
+Of course, prices can change and whatnot. And then the RTL-SDR blog version 3 or version 4 software-defined radios are pretty flexible. Those are some of the most affordable ones. And actually, it's a $50 kit that comes with an antenna that will work for a lot of those things. Not quite as effectively as a Yagi-Uda antenna, but it'll pick up weather settings.
+
+satellites. It'll pick up ham radio satellites with just the stock antenna that comes in that kit. Are there any resources you have to learn how to track something like, I know this satellite's name, where do I go to find out the information to track it? I use a lot of programs like gPredict is a Linux program you can run on a Raspberry Pi, you can run on a desktop computer, and that lets you put in satellites that you're interested in or categories of satellites, and they'll give you orbital parameters for your location. It's not as complicated. I may be making it sound complicated
+
+here. It's pretty simple. And that will actually control if you have a rotor of some sort, it will interface with that rotor and let you automatically aim your antenna. Or it will show you kind of a diagram of what the orbit looks like. So if you're hand tracking, if you're just aiming your antenna at the sky, you can use that little diagram to tell you where to aim your antenna. So that's one
+
+option. Another one is there's an app called Stellarium. I believe it's also a desktop program. I find that one pretty handy because it gives you like a heads up display if you're using it on an Android phone. And you can basically just aim the phone at the sky. You can search through the list
+
+of satellites in the app. And it just overlays that as kind of an AR augmented reality display. Those are a couple options. And of course, to make things easier for you, if you want to listen, I asked Dave what frequencies we should listen to for SilverSat. If they want to listen to our, you know, our communications with the satellite, yes, they can absolutely pick up our downlink.
+
+We're at 437, 175. The downlink from the satellite, when we are telling it to tweet, for example, you can pick that up and pull the picture out from that. One of the things that we've added to the satellite to make this a much more accessible thing is we have a slow scan digital video mode with the satellite as well, where we will schedule time periods where the satellite will just take its last picture and broadcast it down. Anybody, any radio enthusiast within the footprint of the satellite can pick this up and reconstruct the picture. Yeah, there's a number of different ways that people can now interact with the mission.
+
+So they can follow us on social media. They can be recommending where we want to take a picture. And absolutely, if they want to actually try to pick us up as we go overhead, we're going to be publishing on that website our schedule for when we're going to be in the SSDV mode. And you can pick us up as we go overhead. Now, if you want to follow Silversat's launch and the rest of the mission online, I'll let Letitia tell you how.
+
+The best place to follow Silversat is our website, silversat.org. Otherwise, we're on Instagram @silversat, Facebook and Twitter, we are @silversat.org. So all those links people can get to directly from our website.
+
+And like Dave said, the GitHub link will be live soon as well. I feel like a broken record, but one thing I love talking to anyone in the CubeSat community is the sense of infectious enthusiasm. And I was going to cut this bit out for time, but watching it back, I realized other people would probably enjoy Tim showing off some neat CubeSats in his personal collection as much as I did. So I put up some bonus content over on Level 2 Jeff. Go check out my second channel if you don't get enough CubeSat hardware in this video.
+
+And thank you to everyone who taught me about CubeSats. I hope you learned something new, and until next time, I'm Jeff Geerling.

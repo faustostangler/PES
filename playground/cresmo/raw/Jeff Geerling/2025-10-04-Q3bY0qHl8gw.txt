@@ -1,0 +1,621 @@
+---
+video_title: "Can we get Intel Arc GPUs working on a Pi before Nvidia kills them?"
+video_id: Q3bY0qHl8gw
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Q3bY0qHl8gw
+video_date: 2025-10-04T20:57:39+00:00
+video_description: |
+  It's been five years since I started working towards full eGPU support on the Raspberry Pi.
+  
+  And we're finally here. Check out all the graphics cards I'm testing on: https://pipci.jeffgeerling.com
+  
+  And PLEASE consider donating to the UOAA, who has helped me and millions of ostomates over the years, to live a better life after surgery. You can use the donation option on YouTube, or support the UOAA directly: https://www.ostomy.org/donate/
+  
+  You can also donate on my 5K Run for Resilience fundraising page—any option supports the UOAA directly! https://runsignup.com/jeff-geerling
+  
+  Other things I mentioned in the video:
+  
+    - Run LLMs with llama.cpp on GPU on Pi: https://www.jeffgeerling.com/blog/2024/llms-accelerated-egpu-on-raspberry-pi-5
+    - Full Pi eGPU acceleration with tiny patch: https://www.jeffgeerling.com/blog/2025/full-egpu-acceleration-on-pi-500-15-line-patch
+    - JMT eGPU Dock + M.2 adapter: https://amzn.to/4mLcnNF
+    - OCuLink cable: https://amzn.to/4gRWBiO
+    - ThirdReality Smart Zigbee Outlets (for power monitoring): https://amzn.to/3IItDW6
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00:00 - Intro and UOAA fundraiser info
+  00:03:12 - The setup - Pi 500+ and an eGPU Dock
+  00:04:55 - The 23-line Linux kernel patch and setup
+  00:07:49 - Doom 3 on 7900 XT
+  00:08:57 - Can it run Crysis? (And Steam?)
+  00:12:31 - You can actually *see* it run Crysis
+  00:13:46 - Doom Eternal on 7900 XT (RTX ON)
+  00:19:00 - Portal 2 (almost works)
+  00:19:28 - Ultimate Epic Battle Simulator II (CPU-crusher)
+  00:21:47 - Power consumption measurements
+  00:22:54 - SSH from Windows 11 to check on UEBS II
+  00:24:38 - Minecraft, but faster
+  00:27:12 - Practicality and AI/LLMs
+  00:28:10 - Open WebUI and llama.cpp for AI models (llama and gpt-oss)
+  00:31:00 - Special guests!
+  00:32:58 - gpt-oss 20B on the 7900 XT (and AI lies!)
+  00:35:34 - Keeping your Sony cams cool (featuring audio insanity)
+  00:35:50 - Chat questions - AI TOPS and Bookworm vs Trixie
+  00:37:08 - Pi-apps and Steam install (and more chat questions)
+  00:40:45 - GPU swap, AMD Radeon RX 9070 XT edition
+  00:44:47 - What happens when Mesa's too old (a little more kernel talk)
+  00:48:27 - RX 9070 XT works (with newer Mesa), plus gaming
+  00:52:25 - But Steam doesn't (with newer Mesa)
+  00:53:35 - llama.cpp AI on the 9070 XT (and power consumption)
+  00:58:18 - Let's get to INTEL (B580, A750)
+  01:00:45 - What happens on Intel?
+  01:01:05 - Minisforum DEG1 eGPU dock doesn't work as well
+  01:02:03 - Intel, seriously? Copy protection??
+  01:02:52 - The curse of the blinking cursor
+  01:04:42 - Wayland a no-go, but what about X
+  01:07:08 - Intel B580 is blue
+  01:09:27 - Switching to Trixie, recompiled Mesa
+  01:12:17 - Jeff is so yellow
+  01:12:55 - B580 experience and new Trixie features
+  01:17:55 - Debugging - dmesg, lspci, firmware, PCIe, Resizeable BAR
+  01:20:30 - Disabling iGPU, enabling PCIe Gen 3
+  01:24:38 - A brief field trip!
+  01:26:42 - Chat corrects Jeff on PCIe link speed reporting (ft nvtop)
+  01:29:00 - B580 power draw, current status, and CO2 levels
+  01:33:24 - Old school value with the RX 460
+  01:38:20 - Chat questions - early bootloader not displayed
+  01:38:54 - AI on an old GPU? Is it useful?
+  01:41:58 - Even an old GPU is way faster than Pi's CPU
+  01:43:06 - RX 460 AI power draw
+---
+All right, I think that's live. Can you see if it's coming up on your side? I can't. It's not. Okay. Well, it should just start playing. I think that we're live.
+
+I think we're live. I don't know. If somebody sees me, say yes or something. Okay, here we go. All right, let's get started.
+
+So for five years, I've been working to get external graphics cards working on the Raspberry Pi. Thanks to massive efforts from users like CoreForge, IfDo, RSC Games, Yang Haku, 6x9, and many others, we have a 23-line patch that gets pretty much every AMD GPU running on the Pi, and it should get us closer to full Intel support. So the goal today is to see how many of these graphics cards we can get working, and for anyone watching, after the fact I'll add in chapter markers so you can skip to just the parts you want to see. But before we get started, I'm going to hand things over to PastMe. This is PastJeff from a few hours ago, and I just got back from running a 5k with my two oldest children and i'm just thinking back to a few years ago when i still had tons of crohn's issues and i had issues with my digestive system all that kind of stuff the help of a particular organization was was really what helped me get through it and and decide to get the surgery that turned my life around i was basically like at the end of the line for crohn's treatments and my health was in decline my weight was way low i couldn't i didn't have energy to even be with my kids and do things with them. So the UOAA, which is what this video's
+
+fundraiser is for, they have local chapters around the U.S. that helps people who are considering having an ostomy for IBD or people who have had emergency surgery and had to get an ostomy. And we need an organization like this because there's at least something like a million people in the U.S. and millions around the world who have ostomies. And it's kind of an invisible illness
+
+in some ways. And it's also something that is not very glamorous to talk about. It's not something that people like to talk about that much. And a lot of people might be embarrassed about it too. So the UOA helps people who have this, and it helps them to be able to live with dignity, helps them to be able to understand what it is, how to deal with it, and how to live life to the fullest. And I have a permanent ostomy. Some people have temporary ostomies. In fact, like Pope John
+
+Paul II had one, some of our past presidents had one. There's a lot of people, a lot of celebrities have had them. Some people don't know how to deal with it, and it's mostly because they never had a group like the UAE and the local chapters to help them through the process and deal with it. Anyway, I am forever indebted to them, so for this stream today, trying to get all these things working, I'd like to dedicate it to them, and if you have any ability to support them, that would be awesome, and you could help other people like me. And it'd be surprising, you might know somebody who has an ostomy, but you might not even be aware of it, because it is, as the cert says, an invisible disability.
+
+Anyway, back to the video, and let's see if we can get all these graphics cards working. All right, and yes, I am live, and I do a terrible job of looking at chat, so if you post something and I don't see it, it's not something about you, it's something about me. But let me show you my setup today, because right now you might notice that I have a AMD Radeon 7900 XT with 20 gigs of VRAM on it, connected to a Raspberry Pi 500+. Whoops, well, that's the Pi. Let me go to my iPhone here, which is not showing up for some reason.
+
+There it is. Okay, so I have my iPhone here showing you. This is the Pi 500+. Inside of here, I'm not going to lift it off while it's running because that's a little risky, but there's an OcuLink to M.2 adapter, so because of that I have the boot drive out here just sitting in my little USB adapter.
+
+Booting off of that, then I have an eGPU dock that's plugged in via OcuLink to the Pi, and it gets power from a separate power supply. This is a little Lian Li 750W SFX power supply. So that's all set up and then I have HDMI plugged in here that loops over into the computer so that you can see this Which if I go back to the iPhone is what I'm seeing on this display So this is running B top and this is not plugged into the Pi. It's plugged into the graphics card and I figured that the first thing that I should do is show where we are with the AMD cards show how I got this setup going and And again, a lot of this is not my work. I try to coordinate some things as much as I can.
+
+But it's the community that's been around this thing. The people I mentioned at the beginning of this video, they're the ones who have done the great work. And I have just been able to kind of put things together and connect people together. So let me first show you. I'll go back over to the Pi.
+
+And I'll show you how this is set up. So if I go into my Linux directory, what used to happen is I used to have to do a lot of work and apply like a large patch set and it was kind of disjointed and it would take a long time and it would kind of work. But now let me go into here and say git diff. So the only changes that are made to Linux right now are there's a little thing telling the Intel driver to turn off VGA mode if if there's a legacy thing. And then there's another thing for that and another part of the Intel driver.
+
+We'll talk about Intel soon, but for pretty much all the GPUs, there's only a couple of things in here that are fixing some memory cache coherency issues, which like I said, these are other people that found these things out. I just kind of try to provide breadcrumbs to help other people. And then I kind of put things together. And then I have a live stream like this where I get to show off this cool stuff, but that's it. That's the only changes, which means we can probably, Let me get out of here.
+
+Okay. Which means we can probably get these patches or at least parts of them into mainline Linux at some point because some of the things are also for other ARM platforms, not just for Raspberry Pi. A lot of people say like, who cares about these things on Raspberry Pi? Well, first of all, there are use cases for GPUs on Raspberry Pis. Second of all, there's a large ARM ecosystem.
+
+And if we can fix the drivers and get them to run on ARM PCs, that's a good thing. It's a win, but the window is not readable. Here, I'll make it a little bit bigger, so hopefully you can read it a little bit better. It's always fun on live streams trying to make it so that somebody like on a mobile phone can see it, and you're not nuking somebody who's on a desktop with a giant screen. So I'll make this bigger.
+
+The other part of this, if you want to replicate what I have, this is all documented on GitHub. I have links in the description. But if I go make menu config, this is where you set up Linux, like tell it what to put into the Linux build that you're building. The only things I changed in here are I set it to the 4k page size, so it's normally 16k for Raspberry Pis. I set it to 4k for compatibility with old Windows applications.
+
+That's the only reason I did that. And then down in device, whoops, let's see, exit, down in device drivers, that's where you tell it like I have AMD GPUs, Intel GPUs, NVIDIA, that kind of thing. So if I go down here to Graphics Support, and here, I enabled AMD GPU, and then I did SI and CIK. Those are like older AMD GPUs. And then I did Intel Z Graphics, which again, we'll talk about this in a little bit, but I wanted to show how things are working on AMD because you might notice there's no problems, no latency issues.
+
+And I figured that the first thing that we always need to test on these things is will it run DOOM? and not just Doom, but maybe Doom 3, which is a little more advanced than the regular Doom. And I don't know if you'll be able to hear this or not. Let's see. I need to hit escape.
+
+So load. And then let's get in. I'll pop in. I played a little bit ahead so that I wouldn't have to be in like the little beginner tutorial but uh this is doom 3 from what was it does anybody remember was it 2008 or 2016 i don't remember but here's uh here's doom
+
+running very smoothly i forget uh forget what the how to get fps in here it's been a long time since i've played these old games but
+
+Apparently he's going to get possessed.
+
+Oh!
+
+So there's Doom for you. And of course people are going to say, "Well, of course it can run Doom. My toothbrush runs Doom nowadays." So the bigger question is, can it run Crysis? And that is going... I'm going to rely on Steam here, which yes, Steam runs on the Raspberry Pi just fine.
+
+If you download the latest OS, I might talk about this more later with Trixie. download the latest OS then you might have some issues. But you'll also notice that Steam might run but it's not the fastest thing in the world. It's not the most pleasant experience yet on a Raspberry Pi. This is overclocked at 2.8
+
+gigahertz and it's still a little bit slow. And I think if you look at the size of this graphics card versus the size of the Raspberry Pi 500 Plus, you'll realize why when your computer is like a tenth the size of the graphics card. Graphics are overpowered, CPU is underpowered. Let me pop in here. I should have just had this running so I don't have to wait for it. But I also have, I
+
+have a side view too in case the, I was having trouble with the PC getting all the video feeds into it. It started getting choppy and it's not choppy right now so that's good. But let's see. Someone says soon x86 will be just as fish in his arm that's a fun debate to be had and it's I don't think that that is necessarily a completely true statement but let's see here I'm going to go into Crysis of course and we'll run it as well and anybody who's watched this channel for a long time knows on I have it down here the giant ampere Thelio Astro workstation it runs Crysis very well but of course that's a server with 128 cores the arm cpu each core is faster than the pi so of course it should work there but this is a raspberry pi we're talking about and uh let's see yeah i don't care about the driver version
+
+cs go 2 i i never played that game so i would be terrible at it but it might be fun let's see i'm going to turn it down just a little bit
+
+Yes, Crysis, I believe this is single threaded and that's part of the reason why it's so slow. The bottleneck here is not the 7900 XT at all. The bottleneck is 100% the Pi. Let's see.
+
+See if we can load in here. It's not terrible though. I mean, I turned on an Xbox a couple weeks ago and I realized it takes like a minute or so before, from the time you turn it on to the time you're playing a game. So that's kind of... hey, UOAA is here. Yes, so while this is loading,
+
+good reminder, this stream's purpose is to raise money for the UOAA who helped me and helps hundreds of thousands, if not millions, of other ostomates through the years who deal with an invisible illness and deal with... sometimes it's a surprise surgery, sometimes it's something I had to plan, but in any case, I don't think there's anybody I've ever met who's like, "I really wanted an ostomy the day i was born but there might be one of those out there but anyway let's pop in here and there's a donate link over there so you can see there is there is a little bit of choppiness and i think this is with uh it's not in can it run crisis mode
+
+but uh everything's working and it's it's more stable than the first few times i was playing this Part of that work is from the community around box 64 and box 86. So, oh, I'm...
+
+I just realized I didn't have that on. Thanks to my dad and my nephew who are here reminding me. So, yes.
+
+But anyway, no issues with crisis here
+
+Except for the fact that it isn't running in super fast FPS but I do have let's see what the settings are that I have set on here options graphics so I have anti-aliasing and it's in high so DLSS is off there are a few settings that kind of flake out I think partly due to the driver being not like I don't think AMD engineers are sitting around validating everything on Raspberry Pis yet maybe they will at some point but let's see yes So anyway, Crisis runs, Doom runs, Doom Eternal also runs. So let's quit, yes.
+
+And we'll get over to there. And again, this part of the stream, I'm just trying to kind of show that these games, everything is stable enough to run. There's a couple of games that don't, and usually it's a weird compatibility issue with between like Box 64, Box 86, Steam, Proton. We're dealing with a few translation layers. and when you have that many translation layers, sometimes it's a little bit hard to debug things.
+
+And sometimes something is working one day and it'll break a few weeks later when there's a patch for a game. But yeah. FPC to Oculink. I haven't seen anyone make one yet. I would love to see that on a hat. That would be really cool. But yeah, it'd be nice to have a few more hats
+
+out there to get to get to these cards a little easier. I've always wanted to have like a Raspberry Pi just strapped to the back of a GPU because then you can just pick up the GPU and go and as long as you plug it in the power you're good. There is a new launcher. I don't I don't want the launcher. Okay. You can still see I presume the capture card on the PC is doing pretty good.
+
+I still presume you can hear everything. It's not loud, but it's hearable.
+
+Ah, someone said Minecraft. That's a magic word. Yes, we'll get there.
+
+Come on.
+
+Sometimes you spend more time in loading screens. I'm guessing that this friend request is from somebody who's watching this stream. So come on, we can do it. I do have a merch store, redshirtjeff.com, but as a reminder this stream is all about trying to give some money to the UOAA who helps people who have ostomies. So there's a link
+
+somewhere, if you're on desktop, oh gosh, if you're on desktop it's up there, no it might be down here. Tablet is like down there and I don't know where it is on phone. You just keep scrolling down and yes this is live. Hi, what are you looking at? I'm looking at you. Okay so here's Doom and why is it in this aspect ratio?
+
+That's kind of weird. Let's go to settings video. That's weird. I'm only seeing one. that wasn't how it was earlier so anyway but I do have on video where's I do have ray tracing turned on you can see it over here I don't remember where somewhere in here there's that setting I don't like the settings menu oh there it is ray tracing is on so this is with ray tracing and I don't know why I can't do full res but this is as good as we can do right now I guess let's go into campaign and I think we're in here continue yep yep yep yeah I would like to fix the oh there's an aspect ratio setting okay I didn't see that is that well I hit escape now I don't know what's going to happen. Can PCI slot power the Pi from GPU? No, unfortunately it can't do that. But I have
+
+been, like I said, I'd like to find a way to strap a Pi on the back of a GPU. And basically there's so much power in one of these power supplies and there's five volts. There's rails for five, 3.3, 12, -12, and yeah, so there's plenty of power rails to power Pi. You just need to figure out the right adapter. So it'd be cool to have like a PCIe to Raspberry Pi USB-C adapter or something like
+
+that. Oh, press space to continue. Okay, so again, this is not going to be the same amount of power... let me turn this down a little bit...
+
+so it's not gonna be the same amount of power as say... this is probably a pretty violent video game. I don't have like no blood mode turned on or something, but... whoops... ah!
+
+Can you tell I've never played this game? But anyway, there's not as much power as like on the Ampere workstation. That looks fun.
+
+Oh, there's like a tutorial here. Okay, well anyway, the point is that we're getting 30 to 50 fps on here.
+
+Reload, reload, yeah, I don't know. Anyway, we're getting 30 to 40 fps with ray tracing turned on. Of course it's on a 7900 XT and I would have a 7900 XTX, however the one that I bought had that weird issue with cooling. So I returned it and I told AMD basically, I mean they didn't give it to me, but I did email AMD and PowerColor, I forget who made that one, and said like, "Hey this this thing stinks." And I never got a response to that except for you can return it. So thanks. Someone mentioned Portal 2. Yeah,
+
+let's try it out. This wasn't working the first time I tried it. I don't know if it's going to work or not. It worked fine on the Ampere workstation, so I don't think it's an ARM compatibility thing. And yeah, see that's what happened. It like loads to full screen, then it
+
+goes away. So there might be a setting for that, a tweak somewhere. Ultimate Epic Battle Simulator 2. Somebody mentioned, let me close out, well, you know, I'm not going to close Steam because it takes so long to open. I'll just show this. It did work yesterday when I opened it up. This is another one
+
+where the CPU is a massive bottleneck. It's gonna crush the pie basically. Yes, I also hope that Arc lives on it. I mean, here's the thing: AMD has had open source drivers for years and years, which made this whole thing kind of possible, whereas NVIDIA kind of just open-sourced them recently, and they didn't open source everything, and they're not... I have to give them some credit. They're doing a
+
+a good job, but they're not on AMD's level in terms of being involved in the community and all that kind of stuff. So it's nice to have more competition is what I'm trying to say, and if Intel goes away that would be sad. So let's play Ultimate Epic Battle Simulator. If you ever wanted to have the the Orcs of Isengard versus the Ducks of whatever, this is the game for you.
+
+Chuck Norris versus Automatic Shermans. One million of them or a hundred thousand? you know a million cards being troubleshooted in the stream so this one is the 7900 XT there's a reason I started off with this one you might notice on the screen here I also have a this is a 9070 XT you gotta love how they change their numbering scheme 9070 XT I think this is with 16 gigs of RAM or 12 gigs I don't remember this is AMD's newest lineup this is their like previous generation, but this one has more AI processors, more of whatever their stream processor, whatever that is. It has a little bit more grunt than this one, I mean it's a bigger cart anyway, and it has 20 gigs of VRAM, so this is a little more powerful and it uses more power. So let me go back over here, skip, and let's start, and I did this, this took a while to load up, so I'm gonna do, let's just do 5,000 verses. We'll do 5,000 versus 10,000 to start. I think that the
+
+Roman soldiers are gonna win this one, but while it's doing that too, let me get into home assistant. So you can see, well you can't see from there, let me switch to the side cam. So you can see that this is using between, it looks like idle is around... idles around 20 to 30 watts with this setup, and maxed out it's like 100 to 180 watts,
+
+something like that. So, and I know somebody's going to ask in chat, this I have set up through a third reality Zigbee smart outlet under the desk that is configured through Home Assistant, and I have an Apex Charts card, and I think I posted on my blog or somewhere about this setup, but that's how I monitor my power usage over time. So nice. And if I wanted to, I could hit this button and turn everything...
+
+Oh, don't do that though. I could turn this off and everything would just shut down and that would be sad. And this, this is interesting. I've never seen this before.
+
+Maybe it doesn't want to see us competing the ducks against the soldiers.
+
+But we'll see if that's still going. I do have over on here... I do have the ability this is something I didn't even realize nope I don't want task manager that's weird windows 11 bugs I didn't even realize you can ssh from here so ssh pi at what is it pi 500
+
+what do I call it plus dot local is that what it is yeah here we go so you can ssh from windows in PowerShell which is nice I think that was a feature a couple years ago I just never tried it out, but it all works well and all the keyboard shortcuts and everything, so that's nice. So I can say "Btop" and from over here see what's going on on the Raspberry Pi over there. And it looks like... I hope you can see me... yeah you can...
+
+Oh goodness, that's window management. It looks like it's not doing anything. So you can see the UEBS 2 is doing nothing, so I think that we're locked up on that. and let's see if we can close it let's just hit stop here okay well we might not want to do that today maybe the ducks took over and don't want us to play that but let me close out of this because that a steam and we will do we'll do a little Minecraft and you can't see it right now so let me go back over here and I'll hide this and switch back here so I can see what's going on. First time messing with the kernel compilation. I have a shirt for that, you know.
+
+This won't be your last time, I'm sure. Once you do it once successfully, it's kind of addictive in a weird way. Yeah, btop is awesome. That is btop, in case you were wondering.
+
+btop, wowo14b, that is btop. Somebody can post btop in there. But it should be an install away on anything. So I'm gonna do, what is, I'm using Prism Launcher. Prism Launcher to load Minecraft.
+
+GPU accelerated Minecraft, of course.
+
+And hopefully it loads in soon here. And as with all these things, the Raspberry Pi CPU is definitely a bottleneck. I don't think, if you were being practical about this, you probably wouldn't pair up 7900 with the raspberry pi but let's go in here single player let's go into the game that i had set up on here minecraft uses some cpu but it if you if you render things at great distances there is a gpu component to things too but you can see it's still loading in chunks here this this is the cpu holding back the gpu we're loading stuff in and the pcie lane the single lane at pc gen 3 and the ability to get the ram back and forth over the bus but once it loads in we're playing a pretty pretty good frame rate here where's what is the frame rate f3 yeah there we go so we're getting where are the frames let's see 45 55 fps this is with all the settings on like pretty high oh gosh let me turn off those really quick video settings graphics fancy um you know here's the settings for you if you are a Minecraft nerd and know all these things. But yeah, back to game. Yeah, it's working well. If I turn down the settings, I can get a smooth 60 fps forever,
+
+but I'm not going to do that right now. But everything works well, and there's... what used to happen is there used to be some rendering bugs. So some things wouldn't render
+
+right, or some textures wouldn't load, or we'd have memory issues. That was the thing that was plaguing us before this really nice new patch that we have. Thanks to YangHaku so much for that. Here's some lava and I think it would be a great way to finish this out by just jumping into it.
+
+Okay, so we'll get out of there. So there's Minecraft and I tried getting RTX Minecraft to work and I was having some trouble with that. It's always thrown me for a loop and I think that that one... it seems like some of these RTX optimized games are really built for Nvidia.
+
+so i think that some of those won't work that great on a pie but let's clear out of here and what else we got okay so another thing before we get to the intel cards a lot of people one of the practical use cases and the practicality can be debated in the chat craft a pumpkin pie no i'm already out of it right now but one thing is ai workloads or llms where where you can have like a chat. For me, I hate the fact that like Google already tracks everything that we do. And pretty much all companies that have free services, the free services are basically tracking your data, aggregating your data, selling your data. And guess what all these AI companies do? They track your data, they aggregate it, they put it together and they bundle it up and they sell it.
+
+And they're basically selling you as a product to advertisers, that kind of thing. Anyway, a nice thing about having GPUs like AMDs that can be run with llama.cpp using open source tools is you can have your large language models running locally with hardware you control and nothing goes over the network. So that's the demo that I am planning on hopefully making work here. So I have it running in Docker.
+
+So Docker start, what is it? OpenWebUI.
+
+Docker. And then what is the command? I pasted the command here because I would forget it on the stream for sure.
+
+And here I'm going to start. No, I already started WebUI, so I'm going to run Llama server. I already installed Llama, and I have a guide on my website for this. So, oh, I need to go into Llama.
+
+Okay, so that's going to load into the GPU. You might see the GPU fan spin up at some point when it starts doing a lot of work there. In fact, the mouse just froze for half a second. So it's loading that in. This is a small model, 3B, but just to show it working.
+
+And the guide for this, if you go Jeff Geirling, LLM accelerated GPU, this is the blog post for that. I don't know if I linked that in the in the description, but you can find it. It's just go here or search for LLM's eGPU Raspberry Pi Geirling. That's what I usually do. So here we have this web UI running and I can say, let's say, what is an ostomy?
+
+And this is all running locally. You can see the fan spun up because it's using a lot more power here. And we can also check the power usage here. So let's go over here.
+
+So power usage, less than 140 watts for that, for the small model here. but i also loaded up a much larger model and yes the 3b it's llama 3b that's easy peasy nobody cares black screen oh no my camera turned off oh no it overheated the bane of sony cameras
+
+yeah okay there we go let's see side camera so i was showing but in the comments someone mentioned yeah 3b it's tiny a small model but this is a 30 well 130 watts or 140 watts was about what what that took but if i go if i go back over here i'm going to close this out and we'll run a a little bit larger model i have let's see what models i have on here
+
+We can do GPT, so the chat GPT open source model, 20b parameter model, 20 billion parameters. This will take a little bit longer to load in.
+
+And let me switch back to the Pi camera. It lived again with the message and I hit OK, destroyed the battery. How about we turn off? Oh, yeah. Well, I'm going to turn off the side camera for a couple minutes.
+
+Yeah, let it cool down. Hey, Dad, do you want to say hi? Say hi to the stream. Joseph. This is my nephew over here and Godson. He actually was the reason I ran this morning
+
+out where I ran. They had a 5k there and they're like, hey, you can run with us. So that was nice. I did not run. Yeah, you didn't run, but you could. I could. Maybe. I don't know if you've done one.
+
+You mentioned something about liquid cooled camera. Well, that's the thing. Everybody tells me I need to get an FX3 or FX30 or something but yeah this dad do you gearling engineering yeah subscribe over there a lot of fun opportunities for us with that channel right now you know there's just a lot of things on the pile I'm trying to get time to head to these places and see these people and bring some interesting stuff back it's it's very fun yeah and I said stuff once just for mom so she could criticize me. I've had like five or six years of this now so I know some of my verbal tics and things but it's it's funny when you hear yourself talking you hear all these things that you say and you're like oh I shouldn't say that like he says stuff I say so a lot so blah blah blah things and stuff yeah yeah things things you know things all right yeah okay so it looks looks like this is almost loaded in and goes out of here but you can see it's taking a bit longer one thing is the CPU is is not like the CPU itself is not a bottleneck but the PCI Express bus can be a bit more of a bottleneck in this case and I have yes I do have in top installed to show some of this but the problem is in top the version in Debian was not working with this setup that I have going on right now for some reason I didn't have time to compile it before so sorry about that. And the AMD GPU top works, but I, again, didn't have time to get that running because I have a story about that.
+
+But let's see, here's a... Remind me to tell you that story. Let's see, open web UI, and we'll see if it's loaded.
+
+GPT. So let's ask it a good question. I think a pertinent question today is, can you run an AMD GPU on a Raspberry Pi? Now this is ChatGPT's latest and greatest open model GPT OSS. This is the 20B. It's the smaller one, but it should know a lot of stuff.
+
+So let's ask it that and see what it thinks. Context. It uses an ARM CPU and integrated GPU. AMD GPU requires drivers. AMD GPU uses x86.
+
+Obviously that can't work. Oh, no, unless you hack something crazy like using a GPU virtualization, which I'm not doing, this doesn't work. okay well what if i'm chatting with you on such a setup right now ai i mean people say ai knows everything uh oh i think i i exploded its context or it just got really angry let's delete this chat all right i don't think that it wants to go down that path um let's do a new chat and say uh who is jeff earling because obviously they have to know something okay ansible tutorials ansible roles ansible for devops ansible for the absolute beginner no i've never done anything like that i'm not a dev advocate but i do advocate for developers
+
+hmm well i mean it's it's really tooting my horn here but let's see jeffrey r gearling that's definitely not right. It does have my GitHub and my website right, and I never wrote a book called Ansible for the absolute beginner, and I wouldn't call myself a leading figure. There's a lot of people that know a lot more about me, but thank you for thank you for tooting my horn here. But yeah, I don't know. Every time I test these models, they get better and better, but they're still, there's always these little itty bitty things that really show me like you can't trust the output.
+
+you have to, I mean, you can trust a little bit, but you got to verify, because obviously, I never wrote a companion Ansible for the Absolute Beginner series, and I don't run the learning site ansible.com/learn. I've never helped with that. I mean, I've helped with Ansible documentation, but not the Learn site. So yeah, a lot of fun stuff. And I don't do anything on Slack anymore.
+
+I only open it like once a year when I remember that I was on some Slack channel. So yeah, anyway, there's there's chat tpt local open model. I've got a portable cooler, Jeff. You got a portable cooler for your fan. What was that one? For your camera.
+
+There we go. Now it'll keep the Sony camera cold.
+
+Good idea.
+
+How many AI tops? So tops is a funny funny thing. Does it mean tops at single precision, double precision, half precision, quarter precision, TOPS is completely meaningless, kind of like megahertz was, I remember, 20 or so years ago. Yeah, I'm sure that thing is... I think I have the the silence filter on here, the background noise
+
+filter. And somebody asked about Trixie too. But TOPS, I don't like talking about TOPS because it doesn't mean a whole lot. You have to say, like, it does this many TOPS with all of these settings and with this thing on the system because everything is different there. It's not like saying you got a certain amount of gigaflops measurable by double precision HPL or something like that.
+
+So anyway, a little tangent. Somebody asked if this is Trixie. One tip is if you see this background, which I'm just pointing at the air to you, but if you see, oh, that camera's still dead. Let's turn that back on. So if you see this background with this little guy on the boat thing, This is Debian Bookworm or Raspberry Pi OS Bookworm, and that's the default background.
+
+We might get to Trixie today if we get some time. But anyway, so that's AI on there. Do I have anything else to show on here? One question some people ask is, how hard is it to get Steam on here? I'm using Pi Apps, which is a really awesome community project that has tons of scripts and tons of compatibility shims and things to get everything working on a Raspberry Pi.
+
+It has tons of different installers so that anything that's not just a package install on the Pi you can get on here. And yeah, I might want to go here so you can actually see what I'm doing. But it has under games down here, it has Steam and all you do is you click install and you're done. Now this the reason why I'm not on Trixie yet is because Pi Apps, this is the main reason, Pi Apps is still working on compatibility with Trixie because they have a lot of scripts that kind of put things together the right way. So there needs to be some changes to get all that working on Trixie correctly.
+
+You could do it manually, but it takes a lot longer to do that. Anyway, that's Pyops, that's Trixie, and that's this card. Now, I'm going to show you a few things that happened like this. For the past few weeks, I've been working on all these cards and at various times fixing a few other things. Compared to like a Halo 8 or something, someone's asking about tops and precision and all that.
+
+This is going to blow a Halo 8 way out of the water. This is, it's a full GPU, unless you have one very specific thing built just for that halo. So, anyway, I am using SSD over USB right now. I'm not using the SSD internally at all. I guess some people haven't come into the, probably came into the stream a little bit later.
+
+I don't know how many people are watching right now. I can't see on here. Oh, nice. Okay. I don't want to shake an app to debug, no.
+
+So I'll show you the setup again. So this is the Raspberry Pi 500+. Inside of here I have an Oculink to M.2 adapter that's plugged into this funny cable that goes over to the dock. And I took out the SSD and put it into this.
+
+This is just a little M.2 docking station. It's USB 3. So that makes this a tiny bit slower, but it gives all the bandwidth to the GPU. And you can use GPUs through switches, but I'm not going to try that on here.
+
+it really kind of stunts the performance for transferring tons of data over there. Anyway, that's that. And there's, I see you. You don't look like that, probably, but that's what I see when I look up at you. Anyway, here, let's get back to the Pi, I think.
+
+No, actually, let's go back to side view, because I'm going to swap this out. So I'm just going to shut down the Pi.
+
+And let's see, that's shutting down. I've noticed sometimes if I do a lot of stuff something in the driver must just sit there waiting because it'll do this It'll go to PlymouthPowerOff.Service and sit there for like 10 or 20 minutes And then it'll shut down and I don't want to wait 10 or 20 minutes for that. You're in the ICU I hope that you are getting medical attention and I will say a quick prayer for you. Thanks Will I be at open sauce? Oh, I sure hope so
+
+Logitech K400. Yes, this this thing if you ever see any streamer or I'm on this camera. If you see any streamer or youtuber or anything, these things, I have three of these around the studio because they're just too handy. I hate the trackpad, but it works in a pinch. Anyway, the K400. I bought one of these like 10 years ago, and they still make them to this day,
+
+and I don't know why anybody makes like a really nice version of this with a really nice glass trackpad. If they did, I would buy it in a heartbeat. Anyway, yes, it's great for Homelab because it fits in a 19 inch rack nicely. Zero days since free compiling Linux. Yes, where I'm on the wrong the wrong mouse here.
+
+OK, so let's unplug this. I'm just using HDMI for ease of capturing. It's not because it's better. It's because my capture card is HDMI and doesn't do DisplayPort. But most of these cards require PCIe power, and that's why you have to have an external power supply, which this guy is kind of hot, I guess, from doing all that AI stuff.
+
+and you should probably turn it off before you unplug power but do as I say and not as I do yeah get out of there there we go and this card is one of the ones that I'm most nervous about just ripping the socket off because it's like five pounds or something this card's getting more and more massive oh if is it saying a battery thing okay all right good yeah it gets hotter I was hacking a little fan on it. The Sony FX3 and FX30 and those nicer video cameras, they actually have fans because they're like, huh, if you're doing video, you might need a fan. I mean, this thing is, I mean, look at this thing. I'm on the wrong camera here. Look at this thing. It's massive. It's ridiculous. This is compared to, like, this was a workstation
+
+graphics card back in the day. Look at that. Just the size of it and the little fan on it and and by the way this does work with this patch as well these old old cards so if you wanted like to have an extra monitor or extra two or three or four monitors on your pie this is the way you could do that for cheap these things are like 10 bucks on ebay that's i think that's a 74.50 or something like that i'm going to set this down so i don't drop it
+
+get this on there you go and then you had like this one what is this one it's a sapphire
+
+rx 580 8 gig so even a card like this wouldn't be the worst to pair up with a pie because it the pie is not going to be as much of a bottleneck on it okay i even put a label there because i always forgot what this one was but yeah there's a lot of cards that are out there that you might You might even have one of these laying around if you're a PC enthusiast. And you could use it for small language models. You could use it for...
+
+One thing I like is Home Assistant has their Home Assistant voice system built up. And you could use one of these to get responses in like a second using a really good model. Less than a second, like 100 milliseconds or something. Let me put this back over here.
+
+But we're going to go to the newer AMD card. And I'll show you a problem I've been having. Hopefully I don't drop that card. This is the 9070 XT with how much RAM? I don't remember, was it 12, 16 gigs?
+
+Okay, that's not bad. So that's another reason we need competition. AMD is like, we'll release a mid-range card with 16 gigs of VRAM. And Nvidia is like, we'll release a mid-range card with like eight gigs or 12 gigs. It's like, come on, seriously.
+
+Okay. Hello, Brian. And while I'm getting this all plugged back in, if you have not, if you weren't here for the beginning of this stream, this stream's fundraiser is for the UOAA who helps people who have ostomies. Because today is World Ostomy Day, and they helped me a ton and it's a condition, it's a surgery that people have a lot of times without even thinking about ever having it because they're in an accident or they had cancer, colon cancer or something. So this organization is awesome for helping people with ostomies and consider supporting them and helping people who were like me in my situation and had to decide like how to approach it it's kind of a scary operation but anyway this is plugged in now let's turn it on okay and let's boot the pi up and here i'll show you what's going to happen here there's no signal right now because booting up yeah the b770 i would love to see intel make a few more nice cards and we'll get to there i'm hoping uh i'm hoping around three o'clock we'll we'll get to that if if you need to take a little break and you don't care about AMD anymore.
+
+You just want to see Intel.
+
+Yeah, I've switched over to ZSH for my Mac as well, once Apple moved. Vince, if you go back to the beginning of the stream, you can see it is playing Crysis Remastered.
+
+Some of these things you're seeing the first time because, like with steam it takes like four hours to download a game so i downloaded some of those games yesterday and all i did was i tried to pre-cache as much as i could
+
+so steam on a pi5 with pi apps if you try it on tricksy it's not going to work right now but it should soon there's an issue in their github thank you for those donations by the way i'm seeing some come in and yeah vince well at least you're here now but let's see so we still have no signal out of this and the problem is that this card needs a newer version of Mesa. Mesa is like the graphics library for Linux and this card needs a newer version that is not available easily on Bookworm, on Debian 12. You can compile a newer version and I got that working but it kind of broke some other things or you can install from back ports but that also messes up some things but I'll show you that. i'm going to shut down the pi which i can't do it from here so let me pop over to the pc we'll do it through ssh so ssh in there uh does the pi boot it up
+
+why why are you not here what has happened okay well i'm just going to hard shut it down and i'm going to switch over you might have noticed if you looked closely while i was doing my work here. I'll switch back to the iPhone here. We'll see if you can see what I see. That's still on PC. There's main iPhone. There we go. Okay. So I have some of these things you're
+
+seeing the first time. Other things I've been testing, like each one of these is a different build environment, whether it's 6.15 kernel with bookworm, these two, or Trixie with the 6.17 kernel a special custom Mesa compilation there with, I tried different versions of Mesa. So yeah, we're going to switch over to this one, which is a clone.
+
+I basically cloned this image, the one that we were just working on, and I put it onto this card using rpy clone, which you can find at rpy clone.jeffgearling.com. It's rpy-clone. And we'll turn on this guy and we're plugged in, right?
+
+everything should be good I see the fan spinning so let's turn it on okay let's go back to main or we'll go back to PI and let's see if we get a signal now another thing is I had to change I had to change this whole setup for how the monitor gets its signal from there through the capture card I had another capture card that was running and it just stopped working this morning of course after i had tested everything else and you you i'm i don't know why i'm even looking in my phone right now you can't see that uh here we go okay so this works so the reason this works is because i oh well it worked there it is okay we're back uh so the reason this works is because i compiled a custom version of mason if i say gl gl glx info if i run this no i want to do dash b i think. So you can see I installed Mesa 25.0.7. This is from Bookworm Backports, and I have a guide for that on my GitHub, which is linked in the description below.
+
+I had to do that to get this card working because this card was not supported at all in the version that shipped with that still ships with Bookworm, with Debian 12. So the annoying thing is when you have like a newer graphics card with an older library on an OS that's more stable, that's the world of Linux. You can't just install the new driver and everything works. There's the driver, there's the Mesa library, there's maybe if you're using Steam and Proton, there's those things. So it can get a little complicated and that's one area where Linux could improve a little bit, I think. But anyway, it does work on here. However, if I go into, let's say,
+
+I didn't actually try this. Does Doom? Oh, Doom actually works here. So here's Doom on the 97 EXT, Doom 3, I should say. Load game, do we have it?
+
+Yeah, so that's working.
+
+Does the GPU adapter have power output? Yes, it does have a power output, so I could probably power the Pi from there with some sort of weird adapter, but I'm not doing that.
+
+Anyway, oh, this is a later... It must have...
+
+Oh, here.
+
+There's that guy.
+
+Nope. Yeah, so anyway, there's Doom. So that does work, and I don't remember if that's using OpenGL maybe.
+
+Uh, yes. Okay, get out of here. Let's see if anything else is working.
+
+SuperTuxCart. on the other one, but SuperTuxCart of course is extremely optimized under Linux. Although I don't know if this one works either. Let's check. If I go to options, graphics, let's turn up everything, go to full screen, 1920 by 1080, apply.
+
+Rock'em. I have not tried Rock'em yet. I've only tried Vulkan because Vulkan is much more universally compatible with everything. Rock'em is super annoying even on x86. So I have not tried Rock'em. Let's see if this works, if it's accelerated or not. No, it does look. It's smooth. If you do
+
+this, if you try doing this on the Pi at high resolution, it's going to be very choppy. Let's see. Start. Oh, you know what? I didn't turn on FPS. Oh, it is on. Yeah, so 111 means it's more FPS than
+
+this game than this game can ever supply so and I keep pointing at the screen but it's not like you can see me pointing at the screen I should probably look on here because there's less latency actually there's probably about the same amount of latency so anyway there's there's that if you're getting 111 fps that means your graphics situation is way better than super tux card I've never found a way way to get past that. And MangoHUD, I had problems with that earlier, so I uninstalled it and I just never got around to putting it back on. But yes, MangoHUD is like the Linux way of putting those graphics stats on the side.
+
+Yes, yeah. Rokkam is getting a little bit better, but I think that's partially because AMD is finally like putting some momentum behind it. It was crazy that it didn't even support like a couple year old GPUs for a while. But I don't know if steam is do i have steam and let's see if steam works on here maybe maybe this is all working now and i just was last time i tried this card with bookworm and mesa 2507 i was having a lot of trouble so i don't know if just rebooting it this time is helping do you guys need to leave okay
+
+so i i have a fan over there like a little usb one but that thing is not very uh well when i'm not on the side one we can just turn it off this is also a new camera my old my old sony would not overheat but i think this one has like the xx speed 7 or whatever the the sony processor is the newest one and it gets a lot hotter i don't think steam is going to run so it looks like that's
+
+yeah steam steam seems to have killed itself so yeah that that was one thing where the if you run the later mesa version on the older os there's little issues like that that i don't know i haven't debugged it too much but uh that's something that you'll run into but everything else i mean let's see if the ai stuff works mama um what is i have the command in here this just to see if it works i don't need to run gpt 20b on this one because we already did that on the other one but is this going to work and i'll make sure dr start
+
+okay so it's loading that in and we'll ask it uh what let's see what should we ask what should we ask the AI? It's only on a 3B so it's not that intelligent, but what should we ask it? Nope. Why is this not working? Here we go, it's loading.
+
+PPC64. I have a Mac, a Power Mac G4 in there, which I'd love to think about installing some other Linux versions on that too. Okay, write a recipe for cinnamon cupcakes. Write a recipe or cinnamon cupcakes.
+
+There you go. I don't know if somebody wants to try that out. That's a lot of ingredients. It's not too much I guess, but it's working and we're getting on llama3b 70 tokens per second with prompt processing 262 tokens per second using web UI on here. This is completely unoptimized, but it is running on that card and let's check the power usage that is one thing that's interesting to see i'll turn this camera back on so we can see it uh where's my home assistant nope i don't want to debug the app power usage so if i go in here and do a new chat and we can see so idle is between 15 to 30 watts and again that's on my third reality smart Zigbee outlet using home assistant using an apex chart in the UI if someone is interested in that but if I run another question like how do I bake a chocolate cake so doing that we're getting
+
+this takes a little time to update 150 watts so this this uh gpu uses a little less power but it's a little slower than the 7900 xt and it has four gigs less vram so that's uh that's how things are uh but anyway so that works and i'll get out of here let's shut this guy down
+
+and we'll see if it does this the plymouth power off service thing okay that time let's see it shut down. I don't know why some cards it just sits there, or it could be some software I run or something. But while I change this out again, if you have the means and you would like to support an organization that has helped me and helps a lot of other people go through a challenging part of their medical journey, if they have colon cancer or if they had an injury in their abdomen or if they have Crohn's disease or IBD. Ostomies are a challenging thing to go through and if you have the right support though it's a lot less challenging, I can tell you that. And this is World Ostomy Day today so I have a fundraiser over in the side which is somewhere between there and down there. Or if you're on a phone just keep scrolling down. Anyway so this is, that was this
+
+9070 XT. I'm just going to set it up here. I'm extremely ESD safe. I know everybody's very worried about that. And I have other cards too that I have tested with this patch. So I've,
+
+and I have an issue on GitHub testing the W7700 Pro 16 gigs, RX 6700 XT with 12 gigs. even i think this is these are some of the oldest cards that will go uh these are some of the oldest like i'd call them oh you can't i i'm not even showing there we go these are some of the oldest cards that would be practical i think like if you i wouldn't go and buy one of these because it's not worth the power that you're it's not much power that you're using but it's not really worth the effort but if you have one of these laying around and you wanted to do something fun with it it works with vulcan so you can get some acceleration but there are the older the card the more little issues you can run into with it and yeah jellyfin transcoding all that kind of stuff although amd gpus are not necessarily the best for that stuff but let us get to intel it's uh it's wow i'm like perfectly timed for that i said three o'clock and we're at three o'clock so intel the only two cards i have are the arc 750 a750 this guy and the limited edition whatever that means and i have a sparkle uh b580 and this was actually one of the viewers of this channel was very generous this was when these were like impossible to get he was like at micro center found one bought the thing and gave it to me so thank you so much for that i've put a lot of hours into this card already but we're going to try both of these and you will see some of the some of the issues that we have intel actually doesn't support arm whatsoever at least amd acknowledges arm exists but intel at least in the gpu driver still has a flag that says like x86 only or something yeah we used to have to disable that but now you can just work around it i think the new v2 version of the driver the latest version doesn't have that silly silly restriction but we'll start with the a750 because it's the slightly older card and sometimes older means better supported other times older means doesn't have the things that make it easier on a system like which is more exotic. Not exotic in a fast way but exotic in a strange way. But I always screw these in because I don't want these to rip out that socket and I only have one of these docks. I should buy in a second one since I use it so much. The A750 is also weird because it has one full plug. Let's do
+
+this side view here has one full plug and then it has like a plug with just six instead of eight pins oh i forgot to un- always switch off the power supply before you plug in cards fans are going now which you can see here not well but you can see it a little bit i hope the external pci dock is from jmt i think i don't think i linked to it in the description but but I link to it in many other places. If you go to my blog, there's places that have the links for all these things. Also on the Pi PCIU website, that is definitely linked in the description. I have these kind of things linked. But that's on.
+
+It shouldn't have been, but now it is. Let's turn on the Pi, and we'll see what happens. I think I know what will happen on here. I was going to try this on my first clean version that didn't have the updated MESA, but you can try it on this one and see what happens. yes someone mentions uh roll your own tech
+
+yeah oh yeah the the camera or the yeah that camera gets hot this guy
+
+i don't have my roving camera setup or anything but this is the uh the minis form deg1 yeah that's what it is it has all these switches on the bottom it works with like half my gpus but not all of them so that was weird and annoying and it's very hard to know if it's a gpu thing a driver thing or whatever and this just added one more variable this dock works with all of them never had an issue if if it doesn't work i know it's not the docs problem this one works with like i don't know six out of ten cards that i try with it so if it's not that reliable i can't rely on it for that but if i find a setup that i want to have compact the nice thing is with this you screw the the power supply right here the graphics card right there it's very compact and very nice this one you can see it's a little janky
+
+but we are now to the point where you can see the problem here copy what that's what no intel seriously it's not copy protected let me go to the side cam i'm just going to zoom in on this and show you what's actually happening if this camera doesn't fail me can you see
+
+I might have to go to the iPhone to show you what exactly is happening here.
+
+Let me... You can see it. Well, some of you can see it if you're not on a...
+
+Not on like a...
+
+Oh, focus is bad on here. Let me just... I'll just do the iPhone.
+
+The iPhone will be easier here. Go back to this view. Yes, you can see the blinking cursor, but I'm going to show it to you close up because like on a tiny phone or something. It's nice to help you out. Okay, so you can see there, blinking cursor.
+
+What that means is everything is working except for something in the driver stack or Mesa or something like that, or the window environment. And in this case, I know it's the window environment because this happens on a lot of cards. And what you can do is hit Alt F2, and that brings you to the command line. So I'll switch back over here. And I'll zoom in a little bit.
+
+So because of, for some reason, Intel is marking a flag in the HDMI signal that says it's copy protected, which is dumb. So because of that, my capture card is like, oh, I can't capture that. It's like, whatever. Oh, and this is totally blurring in and out. Hold on.
+
+Let me fix that. Meanwhile, I'm sure this camera is gonna go. Okay.
+
+Yes. If I say "py" and the most secure password in the world, which is "raspberry", that's what I use for the default for these systems that I'm not going to actually put into production. Let's see. So if I say "labwc-py", that is the compositor, the window manager. Ooh, is that?
+
+It's a little choppy. Sorry about that. And these are all in 6.15.y, the RPI 6.15.y.
+
+I have 6.17. I'll show you that soon. can see that it says iris driver missing well you probably can't see that but trust me it says that i'll go back to the iphone here and show you this is the message you get and again this is all on github as well if you want to read all the read all the stuff that's happening it says iris driver missing and it can't focus that well but yeah anyway so that's what it says and what we can do on these intel cards with this particular setup is we can say start x and this is the x x window system this actually works fine and it used to be that this would be super weird and there'd be artifacts and glitches but after the patch from yang haku that fixes the cache coherency issues on the pi now this all actually works well i can even get into a browser i can go to youtube.com slash Jeff Geerling again it's a raspberry pi so we're not talking like 7900 XT 7 whatever the this isn't like the fastest AMD driver CPU and all that stuff in the world but that's the problem Wayland is not working right now as far as I can tell on these Intel cards with this version of uh, Pi OS with kernel 6.15 with Mesa 24 or 25. Uh, oh, this would be trippy. I wonder if this
+
+works. Mesa 24 or 25. Ooh, I don't want to start like an echo storm in there, but hey, it did work. Anyway, so that's, this stuff works, but it's in X windows, which means that some things don't work. I think, I think SuperTuxCart won't use the GPU and it could be a driver issue too, because see, we're full screen again.
+
+Let me turn down the music a bit. So full screen, everything's set up. And if I go back and do single player, you can see, see this is using the CPU, the, I think this is using CPU graphics, so it's even slower than the built-in iGPU. It's just, it's painfully slow. So you'll see, this is a quick way to tell if your driver is working or not.
+
+If you try playing a game and it does this, there's Clippy. So yeah, notice that this is not as smooth as it was earlier playing on the GPU.
+
+And even getting out of here is going to take a little time. FPS, it can't even calculate because it's so slow.
+
+Okay, quit. Yeah, so that's the problem that this is where we're at with kernel 6.15 on Raspberry Pi OS 12 or Debian bookworm. And so what I've been doing, so I'm going to shut this down. Oh, and also the B580 requires a newer version of Mesa as well, which there's the B580.
+
+It's kind of a cool design. I don't know if you like blue. That's one of the bluest cards I've seen.
+
+Let's see. That's shut down. this time I'm actually going to... let's turn off... no focus... okay I'm actually
+
+going to turn this off this time so that I don't accidentally blow up the video
+
+card. You know, Pi-hole doesn't actually block the ads on YouTube, at least not all of them. You still need plugins for that. I hope that that statement didn't just this whole stream. Am I going to the city match? I believe it's in Austin. Is that
+
+where they're playing, Dad? City? Yeah, so I think they're in Austin. I am not going to unfortunately be flying down there today. That'd be fun though. I've never
+
+seen a city game in another city. Ow, that hurt. Okay, that guy gets hot. The older card. Yeah, I remember some of the things we're saying these are not the most efficient GPUs and the fans also the way the fan stack was set up and all that was not incredible so i noticed on this one there's there's a pass through here for air to flow through i think they call that a flow through design something like that okay
+
+i'm not going to say the words of what 300zx turbo said because if i do i'm sure that would trigger demonetization for the stream but yeah no hard feelings to anybody who wants to remove advertising from their lives i also noticed this card only has one 8-pin plug which means it doesn't draw quite as much power that's for sure and it's uh we can we can always verify that with home assistant later but let me do this and i'm also going to switch out let me get back to the iPhone here. iPhone stream connect connect there we go okay. I'm also going to switch out the boot drive so my highly complicated system of boot drives here. So we're going to switch up to 6.17.y
+
+and this is a custom compiled version of Mesa, I think 2507, that I even explicitly put Iris into, into the build, so it should work, you know, this should be the way that it is, but I found that there's either a bug or something funny missing somewhere, because it won't quite work, so I'm going to turn this on and why is my the white balance is all over the place here go back to 4000 silly thing there we go nope yeah no go away okay and then boot it up see now the colors are nice now that's a white white and a desk desk maple I don't know what color that is
+
+and we'll switch back to side view for the camera that might overheat again
+
+and i guess it's a good time every 15 minutes or so to say that this stream's purpose today is not only to assess all these cards and show you where things are at but also to we got the blinking cursor to raise money for the ua so if you look over here or somewhere along here if you're on desktop or tablet or if you go down on phone you can donate to the ua who has helped people like me deal with their ostomy help them have a good support system and the best thing for me is like the local communities that help that sometimes people visit you in the hospital that kind of $519? 1,006 people watching. Oh, well hello to the 1,006 of you. And if you're watching the stream after the fact, you can still donate. I'm going to leave it up.
+
+Anyway, we got that blinking cursor again. So again, I'll go... On this one, it doesn't do the content restriction.
+
+Of course, now my main camera's dead. Hold on a second.
+
+Oh boy.
+
+yeah yeah you could just do I almost grabbed the the Hacksmith blowtorch
+
+yeah now it's gonna blow up from being too cold and then I'll twist the metal Yeah. Okay. Now we're on there. Nope. I'm getting the temperature warning on this one. I'm going
+
+to turn off the side camera. Oh no, my color balance is way off. Oh, okay. So maybe, maybe people are right. I need to buy the more expensive Sony cameras. Apparently I live stream once a year
+
+at this point. So these are all growing pains. No, thank you to Katie and Michael T. Rose and anonymous thank you for your donations yeah i don't know what's going on maybe i burned out one of those sensors in there but the nice thing is now you can see that there's a blinking cursor and it's still intel so i don't know what's up with that maybe it is uh an older kernel thing or who knows what but if i say alt f2 now i can log in as hi with raspberry still using that highly secure password and if i say labwcpy that says iris driver missing nope the camera okay turn that one off for a little bit let it cool off
+
+and just leave it and then i'll uh you can't see me i'm sorry
+
+well but i'd have to set that up and i'm not i'm not that much of a streamer that i can sit there on the fly and do that but I can do let me just grab I'll grab the secondary camera sorry you're seeing black right now but that's because I'm recalibrating copy screen sharing paste and oh I have that camera turned off too ah okay oh I'll just remove that yes okay well I do I you know I set this thing up for for this kind of it's not an emergency but if all my cameras died this is my last hope so i can set this up like this yeah the phone is going to overheat okay i got the phone here let's get it set up and uh turn that off okay white balance we're going to set to 4 000 so it stops messing things up. Yeah, plus the donations are going really well. Oh yeah, everybody donate. Donate more money to the UIA. It won't help this live stream, but it will help a lot of people.
+
+Okay, now I need to go in here and go into iPhone NDI, copy. Oh man, the colors on here are not wonderful either. Paste. Oh, I'm huge. Make me smaller.
+
+Okay, whoa, I'm tiny. Okay, now I'm...
+
+You can see me. Yeah, stop. Okay, there we go. That's good. Okay, we'll just we'll just do this for now. So that I mean, you don't really have to see me.
+
+It doesn't matter. But here we go. So the B580 doesn't work there. Is there like a way...
+
+way there's not wayfire or something but let's see if i do if i do start x of course that's going to work just like it did on the a750 but now this is the difference you might notice that the background here is a bit different and that is because this is debian tricksy raspberry pi os tricksy if you haven't seen it yet i'll give you a quick rundown on a couple things i like the new control center is extremely nice compared to what they used to have Now it's like a lot of other settings, setting systems, where it's just a bunch of things on the left and the settings are on the right. Although one thing that confused me is you have display and I'm like, okay, how do I change the resolution? I don't know. I don't get it. And then if, but if you go way down here, there's screens and that's where the resolution, frequency, orientation, and layout, all that stuff is. So there's still growing panes. I would like to see those unified.
+
+but the new setup does have nicer icons a more unified scheme this this setup over here has been reorganized a little bit to make it a little nicer but again we can run a web browser we can do that kind of stuff but i don't know i don't even know if i put anything on here yeah i don't have llama or anything but if i say preferences i'll make this bigger so you can some of you could actually see it and make that a little bit bigger too.
+
+Fast fetch, screen fetch, do I have that on here?
+
+Is it fast fetch now? Every year it changes it was neo fetch then screen fetch, Now I think it's fast fetch. You can see what's on here. Fast fetch. So you can see that we are on the Linux kernel 6.17. This is actually 4k. I forgot to change the string here. You can change
+
+this string and make a custom kernel name and I just left the default which is 16k, but this is actually a 4k page size kernel but we're on the B580 and everything everything works in X windows but it doesn't mean that everything works everywhere so what is it what's the game that I was just playing super tux cart I don't think I have it on here but we'll see if that works I don't think it will I think there's something funny with the driver on here and another thing if you're gonna to do this yourself and debug things you can see there is some there's a little bit you can't see it that well but there's a little artifacting on the edges of these windows but I don't know if that's necessarily the driver or something on the X windows itself but if I go into d message whoops d message this log has almost all the information you need to know and there is there is something going on here with the card there's p code mailbox failed power limits. So there's a power limit issue. All the firmware is loading in, but the other thing that I've noticed on these Intel cards is they want to have a resizable bar. Bar is something that I explained like years ago and I still don't understand everything about it, but it's basically a way for the addresses of memory on the video card to line up the addresses in this in the RAM and the system, and if they're kind of not right and they don't map correctly then you have problems, but we have been working on trying to get resizable bar to work correctly on the Pi for Intel. It works! You can actually resize the bar and it
+
+should be fine. There's no BIOS or anything on the Pi, it just works out of the box. But there's some issue and we don't know if it's in the Intel driver or there might be some memory alignment things that we need to fix in the Pi's own setup. But yeah, that is one issue that could be causing this, that could be a cause for it but anytime I see red in here I always am like oh something's going on but you can see that it's working it's all going through the card here but let's see if we can whoops did I close everything oops let's go back and see if it installed that SuperTux cart we'll see I don't think it's going to use the GPU for acceleration on here it already doesn't feel quite as snappy
+
+Let me turn this down. Nope. So that first time I'm launching it, I got to set this stuff back up. Turn everything all the way up.
+
+1920 1080 full screen apply.
+
+Yeah, I can see there's just that tiny bit of sloppiness, a little bit of choppiness and display FPS general back. Single player.
+
+yeah that's this is i'm not even going to start the game you can tell that that's running on the cpu and not on the gpu and another thing about this is when you're working on these intel ones i in the past i don't know if this is still the case necessarily but in the past there were issues if you use the igpu on the pi at the same time so if i say sudo nano root firmware config down in here I actually disabled the iGPU right here the DT overlay VC4 KMS v3D if you disable that it turns off the iGPU I don't think that that's actually as much of a problem anymore I think it was a problem with the older patches that we're using I also noticed I have they don't have the little toggle in here to turn PSAT Express to Gen 3 which is like DT param what is it this is how I do most of my stuff. This is the reason why I have a blog. I say Jeff Geerling PCI Express Gen3 Pi5 and then I click on the top link and then I grab the code. This is my blog is literally my sketchpad. So if I copy, whoops, copy, paste get out of here exit and you can check also if you say sudo lspci - VVV you can check what speed the card is at so lspci lists all the PCI devices on on here and I run this quite often to see what's going on but here's the Intel battlemage G21 B580 and it says link status oh wow 2.5 gigatransfer that's
+
+That's like PCIe Gen 1. I wonder if there's an issue there. Either with negotiation or what. It says capability speed 2.5. That's weird.
+
+Should be giving me at least 5 gigatransfer. That's PCIe Gen 2. So let's try rebooting.
+
+And see, I don't think that's going to cause any issues here.
+
+So Al Bundy probably knows more about BAR and how all that works than I do. Yes, my blog is my... I put all my stuff on my blog because I just use Google or DuckDuckGo to find it.
+
+It is by one, yeah, it's by one, but it should be five gigatransfers since it's gen two, and then it should be eight if it's gen three. So we're rebooting. Hello from Russia. I'm glad you can use my open source work. Same issue with B50.
+
+I am not Groot, but sometimes I'm Root.
+
+So the Intel drivers supposedly use more CPU as well, but the problem is I haven't gotten to a point where I'm getting bottlenecked. I haven't been able to run some of those crazy games like Ultimate Battle Simulator and all that. Favorite Linux distro? I don't really have a favorite favorite. I use Debian and Ubuntu mostly, but I've used Fedora a lot.
+
+I used to use CentOS for servers, but now I mostly do Ubuntu.
+
+What's going on here? Oh, we're at the blinking cursor. I'm like, it's all black, but there's a blinking cursor. F2, Pi, Raspberry.
+
+And let's see, I'll log in so you can see the bigger font. Start X. You can hear that clacky, the Gateron blues, which are colored gray on here, but they're Gateron blues. What? Now I'm not getting anything. Well, that's not fun. Apparently
+
+if you set it to Gen... I didn't set it to Gen 3 though. Oh, it might be... You know what?
+
+I think I enabled the internal GPU, which is now telling it. So this is an issue, I guess, still on 6.17 on Trixie. If you have the iGPU enabled, it will still do this. So let me go back.
+
+Let me go back over to the PC here and you can see what I'm seeing. I'm going to log into the Pi.
+
+Oh, you know what? I got to set this up over here really quick
+
+because I don't have my SSH key set on here.
+
+you could move that camera if you want to see me actually it's not do iphone ndi
+
+iphone you can move that and then now watch my camera will magically follow me over here hello i'm now here i hope that that's live is that is that actually working oh there it goes yep okay so i'm gonna get on this guy no that's good and i'm going to set up my ssh key on here because I have a separate ssh key on the streaming PC because I don't want to use my main key on that PC since I only boot it up like a couple times a year so I need to do nano.ssh authorized keys and oh my gosh yeah there's a bug in imager it literally like copies a bazillion copies of your ssh key there's three thousand lines of it in here so hopefully that bug is fixed It probably is in the latest version. I haven't updated in a while, but I'm going to paste in the key from the stream PC so I can log in over there. Stream PC paste. Save exit.
+
+OK, now I'll come back over here. There's. Dad is here for the day. And Joseph. Yeah, you can turn it back on.
+
+Now I have all the cameras are funny. So now if I log in, go back to the PC, log in, there we go, now I'm logged in. And then I can say sudo nano boot firmware fig. This is another thing, if you're going to be experimenting with these things, you want to have SSH access to the computer. So make sure networking is good, otherwise you have issues.
+
+So I'm going to turn the internal GPU back off. And we'll check, this should be, if I say, sudo lspci-vvv, this should be gen 2, which is 5 gigatransfers.
+
+Where's the intel? Here we go. Link status, 2.5. That's weird.
+
+So that's another weird thing. I don't know. Maybe it's trying to retime itself. What happens, let me sudo reboot so we can get back on there. And we'll get back to...
+
+Is that camera on yet? Oh, yeah. There it is. Hi, everyone. I'm back.
+
+The Mac Mini... Streaming with OBS is not as fun on a Mac, unfortunately. I do some stuff on the Mac with OBS, but it's more fun...
+
+I wouldn't say it's fun, but it's more utilitarian on Windows at this point. I don't know. Streamers like games and games aren't on Windows. It's crazy people. I haven't... One goal is to run one of these streams from the Ampere Thielo Astra, the big giant ARM workstation.
+
+I haven't gotten to that point, but I think I will be able to soon.
+
+Oh, you know what? Yeah. Okay, so DIST-D is correct. The newer cards, including NVIDIA cards, AMD doesn't seem to always do this, but I think their newer ones do. They actually do report slower speeds in LSPCI.
+
+If they aren't rating themselves up, it's an energy-saving thing. they won't use the full speed so it probably is at gen 2. so anyway that's besides the point we're back at the blinking cursor so if i go here and say oh no i want to wait there we go okay uh alt f2 pi raspberry okay and then start x now this should work there we go now we're back in here
+
+so nvtop sudo apt install nvtop i don't know if nvtop will work on tricksy either at least not with this oh yeah okay never mind we got it this is working so yeah pci gen 3 at 1x so that this is correct wait gen 3 i don't but i don't have that configured That's what's weird. That's really weird because we don't have it in here, right?
+
+Oh, I did put it in here. Okay, never mind. I'm just... it's getting... we're getting one
+
+and a half hours in the stream. My brain stops working a little bit. Okay, so yeah, that's...
+
+that's working. Yeah, the air conditioner's on. It's giving us a little fresh air. Actually, that is interesting. Let's check on... oh, my phone is over here doing the camera.
+
+let's grab you back phone is now getting hot it's going to overheat
+
+okay home assistant let's go to side cam which is turned off let's turn you back on
+
+uh let's see so we got power the intel cards actually this card uses a not much power at all when it's uh when it's idling only only a few watts the pi is using six watts or five watts and and that's using like 8 watts so if you want a good idle power card that's that's a decent one i guess if we go to overview let me make sure there's nothing okay i don't have anything weird on there like private uh i don't have any like key codes or anything but the co2 levels you can see during the stream there we go the co2 levels have gone quite a bit up because right now there's there's three people in here there's a two to do there's why is this not working there we go see there's two over there and one right here so three people breathing gets that co2 level up a bit okay dad's gonna stop breathing you don't actually have to do that
+
+yep yeah so so that that is working and the thing is like why why is it not uh i don't whoops i don't think that even the web browser is using the acceleration i think that it's only optimized for the internal gpu but it is it's in let's see type graphic let's see if we do youtube
+
+if you do this deny you go in here and mute that yeah it's actually pretty real-time that's that's interesting so it is it's it's all CPU it's not doing any GPU acceleration see that it's it's trying but it's not using any GPU and oh okay there we go so yeah that's that's the Intel status let me go back to the main camera and I'm gonna shut this down we'll swap back over to an AMD card to close things out shut down yeah the B588 it's it's weird like that this is the issue with Intel it's you can tell that they're trying and I like that they're trying but they still their drivers even on x86 have had growing pains they're doing a lot better today than they were with the first the first round of generations but if you want to follow that progress for onyx is one of the sites that I follow pretty closely for that stuff and there's also videos from a lot of other content creators but for onyx has a lot of great benchmarks showing the little improvements here and there. Sometimes there's regressions in the drivers. But yeah, the CM5 kit, yeah, I always have that dev kit sitting over there because I'm always popping things on and off it for testing. And I've noticed that as I visited more engineers who do hardware stuff, I mean, I always knew how my dad was in radio, you know, they have a workbench with stuff sitting all over it. This is like extremely clean and tidy. Like normally, like if I'm guessing if you go to one of these AMD or
+
+intel engineers or something you'd probably see a desk that's more like this
+
+more like this with probably like a box here and a box here and probably a soda sitting on top of it like this is this is like engineering work that's how that's how you know if somebody's actually doing the hard work or if they just want to make it look like that it's funny whenever you go to apples like those apple events that they have and they have like the ultimate pristine desk and there's like there's there's a motherboard sitting perfectly straight with like a screwdriver right next to it's like who's actually going to do work there it's obviously just for show but yeah that's those are the intel cards and just for fun
+
+nice and uh while i'm doing this again if you are considering possibly donating to the uaa they are an awesome organization that helps people with ostomies. Ostomies are not something that, like, if you don't have one, which I'm sure most of you, if not all of you, there's probably one or two ostomates watching this stream. But if you ever thought, "Man, what would it be like to have an ostomy?" You probably don't want to think about that too much. So people that have them or people that get them in an emergency situation, they need support. Otherwise, it can be a very daunting and
+
+complicated thing. And some people sadly never get that support and they end up hating it because they had an ostomy nurse who just wasn't like or they didn't get an ostomy nurse ever to help them. So the UAE is a great resource to help people and also advocate for people with ostomies because our politicians don't often consider the fact that an ostomy is not like a prosthetic that's the same as like a leg prosthetic but it's categorized the same way in medicare I think a lot of times and so it's not like you just get your thing and you're done or whatever and there's also different types of skin and different types of people and bodies and different types of ostomates so you can't just say like this is the one company that makes all the supplies for all ostomates ua helps make that point to our government which doesn't always listen to that so consider supporting them they're up here down there somewhere or on a phone i think it's down below but let's see i'm going to try this 480 which you can get these for pretty cheap a lot of people just have this generation of cards like a 4 460 480 550 580 one of those kind of cards sitting around and these also i think this one is going to work let me switch back this one this is the boot up this is the uh nvme that's set up mostly for the intel testing i do have a tricksy set up for amd so we'll try that really quick
+
+and we'll see if that works go back to the rpi and of course i didn't turn on the power supply so hold on for a second and what is oh gosh i need to get rid of this now uh how do i get rid of this one uh remove i could just hide it but i'm just going to remove it i can put it back if i need to but this camera seems to be doing okay now
+
+Yes.
+
+It's back. Well, it's working right now and we'll be finished soon. I just want to see if one of these older cards works. Speaking of which, let me go back to the PC. We'll log into the Pi, which is not booting up.
+
+Let's try shutting you back down. I'm going to force shut it down.
+
+Okay, this time I'm going to turn on the graphics card. Power.
+
+And let's see if we see it this time.
+
+I wonder if I messed up this NVMe. Oh, there we go. It's booting. Another thing that you can look at if you're going to replicate a setup like this is the they do something different when they're initializing correctly versus when they just turn on and don't initialize. Usually they just run it 100% if they're having big issues or they just run steady, but you can hear it go like, "hmm, hmm." Like that's like the driver kicking in.
+
+Although there are a couple cards that the fans don't spin at all if they're cool enough, and I wish that like for debugging purposes, it's nice to have something happen when you initialize something. So when a driver engineer always do something, blink an LED or make the fan spin different, something like that.
+
+Well, I don't think we're getting any output out of this one. Maybe I didn't have it working on Trixie. Let me shut this one down.
+
+actually before I do that let me go into here and see if I can log in
+
+PC nope okay so maybe I might have nuked that install because I was doing some weird stuff on a couple of these compiling like everything from hand and sometimes you have to do that to get the latest and greatest of everything so I'm just going to shut this down and we're going to go back to the bookworm install and see if that works because i probably screwed this install up
+
+power and back to here pi
+
+yes christian makes a good point that i forgot to mention that i was going to mention earlier when you're using a graphics card with a Pi, and this is the case with most ARM systems, not all of them, but most of them, you can't get the initial boot screen. So whether it's like the EDK2 bio screen on some systems, or it's the Raspberry Pi has their little boot loader thing that will show you what it's booting from, those won't work through the graphics card because the graphics driver has to initialize on ARM before that works. So here's, this is the, what is this, rx 460 4 gig so if you have one of these lying around it's not the it's not useless um i think i think that llama works with this too so if i go llama oh i have the command up here oh no we wouldn't be able to do the 20 20 billion parameter but can i do llama on here let's see in llama's output you can see at the top here it should say if it sees the card yeah i found one vulcan device with four gigs of vram so if we go down here it's loading into the graphics card so we're using graphics card accelerated accelerated processing for the prompt let me go to docker start what is the container i guess just hit tab open web ui okay that's going to launch and we are accelerated it's not going to be as fast for sure as uh as one of these uh well i just put them all away
+
+you're not going to get as much speed on this little guy from like 10 years ago as this guy from a couple years ago that's for sure but it could work so let me go to open web ui
+
+and we'll see if this works
+
+And if this does work, I think that'll be a good way to wrap this thing up. Let's see.
+
+What's a good one paragraph way to wrap up a video about graphics cards on a Pi?
+
+It's working. In conclusion, the choice of graphics card for a Raspberry Pi setup depends on your specific needs and budgets. If you're looking for a base experience, using the built-in GPU should suffice. But if you're going to do gaming, video editing, 3D modeling, a dedicated graphics card like a Raspberry Pi 3B+, yeah, I don't think that would be an upgrade.
+
+Alternatively, can you consider using a USB-based graphics card like the RPi USB graphics card? I don't think that that's going to help either. But I think that you could use one of these AMD jobs. And let's see how the stats are for that compared to the other card. So 27 tokens per second.
+
+But if I, just for a comparison, let me close this out. And I'm going to run this without offloading layers to the GPU. So take off NGL. This is loading it all on the CPU. No, it's still loading it on the GPU.
+
+I don't know. I think the default. So let me do dash NGL. We'll do one, oops, one layer on the GPU. So now it loaded it.
+
+Where was that? Did it load it in there? So see this now it's mostly on the CPU. There's one layer on the GPU. That's just a quick way to ignore that.
+
+Now let's refresh this. Open WebUI New Chat and say, what's a good way to say goodbye on a live stream?
+
+So you can see it's a little bit slower. Just a little bit.
+
+And by a little bit I mean I'm not going to wait for this whole thing to finish. But this is the difference. If you have a card laying around and you want to play around with these small models, there's worse ways to do it for sure. You don't have to go out and buy a new $700 plus graphics card. Power consumption, I will show you that.
+
+So I'll do that in Home Assistant really quick. Let's go back to my power monitoring. And right now the CPU with a tiny bit of offload on the GPU is using 50 watts. If I stop this, I don't know how to tell it to basically stop, but I'll just close that, go back to NGL 99, load all the layers. It doesn't have to be 99, it just has to be however many layers are in your model.
+
+But it's loading up on there, and we'll say,
+
+How should I include live stream quickly? So here it's doing it on the GPU now and we can see the power consumption is 108 watts. So there's more efficient ways too. But again, like if your goal is to learn how GPU compute works and how AI models use it or LLMs and you don't want to break the bank doing it, you can either buy one of these cards cheap online or I mean honestly I know a few people that have this generation of cards just sitting around in a closet somewhere you can probably get one pretty cheap or just go on Facebook marketplace and buy an old PC with one of these things and and get it working AMD cards Nvidia stay tuned for that I probably won't do a live stream I'll do a full video if I get one of those working but Yanghaku has shown it working it's just the code is kind of messy there and we'll get to the point where we can do it working elsewhere as well but that one was 27 tokens per second, with prompt processing at 60 tokens per second, so not bad at all. And for a small language model, that's okay.
+
+Anyway, that is the current status of AMD graphics cards, which are basically running great with like... that part of the patch is only about 18 lines or 20 lines or something. And then there's like 8 lines for the Intel cards.
+
+To make them sort of work, but not quite yet. We're still getting there. anyway I guess until next time I'm Jeff Geerling... and I'm on the wrong mouse. Until
+
+next time I'm Jeff Geerling!
