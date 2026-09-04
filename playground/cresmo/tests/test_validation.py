@@ -83,3 +83,11 @@ def test_is_valid_reconciliation_log(tmp_path: Path):
     f.write_text("# Report\n\n- All notes integrated successfully.", encoding="utf-8")
     assert is_valid_reconciliation_log(f, min_bytes=20) is True
     assert is_valid_reconciliation_log(f, min_bytes=500) is False
+
+
+def test_poll_fallback_interval_configuration():
+    """Verify POLL_FALLBACK_INTERVAL is defined and configured to 30."""
+    from cresmo_pipeline import POLL_FALLBACK_INTERVAL
+
+    assert POLL_FALLBACK_INTERVAL == 30
+
