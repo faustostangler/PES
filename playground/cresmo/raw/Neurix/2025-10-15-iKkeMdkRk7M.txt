@@ -1,0 +1,108 @@
+---
+video_title: "How Hackers Use Burp Suite to Get Into Websites"
+video_id: iKkeMdkRk7M
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=iKkeMdkRk7M
+video_date: 2025-10-15T09:30:29+00:00
+video_description: |
+  Hackers don’t always need zero-days or fancy exploits.
+  Sometimes, all it takes is knowing where to look, and using the power of Burp Suite to listen when a website talks back.
+  
+  In this video, you’ll see how a website can be compromised using nothing more than Burp Suite and real-world techniques, all inside a controlled cybersecurity lab. 
+  
+  This video is for educational and awareness purposes only.
+  Only test systems you own or have explicit permission to assess.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Ubuntu Server: Victim  
+  - Burp Suite Community Edition: web security tool
+  - SQL Scripting: SQL injection
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  00:52  Burp Suite Overview
+  04:38  Burp's Intercept, Google Example
+  08:19  Injecting SQL with Burp Suite
+  12:22  Website Hacked!
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #websitehacking #cybersecurity
+---
+This is Sally. She's the proud founder of a brand new painting startup. Passionate about art, she just launched her very first website, sallyshop.test, where she sells her original paintings online. Her website is pretty classic.
+
+There's a homepage, a gallery of her artwork, and of course, a login button so customers can sign in, leave reviews, and place orders. But what Sally doesn't know is that her website has some hidden security flaws. And this is where Kim comes in. He is an experienced ethical hacker testing the security of Sally's new site. And what he's about to find might surprise you. Kim doesn't have any
+
+special access. He starts off just like any other visitor, browsing the site anonymously. But with a tool called Burp Suite, he'll intercept and manipulate requests, dig into how the site handles login and reviews, and uncover some critical vulnerabilities, all without any insight into the backend logic. Burpuite is actually pre-installed on Kali Linux. To launch it, Kim just heads to the search bar, types in Burpuite, and there it is. He clicks it and Burp
+
+fires up. Once launched, we can click next to start a temporary project. Now, before we dive in, you may ask, what exactly is Burp Suite? Think of Burp Suite as a powerful magnifying glass for web traffic. It sits between your browser and the website server, acting like a middleman, and allows you to see, modify, and replay the requests your browser sends to the website server.
+
+In normal browsing, when you ask Google for, say, Paris news, the browser quietly sends an HTTP request to Google's servers and the servers respond. Normally, this happens invisibly, but with Burp Suite, every request can be paused, inspected, and modified before it reaches the website's server. For example, imagine you search Google for Paris News. Your browser creates an HTTP request for the Google server. If Burp Suite is active, it catch that request before it's reached Google server and let you modify it. So
+
+instead of sending Paris, you could change the request to ask for New York instead. Now when the request is finally forwarded to Google's server, it think you're asking for New York and it returns search results for New York instead of Paris. The browser then displays that response, never knowing the original request was changed along the way. This is exactly how Burpuite works. by intercepting and manipulating the conversation between your browser and the server all in real time. Let's
+
+go back to Burp Suite. We click next to start a new temporary project. Then click start Burp. And voila, Burpuite is now running. At first glance, it might look a little intimidating. Lots of tabs, buttons, and
+
+panels. But don't worry, we'll walk through it. Burp Suite has multiple tools built into it. The main ones are the intercept which lets us intercept live requests from the browser. The repeater for rescending and modifying requests manually, perfect for testing injections, the intruder for automating attacks like brute force login.
+
+And the HTTP history to view everything your browser has sent and received during the session. Let's demonstrate our previous example about Paris and New York. To use Burp Suite, we have two options. We can either manually configure our browser to use Burp's proxy settings, or we can just use the preconfigured browser that Burp Suite gives us, which is much easier. Let's go with the second option. We launch the browser by
+
+clicking open browser. And just like that, it opens a Chromiumbased browser already configured to send all of its traffic through Burp. The start page is google.com. You can see that Burp's HTTP history tab immediately starts filling up with entries, one for each request made by the browser. Each line here
+
+shows important details, the request method, the host, the URL, the status code, and more. For example, here you can see requests to google.com. Some are get requests, some are post, and the status code shows whether the request was successful. This is how Burp captures and logs everything your browser sends, giving us full visibility into the communication between browser and website server.
+
+Let's now search Paris. But before we do that, we need to make sure that Burp Suite is set to intercept traffic and not just observes it. We do that by going to the intercept tab and turning it on. When intercept is on, Burpuite pauses each request before it reaches the server, giving us a chance to look at it, modify it, or drop it. But when intercept is off, burpuite just lets everything flow through without stopping it, like a silent observer. You can also
+
+see how the light change here from green to red, telling us that the traffic will pause here. So now that intercept is on, let's head back to the browser. You see how when we click on the browser, the first request send are intercepted by Burp Suite. We type Paris into Google and hit enter. You'll notice something interesting. The
+
+browser pauses. It looks like it's waiting for a response, but actually it's Burp Suite that's holding the request. It's intercepted it before it reaches the Google server. In the intercept tab in Burp Suite, you see the request sitting right there. You can see all kinds of details. The time the
+
+request was made, the type of request, and of course, the data being sent. Let's inspect this request more closely. Down here, we can view the full request in three different formats: pretty, raw, and hex. The pretty tab tries to format the request in a way that's easier to read, especially for JSON or XML data. The raw tab shows the request exactly as it was sent over the wire. That means
+
+plain text, just like the browser generated it. And the hex tab shows the full request in hexadimal, which is useful when you're analyzing binary data or encoded payloads. When we click on a request row above, the full pretty raw and hex details appear down here in this section. Let's select one of the last get requests. These are the most likely to contain our search query for Paris.
+
+Why? Well, because when we typed Paris in the browser, the search bar actually triggered a new get request for almost every letter we entered. That's how autocomplete and live suggestions work behind the scenes. So, the most recent intercepted request usually contains the full search term. in this case, the most complete version of what we typed. And
+
+in fact, we can already see the word Paris there. So, that's probably the one we want. Let's type Paris in the request search bar and press enter. As you can see, a match has been found. Right here in the body or query string, you can see the word Paris.
+
+Let's change it to New York instead. We can just edit it directly in the request. Now we forward this modified request to Google server. To do so, we have two options. We can either choose forward to send this request one at a time or we can choose forward all to let everything else flow through normally.
+
+In this case, we'll just click forward all. And voila, Google receives the modified request and instead of showing results for Paris, it shows results for New York. That's the power of Burp Suite. We've just modified a live request between the browser and a server in real time. Let's now see how Kim applies this to look for vulnerabilities in Sally's website. We
+
+set intercept to off. So, Burp Suite becomes a silent observer. Now, it won't pause or hold any requests. It will simply watch traffic pass between the browser and the server. To keep things clean, we can also clear the HTTP history. We just right click on any
+
+entry in the list and select clear history. This wipes out all previously captured requests so we can start fresh. Let's head back to Sally website in the browser. Kim will try one of the first thing attacker test on websites. SQL injection. This is because many login
+
+forms especially in early stage or rush projects are vulnerable if they don't handle user input safely. And for attackers, SQL injection is attractive because it's quick to test and can lead to immediate access even without a valid password. Now Kim heads to the main menu and clicks login. The login page appears. Just to test the behavior, he tries entering a random email, something like a aa, and uses dummy as the password. The server replies with
+
+invalid email or password, which is expected. Now Kim wants to see exactly what the website sends to the server during login. To do that, he goes back to Burp Suite and turn the intercept on. This means that every request from the browser will now be intercepted and paused before it reaches the server, giving Kim the chance to inspect or even modify it. With intercept on, Kim enters the same values again, AA as the email and dummy as the password, and clicks log in. This time, Burp Suite catches
+
+the request before it goes out. If we look at the raw request, we can clearly see the email and password fields, exactly what Kim typed in the browser. And here's where the real test begins. Instead of just sending the dummy email, Kim replaces it with an SQL injection trick. This is what he typed as email aa single quote or one equals 1- dash. This
+
+entry is designed to trick the server's SQL query into always returning true. By doing so, it bypasses the password check. The password field can be left as is because if the injection works, the password is ignored entirely. We have see in the last video why such an SQL injection works. But let's make a quick recap. In the last video, we looked at
+
+what happened behind the scene when a website checks credentials. When someone logs in like Kim with email a AAA and a dummy password, the website sends the email which is the username and password to the back end. The backend then queries the database server to verify the credentials. The SQL query used for that looks like this. Select from users where email equal AA and password equal dummy. This query is asking the
+
+database, find a user whose email is a AAA and whose password is dummy. If a matching user is found, the login is successful. Now, here's where it gets dangerous. If the website doesn't properly sanitize the input, an attacker can manipulate that SQL query using specially crafted input. Let's say Kim enter as email a a single quote or 1= 1- dash. And for the
+
+password, he types anything. It doesn't matter. So what happens? The double dash symbol in SQL is used to indicate a comment. Everything after it is ignored. That
+
+means the original query gets transformed into select from users where email equals a aaa single quote or one equals 1. Everything after the double dash is commented out including the password check. So what's left is the part in white. So what does this part in white return? Email equals a aa is false because there's no user with that email.
+
+1 equals 1 is always true because 1 is always equal to one. So in effect the query becomes select from users where false or true which simplifies to just true meaning the query will return a valid result and the login will succeed. In cases like this, because no valid email was actually provided, the application simply logs in the first user it finds in the database, and that's off in the admin. Let's now see how Kim puts this to the test on Sally's website. As we saw earlier, he intercepted the authentication request that the browser tried to send to the server using Burp Suite's intercept feature. In that intercepted request, he
+
+modified the email field to include the SQL injection payload aa single quote or 1 equals 1- dash. You might have noticed something interesting in this intercepted login request from Sally's site. Kim is modifying a post request. But earlier in the Google Paris, New York example, we modified a get request. So why is it post in one case and get in the other? When you searched for Paris
+
+on Google, the browser sent your query using a get request. That's because search engines like Google often use get to submit search terms. It's simple, fast, and the search term appears right in the URL like this. On Sally's website, the login form uses a post request, and that's very common for login systems. Unlike get, a post request sends the data in the body of the request, not in the URL. That is
+
+because it includes sensitive information like the username and password and it's not something you want showing up in the URL or browser history. Burpuite can intercept both get and post and that's what makes it so powerful for testing web applications. With the SQL injection in place, Kim clicks forward all to send the modified request through to the server and voila, he's in. The website logs him in without needing a valid email or password. Now that he's authenticated, Kim turns Intercept off so he can browse the site normally. He can see that the shopping
+
+cart is filled, he clicks on it, and that's when it becomes clear he's not logged in as some random user. He's logged in as admin at sallyop.test, the first user in the database. That means the SQL injection worked exactly as intended, giving Kim access to the most privileged account in the system. This is what makes SQL injection so dangerous. It doesn't just break the
+
+login system. It can give attackers access to everything. Admin dashboards, user data, internal tools, and more. So, that's it for today. Kim was able to log into Sally's website as the admin without ever knowing the real password.
+
+All it took was a classic SQL injection made possible by unsafe input handling and the help of Burpuite to intercept and modify the login request. We also saw how Burp Suite lets us view and modify HTTP traffic in real time, whether it's a simple search query or a full login attempt. So, if you're building something online, take security seriously right from the start, because even a small mistake like a poorly protected login form can lead to a major breach. See you in the next video. Bye-bye.

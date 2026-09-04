@@ -1,0 +1,86 @@
+---
+video_title: "HTTP for Hackers"
+video_id: KdTLDrT3pdU
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KdTLDrT3pdU
+video_date: 2025-12-03T10:00:39+00:00
+video_description: |
+  Hackers don’t always exploit code, sometimes, they just read the conversation between a browser and a server.
+  
+  This video is for educational and awareness purposes only. The goal is to raise awareness of common web vulnerabilities so developers can defend against them.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Ubuntu Server: Victim  Server
+  - Windows 10: Victim User
+  - Wireshark: Network protocol analyzer
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  00:40 What are HTTP and HTTPS
+  03:08 Intercepting HTTP traffic
+  08:29 How do browsers know which site to trust?
+  09:50 Outro & Outlook
+  
+  #penetrationtesting #wireshark #cybersecurity 
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+---
+This is Sally. She's writing a letter to her friend John. She write what she want to say, put it in an envelope, and send it off. A short time later, she get a reply. That simple exchange. That's
+
+exactly how your browser and a web server talk to each other using something called HTTP, the hypertext transfer protocol. Every time you open a website, whether it's YouTube, Google, or Netflix, your browser is asking for information. and the web server is responding with what you asked for, the images, the text, even the videos. This entire conversation follows a specific rulebook called HTTP, short for hypertext transfer protocol. HTTP was invented between 1989 and 1991 by Tim Berners Lee and his team. They
+
+were the same pioneers who created the worldwide web. Think of HTTP as the language that browsers and servers use to exchange web content. And it's not just text. HTML files, images, stylesheets, JavaScript code, and even videos, all of it moves over the web using HTTP. But there's one big problem with regular HTTP.
+
+It's like sending postcards. Anyone along the way can read what's written. That's where HTTPS comes in. The secure version of HTTP. The S in HTTPS stands for secure. But
+
+what does that really mean? It actually refers to three important concepts. Encryption, authentication, and data integrity. Encryption means that everything you send or receive, from login passwords to cat videos, is protected using complex math before it leaves your device. That way, if someone tries to spy on your connection, all they'll see is a jumbled mess of characters, not your private information. Think of it like sealing a
+
+letter in an envelope instead of sending a postcard anyone can read. Next, authentication. This makes sure you're really talking to the real website, not a fake one pretending to be it. Without this check, a hacker could set up a fake site that looks exactly like your bank, your email provider, or your favorite store, and steal your login details. With HTTPS, your browser checks the website's digital certificate, kind of like checking an ID badge to confirm its identity before sending any data.
+
+And finally, data integrity. This ensures that the information you get from a website, like a file download or a web page, hasn't been altered on the way to you. If data integrity isn't guaranteed, a hacker could slip malicious code or fake content into what you're receiving without you ever knowing. Think of it like receiving a sealed package. If the seal is broken, you know something's wrong. So, the next
+
+time you see that little lock icon next to a website's address, remember it's doing some serious work behind the scenes. Your messages are private, you're connected to the real site, and your data hasn't been modified. That's HTTPS. Simple and powerful. This is what it looks like when a website is not secure. Notice the red
+
+line through the padlock next to the address bar. That's your browser warning you. It's say, "Hey, this site isn't using HTTPS. Your connection isn't safe." But what if someone logs in anyway? Well, their login details can be
+
+captured by anyone sitting on the same network. Let's see how Kim, our ethical hacker, intercepts Joshua's login credentials when he signs into Sally's website. To do that, he uses a tool called Wireshark. Wireshark is a powerful network analyzer. It captures and displays everything that's happening on the network in real time. Think of it like a
+
+digital wire tap for your internet traffic. To get started, Kim opens the search bar on his computer and types Wireshark. He clicks the icon and Wireshark fires up. Once Wireark opens, it lists all the network interfaces available on the machine. These are like virtual ears.
+
+Each one listens to a different part of your computer's network activity. For example, one interface might handle Wi-Fi, another might handle Ethernet, and others may be for VPN or virtual machines. To capture traffic from a specific connection, Kim needs to pick the correct interface. In this case, that's the interface connected to the same LAN or Wi-Fi network as Joshua, which is Ethernet 0, the wired Ethernet interface. He double click it and wire begins capturing everything on that network in real time. If Joshua uses
+
+HTTP instead of HTTPS, what he actually does, everything he sends, including his login credentials, will show up here in plain text. In the Wireshark interface, you can see key information about every captured packet. the time it was captured, the source IP, which is who sent it, the destination IP, meaning who it's going to, the protocol used, and some info about what the packet contains. Right now, it's all a mess. Lots of different protocols like TCP, CDP, SDP, and more. But Kim is only interested in
+
+HTTP traffic. So, he heads to the filter bar at the top and types HTTP and hits enter. Now the view is clean. Wireshark will only show HTTP traffic at this moment. Nothing appears yet because Joshua hasn't done anything. But when he
+
+opens his browser and visits Sally website, the traffic suddenly starts rolling in. We can see a list of HTTP requests going back and forth between two IP addresses. The source column shows who sent the packet and the destination column shows who received it. You'll notice two main IP addresses here. 192.168.130,
+
+that's Joshua's machine, the victim. And 192.168.1.22, that's Sally's server where the website is hosted.
+
+So when you see a traffic where source is30 and destination is22, that means Joshua is sending a request to the server. And when you see source is22 and destination is30, that means the server is responding back to Joshua. This back and forth is how web communication works. Your browser doesn't just download a web page, it requests something, the server answers, and more exchanges continue until the page is complete. So what we're seeing here is the full conversation between Joshua and Sally's server.
+
+We also see the HTTP methods like get, post, and more. We'll cover those methods in another video, but for now, just know this. Login credentials are sent in a post request. So, when Joshua logs in, we'll be looking for that post. Now, Joshua navigates to the login page.
+
+He enters his credentials, Joshua sallyop.test as the username and let me in as the password. Then, he clicks login. As soon as Joshua submitted the form, something interesting appears. Kim spots a new post request coming from Joshua's machine. This is exactly what
+
+he was waiting for because post requests often contain login data. Kim right clicks the post packet and selects follow then TCP stream. This tells Wireshark, show me the full conversation between these two devices from start to finish over this connection. It filters out the noise and gives Kim a clean view of everything Joshua's browser sent to the server and what the server sent back. A new window pops up. This is
+
+called the TCP stream viewer. It shows the raw HTTP request exactly as it was sent. Headers, body, everything. Kim scrolls down and here it is. Joshua's email and password in plain text, completely exposed to anyone watching the network. No encryption, no
+
+protection, just raw data floating through the air. So, next time you're about to log in somewhere, always check for the lock icon first. If it's missing or crossed out, your data could be at risk. Now, you might be wondering, okay, my browser warns me with a red padlock or no lock at all when a website isn't secure. But how does it actually know if a site is secure or trustworthy in the first place? That's where digital
+
+certificate comes in. Let's say you're at airport security. You show your passport. But how do they know it's real? Well, it was issued by a government authority they trust. The
+
+internet works the same way. When you visit a secure website like your local coffee store.com, the server presents a digital certificate like a passport for the website. This certificate proves three things. Who owns the site, that the site is using a valid encryption key, and that a trusted third party vouches for it. That trusted third party
+
+is called a certificate authority. Your browser comes preloaded with a list of trusted certificate authorities, kind of like a VIP list. When you connect to a website, your browser checks who issued the certificate. Is the certificate still valid? Is the certificate issued for this specific website? If everything
+
+checks out, boom, you get the lock icon and a secure connection. But if the certificate is expired, self-signed, or issued by someone sketchy, your browser will block the connection and show a warning page. It might say something like, "This website's ID doesn't look legit. proceed with caution. That's your browser protecting you from handing over sensitive information to an untrusted or malicious site. So, that's it for today.
+
+We learned what HTTP and HTTPS are, how attackers can intercept unencrypted data sent over HTTP, why HTTPS protects you, and how browsers know which websites to trust. In the next video, we'll take a deeper look at how URL work, what they mean, how they're structured, and why that matters. This is essential knowledge for anyone learning about web hacking, penetration testing, or even just how the web functions behind the scenes. You'll start seeing things in every link, things most people completely overlook. If you found this video helpful or eye opening, give it a like and subscribe for more deep dives into real world cyber security flaws explained step by step. Thanks for watching and see you in
+
+the next episode. Until then, stay curious and stay secure. Bye-bye.

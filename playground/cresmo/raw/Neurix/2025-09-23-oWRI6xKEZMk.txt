@@ -1,0 +1,118 @@
+---
+video_title: "How Hackers Hack Websites"
+video_id: oWRI6xKEZMk
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=oWRI6xKEZMk
+video_date: 2025-09-23T14:25:08+00:00
+video_description: |
+  Hackers don’t always need zero-days or fancy exploits.
+  Sometimes, all it takes is knowing where to look, and how to listen when a website talks back.
+  
+  In this video, you’ll see how a website can be compromised from scratch, using common tools and real-world techniques, all inside a controlled cybersecurity lab. 
+  
+  This demonstration is for educational and awareness purposes only.
+  Always hack ethically. Only test systems you own or have explicit permission to assess.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Ubuntu Server: Victim  
+  - Gobuster:  Directory enumeration
+  - Hydra: Brute-force attack tool
+  - SecLists: Username and password lists
+  - Nmap: Network scanning tool
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  01:08  Finding the Website’s IP 
+  02:11  Scanning for Open Ports with Nmap
+  02:42  Discovering Hidden Pages with Gobuster
+  07:28  Understanding the Hidden Pages
+  08:40  Launching the Hydra Brute-Force Attack
+  14:07  Website Hacked! 
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #websitehacking #cybersecurity
+---
+This is Sally. She's the founder of a brand new food delivery startup. She just launched the website salallystartup.com where customers can browse menus and place orders. Behind the scenes, she also created an admin panel for restaurant owners to log in and update their menus. She thinks
+
+nobody will find it, but she's wrong because there's Kim. He doesn't know Sally personally, but he knows one thing. Every new startup puts something online. And where there's a website, there's a chance for hidden doors. Kim is running Kali Linux, the go-to operating system for ethical hacking and penetration testing.
+
+He visits Sally startup website, but there's nothing suspicious on the surface. Just two obvious pages, menu and order. No admin link or debug pages. That's the thing about online doors. They're rarely advertised.
+
+They're hidden. So, let's see how Kim launches his attack on this Sally's new brand website. Kim doesn't know Sally's website IP address. That's the first thing he needs to figure out. All he knows right now is a single lead, the domain, sallystartup.com.
+
+To find a website's IP address, there is a simple trick. DNS lookup. A command like NS lookup asks DNS for the site's records and returns the IP address. Another quick option is ping. It also shows the IP it's trying to contact.
+
+That's exactly the tactic Kim uses. He runs ping Sally startup and boom, the domain resolves to an IP 192.168.1.20.
+
+With that IP in hand, Kim can move to active reconnaissance and run a network scan using end mapap. Kim has found the IP address. That's like knowing where someone lives. Now he wants to see if anything is open at that address. Think of it like walking around a house, checking if any doors or windows are unlocked. To do that, he runs a port
+
+scan. He opens a terminal and types nap- SV followed by the IP address. The SV flag tells NAPAP to scan for open ports and detect the version of the services running on them. And here's the result. Port 80 is open. That's HTTP. And it's
+
+running Apache. That confirms the website is being served from this machine. But Kim isn't just looking for what's visible. He's hunting for what's hidden. He is looking for directories and files that cannot be seen directly on the website. To do this, Kim uses a
+
+tool called Gobuster. But what exactly is Gob Buster? It's a directory brute forcing tool. It scans a website for hidden directories and files that aren't linked anywhere on the homepage. Normally, when you visit a website, you just see what the developer wants you to see, like the menu, the about page, or a blog. But behind the scenes, there might
+
+be more. Forgotten folders, hidden panels, old backups. These aren't visible to the average visitor, but they still exist on the server. And that's exactly what Kim is trying to uncover. So he open a new terminal and check if Gob Buster is installed by typing Gob Buster. As you
+
+can see, it is not installed. So he accept the installation. And voila, Gobuster is now installed. If he now type gobuster, a usage guide appear. If we scroll up, we can see the version, the author, and the command used to run Gob Buster. What Kim need is the dear
+
+command since he will perform directory and file enumeration. In fact the full command to run go buster is go buster dear-w followed by a world list then u followed by the website to be enumerated. World list is a list of common folder and file names like admin, login, config and so on that goer will try to discover on the target website. A popular resource for these is called SEC lists. A massive collection of word lists for directory and file name discovery, passwords, usernames or payloads gathered from penetration testing, default credentials, and leaked databases.
+
+Kim checks whether seclist is already on his machine. He opens a terminal and types seclists. As you can see, it is installed. If it wasn't, Kim would install it with pseudoapp install seclists. SEC lists is organized into folders based on different types of attacks. We
+
+can see categories like webshells, passwords, a huge list of leaked or common passwords. Usernames, a huge list of leaked or common usernames, and discovery for hidden files and directories. That's exactly what Kim needs. So let's explore this discovery category. Inside there are several subfolders each focused on different types of discovery.
+
+One of the most important is web content. Let's explore it. And there it is. A whole collection of word lists designed to find hidden files and directories on websites. Each of these files contains hundreds, sometimes thousands of possible directory names that web developers might forget to lock down or hide. There are word lists like
+
+common, a short, fast list of the most commonly used paths, or big, a larger, more exhaustive version. Kim will use the common word list. Let's take a quick look at what it contains using the cat command. Let's first check how many entries it contains using the word count command. As you can see, it contains 4,746 paths, potential directories or files like admin, login, images, and uploads.
+
+If we scroll up to inspect the result of the cat command, we can see paths like images, contact, admin, and so on. The kind of folders developers often use without hiding them properly. As we saw previously with the word count command, this common.txt list contains 4,746 entries or paths. Gobuster will try each one of them by sending a request to the server. If the server responds with a
+
+200 okay or 43 forbidden, it means the path exists even if it's not linked anywhere on the site. Now that he has a word list, Kim is ready to run go buster. As already mentioned, the command is gobuster deer for directory-w followed by the word list and finally -ash u followed by the URL to be targeted. Remember deer tells Gobuster to run in directory scanning mode. -w specifies the word list and -ash u is the URL of the website Kim wants to scan. In this case, sallystartup.com.
+
+The idea is simple. GoBuster takes every word in the list and tries it as a directory or file on the server. If the server responds with a valid page, it means that location exists, even if it's not linked anywhere publicly. Now Kim can press enter to launch the Go Buster scan. And now Gobuster starts hammering the server one request at a time using the common.txt word list. After a few
+
+minutes, boom, Gobuster finishes scanning all 4,746 entries. Let's break down the results. Paths like ht access, htp pass wd, and server status return to 403 forbidden. That means the files exist, but access is restricted. But look right here.
+
+Admin.php gives a 200 okay status. This means the file is there and it's accessible. This is a huge find. Kim just uncovered a hidden admin panel, one that isn't linked anywhere on the homepage. Most visitors would never find
+
+it, but Gobuster did quietly and methodically. Now Kim wants to confirm it manually. He opens a browser and visits the site directly, but this time he adds /admin.php to the end of the URL. And just like that, the login page appears. Now Kim just needs the right
+
+credential. The page is asking for a username and a password, but it doesn't give any hints. No forgot password link for example. So what does Kim do? He prepares to brute force the login using a tool designed to test thousands of username and password combinations in seconds. That tool is called Hydra. So
+
+what exactly is Hydra? It is a powerful login cracker. A tool that automates the process of trying millions of usernames and passwords until it finds the right combination. To do that, Hydra needs two things. a list of usernames to try and a list of passwords to try. Hydra will
+
+take each username from the list and pair it with each password one by one and try to log in. If the target doesn't block or throttle those attempts, Hydra will eventually find the correct credentials if they're in the list. Think of it like trying every possible key on a key ring. Hydra just does it lightning fast over the network and completely unattended. So to run Hydra, Kim needs two key ingredients. A list of
+
+usernames to try and a list of passwords to try. A powerful resource for both is seclists, the same collection he used earlier with Go Buster. Let's take another look at its contents. We see that it contains a username folder and a password folder. Let's explore the usernames folder. It contains several
+
+text files including cert default usernames, a file filled with default admin names used in devices and software. SAP default usernames containing usernames specific to SAP systems. And the largest of all, Zatoet 10 million usernames, a massive list compiled from real world data breaches. Let's take a quick look with the cat command. As you can see, the list is extremely long.
+
+We stop it and check how many entries it contains using the word count command. It contains over 8 million usernames. Way too large for a quick demo. Kim will uses top username short list, a file with just the most common usernames. Let's see what it contains. As you can
+
+see, it includes classic admin names like root, admin, guest, user, administrator, MySQL, and even cloud-based defaults like EC2 user and Azure user. These are the usual suspects, the first usernames attackers try when brute forcing a login. So, these are the usernames Kim will use in his attack. Now, Kim moves on to the second piece of the puzzle, the password list. He heads into the passwords folder inside seclists and just like before it's packed with categorized word lists like default credentials for common vendor login, leaked databases containing real passwords from data breaches, malware and honeypot captures with payloads and traps and of course the well-known common credential section. This is what Kim will use. So
+
+he navigate to the common credential folder. There he finds a file called top passwordshortlist.txt. A small but deadly list of the most commonly used passwords online. We're talking about weak passwords like 1 2 3 4 5 6 q web e r t y or I love you.
+
+Simple, fast, and perfect for a quick brute force test. This is the word list Kim will use. Now that Kim has both pieces, a username list and a password list, he is ready to launch the brute force login attack using Hydra. The command he runs is hydra4vf capital L followed by the username list, capital P followed by the password list, then the target domain. Here sallystartup.com.
+
+Then comes the important part, the HTTP post form module. Hydra needs to know exactly how the login form works. Let's break it down. The page targeted is admin.php.
+
+The field names must match the login form exactly. Here it's username and password. There's a login button, too. Kim needs to submit it to Hydra. And finally, Hydra needs to know what error message the site shows when a login fails. So, Kim enters a fake
+
+username and password manually, clicks login, and reads the response. Incorrect username or password. That's the key phrase he adds at the end of the command so Hydra knows when it's wrong and when it's right. So this is the full Hydra command Kim types. Let's recap. We give Hydra a
+
+username list, a password list, the domain name of the target, the specific page to attack, and the form structure Hydra will use to try to log in. By the way, if the site was running on HTTPS instead of HTTP, the command would stay exactly the same except the protocol would change to HTTPS post form. Now Kim presses enter and the login brute force attack begins. As you can see, Hydra is testing every possible combination of usernames and passwords found in the username and password list. For each username, it try all the passwords, then moves on to the next username and repeats the process. For each combo of
+
+username and password, Hydra sends a login request to the server just like a real user would. If the credentials are wrong, it sees the familiar error message, incorrect username or password, and keeps going. But if the login is successful, Hydra immediately stops and returns the winning combination. Hydra shouldn't takes too long to finish. And after just a few tries, boom, a match has been found. It seems
+
+the username is administrator and the password is I love you. Let's test this manually to confirm. It's time to try logging in and see what kind of control Kim now has. He opened the admin page and enters the credentials that Hydra just discovered. Administrator as the username and I love you as the password.
+
+then clicks Logan and voila, he's in. He can see a welcome admin message at the top of the page. And just below that, a live customer database, names, emails, and phone numbers. Real user data sitting right there behind a weak password and an unprotected admin panel. This isn't just a proof of concept. This
+
+is exactly the kind of breach that happens in the real world. And that's for today. If you found this video helpful, give it a like, share it with your fellow learners, and subscribe for more ethical hacking labs like this one. Stay curious, stay ethical, and stay safe online. Bye-bye.

@@ -1,0 +1,81 @@
+---
+video_title: "HTTP Requests for Hackers"
+video_id: LVSxI0ON7hk
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=LVSxI0ON7hk
+video_date: 2025-12-05T10:00:41+00:00
+video_description: |
+  It’s not always what the server says, sometimes, it’s what the browser gives away that matters.
+  
+  This video is for educational and awareness purposes only. The goal is to raise awareness of common web vulnerabilities so developers can defend against them.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Demo machine
+  - Burp Suite: Web security tool
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  00:40  What is an HTTP Request
+  05:30  Demo: Intercepting a Real Request
+  08:44  Outro & Outlook
+  
+  #penetrationtesting #httprequests  #cybersecurity 
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+---
+This is Kim. After a long day of ethical hacking and penetration testing, he just wants to relax and watch a movie. So, he opens his browser, types.com, and hits enter. And just like that, the Netflix homepage appears. Fast, smooth,
+
+and seemingly effortless. But what actually happens behind the scenes when one visit a website like Netflix? In reality, when Kim presses enter, it browser begins a process. It sends a request to Netflix's server, almost like writing a formal letter that says, "Hello, Netflix. I'd like to see your homepage." That letter looks something
+
+like this. This is an example of request. Let's break this down line by line. The first line is called the request line. This is where the browser says what it wants to do. The first word here is get. This is
+
+called the HTTP method. Get is used to retrieve data from a server. Think of it as your browser saying hey server I want to fetch something. Other method are for example post which is used to send data to the server or put which is used to update a resource entirely. The method is followed by the URL or path of the resource being requested. In this case
+
+it's requesting the movie located on the browse page with the ID 101. And finally, the last part of this line gives the protocol version. The protocol is HTTP. It's the language that your browser and the web server use to communicate. And the version number here, 1.1, tells the server which
+
+addition of that language the browser is speaking. HTTP 1.1 is still very common, but it's not the newest. We now have HTTP2 and HTTP3, which are faster and more efficient. So that full line says I want to get the Netflix browse page, specifically the one with the ID 101, and I'll be speaking to the server using the HTTP protocol version 1.1.
+
+The second line is the host line. This tells the server exactly which website we want. This is especially useful when multiple websites share the same server, which is very common in today's internet. Let's say Netflix runs several websites on the same server. For example, netflix.com for global users,
+
+us.netetflix.com for the US users and eu.netetflix.com for Europe. When your browser says in
+
+the first line, "Hey server, please give me the page for movie ID 101," the server needs to know which version of the site you want, the US one, the European one, or the global one. That's what the host line do. The third line is called the user agent header. This is how your browser tells the server who's making the request, what kind of device, operating system, and browser you're using. In the present example, this line is saying, "Hey Netflix, I'm using Firefox version 120 on a Windows 10 machine." Why does this matter? Let's
+
+say you visit Netflix on a smartphone, a tablet, and a desktop. The layout should adapt to your screen. Or maybe you're using a really old browser that can't play certain videos. Netflix might want to show you a simplified version. That's why the server needs to know what kind of browser you're using, what version it is, what operating system you're on. The
+
+user agent helps Netflix deliver the best version of the site customized for your device. You don't usually see this header yourself, but your browser includes it every time you visit a website. And yes, some websites use it to personalize content, optimize layouts, or even block certain bots and scrapers. The fourth line is called the referer header. This line tells the server which page the user came from before landing on the current one. In our case, it is
+
+netflix.com/home. That's your browser saying, "Hey Netflix server, I came here from the homepage." This info is useful for analytics like tracking what users click on, personalization. Netflix might prioritize certain content if you're coming from the home screen, or security. Some sites block access if the
+
+referer is missing or doesn't match. For example, let's say Netflix has an internal admin page that should only be accessed from inside their dashboard, not directly from Google or another site. If someone tries to open a sensitive URL like netflix.com/admin/s settings, but the referer says randomsite.com/hackingtools, the Netflix server sees that and thinks, "Wait a minute. This request didn't come
+
+from our site. It came from somewhere sketchy. I will block it." So, when the referer doesn't match, it's a red flag and the server might deny the request to protect both the site and the user. Now comes the last part of the request, a blank line. It might look like
+
+nothing, but it's actually very important. This blank line tells the server, "That's it. I'm done sending the request. Time for you to respond." In technical terms, it signals the end of the HTTP request headers.
+
+So that's the full request your browser sends to the web server every time you enter a website and press enter. It's like sending a structured letter with a request line. the host, the user agent, and the referer, all packed with information the server needs to understand what you're asking for. Now, let's see this in action. We'll follow Kim, who's using a web security tool called Burp Suite to capture and inspect a real HTTP request.
+
+If you're not familiar with Burpuite, don't worry. I've got you covered. Just watch the video that appears above where I explain what Burpuite is step by step. In short, Burp Suite is a web proxy that lets you capture and inspect all browser traffic in detail. To get started, Kim opens the search bar on his computer and types Burpuit. He clicks on the Burp
+
+Suite icon and Burpuite fires up. Once it opens, he goes to the proxy tab and then clicks on open browser. Burp's built-in browser launches. And here's the cool part. It's already preconfigured to send traffic through Burp Suite, so there's no setup needed.
+
+At the top of the proxy screen, Kim sees the intercept button. This button acts like a pause button for web traffic. When intercept is on, Burp will catch the browser request before it's sent to the server. Kim goes to the browser and searches for Netflix on Google. Before clicking the search result, he turns the intercept on so Burp Suite can capture the request the browser will send to the server. Now he can return to the browser
+
+and click the Netflix search result attempting to access the Netflix page. As mentioned earlier, the browser will send a request to the Netflix server. As soon as Kim clicks on the Netflix link, the browser appears to freeze. Why? Well, because the request hasn't reached the server yet. It's being held by Burp
+
+Suite, which pauses the request and waits for Kim to inspect or modify it. In Burp, we now see a captured HTTP request to Netflix. Let's walk through it. We can see the request line at the top. This means the browser is requesting the root page of the Netflix site using the get method and speaking HTTP version 1.1.
+
+Next, we see the host netflix.com. This tells the server which website the browser wants. As already mentioned, this is useful when the server hosts multiple domains. We also see some cookies being sent with the request.
+
+These are bits of data used to identify users, sessions, or preferences. We'll cover cookies in detail in another video. Scrolling down a bit, we see the line specifying the user agent. This tells the Netflix server exactly what kind of browser and operating system Kim is using. In this case, Chrome on Linux.
+
+It helps the server deliver the best experience for that device. Further down, we see the referer. This tells the server where the user came from. In this case, Kim clicked the Netflix link from Google's search results. The Netflix server can use this info to track traffic sources, tailor experiences, or apply security rules.
+
+And that's it. So, let's recap. Using Burp Suite, we captured a real request and broke it down into its key parts. The request line, the host, the user agent, the referer, and even the cookies. This hands-on look shows us how our browser communicates with web servers and how tools like Burp Suite help us peak behind the scenes. Now,
+
+let's wrap it up. If Kim releases the interception by setting intercept to off, the request is finally allowed to continue. And just like that, the Netflix homepage appears in the browser. That's because the request which was temporarily paused by Burpuite was now sent to the Netflix server which then sent a response back through Burpswuite and finally to Kim's browser. You might be wondering what does that response actually look like? What does the server
+
+send back when we request a web page? That's exactly what we'll explore in the next video. We'll break down the HTTP response step by step and see how your browser turns it into the Netflix page you know and love. Until then, give this video a like if you learned something new and don't forget to subscribe so you don't miss the next breakdown. Thanks for watching and see you in the next video. Bye-bye.

@@ -1,0 +1,93 @@
+---
+video_title: "How Hackers Steal Website Data with Burp Suite"
+video_id: f4j9JHeRI1A
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=f4j9JHeRI1A
+video_date: 2025-10-22T12:01:17+00:00
+video_description: |
+  A single overlooked detail in a website’s backend can lead to a private data leak.
+  
+  This video is for educational and awareness purposes only.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Ubuntu Server: Victim 
+  - Burp Suite: web security tool
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  00:52  Burp Suite setup
+  02:22  Website exploration 
+  07:15  The tiny mistake
+  07:55  Data exposure
+  09:40  Why this flaw is common
+  10:42  How to prevent it
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #websitehacking #cybersecurity
+---
+This is Sally. She's the proud founder of a brand new painting startup. Passionate about art. She just launched her very first website, sallyshop.test, where she sells her original paintings online.
+
+Her website is pretty classic. There's a homepage, a gallery of her artwork, and of course, a login button so customers can sign in, leave reviews, and place orders. But what Sally doesn't know is that her website has some hidden security flaws. And this is where Kim comes in. He is an experienced ethical hacker testing the security of Sally's new site. And what
+
+he's about to find might surprise you. Kim doesn't have any special access. He starts off just like any other visitor, browsing the site anonymously. But with a tool called Burp Suite, he'll intercept and manipulate requests. dig into how the site handles login and reviews and uncover some critical vulnerabilities, all without any insight into the backend logic. Burp Suite is
+
+actually pre-installed on Kali Linux. To launch it, Kim just heads to the search bar, types in Burpuite, and there it is. He clicks it, and Burp fires up. Once launched, we can click next to start a temporary project. Then click start burp. And voila, Burp
+
+Suite is now running. To start exploring, Kim uses the Burpuite browser, a special Chromiumbas based browser that's already preconfigured to capture all traffic between the browser and the website server. He simply clicks open browser and there it is, a fully functional Chromium browser seamlessly integrated with Burp Suite. From this point on, every page he visits, every login form he submits, every review he posts will be intercepted, inspected, and analyzed in real time. Before diving in, Kim takes one simple but important step. He clears the HTTP history in Burp
+
+Suite. Why? Because when Burp launches the built-in browser, it opens a default homepage here, Google, which clutters the request list. By wiping the history clean, Kim ensures that every new request he sees from this point is directly related to Sally's site. Now he can visits the target site, sallyop.test.
+
+As you can see, Sally's website looks clean and modern. There's a big welcoming message inviting visitors into her world of handcrafted paintery. There's also a cookie consent banner at the bottom, a nice touch that shows Sally is thinking about privacy and compliance. Kim will validate both elements and take a quick look around the site. He can browse the articles, but nothing catches his eyes. To explore
+
+more, Kim scrolls back up and looks for a main menu. On the top left corner, he spots a familiar icon, the hamburger menu. He clicks it. A sidebar menu slides in with a few options. Account access, feedback, artist stories, buying guides. But one item stands out. Login.
+
+Kim clicks the login button and lands on a standard login form, email, password, and a remember me checkbox. To explore features like the shopping basket or product reviews, Kim needs to log in, but he doesn't have an account yet, so he creates one. To do so, he clicks the not yet a customer button and lands on a pretty standard user registration form. It asks for an email, a password, a security question, the usual setup. as email. Kim enters kim@google.com.
+
+For the password, something simple. 1 2 3 4 5. He repeats the password and then picks a security question. What is your mother's maiden name? And types [music] Anna. Now everything looks good. He
+
+clicks the register button. And just like that, his account is created. Now that Kim is a registered user, he can log in. And that's where things start to get more interesting. Behind the scenes, the website has likely issued a session cookie or token to identify him as a loggedin user. He browses through the
+
+site and adds a few paintings to his shopping basket. The artisan, the bishop, and the blacksmith. His basket now contains these three items. And this is where Kim starts getting curious. How exactly is the website managing that basket? Where is it stored? [music] Is
+
+it tied to his session or can it be manipulated? To answer that, Kim turns to Burp Suite. He switches over to the proxy tab and then turns the intercept on. This puts Burp into active interception mode, meaning every request from the browser is paused before it reaches the server. Kim wants to see the traffic related to his basket. So, he
+
+goes back to the browser and refreshes the page. As you can see, the page seems stuck. That's because modern websites like Sally's are built as single page applications. Instead of loading everything at once like traditional websites, single page applications make lots of background API calls using JavaScript. [music] So when Kim refreshes the page, Burp Suite jumps into action. It starts intercepting
+
+every single background request the browser tries to send to the server. These include JavaScript files, fonts, stylesheets, and sometimes even analytics or tracking calls. All part of what's called a single page application. Burpuite gives Kim two options. He can click forward to pass each request through one by one, or he can click forward all to let everything through at once. But today, Kim is taking the
+
+careful route, one request at a time. Here's the first intercepted request. Get/socket.io/questark io/questark and so on. This is part of a websocket polling connection used to maintain real-time updates between the browser and the server. Pretty common in
+
+modern web apps. Kim clicks forward. Next up, get/http/2. This is the main HTML request, essentially the homepage shell of the site. He forwards it too. Then comes
+
+another websocket polling request. Kim clicks forward again. Next we have get/assets/i18/english.json.
+
+This one is interesting. It's a language file for internationalization. It tells the website how to display English content in various UI components. But that's not related to the basket item. So Kim clicks forward. Another
+
+polling connection page load. He clicks forward again. Now here's something new. Rest admin application version. This is the site asking the server, hey, what version of the application am I running?
+
+This is useful for debugging or internal tracking. Kim clicks forward. Then comes application configuration. This fetches appwide settings. Another admin related call that's not too relevant to Kim's basket just yet. He
+
+clicks forward. And finally, bingo. Get rest basket 6. This is the request Kim was waiting for. This is how Sally's website loads his shopping basket. It uses a REST API
+
+endpoint and the number six is the basket ID assigned to Kim. So, a good question to ask is what happens if Kim changes that number? Is this basket properly protected or could someone else's basket be just one number away? He replaces the six with a two and then clicks forward to let the modified request reach the server. And suddenly something unexpected happens. Kim's
+
+basket page now shows someone else's items, the carpenter painting. He's still logged in as Kim, but the data clearly belongs to another user. This confirms a classic security flaw known as insecure direct object reference. It happens when a website exposes direct object IDs like basket numbers, user IDs, or file names without properly checking whether the person making the request actually owns that resource. In plain terms, Sally's site should have verified that the loggedin user, Kim, was the owner of basket 6 only. But the
+
+server didn't check. It just served up whatever basket number it was asked for. This kind of vulnerability might seem small, just a number in a URL. But in some cases, it can expose personal data, order histories, or even financial information. Of course, Kim is an ethical hacker. He'll be reporting the
+
+issue so Sally can fix it. Now that Kim confirmed the vulnerability, the next question is, how could Sally fix it? Let's look at what went wrong and how to prevent this type of bug altogether. The server exposed direct access to basket data using a predictable numeric ID without checking if the user actually owns that basket. To fix this, the server must perform a simple but critical check on every request. It
+
+should verify that the authenticated user is allowed to access the requested resource. If they're not, it should return a 4003 forbidden response. But if they are authorized, then and only then should the resource be returned. Insecure direct object reference is one of the most common and dangerous web vulnerabilities today, especially in modern web applications and APIs. Why does it happen so often? First, because
+
+developers often trust data that comes from the client side. Many apps accept user input like user IDs, basket IDs, or order numbers without confirming that the person making the request actually has permission to view them. [music] Second, restful APIs often expose predictable object IDs directly in URLs like HTTPS API users 4, orders 5 or basket 6. And finally, modern single page application and mobile apps make countless background API calls which are easy to intercept and tamper with using tools like Burp Suite or Postman. For example, Facebook once had an insecure direct object reference vulnerability that let researchers view private photos. Airlines have had it
+
+leaking passengers boarding passes or travel details. Even government and healthcare systems have suffered from insecure direct object reference vulnerabilities exposing citizen or patient information, sometimes at massive scale. So to prevent insecure direct object reference vulnerabilities like this one, developers should follow a few simple but powerful rules. Never trust the client for ownership or identity data. Authenticate and authorize every request on the server.
+
+And finally, use secure identifiers, for example, random or UUID based ID instead of predictable numbers. And that's it for today. We saw how something as simple as a numeric ID in a URL when left unchecked can lead to a serious security vulnerability. One that in some cases could expose sensitive data, user activity, or even someone else's private information. If you're a developer, take this as a reminder. Validate everything on the
+
+server. And if you're learning security, be curious. Don't just look at what the app shows you. Look at how it works behind the scenes. Thanks for watching and see you in the next one. Bye-bye.

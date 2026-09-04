@@ -1,0 +1,147 @@
+---
+video_title: "How Hackers Craft Advanced SQL Injection Attacks"
+video_id: noU9N9a__YQ
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=noU9N9a__YQ
+video_date: 2025-11-07T16:37:35+00:00
+video_description: |
+  Hackers don’t always need prior access. Sometimes, all it takes is a curious mind, a vulnerable search box, and Burp Suite listening closely to what the server says back.
+  
+  In this episode, we explore how hackers craft advanced SQL injection payloads, and how a single request can reveal far more than it should.
+  
+  This video is for educational and awareness purposes only. The goal is to raise awareness of common web vulnerabilities so developers can defend against them.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Ubuntu Server: Victim  
+  - Burp Suite: web security tool
+  - SQL Scripting: SQL injection
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  02:00  Capturing requests
+  03:24  Using Repeater
+  08:20  Injection testing begins
+  10:35  Union Select attack
+  20:37  Final thoughts
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #cybersecurity #sqlinjection #websitehacking
+---
+This is Sally. She's an artist with a dream and now the proud owner of a brand new online store, sallyhop.test. With a love for bold colors and big canvases, she's decided to turn her passion into a business. Her website is simple but elegant. A homepage
+
+showcasing her latest collections, a gallery of paintings for sale, and of course, a neatly organized menu inviting visitors to explore. From posting reviews to discovering limited editions and more. But behind the brushstrokes and bright colors, Sally's site has a problem. A hidden vulnerability is lurking in her code. Invisible to her, but obvious to someone who knows what to look for. And
+
+this is where Kim comes in. He's not a hacker in a hoodie. He's an ethical cyber security trainer. And today he will demonstrate what can happen when web apps forget to defend themselves. Using a tool called Burp Suite, Kim is going to show us how a single vulnerable search box can leak an entire user database, all without even logging in.
+
+Let's dive in. Kim launches Sally's website and starts exploring. Everything looks simple. A clean layout, some artwork, and right near the top, a search box, most likely used to browse products. just below it, he notices a painting titled The Baker. So, he types
+
+baker into the search field. And two results appear, the baker and the baker's wife. Now, here's the thing. Search boxes like this are one of the most common entry points for vulnerabilities, especially SQL injection. Kim knows this, so he will fires up Burpuite, activates the proxy, and gets ready to look under the hood.
+
+We've already explored Burpuite in a previous video. If it's new to you, don't worry. Just check out that episode first to get up to speed. Burp Suite is actually pre-installed on Kali Linux. To launch it, Kim just heads to the search bar, types in Burp Suite, and there it is. He clicks it, and Burp fires up.
+
+Once launched, we can click next to start a temporary project. Then click start Burp, and voila, Burp Suite is now running. Kim heads over to the proxy tab in Burp Suite and launches the built-in Burp browser. From there, he visits Sally's website and searches for Baker just like before. And as expected, the same two results appear. Now, it's time to take a closer
+
+look at what's happening behind the scenes. Kim toggles intercept to on, then reloads the page. And voila, Burp intercepts the request sent from the browser to the web server. Just like we saw in the previous video, Kim can now forward each request one by one until he spots the one he's interested in. And there it is. Get rest products.
+
+Search Q equal Baker. The exact request triggered by the search box. Bingo. This is the one Kim needs. Now that Kim has captured the request, it's time to experiment with it. For
+
+that, Burp Suite offers a powerful tool called the repeater. Designed exactly for this kind of task. As the name suggests, it allows to send the same request repeatedly, making small changes each time to observe how the server responds. Kim simply right-clicks the intercepted request and chooses send to repeater. Kim now navigates to the repeater tab.
+
+And there it is, the Baker search request that Burpuite just captured. From here, he can start experimenting, tweaking the request, sending it again, and watching how the server reacts. At this stage, the intercept feature isn't needed anymore. That's because intercept is only used to pause and capture live requests coming from the browser. Now that Kim already has the request he wants safely stored in repeater, he can test it freely without blocking any more traffic.
+
+So, he switches back to the proxy tab and turns intercept off. Let's go back to the repeater tab and take a closer look. On the left, we see the request. This is exactly what the browser would send to the server. In this case, it's a simple get request. On
+
+the right, we have the response. This is where the server's reply will appear after we send the request. Right now, it's empty because we haven't sent anything yet from repeater. And on the far right, we see the inspector. One of the most useful features in Burp Suite.
+
+It breaks down the request into clean organized sections so we can understand exactly what's going on. First there's the protocol. Here we see HTTP2 is being used which is just a newer faster version of HTTP1. Next is the method. In this case it's get. That means the browser is simply
+
+asking the server for information and any data it sends like our search keyword is included directly in the URL as a query parameter. Remember that get is typically used when you're just retrieving information from a server like loading a page, fetching a product list, or searching for something. It's fast and simple, but everything you send with it, like search terms, is visible right in the URL. That's why you wouldn't use get for actions that involve sensitive data like logging in or submitting a password. For those, we usually use post, which sends the data in the body of the request, keeping it out of the URL bar. Then there's the
+
+path. This tells us exactly which resource on the server is trying to be reached. Here it's rest products search which is clearly an endpoint designed to search for products in Sally shop. Below that we have the query parameters. These are values added to the URL or path.
+
+They usually modify how the request behaves. In this case it's telling the server what we want to search for, namely Baker. Then we have the headers. These are extra pieces of information that the browser sends along with the request. Things like what kind of data it can accept in return, what language it prefers, or what platform it's running on. And finally, there are the
+
+cookies. These are small pieces of data stored in the browser that often help the server remember who we are or what settings we've chosen. For example, you can see Sally's site has stored a language preference and some banner dismiss statuses. All of these inspector tools are incredibly helpful when analyzing how a web app works and how we might begin to explore its behavior. So, let's start exploring. Kim clicks send,
+
+which sends the request to the server just as if it were coming from the browser. And right away, we get a response in the right-h hand tab. We see a 200 okay, which means the server successfully understood and processed our request. Below that, we see the full JSON response listing the products that match the search term baker. Just like in the browser, we get two products, the baker and the baker's wife. But this
+
+time, we're seeing much more detail. Names, descriptions, prices, image file names, timestamps for creation and updates, and even a deleted at field all returned in clean structured JSON. This level of detail is super useful. It gives Kim clues about how the data is structured and how the application might be storing and querying that data in the background. Now that we understand the repeater interface, it's time to use it for its main purpose. Testing how a
+
+server reacts to modified requests. Repeater lets us change parameters, headers, and other parts of a request over and over again without needing to reload the page or touch the browser. For example, instead of going back to the site and manually typing doctor into the search box, Kim can simply update the query right inside the request tab, he change it to search for doctor and hit send. Instantly, he sees how the server responds. In this case, two products containing the word doctor are returned. He can do the same for Bishop
+
+or any other term, all without ever touching the browser. That's the power of repeater. It's faster, cleaner, and far more precise and informative than using the front end. This makes it the perfect tool for experimenting with potential vulnerabilities. So, Kim is ready to run his first SQL injection test. He modifies the search
+
+term by adding a single quote. Why a single quote? Because in SQL, quotes are used to define string values. Right now, Kim just wants to check whether the search parameter is injectable. that is whether the Q value actually reaches the database. If
+
+sending Q equal Baker single quote causes a syntax error that tells him that the input is directly embedded in a SQL statement instead of being passed as a safe parameter, meaning the application might be vulnerable to SQL injection. Kim hits send with the modified input, namely Baker single quote. And right away we get a response from the server. It is an error message, specifically an SQL error. This confirms exactly what Kim was hoping for. The
+
+server is leaking a database error, which indicates the search parameter is reaching the database without proper validation or parameterization. This opened the door to SQL injection. Looking at the full SQL error, Kim can start to piece together how the application is querying the database and more importantly, how the data is structured. The products table likely looks something like this. Each row represents a product and each column is a field that could be displayed or exploited. The SQL statement found in
+
+SQL error message was select asterisk from products which means retrieve all columns from the table named products. Wear name like baker or description like baker. The wear filters the rows returning only the products that meet the conditions inside the parenthesis. like is used for pattern matching and the percent signs are wild cards that mean any sequence of characters. So this section means filters rows where name or description contains baker. The
+
+second condition and deleted at is null ensures only not deleted or active products are selected. Finally, order by name sort the results alphabetically by the product name. This understanding helps Kim with the next step. Crafting an injection that fits the query structure without breaking it. Now that Kim understands how the query is built, he's ready to take the next step. He
+
+wants to trick the application into not just searching for products, but secretly pulling columns from another table like users where sensitive information such as emails and passwords are stored. To do that, he'll test whether the backend is vulnerable to a powerful technique, the Union Select attack. The idea behind Union Select is simple, but incredibly powerful. It lets you combine the results of two different SQL queries into a single response. But there's one critical rule. Both queries
+
+must return the same number of columns. And this is where things get interesting. Since Kim already knows the original query structure, retrieve all columns from the table products and filters rows where name or description contains Baker, he can use that knowledge to craft a second query, one that pulls data from the users table and attempt to merge the two using union select. The union select will looks like this. Union select 1 2 3 from users dash. The dash at the end tells the
+
+database to ignore the rest of the original query. So it doesn't interfere with union select injection. The numbers 1 2 3 are just placeholders. That means dummy values used to represent the number of columns. But how many placeholders or columns does Kim need?
+
+Well, that depends on the original query. As mentioned previously, both the product query and the users query must return the same number of columns. If the products table returns nine columns, then Kim's injected users query must also return exactly nine values. Otherwise, the database will throw a number of result columns error. So, Kim need as many placeholder as there are columns in the product table. Earlier,
+
+he assumed five columns, but that was just a guess and here there are only three columns. So, how does Kim figure out the real number of columns? Well, that's the easy part. Kim proceeds by trial and error, starting small and increasing until he finds the correct number of columns. In Burpuite, he sends this test payload Q equal Baker single quote twice the right parenthesis. Then
+
+union select one from users dash. The single quote closes the original Baker search string in the SQL query. The first right parenthesis closes the red left parenthesis while the second right parenthesis closed the purple left parenthesis. Union select one from users is the injected query. Kim is trying to pull one column of data from the users table.
+
+And finally, dash is a SQL comment. It tells the database to ignore the rest of the original query after Kim's injection, avoiding syntax errors. So when Kim sends his injection, the original query get transformed like this. In plain English, this says search for the word baker in the product table. Oh, and while you're at it, also grab one column from the users table and just ignore the rest of the original query.
+
+You may want to pause here for a moment to make sure you fully understand the concept of union select. This is one of the most common and powerful SQL injection techniques out there. It's all about using the structure of an existing query to your advantage and merging it with a second injected query that pulls data you're not supposed to see. Once you get how it works, it unlocks a whole new level of understanding in web security. So now let's jump back into Burpswuite and watch how Kim sends this first payload using the repeater tool.
+
+As query, he write baker single quote twice the right parenthesis union select one from users dash then hit send. And there is the response. Kim gets a 400 bad request. That's because he typed the payload directly into the raw request box. But get requests have to follow a specific format. Everything after the Q equal
+
+needs to be URL encoded. Otherwise, the server might reject it as malformed. That's exactly what's happening here. The browser normally encodes special characters for us, but when editing the raw request directly, Burp Suite doesn't do it automatically. To fix that, Kim goes to the inspector panel on the right and pastes the same payload into the query parameters field. That way, Burp
+
+Suite handles the encoding behind the scenes and the request gets properly formatted. When he hits enter, Burpuite automatically URL encodes the value. You can even see the change reflected in the request panel on the left. Now everything is correctly formatted. Kim can click send and voila. This time Kim
+
+get a response. Not a success message yet, but he is getting somewhere. The server returns a 500 internal server error, which means something broke while the server was trying to handle the request. If we scroll down in the response tab, we find a juicy clue. Selects to the left and right of union do not have the same number of result columns. That's exactly what Kim
+
+expected. This error tells us something really important. The server actually executed the SQL query, but it failed. The problem, his union select isn't returning the same number of columns as the original query from the products table. In other words, the injection worked. It's just not shaped correctly
+
+yet. To fix the problem, Kim needs to find the right number of column in the product table. But he doesn't need to guess blindly. He'll just test a few options. First, he tries a slightly longer query. Union select 1 2 3 4 5. He
+
+pastes it into the query parameter field. hits enter to URL encode it. Then click send. Still a 500 error. Too few columns. Next, he goes bigger. Union.
+
+Select 1 2 3 4 5 6 7 8 9. He press enter to encode it. Then hit send. And boom, 200. Okay. If he scrolls down the
+
+response, he can see a nicely formatted JSON object. That means Kim just found the correct number of columns. He now has a working injection point, a way to slip SQL code directly into the application's query logic without triggering any errors. The request is successfully returning merge data from both the original products query and Kim's injected users query. But so far, it hasn't actually revealed anything from users table. That is because Kim
+
+was only using dummy values 1 2 3 4 5 in the union select. But now he's about to replace those placeholders with real column names from the users table. Things are about to get interesting. So now that Kim's union select injection works, it's time to swap out those dummy numbers and start asking the server for real data from the users table. He will ask for column name, ID, email, and password from the users table. But wait,
+
+how does Kim know which column names to use from the users table? Let's start with the obvious ones. email and password. To figure those out, Kim doesn't have to guess. He uses another feature of the website. He opens the
+
+login page and enters some test credentials. Test as the email and test as the password. Then with intercept turned on in Burp Suite, he clicks the login button. And there it is. In the intercepted request, he can clearly see the fields being sent, email and password. So now he knows that somewhere
+
+in the database there's a users table with at least two columns, email and password. But what about ID? How does he know that the users table has a column named ID? Well, that one is an educated guess and a good one. Earlier when Kim searched for products, the response returned results like this. ID 2 name
+
+the baker's wife. Almost all database tables use a column called ID as the primary key, a unique identifier for each row. So, it's a safe bet that the user's table probably has an ID column, too. With the correct number of columns confirmed, nine to be exact, and armed with the column names ID, email, and password, Kim is ready to send his final payload. Note that the server still needs to return exactly nine values, just like before.
+
+So for the columns he doesn't care about right now, he simply uses placeholder values to keep the structure intact. Let's break down this final payload. Again, the first three values, ID, email, and password are the real targets. These will pull actual data from the user's table. The rest 4 through 9 are just filler values to make sure the total count adds up to nine. And
+
+remember the dash dash at the end tells the database to ignore the rest of the original query so it won't interfere with Kim's injection. Kim can now click send and voila, the response is a success 200. Okay. He scrolls down the response tab and there it is. A list of user IDs, email addresses, and passwords pulled straight from the database. He
+
+sees accounts for admin, Justin, Brian, and more. If you look closely at the field name, you will notice that every value in this response is labeled using the column names from the products table, not from the users table. Why? Well, because the original query was built to fetch products. So, the application is still trying to format the output as if it's a product. So even though the actual data
+
+is coming from the users table, the labels in the response are still things like name, description, price, and so on. These are all columns from the products table. The database engine doesn't care what the columns are called. It just fills in the expected slots with whatever data Kim gave it. That's why the user's email ends up labeled as name and the password hash shows up as description. Speaking of
+
+passwords, at first glance, it might look like they're secure because they're stored as hashes. But just because a password is hashed doesn't mean it's safe. For example, the admin hash correspond to the weak password admin 123. We can verify that by running echo nadmin123 MD5 sum. This command used the MD5 sum tool to calculate its MD5 hash of the given string. here, admin one, two,
+
+three. So, that's it for today. Kim used nothing more than a vulnerable search box and some clever SQL syntax to extract sensitive user data right from the database. And the most shocking part, Kim didn't need to log in. He didn't crack a password or bypass a login form. He didn't need special tools
+
+or admin access. All he did was send a single, carefully crafted request to a search field that wasn't properly protected. This wasn't just a proof of concept. It was a real working example of the kind of data breach that happens every single day on millions of poorly secured websites around the world. If you like the video, don't forget to give it a thumbs up and subscribe for more realworld educational hacking demo explained stepby step.
+
+Thanks for watching and see you in the next one. Bye-bye.

@@ -1,0 +1,97 @@
+---
+video_title: "How Hackers Use SQL Injection to Get Into Websites"
+video_id: GpngIucpMkw
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GpngIucpMkw
+video_date: 2025-10-08T11:00:44+00:00
+video_description: |
+  A single mistake in website development can lead to full compromise via SQL injection. Here’s how, safely explained.
+  
+  This video is for educational and awareness purposes only.
+  It was performed in a safe, controlled lab environment to raise awareness about common web security flaws like SQL injection.
+  The goal is to help developers and cybersecurity practitioners understand how these attacks work and how to prevent them.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: attacker machine
+  - Apache + PHP + MySQL: vulnerable website
+  - Python: generate username wordlists
+  - Hydra: brute-force username enumeration
+  - SQL Scripting: SQL injection
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue
+  00:58  Setup & Database
+  02:27  Build Username List with Python
+  06:13  Username Enumeration
+  09:09  Understanding SQL Injection
+  10:58  SQL Injection: Gaining Admin Access
+  11:59  How to protect
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #sqlinjection #cybersecurity
+---
+This is Sally. She is the founder of an online store selling handmade pottery, a cozy little website where customers can browse and buy beautiful pottery, all crafted by hand. Like any online store, her site includes a login page. This is where customers can log in to check their orders, manage their profiles, or save favorite items for later. Let's take Susan, one of her customers.
+
+She clicks the login button, enters her username and password, and signs in. Once logged in, she sees her dashboard where she can view past purchases and canceled item. John, another regular user, signs in with the credentials he created during registration. He can then checks and see that his order has already been shipped. Or Linda, a frequent customer. She logs in
+
+with her credentials and see her items still pending in her cart. To make all of this possible, Sally's website needs a backend, a database that stores user accounts, passwords, orders, and more. And like many developers, Sally chose MySQL, a popular open-source SQL database to power her site. Now, here's the important part. Sally is also an admin. She logs into a special
+
+section of the website where she can manage inventory, fulfill orders, and view customer accounts. But there's a problem. Sally's login system was built quickly without much thought for security. And that's where things start to get interesting because there is Kim, a penetration tester who will try to exploit weaknesses in Sally's login system to demonstrate just how vulnerable it really is. Kim is running Kali Linux, the go to operating system for ethical hacking and penetration testing. Kim visits Sally's
+
+website and clicks around browsing the products. Then something catches his eye. A login page. Now Kim doesn't have an account there, but he wonders how secure is this login. Out of habit, he tries a few common usernames. Admin, administrator,
+
+and even Sally since her name appears in the domain. Each time the website replies, "Username not found." For Kim, that's a giveaway. Why? Because the site is giving away too much information. It's not just checking
+
+if the credentials are correct. It's confirming whether a username exists at all. That subtle difference opens the door for Kim to a technique called username enumeration. That means he can automatically test a large list of usernames and observe how the website responds. If a username isn't in the database, the site will reply with username not found. But if
+
+the username does exist, the response will be different, revealing which usernames are valid. Rather than relying on a generic list, Kim builds a targeted set of usernames. He figures that since the store is called Sally's store, the admin account probably includes names like Sally admin or administrator. So he writes a quick Python script to generate combinations like Sally admin in Pascal case, Sally admin in snake case, admin Sally with an uppercase prefix, and so on. Here's the code Kim uses. He starts with the name Sally and
+
+combines it with common admin roles like admin and administrator. They are combined either directly or separated by an underscore. Then there's the function called variance. It takes a word and generates different capitalization styles like lowercase sally, capitalized Sally, and uppercase Sally. This helps cover all the common ways usernames are written. On line 11,
+
+Kim begins the main loop. Using Python's product function, he goes through every possible combination of a name, a ro, and a separator. Then on line 12, for each combination, he applies the variance function to both the name and the role, generating versions like Sally admin, all lowercase, Sally admin with an underscore, or admin Sally in uppercase prefix. Let's run the script and see what it produces. We adds a simple print statement to display each generated username in real time. Now we can press run and see the
+
+result. And voila, in just seconds, Kim has a clean, customized list of potential admin usernames tailored specifically to Sally's website. Each result is written to a file called usernames.txt, ready to be used in a brute force or enumeration attack. In just a few lines of code, Kim creates a highly effective targeted username list, all based on nothing more than the store's name, Sally's store. Kim can now copy the code
+
+to bring it to his local machine. What you just saw was done using an online Python editor. A great way for Kim to quickly prototype his username generator. Once he's happy with the code, Kim saves it as a file called generate usernames.py in his downloads folder. In nano we use control O to save
+
+the file. He then uses the cat command to view the code and make sure everything was copied properly. Now he can runs the script with Python to create the usernames.txt file. The file is generated in his current working directory. Kim opens a
+
+second terminal, navigates to that folder, and uses the cat command to see the generated list. And there it is, the beautiful customcrafted username list. Let's check how many usernames the file contains using the word count command. It shows 36 usernames. That number comes from the fact that we have one name Sally. Two roles admin and
+
+administrator. Two separator which are no separator and underscore. Three variants of the name lowercase sally, capitalized Sally and uppercase Sally. and finally three variants of the role in the same styles. Now that Kim has his custom word list, he's ready for the next phase, brute force username enumeration.
+
+To do this, he'll use a powerful tool called Hydra. Hydra is a well-known login cracker used by cyber security professionals and penetration testers. It can perform fast automated login attempts against a wide range of services from SSH and FTP to HTTP login forms like Sally's. In this case, Kim will use Hydra to test for valid usernames, not passwords. Here's how it works. He gives Hydra the
+
+list of usernames he just generated and sets a dummy password like dummy 123 for all attempts. Because Sally's login page returns different error messages like username not found for invalid accounts and wrong password for real ones, Hydra can detect which usernames actually exist based on the response. Let's see how Kim runs Hydra for username enumeration. The command he types is hydra t1vf capital l followed by the username list lowercase p followed by the single password to try then the target domain here sallystore.com then comes the important part the http post form module hydra needs to know exactly how the login form works let's break it down the page targeted is login.php PHP. The field names must
+
+match the login form exactly here. It's username and password. There's a login button, too. Kim needs to submit it to Hydra. And finally, Hydra needs to know what error message the site shows when a login fails. In Sally's case, it is
+
+username not found. That's the key string Hydra will look for. If it sees that text in the response, it knows the attempt failed. But if the message doesn't appear, Hydra assumes it may have found a valid username. This is how Kim turns simple error messages into an enumeration tool. So
+
+this is the full Hydra command Kim types. Let's recap. We give Hydra a username list, a single password, the domain name of the target, the specific page to attack. Now Kim presses enter, and the username enumeration begins. Each username in the list is tested with the same dummy password. And after just
+
+a few tries, boom, a match has been found. It seems the username is Sally admin with an underscore. And just like that, Kim discovers a valid username. To confirm it, he heads back to Sally's login page and types in the username he just found. He enters any random password and bingo. The
+
+response is different. Instead of username not found, the site now says wrong password. That subtle change confirms it. The username is real. That's probably the account Sally uses to manage the store. Now Kim wants to go
+
+one step further. He doesn't know the password. But what if he doesn't need it? Kim is not going to guess the password. He's going to bypass it. This
+
+is where SQL injection comes in. To understand what Kim is about to do, we first need to understand what happens behind the scenes when a site checks credentials. So, let's take a look behind the scenes. When someone logs in, like Kim, with the username he just found and a dummy password, the website sends the username and password to the back end. The backend then queries the database server to verify the credentials. The SQL query used for that
+
+looks like this. Select from users where username equals sally_admin and password equal dummy. This query is asking the database find a user whose username is sally admin and whose password is dummy. If a matching user is found, the login is successful. Now, here's where it gets dangerous. If the
+
+website doesn't properly sanitize the input, an attacker can manipulate that SQL query using specially crafted input. Let's say Kim enter his username sally_admin apostrophe hash and for the password he types anything it doesn't matter so what happens the hash symbol in SQL is used to indicate a comment everything after it is ignored that means the original query gets transformed into select from users where username equals apostrophe sally admin apostrophe everything after the hash is commented out including the password check. So what's left is the part in white. And since that user exists in the database, the query will returns a valid result and the login will succeeds. Let's see how Kim puts this to the test on Sally's website. In the username
+
+field, he enters the valid username he discovered earlier, followed by a single quote to trick SQL into thinking the username string is complete. And finally, a hash symbol to comment out the password check. In the password field, he types anything. It doesn't matter. Then he hits Logan and bingo, he's in logged in as the admin without ever knowing the password.
+
+This is the power and the danger of SQL injection. With just a few characters of cleverly crafted input, Kim was able to bypass the login system entirely. Now, imagine if this weren't a demo. If this were a real store with real customers, their data, orders, and even payment history could be exposed in seconds. The scariest part, this kind of vulnerability is still incredibly common on small business websites today.
+
+But the good news, it's easily preventable with just a few best practices. Always use prepared statements or parameterized queries to separate SQL code from user input. We will see how to do this in a future video. Never trust input from forms. Always sanitize and validate it. And avoid
+
+giving away clues with error messages. Username not found might seem helpful, but it could be all an attacker needs. So, always keep these best practices in mind when developing websites. Kim is an ethical hacker, a pent tester hired to find these types of issues before real attackers do. But many small businesses don't take security seriously until it's too late. So whether you're a developer
+
+or just someone who runs a website, understanding these basics could save you and your users a lot of pain. If you found this video helpful, give it a like. Subscribe for more cyber security breakdowns. And remember, sometimes all it takes is one apostrophe and a hash. Bye-bye.

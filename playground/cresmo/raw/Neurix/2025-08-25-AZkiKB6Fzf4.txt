@@ -1,0 +1,94 @@
+---
+video_title: "How Hackers Get Into Your PC Using an Image Trojan"
+video_id: AZkiKB6Fzf4
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AZkiKB6Fzf4
+video_date: 2025-08-25T09:00:14+00:00
+video_description: |
+  An innocent-looking .JPG file can be weaponized to take full control of a computer. In this video, you'll see step by step, how hackers create an image trojan, disguise it as something harmless, and trick victims into opening it.
+  
+  This video is for educational and awareness purposes only.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: attacker machine
+  - Windows 10: victim machine
+  - msfvenom: payload generator
+  - Metasploit Framework: set up listener & exploit
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00 Prologue
+  00:38 Setup: Attacker and Victim
+  01:09 Step 1: Building the Trojan with msfvenom
+  06:15 Step 2: Setting up a listener in Metasploit
+  10:00 Step 3: Social engineering the victim
+  11:18 Step 4: Gaining access with Meterpreter
+  12:29 Protecting yourself (5 essential tips)
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #trojan #cybersecurity
+---
+An image lands in your inbox, a Paris sunset from a friend. You click to open it, expecting a photo. But in the background, something else launches. A hidden program silently gives a hacker full control of your computer. This technique is called an image Trojan.
+
+It's not science fiction. It's a real method used by attackers. And in this video, you will see exactly how it is done, step by step. This is cyber security in real life, explained like never before. Let's go. Our ethical
+
+attacker is Kim. He's running Kaye Linux, the go-to operating system for penetration testing. His target is a Windows 10 machine used by Sally. Sally has a good friend named Bob. And Kim plans to exploit that trust. He will
+
+craft an email to Sally pretending to be Bob and send her what looks like a harmless photo from his recent Paris trip. But hidden inside that image is a Trojan that will give Kim full control of Sally's computer the moment she opens it. To trick Sally into believing the file she received per mail is a genuine photo from Bob, Kim needs to embed malicious code inside what appears to be a regular image. One of the tools hackers use for this is called MSF Venom, a payload generator that can create malicious executables and disguise them as harmless files. So what exactly is MSF Venom? It is a command
+
+line tool that comes with the Metas-ploit framework and is used to create custom malicious payloads. A payload is a small piece of code designed to do something specific once it reaches the target. In this case, the payload is a reverse shell. It gives the attacker remote control of the victim's device. Think of the malicious file sent by Kim to Sally, like a delivery package. The
+
+outer wrapping is how it gets to Sally, the victim. But inside is the payload, the real action code. Before launching the attack, Kim first checks if MSF Venom is installed on his Kali Linux system. He opens a terminal and simply types MSF Venom. And there it is. MSF Venom is installed and ready. If
+
+we scroll up, we can see a usage guide with an example. Let's take a quick look. We can see that MSF Venom uses the lowercase P flag to specify the payload, then LHOST to set the attacker's IP address, the lowercase F flag to choose the output format like XE for a Windows program, and finally the lowercase O flag if you want to set the name and location of the generated file. So the first thing Kim need to give MSF Venom is the payload he want to use. That is the actual malicious code that will run on the victim's system. To see
+
+all available options, Kim types MSF Venom-L payloads. And here is the result. Let's scroll up to see what we've got. As you can see, there are a lot of payloads for reverse HTTP, reverse HTTPS, and many more. The one Kim wants is called reverse TCP.
+
+This payload creates a reverse shell. This means that once Sally opens the file, her computer will connect back to Kim's machine over TCP, giving him a remote meter session. Now that Kim has confirmed MSF Venom is installed and that the payload he wants to use is available, he can move forward in his attack on Sally. The next step is to generate the malicious code that will be hidden inside a file designed to look like a regular image. The command he runs is msfven venom-p followed by the payloads. Here a reverse shell for
+
+Windows over TCP. Then L-host followed by the IP address of a machine he controls. In this case is its attacker machine IP address. This is where the victim's system will connect back. Then Lport followed by a port number on Kim's machine that will listen for the incoming connection. Here 4444 is used
+
+which is the default listening port for many metas-ploit reverse shell payloads. This port must be free on Kim's machine since it will be the endpoint where the reverse shell connection from the victim's system arrives. Kim further type- F to specifies the output format such as XE when the target is a Windows machine. And finally the greater than symbol used to write the generated file to disk with a specific name. Here picture.exe.
+
+Kim can now run this command to generate picture.xa, the malicious file that will secretly contain the reverse shell payload while appearing to be a harmless image. And voila, the malicious code has been generated. MSF Venom confirms the payload size is 354 bytes and the final Windows executable is about 73 kilob. The file is created in the current working directory, in this case, Kim's home folder. At first glance, it looks
+
+like an ordinary file, but hidden inside is the reverse shell payload that will connect back to Kim's machine the moment it is opened. The picture.ex file now contains a reverse shell. But no one will willingly doubleclick an obvious.x file, right? So
+
+Kim needs to make it look harmless. To do so, he renames the file so it appears to be a JPEG image. This is done with the command move picture.exe. picture.jpeg.exe.
+
+The commands simply say rename picture.exe into picture.jpeg.exe. This is a Linux command that simply moves or renames a file. In this case,
+
+changing its name so that it include the JPEG extension. Now, the malicious file appears to be a normal picture, but it is still a Windows executable. The trick here is that by default, Windows hides file extensions. So, picture.jpeg.exe
+
+will simply appear as picture.jpeg. And that is where the danger lies. It looks like an image, but the moment Sally opens it, the hidden malicious code will execute. Now that Kim has the malicious file, he can send it to Sally. But first, he
+
+needs to set up a listener, like a walkie-talkie waiting for the victim response. This listener will be ready and waiting for the reverse shell to connect back the moment Sally clicks on the file. Kim uses the metas-ploit framework for this. He opens a new terminal and types msf console. This launches Metas-ploit's main interface where he can configure the listener to wait for the connection from Sally's computer.
+
+The Metas-ploit framework is a powerful penetration testing platform used by both security professionals and attackers. It comes loaded with tools and modules for every stage of an attack. From reconnaissance, which is gathering information about a target, to exploits, which take advantage of vulnerabilities, then payloads, which deliver malicious code, and finally loot, which is all about stealing valuable data from a compromised system. In this case, Kim has already created his malicious picture.exe XE payload using MSF Venom, a built-in tool within the Metas-ploit framework. Now, he just
+
+needs to set up a multi- handler listener, a module designed to wait for incoming connections from the reverse shell hidden inside the malicious file. Setting up the multi-Handler listener is done in three steps. First, Kim tells Metas-ploit that he want to use that listener module. To do this, he types use exploit/multi/handler. This module acts like a generic listener ready to handle incoming connections from payloads we have generated.
+
+Next, Kim tells that listener what kind of payload it should expect by typing set payload windows/meterreder/reverse TCP. In other words, he is saying, "Hey, listener, get ready for a reverse TCP meter connection from a Windows machine." Each payload has its own set of arguments, also called options or variables that need to be configured. For example, the attacker's IP address and the listening port to see exactly which ones are required for the selected payload. Kim types, show options.
+
+This displays a table of all configurable arguments for the chosen payload along with whether they are required and their current values. Another command that can be used for this is the info command. This provides detailed information about the selected payload such as its name, platform, architecture, whether it requires administrator privileges, total size, and even who developed it. It's a quick way to confirm exactly what the payload does and any special requirements before launching the attack. So we can see here that all the required variables are already set except for LHost. LH host is the local host, the IP
+
+address the victim's computer will connect back to. In this case, it's Kim's own IP address or the IP of a machine he controls that's running the listener. Let's go ahead and set it in metas-ploit. Setting a payload argument is done by typing set followed by the argument name and then the value we want to assign. If we run show options again, we can see that all variables, including lhost, are now ready. With everything in place, Kim
+
+launches the listener with the command run. The port is now open and Metas-ploit sits quietly waiting for the victim to take the bait. Now that the reverse shell is ready, Kim moves on to the final stage of the attack, social engineering. A Trojan is only effective if the victim actually opens it. That's why hackers rely on social engineering tricks to make the files seem safe and trustworthy.
+
+Kim knows his target Sally has a best friend named Bob. So, he creates a fake email account that looks just like Bob's and crafts a message designed to lower her guard. The message reads, "Hey, Sally, here is that sunset shot from the Eiffel Tower I told you about. It's my favorite from the trip. Cheers, Bob.
+
+Then he attaches the Trojan file carefully disguised to look like an innocent picture and is ready to hit send. Let's put Kim and Sally side by side to see how Sally received the message once Kim sends it. Kim sends the email and it instantly lands in Sally's inbox. To her, it looks like a sweet message from a friend, but hidden inside that photo is the key to giving Kim full control of her computer. Let's switch over to the listener terminal on Kim and watch what happens when Sally takes the bait. She
+
+clicks on the attachment and saves it to her downloads folder. Excited to see the beautiful Eiffel Tower sunset her friend Bob promised, Sally heads straight to the downloads folder to find the file. Notice how the.exe extension is hidden because Windows hides file extensions by default. All Sally sees is a harmless looking picture.jpeg.
+
+Trusting it completely, she double clicks the file and boom, the malicious Trojan silently opens a tunnel back to Kim's machine. On his screen, a meter predator session pops up. He is now inside Sally's computer with full control. Once inside, Kim can run commands like system info to gather details about Sally's machine. Instantly, he sees that she's running Windows 10, 64-bit architecture, English language, part of a work group, and that two users are currently logged in. In
+
+other words, he now knows exactly what kind of system he is dealing with and can tailor his next moves for maximum control. Furthermore, he can navigate through the file system to browse directories, open folders, and access any files he wants, from personal photos to sensitive documents. So, let's recap. Kim creates a Trojan disguised as an image, tricks Sally into opening it by pretending to be her friend Bob, and gains full control of her machine. Simple, sneaky, and scary.
+
+Before we wrap up, let's talk about how to protect yourself from attacks like this. Always show file extensions in Windows so you can spot suspicious files. Never open unexpected or strange attachments, even if they appear to be from someone you know. Use antivirus software with real-time scanning enabled. Avoid running as administrator unless absolutely necessary.
+
+Open suspicious files in a safe environment like a virtual machine or sandbox. If you liked this video, hit the like button, subscribe for more real world hacking demos, and tell us in the comments which topic you'd like us to ethically hack next. I will see you in the next one. Bye-bye.

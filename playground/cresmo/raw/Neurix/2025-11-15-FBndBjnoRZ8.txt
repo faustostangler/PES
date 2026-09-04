@@ -1,0 +1,102 @@
+---
+video_title: "How Hackers Use John the Ripper to Crack Passwords"
+video_id: FBndBjnoRZ8
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FBndBjnoRZ8
+video_date: 2025-11-15T13:50:00+00:00
+video_description: |
+  Hackers don’t always steal passwords, sometimes, they steal the hashes and crack them.
+  
+  This video is for educational and awareness purposes only. The goal is to raise awareness of common web vulnerabilities so developers can defend against them.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Ubuntu Server: Victim  
+  - John the Ripper: Password hash cracking tool
+  - Burp Suite: web security tool
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  01:41  Recap
+  04:20  What is a hash?
+  05:37  John the Ripper Intro
+  08:45  Finding Wordlists in SecLists
+  10:28  Cracking the passwords
+  13:00  Outro & Prevention
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #ethicalhacking  #johntheripper #cybersecurity
+---
+This is Sally. She's an artist with a dream and a brush in hand. After years of selling her paintings at local markets, she finally took the leap and launched her very first online store, sallyshop.test. Passionate about creativity and proud of her work, Sally poured hours into building a beautiful website to showcase and sell her original art.
+
+To protect her customer and their data, she made sure all passwords were stored securely. Not as plain text, but as cryptographic hashes. "It's secure," she thought. But what Sally doesn't know is that hashing doesn't always mean security. And this is where Kim comes in.
+
+He is an ethical hacker, a penetration tester hired to find security flaws before the real criminals do. Today, Kim will gain access to a user's account and demonstrates that even hashed passwords can be cracked, revealing how dangerous common mistakes can be when it comes to authentication security. Let's dive in. In the last episode, Kim discovered that the search bar for searching products on Sally's website was vulnerable to SQL injection. He launched an advanced SQL attack known as union select.
+
+Union select is one of the most common and powerful SQL injection technique. To recap, it allows an attacker to merge their own query with the website's original query, essentially repurposing it to retrieve data from a completely different table. In this case, Kim used it to take advantage of the structure of the vulnerable product search feature. This allows him to pull data from the site's users table instead. Let's quickly review how he did it.
+
+To begin his attack, Kim launches Burp Suite, his go-to tool for intercepting and analyzing web traffic. He opens up Sally's website in the Burp Suite built-in browser, and in the search bar, he types the word doctor. Two products appear, the doctor and the nurse. Why the nurse? Well, remember how the website's SQL query handles product searches?
+
+It retrieves all columns from the products table where the product's name or description contains the search term, here doctor. The nurse's description contains the word doctor, so it's returned, too. Now, Kim turns back to Burp Suite and sets the intercept on. He reloads the page and Burp Suite starts catching each request, one by one. He carefully steps through them until he finds the one carrying the search parameter.
+
+A rest request to the product search endpoint with the query doctor. He can then right-click on the request box and sends the request to the repeater tab, where he can tweak and test it freely without affecting the actual website. Inside the repeater tab, Kim now prepares to inject his payload. He replaces the original search term doctor with the following SQL injection: single quote, two closing parentheses, union select ID, email, password, 456789 from users {dash} {dash}. This payload is designed to merge with the original SQL query behind the scenes, and instead of fetching products, it now pulls sensitive information from the users table.
+
+Kim hits enter to URL encode the payload automatically, then click send. The response is a success 200 OK, and what Kim sees is exactly what he hoped for, a list of users along with their email addresses and hashed passwords. Accounts like admin, Justin, Brian, Ben, Cyrus, support, Mason, Marcel, Joshua, Jane, and many more. Just like that, Kim has breached one of the most sensitive parts of the system, all by exploiting a simple product search. And that's where we left off in the previous episode.
+
+If any part of this process feels unfamiliar or confusing, be sure to check that episode before continuing. Now, let's pick up right where we left off, because Kim isn't done yet. He may have the email and password hashes, but to log in, he needs the real passwords. Let's take a closer look at one example, Jane's password. At first glance, that password looks like a random string of letters and numbers, but Kim knows better.
+
+This is almost certainly a cryptographic hash, specifically an MD5 hash. Now, you may ask, what exactly is a hash? A hash is a one-way function, a mathematical process that takes an input, like a password, and turns it into a fixed-length string of characters. It's called one-way because you can't reverse it. There's no way to take the hash and work backwards to find the original password.
+
+That's why hashes are commonly used to store passwords securely. Instead of saving the actual password, the system stores its hash, like a digital fingerprint. There are many types of hash functions, including MD5, SHA1, and SHA256. Each one follows a slightly different process, but they all share the same core idea. Take any input, a word, a sentence, even a whole file, and compress it down into a unique fixed-size output.
+
+Here, for example, you can see the different hashes produced for the word cake. As mentioned, hashes are irreversible, meaning there's no way to take the hash and work backward to find the original input. But that doesn't stop Kim, because while you can't reverse a hash directly, you can still crack it. And that's exactly what Kim is about to do. To crack the hashed password, Kim turns to a tool called John the Ripper, a classic in the hacker's toolbox.
+
+The technique John the Ripper uses is surprisingly simple. You give it a list of possible passwords, called a word list. You tell it what type of hash you're dealing with, for example, MD5. Then John the Ripper hashes each password from the list, one by one, and compares it to the target hash. If one of them matches, boom, the password is cracked.
+
+This method is called a dictionary attack because it uses a predefined list of likely passwords, often taken from real-world leaks. And when users choose weak or common passwords, this method works scarily well. Now, let's watch Kim in action. First, he needs to make sure John the Ripper is installed on his Kali Linux system. He opens a terminal and types john {dash} {dash} help.
+
+As expected, it's already installed because John comes pre-installed on Kali by default. If it were not installed, he could add it on any Debian-based Linux distribution with sudo apt install john. If we scroll up, we can see a helpful usage guide listing the various options. One of the most useful options is word list. This tells John which list of passwords to try when attempting to crack a hash.
+
+If we scroll back down, we come across another important option, {dash} {dash} format. This tells John what kind of hash algorithm it's dealing with. In Kim's case, the target hashes are in MD5 format, so he'll need to specify that. To see all supported format, Kim can run john {dash} {dash} list equal formats. There are formats for everything from simple MD5 and SHA1 hashes to more complex types like bcrypt, SHA512, salted hashes, and even ones used in zip files, MySQL databases, and authentication protocols like SSH.
+
+To filter the results for MD5 hashes, Kim uses a classic command-line trick, the grep option. The command he typed is john {dash} {dash} list equal formats pipe grep {dash} i md5. This command tells the system, "Show me only the formats that mention MD5, and ignore whether it's uppercase or lowercase." Now, the list is much more manageable. From here, Kim identifies the format he needs, raw MD5, perfect for cracking plain MD5 hashes like the one he got from Sally website.
+
+How does Kim know raw MD5 is the one he needs? Well, it's because the hashes he pulled from Sally's website are exactly 32 characters long and made entirely of hexadecimal digits. That's the signature of a basic raw MD5 hash. And when we say raw, we mean the hash hasn't been encoded or transformed in any way. It's just the plain output of the MD5 algorithm, a clean 32-character hex string in its raw form.
+
+And that's how Kim knows raw MD5 is the right format for the job. Now that Kim knows the hash format is raw MD5, there's just one more thing he needs to run John the Ripper, a password word list. A popular resource for these is called SecLists, a massive collection of word lists for directory and file name discovery, passwords, usernames, or payloads gathered from penetration testing, default credentials, and leaked databases. Kim checks whether SecLists is already on his machine. He opens a terminal and type seclists.
+
+As you can see, it is installed. If it wasn't, Kim would install it with sudo apt install seclists. SecLists is organized into folders based on different types of attacks. We can see categories like web shells, usernames, a huge list of leaked or common usernames, passwords, a huge list of leaked or common passwords. That's exactly what Kim needs.
+
+Let's explore this password category. Inside, there are dozens of subfolders and files, each tailored for different kinds of password attacks. One of the most useful folders is called common credentials. Let's explore it. And there it is.
+
+A whole list of password lists based on real-world credentials leaked from past data breaches. These aren't random guesses. They're the passwords people actually use. >> [music] >> Here, Kim finds files like the 100,000 most used passwords, the 200 most common passwords from 2020, 2023, and 2024. Today, Kim chooses a very small and fast word list, best15, a list of the 15 most commonly used passwords of all time.
+
+Let's see what it contains using the cat command. And here they are. We can see very common password like monkey, let me in, and so on. If Jane used any of these, Kim's about to find out. Now that Kim has everything he needs, the hash format and a powerful word list, it's time to crack the password.
+
+First, he needs to save the target hash into a text file. Let's say he's starting with Jane's password. He copies her hashed password directly from Burp Suite and uses the echo command to append it to a file named hashes.txt. If the file doesn't exist, like in this case, it's created automatically.
+
+To verify that everything worked correctly, Kim uses the cat command. And there it is, Jane's name followed by her hashed password. One useful feature in John the Ripper is the ability to label each hash with a username. The format is simple, username:hash. This is what Kim uses for his hashes files.
+
+It helps keep things organized, especially when cracking multiple hashes at once. Let's say Kim also wants to crack Joshua's password. He copies Joshua's hash from Burp Suite and appends it to the same file. Again, he uses cat to check. Everything looks good, two targets, two hashes.
+
+Now comes the moment of truth. Kim can now launch his John the Ripper to begin the cracking process. The command he runs is John followed by the format, in this case, raw-md5, then the file containing the target hashes, our hashes.txt we just created, and then the chosen word list, here the best15.txt word list identified earlier.
+
+This command tells John the Ripper use the raw-md5 format to hash each password from the best15.txt word list and compare the results against the hashes stored in the hashes.txt file. Kim clicks enter and John the Ripper begins the attack, testing one password after another against each hash. And before long, boom, both passwords are cracked successfully.
+
+Kim can now see the results. Joshua's password is let me in and Jane's password is I love you. With valid credentials in hand, Kim returns to Sally's website to test his access. Let's say he targets Jane's account. He goes to the login page and enters the email address he previously extracted using SQL injection, which is jane@sallyshop.test.
+
+Then he types in the password he just cracked, which is I love you. And boom, it works. The login is accepted, but Kim isn't in just yet. Instead of landing on the dashboard, he's hit with a second wall, two-factor authentication. This is where Kim pauses.
+
+He steps away from the keyboard, grabs a coffee, maybe even some juice. And we'll take a break here, too. Will two-factor authentication stop Kim in his tracks, or will he find a way around it? We will found out in the next video. But before we go, let's talk about prevention.
+
+Here are a few simple but crucial steps that could have prevented Kim's attack entirely. Never use weak or common passwords. Weak or frequently used passwords are easy targets for automated cracking tools. Strong password requirements, sufficient length, special characters, and avoidance of dictionary words make attacks far more difficult. Always hash passwords with a strong secure algorithm.
+
+Avoid MD5 or SHA-1. Rather, use secure algorithms like bcrypt, scrypt, or Argon2. Use a unique salt for each password. A salt is a random value added to the password before it's hashed. This means that even if two users have the same password, their hashes will be completely different. This breaks
+
+precomputed attacks like the one we saw completely. Because if each hash is unique thanks to the salt, the attacker has to start from scratch for every user. This makes the attack way more time-consuming and often not worth the effort. That's it for today. Thanks for watching.
+
+If you found this helpful, hit the like button, subscribe, and turn on notifications so you don't miss the next episode, where Kim takes on two-factor authentication. Until then, stay ethical and don't hash with MD5. Bye-bye.
