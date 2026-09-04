@@ -5,6 +5,7 @@ Downloads new videos uploaded within the last X days from channels listed in pla
 Maintains idempotency via a Markdown log file.
 """
 
+import argparse
 import json
 import os
 import queue
@@ -17,7 +18,11 @@ from pathlib import Path
 
 import yt_dlp
 
-from downloader import extract_video_metadata, get_youtube_audio_or_transcript
+from downloader import (
+    apply_preventative_pacing,
+    extract_video_metadata,
+    get_youtube_audio_or_transcript,
+)
 from export_cookies import ensure_cookies
 from helper import (
     apply_cookies_to_ydl_opts,
@@ -259,6 +264,7 @@ def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: b
 
     # Check 3-tier downloader
     transcript_text, ogg_path, _ = get_youtube_audio_or_transcript(url, output_dir=str(target_dir), info=info)
+    apply_preventative_pacing(min_delay=0.8, max_delay=1.8)
 
     if transcript_text:
         text = transcript_text.strip()
@@ -456,6 +462,7 @@ def process_and_compile_video(
     transcript_text, _, _ = get_youtube_audio_or_transcript(
         url, output_dir=str(target_dir), info=info, download_audio_if_missing=False
     )
+    apply_preventative_pacing(min_delay=0.8, max_delay=1.8)
 
     if transcript_text:
         text = transcript_text.strip()

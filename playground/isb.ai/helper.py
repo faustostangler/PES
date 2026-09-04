@@ -1,6 +1,8 @@
 """Helper utilities shared across the playground modules."""
 
 import re
+from typing import Any, cast
+import urllib.error
 import urllib.request
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -102,35 +104,82 @@ def _get_chrome_cookies():
     return _COOKIE_JAR if _COOKIE_JAR else None
 
 
-def fetch_url_content(url: str, headers: dict | None = None, use_cookies: bool = False) -> str:
-    """Fetch content of a URL as string with a user-agent header.
+def build_youtube_player_headers(url: str, video_id: str | None = None) -> dict[str, str]:
+    """Construct authentic browser headers mimicking YouTube player timedtext requests."""
+    target_video_id = video_id
+    if not target_video_id:
+        match = re.search(r'[?&]v=([a-zA-Z0-9_-]{11})', url)
+        if match:
+            target_video_id = match.group(1)
 
-    Timedtext URLs are pre-signed by YouTube and will return HTTP 400 if attached with mismatched/corrupted cookies,
+    referer = f"https://www.youtube.com/watch?v={target_video_id}" if target_video_id else "https://www.youtube.com/"
+    return {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7",
+        "Referer": referer,
+        "Origin": "https://www.youtube.com",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+    }
+
+
+def fetch_url_content(
+    url: str,
+    headers: dict | None = None,
+    use_cookies: bool = False,
+    video_id: str | None = None,
+) -> str:
+    """Fetch content of a URL as string with YouTube player headers and yt-dlp networking session.
+
+    Timedtext URLs are pre-signed by YouTube and return HTTP 400 if attached with mismatched/corrupted cookies,
     so use_cookies defaults to False.
     """
     if headers is None:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        }
-    req = urllib.request.Request(url, headers=headers)
+        headers = build_youtube_player_headers(url, video_id=video_id)
 
-    handlers = []
-    if use_cookies:
-        cj = _get_chrome_cookies()
-        if cj:
-            handlers.append(urllib.request.HTTPCookieProcessor(cj))
-
-    opener = urllib.request.build_opener(*handlers)
+    # 1. Primary networking engine: yt-dlp session (handles SSL contexts, pooling, and anti-bot headers)
     try:
-        with opener.open(req, timeout=10) as response:
-            return response.read().decode('utf-8')
-    except urllib.error.HTTPError as e:
-        # If a request fails with 400 and cookies were used, retry without cookies
-        if e.code == 400 and use_cookies:
-            clean_opener = urllib.request.build_opener()
-            with clean_opener.open(req, timeout=10) as response:
-                return response.read().decode('utf-8')
-        raise e
+        import yt_dlp
+        from yt_dlp.networking.common import Request as YtdlRequest
+
+        ydl_opts = {
+            "quiet": True,
+            "no_warnings": True,
+            "nocheckcertificate": False,
+        }
+        if use_cookies:
+            apply_cookies_to_ydl_opts(ydl_opts, use_cookies=True)
+
+        ytdl_req = YtdlRequest(url, headers=headers)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            resp = ydl.urlopen(cast(Any, ytdl_req))
+            data = resp.read()
+            return data.decode("utf-8")
+    except Exception as e:
+        status_code = getattr(e, "status", getattr(e, "code", None))
+        if status_code == 429 or "429" in str(e) or "Too Many Requests" in str(e):
+            raise e
+
+        # 2. Resilient fallback: standard urllib.request
+        req = urllib.request.Request(url, headers=headers)
+        handlers = []
+        if use_cookies:
+            cj = _get_chrome_cookies()
+            if cj:
+                handlers.append(urllib.request.HTTPCookieProcessor(cj))
+
+        opener = urllib.request.build_opener(*handlers)
+        try:
+            with opener.open(req, timeout=10) as response:
+                return response.read().decode("utf-8")
+        except urllib.error.HTTPError as http_err:
+            if http_err.code == 400 and use_cookies:
+                clean_opener = urllib.request.build_opener()
+                with clean_opener.open(req, timeout=10) as response:
+                    return response.read().decode("utf-8")
+            raise http_err
 
 def get_full_upload_date(info: dict) -> str:
     """Retrieve full upload date if available (ISO timestamp), falling back to YYYYMMDD."""

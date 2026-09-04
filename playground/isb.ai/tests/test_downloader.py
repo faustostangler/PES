@@ -273,5 +273,102 @@ def test_calculate_backoff_delay():
         assert 0.0 <= val <= 8.0
 
 
+def test_find_subtitle_url_rejects_tlang_and_prioritizes_native_orig():
+    """Should reject machine-translated (tlang) URLs and prioritize original native audio captions."""
+    info = {
+        "language": "en-US",
+        "automatic_captions": {
+            "pt": [{"ext": "json3", "url": "https://www.youtube.com/api/timedtext?v=test&lang=en&tlang=pt&fmt=json3"}],
+            "en-orig": [{"ext": "json3", "url": "https://www.youtube.com/api/timedtext?v=test&lang=en&fmt=json3"}],
+            "en": [{"ext": "json3", "url": "https://www.youtube.com/api/timedtext?v=test&lang=en&fmt=json3"}]
+        }
+    }
+
+    res = downloader.find_subtitle_url(info, "json3")
+    assert res is not None
+    lang, url = res
+    assert lang == "en-orig"
+    assert "tlang=" not in url
+    assert url == "https://www.youtube.com/api/timedtext?v=test&lang=en&fmt=json3"
+
+
+def test_find_subtitle_url_adapts_to_video_language():
+    """Should adapt language search order based on video native language."""
+    pt_info = {
+        "language": "pt-BR",
+        "automatic_captions": {
+            "en": [{"ext": "json3", "url": "https://www.youtube.com/api/timedtext?v=test&lang=pt&tlang=en&fmt=json3"}],
+            "pt-orig": [{"ext": "json3", "url": "https://www.youtube.com/api/timedtext?v=test&lang=pt&fmt=json3"}]
+        }
+    }
+    res = downloader.find_subtitle_url(pt_info, "json3")
+    assert res is not None
+    lang, url = res
+    assert lang == "pt-orig"
+    assert "tlang=" not in url
+
+
+@patch("downloader.download_audio_as_ogg")
+@patch("downloader.fetch_and_parse_srv1")
+@patch("downloader.parse_json3_to_paragraphs")
+@patch("downloader.time.sleep")
+def test_candidate_loop_continues_on_429_until_success(mock_sleep, mock_parse_json3, mock_parse_srv1, mock_download_ogg):
+    """If first candidate format (JSON3) fails with 429, it must continue to next candidate (SRV1) without breaking."""
+    import email.message
+    import urllib.error
+    downloader.reset_429_state()
+
+    mock_parse_json3.side_effect = urllib.error.HTTPError("http://test", 429, "Too Many Requests", email.message.Message(), None)
+    mock_parse_srv1.return_value = "SRV1 Subtitles successfully parsed"
+
+    info = {
+        "id": "test_multi_cand",
+        "title": "Test Title",
+        "language": "en",
+        "automatic_captions": {
+            "en-orig": [
+                {"ext": "json3", "url": "http://test_url_json3"},
+                {"ext": "srv1", "url": "http://test_url_srv1"}
+            ]
+        }
+    }
+
+    txt, ogg, vid = downloader.get_youtube_audio_or_transcript("http://youtube.com/watch?v=test_multi_cand", info=info)
+
+    assert txt == "SRV1 Subtitles successfully parsed"
+    assert ogg is None
+    assert vid == "test_multi_cand"
+    # mock_parse_json3 was called and failed with 429, then mock_parse_srv1 was called and succeeded!
+    assert mock_parse_json3.call_count == 1
+    assert mock_parse_srv1.call_count == 1
+    # Crucial: sleep should NOT be called because the second candidate succeeded immediately!
+    assert mock_sleep.call_count == 0
+    assert mock_download_ogg.call_count == 0
+    assert downloader.get_429_attempt_count() == 0
+
+
+def test_build_youtube_player_headers_extracts_video_id_and_emulates_player():
+    """Should construct authentic headers mimicking YouTube player with correct Referer and Origin."""
+    from helper import build_youtube_player_headers
+
+    url = "https://www.youtube.com/api/timedtext?v=jNQXAC9IVRw&lang=en&fmt=json3"
+    headers = build_youtube_player_headers(url)
+
+    assert headers["Referer"] == "https://www.youtube.com/watch?v=jNQXAC9IVRw"
+    assert headers["Origin"] == "https://www.youtube.com"
+    assert "User-Agent" in headers
+    assert headers["Sec-Fetch-Mode"] == "cors"
+
+
+@patch("downloader.time.sleep")
+def test_apply_preventative_pacing(mock_sleep):
+    """Should sleep for a duration within the requested [min_delay, max_delay] interval."""
+    delay = downloader.apply_preventative_pacing(min_delay=1.0, max_delay=2.0)
+    assert 1.0 <= delay <= 2.0
+    mock_sleep.assert_called_once_with(delay)
+
+
+
+
 
 
