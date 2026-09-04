@@ -24,22 +24,26 @@ MAX_FILES_PER_COMMIT = 100
 STAGE_CHUNK_SIZE = 500
 
 
-def clear_lock() -> None:
-    """Removes stale index.lock file if present."""
+def clear_lock(stale_threshold_seconds: float = 10.0) -> None:
+    """Removes stale index.lock file if older than threshold."""
     if LOCK_FILE.exists():
         try:
-            LOCK_FILE.unlink(missing_ok=True)
+            mtime = LOCK_FILE.stat().st_mtime
+            if (time.time() - mtime) > stale_threshold_seconds:
+                LOCK_FILE.unlink(missing_ok=True)
         except Exception:
             pass
 
 
 def run_git(args: list[str], max_retries: int = 5) -> subprocess.CompletedProcess:
     """Executes a git command with lock retry logic."""
+    res: subprocess.CompletedProcess = subprocess.CompletedProcess(args=args, returncode=1, stderr="no attempts")
     for attempt in range(max_retries):
         clear_lock()
         res = subprocess.run(args, cwd=REPO_ROOT, capture_output=True, text=True)
-        if "index.lock" in res.stderr and attempt < max_retries - 1:
-            time.sleep(0.5)
+        error_indicators = ["index.lock", "Could not write new index file", "Unable to create"]
+        if any(err in res.stderr for err in error_indicators) and attempt < max_retries - 1:
+            time.sleep(1.0 * (attempt + 1))
             continue
         return res
     return res
