@@ -1,0 +1,176 @@
+---
+video_title: "Goodbye Arch Linux."
+video_id: qPpMrcIPdHI
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qPpMrcIPdHI
+video_date: 2025-12-17T16:01:23+00:00
+video_description: |
+  🚀 Apply to join KubeCraft & land your DevOps job: https://kubecraft.click/a7c527
+  📥 Get my FREE DevOps Career Blueprint → https://go.kubecraft.dev/blueprint-yt-1
+  
+  After 14 months of daily driving this custom Arch system, I'm walking through exactly how I designed it before wiping it clean. Perfect for Linux enthusiasts ready to level up from casual user to system architect.
+  
+  This deep dive covers my complete Arch Linux setup including encrypted file systems with LUKS and LVM, systemd-first philosophy for networking and services, Hyprland window manager configuration, and my containerized dev workflow. You'll see why I chose each component and how this minimal approach translates directly to professional DevOps skills that land jobs.
+  
+  🔗 RESOURCES MENTIONED:
+  → Arch Linux Wiki: https://wiki.archlinux.org
+  → Hyprland Documentation: https://wiki.hyprland.org
+  → Johnny Decimal System: https://johnnydecimal.com
+  → Fedora Atomic Desktops: https://fedoraproject.org/atomic-desktops
+  
+  📱 CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischa_vdburg
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ℹ️ ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into succesful DevOps careers.
+  
+  #Linux #DevOps #ArchLinux
+---
+Today's the day that I'm leaving Arch Linux. I had the USB stick in my hand to wipe the file system and install the new operating system for my brother and give it away. But before I did that, I got a surprising amount of nostalgia and melancholy in me. And I was surprised by these feelings. So I thought this was significant. So I figured I would do I
+
+would do just one more video from the the Arch Linux system, one more walk through. And in this video, I'm going to show you exactly how I've built it, the reasons why I've built everything this way, how I set it up, basically what's going through me as I'm leaving this operating system now and moving on to something else, albeit for maybe an a temporary time. Let's dive in. I'm going to show you exactly how everything works. So, yes, my Arch Linux system. If
+
+you've been following me for a while, then you've seen me use this system for the past 14 months or so has been produced on this Arch Linux system. So, if we do the stat of the root file system, you will see that the birth of this system is 24th of 2024 on the 27th of August of that year. And as I'm writing this, we are now in 2025 on the 18th of November. So yeah, that is 14 months. I'm so bad at math, but um some something like that. So a little bit
+
+over a year I've been running this. And I'll tell you also the story why I built this system in the first place. When I got when I started my DevOps engineering journey, I got an um a very thin um lowquality lowspeced MacBook from the company that I was working for. And that didn't really work out very well. I mean it worked but I couldn't really run containers or anything. So I decided to
+
+switch to Linux then. So I was daily driving Linux starting with Ubuntu trying all of these different distros and eventually of obviously in this journey you inevitably come across Arch and I also had a mentor in in that company who was run daily driving Arch and he is basically the first person that I met who was working with a complete keyboard centered workflow. So he was running a window manager, something I hadn't seen before. He was he was running um i3 at the time. He did everything in Vim. And I was just very
+
+impressed with how he how fast he could switch between things and how um how he worked. And when I saw that, it was like, okay, that's what I want. It was very inspiring to me because I I I recognize the craftsmanship in that. It's not because it's flashy or cool. I I saw that. I mean, I highly respected
+
+his technical capabilities, but I saw how this workflow made him the person that he was, that the craftsmanship that this that this shows to the world. So, that was my my my entry towards Arch. And then in my free time, I spent a lot of time learning Arch, building it. I made a few mistakes along the way. He is also the mentor who really kicked my ass because when I first showed up with my new Arch system and was super proud, the first thing he asked me is, "Did you encrypt your system?" And I said, "I I
+
+don't understand. What do you mean with encrypting your system?" I was a noob. And he he kicked my ass. He got really mad at me. And he it was the right
+
+thing. Like I needed that shock. I needed that sort of I will never forget that moment. And this is also what I teach my students that you should never ever run an an unencrypted system. So it really he really distill he really instilled some good practices in me. So
+
+that was my my journey towards Arch and then I worked at that company for a few years and then I left because I was going to work for a consultancy and I doubled my salary in the process. And in that in that consultancy I was I I could buy a MacBook. I could get a MacBook. And I I did that because I mean my art system was working, but occasionally I would run into problems and I wasn't as skilled back then as I am now. So sometimes things didn't work out as well. And with the consultancy, I
+
+was going to be working for many different clients, right? I was going to be working with in many different environments like Microsoft environments, different environments. So I was getting a little bit like in the previous job I I could just have my own little world. I could do my thing and I was only working in one environment. But with the consultancy suddenly I'm expected to be up and running very quickly in many different environments.
+
+So then Arch Linux felt a bit scary and it's a skill issue like right now I have no problem I wouldn't have any problems doing that. So that's when I went to Mac for a few years and I I daily drove Mac for a few years. I wasn't I was tinkering with Linux and I was of course running it on my my servers in my home lab but I wasn't using Linux as a daily driver for a few years then and then as my technical skills grew and as I um as my career evolved I I really started missing Arch Linux. I really started missing this feeling of being the your own system administrator, like being in complete control over the system you built and knowing exactly how everything works. And with Mac, Mac is great. It
+
+just works. But it started to feel too easy, right? I I did I didn't have that that joy of computing anymore, like working with a computer. Because to me, like maybe I'm a massochist, but there is joy in me when something breaks and I spend a little bit a little bit of time and I fix it and I understand another new component of the system that I built that I didn't understand before. So usually when things break then I I learn from that and I I enjoy that. So I've
+
+been running this system for 14 months now, well over a year. And let me just show you what the system is comprised of. Here we go. So my system obviously is running Arch Linux and I am running Hyperland on Wayland obviously and I am the system has a 9950 AMD CPU with 32 cores and the system has a 9950X CPU and a Nvidia 4090 GPU 64 GB of RAM a little bit of swap and that's it. So a very beefy system that I built so that I can run big Kubernetes clusters, work a lot with containers, test out things. So it
+
+was built for my DevOps workflow, right? And it has served me very well. And there are a few reasons why I am feeling so nostalgic about leaving this system now. First of all is I have been successfully running my entire business from this system. my content creation, everything has been that I've been doing for the past 14 months has been done on this system. And in those 14 months, I
+
+have grown considerably like as a person as well. Like 14 months ago, I had just started my school community. The first members were coming in and I had no clue what I was doing. And now this has grown to a very successful six-figure business that I work on with so much pleasure and joy every single day and I get to help people become DevOps engineers every single day and it's like a dream come true. The art system is connected to that experience and secondly as I was building it out I recorded everything because I wanted to teach my students how to do this. So in CubeCraft there is
+
+a complete Linux course that will teach you how to um learn Linux and one after you have done the the basics then we go into our Arch Linux uh installation. So I have the full complete course where you learn how to build the system that I have basically and how I did it and why I did it. And when you now search CubeCraft for Arch here we see Arch of Triumph. So you get all of these people who have installed installation like first post from my arch installation. So Arch installation, Arch Linux, Arch Linux just finished the course and successfully installed my system. So and
+
+you can see there are 332 posts about this. So I have literally helped people hundreds of people build their own Arch Linux system and it brings me so much joy that I because I get so much pleasure out of running my own system that I could give that to other people as well right I did that on this system and that's why it feels very nostalgic to me I think and why I feel reluctant to to leave it right now so that is the emotional aspect of it I suppose u but let's just take a look at why I think this is such a good system. So I designed this with as as I run my life with complete minimalism in mind. When I set out to create my Arch Linux system like for the first time years ago, I had no clue what I was doing. Like I I followed the Arch wiki, but I didn't really understand what was going on. So
+
+everything starts of course with your file system. So if I do lsbk, then you will see that I have a two terbte SSD drive and I created logical volumes on that. And obviously everything is encrypted. So you will see that I have a locks container here and in there I have my logical volumes. In there I have my swap and my root and my home. So I like
+
+to separate my root file system and my my home file system. And the reason for that is that this way I can easily expand my home directory. As you see I am not using the complete all of the space that I that I have available on my drive. I didn't allocate everything. There's like 400 gigabytes that I didn't allocate just because I wanted to experiment with with growing the file system, etc. And this way I could easily
+
+just add another disc and just expand the file system to that disk and I would not have any problems swapping out discs or anything like that. So that's why that's how I designed the the file system layout. Obviously also locks encrypted. So if you steal this PC, it's completely useless to you because you can't you can't access my files or anything. So that's where it started and that is all configured and you learn how to do this in in the course. But and
+
+then the next thing is how am I going to design the actual um like with Arch you you get a very minimal set of packages. you get your your your kernel, a few packages you need to run your system, but even the pseudo command is not installed when you first boot up Arch, right? Or when you install it. So, it literally has only what you need for to have a running uh TTY. Because of that, I I I became very conscious of what packages I am putting there. So, if you
+
+check out my PS3 now, you will see that there is relatively little running here. So everything starts with systemd. So obviously um Arch uses systemd and the world has moved on. If you're still grow holding on to CIS 5 in it then um we need to have a chat. But system D is where it's at because system D is basically the nuts and bolts of the system. I wanted to I I had this goal of
+
+if I can do it with systemd I will do it with systemd. So for example many people or when you install a a distro then very often it includes network manager so with your NM CLI well that is completely unnecessary if you know how to work with systemd that's one example so we'll get into that but if we take a look at my PS3 here all we see is my electricity so my terminal emulator my Bluetooth demon uh chrome is run some processes for chrome my cloud drive UI So this is my Synology sync that is my my Synology file system that is automatically being synced containerd for running containers debus docker and iwd for switching for connecting over Wi-Fi and then you have my login shell which is running wayand and my apps. So this is obsidian that's running here and my way bar etc. Then we have polekit, rootkit, um, cd, sshd and that's it like and for all of the rest is just systemd required the packages to run my system and vivaldi my browser. So it's very minimal and I know exactly what each of these processes what do and why they're there and that is why why I love this so much that everything is there because I put it there and I understand what it's doing. So I
+
+completely designed this with this philosophy in mind that constantly checking PS3 and seeing what what is this and why is it running here and why does it do that? And in the course I actually go through that process every single time. And as the PS3 grows, as we go from a blinking cursor to on on the on the screen to a fully functional system that you see here, I explain in depth like very very elaborately what is going on and why it's going on. So I really like to go deep with this because I want to understand my own system. So this is um this is the philosophy that I had in mind for that like one example then is the the network D. So if we
+
+check the network ctl list, this is just interacting with systemd directly. There's no need for nmli. If you just con configure your uh system your your network with systemd. So if you if I do ls at c system d then you will see that I have my networkd.con and my network directory like this. So you see my network
+
+directory. it contains my wireless network configuration and that's it. If you just do it that way, there's no need for to have that NM CLI package, right? You can just do that with the with with systemd. The same thing for resolve ctl. So I I I configured my DNS with
+
+resolve ctl very very simple and that's systemd resolved d. So if I do cat at C result of conf instead of like manually editing that file I will just let um systemd handle this. So here you see this is actually managed by systemd resolved the do not edit. So anything that can be done by systemd I've done with systemd likewise chron which chron you will not see chron on my uh on my uh system and you should not be running chron tab anymore. you should be running systemd timers. So that is the
+
+philosophy. If it can be done with systemd, it should be done with systemd and I can teach you how to do that. So that with that in mind, this is this is how I designed my system with when I had basically the encrypted file system set up everything all of the required things for for systemd and managing everything with systemd. Then came the the decision, okay, how am I actually going to make stuff appear on my screen, right? And at that time I I was thinking of Sway or Hyperland. And I actually I
+
+was pretty much attracted to Sway because it's stable. And as you see, my system is extremely minimal. Like I don't I I have an extremely small way bar in the bottom. I don't hardly ever use that. I just need to if I want to just reference it. I don't want any
+
+distractions, no animations. It is just it it is just extremely extremely simple. And um it is designed for optimal focus, minimal distraction and extreme speed of work. So I can just navigate around, do what I want and not be distracted by anything. And that is how I designed it. So, Hyperland in that
+
+sense is actually overkill. Like I could have easily done this with Sway and Sway is more established more. It is like Hyperland is maintained by created and maintained by one guy. Sway is has a bigger community. I don't know. But I
+
+did go for Hyperland because I just wanted to try it, right? So I I tried Hyperland and I I've been running Hyperland for yeah for the entire time together with Cosmic. Like the great thing when you build your own system like this, I can just exit this session and boot up cosmic and just run cosmic. So I've really liked seeing pro cosmic progress. I've been trying it on and off, but the main bread and butter has been hyperland and that has been a nice experience. But I could have just as
+
+easily done all of this with Sway. Like all I want is to basically when I start my system, I want my browser in tab one, obsidian in in workspace 2, and my terminal in three, etc. So I have a bit of a system of where I want my stuff to be, so I always know where it's at. But as long I can do that, I'm I'm a happy camper. I have done my my part in rising and creating beautiful systems when I was a junior. And yeah, honestly, I
+
+think it's just a waste of time and a huge distraction. You're just it's just mental masturbation. You think you're doing something productive, but you don't. And I I don't recommend doing it. All of the pros that I know, like the highly highly senior ones, they are just running base configs of either Hyperland, i3 or Gnome. Like one of my
+
+my most respected senior friends, Rio, he is just running Gnome. almost no cons uh configuration and that is that is some I have also arrived at like very minimal no colors optimized for speed and focus and that's it. So that's a pattern I've noticed that the real pros they don't run these super hyped rice systems and I mean if you enjoy it as a creative activity of course I go ahead I'm not going to stop you but don't don't see that as a a useful productive activity that's actually going to benefit you in your career as a Linux DevOps Kubernetes engineer. So, Hyperland has been working very well for me and for content creation obviously I'm using OBS just running OBS natively and it's working really well and that is basically the nuts and bolts of my system everything systemd hyperland with a very minimal config and of course there is my dev container workflow so the thing is like which cubectl I I don't I'm a Kubernetes engineer but I don't have cubectl installed on my system like this is just the base system but otherwise everything happens in containers. So if I go to my home lab um my home lab repo then what I do is every system that I build every system that I have has a dev container. So this is a
+
+repository for my home lab and it is now going to download the the the image and it's going to create a separate system that I work in. So now it's cloning the my dot files into that repository or into that container and when it creates that container now a large series of scripts are going to be running um managed through Shimoa and Mi which are going to be installing all of the packages that I want. So in this case you see uh lazy vim, git, node, fcf, rip, grabb uh neovim everything is now being installed. And if I now do defbot ssh, I can now enter my home lab uh container. And if I then open my um my readme.md for example, now we will see
+
+that vim is now going to automatically create my entire system, my entire editor. Everything is going to be configured just as I like it with my color scheme, with the extensions that I want, with the configuration that I want. So my actual environment, my actual dev environment is completely portable. So I don't I I can run this anywhere in the world. I can run run this in a browser. Any system that has a
+
+container environment, a a container runtime, I can work in. And that is that is my workflow now. And I've worked very hard to build this and to um to create this and it's working extremely well for me. So all of my actual work is done completely in in git repositories with dev containers in containerized environments. So when I leave this system, there's actually hardly any data that I need to move because my home directory basically is a series of repos which I've backed up. And then I have my
+
+own personal files which are all in a a system that I call system zero. So if I do system zero, you see that there's a a a directory structure here based on Johnny decimal. Johnny Decimal. It's a based on the Johnny Johnny Decimal system to organize your life. Um, buy his stuff. This man
+
+is amazing. I'm not going to give it away for free because he needs to be paid for what he does. This is an amazing man and amazing system. And this is how I organize my life basically. And all of those files are being backed up to my Sonology. So literally, I can just
+
+wipe my system, download this, have my container runtime, and I can be productive. And again this whole dev container workflow that you just saw all of that is also uh being taught in um in CubeCraft here in the DevOps OS. So here we have the dev containers course and you will can learn exactly how to set this up um from scratch. So and you you get my dot files everything the templates are there so you can have this containerized workflow that will work anywhere in the world and that is basically the the the architecture design of my system. So systemd encrypted file system and a container runtime to do my work because here I have my cubectl installed. I have
+
+everything I need my editor etc. But when I'm done with this project I just delete the container and we're golden. So that is the main architecture of my system and why I love it so much. So what's what's going to happen now? So, I bought a framework laptop and I have done a a what do you call it a kickoff of these video series that I am currently producing and the first video in that series will be linked somewhere in the screen so that you can see um what's actually going on. But in short,
+
+I am wiping this system. My laptop is going to arrive anytime soon. In the meantime, I'm just going to be working on my minis forum that I also made a video about, which you can find linked here. I'm using that as a daily driver for a little while. And I'm there. I'm
+
+going to be installing um Fedora Silver Blue. Uh well, actually, not Silver Blue. I'm going to be installing the cosmic version of this. So, you have the Fedora Fedora atomic desktops. These are the what I'm going to be running a atomic desktop. This is a um
+
+immutable OS. So you the read the root file system is read only and I'm very excited about this. I want to learn more about this kind of stuff also because it fits my philosophy of a stateless workstation. So well so I'm going to be running the cosmic atomic on my minis form for a while until my framework arrives. move to that and really test this sort of like as you can tell I I architected this to be a stateless workstation so that my my workflow is completely portable and I can run anywhere in the world but I haven't really tested it. So, this is what I'm
+
+going to be testing now to move my Arch workflow to a different OS, a diff a different distro, a different environment, a different machine, see how smooth that process goes. And I'm just going to do it the hard way by pulling the plug, wiping it, and see how well I can um reproduce everything. So, that is what what's going to happen next. And when my framework arrives, I'm going to move to that. And event I also ordered a framework desktop. And when
+
+that one arrives, then my plan is to rebuild Arch again because I've been playing with the immutable OS. It's great. But I again, I'm already missing that kind of level of control and and mastery over your system because that's what it's all about. Like if you can do what I have shown you in my videos in this video, like building a system, architecting it with a clear path, a clear goal, implementing that, and then fixing things when when things break. Like that is mastery to me. There are
+
+millions of people who are much better at Linux at me than me. I'm not saying that I am the best Linux user in the world. But I do feel that I have mastered the running of your own personal system on Arch Linux. I have mastered that and I and that also translates to my professional capabilities with Linux because most of the stuff that I run into with Linux problems, file systems, formatting issues, everything I've learned by creating and building my Arch Linux system. So when when I teach my students to go from zero to Kubernetes engineers, the first thing I tell them is learn Linux. and I force them to create an
+
+Arch Linux system because that's where I learn so much and every day I run into things that I learned there. So that is the my philosophy of teaching there. It's working very well like we're landing jobs every single week. We've recently we had a couple of good wins in the community here. 10K views. Uh let me
+
+see how my AWS home lab helped me land a fully remote SRE role um job offer and accepted it and so achievements in October. So there are definitely being jobs being landed all the time just by by doing this this sort of progression and it's working well. So I do miss that feeling already on immutable OS but uh I'm planning to rebuild Arch Linux when I get my framework desktop. So that's what's going to happen next. But I'm also very excited to go somewhere else.
+
+And that's the thing. When I realized that I had some nostalgia, some feelings about leaving Arch Linux, it was an indicator to me that, oh, I'm I'm actually getting a little bit too attached to things here. And I'm a Buddhist. So in Buddhist philosophy, attachment is the root of suffering. All clinging all suffering comes from attachment and clinging to things. So
+
+the very fact that I was clinging to this arch system is already something that I need to pay attention to. Likewise it does also um like I I have built this identity around myself of a Linux user. I'm always saying Arch by the way arch arch arch. And that is an identity and a sense of brand that I am creating. And it's always good to don't not to get too serious about yourself with these things. And when you get too
+
+attached to something, then that's the sign that you actually need to detach yourself from that for a little while. And that's why I I realized when I got these emotions, because I'm I'm usually very stoic and very calm about things. I was like, hm, why do I have these feelings about leaving my arch system? Why is this feeling why are these feelings so strongly? body feeling so strong and that's why I'm making this video to sort of talk myself through that process as well. But
+
+it's an attachment to to that and also a sense of identity. So there's a an interesting tension here where I built my system to be completely stateless and I want it to be completely portable but at the same time I want to be clinging to this one OS and this one thing that I built and that's goes entirely against the whole that whole philosophy. So, there's some interesting tension going on here. And I usually don't dream, but last night I had a dream where I was um I was I was sitting in a barber's chair and I'm I'm as you know, I'm I'm a beard, long hair, and I am very careful with who I with who gets to touch my beard in terms of barbers and such. I've had bad experiences where my beard got completely ruined by barbers. So, I'm
+
+very careful with that and I usually just do it myself. And in the dream I was like, "Yeah, just trim the edges and like shave the skin around." And in the dream I sat in the chair and for some reason, like this is how dreams work, right? But for some reason, I didn't realize that he was actually shaving off my entire beard. And uh at the end I it was like, "What?
+
+What the hell, man? You shaved off my entire beard. What's going on?" And you um why did you do that? And then in the dream, I walked away. I felt the wind on
+
+my face. And I've shaved my beard before. And it's always an interesting experience when you first when you've had a beard for years and you shave it off completely. You're clean shaving again. You feel the wind on your skin.
+
+You don't feel that when you have a beard. And I could feel that feeling in the dream. And it was like, yeah, well, like it's gone now. Like there's nothing I can do. Sense of resignation.
+
+And I've like for the past three days I've been preparing this move from away from Arch Linux to a different system. And it's interesting that it's coming in my dreams as well. And also like there's a very be something very beautiful there with shaving the beard. So the beard is obviously a big um symbol of my identity, my brand. like everybody knows me of for my beard in the on YouTube etc. is my appearance and in as I'm
+
+moving to a different OS I'm shaving the beard I'm leaving behind a certain identity and there's some interesting unconscious stuff going on there. So yeah, we'll see how this goes. I'm excited to be running a different OS because sometimes you have to be you have to take yourself away from something for a while in order to understand what you actually mastered and how things relate to other things. So I'm I'm excited to do something completely different for a while. And the best part of this which you're also going to be seeing is I'm actually going to force my brother to to use Linux for a while and see how he picks that up. So
+
+after I press quit here on this video or stop the recording, I am going to wipe the system and install Bazite on here and transfer the workstation over to my brother who is going to use the GPU and the CPU um a little bit better than I have done because he's more of a gamer. So he's going to be using this and utilizing it more because frankly I have not been I I haven't played video games in years. I did try want to build the system to play a few games, but I I haven't done it in the end. I'm just too busy working. So I I don't have time for games anyway. And the framework desktop
+
+is a much better choice for AI experimentation, which I'm more interested in. So he's going to be doing that. I'm going to be installing Bazite on here. So yeah, I've I've shown you the system. This is the last video I'm going to be creating on this system.
+
+It's the last peak. Uh oh, I mean the container of course fast fetch the last peak at my system. Thank you Arch Linux for the 14 months we've had together. Thank you for the joy you have brought other people with the course that we have created together and the the pleasure that the jobs that people are getting through by virtue of creating this system. So you have served the world well dear Arch Linux system on Mimir.
+
+Thank you for the for the good times together. And now I'm going to stop the recording. And of course I cannot wipe this system before trying something that I've actually never done before. That is to do RM RF root. Like I'm not going to type it now, but just in case I hit the enter key, but I am going when I stop this recording, I'm going to take my iPhone, start filming, and you will see that. And then uh there's no going back.
+
+So, thank you so much for watching and I'll see you in the next video live from Fedora Atomic Desktops. >> All right. Well, here we go. Mishad Mimir Arch Linux running on the workstation down below here. And yes, I have some cable management issues, but don't don't mind that. This is the one that's going to be
+
+transferred to my brother. And I am going to be working on this puppy for a while, the MSA2. But before I move, I have to do this. I haven't done this ever before in my life. Not on Arch. But before I
+
+reinstall this system with Bezart for Sammy, I have to do this. So Noah back after this Archinx, thank you so much for the 14 months we've had together. You've given me so much and I look forward to returning to you when my framework desktop arrives. Three, two, one.
+
+Here we go. Oh, yes. Great. It actually it actually rewards you for it. Okay. I didn't know that and I'm
+
+very happy that it does this. This is actually good system design. So, hold on. Nope. preserved roots.
+
+Three, two, one.
+
+This is so weird. Okay, well, here we go. Thank you so much for the good times and no way back now.

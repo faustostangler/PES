@@ -1,0 +1,242 @@
+---
+video_title: "How I Rebuilt My Entire Workstation After Quitting Arch Linux"
+video_id: S6T5M4jLqR8
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=S6T5M4jLqR8
+video_date: 2026-01-15T17:01:25+00:00
+video_description: |
+  Apply to join KubeCraft & land your DevOps job: https://kubecraft.click/cgv77
+  
+  Master Linux fundamentals like you just saw in action → Get my FREE Linux Starter Kit: https://go.kubecraft.dev/linux-starter-kit
+  
+  
+  Fedora Atomic Linux setup from scratch - Build a production-ready immutable workstation with containerized workflows in under 90 minutes. Learn how atomic desktops eliminate system breakage through image-based updates and OS-Tree versioning while maintaining complete development flexibility. Perfect for DevOps engineers wanting bulletproof daily drivers that survive any update.
+  
+  Fedora Atomic desktops revolutionize Linux stability through immutable infrastructure. Watch a complete workstation rebuild using Cosmic desktop environment, toolbox containers for CLI packages, flatpak for GUI apps, and devpod for containerized development. This video covers stateless workstation philosophy—separating system state from configuration through dotfiles, password-store with GPG encryption, Synology NAS file sync, and GitHub-backed configurations. You'll see real-world container orchestration with Podman, devcontainer workflows, and Framework laptop migration planning.
+  
+  
+  🔗 RESOURCES MENTIONED:
+  → Fedora Atomic Desktops Documentation: https://fedoraproject.org/atomic-desktops/
+  → RPM-OSTree Version Control: https://coreos.github.io/rpm-ostree/
+  → Password Store (pass): https://www.passwordstore.org/
+  → Johnny Decimal File Organization: https://johnnydecimal.com/
+  → DevPod Container Development: https://devpod.sh/
+  
+  📱 CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischa_vdburg
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ℹ️ ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into successful DevOps careers.
+  
+  #FedoraLinux #ImmutableOS #LinuxWorkstation
+---
+I've been daily driving Arch Linux for several years, but I left. And in this video, I'm going to be setting up Fedora Atomic completely from scratch. My Arch Linux workstation is already wiped, and I already gave it away to my brother. So, it literally does not exist anymore. And in this video, I'm going to be rebuilding my entire setup completely from scratch. So, let's jump in. So,
+
+first of all, obviously, I am recording my screen, so I had to do a few installations so that I could be running OBS. I'll I will return to that in a second. But first of all, let's just I'll just show you what I am running here. So, we are running Fedora Atomic. Fedora Atomic desktops. And I was very
+
+intrigued by these because they are an immutable OS. And I'm going to be explaining a little bit more about that later in the video. But basically, what it means is that it's a read-only root file system. So, you don't even you can't even make changes to it. And I'm going to get deeper into it later.
+
+But the one that I chose is the Fedora Cosmic Atomic. And I literally just um created a new USB stick with that for that. Booted it up. And that's what what you see here now. After I booted it up, I set up um Flatpak. Let me uh show you
+
+the instructions that I used here. So, this is just the user guide. And I just added a remote. So, I did an an a remote repository, uh Flathub in this case. And then I installed a few packages using Flatpak.
+
+So, the command that I ran is Flatpak install Obsidian. It's for my notes. Uh OBS Studio. VLC and Vivaldi. So, it's my note-taking app, my OBS for recording the screen, VLC for playing the video because I had to test whether everything works well, and my preferred browser. And that is
+
+all that I have done so far. And from here on out, I'm going to be configuring my workstation completely from scratch. Now, I've been on a bit of a journey with buying new hardware and switching out things and switching distros. If you want to hear the full story and my whole philosophy behind it, you can check out the linked video over here because I've already created that. But just to give you a very quick overview, what's happening is I had to I used to have my Arch Linux workstation that I built myself.
+
+And I'm moving towards a Framework laptop. But in the meantime, my brother needed this workstation because he wanted to have a better workstation. So, in the meantime, I'm actually running on my Minisforum. So, the Minisforum I can't show it because that's actually running now. So, this is basically a intermediary stage. And the mean what
+
+I'm running on is the Minisforum MS02, which I actually used to use as a a little Proxmox server. Where is it? Here. Here we go. I was using this as a Proxmox server in my home lab, but I just repurposed it temporarily into my workstation. So,
+
+this is the hardware that we're actually running this on. And the idea is that I'm building a setup that I can also then easily replicate to my Fedora my my Framework laptop when that arrives. So, that's very quickly the the hardware story of why I'm actually doing this. And with that being said, let's just uh dive into it. So, I have only set up the browser and OBS.
+
+And what I've done is I have this I I mounted a USB stick that I call my workstation bootstrap. If you ls ls b okay, let me just make this a little bit bigger for you. So, here I have my I have a USB stick that was mounted, and then I copied the contents of that USB stick to my home directory. And that's that is what you see here. And this contains a markdown file with some instructions, a setup script, and an SSH key that I use to bootstrap. And you'll see how that works
+
+in in a few moments. So, the first thing that I need to do is to install a few system-wide packages so that this bootstrap process can actually run. So, in this Fedora file, there are two commands. rpm-ostree install. And this is going to install Alacritty, a C compiler, GnuPG, which I need for my for my YubiKey. Here. This is my YubiKey,
+
+and I use this in order to authenticate to all of my services. This contains a GPG key. And I need this to decrypt my passwords. And I'll show you how that works later. And libatomic is something that I need for that to work as well. And then, of
+
+course, I need tmux and zsh. Also, something I'm doing is I need to remove OpenSC, which is a smart card daemon, and OpenSC libs. And this all has to do with getting the YubiKey to work. So, first, I'm just going to run that Fedora file so that it's going to be um it's going to install these packages. And while this is running, let me just explain what what's going on here now.
+
+So, the reason why I chose these Fedora Atomic desktops is because they are an immutable OS. Now, this is also completely new to me. So, I am also learning this as I go. But basically, an immutable OS means that you get an image of your operating system, which is then loaded uh when you boot your system. And this this this image is served to you as a whole. So,
+
+when you have an a system update, Fedora on their end, they will actually update all of the packages, then bake that into an image, and that image is then sent out to the users. So, when you update your system, you're not just updating a bunch of packages, you're updating the whole image. So, while this is running, let's just check out what Fedora says about these Atomic desktops and and to give you an indication of what's actually going on here. Fedora Silverblue is the GNOME version of what I am running right here, what you see on the screen. They explain these Atomic desktops as follows. They're reliable,
+
+so each version is updated for approximately 13 months, and each update takes effect on your next reboot, keeping your system consistent. And the what they mean with Atomic is that the whole system is updated in one go, and an update will not apply if anything goes wrong, meaning you will always have a working computer. So, this is why I chose this for my Framework laptop that's coming very soon. Uh I wanted to have a for my portable system that I'm going to be using while I'm driving around in my camper, etc., I need that to be as stable as possible.
+
+And although I'm very confident in my Arch capabilities, this was a very compelling argument for me that it is always um always updated and always um it will always work. Because what happens is Fedora basically creates an image. And this whole image is downloaded. And then, that is being loaded while you boot your computer. But if that does not work for some reason, you can always switch back to the other image that you old image that was working. So, you will
+
+always have a yeah, as they say here, a previous version of your system is always kept around just in case. Next, the all your applications are installed via Flatpak, the gra- graphical ones. And they are separate from the base system. So, I really like this that everything is containerized. And it basically is completely optimized for containerized workflows. And this
+
+is, of course, completely up my street. So, here we see rpm-ostree. That is basically what what powers all of this. And I am I am still learning this. I'm going to be doing a deep dive into this in a separate video. But basically, OS
+
+tree is a version control system for your file system. So, when we install these packages, I'm actually modifying the image that Fedora created for us. I'm saying, "Okay, I want your image, but also I want to add these layers." And in this case, it is Alacritty, um tmux and zsh. All of these things I need to have available on my system at all times. So, I want to bake that into the
+
+image. It's just like a Dockerfile where you would add several lines. You're basically defining your OS as if you are in a Dockerfile. So, if I now do rpm-ostree status, in a way, this is now my Dockerfile. You have I have my base layer, and then I'm adding a few packages, and I'm removing a few packages. And it is all completely
+
+defined basically in code how my OS should look like. I I really like this concept. So, I have now installed these packages, but in order to load this new image basically with the new packages installed, I now have to reboot. So, that's what I'm going to do, and then I'll be back in a few seconds. All right. So, we have rebooted, and we are
+
+back in business. I am recording again on OBS, but I haven't done anything else. So, now I should have Alacritty available on my system. And yes, here we go. So, it's showing me the zsh configuration function for new users. And I should say that the I did
+
+run one command. Yeah, I did run one command after rebooting. That was sudo usermod shell user bin in Z shell. So, I changed my default shell to Z shell, and then I rebooted again. And this is what you're seeing now. It is now prompting
+
+me because I'm a new I'm a new user, right? For Z shell, it doesn't have any configuration files yet. And that is what we're going to be changing now. So, what I'm going to do now is I'm just going to go to that bootstrap directory that I had before. And then I will run the setup script.
+
+So, this is going to do a lot of magic in the background. First of all, it's going to be installing meese, which I use for managing my packages. Then, when meese is installed, it uses shamwa to pull in my dot files. In my dot files, there is a complete setup script that contains all of the packages that I want in my on my system. And it is going to automatically set up all of my dot files and everything, so that now my my complete shell environment should be completely configured now. So, if I just close
+
+alacrity here, and if I restart it now, alacrity, then okay, it's we're almost there. If I now go to shamwa CD, there is a final setup step that I need to do here. And now when I close this and open alacrity, then we see that I have my trusted prompt that you have seen in so many of my videos. So, next I'm going to just quickly adjust the tiling here in cosmic here. And that's the new workspace, and let's tile the current workspace. And now here
+
+we go. So, this is my my familiar shell with my prompt, with everything. It I it has changed it has installed and changed the fonts as you see. Uh my FCF is running. I I'm I can navigate my history as I'm used to. So, everything now my my shell
+
+is completely configured. Likewise, if I go to my workspace bootstrap again, and if I now open my uh fedora bootstrap file, now we see it's opening neovim. This was not on my system um available on my system before, obviously, but it's now installing neovim, and it's going to automatically set up all of my plugins. It's going to automatically configure my editor as I like it. Everything is going to be configured just the way I like it. And this whole
+
+setup this has taken me years to craft this as it like this as it works now, but it works really well as you see. And this is my my setup. And if I now do lazy extras, and if I install markdown here, then if I then reopen this, here we go. It's now going to install my render markdown, and this should then have installed my markdown rendering. Yep, beautiful.
+
+Okay, so now I have my my installation guide available to me in markdown in the format that I like, in the rendering that I like. So, everything is set up properly now. So, what you just saw here with the setup scripts and all these packages and my editors, everything being configured exactly as I wanted on a completely new system, this has taken me years and years and years to craft, but I have created a full system that you can get access to. My Cube Crash students get access to an 8-hour course. It literally takes me 8 hours to actually show you how this works, how you can craft your own workflow like this. You get all of
+
+my dot files, you get all of the templates. You can get everything you can get up and running within seconds with this, but I also have an 8-hour course explaining you exactly how this works. So, if you really want to know how this works under the hood, you can check out Cube Crash, and I'm happy to teach you there. So, this is now my my shell environment set up. So, let's check where we are now. We
+
+installed these flat packs that I wanted to have on my system. I've configured OBS. Then there is the mounting of that USB. We've run these rpm-ostree installs, so that all of these packages are available in the base system. Then I modified my default shell to Z shell, so that's running now. And now we
+
+can start to set up the rest of our system. So, now that I have my shell environment set up correctly, now I can actually start like pulling in repos and things like that. But in order to do that, I need to authenticate with my SSH key and my credentials. Now, what I use for that is a YubiKey. This contains a GPG key, and I might I'm actually using this as my SSH key. So, in order for that to
+
+work, that is why I needed to install those packages that you saw earlier. So, I'm going to be running this command that's going to import my public key to my GPG agent, so that when I authenticate, they actually know what what key I am actually using. Now that my key is imported, then I can start cloning my repository. So, let's open my guide again. And here in my guide, I have a section about setting up pass. So, the password
+
+manager that I'm using is called password store. And that is the the the standard Unix password manager. This is what I'm using for my passwords. And this is I love this because it follows the Unix philosophy. It's basically a bash script, but what it does is each password is just a GPG encrypted file, and all of this is then being backed up to a git repository.
+
+Now, the way fedora these atomic desktops work is I cannot install packages as you are as you would be used to. I can bake them into the image, but I cannot There's no DNF, which rpm There's I I There is actually rpm, but if you want to install packages in these atomic desktops, you have to use something that they call toolbox. So, let's open up the silver blue user guide fedora. Let me show you how they explain it. So, um getting started.
+
+So, for GUI apps, you use flatpak, but for CLI apps, you are using toolbox. Here Here we go. Why use toolbox? It makes it easy to use a containerized environment for area software development and debugging. So, basically, you should not be installing any packages on your host operating system, even though I did with with the tmux and Z shell etc., but that is stuff
+
+that I always need to have. But in order to access my passwords, what I can do is I do toolbox create tools. And this is then going to basically create a container on my system and run it, and in there I can install my packages. So, if I want to access my passwords, I need to actually go into this container. So, now this is created, and if I then do toolbox enter tools, then we see that um if I now do which DNF, now I have DNF, so I can install packages in here. So,
+
+pseudo DNF install Z shell and pass. And by the way, like it automatically pulls fedora, but I might as well have used arch or anything else. And you can also use something that's called distrobox for this. But this is something that I am like I'm still learning this as I go along. This is the best way that I This is what I my understanding is right now that for CLI tools, you have to be running these toolbox or distrobox containers and not be installing it on your host system, but I'm still learning this as I go along. So, in a few weeks from now, I
+
+will create another video and you will see my fully refined workflow with this. So, if I exit now and toolbox enter, then you see that I am now in in uh in the toolbox enter, but you also see that my Z shell is loaded here. And it is my my shell looks exactly the same. So, how does that work? Well, under the hood, this is all using podman, which is basically the open source version of docker um that that Red Hat creates. So, this
+
+is now running a a container with a command toolbox etc., but if we do podman inspect, here we can actually see what's going on here. And if I check this out, then we see that this is running This is the actual command that is being run. So, podman, C groups etc. So, podman is actually creating this container.
+
+And here we will see that there's a volume called var home misha, var home misha are slave. So, it is mounting my home directory inside of this container. So, instead of installing packages in my host system, which would be deleted if I update, it is actually now running a container which has mounted my home directory. So, any change I make to this in this container in my home directory is going to persist. So, I I think this is a very elegant system, and this might sound very elaborate and complicated to you if you're a new Linux user, but I like I just like to go explain these things as I'm learning about them as well. It took me a while to wrap my
+
+mind around this, and I'm still learning this as I go along, but I I'm really enjoying this this type of work and how this is all architected. In this container, I should now have which pass. Yes, now I have in user been pass installed. It's actually a good I was here in my normal shell, but here I have it installed, so that's good. And if I now, for example, if I now want to clone my repo that contains all of my passwords, it is now prompting me for my um YubiKey. And I'm unlocking it now. And
+
+this is now it it has now cloned all of my passwords. Now if I now do pass find Vivaldi, now I can actually search my passwords. So if I do pass show C Vivaldi, then this should copy to my keyboard. And if I now go to Vivaldi and log in, this should then Yeah, now this should start syncing all of my bookmarks and my extensions and everything. So this is cool. I already have all of
+
+my my GPG encrypted passwords available to me. I'm syncing my browser, so my bookmarks, everything is now going to be loaded into my browser and exactly the way I like it. And all of this is demonstrating the concept of something that I aspire to, which is the stateless workstation. That is basically the whole goal of how I architected my Arch Linux setup. And I go a deeper into that in a video that I will link up here, where I explain my entire Arch setup, how I architected it for for it to be stateless. But now I'm actually getting
+
+to test it and I I'm doing it the hard way because I already wiped my Arch system. So there is literally no way back. I'm actually testing my my stateless workstation philosophy as I'm doing this project. So I do put my I do walk the talk for to say the least. So let's see see. My my extensions are
+
+now loaded. My bookmarks should be loaded. Maybe I have to reboot restart it here. Let's see Vivaldi. So my bookmarks have not completely loaded yet, interestingly enough. But that is
+
+something that we can that I can fix later. All right. So this is now set up. It does have load It has loaded my extensions. Next I'm going to be checking the guide and that's going to be Podman. So
+
+I've been talking about the stateless workstation, right? So let me open up X College Draw. The stateless workstation. So the stateless workstation, this is this is what I aspire to. So I want my workstation to be completely stateless so that I can basically copy and I can basically take any machine in the world and be productive in there very quickly. Like in I want to be able
+
+to be productive in less than 15 minutes, basically. But this is not an easy thing to do, right? This means that all of my state needs to live elsewhere. So what I mean by this that let's say this is my my current workstation, right? This now has a root file system and it has my home directory in it.
+
+Actually, let's just make a nice little drawing here that I can reuse. This is my workstation, then we have the home and then we have the root. Then this root file system is read-only and this my home directory persists. So this root file system is read-only and my home directory persists. And this is why this atomic desktop and this immutable OS suits this workflow so well because you by design you are going not going to be changing your OS at all and you need to have this component, which is your home directory, that is going to be the persistence. So
+
+similar to, for example, an application where you have your front-end container and then you have your back-end container, front end and this is your back-end. So a request comes in from the internet, goes to your front-end container. This front-end is then going to talk to the back-end, "Hey, can you please get some data?" Now this data lives somewhere else. This data lives, for example, in a database.
+
+This is how modern applications work. But these containers on the front end here, you can delete those, update those, you can do whatever you want with them. These do not contain any state. Likewise, the back-end does not contain any state. If it needs any state, if it needs to get any data, it talks to the database. And the database are not being
+
+created and destroyed all the time. My home directory is going to be my database. This state, I have created this in several ways. So where does my state So my my home directory is my state. Where does the state? So there is a few
+
+way you few elements of state here. So one of them you've seen already are my dot files and configuration. And I have loaded that with chezmoi and mise. But the actual state lives on GitHub. It's a repository on GitHub. That's what I did when I was
+
+running this setup script. It pulled in my dot files repo and set up everything that is in there. So that that that is one state that I have. The second state was my my passwords, right? This again also lives in GitHub GPG encrypted files. All of that lives
+
+there. The next state that I that I'm going to be setting up is my my actual files. And that all of that lives in my Synology. So that's my my NAS and this NAS contains a file system, which I I'm going to be setting up shortly. This NAS runs locally, right? It runs in my local
+
+network. But again, this NAS is also being backed up to, for example, a cloud provider. So I am layering in multiple levels of state here and I have a complete backup strategy for this so that I know that first of all I can load this state wherever I am. Next, I can use that state and this state is also being backed up. So I I trust GitHub to take good care of my repo. GitHub does not
+
+lose any repos as far as I'm in my experience, so those are securely backed up. And for my NAS, I am using my local backups and that is also being backed up to the cloud. So I have multiple levels of backup. So it's not just the stateless workstation, it's not just about your workstation being stateless, it's also about an entire philosophy with being very intentional where your files are, how you organize those files and how these files are backed up. And that is the summary of the stateless workstation philosophy that I'm designing my systems. Let's
+
+then load in my files. So we have already checked out this toolbox, but in order to install GUI applications, you use flatpaks. And flatpak is I I was not aware like I wasn't aware of the name flatpak, but I was not aware of what flatpaks actually are and how they work. And now that I know, I'm actually really excited about this. And when I do return to Arch Linux, I would be basing my workflow much more around flatpaks because I can basically just do a flatpak list now.
+
+These are all the flatpaks that are installed on my system. So I can export that flatpak list and install them in a in a different system very easily. I can do that with yay or pacman exports as well. That's not the only thing. But I like that it's a package manager that would be working across multiple different Linux distros. So here the
+
+basic concept of a flatpak is again containerization. So a flatpak is bundled with libraries that are not available in runtime. So on my stateless immutable root file system, many libraries or dependencies that packages would need are not there installed there. And if I would install them and if I then reboot, they would not persist. So flatpaks operate in sandboxes. So every each application is
+
+run is built and run in an isolated environment called the sandbox. And each sandbox contains the application and its runtime. So and here's what is really interesting. By default, the application can only access the contents of its sandbox. Access to user files, network sockets, etc. needs to be explicitly
+
+granted. Oh, and I love this. Like this is this is how you run modern software. So I cannot believe that I was not aware of flatpaks before. But this is why it's so good to get out of your shell a bit. Like I was
+
+this I am this Arch Linux user and Arch Linux is the way. But the danger of that is that you can get a little bit of tunnel vision and you don't get exposed to things like this. And then doing something like just removing everything and going to an atomic desktop and immutable OS now exposes me to something like flatpak and I'm growing as an engineer again. So I'm I'm very happy I I discovered this. So in order to install my Synology flatpak, you can I we loaded flathub as the Let's see, flathub. Flathub is basically a
+
+repository for flatpaks. So in here, there is then I could probably search for Synology because what I what I need is my Synology Drive Client. Yeah, here we go. So the Synology Drive Client is here. Yeah, I prefer to install things via the CLI.
+
+But what would happen? Oh, yeah, okay. Well, at least it will give me this. I could actually do this. Would that run something? Okay, so no
+
+apps available. Okay, so I don't have any manager installed yet. But it does give me the the code, so that is good. I can This is the command. Alternatively, I could do flatpak search Synology.
+
+And then it would show me Synology Drive. So, let's just run flatpak install Synology Drive. Yes. This is going to install my Synology Drive and everything it needs to run the Synology Drive. And while this is installing, I'm actually going to change my Cosmic settings.
+
+Cuz I'm getting very annoyed with the dock here. Let me see. Desktop. Dock. Here we go.
+
+Automatically hide it. Ah, much better. While we're at it, let's see. Can we also change appearance? I want to have an orange color. Okay, looking pretty
+
+good. All right, my Synology Drive is now installed. So, if I then go to here, Synology Drive client. So, let's open that. Ooh, that is very small. Can I
+
+scale it up a little bit or something? Okay. Well, I'm happy I have this zoom functionality. Now I will need to add my Synology credentials, so I will cut the video here and set this up, obviously. All right, so I'm now logged in to the Drive client and now I can set up a sync task and let me see, I want to sync my zero directory.
+
+Okay. And I want to My home directory is in var home. This is something I'll have to get used to where My home directory is in var. Here, I'm going to create a directory called zero. Like this. So, in the background, it is
+
+now syncing and if I go to my home directory and open zero, then this is actually going to be loading in all of my personal files. This system with all of the numbers and everything, this contains my actual files that I carry with me everywhere. It contains my documents. It contains all of my the output that I create, courses, videos, um all of my business documentation, everything is in that file system. And this is all organized following a Johnny Decimal file system, which is something that I highly recommend you look into if you want to um nerd out about organizing your life.
+
+But, this is the thing to do. Buy his stuff. It's like, I don't know, $50 or something to get his uh the full course that he creates. I I'm not affiliated. I don't know the man, but he does amazing work. So, I highly
+
+recommend this. This is what I took and created my own file system, which is then backed up to my Synology, which is then backed up to a separate location, which I now can can carry around with me. And this is basically the main engine between my uh that powers my sort of stateless workstation. So, now that my files are loaded, my passwords, everything, the last thing that I need to configure are my dot file or or my dev containers, because as you know, if you have seen any of my videos, all of my workflow is based around containers and dev containers. So, let's say I want to connect to my home lab now. Well, this all is done through a
+
+Git repository with a containerized environment. In order to do that, I use devpod. So, devpod spins up my containers, but to run the containers, I need to run a container runtime. And in this case, it is Podman. I'm going to go to my home directory.
+
+I'm make there repos. And what I can do now is do devpod up git at github.com Misha van den berg /homelab. So, I'm now taking my my homelab directory and creating a devpod out of it. So, this should, if everything works, now ask me for my SSH key. Devpod is now
+
+cloning my my my content. So, what devpod is doing now is cloning my homelab repo and it's installing the packages that I have defined in my dev container.json. And after it has done that, after it's done setting up the actual uh repository, it is then going to clone my dot files that I have that I defined. And then it's again going to set up my dot files exactly as I like them.
+
+And as you've seen, it's now cloning my dot files. And this is very simple This is exactly the same setup that was running earlier when I set up this host system. So, it is now just going to set up my Neovim, my editor, everything is going to be configured exactly as I specified in my in my files. So, it's now downloading Node, LazyVim, Ripgrep. And now when I do devpod ls, you see that I have a dev container running. And if I do devpod ssh, I can
+
+SSH into it. And here, so if I show you now, I'm creating a new tmux session and if I do which kubectl, there's no kubectl installed on my system. However, in my homelab repo, uh which kubectl, here kubectl is installed. And if I do cat mees.toml, it will have kubectl and any tool that I specify in this file is now going to be um installed whenever I set up this repo. So, my repo is completely ready to
+
+start working. I can connect to my clusters. Everything is in there. And this is the power of a stateless workstation that I can get up and running everywhere. So, now that I can also run dev containers and pull in my repos with all of the project specifications and everything, I can literally do everything I want now. So,
+
+I have pulled in my my home file system, so all of my files, my passwords, and I have my containerized developer workflow also set up. And now I can actually just do everything I need. I can work with clients. I can start producing courses for CubeCraft. I can do my content creation, everything. So,
+
+this is all that I need to to be productive. And actually, let's just talk about this Minisforum that I I'm using. So, Minisforum MS-A2. So, there is a full full review I've done about this machine, which will be linked up here somewhere that you and I I reviewed that in a uh homelab setting, in a homelab context, but I'm actually now using it as a full workstation. And so far, it is working quite well. It's pretty snappy.
+
+I'm recording uh everything you've seen me doing. I'm doing this while I'm recording in 4K 25 FPS. It's using about 3% CPU. And actually, let's just check out Let's enter my toolbox and dnf install btop. No, wait. I Then I would be reading the
+
+container. How would I see my my resource this Atomic Desktop? Let's see. System monitor. Let's Let's do it the the graphical way then. So, how much are
+
+we How much are we using right now, actually? We're using 10 gigs of memory. I got 32. In terms of CPU, we are doing really well. We are not using much CPU at all, while we are actually running uh recording in 4K. So, this machine, in
+
+terms of specs, it's performing well. But, there's one thing that's bothering me, and that is the sound, the the the noise of the fan. I'm not sure if you can even hear it from the microphone. It has very good noise filtering, so probably not. But, in the video that I created about the Minisforum, I already addressed this that it does have a high noise level. And as it's now sitting on
+
+my desk here, I can hear it. It's like there's a constant fan noise. And that annoys the heck out of me. I can I cannot work with a machine in the long term that does that. I've spent Maybe you've done this, too, but I've spent so many years sitting in my attic room with these old PCs that made so much noise. I've done my part.
+
+Now I just want silent machines. And this one is not silent, so that's the only gripe I have with it. But, actually, like it's How cool is it that I can do all of this stuff on such a small little machine and that's completely portable as well. I could bring this with me if I would move house, offices. It's a very portable, nice setup. So,
+
+in that sense, I do like it. Um and it's it's performing well. And lastly, I should probably also cover why I went for the Cosmic um Atomic Desktop, because you have Silverblue, which is the Gnome one. Then there's the KDE one, Kinoite. There is the Sway one, Budgie, and Cosmic.
+
+And Cosmic is in beta now. I've been testing it in the alpha for the in the past year or so. And I've basically been running Hyprland and Cosmic. And I would sort of change between the two, but I'm running Cosmic because I I've gotten used to it. I like that it's it's um it's being actively developed.
+
+And I could have gone for the Sway one. That's probably the closest one to the Hyprland workflow I'm used to, but on the one hand, I wanted something different and I was already used to Cosmic. And Cosmic does work well. I it it works smooth. I have all of my little applets.
+
+I can easily connect to to Bluetooth, um to my Wi-Fi, and uh my sound, like I don't have to be messing with the CLI in order to get fixed my sound. So, all of this is it is working well and it's working really fast. It doesn't take up much much much resources. And the thing is, I'm building this so that I can use it on my laptop, right? And on my Arch workstation, I'm happy to tinker to to to like spend time in the CLI, etc. But,
+
+when I'm on a laptop on the go and if I want to get into a video call and my sound isn't working, I want to just be able to quickly go into my bar on the top here, change my sound, and and be done with it. Like I don't want I just want a simple, stable system. And Cosmic definitely ticks that box. I've spent years on GNOME. I could have gone with GNOME, but I like the tiling aspects of um of Cosmic. So, here like I can do
+
+I can create more terminals like this and they will automatically tile. So, all of that is working very nicely. It has the workspaces, the tiling. It's basically the perfect middle way between tiling window managers and a fully fledged desktop environment. And I really like that. Like GNOME does not do
+
+this very well. It's very feels very clunky to do this. You're sort of switching between all tabbing and yeah, it doesn't feel well. So, this feels like a window manager and a desktop environment at the same time. So, that's why I went for this one. So, yeah, in a
+
+few weeks, I will report back on about my time on on Atomic and and Cosmic in that sense. That has basically been the setup of this complete uh Linux workstation. So, you've seen me build this station from scratch. That's because I have the Linux skills, right? So, if you want to learn Linux from me and how to learn how to create Arch your own Arch Linux system, I have a full 8-hour course that will teach you Linux on a deep deep level. Like many people
+
+are landing jobs because of that call course alone. And there is my entire dev container setup that you just saw me create with all of the scripts and all everything. You get access to my full dot files repo. You can uh copy and paste everything that I've just done, but you also get an 8-hour another 8-hour course going extremely deep into how this actually all works in addition to everything else. Like the If you want to make six figures as a Kubernetes engineer, CubeCraft is where you should be. So, maybe I will see you
+
+there. If not, I'll probably see you in the next video. Thank you so much for watching. Have a good one. See you in the next one.

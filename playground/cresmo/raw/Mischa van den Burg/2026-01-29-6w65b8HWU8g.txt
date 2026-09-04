@@ -1,0 +1,88 @@
+---
+video_title: "How the Ralph Technique Works (Full Tutorial)"
+video_id: 6w65b8HWU8g
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6w65b8HWU8g
+video_date: 2026-01-29T15:51:17+00:00
+video_description: |
+  Apply to join KubeCraft & land your DevOps job: https://kubecraft.click/cgv94
+  Learn to build a Home Lab for FREE: https://go.kubecraft.dev/kubernetes-homelab
+  
+  Ralph is the autonomous AI coding loop taking Tech Twitter by storm — and it ships features while you sleep. This video breaks down exactly how Ralph works, how to set it up with Claude Code, and why DevOps engineers are uniquely protected from the AI coding revolution.
+  
+  You'll see a real-world demo building a Whoop API scraper running on Kubernetes with PostgreSQL, managed entirely through Ralph's bash loop technique. Whether you write code or manage infrastructure, you need to understand what Ralph means for your career.
+  
+  Ralph & the Job Market: https://youtu.be/szxQhYjEUfU
+  
+  RESOURCES MENTIONED:
+  https://x.com/mischa_vdburg/status/2011798980842144240?s=2
+  https://x.com/mischavdburg/status/2011803526054236251
+  https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+  https://x.com/ryancarson/status/2008548371712135632
+  
+  CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischavdburg
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into succesful DevOps careers.
+  
+  # DevOps #AIcoding #Kubernetes
+---
+Ralph Wigum is taking the world by storm. It's the latest and greatest in AI agentic coding. And if you have no idea what I'm talking about, this video is for you. Ralph is a new coding technique that's been going viral on X. And I know that many of my viewers are not active on X, so that's why I'm making this video for you. Uh, it was
+
+originated by a man called Jeffrey Huntley, but it recently built on X. It got 1.8 million views, and this was created by Ryan Carson. But here in the video he in the article he actually references to Huntley who created the technique on the 14th of July in 2025. So even though the technique has been around for a while it is now only recently been going viral. So what is
+
+Ralph? Here in the article he says Ralph is an autonomous AI coding loop that ships features while you sleep. That is exactly what it does. Ralph is a way of running AI coding agents in a loop so that you can do other things and it is extremely powerful. I've been building a few applications that I've been dreaming about for years and in this video I'll show you exactly how it works. So I have
+
+a project here that's called a whoop scraper. I wear a Whoop every single day and the this data is being stored at Whoop. And of course I don't like that. I want to have my own copy of that data. So on my Kubernetes cluster, I'm running several Postgress databases. One of them
+
+being my quantified self database where I gather metrics like my Whoop metrics. So I've created a scraper that scrapes the Whoop API, takes that data, stores it in my database so that I can query it with Grafana as you see here and I can um gather this data and have it on my own infrastructure. The data has to be at the vendor of course, but I don't want them to decide when and when I cannot access my data. If they go bankrupt, I want to have my own copy of the data. And what's also cool is that I can do other things with the data because I also use an aura ring. And for example,
+
+I can do cool stuff like this where where I'm comparing my aura and whoop scores every single day right in my dashboard. And again all of this is running on Kubernetes using Postgress databases all Kubernetes native on my home lab and if you want to learn more about that then check the link below in description. So the app that I'm building here is the whoop scraper and what I'm going to be doing is I'm going to be using Ralph to develop on this project. So fundamentally Ralph as Huntley shows here in the in his original article fundamentally what Ralph is is a while loop where you start a while loop you cat the prompt MD pipe that to claude code and done that's fundamentally what Ralph is so here I have my prompt MD and let's take a look what that looks like. So first I'm telling it to study agent MD and if you don't know what agent MD is it is basically a claude MD but then for um so that it's compatible with all coding agents the agent MD yeah it's a development guide and basically hints for AI coding agents so that they can learn how to work with this project then study specs the specs directory in my specs directory there are a few specifications about testing thing. For
+
+example, here is a test uh specification for my config module because what we're going to be doing with Ralph is we're going to be creating tests for my project here because my project currently doesn't have any tests. Okay, so I have my prompt MD study specs study agent MD and then study the fix plan to understand the current progress and priorities because when you're running a coding agent in a loop, you also need a way of tracking the progress of it, right? so it knows what it has done and what it hasn't done. Your task is to implement one test module from the fix plan. Choose one with the highest priority and completed uh an an incomplete item and do one task per loop only one. Do not implement
+
+multiple test files. So these are very important instructions to give to the agent. Then there are so a few uh pre-implementation checks. Do not assume tests don't exist. Verify by searching.
+
+This is very important and also this directive to search existing directory using sub aents because when you tell it to use sub aents then you are not populating the current context window with uh useless tokens. Okay, if you're using sub agents, then those sub agents get their context window filled and you keep your own context window because if you didn't know this, cloud code operates with a 200,000 token context window if you use opus. And if you are going beyond 40% of that or so, then the model starts to become very stupid. You probably have experienced this already. And the whole goal here is to avoid context compaction. Next we do the
+
+implementation. So writing the tests or write writing the tests following the specification. Then there's the validation etc. So this is a very specific prompt for this type of task that I built for this. And basically what we do is we just go I can just cat the raal. MD here. And basically what we
+
+do is we're just going to say a while loop take that prompt and start implementing it. while true do cat prompt MD and then run cloud with danger dangerously skip permissions so it can just do whatever it wants and now it's just taking the prompt it's going to study my agents.mmd and it's going to implement it's going to pick one of these tasks and here you see it automatically determined which one has the right highest priority so I'm letting the AI agent decide which task to work on it's going to read in the correct um context that it needs. And now I can just go and do other things. I can do I can go out, I can do other things. And now it will just keep
+
+looping and looping and looping in the background until I stop it. It's going to look at all of the specifications and implement all of the tests automatically while I sleep. And this is the power of Ralph. Rather than having giving it a oneshot uh task to do and having to constantly coax it in the right direction, we're giving Ralph the complete autonomy to do whatever it wants and to build the features according to the specifications that we have given it. And this is revolutionizing how how we are building software right now. So what I've just
+
+shown you is basically Ralph in its purest form. It's just a bash loop where you are constantly doing the same thing over and over again. And in my latest software project that I'm developing right now, I have created a little bit of a more um refined uh approach to this because currently as we are running this then there's no way for Ralph to know when it should stop, right? It has no idea when the loop should stop. So I built a bash script that has a way of determining when it is done. And I'm
+
+doing that by saying if the result is promise complete promise then notify and exit and the promise then is determined in the prompt that you can see here. This is how I do it. So if all stories are complete and passing reply with promise complete promise and the stories he is working on are then defined in a prd.json here. So for my Ralph I generate a list of user stories in a prd.json JSON and
+
+then here there is um a a boolean here that says passes true or false and that is how Ralph will know which ones are still um left to do or ones that he still can needs to work on. So initially all of these are passes false and then he will just pick one of these stories and iterate over the JSON file like this. So I base this on the following repository snark tank/raal. You can find more examples here and you can learn about it yourself. I also recommend you read this article about effective harnesses for longunning agents. That's
+
+where this prd.json is based upon and I got that from a guy called Matt PCO. Matt, he's like a Typescript influencer, but he has also been talking a lot about Ralph on the on on X and he's been going quite viral about it. So, um, he is also one to note if you want to learn more about it. But creator of the Ralph technique is Jeffrey Huntley and I strongly recommend you check out his stuff as well. Now, our first task of
+
+Ralph is now complete. We see that he has u completed the test config.py. He has now created tests for the config. And now the loop should start picking up the next task. Well, this now is not
+
+working because in the uh in the way that I set up the loop, I have to actually interrupt the claw process because it waits for my input, right? So, I just cancel the previous claw process and now the loop has restarted. And now you see it is going to move to o.py. Now if you want to run this completely autonomously what you do is you do the uh following command. So now
+
+I am there is a slight nuance here. You will see I'm still doing claude dangerous peri skip permissions but then I do the -p command and then take standard input. So you're catting prompt MD and then claude takes a standard input here and does runs it in prompt mode which means that if I press enter now I don't see the output of claude right now it's just running in the background and it's doing its thing and it would just keep looping and looping and looping until I stop this process. And if you want a more refined one, then I recommend checking out this um other approach that I showed you with the promise. So that is fundamentally what Ralph is. You're just using this to run
+
+your AI coding agent. May it be clawed code or whatever in a bash loop so that it can autonomously decide what to work on and how to implement it. And people are building software overnight with this. Jeffrey Huntley himself, he is used he used this to completely rebuild Hashi Cororp Nomad for example. He talks about that in his blog posts and in his videos. And
+
+if you're not on X and you're not scrolling the feed there, then you may have missed out on this. But Tech Twitter is on fire about this. It's all about Claude Code and Ralph and people are just copying companies by using this technique. So it is I strongly recommend you look into this. So obviously having an AI coding agent running while you sleep is a massive threat to people who write code for a living. I did a
+
+complete video on that and my thoughts about that which you can check out over here. I have been testing this for DevOps work because I'm a DevOps engineer, right? That's what I do. I manage infrastructure. I have not had much success with Ralph for managing infrastructure just yet. I'm still
+
+figuring that out. So I I definitely think that infrastructure and DevOps engineers still are relatively safe uh and protected from the Ralph technique. And actually I wrote a post about this on my ex account and the creator of Ralph Jeffrey Huntley he replied to my post. Let me show it to you here. I wrote a post about thinking a lot about junior devops roles and AI after seeing the cloud code and Ralph craze of this week. And basically my argument is that
+
+writing code is a different skill than man from managing infrastructure. And yeah, you can read the post um if you want. But again, Jeffrey himself, the creator of Ralph, he replied here saying that there's systems level thinking with infrastructure. I've been doing it since sunos, so it's all natural and AI makes me an absolute weapon with it. So AI is useful if you have the skills. But look,
+
+he says, "I'm not sure about juniors." However, there's so many concepts that need to be known about it before you can even prompt for it. My point here is that you need to have high infrastructure skills for Ralph to be working properly uh for infrastructure. Yeah, you need to be able to prompt it correctly and to guide it in the right direction. And so I think there's still a higher bar for Ralph to start working with infrastructure. So I don't think
+
+that an army of juniors is going to be able to replace DevOps engineers using Ralph just yet. I have not had much success with Ralph using DevOps and infrastructure work myself. But I'm constantly testing it out. So the bar is still a lot higher and therefore infrastructure and DevOps roles are much more futurep proof as Jeffrey the creator of Ralph basically confirms here himself. So yeah, that is what I teach for a living. If you want to learn more
+
+about Kubernetes and infrastructure, you can check out the link below. This is what I do and I'm very happy I chose that way because tech Twitter is on fire now with software engineers being replaced and I sleep very soundly at night knowing that I have a future proof skill set. So check out Ralph, be aware of what's going on. And thank you so much for watching.
