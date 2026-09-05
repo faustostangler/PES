@@ -2,6 +2,7 @@
 """Index raw transcript files using local Ollama LLM into paratactic CSV summaries with standardized PES ETA logging."""
 
 import argparse
+import atexit
 import csv
 import json
 import os
@@ -87,11 +88,28 @@ def extract_frontmatter_and_body(text: str) -> tuple[str, str]:
     return title, clean_body
 
 
+def unload_ollama_model(model: str = DEFAULT_MODEL, base_url: str = DEFAULT_OLLAMA_URL) -> None:
+    """Explicitly tell Ollama to unload model weights and free RAM/VRAM immediately."""
+    endpoint = f"{base_url.rstrip('/')}/api/generate"
+    payload = {"model": model, "keep_alive": 0}
+    try:
+        req = urllib.request.Request(
+            endpoint,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            resp.read()
+    except Exception:
+        pass
+
+
 def call_ollama(
     prompt: str,
     model: str = DEFAULT_MODEL,
     base_url: str = DEFAULT_OLLAMA_URL,
     temperature: float = 0.2,
+    keep_alive: str = "5m",
 ) -> str:
     """Send prompt to local Ollama instance and return raw response string."""
     endpoint = f"{base_url.rstrip('/')}/api/generate"
@@ -99,10 +117,13 @@ def call_ollama(
         "model": model,
         "prompt": prompt,
         "stream": False,
-        "keep_alive": "60m",
+        "keep_alive": keep_alive,
         "options": {
             "temperature": temperature,
             "num_predict": 120,
+            "num_gpu": 99,  # Offload all layers to GPU when NVIDIA driver/device is available
+            "num_thread": min(4, os.cpu_count() or 4),  # Cap CPU threads to prevent system freeze
+            "num_ctx": 2048,  # Truncate context to save memory (excerpts are only 2500 chars)
         },
     }
 
@@ -241,7 +262,7 @@ def process_channel_folder(
                     file_time_block = format_time_block(file_elapsed, file_eta_sec)
 
                 display_title = title if title else concept
-                print(f"{f_idx}+{f_remaining}={total_in_channel} ({f_percent:6.2f}%) {file_time_block} {filepath.name} | {display_title}")
+                print(f"{f_idx}+{f_remaining}={total_in_channel} ({f_percent:6.2f}%) {file_time_block} {filepath.name} | {concept}")
 
             except Exception as exc:
                 f_remaining = total_in_channel - f_idx
@@ -324,13 +345,17 @@ if __name__ == "__main__":
     total_channels = len(active_folders)
     global_start_time = time.time()
 
-    for idx, (folder, _) in enumerate(active_folders, 1):
-        process_channel_folder(
-            folder=folder,
-            channel_idx=idx,
-            total_channels=total_channels,
-            global_start_time=global_start_time,
-            output_dir=args.output_dir,
-            model=args.model,
-            limit=args.limit,
-        )
+    atexit.register(unload_ollama_model, model=args.model, base_url=DEFAULT_OLLAMA_URL)
+    try:
+        for idx, (folder, _) in enumerate(active_folders, 1):
+            process_channel_folder(
+                folder=folder,
+                channel_idx=idx,
+                total_channels=total_channels,
+                global_start_time=global_start_time,
+                output_dir=args.output_dir,
+                model=args.model,
+                limit=args.limit,
+            )
+    finally:
+        unload_ollama_model(model=args.model, base_url=DEFAULT_OLLAMA_URL)
