@@ -43,6 +43,7 @@ from cresmo_shared import (
     load_processed_cresmo_log,
     parse_merged_transcriptions,
     resolve_active_session,
+    sanitize_untrusted_content,
     save_processed_cresmo_log,
     scan_session_for_quota_refresh,
     send_agent_message,
@@ -271,19 +272,22 @@ def execute_stage2_expander(
 
         pass_label = f"Pass {pass_num}/{total_passes}" if total_passes > 1 else "Pass 1"
         if pass_num == 1:
+            safe_raw = sanitize_untrusted_content(raw_text, source_label=txt_file.name)
             header_context = (
                 f"--- ORIGINAL RAW TRANSCRIPT METADATA & TEXT (GROUND TRUTH) ---\n"
                 f"File: {txt_file.name}\n"
-                f"{raw_text}"
+                f"{safe_raw}"
             )
         else:
+            safe_raw = sanitize_untrusted_content(raw_text, source_label=txt_file.name)
+            safe_current = sanitize_untrusted_content(current_text, source_label=f"{enriched_file.name} (pass {pass_num - 1})")
             header_context = (
                 f"--- ORIGINAL RAW TRANSCRIPT (GROUND TRUTH REFERENCE) ---\n"
                 f"File: {txt_file.name}\n"
-                f"{raw_text}\n\n"
+                f"{safe_raw}\n\n"
                 f"--- PREVIOUS PASS EXPANDED COMPENDIUM DRAFT (PASS {pass_num - 1} TO ENRICH & DEEPEN) ---\n"
                 f"File: {enriched_file.name}\n"
-                f"{current_text}"
+                f"{safe_current}"
             )
 
         prompt = task_prompt + (
@@ -380,12 +384,13 @@ def execute_stage3_atomic_notes(
 
     enriched_text = enriched_file.read_text(encoding="utf-8")
     skill_doc = SKILL_ATOMIC_PATH.read_text(encoding="utf-8") if SKILL_ATOMIC_PATH.exists() else ""
+    safe_enriched = sanitize_untrusted_content(enriched_text, source_label=enriched_file.name)
 
     prompt = STAGE3_PRE_PROMPT + (
         f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
         f"Save output directly to file: {xml_output_file.resolve()}\n\n"
         f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
-        f"--- ENRICHED TEXT ---\n{enriched_text}"
+        f"--- ENRICHED TEXT ---\n{safe_enriched}"
     )
 
     if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
@@ -709,6 +714,7 @@ def execute_stage56_moc_manager(
 
     skill_doc = SKILL_MOC_MANAGER_PATH.read_text(encoding="utf-8") if SKILL_MOC_MANAGER_PATH.exists() else ""
     xml_content = xml_file.read_text(encoding="utf-8") if xml_file.exists() else ""
+    safe_xml = sanitize_untrusted_content(xml_content, source_label=xml_file.name)
 
     pre_prompt = (
         f"You are Cresmo MOC Manager. Reconcile the XML atomic notes into the Obsidian vault at '{cresmo_wiki_dir.resolve()}'.\n"
@@ -720,7 +726,7 @@ def execute_stage56_moc_manager(
         f"1. Weave and integrate the new atomic notes into the relevant narrative Map of Content (MOC) under '{cresmo_wiki_dir.resolve()}/MOCs/' using file writing/editing tools.\n"
         f"2. FINAL STEP: Save the reconciliation report directly to: {reconciliation_log.resolve()} using write_to_file.\n"
         f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
-        f"--- XML ATOMIC NOTES BATCH ---\n{xml_content}"
+        f"--- XML ATOMIC NOTES BATCH ---\n{safe_xml}"
     )
 
     if isolate_context:
