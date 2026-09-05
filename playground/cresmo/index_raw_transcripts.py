@@ -261,8 +261,8 @@ def process_channel_folder(
                     file_eta_sec = f_remaining * avg_file_sec
                     file_time_block = format_time_block(file_elapsed, file_eta_sec)
 
-                display_title = title if title else concept
-                print(f"{f_idx}+{f_remaining}={total_in_channel} ({f_percent:6.2f}%) {file_time_block} {filepath.name} | {concept}")
+                display_title = concept if concept else title
+                print(f"{f_idx}+{f_remaining}={total_in_channel} ({f_percent:6.2f}%) {file_time_block} {filepath.name} | {display_title}")
 
             except Exception as exc:
                 f_remaining = total_in_channel - f_idx
