@@ -1,6 +1,6 @@
 ---
 name: cresmo-moc-manager
-description: Reconciles XML atomic notes into an Obsidian Vault. Performs entity resolution, tiered lookups against _index.json, incremental note merging, bi-directional cross-text linking, tag governance, and Maps of Content (MOC) narrative integration with zero orphaned notes. Use whenever atomic notes need to be merged into an existing Obsidian vault, reconciled with index files, or linked into MOCs. Make sure to trigger this skill during Stage 3 of the Cresmo pipeline or whenever MOC management and vault reconciliation are requested.
+description: Reconciles XML atomic notes into an Obsidian Vault. Performs entity resolution, tiered lookups against _index.json, incremental note merging, bi-directional cross-text linking, tag governance, and Maps of Content (MOC) integration with zero orphaned notes. Use whenever atomic notes need to be merged into an existing Obsidian vault, reconciled with index files, or linked into MOCs. Make sure to trigger this skill during Stage 3 of the Cresmo pipeline or whenever MOC management and vault reconciliation are requested.
 ---
 
 # Cresmo MOC Manager (Obsidian Vault & MOC Integration Agent)
@@ -9,7 +9,7 @@ description: Reconciles XML atomic notes into an Obsidian Vault. Performs entity
 
 The `cresmo-moc-manager` skill acts as the Second Brain Vault Integrator for Obsidian. It takes incoming batches of atomic notes (formatted in XML `<xml><nota>...</nota></xml>`) and reconciles them into an active Obsidian Vault environment.
 
-It enforces zero orphaned notes (every note is woven into a fluid narrative Map of Content - MOC), executes tiered entity resolution against `_index.json`, performs non-destructive incremental note merging for existing notes, synchronizes bi-directional links trans-textually across existing vault files, and maintains tag governance.
+It enforces zero orphaned notes (every note is woven into a hierarchically organized Map of Content - MOC), executes tiered entity resolution against `_index.json`, performs non-destructive incremental note merging for existing notes, synchronizes bi-directional links trans-textually across existing vault files, and maintains tag governance.
 
 **File Proliferation Directive**: This phase transforms the XML batch of atomic notes into individual Markdown (.md) files. Each atomic note extracted from `<xml><nota>...</nota></xml>` must be saved as an individual `.md` file in `playground/cresmo/wiki/<note_type>/` (where `<note_type>` is `entity`, `concept`, `event`, or `process`), named exactly after the note's title (`[Exact Note Title].md`). 
 
@@ -19,7 +19,7 @@ Save the overall reconciliation log report directly to `playground/cresmo/enrich
 
 ## Core Vault Rules & Operating Principles
 
-1. **Zero Orphaned Notes**: Every atomic note MUST be linked within the narrative structure of at least one Map of Content (MOC). Unlinked, floating notes are strictly prohibited.
+1. **Zero Orphaned Notes**: Every atomic note MUST be linked within the hierarchical structure of at least one Map of Content (MOC). Unlinked, floating notes are strictly prohibited.
 2. **Bi-Directional Trans-Textual Sync**: When a new note references existing vault notes, the agent MUST update those existing notes with back-links (`[[WikiLink]]`), maintaining full symmetry across the vault.
 3. **Non-Destructive Incremental Merging**: Never overwrite historical vault data. When an incoming note matches an existing file, merge tags, aliases, context, triples, and causal matrices incrementally.
 
@@ -43,7 +43,7 @@ When entity resolution determines a candidate note already exists in the vault, 
 
 1. **YAML Frontmatter**: Merge `tags` (deduplicating) and append new items to `aliases`.
 2. **Contextual Analysis & Divergent Data**: Synthesize new factual data into existing paragraphs without destroying previous context. If source data divergence exists between the incoming candidate and historical vault records, explicitly state both positions in the analysis text with their respective epistemic attributions.
-3. **Triples & Connections**: Append new declarative triples (`* [[Source]] -> [Action] -> [[Target]]`), deduplicating identical statements.
+3. **Triples & Connections**: Append new declarative triples (`* [[Source]] -> [Action] -> [[Target]]`), deduplicating statements.
 4. **Causal Matrix & Cross-Context**: Append new premisses, effects, precursors, lateral events, and ramifications.
 5. **Trans-Text Bi-Directional Sync**: Inspect newly added `[[WikiLinks]]` and open target existing files in the vault to insert reciprocal back-links.
 
@@ -56,7 +56,9 @@ When entity resolution determines a candidate note already exists in the vault, 
 - **Thematic Sub-MOCs**: Created within a Global MOC when a dense semantic cluster emerges (e.g., `[[MOC Conflitos no Leste Europeu]]`, `[[MOC Oftalmologia]]`).
 
 ### MOC Narrative Format
-MOCs are NOT simple bulleted lists of links. MOCs MUST be structured as continuous narrative paragraphs providing thematic context, within which `[[WikiLinks]]` to atomic notes are naturally embedded.
+MOCs are NOT simple bulleted lists of links. MOCs MUST be structured as an hierarquical index based on context, with `[[WikiLinks]]` to atomic notes.
+
+In an old-style prose-like MOC is found, convert it to the correct format (an hierarquical index based on context, with `[[WikiLinks]]` to atomic notes).
 
 ---
 
@@ -77,7 +79,7 @@ Rule: Notes in the same semantic micro-context MUST share at least one `#cluster
 
 **MANDATORY RULE**: The MOC Manager agent must execute all file modifications, MOC narrative updates, and reconciliation report generation EXCLUSIVELY via native file manipulation tools (`write_to_file`, `replace_file_content`).
 - **ABSOLUTE PROHIBITION**: NEVER invoke `run_command` or shell/terminal commands to manipulate files, run python one-liners, or parse XML. 
-- In the automated pipeline (`cresmo-pipeline.py`), the proliferation of individual `.md` notes and the synchronization of `_index.json` are performed automatically by Python. The MOC Manager agent's responsibility is to weave the links into the appropriate narrative MOCs and write the final reconciliation report using `write_to_file`.
+- In the automated pipeline (`cresmo-pipeline.py`), the proliferation of individual `.md` notes and the synchronization of `_index.json` are performed automatically by Python. The MOC Manager agent's responsibility is to weave the links into the appropriate index MOCs and write the final reconciliation report using `write_to_file`.
 
 ---
 

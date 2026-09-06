@@ -1,30 +1,31 @@
 ---
 type: entity
 content:
-  - orgao_de_classe
-  - autoridade_medica
-domain: saude_publica
-cluster: execucao_penal_e_crise_institucional
-source: ancapsu/rPcXjm79xis
+  - corporacoes_profissionais
+  - corporacoes_profissionais/saude
+domain: regulacao_profissional
+cluster: conselhos_de_classe
+source: ancapsu/aGgKsdTb4vM
 aliases: ["CFM", "Conselho de Medicina"]
 ---
-# Conselho Federal de Medicina
+# [[Conselho Federal de Medicina]]
 
 ## Definição e Análise Contextual
-O [[Conselho Federal de Medicina]] é a autarquia federal brasileira encarregada da fiscalização ética e da regulamentação do exercício profissional da medicina no país.
+O [[Conselho Federal de Medicina]] (CFM) é uma autarquia pública federal dotada de poder de polícia para disciplinar, fiscalizar e regular o exercício da profissão médica em todo o território nacional brasileiro. Criado por diploma legal nos anos 1950, o conselho detém competência para emitir registros profissionais (CRM), julgar infrações éticas e emitir resoluções normativas de classe.
 
-Por meio de resoluções e pareceres normativos, como o Parecer CFM nº 05/2016, estabelece o princípio da autonomia médica, determinando que diagnósticos e prescrições terapêuticas emitidos por médicos assistentes devem ser respeitados por autoridades administrativas, vedando impedimentos burocráticos ao tratamento de apenados enfermos.
+No escopo de debates regulatórios como o deflagrado pelo [[Projeto de Lei nº 5990 de 2025]], o CFM figura como entidade prototípica de cartório estatal que se beneficiaria da reserva compulsória de fala sobre temas biomédicos. Sob a ótica da teoria da escolha pública, a exclusão de comunicadores leigos ou cientistas não médicos atende a dinâmicas de busca de rendas e preservação de autoridade corporativa perante a sociedade civil.
 
 ## Conexões e Relações Diretas
-* [[Conselho Federal de Medicina]] -> edita o Código de Ética Médica que orienta laudos sobre -> [[Jair Bolsonaro]]
-* [[Conselho Federal de Medicina]] -> estabelece normas técnicas para a realização de exames como a -> [[Ultrassonografia In Loco]]
+* [[Conselho Federal de Medicina]] -> é citado como autarquia de registro no -> [[Projeto de Lei nº 5990 de 2025]], para reserva de conteúdo
+* [[Conselho Federal de Medicina]] -> opera sob incentivos explicados pela -> [[Teoria da Escolha Pública]], na defesa de monopólios corporativos
+* [[Conselho Federal de Medicina]] -> é confrontado pelo princípio do -> [[Conhecimento Descentralizado e Saberes Práticos]], na difusão de dados de saúde
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** Competência legal para normatizar a deontologia médica e salvaguardar a autonomia técnica dos profissionais de saúde.
-* **Efeito / Impacto:** Fornecimento de parâmetros ético-jurídicos para contestar a recusa de tratamento médico a custodiados.
-* **Atribuição Epistêmica:** [[Lei Federal nº 3.268/1957]]
+* **Causa / Premissa:** Monopólio legal outorgado pelo Estado sobre a concessão de licenças para a prática e aconselhamento médico.
+* **Efeito / Impacto:** Barreira à livre disseminação de informações de saúde e críticas a procedimentos por atores não corporativos.
+* **Atribuição Epistêmica:** Direito administrativo sanitário e sociologia das corporações de ofício
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Criação dos conselhos profissionais de saúde no Brasil
-* **Eventos Laterais e Paralelos:** Litígios sobre assistência à saúde no sistema penitenciário
-* **Desdobramentos e Posteridade:** Vinculação de responsabilidade médica e estatal na custódia de presos debilitados
+* **Precursores e Ancestralidade:** Corporações medievais de ofício e regulamentação da medicina científica
+* **Eventos Laterais e Paralelos:** Resoluções sobre publicidade médica e telemedicina no Brasil
+* **Desdobramentos e Posteridade:** Enquadramento de influenciadores digitais sob fiscalização corporativa

@@ -78,14 +78,19 @@ aliases: ["Alternative Name 1", "Acronym or Short Name"]
 * [[Nota Origem ou Sujeito]] -> [Verbo de Ação ou Conector de Ligação] -> [[Nota Destino ou Objeto]], em linguagem natural similar ao texto original
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** [Fator condicional ou evento que origina/sustenta esta nota]
+* **Causa / Premissa:** [Fator ou fatores condicionais ou eventos que originam ou sustentam esta nota]
 * **Efeito / Impacto:** [Desdobramentos e consequências decorrentes desta nota]
 * **Atribuição Epistêmica:** [[Entidade Proponente ou Fonte Histórica]]
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Contexto em relação à [[Nota Precursora 1]], Contexto em relação à [[Nota Precursora 2]]
-* **Eventos Laterais e Paralelos:** Contexto em relação à [[Nota Lateral ou Paralela 1]], Contexto em relação à [[Nota Lateral ou Paralela 2]]
+* **Precursores e Ancestralidade:** Contexto encontrado e expansão de contexto em relação à [[Nota Precursora 1]], Contexto em relação à [[Nota Precursora 2]]
+* **Eventos Laterais e Paralelos:** Contexto eem relação à [[Nota Lateral ou Paralela 1]], Contexto em relação à [[Nota Lateral ou Paralela 2]]
 * **Desdobramentos e Posteridade:** Desdobramentos relacionados à [[Nota Posterior 1]], Desdobramentos relacionados à [[Nota Posterior 2]]
+
+* **Precursores e Ancestralidade (origem genealógica, base epistemológica ou causa histórica primária, marco antecedente necessário):** Explique a relação histórica ou conceitual com a [[Nota Precursora 1]] e a [[Nota Precursora 2]] 
+* **Eventos Laterais e Paralelos (fenômeno coetâneo análogo ou mecanismo concorrente, instituição ou processo correlato sem causalidade direta):** Descreva o contexto simultâneo ou conexões horizontais com a [[Nota Lateral 1]] e a [[Nota Lateral 2]]
+* **Desdobramentos e Posteridade (derivação teórica subsequente ou impacto de longo curso, ruptura sistêmica ou reação institucional deflagrada):** Aponte os impactos futuros e desdobramentos relacionados à [[Nota Posterior 1]] e a [[Nota Posterior 2]]
+
 ```
 
 ---

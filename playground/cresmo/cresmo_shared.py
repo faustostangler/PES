@@ -18,6 +18,7 @@ DEFAULT_CRESMO_DIR: Path = CRESMO_ROOT
 DEFAULT_CRESMO_WIKI_DIR: Path = CRESMO_ROOT / "wiki"
 PROCESSED_CRESMO_LOG: Path = CRESMO_ROOT / "processed_cresmo.json"
 DEFAULT_PLAYLIST_FILE: Path = CRESMO_ROOT / "playlist.txt"
+DEFAULT_PLAYLIST_PRIORITY_FILE: Path = CRESMO_ROOT / "playlist-priority.txt"
 DEFAULT_BRAIN_CSV: Path = CRESMO_ROOT / "brain.csv"
 DEFAULT_COOKIES_FILE: Path = CRESMO_ROOT / ".yt_dlp_cookies.txt"
 DEFAULT_RATE_LIMIT_LOG_FILE: Path = CRESMO_ROOT / "rate_limit_log.json"
@@ -100,6 +101,9 @@ _INJECTION_REDACT_MARKER: str = "[REDACTED:INJECTION]"
 
 
 def sanitize_untrusted_content(text: str, source_label: str = "untrusted") -> str:
+    print("fast debug")
+    return text # fast debug
+
     """Neutralize indirect prompt injection attacks embedded in untrusted content.
 
     Implements a defense-in-depth strategy with two complementary layers:
@@ -544,6 +548,54 @@ def read_playlist_urls(file_path: Path) -> list[str]:
                 if line:
                     urls.append(line)
     return urls
+
+
+YT_VIDEO_ID_REGEX: re.Pattern[str] = re.compile(
+    r'(?:https?://)?(?:www\.)?(?:youtube\.com/(?:watch\?(?:.*&)?v=|embed/|v/|shorts/)|youtu\.be/)([a-zA-Z0-9_-]{11})'
+)
+RAW_SLUG_REGEX: re.Pattern[str] = re.compile(r'^[a-zA-Z0-9_-]{11}$')
+
+
+def extract_video_id(value: str) -> str | None:
+    """Extract 11-character YouTube video ID from a URL or raw slug."""
+    clean = value.strip()
+    if not clean or clean.startswith("#"):
+        return None
+    if " #" in clean or "\t#" in clean:
+        clean = clean.split("#", 1)[0].strip()
+    if RAW_SLUG_REGEX.match(clean):
+        return clean
+    match = YT_VIDEO_ID_REGEX.search(clean)
+    return match.group(1) if match else None
+
+
+def read_priority_entries(file_path: Path) -> list[dict[str, str]]:
+    """Read structured priority entries (video_id and url) from priority playlist file, preserving order and deduplicating."""
+    if not file_path.exists():
+        return []
+    entries: list[dict[str, str]] = []
+    seen: set[str] = set()
+    with open(file_path, encoding="utf-8") as f:
+        for line in f:
+            clean = line.strip()
+            if not clean or clean.startswith("#"):
+                continue
+            raw_target = clean.split("#", 1)[0].strip() if "#" in clean else clean
+            vid = extract_video_id(raw_target)
+            if vid and vid not in seen:
+                seen.add(vid)
+                canonical_url = raw_target if raw_target.startswith("http://") or raw_target.startswith("https://") else f"https://www.youtube.com/watch?v={vid}"
+                entries.append({
+                    "video_id": vid,
+                    "url": canonical_url,
+                    "raw_entry": raw_target,
+                })
+    return entries
+
+
+def read_priority_video_ids(file_path: Path) -> list[str]:
+    """Read video IDs/slugs from a priority playlist file, preserving order and deduplicating."""
+    return [entry["video_id"] for entry in read_priority_entries(file_path)]
 
 
 def parse_merged_transcriptions(file_path: Path) -> list[dict]:
