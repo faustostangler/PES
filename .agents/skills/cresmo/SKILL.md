@@ -42,6 +42,14 @@ All pipeline outputs are stored systematically under:
 Purges speech noise, oralities, hesitations, direct audience interactions, diagrams, tables, formulas, and bullet lists. Conducts fact-checking and a 2-pass Socratic/Genealogical gap audit, producing continuous fluid Markdown prose with markdown headings and a complementary information section.
 Target Skill File: [`cresmo-expander`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-expander/SKILL.md)
 
+#### cresmo-long-expander
+Deep longitudinal expander specializing in Fernand Braudel's *longue durée*, multi-secular historical continuities, deep structural forces (geography, climate, demographic transitions, long economic cycles), and historical palimpsests (genealogies of overlapping, sedimented institutional layers). Subordinates surface events to subterranean multi-century evolutionary trajectories.
+Target Skill File: [`cresmo-long-expander`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-long-expander/SKILL.md)
+
+#### cresmo-wide-expander
+Synchronic horizontal expander specializing in Axial Time (*Achsenzeit* - Karl Jaspers), connected global history, and comparative civilizational cross-sections. Analyzes synchronous global moments across two modalities: Synchrony & Connectivity (events linked by global networks, trade flows, silver circuits, and planetary climatic shocks) and Parallelism & Analogy (independent societies responding similarly to common systemic pressures with zero or minimal contact).
+Target Skill File: [`cresmo-wide-expander`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-wide-expander/SKILL.md)
+
 #### cresmo-atomic
 Transforms expanded fluid text into autonomous, semantically dense Atomic Notes formatted for an Obsidian Second Brain vault. Enforces strict typologies (`entity`, `concept`, `event`, `process`), Big-Endian event titles, YAML frontmatter, declarative triple connections, causal attribution matrices, and bi-directional WikiLinks, outputting an XML batch. Extracts `channel_name` and `video_id` from the source header to construct source tags `#fonte/[channel_name]/[video_id]`.
 Target Skill File: [`cresmo-atomic`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-atomic/SKILL.md)

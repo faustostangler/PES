@@ -1,5 +1,3 @@
-# A Fundação de Portugal, a Dinâmica Geopolítica de Borgonha e a Linhagem Monárquica Luso-Brasileira
-
 ## A Gênese Carolíngia, a Rede Borgonha-Cluny e a Geopolítica da Reconquista Ibérica no Século XI
 
 ### 1085–1096: A Queda de Toledo, a Invasão Almorávida e a Concessão do Condado Portucalense
@@ -71,8 +69,6 @@ Essa profunda continuidade institucional e constitucional atravessou o Atlântic
 Em seis de fevereiro de **[[1818]]**, no Largo do Paço no Rio de Janeiro, teve lugar a solene aclamação de Dom João VI como rei soberano do Reino Unido luso-brasileiro, configurando a primeira e única cerimônia de aclamação monárquica de uma dinastia tradicional europeia realizada em solo das Américas. Para ornar o grandioso Teatro da Aclamação e o pórtico monumental erigidos na Praça do Comércio sob o traço artístico do mestre neoclássico Jean-Baptiste Debret, a corte encomendou representações iconográficas que estampavam deliberadamente a efígie de Dom Afonso Henriques e a memória épica da Batalha de Ourique. Com essa explícita encenação de poder, o governo joanino proclamava aos observadores estrangeiros e à sociedade colonial americana que a monarquia estabelecida no Rio de Janeiro não consubstanciava uma criação exótica ou precária, mas a manifestação direta, madura e ininterrupta daquela mesma linhagem política e espiritual inaugurada em 1139 nas planícies ensanguentadas do Alentejo.
 
 A memória cultural das façanhas de Dom Afonso Henriques preservou-se de forma indelével também nas raízes da arte e da literatura popular da civilização luso-brasileira por intermédio da **[[Literatura de Cordel]]**. As canções de gesta, os cantares épicos e as narrativas de cavalaria cultivadas originalmente pelos trovadores medievais galego-portugueses nos séculos XII e XIII cruzaram o Atlântico a bordo das caravelas da colonização, encontrando solo fértil no sertão e nas feiras livres do Nordeste brasileiro. Sob a métrica rigorosa dos versos em sextilhas e do martelo agalopado declamados por repentistas e cantadores, os ciclos de cavalaria como a matéria dos Doze Pares de França e os feitos épicos dos guerreiros contra os infiéis mantiveram viva a saga da fundação de reinos. Essa sobrevivência poética atesta que o legado de Afonso Henriques não pertence apenas aos arquivos da diplomacia senhorial, mas vive como matriz indestrutível da imaginação moral, histórica e linguística que congrega fraternalmente todos os povos que se expressam na língua portuguesa.
-
----
 
 ## Informações Complementares
 

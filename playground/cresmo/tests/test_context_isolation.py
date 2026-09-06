@@ -87,7 +87,7 @@ def test_stage2_sentinel_omitted_on_subsequent_passes(tmp_path: Path, monkeypatc
     monkeypatch.setattr(cresmo_pipeline, "clear_session_history", mock_clear_session)
     monkeypatch.setattr(cresmo_pipeline, "send_agent_message", mock_send_agent_message)
 
-    cresmo_pipeline.execute_stage2_expander(
+    cresmo_pipeline.cresmo_gap_filler(
         txt_file=dummy_raw,
         meta={"channel_name": "ANCAPSU", "video_id": "test_raw"},
         session_id="test-session-multi-pass",
