@@ -237,7 +237,7 @@ def is_valid_reconciliation_log(file_path: Path, min_bytes: int = MIN_RECONCILIA
 # PIPELINE STAGES
 # ==============================================================================
 
-def execute_stage2_expander(
+def cresmo_gap_filler(
     txt_file: Path,
     meta: dict,
     session_id: str,
@@ -372,7 +372,7 @@ def execute_stage2_expander(
     return enriched_file
 
 
-def execute_stage3_atomic_notes(
+def cresmo_notes(
     enriched_file: Path,
     meta: dict,
     session_id: str,
@@ -613,7 +613,7 @@ def normalize_yaml_tags(content: str) -> str:
     return f"---{chr(10)}{new_frontmatter}{chr(10)}---{chr(10)}{body.strip()}{chr(10)}"
 
 
-def parse_and_proliferate_xml_notes(
+def parse_and_proliferate_notes(
     xml_file: Path,
     cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR,
     force: bool = False,
@@ -702,7 +702,7 @@ def parse_and_proliferate_xml_notes(
     return created_files
 
 
-def execute_stage56_moc_manager(
+def cresmo_moc_manager(
     xml_file: Path,
     meta: dict,
     session_id: str,
@@ -859,7 +859,7 @@ def process_candidate_blocks(
             print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
             continue
         # Stage 2: Expander & Detranscriptor (5 progressive in-place passes)
-        enriched_file = execute_stage2_expander(
+        enriched_file = cresmo_gap_filler(
             txt_file,
             meta,
             session_id,
@@ -871,7 +871,7 @@ def process_candidate_blocks(
         )
 
         # Stage 3 & 4: Atomic Generator & Proliferation
-        xml_file, is_newly_generated = execute_stage3_atomic_notes(
+        xml_file, is_newly_generated = cresmo_notes(
             enriched_file,
             meta,
             session_id,
@@ -881,10 +881,10 @@ def process_candidate_blocks(
             restart_server=restart_server,
         )
         # Idempotently unpack atomic notes and update _index.json (preserves existing notes unless force=True)
-        parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
+        parse_and_proliferate_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
 
         # Stage 5 & 6: MOC Manager & Graph Reconciliation
-        execute_stage56_moc_manager(
+        cresmo_moc_manager(
             xml_file,
             meta,
             session_id,

@@ -34,6 +34,8 @@ _CANDIDATE_SKILLS_DIRS = [
 SKILLS_ROOT: Path = next((p for p in _CANDIDATE_SKILLS_DIRS if p.exists()), _WORKSPACE_ROOT / ".agents" / "skills")
 
 SKILL_EXPANDER_PATH: Path = SKILLS_ROOT / "cresmo-expander" / "SKILL.md"
+SKILL_LONG_EXPANDER_PATH: Path = SKILLS_ROOT / "cresmo-long-expander" / "SKILL.md"
+SKILL_WIDE_EXPANDER_PATH: Path = SKILLS_ROOT / "cresmo-wide-expander" / "SKILL.md"
 SKILL_ATOMIC_PATH: Path = SKILLS_ROOT / "cresmo-atomic" / "SKILL.md"
 SKILL_MOC_MANAGER_PATH: Path = SKILLS_ROOT / "cresmo-moc-manager" / "SKILL.md"
 

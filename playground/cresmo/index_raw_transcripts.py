@@ -156,6 +156,130 @@ def parse_summary_line(raw_output: str) -> tuple[str, str]:
     return "Síntese Conceitual", target_line.strip()
 
 
+INDICATIVE_KEYWORDS: tuple[str, ...] = (
+    "one sentence synthesis in original language",
+    "one sentence synthesis",
+    "synthesis in original language",
+    "síntese conceitual",
+    "sintese conceitual",
+    "conceptual synthesis",
+    "key concepts",
+    "key concept",
+    "key-concept",
+    "conceitos-chave",
+    "conceito-chave",
+    "conceitos chave",
+    "conceito chave",
+    "síntese",
+    "sintese",
+    "synthesis",
+    "conceitos",
+    "conceito",
+    "concepts",
+    "concept",
+    "concepto",
+    "conceptos",
+    "video title",
+    "título",
+    "titulo",
+    "title",
+)
+
+
+def extract_essence(text: str) -> str:
+    """Iteratively strip indicative keywords, markdown, prompt echoes, and delimiters using a while loop.
+
+    >>> extract_essence("Key Concept: Gênero em Debate Social")
+    'Gênero em Debate Social'
+    >>> extract_essence("Síntese Conceitual")
+    ''
+    >>> extract_essence("Key Concept: Reception Ceremony (2 words)")
+    'Reception Ceremony'
+    >>> extract_essence("**Key Concept**: Family Influence in Adolescence")
+    'Family Influence in Adolescence'
+    >>> extract_essence("Síntese Conceitual: Human Error or System Failure?")
+    'Human Error or System Failure?'
+    >>> extract_essence("Key Concept: Key Concept: Double Stack")
+    'Double Stack'
+    """
+    result = text.strip()
+    while True:
+        original = result
+        # 1. Strip leading punctuation, quotes, markdown symbols, dashes, pipes
+        result = re.sub(r"^[\s\"'*_\-–—:;|#]+", "", result).strip()
+
+        # 2. Check and strip leading indicative prefixes (case-insensitive)
+        for prefix in INDICATIVE_KEYWORDS:
+            if result.lower().startswith(prefix):
+                rest = result[len(prefix):]
+                # Optional parenthetical qualifier right after keyword, e.g. "Key Concept (2 words):"
+                m_paren = re.match(r"^\s*[\(\[][^\)\]]*[\)\]]", rest)
+                if m_paren:
+                    rest = rest[m_paren.end():]
+                if not rest or rest[0] in " \t:=-–—_*#|([.,":
+                    result = rest.strip()
+                    break
+
+        result = re.sub(r"^[\s\"'*_\-–—:;|#]+", "", result).strip()
+
+        # 3. Strip trailing prompt echoes like (2 words), (2 to 4 words), (Original Language), (Key Concept)
+        result = re.sub(
+            r"\s*[\(\[](?:key\s*concepts?|conceitos?[\s\-]chave|s[íi]ntese(?:\s*conceitual)?|synthesis|\d+\s*(?:to\s*\d+\s*)?words?|original\s*language)[\)\]]?\s*$",
+            "",
+            result,
+            flags=re.IGNORECASE,
+        ).strip()
+
+        # 4. Strip trailing punctuation/markdown
+        result = re.sub(r"[\s\"'*_\-–—:;|#]+$", "", result).strip()
+
+        if result == original:
+            break
+
+    return result
+
+
+def clean_concept_and_synthesis(
+    concept: str,
+    synthesis: str,
+    fallback_title: str = "",
+) -> tuple[str, str]:
+    """Clean concept and synthesis, recovering missing parts and stripping boilerplate keywords.
+
+    Uses extract_essence() to iteratively remove prefixes/suffixes.
+    If concept is empty or generic (e.g. from fallback 'Síntese Conceitual'),
+    attempts to split synthesis or use synthesis/title as concept.
+    """
+    clean_c = extract_essence(concept)
+    clean_s = extract_essence(synthesis)
+
+    if not clean_c:
+        # Check if synthesis contains a separator between concept and synthesis
+        for sep in (" - ", " – ", " — ", " | "):
+            if sep in clean_s:
+                part_c, part_s = clean_s.split(sep, 1)
+                cand_c = extract_essence(part_c)
+                cand_s = extract_essence(part_s)
+                if cand_c and cand_s:
+                    clean_c = cand_c
+                    clean_s = cand_s
+                    break
+
+        # If still no concept, but clean_s exists, synthesis itself might be the concept
+        if not clean_c and clean_s:
+            clean_c = clean_s
+            clean_s = fallback_title or clean_s
+
+        # Fallback to title if still empty
+        if not clean_c:
+            clean_c = fallback_title
+
+    if not clean_s:
+        clean_s = fallback_title or clean_c
+
+    return clean_c, clean_s
+
+
 def load_indexed_files(index_file: Path) -> set[str]:
     """Load filenames already present in index to prevent duplicate work."""
     if not index_file.exists():
@@ -246,6 +370,11 @@ def process_channel_folder(
                 raw_response = call_ollama(prompt, model=model, base_url=base_url)
                 concept, synthesis = parse_summary_line(raw_response)
 
+                # Post-extraction check: iteratively extract essence and strip indicative keywords
+                concept, synthesis = clean_concept_and_synthesis(
+                    concept, synthesis, fallback_title=title or filepath.stem
+                )
+
                 writer.writerow([filepath.name, concept, synthesis])
                 f.flush()
                 processed_count += 1
@@ -261,7 +390,7 @@ def process_channel_folder(
                     file_eta_sec = f_remaining * avg_file_sec
                     file_time_block = format_time_block(file_elapsed, file_eta_sec)
 
-                display_title = concept if concept else title
+                display_title = concept if concept else (title or filepath.stem)
                 print(f"{f_idx}+{f_remaining}={total_in_channel} ({f_percent:6.2f}%) {file_time_block} {filepath.name} | {display_title}")
 
             except Exception as exc:
@@ -283,6 +412,33 @@ def _run_sanity_checks():
     c, s = parse_summary_line("Alpha, Beta gamma delta")
     assert c == "Alpha"
     assert s == "Beta gamma delta"
+
+    # Essence extraction with while loop checks
+    assert extract_essence("Key Concept: Gênero em Debate Social") == "Gênero em Debate Social"
+    assert extract_essence("Key Concepts: Financial Education") == "Financial Education"
+    assert extract_essence("Síntese Conceitual") == ""
+    assert extract_essence("Key Concept (2 words): Reception Ceremony") == "Reception Ceremony"
+    assert extract_essence("Key Concept: Reception Ceremony (2 words)") == "Reception Ceremony"
+    assert extract_essence("**Key Concept**: Family Influence in Adolescence") == "Family Influence in Adolescence"
+    assert extract_essence("Síntese Conceitual: Key Concept: Double Stack") == "Double Stack"
+    assert extract_essence("Key Concept: Odisseuss vengeance (Odiseus se vinga)") == "Odisseuss vengeance (Odiseus se vinga)"
+    assert extract_essence("Banco Centrals Liquidation Decision (Key Concept") == "Banco Centrals Liquidation Decision"
+
+    # Clean concept and synthesis recovery checks
+    c1, s1 = clean_concept_and_synthesis("Key Concept: Alpha", "Síntese: Beta gamma")
+    assert c1 == "Alpha"
+    assert s1 == "Beta gamma"
+
+    c2, s2 = clean_concept_and_synthesis("Síntese Conceitual", "Key Concept: Human Error or System Failure?", fallback_title="Default")
+    assert c2 == "Human Error or System Failure?"
+
+    c3, s3 = clean_concept_and_synthesis(
+        "Síntese Conceitual",
+        "Liberalismo em Declínio - Javier Milé transforma a identidade liberal",
+        fallback_title="Default",
+    )
+    assert c3 == "Liberalismo em Declínio"
+    assert s3 == "Javier Milé transforma a identidade liberal"
 
 
 if __name__ == "__main__":
