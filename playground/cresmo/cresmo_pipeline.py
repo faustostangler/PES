@@ -22,6 +22,8 @@ import sys
 import textwrap
 import time
 
+from typing import Callable
+
 # Ensure script directory is in sys.path
 sys.path.insert(0, str(Path(__file__).parent.resolve()))
 
@@ -32,6 +34,7 @@ from cresmo_shared import (
     DEFAULT_CRESMO_DIR,
     DEFAULT_CRESMO_WIKI_DIR,
     DEFAULT_ENRICHED_DIR,
+    DEFAULT_PLAYLIST_PRIORITY_FILE,
     DEFAULT_RAW_DIR,
     PROCESSED_CRESMO_LOG,
     SENTINEL_PREFIX,
@@ -42,6 +45,8 @@ from cresmo_shared import (
     clear_session_history,
     load_processed_cresmo_log,
     parse_merged_transcriptions,
+    read_priority_entries,
+    read_priority_video_ids,
     resolve_active_session,
     sanitize_untrusted_content,
     save_processed_cresmo_log,
@@ -312,8 +317,12 @@ def execute_stage2_expander(
             )
 
         if isolate_context:
-            clear_session_history(session_id, restart_server=restart_server)
-            prompt = SENTINEL_PREFIX + prompt
+            # Context isolation and Sentinel reset are strictly applied to Pass 1.
+            # Passes > 1 must retain conversational continuity to enable progressive enrichment
+            # without triggering an adversarial context-reset prompt instruction.
+            if pass_num == 1:
+                clear_session_history(session_id, restart_server=restart_server)
+                prompt = SENTINEL_PREFIX + prompt
 
         dispatch_time = time.time()
         send_agent_message(prompt, session_id)
@@ -871,11 +880,8 @@ def process_candidate_blocks(
             isolate_context=isolate_context,
             restart_server=restart_server,
         )
-        if is_newly_generated:
-            parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
-        else:
-            pass
-            # print(f"  ℹ [Stage 4 Skip] XML already exists/cached ({xml_file.name}) -> skipping file proliferation to protect vault")
+        # Idempotently unpack atomic notes and update _index.json (preserves existing notes unless force=True)
+        parse_and_proliferate_xml_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
 
         # Stage 5 & 6: MOC Manager & Graph Reconciliation
         execute_stage56_moc_manager(
@@ -894,6 +900,103 @@ def process_candidate_blocks(
         print(f"  ✓ Finished video_id: {video_id}\n")
 
 
+def sync_missing_priority_video(video_id: str, url: str, raw_dir: Path) -> Path | None:
+    """Perform on-demand single-video ingestion using sync_single_video."""
+    try:
+        isb_dir = Path(__file__).resolve().parent.parent / "isb.ai"
+        if isb_dir.exists() and str(isb_dir) not in sys.path:
+            sys.path.insert(0, str(isb_dir))
+
+        import sync_channels
+        from cresmo_shared import DEFAULT_COOKIES_FILE
+        from export_cookies import ensure_cookies
+
+        ensure_cookies(output_file=DEFAULT_COOKIES_FILE, verbose=False)
+        print(f"  ⬇️ [Priority Auto-Sync] Ingesting raw transcript on-demand for video_id: '{video_id}' ({url})...")
+        res = sync_channels.sync_single_video(
+            url=url,
+            output_dir=raw_dir,
+            model_name="base",
+            keep_audio=False,
+        )
+        if not res or not res.get("video_id"):
+            return None
+
+        matched = list(raw_dir.glob(f"**/*{video_id}*.txt"))
+        return matched[0] if matched else None
+    except Exception as e:
+        print(f"  ❌ [Priority Auto-Sync Error] Failed to ingest {video_id}: {e}")
+        return None
+
+
+def resolve_priority_blocks(
+    priority_ids: list[str] | list[dict[str, str]],
+    raw_dir: Path,
+    processed_log: set[str] | dict,
+    force: bool = False,
+    auto_sync: bool = True,
+    syncer: Callable[[str, str, Path], Path | None] | None = None,
+) -> list[dict]:
+    """Resolve candidate blocks for priority video IDs directly via fast-path disk lookup,
+    optionally triggering on-demand auto-sync for missing transcripts.
+    """
+    priority_blocks: list[dict] = []
+    if not priority_ids:
+        return priority_blocks
+
+    effective_syncer = syncer if syncer is not None else sync_missing_priority_video
+
+    for item in priority_ids:
+        if isinstance(item, dict):
+            vid = item.get("video_id", "")
+            url = item.get("url") or f"https://www.youtube.com/watch?v={vid}"
+        else:
+            vid = item.strip()
+            url = f"https://www.youtube.com/watch?v={vid}"
+
+        if not vid:
+            continue
+
+        if not force and vid in processed_log:
+            continue
+
+        matched_files = list(raw_dir.glob(f"**/*{vid}*.txt"))
+
+        # If missing from raw/ and auto_sync is enabled, attempt on-demand ingestion
+        if not matched_files and auto_sync:
+            synced_file = effective_syncer(vid, url, raw_dir)
+            if synced_file and synced_file.exists():
+                matched_files = [synced_file]
+
+        block_found = False
+        for txt_file in matched_files:
+            blocks = parse_merged_transcriptions(txt_file)
+            for b in blocks:
+                b["source_file"] = txt_file
+                meta = b.get("metadata", {})
+                block_vid = meta.get("video_id")
+                if not block_vid:
+                    m = YT_ID_PATTERN.match(txt_file.stem)
+                    block_vid = m.group(1) if m else txt_file.stem
+                    meta["video_id"] = block_vid
+
+                if block_vid == vid:
+                    channel = meta.get("channel_name", DEFAULT_CHANNEL_NAME)
+                    domain, cat_type = classify_channel(channel)
+                    meta["domain"] = domain
+                    meta["category_type"] = cat_type
+                    priority_blocks.append(b)
+                    block_found = True
+                    break
+            if block_found:
+                break
+
+        if not block_found:
+            print(f"  ⚠️ [Priority Fast-Path] Raw transcript not found for video_id: '{vid}'")
+
+    return priority_blocks
+
+
 # ==============================================================================
 # MASTER PIPELINE ENTRYPOINT
 # ==============================================================================
@@ -907,6 +1010,8 @@ def run_cresmo_pipeline(
     isolate_context: bool = True,
     restart_server: bool = False,
     categories: list[str] | set[str] | None = None,
+    priority_playlist: Path | None = DEFAULT_PLAYLIST_PRIORITY_FILE,
+    auto_sync: bool = True,
 ) -> None:
     """Execute complete Cresmo pipeline across Stages 2 through 6."""
     cresmo_wiki_dir = cresmo_dir / "wiki"
@@ -927,6 +1032,25 @@ def run_cresmo_pipeline(
     if "all" in allowed_categories or "*" in allowed_categories:
         allowed_categories.clear()
 
+    priority_entries: list[dict[str, str]] = []
+    if priority_playlist:
+        priority_entries = read_priority_entries(Path(priority_playlist))
+
+    priority_blocks: list[dict] = []
+    if priority_entries:
+        priority_blocks = resolve_priority_blocks(
+            priority_ids=priority_entries,
+            raw_dir=raw_dir,
+            processed_log=processed_log,
+            force=force,
+            auto_sync=auto_sync,
+        )
+
+    priority_vids = {e["video_id"] for e in priority_entries}
+    handled_priority_vids = {
+        b.get("metadata", {}).get("video_id") for b in priority_blocks
+    } | priority_vids
+
     print("==================================================")
     print("🧠 Cresmo Master Pipeline (Stages 2 -> 6)")
     print(f"   Raw Directory:      {raw_dir}")
@@ -934,6 +1058,10 @@ def run_cresmo_pipeline(
     print(f"   Cresmo Vault:       {cresmo_wiki_dir}")
     print(f"   Processed Log:      {PROCESSED_CRESMO_LOG.name} ({len(processed_log)} items completed)")
     print(f"   Category Filter:    {', '.join(sorted(allowed_categories)) if allowed_categories else 'All Categories'}")
+    if priority_entries:
+        playlist_name = Path(priority_playlist).name if priority_playlist else "none"
+        print(f"   Priority Queue:     {len(priority_blocks)}/{len(priority_entries)} resolved from {playlist_name}")
+    print(f"   Auto-Sync On-Demand:{auto_sync}")
     print(f"   Isolate Context:    {isolate_context}")
     print(f"   Restart Server:     {restart_server}")
     print("==================================================")
@@ -979,6 +1107,9 @@ def run_cresmo_pipeline(
                 video_id = m.group(1) if m else txt_file.stem
                 meta["video_id"] = video_id
 
+            if video_id in handled_priority_vids:
+                continue
+
             if not force and video_id in processed_log:
                 continue
 
@@ -1009,6 +1140,8 @@ def run_cresmo_pipeline(
         if target_blocks_limit and len(candidate_blocks) >= target_blocks_limit:
             print(f"breaking at {len(candidate_blocks)} candidate blocks")
             break
+
+    candidate_blocks = priority_blocks + candidate_blocks
 
     if limit:
         candidate_blocks = candidate_blocks[:limit]
@@ -1064,6 +1197,17 @@ if __name__ == "__main__":
         default=False,
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
+    parser.add_argument(
+        "--priority-playlist",
+        default=str(DEFAULT_PLAYLIST_PRIORITY_FILE),
+        help="Path to priority playlist text file (default: playground/cresmo/playlist-priority.txt)",
+    )
+    parser.add_argument(
+        "--auto-sync",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Automatically download/transcribe missing priority videos on-demand (default: True)",
+    )
 
     args = parser.parse_args()
 
@@ -1076,4 +1220,6 @@ if __name__ == "__main__":
         force=args.force,
         isolate_context=args.isolate_context,
         restart_server=args.restart_server,
+        priority_playlist=Path(args.priority_playlist) if args.priority_playlist else None,
+        auto_sync=args.auto_sync,
     )

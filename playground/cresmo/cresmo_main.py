@@ -24,6 +24,7 @@ from cresmo_shared import (
     DEFAULT_CRESMO_DIR,
     DEFAULT_ENRICHED_DIR,
     DEFAULT_PLAYLIST_FILE,
+    DEFAULT_PLAYLIST_PRIORITY_FILE,
     DEFAULT_RAW_DIR,
 )
 from export_cookies import ensure_cookies
@@ -75,6 +76,11 @@ def build_parser() -> argparse.ArgumentParser:
     sync_parser.add_argument("--model", default=DEFAULT_WHISPER_MODEL, help="Whisper fallback model size")
     sync_parser.add_argument("--keep-audio", action="store_true", default=DEFAULT_KEEP_AUDIO, help="Keep downloaded audio files")
     sync_parser.add_argument("--max-workers", type=int, default=DEFAULT_MAX_WORKERS, help="Max worker threads")
+    sync_parser.add_argument(
+        "--priority-playlist",
+        default=str(DEFAULT_PLAYLIST_PRIORITY_FILE),
+        help="Path to priority playlist text file (default: playground/cresmo/playlist-priority.txt)",
+    )
 
     # --- Process Subcommand (Stages 2 -> 6) ---
     process_parser = subparsers.add_parser("process", help="Run Stages 2->6 Cresmo Skills Pipeline")
@@ -101,6 +107,17 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=DEFAULT_RESTART_SERVER,
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
+    )
+    process_parser.add_argument(
+        "--priority-playlist",
+        default=str(DEFAULT_PLAYLIST_PRIORITY_FILE),
+        help="Path to priority playlist text file (default: playground/cresmo/playlist-priority.txt)",
+    )
+    process_parser.add_argument(
+        "--auto-sync",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Automatically download/transcribe missing priority videos on-demand (default: True)",
     )
 
     # --- Full Subcommand (Stage 1 -> Stage 6) ---
@@ -135,6 +152,17 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_RESTART_SERVER,
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
+    full_parser.add_argument(
+        "--priority-playlist",
+        default=str(DEFAULT_PLAYLIST_PRIORITY_FILE),
+        help="Path to priority playlist text file (default: playground/cresmo/playlist-priority.txt)",
+    )
+    full_parser.add_argument(
+        "--auto-sync",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Automatically download/transcribe missing priority videos on-demand (default: True)",
+    )
 
     return parser
 
@@ -160,15 +188,18 @@ def parse_cli_args(argv: list[str] | None = None) -> argparse.Namespace:
         args.force = getattr(args, "force", False)
         args.isolate_context = getattr(args, "isolate_context", DEFAULT_ISOLATE_CONTEXT)
         args.restart_server = getattr(args, "restart_server", DEFAULT_RESTART_SERVER)
+        args.priority_playlist = getattr(args, "priority_playlist", str(DEFAULT_PLAYLIST_PRIORITY_FILE))
+        args.auto_sync = getattr(args, "auto_sync", True)
 
     return args
 
 
 def main() -> None:
-    # Ensure fresh Netscape cookies file is active and present for ingestion & yt-dlp
-    ensure_cookies(output_file=DEFAULT_COOKIES_FILE, verbose=True)
-
     args = parse_cli_args()
+
+    # Ensure fresh Netscape cookies file is active when ingestion / yt-dlp is required
+    if args.command in {"sync", "full", "all"}:
+        ensure_cookies(output_file=DEFAULT_COOKIES_FILE, verbose=True)
 
     if args.command == "sync":
         run_cresmo_ingestion(
@@ -179,6 +210,7 @@ def main() -> None:
             model_name=args.model,
             keep_audio=getattr(args, "keep_audio", DEFAULT_KEEP_AUDIO),
             max_workers=getattr(args, "max_workers", DEFAULT_MAX_WORKERS),
+            priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
         )
 
     elif args.command == "process":
@@ -191,6 +223,8 @@ def main() -> None:
             force=args.force,
             isolate_context=args.isolate_context,
             restart_server=args.restart_server,
+            priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
+            auto_sync=getattr(args, "auto_sync", True),
         )
 
     elif args.command in {"full", "all"}:
@@ -202,6 +236,7 @@ def main() -> None:
             model_name=args.model,
             keep_audio=getattr(args, "keep_audio", DEFAULT_KEEP_AUDIO),
             max_workers=getattr(args, "max_workers", DEFAULT_MAX_WORKERS),
+            priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
         )
         run_cresmo_pipeline(
             raw_dir=Path(args.raw_dir),
@@ -212,6 +247,8 @@ def main() -> None:
             force=args.force,
             isolate_context=args.isolate_context,
             restart_server=args.restart_server,
+            priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
+            auto_sync=getattr(args, "auto_sync", True),
         )
 
 

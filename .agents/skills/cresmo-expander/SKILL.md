@@ -84,8 +84,8 @@ Mandatory for Pass 1 & 2: Iteratively review and expand the veracity and complet
 
 ## Conducting Textual Conceptual Expansion
 Use deep causality to replace abstractions and bridge gaps across the main body and supplementary notes.
-Anchor the narrative in realistic empirical elements: exact figures, precise statistics, confirmed dates, proper names, and verified real-world cases researched and validated on the web.
-If the YAML frontmatter provides references and complimentary info, consider them and follow those links to expand the translation
+Anchor the narrative in realistic empirical elements: exact figures, precise statistics, confirmed dates, proper names, and verified real-world cases researched and validated on the web. 
+If the YAML frontmatter or the translation text provides references and complimentary info, also consider them and follow those links to expand the concepts. 
 Prevent combinatorial explosion: preserve the narrative spine of the text.
 Transfer secondary or tangential expansions to informative footnotes at the end of the text.
 
@@ -96,7 +96,7 @@ Transfer secondary or tangential expansions to informative footnotes at the end 
 - **Inter-Paragraph Cohesion**: Guarantee fluid transition between paragraphs by mandatory use of formal transition connectives (temporal, causal, opposition, and complementarity).
 - **Markdown Headers**:
   - `##` for Eras, Centuries, or Major Macro Phases.
-  - `###` for Decades, Years, or Hierarchical Conceptual Blocks.
+  - `###` for Decades, Years, or Hierarchical Conceptual Block, always use big-endian notation. 
 - **Typography Rules**:
   - Bold (`**...**`): Apply **exclusively** on the first occurrence of named entities, dates, theoretical concepts, and key atomic terms and etc.
   - Italics (`_..._`): Apply strictly for foreign terms, titles of cultural works, software, and hardware names and etc.
@@ -105,7 +105,7 @@ Transfer secondary or tangential expansions to informative footnotes at the end 
 
 
 ## Complementary Information Section
-Append a dedicated section at the end of the text under the exact heading:
+Whenever needed to prevent combinatorial explosion of concepts, append a dedicated section at the end of the text under the exact heading:
 ```markdown
 ## Informações Complementares
 ```
