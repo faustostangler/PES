@@ -9,6 +9,8 @@ description: Converts expanded fluid text into a collection of interconnected At
 
 The `cresmo-atomic` skill processes expanded narrative Markdown texts (from `cresmo-expander` or existing clean drafts) and extracts a set of autonomous, semantically dense **Atomic Notes** for an Obsidian Second Brain vault.
 
+All narrative prose written within the atomic notes must adhere strictly to the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md), enforcing second-order mechanisms, affirmative syntax, zero em-dashes (`—`), and zero binary antitheses.
+
 Each note addresses a single entity, concept, event, or process, using strict YAML metadata, standardized Obsidian WikiLinks (`[[Note Title]]`), declarative triple connections, causal attribution matrices, and bi-directional cross-context linking.
 
 Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
@@ -18,7 +20,7 @@ Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
 ## Fundamental Atomic Principles
 
 1. **Principle of Atomicity**: Each note must cover a single autonomous idea, entity, historical event, or dynamic process, containing all necessary context to be fully understandable on its own.
-2. **Semantic Density**: Avoid empty notes. Every note must extract full factual substance and conceptual rigor.
+2. **Semantic Density & Style Compliance**: Avoid empty notes. Every note must extract full factual substance and conceptual rigor, complying with the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md) (second-order explanations, zero em-dashes `—`, zero binary antitheses).
 3. **Internal WikiLinks Syntax**: Every mention of another note within the vault must be formatted as `[[Exact Note Title]]` or `[[Exact Note Title|Flexed Surface Text]]`.
 4. **Resolution of Orphan Terms**: No note may refer to a non-existent node. If an entity/concept is hyperlinked in any note body, the corresponding atomic note MUST be included in the batch.
 
@@ -72,7 +74,7 @@ aliases: ["Alternative Name 1", "Acronym or Short Name"]
 # [Exact Note Title]
 
 ## Definição e Análise Contextual
-[Analytical description of 1 to 3 continuous paragraphs. Consolidates fundamental definition, historical/technical context, and global role. Use parataxis, direct and swift word order, single and self-contained clausesAll domain terms must use [[WikiLink]] syntax.]
+[Analytical description of 1 to 3 continuous paragraphs conforming to the cresmo-style-guide. Consolidates fundamental definition, second-order mechanisms, historical/technical context, and systemic role. Strictly zero em-dashes and zero binary antitheses. All domain terms must use [[WikiLink]] syntax.]
 
 ## Conexões e Relações Diretas
 * [[Nota Origem ou Sujeito]] -> [Verbo de Ação ou Conector de Ligação] -> [[Nota Destino ou Objeto]], em linguagem natural similar ao texto original

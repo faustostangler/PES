@@ -58,6 +58,12 @@ Target Skill File: [`cresmo-atomic`](file:///home/stangler/gamer_d/Fausto%20Stan
 Reconciles incoming XML atomic notes with an active Obsidian Vault environment. Executes a 3-tier lookup protocol (`_index.json` -> Category MOCs -> Semantic audit), performs non-destructive incremental note merging, updates reciprocal back-links trans-textually, enforces tag governance (`#fonte/[channel_name]/[video_id]`), and integrates every note into narrative Maps of Content (MOCs) with zero orphaned notes.
 Target Skill File: [`cresmo-moc-manager`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-moc-manager/SKILL.md)
 
+### Cross-Cutting Style Dependency
+
+#### cresmo-style-guide
+Defines and enforces the centralized authorial voice across the entire Cresmo ecosystem: second-order explanations, methodological naturalism, structuring metaphors, methodological caution, literary DNA (Dennett, Cioran, Nietzsche, Borges, Taleb), and strict anti-patterns (zero em-dashes `—`, zero antitheses, zero lists or tables, and pure continuous prose). All sub-skills producing or editing prose must comply with its standards.
+Target Skill File: [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md)
+
 ---
 
 ## Orchestration Pipelines & Execution Modes
@@ -108,7 +114,7 @@ Stage Outputs:
 
 1. **Analyze Intent**: Determine whether the user requires the full 3-stage master flow, a 2-stage flow, or a single sub-skill execution.
 2. **Initialize Workspace**: Create directory `playground/cresmo/<transcript_slug>/`.
-3. **Execute Stage 1 (`cresmo-expander`)**: Pass the input transcript to `cresmo-expander`. Ensure all diagrams, ASCII art, and bullet lists are purged and converted into fluid prose paragraphs. Save result to `01_expanded.md`.
-4. **Execute Stage 2 (`cresmo-atomic`)**: Pass `01_expanded.md` to `cresmo-atomic`. Extract atomic notes with YAML frontmatter, WikiLinks (`[[Title]]`), and XML container tags. Save result to `02_atomic_notes.xml`.
-5. **Execute Stage 3 (`cresmo-moc-manager`)**: Pass `02_atomic_notes.xml` to `cresmo-moc-manager`. Reconcile against `_index.json`, perform incremental merges, update trans-text back-links, and weave every note into a narrative MOC. Save summary to `03_moc_reconciliation.md`.
+3. **Execute Stage 1 (`cresmo-expander`)**: Pass the input transcript to `cresmo-expander`. Enforce the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md): ensure all diagrams, ASCII art, bullet lists, em-dashes (`—`), and antithetical contrasts are purged, converting content into fluid, second-order prose paragraphs. Save result to `01_expanded.md`.
+4. **Execute Stage 2 (`cresmo-atomic`)**: Pass `01_expanded.md` to `cresmo-atomic`. Extract atomic notes with YAML frontmatter, WikiLinks (`[[Title]]`), and XML container tags, adhering to the style guide in note context sections. Save result to `02_atomic_notes.xml`.
+5. **Execute Stage 3 (`cresmo-moc-manager`)**: Pass `02_atomic_notes.xml` to `cresmo-moc-manager`. Reconcile against `_index.json`, perform incremental merges, update trans-text back-links, and weave every note into a narrative MOC following the style guide. Save summary to `03_moc_reconciliation.md`.
 6. **Deliver Final Summary**: Present delivery report with exact clickable file links to all created output files.
