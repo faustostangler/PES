@@ -40,7 +40,9 @@ from cresmo_shared import (
     SENTINEL_PREFIX,
     SKILL_ATOMIC_PATH,
     SKILL_EXPANDER_PATH,
+    SKILL_LONG_EXPANDER_PATH,
     SKILL_MOC_MANAGER_PATH,
+    SKILL_WIDE_EXPANDER_PATH,
     classify_channel,
     clear_session_history,
     load_processed_cresmo_log,
@@ -112,6 +114,26 @@ STAGE2_V2_PROMPT_TASK: str = (
     "Perform exhaustive Socratic gap filling, add robust empirical context, quantify claims with exact historical/statistical grounding, and refine causal relationships (historical-scientific genealogy mapping, verifying causal mechanisms, enriching empirical facts and footnotes).\n"
     "Deepen theoretical frameworks, map counter-arguments, sharpen conceptual nuances, and ensure rigorous semantic density throughout the prose and footnotes.\n"
     "Synthesize all historical, empirical, and conceptual threads into a definitive encyclopedic compendium of the highest stylistic and academic rigor.\n"
+)
+CRESMO_LONG_EXPANDER_PROMPT_TASK: str = (
+    "You are Cresmo Long-Expander (Longue Durée, Multi-Secular Historical Continuities & Palimpsestic Stratification).\n"
+    "This is your most important task: Take the enriched Markdown document and expand it through Fernand Braudel's longue durée.\n"
+    "Subordinate short-term surface events (l'histoire événementielle) to subterranean multi-century evolutionary trajectories, "
+    "deep structural forces (geography, climate, demographic transitions, long economic cycles), and historical palimpsests "
+    "(genealogies of overlapping, sedimented institutional layers).\n"
+    "Purge any remaining oralities, bullet lists, tables, diagrams, LaTeX, and YAML metadata. "
+    "Produce continuous, highly dense factual Markdown prose without diagrams, tables, or bullet lists, "
+    "preserving the '## Informações Complementares' section for deep secondary lineages.\n"
+)
+CRESMO_WIDE_EXPANDER_PROMPT_TASK: str = (
+    "You are Cresmo Wide-Expander (Synchronic Cross-Sections, Axial Time & Global Connected History).\n"
+    "This is your most important task: Take the longitudinally expanded Markdown document and perform a synchronic horizontal cross-section across the globe.\n"
+    "Apply Karl Jaspers' Axial Time (Achsenzeit) and analyze concurrent developments across two modalities: "
+    "1) Synchrony & Connectivity (events linked by global contact networks, trade flows, bullion circuits, and planetary climatic shocks like the 17th Century Crisis), and "
+    "2) Parallelism & Analogy (independent societies responding similarly to common systemic pressures with zero or minimal contact, such as pristine state formation or Axial Age ethical/philosophical revolutions).\n"
+    "Purge all bullet lists, tables, diagrams, LaTeX, and YAML metadata. "
+    "Produce continuous, highly dense factual Markdown prose without diagrams, tables, or bullet lists, "
+    "enriching the '## Informações Complementares' section with trans-civilizational comparative dossiers.\n"
 )
 STAGE3_PRE_PROMPT: str = (
     "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text inside "
@@ -366,6 +388,157 @@ def cresmo_gap_filler(
                 print(f"  ✓ [Stage 2 {pass_label} Fallback] Saved current text -> {enriched_file}")
 
         # Update current_text for next pass
+        if enriched_file.exists():
+            current_text = enriched_file.read_text(encoding="utf-8").strip()
+
+    return enriched_file
+
+
+def cresmo_expander(
+    enriched_file: Path,
+    meta: dict,
+    session_id: str,
+    raw_file: Path | None = None,
+    force: bool = False,
+    isolate_context: bool = True,
+    restart_server: bool = False,
+) -> Path:
+    """Stage 2.5: Deep Longitudinal & Synchronic Expansion (cresmo-expander).
+
+    Executes 2 sequential inner expansion steps on the enriched Markdown document:
+    1. cresmo-long-expander: Fernand Braudel's longue durée, multi-secular historical
+       continuities, deep structural forces (geography, climate, demographic transitions,
+       long economic cycles), and historical palimpsests.
+    2. cresmo-wide-expander: Karl Jaspers' Axial Time (Achsenzeit), synchronic horizontal
+       cross-sections, global connected history (17th Century Crisis, silver circuits,
+       Little Ice Age), and comparative civilizational analogies (pristine state formation,
+       axial ethical revolutions).
+
+    Each inner step expands and enriches the canonical Markdown file directly in-place:
+    `playground/cresmo/enriched/[Channel_Name]/[Video_ID].md`.
+    """
+    video_id = meta.get("video_id", enriched_file.stem)
+
+    # Downstream guard: if atomic XML notes are already generated, skip unless force=True
+    xml_output_file = enriched_file.parent / f"{video_id}.xml"
+    if not force and is_valid_atomic_xml(xml_output_file, MIN_VALID_OUTPUT_BYTES):
+        return enriched_file
+
+    if not enriched_file.exists():
+        if raw_file and raw_file.exists():
+            enriched_file.parent.mkdir(parents=True, exist_ok=True)
+            enriched_file.write_text(raw_file.read_text(encoding="utf-8"), encoding="utf-8")
+        else:
+            return enriched_file
+
+    current_text = enriched_file.read_text(encoding="utf-8").strip()
+    raw_text = raw_file.read_text(encoding="utf-8").strip() if (raw_file and raw_file.exists()) else ""
+
+    expander_steps = [
+        (
+            1,
+            "long",
+            "Long Expander (Longue Durée)",
+            SKILL_LONG_EXPANDER_PATH,
+            CRESMO_LONG_EXPANDER_PROMPT_TASK,
+        ),
+        (
+            2,
+            "wide",
+            "Wide Expander (Synchronic & Axial)",
+            SKILL_WIDE_EXPANDER_PATH,
+            CRESMO_WIDE_EXPANDER_PROMPT_TASK,
+        ),
+    ]
+
+    for step_num, step_key, step_label, skill_path, task_prompt in expander_steps:
+        step_tag = f"Step {step_num}/2 ({step_label})"
+        skill_doc = skill_path.read_text(encoding="utf-8") if skill_path.exists() else ""
+
+        safe_current = sanitize_untrusted_content(
+            current_text,
+            source_label=f"{enriched_file.name} (before {step_key})",
+        )
+        if raw_text:
+            safe_raw = sanitize_untrusted_content(
+                raw_text,
+                source_label=raw_file.name if raw_file else "raw",
+            )
+            header_context = (
+                f"--- ORIGINAL RAW TRANSCRIPT REFERENCE (GROUND TRUTH) ---\n"
+                f"File: {raw_file.name if raw_file else 'raw_transcript'}\n"
+                f"{safe_raw}\n\n"
+                f"--- CURRENT ENRICHED TEXT (TO DEEPEN VIA {step_label.upper()}) ---\n"
+                f"File: {enriched_file.name}\n"
+                f"{safe_current}"
+            )
+        else:
+            header_context = (
+                f"--- CURRENT ENRICHED TEXT (TO DEEPEN VIA {step_label.upper()}) ---\n"
+                f"File: {enriched_file.name}\n"
+                f"{safe_current}"
+            )
+
+        prompt = task_prompt + (
+            f"Save output directly to enriched file: {enriched_file.resolve()}\n\n"
+            f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
+            f"{header_context}"
+        )
+
+        if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+            if raw_file and raw_file.exists():
+                input_desc = (
+                    f"Input raw transcript reference: {raw_file.resolve()}\n"
+                    f"Input current enriched text to expand: {enriched_file.resolve()}\n"
+                )
+            else:
+                input_desc = f"Input enriched text to expand: {enriched_file.resolve()}\n"
+
+            prompt = task_prompt + (
+                f"Save output directly to enriched file: {enriched_file.resolve()}\n"
+                f"{input_desc}"
+                f"Skill specification: {skill_path.resolve()}\n"
+                f"Please read the input text(s), run {step_label}, and write the expanded output directly to {enriched_file.resolve()} in the enriched directory."
+            )
+
+        if isolate_context and step_num == 1:
+            clear_session_history(session_id, restart_server=restart_server)
+            prompt = SENTINEL_PREFIX + prompt
+
+        dispatch_time = time.time()
+        send_agent_message(prompt, session_id)
+
+        step_completed = False
+        for attempt in range(1, POLL_MAX_ATTEMPTS + 1):
+            if (
+                enriched_file.exists()
+                and enriched_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
+                and is_valid_enriched_markdown(enriched_file, MIN_VALID_OUTPUT_BYTES)
+            ):
+                print(f"  ✓ [Stage Expander - {step_tag} Success] Enriched text updated -> {enriched_file}")
+                step_completed = True
+                break
+
+            if attempt % POLL_FALLBACK_INTERVAL == 0:
+                content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+                if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
+                    enriched_file.write_text(content, encoding="utf-8")
+                    print(f"  ✓ [Stage Expander - {step_tag} Fast Fallback Success] Saved enriched text -> {enriched_file}")
+                    step_completed = True
+                    break
+
+            if _is_quota_reached(session_id):
+                dispatch_time = time.time()
+                send_agent_message(prompt, session_id)
+            time.sleep(POLL_SLEEP_SECONDS)
+
+        if not step_completed:
+            content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+            if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
+                enriched_file.write_text(content, encoding="utf-8")
+                print(f"  ✓ [Stage Expander - {step_tag} Fallback Success] Saved enriched text -> {enriched_file}")
+                step_completed = True
+
         if enriched_file.exists():
             current_text = enriched_file.read_text(encoding="utf-8").strip()
 
@@ -858,13 +1031,24 @@ def process_candidate_blocks(
         if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
             print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
             continue
-        # Stage 2: Expander & Detranscriptor (5 progressive in-place passes)
+        # Stage 2: Gap Filler (progressive in-place passes)
         enriched_file = cresmo_gap_filler(
             txt_file,
             meta,
             session_id,
             output_dir=enriched_dir,
             total_passes=DEFAULT_STAGE2_PASSES,
+            force=force,
+            isolate_context=isolate_context,
+            restart_server=restart_server,
+        )
+
+        # Stage 2.5: Expander (2 inner steps: long then wide expanders)
+        enriched_file = cresmo_expander(
+            enriched_file,
+            meta,
+            session_id,
+            raw_file=txt_file,
             force=force,
             isolate_context=isolate_context,
             restart_server=restart_server,
