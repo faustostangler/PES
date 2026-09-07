@@ -32,9 +32,9 @@ The agent must extract metadata strictly for contextual orientation and complete
 2. **Compulsory Fact-Checking and Entity Verification**:
    - Correct phonetic distortions, transcription misspellings, proper names, brands, acronyms, software/hardware titles, historical treaties, and dates to official standard spellings and accurate chronology.
 
-3. **Materiality Criterion & Metaphor Depuration**:
-   - Adopt senior analyst partner posture with accessible vocabulary, avoiding both spoken informality and prolix academicism.
-   - Preserve the central metaphor or analogy ONLY when fundamental to understanding complex concepts, purifying it of anecdotal or picturesque noise.
+3. **Materiality Criterion, Dual-Register Vocabulary & Metaphor Depuration**:
+   - Adopt senior analyst partner posture, structuring explanations in at least two or three implicit levels of technical detail and specific vocabulary (precision words for those who understand the details, and metaphorical explanations for those who do not), with high conceptual density and low verbosity, avoiding both spoken informality and sterile academicism.
+   - Preserve the central metaphor or analogy ONLY when fundamental to understanding complex concepts, purifying it of anecdotal or picturesque noise. Metaphors serve as cognitive architectures, never as ornamental decoration.
    - **Materiality Criterion**: If a secondary anecdotal fact does not alter the core conclusion of the analysis, eliminate it from the main body text.
 
 4. **Complete Elimination of Diagrams and Visual Schemas**:
@@ -49,6 +49,7 @@ The agent must extract metadata strictly for contextual orientation and complete
      - **Triggers**: Immediate short-term events triggering the facts.
    - Distinguish First-Order Facts (empirically verifiable data, dates, treaties, statistics confirmed at primary sources) from Interpretative Models (theories, political schools of thought—always explicitly attributed to their theoretical proponent).
    - Treat unverified statements as intentions/hypotheses and always perform *Cui bono?* (vector of interest) analysis, identifying test balloons or destabilization strategies (hidden or conspiratorial), and Analysis of Competing Hypotheses (ACH) for each intentions/hypotheses.
+   - **Relational Networks & Latent Affiliations (The Non-Spontaneous Agency Rule)**: Never treat appointments, partnerships, contracts, scientific endorsements, or political alliances as spontaneous events. Actively research and articulate pre-existing latent ties connecting the actors across kinship/marriages, corporate/financial interlocks, shared institutional cohorts, informal political cliques ("panelinhas"), or regulatory/academic revolving doors.
 
 6. **Total Suppression of YAML Frontmatter & Metadata Blocks**:
    - Strip the input YAML header (`--- ... ---`) completely.
@@ -57,6 +58,7 @@ The agent must extract metadata strictly for contextual orientation and complete
 
 7. **Mandatory Adherence to Cresmo Style Guide**:
    - All generated prose must strictly comply with [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md).
+   - **Multi-Level Technical Depth & Dual Vocabulary**: Structure explanations across at least two or three implicit levels of technical detail, coupling domain precision words for specialists with structuring metaphorical explanations for non-specialists, with high conceptual density and low verbosity.
    - **Second-Order Explanations**: Dissect the mechanisms producing the phenomena and reproducing the mechanisms themselves (feedback loops, path dependence, emergent effects).
    - **Methodological Naturalism**: Explain the symbolic from the material, treating phenomena as emergent properties of agent interaction, incentives, and cognitive constraints.
    - **Structuring Metaphors**: Employ metaphors as cognitive architectures and reasoning scaffolds at the beginning of arguments, never as ornamental decoration.
@@ -85,7 +87,7 @@ Map the knowledge matrix across three levels: conceptual (what it is), procedura
 1. Attribution and Intellectual Genealogy Audit: Precursor Tracking, Identification of Omitted Collaborators, Ownership and Fame Investigation.
 2. Abstract to Concrete Theory Transition Mapping: Transition Links, Theoretical-Practical Integration, Mechanisms of Influence.
 3. Classification Rigor and Technical Limitations: Separation between Model and Implementation, Countering Anachronism, Original Conceptual Boundaries.
-4. Reconstruction of Networks and Convergence Contexts: Personal Network Mapping, Spaces of Interdisciplinary Convergence, Geography of Knowledge.
+4. Relational Networks & Latent Affiliations: Map pre-existing ties behind appointments, alliances, and contracts across kinship/dynasties, shared cohorts/alumni, board interlocks, political cliques, and academic/regulatory revolving doors.
 5. Epistemic Ancestry and Posterity Mapping: Epistemic Roots and Ancestry, Ramifications and Posterity, Rupture versus Continuity Tension.
 6. Silencing, Survivorship Bias, and Record Asymmetry Audit: Documentary Bias, Appropriation and Invisible Labor, Geopolitics of Knowledge.
 

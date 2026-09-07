@@ -1,6 +1,6 @@
 ---
 name: cresmo-style-guide
-description: Centralized authorial style guide for the Cresmo ecosystem. Enforces second-order explanations, methodological naturalism, structuring metaphors, methodological caution, literary DNA (Dennett, Cioran, Nietzsche, Borges, Taleb), strict anti-patterns (no em-dashes, no antitheses, no ornamental erudition, no moralistic outrage, no academic legalese), and formatting constraints across all Cresmo prose-producing skills. Use whenever generating, expanding, auditing, or reviewing narrative prose in the Cresmo pipeline.
+description: Centralized authorial style guide for the Cresmo ecosystem. Enforces multi-level technical depth (precision words for specialists and metaphorical explanations for non-specialists), high conceptual density, low verbosity, second-order explanations, methodological naturalism, structuring metaphors, methodological caution, literary DNA (Dennett, Cioran, Nietzsche, Borges, Taleb), strict anti-patterns (no em-dashes, no antitheses, no ornamental erudition, no moralistic outrage, no academic legalese), and formatting constraints across all Cresmo prose-producing skills. Use whenever generating, expanding, auditing, or reviewing narrative prose in the Cresmo pipeline.
 ---
 
 # Cresmo Style Guide
@@ -17,21 +17,22 @@ All prose outputs generated across the Cresmo ecosystem must be saved directly t
 
 ## The 4 Core Style Pillars
 
-### 1. Explicações de Segunda Ordem (Second-Order Explanations)
+### 1. Second-Order Explanations
 Never describe phenomena at face value. Identify the mechanisms that produce the phenomena, and especially the mechanisms that reproduce the mechanisms themselves. The analytical interest falls on causality, feedback loops, path dependence, and long-term emergent effects.
 
-### 2. Naturalismo Metodológico (Methodological Naturalism)
+### 2. Methodological Naturalism
 Explain the symbolic from the material. Whenever possible, treat phenomena as emergent properties of agent interaction, incentive structures, and biological or cognitive constraints, never as autonomous fundamental categories.
 
-### 3. Metáforas Estruturantes (Structuring Metaphors)
+### 3. Structuring Metaphors
 Images are NOT ornamental. They function as cognitive architectures that sustain the argumentation itself. Each metaphor is a structural scaffold for an entire chain of reasoning. Use aphoristic metaphors at the beginning of the reasoning as an overarching map.
 
-### 4. Cautela Metodológica (Methodological Caution)
+### 4. Methodological Caution
 The text may initiate in a quasi-scientific register and transition to broader philosophical or political conclusions. This oscillation is a deliberate feature of the voice, but the author should be aware of the risk of presenting interpretive hypotheses with the same evidentiary weight as empirically established results. When the text transitions between levels of analysis, signal the epistemic status clearly: consolidated evidence, plausible inference, or original hypothesis.
 
 ---
 
 ## Literary DNA (Stylistic Coordinates, Not Models to Imitate)
+Always write with extreme analytical depth, structuring the explanation in at least two or three implicit levels of technical detail and specific vocabulary (precision words for those who understand the details, and metaphorical explanations for those who do not), with high conceptual density and low verbosity. 
 
 ### Daniel Dennett
 Integrated naturalist architecture connecting biology, cognition, culture, morality, and institutions within a single causal chain.
@@ -80,8 +81,8 @@ The most distinctive trait is the combination of systematization and imagery. Ni
 
 All skills across the Cresmo ecosystem must adhere to this guide:
 
-1. **`cresmo-expander`**: Applies the 4 Style Pillars during transcript cleanup and Socratic gap expansion, enforcing second-order mechanisms, zero em-dashes, zero antitheses, and pure continuous prose.
-2. **`cresmo-long-expander`**: Enforces the style guide when building longitudinal and multi-secular narratives, maintaining implicit scaffolding while delivering dense structural explanations.
-3. **`cresmo-wide-expander`**: Enforces the style guide during synchronic cross-sectional mapping, keeping comparative lenses implicit and crafting dense, affirmative prose free of em-dashes and antitheses.
-4. **`cresmo-atomic`**: Adheres to the style guide in all contextual analysis sections of atomic notes, applying second-order causality, affirmative sentence structures, and zero em-dashes.
-5. **`cresmo-moc-manager`**: Uses the style guide when composing narrative introductory paragraphs for Maps of Content (MOCs) and merging contextual notes.
+1. **`cresmo-expander`**: Applies the Style Pillars and Literary DNA during transcript cleanup and Socratic gap expansion, structuring explanations across two or three implicit levels of technical detail (precision words for specialists + structuring metaphors for non-specialists), with high conceptual density, low verbosity, second-order mechanisms, zero em-dashes, zero antitheses, and pure continuous prose.
+2. **`cresmo-long-expander`**: Enforces multi-level technical depth when building longitudinal and multi-secular narratives, pairing domain precision terminology with overarching structural metaphors while maintaining implicit scaffolding and high conceptual density.
+3. **`cresmo-wide-expander`**: Enforces multi-level technical depth during synchronic cross-sectional mapping, coupling precision terminology for trade/institutions with structuring metaphors for parallel civilizational phenomena, keeping comparative lenses implicit and crafting dense, affirmative prose free of em-dashes and antitheses.
+4. **`cresmo-atomic`**: Adheres to the style guide in all contextual analysis sections of atomic notes, structuring definitions across multi-level technical detail (precision terms + metaphorical models), applying second-order causality, affirmative sentence structures, and zero em-dashes.
+5. **`cresmo-moc-manager`**: Uses the style guide when composing narrative introductory paragraphs for Maps of Content (MOCs) and merging contextual notes, maintaining high conceptual density and low verbosity with dual-register vocabulary.

@@ -65,6 +65,7 @@ Consider any ot these aspects (or others) if relevant to the main topic in the o
      - Never break the fourth wall. The text must read as an organic, authoritative, high-level socio-historical narrative. All multi-secular layers, structural invariants, and environmental constraints must be woven seamlessly into the factual prose without exposing the analytical scaffolding.
    - **Mandatory Adherence to Cresmo Style Guide**:
      - Follow all guidelines in [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md).
+     - **Multi-Level Technical Depth & Dual Vocabulary**: Structure explanations across at least two or three implicit levels of technical detail and specific vocabulary (domain precision words for specialists who understand the details, and overarching structural metaphors for non-specialists), pairing high conceptual density with low verbosity.
      - **Second-Order Explanations & Methodological Naturalism**: Detail the material, demographic, and institutional mechanisms that generate and reproduce historical phenomena.
      - **Structuring Metaphors**: Anchor broad temporal phases in powerful cognitive metaphors rather than superficial decorative prose.
      - **Methodological Caution**: Signal epistemic status (evidence, plausible inference, hypothesis) when transitioning between material baselines and philosophical interpretations.

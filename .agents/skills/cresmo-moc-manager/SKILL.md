@@ -9,7 +9,7 @@ description: Reconciles XML atomic notes into an Obsidian Vault. Performs entity
 
 The `cresmo-moc-manager` skill acts as the Second Brain Vault Integrator for Obsidian. It takes incoming batches of atomic notes (formatted in XML `<xml><nota>...</nota></xml>`) and reconciles them into an active Obsidian Vault environment.
 
-All contextual prose and synthesis generated during reconciliation or MOC curation must strictly comply with the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md), enforcing affirmative direct syntax, second-order mechanisms, zero em-dashes (`—`), and zero binary antitheses.
+All contextual prose and synthesis generated during reconciliation or MOC curation must strictly comply with the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md), structuring explanations across two or three implicit levels of technical detail and specific vocabulary (precision words for specialists, paired with metaphorical explanations for non-specialists), with high conceptual density, low verbosity, affirmative direct syntax, second-order mechanisms, zero em-dashes (`—`), and zero binary antitheses.
 
 It enforces zero orphaned notes (every note is woven into a hierarchically organized Map of Content - MOC), executes tiered entity resolution against `_index.json`, performs non-destructive incremental note merging for existing notes, synchronizes bi-directional links trans-textually across existing vault files, and maintains tag governance.
 
@@ -49,7 +49,7 @@ Third, if ambiguity persists after the first two tiers, perform a Tier 3 Semanti
 When entity resolution determines a candidate note already exists in the vault, merge using the following rules:
 
 1. **YAML Frontmatter**: Merge `tags` (deduplicating) and append new items to `aliases`.
-2. **Contextual Analysis & Divergent Data**: Synthesize new factual data into existing paragraphs without destroying previous context, adhering to the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md) (second-order explanations, zero em-dashes `—`, zero binary antitheses). If source data divergence exists between the incoming candidate and historical vault records, explicitly state both positions in the analysis text with their respective epistemic attributions.
+2. **Contextual Analysis & Divergent Data**: Synthesize new factual data into existing paragraphs without destroying previous context, adhering to the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md) (structuring multi-level technical depth and dual-register vocabulary with high conceptual density and low verbosity, second-order explanations, zero em-dashes `—`, zero binary antitheses). If source data divergence exists between the incoming candidate and historical vault records, explicitly state both positions in the analysis text with their respective epistemic attributions.
 3. **Triples & Connections**: Append new declarative triples (`* [[Source]] -> [Action] -> [[Target]]`), deduplicating statements.
 4. **Causal Matrix & Cross-Context**: Append new premisses, effects, precursors, lateral events, and ramifications.
 5. **Trans-Text Bi-Directional Sync**: Inspect newly added `[[WikiLinks]]` and open target existing files in the vault to insert reciprocal back-links.

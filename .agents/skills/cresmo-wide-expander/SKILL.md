@@ -51,6 +51,7 @@ Comparative history and Axial time: how things are similar in different places a
      - Never break the fourth wall. Present global linkages, simultaneous developments, and convergent civilizational reactions directly through concrete historical reality and seamless narrative flow without exposing the analytical scaffolding.
    - **Mandatory Adherence to Cresmo Style Guide**:
      - Follow all guidelines in [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md).
+     - **Multi-Level Technical Depth & Dual Vocabulary**: Structure comparative cross-sections and synchronic connections across at least two or three implicit levels of technical detail, combining domain precision vocabulary for specialists with structuring metaphorical models for non-specialists, with high conceptual density and low verbosity.
      - **Second-Order Explanations**: Unpack the systemic mechanisms, commercial routes, and material incentives coordinating parallel civilizational responses.
      - **Structuring Metaphors**: Use cognitive metaphors to map synchronic alignments without relying on decorative rhetoric.
      - **Methodological Caution**: Distinguish established contemporaneous records from speculative teleconnections.
