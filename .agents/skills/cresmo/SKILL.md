@@ -43,7 +43,7 @@ Purges speech noise, oralities, hesitations, direct audience interactions, diagr
 Target Skill File: [`cresmo-expander`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-expander/SKILL.md)
 
 #### cresmo-long-expander
-Deep longitudinal expander specializing in Fernand Braudel's *longue durée*, multi-secular historical continuities, deep structural forces (geography, climate, demographic transitions, long economic cycles), and historical palimpsests (genealogies of overlapping, sedimented institutional layers). Subordinates surface events to subterranean multi-century evolutionary trajectories.
+Deep longitudinal expander grounded in the Annales School and Fernand Braudel's *longue durée*, performing multi-secular structural analysis and historical palimpsest deconstruction. Dissects causation across three tiers (first-order determinants, second-order structures, third-order opportunities) and plural temporalities, employing Reversed Longue Durée to trace modern concepts back to foundational institutional, infrastructural, geopolitical, and cognitive strata.
 Target Skill File: [`cresmo-long-expander`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-long-expander/SKILL.md)
 
 #### cresmo-wide-expander

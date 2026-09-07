@@ -12,6 +12,7 @@ from cresmo_shared import (
     SENTINEL_PREFIX,
     clear_session_history,
 )
+import cresmo_pipeline
 
 
 def test_sentinel_prefix_content():
@@ -104,4 +105,54 @@ def test_stage2_sentinel_omitted_on_subsequent_passes(tmp_path: Path, monkeypatc
 
     # Pass 2 must NOT include SENTINEL_PREFIX and NOT trigger clear_session_history
     assert SENTINEL_PREFIX not in prompts_sent[1]
+
+
+def test_cresmo_expander_two_inner_steps(tmp_path: Path, monkeypatch):
+    """Verify cresmo_expander executes 2 inner steps (long then wide) with correct context isolation."""
+    enriched_dir = tmp_path / "enriched" / "ANCAPSU"
+    enriched_dir.mkdir(parents=True, exist_ok=True)
+    enriched_file = enriched_dir / "vid123.md"
+    enriched_file.write_text("## Resumo Abrangente\nInitial content\n## Informações Complementares\nInitial notes", encoding="utf-8")
+
+    raw_file = tmp_path / "raw.txt"
+    raw_file.write_text("Raw text", encoding="utf-8")
+
+    prompts_sent: list[str] = []
+    clear_calls: list[str] = []
+
+    def mock_clear_session(session_id, restart_server=False):
+        clear_calls.append(session_id)
+        return True
+
+    def mock_send_agent_message(prompt, session_id):
+        prompts_sent.append(prompt)
+        enriched_file.write_text(
+            f"## Resumo Abrangente\nExpanded step {len(prompts_sent)}\n" + "x" * 600 + "\n## Informações Complementares\nNotes",
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(cresmo_pipeline, "clear_session_history", mock_clear_session)
+    monkeypatch.setattr(cresmo_pipeline, "send_agent_message", mock_send_agent_message)
+
+    result_file = cresmo_pipeline.cresmo_expander(
+        enriched_file=enriched_file,
+        meta={"channel_name": "ANCAPSU", "video_id": "vid123"},
+        session_id="test-session-expander",
+        raw_file=raw_file,
+        force=True,
+        isolate_context=True,
+    )
+
+    assert result_file == enriched_file
+    assert len(prompts_sent) == 2, f"Expected 2 inner steps, got {len(prompts_sent)}"
+
+    # Step 1: Long Expander (must have SENTINEL_PREFIX and call clear_session_history)
+    assert prompts_sent[0].startswith(SENTINEL_PREFIX)
+    assert len(clear_calls) == 1
+    assert "cresmo-long-expander" in prompts_sent[0].lower() or "longue durée" in prompts_sent[0].lower()
+
+    # Step 2: Wide Expander (must NOT have SENTINEL_PREFIX, no second clear_session_history call)
+    assert SENTINEL_PREFIX not in prompts_sent[1]
+    assert "cresmo-wide-expander" in prompts_sent[1].lower() or "synchronic" in prompts_sent[1].lower()
+
 
