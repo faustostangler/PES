@@ -1,10 +1,11 @@
 """Unit tests for Cresmo stage completion validators and multi-pass checks."""
 
+import json
 from pathlib import Path
 import pytest
 
 from cresmo_pipeline import (
-    is_valid_atomic_xml,
+    is_valid_atomic_json,
     is_valid_enriched_markdown,
     is_valid_reconciliation_log,
 )
@@ -54,27 +55,25 @@ def test_is_valid_enriched_markdown_too_short(tmp_path: Path):
     assert is_valid_enriched_markdown(f, min_bytes=300) is False
 
 
-def test_is_valid_atomic_xml_valid(tmp_path: Path):
-    """Verify is_valid_atomic_xml returns True for valid XML containing note blocks."""
-    f = tmp_path / "valid.xml"
-    content = """<xml>
-<notas>
-<nota>
-# [Nota 1]
-Conteúdo detalhado.
-</nota>
-</notas>
-</xml>
-"""
+def test_is_valid_atomic_json_valid(tmp_path: Path):
+    """Verify is_valid_atomic_json returns True for valid JSON containing note blocks."""
+    f = tmp_path / "valid.json"
+    content = json.dumps([
+        {
+            "title": "Nota 1",
+            "type": "concept",
+            "definition": "Conteúdo detalhado.",
+        }
+    ])
     f.write_text(content, encoding="utf-8")
-    assert is_valid_atomic_xml(f, min_bytes=50) is True
+    assert is_valid_atomic_json(f, min_bytes=30) is True
 
 
-def test_is_valid_atomic_xml_invalid(tmp_path: Path):
-    """Verify is_valid_atomic_xml returns False for malformed XML without note markers."""
-    f = tmp_path / "invalid.xml"
-    f.write_text("Some text without xml or nota tags", encoding="utf-8")
-    assert is_valid_atomic_xml(f, min_bytes=10) is False
+def test_is_valid_atomic_json_invalid(tmp_path: Path):
+    """Verify is_valid_atomic_json returns False for malformed JSON or non-array content."""
+    f = tmp_path / "invalid.json"
+    f.write_text("Some text without json array", encoding="utf-8")
+    assert is_valid_atomic_json(f, min_bytes=10) is False
 
 
 def test_is_valid_reconciliation_log(tmp_path: Path):

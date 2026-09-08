@@ -49,6 +49,9 @@ DEFAULT_LS_ADDRESS: str = "127.0.0.1:41667"
 DEFAULT_CSRF_TOKEN: str = "ff53390d-3617-40f6-836e-6c5375ff5817"
 GRPC_TEST_TIMEOUT_SECONDS: float = 1.5
 
+# --- CLI Prompt Payload Limits ---
+PROMPT_MAX_BYTES_INLINE: int = 120_000
+
 # --- Formats & Protocols ---
 DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 VIDEO_DESCRIPTION_KEY: str = "video_description"
@@ -103,9 +106,6 @@ _INJECTION_REDACT_MARKER: str = "[REDACTED:INJECTION]"
 
 
 def sanitize_untrusted_content(text: str, source_label: str = "untrusted") -> str:
-    print("fast debug")
-    return text # fast debug
-
     """Neutralize indirect prompt injection attacks embedded in untrusted content.
 
     Implements a defense-in-depth strategy with two complementary layers:
@@ -835,6 +835,12 @@ def resolve_active_session() -> str:
 
 def send_agent_message(prompt: str, session_id: str) -> str:
     """Dispatch RPC payload to target agent session."""
+    prompt_bytes = len(prompt.encode("utf-8"))
+    if prompt_bytes > PROMPT_MAX_BYTES_INLINE:
+        raise ValueError(
+            f"Prompt payload size ({prompt_bytes} bytes) exceeds safe CLI argument limit "
+            f"({PROMPT_MAX_BYTES_INLINE} bytes). Use file path references instead."
+        )
     binary_path = get_agentapi_binary()
     env = get_antigravity_env()
     cmd = [binary_path, "send-message", session_id, prompt]

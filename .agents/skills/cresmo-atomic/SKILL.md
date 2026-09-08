@@ -1,6 +1,6 @@
 ---
 name: cresmo-atomic
-description: Converts expanded fluid text into a collection of interconnected Atomic Notes formatted for Obsidian Second Brain in XML format. Maps WikiLinks, note typologies, causal matrices, and double-side linking. Use whenever expanded text needs to be broken down into structured, interlinked atomic Markdown notes wrapped in XML tags. Make sure to trigger this skill whenever atomic note generation for Obsidian is requested.
+description: Converts expanded fluid text into a collection of interconnected Atomic Notes formatted for Obsidian Second Brain as a JSON array. Maps WikiLinks, note typologies, causal matrices, and double-side linking. Use whenever expanded text needs to be broken down into structured, interlinked atomic notes formatted in JSON. Make sure to trigger this skill whenever atomic note generation for Obsidian is requested.
 ---
 
 # Cresmo Atomic (Atomic Notes Generator & WikiLinks Mapper)
@@ -13,7 +13,7 @@ All narrative prose written within the atomic notes must adhere strictly to the 
 
 Each note addresses a single entity, concept, event, or process, using strict YAML metadata, standardized Obsidian WikiLinks (`[[Note Title]]`), declarative triple connections, causal attribution matrices, and bi-directional cross-context linking.
 
-Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
+Save output directly to `cresmo/enriched/<channel_name>/<video_id>.json`.
 
 ---
 
@@ -22,8 +22,8 @@ Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
 1. **Principle of Atomicity**: Each note must cover a single autonomous idea, entity, historical event, or dynamic process, containing all necessary context to be fully understandable on its own.
 2. **Semantic Density & Style Compliance**: Avoid empty notes. Every note must extract full factual substance and conceptual rigor, complying with the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md): structure the explanation across two or three implicit levels of technical detail, combining domain precision words for specialists with structuring metaphorical explanations for non-specialists, high conceptual density, low verbosity, second-order mechanisms, zero em-dashes (`—`), and zero binary antitheses.
 3. **Internal WikiLinks Syntax**: Every mention of another note within the vault must be formatted as `[[Exact Note Title]]` or `[[Exact Note Title|Flexed Surface Text]]`.
-4. **Resolution of Orphan Terms & Update-Over-Creation Governance**: No note may reference a non-existent node. If any `[[WikiLink]]` target appears in any note body, the corresponding atomic note MUST either (a) already exist in the vault as registered in `cresmo/wiki/_index.json`, or (b) be included in the current XML batch. Consult `cresmo/wiki/_index.json` before generating notes:
-   - **Update Existing Notes (Do Not Create Duplicates)**: If an entity, concept, event, or process is already registered in `_index.json` (matched by canonical title or any registered alias), the agent MUST NOT create a new note under a different title or surface variation. The note emitted in the XML batch MUST reuse the exact canonical title and type from `_index.json`. The note body is enriched with the new source text's facts, mechanisms, triples, and causal connections, serving as an update payload for `cresmo-moc-manager` rather than spawning a duplicate file.
+4. **Resolution of Orphan Terms & Update-Over-Creation Governance**: No note may reference a non-existent node. If any `[[WikiLink]]` target appears in any note body, the corresponding atomic note MUST either (a) already exist in the vault as registered in `cresmo/wiki/_index.json`, or (b) be included in the current JSON batch. Consult `cresmo/wiki/_index.json` before generating notes:
+   - **Update Existing Notes (Do Not Create Duplicates)**: If an entity, concept, event, or process is already registered in `_index.json` (matched by canonical title or any registered alias), the agent MUST NOT create a new note under a different title or surface variation. The note emitted in the JSON batch MUST reuse the exact canonical title and type from `_index.json`. The note body is enriched with the new source text's facts, mechanisms, triples, and causal connections, serving as an update payload for `cresmo-moc-manager` rather than spawning a duplicate file.
    - **Create New Notes Only When Unindexed**: Only when an entity is genuinely novel and absent from `_index.json` does the agent mint a new canonical title and create a new atomic note.
 5. **Principle of Exhaustive Extraction**: The entire source text, including every paragraph, sentence, and supplementary section, must be systematically scanned for extractable entities. No noteworthy item may be silently omitted. The output batch must capture the full semantic content of the source text as a self-contained knowledge graph.
 
@@ -52,7 +52,7 @@ Before generating the note batch:
    - **Exact Canonical Title**: Use the exact canonical title registered in `_index.json` as the `# [Exact Note Title]` and in all `[[WikiLinks]]`. Never use a synonymous or surface-level variant as the note title (for instance, if `1139-07-25 Batalha de Ourique` is in `_index.json`, use that exact title, avoiding separate notes like `# Batalha de Ourique`).
    - **Type Preservation**: Retain the `type:` registered in `_index.json`.
    - **Alias Inheritance & Growth**: Populate `aliases:` with all existing aliases from `_index.json` plus any new variant found in the current text.
-   - **Content Enrichment**: Emit the `<nota>` block with the newly synthesized contextual analysis, declarative triples, causal matrix, and cross-context links from the current source. This payload updates the existing note in the vault during Stage 3 (`cresmo-moc-manager`) without creating a duplicate file.
+   - **Content Enrichment**: Emit the JSON note object with the newly synthesized contextual analysis, declarative triples, causal matrix, and cross-context links from the current source. This payload updates the existing note in the vault during Stage 5/6 (`cresmo-moc-manager`) without creating a duplicate file.
 3. **Match NOT Found -> CREATION MODE**: If and only if the candidate is completely absent from `_index.json`:
    - Mint a new canonical title following typology rules (Big-Endian date notation for events).
    - Register any surface variants and parenthetical annotations in `aliases:`.
@@ -65,7 +65,7 @@ Before generating the note batch:
 After generating all notes from Passes 1 and 2:
 
 1. **Compile a master set** of every `[[WikiLink]]` target referenced across all note bodies in the current batch.
-2. **For each target**, verify that it resolves to either (a) an existing note registered in `_index.json`, or (b) a note present in the current XML batch.
+2. **For each target**, verify that it resolves to either (a) an existing note registered in `_index.json`, or (b) a note present in the current JSON batch.
 3. **For every unresolved target**, generate an atomic note using whatever context is available from the source text. If information is minimal, apply the Minimal Note Protocol (see below).
 4. **Repeat** the audit until no dangling links remain within the batch (excluding links that resolve to `_index.json` entries).
 
@@ -172,13 +172,13 @@ Sparse notes are first-class citizens of the vault. They serve as anchoring node
 1. **Exhaustive Hyperlinking**: Embed `[[WikiLinks]]` across every mention of named entities, treaties, historical dates, theories, and processes in text bodies.
 2. **Aliasing Syntax**: Use `[[Target Title|Flexed Form]]` when text syntax requires grammatical flexions, ensuring the base `Target Title` matches the destination note exactly. Add the flexed form to the `aliases:` list in the YAML header.
 3. **Declarative Triples**: In `## Conexões e Relações Diretas`, convert extracted triples into declarative statements in natural language similar to the original text.
-4. **Bi-Directionality Verification**: For every note A that contains `[[B]]` in its body, note B MUST contain `[[A]]` in at least one of its sections (Conexões, Matriz Causal, or Redes de Conexão). Perform this verification for all note pairs in the batch before emitting the final XML. Notes referencing entries that already exist in `_index.json` and are not part of the current update batch are exempt from this check within the current batch, as the `cresmo-moc-manager` handles cross-text back-linking during reconciliation.
+4. **Bi-Directionality Verification**: For every note A that contains `[[B]]` in its body, note B MUST contain `[[A]]` in at least one of its sections (Conexões, Matriz Causal, or Redes de Conexão). Perform this verification for all note pairs in the batch before emitting the final JSON. Notes referencing entries that already exist in `_index.json` and are not part of the current update batch are exempt from this check within the current batch, as the `cresmo-moc-manager` handles cross-text back-linking during reconciliation.
 
 ---
 
 ## Completeness Self-Verification Checklist
 
-Before emitting the final XML output, verify that all conditions are met:
+Before emitting the final JSON output, verify that all conditions are met:
 
 1. ✅ Every paragraph and every section of the source text (including supplementary/complementary sections) has been scanned for extractable entities.
 2. ✅ Every candidate entity registered in `_index.json` (by title or alias) is emitted using its EXACT registered canonical title and type, guaranteeing that it updates the existing vault note rather than creating a duplicate file.
@@ -192,21 +192,48 @@ Before emitting the final XML output, verify that all conditions are met:
 
 ---
 
-## Automated XML Output Specification
+## Automated JSON Output Specification
 
-The complete batch of generated atomic notes MUST be presented inside XML container tags, with correct indented tabulation:
+The complete batch of generated atomic notes MUST be presented as a **JSON array of objects** saved directly to `cresmo/enriched/<channel_name>/<video_id>.json`.
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<notas>
-   <nota>
-      Complete Markdown content of first atomic note
-   </nota>
-   <nota>
-      Complete Markdown content of second atomic note
-   </nota>
-</notas>
+Do NOT write individual files via bash scripts or tool loops. The pipeline will automatically unpack the JSON array into individual vault markdown files and update `_index.json`.
+
+```json
+[
+  {
+    "title": "Guimarães",
+    "type": "entity",
+    "content": [
+      "geografia",
+      "geografia/centro_urbano"
+    ],
+    "domain": "geografia_historica",
+    "cluster": "centros_de_poder_medieval",
+    "source": "marcelo-andrade/9IbNJ0EsTxI",
+    "aliases": [
+      "Berço da Nação",
+      "Vila de Guimarães",
+      "Burgo de Guimarães"
+    ],
+    "definition": "Guimarães constituiu o centro administrativo, militar e simbólico original do Condado Portucalense, atuando como núcleo originário da afirmação senhorial da dinastia de Borgonha...",
+    "direct_relations": [
+      "[[Guimarães]] -> abrigou a corte condal de -> [[Henrique de Borgonha]]",
+      "[[Guimarães]] -> serviu de local de nascimento para -> [[Afonso Henriques]]",
+      "[[Guimarães]] -> testemunhou o desfecho da insurreição em -> [[1128-06-24 Batalha de São Mamede]]"
+    ],
+    "causal_matrix": {
+      "cause": "Fundação do mosteiro e da fortaleza defensiva por Mumadona Dias para proteção contra incursões normandas e muçulmanas.",
+      "effect": "Fixação do centro de gravidade político do Condado Portucalense até a transferência da capital para Coimbra.",
+      "epistemic_attribution": "Documentos cartorários medievais e crônicas régias portuguesas."
+    },
+    "cross_context": {
+      "precursors": "Origem ancorada na fortificação condal do século X e na consolidação territorial do Condado Portucalense.",
+      "lateral_events": "Articulação defensiva contemporânea com a diocese metropolitana de [[Braga]].",
+      "aftermath": "Perda da condição de capital administrativa com a [[1131 Transferência da Capital para Coimbra]], preservando o prestígio simbólico de berço dinástico."
+    }
+  }
+]
 ```
 
-Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
-Do not output any introductory greetings, conversational commentary, or postscripts outside the `<xml>...</xml>` block.
+Save output directly to `cresmo/enriched/<channel_name>/<video_id>.json`.
+Do not output any introductory greetings, conversational commentary, or postscripts outside the JSON payload.

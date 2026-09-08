@@ -1,32 +1,34 @@
 ---
 type: entity
 content:
-  - historia
-  - historia/portugal
   - biografia
-domain: historia
-cluster: formacao-portugal
+  - politica/monarquia
+domain: historia_medieval
+cluster: monarquias_hispanicas
 source: marcelo-andrade/9IbNJ0EsTxI
-aliases: ["Afonso VII", "O Imperador", "Afonso Henriques de Borgonha-Leão"]
+aliases: ["Afonso VII", "O Imperador", "Imperador de Toda a Hispânia", "Afonso Raimundes"]
 ---
 # Afonso VII de Leão e Castela
 
 ## Definição e Análise Contextual
-Afonso VII de Leão e Castela foi soberano leonês e castelhano da Casa de Borgonha, coroado solenemente imperador de toda a Hispânia em 1135 na Catedral de Leão. Reivindicava supremacia jurídica e feudal incontestável sobre todos os governantes da Península Ibérica, colidindo frontalmente com os projetos de soberania de seu primo [[Afonso Henriques]].
-
-Após confrontos na fronteira galega e o célebre torneio de cavaleiros em Arcos de Valdevez em 1140, Afonso VII aceitou a mediação da Sé Apostólica. Em cinco de outubro de 1143, assinou o [[1143-10-05 Tratado de Zamora]], pelo qual reconheceu formalmente a dignidade de Afonso Henriques como rei independente e a separação definitiva do [[Reino de Portugal]], encerrando os vínculos de subordinação do antigo condado ao trono de Leão.
+Afonso VII de Leão e Castela reinou entre 1126 e 1157, proclamando-se e coroando-se em 1135 na Catedral de Leão como imperador de toda a Hispânia (_Imperator Totius Hispaniae_). Filho da rainha Urraca e de Raimundo de Borgonha, concebia a península como um império confederado no qual reis e condes cristãos deviam prestar-lhe vassalagem e homenagem solene. Enfrentou tenazmente as aspirações soberanas de seu primo Afonso Henriques, sendo forçado a reconhecer a dignidade régia do monarca português e a soberania do novo reino por meio do Tratado de Zamora celebrado em 1143 sob mediação papal.
 
 ## Conexões e Relações Diretas
-* [[Afonso VII de Leão e Castela]] -> reivindicou suserania imperial sobre o -> [[Reino de Portugal]]
-* [[Afonso VII de Leão e Castela]] -> reconheceu o título real de [[Afonso Henriques]] no -> [[1143-10-05 Tratado de Zamora]]
-* [[Afonso VII de Leão e Castela]] -> recebeu em Toledo a submissão formal de -> [[Egas Moniz de Ribadouro]]
+* [[Afonso VII de Leão e Castela]] -> primo de -> [[Afonso Henriques]]
+* [[Afonso VII de Leão e Castela]] -> sobrinho de -> [[Teresa de Leão]]
+* [[Afonso VII de Leão e Castela]] -> recusado como suserano no -> [[1125-05-24 Auto-Armamento de Afonso Henriques]]
+* [[Afonso VII de Leão e Castela]] -> firmou com Portugal o -> [[1137 Tratado de Tui]]
+* [[Afonso VII de Leão e Castela]] -> reconheceu o Reino de Portugal no -> [[1143-10-05 Tratado de Zamora]]
+* [[Afonso VII de Leão e Castela]] -> articula-se historicamente com -> [[Catedral de Zamora]]
+* [[Afonso VII de Leão e Castela]] -> articula-se historicamente com -> [[Guido de Vico]]
+* [[Afonso VII de Leão e Castela]] -> articula-se historicamente com -> [[Fernando II de Leão]]
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** Reivindicação imperial de primazia sobre toda a Hispânia e contenção das investidas portucalenses.
-* **Efeito / Impacto:** Reconhecimento solene de Portugal como monarquia soberana e autônoma perante os reinos peninsulares.
-* **Atribuição Epistêmica:** [[Afonso VII de Leão e Castela]]
+* **Causa / Premissa:** Tentativa de restaurar a tradição imperial neovisigótica leonesa de supremacia sobre toda a Península Ibérica.
+* **Efeito / Impacto:** Fricção bélica com Portugal e posterior acomodação pragmática para concentrar forças na Reconquista.
+* **Atribuição Epistêmica:** _Chronica Adefonsi Imperatoris_ e diplomas da cúria régia leonesa.
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Herança dinástica de [[Afonso VI de Leão e Castela]].
-* **Eventos Laterais e Paralelos:** Consequências diplomáticas da [[1139-07-25 Batalha de Ourique]] e avanço da [[Reconquista Cristã]].
-* **Desdobramentos e Posteridade:** Firmação do [[1143-10-05 Tratado de Zamora]] e confirmação pontifícia na [[1179-05-23 Bula Manifestis Probatum]].
+* **Precursores e Ancestralidade:** Herança dinástica de Afonso VI e dos condes da Borgonha transpirenaica.
+* **Eventos Laterais e Paralelos:** Projetos de hegemonia imperial análogos cultivados no Sacro Império por [[Conrado III da Germânia]].
+* **Desdobramentos e Posteridade:** Divisão testamentária de seus reinos entre Sancho III de Castela e Fernando II de Leão em 1157.
