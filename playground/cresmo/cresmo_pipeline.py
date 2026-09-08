@@ -37,6 +37,7 @@ from cresmo_shared import (
     DEFAULT_CRESMO_WIKI_DIR,
     DEFAULT_ENRICHED_DIR,
     DEFAULT_PLAYLIST_PRIORITY_FILE,
+    DEFAULT_PRIORITY_FOLDER,
     DEFAULT_RAW_DIR,
     PROCESSED_CRESMO_LOG,
     SENTINEL_PREFIX,
@@ -53,6 +54,7 @@ from cresmo_shared import (
     read_priority_entries,
     read_priority_video_ids,
     resolve_active_session,
+    resolve_folder_priority_blocks,
     sanitize_untrusted_content,
     save_processed_cresmo_log,
     scan_session_for_quota_refresh,
@@ -1284,7 +1286,12 @@ def process_candidate_blocks(
         txt_file = Path(txt_file_raw)
         video_id = meta.get("video_id", DEFAULT_VIDEO_ID)
         channel = meta.get("channel_name", DEFAULT_CHANNEL_NAME)
-        domain, cat_type = classify_channel(channel)
+        domain = meta.get("domain")
+        cat_type = meta.get("category_type")
+        if not domain or not cat_type:
+            domain, cat_type = classify_channel(channel)
+            meta["domain"] = domain
+            meta["category_type"] = cat_type
 
         pct = (idx / total_candidates) * 100
         elapsed = time.time() - pipeline_start_time
@@ -1468,6 +1475,7 @@ def run_cresmo_pipeline(
     isolate_context: bool = True,
     restart_server: bool = False,
     categories: list[str] | set[str] | None = None,
+    priority_folder: Path | None = DEFAULT_PRIORITY_FOLDER,
     priority_playlist: Path | None = DEFAULT_PLAYLIST_PRIORITY_FILE,
     auto_sync: bool = True,
 ) -> None:
@@ -1490,9 +1498,29 @@ def run_cresmo_pipeline(
     if "all" in allowed_categories or "*" in allowed_categories:
         allowed_categories.clear()
 
+    # Tier 1: Resolve local folder priority blocks
+    folder_priority_blocks: list[dict] = []
+    if priority_folder:
+        p_folder = Path(priority_folder)
+        if p_folder.exists():
+            folder_priority_blocks = resolve_folder_priority_blocks(
+                folder_path=p_folder,
+                processed_log=processed_log,
+                force=force,
+            )
+
+    folder_priority_vids = {
+        b.get("metadata", {}).get("video_id") for b in folder_priority_blocks
+    }
+
+    # Tier 2: Resolve YouTube priority playlist entries
     priority_entries: list[dict[str, str]] = []
     if priority_playlist:
         priority_entries = read_priority_entries(Path(priority_playlist))
+
+    # Exclude any items already scheduled in Tier 1 folder priority
+    if folder_priority_vids:
+        priority_entries = [e for e in priority_entries if e["video_id"] not in folder_priority_vids]
 
     priority_blocks: list[dict] = []
     if priority_entries:
@@ -1505,9 +1533,11 @@ def run_cresmo_pipeline(
         )
 
     priority_vids = {e["video_id"] for e in priority_entries}
-    handled_priority_vids = {
-        b.get("metadata", {}).get("video_id") for b in priority_blocks
-    } | priority_vids
+    handled_priority_vids = (
+        folder_priority_vids
+        | {b.get("metadata", {}).get("video_id") for b in priority_blocks}
+        | priority_vids
+    )
 
     print("==================================================")
     print("🧠 Cresmo Master Pipeline (Stages 2 -> 6)")
@@ -1516,6 +1546,9 @@ def run_cresmo_pipeline(
     print(f"   Cresmo Vault:       {cresmo_wiki_dir}")
     print(f"   Processed Log:      {PROCESSED_CRESMO_LOG.name} ({len(processed_log)} items completed)")
     print(f"   Category Filter:    {', '.join(sorted(allowed_categories)) if allowed_categories else 'All Categories'}")
+    if folder_priority_blocks:
+        folder_name = Path(priority_folder).name if priority_folder else "none"
+        print(f"   Folder Priority:    {len(folder_priority_blocks)} items resolved from {folder_name}")
     if priority_entries:
         playlist_name = Path(priority_playlist).name if priority_playlist else "none"
         print(f"   Priority Queue:     {len(priority_blocks)}/{len(priority_entries)} resolved from {playlist_name}")
@@ -1599,7 +1632,7 @@ def run_cresmo_pipeline(
             print(f"breaking at {len(candidate_blocks)} candidate blocks")
             break
 
-    candidate_blocks = priority_blocks + candidate_blocks
+    candidate_blocks = folder_priority_blocks + priority_blocks + candidate_blocks
 
     if limit:
         candidate_blocks = candidate_blocks[:limit]
@@ -1656,6 +1689,11 @@ if __name__ == "__main__":
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
     parser.add_argument(
+        "--priority-folder",
+        default=str(DEFAULT_PRIORITY_FOLDER),
+        help="Path to priority content text directory (default: playground/cresmo/priority_content)",
+    )
+    parser.add_argument(
         "--priority-playlist",
         default=str(DEFAULT_PLAYLIST_PRIORITY_FILE),
         help="Path to priority playlist text file (default: playground/cresmo/playlist-priority.txt)",
@@ -1678,6 +1716,7 @@ if __name__ == "__main__":
         force=args.force,
         isolate_context=args.isolate_context,
         restart_server=args.restart_server,
+        priority_folder=Path(args.priority_folder) if args.priority_folder else None,
         priority_playlist=Path(args.priority_playlist) if args.priority_playlist else None,
         auto_sync=args.auto_sync,
     )

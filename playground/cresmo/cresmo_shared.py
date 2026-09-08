@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 import time
+import uuid
 
 # --- Path Configurations ---
 CRESMO_ROOT: Path = Path(__file__).parent.resolve()
@@ -19,6 +20,7 @@ DEFAULT_CRESMO_WIKI_DIR: Path = CRESMO_ROOT / "wiki"
 PROCESSED_CRESMO_LOG: Path = CRESMO_ROOT / "processed_cresmo.json"
 DEFAULT_PLAYLIST_FILE: Path = CRESMO_ROOT / "playlist.txt"
 DEFAULT_PLAYLIST_PRIORITY_FILE: Path = CRESMO_ROOT / "playlist-priority.txt"
+DEFAULT_PRIORITY_FOLDER: Path = CRESMO_ROOT / "priority_content"
 DEFAULT_BRAIN_CSV: Path = CRESMO_ROOT / "brain.csv"
 DEFAULT_COOKIES_FILE: Path = CRESMO_ROOT / ".yt_dlp_cookies.txt"
 DEFAULT_RATE_LIMIT_LOG_FILE: Path = CRESMO_ROOT / "rate_limit_log.json"
@@ -656,6 +658,188 @@ def parse_merged_transcriptions(file_path: Path) -> list[dict]:
     except Exception as e:
         print(f"Error parsing merged transcriptions in {file_path.name}: {e}")
     return metadata_list
+
+
+# --- Priority Content & Local Text File Adapters ---
+
+TEXT_DOMAIN_KEYWORDS: dict[str, tuple[str, set[str]]] = {
+    "politics_br": (
+        "volatile",
+        {
+            "stf", "supremo tribunal", "lula", "bolsonaro", "congresso", "senado",
+            "câmara", "camara", "deputado", "senador", "ministro", "eleições",
+            "eleicoes", "pt", "pl", "pgr", "polícia federal", "policia federal",
+            "tse", "moraes", "planalto", "partido", "governo federal",
+        },
+    ),
+    "geopolitics": (
+        "volatile",
+        {
+            "geopolítica", "geopolitica", "otan", "rússia", "russia", "ucrânia",
+            "ucrania", "china", "taiwan", "eua", "pentágono", "pentagono",
+            "oriente médio", "oriente medio", "israel", "gaza", "irã", "ira",
+            "guerra mundial", "sanções", "sancoes",
+        },
+    ),
+    "tech_ai": (
+        "perennial",
+        {
+            "llm", "llms", "inteligência artificial", "inteligencia artificial",
+            "machine learning", "deep learning", "python", "fastapi", "docker",
+            "kubernetes", "devops", "cloud", "api", "apis", "software", "código",
+            "codigo", "prompt", "neural", "algoritmo", "database", "sql", "git",
+            "clean architecture", "domain-driven", "microservices", "frontend",
+            "backend", "framework",
+        },
+    ),
+    "finance": (
+        "perennial",
+        {
+            "selic", "taxa de juros", "inflação", "inflacao", "ibovespa", "ações",
+            "acoes", "dividendos", "tesouro direto", "cdb", "fgc", "banco central",
+            "investimento", "investimentos", "renda fixa", "renda variável",
+        },
+    ),
+    "philosophy": (
+        "perennial",
+        {
+            "epistemologia", "ontologia", "ética", "etica", "niilismo", "metafísica",
+            "metafisica", "kant", "nietzsche", "hegel", "spinoza", "fenomenologia",
+            "filosofia", "dialética", "dialetica",
+        },
+    ),
+    "history": (
+        "perennial",
+        {
+            "historiografia", "século", "seculo", "idade média", "idade media",
+            "revolução industrial", "revolucao industrial", "império", "imperio",
+            "monarquia", "guerra civil", "feudalismo",
+        },
+    ),
+}
+
+
+def classify_text_content(text: str) -> tuple[str, str]:
+    """Classify plain text content deterministically into (domain, category_type)."""
+    text_lower = text.lower()
+    scores: dict[str, int] = {}
+    for domain, (cat_type, keywords) in TEXT_DOMAIN_KEYWORDS.items():
+        score = sum(1 for kw in keywords if kw in text_lower)
+        if score > 0:
+            scores[domain] = score
+
+    if scores:
+        best_domain = max(scores, key=lambda k: scores[k])
+        return best_domain, TEXT_DOMAIN_KEYWORDS[best_domain][0]
+
+    return "tech_ai", "perennial"
+
+
+def generate_content_uuid(content: str) -> str:
+    """Generate deterministic UUIDv5 based on normalized text content."""
+    norm = content.strip()
+    return str(uuid.uuid5(uuid.NAMESPACE_OID, norm))
+
+
+def parse_priority_text_file(file_path: Path) -> list[dict]:
+    """Parse a .txt file from priority_content, supporting both YAML frontmatter and plain text.
+
+    Returns candidate blocks wrapped with canonical metadata:
+    - If YAML frontmatter exists: parsed via parse_merged_transcriptions with fallback defaults.
+    - If plain text: synthesizes block with deterministic UUIDv5 video_id, channel_name='text',
+      content-based domain and category, and source file path.
+    """
+    if not file_path.exists():
+        return []
+
+    content = file_path.read_text(encoding="utf-8").strip()
+    if not content:
+        return []
+
+    # Case 1: File contains YAML frontmatter blocks
+    if content.startswith("---"):
+        blocks = parse_merged_transcriptions(file_path)
+        if blocks:
+            for b in blocks:
+                b["source_file"] = file_path
+                meta = b.get("metadata", {})
+                if not meta.get("video_id"):
+                    meta["video_id"] = generate_content_uuid(b.get("text", content))
+                if not meta.get("channel_name"):
+                    meta["channel_name"] = "text"
+                if not meta.get("video_title"):
+                    meta["video_title"] = file_path.stem.replace("_", " ").replace("-", " ").title()
+                if not meta.get("url"):
+                    meta["url"] = f"file://{file_path.resolve()}"
+
+                domain = meta.get("domain") or meta.get("channel_category")
+                if not domain:
+                    domain, cat_type = classify_text_content(b.get("text", ""))
+                    meta["domain"] = domain
+                    meta["category_type"] = cat_type
+                elif not meta.get("category_type"):
+                    _, cat_type = classify_channel(domain)
+                    meta["domain"] = domain
+                    meta["category_type"] = cat_type
+            return blocks
+
+    # Case 2: Plain text without YAML frontmatter
+    lines = [line.strip() for line in content.splitlines() if line.strip()]
+    title = file_path.stem.replace("_", " ").replace("-", " ").title()
+    if lines:
+        first_line = lines[0]
+        if first_line.startswith("#"):
+            title = first_line.lstrip("#").strip()
+        elif len(first_line) <= 120:
+            title = first_line
+
+    video_id = generate_content_uuid(content)
+    domain, category_type = classify_text_content(content)
+
+    meta = {
+        "video_id": video_id,
+        "video_title": title,
+        "channel_name": "text",
+        "domain": domain,
+        "category_type": category_type,
+        "url": f"file://{file_path.resolve()}",
+        "source_path": str(file_path.resolve()),
+    }
+
+    return [{
+        "metadata": meta,
+        "text": content,
+        "source_file": file_path,
+    }]
+
+
+def resolve_folder_priority_blocks(
+    folder_path: Path,
+    processed_log: set[str] | dict,
+    force: bool = False,
+) -> list[dict]:
+    """Resolve candidate blocks from local priority folder containing .txt files.
+
+    Processes .txt files in folder_path in sorted order, skipping already processed
+    entries unless force=True.
+    """
+    priority_blocks: list[dict] = []
+    if not folder_path or not folder_path.exists():
+        return priority_blocks
+
+    txt_files = sorted(folder_path.glob("*.txt"))
+    for txt_file in txt_files:
+        blocks = parse_priority_text_file(txt_file)
+        for b in blocks:
+            meta = b.get("metadata", {})
+            vid = meta.get("video_id")
+            if not vid:
+                continue
+            if not force and vid in processed_log:
+                continue
+            priority_blocks.append(b)
+
+    return priority_blocks
 
 
 # --- Idempotency & Log Management ---

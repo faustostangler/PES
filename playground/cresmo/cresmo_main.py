@@ -25,6 +25,7 @@ from cresmo_shared import (
     DEFAULT_ENRICHED_DIR,
     DEFAULT_PLAYLIST_FILE,
     DEFAULT_PLAYLIST_PRIORITY_FILE,
+    DEFAULT_PRIORITY_FOLDER,
     DEFAULT_RAW_DIR,
 )
 from export_cookies import ensure_cookies
@@ -109,6 +110,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
     process_parser.add_argument(
+        "--priority-folder",
+        default=str(DEFAULT_PRIORITY_FOLDER),
+        help="Path to priority content text directory (default: playground/cresmo/priority_content)",
+    )
+    process_parser.add_argument(
         "--priority-playlist",
         default=str(DEFAULT_PLAYLIST_PRIORITY_FILE),
         help="Path to priority playlist text file (default: playground/cresmo/playlist-priority.txt)",
@@ -153,6 +159,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Restart Language Server process before each dispatch to isolate context (default: False)",
     )
     full_parser.add_argument(
+        "--priority-folder",
+        default=str(DEFAULT_PRIORITY_FOLDER),
+        help="Path to priority content text directory (default: playground/cresmo/priority_content)",
+    )
+    full_parser.add_argument(
         "--priority-playlist",
         default=str(DEFAULT_PLAYLIST_PRIORITY_FILE),
         help="Path to priority playlist text file (default: playground/cresmo/playlist-priority.txt)",
@@ -188,6 +199,7 @@ def parse_cli_args(argv: list[str] | None = None) -> argparse.Namespace:
         args.force = getattr(args, "force", False)
         args.isolate_context = getattr(args, "isolate_context", DEFAULT_ISOLATE_CONTEXT)
         args.restart_server = getattr(args, "restart_server", DEFAULT_RESTART_SERVER)
+        args.priority_folder = getattr(args, "priority_folder", str(DEFAULT_PRIORITY_FOLDER))
         args.priority_playlist = getattr(args, "priority_playlist", str(DEFAULT_PLAYLIST_PRIORITY_FILE))
         args.auto_sync = getattr(args, "auto_sync", True)
 
@@ -223,6 +235,7 @@ def main() -> None:
             force=args.force,
             isolate_context=args.isolate_context,
             restart_server=args.restart_server,
+            priority_folder=Path(args.priority_folder) if getattr(args, "priority_folder", None) else None,
             priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
             auto_sync=getattr(args, "auto_sync", True),
         )
@@ -247,6 +260,7 @@ def main() -> None:
             force=args.force,
             isolate_context=args.isolate_context,
             restart_server=args.restart_server,
+            priority_folder=Path(args.priority_folder) if getattr(args, "priority_folder", None) else None,
             priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
             auto_sync=getattr(args, "auto_sync", True),
         )
