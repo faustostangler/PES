@@ -1,4 +1,4 @@
-"""Unit tests for Cresmo XML parsing, non-destructive note proliferation, and cache guards."""
+"""Unit tests for Cresmo JSON parsing, non-destructive note proliferation, and cache guards."""
 
 import json
 from pathlib import Path
@@ -7,29 +7,23 @@ import pytest
 from cresmo_pipeline import parse_and_proliferate_notes
 
 
-SAMPLE_XML_CONTENT = """
-<xml>
-<nota>
----
-type: concept
-aliases:
-  - "Conceito Teste"
----
-# [Conceito de Teste]
-
-Texto explicativo inicial do conceito.
-</nota>
-</xml>
-"""
+SAMPLE_JSON_CONTENT = json.dumps([
+    {
+        "title": "Conceito de Teste",
+        "type": "concept",
+        "aliases": ["Conceito Teste"],
+        "definition": "Texto explicativo inicial do conceito.",
+    }
+])
 
 
 def test_parse_and_proliferate_creates_new_note(tmp_path: Path):
     """Verify parse_and_proliferate_notes creates a new .md note if it does not exist."""
-    xml_file = tmp_path / "video_test.xml"
-    xml_file.write_text(SAMPLE_XML_CONTENT, encoding="utf-8")
+    json_file = tmp_path / "video_test.json"
+    json_file.write_text(SAMPLE_JSON_CONTENT, encoding="utf-8")
 
     wiki_dir = tmp_path / "wiki"
-    created = parse_and_proliferate_notes(xml_file, cresmo_wiki_dir=wiki_dir, force=False)
+    created = parse_and_proliferate_notes(json_file, cresmo_wiki_dir=wiki_dir, force=False)
 
     assert len(created) == 1
     expected_note = wiki_dir / "concept" / "Conceito de Teste.md"
@@ -53,11 +47,11 @@ def test_parse_and_proliferate_preserves_existing_note_without_force(tmp_path: P
     enriched_historical_content = "# [Conceito de Teste]\n\nConteúdo enriquecido pelo MOC Manager com [[Backlink]]!"
     note_file.write_text(enriched_historical_content, encoding="utf-8")
 
-    xml_file = tmp_path / "video_test.xml"
-    xml_file.write_text(SAMPLE_XML_CONTENT, encoding="utf-8")
+    json_file = tmp_path / "video_test.json"
+    json_file.write_text(SAMPLE_JSON_CONTENT, encoding="utf-8")
 
     # Proliferate with force=False
-    created = parse_and_proliferate_notes(xml_file, cresmo_wiki_dir=wiki_dir, force=False)
+    created = parse_and_proliferate_notes(json_file, cresmo_wiki_dir=wiki_dir, force=False)
 
     # Must NOT count as a newly created file and must NOT overwrite
     assert len(created) == 0
@@ -73,11 +67,11 @@ def test_parse_and_proliferate_overwrites_when_force_is_true(tmp_path: Path):
     note_file = concept_dir / "Conceito de Teste.md"
     note_file.write_text("Old content", encoding="utf-8")
 
-    xml_file = tmp_path / "video_test.xml"
-    xml_file.write_text(SAMPLE_XML_CONTENT, encoding="utf-8")
+    json_file = tmp_path / "video_test.json"
+    json_file.write_text(SAMPLE_JSON_CONTENT, encoding="utf-8")
 
     # Proliferate with force=True
-    created = parse_and_proliferate_notes(xml_file, cresmo_wiki_dir=wiki_dir, force=True)
+    created = parse_and_proliferate_notes(json_file, cresmo_wiki_dir=wiki_dir, force=True)
 
     assert len(created) == 1
     assert "Texto explicativo inicial" in note_file.read_text(encoding="utf-8")

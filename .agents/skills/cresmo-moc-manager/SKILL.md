@@ -1,19 +1,19 @@
 ---
 name: cresmo-moc-manager
-description: Reconciles XML atomic notes into an Obsidian Vault. Performs entity resolution, tiered lookups against _index.json, incremental note merging, bi-directional cross-text linking, tag governance, and Maps of Content (MOC) integration with zero orphaned notes. Use whenever atomic notes need to be merged into an existing Obsidian vault, reconciled with index files, or linked into MOCs. Make sure to trigger this skill during Stage 3 of the Cresmo pipeline or whenever MOC management and vault reconciliation are requested.
+description: Reconciles JSON atomic notes into an Obsidian Vault. Performs entity resolution, tiered lookups against _index.json, incremental note merging, bi-directional cross-text linking, tag governance, and Maps of Content (MOC) integration with zero orphaned notes. Use whenever atomic notes need to be merged into an existing Obsidian vault, reconciled with index files, or linked into MOCs. Make sure to trigger this skill during Stage 3 of the Cresmo pipeline or whenever MOC management and vault reconciliation are requested.
 ---
 
 # Cresmo MOC Manager (Obsidian Vault & MOC Integration Agent)
 
 ## Overview
 
-The `cresmo-moc-manager` skill acts as the Second Brain Vault Integrator for Obsidian. It takes incoming batches of atomic notes (formatted in XML `<xml><nota>...</nota></xml>`) and reconciles them into an active Obsidian Vault environment.
+The `cresmo-moc-manager` skill acts as the Second Brain Vault Integrator for Obsidian. It takes incoming batches of atomic notes (formatted as a JSON array) and reconciles them into an active Obsidian Vault environment.
 
 All contextual prose and synthesis generated during reconciliation or MOC curation must strictly comply with the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md), structuring explanations across two or three implicit levels of technical detail and specific vocabulary (precision words for specialists, paired with metaphorical explanations for non-specialists), with high conceptual density, low verbosity, affirmative direct syntax, second-order mechanisms, zero em-dashes (`—`), and zero binary antitheses.
 
 It enforces zero orphaned notes (every note is woven into a hierarchically organized Map of Content - MOC), executes tiered entity resolution against `_index.json`, performs non-destructive incremental note merging for existing notes, synchronizes bi-directional links trans-textually across existing vault files, and maintains tag governance.
 
-**File Proliferation Directive**: This phase transforms the XML batch of atomic notes into individual Markdown (.md) files. Each atomic note extracted from `<xml><nota>...</nota></xml>` must be saved as an individual `.md` file in `playground/cresmo/wiki/<note_type>/` (where `<note_type>` is `entity`, `concept`, `event`, or `process`), named exactly after the note's title (`[Exact Note Title].md`). 
+**File Proliferation Directive**: This phase transforms the JSON batch of atomic notes into individual Markdown (.md) files. Each atomic note extracted from the JSON array is saved as an individual `.md` file in `playground/cresmo/wiki/<note_type>/` (where `<note_type>` is `entity`, `concept`, `event`, or `process`), named exactly after the note's title (`[Exact Note Title].md`).
 
 Save the overall reconciliation log report directly to `playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md`.
 
@@ -85,19 +85,19 @@ Rule: Notes in the same semantic micro-context MUST share at least one `#cluster
 ## Tool Execution Directive (Strict Automated Governance)
 
 **MANDATORY RULE**: The MOC Manager agent must execute all file modifications, MOC narrative updates, and reconciliation report generation EXCLUSIVELY via native file manipulation tools (`write_to_file`, `replace_file_content`).
-- **ABSOLUTE PROHIBITION**: NEVER invoke `run_command` or shell/terminal commands to manipulate files, run python one-liners, or parse XML. 
-- In the automated pipeline (`cresmo-pipeline.py`), the proliferation of individual `.md` notes and the synchronization of `_index.json` are performed automatically by Python. The MOC Manager agent's responsibility is to weave the links into the appropriate index MOCs and write the final reconciliation report using `write_to_file`.
+- **ABSOLUTE PROHIBITION**: NEVER invoke `run_command` or shell/terminal commands to manipulate files, run python one-liners, or parse JSON.
+- In the automated pipeline (`cresmo_pipeline.py`), the proliferation of individual `.md` notes and the synchronization of `_index.json` are performed automatically by Python. The MOC Manager agent's responsibility is to weave the links into the appropriate index MOCs and write the final reconciliation report using `write_to_file`.
 
 ---
 
 ## Step-by-Step Execution Algorithm
 
-For each incoming XML batch (`<xml><nota>...</nota></xml>`):
+For each incoming JSON batch:
 
-1. **Read Candidate Note**: Parse YAML, title, body, and WikiLinks from `<nota>`.
+1. **Read Candidate Note**: Parse title, structured fields (or definition), and WikiLinks from the JSON note object.
 2. **Execute Entity Resolution**: Run Tiered Lookup (`_index.json` -> Category MOC -> Semantic Audit).
    - If match found: Perform **Incremental Merge**.
-   - If match not found: Write new `.md` note file in the Vault (or verify pipeline proliferation).
+   - If match not found: Verify pipeline proliferation under `playground/cresmo/wiki/<note_type>/[Exact Note Title].md`.
 3. **Execute Trans-Text Sync & Dangling Link Resolution**: Scan note body for references to existing vault files and update those existing files with reciprocal `[[WikiLinks]]`. If any referenced `[[WikiLink]]` points to a note that does not yet exist in the vault, immediately create the target note as a minimal viable stub with context from the current note, and insert the reciprocal bi-directional back-link. Use the descriptive narrative content of MOCs to guide exactly where to weave the new back-links naturally into existing paragraphs.
 4. **Map Epistemological Category**: Identify the target Global MOC or Sub-MOC.
 5. **Update/Create MOC Narrative**: Integrate the note's `[[WikiLink]]` into the fluid text paragraphs of the MOC using `replace_file_content`.

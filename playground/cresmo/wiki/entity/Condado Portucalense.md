@@ -1,32 +1,42 @@
 ---
 type: entity
 content:
-  - historia
-  - historia/portugal
-domain: historia
-cluster: formacao-portugal
+  - geografia/politica
+  - instituicoes/senhorio
+domain: historia_medieval
+cluster: territorios_medievais
 source: marcelo-andrade/9IbNJ0EsTxI
-aliases: ["Condado de Portugal", "Terra Portucalense"]
+aliases: ["Condado de Portugal", "Terra Portucalense", "Territorium Portucalense"]
 ---
 # Condado Portucalense
 
 ## Definição e Análise Contextual
-O Condado Portucalense constituiu uma circunscrição comitial, senhorial e militar erigida no noroeste da Península Ibérica como parte integrante do Reino de Leão. Em 1096, o imperador [[Afonso VI de Leão e Castela]] concedeu o senhorio hereditário da província ao cavaleiro francês [[Henrique de Borgonha]] e à sua filha natural, a infanta [[Teresa de Leão]], como encargo defensivo contra a ofensiva do [[Império Almorávida]]. O território estendia-se da linha do rio Minho ao norte até a margem do rio Mondego ao sul, tendo as cidades de Guimarães e Coimbra como eixos basilares.
-
-O condado funcionou como escudo protetor e polo de repovoamento no âmbito da [[Reconquista Cristã]]. A fixação da nobreza terratenente dos [[Infanções Portucalenses]] fortaleceu aspirações de soberania regional em oposição aos magnatas galegos liderados por [[Fernão Peres de Trava]], criando as condições políticas para a sublevação liderada por [[Afonso Henriques]] e a subsequente transformação do território no independente [[Reino de Portugal]].
+O Condado Portucalense correspondeu à entidade senhorial e político-militar instituída na bacia ocidental da Península Ibérica como marca de contenção contra o avanço muçulmano. Reconstituído em 1096 sob a autoridade da dinastia ducal da Borgonha, o território estendia-se originariamente entre os rios Minho e Mondego, funcionando como zona tampão e esteio de defesa do Reino de Leão. A dinâmica institucional interna conjugava os direitos senhoriais de antigas linhagens nobres com a autonomia de comunidades concelhias protegidas por cartas de privilégio, criando o substrato administrativo que permitiu a subsequente conversão do condado em reino independente sob a liderança de Afonso Henriques.
 
 ## Conexões e Relações Diretas
-* [[Afonso VI de Leão e Castela]] -> outorgou o governo feudal do -> [[Condado Portucalense]]
-* [[Henrique de Borgonha]] -> exerceu o comando comitial do -> [[Condado Portucalense]]
-* [[Teresa de Leão]] -> assumiu a regência administrativa sobre o -> [[Condado Portucalense]]
-* [[Condado Portucalense]] -> transformou-se no estado soberano do -> [[Reino de Portugal]]
+* [[Condado Portucalense]] -> originado na -> [[1096 Doação do Condado Portucalense]]
+* [[Condado Portucalense]] -> governado por -> [[Henrique de Borgonha]]
+* [[Condado Portucalense]] -> governado por -> [[Teresa de Leão]]
+* [[Condado Portucalense]] -> governado e emancipado por -> [[Afonso Henriques]]
+* [[Condado Portucalense]] -> sediado inicialmente em -> [[Guimarães]]
+* [[Condado Portucalense]] -> abrangeu a província de -> [[Entre-Douro-e-Minho]]
+* [[Condado Portucalense]] -> transformado no Reino de Portugal no -> [[1143-10-05 Tratado de Zamora]]
+* [[Condado Portucalense]] -> articula-se historicamente com -> [[Afonso VI de Leão e Castela]]
+* [[Condado Portucalense]] -> relaciona-se doutrinariamente com -> [[Pronoia]]
+* [[Condado Portucalense]] -> relaciona-se doutrinariamente com -> [[Óptimo Climático Medieval]]
+* [[Condado Portucalense]] -> articula-se historicamente com -> [[Portus Cale]]
+* [[Condado Portucalense]] -> relaciona-se doutrinariamente com -> [[Presúria]]
+* [[Condado Portucalense]] -> articula-se historicamente com -> [[Vímara Peres]]
+* [[Condado Portucalense]] -> articula-se historicamente com -> [[Sijilmassa]]
+* [[Condado Portucalense]] -> relaciona-se doutrinariamente com -> [[Párias]]
+* [[Condado Portucalense]] -> relaciona-se doutrinariamente com -> [[Cartas de Foral]]
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** Derrota das forças de Leão na [[1086-10-23 Batalha de Zalaca]] e necessidade de blindar a fronteira ocidental.
-* **Efeito / Impacto:** Enraizamento da dinastia de Borgonha no espaço luso e gestação da estrutura institucional portuguesa.
-* **Atribuição Epistêmica:** [[Afonso VI de Leão e Castela]]
+* **Causa / Premissa:** Necessidade militar de criar uma cintura defensiva no ocidente peninsular após o revés cristão na Batalha de Zalaca.
+* **Efeito / Impacto:** Emergência de uma estrutura senhorial autônoma que culminou na fragmentação do espaço político hispânico tradicional.
+* **Atribuição Epistêmica:** Diplomas cartorários leoneses e documentos da chancelaria condal portucalense.
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Estruturas senhoriais oriundas do [[Ducado da Borgonha]] e partilhas do [[0843 Tratado de Verdun]].
-* **Eventos Laterais e Paralelos:** Extração tributária das [[Párias]] e reformas promovidas pela [[Abadia de Cluny]].
-* **Desdobramentos e Posteridade:** Ruptura política na [[1128-06-24 Batalha de São Mamede]] e nascimento do [[Reino de Portugal]].
+* **Precursores e Ancestralidade:** Remonta à presúria de Vímara Peres em 868 e à reorganização administrativa da antiga província de [[Gallaecia]].
+* **Eventos Laterais e Paralelos:** Coexistência fronteiriça com o Condado da Galiza e com os domínios meridionais dos [[Almorávidas]].
+* **Desdobramentos e Posteridade:** Extinção da condição condal e ascensão formal da dignidade régia consagrada na [[1179-05-23 Bula Manifestis Probatum]].

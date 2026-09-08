@@ -1,32 +1,32 @@
 ---
 type: concept
 content:
-  - historia
-  - literatura
-  - cultura
-domain: historia
-cluster: formacao-portugal
+  - literatura_popular
+  - cultura_brasileira
+domain: estudos_culturais
+cluster: cultura_e_memoria_literaria
 source: marcelo-andrade/9IbNJ0EsTxI
-aliases: ["Cordel", "Folhetos de Cordel", "Romanceiro Nordestino"]
+aliases: ["Folhetos de Cordel", "Poesia Popular Nordestina", "Versos de Bancada"]
 ---
 # Literatura de Cordel
 
 ## Definição e Análise Contextual
-A Literatura de Cordel é uma secular manifestação poética e editorial popular radicada no Nordeste do Brasil, caracterizada pela produção de folhetos em versos rimados (sextilhas, martelos) expostos em feiras e declamados por cantadores e repentistas ao som de violas.
-
-Representa a sobrevivência e desdobramento transatlântico das narrativas de cavalaria e das canções trovadorescas originadas em [[Galego-Português]] durante a Idade Média. Os cantadores populares mantiveram vivas temáticas como as lutas de cavaleiros contra infiéis forjadas na [[Reconquista Cristã]] e a memória das sagas de fundação de reinos, preservando na imaginação moral do sertão brasileiro os ecos lendários das façanhas de monarcas guerreiros como [[Afonso Henriques]].
+A Literatura de Cordel designa a tradição poético-editorial impressa em folhetos rústicos expostos em barbantes ou cordéis em feiras e praças públicas, característica notória da cultura popular do Nordeste do Brasil. Descendente direta das folhas volantes portuguesas e do Romanceiro Tradicional ibérico transportado pelos colonos lusitanos, estrutura-se em estrofes de redondilha maior rigorosamente rimadas em sextilhas ou setilhas declamadas por poetas e violeiros. Seu repertório reelabora lendas da cavalaria medieval, feitos de imperadores e pares de França, conflitos da Reconquista e relatos da fundação de Ourique, aclimatando tais arquétipos à realidade árdua dos vaqueiros e sertanejos brasileiros.
 
 ## Conexões e Relações Diretas
-* [[Literatura de Cordel]] -> preservou as formas poéticas nascidas no -> [[Galego-Português]]
-* [[Literatura de Cordel]] -> continuou a veicular a matéria épica da -> [[Reconquista Cristã]]
-* [[Literatura de Cordel]] -> manteve no imaginário popular a gesta de -> [[Afonso Henriques]]
+* [[Literatura de Cordel]] -> descende diretamente dos modelos métricos do -> [[Trovadorismo Galego-Português]]
+* [[Literatura de Cordel]] -> reelaborou narrativas cavaleirescas do -> [[Romanceiro Tradicional]]
+* [[Literatura de Cordel]] -> preservou memórias populares da fundação épica em -> [[1139-07-25 Batalha de Ourique]]
+* [[Literatura de Cordel]] -> ecoou os versos heroicos celebrados em -> [[Os Lusíadas]]
+* [[Literatura de Cordel]] -> articula-se historicamente com -> [[Língua Galego-Portuguesa]]
+* [[Literatura de Cordel]] -> articula-se historicamente com -> [[Chanson de Roland]]
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** Colonização lusa e transmissão da cultura oral medieval ibérica para o interior colonial brasileiro.
-* **Efeito / Impacto:** Manutenção vigorosa do romanceiro épico e cavalheiresco na arte e na identidade do Brasil.
-* **Atribuição Epistêmica:** Poetas e Cantadores Populares Nordestinos
+* **Causa / Premissa:** Presença duradoura da memória oral ibérica aliada à instalação de pequenas prensas tipográficas rurais no Nordeste brasileiro.
+* **Efeito / Impacto:** Preservação da poética medieval e dos ciclos heroicos europeus no coração da literatura popular sertaneja.
+* **Atribuição Epistêmica:** Investigações etnográficas e literárias de Luís da Câmara Cascudo e Ariano Suassuna.
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Tradição poética do [[Galego-Português]] e épica da [[Reconquista Cristã]].
-* **Eventos Laterais e Paralelos:** Doutrina de legitimidade celebrada na [[Aclamação Régia]].
-* **Desdobramentos e Posteridade:** Entronização cultural durante a [[1818-02-06 Aclamação de Dom João VI no Rio de Janeiro]].
+* **Precursores e Ancestralidade:** Romances orais e folhetos volantes produzidos em [[Lisboa]] e espalhados pelas províncias atlânticas.
+* **Eventos Laterais e Paralelos:** Tradições orais e narrativas métricas corporificadas pelos griots do [[Império do Mali]].
+* **Desdobramentos e Posteridade:** Consagração do cordel como patrimônio cultural imaterial brasileiro e fecundação da estética do Movimento Armorial.

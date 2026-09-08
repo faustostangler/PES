@@ -32,7 +32,7 @@ video_description: description of video
 All pipeline artifacts are systematically stored under:
 - `playground/cresmo/raw/<channel_name>/<video_id>.txt` (Stage 1)
 - `playground/cresmo/enriched/<channel_name>/<video_id>.md` (Stage 2 & Stage 2.5)
-- `playground/cresmo/enriched/<channel_name>/<video_id>.xml` (Stage 3)
+- `playground/cresmo/enriched/<channel_name>/<video_id>.json` (Stage 3)
 - `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and `_index.json` (Stage 4)
 - `playground/cresmo/wiki/MOCs/MOC_*.md` (Stage 5)
 - `playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md` (Stage 6)
@@ -57,11 +57,11 @@ Synchronic horizontal expander specializing in Axial Time (*Achsenzeit* - Karl J
 Target Skill File: [`cresmo-wide-expander`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-wide-expander/SKILL.md)
 
 #### cresmo-atomic
-Transforms expanded fluid text into autonomous, semantically dense Atomic Notes formatted for an Obsidian Second Brain vault. Enforces strict typologies (`entity`, `concept`, `event`, `process`), Big-Endian event titles, YAML frontmatter, declarative triple connections, causal attribution matrices, and bi-directional WikiLinks, outputting an XML batch. Extracts `channel_name` and `video_id` from the source header to construct source tags `#fonte/[channel_name]/[video_id]`.
+Transforms expanded fluid text into autonomous, semantically dense Atomic Notes formatted for an Obsidian Second Brain vault. Enforces strict typologies (`entity`, `concept`, `event`, `process`), Big-Endian event titles, YAML frontmatter, declarative triple connections, causal attribution matrices, and bi-directional WikiLinks, outputting a JSON array. Extracts `channel_name` and `video_id` from the source header to construct source tags `#fonte/[channel_name]/[video_id]`.
 Target Skill File: [`cresmo-atomic`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-atomic/SKILL.md)
 
 #### cresmo-moc-manager
-Reconciles incoming XML atomic notes with an active Obsidian Vault environment. Executes a 3-tier lookup protocol (`_index.json` -> Category MOCs -> Semantic audit), performs non-destructive incremental note merging, updates reciprocal back-links trans-textually, enforces tag governance (`#fonte/[channel_name]/[video_id]`), and integrates every note into narrative Maps of Content (MOCs) with zero orphaned notes.
+Reconciles incoming JSON atomic notes with an active Obsidian Vault environment. Executes a 3-tier lookup protocol (`_index.json` -> Category MOCs -> Semantic audit), performs non-destructive incremental note merging, updates reciprocal back-links trans-textually, enforces tag governance (`#fonte/[channel_name]/[video_id]`), and integrates every note into narrative Maps of Content (MOCs) with zero orphaned notes.
 Target Skill File: [`cresmo-moc-manager`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-moc-manager/SKILL.md)
 
 ### Cross-Cutting Style Dependency
@@ -82,8 +82,8 @@ Sequence: Ingestion -> `cresmo-expander` (Gap Filler) -> `cresmo-long-expander` 
 - **Stage 1 (Raw Ingestion)**: Ingests YouTube audio/playlists to `playground/cresmo/raw/<channel_name>/<video_id>.txt` with YAML metadata.
 - **Stage 2 (Gap Filler & Multi-Pass Densification)**: Multi-pass cleaning and Socratic gap densification via `cresmo-expander` into `playground/cresmo/enriched/<channel_name>/<video_id>.md`.
 - **Stage 2.5 (Expander - Longitudinal & Synchronic Deep Expansion)**: In-place enrichment of `playground/cresmo/enriched/<channel_name>/<video_id>.md` via `cresmo-long-expander` (*longue durée* and structural palimpsests) followed by `cresmo-wide-expander` (Axial Time and synchronic connected history).
-- **Stage 3 (Atomic Note Generation)**: Transforms enriched text into `<xml><nota>...</nota></xml>` batch in `playground/cresmo/enriched/<channel_name>/<video_id>.xml` via `cresmo-atomic`.
-- **Stage 4 (Proliferation & Indexing)**: Deterministically unpacks XML into individual atomic `.md` files under `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and updates `playground/cresmo/wiki/_index.json`.
+- **Stage 3 (Atomic Note Generation)**: Transforms enriched text into a JSON array of note objects in `playground/cresmo/enriched/<channel_name>/<video_id>.json` via `cresmo-atomic`.
+- **Stage 4 (Proliferation & Indexing)**: Deterministically unpacks JSON into individual atomic `.md` files under `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and updates `playground/cresmo/wiki/_index.json`.
 - **Stage 5 & 6 (MOC Management, Vault Graph Sync, & Reconciliation)**: Integrates notes into `playground/cresmo/wiki/MOCs/MOC_*.md`, enforces reciprocal back-links across existing vault notes, and saves reconciliation report to `playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md`.
 
 ### 2. Processing Pipeline (Stages 2 through 6)
@@ -94,8 +94,8 @@ Sequence: `cresmo-expander` -> `cresmo-long-expander` -> `cresmo-wide-expander` 
 Executed when the user wants to convert a raw or enriched transcript into atomic notes without performing vault proliferation or MOC reconciliation.
 Sequence: `cresmo-expander` -> `cresmo-atomic`
 
-### 4. XML Vault Integration Pipeline (Stages 4 through 6)
-Executed when the user already has an XML batch of atomic notes and wants to unpack, index, and reconcile them into an Obsidian vault.
+### 4. JSON Vault Integration Pipeline (Stages 4 through 6)
+Executed when the user already has a JSON batch of atomic notes and wants to unpack, index, and reconcile them into an Obsidian vault.
 Sequence: `parse_and_proliferate_notes` -> `cresmo-moc-manager`
 
 ### 5. Direct Sub-Skill Routing
@@ -111,7 +111,7 @@ When chaining sub-skills in multi-stage pipelines, `cresmo` enforces the followi
 All outputs MUST be saved under the designated pipeline structure:
 - Raw Transcripts Input: `playground/cresmo/raw/<channel_name>/<video_id>.txt`
 - Enriched Expander Output: `playground/cresmo/enriched/<channel_name>/<video_id>.md` (CRITICAL: Stage 2 and Stage 2.5 outputs are ALWAYS saved in `enriched/` and NEVER in `raw/`).
-- Atomic XML Output: `playground/cresmo/enriched/<channel_name>/<video_id>.xml`
+- Atomic JSON Output: `playground/cresmo/enriched/<channel_name>/<video_id>.json`
 - Atomic notes wiki proliferation directory: `playground/cresmo/wiki/<note_type>/` (where `<note_type>` is `entity`, `concept`, `event`, or `process`).
 - Obsidian Index SSOT: `playground/cresmo/wiki/_index.json`
 - MOC Files: `playground/cresmo/wiki/MOCs/MOC_*.md`
@@ -122,7 +122,7 @@ Stage Outputs:
 - **Stage 1 Output (Raw Ingestion - `cresmo_ingestion`)**: `playground/cresmo/raw/<channel_name>/<video_id>.txt` (Raw transcript text with YouTube YAML frontmatter metadata).
 - **Stage 2 Output (Gap Filler - `cresmo-expander`)**: `playground/cresmo/enriched/<channel_name>/<video_id>.md` (Progressive multi-pass pre-processing and Socratic gap densification; strictly continuous narrative Markdown prose without diagrams, tables, formulas, blockquotes, or bullet lists; saved in `enriched/`, never in `raw/`).
 - **Stage 2.5 Output (Expander - `cresmo-long-expander` & `cresmo-wide-expander`)**: In-place expansion of `playground/cresmo/enriched/<channel_name>/<video_id>.md` (Two sequential inner steps: Step 1 via `cresmo-long-expander` for Fernand Braudel's *longue durée*, multi-secular structural forces, and historical palimpsests; Step 2 via `cresmo-wide-expander` for Karl Jaspers' Axial Time, synchronic horizontal cross-sections, and trans-civilizational comparative dossiers; preserving `## Informações Complementares`).
-- **Stage 3 Output (Atomic Note Generation - `cresmo-atomic`)**: `playground/cresmo/enriched/<channel_name>/<video_id>.xml` (Strictly autonomous `<xml><nota>...</nota></xml>` XML container with Obsidian YAML frontmatter, strict typologies, and WikiLinks).
+- **Stage 3 Output (Atomic Note Generation - `cresmo-atomic`)**: `playground/cresmo/enriched/<channel_name>/<video_id>.json` (Strictly autonomous JSON array of note objects with Obsidian YAML frontmatter, strict typologies, and WikiLinks).
 - **Stage 4 Output (Proliferation & Indexing - `parse_and_proliferate_notes`)**: Individual Atomic Note `.md` files placed in `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and global registry updates in `playground/cresmo/wiki/_index.json`.
 - **Stage 5 & 6 Output (MOC Management & Graph Reconciliation - `cresmo-moc-manager`)**: MOC updates (`playground/cresmo/wiki/MOCs/MOC_*.md`), trans-text reciprocal bi-directional link synchronization across existing vault notes, and final Reconciliation Report (`playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md`).
 
@@ -137,8 +137,8 @@ Stage Outputs:
 5. **Execute Stage 2.5 (Expander - Longitudinal & Synchronic Deep Expansion)**: In-place deepen `playground/cresmo/enriched/<channel_name>/<video_id>.md`:
    - Step 1: Run `cresmo-long-expander` to incorporate Fernand Braudel's *longue durée*, multi-secular structural forces, 3-tier causal stratification, and historical palimpsests.
    - Step 2: Run `cresmo-wide-expander` to incorporate Karl Jaspers' Axial Time (*Achsenzeit*), synchronic horizontal cross-sections, and trans-civilizational comparative dossiers.
-6. **Execute Stage 3 (Atomic Note Generation - `cresmo-atomic`)**: Process enriched Markdown compendium into autonomous atomic notes wrapped in `<xml><nota>...</nota></xml>`. Enforce typologies, frontmatter metadata, source tags (`#fonte/[channel_name]/[video_id]`), and WikiLinks. Save result to `playground/cresmo/enriched/<channel_name>/<video_id>.xml`.
-7. **Execute Stage 4 (Proliferation & Indexing - `parse_and_proliferate_notes`)**: Unpack XML `<nota>` blocks into individual Markdown files under `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and update `playground/cresmo/wiki/_index.json`.
+6. **Execute Stage 3 (Atomic Note Generation - `cresmo-atomic`)**: Process enriched Markdown compendium into autonomous atomic notes formatted as a JSON array. Enforce typologies, frontmatter metadata, source tags (`#fonte/[channel_name]/[video_id]`), and WikiLinks. Save result to `playground/cresmo/enriched/<channel_name>/<video_id>.json`.
+7. **Execute Stage 4 (Proliferation & Indexing - `parse_and_proliferate_notes`)**: Unpack JSON note objects into individual Markdown files under `playground/cresmo/wiki/<note_type>/[Exact Note Title].md` and update `playground/cresmo/wiki/_index.json`.
 8. **Execute Stages 5 & 6 (MOC Management, Vault Graph Sync, & Reconciliation - `cresmo-moc-manager`)**:
    - Reconcile notes against `_index.json`, perform incremental merges, update trans-text reciprocal back-links, and weave each note into the appropriate narrative Map of Content under `playground/cresmo/wiki/MOCs/MOC_*.md`.
    - Save the definitive audit and reconciliation report to `playground/cresmo/enriched/<channel_name>/<video_id>_reconciliation.md`.

@@ -1,31 +1,31 @@
 ---
 type: concept
 content:
-  - historia
-  - economia
-domain: historia
-cluster: formacao-portugal
+  - economia/fiscalidade
+  - politica/diplomacia
+domain: historia_medieval
+cluster: instituicoes_militares
 source: marcelo-andrade/9IbNJ0EsTxI
-aliases: ["Parias", "Tributos das Párias"]
+aliases: ["Tributo de Párias", "Regime das Párias"]
 ---
 # Párias
 
 ## Definição e Análise Contextual
-As Párias foram vultosos tributos anuais em ouro amoedado e metais preciosos exigidos coercitivamente pelos monarcas cristãos do norte da Península Ibérica sobre os enfraquecidos reinos de taifas muçulmanos durante o século XI. Em troca desse tributo escorchante, os soberanos cristãos ofereciam salvaguarda militar nominal e comprometiam-se a não assaltar os territórios tributados.
-
-O mecanismo foi habilmente arquitetado por [[Afonso VI de Leão e Castela]], servindo para drenar as riquezas andaluzas e financiar a modernização bélica leonesa e as colossais construções da [[Abadia de Cluny]]. A opressão econômica e o desespero financeiro causados pela cobrança ininterrupta das párias forçaram os emires taifas a convocar o socorro do [[Império Almorávida]], ensejando a sangrenta colisão militar da [[1086-10-23 Batalha de Zalaca]].
+As párias constituíram um sistema de tributos monetários em ouro e prata que os reinos cristãos do norte da Península Ibérica impuseram aos reinos de taifas muçulmanos durante o século XI. Em contrapartida ao pagamento periódico desses vultosos valores em numerário, os soberanos cristãos comprometiam-se a prestar auxílio militar e a abster-se de campanhas de conquista territorial contra as cidades tributárias. Esse mecanismo drenou os recursos auríferos do Al-Andalus e do comércio saariano em benefício dos reinos cristãos, permitindo a nobres e monarcas financiar a fortificação de fronteiras e o recrutamento de hostes senhoriais e concelhias.
 
 ## Conexões e Relações Diretas
-* [[Párias]] -> sustentaram o erário e as forças de -> [[Afonso VI de Leão e Castela]]
-* [[Párias]] -> financiaram a expansão construtiva da -> [[Abadia de Cluny]]
-* [[Párias]] -> motivaram a intervenção invasora do -> [[Império Almorávida]]
+* [[Párias]] -> cobradas por soberanos como -> [[Afonso VI de Leão e Castela]]
+* [[Párias]] -> interrompidas militarmente após a vitória dos -> [[Almorávidas]]
+* [[Párias]] -> sustentadas pelo ouro comercializado em -> [[Sijilmassa]]
+* [[Párias]] -> financiaram as forças militares e defesas do -> [[Condado Portucalense]]
+* [[Párias]] -> participou ou integrou o contexto histórico de -> [[1086-10-23 Batalha de Zalaca]]
 
 ## Matriz Causal e Atribuição Epistêmica
-* **Causa / Premissa:** Desintegração do Califado de Córdova em taifas desunidas e superioridade militar dos reinos cristãos do norte.
-* **Efeito / Impacto:** Enriquecimento dos tesouros régios cristãos e contraofensiva almorávida que sacudiu a península.
-* **Atribuição Epistêmica:** [[Afonso VI de Leão e Castela]]
+* **Causa / Premissa:** Fragmentação do Califado de Córdova em taifas desunidas militarmente vulneráveis à cavalaria cristã.
+* **Efeito / Impacto:** Monetarização profunda das economias dos reinos cristãos do norte peninsular e dependência das rendas tributárias.
+* **Atribuição Epistêmica:** Diplomas régios de Leão e Navarra e crônicas historiográficas hispano-muçulmanas.
 
 ## Redes de Conexão e Contexto Cruzado
-* **Precursores e Ancestralidade:** Campanhas da [[Reconquista Cristã]].
-* **Eventos Laterais e Paralelos:** Vínculos dinásticos com o [[Ducado da Borgonha]].
-* **Desdobramentos e Posteridade:** Conflito em Zalaca e emergência do [[Condado Portucalense]].
+* **Precursores e Ancestralidade:** Costume consuetudinário de tributação de proteção e pagamento de resgates guerreiros.
+* **Eventos Laterais e Paralelos:** Cobrança simultânea de tributos e rendas mercantis em entrepostos bizantinos e italianos.
+* **Desdobramentos e Posteridade:** A Batalha de Zalaca de 1086 encerrou as párias e forçou a outorga da [[1096 Doação do Condado Portucalense]].

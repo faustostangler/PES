@@ -22,7 +22,9 @@ import sys
 import textwrap
 import time
 
-from typing import Callable
+from typing import Any, Callable
+
+from pydantic import BaseModel, Field, model_validator
 
 # Ensure script directory is in sys.path
 sys.path.insert(0, str(Path(__file__).parent.resolve()))
@@ -47,6 +49,7 @@ from cresmo_shared import (
     clear_session_history,
     load_processed_cresmo_log,
     parse_merged_transcriptions,
+    PROMPT_MAX_BYTES_INLINE,
     read_priority_entries,
     read_priority_video_ids,
     resolve_active_session,
@@ -66,7 +69,6 @@ POLL_FALLBACK_INTERVAL: int = 30
 
 # --- Payload & File Size Thresholds ---
 DEFAULT_STAGE2_PASSES: int = 3
-PROMPT_MAX_BYTES_INLINE: int = 120_000
 MIN_ENRICHED_EXISTING_BYTES: int = 500
 MIN_VALID_OUTPUT_BYTES: int = 300
 MIN_RECONCILIATION_LOG_BYTES: int = 200
@@ -83,14 +85,9 @@ INDEX_JSON_FILENAME: str = "_index.json"
 # --- Markers & Tag Delimiters ---
 TAG_MARKDOWN_H2: str = "## "
 TAG_COMPLEMENTARY_INFO: str = "## Informações Complementares"
-TAG_XML_OPEN: str = "<xml>"
-TAG_XML_CLOSE: str = "</xml>"
 
 # --- Compiled Regular Expressions ---
 YT_ID_PATTERN: re.Pattern[str] = re.compile(r"^.*-([a-zA-Z0-9_-]{11})$")
-NOTA_XML_PATTERN: re.Pattern[str] = re.compile(r"<nota>(.*?)</nota>", re.DOTALL)
-CDATA_START_PATTERN: re.Pattern[str] = re.compile(r"^\s*<!\[CDATA\[\s*")
-CDATA_END_PATTERN: re.Pattern[str] = re.compile(r"\s*\]\]>\s*$")
 TITLE_H1_BRACKET_PATTERN: re.Pattern[str] = re.compile(r"^\s*#\s+\[\[(.*?)\]\]", re.MULTILINE)
 TITLE_H1_PATTERN: re.Pattern[str] = re.compile(r"^\s*#\s+(.+)$", re.MULTILINE)
 BRACKETS_PATTERN: re.Pattern[str] = re.compile(r"\[\[(.*?)\]\]")
@@ -100,6 +97,188 @@ ALIASES_EXTRACT_PATTERN: re.Pattern[str] = re.compile(r"aliases:\s*\[(.*?)\]")
 TAGS_INLINE_PATTERN: re.Pattern[str] = re.compile(r"^tags:\s*\[(.*)\]$")
 INLINE_LIST_PATTERN: re.Pattern[str] = re.compile(r"^\[(.*)\]$")
 YAML_KEY_PATTERN: re.Pattern[str] = re.compile(r"^[a-zA-Z0-9_-]+:")
+
+
+# ==============================================================================
+# DOMAIN MODELS (DDD / Pydantic V2)
+# ==============================================================================
+
+class CausalMatrixModel(BaseModel):
+    """Causal attribution matrix for an atomic note."""
+
+    cause: str = ""
+    effect: str = ""
+    epistemic_attribution: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_keys(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            mapped: dict[str, str] = {}
+            for k, v in data.items():
+                k_norm = str(k).lower().strip()
+                if k_norm in {"causa", "premissa", "cause"}:
+                    mapped["cause"] = str(v).strip()
+                elif k_norm in {"efeito", "impacto", "effect"}:
+                    mapped["effect"] = str(v).strip()
+                elif k_norm in {"atribuicao_epistemica", "atribuicao", "epistemic_attribution"}:
+                    mapped["epistemic_attribution"] = str(v).strip()
+                else:
+                    mapped[str(k)] = str(v).strip()
+            return mapped
+        return data
+
+
+class CrossContextModel(BaseModel):
+    """Cross-context linking matrix for an atomic note."""
+
+    precursors: str = ""
+    lateral_events: str = ""
+    aftermath: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_keys(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            mapped: dict[str, str] = {}
+            for k, v in data.items():
+                k_norm = str(k).lower().strip()
+                if k_norm in {"precursores", "ancestralidade", "precursors"}:
+                    mapped["precursors"] = str(v).strip()
+                elif k_norm in {"eventos_laterais", "laterais", "lateral_events"}:
+                    mapped["lateral_events"] = str(v).strip()
+                elif k_norm in {"desdobramentos", "posteridade", "aftermath"}:
+                    mapped["aftermath"] = str(v).strip()
+                else:
+                    mapped[str(k)] = str(v).strip()
+            return mapped
+        return data
+
+
+class AtomicNoteModel(BaseModel):
+    """Domain model for Cresmo Atomic Note parsed from JSON."""
+
+    title: str
+    type: str = "concept"
+    content: list[str] = Field(default_factory=list)
+    domain: str = ""
+    cluster: str = ""
+    source: str = ""
+    aliases: list[str] = Field(default_factory=list)
+
+    definition: str = ""
+    direct_relations: list[str] = Field(default_factory=list)
+    causal_matrix: CausalMatrixModel | None = None
+    cross_context: CrossContextModel | None = None
+    markdown: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_fields(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        mapped = dict(data)
+
+        # Normalize type
+        raw_type = str(mapped.get("type", DEFAULT_NOTE_TYPE)).lower().strip()
+        if raw_type not in VALID_NOTE_TYPES:
+            raw_type = DEFAULT_NOTE_TYPE
+        mapped["type"] = raw_type
+
+        # Normalize title
+        raw_title = str(mapped.get("title", DEFAULT_NOTE_TITLE)).strip()
+        raw_title = BRACKETS_PATTERN.sub(r"\1", raw_title).strip()
+        mapped["title"] = CLEAN_TITLE_SANITIZE_PATTERN.sub("", raw_title).strip()
+
+        # Portuguese aliases mapping for definition
+        if "definicao" in mapped and "definition" not in mapped:
+            mapped["definition"] = mapped.pop("definicao")
+        elif "definicao_analise_contextual" in mapped and "definition" not in mapped:
+            mapped["definition"] = mapped.pop("definicao_analise_contextual")
+
+        # Portuguese aliases mapping for direct relations
+        if "conexoes" in mapped and "direct_relations" not in mapped:
+            mapped["direct_relations"] = mapped.pop("conexoes")
+        elif "conexoes_relacoes_diretas" in mapped and "direct_relations" not in mapped:
+            mapped["direct_relations"] = mapped.pop("conexoes_relacoes_diretas")
+
+        if isinstance(mapped.get("direct_relations"), str):
+            mapped["direct_relations"] = [
+                line.lstrip("*- ").strip()
+                for line in mapped["direct_relations"].splitlines()
+                if line.strip()
+            ]
+
+        # Portuguese aliases mapping for causal matrix
+        if "matriz_causal" in mapped and "causal_matrix" not in mapped:
+            mapped["causal_matrix"] = mapped.pop("matriz_causal")
+
+        # Portuguese aliases mapping for cross-context
+        if "redes_conexao" in mapped and "cross_context" not in mapped:
+            mapped["cross_context"] = mapped.pop("redes_conexao")
+
+        return mapped
+
+    def to_markdown(self) -> str:
+        """Render atomic note into standardized Obsidian Markdown format."""
+        if self.markdown and self.markdown.strip():
+            return normalize_yaml_tags(self.markdown)
+
+        # Build YAML frontmatter
+        lines = ["---", f"type: {self.type}"]
+        if self.content:
+            lines.append("content:")
+            for c in self.content:
+                lines.append(f"  - {c}")
+        if self.domain:
+            lines.append(f"domain: {self.domain}")
+        if self.cluster:
+            lines.append(f"cluster: {self.cluster}")
+        if self.source:
+            lines.append(f"source: {self.source}")
+        if self.aliases:
+            aliases_json = json.dumps(self.aliases, ensure_ascii=False)
+            lines.append(f"aliases: {aliases_json}")
+        lines.append("---")
+        lines.append(f"# {self.title}")
+        lines.append("")
+
+        # Section 1: Definition
+        lines.append("## Definição e Análise Contextual")
+        if self.definition and self.definition.strip():
+            lines.append(self.definition.strip())
+        lines.append("")
+
+        # Section 2: Direct Relations
+        lines.append("## Conexões e Relações Diretas")
+        if self.direct_relations:
+            for rel in self.direct_relations:
+                rel_str = rel.strip()
+                if not rel_str.startswith("* "):
+                    rel_str = f"* {rel_str}"
+                lines.append(rel_str)
+        lines.append("")
+
+        # Section 3: Causal Matrix
+        lines.append("## Matriz Causal e Atribuição Epistêmica")
+        if self.causal_matrix:
+            cm = self.causal_matrix
+            lines.append(f"* **Causa / Premissa:** {cm.cause}")
+            lines.append(f"* **Efeito / Impacto:** {cm.effect}")
+            lines.append(f"* **Atribuição Epistêmica:** {cm.epistemic_attribution}")
+        lines.append("")
+
+        # Section 4: Cross-Context Networks
+        lines.append("## Redes de Conexão e Contexto Cruzado")
+        if self.cross_context:
+            cc = self.cross_context
+            lines.append(f"* **Precursores e Ancestralidade:** {cc.precursors}")
+            lines.append(f"* **Eventos Laterais e Paralelos:** {cc.lateral_events}")
+            lines.append(f"* **Desdobramentos e Posteridade:** {cc.aftermath}")
+        lines.append("")
+
+        return "\n".join(lines)
+
 
 # --- Prompts & Directives ---
 STAGE2_PROMPT_TASK: str = (
@@ -136,8 +315,7 @@ CRESMO_WIDE_EXPANDER_PROMPT_TASK: str = (
     "enriching the '## Informações Complementares' section with trans-civilizational comparative dossiers.\n"
 )
 STAGE3_PRE_PROMPT: str = (
-    "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text inside "
-    "<xml> <notas><nota></nota></notas> tags.\n"
+    "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text as a structured JSON array of note objects.\n"
 )
 
 
@@ -177,6 +355,74 @@ def fetch_trajectory_response(
                 if partial:
                     return partial[-1]
                 return candidates[-1]
+        except Exception:
+            pass
+        time.sleep(POLL_SLEEP_SECONDS)
+    return ""
+
+
+def extract_json_payload(content: str) -> str | None:
+    """Extract valid JSON array or object string from model text output."""
+    content = content.strip()
+    # 1. Try direct parse
+    if (content.startswith("[") and content.endswith("]")) or (content.startswith("{") and content.endswith("}")):
+        try:
+            json.loads(content)
+            return content
+        except Exception:
+            pass
+
+    # 2. Try finding markdown code block ```json ... ``` or ``` ... ```
+    matches = re.findall(r"```(?:json)?\s*([\s\S]*?)\s*```", content)
+    for candidate in matches:
+        candidate_clean = candidate.strip()
+        if candidate_clean.startswith("[") or candidate_clean.startswith("{"):
+            try:
+                json.loads(candidate_clean)
+                return candidate_clean
+            except Exception:
+                continue
+
+    # 3. Try outermost bracket boundaries
+    start_bracket = content.find("[")
+    end_bracket = content.rfind("]")
+    if start_bracket != -1 and end_bracket > start_bracket:
+        candidate = content[start_bracket : end_bracket + 1].strip()
+        try:
+            json.loads(candidate)
+            return candidate
+        except Exception:
+            pass
+
+    return None
+
+
+def fetch_trajectory_response_json(
+    session_id: str,
+    timeout_seconds: int = DEFAULT_TRAJECTORY_TIMEOUT_SECONDS,
+) -> str:
+    """Scan transcript.jsonl for complete MODEL response containing valid atomic JSON."""
+    log_path = BRAIN_DIR / session_id / ".system_generated" / "logs" / "transcript.jsonl"
+    if not log_path.exists():
+        return ""
+
+    start = time.time()
+    while time.time() - start < timeout_seconds:
+        try:
+            with open(log_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+
+            for line in reversed(lines):
+                try:
+                    entry = json.loads(line.strip())
+                    if entry.get("source") == "MODEL" and entry.get("content"):
+                        content = str(entry["content"]).strip()
+                        if content and not content.startswith("{") and "send-message" not in content:
+                            extracted = extract_json_payload(content)
+                            if extracted:
+                                return extracted
+                except Exception:
+                    continue
         except Exception:
             pass
         time.sleep(POLL_SLEEP_SECONDS)
@@ -228,19 +474,29 @@ def is_valid_enriched_markdown(file_path: Path, min_bytes: int = MIN_VALID_OUTPU
         return False
 
 
-def is_valid_atomic_xml(file_path: Path, min_bytes: int = MIN_VALID_OUTPUT_BYTES) -> bool:
-    """Validate that atomic XML contains properly delimited note tags."""
+def is_valid_atomic_json(file_path: Path, min_bytes: int = MIN_VALID_OUTPUT_BYTES) -> bool:
+    """Validate that atomic JSON file contains valid non-empty array of atomic note objects."""
     if not file_path.exists():
         return False
     try:
         if file_path.stat().st_size < min_bytes:
             return False
         content = file_path.read_text(encoding="utf-8").strip()
-        has_xml_tags = (TAG_XML_OPEN in content and TAG_XML_CLOSE in content) or (
-            "<notas>" in content and "</notas>" in content
-        )
-        has_nota = "<nota>" in content and "</nota>" in content
-        return (has_xml_tags or has_nota) and len(content) >= min_bytes
+        data = json.loads(content)
+        notes = data if isinstance(data, list) else data.get("notes", [])
+        if not isinstance(notes, list) or len(notes) == 0:
+            return False
+        first = notes[0]
+        if isinstance(first, dict):
+            return bool(
+                first.get("title")
+                or first.get("markdown")
+                or first.get("definition")
+                or first.get("definicao")
+            )
+        elif isinstance(first, str):
+            return len(first.strip()) > 0
+        return False
     except Exception:
         return False
 
@@ -419,9 +675,9 @@ def cresmo_expander(
     """
     video_id = meta.get("video_id", enriched_file.stem)
 
-    # Downstream guard: if atomic XML notes are already generated, skip unless force=True
-    xml_output_file = enriched_file.parent / f"{video_id}.xml"
-    if not force and is_valid_atomic_xml(xml_output_file, MIN_VALID_OUTPUT_BYTES):
+    # Downstream guard: if atomic JSON notes are already generated, skip unless force=True
+    json_output_file = enriched_file.parent / f"{video_id}.json"
+    if not force and is_valid_atomic_json(json_output_file, MIN_VALID_OUTPUT_BYTES):
         return enriched_file
 
     if not enriched_file.exists():
@@ -554,15 +810,15 @@ def cresmo_notes(
     isolate_context: bool = True,
     restart_server: bool = False,
 ) -> tuple[Path, bool]:
-    """Stage 3: Atomic Note Generation (cresmo-atomic). Returns (xml_file, is_newly_generated)."""
+    """Stage 3: Atomic Note Generation (cresmo-atomic). Returns (json_file, is_newly_generated)."""
     video_id = meta.get("video_id", enriched_file.stem)
-    xml_output_file = enriched_file.parent / f"{video_id}.xml"
+    json_output_file = enriched_file.parent / f"{video_id}.json"
 
-    if not force and is_valid_atomic_xml(xml_output_file, MIN_VALID_OUTPUT_BYTES):
-        return xml_output_file, False
+    if not force and is_valid_atomic_json(json_output_file, MIN_VALID_OUTPUT_BYTES):
+        return json_output_file, False
 
     if not enriched_file.exists():
-        return xml_output_file, False
+        return json_output_file, False
 
     enriched_text = enriched_file.read_text(encoding="utf-8")
     skill_doc = SKILL_ATOMIC_PATH.read_text(encoding="utf-8") if SKILL_ATOMIC_PATH.exists() else ""
@@ -570,7 +826,7 @@ def cresmo_notes(
 
     prompt = STAGE3_PRE_PROMPT + (
         f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
-        f"Save output directly to file: {xml_output_file.resolve()}\n\n"
+        f"Save output directly to file: {json_output_file.resolve()}\n\n"
         f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
         f"--- ENRICHED TEXT ---\n{safe_enriched}"
     )
@@ -578,16 +834,15 @@ def cresmo_notes(
     if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
         prompt = STAGE3_PRE_PROMPT + (
             f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
-            f"Save output directly to file: {xml_output_file.resolve()}\n"
+            f"Save output directly to file: {json_output_file.resolve()}\n"
             f"Input enriched file: {enriched_file.resolve()}\n"
             f"Skill specification: {SKILL_ATOMIC_PATH.resolve()}\n"
-            f"Please read the input file, apply cresmo-atomic skill, and write the XML result directly to {xml_output_file.resolve()}."
+            f"Please read the input file, apply cresmo-atomic skill, and write the JSON array result directly to {json_output_file.resolve()}."
         )
 
     if isolate_context:
         clear_session_history(session_id, restart_server=restart_server)
         prompt = SENTINEL_PREFIX + prompt
-
 
     dispatch_time = time.time()
     send_agent_message(prompt, session_id)
@@ -595,33 +850,33 @@ def cresmo_notes(
     # Poll for Option A direct file write with periodic Option B trajectory fallback
     for attempt in range(1, POLL_MAX_ATTEMPTS + 1):
         if (
-            xml_output_file.exists()
-            and xml_output_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
-            and is_valid_atomic_xml(xml_output_file, MIN_VALID_OUTPUT_BYTES)
+            json_output_file.exists()
+            and json_output_file.stat().st_mtime >= (dispatch_time - POLL_DISPATCH_TIME_BUFFER)
+            and is_valid_atomic_json(json_output_file, MIN_VALID_OUTPUT_BYTES)
         ):
-            print(f"  ✓ [Stage 3 Success] Atomic XML generated -> {xml_output_file}")
-            return xml_output_file, True
+            print(f"  ✓ [Stage 3 Success] Atomic JSON generated -> {json_output_file}")
+            return json_output_file, True
 
         # Option B: Periodic check for agent textual completion in trajectory every 30 attempts
         if attempt % POLL_FALLBACK_INTERVAL == 0:
-            content = fetch_trajectory_response(session_id, TAG_XML_OPEN, TAG_XML_CLOSE)
+            content = fetch_trajectory_response_json(session_id)
             if content:
-                xml_output_file.write_text(content, encoding="utf-8")
-                print(f"  ✓ [Stage 3 Fast Fallback Success] Saved Atomic XML -> {xml_output_file}")
-                return xml_output_file, True
+                json_output_file.write_text(content, encoding="utf-8")
+                print(f"  ✓ [Stage 3 Fast Fallback Success] Saved Atomic JSON -> {json_output_file}")
+                return json_output_file, True
 
         if _is_quota_reached(session_id):
             dispatch_time = time.time()
             send_agent_message(prompt, session_id)
         time.sleep(POLL_SLEEP_SECONDS)
 
-    content = fetch_trajectory_response(session_id, TAG_XML_OPEN, TAG_XML_CLOSE)
+    content = fetch_trajectory_response_json(session_id)
     if content:
-        xml_output_file.write_text(content, encoding="utf-8")
-        print(f"  ✓ [Stage 3 Fallback Success] Saved Atomic XML -> {xml_output_file}")
-        return xml_output_file, True
+        json_output_file.write_text(content, encoding="utf-8")
+        print(f"  ✓ [Stage 3 Fallback Success] Saved Atomic JSON -> {json_output_file}")
+        return json_output_file, True
 
-    return xml_output_file, False
+    return json_output_file, False
 
 
 def normalize_yaml_tags(content: str) -> str:
@@ -787,17 +1042,24 @@ def normalize_yaml_tags(content: str) -> str:
 
 
 def parse_and_proliferate_notes(
-    xml_file: Path,
+    json_file: Path,
     cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR,
     force: bool = False,
 ) -> list[Path]:
-    """Parses <xml><nota>...</nota></xml>, saves individual .md files into cresmo/wiki/<note_type>/, and updates _index.json."""
-    if not xml_file.exists():
+    """Parses JSON atomic notes, saves individual .md files into cresmo/wiki/<note_type>/, and updates _index.json."""
+    if not json_file.exists():
         return []
 
-    xml_text = xml_file.read_text(encoding="utf-8")
-    note_blocks = NOTA_XML_PATTERN.findall(xml_text)
-    created_files = []
+    try:
+        raw_content = json_file.read_text(encoding="utf-8").strip()
+        data = json.loads(raw_content)
+        notes_list = data if isinstance(data, list) else data.get("notes", [])
+    except Exception as e:
+        print(f"  ❌ [Proliferation Error] Failed to parse JSON from {json_file}: {e}")
+        return []
+
+    if not isinstance(notes_list, list):
+        return []
 
     index_file = cresmo_wiki_dir / INDEX_JSON_FILENAME
     index_data = {"notes": {}}
@@ -809,74 +1071,75 @@ def parse_and_proliferate_notes(
         except Exception:
             index_data = {"notes": {}}
 
-    for block in note_blocks:
-        block = block.strip()
-        if not block:
+    created_files = []
+    processed_count = 0
+
+    for raw_note in notes_list:
+        try:
+            if isinstance(raw_note, str):
+                # Raw markdown string in array
+                block = normalize_yaml_tags(raw_note)
+                title_match = TITLE_H1_PATTERN.search(block)
+                raw_title = title_match.group(1).strip() if title_match else DEFAULT_NOTE_TITLE
+                note_title = BRACKETS_PATTERN.sub(r"\1", raw_title).strip()
+                clean_title = CLEAN_TITLE_SANITIZE_PATTERN.sub("", note_title).strip()
+
+                type_match = TYPE_EXTRACT_PATTERN.search(block)
+                note_type = type_match.group(1).lower().strip() if type_match else DEFAULT_NOTE_TYPE
+                if note_type not in VALID_NOTE_TYPES:
+                    note_type = DEFAULT_NOTE_TYPE
+
+                aliases = []
+                aliases_match = ALIASES_EXTRACT_PATTERN.search(block)
+                if aliases_match:
+                    aliases = [a.strip().strip("'\"") for a in aliases_match.group(1).split(",") if a.strip()]
+                md_content = block
+            elif isinstance(raw_note, dict):
+                note_model = AtomicNoteModel.model_validate(raw_note)
+                clean_title = note_model.title
+                note_type = note_model.type
+                aliases = note_model.aliases
+                md_content = note_model.to_markdown()
+            else:
+                continue
+
+            processed_count += 1
+            type_dir = cresmo_wiki_dir / note_type
+            type_dir.mkdir(parents=True, exist_ok=True)
+            note_file = type_dir / f"{clean_title}.md"
+
+            # Non-destructive preservation: Only write if note does not exist, or force is True
+            if not note_file.exists() or force:
+                note_file.write_text(md_content, encoding="utf-8")
+                created_files.append(note_file)
+            else:
+                print(f"  ℹ [Vault Match] '{clean_title}.md' already exists in vault -> preserved for Stage 5/6 incremental merging")
+
+            # Update index entry
+            rel_path = f"{note_type}/{clean_title}.md"
+            existing_aliases = index_data["notes"].get(clean_title, {}).get("aliases", [])
+            combined_aliases = sorted(list(set(existing_aliases + aliases)))
+            index_data["notes"][clean_title] = {
+                "type": note_type,
+                "path": rel_path,
+                "aliases": combined_aliases,
+            }
+        except Exception as err:
+            print(f"  ⚠️ [Proliferation Warning] Failed to process note item: {err}")
             continue
 
-        # Strip CDATA tags if present
-        block = CDATA_START_PATTERN.sub("", block)
-        block = CDATA_END_PATTERN.sub("", block)
-        block = block.replace("<![CDATA[", "").replace("]]>", "").strip()
-        block = textwrap.dedent(block).strip()
-
-        block = normalize_yaml_tags(block)
-
-        # Clean H1 title in block if it has [[ ]]
-        block = TITLE_H1_BRACKET_PATTERN.sub(r"# \1", block)
-
-        # Extract title from # [Title] (allowing optional leading whitespace)
-        title_match = TITLE_H1_PATTERN.search(block)
-        note_title = title_match.group(1).strip() if title_match else DEFAULT_NOTE_TITLE
-        note_title = BRACKETS_PATTERN.sub(r"\1", note_title).strip()
-        clean_title = CLEAN_TITLE_SANITIZE_PATTERN.sub("", note_title).strip()
-
-        # Extract type from frontmatter YAML
-        type_match = TYPE_EXTRACT_PATTERN.search(block)
-        note_type = type_match.group(1).lower().strip() if type_match else DEFAULT_NOTE_TYPE
-        if note_type not in VALID_NOTE_TYPES:
-            note_type = DEFAULT_NOTE_TYPE
-
-        # Extract aliases from frontmatter YAML
-        aliases = []
-        aliases_match = ALIASES_EXTRACT_PATTERN.search(block)
-        if aliases_match:
-            aliases = [a.strip().strip("'\"") for a in aliases_match.group(1).split(",") if a.strip()]
-
-        type_dir = cresmo_wiki_dir / note_type
-        type_dir.mkdir(parents=True, exist_ok=True)
-
-        note_file = type_dir / f"{clean_title}.md"
-
-        # Non-destructive preservation: Only write if note does not exist, or force is True
-        if not note_file.exists() or force:
-            note_file.write_text(block, encoding="utf-8")
-            created_files.append(note_file)
-        else:
-            print(f"  ℹ [Vault Match] '{clean_title}.md' already exists in vault -> preserved for Stage 5/6 incremental merging")
-
-        # Update index entry
-        rel_path = f"{note_type}/{clean_title}.md"
-        existing_aliases = index_data["notes"].get(clean_title, {}).get("aliases", [])
-        combined_aliases = sorted(list(set(existing_aliases + aliases)))
-        index_data["notes"][clean_title] = {
-            "type": note_type,
-            "path": rel_path,
-            "aliases": combined_aliases,
-        }
-
-    if len(created_files) > 0 or len(note_blocks) > 0:
+    if len(created_files) > 0 or processed_count > 0:
         index_file.write_text(json.dumps(index_data, ensure_ascii=False, indent=2), encoding="utf-8")
         if created_files:
             print(f"  ✓ [Proliferation] Unpacked {len(created_files)} new atomic .md note(s) & updated {INDEX_JSON_FILENAME} in {cresmo_wiki_dir}")
         else:
-            print(f"  ✓ [Proliferation] All {len(note_blocks)} note(s) already existed in vault & updated {INDEX_JSON_FILENAME}")
+            print(f"  ✓ [Proliferation] All {processed_count} note(s) already existed in vault & updated {INDEX_JSON_FILENAME}")
 
     return created_files
 
 
 def cresmo_moc_manager(
-    xml_file: Path,
+    json_file: Path,
     meta: dict,
     session_id: str,
     cresmo_dir: Path = DEFAULT_CRESMO_DIR,
@@ -886,8 +1149,8 @@ def cresmo_moc_manager(
     restart_server: bool = False,
 ) -> Path:
     """Stage 5 & 6: MOC Management, Vault Graph Sync, & Reconciliation (cresmo-moc-manager)."""
-    video_id = meta.get("video_id", xml_file.stem)
-    reconciliation_log = xml_file.parent / f"{video_id}_reconciliation.md"
+    video_id = meta.get("video_id", json_file.stem)
+    reconciliation_log = json_file.parent / f"{video_id}_reconciliation.md"
     index_file = cresmo_wiki_dir / INDEX_JSON_FILENAME
 
     # Skip if reconciliation log already exists — stages 5 & 6 are complete for this video.
@@ -895,11 +1158,11 @@ def cresmo_moc_manager(
         return reconciliation_log
 
     skill_doc = SKILL_MOC_MANAGER_PATH.read_text(encoding="utf-8") if SKILL_MOC_MANAGER_PATH.exists() else ""
-    xml_content = xml_file.read_text(encoding="utf-8") if xml_file.exists() else ""
-    safe_xml = sanitize_untrusted_content(xml_content, source_label=xml_file.name)
+    json_content = json_file.read_text(encoding="utf-8") if json_file.exists() else ""
+    safe_json = sanitize_untrusted_content(json_content, source_label=json_file.name)
 
     pre_prompt = (
-        f"You are Cresmo MOC Manager. Reconcile the XML atomic notes into the Obsidian vault at '{cresmo_wiki_dir.resolve()}'.\n"
+        f"You are Cresmo MOC Manager. Reconcile the JSON atomic notes into the Obsidian vault at '{cresmo_wiki_dir.resolve()}'.\n"
     )
 
     prompt = pre_prompt + (
@@ -908,13 +1171,24 @@ def cresmo_moc_manager(
         f"1. Weave and integrate the new atomic notes into the relevant narrative Map of Content (MOC) under '{cresmo_wiki_dir.resolve()}/MOCs/' using file writing/editing tools.\n"
         f"2. FINAL STEP: Save the reconciliation report directly to: {reconciliation_log.resolve()} using write_to_file.\n"
         f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
-        f"--- XML ATOMIC NOTES BATCH ---\n{safe_xml}"
+        f"--- JSON ATOMIC NOTES BATCH ---\n{safe_json}"
     )
+
+    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+        prompt = pre_prompt + (
+            f"NOTE: All atomic notes and '{index_file.resolve()}' have ALREADY been unpacked and indexed by the pipeline.\n"
+            f"Your tasks are:\n"
+            f"1. Weave and integrate the new atomic notes into the relevant narrative Map of Content (MOC) under '{cresmo_wiki_dir.resolve()}/MOCs/' using file writing/editing tools.\n"
+            f"2. FINAL STEP: Save the reconciliation report directly to: {reconciliation_log.resolve()} using write_to_file.\n"
+            f"Input JSON atomic notes reference: {json_file.resolve()}\n"
+            f"Input index reference: {index_file.resolve()}\n"
+            f"Skill specification: {SKILL_MOC_MANAGER_PATH.resolve()}\n"
+            f"Please read the input JSON and index, apply cresmo-moc-manager skill to weave the notes into the MOCs, and save the reconciliation report directly to {reconciliation_log.resolve()}."
+        )
 
     if isolate_context:
         clear_session_history(session_id, restart_server=restart_server)
         prompt = SENTINEL_PREFIX + prompt
-
 
     dispatch_time = time.time()
     send_agent_message(prompt, session_id)
@@ -1026,8 +1300,8 @@ def process_candidate_blocks(
 
         # Derive the completion sentinel path (written only after stage 6 finishes).
         # If it exists, this video was fully processed end-to-end — skip stages 3-6.
-        xml_file = enriched_dir / channel / f"{video_id}.xml"
-        reconciliation_log = xml_file.parent / f"{video_id}_reconciliation.md"
+        json_file = enriched_dir / channel / f"{video_id}.json"
+        reconciliation_log = json_file.parent / f"{video_id}_reconciliation.md"
         if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
             print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
             continue
@@ -1055,7 +1329,7 @@ def process_candidate_blocks(
         )
 
         # Stage 3 & 4: Atomic Generator & Proliferation
-        xml_file, is_newly_generated = cresmo_notes(
+        json_file, is_newly_generated = cresmo_notes(
             enriched_file,
             meta,
             session_id,
@@ -1065,11 +1339,11 @@ def process_candidate_blocks(
             restart_server=restart_server,
         )
         # Idempotently unpack atomic notes and update _index.json (preserves existing notes unless force=True)
-        parse_and_proliferate_notes(xml_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
+        parse_and_proliferate_notes(json_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
 
         # Stage 5 & 6: MOC Manager & Graph Reconciliation
         cresmo_moc_manager(
-            xml_file,
+            json_file,
             meta,
             session_id,
             cresmo_dir=cresmo_dir,
