@@ -235,5 +235,29 @@ Do NOT write individual files via bash scripts or tool loops. The pipeline will 
 ]
 ```
 
+---
+
+## Large Payload Architecture & Intermediate Scratch Lifecycle
+
+When processing large transcripts where the extracted atomic batch exceeds operational buffer thresholds, the agent is explicitly authorized and expected to adopt an intermediate staged architectural pattern.
+
+### Operational Thresholds Defining a "Large Payload":
+- **Total Output Size**: Estimated or measured JSON payload $> 50\text{ KB}$ (or $> 25,000\text{ characters}$ / $\approx 10,000\text{ tokens}$).
+- **Node Count**: Batch containing $> 30$ atomic notes.
+- **Graph Complexity**: High-density intra-batch relational cross-linking requiring mathematical closure ($A \to B \iff B \to A$) across dozens of nodes.
+
+### Permitted Intermediate Architectural Pattern:
+1. **Modular Chunk Staging**: The agent may segment note definitions across temporary modular files in the workspace scratch directory (e.g., `scratch/atomic_group*.py` or temporary JSON chunk files).
+2. **Automated Programmatic Quality Gate**: The agent may write and execute an assembly/audit script in `scratch/` to:
+   - Programmatically compute bidirectional graph reconciliation (adding missing reciprocal links so that $A \to B \implies B \to A$).
+   - Perform orphan closure audits against `wiki/_index.json`.
+   - Run regex checks enforcing zero em-dashes (`—`) and zero binary antitheses across 100% of the notes.
+   - Validate each note against `AtomicNoteModel` (Pydantic V2).
+3. **Single Source of Truth Target Write**: The assembled batch must be written in a single consolidated write operation directly to `cresmo/enriched/<channel_name>/<video_id>.json`.
+4. **Mandatory Post-Assembly Scratch Cleanup**: Once the final JSON file is verified as valid (`is_valid_atomic_json(target_file) == True`) and non-empty, the agent **MUST immediately delete all temporary scratch scripts, chunks, and cached files** created during the intermediate stage. No temporary scratch files may be left behind in the workspace after task completion.
+
+---
+
 Save output directly to `cresmo/enriched/<channel_name>/<video_id>.json`.
 Do not output any introductory greetings, conversational commentary, or postscripts outside the JSON payload.
+

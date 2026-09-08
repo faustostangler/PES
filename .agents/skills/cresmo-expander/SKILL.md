@@ -128,9 +128,30 @@ In this footnotes section, provide numbered continuous paragraphs detailing mini
 
 ---
 
+## Large Payload Staging & Scratch Cleanup Protocol
+
+When processing extensive transcripts where the resulting enriched Markdown compendium exceeds operational buffer thresholds, the agent is explicitly authorized to adopt an intermediate staging pattern:
+
+### Operational Thresholds Defining a "Large Payload":
+- **Text Volume**: Source transcript $> 30\text{ KB}$ or expected enriched text $> 35\text{ KB}$ (or $> 20,000\text{ characters}$ / $\approx 8,000\text{ tokens}$).
+- **Structural Complexity**: Narrative covering multiple chronological eras with $> 15$ numbered entries in `Informações Complementares`.
+
+### Permitted Intermediate Architectural Workflow:
+1. **Sectional Scratch Staging**: The agent may stage multi-pass gap expansions across temporary modular files in `scratch/` (e.g., `scratch/build_group*.py` or section chunk files) to prevent tool payload truncation.
+2. **Programmatic Style & Integrity Audit**: The agent may execute an assembly script in `scratch/` to verify:
+   - Zero em-dashes (`—`) across all paragraphs.
+   - Zero binary antitheses (`não ... mas`, `não apenas ... mas também`, `não se trata de ... e sim`).
+   - Zero frontmatter blocks (starting directly with `##` on Line 1).
+   - Validation against `is_valid_enriched_markdown`.
+3. **Target Delivery**: The final assembled text must be written directly to `cresmo/enriched/<channel_name>/<video_id>.md`.
+4. **Mandatory Post-Generation Scratch Cleanup**: Once the final Markdown file is written and confirmed valid (`is_valid_enriched_markdown(target_file) == True`), the agent **MUST immediately delete all temporary intermediate scratch scripts, chunks, and cached files**. No temporary scratch files may be left in the workspace.
+
+---
+
 ## File Delivery Directive
 
 Write the final output directly to the `enriched` directory:
 `cresmo/enriched/<channel_name>/<video_id>.md`
 
 Do not output meta-commentary, conversational preambles, or postscripts.
+
