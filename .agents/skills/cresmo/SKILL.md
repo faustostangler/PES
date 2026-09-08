@@ -128,6 +128,27 @@ Stage Outputs:
 
 ---
 
+## Large Payload Strategy & Temporary Artifact Lifecycle Protocol
+
+When pipeline stages (specifically Stage 2/2.5 narrative densification and Stage 3 atomic extraction) generate large payloads that challenge LLM output token limits, tool payload thresholds, or combinatorial graph operations, the agent is explicitly authorized to adopt an intermediate staged architectural pattern.
+
+### Operational Thresholds Defining a "Large Payload":
+- **File / Payload Size Threshold**: Estimated or measured text/JSON payload $> 50\text{ KB}$ (or $> 25,000\text{ characters}$ / $\approx 10,000\text{ tokens}$).
+- **Entity / Note Count Threshold**: Batches containing $> 30$ atomic notes or multi-era historical compendiums with $> 15$ complementary annotations.
+- **Relational Complexity**: High-density intra-batch relational hyperlinking requiring programmatic graph closure ($A \to B \iff B \to A$) and orphan closure against `_index.json`.
+
+### Permitted Intermediate Architectural Workflow:
+1. **Modular Scratch Staging**: The agent may segment generation into temporary modular files inside the workspace scratch directory (e.g., `scratch/build_group*.py`, `scratch/atomic_group*.py`, or temporary section chunks).
+2. **Programmatic Quality & Graph Gate**: The agent may write and execute an assembly/audit script in `scratch/` to programmatically:
+   - Audit and enforce strict style rules: zero em-dashes (`—`) and zero binary antitheses across 100% of the content.
+   - Resolve and reconcile 100% of `[[WikiLinks]]` against `wiki/_index.json` and the active batch.
+   - Mathematically compute and insert all reciprocal backlinks ($A \to B \implies B \to A$).
+   - Validate schema correctness (e.g., `AtomicNoteModel` or `is_valid_enriched_markdown`).
+3. **Canonical Single Source of Truth Write**: The final consolidated output must be written directly to its designated pipeline path (`cresmo/enriched/<channel_name>/<video_id>.md` or `cresmo/enriched/<channel_name>/<video_id>.json`).
+4. **Mandatory Immediate Scratch Cleanup**: Once the final target file is written and validated against its corresponding pipeline gate (`is_valid_enriched_markdown` or `is_valid_atomic_json`), the agent **MUST immediately clean up and delete all temporary intermediate scratch scripts, chunks, and cached files**. No intermediate scratch artifacts may remain in the workspace upon step completion.
+
+---
+
 ## Operational Execution Protocol
 
 1. **Analyze Intent**: Determine whether the user requires the full end-to-end pipeline (Stages 1 through 6), the processing pipeline (Stages 2 through 6), an intermediate stage, or a single isolated sub-skill.
