@@ -7,7 +7,7 @@ description: Converts expanded fluid text into a collection of interconnected At
 
 ## Overview
 
-The `cresmo-atomic` skill processes expanded narrative Markdown texts (from `cresmo-expander` or existing clean drafts) and extracts a **complete set** of autonomous, semantically dense **Atomic Notes** for an Obsidian Second Brain vault.
+The `cresmo-atomic` skill processes expanded narrative Markdown texts (from `cresmo-expander` or existing clean drafts) and extracts a **complete set** of autonomous, semantically dense **Atomic Notes** for an Obsidian Second Brain vault. It operates under an **update-first paradigm**: when entities or concepts are already cataloged in `cresmo/wiki/_index.json`, the skill targets those existing nodes for **enrichment and update** rather than generating duplicate notes or omitting them, minting new atomic notes only for genuinely unindexed entities.
 
 All narrative prose written within the atomic notes must adhere strictly to the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md), structuring explanations across two or three implicit levels of technical detail and specific vocabulary (precision words for specialists, paired with metaphorical explanations for non-specialists), with high conceptual density, low verbosity, second-order mechanisms, affirmative syntax, zero em-dashes (`—`), and zero binary antitheses.
 
@@ -22,8 +22,10 @@ Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
 1. **Principle of Atomicity**: Each note must cover a single autonomous idea, entity, historical event, or dynamic process, containing all necessary context to be fully understandable on its own.
 2. **Semantic Density & Style Compliance**: Avoid empty notes. Every note must extract full factual substance and conceptual rigor, complying with the [`cresmo-style-guide`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/cresmo-style-guide/SKILL.md): structure the explanation across two or three implicit levels of technical detail, combining domain precision words for specialists with structuring metaphorical explanations for non-specialists, high conceptual density, low verbosity, second-order mechanisms, zero em-dashes (`—`), and zero binary antitheses.
 3. **Internal WikiLinks Syntax**: Every mention of another note within the vault must be formatted as `[[Exact Note Title]]` or `[[Exact Note Title|Flexed Surface Text]]`.
-4. **Resolution of Orphan Terms**: No note may reference a non-existent node. If any `[[WikiLink]]` target appears in any note body, the corresponding atomic note MUST either (a) already exist in the vault as registered in `cresmo/wiki/_index.json`, or (b) be included as a new note in the current XML batch. Consult `_index.json` before generating a new note to avoid duplicating existing vault entries and to resolve aliases.
-5. **Principle of Exhaustive Extraction**: The entire source text — every paragraph, every sentence, every supplementary section — must be systematically scanned for extractable entities. No noteworthy item may be silently omitted. The output batch must capture the full semantic content of the source text as a self-contained knowledge graph.
+4. **Resolution of Orphan Terms & Update-Over-Creation Governance**: No note may reference a non-existent node. If any `[[WikiLink]]` target appears in any note body, the corresponding atomic note MUST either (a) already exist in the vault as registered in `cresmo/wiki/_index.json`, or (b) be included in the current XML batch. Consult `cresmo/wiki/_index.json` before generating notes:
+   - **Update Existing Notes (Do Not Create Duplicates)**: If an entity, concept, event, or process is already registered in `_index.json` (matched by canonical title or any registered alias), the agent MUST NOT create a new note under a different title or surface variation. The note emitted in the XML batch MUST reuse the exact canonical title and type from `_index.json`. The note body is enriched with the new source text's facts, mechanisms, triples, and causal connections, serving as an update payload for `cresmo-moc-manager` rather than spawning a duplicate file.
+   - **Create New Notes Only When Unindexed**: Only when an entity is genuinely novel and absent from `_index.json` does the agent mint a new canonical title and create a new atomic note.
+5. **Principle of Exhaustive Extraction**: The entire source text, including every paragraph, sentence, and supplementary section, must be systematically scanned for extractable entities. No noteworthy item may be silently omitted. The output batch must capture the full semantic content of the source text as a self-contained knowledge graph.
 
 ---
 
@@ -31,26 +33,34 @@ Save output directly to `cresmo/enriched/<channel_name>/<video_id>.xml`.
 
 The extraction process follows a **three-pass sequential sweep** over the complete source text. No paragraph may be skipped. No section may be deprioritized.
 
-### Pass 1 — Paragraph-by-Paragraph Sequential Scan
+### Pass 1: Paragraph-by-Paragraph Sequential Scan
 
-Process the source text from beginning to end, paragraph by paragraph. For each paragraph:
+Process the source text from beginning to end, paragraph by paragraph:
 
 1. **Identify every proper noun**: persons, places, institutions, documents, works, organizations, infrastructure, geographic features, hydrographic features, political entities, languages, and any other named thing.
 2. **Identify every dated event**: any event with an explicit temporal marker (year, month, full date, approximate period) generates an `event` note with Big-Endian date prefix.
-3. **Identify every domain-specific concept**: specialized terminology, processes, social phenomena, doctrines, legal constructs, technical methods, scientific principles, philosophical frameworks — anything that requires domain knowledge to understand.
+3. **Identify every domain-specific concept**: specialized terminology, processes, social phenomena, doctrines, legal constructs, technical methods, scientific principles, philosophical frameworks, representing anything that requires domain knowledge to understand.
 4. **Identify every dynamic process**: cause-and-effect chains, systemic flows, operational sequences, historical movements, and recurring phenomena that transcend a single event or entity.
 5. **Harvest supplementary context**: When the source text contains a supplementary or complementary information section (numbered footnotes, biographical notes, contextual annotations), extract the factual content from these entries and integrate it into the relevant atomic notes. Each supplementary entry enriches the corresponding note's "Definição e Análise Contextual" section with additional biographical, historical, or technical depth. Entities appearing exclusively in supplementary entries still require their own atomic notes.
 
-### Pass 2 — Alias Resolution & Vault Disambiguation
+### Pass 2: Alias Resolution & Vault Disambiguation (Update vs. Create Protocol)
 
 Before generating the note batch:
 
-1. **Consult `cresmo/wiki/_index.json`** to verify whether any extracted entity already exists in the vault under an existing title or alias.
-2. **Parenthetical annotations are alias signals**: When the source text uses constructions like `"Modern Name (Ancient Name)"`, `"Full Name (Acronym)"`, or `"Local Term (Translation)"`, the primary term becomes the note title and the parenthetical term becomes an alias in the `aliases:` YAML field. If the entity already exists in `_index.json` under either name, use the existing canonical title and add the new variant as an alias.
-3. **Grammatical flexions are alias signals**: When the source text refers to the same entity in different grammatical forms (plural, genitive, adjectival), use the `[[Canonical Title|Flexed Form]]` WikiLink syntax and register the flexed form in the `aliases:` list.
-4. **Do not generate duplicate notes**: If `_index.json` already contains an entry (by title or alias match) for an extracted entity, reference it via `[[Existing Title]]` but do NOT regenerate it in the current batch.
+1. **Consult `cresmo/wiki/_index.json`**: For every candidate entity, perform a bidirectional lookup against `_index.json`. Check both primary dictionary keys (canonical titles) and every list of `aliases`.
+2. **Match Found -> UPDATE MODE**: If the candidate matches an existing entry in `_index.json` (by title or alias):
+   - **Exact Canonical Title**: Use the exact canonical title registered in `_index.json` as the `# [Exact Note Title]` and in all `[[WikiLinks]]`. Never use a synonymous or surface-level variant as the note title (for instance, if `1139-07-25 Batalha de Ourique` is in `_index.json`, use that exact title, avoiding separate notes like `# Batalha de Ourique`).
+   - **Type Preservation**: Retain the `type:` registered in `_index.json`.
+   - **Alias Inheritance & Growth**: Populate `aliases:` with all existing aliases from `_index.json` plus any new variant found in the current text.
+   - **Content Enrichment**: Emit the `<nota>` block with the newly synthesized contextual analysis, declarative triples, causal matrix, and cross-context links from the current source. This payload updates the existing note in the vault during Stage 3 (`cresmo-moc-manager`) without creating a duplicate file.
+3. **Match NOT Found -> CREATION MODE**: If and only if the candidate is completely absent from `_index.json`:
+   - Mint a new canonical title following typology rules (Big-Endian date notation for events).
+   - Register any surface variants and parenthetical annotations in `aliases:`.
+   - Emit as a newly created atomic note.
+4. **Grammatical flexions in text**: When the text refers to an existing or new entity in a flexed form, use `[[Canonical Title|Flexed Form]]` and ensure the flexed form is included in the note's `aliases:` list.
+5. **Parenthetical annotations are alias signals**: When the source text uses constructions like `"Modern Name (Ancient Name)"`, `"Full Name (Acronym)"`, or `"Local Term (Translation)"`, the primary term becomes the note title and the parenthetical term becomes an alias in the `aliases:` YAML field. If the entity already exists in `_index.json` under either name, use the existing canonical title and add the new variant as an alias.
 
-### Pass 3 — Orphan Closure Audit
+### Pass 3: Orphan Closure Audit
 
 After generating all notes from Passes 1 and 2:
 
@@ -63,10 +73,10 @@ After generating all notes from Passes 1 and 2:
 
 ## Extraction Depth & Granularity Rules
 
-These rules are **field-agnostic** — they apply identically whether the source text covers history, technology, science, philosophy, law, economics, literature, or any other domain.
+These rules are **field-agnostic**, applying identically whether the source text covers history, technology, science, philosophy, law, economics, literature, or any other domain.
 
 1. **Rule of Autonomous Meaning**: If removing a term from the sentence would leave an informational gap that a reader cannot fill from general knowledge alone, that term deserves its own note. Yeah, that may need a lot of notes. 
-2. **Proper Nouns Always Generate Notes**: Every proper noun — whether a person, place, institution, document, work, event, or named thing — generates a note. No exceptions.
+2. **Proper Nouns Always Generate Notes**: Every proper noun (person, place, institution, document, work, event, or named thing) generates a note. No exceptions.
 3. **Dated Events Always Generate Notes**: Any event anchored to an explicit temporal marker generates an `event` note with a Big-Endian date prefix in the title.
 4. **Domain-Specific Terms Generate Notes**: Specialized vocabulary requiring domain expertise to understand generates a `concept` or `entity` note, regardless of how briefly it appears in the source text.
 5. **Parenthetical Annotations Are Extraction Signals**: When the source text contains parenthetical clarifications, both the primary term and the parenthetical variant produce a single note with the variant as an alias.
@@ -162,7 +172,7 @@ Sparse notes are first-class citizens of the vault. They serve as anchoring node
 1. **Exhaustive Hyperlinking**: Embed `[[WikiLinks]]` across every mention of named entities, treaties, historical dates, theories, and processes in text bodies.
 2. **Aliasing Syntax**: Use `[[Target Title|Flexed Form]]` when text syntax requires grammatical flexions, ensuring the base `Target Title` matches the destination note exactly. Add the flexed form to the `aliases:` list in the YAML header.
 3. **Declarative Triples**: In `## Conexões e Relações Diretas`, convert extracted triples into declarative statements in natural language similar to the original text.
-4. **Bi-Directionality Verification**: For every note A that contains `[[B]]` in its body, note B MUST contain `[[A]]` in at least one of its sections (Conexões, Matriz Causal, or Redes de Conexão). Perform this verification for all note pairs in the batch before emitting the final XML. Notes referencing entries that already exist in `_index.json` are exempt from this check within the current batch, as the `cresmo-moc-manager` handles cross-text back-linking.
+4. **Bi-Directionality Verification**: For every note A that contains `[[B]]` in its body, note B MUST contain `[[A]]` in at least one of its sections (Conexões, Matriz Causal, or Redes de Conexão). Perform this verification for all note pairs in the batch before emitting the final XML. Notes referencing entries that already exist in `_index.json` and are not part of the current update batch are exempt from this check within the current batch, as the `cresmo-moc-manager` handles cross-text back-linking during reconciliation.
 
 ---
 
@@ -171,13 +181,14 @@ Sparse notes are first-class citizens of the vault. They serve as anchoring node
 Before emitting the final XML output, verify that all conditions are met:
 
 1. ✅ Every paragraph and every section of the source text (including supplementary/complementary sections) has been scanned for extractable entities.
-2. ✅ Every proper noun in the source text has a corresponding note in the batch or a matching entry in `_index.json`.
-3. ✅ Every explicitly dated event has a corresponding `event` note with Big-Endian title prefix.
-4. ✅ Every domain-specific term or specialized concept has a corresponding note.
-5. ✅ Every `[[WikiLink]]` in any note body resolves to either an existing `_index.json` entry or a note in the current batch.
-6. ✅ Every note pair within the batch satisfies bi-directional linking (A links B implies B links A).
-7. ✅ All parenthetical annotations have been processed as aliases with `_index.json` disambiguation.
-8. ✅ The Minimal Note Protocol has been applied to all sparse entities — no entity was silently dropped for lack of context.
+2. ✅ Every candidate entity registered in `_index.json` (by title or alias) is emitted using its EXACT registered canonical title and type, guaranteeing that it updates the existing vault note rather than creating a duplicate file.
+3. ✅ Newly created notes are minted exclusively for entities that do not exist in `_index.json`.
+4. ✅ Every explicitly dated event has a corresponding `event` note with Big-Endian title prefix.
+5. ✅ Every domain-specific term or specialized concept has a corresponding note.
+6. ✅ Every `[[WikiLink]]` in any note body resolves to either an existing `_index.json` entry or a note in the current batch.
+7. ✅ Every note pair within the batch satisfies bi-directional linking (A links B implies B links A).
+8. ✅ All parenthetical annotations have been processed as aliases with `_index.json` disambiguation.
+9. ✅ The Minimal Note Protocol has been applied to all sparse entities, ensuring no entity was silently dropped for lack of context.
 
 ---
 
