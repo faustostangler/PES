@@ -369,6 +369,27 @@ class PipelineSettings(BaseModel):
         validation_alias=AliasChoices("prompt_max_bytes_inline", "PROMPT_MAX_BYTES_INLINE"),
         description="Safe byte limit for inlining content directly into CLI arguments vs disk references.",
     )
+    atomic_batch_size: int = Field(
+        default=5,
+        ge=1,
+        le=20,
+        validation_alias=AliasChoices("atomic_batch_size", "ATOMIC_BATCH_SIZE", "CRESMO_ATOMIC_BATCH_SIZE"),
+        description="Maximum atomic note entities processed per LLM synthesis batch.",
+    )
+    atomic_inventory_temperature: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=2.0,
+        validation_alias=AliasChoices("atomic_inventory_temperature", "ATOMIC_INVENTORY_TEMPERATURE"),
+        description="Sampling temperature for holistic inventory discovery.",
+    )
+    atomic_generation_temperature: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=2.0,
+        validation_alias=AliasChoices("atomic_generation_temperature", "ATOMIC_GENERATION_TEMPERATURE"),
+        description="Sampling temperature for rich atomic note synthesis batches.",
+    )
 
 
 class IngestionSettings(BaseModel):
