@@ -44,7 +44,7 @@ class ExpandLongitudinalSynchronicUseCase:
             comp_info = compendium.complementary_info
 
         if not comp_info:
-            raise CompendiumStructureError("Missing complementary info in Stage 3 expansion.")
+            raise CompendiumStructureError("Missing complementary info in expansion.")
 
         updated = EnrichedCompendium(
             content_id=compendium.content_id,

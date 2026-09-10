@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _WORKSPACE_DIR = Path(__file__).resolve().parents[3]
@@ -89,9 +89,10 @@ class CresmoSettings(BaseSettings):
         default=730,
         description="Default crawling lookback window in days.",
     )
-    stage_5_batch_size: int = Field(
+    batch_size: int = Field(
         default=5,
-        description="Batch size for Stage 5 Atomic Note synthesis.",
+        validation_alias=AliasChoices("batch_size", "stage_5_batch_size", "atomic_batch_size"),
+        description="Batch size for Atomic Note synthesis.",
     )
     keep_audio: bool = Field(
         default=False,

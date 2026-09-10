@@ -161,3 +161,31 @@ class TestMapOfContent:
                 overview="Visão geral",
                 associated_notes=(note_a, note_a),
             )
+
+    def test_raw_transcript_empty_channel_raises_error(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        with pytest.raises(DomainValidationError, match="channel_name cannot be empty"):
+            RawTranscript(content_id=cid, channel_name="   ", body="Valid body.")
+
+    def test_enriched_compendium_empty_body_raises_error(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        with pytest.raises(CompendiumStructureError, match="body cannot be empty"):
+            EnrichedCompendium(
+                content_id=cid,
+                channel_name="Channel",
+                title=NoteTitle("Title"),
+                body="   ",
+                complementary_info="Complementary info.",
+            )
+
+    def test_enriched_compendium_invalid_pass_count_raises_error(self) -> None:
+        cid = ContentId("dQw4w9WgXcQ")
+        with pytest.raises(CompendiumStructureError, match="pass_count must be at least 1"):
+            EnrichedCompendium(
+                content_id=cid,
+                channel_name="Channel",
+                title=NoteTitle("Title"),
+                body="Valid body.",
+                complementary_info="Complementary info.",
+                pass_count=0,
+            )
