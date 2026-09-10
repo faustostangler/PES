@@ -15,25 +15,31 @@ from google import genai
 from google.genai import types
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import Retrying, retry_if_exception_type, stop_after_attempt, wait_exponential
+
+from cresmo_config import (
+    CresmoConfig,
+    GeminiProviderSettings,
+    RetrySettings,
+    get_config,
+)
 
 _CURRENT_DIR = Path(__file__).parent.resolve()
 _WORKSPACE_DIR = _CURRENT_DIR.parent.parent
 
 
-# --- Standard Non-Secret LLM Configuration (Committed to Version Control) ---
-DEFAULT_GEMINI_MODEL: str = "gemini-3.5-flash"  # or gemini-3.7-flash; default: gemini-3.8-flash
-DEFAULT_GEMINI_TEMPERATURE: float = 0.7  # default: 0.2; lower is more deterministic/less creative
-DEFAULT_GEMINI_MAX_OUTPUT_TOKENS: int = 65536  # default: 65536; max
-DEFAULT_GEMINI_REQUEST_TIMEOUT_SECONDS: float = 180.0  # default: 180.0
-DEFAULT_GEMINI_ENABLE_STREAMING: bool = True  # default: True for debug; False for prod
+# --- Standard Non-Secret LLM Configuration (Sourced from Centralized Config) ---
+DEFAULT_GEMINI_MODEL: str = "gemini-2.5-flash"
+DEFAULT_GEMINI_TEMPERATURE: float = 0.7
+DEFAULT_GEMINI_MAX_OUTPUT_TOKENS: int = 65536
+DEFAULT_GEMINI_REQUEST_TIMEOUT_SECONDS: float = 180.0
+DEFAULT_GEMINI_ENABLE_STREAMING: bool = True
 
 
 class CresmoLLMConfig(BaseSettings):
     """Configuration for LLM Transformation Port using fail-fast validation.
 
-    Distinguishes strictly between secrets (GEMINI_API_KEY from .env / environment)
-    and behavioral configuration parameters (defaults defined as version-controlled constants).
+    Maintained as a typed facade over centralized CresmoConfig for backward compatibility.
     """
 
     # --- Secret: Loaded exclusively from .env or environment variable ---
@@ -75,6 +81,10 @@ class CresmoLLMConfig(BaseSettings):
         validation_alias="GEMINI_ENABLE_STREAMING",
         description="Enable live token streaming for debug visibility into generation progress",
     )
+    retry: RetrySettings = Field(
+        default_factory=RetrySettings,
+        description="Defensive backoff retry configuration for LLM API calls",
+    )
 
     model_config = SettingsConfigDict(
         env_file=(
@@ -91,8 +101,22 @@ class LLMTransformationPort(ABC):
     """Port interface defining transformation contracts for Cresmo pipeline stages."""
 
     @abstractmethod
-    def transform(self, prompt: str, system_instruction: str | None = None) -> str:
-        """Execute text transformation contract given input prompt and optional system directive."""
+    def transform(
+        self,
+        prompt: str,
+        system_instruction: str | None = None,
+        temperature: float | None = None,
+    ) -> str:
+        """Execute text transformation contract given input prompt and optional system directive.
+
+        Args:
+            prompt: Text prompt payload to transform.
+            system_instruction: Optional system level directive.
+            temperature: Optional sampling temperature override (0.0 - 2.0). If None, uses default config.
+
+        Returns:
+            Transformed text response.
+        """
         raise NotImplementedError
 
 
@@ -103,10 +127,16 @@ class MockLLMAdapter(LLMTransformationPort):
         self.canned_response = canned_response
         self.call_history: list[dict[str, Any]] = []
 
-    def transform(self, prompt: str, system_instruction: str | None = None) -> str:
+    def transform(
+        self,
+        prompt: str,
+        system_instruction: str | None = None,
+        temperature: float | None = None,
+    ) -> str:
         self.call_history.append({
             "prompt": prompt,
             "system_instruction": system_instruction,
+            "temperature": temperature,
             "timestamp": time.time(),
         })
         return self.canned_response
@@ -117,10 +147,48 @@ class GeminiAPIAdapter(LLMTransformationPort):
 
     def __init__(
         self,
-        config: CresmoLLMConfig | None = None,
+        config: CresmoConfig | CresmoLLMConfig | GeminiProviderSettings | None = None,
         client: Any | None = None,
     ) -> None:
-        self.config = config or CresmoLLMConfig()
+        if config is None:
+            system_config = get_config()
+            self.config = CresmoLLMConfig(
+                gemini_api_key=system_config.gemini_api_key,
+                gemini_model=system_config.llm.gemini.model_name,
+                temperature=system_config.llm.gemini.temperature,
+                max_output_tokens=system_config.llm.gemini.max_output_tokens,
+                request_timeout_seconds=system_config.llm.gemini.request_timeout_seconds,
+                enable_streaming=system_config.llm.gemini.enable_streaming,
+                retry=system_config.llm.gemini.retry,
+            )
+        elif isinstance(config, CresmoConfig):
+            self.config = CresmoLLMConfig(
+                gemini_api_key=config.gemini_api_key,
+                gemini_model=config.llm.gemini.model_name,
+                temperature=config.llm.gemini.temperature,
+                max_output_tokens=config.llm.gemini.max_output_tokens,
+                request_timeout_seconds=config.llm.gemini.request_timeout_seconds,
+                enable_streaming=config.llm.gemini.enable_streaming,
+                retry=config.llm.gemini.retry,
+            )
+        elif isinstance(config, GeminiProviderSettings):
+            system_config = get_config()
+            self.config = CresmoLLMConfig(
+                gemini_api_key=system_config.gemini_api_key,
+                gemini_model=config.model_name,
+                temperature=config.temperature,
+                max_output_tokens=config.max_output_tokens,
+                request_timeout_seconds=config.request_timeout_seconds,
+                enable_streaming=config.enable_streaming,
+                retry=config.retry,
+            )
+        else:
+            self.config = config
+
+        self.total_requests: int = 0
+        self.session_prompt_tokens: int = 0
+        self.session_candidate_tokens: int = 0
+        self.session_total_tokens: int = 0
         if client is not None:
             self._client = client
         else:
@@ -128,6 +196,7 @@ class GeminiAPIAdapter(LLMTransformationPort):
                 api_key=self.config.gemini_api_key.get_secret_value()
             )
 
+    @staticmethod
     def _log_retry_attempt(retry_state: Any) -> None:
         exception = retry_state.outcome.exception() if retry_state.outcome else None
         attempt = retry_state.attempt_number
@@ -139,19 +208,76 @@ class GeminiAPIAdapter(LLMTransformationPort):
             flush=True,
         )
 
-    @retry(
-        retry=retry_if_exception_type(Exception),
-        stop=stop_after_attempt(7),
-        wait=wait_exponential(multiplier=2.0, min=2, max=60),
-        before_sleep=_log_retry_attempt,
-        reraise=True,
-    )
-    def transform(self, prompt: str, system_instruction: str | None = None) -> str:
-        """Transforms text using Gemini API with dual-path execution (streaming debug vs batch prod)."""
+    def _log_usage_telemetry(
+        self,
+        elapsed: float,
+        usage: Any | None,
+        char_len: int,
+    ) -> None:
+        """Format and print real-time quota and token metrics for the current execution."""
+        self.total_requests += 1
+
+        def _safe_int(val: Any) -> int:
+            return val if type(val) is int else 0
+
+        raw_prompt = getattr(usage, "prompt_token_count", 0) if usage is not None else 0
+        raw_candidate = getattr(usage, "candidates_token_count", 0) if usage is not None else 0
+        raw_total = getattr(usage, "total_token_count", 0) if usage is not None else 0
+
+        prompt_tokens = _safe_int(raw_prompt)
+        candidate_tokens = _safe_int(raw_candidate)
+        total_call_tokens = _safe_int(raw_total) or (prompt_tokens + candidate_tokens)
+
+        self.session_prompt_tokens += prompt_tokens
+        self.session_candidate_tokens += candidate_tokens
+        self.session_total_tokens += total_call_tokens
+
+        # Known daily free tier caps for visualization
+        daily_cap = 1500 if "3.5" in self.config.gemini_model or "2.5" in self.config.gemini_model else 20
+        pct_cap = (self.total_requests / daily_cap) * 100
+
+        print(
+            f"📊 [Gemini Telemetry] Req #{self.total_requests} ({self.config.gemini_model}) | "
+            f"{elapsed:.2f}s | "
+            f"Tokens: {prompt_tokens:,} in / {candidate_tokens:,} out ({char_len:,} chars) | "
+            f"Session: {self.session_total_tokens:,} tokens | "
+            f"Est. Free Quota: {self.total_requests}/{daily_cap} reqs ({pct_cap:.1f}%)",
+            flush=True,
+        )
+
+    def transform(
+        self,
+        prompt: str,
+        system_instruction: str | None = None,
+        temperature: float | None = None,
+    ) -> str:
+        """Transforms text using Gemini API with configurable retry policy and dual-path execution."""
+        retry_cfg = getattr(self.config, "retry", None) or RetrySettings()
+        retrying = Retrying(
+            retry=retry_if_exception_type(Exception),
+            stop=stop_after_attempt(retry_cfg.max_attempts),
+            wait=wait_exponential(
+                multiplier=retry_cfg.multiplier,
+                min=retry_cfg.min_seconds,
+                max=retry_cfg.max_seconds,
+            ),
+            before_sleep=self._log_retry_attempt,
+            reraise=True,
+        )
+        return retrying(self._execute_transform, prompt, system_instruction, temperature)
+
+    def _execute_transform(
+        self,
+        prompt: str,
+        system_instruction: str | None = None,
+        temperature: float | None = None,
+    ) -> str:
+        """Internal execution routine for Gemini generation."""
         import sys
 
+        effective_temperature = self.config.temperature if temperature is None else temperature
         generate_config = types.GenerateContentConfig(
-            temperature=self.config.temperature,
+            temperature=effective_temperature,
             max_output_tokens=self.config.max_output_tokens,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
@@ -159,11 +285,12 @@ class GeminiAPIAdapter(LLMTransformationPort):
             generate_config.system_instruction = system_instruction
 
         start_time = time.time()
-        prompt_preview = prompt.strip()[:20].replace("\n", " ")
+        prompt_preview = prompt.strip()[:30].replace("\n", " ")
+        last_usage_metadata: Any | None = None
 
         if self.config.enable_streaming:
             # Debug path: live streaming chunks to stdout for instant visibility
-            print(f"\n📡 [Gemini Stream] Dispatching request to {self.config.gemini_model} ('{prompt_preview}...')", flush=True)
+            print(f"\n📡 [Gemini Stream] Dispatching request #{self.total_requests + 1} to {self.config.gemini_model} ('{prompt_preview}...')", flush=True)
             chunks: list[str] = []
             chunk_count = 0
             for chunk in self._client.models.generate_content_stream(
@@ -174,7 +301,9 @@ class GeminiAPIAdapter(LLMTransformationPort):
                 chunk_text = chunk.text or ""
                 chunks.append(chunk_text)
                 chunk_count += 1
-                # Print dot indicator or live progress every few chunks
+                if getattr(chunk, "usage_metadata", None):
+                    last_usage_metadata = chunk.usage_metadata
+                # Print dot indicator every few chunks
                 if chunk_count % 5 == 0:
                     sys.stdout.write(".")
                     sys.stdout.flush()
@@ -182,6 +311,7 @@ class GeminiAPIAdapter(LLMTransformationPort):
             text = "".join(chunks)
             elapsed = time.time() - start_time
             print(f"\n✅ [Gemini Stream] Completed in {elapsed:.2f}s ({len(text)} chars, {chunk_count} chunks)", flush=True)
+            self._log_usage_telemetry(elapsed=elapsed, usage=last_usage_metadata, char_len=len(text))
         else:
             # Production path: standard batch execution
             response = self._client.models.generate_content(
@@ -191,8 +321,20 @@ class GeminiAPIAdapter(LLMTransformationPort):
             )
             elapsed = time.time() - start_time
             text = response.text or ""
+            usage = getattr(response, "usage_metadata", None)
+            self._log_usage_telemetry(elapsed=elapsed, usage=usage, char_len=len(text))
 
         if not text.strip():
             raise ValueError(f"Gemini API returned an empty response after {elapsed:.2f}s")
 
         return text
+
+
+if __name__ == "__main__":
+    print(f"🚀 Initializing GeminiAPIAdapter smoke test with model '{DEFAULT_GEMINI_MODEL}'...")
+    adapter = GeminiAPIAdapter()
+    sample_prompt = "Synthesize in one concise sentence the definition of Domain-Driven Design."
+    output = adapter.transform(sample_prompt)
+    print("\n--- Output ---")
+    print(output.strip())
+

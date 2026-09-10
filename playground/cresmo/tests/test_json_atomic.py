@@ -12,6 +12,7 @@ from cresmo_pipeline import (
     AtomicNoteModel,
     CausalMatrixModel,
     CrossContextModel,
+    extract_json_payload,
     is_valid_atomic_json,
     parse_and_proliferate_notes,
 )
@@ -185,3 +186,46 @@ def test_parse_and_proliferate_json(tmp_path: Path):
     assert "Batalha de São Mamede" in index_data["notes"]
     assert index_data["notes"]["Batalha de São Mamede"]["type"] == "event"
     assert "São Mamede 1128" in index_data["notes"]["Batalha de São Mamede"]["aliases"]
+
+
+def test_extract_json_payload_salvages_truncated_array():
+    """Verify extract_json_payload rescues complete notes when LLM output is truncated mid-generation."""
+    truncated = (
+        "```json\n"
+        "[\n"
+        '  {"title": "Note 1", "type": "concept", "definition": "Desc 1"},\n'
+        '  {"title": "Note 2", "type": "entity", "definition": "Desc 2"},\n'
+        '  {"title": "Note 3", "type": "event", "definition": "Truncated mid-sent'
+    )
+    result = extract_json_payload(truncated)
+    assert result is not None
+    data = json.loads(result)
+    assert len(data) == 2
+    assert data[0]["title"] == "Note 1"
+    assert data[1]["title"] == "Note 2"
+
+
+def test_extract_json_payload_salvages_user_real_scenario():
+    """Verify regression scenario where Gemini hit output token limit mid-definition of 10th note."""
+    truncated_user_snippet = (
+        '```json\n'
+        '[\n'
+        '  {"title": "Corredor de Rendas", "type": "concept", "definition": "O Corredor de Rendas delineia..."},\n'
+        '  {"title": "Fronteira de Conveniência", "type": "concept", "definition": "A Fronteira..."},\n'
+        '  {"title": "Patrimonialismo", "type": "concept", "definition": "Conceito sociológico..."},\n'
+        '  {"title": "Brasil", "type": "entity", "definition": "Entidade geopolítica..."},\n'
+        '  {"title": "Luso-brasileira", "type": "concept", "definition": "Termo que descreve..."},\n'
+        '  {"title": "1383-1385 Crise Dinástica Portuguesa", "type": "event", "definition": "Período..."},\n'
+        '  {"title": "Fernando I de Portugal", "type": "entity", "definition": "Último monarca..."},\n'
+        '  {"title": "1383-10-22 Morte de Fernando I de Portugal", "type": "event", "definition": "Evento..."},\n'
+        '  {"title": "Dinastia de Borgonha", "type": "entity", "definition": "Linhagem real..."},\n'
+        '  {"title": "João I de Castela", "type": "entity", "definition": "Monarca da [[Coroa de Castela]] que, casado com [[Beatriz de Portugal]], filha de [[Fernando I de Portugal]], reivindicou o trono português após a morte de seu sogro em 1383. Sua pretensão representou uma ameaça existencial à independência de [[Portugal]], culminando na [[1383-1385 Crise Dinástica Portuguesa]] e na [[1385-08-14 Batalha de Aljubarrota]], onde suas forças foram derrotadas. A união dinástica implicaria a absorção do reino português'
+    )
+    result = extract_json_payload(truncated_user_snippet)
+    assert result is not None
+    notes = json.loads(result)
+    assert len(notes) == 9
+    assert notes[0]["title"] == "Corredor de Rendas"
+    assert notes[8]["title"] == "Dinastia de Borgonha"
+
+

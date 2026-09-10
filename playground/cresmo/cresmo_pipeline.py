@@ -63,20 +63,24 @@ from cresmo_shared import (
     send_agent_message,
 )
 
-# --- Polling & Timing Defaults ---
-DEFAULT_TRAJECTORY_TIMEOUT_SECONDS: int = 15
-POLL_MAX_ATTEMPTS: int = 300
-POLL_SLEEP_SECONDS: float = 1.0
-POLL_DISPATCH_TIME_BUFFER: float = 1.0
-POLL_FALLBACK_INTERVAL: int = 30
+from cresmo_config import get_config
+
+_system_cfg = get_config()
+
+# --- Polling & Timing Defaults (Sourced from CresmoConfig SSOT) ---
+DEFAULT_TRAJECTORY_TIMEOUT_SECONDS: int = _system_cfg.pipeline.trajectory_timeout_seconds
+POLL_MAX_ATTEMPTS: int = _system_cfg.pipeline.poll_max_attempts
+POLL_SLEEP_SECONDS: float = _system_cfg.pipeline.poll_sleep_seconds
+POLL_DISPATCH_TIME_BUFFER: float = _system_cfg.pipeline.poll_dispatch_time_buffer
+POLL_FALLBACK_INTERVAL: int = _system_cfg.pipeline.poll_fallback_interval
 
 
-# --- Payload & File Size Thresholds ---
-DEFAULT_STAGE2_PASSES: int = 3
-MIN_ENRICHED_EXISTING_BYTES: int = 500
-MIN_VALID_OUTPUT_BYTES: int = 300
-MIN_RECONCILIATION_LOG_BYTES: int = 200
-MAX_CANDIDATE_PARSE_LIMIT: int = 1000
+# --- Payload & File Size Thresholds (Sourced from CresmoConfig SSOT) ---
+DEFAULT_STAGE2_PASSES: int = _system_cfg.pipeline.stage2_passes
+MIN_ENRICHED_EXISTING_BYTES: int = _system_cfg.pipeline.min_enriched_existing_bytes
+MIN_VALID_OUTPUT_BYTES: int = _system_cfg.pipeline.min_valid_output_bytes
+MIN_RECONCILIATION_LOG_BYTES: int = _system_cfg.pipeline.min_reconciliation_log_bytes
+MAX_CANDIDATE_PARSE_LIMIT: int = _system_cfg.pipeline.max_candidate_parse_limit
 
 # --- Domain & Typology Standards ---
 VALID_NOTE_TYPES: frozenset[str] = frozenset({"entity", "concept", "event", "process"})
@@ -320,6 +324,10 @@ CRESMO_WIDE_EXPANDER_PROMPT_TASK: str = (
 )
 STAGE3_PRE_PROMPT: str = (
     "You are Cresmo Atomic. Extract atomic Obsidian notes from the enriched text as a structured JSON array of note objects.\n"
+    "CRITICAL CONSTRAINTS:\n"
+    "1. Output strictly a single valid JSON array starting with '[' and ending with ']'.\n"
+    "2. Prioritize the top 8 to 12 most foundational concepts, entities, and events to ensure high conceptual density while completing the JSON array within output limits.\n"
+    "3. Keep definitions precise, dense, and non-verbose according to the cresmo-style-guide.\n"
 )
 
 
@@ -397,6 +405,27 @@ def extract_json_payload(content: str) -> str | None:
             return candidate
         except Exception:
             pass
+
+    # 4. Resilient Fallback: Salvage truncated JSON array
+    # When model response exceeds token limits, the last item is truncated mid-generation.
+    # Salvage all preceding complete objects by finding the last valid closing brace '}' boundary.
+    if start_bracket != -1:
+        array_slice = content[start_bracket:]
+        last_brace = array_slice.rfind("}")
+        while last_brace != -1:
+            candidate = array_slice[: last_brace + 1].strip() + "\n]"
+            try:
+                parsed = json.loads(candidate)
+                if isinstance(parsed, list) and len(parsed) > 0:
+                    print(
+                        f"⚠️ [JSON Salvage] Model response was truncated mid-generation. "
+                        f"Successfully salvaged {len(parsed)} complete atomic note objects.",
+                        flush=True,
+                    )
+                    return candidate
+            except Exception:
+                pass
+            last_brace = array_slice.rfind("}", 0, last_brace)
 
     return None
 
@@ -882,7 +911,11 @@ def cresmo_notes(
 
     # Execution via synchronous Hexagonal LLM Port
     if llm is not None:
-        response_text = llm.transform(prompt=prompt, system_instruction=STAGE3_PRE_PROMPT)
+        response_text = llm.transform(
+            prompt=prompt,
+            system_instruction=STAGE3_PRE_PROMPT,
+            temperature=0.0,
+        )
         json_payload = extract_json_payload(response_text)
         if not json_payload:
             raise ValueError(f"Failed to extract valid atomic JSON notes from LLM response for video_id '{video_id}'")
@@ -1377,7 +1410,9 @@ def process_candidate_blocks(
         if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
             print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
             continue
-        # Stage 2: Gap Filler (progressive in-place passes)        enriched_file = cresmo_gap_filler(
+
+        # Stage 2: Gap Filler (progressive in-place passes)
+        enriched_file = cresmo_gap_filler(
             txt_file,
             meta,
             session_id=session_id,

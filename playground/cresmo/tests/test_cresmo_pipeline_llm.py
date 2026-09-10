@@ -111,6 +111,7 @@ def test_notes_with_llm_adapter(tmp_path: Path):
     assert is_new is True
     assert json_file.exists()
     assert len(adapter.call_history) == 1
+    assert adapter.call_history[0]["temperature"] == 0.0
     loaded_notes = json.loads(json_file.read_text(encoding="utf-8"))
     assert len(loaded_notes) == 1
     assert loaded_notes[0]["title"] == "Geopolítica de Recursos Hídricos"

@@ -11,21 +11,25 @@ import sys
 import time
 import uuid
 
-# --- Path Configurations ---
-CRESMO_ROOT: Path = Path(__file__).parent.resolve()
-DEFAULT_RAW_DIR: Path = CRESMO_ROOT / "raw"
-DEFAULT_ENRICHED_DIR: Path = CRESMO_ROOT / "enriched"
-DEFAULT_CRESMO_DIR: Path = CRESMO_ROOT
-DEFAULT_CRESMO_WIKI_DIR: Path = CRESMO_ROOT / "wiki"
-PROCESSED_CRESMO_LOG: Path = CRESMO_ROOT / "processed_cresmo.json"
-DEFAULT_PLAYLIST_FILE: Path = CRESMO_ROOT / "playlist.txt"
-DEFAULT_PLAYLIST_PRIORITY_FILE: Path = CRESMO_ROOT / "playlist-priority.txt"
-DEFAULT_PRIORITY_FOLDER: Path = CRESMO_ROOT / "priority_content"
-DEFAULT_BRAIN_CSV: Path = CRESMO_ROOT / "brain.csv"
-DEFAULT_COOKIES_FILE: Path = CRESMO_ROOT / ".yt_dlp_cookies.txt"
-DEFAULT_RATE_LIMIT_LOG_FILE: Path = CRESMO_ROOT / "rate_limit_log.json"
+from cresmo_config import CresmoConfig, get_config
 
-BRAIN_DIR: Path = Path(os.environ.get("ANTIGRAVITY_BRAIN_DIR", Path.home() / ".gemini" / "antigravity-ide" / "brain"))
+_system_cfg = get_config()
+
+# --- Path Configurations (Sourced from CresmoConfig SSOT) ---
+CRESMO_ROOT: Path = _system_cfg.storage.root_dir
+DEFAULT_RAW_DIR: Path = _system_cfg.storage.raw_dir or (CRESMO_ROOT / "raw")
+DEFAULT_ENRICHED_DIR: Path = _system_cfg.storage.enriched_dir or (CRESMO_ROOT / "enriched")
+DEFAULT_CRESMO_DIR: Path = _system_cfg.storage.root_dir
+DEFAULT_CRESMO_WIKI_DIR: Path = _system_cfg.storage.wiki_dir or (CRESMO_ROOT / "wiki")
+PROCESSED_CRESMO_LOG: Path = _system_cfg.storage.processed_log or (CRESMO_ROOT / "processed_cresmo.json")
+DEFAULT_PLAYLIST_FILE: Path = _system_cfg.storage.playlist_file or (CRESMO_ROOT / "playlist.txt")
+DEFAULT_PLAYLIST_PRIORITY_FILE: Path = _system_cfg.storage.priority_playlist or (CRESMO_ROOT / "playlist-priority.txt")
+DEFAULT_PRIORITY_FOLDER: Path = _system_cfg.storage.priority_folder or (CRESMO_ROOT / "priority_content")
+DEFAULT_BRAIN_CSV: Path = _system_cfg.storage.brain_csv or (CRESMO_ROOT / "brain.csv")
+DEFAULT_COOKIES_FILE: Path = _system_cfg.storage.cookies_file or (CRESMO_ROOT / ".yt_dlp_cookies.txt")
+DEFAULT_RATE_LIMIT_LOG_FILE: Path = _system_cfg.storage.rate_limit_log or (CRESMO_ROOT / "rate_limit_log.json")
+
+BRAIN_DIR: Path = _system_cfg.agent_rpc.brain_dir
 
 _WORKSPACE_ROOT = CRESMO_ROOT.parent.parent
 _CANDIDATE_SKILLS_DIRS = [
@@ -41,18 +45,15 @@ SKILL_WIDE_EXPANDER_PATH: Path = SKILLS_ROOT / "cresmo-wide-expander" / "SKILL.m
 SKILL_ATOMIC_PATH: Path = SKILLS_ROOT / "cresmo-atomic" / "SKILL.md"
 SKILL_MOC_MANAGER_PATH: Path = SKILLS_ROOT / "cresmo-moc-manager" / "SKILL.md"
 
-# --- Agent RPC & gRPC Defaults ---
-DEFAULT_AGENTAPI_BINARY: Path = Path(os.environ.get(
-    "ANTIGRAVITY_AGENTAPI_BINARY",
-    Path.home() / ".gemini" / "antigravity-ide" / "bin" / "agentapi"
-))
-FALLBACK_TEST_CONVERSATION_ID: str = "0e69775c-ba22-4a48-ad18-ba6a318c9a04"
-DEFAULT_LS_ADDRESS: str = "127.0.0.1:41667"
-DEFAULT_CSRF_TOKEN: str = "ff53390d-3617-40f6-836e-6c5375ff5817"
-GRPC_TEST_TIMEOUT_SECONDS: float = 1.5
+# --- Agent RPC & gRPC Defaults (Sourced from CresmoConfig SSOT) ---
+DEFAULT_AGENTAPI_BINARY: Path = _system_cfg.agent_rpc.agentapi_binary
+FALLBACK_TEST_CONVERSATION_ID: str = _system_cfg.agent_rpc.fallback_test_conversation_id
+DEFAULT_LS_ADDRESS: str = _system_cfg.agent_rpc.ls_address
+DEFAULT_CSRF_TOKEN: str = _system_cfg.agent_rpc.csrf_token
+GRPC_TEST_TIMEOUT_SECONDS: float = _system_cfg.agent_rpc.grpc_test_timeout
 
 # --- CLI Prompt Payload Limits ---
-PROMPT_MAX_BYTES_INLINE: int = 120_000
+PROMPT_MAX_BYTES_INLINE: int = _system_cfg.pipeline.prompt_max_bytes_inline
 
 # --- Formats & Protocols ---
 DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
