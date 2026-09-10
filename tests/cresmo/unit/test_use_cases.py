@@ -19,6 +19,10 @@ from cresmo.domain.entities import (
     EnrichedCompendium,
     RawTranscript,
 )
+from cresmo.domain.exceptions import (
+    CompendiumStructureError,
+    DomainValidationError,
+)
 from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     ContentId,
@@ -32,8 +36,8 @@ from cresmo.infrastructure.adapters.mock_adapters import (
 )
 
 
-class TestStage1IngestRawTranscript:
-    """SPEC-001 Scenario 1.1: Stage 1 Raw Transcript Ingestion."""
+class TestIngestRawTranscript:
+    """SPEC-001 Scenario 1.1: Raw Transcript Ingestion."""
 
     def test_ingest_single_video_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -53,8 +57,8 @@ class TestStage1IngestRawTranscript:
         assert vault_port.get_raw_transcript(cid) == canned
 
 
-class TestStage2FillGapsFluidProse:
-    """SPEC-001 Scenario 2.1: Stage 2 Socratic Gap Filler."""
+class TestFillGapsFluidProse:
+    """SPEC-001 Scenario 2.1: Socratic Gap Filler."""
 
     def test_fill_gaps_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -80,8 +84,8 @@ class TestStage2FillGapsFluidProse:
         assert vault_port.get_enriched_compendium(cid) == compendium
 
 
-class TestStage3ExpandLongitudinalSynchronic:
-    """SPEC-001 Scenario 3.1: Stage 3 Braudel & Jaspers Expansion."""
+class TestExpandLongitudinalSynchronic:
+    """SPEC-001 Scenario 3.1: Braudel & Jaspers Expansion."""
 
     def test_expand_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -109,8 +113,8 @@ class TestStage3ExpandLongitudinalSynchronic:
         assert vault_port.get_enriched_compendium(cid) == updated
 
 
-class TestStage4DiscoverAtomicInventory:
-    """SPEC-001 Scenario 4.1: Stage 4 Holistic Inventory Discovery."""
+class TestDiscoverAtomicInventory:
+    """SPEC-001 Scenario 4.1: Holistic Inventory Discovery."""
 
     def test_discover_inventory_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -133,8 +137,8 @@ class TestStage4DiscoverAtomicInventory:
         assert "Oligarquia de Ferro" in titles
 
 
-class TestStage5SynthesizeAtomicBatch:
-    """SPEC-001 Scenario 5.1: Stage 5 Batched Atomic Synthesis."""
+class TestSynthesizeAtomicBatch:
+    """SPEC-001 Scenario 5.1: Batched Atomic Synthesis."""
 
     def test_synthesize_batch_success(self) -> None:
         cid = ContentId("dQw4w9WgXcQ")
@@ -166,8 +170,8 @@ class TestStage5SynthesizeAtomicBatch:
         assert vault_port.get_atomic_note_by_title(NoteTitle("Vilfredo Pareto")) == note
 
 
-class TestStage6ReconcileMOCs:
-    """SPEC-001 Scenario 6.1: Stage 6 MOC Reconciliation."""
+class TestReconcileMOCs:
+    """SPEC-001 Scenario 6.1: MOC Reconciliation."""
 
     def test_reconcile_mocs_success(self) -> None:
         vault_port = InMemoryVaultAdapter()
@@ -194,7 +198,7 @@ class TestStage6ReconcileMOCs:
         assert NoteTitle("Vilfredo Pareto") in moc.associated_notes
 
 
-class TestStageUseCasesEdgeCases:
+class TestUseCasesEdgeCases:
     """Boundary conditions and exception branch coverage."""
 
     def test_fill_gaps_missing_complementary_info_raises_error(self) -> None:
@@ -209,7 +213,7 @@ class TestStageUseCasesEdgeCases:
         vault_port = InMemoryVaultAdapter()
 
         use_case = FillGapsFluidProseUseCase(llm_port, vault_port)
-        with pytest.raises(Exception):
+        with pytest.raises(CompendiumStructureError):
             use_case.execute(raw, passes=1)
 
     def test_discover_inventory_non_list_raises_error(self) -> None:
@@ -224,7 +228,7 @@ class TestStageUseCasesEdgeCases:
         llm_port = MockLLMAdapter(responses=['{"not_a_list": true}'])
         use_case = DiscoverAtomicInventoryUseCase(llm_port)
 
-        with pytest.raises(Exception):
+        with pytest.raises(DomainValidationError):
             use_case.execute(compendium)
 
     def test_discover_inventory_empty_items_raises_error(self) -> None:
@@ -239,7 +243,7 @@ class TestStageUseCasesEdgeCases:
         llm_port = MockLLMAdapter(responses=['[]'])
         use_case = DiscoverAtomicInventoryUseCase(llm_port)
 
-        with pytest.raises(Exception):
+        with pytest.raises(DomainValidationError):
             use_case.execute(compendium)
 
     def test_synthesize_batch_non_list_raises_error(self) -> None:
@@ -256,5 +260,5 @@ class TestStageUseCasesEdgeCases:
         vault_port = InMemoryVaultAdapter()
 
         use_case = SynthesizeAtomicBatchUseCase(llm_port, vault_port)
-        with pytest.raises(Exception):
+        with pytest.raises(DomainValidationError):
             use_case.execute(inv, compendium)

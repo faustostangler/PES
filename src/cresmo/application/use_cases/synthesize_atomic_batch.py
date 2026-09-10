@@ -85,7 +85,7 @@ class SynthesizeAtomicBatchUseCase:
             data = extract_json_data(response)
             if not isinstance(data, list):
                 raise DomainValidationError(
-                    f"Stage 5 batch synthesis expected JSON array, got: {type(data).__name__}"
+                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
                 )
 
             # Step 2b: Parse response into AtomicNote domain aggregates.

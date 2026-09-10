@@ -59,28 +59,28 @@ class CresmoPipeline:
         self.vault_port = vault_port
         self.ledger_port = ledger_port
 
-        # Stage Use Cases instantiation
-        self.stage_1_ingest = IngestRawTranscriptUseCase(
+        # Use cases instantiation
+        self.ingest_raw_transcript = IngestRawTranscriptUseCase(
             ingestion_port=self.media_ingestion_port,
             vault_port=self.vault_port,
         )
-        self.stage_2_gap_filler = FillGapsFluidProseUseCase(
+        self.fill_gaps_fluid_prose = FillGapsFluidProseUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
         )
-        self.stage_3_expander = ExpandLongitudinalSynchronicUseCase(
+        self.expand_longitudinal_synchronic = ExpandLongitudinalSynchronicUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
         )
-        self.stage_4_inventory = DiscoverAtomicInventoryUseCase(
+        self.discover_atomic_inventory = DiscoverAtomicInventoryUseCase(
             llm_port=self.llm_port,
         )
-        self.stage_5_batch = SynthesizeAtomicBatchUseCase(
+        self.synthesize_atomic_batch = SynthesizeAtomicBatchUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
             batch_size=batch_size,
         )
-        self.stage_6_moc = ReconcileMOCsUseCase(
+        self.reconcile_mocs = ReconcileMOCsUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
         )
@@ -90,21 +90,21 @@ class CresmoPipeline:
         video_url: str,
         gap_filler_passes: int = 1,
     ) -> PipelineResult:
-        """Run the end-to-end 6-stage pipeline for a single video source.
+        """Run the end-to-end synthesis pipeline for a single video source.
 
         Args:
             video_url: Target YouTube or media URL.
-            gap_filler_passes: Number of refinement passes for Stage 2.
+            gap_filler_passes: Number of refinement passes for gap filling.
 
         Returns:
             PipelineResult summarizing synthesized notes, MOCs, and status.
         """
-        # Stage 1: Raw Transcript Ingestion
-        raw = self.stage_1_ingest.execute(
+        # Raw Transcript Ingestion
+        raw = self.ingest_raw_transcript.execute(
             video_url=video_url,
         )
         if raw is None:
-            raise CresmoDomainError(f"Stage 1 Ingestion failed to retrieve transcript for: {video_url}")
+            raise CresmoDomainError(f"Ingestion failed to retrieve transcript for: {video_url}")
 
         content_id = raw.content_id
 
@@ -118,30 +118,30 @@ class CresmoPipeline:
                 error_message="Content already marked processed in ledger.",
             )
 
-        # Stage 2: Socratic Gap Filler
-        compendium = self.stage_2_gap_filler.execute(
+        # Socratic Gap Filler
+        compendium = self.fill_gaps_fluid_prose.execute(
             raw_transcript=raw,
             passes=gap_filler_passes,
         )
 
-        # Stage 3: Longitudinal & Synchronic Expander
-        expanded_compendium = self.stage_3_expander.execute(
+        # Longitudinal & Synchronic Expander
+        expanded_compendium = self.expand_longitudinal_synchronic.execute(
             compendium=compendium,
         )
 
-        # Stage 4: Holistic Inventory Discovery
-        inventory = self.stage_4_inventory.execute(
+        # Holistic Inventory Discovery
+        inventory = self.discover_atomic_inventory.execute(
             compendium=expanded_compendium,
         )
 
-        # Stage 5: Batched Atomic Synthesis
-        notes = self.stage_5_batch.execute(
+        # Batched Atomic Synthesis
+        notes = self.synthesize_atomic_batch.execute(
             inventory=inventory,
             compendium=expanded_compendium,
         )
 
-        # Stage 6: Map of Content Reconciliation
-        mocs = self.stage_6_moc.execute()
+        # Map of Content Reconciliation
+        mocs = self.reconcile_mocs.execute()
 
         # Mark processed in ledger
         if self.ledger_port:

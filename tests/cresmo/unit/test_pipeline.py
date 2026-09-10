@@ -29,37 +29,37 @@ class TestCresmoPipelineOrchestration:
             body="Raw spoken audio transcript regarding Vilfredo Pareto and elites.",
         )
 
-        stage_2_llm = (
+        gap_filler_llm = (
             "# Teoria das Elites\n\n"
             "A teoria da circulação das elites postula que minorias organizadas governam maiorias.\n\n"
             "## Informações Complementares\n\n"
             "Análise sociológica e precursores históricos."
         )
-        stage_3_llm = (
+        expander_llm = (
             "Texto expandido com longa duração e dinâmica axial sincrônica.\n\n"
             "## Informações Complementares\n\n"
             "Matrizes históricas aprofundadas."
         )
-        stage_4_llm = '[{"title": "Vilfredo Pareto", "type": "entity"}]'
-        stage_5_llm = (
+        inventory_llm = '[{"title": "Vilfredo Pareto", "type": "entity"}]'
+        batch_llm = (
             '[{"title": "Vilfredo Pareto", "type": "entity", '
             '"definition": "Sociólogo e economista italiano formulador do conceito de circulação das elites.", '
             '"direct_relations": ["Teoria das Elites"], '
             '"causal_matrix": {"cause": "Heterogeneidade social", "effect": "Substituição cíclica de lideranças"}}]'
         )
-        stage_6_llm = (
+        moc_llm = (
             '[{"title": "MOC Teoria Politica", "theme": "Ciência Política", '
             '"overview": "Mapeamento das teorias de liderança.", '
             '"associated_notes": ["Vilfredo Pareto"]}]'
         )
 
         mock_llm = MockLLMAdapter(responses=[
-            stage_2_llm,  # Stage 2 Gap Filler
-            stage_3_llm,  # Stage 3 Longitudinal
-            stage_3_llm,  # Stage 3 Synchronic
-            stage_4_llm,  # Stage 4 Inventory
-            stage_5_llm,  # Stage 5 Batch
-            stage_6_llm,  # Stage 6 MOC
+            gap_filler_llm,  # Gap Filler
+            expander_llm,  # Longitudinal Expander
+            expander_llm,  # Synchronic Expander
+            inventory_llm,  # Inventory Discovery
+            batch_llm,  # Batched Synthesis
+            moc_llm,  # MOC Reconciliation
         ])
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
         vault_port = InMemoryVaultAdapter()

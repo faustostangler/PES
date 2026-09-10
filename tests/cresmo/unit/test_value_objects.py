@@ -11,6 +11,7 @@ from cresmo.domain.value_objects import (
     AtomicEntityInventory,
     CausalMatrix,
     ContentId,
+    CrossContextRelations,
     NoteTitle,
     NoteType,
 )
@@ -127,3 +128,17 @@ class TestAtomicEntityInventory:
     def test_empty_inventory_raises_validation_error(self) -> None:
         with pytest.raises(DomainValidationError):
             AtomicEntityInventory(items=())
+
+
+class TestCrossContextRelations:
+    """CrossContextRelations validation and stripping."""
+
+    def test_cross_context_strips_whitespace(self) -> None:
+        cc = CrossContextRelations(
+            precursors="  Precursor  ",
+            lateral_events="  Lateral  ",
+            aftermath="  Aftermath  ",
+        )
+        assert cc.precursors == "Precursor"
+        assert cc.lateral_events == "Lateral"
+        assert cc.aftermath == "Aftermath"

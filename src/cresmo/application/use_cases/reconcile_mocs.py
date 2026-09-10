@@ -57,7 +57,7 @@ class ReconcileMOCsUseCase:
         data = extract_json_data(response)
         if not isinstance(data, list):
             raise DomainValidationError(
-                f"Stage 6 MOC reconciliation expected JSON array, got: {type(data).__name__}"
+                f"MOC reconciliation expected JSON array, got: {type(data).__name__}"
             )
 
         # Step 3: Parse response and instantiate MapOfContent aggregates.
