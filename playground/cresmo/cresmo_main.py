@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.resolve()))
 
 from cresmo_ingestion import run_cresmo_ingestion
+from cresmo_llm import CresmoLLMConfig, GeminiAPIAdapter
 from cresmo_pipeline import run_cresmo_pipeline
 from cresmo_shared import (
     CRESMO_ROOT,
@@ -125,6 +126,11 @@ def build_parser() -> argparse.ArgumentParser:
         default=True,
         help="Automatically download/transcribe missing priority videos on-demand (default: True)",
     )
+    process_parser.add_argument(
+        "--llm-model",
+        default=None,
+        help="Gemini LLM model identifier (default: gemini-3.8-flash, or from GEMINI_MODEL env)",
+    )
 
     # --- Full Subcommand (Stage 1 -> Stage 6) ---
     full_parser = subparsers.add_parser("full", help="Run FULL end-to-end pipeline (Sync + Process)")
@@ -174,6 +180,11 @@ def build_parser() -> argparse.ArgumentParser:
         default=True,
         help="Automatically download/transcribe missing priority videos on-demand (default: True)",
     )
+    full_parser.add_argument(
+        "--llm-model",
+        default=None,
+        help="Gemini LLM model identifier (default: gemini-3.8-flash, or from GEMINI_MODEL env)",
+    )
 
     return parser
 
@@ -213,6 +224,11 @@ def main() -> None:
     if args.command in {"sync", "full", "all"}:
         ensure_cookies(output_file=DEFAULT_COOKIES_FILE, verbose=True)
 
+    llm = None
+    llm_model_override = getattr(args, "llm_model", None)
+    if llm_model_override:
+        llm = GeminiAPIAdapter(config=CresmoLLMConfig(gemini_model=llm_model_override))
+
     if args.command == "sync":
         run_cresmo_ingestion(
             playlist_path=Path(args.playlist),
@@ -238,6 +254,7 @@ def main() -> None:
             priority_folder=Path(args.priority_folder) if getattr(args, "priority_folder", None) else None,
             priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
             auto_sync=getattr(args, "auto_sync", True),
+            llm=llm,
         )
 
     elif args.command in {"full", "all"}:
@@ -263,6 +280,7 @@ def main() -> None:
             priority_folder=Path(args.priority_folder) if getattr(args, "priority_folder", None) else None,
             priority_playlist=Path(args.priority_playlist) if getattr(args, "priority_playlist", None) else None,
             auto_sync=getattr(args, "auto_sync", True),
+            llm=llm,
         )
 
 
