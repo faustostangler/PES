@@ -110,9 +110,10 @@ def test_notes_with_llm_adapter(tmp_path: Path):
 
     assert is_new is True
     assert json_file.exists()
-    assert len(adapter.call_history) == 1
-    assert adapter.call_history[0]["temperature"] == 0.0
-    loaded_notes = json.loads(json_file.read_text(encoding="utf-8"))
+    assert len(adapter.call_history) == 2  # 1 inventory discovery + 1 batch synthesis
+    assert all(c["temperature"] == 0.0 for c in adapter.call_history)
+    loaded_data = json.loads(json_file.read_text(encoding="utf-8"))
+    loaded_notes = loaded_data["notes"] if isinstance(loaded_data, dict) else loaded_data
     assert len(loaded_notes) == 1
     assert loaded_notes[0]["title"] == "Geopolítica de Recursos Hídricos"
 

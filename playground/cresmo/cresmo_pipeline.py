@@ -21,6 +21,7 @@ import re
 import sys
 import textwrap
 import time
+import uuid
 
 from typing import Any, Callable
 
@@ -330,6 +331,28 @@ STAGE3_PRE_PROMPT: str = (
     "3. Keep definitions precise, dense, and non-verbose according to the cresmo-style-guide.\n"
 )
 
+STAGE3_INVENTORY_PRE_PROMPT: str = (
+    "You are Cresmo Atomic Inventory Specialist. Your objective is to scan the entire enriched text and produce "
+    "an exhaustive, deduplicated JSON inventory array of all extractable atomic entities, concepts, events, and dynamic processes.\n"
+    "CRITICAL CONSTRAINTS:\n"
+    "1. Output strictly a single valid JSON array of objects starting with '[' and ending with ']': "
+    '[{"title": str, "type": "entity"|"concept"|"event"|"process", "domain": str, "aliases": list[str]}].\n'
+    "2. Be exhaustive across the whole text (including supplementary context). Do NOT omit key actors, concepts, or dated events.\n"
+    "3. Adhere to Big-Endian date prefixes for events (e.g. '1383-1385 Crise Dinástica Portuguesa').\n"
+    "4. Do NOT generate full definitions or relations here; output ONLY title, type, domain, and aliases.\n"
+)
+
+STAGE3_BATCH_NOTE_PREMPT: str = (
+    "You are Cresmo Atomic. Extract deep, rigorous, autonomous atomic Obsidian notes strictly for the provided target entities, "
+    "grounded in the entire enriched text.\n"
+    "CRITICAL CONSTRAINTS:\n"
+    "1. Output strictly a single valid JSON array of complete note objects starting with '[' and ending with ']'.\n"
+    "2. Generate full notes ONLY for the explicit target titles listed in this batch prompt. Do not hallucinate or add other entities.\n"
+    "3. Each note must adhere strictly to the cresmo-atomic specification: title, type, content/tags, domain, cluster, source, aliases, "
+    "definition (complying with cresmo-style-guide with high density, second-order mechanisms, zero em-dashes), direct_relations (triples), "
+    "causal_matrix (cause, effect, epistemic_attribution), and cross_context (precursors, lateral_events, aftermath).\n"
+)
+
 
 def fetch_trajectory_response(
     session_id: str,
@@ -428,6 +451,14 @@ def extract_json_payload(content: str) -> str | None:
             last_brace = array_slice.rfind("}", 0, last_brace)
 
     return None
+
+
+def atomic_write_json(file_path: Path, data: Any) -> None:
+    """Safely write JSON payload to file using an atomic temp-file replace pattern."""
+    temp_file = file_path.with_suffix(f".tmp.{uuid.uuid4().hex}")
+    temp_file.parent.mkdir(parents=True, exist_ok=True)
+    temp_file.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    temp_file.replace(file_path)
 
 
 def fetch_trajectory_response_json(
@@ -881,18 +912,181 @@ def cresmo_notes(
 ) -> tuple[Path, bool]:
     """Stage 3: Atomic Note Generation (cresmo-atomic). Returns (json_file, is_newly_generated)."""
     video_id = meta.get("video_id", enriched_file.stem)
+    channel_name = meta.get("channel_name", enriched_file.parent.name)
     json_output_file = enriched_file.parent / f"{video_id}.json"
-
-    if not force and is_valid_atomic_json(json_output_file, MIN_VALID_OUTPUT_BYTES):
-        return json_output_file, False
 
     if not enriched_file.exists():
         return json_output_file, False
+
+    # Check existing state and resume status
+    existing_inventory: list[dict[str, Any]] = []
+    existing_notes: list[dict[str, Any]] = []
+    if json_output_file.exists():
+        try:
+            cached = json.loads(json_output_file.read_text(encoding="utf-8").strip())
+            if isinstance(cached, dict):
+                existing_inventory = cached.get("inventory", [])
+                existing_notes = cached.get("notes", [])
+            elif isinstance(cached, list):
+                existing_notes = cached
+        except Exception:
+            existing_inventory = []
+            existing_notes = []
+
+    completed_titles = {
+        n.get("title", "").strip().lower()
+        for n in existing_notes
+        if isinstance(n, dict) and n.get("title")
+    }
+
+    # If not force and already fully completed
+    if not force and is_valid_atomic_json(json_output_file, MIN_VALID_OUTPUT_BYTES):
+        if existing_inventory:
+            if len(completed_titles) >= len(existing_inventory):
+                return json_output_file, False
+        else:
+            if len(existing_notes) > 0 and llm is None:
+                return json_output_file, False
 
     enriched_text = enriched_file.read_text(encoding="utf-8")
     skill_doc = SKILL_ATOMIC_PATH.read_text(encoding="utf-8") if SKILL_ATOMIC_PATH.exists() else ""
     safe_enriched = sanitize_untrusted_content(enriched_text, source_label=enriched_file.name)
 
+    # --- Phase 1 & 2 via Hexagonal LLM Port ---
+    if llm is not None:
+        batch_size = _system_cfg.pipeline.atomic_batch_size
+        inv_temp = _system_cfg.pipeline.atomic_inventory_temperature
+        gen_temp = _system_cfg.pipeline.atomic_generation_temperature
+
+        # --- Phase 1: Holistic Inventory Discovery ---
+        inventory: list[dict[str, Any]] = existing_inventory if not force else []
+        if not inventory:
+            inv_prompt = (
+                f"{STAGE3_INVENTORY_PRE_PROMPT}\n"
+                f"Source metadata: channel_name='{channel_name}', video_id='{video_id}'\n\n"
+                f"--- ENRICHED TEXT ---\n{safe_enriched}"
+            )
+            print(f"  📋 [Stage 3 Inventory] Scanning entire enriched text for exhaustive entity discovery...", flush=True)
+            inv_response = llm.transform(
+                prompt=inv_prompt,
+                system_instruction=STAGE3_INVENTORY_PRE_PROMPT,
+                temperature=inv_temp,
+            )
+            inv_json = extract_json_payload(inv_response)
+            if not inv_json:
+                raise ValueError(f"Failed to extract valid inventory JSON for video_id '{video_id}'")
+            parsed_inv = json.loads(inv_json)
+            if not isinstance(parsed_inv, list) or len(parsed_inv) == 0:
+                raise ValueError(f"Extracted inventory is empty for video_id '{video_id}'")
+
+            # Deduplicate by title
+            seen_inv_titles: set[str] = set()
+            for item in parsed_inv:
+                if isinstance(item, dict) and item.get("title"):
+                    norm_t = item["title"].strip().lower()
+                    if norm_t not in seen_inv_titles:
+                        seen_inv_titles.add(norm_t)
+                        inventory.append(item)
+
+            # Persist initial checkpoint
+            initial_payload = {
+                "video_id": video_id,
+                "channel_name": channel_name,
+                "inventory": inventory,
+                "notes": existing_notes if not force else [],
+            }
+            atomic_write_json(json_output_file, initial_payload)
+            print(f"  ✓ [Stage 3 Inventory] Discovered {len(inventory)} unique atomic entities across text.", flush=True)
+
+        # Recalculate completed notes and pending items
+        notes_accumulator = list(existing_notes) if not force else []
+        completed_titles = {
+            n.get("title", "").strip().lower()
+            for n in notes_accumulator
+            if isinstance(n, dict) and n.get("title")
+        }
+        pending_items = [
+            it for it in inventory
+            if it.get("title", "").strip().lower() not in completed_titles
+        ]
+
+        if not pending_items and len(notes_accumulator) > 0:
+            print(f"  ✓ [Stage 3 Success] All {len(notes_accumulator)} atomic notes already completed -> {json_output_file}")
+            return json_output_file, False
+
+        # --- Phase 2: Batched Synthesis (<= batch_size per batch) ---
+        batches = [pending_items[i:i + batch_size] for i in range(0, len(pending_items), batch_size)]
+        total_batches = len(batches)
+        print(
+            f"  🔄 [Stage 3 Batched] Generating {len(pending_items)} pending notes across {total_batches} "
+            f"batches (size <= {batch_size})...",
+            flush=True,
+        )
+
+        for batch_idx, batch in enumerate(batches, start=1):
+            target_titles = [it.get("title", "").strip() for it in batch]
+            target_list_str = "\n".join(f"- {t} ({it.get('type', 'concept')})" for it, t in zip(batch, target_titles))
+
+            batch_prompt = (
+                f"{STAGE3_BATCH_NOTE_PREMPT}\n"
+                f"Source metadata: channel_name='{channel_name}', video_id='{video_id}'\n"
+                f"TARGET ENTITIES TO GENERATE IN THIS BATCH:\n{target_list_str}\n\n"
+                f"--- SKILL SPECIFICATION ---\n{skill_doc}\n\n"
+                f"--- ENRICHED TEXT GROUNDING ---\n{safe_enriched}"
+            )
+
+            print(
+                f"    -> [Batch {batch_idx}/{total_batches}] Requesting notes for: {', '.join(target_titles[:3])}"
+                f"{'...' if len(target_titles) > 3 else ''}...",
+                flush=True,
+            )
+            batch_response = llm.transform(
+                prompt=batch_prompt,
+                system_instruction=STAGE3_BATCH_NOTE_PREMPT,
+                temperature=gen_temp,
+            )
+            batch_json = extract_json_payload(batch_response)
+            if not batch_json:
+                raise ValueError(f"Failed to extract valid batch JSON notes in batch {batch_idx} for video_id '{video_id}'")
+
+            parsed_batch = json.loads(batch_json)
+            batch_notes = parsed_batch if isinstance(parsed_batch, list) else parsed_batch.get("notes", [])
+            if not isinstance(batch_notes, list) or len(batch_notes) == 0:
+                raise ValueError(f"Batch {batch_idx} returned empty notes list for video_id '{video_id}'")
+
+            # Append new unique notes
+            new_in_batch = 0
+            for note in batch_notes:
+                if isinstance(note, dict) and note.get("title"):
+                    n_title = note["title"].strip().lower()
+                    if n_title not in completed_titles:
+                        completed_titles.add(n_title)
+                        notes_accumulator.append(note)
+                        new_in_batch += 1
+                    else:
+                        for i, existing in enumerate(notes_accumulator):
+                            if existing.get("title", "").strip().lower() == n_title:
+                                notes_accumulator[i] = note
+                                break
+
+            # Atomic incremental persistence after EVERY batch
+            checkpoint_payload = {
+                "video_id": video_id,
+                "channel_name": channel_name,
+                "inventory": inventory,
+                "notes": notes_accumulator,
+            }
+            atomic_write_json(json_output_file, checkpoint_payload)
+            print(
+                f"    ✓ [Batch {batch_idx}/{total_batches} Saved] +{new_in_batch} notes written to disk. "
+                f"Progress: {len(notes_accumulator)}/{len(inventory)} total compiled.",
+                flush=True,
+            )
+
+        print(f"  ✓ [Stage 3 Success] All {len(notes_accumulator)} atomic notes compiled -> {json_output_file}")
+        return json_output_file, True
+
+    # Legacy agent RPC path
     prompt = STAGE3_PRE_PROMPT + (
         f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
         f"Save output directly to file: {json_output_file.resolve()}\n\n"
@@ -900,7 +1094,7 @@ def cresmo_notes(
         f"--- ENRICHED TEXT ---\n{safe_enriched}"
     )
 
-    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE and llm is None:
+    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
         prompt = STAGE3_PRE_PROMPT + (
             f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
             f"Save output directly to file: {json_output_file.resolve()}\n"
@@ -908,20 +1102,6 @@ def cresmo_notes(
             f"Skill specification: {SKILL_ATOMIC_PATH.resolve()}\n"
             f"Please read the input file, apply cresmo-atomic skill, and write the JSON array result directly to {json_output_file.resolve()}."
         )
-
-    # Execution via synchronous Hexagonal LLM Port
-    if llm is not None:
-        response_text = llm.transform(
-            prompt=prompt,
-            system_instruction=STAGE3_PRE_PROMPT,
-            temperature=0.0,
-        )
-        json_payload = extract_json_payload(response_text)
-        if not json_payload:
-            raise ValueError(f"Failed to extract valid atomic JSON notes from LLM response for video_id '{video_id}'")
-        json_output_file.write_text(json_payload, encoding="utf-8")
-        print(f"  ✓ [Stage 3 Success] Atomic JSON generated via LLM Adapter -> {json_output_file}")
-        return json_output_file, True
 
     # Legacy agent RPC path
     target_session = session_id or ""
