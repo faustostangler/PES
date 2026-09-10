@@ -22,9 +22,11 @@ except ImportError:
     print("Error: yt-dlp is required. Install it with: pip install yt-dlp", file=sys.stderr)
     sys.exit(1)
 
+from cresmo_config import get_config
+
 # --- Browser & Cookie Defaults ---
 SUPPORTED_BROWSERS: list[str] = ["firefox", "chrome", "chromium", "brave", "edge", "opera", "vivaldi"]
-DEFAULT_COOKIE_FILE: Path = Path(__file__).parent.resolve() / ".yt_dlp_cookies.txt"
+DEFAULT_COOKIE_FILE: Path = get_config().storage.cookies_file or (Path(__file__).parent.resolve() / ".yt_dlp_cookies.txt")
 DEFAULT_TARGET_DOMAINS: tuple[str, ...] = ("youtube.com", "google.com", "ytimg.com")
 IGNORED_SUBDOMAINS: tuple[str, ...] = (
     "takeout",

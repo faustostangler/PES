@@ -38,10 +38,11 @@ def test_cresmo_llm_config_defaults():
     """Verify default configuration values adhere to SOTA KISS specifications."""
     config = CresmoLLMConfig(_env_file=None, gemini_api_key="test_api_key_123")
     assert config.gemini_api_key.get_secret_value() == "test_api_key_123"
-    assert config.gemini_model == "gemini-3.5-flash"
+    assert config.gemini_model == "gemini-2.5-flash"
     assert config.temperature == 0.7
     assert config.max_output_tokens == 65536
     assert config.request_timeout_seconds == 180.0
+    assert config.enable_streaming is True
 
 
 def test_cresmo_llm_config_fail_fast_missing_key():
@@ -63,6 +64,7 @@ def test_gemini_api_adapter_calls_genai_client():
     mock_client = MagicMock()
     mock_response = MagicMock()
     mock_response.text = "# Enriched Output\n\nEmpirical prose.\n\n## Informações Complementares\nDetails."
+    mock_response.usage_metadata = MagicMock(prompt_token_count=10, candidates_token_count=20, total_token_count=30)
     mock_client.models.generate_content.return_value = mock_response
 
     adapter = GeminiAPIAdapter(config=config, client=mock_client)
@@ -125,3 +127,84 @@ def test_gemini_api_adapter_streaming_mode():
 
     assert output == "Hello World!"
     mock_client.models.generate_content_stream.assert_called_once()
+
+
+def test_gemini_api_adapter_temperature_override():
+    """Verify GeminiAPIAdapter respects explicit temperature argument over default config."""
+    config = CresmoLLMConfig(
+        gemini_api_key="AIzaSyDummyKeyForTestingPurposes",
+        gemini_model="gemini-2.5-flash",
+        temperature=0.7,
+        enable_streaming=False,
+    )
+
+    mock_client = MagicMock()
+    mock_response = MagicMock()
+    mock_response.text = '{"nodes": []}'
+    mock_response.usage_metadata = MagicMock(prompt_token_count=10, candidates_token_count=15, total_token_count=25)
+    mock_client.models.generate_content.return_value = mock_response
+
+    adapter = GeminiAPIAdapter(config=config, client=mock_client)
+    output = adapter.transform(
+        prompt="Extract JSON",
+        system_instruction="Strict JSON schema",
+        temperature=0.0,
+    )
+
+    assert output == '{"nodes": []}'
+    call_kwargs = mock_client.models.generate_content.call_args.kwargs
+    assert call_kwargs["config"].temperature == 0.0
+
+
+def test_gemini_api_adapter_accepts_cresmo_config():
+    """Verify GeminiAPIAdapter accepts root CresmoConfig via dependency injection."""
+    from cresmo_config import CresmoConfig
+
+    cresmo_cfg = CresmoConfig(
+        _env_file=None,
+        gemini_api_key="AIzaSyCresmoConfigKey",
+        llm={
+            "active_provider": "gemini",
+            "gemini": {
+                "model_name": "gemini-3.8-flash",
+                "temperature": 0.4,
+                "enable_streaming": False,
+            },
+        },
+    )
+
+    mock_client = MagicMock()
+    mock_response = MagicMock()
+    mock_response.text = "Injected config output"
+    mock_client.models.generate_content.return_value = mock_response
+
+    adapter = GeminiAPIAdapter(config=cresmo_cfg, client=mock_client)
+    assert adapter.config.gemini_model == "gemini-3.8-flash"
+    assert adapter.config.temperature == 0.4
+
+    output = adapter.transform("Test DI prompt")
+    assert output == "Injected config output"
+
+
+def test_gemini_api_adapter_custom_retry_policy():
+    """Verify GeminiAPIAdapter respects custom RetrySettings rather than hardcoded defaults."""
+    from cresmo_config import RetrySettings
+
+    config = CresmoLLMConfig(
+        gemini_api_key="AIzaSyDummyKeyForTestingPurposes",
+        gemini_model="gemini-2.5-flash",
+        enable_streaming=False,
+        retry=RetrySettings(max_attempts=2, multiplier=1.0, min_seconds=0.01, max_seconds=0.05),
+    )
+
+    mock_client = MagicMock()
+    mock_client.models.generate_content.side_effect = ConnectionResetError("Repeated failure")
+
+    adapter = GeminiAPIAdapter(config=config, client=mock_client)
+    with pytest.raises(ConnectionResetError):
+        adapter.transform("Test prompt that always fails")
+
+    # Should fail after exactly 2 attempts as defined in custom RetrySettings
+    assert mock_client.models.generate_content.call_count == 2
+
+

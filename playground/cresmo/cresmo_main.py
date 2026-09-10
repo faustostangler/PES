@@ -31,14 +31,18 @@ from cresmo_shared import (
 )
 from export_cookies import ensure_cookies
 
-# --- CLI & Pipeline Defaults ---
-DEFAULT_DAYS: int = 365 * 2
-DEFAULT_WHISPER_MODEL: str = "base"
-DEFAULT_MAX_WORKERS: int = 5
-DEFAULT_KEEP_AUDIO: bool = False
-DEFAULT_ISOLATE_CONTEXT: bool = True
-DEFAULT_RESTART_SERVER: bool = False
-DEFAULT_COMMAND: str = "sync" # "full"
+from cresmo_config import get_config
+
+_system_cfg = get_config()
+
+# --- CLI & Pipeline Defaults (Sourced from CresmoConfig SSOT) ---
+DEFAULT_DAYS: int = _system_cfg.ingestion.days_lookback
+DEFAULT_WHISPER_MODEL: str = _system_cfg.ingestion.whisper_model
+DEFAULT_MAX_WORKERS: int = _system_cfg.ingestion.resolve_max_workers()
+DEFAULT_KEEP_AUDIO: bool = _system_cfg.ingestion.keep_audio
+DEFAULT_ISOLATE_CONTEXT: bool = _system_cfg.runtime.isolate_context
+DEFAULT_RESTART_SERVER: bool = _system_cfg.runtime.restart_server
+DEFAULT_COMMAND: str = _system_cfg.runtime.default_command
 
 CLI_EPILOG_EXAMPLES: str = """
 Examples:

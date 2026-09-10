@@ -13,12 +13,16 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-# --- Config defaults ---
-DEFAULT_OLLAMA_URL = "http://localhost:11434"
-DEFAULT_MODEL = "phi3:mini"
-DEFAULT_RAW_DIR = Path(__file__).resolve().parent / "raw"
-DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent
-MAX_TRANSCRIPT_CHARS = 2500
+from cresmo_config import get_config
+
+_system_cfg = get_config()
+
+# --- Config defaults (Sourced from CresmoConfig SSOT) ---
+DEFAULT_OLLAMA_URL = _system_cfg.llm.ollama.base_url
+DEFAULT_MODEL = _system_cfg.llm.ollama.model_name
+DEFAULT_RAW_DIR = _system_cfg.storage.raw_dir or (Path(__file__).resolve().parent / "raw")
+DEFAULT_OUTPUT_DIR = _system_cfg.storage.root_dir
+MAX_TRANSCRIPT_CHARS = _system_cfg.llm.ollama.max_transcript_chars
 
 SYSTEM_PROMPT = """Act as a domain expert in conceptual synthesis.
 Analyze the provided title and transcript excerpt.
