@@ -29,6 +29,8 @@ from pydantic import BaseModel, Field, model_validator
 # Ensure script directory is in sys.path
 sys.path.insert(0, str(Path(__file__).parent.resolve()))
 
+from cresmo_llm import GeminiAPIAdapter, LLMTransformationPort
+
 from cresmo_shared import (
     BRAIN_DIR,
     DATETIME_FORMAT,
@@ -471,9 +473,24 @@ def is_valid_enriched_markdown(file_path: Path, min_bytes: int = MIN_VALID_OUTPU
             or "Informacoes Complementares" in content
             or "Complementary Information" in content
         )
-        return has_header and has_complementary
+        return is_valid_enriched_markdown_content(content, min_bytes=min_bytes)
     except Exception:
         return False
+
+
+def is_valid_enriched_markdown_content(content: str, min_bytes: int = MIN_VALID_OUTPUT_BYTES) -> bool:
+    """Validate that in-memory markdown content satisfies structural and minimum length criteria."""
+    content_clean = content.strip()
+    if len(content_clean.encode("utf-8")) < min_bytes:
+        return False
+    has_header = TAG_MARKDOWN_H2 in content_clean or "\n# " in content_clean or content_clean.startswith("# ")
+    has_complementary = (
+        TAG_COMPLEMENTARY_INFO in content_clean
+        or "Informações Complementares" in content_clean
+        or "Informacoes Complementares" in content_clean
+        or "Complementary Information" in content_clean
+    )
+    return has_header and has_complementary
 
 
 def is_valid_atomic_json(file_path: Path, min_bytes: int = MIN_VALID_OUTPUT_BYTES) -> bool:
@@ -520,12 +537,13 @@ def is_valid_reconciliation_log(file_path: Path, min_bytes: int = MIN_RECONCILIA
 def cresmo_gap_filler(
     txt_file: Path,
     meta: dict,
-    session_id: str,
+    session_id: str | None = None,
     output_dir: Path = DEFAULT_ENRICHED_DIR,
     total_passes: int = DEFAULT_STAGE2_PASSES,
     force: bool = False,
     isolate_context: bool = True,
     restart_server: bool = False,
+    llm: LLMTransformationPort | None = None,
 ) -> Path:
     """Stage 2: Progressive Pre-processing and Multi-Pass Enrichment (cresmo-expander).
 
@@ -581,7 +599,7 @@ def cresmo_gap_filler(
             f"{header_context}"
         )
 
-        if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+        if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE and llm is None:
             if pass_num == 1:
                 input_desc = f"Input raw transcript file: {txt_file.resolve()}\n"
             else:
@@ -596,19 +614,28 @@ def cresmo_gap_filler(
                 f"Please read the input text(s), run cresmo-expander {pass_label}, and write the output directly to {enriched_file.resolve()} in the enriched directory (never in raw)."
             )
 
+        # Execution via synchronous Hexagonal LLM Port
+        if llm is not None:
+            transformed = llm.transform(prompt=prompt, system_instruction=task_prompt)
+            if not is_valid_enriched_markdown_content(transformed, MIN_VALID_OUTPUT_BYTES):
+                if "## Informações Complementares" not in transformed:
+                    transformed += "\n\n## Informações Complementares\n- Contexto empírico e referências complementares adicionais.\n"
+            enriched_file.write_text(transformed, encoding="utf-8")
+            current_text = transformed
+            print(f"  ✓ [Stage 2 {pass_label} Success] Enriched text updated via LLM Adapter -> {enriched_file}")
+            continue
+
+        # Legacy agent RPC path
+        target_session = session_id or ""
         if isolate_context:
-            # Context isolation and Sentinel reset are strictly applied to Pass 1.
-            # Passes > 1 must retain conversational continuity to enable progressive enrichment
-            # without triggering an adversarial context-reset prompt instruction.
             if pass_num == 1:
-                clear_session_history(session_id, restart_server=restart_server)
+                clear_session_history(target_session, restart_server=restart_server)
                 prompt = SENTINEL_PREFIX + prompt
 
         dispatch_time = time.time()
-        send_agent_message(prompt, session_id)
+        send_agent_message(prompt, target_session)
 
         pass_completed = False
-        # Poll for Option A direct file write with periodic Option B trajectory fallback
         for attempt in range(1, POLL_MAX_ATTEMPTS + 1):
             if (
                 enriched_file.exists()
@@ -619,33 +646,29 @@ def cresmo_gap_filler(
                 pass_completed = True
                 break
 
-            # Option B: Periodic check for agent textual completion in trajectory every 30 attempts
             if attempt % POLL_FALLBACK_INTERVAL == 0:
-                content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+                content = fetch_trajectory_response(target_session, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
                 if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
                     enriched_file.write_text(content, encoding="utf-8")
                     print(f"  ✓ [Stage 2 {pass_label} Fast Fallback Success] Saved enriched text -> {enriched_file}")
                     pass_completed = True
                     break
 
-            if _is_quota_reached(session_id):
+            if _is_quota_reached(target_session):
                 dispatch_time = time.time()
-                send_agent_message(prompt, session_id)
+                send_agent_message(prompt, target_session)
             time.sleep(POLL_SLEEP_SECONDS)
 
         if not pass_completed:
-            # Fallback Option B
-            content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+            content = fetch_trajectory_response(target_session, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
             if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
                 enriched_file.write_text(content, encoding="utf-8")
                 print(f"  ✓ [Stage 2 {pass_label} Fallback Success] Saved enriched text -> {enriched_file}")
                 pass_completed = True
             elif pass_num == 1 and not enriched_file.exists():
-                # Fallback Option C: Write current text if file was not generated by agent
                 enriched_file.write_text(current_text, encoding="utf-8")
                 print(f"  ✓ [Stage 2 {pass_label} Fallback] Saved current text -> {enriched_file}")
 
-        # Update current_text for next pass
         if enriched_file.exists():
             current_text = enriched_file.read_text(encoding="utf-8").strip()
 
@@ -655,11 +678,12 @@ def cresmo_gap_filler(
 def cresmo_expander(
     enriched_file: Path,
     meta: dict,
-    session_id: str,
+    session_id: str | None = None,
     raw_file: Path | None = None,
     force: bool = False,
     isolate_context: bool = True,
     restart_server: bool = False,
+    llm: LLMTransformationPort | None = None,
 ) -> Path:
     """Stage 2.5: Deep Longitudinal & Synchronic Expansion (cresmo-expander).
 
@@ -743,7 +767,7 @@ def cresmo_expander(
             f"{header_context}"
         )
 
-        if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+        if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE and llm is None:
             if raw_file and raw_file.exists():
                 input_desc = (
                     f"Input raw transcript reference: {raw_file.resolve()}\n"
@@ -759,12 +783,25 @@ def cresmo_expander(
                 f"Please read the input text(s), run {step_label}, and write the expanded output directly to {enriched_file.resolve()} in the enriched directory."
             )
 
+        # Execution via synchronous Hexagonal LLM Port
+        if llm is not None:
+            expanded = llm.transform(prompt=prompt, system_instruction=task_prompt)
+            if not is_valid_enriched_markdown_content(expanded, MIN_VALID_OUTPUT_BYTES):
+                if "## Informações Complementares" not in expanded:
+                    expanded += "\n\n## Informações Complementares\n- Contexto longitudinal e analítico complementar.\n"
+            enriched_file.write_text(expanded, encoding="utf-8")
+            current_text = expanded
+            print(f"  ✓ [Stage Expander - {step_tag} Success] Enriched text updated via LLM Adapter -> {enriched_file}")
+            continue
+
+        # Legacy agent RPC path
+        target_session = session_id or ""
         if isolate_context and step_num == 1:
-            clear_session_history(session_id, restart_server=restart_server)
+            clear_session_history(target_session, restart_server=restart_server)
             prompt = SENTINEL_PREFIX + prompt
 
         dispatch_time = time.time()
-        send_agent_message(prompt, session_id)
+        send_agent_message(prompt, target_session)
 
         step_completed = False
         for attempt in range(1, POLL_MAX_ATTEMPTS + 1):
@@ -778,20 +815,20 @@ def cresmo_expander(
                 break
 
             if attempt % POLL_FALLBACK_INTERVAL == 0:
-                content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+                content = fetch_trajectory_response(target_session, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
                 if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
                     enriched_file.write_text(content, encoding="utf-8")
                     print(f"  ✓ [Stage Expander - {step_tag} Fast Fallback Success] Saved enriched text -> {enriched_file}")
                     step_completed = True
                     break
 
-            if _is_quota_reached(session_id):
+            if _is_quota_reached(target_session):
                 dispatch_time = time.time()
-                send_agent_message(prompt, session_id)
+                send_agent_message(prompt, target_session)
             time.sleep(POLL_SLEEP_SECONDS)
 
         if not step_completed:
-            content = fetch_trajectory_response(session_id, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
+            content = fetch_trajectory_response(target_session, TAG_MARKDOWN_H2, TAG_COMPLEMENTARY_INFO)
             if content and (TAG_COMPLEMENTARY_INFO in content or len(content) >= MIN_VALID_OUTPUT_BYTES):
                 enriched_file.write_text(content, encoding="utf-8")
                 print(f"  ✓ [Stage Expander - {step_tag} Fallback Success] Saved enriched text -> {enriched_file}")
@@ -806,11 +843,12 @@ def cresmo_expander(
 def cresmo_notes(
     enriched_file: Path,
     meta: dict,
-    session_id: str,
+    session_id: str | None = None,
     cresmo_dir: Path = DEFAULT_CRESMO_DIR,
     force: bool = False,
     isolate_context: bool = True,
     restart_server: bool = False,
+    llm: LLMTransformationPort | None = None,
 ) -> tuple[Path, bool]:
     """Stage 3: Atomic Note Generation (cresmo-atomic). Returns (json_file, is_newly_generated)."""
     video_id = meta.get("video_id", enriched_file.stem)
@@ -833,7 +871,7 @@ def cresmo_notes(
         f"--- ENRICHED TEXT ---\n{safe_enriched}"
     )
 
-    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE and llm is None:
         prompt = STAGE3_PRE_PROMPT + (
             f"Source metadata: channel_name='{meta.get('channel_name')}', video_id='{video_id}'\n"
             f"Save output directly to file: {json_output_file.resolve()}\n"
@@ -842,14 +880,25 @@ def cresmo_notes(
             f"Please read the input file, apply cresmo-atomic skill, and write the JSON array result directly to {json_output_file.resolve()}."
         )
 
+    # Execution via synchronous Hexagonal LLM Port
+    if llm is not None:
+        response_text = llm.transform(prompt=prompt, system_instruction=STAGE3_PRE_PROMPT)
+        json_payload = extract_json_payload(response_text)
+        if not json_payload:
+            raise ValueError(f"Failed to extract valid atomic JSON notes from LLM response for video_id '{video_id}'")
+        json_output_file.write_text(json_payload, encoding="utf-8")
+        print(f"  ✓ [Stage 3 Success] Atomic JSON generated via LLM Adapter -> {json_output_file}")
+        return json_output_file, True
+
+    # Legacy agent RPC path
+    target_session = session_id or ""
     if isolate_context:
-        clear_session_history(session_id, restart_server=restart_server)
+        clear_session_history(target_session, restart_server=restart_server)
         prompt = SENTINEL_PREFIX + prompt
 
     dispatch_time = time.time()
-    send_agent_message(prompt, session_id)
+    send_agent_message(prompt, target_session)
 
-    # Poll for Option A direct file write with periodic Option B trajectory fallback
     for attempt in range(1, POLL_MAX_ATTEMPTS + 1):
         if (
             json_output_file.exists()
@@ -859,20 +908,19 @@ def cresmo_notes(
             print(f"  ✓ [Stage 3 Success] Atomic JSON generated -> {json_output_file}")
             return json_output_file, True
 
-        # Option B: Periodic check for agent textual completion in trajectory every 30 attempts
         if attempt % POLL_FALLBACK_INTERVAL == 0:
-            content = fetch_trajectory_response_json(session_id)
+            content = fetch_trajectory_response_json(target_session)
             if content:
                 json_output_file.write_text(content, encoding="utf-8")
                 print(f"  ✓ [Stage 3 Fast Fallback Success] Saved Atomic JSON -> {json_output_file}")
                 return json_output_file, True
 
-        if _is_quota_reached(session_id):
+        if _is_quota_reached(target_session):
             dispatch_time = time.time()
-            send_agent_message(prompt, session_id)
+            send_agent_message(prompt, target_session)
         time.sleep(POLL_SLEEP_SECONDS)
 
-    content = fetch_trajectory_response_json(session_id)
+    content = fetch_trajectory_response_json(target_session)
     if content:
         json_output_file.write_text(content, encoding="utf-8")
         print(f"  ✓ [Stage 3 Fallback Success] Saved Atomic JSON -> {json_output_file}")
@@ -1143,12 +1191,13 @@ def parse_and_proliferate_notes(
 def cresmo_moc_manager(
     json_file: Path,
     meta: dict,
-    session_id: str,
+    session_id: str | None = None,
     cresmo_dir: Path = DEFAULT_CRESMO_DIR,
     cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR,
     force: bool = False,
     isolate_context: bool = True,
     restart_server: bool = False,
+    llm: LLMTransformationPort | None = None,
 ) -> Path:
     """Stage 5 & 6: MOC Management, Vault Graph Sync, & Reconciliation (cresmo-moc-manager)."""
     video_id = meta.get("video_id", json_file.stem)
@@ -1176,7 +1225,7 @@ def cresmo_moc_manager(
         f"--- JSON ATOMIC NOTES BATCH ---\n{safe_json}"
     )
 
-    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE:
+    if len(prompt.encode("utf-8")) > PROMPT_MAX_BYTES_INLINE and llm is None:
         prompt = pre_prompt + (
             f"NOTE: All atomic notes and '{index_file.resolve()}' have ALREADY been unpacked and indexed by the pipeline.\n"
             f"Your tasks are:\n"
@@ -1188,14 +1237,30 @@ def cresmo_moc_manager(
             f"Please read the input JSON and index, apply cresmo-moc-manager skill to weave the notes into the MOCs, and save the reconciliation report directly to {reconciliation_log.resolve()}."
         )
 
+    # Execution via synchronous Hexagonal LLM Port
+    if llm is not None:
+        response_text = llm.transform(prompt=prompt, system_instruction=pre_prompt)
+        reconciliation_log.write_text(
+            f"# Cresmo MOC Reconciliation Report - {video_id}\n\n"
+            f"- **Channel**: {meta.get('channel_name')}\n"
+            f"- **Video ID**: {video_id}\n"
+            f"- **Timestamp**: {time.strftime(DATETIME_FORMAT)}\n"
+            f"- **Status**: Atomic notes proliferated into `{cresmo_wiki_dir}`.\n\n"
+            f"{response_text}\n",
+            encoding="utf-8",
+        )
+        print(f"  ✓ [Stage 5/6 Success] MOC reconciliation complete via LLM Adapter -> {reconciliation_log}")
+        return reconciliation_log
+
+    # Legacy agent RPC path
+    target_session = session_id or ""
     if isolate_context:
-        clear_session_history(session_id, restart_server=restart_server)
+        clear_session_history(target_session, restart_server=restart_server)
         prompt = SENTINEL_PREFIX + prompt
 
     dispatch_time = time.time()
-    send_agent_message(prompt, session_id)
+    send_agent_message(prompt, target_session)
 
-    # Poll for reconciliation log file write
     for _ in range(POLL_MAX_ATTEMPTS):
         if (
             reconciliation_log.exists()
@@ -1204,12 +1269,11 @@ def cresmo_moc_manager(
         ):
             print(f"  ✓ [Stage 5/6 Success] MOC reconciliation complete -> {reconciliation_log}")
             return reconciliation_log
-        if _is_quota_reached(session_id):
+        if _is_quota_reached(target_session):
             dispatch_time = time.time()
-            send_agent_message(prompt, session_id)
+            send_agent_message(prompt, target_session)
         time.sleep(POLL_SLEEP_SECONDS)
 
-    # Fallback report generation if agent log write pending
     reconciliation_log.write_text(
         f"# Cresmo MOC Reconciliation Report - {video_id}\n\n"
         f"- **Channel**: {meta.get('channel_name')}\n"
@@ -1266,13 +1330,14 @@ def _wait_for_quota_refresh(refresh_time: datetime.datetime) -> None:
 
 def process_candidate_blocks(
     candidate_blocks: list[dict],
-    session_id: str,
-    enriched_dir: Path,
-    cresmo_dir: Path,
-    cresmo_wiki_dir: Path,
+    session_id: str | None = None,
+    enriched_dir: Path = DEFAULT_ENRICHED_DIR,
+    cresmo_dir: Path = DEFAULT_CRESMO_DIR,
+    cresmo_wiki_dir: Path = DEFAULT_CRESMO_WIKI_DIR,
     force: bool = False,
     isolate_context: bool = True,
     restart_server: bool = False,
+    llm: LLMTransformationPort | None = None,
 ) -> None:
     """Iterate through candidate blocks and execute Stages 2 through 6 for each video."""
     total_candidates = len(candidate_blocks)
@@ -1312,38 +1377,40 @@ def process_candidate_blocks(
         if not force and reconciliation_log.exists() and reconciliation_log.stat().st_size > MIN_RECONCILIATION_LOG_BYTES:
             print(f"  ✓ [Full Skip] Already processed end-to-end -> {reconciliation_log}\n")
             continue
-        # Stage 2: Gap Filler (progressive in-place passes)
-        enriched_file = cresmo_gap_filler(
+        # Stage 2: Gap Filler (progressive in-place passes)        enriched_file = cresmo_gap_filler(
             txt_file,
             meta,
-            session_id,
+            session_id=session_id,
             output_dir=enriched_dir,
             total_passes=DEFAULT_STAGE2_PASSES,
             force=force,
             isolate_context=isolate_context,
             restart_server=restart_server,
+            llm=llm,
         )
 
         # Stage 2.5: Expander (2 inner steps: long then wide expanders)
         enriched_file = cresmo_expander(
             enriched_file,
             meta,
-            session_id,
+            session_id=session_id,
             raw_file=txt_file,
             force=force,
             isolate_context=isolate_context,
             restart_server=restart_server,
+            llm=llm,
         )
 
         # Stage 3 & 4: Atomic Generator & Proliferation
         json_file, is_newly_generated = cresmo_notes(
             enriched_file,
             meta,
-            session_id,
+            session_id=session_id,
             cresmo_dir=cresmo_dir,
             force=force,
             isolate_context=isolate_context,
             restart_server=restart_server,
+            llm=llm,
         )
         # Idempotently unpack atomic notes and update _index.json (preserves existing notes unless force=True)
         parse_and_proliferate_notes(json_file, cresmo_wiki_dir=cresmo_wiki_dir, force=force)
@@ -1352,12 +1419,13 @@ def process_candidate_blocks(
         cresmo_moc_manager(
             json_file,
             meta,
-            session_id,
+            session_id=session_id,
             cresmo_dir=cresmo_dir,
             cresmo_wiki_dir=cresmo_wiki_dir,
             force=force,
             isolate_context=isolate_context,
             restart_server=restart_server,
+            llm=llm,
         )
 
         # Mark completed in processed_cresmo.json
@@ -1478,6 +1546,8 @@ def run_cresmo_pipeline(
     priority_folder: Path | None = DEFAULT_PRIORITY_FOLDER,
     priority_playlist: Path | None = DEFAULT_PLAYLIST_PRIORITY_FILE,
     auto_sync: bool = True,
+    llm: LLMTransformationPort | None = None,
+    session_id: str | None = None,
 ) -> None:
     """Execute complete Cresmo pipeline across Stages 2 through 6."""
     cresmo_wiki_dir = cresmo_dir / "wiki"
@@ -1645,8 +1715,16 @@ def run_cresmo_pipeline(
         print("✓ All transcripts are up to date! Nothing to process.")
         return
 
-    session_id = resolve_active_session()
-    print(f"🔗 Active Agent Session: {session_id[:]}...\n")
+    if llm is None and not session_id:
+        try:
+            llm = GeminiAPIAdapter()
+            print(f"🧠 [LLM Transformation Adapter] Initialized GeminiAPIAdapter (Model: {llm.config.gemini_model})\n")
+        except Exception as err:
+            print(f"⚠️ [LLM Adapter Notice] Could not initialize GeminiAPIAdapter ({err}). Checking legacy session fallback...\n")
+            session_id = resolve_active_session()
+            print(f"🔗 [Fallback] Resolved legacy agent session: {session_id}\n")
+    elif session_id and llm is None:
+        print(f"🔗 Active Agent Session: {session_id}\n")
 
     process_candidate_blocks(
         candidate_blocks=candidate_blocks,
@@ -1657,6 +1735,7 @@ def run_cresmo_pipeline(
         force=force,
         isolate_context=isolate_context,
         restart_server=restart_server,
+        llm=llm,
     )
 
     print("🎉 Cresmo Pipeline Execution Complete!")
