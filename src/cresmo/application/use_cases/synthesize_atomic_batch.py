@@ -57,8 +57,7 @@ class SynthesizeAtomicBatchUseCase:
         for i in range(0, len(all_items), self.batch_size):
             chunk = all_items[i : i + self.batch_size]
             targets_summary = [
-                {"title": title.value, "type": note_type.value}
-                for title, note_type in chunk
+                {"title": title.value, "type": note_type.value} for title, note_type in chunk
             ]
 
             # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
@@ -107,9 +106,7 @@ class SynthesizeAtomicBatchUseCase:
 
                 relations_raw = entry.get("direct_relations", [])
                 relations = tuple(
-                    NoteTitle(r)
-                    for r in relations_raw
-                    if isinstance(r, str) and r.strip()
+                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
                 )
 
                 cm_raw = entry.get("causal_matrix")
@@ -131,17 +128,11 @@ class SynthesizeAtomicBatchUseCase:
                     )
 
                 aliases_raw = entry.get("aliases", [])
-                aliases = tuple(
-                    a.strip()
-                    for a in aliases_raw
-                    if isinstance(a, str) and a.strip()
-                )
+                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
 
                 tags_raw = entry.get("content_tags", [])
                 content_tags = tuple(
-                    t.strip()
-                    for t in tags_raw
-                    if isinstance(t, str) and t.strip()
+                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
                 )
 
                 note = AtomicNote(

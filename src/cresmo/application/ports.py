@@ -17,7 +17,13 @@ from cresmo.domain.entities import (
     MapOfContent,
     RawTranscript,
 )
-from cresmo.domain.value_objects import ContentId, NoteTitle
+from cresmo.domain.value_objects import (
+    ChannelFeedQuery,
+    ContentId,
+    DiscoveredMediaItem,
+    LedgerEntry,
+    NoteTitle,
+)
 
 
 class MediaIngestionPort(ABC):
@@ -60,6 +66,20 @@ class MediaIngestionPort(ABC):
         4. Return sequence of newly ingested RawTranscript entities.
         """
         raise NotImplementedError("Step 1: Implement channels ingestion contract.")
+
+    @abstractmethod
+    def discover_channel_feed(
+        self,
+        query: ChannelFeedQuery,
+    ) -> list[DiscoveredMediaItem]:
+        """Query and discover media items from a channel or playlist feed within query constraints.
+
+        Walkthrough:
+        1. Resolve channel or playlist URL.
+        2. Extract recent video metadata (content_id, title, published_at, url, channel_name).
+        3. Filter by lookback window and return DiscoveredMediaItem list.
+        """
+        raise NotImplementedError("Step 1: Implement discover channel feed contract.")
 
 
 class LLMTransformationPort(ABC):
@@ -149,3 +169,18 @@ class LedgerRepositoryPort(ABC):
     def mark_processed(self, content_id: ContentId) -> None:
         """Record content item as successfully processed."""
         raise NotImplementedError("Step 1: Record content ID in processed ledger.")
+
+    @abstractmethod
+    def save_entry(self, entry: LedgerEntry) -> None:
+        """Persist or update an immutable LedgerEntry audit record atomically."""
+        raise NotImplementedError("Step 1: Persist ledger entry.")
+
+    @abstractmethod
+    def get_entry(self, content_id: ContentId) -> LedgerEntry | None:
+        """Retrieve the latest LedgerEntry for a given content ID."""
+        raise NotImplementedError("Step 1: Retrieve ledger entry.")
+
+    @abstractmethod
+    def list_entries(self, limit: int = 100) -> list[LedgerEntry]:
+        """List recently recorded ledger entries."""
+        raise NotImplementedError("Step 1: List ledger entries.")

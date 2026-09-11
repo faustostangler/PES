@@ -68,13 +68,16 @@ class TestNoteTitle:
 class TestNoteType:
     """SPEC-001 §2.1: NoteType enum parsing."""
 
-    @pytest.mark.parametrize("raw,expected", [
-        ("concept", NoteType.CONCEPT),
-        ("CONCEPT", NoteType.CONCEPT),
-        ("entity", NoteType.ENTITY),
-        ("event", NoteType.EVENT),
-        ("process", NoteType.PROCESS),
-    ])
+    @pytest.mark.parametrize(
+        "raw,expected",
+        [
+            ("concept", NoteType.CONCEPT),
+            ("CONCEPT", NoteType.CONCEPT),
+            ("entity", NoteType.ENTITY),
+            ("event", NoteType.EVENT),
+            ("process", NoteType.PROCESS),
+        ],
+    )
     def test_valid_note_types(self, raw: str, expected: NoteType) -> None:
         assert NoteType.from_string(raw) == expected
 

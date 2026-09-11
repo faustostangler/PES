@@ -53,14 +53,16 @@ class TestCresmoPipelineOrchestration:
             '"associated_notes": ["Vilfredo Pareto"]}]'
         )
 
-        mock_llm = MockLLMAdapter(responses=[
-            gap_filler_llm,  # Gap Filler
-            expander_llm,  # Longitudinal Expander
-            expander_llm,  # Synchronic Expander
-            inventory_llm,  # Inventory Discovery
-            batch_llm,  # Batched Synthesis
-            moc_llm,  # MOC Reconciliation
-        ])
+        mock_llm = MockLLMAdapter(
+            responses=[
+                gap_filler_llm,  # Gap Filler
+                expander_llm,  # Longitudinal Expander
+                expander_llm,  # Synchronic Expander
+                inventory_llm,  # Inventory Discovery
+                batch_llm,  # Batched Synthesis
+                moc_llm,  # MOC Reconciliation
+            ]
+        )
         mock_ingestion = MockMediaIngestionPort(canned_transcript=canned_raw)
         vault_port = InMemoryVaultAdapter()
         ledger_port = InMemoryLedgerAdapter()

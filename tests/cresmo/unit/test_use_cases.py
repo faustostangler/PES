@@ -240,7 +240,7 @@ class TestUseCasesEdgeCases:
             body="Body content.",
             complementary_info="Complementary info.",
         )
-        llm_port = MockLLMAdapter(responses=['[]'])
+        llm_port = MockLLMAdapter(responses=["[]"])
         use_case = DiscoverAtomicInventoryUseCase(llm_port)
 
         with pytest.raises(DomainValidationError):

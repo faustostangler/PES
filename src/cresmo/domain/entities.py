@@ -121,5 +121,7 @@ class MapOfContent:
         for note in self.associated_notes:
             key = note.value.lower()
             if key in seen:
-                raise DomainValidationError(f"Duplicate associated note '{note.value}' in MapOfContent.")
+                raise DomainValidationError(
+                    f"Duplicate associated note '{note.value}' in MapOfContent."
+                )
             seen.add(key)

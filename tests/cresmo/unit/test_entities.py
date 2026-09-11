@@ -100,7 +100,9 @@ class TestAtomicNote:
             title=title,
             note_type=NoteType.CONCEPT,
             definition="A circulação das elites postula que minorias organizadas governam maiorias desorganizadas.",
-            causal_matrix=CausalMatrix(cause="Desorganização da massa", effect="Governo oligárquico"),
+            causal_matrix=CausalMatrix(
+                cause="Desorganização da massa", effect="Governo oligárquico"
+            ),
             direct_relations=(NoteTitle("Vilfredo Pareto"),),
         )
         assert note.title == title

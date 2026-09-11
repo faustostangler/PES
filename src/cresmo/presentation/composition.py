@@ -7,10 +7,14 @@ from CresmoSettings to concrete infrastructure adapters and instantiating Cresmo
 from __future__ import annotations
 
 from cresmo.application.pipeline import CresmoPipeline
+from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
-from cresmo.infrastructure.adapters.json_ledger_adapter import JsonLedgerAdapter
-from cresmo.infrastructure.adapters.legacy_isb_ingestion_adapter import LegacyIsbIngestionAdapter
+from cresmo.infrastructure.adapters.legacy_isb_ingestion_adapter import (
+    LegacyIsbIngestionAdapter,
+)
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
 
 
@@ -35,12 +39,10 @@ def build_pipeline(
         model_name=resolved_settings.gemini_model,
     )
     vault_port = ObsidianVaultAdapter(root_dir=resolved_settings.vault_dir)
-    ledger_port = JsonLedgerAdapter(ledger_path=resolved_settings.ledger_path)
+    ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
-        batch_size_override
-        if batch_size_override is not None
-        else resolved_settings.batch_size
+        batch_size_override if batch_size_override is not None else resolved_settings.batch_size
     )
 
     return CresmoPipeline(
@@ -49,4 +51,55 @@ def build_pipeline(
         vault_port=vault_port,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
+    )
+
+
+def build_preflight_checker(
+    settings: CresmoSettings | None = None,
+    check_ffmpeg: bool = True,
+) -> PreflightHealthChecker:
+    """Construct PreflightHealthChecker with resolved settings.
+
+    Args:
+        settings: Validated application settings.
+        check_ffmpeg: Whether to verify presence of ffmpeg in system PATH.
+
+    Returns:
+        Configured PreflightHealthChecker instance.
+    """
+    resolved_settings = settings or CresmoSettings()
+    return PreflightHealthChecker(
+        gemini_api_key=resolved_settings.gemini_api_key,
+        vault_dir=resolved_settings.vault_dir,
+        sqlite_ledger_path=resolved_settings.sqlite_ledger_path,
+        check_ffmpeg=check_ffmpeg,
+    )
+
+
+def build_sync_channel_use_case(
+    settings: CresmoSettings | None = None,
+    batch_size_override: int | None = None,
+    check_ffmpeg: bool = True,
+) -> SyncChannelUseCase:
+    """Construct SyncChannelUseCase with all ports and dependencies wired.
+
+    Args:
+        settings: Validated application settings.
+        batch_size_override: Optional operational override for batch size.
+        check_ffmpeg: Whether to verify ffmpeg in preflight.
+
+    Returns:
+        Wired SyncChannelUseCase orchestrator.
+    """
+    resolved_settings = settings or CresmoSettings()
+    pipeline = build_pipeline(resolved_settings, batch_size_override=batch_size_override)
+    preflight_checker = build_preflight_checker(resolved_settings, check_ffmpeg=check_ffmpeg)
+
+    assert pipeline.ledger_port is not None, "Ledger port must be wired for channel sync."
+
+    return SyncChannelUseCase(
+        media_ingestion_port=pipeline.media_ingestion_port,
+        ledger_port=pipeline.ledger_port,
+        pipeline=pipeline,
+        preflight_checker=preflight_checker,
     )
