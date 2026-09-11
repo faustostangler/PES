@@ -32,3 +32,7 @@ This glossary establishes the canonical terminology across all engineering discu
 | **`LegacyISBMediaIngestionAdapter`** | Anti-Corruption Layer (ACL) that encloses legacy code in `playground/isb.ai/`, isolating `sys.path` modifications and converting legacy dictionaries into domain entities. | `ISBWrapper`, `SyncHelper` |
 | **`ObsidianVaultAdapter`** | Infrastructure adapter implementing `VaultRepositoryPort` using atomic `.tmp` rename filesystem operations and frontmatter serialization. | `MarkdownWriter`, `WikiAdapter` |
 | **`EvalRubric`** | Quantified scoring criteria (faithfulness, relevance, hallucination, toxicity) executed via Langfuse to validate LLM output quality against frozen thresholds. | `PromptTest`, `QualityCheck`, `EvalSpec` |
+| **`CompositionRoot`** | Centralized presentation layer entrypoint where infrastructure adapters are instantiated, configuration is bound, and dependencies are injected into application orchestrators. | `MainFactory`, `Bootstrapper`, `WireContainer` |
+| **`HumbleObjectCLI`** | Architectural presentation pattern ensuring command-line interfaces remain ultra-thin translators between I/O streams/flags and use cases with zero domain logic. | `CommandLineScript`, `RunnerScript`, `GodCLI` |
+| **`JsonLedgerAdapter`** | Infrastructure adapter implementing `LedgerRepositoryPort` to provide file-based idempotency tracking via atomic JSON serialization of completed `ContentId`s. | `LedgerWriter`, `AuditFile`, `HistoryTracker` |
+

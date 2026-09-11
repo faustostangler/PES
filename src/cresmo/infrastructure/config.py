@@ -74,6 +74,16 @@ class CresmoSettings(BaseSettings):
         """Master lookup JSON index."""
         return self.wiki_dir / "_index.json"
 
+    ledger_filename: str = Field(
+        default="processed_cresmo.json",
+        description="Filename of the JSON ledger for processed content tracking.",
+    )
+
+    @property
+    def ledger_path(self) -> Path:
+        """Absolute path to processed content ledger JSON file."""
+        return self.vault_dir / self.ledger_filename
+
     # =========================================================================
     # 🟢 Category 3: Operational Tunables
     # =========================================================================
