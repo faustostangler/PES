@@ -1,19 +1,20 @@
 # SPEC-002: Cresmo Production CLI & Presentation Layer Specifications
 
-**Linked ADR:** [`ADR-002: Cresmo Production CLI Entrypoint and Presentation Layer Orchestration`](../adr/ADR-002-cresmo-presentation-cli.md)  
-**Status:** DRAFT (Awaiting Lead Architect Approval)  
-**Date:** 2026-09-10  
+**Linked ADR:** [`ADR-002: Cresmo Production CLI Entrypoint and Presentation Layer Orchestration`](../adr/ADR-002-cresmo-presentation-cli.md) & [`ADR-003: PES Production Architecture`](../adr/ADR-003-pes-production-architecture.md)  
+**Status:** APPROVED  
+**Date:** 2026-09-11  
 **Bounded Context:** Cresmo Knowledge Synthesis — Presentation & Infrastructure Adapters  
 
 ---
 
 ## 1. Overview & Objectives
 
-Derives the precision test specifications and frozen acceptance criteria from [`ADR-002`](../adr/ADR-002-cresmo-presentation-cli.md). This specification covers:
-1. The **Humble Object CLI** controller in `src/cresmo/presentation/cli.py` driven by `argparse`.
-2. The **Composition Root** factory in `src/cresmo/presentation/composition.py`.
-3. The **Atomic JSON Ledger Adapter** in `src/cresmo/infrastructure/adapters/json_ledger_adapter.py`.
+Derives the precision test specifications and frozen acceptance criteria from [`ADR-002`](../adr/ADR-002-cresmo-presentation-cli.md) and [`ADR-003`](../adr/ADR-003-pes-production-architecture.md). This specification covers:
+1. The **Humble Object CLI** controller in `src/cresmo/presentation/cli.py` driven by `argparse` (`run`, `sync`, `check-config`, `worker`).
+2. The **Composition Root** factory in `src/cresmo/presentation/composition.py` wiring `LLMAdapterFactory`, `PromptRepositoryPort`, and `PreflightHealthChecker`.
+3. The **ACID SQLite WAL Ledger Adapter** in `src/cresmo/infrastructure/adapters/sqlite_ledger_adapter.py` (`SqliteLedgerAdapter`).
 4. The **Process Exit Code Taxonomy** mapping CLI executions to deterministic shell exit codes.
+
 
 ---
 
