@@ -26,9 +26,21 @@ class CompendiumStructureError(CresmoDomainError):
     """Raised when an Enriched Compendium lacks continuous prose or complementary information."""
 
 
-class RateLimitExceededError(CresmoDomainError):
+class CresmoInfrastructureError(Exception):
+    """Base exception for all external infrastructure, adapter, and environment failures."""
+
+
+class PreflightError(CresmoInfrastructureError):
+    """Raised when environment preflight sanity checks fail."""
+
+
+class SecurityViolationError(CresmoInfrastructureError):
+    """Raised when a security sandbox or path traversal boundary is violated."""
+
+
+class RateLimitExceededError(CresmoInfrastructureError, CresmoDomainError):
     """Raised when an upstream media source or LLM returns HTTP 429 rate limit."""
 
 
-class IngestionNetworkError(CresmoDomainError):
+class IngestionNetworkError(CresmoInfrastructureError, CresmoDomainError):
     """Raised when media crawling or download fails due to network/transcription errors."""

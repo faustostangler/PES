@@ -81,7 +81,9 @@ class GeminiLLMAdapter(LLMTransformationPort):
         # Extract usage metadata
         usage_meta = getattr(response, "usage_metadata", None)
         prompt_tokens = getattr(usage_meta, "prompt_token_count", 0) or len(prompt.split())
-        candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(response_text.split())
+        candidate_tokens = getattr(usage_meta, "candidates_token_count", 0) or len(
+            response_text.split()
+        )
 
         # Bind output and token metadata to Langfuse generation span
         try:

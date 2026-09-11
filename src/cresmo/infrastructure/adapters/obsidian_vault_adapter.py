@@ -276,7 +276,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
         # Parse cross context
         cross_context: CrossContextRelations | None = None
-        cc_match = re.search(r"## Redes de Conexão \(Cross-Context\)\s*\n([\s\S]*?)(?=\n## |\Z)", body)
+        cc_match = re.search(
+            r"## Redes de Conexão \(Cross-Context\)\s*\n([\s\S]*?)(?=\n## |\Z)", body
+        )
         if cc_match:
             cc_text = cc_match.group(1)
             prec = re.search(r"- Precursores:\s*(.*)", cc_text)

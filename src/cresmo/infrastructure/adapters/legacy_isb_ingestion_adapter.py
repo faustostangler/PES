@@ -8,14 +8,23 @@ from __future__ import annotations
 
 import re
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
 
 from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.entities import RawTranscript
-from cresmo.domain.exceptions import IngestionNetworkError, RateLimitExceededError
-from cresmo.domain.value_objects import ContentId
+from cresmo.domain.exceptions import (
+    DomainValidationError,
+    IngestionNetworkError,
+    RateLimitExceededError,
+)
+from cresmo.domain.value_objects import (
+    ChannelFeedQuery,
+    ContentId,
+    DiscoveredMediaItem,
+)
 
 _VIDEO_ID_REGEX = re.compile(r"(?:v=|\/)([a-zA-Z0-9_-]{8,64})(?:[&?]|\Z)")
 _FRONTMATTER_REGEX = re.compile(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$")
@@ -56,7 +65,7 @@ class LegacyIsbIngestionAdapter(MediaIngestionPort):
             path_added = True
 
         try:
-            import sync_channels  # type: ignore[import-not-found]
+            import sync_channels
 
             sync_channels.sync_single_video(
                 url=video_url,
@@ -168,7 +177,7 @@ class LegacyIsbIngestionAdapter(MediaIngestionPort):
             path_added = True
 
         try:
-            import sync_channels  # type: ignore[import-not-found]
+            import sync_channels
 
             csv_path = output_dir.parent / "isb_brain.csv"
             sync_channels.sync_channels_and_seeds(
@@ -198,6 +207,102 @@ class LegacyIsbIngestionAdapter(MediaIngestionPort):
                     f"Upstream rate limit (429) during batch crawl: {err_msg}"
                 ) from exc
             raise IngestionNetworkError(f"Batch crawl failed: {err_msg}") from exc
+        finally:
+            if path_added and str_isb in sys.path:
+                sys.path.remove(str_isb)
+
+    def discover_channel_feed(
+        self,
+        query: ChannelFeedQuery,
+    ) -> list[DiscoveredMediaItem]:
+        """Query and discover media items from a channel or playlist feed via yt-dlp flat extraction.
+
+        Args:
+            query: Encapsulated query constraints (channel URL, lookback days, max videos).
+
+        Returns:
+            List of DiscoveredMediaItem objects within query bounds.
+
+        Raises:
+            RateLimitExceededError: If upstream returns HTTP 429.
+            IngestionNetworkError: If discovery fails due to network error.
+        """
+        str_isb = str(self.isb_dir)
+        path_added = False
+        if str_isb not in sys.path and self.isb_dir.exists():
+            sys.path.insert(0, str_isb)
+            path_added = True
+
+        try:
+            import yt_dlp
+
+            ydl_opts = {
+                "extract_flat": True,
+                "quiet": True,
+                "no_warnings": True,
+                "playlistend": query.max_videos,
+            }
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(query.channel_url, download=False)
+                if not info:
+                    return []
+
+                raw_entries = info.get("entries") or []
+                channel_name = (
+                    info.get("channel")
+                    or info.get("uploader")
+                    or info.get("title")
+                    or "UnknownChannel"
+                )
+
+                discovered: list[DiscoveredMediaItem] = []
+                for entry in raw_entries:
+                    if not entry:
+                        continue
+                    vid = entry.get("id")
+                    title = entry.get("title")
+                    if not vid or not title:
+                        continue
+
+                    url = entry.get("url") or f"https://www.youtube.com/watch?v={vid}"
+
+                    # Timestamp parsing
+                    timestamp = entry.get("timestamp")
+                    if timestamp:
+                        pub_dt = datetime.fromtimestamp(timestamp, tz=UTC)
+                    else:
+                        ud = entry.get("upload_date")
+                        if ud and len(ud) == 8:
+                            try:
+                                pub_dt = datetime.strptime(ud, "%Y%m%d").replace(tzinfo=UTC)
+                            except ValueError:
+                                pub_dt = datetime.now(UTC)
+                        else:
+                            pub_dt = datetime.now(UTC)
+
+                    try:
+                        item = DiscoveredMediaItem(
+                            content_id=ContentId(str(vid)),
+                            title=str(title),
+                            published_at=pub_dt,
+                            media_url=url,
+                            channel_name=str(channel_name),
+                        )
+                        discovered.append(item)
+                    except DomainValidationError:
+                        continue
+
+                return discovered
+        except Exception as exc:
+            err_msg = str(exc)
+            if "429" in err_msg or "Too Many Requests" in err_msg:
+                raise RateLimitExceededError(
+                    f"Rate limit (429) hit discovering feed for '{query.channel_url}': {err_msg}"
+                ) from exc
+            raise IngestionNetworkError(
+                f"Failed to discover feed for '{query.channel_url}': {err_msg}"
+            ) from exc
         finally:
             if path_added and str_isb in sys.path:
                 sys.path.remove(str_isb)

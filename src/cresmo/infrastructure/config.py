@@ -74,15 +74,20 @@ class CresmoSettings(BaseSettings):
         """Master lookup JSON index."""
         return self.wiki_dir / "_index.json"
 
-    ledger_filename: str = Field(
-        default="processed_cresmo.json",
-        description="Filename of the JSON ledger for processed content tracking.",
+    sqlite_ledger_filename: str = Field(
+        default="cresmo_ledger.db",
+        description="Filename of the SQLite WAL database for processed content tracking.",
     )
 
     @property
+    def sqlite_ledger_path(self) -> Path:
+        """Absolute path to processed content SQLite WAL database file."""
+        return self.vault_dir / self.sqlite_ledger_filename
+
+    @property
     def ledger_path(self) -> Path:
-        """Absolute path to processed content ledger JSON file."""
-        return self.vault_dir / self.ledger_filename
+        """Absolute path to processed content SQLite WAL database file."""
+        return self.sqlite_ledger_path
 
     # =========================================================================
     # 🟢 Category 3: Operational Tunables

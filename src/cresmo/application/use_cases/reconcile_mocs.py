@@ -37,8 +37,7 @@ class ReconcileMOCsUseCase:
         # Step 1: Read all existing atomic notes from vault.
         notes = self.vault_port.get_all_atomic_notes()
         note_summaries = [
-            {"title": n.title.value, "type": n.note_type.value, "domain": n.domain}
-            for n in notes
+            {"title": n.title.value, "type": n.note_type.value, "domain": n.domain} for n in notes
         ]
 
         # Step 2: Prompt LLM to cluster notes into thematic Maps of Content.

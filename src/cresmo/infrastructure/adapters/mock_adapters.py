@@ -20,16 +20,35 @@ from cresmo.domain.entities import (
     MapOfContent,
     RawTranscript,
 )
-from cresmo.domain.value_objects import ContentId, NoteTitle
+from cresmo.domain.value_objects import (
+    ChannelFeedQuery,
+    ContentId,
+    DiscoveredMediaItem,
+    LedgerEntry,
+    NoteTitle,
+)
 
 
 class MockMediaIngestionPort(MediaIngestionPort):
     """In-memory mock for MediaIngestionPort."""
 
-    def __init__(self, canned_transcript: RawTranscript | None = None) -> None:
+    def __init__(
+        self,
+        canned_transcript: RawTranscript | None = None,
+        canned_feed: list[DiscoveredMediaItem] | None = None,
+    ) -> None:
         self.canned_transcript = canned_transcript
+        self.canned_feed = canned_feed or []
         self.ingest_single_calls: list[str] = []
         self.ingest_channels_calls: list[list[str]] = []
+        self.discover_calls: list[ChannelFeedQuery] = []
+
+    def discover_channel_feed(
+        self,
+        query: ChannelFeedQuery,
+    ) -> list[DiscoveredMediaItem]:
+        self.discover_calls.append(query)
+        return list(self.canned_feed)
 
     def ingest_single_video(
         self,
@@ -67,11 +86,13 @@ class MockLLMAdapter(LLMTransformationPort):
         system_instruction: str | None = None,
         temperature: float | None = None,
     ) -> str:
-        self.call_history.append({
-            "prompt": prompt,
-            "system_instruction": system_instruction,
-            "temperature": temperature,
-        })
+        self.call_history.append(
+            {
+                "prompt": prompt,
+                "system_instruction": system_instruction,
+                "temperature": temperature,
+            }
+        )
         if self.responses:
             return self.responses.pop(0)
         return "Deterministic mock LLM response."
@@ -125,9 +146,20 @@ class InMemoryLedgerAdapter(LedgerRepositoryPort):
 
     def __init__(self) -> None:
         self.processed_ids: set[str] = set()
+        self.entries: dict[str, LedgerEntry] = {}
 
     def is_processed(self, content_id: ContentId) -> bool:
         return content_id.value in self.processed_ids
 
     def mark_processed(self, content_id: ContentId) -> None:
         self.processed_ids.add(content_id.value)
+
+    def save_entry(self, entry: LedgerEntry) -> None:
+        self.processed_ids.add(entry.content_id.value)
+        self.entries[entry.content_id.value] = entry
+
+    def get_entry(self, content_id: ContentId) -> LedgerEntry | None:
+        return self.entries.get(content_id.value)
+
+    def list_entries(self, limit: int = 100, offset: int = 0) -> list[LedgerEntry]:
+        return list(self.entries.values())[offset : offset + limit]

@@ -20,6 +20,7 @@ from cresmo.application.use_cases.ingest_raw_transcript import (
     IngestRawTranscriptUseCase,
 )
 from cresmo.application.use_cases.reconcile_mocs import ReconcileMOCsUseCase
+from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.synthesize_atomic_batch import (
     SynthesizeAtomicBatchUseCase,
 )
@@ -30,5 +31,6 @@ __all__ = [
     "FillGapsFluidProseUseCase",
     "IngestRawTranscriptUseCase",
     "ReconcileMOCsUseCase",
+    "SyncChannelUseCase",
     "SynthesizeAtomicBatchUseCase",
 ]
