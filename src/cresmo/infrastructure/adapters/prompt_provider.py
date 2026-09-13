@@ -111,8 +111,9 @@ class JsonPromptProvider(PromptProviderPort):
         current_text: str | None = None,
     ) -> str:
         """Format the Socratic gap filler prompt differentiating pass 1 from subsequent passes."""
-        key = "stage2_pass1" if pass_num == 1 else "stage2_pass_subsequent"
-        entry = self._templates.get(key, {})
+        key = "gap_filler_pass1" if pass_num == 1 else "gap_filler_pass_subsequent"
+        legacy_key = "stage2_pass1" if pass_num == 1 else "stage2_pass_subsequent"
+        entry = self._templates.get(key) or self._templates.get(legacy_key, {})
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-expander")
         template = entry.get("template", "")
@@ -168,7 +169,9 @@ class JsonPromptProvider(PromptProviderPort):
         complementary_info: str,
     ) -> str:
         """Format the Braudelian longitudinal expander prompt."""
-        entry = self._templates.get("stage3_long_expander", {})
+        entry = self._templates.get("long_expander") or self._templates.get(
+            "stage3_long_expander", {}
+        )
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-long-expander")
         template = entry.get("template", "")
@@ -194,7 +197,9 @@ class JsonPromptProvider(PromptProviderPort):
         current_text: str,
     ) -> str:
         """Format the Jaspers synchronic wide expander prompt."""
-        entry = self._templates.get("stage3_wide_expander", {})
+        entry = self._templates.get("wide_expander") or self._templates.get(
+            "stage3_wide_expander", {}
+        )
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-wide-expander")
         template = entry.get("template", "")
@@ -215,8 +220,10 @@ class JsonPromptProvider(PromptProviderPort):
         channel_name: str,
         compendium_body: str,
     ) -> str:
-        """Format the Stage 4 atomic inventory extraction prompt."""
-        entry = self._templates.get("stage4_inventory", {})
+        """Format the atomic inventory extraction prompt."""
+        entry = self._templates.get("atomic_inventory") or self._templates.get(
+            "stage4_inventory", {}
+        )
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-atomic")
         template = entry.get("template", "")
@@ -247,8 +254,12 @@ class JsonPromptProvider(PromptProviderPort):
         compendium_body: str,
         targets_json: str,
     ) -> str:
-        """Format the Stage 5 atomic note batch synthesis prompt."""
-        entry = self._templates.get("stage5_batch_notes", {})
+        """Format the atomic note batch synthesis prompt."""
+        entry = (
+            self._templates.get("atomic_batch")
+            or self._templates.get("synthesize_atomic_batch")
+            or self._templates.get("stage5_batch_notes", {})
+        )
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-atomic")
         template = entry.get("template", "")
@@ -278,8 +289,12 @@ class JsonPromptProvider(PromptProviderPort):
         self,
         notes_json: str,
     ) -> str:
-        """Format the Stage 6 MOC reconciliation prompt."""
-        entry = self._templates.get("stage6_mocs", {})
+        """Format the MOC reconciliation prompt."""
+        entry = (
+            self._templates.get("reconcile_mocs")
+            or self._templates.get("mocs")
+            or self._templates.get("stage6_mocs", {})
+        )
         task = entry.get("task", "")
         skill_name = entry.get("skill_name", "cresmo-moc-manager")
         template = entry.get("template", "")

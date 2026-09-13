@@ -89,9 +89,7 @@ class FillGapsFluidProseUseCase:
             )
 
         video_date_str = (
-            raw_transcript.upload_date.strftime("%Y%m%d")
-            if raw_transcript.upload_date
-            else ""
+            raw_transcript.upload_date.strftime("%Y%m%d") if raw_transcript.upload_date else ""
         )
         compendium = EnrichedCompendium(
             content_id=raw_transcript.content_id,
