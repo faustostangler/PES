@@ -326,6 +326,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             sys.stdout.write(f"- SQLite Ledger: {settings.sqlite_ledger_path}\n")
             sys.stdout.write(f"- Gemini Model: {settings.gemini_model}\n")
             sys.stdout.write(f"- Batch Size: {settings.batch_size}\n")
+            lf_pk = getattr(settings, "langfuse_public_key", "")
+            lf_sk = getattr(settings, "langfuse_secret_key", None)
+            lf_host = getattr(settings, "langfuse_host", "https://cloud.langfuse.com")
+            if lf_pk and lf_sk and hasattr(lf_sk, "get_secret_value") and lf_sk.get_secret_value():
+                pk_masked = lf_pk[:10] + "..."
+                sys.stdout.write(f"- Langfuse Telemetry: Enabled ({lf_host}, {pk_masked})\n")
+            else:
+                sys.stdout.write("- Langfuse Telemetry: Disabled (no credentials configured)\n")
             return EXIT_SUCCESS
         except ValidationError as exc:
             sys.stderr.write(f"Configuration validation error:\n{exc}\n")
@@ -506,6 +514,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
                 return EXIT_SUCCESS
 
+            lf_pk = getattr(settings, "langfuse_public_key", "")
+            lf_sk = getattr(settings, "langfuse_secret_key", None)
+            lf_host = getattr(settings, "langfuse_host", "https://cloud.langfuse.com")
+            if lf_pk and lf_sk and hasattr(lf_sk, "get_secret_value") and lf_sk.get_secret_value():
+                sys.stdout.write(f"Langfuse telemetry active: {lf_host}\n")
             sys.stdout.write(f"Starting batch execution for {len(sources)} items...\n")
 
             if args.dry_run:

@@ -25,24 +25,35 @@ While Langfuse Cloud imposes monthly quota limits (50k observations/month) and s
 The self-hosted stack is defined as immutable Infrastructure-as-Code in `docker-compose.langfuse.yml`:
 
 ```
-┌────────────────────────────────────────────────────────┐
-│ Host Machine (:3000)                                   │
-│                                                        │
-│  ┌─────────────────────────┐   ┌────────────────────┐  │
-│  │ cresmo-langfuse-server  │──▶│ cresmo-langfuse-db │  │
-│  │ (langfuse/langfuse:2)   │   │ (postgres:16)      │  │
-│  └─────────────────────────┘   └────────────────────┘  │
-│               │                           │            │
-└───────────────┼───────────────────────────┼────────────┘
-                ▼                           ▼
-        HTTP Web UI / API           Named Docker Volume
-      (http://localhost:3000)   (cresmo_langfuse_postgres_data)
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│ Host Machine (:3000)                                                                    │
+│                                                                                         │
+│  ┌────────────────────────┐      ┌─────────────────────────┐     ┌───────────────────┐  │
+│  │  cresmo-langfuse-db    │◀─────│ cresmo-langfuse-server  │────▶│ cresmo-clickhouse │  │
+│  │     (postgres:16)      │      │   (langfuse/langfuse:3) │     │ (clickhouse:24.3) │  │
+│  └────────────────────────┘      └─────────────────────────┘     └───────────────────┘  │
+│               │                               │                            │            │
+│               │                  ┌────────────┴────────────┐               │            │
+│               │                  ▼                         ▼               │            │
+│               │       ┌──────────────────────┐  ┌──────────────────────┐   │            │
+│               │       │ cresmo-langfuse-minio│  │ cresmo-langfuse-redis│   │            │
+│               │       │ (chainguard/minio)   │  │   (redis:7-alpine)   │   │            │
+│               │       └──────────────────────┘  └──────────────────────┘   │            │
+│               │                                                            │            │
+└───────────────┼────────────────────────────────────────────────────────────┼────────────┘
+                ▼                                                            ▼
+      Postgres Volume                                                ClickHouse Volume
+(cresmo_langfuse_postgres_data)                               (cresmo_langfuse_clickhouse_data)
 ```
 
 ### Container Services
-- **`cresmo-langfuse-server`**: Langfuse v2 web application and REST/OTLP ingestion API listening on `0.0.0.0:3000`.
-- **`cresmo-langfuse-db`**: PostgreSQL 16 Alpine instance with automated healthcheck (`pg_isready`).
-- **`cresmo_langfuse_postgres_data`**: Named volume guaranteeing data persistence across container recycles.
+- **`cresmo-langfuse-server`**: Langfuse v3 web application and native OpenTelemetry OTLP ingestion API (`/api/public/otel/v1/traces`) listening on `0.0.0.0:3000`.
+- **`cresmo-langfuse-clickhouse`**: ClickHouse 24.3 columnar database for high-throughput OpenTelemetry trace storage.
+- **`cresmo-langfuse-db`**: PostgreSQL 16 Alpine instance managing user accounts, projects, API keys, and relational metadata.
+- **`cresmo-langfuse-redis`**: Redis 7 Alpine caching layer and task queue.
+- **`cresmo-langfuse-minio`**: Chainguard MinIO S3-compatible blob storage for raw payload events.
+- **Persistent Volumes**: `cresmo_langfuse_postgres_data`, `cresmo_langfuse_clickhouse_data`, `cresmo_langfuse_redis_data`, `cresmo_langfuse_minio_data`.
+
 
 ---
 
@@ -92,20 +103,38 @@ docker compose -f docker-compose.langfuse.yml down
 
 ---
 
-## 5. Application Configuration (`.env`)
+## 5. Secrets Management & Governance
 
-Add the extracted credentials into your root `.env` file (`.env`):
+Under **12-Factor App** principles and **DevOps / SRE** best practices, credentials must be strictly segregated by their consumer domain (Machine vs. Human):
+
+### 5.1 Machine-to-Machine Credentials (API Keys)
+- **What they are**: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST`.
+- **Primary Storage**: Local `.env` file in the project root.
+- **Security Guarantee**: The `.env` file is strictly ignored in `.gitignore`.
+- **Validation**: Loaded and validated fail-fast by Pydantic V2 (`pydantic-settings`) via `CresmoSettings`, with sensitive tokens masked using `SecretStr`.
 
 ```bash
 # ==========================================
-# Langfuse LLM Observability & Telemetry (Self-Hosted)
+# Machine-to-Machine AI Telemetry Credentials (.env)
 # ==========================================
 LANGFUSE_PUBLIC_KEY="pk-lf-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 LANGFUSE_SECRET_KEY="sk-lf-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 LANGFUSE_HOST="http://localhost:3000"
 ```
 
-The application's `CresmoSettings` fail-fast configuration validator automatically verifies these variables and binds them into `GeminiLLMAdapter` and the `@observe` decorator context.
+### 5.2 Human Operator Credentials (Web UI User & Password)
+- **What they are**: The email and master password used to access the Langfuse administration dashboard (`http://localhost:3000`).
+- **Where to Store**:
+  1. **Option A (Recommended for Single-Developer Workstations)**: In the root `.env` file as operational variables. Because `.env` is already gitignored and the Single Source of Truth for local environment variables:
+     ```bash
+     # ==========================================
+     # Cresmo Project Human Operator UI Credentials (Self-Hosted Only)
+     # ==========================================
+     LANGFUSE_ADMIN_EMAIL="admin@cresmo.local"
+     LANGFUSE_ADMIN_PASSWORD="<your_secure_master_password>"
+     ```
+  2. **Option B (Recommended for Team / Multi-Workstation Setups)**: An encrypted **Password Manager** (1Password, Bitwarden, or KeePassXC) under an entry named `Cresmo - Langfuse Local Admin`. This prevents plaintext password sprawl on disk and enables biometric/master-key protection.
+  3. **Option C (Production / Enterprise Environments)**: Enterprise Single Sign-On (SSO / OAuth2 / OIDC) integrated directly with GitHub, Google Workspace, or Okta (configured via `NEXTAUTH_URL` and provider environment variables in `docker-compose.langfuse.yml`).
 
 ---
 
@@ -130,3 +159,17 @@ cat backup_langfuse_YYYYMMDD.sql | docker compose -f docker-compose.langfuse.yml
 ```bash
 docker compose -f docker-compose.langfuse.yml down -v
 ```
+
+### 6.4 Emergency Admin Password Reset (Zero Data Loss)
+If you ever forget the web administrator password, you can reset it instantly by running an update directly in PostgreSQL inside the Docker container:
+
+```bash
+# Replace 'YOUR_NEW_PASSWORD' and 'YOUR_EMAIL'
+docker compose -f docker-compose.langfuse.yml exec -T langfuse-db \
+  psql -U langfuse -d langfuse -c "
+    UPDATE users 
+    SET password = crypt('YOUR_NEW_PASSWORD', gen_salt('bf')) 
+    WHERE email = 'YOUR_EMAIL';
+  "
+```
+Once executed, you can immediately log in at `http://localhost:3000` with the new password, keeping all your project traces, spans, and API keys 100% intact.
