@@ -62,7 +62,10 @@ def build_pipeline(
         except Exception:  # noqa: BLE001
             langfuse_client = None
 
-    media_ingestion_port = NativeMediaIngestionAdapter(header_generator=header_generator)
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=resolved_settings.whisper_workers,
+    )
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,

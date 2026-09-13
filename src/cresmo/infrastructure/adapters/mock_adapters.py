@@ -73,6 +73,13 @@ class MockMediaIngestionPort(MediaIngestionPort):
         self.ingest_channels_calls.append(playlist_urls)
         return [self.canned_transcript] if self.canned_transcript else []
 
+    def extract_channel_url_from_video(
+        self,
+        video_url: str,
+    ) -> str | None:
+        return getattr(self, "canned_channel_url", None)
+
+
 
 class MockLLMAdapter(LLMTransformationPort):
     """In-memory mock for LLMTransformationPort."""

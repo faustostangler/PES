@@ -11,6 +11,7 @@ import json
 import re
 import shutil
 import tempfile
+import threading
 import urllib.error
 import urllib.request
 from datetime import UTC, datetime
@@ -46,15 +47,19 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self,
         request_timeout: float = 30.0,
         header_generator: RandomHeaderGenerator | None = None,
+        whisper_concurrency_limit: int = 2,
     ) -> None:
         """Initialize NativeMediaIngestionAdapter.
 
         Args:
             request_timeout: Socket timeout in seconds for subtitle HTTP requests.
             header_generator: Optional dynamic browser request header generator.
+            whisper_concurrency_limit: Maximum concurrent Whisper model executions.
         """
         self.request_timeout = request_timeout
         self._header_generator = header_generator or RandomHeaderGenerator()
+        self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
+
 
     def _extract_video_id(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
@@ -231,13 +236,15 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 shutil.copy2(audio_file, dest_audio)
 
             try:
-                model = whisper.load_model(whisper_model)
-                transcription_result = model.transcribe(str(audio_file))
-                body = str(transcription_result.get("text", "")).strip()
+                with self._whisper_semaphore:
+                    model = whisper.load_model(whisper_model)
+                    transcription_result = model.transcribe(str(audio_file))
+                    body = str(transcription_result.get("text", "")).strip()
             except Exception as exc:
                 raise CresmoInfrastructureError(f"Whisper transcription failed: {exc}") from exc
 
         return body, channel_name
+
 
     def ingest_single_video(
         self,
@@ -403,3 +410,36 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             if raw:
                 transcripts.append(raw)
         return transcripts
+
+    def extract_channel_url_from_video(
+        self,
+        video_url: str,
+    ) -> str | None:
+        """Resolve YouTube channel URL or feed identifier from a video URL."""
+        ydl_opts: dict[str, Any] = {
+            "extract_flat": True,
+            "quiet": True,
+            "no_warnings": True,
+            "http_headers": self._header_generator.get_random_headers(),
+        }
+
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(video_url, download=False)
+        except Exception:  # noqa: BLE001
+            return None
+
+
+        if not info or not isinstance(info, dict):
+            return None
+
+        channel_url = info.get("channel_url") or info.get("uploader_url")
+        if channel_url:
+            return str(channel_url).strip()
+
+        channel_id = info.get("channel_id") or info.get("uploader_id")
+        if channel_id:
+            return f"https://www.youtube.com/channel/{str(channel_id).strip()}"
+
+        return None
+

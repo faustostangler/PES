@@ -81,6 +81,20 @@ class MediaIngestionPort(ABC):
         """
         raise NotImplementedError("Step 1: Implement discover channel feed contract.")
 
+    @abstractmethod
+    def extract_channel_url_from_video(
+        self,
+        video_url: str,
+    ) -> str | None:
+        """Resolve YouTube channel URL or feed identifier from a video URL.
+
+        Extracts channel/uploader metadata without downloading video or audio streams.
+        Returns the canonical channel URL (e.g. https://www.youtube.com/channel/{channel_id})
+        or None if resolution fails.
+        """
+        raise NotImplementedError("Step 1: Implement video channel resolution contract.")
+
+
 
 class LLMTransformationPort(ABC):
     """Port defining contract for text generation and structured extraction."""

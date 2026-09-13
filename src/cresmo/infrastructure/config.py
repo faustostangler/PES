@@ -10,8 +10,9 @@ Enforces the 4-Category Configuration Taxonomy using Pydantic Settings V2:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Self
 
-from pydantic import AliasChoices, Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _WORKSPACE_DIR = Path(__file__).resolve().parents[3]
@@ -154,9 +155,33 @@ class CresmoSettings(BaseSettings):
         description="Whisper STT model variant for audio transcription.",
     )
     days_lookback: int = Field(
-        default=730,
-        description="Default crawling lookback window in days.",
+        default=365,
+        description="Default crawling lookback window in days (default: 365 / 1 year).",
     )
+    whisper_workers: int = Field(
+        default=1,
+        validation_alias=AliasChoices("whisper_workers", "max_whisper_workers"),
+        description="Concurrent worker threads for local Whisper audio-to-text fallback (default: 1).",
+    )
+    subtitle_workers: int = Field(
+        default=0,
+        validation_alias=AliasChoices("subtitle_workers", "max_subtitle_workers"),
+        description="Concurrent worker threads for native JSON/SRV subtitle downloading (defaults to whisper_workers * 5).",
+    )
+    channel_discovery_workers: int = Field(
+        default=0,
+        validation_alias=AliasChoices("channel_discovery_workers", "max_channel_workers"),
+        description="Concurrent worker threads for scanning YouTube channel uploads feeds (defaults to whisper_workers * 10).",
+    )
+
+    @model_validator(mode="after")
+    def _compute_worker_multiples(self) -> Self:
+        """Compute worker pools as multiples of whisper_workers unless explicitly configured."""
+        if self.subtitle_workers <= 0:
+            self.subtitle_workers = max(1, self.whisper_workers * 5)
+        if self.channel_discovery_workers <= 0:
+            self.channel_discovery_workers = max(1, self.whisper_workers * 10)
+        return self
     batch_size: int = Field(
         default=5,
         validation_alias=AliasChoices("batch_size", "stage_5_batch_size", "atomic_batch_size"),
@@ -171,3 +196,4 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("gap_filler_passes", "stage_2_passes"),
         description="Default Socratic gap filler refinement passes.",
     )
+
