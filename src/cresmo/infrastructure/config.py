@@ -117,9 +117,25 @@ class CresmoSettings(BaseSettings):
         """Absolute path to the priority texts directory."""
         return self.data_dir / self.priority_texts_dirname
 
+    def ensure_directories(self) -> None:
+        """Ensure all runtime directories exist on the filesystem (fail-safe idempotent)."""
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.vault_dir.mkdir(parents=True, exist_ok=True)
+        self.raw_dir.mkdir(parents=True, exist_ok=True)
+        self.enriched_dir.mkdir(parents=True, exist_ok=True)
+        self.priority_texts_dir.mkdir(parents=True, exist_ok=True)
+
     browser_headers_path: Path | None = Field(
         default=None,
         description="Optional custom path to browser request headers pool JSON file.",
+    )
+    prompts_path: Path | None = Field(
+        default=None,
+        description="Optional custom path to LLM prompt templates JSON file.",
+    )
+    skills_dir: Path | None = Field(
+        default=None,
+        description="Optional custom path to .agents/skills directory for prompt enrichment.",
     )
 
     # =========================================================================
@@ -150,3 +166,9 @@ class CresmoSettings(BaseSettings):
         default=False,
         description="Whether to preserve downloaded raw audio files.",
     )
+    gap_filler_passes: int = Field(
+        default=3,
+        validation_alias=AliasChoices("gap_filler_passes", "stage_2_passes"),
+        description="Default Socratic gap filler refinement passes.",
+    )
+

@@ -203,3 +203,67 @@ class LedgerRepositoryPort(ABC):
     def list_entries(self, limit: int = 100) -> list[LedgerEntry]:
         """List recently recorded ledger entries."""
         raise NotImplementedError("Step 1: List ledger entries.")
+
+
+class PromptProviderPort(ABC):
+    """Hexagonal Port for loading decoupled LLM prompt templates and skill documentation."""
+
+    @abstractmethod
+    def get_gap_filler_prompt(
+        self,
+        pass_num: int,
+        total_passes: int,
+        channel_name: str,
+        file_name: str,
+        raw_text: str,
+        current_text: str | None = None,
+    ) -> str:
+        """Format the Socratic gap filler prompt differentiating pass 1 from subsequent passes."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_long_expander_prompt(
+        self,
+        compendium_body: str,
+        complementary_info: str,
+    ) -> str:
+        """Format the Braudelian longitudinal expander prompt."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_wide_expander_prompt(
+        self,
+        current_text: str,
+    ) -> str:
+        """Format the Jaspers synchronic wide expander prompt."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_inventory_prompt(
+        self,
+        compendium_title: str,
+        channel_name: str,
+        compendium_body: str,
+    ) -> str:
+        """Format the Stage 4 atomic inventory extraction prompt."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_batch_notes_prompt(
+        self,
+        compendium_title: str,
+        channel_name: str,
+        compendium_body: str,
+        targets_json: str,
+    ) -> str:
+        """Format the Stage 5 atomic note batch synthesis prompt."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_mocs_prompt(
+        self,
+        notes_json: str,
+    ) -> str:
+        """Format the Stage 6 MOC reconciliation prompt."""
+        raise NotImplementedError
+

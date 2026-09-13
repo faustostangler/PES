@@ -8,22 +8,33 @@ from __future__ import annotations
 import json
 
 from cresmo.application.json_parser import extract_json_data
-from cresmo.application.ports import LLMTransformationPort, VaultRepositoryPort
+from cresmo.application.ports import (
+    LLMTransformationPort,
+    PromptProviderPort,
+    VaultRepositoryPort,
+)
 from cresmo.domain.entities import MapOfContent
 from cresmo.domain.exceptions import DomainValidationError
 from cresmo.domain.value_objects import NoteTitle
 
 
 class ReconcileMOCsUseCase:
-    """Stage 6: Map of Content reconciliation and vault graph cohesion."""
+    """Stage 6: Map of Content reconciliation and graph topological governance."""
 
     def __init__(
         self,
         llm_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
+        prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         self.llm_port = llm_port
         self.vault_port = vault_port
+        if prompt_provider is None:
+            from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+
+            self.prompt_provider: PromptProviderPort = JsonPromptProvider()
+        else:
+            self.prompt_provider = prompt_provider
 
     def execute(self) -> list[MapOfContent]:
         """Execute Stage 6 MOC reconciliation.
@@ -41,15 +52,8 @@ class ReconcileMOCsUseCase:
         ]
 
         # Step 2: Prompt LLM to cluster notes into thematic Maps of Content.
-        prompt = (
-            "You are Cresmo MOC Manager. Cluster the following atomic notes into thematic Maps of Content.\n"
-            "Enforce zero orphaned notes: every note must belong to at least one MOC.\n\n"
-            f"Atomic Notes in Vault:\n{json.dumps(note_summaries, ensure_ascii=False)}\n\n"
-            "Output strictly a JSON array of MOC objects with keys:\n"
-            "- title (string, e.g. 'MOC Teoria Politica')\n"
-            "- theme (string)\n"
-            "- overview (string)\n"
-            "- associated_notes (list of strings matching atomic note titles)"
+        prompt = self.prompt_provider.get_mocs_prompt(
+            notes_json=json.dumps(note_summaries, ensure_ascii=False),
         )
 
         response = self.llm_port.transform(prompt=prompt)

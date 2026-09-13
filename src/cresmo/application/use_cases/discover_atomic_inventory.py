@@ -6,7 +6,7 @@ Executes holistic discovery scan across an Enriched Compendium to extract unique
 from __future__ import annotations
 
 from cresmo.application.json_parser import extract_json_data
-from cresmo.application.ports import LLMTransformationPort
+from cresmo.application.ports import LLMTransformationPort, PromptProviderPort
 from cresmo.domain.entities import EnrichedCompendium
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import AtomicEntityInventory, NoteTitle, NoteType
@@ -15,8 +15,18 @@ from cresmo.domain.value_objects import AtomicEntityInventory, NoteTitle, NoteTy
 class DiscoverAtomicInventoryUseCase:
     """Stage 4: Holistic entity discovery across enriched text."""
 
-    def __init__(self, llm_port: LLMTransformationPort) -> None:
+    def __init__(
+        self,
+        llm_port: LLMTransformationPort,
+        prompt_provider: PromptProviderPort | None = None,
+    ) -> None:
         self.llm_port = llm_port
+        if prompt_provider is None:
+            from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+
+            self.prompt_provider: PromptProviderPort = JsonPromptProvider()
+        else:
+            self.prompt_provider = prompt_provider
 
     def execute(self, compendium: EnrichedCompendium) -> AtomicEntityInventory:
         """Execute Stage 4 discovery scan at temperature=0.0.
@@ -31,13 +41,10 @@ class DiscoverAtomicInventoryUseCase:
             DomainValidationError: If no valid entities could be discovered.
         """
         # Step 1: Format inventory discovery prompt with compendium body and metadata.
-        prompt = (
-            f"Title: {compendium.title.value}\n"
-            f"Channel: {compendium.channel_name}\n\n"
-            f"Content:\n{compendium.body}\n\n"
-            "Extract an exhaustive, deduplicated JSON inventory array of all extractable atomic entities, "
-            "concepts, events, and dynamic processes.\n"
-            'Output strictly a JSON array of objects: [{"title": "...", "type": "entity|concept|event|process"}]'
+        prompt = self.prompt_provider.get_inventory_prompt(
+            compendium_title=compendium.title.value,
+            channel_name=compendium.channel_name,
+            compendium_body=compendium.body,
         )
 
         # Step 2: Execute LLM transformation with deterministic temperature=0.0.

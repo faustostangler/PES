@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -70,17 +71,32 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         os.replace(temp_file, target_path)
 
     def save_raw_transcript(self, transcript: RawTranscript) -> None:
-        """Persist raw transcript with YAML frontmatter to raw/{channel_name}/{content_id}.md."""
+        """Persist raw transcript with playground-compatible YAML frontmatter."""
         channel_dir = self.raw_dir / sanitize_filename(transcript.channel_name)
         file_path = channel_dir / f"{transcript.content_id.value}.md"
 
-        frontmatter_dict = {
-            "id": transcript.content_id.value,
-            "channel": transcript.channel_name,
-            "type": "raw_transcript",
-        }
-        frontmatter_yaml = yaml.dump(frontmatter_dict, allow_unicode=True, sort_keys=False)
-        content = f"---\n{frontmatter_yaml}---\n\n{transcript.body}"
+        desc = transcript.video_description or ""
+        desc_indented = "\n".join("  " + l for l in desc.splitlines())
+        date_str = transcript.upload_date.strftime("%Y%m%d") if transcript.upload_date else ""
+        escaped_title = (transcript.title or transcript.content_id.value).replace('"', '\\"')
+        escaped_channel = transcript.channel_name.replace('"', '\\"')
+        escaped_category = (transcript.channel_category or "uncategorized").replace('"', '\\"')
+        channel_id_val = transcript.channel_id or "unknown_channel"
+
+        yaml_header = (
+            f"---\n"
+            f'video_title: "{escaped_title}"\n'
+            f"video_id: {transcript.content_id.value}\n"
+            f'channel_name: "{escaped_channel}"\n'
+            f"channel_id: {channel_id_val}\n"
+            f'channel_category: "{escaped_category}"\n'
+            f"url: {transcript.source_url}\n"
+            f"video_date: {date_str}\n"
+            f"video_description: |\n"
+            f"{desc_indented}\n"
+            f"---"
+        )
+        content = f"{yaml_header}\n\n{transcript.body}"
         self._atomic_write(file_path, content)
 
     def get_raw_transcript(self, content_id: ContentId) -> RawTranscript | None:
@@ -102,32 +118,67 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
         fm_text, body = match.groups()
         meta = yaml.safe_load(fm_text) or {}
+        ch_name = str(meta.get("channel_name") or meta.get("channel") or file_path.parent.name)
+        title = str(meta.get("video_title") or meta.get("title") or "")
+        ch_id = str(meta.get("channel_id") or "")
+        ch_cat = str(meta.get("channel_category") or meta.get("domain") or "")
+        url = str(meta.get("url") or meta.get("source_url") or "")
+        raw_date = meta.get("video_date") or meta.get("upload_date")
+        upload_date = None
+        if raw_date:
+            date_str = str(raw_date).strip()
+            if len(date_str) == 8 and date_str.isdigit():
+                try:
+                    upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
+                except ValueError:
+                    pass
+        desc = str(meta.get("video_description") or "")
+
         return RawTranscript(
             content_id=content_id,
-            channel_name=meta.get("channel", file_path.parent.name),
+            channel_name=ch_name,
             body=body.strip(),
+            title=title,
+            source_url=url,
+            upload_date=upload_date,
+            channel_id=ch_id,
+            channel_category=ch_cat,
+            video_description=desc,
         )
 
     def save_enriched_compendium(self, compendium: EnrichedCompendium) -> None:
-        """Persist enriched compendium directly into enriched/ directory."""
+        """Persist enriched compendium directly into enriched/ directory with playground YAML."""
         channel_dir = self.enriched_dir / sanitize_filename(compendium.channel_name)
         file_path = channel_dir / f"{compendium.content_id.value}.md"
 
-        frontmatter_dict = {
-            "id": compendium.content_id.value,
-            "channel": compendium.channel_name,
-            "title": compendium.title.value,
-            "type": "enriched_compendium",
-            "pass_count": compendium.pass_count,
-        }
-        frontmatter_yaml = yaml.dump(frontmatter_dict, allow_unicode=True, sort_keys=False)
+        desc = compendium.video_description or ""
+        desc_indented = "\n".join("  " + l for l in desc.splitlines())
+        escaped_title = compendium.title.value.replace('"', '\\"')
+        escaped_channel = compendium.channel_name.replace('"', '\\"')
+        escaped_category = (compendium.channel_category or "uncategorized").replace('"', '\\"')
+        channel_id_val = compendium.channel_id or "unknown_channel"
+
+        yaml_header = (
+            f"---\n"
+            f'video_title: "{escaped_title}"\n'
+            f"video_id: {compendium.content_id.value}\n"
+            f'channel_name: "{escaped_channel}"\n'
+            f"channel_id: {channel_id_val}\n"
+            f'channel_category: "{escaped_category}"\n'
+            f"url: {compendium.source_url}\n"
+            f"video_date: {compendium.video_date}\n"
+            f"pass_count: {compendium.pass_count}\n"
+            f"video_description: |\n"
+            f"{desc_indented}\n"
+            f"---"
+        )
         body_text = (
             f"# {compendium.title.value}\n\n"
             f"{compendium.body}\n\n"
             f"## Informações Complementares\n\n"
             f"{compendium.complementary_info}"
         )
-        content = f"---\n{frontmatter_yaml}---\n\n{body_text}"
+        content = f"{yaml_header}\n\n{body_text}"
         self._atomic_write(file_path, content)
 
     def get_enriched_compendium(self, content_id: ContentId) -> EnrichedCompendium | None:
@@ -156,13 +207,26 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             body_lines = body_part.splitlines()
             body_part = "\n".join(body_lines[1:]).strip()
 
+        ch_name = str(meta.get("channel_name") or meta.get("channel") or file_path.parent.name)
+        title = str(meta.get("video_title") or meta.get("title") or file_path.stem)
+        ch_id = str(meta.get("channel_id") or "")
+        ch_cat = str(meta.get("channel_category") or meta.get("domain") or "")
+        url = str(meta.get("url") or meta.get("source_url") or "")
+        v_date = str(meta.get("video_date") or "")
+        desc = str(meta.get("video_description") or "")
+
         return EnrichedCompendium(
             content_id=content_id,
-            channel_name=meta.get("channel", file_path.parent.name),
-            title=NoteTitle(meta.get("title", file_path.stem)),
+            channel_name=ch_name,
+            title=NoteTitle(title),
             body=body_part,
             complementary_info=comp_part,
             pass_count=int(meta.get("pass_count", 1)),
+            channel_id=ch_id,
+            channel_category=ch_cat,
+            source_url=url,
+            video_date=v_date,
+            video_description=desc,
         )
 
     @staticmethod

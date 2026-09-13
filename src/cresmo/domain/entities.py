@@ -36,6 +36,9 @@ class RawTranscript:
     title: str = ""
     source_url: str = ""
     upload_date: datetime.date | None = None
+    channel_id: str = ""
+    channel_category: str = ""
+    video_description: str = ""
 
     def __post_init__(self) -> None:
         if not self.channel_name.strip():
@@ -54,6 +57,11 @@ class EnrichedCompendium:
     body: str
     complementary_info: str
     pass_count: int = 1
+    channel_id: str = ""
+    channel_category: str = ""
+    source_url: str = ""
+    video_date: str = ""
+    video_description: str = ""
 
     def __post_init__(self) -> None:
         b = self.body.strip()

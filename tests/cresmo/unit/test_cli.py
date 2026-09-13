@@ -39,14 +39,22 @@ from cresmo.presentation.cli import (
 class TestCresmoCLI:
     """Hermetic unit tests for CLI entrypoint and exit codes."""
 
-    def test_cli_no_args_returns_code_2(self) -> None:
-        assert main([]) == EXIT_CONFIG_OR_USAGE_ERROR
+    def test_cli_no_args_defaults_to_run_batch(self) -> None:
+        with (
+            patch("cresmo.presentation.cli.build_pipeline"),
+            patch("cresmo.presentation.cli._load_batch_sources", return_value=[]),
+        ):
+            assert main([]) == EXIT_SUCCESS
 
     def test_cli_invalid_subcommand_returns_code_2(self) -> None:
         assert main(["invalid-command"]) == EXIT_CONFIG_OR_USAGE_ERROR
 
-    def test_cli_run_missing_url_returns_code_2(self) -> None:
-        assert main(["run"]) == EXIT_CONFIG_OR_USAGE_ERROR
+    def test_cli_run_without_args_runs_batch(self) -> None:
+        with (
+            patch("cresmo.presentation.cli.build_pipeline"),
+            patch("cresmo.presentation.cli._load_batch_sources", return_value=[]),
+        ):
+            assert main(["run"]) == EXIT_SUCCESS
 
     def test_cli_check_config_success_returns_code_0(self) -> None:
         with (
@@ -99,7 +107,7 @@ class TestCresmoCLI:
             assert exit_code == EXIT_SUCCESS
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
-                gap_filler_passes=1,
+                gap_filler_passes=3,
                 force_reprocess=False,
             )
 
@@ -203,10 +211,10 @@ class TestCresmoCLI:
             )
             mock_pipeline.run_for_video.assert_not_called()
 
-    def test_cli_run_all_missing_manifest_returns_code_2(self, tmp_path: Path) -> None:
+    def test_cli_run_all_missing_manifest_returns_code_0(self, tmp_path: Path) -> None:
         missing_file = tmp_path / "non_existent.txt"
         exit_code = main(["run", "--all", "--manifest", str(missing_file)])
-        assert exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+        assert exit_code == EXIT_SUCCESS
 
     def test_cli_maps_domain_validation_error_to_code_3(self) -> None:
         mock_pipeline = MagicMock()

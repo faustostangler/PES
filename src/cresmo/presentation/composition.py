@@ -16,6 +16,7 @@ from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
+from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
 
@@ -36,6 +37,10 @@ def build_pipeline(
     resolved_settings = settings or CresmoSettings()
 
     header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    prompt_provider = JsonPromptProvider(
+        prompts_path=resolved_settings.prompts_path,
+        skills_dir=resolved_settings.skills_dir,
+    )
     media_ingestion_port = NativeMediaIngestionAdapter(header_generator=header_generator)
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
@@ -59,6 +64,7 @@ def build_pipeline(
         vault_port=vault_port,
         ledger_port=ledger_port,
         batch_size=effective_batch_size,
+        prompt_provider=prompt_provider,
     )
 
 
