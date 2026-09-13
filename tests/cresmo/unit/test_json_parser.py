@@ -47,3 +47,24 @@ class TestJsonParser:
     def test_invalid_json_raises_value_error(self) -> None:
         with pytest.raises(ValueError, match="Failed to extract valid JSON payload"):
             extract_json_data("This is purely conversational text without brackets.")
+
+    def test_json_array_with_trailing_comma(self) -> None:
+        raw = '[{"title": "Trailing", "type": "concept"}, ]'
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert result[0]["title"] == "Trailing"
+
+    def test_json_object_with_trailing_comma(self) -> None:
+        raw = '{"title": "Object Trailing", "type": "concept", }'
+        result = extract_json_data(raw)
+        assert isinstance(result, dict)
+        assert result["title"] == "Object Trailing"
+
+    def test_truncated_array_extracts_individual_objects(self) -> None:
+        raw = '[{"title": "Item 1", "type": "concept"}, {"title": "Item 2", "type": "entity"}, {"title": "Item 3'
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert len(result) == 2
+        assert result[0]["title"] == "Item 1"
+        assert result[1]["title"] == "Item 2"

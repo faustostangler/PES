@@ -9,9 +9,10 @@ from __future__ import annotations
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
+from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
-from cresmo.infrastructure.adapters.legacy_isb_ingestion_adapter import (
-    LegacyIsbIngestionAdapter,
+from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
+    NativeMediaIngestionAdapter,
 )
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
@@ -33,12 +34,17 @@ def build_pipeline(
     """
     resolved_settings = settings or CresmoSettings()
 
-    media_ingestion_port = LegacyIsbIngestionAdapter()
+    media_ingestion_port = NativeMediaIngestionAdapter()
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
+        fallback_model_name=resolved_settings.gemini_fallback_model,
     )
-    vault_port = ObsidianVaultAdapter(root_dir=resolved_settings.vault_dir)
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
     ledger_port = SqliteLedgerAdapter(db_path=resolved_settings.sqlite_ledger_path)
 
     effective_batch_size = (
@@ -103,3 +109,23 @@ def build_sync_channel_use_case(
         pipeline=pipeline,
         preflight_checker=preflight_checker,
     )
+
+
+def build_unify_duplicates_use_case(
+    settings: CresmoSettings | None = None,
+) -> UnifyDuplicateNotesUseCase:
+    """Construct UnifyDuplicateNotesUseCase with ObsidianVaultAdapter wired.
+
+    Args:
+        settings: Validated application settings.
+
+    Returns:
+        Configured UnifyDuplicateNotesUseCase instance.
+    """
+    resolved_settings = settings or CresmoSettings()
+    vault_port = ObsidianVaultAdapter(
+        vault_dir=resolved_settings.vault_dir,
+        raw_dir=resolved_settings.raw_dir,
+        enriched_dir=resolved_settings.enriched_dir,
+    )
+    return UnifyDuplicateNotesUseCase(vault_port=vault_port)

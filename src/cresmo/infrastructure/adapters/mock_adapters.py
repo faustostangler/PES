@@ -5,6 +5,7 @@ Zero I/O, deterministic responses, capturing call histories for test assertions.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -139,6 +140,45 @@ class InMemoryVaultAdapter(VaultRepositoryPort):
 
     def save_map_of_content(self, moc: MapOfContent) -> None:
         self.mocs[moc.title.value.lower()] = moc
+
+    def delete_atomic_note(self, note: AtomicNote) -> None:
+        self.atomic_notes.pop(note.title.value.lower(), None)
+        self.remove_index_entry(note.title.value.lower())
+        for alias in note.aliases:
+            self.remove_index_entry(alias.lower())
+
+    def remove_index_entry(self, key: str) -> None:
+        self.index_entries.pop(key.lower().strip(), None)
+
+    def rewrite_wiki_links(self, old_title: NoteTitle, new_title: NoteTitle) -> int:
+        old_val = old_title.value.strip()
+        new_val = new_title.value.strip()
+        if old_val.lower() == new_val.lower():
+            return 0
+        pattern = re.compile(rf"\[\[{re.escape(old_val)}(\|.*?)?\]\]", re.IGNORECASE)
+        updated = 0
+        for k, note in list(self.atomic_notes.items()):
+            new_rels = tuple(
+                new_title if r.value.lower() == old_val.lower() else r
+                for r in note.direct_relations
+            )
+            new_def, count = pattern.subn(rf"[[{new_val}\1]]", note.definition)
+            if count > 0 or new_rels != note.direct_relations:
+                self.atomic_notes[k] = AtomicNote(
+                    title=note.title,
+                    note_type=note.note_type,
+                    definition=new_def,
+                    content_tags=note.content_tags,
+                    domain=note.domain,
+                    cluster=note.cluster,
+                    source=note.source,
+                    aliases=note.aliases,
+                    direct_relations=new_rels,
+                    causal_matrix=note.causal_matrix,
+                    cross_context=note.cross_context,
+                )
+                updated += 1
+        return updated
 
 
 class InMemoryLedgerAdapter(LedgerRepositoryPort):

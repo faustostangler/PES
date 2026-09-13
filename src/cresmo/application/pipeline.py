@@ -26,6 +26,7 @@ from cresmo.application.use_cases import (
     IngestRawTranscriptUseCase,
     ReconcileMOCsUseCase,
     SynthesizeAtomicBatchUseCase,
+    UnifyDuplicateNotesUseCase,
 )
 from cresmo.domain.entities import AtomicNote, MapOfContent
 from cresmo.domain.exceptions import CresmoDomainError
@@ -34,12 +35,13 @@ from cresmo.domain.value_objects import ContentId
 
 @dataclass(frozen=True)
 class PipelineResult:
-    """Immutable execution outcome of the 6-stage synthesis pipeline."""
+    """Immutable execution outcome of the 7-stage synthesis pipeline."""
 
     content_id: ContentId
     success: bool
     synthesized_notes: tuple[AtomicNote, ...]
     reconciled_mocs: tuple[MapOfContent, ...]
+    duplicates_unified: int = 0
     error_message: str | None = None
 
 
@@ -84,6 +86,9 @@ class CresmoPipeline:
             llm_port=self.llm_port,
             vault_port=self.vault_port,
         )
+        self.unify_duplicate_notes = UnifyDuplicateNotesUseCase(
+            vault_port=self.vault_port,
+        )
 
     def run_for_video(
         self,
@@ -118,16 +123,16 @@ class CresmoPipeline:
                 error_message="Content already marked processed in ledger.",
             )
 
-        # Socratic Gap Filler
-        compendium = self.fill_gaps_fluid_prose.execute(
-            raw_transcript=raw,
-            passes=gap_filler_passes,
-        )
-
-        # Longitudinal & Synchronic Expander
-        expanded_compendium = self.expand_longitudinal_synchronic.execute(
-            compendium=compendium,
-        )
+        # Socratic Gap Filler & Longitudinal Expander (supports resumed execution)
+        expanded_compendium = self.vault_port.get_enriched_compendium(content_id)
+        if expanded_compendium is None:
+            compendium = self.fill_gaps_fluid_prose.execute(
+                raw_transcript=raw,
+                passes=gap_filler_passes,
+            )
+            expanded_compendium = self.expand_longitudinal_synchronic.execute(
+                compendium=compendium,
+            )
 
         # Holistic Inventory Discovery
         inventory = self.discover_atomic_inventory.execute(
@@ -135,7 +140,7 @@ class CresmoPipeline:
         )
 
         # Batched Atomic Synthesis
-        notes = self.synthesize_atomic_batch.execute(
+        self.synthesize_atomic_batch.execute(
             inventory=inventory,
             compendium=expanded_compendium,
         )
@@ -143,13 +148,19 @@ class CresmoPipeline:
         # Map of Content Reconciliation
         mocs = self.reconcile_mocs.execute()
 
+        # Stage 7: Graph Entity Resolution & Duplicate Unification
+        dedup_report = self.unify_duplicate_notes.execute()
+
         # Mark processed in ledger
         if self.ledger_port:
             self.ledger_port.mark_processed(content_id)
 
+        final_notes = self.vault_port.get_all_atomic_notes()
+
         return PipelineResult(
             content_id=content_id,
             success=True,
-            synthesized_notes=tuple(notes),
+            synthesized_notes=tuple(final_notes),
             reconciled_mocs=tuple(mocs),
+            duplicates_unified=dedup_report.duplicates_unified_count,
         )

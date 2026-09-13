@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Rubric thresholds defined in docs/specs/EVAL-001-cresmo-synthesis.md
 THRESHOLDS = {
@@ -63,7 +63,11 @@ def main() -> int:
         print(f"❌ Error: Dataset file not found at {args.dataset}")
         return 1
 
-    samples = [json.loads(line) for line in args.dataset.read_text(encoding="utf-8").splitlines() if line.strip()]
+    samples = [
+        json.loads(line)
+        for line in args.dataset.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
     if not samples:
         print("❌ Error: No samples found in dataset.")
         return 1

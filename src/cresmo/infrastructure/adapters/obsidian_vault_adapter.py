@@ -43,11 +43,40 @@ def sanitize_filename(name: str) -> str:
 class ObsidianVaultAdapter(VaultRepositoryPort):
     """Filesystem-backed Obsidian Second Brain vault adapter."""
 
-    def __init__(self, root_dir: Path) -> None:
-        self.root_dir = Path(root_dir).resolve()
-        self.raw_dir = self.root_dir / "raw"
-        self.enriched_dir = self.root_dir / "enriched"
-        self.wiki_dir = self.root_dir / "wiki"
+    def __init__(
+        self,
+        vault_dir: Path | None = None,
+        raw_dir: Path | None = None,
+        enriched_dir: Path | None = None,
+        root_dir: Path | None = None,
+    ) -> None:
+        effective_vault = Path(vault_dir or root_dir or ".").resolve()
+        self.root_dir = effective_vault
+
+        # Decoupled mode (production layout with separate data_dir and vault_dir)
+        if raw_dir is not None or enriched_dir is not None:
+            self.wiki_dir = effective_vault
+            self.raw_dir = (
+                Path(raw_dir).resolve()
+                if raw_dir is not None
+                else effective_vault.parent / "data" / "raw"
+            )
+            self.enriched_dir = (
+                Path(enriched_dir).resolve()
+                if enriched_dir is not None
+                else effective_vault.parent / "data" / "enriched"
+            )
+        elif (effective_vault / "entities").is_dir() or (effective_vault / "concepts").is_dir():
+            # Vault root already contains atomic note folders directly
+            self.wiki_dir = effective_vault
+            self.raw_dir = effective_vault.parent / "data" / "raw"
+            self.enriched_dir = effective_vault.parent / "data" / "enriched"
+        else:
+            # Monolithic / legacy mode where root_dir contains wiki/, raw/, enriched/
+            self.wiki_dir = effective_vault / "wiki"
+            self.raw_dir = effective_vault / "raw"
+            self.enriched_dir = effective_vault / "enriched"
+
         self.mocs_dir = self.wiki_dir / "MOCs"
         self.index_path = self.wiki_dir / "_index.json"
 
@@ -160,9 +189,18 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             pass_count=int(meta.get("pass_count", 1)),
         )
 
+    @staticmethod
+    def _get_note_subfolder(note_type: NoteType) -> str:
+        """Return standardized plural folder name for a note type."""
+        if note_type == NoteType.ENTITY:
+            return "entities"
+        if note_type == NoteType.PROCESS:
+            return "processes"
+        return f"{note_type.value}s"
+
     def _get_note_path(self, note: AtomicNote) -> Path:
         """Derive target file path in wiki/ for an atomic note."""
-        sub_folder = f"{note.note_type.value}s"
+        sub_folder = self._get_note_subfolder(note.note_type)
         return self.wiki_dir / sub_folder / f"{sanitize_filename(note.title.value)}.md"
 
     def save_atomic_note(self, note: AtomicNote) -> None:
@@ -337,7 +375,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
                 index = {}
 
         target_path = self._get_note_path(note)
-        relative_path = str(target_path.relative_to(self.root_dir))
+        relative_path = str(target_path.relative_to(self.wiki_dir))
 
         entry_payload = {
             "title": note.title.value,
@@ -386,3 +424,63 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         lines.append("")
 
         self._atomic_write(target_path, "\n".join(lines).strip() + "\n")
+
+    def delete_atomic_note(self, note: AtomicNote) -> None:
+        """Remove atomic note file from vault and clean up index entries."""
+        sanitized = sanitize_filename(note.title.value)
+        matched = list(self.wiki_dir.glob(f"**/{sanitized}.md"))
+        for p in matched:
+            if "MOCs" not in p.parts and p.is_file():
+                p.unlink(missing_ok=True)
+
+        self.remove_index_entry(note.title.value.lower())
+        for alias in note.aliases:
+            self.remove_index_entry(alias.lower())
+
+    def remove_index_entry(self, key: str) -> None:
+        """Remove specific canonical title or alias key from master _index.json."""
+        if not self.index_path.exists():
+            return
+        try:
+            index = json.loads(self.index_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return
+
+        k = key.lower().strip()
+        if k in index:
+            del index[k]
+            self._atomic_write(
+                self.index_path,
+                json.dumps(index, ensure_ascii=False, indent=2),
+            )
+
+    def rewrite_wiki_links(self, old_title: NoteTitle, new_title: NoteTitle) -> int:
+        """Rewrite all inbound [[old_title]] links to [[new_title]] across all markdown files in wiki/.
+
+        Returns:
+            Count of files updated.
+        """
+        old_val = old_title.value.strip()
+        new_val = new_title.value.strip()
+        if old_val.lower() == new_val.lower():
+            return 0
+
+        pattern = re.compile(rf"\[\[{re.escape(old_val)}(\|.*?)?\]\]", re.IGNORECASE)
+        updated_count = 0
+
+        for file_path in self.wiki_dir.glob("**/*.md"):
+            try:
+                content = file_path.read_text(encoding="utf-8")
+            except OSError:
+                continue
+
+            def _repl(m: re.Match[str]) -> str:
+                pipe_part = m.group(1) or ""
+                return f"[[{new_val}{pipe_part}]]"
+
+            new_content, count = pattern.subn(_repl, content)
+            if count > 0:
+                self._atomic_write(file_path, new_content)
+                updated_count += 1
+
+        return updated_count

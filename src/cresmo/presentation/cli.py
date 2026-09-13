@@ -29,6 +29,7 @@ from cresmo.presentation.composition import (
     build_pipeline,
     build_preflight_checker,
     build_sync_channel_use_case,
+    build_unify_duplicates_use_case,
 )
 
 # Standardized Process Exit Codes (per ADR-002, ADR-003, and SPEC-003)
@@ -153,6 +154,12 @@ def _create_parser() -> argparse.ArgumentParser:
         "--once",
         action="store_true",
         help="Execute exactly one polling cycle and terminate cleanly",
+    )
+
+    # Subcommand: dedupe
+    subparsers.add_parser(
+        "dedupe",
+        help="Execute Stage 7 graph entity resolution, non-destructive merging, and link rewriting",
     )
 
     return parser
@@ -293,6 +300,26 @@ def main(argv: Sequence[str] | None = None) -> int:
             return EXIT_SUCCESS
         except Exception as exc:  # noqa: BLE001
             sys.stderr.write(f"Worker error: {exc}\n")
+            return EXIT_INTERNAL_ERROR
+
+    if args.subcommand == "dedupe":
+        try:
+            use_case = build_unify_duplicates_use_case()
+            report = use_case.execute()
+            sys.stdout.write("Vault Graph Deduplication Summary:\n")
+            sys.stdout.write(f"- Duplicate Clusters Unified: {report.duplicates_unified_count}\n")
+            sys.stdout.write(
+                f"- Total Inbound WikiLinks Rewritten: {report.total_links_rewritten}\n"
+            )
+            for cluster in report.clusters:
+                merged_str = ", ".join(f"[[{t.value}]]" for t in cluster.merged_titles)
+                sys.stdout.write(
+                    f"  • Unified into [[{cluster.canonical_title.value}]]: {merged_str} "
+                    f"({cluster.links_rewritten_count} links rewritten)\n"
+                )
+            return EXIT_SUCCESS
+        except Exception as exc:  # noqa: BLE001
+            sys.stderr.write(f"Deduplication error: {exc}\n")
             return EXIT_INTERNAL_ERROR
 
     if args.subcommand == "run":

@@ -165,11 +165,11 @@ This specification translates the architectural decisions finalized in [`ADR-003
 
 ## 5. Verification Matrix & Quality Gates
 
-- [ ] Value Objects unit test suite in `tests/cresmo/unit/test_channel_sync_vo.py`.
-- [ ] SQLite WAL Ledger adapter unit test suite in `tests/cresmo/unit/test_sqlite_ledger_adapter.py`.
-- [ ] Preflight checker unit test suite in `tests/cresmo/unit/test_preflight_checker.py`.
-- [ ] Channel sync use case unit test suite in `tests/cresmo/unit/test_sync_channel_use_case.py`.
-- [ ] CLI sync/worker test scenarios in `tests/cresmo/unit/test_cli.py`.
-- [ ] 0 regressions across existing 80 unit tests.
-- [ ] Static typing: `uv run mypy --strict src/cresmo tests/cresmo` passes cleanly.
-- [ ] Linter & Formatter: `uv run ruff check src/cresmo tests/cresmo` passes cleanly.
+- [x] Value Objects unit test suite in `tests/cresmo/unit/test_channel_sync_vo.py`.
+- [x] SQLite WAL Ledger adapter unit test suite in `tests/cresmo/unit/test_sqlite_ledger_adapter.py`.
+- [x] Preflight checker unit test suite in `tests/cresmo/unit/test_preflight_checker.py`.
+- [x] Channel sync use case unit test suite in `tests/cresmo/unit/test_sync_channel_use_case.py`.
+- [x] CLI sync/worker test scenarios in `tests/cresmo/unit/test_cli.py`.
+- [x] 0 regressions across existing unit tests (121/121 unit tests passed, 222/222 workspace tests passed).
+- [x] Static typing: `uv run mypy --strict src/cresmo` passes cleanly (0 errors in 25 source files).
+- [x] Linter & Formatter: `uv run ruff check src/cresmo tests/cresmo` passes cleanly (39 files formatted).

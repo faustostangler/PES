@@ -47,3 +47,26 @@ class TestGeminiLLMAdapter:
         assert call_kwargs["contents"] == "Analyze the circulation of elites."
         assert call_kwargs["config"].temperature == 0.2
         assert call_kwargs["config"].system_instruction == "Act as a political scientist."
+
+    def test_transform_retries_on_transient_503_error(self) -> None:
+        mock_response = MagicMock()
+        mock_response.text = "Success after retry."
+        mock_response.usage_metadata = MagicMock(prompt_token_count=10, candidates_token_count=10)
+
+        mock_genai_client = MagicMock()
+        # Fail first with 503 UNAVAILABLE, then succeed
+        mock_genai_client.models.generate_content.side_effect = [
+            RuntimeError("503 UNAVAILABLE: high demand"),
+            mock_response,
+        ]
+
+        adapter = GeminiLLMAdapter(
+            api_key="test-key",
+            model_name="gemini-2.5-flash",
+            genai_client=mock_genai_client,
+            langfuse_client=MagicMock(),
+        )
+
+        result = adapter.transform(prompt="Test retry")
+        assert result == "Success after retry."
+        assert mock_genai_client.models.generate_content.call_count == 2

@@ -156,6 +156,25 @@ class VaultRepositoryPort(ABC):
         """Persist or update Map of Content in wiki/MOCs/."""
         raise NotImplementedError("Step 1: Persist Map of Content atomically.")
 
+    @abstractmethod
+    def delete_atomic_note(self, note: AtomicNote) -> None:
+        """Remove atomic note file from vault and clean up index entries."""
+        raise NotImplementedError("Step 1: Delete atomic note.")
+
+    @abstractmethod
+    def rewrite_wiki_links(self, old_title: NoteTitle, new_title: NoteTitle) -> int:
+        """Rewrite all inbound [[old_title]] links to [[new_title]] across all markdown files in wiki/.
+
+        Returns:
+            Count of files updated.
+        """
+        raise NotImplementedError("Step 1: Rewrite wiki links.")
+
+    @abstractmethod
+    def remove_index_entry(self, key: str) -> None:
+        """Remove specific canonical title or alias key from master _index.json."""
+        raise NotImplementedError("Step 1: Remove index entry.")
+
 
 class LedgerRepositoryPort(ABC):
     """Persistence port for tracking processed content status and idempotency."""
