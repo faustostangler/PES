@@ -45,45 +45,21 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
 
     def __init__(
         self,
-        vault_dir: Path | None = None,
-        raw_dir: Path | None = None,
-        enriched_dir: Path | None = None,
-        root_dir: Path | None = None,
+        vault_dir: Path,
+        raw_dir: Path,
+        enriched_dir: Path,
     ) -> None:
-        effective_vault = Path(vault_dir or root_dir or ".").resolve()
-        self.root_dir = effective_vault
+        self.vault_dir = Path(vault_dir).resolve()
+        self.raw_dir = Path(raw_dir).resolve()
+        self.enriched_dir = Path(enriched_dir).resolve()
 
-        # Decoupled mode (production layout with separate data_dir and vault_dir)
-        if raw_dir is not None or enriched_dir is not None:
-            self.wiki_dir = effective_vault
-            self.raw_dir = (
-                Path(raw_dir).resolve()
-                if raw_dir is not None
-                else effective_vault.parent / "data" / "raw"
-            )
-            self.enriched_dir = (
-                Path(enriched_dir).resolve()
-                if enriched_dir is not None
-                else effective_vault.parent / "data" / "enriched"
-            )
-        elif (effective_vault / "entities").is_dir() or (effective_vault / "concepts").is_dir():
-            # Vault root already contains atomic note folders directly
-            self.wiki_dir = effective_vault
-            self.raw_dir = effective_vault.parent / "data" / "raw"
-            self.enriched_dir = effective_vault.parent / "data" / "enriched"
-        else:
-            # Monolithic / legacy mode where root_dir contains wiki/, raw/, enriched/
-            self.wiki_dir = effective_vault / "wiki"
-            self.raw_dir = effective_vault / "raw"
-            self.enriched_dir = effective_vault / "enriched"
-
-        self.mocs_dir = self.wiki_dir / "MOCs"
-        self.index_path = self.wiki_dir / "_index.json"
+        self.mocs_dir = self.vault_dir / "MOCs"
+        self.index_path = self.vault_dir / "_index.json"
 
         # Ensure base directory tree exists
         self.raw_dir.mkdir(parents=True, exist_ok=True)
         self.enriched_dir.mkdir(parents=True, exist_ok=True)
-        self.wiki_dir.mkdir(parents=True, exist_ok=True)
+        self.vault_dir.mkdir(parents=True, exist_ok=True)
         self.mocs_dir.mkdir(parents=True, exist_ok=True)
 
     def _atomic_write(self, target_path: Path, content: str) -> None:
@@ -199,9 +175,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         return f"{note_type.value}s"
 
     def _get_note_path(self, note: AtomicNote) -> Path:
-        """Derive target file path in wiki/ for an atomic note."""
+        """Derive target file path in vault/ for an atomic note."""
         sub_folder = self._get_note_subfolder(note.note_type)
-        return self.wiki_dir / sub_folder / f"{sanitize_filename(note.title.value)}.md"
+        return self.vault_dir / sub_folder / f"{sanitize_filename(note.title.value)}.md"
 
     def save_atomic_note(self, note: AtomicNote) -> None:
         """Persist individual atomic note with standardized YAML frontmatter."""
@@ -343,9 +319,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         )
 
     def get_atomic_note_by_title(self, title: NoteTitle) -> AtomicNote | None:
-        """Retrieve atomic note by searching index or wiki directory."""
+        """Retrieve atomic note by searching index or vault directory."""
         sanitized = sanitize_filename(title.value)
-        matched = list(self.wiki_dir.glob(f"**/{sanitized}.md"))
+        matched = list(self.vault_dir.glob(f"**/{sanitized}.md"))
         for p in matched:
             if "MOCs" in p.parts:
                 continue
@@ -355,9 +331,9 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         return None
 
     def get_all_atomic_notes(self) -> list[AtomicNote]:
-        """Retrieve all atomic notes in wiki/ excluding MOCs."""
+        """Retrieve all atomic notes in vault/ excluding MOCs."""
         notes: list[AtomicNote] = []
-        for file_path in self.wiki_dir.glob("**/*.md"):
+        for file_path in self.vault_dir.glob("**/*.md"):
             if "MOCs" in file_path.parts:
                 continue
             note = self._parse_atomic_note_file(file_path)
@@ -375,7 +351,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
                 index = {}
 
         target_path = self._get_note_path(note)
-        relative_path = str(target_path.relative_to(self.wiki_dir))
+        relative_path = str(target_path.relative_to(self.vault_dir))
 
         entry_payload = {
             "title": note.title.value,
@@ -398,7 +374,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         )
 
     def save_map_of_content(self, moc: MapOfContent) -> None:
-        """Persist Map of Content in wiki/MOCs/ atomically."""
+        """Persist Map of Content in vault/MOCs/ atomically."""
         target_path = self.mocs_dir / f"{sanitize_filename(moc.title.value)}.md"
 
         frontmatter_dict = {
@@ -428,7 +404,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
     def delete_atomic_note(self, note: AtomicNote) -> None:
         """Remove atomic note file from vault and clean up index entries."""
         sanitized = sanitize_filename(note.title.value)
-        matched = list(self.wiki_dir.glob(f"**/{sanitized}.md"))
+        matched = list(self.vault_dir.glob(f"**/{sanitized}.md"))
         for p in matched:
             if "MOCs" not in p.parts and p.is_file():
                 p.unlink(missing_ok=True)
@@ -455,7 +431,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
             )
 
     def rewrite_wiki_links(self, old_title: NoteTitle, new_title: NoteTitle) -> int:
-        """Rewrite all inbound [[old_title]] links to [[new_title]] across all markdown files in wiki/.
+        """Rewrite all inbound [[old_title]] links to [[new_title]] across all markdown files in vault/.
 
         Returns:
             Count of files updated.
@@ -468,7 +444,7 @@ class ObsidianVaultAdapter(VaultRepositoryPort):
         pattern = re.compile(rf"\[\[{re.escape(old_val)}(\|.*?)?\]\]", re.IGNORECASE)
         updated_count = 0
 
-        for file_path in self.wiki_dir.glob("**/*.md"):
+        for file_path in self.vault_dir.glob("**/*.md"):
             try:
                 content = file_path.read_text(encoding="utf-8")
             except OSError:
