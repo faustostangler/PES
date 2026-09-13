@@ -88,6 +88,11 @@ class CresmoSettings(BaseSettings):
         """Absolute path to processed content SQLite WAL database file."""
         return self.data_dir / self.sqlite_ledger_filename
 
+    browser_headers_path: Path | None = Field(
+        default=None,
+        description="Optional custom path to browser request headers pool JSON file.",
+    )
+
     # =========================================================================
     # 🟢 Category 3: Operational Tunables
     # =========================================================================

@@ -32,6 +32,7 @@ from cresmo.domain.value_objects import (
     ContentId,
     DiscoveredMediaItem,
 )
+from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 
 _VIDEO_ID_REGEX = re.compile(r"(?:v=|\/)([a-zA-Z0-9_-]{8,64})(?:[&?]|\Z)")
 _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
@@ -40,13 +41,19 @@ _ILLEGAL_FS_CHARS = re.compile(r'[\\/*?:"<>|%]')
 class NativeMediaIngestionAdapter(MediaIngestionPort):
     """Production Hexagonal adapter for media ingestion using pure Python libraries."""
 
-    def __init__(self, request_timeout: float = 30.0) -> None:
+    def __init__(
+        self,
+        request_timeout: float = 30.0,
+        header_generator: RandomHeaderGenerator | None = None,
+    ) -> None:
         """Initialize NativeMediaIngestionAdapter.
 
         Args:
             request_timeout: Socket timeout in seconds for subtitle HTTP requests.
+            header_generator: Optional dynamic browser request header generator.
         """
         self.request_timeout = request_timeout
+        self._header_generator = header_generator or RandomHeaderGenerator()
 
     def _extract_video_id(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
@@ -124,15 +131,10 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         return None
 
     def _fetch_url_content(self, url: str) -> str:
-        """Fetch remote subtitle payload with browser User-Agent headers."""
+        """Fetch remote subtitle payload with dynamic browser headers."""
         req = urllib.request.Request(
             url,
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                )
-            },
+            headers=self._header_generator.get_random_headers(),
         )
         try:
             with urllib.request.urlopen(req, timeout=self.request_timeout) as resp:
@@ -204,6 +206,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 "outtmpl": str(scratch_path / "%(id)s.%(ext)s"),
                 "quiet": True,
                 "no_warnings": True,
+                "http_headers": self._header_generator.get_random_headers(),
             }
 
             try:
@@ -253,6 +256,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             "skip_download": True,
             "quiet": True,
             "no_warnings": True,
+            "http_headers": self._header_generator.get_random_headers(),
         }
 
         try:
@@ -313,6 +317,7 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             "playlistend": query.max_videos,
             "quiet": True,
             "no_warnings": True,
+            "http_headers": self._header_generator.get_random_headers(),
         }
 
         try:

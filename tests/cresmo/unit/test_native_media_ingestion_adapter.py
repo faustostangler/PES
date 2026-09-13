@@ -8,6 +8,7 @@ without invoking external network or legacy isb.ai scripts (SPEC-004).
 from __future__ import annotations
 
 import json
+import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -324,3 +325,55 @@ class TestNativeMediaIngestionAdapter:
 
             assert len(results) == 2
             assert mock_single.call_count == 3
+
+    def test_fetch_url_content_uses_dynamic_headers(self) -> None:
+        mock_generator = MagicMock()
+        mock_generator.get_random_headers.return_value = {
+            "User-Agent": "DynamicTestUA/1.0",
+            "Accept": "text/html",
+        }
+        adapter = NativeMediaIngestionAdapter(header_generator=mock_generator)
+
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_resp = MagicMock()
+            mock_resp.read.return_value = b"sample subtitle payload"
+            mock_resp.__enter__.return_value = mock_resp
+            mock_urlopen.return_value = mock_resp
+
+            content = adapter._fetch_url_content("https://video.google.com/timedtext?v=test")
+
+            assert content == "sample subtitle payload"
+            mock_generator.get_random_headers.assert_called_once()
+            called_req = mock_urlopen.call_args[0][0]
+            assert isinstance(called_req, urllib.request.Request)
+            assert called_req.headers.get("User-agent") == "DynamicTestUA/1.0"
+            assert called_req.headers.get("Accept") == "text/html"
+
+    def test_yt_dlp_options_include_dynamic_http_headers(self, tmp_path: Path) -> None:
+        mock_generator = MagicMock()
+        mock_generator.get_random_headers.return_value = {
+            "User-Agent": "YtDlpTestUA/2.0",
+            "Sec-Ch-Ua-Platform": '"Linux"',
+        }
+        adapter = NativeMediaIngestionAdapter(header_generator=mock_generator)
+
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = {
+                "id": "mock_video_12345",
+                "title": "Mock Title",
+                "subtitles": {},
+                "automatic_captions": {},
+            }
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            with patch.object(adapter, "_transcribe_audio_fallback", return_value=("Text", "Chan")):
+                adapter.ingest_single_video(
+                    "https://youtube.com/watch?v=mock_video_12345", output_dir=tmp_path
+                )
+
+            mock_ydl_cls.assert_called()
+            ydl_opts = mock_ydl_cls.call_args[0][0]
+            assert "http_headers" in ydl_opts
+            assert ydl_opts["http_headers"]["User-Agent"] == "YtDlpTestUA/2.0"
+            assert ydl_opts["http_headers"]["Sec-Ch-Ua-Platform"] == '"Linux"'

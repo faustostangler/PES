@@ -43,6 +43,7 @@ class PipelineResult:
     synthesized_notes: tuple[AtomicNote, ...]
     reconciled_mocs: tuple[MapOfContent, ...]
     duplicates_unified: int = 0
+    already_processed: bool = False
     error_message: str | None = None
 
 
@@ -95,6 +96,7 @@ class CresmoPipeline:
         self,
         video_url: str,
         gap_filler_passes: int = 1,
+        force_reprocess: bool = False,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline for a single video source.
 
@@ -114,14 +116,14 @@ class CresmoPipeline:
 
         content_id = raw.content_id
 
-        # Idempotency check
-        if self.ledger_port and self.ledger_port.is_processed(content_id):
+        # Idempotency guard — bypass only when caller explicitly requests force-reprocess
+        if self.ledger_port and self.ledger_port.is_processed(content_id) and not force_reprocess:
             return PipelineResult(
                 content_id=content_id,
                 success=True,
                 synthesized_notes=(),
                 reconciled_mocs=(),
-                error_message="Content already marked processed in ledger.",
+                already_processed=True,
             )
 
         # Socratic Gap Filler & Longitudinal Expander (supports resumed execution)

@@ -11,6 +11,7 @@ from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
+from cresmo.infrastructure.adapters.header_generator import RandomHeaderGenerator
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
 )
@@ -34,7 +35,8 @@ def build_pipeline(
     """
     resolved_settings = settings or CresmoSettings()
 
-    media_ingestion_port = NativeMediaIngestionAdapter()
+    header_generator = RandomHeaderGenerator(headers_path=resolved_settings.browser_headers_path)
+    media_ingestion_port = NativeMediaIngestionAdapter(header_generator=header_generator)
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,

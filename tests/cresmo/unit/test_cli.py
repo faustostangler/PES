@@ -100,6 +100,7 @@ class TestCresmoCLI:
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
                 gap_filler_passes=1,
+                force_reprocess=False,
             )
 
     def test_cli_run_with_flag_overrides(self) -> None:
@@ -131,6 +132,7 @@ class TestCresmoCLI:
             mock_pipeline.run_for_video.assert_called_once_with(
                 video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
                 gap_filler_passes=3,
+                force_reprocess=False,
             )
 
     def test_cli_run_dry_run_invokes_only_ingest(self) -> None:
