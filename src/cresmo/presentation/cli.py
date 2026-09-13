@@ -41,6 +41,63 @@ EXIT_RATE_LIMIT_EXCEEDED: int = 4
 EXIT_INGESTION_ERROR: int = 5
 
 
+def _read_manifest(path: Path) -> list[str]:
+    """Read a manifest file and return non-empty, non-comment lines."""
+    if not path.is_file():
+        return []
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return [line.strip() for line in lines if line.strip() and not line.strip().startswith("#")]
+
+
+def _load_batch_urls(
+    settings: CresmoSettings,
+    *,
+    explicit_manifest: Path | None = None,
+) -> list[str]:
+    """Build the ordered URL list for batch execution.
+
+    When ``explicit_manifest`` is provided (user passed ``--manifest``), only
+    that single file is used.  Otherwise the implicit contract is:
+
+    1. ``data/playlist-priority.txt`` is loaded first (if it exists).
+    2. ``data/playlist.txt`` is appended, **deduplicating** any URLs already
+       covered by the priority file.
+
+    Returns:
+        Ordered, deduplicated URL list (priority items always come first).
+    """
+    if explicit_manifest is not None:
+        urls = _read_manifest(explicit_manifest)
+        if urls:
+            sys.stdout.write(
+                f"[manifest] Loaded {len(urls)} URLs from {explicit_manifest.name}\n"
+            )
+        return urls
+
+    # Implicit mode: priority-first, then main playlist
+    priority_path = settings.data_dir / "playlist-priority.txt"
+    main_path = settings.data_dir / "playlist.txt"
+
+    priority_urls = _read_manifest(priority_path)
+    main_urls = _read_manifest(main_path)
+
+    if priority_urls:
+        sys.stdout.write(
+            f"[manifest] Priority list: {len(priority_urls)} URLs from {priority_path.name}\n"
+        )
+
+    # WHY: set-based deduplication preserves insertion order from priority list
+    seen: set[str] = set(priority_urls)
+    remaining = [u for u in main_urls if u not in seen]
+
+    if remaining:
+        sys.stdout.write(
+            f"[manifest] Main playlist: {len(remaining)} new URLs from {main_path.name} "
+            f"({len(main_urls) - len(remaining)} duplicates skipped)\n"
+        )
+
+    return priority_urls + remaining
+
 def _create_parser() -> argparse.ArgumentParser:
     """Construct CLI argument parser with subcommands."""
     parser = argparse.ArgumentParser(
@@ -52,12 +109,28 @@ def _create_parser() -> argparse.ArgumentParser:
     # Subcommand: run
     run_parser = subparsers.add_parser(
         "run",
-        help="Run end-to-end knowledge synthesis for a video",
+        help="Run end-to-end knowledge synthesis for a video or manifest playlist",
     )
     run_parser.add_argument(
         "--url",
-        required=True,
+        required=False,
+        default=None,
         help="Target YouTube or media video URL",
+    )
+    # WHY: --all is kept as a no-op alias for backward compatibility with
+    # existing scripts/docs, but batch mode is the default when no --url given.
+    run_parser.add_argument(
+        "--all",
+        action="store_true",
+        default=True,
+        help="(Default) Run full pipeline for all videos in the manifest playlists",
+    )
+    run_parser.add_argument(
+        "--manifest",
+        "--playlist",
+        type=Path,
+        default=None,
+        help="Path to manifest or playlist text file (default: data/playlist.txt)",
     )
     run_parser.add_argument(
         "--passes",
@@ -328,45 +401,131 @@ def main(argv: Sequence[str] | None = None) -> int:
             return EXIT_INTERNAL_ERROR
 
     if args.subcommand == "run":
+
         try:
             if args.batch_size is not None:
                 pipeline = build_pipeline(batch_size_override=args.batch_size)
             else:
                 pipeline = build_pipeline()
 
+            if args.url:
+                if args.dry_run:
+                    raw = pipeline.ingest_raw_transcript.execute(video_url=args.url)
+                    if raw is None:
+                        sys.stderr.write(
+                            f"Dry-run ingestion returned no transcript for {args.url}\n"
+                        )
+                        return EXIT_INGESTION_ERROR
+                    sys.stdout.write(
+                        f"Dry run successful for [{raw.content_id.value}]: "
+                        f"Transcript length: {len(raw.body)} characters.\n"
+                    )
+                    return EXIT_SUCCESS
+
+                result = pipeline.run_for_video(
+                    video_url=args.url,
+                    gap_filler_passes=args.passes,
+                    force_reprocess=args.force_reprocess,
+                )
+                if result.already_processed:
+                    sys.stdout.write(
+                        f"[SKIPPED] Content [{result.content_id.value}] was already marked as COMPLETED "
+                        f"in the ledger. Use --force-reprocess to bypass.\n"
+                    )
+                    return EXIT_SUCCESS
+                if result.success:
+                    sys.stdout.write(
+                        f"Synthesis completed successfully for [{result.content_id.value}]: "
+                        f"{len(result.synthesized_notes)} atomic notes synthesized, "
+                        f"{len(result.reconciled_mocs)} MOCs reconciled, "
+                        f"{result.duplicates_unified} duplicate clusters unified.\n"
+                    )
+                    return EXIT_SUCCESS
+                else:
+                    sys.stderr.write(f"Pipeline error: {result.error_message}\n")
+                    return EXIT_INTERNAL_ERROR
+
+            # Batch execution over manifest playlist(s)
+            # WHY: Priority list is always processed first to ensure high-value
+            # content gets synthesized before the bulk playlist. Deduplication
+            # prevents re-processing URLs that appear in both files.
+            settings = CresmoSettings()
+            urls = _load_batch_urls(settings, explicit_manifest=args.manifest)
+
+            if not urls:
+                sys.stdout.write("No video URLs found in any manifest.\n")
+                return EXIT_SUCCESS
+
+            sys.stdout.write(
+                f"Starting batch execution for {len(urls)} videos...\n"
+            )
+
             if args.dry_run:
-                raw = pipeline.ingest_raw_transcript.execute(video_url=args.url)
-                if raw is None:
-                    sys.stderr.write(f"Dry-run ingestion returned no transcript for {args.url}\n")
-                    return EXIT_INGESTION_ERROR
+                ingested = 0
+                for idx, target_url in enumerate(urls, 1):
+                    raw = pipeline.ingest_raw_transcript.execute(video_url=target_url)
+                    if raw is not None:
+                        ingested += 1
+                        sys.stdout.write(
+                            f"[{idx}/{len(urls)}] Dry-run ingested: [{raw.content_id.value}] "
+                            f"({len(raw.body)} chars)\n"
+                        )
+                    else:
+                        sys.stderr.write(
+                            f"[{idx}/{len(urls)}] Ingestion failed for: {target_url}\n"
+                        )
                 sys.stdout.write(
-                    f"Dry run successful for [{raw.content_id.value}]: "
-                    f"Transcript length: {len(raw.body)} characters.\n"
+                    f"Dry-run completed: {ingested}/{len(urls)} transcripts ingested.\n"
                 )
                 return EXIT_SUCCESS
 
-            result = pipeline.run_for_video(
-                video_url=args.url,
-                gap_filler_passes=args.passes,
-                force_reprocess=args.force_reprocess,
+            completed = 0
+            skipped = 0
+            failed = 0
+
+            for idx, target_url in enumerate(urls, 1):
+                try:
+                    result = pipeline.run_for_video(
+                        video_url=target_url,
+                        gap_filler_passes=args.passes,
+                        force_reprocess=args.force_reprocess,
+                    )
+                    if result.already_processed:
+                        skipped += 1
+                        sys.stdout.write(
+                            f"[{idx}/{len(urls)}] [SKIPPED] [{result.content_id.value}] Already processed in ledger.\n"
+                        )
+                    elif result.success:
+                        completed += 1
+                        sys.stdout.write(
+                            f"[{idx}/{len(urls)}] [DONE] [{result.content_id.value}]: "
+                            f"{len(result.synthesized_notes)} atomic notes synthesized, "
+                            f"{len(result.reconciled_mocs)} MOCs reconciled, "
+                            f"{result.duplicates_unified} duplicate clusters unified.\n"
+                        )
+                    else:
+                        failed += 1
+                        sys.stderr.write(
+                            f"[{idx}/{len(urls)}] [ERROR] {target_url}: {result.error_message}\n"
+                        )
+                except RateLimitExceededError as exc:
+                    failed += 1
+                    sys.stderr.write(f"[{idx}/{len(urls)}] [RATE LIMIT] {target_url}: {exc}\n")
+                except IngestionNetworkError as exc:
+                    failed += 1
+                    sys.stderr.write(f"[{idx}/{len(urls)}] [NETWORK ERROR] {target_url}: {exc}\n")
+                except Exception as exc:  # noqa: BLE001
+                    failed += 1
+                    sys.stderr.write(f"[{idx}/{len(urls)}] [FAILED] {target_url}: {exc}\n")
+
+            sys.stdout.write(
+                f"\nBatch Synthesis Summary:\n"
+                f"- Total URLs: {len(urls)}\n"
+                f"- Completed: {completed}\n"
+                f"- Skipped (Idempotent): {skipped}\n"
+                f"- Failed: {failed}\n"
             )
-            if result.already_processed:
-                sys.stdout.write(
-                    f"[SKIPPED] Content [{result.content_id.value}] was already marked as COMPLETED "
-                    f"in the ledger. Use --force-reprocess to bypass.\n"
-                )
-                return EXIT_SUCCESS
-            if result.success:
-                sys.stdout.write(
-                    f"Synthesis completed successfully for [{result.content_id.value}]: "
-                    f"{len(result.synthesized_notes)} atomic notes synthesized, "
-                    f"{len(result.reconciled_mocs)} MOCs reconciled, "
-                    f"{result.duplicates_unified} duplicate clusters unified.\n"
-                )
-                return EXIT_SUCCESS
-            else:
-                sys.stderr.write(f"Pipeline error: {result.error_message}\n")
-                return EXIT_INTERNAL_ERROR
+            return EXIT_SUCCESS if failed == 0 else EXIT_INTERNAL_ERROR
 
         except RateLimitExceededError as exc:
             sys.stderr.write(f"Rate limit exceeded: {exc}\n")

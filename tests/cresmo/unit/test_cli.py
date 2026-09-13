@@ -155,6 +155,59 @@ class TestCresmoCLI:
             )
             mock_pipeline.run_for_video.assert_not_called()
 
+    def test_cli_run_all_with_manifest_success(self, tmp_path: Path) -> None:
+        manifest_file = tmp_path / "test_playlist.txt"
+        manifest_file.write_text(
+            "# Comment line\n"
+            "https://youtube.com/watch?v=video11111111\n"
+            "\n"
+            "https://youtube.com/watch?v=video22222222\n",
+            encoding="utf-8",
+        )
+
+        mock_pipeline = MagicMock()
+        mock_pipeline.run_for_video.return_value = PipelineResult(
+            content_id=ContentId("video11111111"),
+            success=True,
+            synthesized_notes=(),
+            reconciled_mocs=(),
+        )
+
+        with patch("cresmo.presentation.cli.build_pipeline", return_value=mock_pipeline):
+            exit_code = main(["run", "--all", "--manifest", str(manifest_file)])
+
+            assert exit_code == EXIT_SUCCESS
+            assert mock_pipeline.run_for_video.call_count == 2
+
+    def test_cli_run_all_dry_run(self, tmp_path: Path) -> None:
+        manifest_file = tmp_path / "test_playlist.txt"
+        manifest_file.write_text(
+            "https://youtube.com/watch?v=video11111111\n",
+            encoding="utf-8",
+        )
+
+        mock_pipeline = MagicMock()
+        mock_raw = RawTranscript(
+            content_id=ContentId("video11111111"),
+            channel_name="TestChan",
+            body="Content",
+        )
+        mock_pipeline.ingest_raw_transcript.execute.return_value = mock_raw
+
+        with patch("cresmo.presentation.cli.build_pipeline", return_value=mock_pipeline):
+            exit_code = main(["run", "--all", "--dry-run", "--manifest", str(manifest_file)])
+
+            assert exit_code == EXIT_SUCCESS
+            mock_pipeline.ingest_raw_transcript.execute.assert_called_once_with(
+                video_url="https://youtube.com/watch?v=video11111111"
+            )
+            mock_pipeline.run_for_video.assert_not_called()
+
+    def test_cli_run_all_missing_manifest_returns_code_2(self, tmp_path: Path) -> None:
+        missing_file = tmp_path / "non_existent.txt"
+        exit_code = main(["run", "--all", "--manifest", str(missing_file)])
+        assert exit_code == EXIT_CONFIG_OR_USAGE_ERROR
+
     def test_cli_maps_domain_validation_error_to_code_3(self) -> None:
         mock_pipeline = MagicMock()
         mock_pipeline.run_for_video.side_effect = DomainValidationError("Invalid domain entity")
