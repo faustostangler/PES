@@ -1,12 +1,13 @@
 """Cresmo Knowledge Synthesis Pipeline Orchestrator.
 
-Orchestrates the 6 incremental integer stages:
+Orchestrates the 7 incremental integer stages:
 - Stage 1: Raw Transcript Ingestion (MediaIngestionPort ACL)
 - Stage 2: Socratic Gap Filler (FillGapsFluidProseUseCase)
 - Stage 3: Longitudinal & Synchronic Expander (ExpandLongitudinalSynchronicUseCase)
 - Stage 4: Holistic Inventory Discovery (DiscoverAtomicInventoryUseCase)
 - Stage 5: Batched Atomic Synthesis (SynthesizeAtomicBatchUseCase)
 - Stage 6: Map of Content Reconciliation (ReconcileMOCsUseCase)
+- Stage 7: Graph Entity Resolution & Duplicate Unification (UnifyDuplicateNotesUseCase)
 """
 
 from __future__ import annotations
