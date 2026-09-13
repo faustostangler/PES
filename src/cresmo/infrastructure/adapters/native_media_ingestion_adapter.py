@@ -27,6 +27,7 @@ from cresmo.domain.exceptions import (
     IngestionNetworkError,
     RateLimitExceededError,
 )
+from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import (
     ChannelFeedQuery,
     ContentId,
@@ -301,10 +302,25 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 f"Extracted transcript body is empty for video ID '{actual_video_id}'."
             )
 
+        category, _ = classify_channel(channel_name)
+        date_str = str(info.get("upload_date") or "")
+        upload_date = None
+        if len(date_str) == 8 and date_str.isdigit():
+            try:
+                upload_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC).date()
+            except ValueError:
+                pass
+
         return RawTranscript(
             content_id=ContentId(actual_video_id),
             channel_name=channel_name,
             body=body,
+            title=str(info.get("title") or ""),
+            source_url=video_url,
+            upload_date=upload_date,
+            channel_id=str(info.get("channel_id") or "unknown_channel"),
+            channel_category=category,
+            video_description=str(info.get("description") or ""),
         )
 
     def discover_channel_feed(

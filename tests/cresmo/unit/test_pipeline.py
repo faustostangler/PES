@@ -55,7 +55,9 @@ class TestCresmoPipelineOrchestration:
 
         mock_llm = MockLLMAdapter(
             responses=[
-                gap_filler_llm,  # Gap Filler
+                gap_filler_llm,  # Gap Filler Pass 1
+                gap_filler_llm,  # Gap Filler Pass 2
+                gap_filler_llm,  # Gap Filler Pass 3
                 expander_llm,  # Longitudinal Expander
                 expander_llm,  # Synchronic Expander
                 inventory_llm,  # Inventory Discovery

@@ -7,7 +7,11 @@ from __future__ import annotations
 
 import re
 
-from cresmo.application.ports import LLMTransformationPort, VaultRepositoryPort
+from cresmo.application.ports import (
+    LLMTransformationPort,
+    PromptProviderPort,
+    VaultRepositoryPort,
+)
 from cresmo.domain.entities import EnrichedCompendium, RawTranscript
 from cresmo.domain.exceptions import CompendiumStructureError
 from cresmo.domain.value_objects import NoteTitle
@@ -27,9 +31,16 @@ class FillGapsFluidProseUseCase:
         self,
         llm_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
+        prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         self.llm_port = llm_port
         self.vault_port = vault_port
+        if prompt_provider is None:
+            from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+
+            self.prompt_provider: PromptProviderPort = JsonPromptProvider()
+        else:
+            self.prompt_provider = prompt_provider
 
     def execute(
         self,
@@ -38,20 +49,16 @@ class FillGapsFluidProseUseCase:
     ) -> EnrichedCompendium:
         """Execute Stage 2 multi-pass progressive enrichment."""
         current_text = raw_transcript.body
+        file_name = f"{raw_transcript.content_id.value}.txt"
 
         for p in range(passes):
-            prompt = (
-                f"You are a senior analyst executing the Cresmo Socratic gap expansion and detranscription pipeline (Pass {p + 1}/{passes}).\n"
-                f"Transform the following spoken transcript into a dense, continuous, formal Markdown compendium written in Brazilian Portuguese:\n\n"
-                f"Source Channel: {raw_transcript.channel_name}\n\n"
-                f"Transcript:\n{current_text}\n\n"
-                "MANDATORY STRUCTURAL AND FORMATTING RULES:\n"
-                "1. Line 1 MUST begin with a top-level heading: # <Title of Compendium>\n"
-                "2. The main body must be written in continuous, highly informative fluid Markdown prose using analytical headings (## and ###).\n"
-                "3. Strict Bans: Absolutely NO bullet lists, NO numbered lists in the main body, NO markdown tables, NO oralities/speech filler words, and NO em-dashes (—).\n"
-                "4. MANDATORY SECTION: You MUST conclude the document with the following exact heading:\n"
-                "## Informações Complementares\n"
-                "Under this heading, provide detailed numbered paragraphs containing: historical context, verified dates, mini-biographies, statistical data, and secondary conceptual gap expansions."
+            prompt = self.prompt_provider.get_gap_filler_prompt(
+                pass_num=p + 1,
+                total_passes=passes,
+                channel_name=raw_transcript.channel_name,
+                file_name=file_name,
+                raw_text=raw_transcript.body,
+                current_text=current_text if p > 0 else None,
             )
             current_text = self.llm_port.transform(prompt=prompt)
 
@@ -81,6 +88,11 @@ class FillGapsFluidProseUseCase:
                 "EnrichedCompendium must contain a non-empty 'Informações Complementares' section."
             )
 
+        video_date_str = (
+            raw_transcript.upload_date.strftime("%Y%m%d")
+            if raw_transcript.upload_date
+            else ""
+        )
         compendium = EnrichedCompendium(
             content_id=raw_transcript.content_id,
             channel_name=raw_transcript.channel_name,
@@ -88,6 +100,11 @@ class FillGapsFluidProseUseCase:
             body=body,
             complementary_info=comp_info,
             pass_count=passes,
+            channel_id=raw_transcript.channel_id,
+            channel_category=raw_transcript.channel_category,
+            source_url=raw_transcript.source_url,
+            video_date=video_date_str,
+            video_description=raw_transcript.video_description,
         )
         self.vault_port.save_enriched_compendium(compendium)
         return compendium

@@ -110,18 +110,12 @@ def _load_batch_sources(
     # Tier 0: Priority text/markdown files
     priority_files = _load_priority_text_files(settings.priority_texts_dir)
     if priority_files:
-        sys.stdout.write(
-            f"[manifest] Tier 0 (Priority Texts): {len(priority_files)} local files from {settings.priority_texts_dir.name}/\n"
-        )
         for pf in priority_files:
             sources.append(BatchSource(kind="file", target=str(pf.resolve())))
 
     # Tier 1: Priority URLs
     priority_urls = _read_manifest(settings.playlist_priority_path)
     if priority_urls:
-        sys.stdout.write(
-            f"[manifest] Tier 1 (Priority URLs): {len(priority_urls)} URLs from {settings.playlist_priority_path.name}\n"
-        )
         for pu in priority_urls:
             sources.append(BatchSource(kind="url", target=pu))
 
@@ -131,10 +125,6 @@ def _load_batch_sources(
     remaining_urls = [u for u in main_urls if u not in seen_urls]
 
     if remaining_urls:
-        sys.stdout.write(
-            f"[manifest] Tier 2 (Main Playlist): {len(remaining_urls)} new URLs from {settings.playlist_path.name} "
-            f"({len(main_urls) - len(remaining_urls)} duplicates skipped)\n"
-        )
         for mu in remaining_urls:
             sources.append(BatchSource(kind="url", target=mu))
 
@@ -177,8 +167,8 @@ def _create_parser() -> argparse.ArgumentParser:
     run_parser.add_argument(
         "--passes",
         type=int,
-        default=1,
-        help="Refinement passes for gap filler (default: 1)",
+        default=3,
+        help="Refinement passes for gap filler (default: 3)",
     )
     run_parser.add_argument(
         "--batch-size",
@@ -454,7 +444,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             return EXIT_INTERNAL_ERROR
 
     if args.subcommand == "run":
-
         try:
             if args.batch_size is not None:
                 pipeline = build_pipeline(batch_size_override=args.batch_size)
@@ -502,11 +491,20 @@ def main(argv: Sequence[str] | None = None) -> int:
             # WHY: Priority text files (Tier 0) are processed first, then priority
             # URLs (Tier 1), then main playlist (Tier 2). Deduplication prevents
             # re-processing URLs that appear in both manifest files.
+            # If any tier is missing or empty, it gracefully falls through to the next.
             settings = CresmoSettings()
+            settings.ensure_directories()
             sources = _load_batch_sources(settings, explicit_manifest=args.manifest)
 
             if not sources:
-                sys.stdout.write("No synthesis targets found in manifests or priority folder.\n")
+                sys.stdout.write(
+                    "No synthesis targets found in manifests or priority folder.\n"
+                    "\nBatch Synthesis Summary:\n"
+                    "- Total Items: 0\n"
+                    "- Completed: 0\n"
+                    "- Skipped (Idempotent): 0\n"
+                    "- Failed: 0\n"
+                )
                 return EXIT_SUCCESS
 
             sys.stdout.write(

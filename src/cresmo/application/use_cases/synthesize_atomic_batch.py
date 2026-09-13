@@ -9,7 +9,11 @@ import json
 import re
 
 from cresmo.application.json_parser import extract_json_data
-from cresmo.application.ports import LLMTransformationPort, VaultRepositoryPort
+from cresmo.application.ports import (
+    LLMTransformationPort,
+    PromptProviderPort,
+    VaultRepositoryPort,
+)
 from cresmo.domain.entities import AtomicNote, EnrichedCompendium
 from cresmo.domain.exceptions import DomainValidationError, NoteTypologyError
 from cresmo.domain.value_objects import (
@@ -20,19 +24,32 @@ from cresmo.domain.value_objects import (
     NoteType,
 )
 
+_PREFIX_RE = re.compile(r"^(?:o|a|os|as|um|uma|uns|umas|dr|dra|prof|dom|frei)\s+", re.IGNORECASE)
+
+
+def _norm_honorific(text: str) -> str:
+    return _PREFIX_RE.sub("", text.strip().lower())
+
 
 class SynthesizeAtomicBatchUseCase:
-    """Stage 5: Batched atomic note synthesis and incremental vault persistence."""
+    """Stage 5: Batched Atomic Note synthesis and incremental reconciliation."""
 
     def __init__(
         self,
         llm_port: LLMTransformationPort,
         vault_port: VaultRepositoryPort,
         batch_size: int = 5,
+        prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         self.llm_port = llm_port
         self.vault_port = vault_port
         self.batch_size = max(1, batch_size)
+        if prompt_provider is None:
+            from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+
+            self.prompt_provider: PromptProviderPort = JsonPromptProvider()
+        else:
+            self.prompt_provider = prompt_provider
 
     def execute(
         self,
@@ -94,25 +111,12 @@ class SynthesizeAtomicBatchUseCase:
             ]
 
             # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = (
-                f"Source Compendium Title: {compendium.title.value}\n"
-                f"Source Channel: {compendium.channel_name}\n\n"
-                f"Source Context:\n{compendium.body}\n\n"
-                f"Target Entities to Synthesize in this batch:\n{json.dumps(targets_summary, ensure_ascii=False)}\n\n"
-                "Synthesize each entity into an Obsidian Atomic Note object.\n"
-                "Output strictly a JSON array of note objects with keys:\n"
-                "- title (string)\n"
-                "- type (concept|entity|event|process)\n"
-                "- definition (string, minimum 20 characters of contextual analysis)\n"
-                "- direct_relations (list of related entity titles, MUST NOT include the note's own title)\n"
-                "- causal_matrix (object with cause, effect, epistemic_attribution)\n"
-                "- cross_context (object with precursors, lateral_events, aftermath)\n"
-                "- domain (string)\n"
-                "- cluster (string)\n"
-                "- source (string)\n"
-                "- aliases (list of strings)"
+            prompt = self.prompt_provider.get_batch_notes_prompt(
+                compendium_title=compendium.title.value,
+                channel_name=compendium.channel_name,
+                compendium_body=compendium.body,
+                targets_json=json.dumps(targets_summary, ensure_ascii=False),
             )
-
             response = self.llm_port.transform(prompt=prompt)
             data = extract_json_data(response)
             if not isinstance(data, list):

@@ -13,13 +13,17 @@ Orchestrates the 7 incremental integer stages:
 from __future__ import annotations
 
 import hashlib
+import re
 from dataclasses import dataclass
 from pathlib import Path
+
+import yaml
 
 from cresmo.application.ports import (
     LedgerRepositoryPort,
     LLMTransformationPort,
     MediaIngestionPort,
+    PromptProviderPort,
     VaultRepositoryPort,
 )
 from cresmo.application.use_cases import (
@@ -33,12 +37,13 @@ from cresmo.application.use_cases import (
 )
 from cresmo.domain.entities import AtomicNote, MapOfContent, RawTranscript
 from cresmo.domain.exceptions import CresmoDomainError
+from cresmo.domain.taxonomy import classify_channel
 from cresmo.domain.value_objects import ContentId
 
 
 @dataclass(frozen=True)
 class PipelineResult:
-    """Immutable execution outcome of the 7-stage synthesis pipeline."""
+    """Summary record emitted at the conclusion of a pipeline run."""
 
     content_id: ContentId
     success: bool
@@ -59,11 +64,18 @@ class CresmoPipeline:
         vault_port: VaultRepositoryPort,
         ledger_port: LedgerRepositoryPort | None = None,
         batch_size: int = 5,
+        prompt_provider: PromptProviderPort | None = None,
     ) -> None:
         self.media_ingestion_port = media_ingestion_port
         self.llm_port = llm_port
         self.vault_port = vault_port
         self.ledger_port = ledger_port
+        if prompt_provider is None:
+            from cresmo.infrastructure.adapters.prompt_provider import JsonPromptProvider
+
+            self.prompt_provider: PromptProviderPort = JsonPromptProvider()
+        else:
+            self.prompt_provider = prompt_provider
 
         # Use cases instantiation
         self.ingest_raw_transcript = IngestRawTranscriptUseCase(
@@ -73,22 +85,27 @@ class CresmoPipeline:
         self.fill_gaps_fluid_prose = FillGapsFluidProseUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
+            prompt_provider=self.prompt_provider,
         )
         self.expand_longitudinal_synchronic = ExpandLongitudinalSynchronicUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
+            prompt_provider=self.prompt_provider,
         )
         self.discover_atomic_inventory = DiscoverAtomicInventoryUseCase(
             llm_port=self.llm_port,
+            prompt_provider=self.prompt_provider,
         )
         self.synthesize_atomic_batch = SynthesizeAtomicBatchUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
             batch_size=batch_size,
+            prompt_provider=self.prompt_provider,
         )
         self.reconcile_mocs = ReconcileMOCsUseCase(
             llm_port=self.llm_port,
             vault_port=self.vault_port,
+            prompt_provider=self.prompt_provider,
         )
         self.unify_duplicate_notes = UnifyDuplicateNotesUseCase(
             vault_port=self.vault_port,
@@ -97,7 +114,7 @@ class CresmoPipeline:
     def run_for_video(
         self,
         video_url: str,
-        gap_filler_passes: int = 1,
+        gap_filler_passes: int = 3,
         force_reprocess: bool = False,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline for a single video source.
@@ -173,7 +190,7 @@ class CresmoPipeline:
     def run_for_text_file(
         self,
         file_path: Path,
-        gap_filler_passes: int = 1,
+        gap_filler_passes: int = 3,
         force_reprocess: bool = False,
     ) -> PipelineResult:
         """Run the end-to-end synthesis pipeline starting from a local raw text file.
@@ -219,14 +236,46 @@ class CresmoPipeline:
                 already_processed=True,
             )
 
-        channel_name = file_path.parent.name if file_path.parent.name else "Priority Text"
+        title = stem.replace("_", " ").replace("-", " ").title()
+        channel_name = file_path.parent.name if file_path.parent.name else "text"
+        channel_id = "priority_text"
+        channel_category, _ = classify_channel(channel_name)
+        source_url = f"file://{file_path.resolve()}"
+        video_description = ""
+        body = raw_body
+
+        if raw_body.startswith("---"):
+            fm_match = re.match(r"^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$", raw_body)
+            if fm_match:
+                fm_text, parsed_body = fm_match.groups()
+                body = parsed_body.strip()
+                try:
+                    meta = yaml.safe_load(fm_text) or {}
+                    if meta.get("video_title") or meta.get("title"):
+                        title = str(meta.get("video_title") or meta.get("title"))
+                    if meta.get("channel_name") or meta.get("channel"):
+                        channel_name = str(meta.get("channel_name") or meta.get("channel"))
+                        channel_category, _ = classify_channel(channel_name)
+                    if meta.get("channel_id"):
+                        channel_id = str(meta["channel_id"])
+                    if meta.get("channel_category") or meta.get("domain"):
+                        channel_category = str(meta.get("channel_category") or meta.get("domain"))
+                    if meta.get("url"):
+                        source_url = str(meta["url"])
+                    if meta.get("video_description"):
+                        video_description = str(meta["video_description"])
+                except Exception:  # noqa: BLE001, S110
+                    pass
 
         raw = RawTranscript(
             content_id=content_id,
             channel_name=channel_name,
-            body=raw_body,
-            title=stem.replace("_", " ").replace("-", " ").title(),
-            source_url=f"file://{file_path.resolve()}",
+            body=body,
+            title=title,
+            source_url=source_url,
+            channel_id=channel_id,
+            channel_category=channel_category,
+            video_description=video_description,
         )
         self.vault_port.save_raw_transcript(raw)
 
