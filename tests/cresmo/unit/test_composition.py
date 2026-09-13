@@ -15,7 +15,9 @@ from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.services.preflight import PreflightHealthChecker
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
-from cresmo.infrastructure.adapters.legacy_isb_ingestion_adapter import LegacyIsbIngestionAdapter
+from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
+    NativeMediaIngestionAdapter,
+)
 from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultAdapter
 from cresmo.infrastructure.adapters.sqlite_ledger_adapter import SqliteLedgerAdapter
 from cresmo.infrastructure.config import CresmoSettings
@@ -41,7 +43,7 @@ class TestCompositionRoot:
         pipeline = build_pipeline(settings=test_settings)
 
         assert isinstance(pipeline, CresmoPipeline)
-        assert isinstance(pipeline.media_ingestion_port, LegacyIsbIngestionAdapter)
+        assert isinstance(pipeline.media_ingestion_port, NativeMediaIngestionAdapter)
         assert isinstance(pipeline.llm_port, GeminiLLMAdapter)
         assert isinstance(pipeline.vault_port, ObsidianVaultAdapter)
         assert isinstance(pipeline.ledger_port, SqliteLedgerAdapter)

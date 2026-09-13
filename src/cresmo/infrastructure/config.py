@@ -21,7 +21,13 @@ class CresmoSettings(BaseSettings):
     """Single Source of Truth (SSOT) configuration for Cresmo."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(
+            ".env",
+            str(_WORKSPACE_DIR / ".env"),
+            str(_WORKSPACE_DIR / "vault" / ".env"),
+            str(_WORKSPACE_DIR / "data" / ".env"),
+            str(_WORKSPACE_DIR / "playground" / "cresmo" / ".env"),
+        ),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -49,30 +55,34 @@ class CresmoSettings(BaseSettings):
     # =========================================================================
     # 🟡 Category 2: Infra & Storage Paths
     # =========================================================================
+    data_dir: Path = Field(
+        default_factory=lambda: _WORKSPACE_DIR / "data",
+        description="Root directory for raw media lake, enriched compendiums, and ledger.",
+    )
     vault_dir: Path = Field(
-        default_factory=lambda: _WORKSPACE_DIR / "playground" / "cresmo",
-        description="Root directory for Cresmo pipeline artifacts and Obsidian vault.",
+        default_factory=lambda: _WORKSPACE_DIR / "vault",
+        description="Root directory for Obsidian Second Brain knowledge graph vault.",
     )
 
     @property
     def raw_dir(self) -> Path:
         """Directory for ingested raw media transcripts."""
-        return self.vault_dir / "raw"
+        return self.data_dir / "raw"
 
     @property
     def enriched_dir(self) -> Path:
         """Directory for enriched multi-pass compendiums."""
-        return self.vault_dir / "enriched"
+        return self.data_dir / "enriched"
 
     @property
     def wiki_dir(self) -> Path:
         """Obsidian vault directory holding atomic notes and MOCs."""
-        return self.vault_dir / "wiki"
+        return self.vault_dir
 
     @property
     def index_path(self) -> Path:
         """Master lookup JSON index."""
-        return self.wiki_dir / "_index.json"
+        return self.vault_dir / "_index.json"
 
     sqlite_ledger_filename: str = Field(
         default="cresmo_ledger.db",
@@ -82,7 +92,7 @@ class CresmoSettings(BaseSettings):
     @property
     def sqlite_ledger_path(self) -> Path:
         """Absolute path to processed content SQLite WAL database file."""
-        return self.vault_dir / self.sqlite_ledger_filename
+        return self.data_dir / self.sqlite_ledger_filename
 
     @property
     def ledger_path(self) -> Path:
@@ -93,8 +103,12 @@ class CresmoSettings(BaseSettings):
     # 🟢 Category 3: Operational Tunables
     # =========================================================================
     gemini_model: str = Field(
-        default="gemini-2.5-flash",
+        default="gemini-3.5-flash-lite",
         description="Default Gemini model variant for pipeline stages.",
+    )
+    gemini_fallback_model: str = Field(
+        default="gemini-3.1-flash-lite",
+        description="Fallback Gemini model variant if primary hits quota or demand spikes.",
     )
     whisper_model: str = Field(
         default="base",

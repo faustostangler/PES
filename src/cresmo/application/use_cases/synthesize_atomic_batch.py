@@ -6,6 +6,7 @@ Generates rich AtomicNote entities from an AtomicEntityInventory in small batche
 from __future__ import annotations
 
 import json
+import re
 
 from cresmo.application.json_parser import extract_json_data
 from cresmo.application.ports import LLMTransformationPort, VaultRepositoryPort
@@ -50,12 +51,44 @@ class SynthesizeAtomicBatchUseCase:
         Raises:
             DomainValidationError: If synthesis payload violates domain rules.
         """
-        all_items = list(inventory.items)
-        synthesized_notes: list[AtomicNote] = []
+        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
+        existing_notes = self.vault_port.get_all_atomic_notes()
+        existing_lookup: dict[str, AtomicNote] = {}
+        for n in existing_notes:
+            existing_lookup[n.title.value.lower()] = n
+            for a in n.aliases:
+                existing_lookup[a.lower()] = n
 
-        # Step 1: Partition pending entities into chunks of size <= batch_size.
-        for i in range(0, len(all_items), self.batch_size):
-            chunk = all_items[i : i + self.batch_size]
+        def _norm_honorific(s: str) -> str:
+            cleaned = s.lower().strip()
+            for pfx in ("dom ", "dona ", "d. ", "d "):
+                if cleaned.startswith(pfx):
+                    cleaned = cleaned[len(pfx) :].strip()
+                    break
+            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
+
+        norm_lookup: dict[str, AtomicNote] = {
+            _norm_honorific(n.title.value): n
+            for n in existing_notes
+            if len(_norm_honorific(n.title.value)) >= 4
+        }
+
+        synthesized_notes: list[AtomicNote] = []
+        pending_items: list[tuple[NoteTitle, NoteType]] = []
+
+        for title, note_type in inventory.items:
+            key = title.value.lower()
+            norm_key = _norm_honorific(key)
+            if key in existing_lookup:
+                synthesized_notes.append(existing_lookup[key])
+            elif norm_key in norm_lookup:
+                synthesized_notes.append(norm_lookup[norm_key])
+            else:
+                pending_items.append((title, note_type))
+
+        # Partition pending entities into chunks of size <= batch_size
+        for i in range(0, len(pending_items), self.batch_size):
+            chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
             ]

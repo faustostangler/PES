@@ -24,13 +24,21 @@ from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.synthesize_atomic_batch import (
     SynthesizeAtomicBatchUseCase,
 )
+from cresmo.application.use_cases.unify_duplicate_notes import (
+    DeduplicationReport,
+    DuplicateCluster,
+    UnifyDuplicateNotesUseCase,
+)
 
 __all__ = [
+    "DeduplicationReport",
     "DiscoverAtomicInventoryUseCase",
+    "DuplicateCluster",
     "ExpandLongitudinalSynchronicUseCase",
     "FillGapsFluidProseUseCase",
     "IngestRawTranscriptUseCase",
     "ReconcileMOCsUseCase",
     "SyncChannelUseCase",
     "SynthesizeAtomicBatchUseCase",
+    "UnifyDuplicateNotesUseCase",
 ]

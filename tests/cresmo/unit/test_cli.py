@@ -346,3 +346,29 @@ class TestCresmoCLI:
         ):
             exit_code = main(["worker", "--channel", "https://youtube.com/@test"])
             assert exit_code == EXIT_SUCCESS
+
+    def test_cli_dedupe_success_returns_code_0(self) -> None:
+        from cresmo.application.use_cases.unify_duplicate_notes import (
+            DeduplicationReport,
+            DuplicateCluster,
+        )
+        from cresmo.domain.value_objects import NoteTitle
+
+        mock_use_case = MagicMock()
+        mock_use_case.execute.return_value = DeduplicationReport(
+            clusters=(
+                DuplicateCluster(
+                    canonical_title=NoteTitle("Dom Afonso Henriques"),
+                    merged_titles=(NoteTitle("D. Afonso Henriques"),),
+                    links_rewritten_count=3,
+                ),
+            )
+        )
+
+        with patch(
+            "cresmo.presentation.cli.build_unify_duplicates_use_case",
+            return_value=mock_use_case,
+        ):
+            exit_code = main(["dedupe"])
+            assert exit_code == EXIT_SUCCESS
+            mock_use_case.execute.assert_called_once()

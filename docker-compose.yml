@@ -1,0 +1,56 @@
+services:
+  cresmo-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pes-cresmo:latest
+    container_name: cresmo-runner
+    environment:
+      - ROLE=cli
+      - DATA_DIR=/app/data
+      - VAULT_DIR=/app/vault
+    env_file:
+      - path: .env
+        required: false
+      - path: vault/.env
+        required: false
+    volumes:
+      - ./data:/app/data
+      - ./vault:/app/vault
+    profiles:
+      - tools
+
+  cresmo-check:
+    image: pes-cresmo:latest
+    container_name: cresmo-check
+    command: ["check-config"]
+    environment:
+      - DATA_DIR=/app/data
+      - VAULT_DIR=/app/vault
+    env_file:
+      - path: .env
+        required: false
+      - path: vault/.env
+        required: false
+    volumes:
+      - ./data:/app/data
+      - ./vault:/app/vault
+    profiles:
+      - tools
+
+  cresmo-worker:
+    image: pes-cresmo:latest
+    container_name: cresmo-worker
+    restart: unless-stopped
+    environment:
+      - ROLE=worker
+      - DATA_DIR=/app/data
+      - VAULT_DIR=/app/vault
+    env_file:
+      - path: .env
+        required: false
+      - path: vault/.env
+        required: false
+    volumes:
+      - ./data:/app/data
+      - ./vault:/app/vault
