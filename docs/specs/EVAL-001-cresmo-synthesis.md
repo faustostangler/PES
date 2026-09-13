@@ -4,6 +4,7 @@
 **Phase**: Phase 1 — Stereoscopy  
 **Status**: APPROVED SPECIFICATION  
 **Governing ADR**: [`ADR-001`](../adr/ADR-001-cresmo-modular-monolith-strangling.md)  
+**Operational Runbook**: [`OPS-001`](../operations/OPS-001-langfuse-self-hosted-runbook.md)  
 
 ---
 

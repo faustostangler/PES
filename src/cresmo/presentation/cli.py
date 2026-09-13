@@ -100,9 +100,7 @@ def _load_batch_sources(
     if explicit_manifest is not None:
         urls = _read_manifest(explicit_manifest)
         if urls:
-            sys.stdout.write(
-                f"[manifest] Loaded {len(urls)} URLs from {explicit_manifest.name}\n"
-            )
+            sys.stdout.write(f"[manifest] Loaded {len(urls)} URLs from {explicit_manifest.name}\n")
         return [BatchSource(kind="url", target=u) for u in urls]
 
     sources: list[BatchSource] = []
@@ -129,6 +127,7 @@ def _load_batch_sources(
             sources.append(BatchSource(kind="url", target=mu))
 
     return sources
+
 
 def _create_parser() -> argparse.ArgumentParser:
     """Construct CLI argument parser with subcommands."""
@@ -507,9 +506,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
                 return EXIT_SUCCESS
 
-            sys.stdout.write(
-                f"Starting batch execution for {len(sources)} items...\n"
-            )
+            sys.stdout.write(f"Starting batch execution for {len(sources)} items...\n")
 
             if args.dry_run:
                 ingested = 0
@@ -533,9 +530,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                             sys.stderr.write(
                                 f"[{idx}/{len(sources)}] Ingestion failed for: {src.target}\n"
                             )
-                sys.stdout.write(
-                    f"Dry-run completed: {ingested}/{len(sources)} items validated.\n"
-                )
+                sys.stdout.write(f"Dry-run completed: {ingested}/{len(sources)} items validated.\n")
                 return EXIT_SUCCESS
 
             completed = 0
@@ -577,10 +572,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                         )
                 except RateLimitExceededError as exc:
                     failed += 1
-                    sys.stderr.write(f"[{idx}/{len(sources)}] [RATE LIMIT] {src.display_name}: {exc}\n")
+                    sys.stderr.write(
+                        f"[{idx}/{len(sources)}] [RATE LIMIT] {src.display_name}: {exc}\n"
+                    )
                 except IngestionNetworkError as exc:
                     failed += 1
-                    sys.stderr.write(f"[{idx}/{len(sources)}] [NETWORK ERROR] {src.display_name}: {exc}\n")
+                    sys.stderr.write(
+                        f"[{idx}/{len(sources)}] [NETWORK ERROR] {src.display_name}: {exc}\n"
+                    )
                 except Exception as exc:  # noqa: BLE001
                     failed += 1
                     sys.stderr.write(f"[{idx}/{len(sources)}] [FAILED] {src.display_name}: {exc}\n")
@@ -593,7 +592,6 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"- Failed: {failed}\n"
             )
             return EXIT_SUCCESS if failed == 0 else EXIT_INTERNAL_ERROR
-
 
         except RateLimitExceededError as exc:
             sys.stderr.write(f"Rate limit exceeded: {exc}\n")

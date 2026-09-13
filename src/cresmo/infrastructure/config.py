@@ -171,4 +171,3 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("gap_filler_passes", "stage_2_passes"),
         description="Default Socratic gap filler refinement passes.",
     )
-

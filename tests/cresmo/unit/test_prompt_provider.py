@@ -39,8 +39,13 @@ class TestJsonPromptProvider:
     def test_default_prompt_provider_loads_bundled_json(self) -> None:
         provider = JsonPromptProvider()
         assert len(provider._templates) > 0
-        assert "stage2_pass1" in provider._templates
-        assert "stage2_pass_subsequent" in provider._templates
+        assert "gap_filler_pass1" in provider._templates
+        assert "gap_filler_pass_subsequent" in provider._templates
+        assert "long_expander" in provider._templates
+        assert "wide_expander" in provider._templates
+        assert "atomic_inventory" in provider._templates
+        assert "atomic_batch" in provider._templates
+        assert "reconcile_mocs" in provider._templates
 
     def test_gap_filler_differentiates_pass1_and_subsequent_passes(self) -> None:
         provider = JsonPromptProvider()
@@ -84,12 +89,12 @@ class TestJsonPromptProvider:
 
     def test_custom_prompts_json_override(self, tmp_path: Path) -> None:
         custom_prompts = {
-            "stage2_pass1": {
+            "gap_filler_pass1": {
                 "task": "Custom Task 1",
                 "skill_name": "none",
                 "template": "{task}: Custom Pass 1 for {channel_name}",
             },
-            "stage2_pass_subsequent": {
+            "gap_filler_pass_subsequent": {
                 "task": "Custom Task 2",
                 "skill_name": "none",
                 "template": "{task}: Custom Pass {pass_num} for {channel_name}",

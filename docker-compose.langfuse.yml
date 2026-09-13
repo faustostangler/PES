@@ -1,0 +1,46 @@
+services:
+  langfuse-server:
+    image: langfuse/langfuse:2
+    container_name: cresmo-langfuse-server
+    restart: unless-stopped
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://langfuse:langfuse_secure_password@langfuse-db:5432/langfuse
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=cresmo_super_secret_nextauth_salt_123456789
+      - SALT=cresmo_deterministic_salt_for_keys_123456789
+      - ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      - TELEMETRY_ENABLED=true
+    networks:
+      - langfuse-net
+
+  langfuse-db:
+    image: postgres:16-alpine
+    container_name: cresmo-langfuse-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=langfuse
+      - POSTGRES_PASSWORD=langfuse_secure_password
+      - POSTGRES_DB=langfuse
+    volumes:
+      - langfuse_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse -d langfuse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - langfuse-net
+
+volumes:
+  langfuse_postgres_data:
+    name: cresmo_langfuse_postgres_data
+
+networks:
+  langfuse-net:
+    name: cresmo_langfuse_network

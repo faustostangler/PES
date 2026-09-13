@@ -41,11 +41,33 @@ def build_pipeline(
         prompts_path=resolved_settings.prompts_path,
         skills_dir=resolved_settings.skills_dir,
     )
+    langfuse_client = None
+    if (
+        resolved_settings.langfuse_public_key
+        and resolved_settings.langfuse_secret_key.get_secret_value()
+    ):
+        import os
+
+        os.environ["LANGFUSE_PUBLIC_KEY"] = resolved_settings.langfuse_public_key
+        os.environ["LANGFUSE_SECRET_KEY"] = resolved_settings.langfuse_secret_key.get_secret_value()
+        os.environ["LANGFUSE_HOST"] = resolved_settings.langfuse_host
+        try:
+            from langfuse import Langfuse
+
+            langfuse_client = Langfuse(
+                public_key=resolved_settings.langfuse_public_key,
+                secret_key=resolved_settings.langfuse_secret_key.get_secret_value(),
+                host=resolved_settings.langfuse_host,
+            )
+        except Exception:  # noqa: BLE001
+            langfuse_client = None
+
     media_ingestion_port = NativeMediaIngestionAdapter(header_generator=header_generator)
     llm_port = GeminiLLMAdapter(
         api_key=resolved_settings.gemini_api_key.get_secret_value(),
         model_name=resolved_settings.gemini_model,
         fallback_model_name=resolved_settings.gemini_fallback_model,
+        langfuse_client=langfuse_client,
     )
     vault_port = ObsidianVaultAdapter(
         vault_dir=resolved_settings.vault_dir,

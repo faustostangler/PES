@@ -245,7 +245,7 @@ class PromptProviderPort(ABC):
         channel_name: str,
         compendium_body: str,
     ) -> str:
-        """Format the Stage 4 atomic inventory extraction prompt."""
+        """Format the atomic inventory extraction prompt."""
         raise NotImplementedError
 
     @abstractmethod
@@ -256,7 +256,7 @@ class PromptProviderPort(ABC):
         compendium_body: str,
         targets_json: str,
     ) -> str:
-        """Format the Stage 5 atomic note batch synthesis prompt."""
+        """Format the atomic note batch synthesis prompt."""
         raise NotImplementedError
 
     @abstractmethod
@@ -264,6 +264,5 @@ class PromptProviderPort(ABC):
         self,
         notes_json: str,
     ) -> str:
-        """Format the Stage 6 MOC reconciliation prompt."""
+        """Format the MOC reconciliation prompt."""
         raise NotImplementedError
-

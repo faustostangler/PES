@@ -321,7 +321,6 @@ class CresmoPipeline:
             duplicates_unified=dedup_report.duplicates_unified_count,
         )
 
-
     def run_for_manifest(
         self,
         manifest_path: Path,
