@@ -153,7 +153,7 @@ class VaultRepositoryPort(ABC):
 
     @abstractmethod
     def save_map_of_content(self, moc: MapOfContent) -> None:
-        """Persist or update Map of Content in wiki/MOCs/."""
+        """Persist or update Map of Content in vault/MOCs/."""
         raise NotImplementedError("Step 1: Persist Map of Content atomically.")
 
     @abstractmethod
@@ -163,7 +163,7 @@ class VaultRepositoryPort(ABC):
 
     @abstractmethod
     def rewrite_wiki_links(self, old_title: NoteTitle, new_title: NoteTitle) -> int:
-        """Rewrite all inbound [[old_title]] links to [[new_title]] across all markdown files in wiki/.
+        """Rewrite all inbound [[old_title]] links to [[new_title]] across all markdown files in vault/.
 
         Returns:
             Count of files updated.

@@ -27,18 +27,27 @@ from cresmo.infrastructure.adapters.obsidian_vault_adapter import ObsidianVaultA
 
 
 @pytest.fixture
-def temp_vault_dir(tmp_path: Path) -> Path:
-    """Fixture providing an isolated temporary vault root."""
-    vault = tmp_path / "vault"
-    vault.mkdir(parents=True, exist_ok=True)
-    return vault
+def storage_paths(tmp_path: Path) -> tuple[Path, Path, Path]:
+    """Fixture providing isolated temporary directories for vault, raw lake, and enriched compendiums."""
+    vault_dir = tmp_path / "vault"
+    raw_dir = tmp_path / "data" / "raw"
+    enriched_dir = tmp_path / "data" / "enriched"
+    vault_dir.mkdir(parents=True, exist_ok=True)
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    enriched_dir.mkdir(parents=True, exist_ok=True)
+    return vault_dir, raw_dir, enriched_dir
 
 
 class TestObsidianVaultAdapter:
     """Hermetic unit tests for ObsidianVaultAdapter filesystem operations."""
 
-    def test_save_and_get_raw_transcript(self, temp_vault_dir: Path) -> None:
-        adapter = ObsidianVaultAdapter(temp_vault_dir)
+    def test_save_and_get_raw_transcript(self, storage_paths: tuple[Path, Path, Path]) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
         cid = ContentId("dQw4w9WgXcQ")
         raw = RawTranscript(
             content_id=cid,
@@ -54,8 +63,15 @@ class TestObsidianVaultAdapter:
         assert retrieved.channel_name == "Political Theory"
         assert "transcript line 1" in retrieved.body
 
-    def test_save_and_get_enriched_compendium(self, temp_vault_dir: Path) -> None:
-        adapter = ObsidianVaultAdapter(temp_vault_dir)
+    def test_save_and_get_enriched_compendium(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
         cid = ContentId("dQw4w9WgXcQ")
         compendium = EnrichedCompendium(
             content_id=cid,
@@ -75,8 +91,15 @@ class TestObsidianVaultAdapter:
         assert "circulação das elites" in retrieved.body
         assert "Dados históricos" in retrieved.complementary_info
 
-    def test_save_and_get_atomic_note_with_index(self, temp_vault_dir: Path) -> None:
-        adapter = ObsidianVaultAdapter(temp_vault_dir)
+    def test_save_and_get_atomic_note_with_index(
+        self, storage_paths: tuple[Path, Path, Path]
+    ) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
         title = NoteTitle("Vilfredo Pareto")
         note = AtomicNote(
             title=title,
@@ -118,8 +141,13 @@ class TestObsidianVaultAdapter:
         assert len(all_notes) == 1
         assert all_notes[0].title.value == "Vilfredo Pareto"
 
-    def test_save_map_of_content(self, temp_vault_dir: Path) -> None:
-        adapter = ObsidianVaultAdapter(temp_vault_dir)
+    def test_save_map_of_content(self, storage_paths: tuple[Path, Path, Path]) -> None:
+        vault_dir, raw_dir, enriched_dir = storage_paths
+        adapter = ObsidianVaultAdapter(
+            vault_dir=vault_dir,
+            raw_dir=raw_dir,
+            enriched_dir=enriched_dir,
+        )
         moc = MapOfContent(
             title=NoteTitle("MOC Teoria Politica"),
             theme="Ciência Política",
@@ -128,7 +156,7 @@ class TestObsidianVaultAdapter:
         )
 
         adapter.save_map_of_content(moc)
-        moc_file = temp_vault_dir / "wiki" / "MOCs" / "MOC Teoria Politica.md"
+        moc_file = vault_dir / "MOCs" / "MOC Teoria Politica.md"
         assert moc_file.exists()
         content = moc_file.read_text(encoding="utf-8")
         assert "MOC Teoria Politica" in content

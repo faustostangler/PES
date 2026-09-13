@@ -26,7 +26,6 @@ class CresmoSettings(BaseSettings):
             str(_WORKSPACE_DIR / ".env"),
             str(_WORKSPACE_DIR / "vault" / ".env"),
             str(_WORKSPACE_DIR / "data" / ".env"),
-            str(_WORKSPACE_DIR / "playground" / "cresmo" / ".env"),
         ),
         env_file_encoding="utf-8",
         extra="ignore",
@@ -75,11 +74,6 @@ class CresmoSettings(BaseSettings):
         return self.data_dir / "enriched"
 
     @property
-    def wiki_dir(self) -> Path:
-        """Obsidian vault directory holding atomic notes and MOCs."""
-        return self.vault_dir
-
-    @property
     def index_path(self) -> Path:
         """Master lookup JSON index."""
         return self.vault_dir / "_index.json"
@@ -93,11 +87,6 @@ class CresmoSettings(BaseSettings):
     def sqlite_ledger_path(self) -> Path:
         """Absolute path to processed content SQLite WAL database file."""
         return self.data_dir / self.sqlite_ledger_filename
-
-    @property
-    def ledger_path(self) -> Path:
-        """Absolute path to processed content SQLite WAL database file."""
-        return self.sqlite_ledger_path
 
     # =========================================================================
     # 🟢 Category 3: Operational Tunables
