@@ -15,6 +15,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import yt_dlp
+import yt_dlp.utils
 
 from cresmo.domain.exceptions import IngestionNetworkError, RateLimitExceededError
 from cresmo.domain.value_objects import ChannelFeedQuery, ContentId
@@ -377,3 +378,38 @@ class TestNativeMediaIngestionAdapter:
             assert "http_headers" in ydl_opts
             assert ydl_opts["http_headers"]["User-Agent"] == "YtDlpTestUA/2.0"
             assert ydl_opts["http_headers"]["Sec-Ch-Ua-Platform"] == '"Linux"'
+
+    def test_extract_channel_url_from_video_success(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = {
+                "channel_url": "https://www.youtube.com/@ChannelHandle",
+            }
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
+            assert res == "https://www.youtube.com/@ChannelHandle"
+
+    def test_extract_channel_url_from_video_fallback_to_channel_id(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = {
+                "channel_id": "UC1234567890abcdef",
+            }
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=abc12345")
+            assert res == "https://www.youtube.com/channel/UC1234567890abcdef"
+
+    def test_extract_channel_url_from_video_returns_none_on_error(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with patch("yt_dlp.YoutubeDL") as mock_ydl_cls:
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.side_effect = yt_dlp.utils.DownloadError("Video unavailable")
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=unavailable")
+            assert res is None
+

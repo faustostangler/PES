@@ -7,16 +7,19 @@ pipeline invocations, mapping domain exceptions to standardized process exit cod
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 import time
 from collections.abc import Sequence
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Literal
 
 from pydantic import ValidationError
 
+from cresmo.application.ports import MediaIngestionPort
 from cresmo.domain.exceptions import (
     CresmoDomainError,
     DomainValidationError,
@@ -42,6 +45,11 @@ EXIT_DOMAIN_VALIDATION_ERROR: int = 3
 EXIT_RATE_LIMIT_EXCEEDED: int = 4
 EXIT_INGESTION_ERROR: int = 5
 
+_VIDEO_ID_REGEX = re.compile(r"(?:v=|\/)([a-zA-Z0-9_-]{8,64})(?:[&?]|\Z)")
+_CHANNEL_ID_FRONTMATTER_REGEX = re.compile(r"^\s*channel_id:\s*([A-Za-z0-9_-]+)", re.MULTILINE)
+_VIDEO_ID_FRONTMATTER_REGEX = re.compile(r"^\s*video_id:\s*([A-Za-z0-9_-]+)", re.MULTILINE)
+
+
 
 def _read_manifest(path: Path) -> list[str]:
     """Read a manifest file and return non-empty, non-comment lines."""
@@ -65,37 +73,75 @@ class BatchSource:
         return self.target
 
 
-def _load_priority_text_files(priority_dir: Path) -> list[Path]:
-    """Scan priority directory recursively for non-empty text and markdown transcripts."""
-    if not priority_dir.is_dir():
+def _load_transcript_files(base_dir: Path) -> list[Path]:
+    """Discover all non-temporary transcript files (.txt, .md) in a directory tree."""
+    if not base_dir.is_dir():
         return []
-
-    found: list[Path] = []
-    # Support both .txt and .md transcripts across folder hierarchy
+    files: list[Path] = []
     for ext in ("*.txt", "*.md"):
-        for path in sorted(priority_dir.rglob(ext)):
-            if path.is_file() and path.stat().st_size > 0:
-                found.append(path)
-    return found
+        for f in base_dir.rglob(ext):
+            if f.is_file() and not f.name.startswith(".tmp."):
+                files.append(f)
+    return sorted(files)
+
+
+def _extract_raw_file_metadata(file_path: Path) -> tuple[str | None, str | None]:
+    """Extract video_id and canonical channel_url from raw transcript frontmatter."""
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            lines = [f.readline() for _ in range(30)]
+            header = "".join(lines)
+
+            vm = _VIDEO_ID_FRONTMATTER_REGEX.search(header)
+            vid = vm.group(1) if vm else file_path.stem
+
+            cm = _CHANNEL_ID_FRONTMATTER_REGEX.search(header)
+            chan_url = f"https://www.youtube.com/channel/{cm.group(1)}" if cm else None
+            return vid, chan_url
+    except Exception:  # noqa: BLE001
+        return None, None
+
+
+
+def _is_channel_or_playlist_feed(url: str) -> bool:
+    """Determine if a URL targets a channel feed or playlist rather than a single video."""
+    url_lower = url.lower()
+    return any(
+        pattern in url_lower
+        for pattern in (
+            "/@",
+            "/channel/",
+            "/c/",
+            "/user/",
+            "/playlist",
+            "list=",
+            "/videos",
+        )
+    ) and ("watch?v=" not in url_lower or "list=" in url_lower)
 
 
 def _load_batch_sources(
     settings: CresmoSettings,
     *,
     explicit_manifest: Path | None = None,
+    media_ingestion_port: MediaIngestionPort | None = None,
+    lookback_days: int | None = None,
+    channel_max_videos: int = 50,
+    include_raw_lake: bool = True,
 ) -> list[BatchSource]:
-    """Build the ordered 3-tier source list for batch execution.
+    """Build the ordered tiered source list for batch execution.
 
     When ``explicit_manifest`` is provided (user passed ``--manifest``), only
-    that single file is used. Otherwise the 3-tier contract is:
+    that single file is used. Otherwise the tiered streaming contract is:
 
     - Tier 0: Local priority text/markdown files in ``data/priority/`` (bypasses Stage 1 STT).
     - Tier 1: URLs from ``data/playlist-priority.txt`` (priority YouTube videos).
-    - Tier 2: URLs from ``data/playlist.txt`` (main YouTube playlist), deduplicated
-      against Tier 1.
+    - Tier 2: Existing raw transcripts in ``data/raw/`` lake (bypasses Stage 1 STT).
+    - Tier 3: Direct video URLs from ``data/playlist.txt`` (main YouTube playlist).
+    - Tier 4: Concurrent discovery of recent videos from channel/playlist feeds in ``data/playlist.txt``.
 
     Returns:
-        Ordered list of BatchSource items (Tier 0 -> Tier 1 -> Tier 2).
+        Ordered list of BatchSource items (Tier 0 -> Tier 1 -> Tier 2 -> Tier 3 -> Tier 4).
     """
     if explicit_manifest is not None:
         urls = _read_manifest(explicit_manifest)
@@ -104,29 +150,163 @@ def _load_batch_sources(
         return [BatchSource(kind="url", target=u) for u in urls]
 
     sources: list[BatchSource] = []
+    seen_vids: set[str] = set()
+
+    def _register_video_id(target_str: str) -> None:
+        m = _VIDEO_ID_REGEX.search(target_str)
+        if m:
+            seen_vids.add(m.group(1))
+        else:
+            stem = Path(target_str).stem
+            seen_vids.add(stem)
 
     # Tier 0: Priority text/markdown files
-    priority_files = _load_priority_text_files(settings.priority_texts_dir)
+    priority_files = _load_transcript_files(settings.priority_texts_dir)
     if priority_files:
         for pf in priority_files:
-            sources.append(BatchSource(kind="file", target=str(pf.resolve())))
+            resolved_pf = str(pf.resolve())
+            sources.append(BatchSource(kind="file", target=resolved_pf))
+            _register_video_id(resolved_pf)
 
     # Tier 1: Priority URLs
     priority_urls = _read_manifest(settings.playlist_priority_path)
     if priority_urls:
         for pu in priority_urls:
             sources.append(BatchSource(kind="url", target=pu))
+            _register_video_id(pu)
 
-    # Tier 2: Main playlist URLs (deduplicated against Tier 1)
+    # Tier 2: Existing raw transcripts in data/raw/ lake & local channel mapping
+    local_video_to_channel: dict[str, str] = {}
+    if hasattr(settings, "raw_dir") and settings.raw_dir.is_dir():
+        raw_files = _load_transcript_files(settings.raw_dir)
+        for rf in raw_files:
+            stem = rf.stem
+            vid_front, chan_url = _extract_raw_file_metadata(rf)
+            canonical_vid = vid_front or stem
+            if chan_url:
+                local_video_to_channel[canonical_vid] = chan_url
+                local_video_to_channel[stem] = chan_url
+
+            if include_raw_lake and stem not in seen_vids and canonical_vid not in seen_vids:
+                resolved_rf = str(rf.resolve())
+                sources.append(BatchSource(kind="file", target=resolved_rf))
+                seen_vids.add(stem)
+                seen_vids.add(canonical_vid)
+
+    # Tier 3 & 4: Main playlist entries (split direct videos vs channel feeds)
     main_urls = _read_manifest(settings.playlist_path)
-    seen_urls: set[str] = set(priority_urls)
-    remaining_urls = [u for u in main_urls if u not in seen_urls]
+    direct_video_urls: list[str] = []
+    channel_feed_urls: list[str] = []
+    all_playlist_video_urls: list[str] = []
 
-    if remaining_urls:
-        for mu in remaining_urls:
-            sources.append(BatchSource(kind="url", target=mu))
+    for mu in main_urls:
+        m = _VIDEO_ID_REGEX.search(mu)
+        vid = m.group(1) if m else None
+        if _is_channel_or_playlist_feed(mu):
+            channel_feed_urls.append(mu)
+        else:
+            all_playlist_video_urls.append(mu)
+            if not (vid and vid in seen_vids):
+                direct_video_urls.append(mu)
+                if vid:
+                    seen_vids.add(vid)
+
+    # Append direct video URLs (Tier 3)
+    for u in direct_video_urls:
+        sources.append(BatchSource(kind="url", target=u))
+
+    # Tier 4: Concurrent discovery of channel feeds (explicit + discovered by videos)
+    effective_lookback = lookback_days if lookback_days is not None else settings.days_lookback
+    if media_ingestion_port is not None and (channel_feed_urls or all_playlist_video_urls):
+        workers = getattr(settings, "channel_discovery_workers", 10)
+        cutoff = datetime.now(UTC) - timedelta(days=effective_lookback)
+
+        def _discover_single(chan_url: str) -> list[str]:
+            q = ChannelFeedQuery(
+                channel_url=chan_url,
+                lookback_days=effective_lookback,
+                max_videos=channel_max_videos,
+            )
+            try:
+                discovered = media_ingestion_port.discover_channel_feed(q)
+                in_window: list[str] = []
+                for item in discovered:
+                    pub = item.published_at
+                    if pub.tzinfo is None:
+                        pub = pub.replace(tzinfo=UTC)
+                    if pub >= cutoff:
+                        in_window.append(item.media_url)
+                return in_window
+            except Exception as exc:  # noqa: BLE001
+                sys.stderr.write(f"[crawler] Warning: Failed to probe {chan_url}: {exc}\n")
+                return []
+
+        probed_channels: set[str] = set()
+        channels_to_probe: list[str] = []
+
+        # 1. Enqueue explicit channel feeds
+        for c_url in channel_feed_urls:
+            if c_url not in probed_channels:
+                probed_channels.add(c_url)
+                channels_to_probe.append(c_url)
+
+        # 2. Identify parent channel for each video URL
+        videos_needing_remote_lookup: list[str] = []
+        for v_url in all_playlist_video_urls:
+            m = _VIDEO_ID_REGEX.search(v_url)
+            vid = m.group(1) if m else None
+            local_chan = local_video_to_channel.get(vid) if vid else None
+            if local_chan:
+                if local_chan not in probed_channels:
+                    probed_channels.add(local_chan)
+                    channels_to_probe.append(local_chan)
+            else:
+                videos_needing_remote_lookup.append(v_url)
+
+
+        # 3. Concurrently resolve channels for videos without local raw metadata
+        if videos_needing_remote_lookup:
+            sys.stdout.write(
+                f"[crawler] Resolving parent channels for {len(videos_needing_remote_lookup)} seed videos...\n"
+            )
+            max_res_workers = max(1, min(workers, len(videos_needing_remote_lookup)))
+            with ThreadPoolExecutor(max_workers=max_res_workers) as res_executor:
+                future_to_vurl = {
+                    res_executor.submit(media_ingestion_port.extract_channel_url_from_video, vu): vu
+                    for vu in videos_needing_remote_lookup
+                }
+                for fut in as_completed(future_to_vurl):
+                    try:
+                        resolved_chan = fut.result()
+                        if resolved_chan and resolved_chan not in probed_channels:
+                            probed_channels.add(resolved_chan)
+                            channels_to_probe.append(resolved_chan)
+                    except Exception as exc:  # noqa: BLE001
+                        failed_vu = future_to_vurl[fut]
+                        sys.stderr.write(
+                            f"[crawler] Warning: Failed to resolve channel for {failed_vu}: {exc}\n"
+                        )
+
+        # 4. Concurrently probe all unique channels for recent uploads
+        if channels_to_probe:
+            sys.stdout.write(
+                f"[crawler] Discovering recent videos across {len(channels_to_probe)} channels "
+                f"(lookback: {effective_lookback}d, workers: {workers})...\n"
+            )
+            max_probe_workers = max(1, min(workers, len(channels_to_probe)))
+            with ThreadPoolExecutor(max_workers=max_probe_workers) as executor:
+                future_to_url = {executor.submit(_discover_single, u): u for u in channels_to_probe}
+                for future in as_completed(future_to_url):
+                    discovered_urls = future.result()
+                    for d_url in discovered_urls:
+                        m = _VIDEO_ID_REGEX.search(d_url)
+                        vid = m.group(1) if m else d_url
+                        if vid not in seen_vids:
+                            seen_vids.add(vid)
+                            sources.append(BatchSource(kind="url", target=d_url))
 
     return sources
+
 
 
 def _create_parser() -> argparse.ArgumentParser:
@@ -185,6 +365,25 @@ def _create_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Bypass ledger idempotency guard and re-synthesize even if already completed",
     )
+    run_parser.add_argument(
+        "--lookback",
+        type=int,
+        default=None,
+        help="Days lookback window for channel uploads discovery (default: 365 days / 1 year)",
+    )
+    run_parser.add_argument(
+        "--channel-max-videos",
+        type=int,
+        default=50,
+        help="Maximum candidate videos to inspect per channel feed (default: 50)",
+    )
+    run_parser.add_argument(
+        "--no-scan-raw",
+        action="store_true",
+        default=False,
+        help="Skip scanning existing local markdown transcripts in data/raw/",
+    )
+
 
     # Subcommand: check-config
     subparsers.add_parser(
@@ -500,8 +699,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             # re-processing URLs that appear in both manifest files.
             # If any tier is missing or empty, it gracefully falls through to the next.
             settings = CresmoSettings()
+            if args.lookback is not None:
+                settings.days_lookback = args.lookback
+
             settings.ensure_directories()
-            sources = _load_batch_sources(settings, explicit_manifest=args.manifest)
+            sources = _load_batch_sources(
+                settings,
+                explicit_manifest=args.manifest,
+                media_ingestion_port=pipeline.media_ingestion_port,
+                lookback_days=settings.days_lookback,
+                channel_max_videos=args.channel_max_videos,
+                include_raw_lake=not args.no_scan_raw,
+            )
+
 
             if not sources:
                 sys.stdout.write(

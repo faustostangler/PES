@@ -48,11 +48,13 @@ The self-hosted stack is defined as immutable Infrastructure-as-Code in `docker-
 
 ### Container Services
 - **`cresmo-langfuse-server`**: Langfuse v3 web application and native OpenTelemetry OTLP ingestion API (`/api/public/otel/v1/traces`) listening on `0.0.0.0:3000`.
+- **`cresmo-langfuse-worker`**: Background queue worker consuming the Redis BullMQ ingestion queue and persisting traces asynchronously to ClickHouse.
 - **`cresmo-langfuse-clickhouse`**: ClickHouse 24.3 columnar database for high-throughput OpenTelemetry trace storage.
 - **`cresmo-langfuse-db`**: PostgreSQL 16 Alpine instance managing user accounts, projects, API keys, and relational metadata.
 - **`cresmo-langfuse-redis`**: Redis 7 Alpine caching layer and task queue.
 - **`cresmo-langfuse-minio`**: Chainguard MinIO S3-compatible blob storage for raw payload events.
 - **Persistent Volumes**: `cresmo_langfuse_postgres_data`, `cresmo_langfuse_clickhouse_data`, `cresmo_langfuse_redis_data`, `cresmo_langfuse_minio_data`.
+
 
 
 ---
