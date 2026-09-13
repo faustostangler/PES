@@ -88,6 +88,35 @@ class CresmoSettings(BaseSettings):
         """Absolute path to processed content SQLite WAL database file."""
         return self.data_dir / self.sqlite_ledger_filename
 
+    playlist_filename: str = Field(
+        default="playlist.txt",
+        description="Filename of the main video manifest inside data_dir.",
+    )
+    playlist_priority_filename: str = Field(
+        default="playlist-priority.txt",
+        description="Filename of the priority video manifest inside data_dir.",
+    )
+
+    priority_texts_dirname: str = Field(
+        default="priority",
+        description="Directory name inside data_dir containing priority text files (.txt, .md).",
+    )
+
+    @property
+    def playlist_path(self) -> Path:
+        """Absolute path to the main video manifest."""
+        return self.data_dir / self.playlist_filename
+
+    @property
+    def playlist_priority_path(self) -> Path:
+        """Absolute path to the priority video manifest."""
+        return self.data_dir / self.playlist_priority_filename
+
+    @property
+    def priority_texts_dir(self) -> Path:
+        """Absolute path to the priority texts directory."""
+        return self.data_dir / self.priority_texts_dirname
+
     browser_headers_path: Path | None = Field(
         default=None,
         description="Optional custom path to browser request headers pool JSON file.",
