@@ -13,6 +13,7 @@ Orchestrates the 7 incremental integer stages:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from cresmo.application.ports import (
     LedgerRepositoryPort,
@@ -167,3 +168,39 @@ class CresmoPipeline:
             reconciled_mocs=tuple(mocs),
             duplicates_unified=dedup_report.duplicates_unified_count,
         )
+
+    def run_for_manifest(
+        self,
+        manifest_path: Path,
+        gap_filler_passes: int = 1,
+        force_reprocess: bool = False,
+    ) -> list[PipelineResult]:
+        """Run the end-to-end synthesis pipeline sequentially for all video URLs in a manifest file.
+
+        Args:
+            manifest_path: Path to text file containing video URLs (comments with # and blank lines ignored).
+            gap_filler_passes: Number of refinement passes for gap filling.
+            force_reprocess: If True, bypasses ledger idempotency guard.
+
+        Returns:
+            List of PipelineResult outcomes for each video in the manifest.
+        """
+        if not manifest_path.is_file():
+            raise CresmoDomainError(f"Manifest file not found: {manifest_path}")
+
+        lines = manifest_path.read_text(encoding="utf-8").splitlines()
+        urls: list[str] = []
+        for line in lines:
+            line_str = line.strip()
+            if line_str and not line_str.startswith("#"):
+                urls.append(line_str)
+
+        results: list[PipelineResult] = []
+        for url in urls:
+            res = self.run_for_video(
+                video_url=url,
+                gap_filler_passes=gap_filler_passes,
+                force_reprocess=force_reprocess,
+            )
+            results.append(res)
+        return results

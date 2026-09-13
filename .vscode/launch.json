@@ -2,28 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "justMyCode": true
-        },
-        {
-            "name": "Cresmo: Run Video (Dry-Run)",
+            "name": "Cresmo: Run (Full Pipeline)",
             "type": "debugpy",
             "request": "launch",
             "module": "cresmo.presentation.cli",
             "args": [
-                "run",
-                "--url",
-                "https://www.youtube.com/watch?v=9IbNJ0EsTxI",
-                "--dry-run"
+                "run"
             ],
             "console": "integratedTerminal",
             "python": "${workspaceFolder}/.venv/bin/python",
             "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/src",
                 "PYDEVD_DISABLE_FILE_VALIDATION": "1"
@@ -31,38 +20,77 @@
             "justMyCode": false
         },
         {
-            "name": "Cresmo: Run Video (Full Synthesis)",
+            "name": "Cresmo: Run (Force Re-process)",
             "type": "debugpy",
             "request": "launch",
             "module": "cresmo.presentation.cli",
             "args": [
                 "run",
-                "--url",
-                "https://www.youtube.com/watch?v=9IbNJ0EsTxI"
-            ],
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/src",
-                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
-            },
-            "justMyCode": false
-        },
-        {
-            "name": "Cresmo: Run Video (Force Re-process)",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "cresmo.presentation.cli",
-            "args": [
-                "run",
-                "--url",
-                "https://www.youtube.com/watch?v=9IbNJ0EsTxI",
                 "--force-reprocess"
             ],
             "console": "integratedTerminal",
             "python": "${workspaceFolder}/.venv/bin/python",
             "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Cresmo: Run (Dry-Run)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "cresmo.presentation.cli",
+            "args": [
+                "run",
+                "--dry-run"
+            ],
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Cresmo: Run Single Video",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "cresmo.presentation.cli",
+            "args": [
+                "run",
+                "--url",
+                "https://www.youtube.com/watch?v=REPLACE_ME"
+            ],
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Cresmo: Priority List (Only)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "cresmo.presentation.cli",
+            "args": [
+                "run",
+                "--manifest",
+                "${workspaceFolder}/data/playlist-priority.txt"
+            ],
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/src",
                 "PYDEVD_DISABLE_FILE_VALIDATION": "1"
@@ -80,26 +108,7 @@
             "console": "integratedTerminal",
             "python": "${workspaceFolder}/.venv/bin/python",
             "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/src",
-                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
-            },
-            "justMyCode": false
-        },
-        {
-            "name": "Cresmo: Sync Channel (Dry-Run)",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "cresmo.presentation.cli",
-            "args": [
-                "sync",
-                "--channel",
-                "https://www.youtube.com/@Canal",
-                "--dry-run"
-            ],
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/src",
                 "PYDEVD_DISABLE_FILE_VALIDATION": "1"
@@ -117,90 +126,11 @@
             "console": "integratedTerminal",
             "python": "${workspaceFolder}/.venv/bin/python",
             "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/src",
                 "PYDEVD_DISABLE_FILE_VALIDATION": "1"
             },
-            "justMyCode": false
-        },
-        {
-            "name": "Cresmo: Attach Remote Debugger (debugpy 5678)",
-            "type": "debugpy",
-            "request": "attach",
-            "connect": {
-                "host": "localhost",
-                "port": 5678
-            },
-            "justMyCode": false
-        },
-        {
-            "name": "ISB.AI: process --dry-run",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/playground/isb.ai/main.py",
-            "args": [
-                "process",
-                "--dry-run"
-            ],
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/playground/isb.ai",
-            "justMyCode": false
-        },
-        {
-            "name": "ISB.AI: process --limit few",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/playground/isb.ai/main.py",
-            "args": [
-                "process",
-                "--limit",
-                "5"
-            ],
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/playground/isb.ai",
-            "justMyCode": false
-        },
-        {
-            "name": "ISB.AI: process (all pending)",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/playground/isb.ai/main.py",
-            "args": [
-                "process"
-            ],
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/playground/isb.ai",
-            "justMyCode": false
-        },
-        {
-            "name": "ISB.AI: pipeline (sync + process)",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/playground/isb.ai/main.py",
-            "args": [
-                "pipeline"
-            ],
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/playground/isb.ai",
-            "justMyCode": false
-        },
-        {
-            "name": "ISB.AI: sync --days 7",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/playground/isb.ai/main.py",
-            "args": [
-                "sync",
-                "--days",
-                "7"
-            ],
-            "console": "integratedTerminal",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/playground/isb.ai",
             "justMyCode": false
         }
     ]
