@@ -10,8 +10,10 @@ import argparse
 import sys
 import time
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Literal
 
 from pydantic import ValidationError
 
@@ -49,22 +51,51 @@ def _read_manifest(path: Path) -> list[str]:
     return [line.strip() for line in lines if line.strip() and not line.strip().startswith("#")]
 
 
-def _load_batch_urls(
+@dataclass(frozen=True)
+class BatchSource:
+    """Represents a synthesis target: either a local text file or a remote media URL."""
+
+    kind: Literal["file", "url"]
+    target: str
+
+    @property
+    def display_name(self) -> str:
+        if self.kind == "file":
+            return Path(self.target).name
+        return self.target
+
+
+def _load_priority_text_files(priority_dir: Path) -> list[Path]:
+    """Scan priority directory recursively for non-empty text and markdown transcripts."""
+    if not priority_dir.is_dir():
+        return []
+
+    found: list[Path] = []
+    # Support both .txt and .md transcripts across folder hierarchy
+    for ext in ("*.txt", "*.md"):
+        for path in sorted(priority_dir.rglob(ext)):
+            if path.is_file() and path.stat().st_size > 0:
+                found.append(path)
+    return found
+
+
+def _load_batch_sources(
     settings: CresmoSettings,
     *,
     explicit_manifest: Path | None = None,
-) -> list[str]:
-    """Build the ordered URL list for batch execution.
+) -> list[BatchSource]:
+    """Build the ordered 3-tier source list for batch execution.
 
     When ``explicit_manifest`` is provided (user passed ``--manifest``), only
-    that single file is used.  Otherwise the implicit contract is:
+    that single file is used. Otherwise the 3-tier contract is:
 
-    1. ``data/playlist-priority.txt`` is loaded first (if it exists).
-    2. ``data/playlist.txt`` is appended, **deduplicating** any URLs already
-       covered by the priority file.
+    - Tier 0: Local priority text/markdown files in ``data/priority/`` (bypasses Stage 1 STT).
+    - Tier 1: URLs from ``data/playlist-priority.txt`` (priority YouTube videos).
+    - Tier 2: URLs from ``data/playlist.txt`` (main YouTube playlist), deduplicated
+      against Tier 1.
 
     Returns:
-        Ordered, deduplicated URL list (priority items always come first).
+        Ordered list of BatchSource items (Tier 0 -> Tier 1 -> Tier 2).
     """
     if explicit_manifest is not None:
         urls = _read_manifest(explicit_manifest)
@@ -72,31 +103,42 @@ def _load_batch_urls(
             sys.stdout.write(
                 f"[manifest] Loaded {len(urls)} URLs from {explicit_manifest.name}\n"
             )
-        return urls
+        return [BatchSource(kind="url", target=u) for u in urls]
 
-    # Implicit mode: priority-first, then main playlist
-    priority_path = settings.data_dir / "playlist-priority.txt"
-    main_path = settings.data_dir / "playlist.txt"
+    sources: list[BatchSource] = []
 
-    priority_urls = _read_manifest(priority_path)
-    main_urls = _read_manifest(main_path)
+    # Tier 0: Priority text/markdown files
+    priority_files = _load_priority_text_files(settings.priority_texts_dir)
+    if priority_files:
+        sys.stdout.write(
+            f"[manifest] Tier 0 (Priority Texts): {len(priority_files)} local files from {settings.priority_texts_dir.name}/\n"
+        )
+        for pf in priority_files:
+            sources.append(BatchSource(kind="file", target=str(pf.resolve())))
 
+    # Tier 1: Priority URLs
+    priority_urls = _read_manifest(settings.playlist_priority_path)
     if priority_urls:
         sys.stdout.write(
-            f"[manifest] Priority list: {len(priority_urls)} URLs from {priority_path.name}\n"
+            f"[manifest] Tier 1 (Priority URLs): {len(priority_urls)} URLs from {settings.playlist_priority_path.name}\n"
         )
+        for pu in priority_urls:
+            sources.append(BatchSource(kind="url", target=pu))
 
-    # WHY: set-based deduplication preserves insertion order from priority list
-    seen: set[str] = set(priority_urls)
-    remaining = [u for u in main_urls if u not in seen]
+    # Tier 2: Main playlist URLs (deduplicated against Tier 1)
+    main_urls = _read_manifest(settings.playlist_path)
+    seen_urls: set[str] = set(priority_urls)
+    remaining_urls = [u for u in main_urls if u not in seen_urls]
 
-    if remaining:
+    if remaining_urls:
         sys.stdout.write(
-            f"[manifest] Main playlist: {len(remaining)} new URLs from {main_path.name} "
-            f"({len(main_urls) - len(remaining)} duplicates skipped)\n"
+            f"[manifest] Tier 2 (Main Playlist): {len(remaining_urls)} new URLs from {settings.playlist_path.name} "
+            f"({len(main_urls) - len(remaining_urls)} duplicates skipped)\n"
         )
+        for mu in remaining_urls:
+            sources.append(BatchSource(kind="url", target=mu))
 
-    return priority_urls + remaining
+    return sources
 
 def _create_parser() -> argparse.ArgumentParser:
     """Construct CLI argument parser with subcommands."""
@@ -254,6 +296,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     """
     if argv is None:
         argv = sys.argv[1:]
+    else:
+        argv = list(argv)
+
+    # Known subcommands
+    known_subcommands = {"run", "check-config", "sync", "worker", "dedupe"}
+
+    # If no arguments provided, or the first argument is an option/flag rather than
+    # a known subcommand, default to inserting 'run' as the default subcommand.
+    if not argv:
+        argv = ["run"]
+    elif argv[0] not in known_subcommands and not argv[0].startswith(("-h", "--help")):
+        argv = ["run", *argv]
 
     parser = _create_parser()
 
@@ -264,9 +318,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return EXIT_SUCCESS
         return EXIT_CONFIG_OR_USAGE_ERROR
 
-    if not args.subcommand:
-        parser.print_usage(file=sys.stderr)
-        return EXIT_CONFIG_OR_USAGE_ERROR
+    if not getattr(args, "subcommand", None):
+        args.subcommand = "run"
 
     if args.subcommand == "check-config":
         try:
@@ -445,37 +498,45 @@ def main(argv: Sequence[str] | None = None) -> int:
                     sys.stderr.write(f"Pipeline error: {result.error_message}\n")
                     return EXIT_INTERNAL_ERROR
 
-            # Batch execution over manifest playlist(s)
-            # WHY: Priority list is always processed first to ensure high-value
-            # content gets synthesized before the bulk playlist. Deduplication
-            # prevents re-processing URLs that appear in both files.
+            # Batch execution over manifest playlist(s) and priority texts
+            # WHY: Priority text files (Tier 0) are processed first, then priority
+            # URLs (Tier 1), then main playlist (Tier 2). Deduplication prevents
+            # re-processing URLs that appear in both manifest files.
             settings = CresmoSettings()
-            urls = _load_batch_urls(settings, explicit_manifest=args.manifest)
+            sources = _load_batch_sources(settings, explicit_manifest=args.manifest)
 
-            if not urls:
-                sys.stdout.write("No video URLs found in any manifest.\n")
+            if not sources:
+                sys.stdout.write("No synthesis targets found in manifests or priority folder.\n")
                 return EXIT_SUCCESS
 
             sys.stdout.write(
-                f"Starting batch execution for {len(urls)} videos...\n"
+                f"Starting batch execution for {len(sources)} items...\n"
             )
 
             if args.dry_run:
                 ingested = 0
-                for idx, target_url in enumerate(urls, 1):
-                    raw = pipeline.ingest_raw_transcript.execute(video_url=target_url)
-                    if raw is not None:
+                for idx, src in enumerate(sources, 1):
+                    if src.kind == "file":
+                        fpath = Path(src.target)
                         ingested += 1
                         sys.stdout.write(
-                            f"[{idx}/{len(urls)}] Dry-run ingested: [{raw.content_id.value}] "
-                            f"({len(raw.body)} chars)\n"
+                            f"[{idx}/{len(sources)}] Dry-run text: [{fpath.stem}] "
+                            f"({fpath.stat().st_size} bytes)\n"
                         )
                     else:
-                        sys.stderr.write(
-                            f"[{idx}/{len(urls)}] Ingestion failed for: {target_url}\n"
-                        )
+                        raw = pipeline.ingest_raw_transcript.execute(video_url=src.target)
+                        if raw is not None:
+                            ingested += 1
+                            sys.stdout.write(
+                                f"[{idx}/{len(sources)}] Dry-run ingested: [{raw.content_id.value}] "
+                                f"({len(raw.body)} chars)\n"
+                            )
+                        else:
+                            sys.stderr.write(
+                                f"[{idx}/{len(sources)}] Ingestion failed for: {src.target}\n"
+                            )
                 sys.stdout.write(
-                    f"Dry-run completed: {ingested}/{len(urls)} transcripts ingested.\n"
+                    f"Dry-run completed: {ingested}/{len(sources)} items validated.\n"
                 )
                 return EXIT_SUCCESS
 
@@ -483,22 +544,30 @@ def main(argv: Sequence[str] | None = None) -> int:
             skipped = 0
             failed = 0
 
-            for idx, target_url in enumerate(urls, 1):
+            for idx, src in enumerate(sources, 1):
                 try:
-                    result = pipeline.run_for_video(
-                        video_url=target_url,
-                        gap_filler_passes=args.passes,
-                        force_reprocess=args.force_reprocess,
-                    )
+                    if src.kind == "file":
+                        result = pipeline.run_for_text_file(
+                            file_path=Path(src.target),
+                            gap_filler_passes=args.passes,
+                            force_reprocess=args.force_reprocess,
+                        )
+                    else:
+                        result = pipeline.run_for_video(
+                            video_url=src.target,
+                            gap_filler_passes=args.passes,
+                            force_reprocess=args.force_reprocess,
+                        )
+
                     if result.already_processed:
                         skipped += 1
                         sys.stdout.write(
-                            f"[{idx}/{len(urls)}] [SKIPPED] [{result.content_id.value}] Already processed in ledger.\n"
+                            f"[{idx}/{len(sources)}] [SKIPPED] [{result.content_id.value}] Already processed in ledger.\n"
                         )
                     elif result.success:
                         completed += 1
                         sys.stdout.write(
-                            f"[{idx}/{len(urls)}] [DONE] [{result.content_id.value}]: "
+                            f"[{idx}/{len(sources)}] [DONE] [{result.content_id.value}]: "
                             f"{len(result.synthesized_notes)} atomic notes synthesized, "
                             f"{len(result.reconciled_mocs)} MOCs reconciled, "
                             f"{result.duplicates_unified} duplicate clusters unified.\n"
@@ -506,26 +575,27 @@ def main(argv: Sequence[str] | None = None) -> int:
                     else:
                         failed += 1
                         sys.stderr.write(
-                            f"[{idx}/{len(urls)}] [ERROR] {target_url}: {result.error_message}\n"
+                            f"[{idx}/{len(sources)}] [ERROR] {src.display_name}: {result.error_message}\n"
                         )
                 except RateLimitExceededError as exc:
                     failed += 1
-                    sys.stderr.write(f"[{idx}/{len(urls)}] [RATE LIMIT] {target_url}: {exc}\n")
+                    sys.stderr.write(f"[{idx}/{len(sources)}] [RATE LIMIT] {src.display_name}: {exc}\n")
                 except IngestionNetworkError as exc:
                     failed += 1
-                    sys.stderr.write(f"[{idx}/{len(urls)}] [NETWORK ERROR] {target_url}: {exc}\n")
+                    sys.stderr.write(f"[{idx}/{len(sources)}] [NETWORK ERROR] {src.display_name}: {exc}\n")
                 except Exception as exc:  # noqa: BLE001
                     failed += 1
-                    sys.stderr.write(f"[{idx}/{len(urls)}] [FAILED] {target_url}: {exc}\n")
+                    sys.stderr.write(f"[{idx}/{len(sources)}] [FAILED] {src.display_name}: {exc}\n")
 
             sys.stdout.write(
                 f"\nBatch Synthesis Summary:\n"
-                f"- Total URLs: {len(urls)}\n"
+                f"- Total Items: {len(sources)}\n"
                 f"- Completed: {completed}\n"
                 f"- Skipped (Idempotent): {skipped}\n"
                 f"- Failed: {failed}\n"
             )
             return EXIT_SUCCESS if failed == 0 else EXIT_INTERNAL_ERROR
+
 
         except RateLimitExceededError as exc:
             sys.stderr.write(f"Rate limit exceeded: {exc}\n")
