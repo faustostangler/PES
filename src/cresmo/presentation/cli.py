@@ -348,7 +348,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 sys.stdout.write(
                     f"Synthesis completed successfully for [{result.content_id.value}]: "
                     f"{len(result.synthesized_notes)} atomic notes synthesized, "
-                    f"{len(result.reconciled_mocs)} MOCs reconciled.\n"
+                    f"{len(result.reconciled_mocs)} MOCs reconciled, "
+                    f"{result.duplicates_unified} duplicate clusters unified.\n"
                 )
                 return EXIT_SUCCESS
             else:

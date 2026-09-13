@@ -82,4 +82,5 @@ class TestCresmoPipelineOrchestration:
         assert result.synthesized_notes[0].title.value == "Vilfredo Pareto"
         assert len(result.reconciled_mocs) == 1
         assert result.reconciled_mocs[0].title.value == "MOC Teoria Politica"
+        assert result.duplicates_unified == 0
         assert ledger_port.is_processed(cid) is True

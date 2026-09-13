@@ -11,29 +11,106 @@
             "justMyCode": true
         },
         {
-            "name": "Cresmo: sync",
+            "name": "Cresmo: Run Video (Dry-Run)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/playground/cresmo/cresmo_main.py",
+            "module": "cresmo.presentation.cli",
             "args": [
-                "sync"
+                "run",
+                "--url",
+                "https://www.youtube.com/watch?v=9IbNJ0EsTxI",
+                "--dry-run"
             ],
             "console": "integratedTerminal",
             "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/playground/cresmo",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
             "justMyCode": false
         },
         {
-            "name": "Cresmo: process",
+            "name": "Cresmo: Run Video (Full Synthesis)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/playground/cresmo/cresmo_main.py",
+            "module": "cresmo.presentation.cli",
             "args": [
-                "process"
+                "run",
+                "--url",
+                "https://www.youtube.com/watch?v=9IbNJ0EsTxI"
             ],
             "console": "integratedTerminal",
             "python": "${workspaceFolder}/.venv/bin/python",
-            "cwd": "${workspaceFolder}/playground/cresmo",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Cresmo: Dedupe Entities (Stage 7)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "cresmo.presentation.cli",
+            "args": [
+                "dedupe"
+            ],
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Cresmo: Sync Channel (Dry-Run)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "cresmo.presentation.cli",
+            "args": [
+                "sync",
+                "--channel",
+                "https://www.youtube.com/@Canal",
+                "--dry-run"
+            ],
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Cresmo: Check Config",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "cresmo.presentation.cli",
+            "args": [
+                "check-config"
+            ],
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Cresmo: Attach Remote Debugger (debugpy 5678)",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
             "justMyCode": false
         },
         {

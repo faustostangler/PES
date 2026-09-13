@@ -63,9 +63,7 @@ class TestObsidianVaultAdapter:
         assert retrieved.channel_name == "Political Theory"
         assert "transcript line 1" in retrieved.body
 
-    def test_save_and_get_enriched_compendium(
-        self, storage_paths: tuple[Path, Path, Path]
-    ) -> None:
+    def test_save_and_get_enriched_compendium(self, storage_paths: tuple[Path, Path, Path]) -> None:
         vault_dir, raw_dir, enriched_dir = storage_paths
         adapter = ObsidianVaultAdapter(
             vault_dir=vault_dir,

@@ -1,12 +1,13 @@
 """Use Cases for the Cresmo Knowledge Synthesis pipeline.
 
-Organized across the 6 incremental integer stages:
+Organized across the 7 incremental integer stages:
 - Stage 1: IngestRawTranscriptUseCase
 - Stage 2: FillGapsFluidProseUseCase
 - Stage 3: ExpandLongitudinalSynchronicUseCase
 - Stage 4: DiscoverAtomicInventoryUseCase
 - Stage 5: SynthesizeAtomicBatchUseCase
 - Stage 6: ReconcileMOCsUseCase
+- Stage 7: UnifyDuplicateNotesUseCase
 """
 
 from cresmo.application.use_cases.discover_atomic_inventory import (
