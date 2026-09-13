@@ -76,6 +76,11 @@ def _create_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Ingest raw transcript without executing generative LLM synthesis",
     )
+    run_parser.add_argument(
+        "--force-reprocess",
+        action="store_true",
+        help="Bypass ledger idempotency guard and re-synthesize even if already completed",
+    )
 
     # Subcommand: check-config
     subparsers.add_parser(
@@ -96,14 +101,14 @@ def _create_parser() -> argparse.ArgumentParser:
     sync_parser.add_argument(
         "--lookback",
         type=int,
-        default=7,
-        help="Days lookback window for new uploads (default: 7)",
+        default=7 * 52 * 2,  # 2 years
+        help="Days lookback window for new uploads (default: 2 years)",
     )
     sync_parser.add_argument(
         "--max-videos",
         type=int,
-        default=50,
-        help="Maximum videos to discover and process in this run (default: 50)",
+        default=250,
+        help="Maximum videos to discover and process in this run (default: 250)",
     )
     sync_parser.add_argument(
         "--batch-size",
@@ -343,7 +348,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = pipeline.run_for_video(
                 video_url=args.url,
                 gap_filler_passes=args.passes,
+                force_reprocess=args.force_reprocess,
             )
+            if result.already_processed:
+                sys.stdout.write(
+                    f"[SKIPPED] Content [{result.content_id.value}] was already marked as COMPLETED "
+                    f"in the ledger. Use --force-reprocess to bypass.\n"
+                )
+                return EXIT_SUCCESS
             if result.success:
                 sys.stdout.write(
                     f"Synthesis completed successfully for [{result.content_id.value}]: "
