@@ -105,7 +105,6 @@ def register_subparser(subparsers: argparse._SubParsersAction) -> None:
     run_parser.set_defaults(handler=handle_run)
 
 
-
 def execute_single_video_run(pipeline: CresmoPipeline, args: argparse.Namespace) -> int:
     """Execute knowledge synthesis or dry run for a single target video."""
     if args.dry_run:
@@ -252,7 +251,6 @@ def load_batch_sources(
     return discovery_use_case.execute(query=query)
 
 
-
 def handle_run(args: argparse.Namespace) -> int:
     """Orchestrate knowledge synthesis pipeline for single video or batch manifest."""
     try:
@@ -275,6 +273,7 @@ def handle_run(args: argparse.Namespace) -> int:
             scan_raw=not args.no_scan_raw,
             lookback_days=settings.days_lookback,
             channel_max_videos=args.channel_max_videos,
+            discovery_workers=settings.channel_discovery_workers,
         )
         sources = load_batch_sources(query=query, settings=settings)
 

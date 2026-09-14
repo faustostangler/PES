@@ -15,7 +15,9 @@ from typing import Self
 from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-_WORKSPACE_DIR = Path(__file__).resolve().parents[3]
+from cresmo.infrastructure.paths import find_workspace_root
+
+_WORKSPACE_DIR = find_workspace_root()
 
 
 class CresmoSettings(BaseSettings):
@@ -182,6 +184,7 @@ class CresmoSettings(BaseSettings):
         if self.channel_discovery_workers <= 0:
             self.channel_discovery_workers = max(1, self.whisper_workers * 10)
         return self
+
     batch_size: int = Field(
         default=5,
         validation_alias=AliasChoices("batch_size", "stage_5_batch_size", "atomic_batch_size"),
@@ -196,4 +199,3 @@ class CresmoSettings(BaseSettings):
         validation_alias=AliasChoices("gap_filler_passes", "stage_2_passes"),
         description="Default Socratic gap filler refinement passes.",
     )
-

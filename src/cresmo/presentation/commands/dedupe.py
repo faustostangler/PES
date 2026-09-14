@@ -28,9 +28,7 @@ def handle_dedupe(args: argparse.Namespace) -> int:
         report = use_case.execute()
         sys.stdout.write("Vault Graph Deduplication Summary:\n")
         sys.stdout.write(f"- Duplicate Clusters Unified: {report.duplicates_unified_count}\n")
-        sys.stdout.write(
-            f"- Total Inbound WikiLinks Rewritten: {report.total_links_rewritten}\n"
-        )
+        sys.stdout.write(f"- Total Inbound WikiLinks Rewritten: {report.total_links_rewritten}\n")
         for cluster in report.clusters:
             merged_str = ", ".join(f"[[{t.value}]]" for t in cluster.merged_titles)
             sys.stdout.write(

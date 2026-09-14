@@ -410,7 +410,6 @@ mutants_xǁMockLLMAdapterǁ__init____mutmut: MutantDict = {}  # type: ignore
 mutants_xǁMockLLMAdapterǁtransform__mutmut: MutantDict = {}  # type: ignore
 
 
-
 class MockLLMAdapter(LLMTransformationPort):
     """In-memory mock for LLMTransformationPort."""
 

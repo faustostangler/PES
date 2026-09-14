@@ -18,6 +18,133 @@ from cresmo.presentation.exit_codes import (
 
 
 from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
+mutants_x_register_subparser__mutmut: MutantDict = {}  # type: ignore
+
+
+@_mutmut_mutated(mutants_x_register_subparser__mutmut)
+def register_subparser(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        help="Validate environment settings and vault access without calling LLMs",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_orig(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        help="Validate environment settings and vault access without calling LLMs",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_1(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = None
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_2(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        None,
+        help="Validate environment settings and vault access without calling LLMs",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_3(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        help=None,
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_4(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        help="Validate environment settings and vault access without calling LLMs",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_5(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_6(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "XXcheck-configXX",
+        help="Validate environment settings and vault access without calling LLMs",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_7(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "CHECK-CONFIG",
+        help="Validate environment settings and vault access without calling LLMs",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_8(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        help="XXValidate environment settings and vault access without calling LLMsXX",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_9(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        help="validate environment settings and vault access without calling llms",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_10(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        help="VALIDATE ENVIRONMENT SETTINGS AND VAULT ACCESS WITHOUT CALLING LLMS",
+    )
+    check_parser.set_defaults(handler=handle_check_config)
+
+
+def x_register_subparser__mutmut_11(subparsers: argparse._SubParsersAction) -> None:
+    """Register 'check-config' subcommand parser."""
+    check_parser = subparsers.add_parser(
+        "check-config",
+        help="Validate environment settings and vault access without calling LLMs",
+    )
+    check_parser.set_defaults(handler=None)
+
+mutants_x_register_subparser__mutmut['_mutmut_orig'] = x_register_subparser__mutmut_orig # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_1'] = x_register_subparser__mutmut_1 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_2'] = x_register_subparser__mutmut_2 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_3'] = x_register_subparser__mutmut_3 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_4'] = x_register_subparser__mutmut_4 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_5'] = x_register_subparser__mutmut_5 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_6'] = x_register_subparser__mutmut_6 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_7'] = x_register_subparser__mutmut_7 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_8'] = x_register_subparser__mutmut_8 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_9'] = x_register_subparser__mutmut_9 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_10'] = x_register_subparser__mutmut_10 # type: ignore # mutmut generated
+mutants_x_register_subparser__mutmut['x_register_subparser__mutmut_11'] = x_register_subparser__mutmut_11 # type: ignore # mutmut generated
 mutants_x_handle_check_config__mutmut: MutantDict = {}  # type: ignore
 
 

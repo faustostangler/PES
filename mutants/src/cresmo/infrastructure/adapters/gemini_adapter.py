@@ -26,8 +26,7 @@ def _is_transient_genai_error(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -47,8 +46,7 @@ def x__is_transient_genai_error__mutmut_orig(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -68,8 +66,7 @@ def x__is_transient_genai_error__mutmut_1(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = None
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -89,8 +86,7 @@ def x__is_transient_genai_error__mutmut_2(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(None, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -110,8 +106,7 @@ def x__is_transient_genai_error__mutmut_3(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, None, None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -131,8 +126,7 @@ def x__is_transient_genai_error__mutmut_4(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr("code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -152,8 +146,7 @@ def x__is_transient_genai_error__mutmut_5(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -173,8 +166,7 @@ def x__is_transient_genai_error__mutmut_6(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", )
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -194,8 +186,7 @@ def x__is_transient_genai_error__mutmut_7(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "XXcodeXX", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -215,8 +206,7 @@ def x__is_transient_genai_error__mutmut_8(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "CODE", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -236,8 +226,7 @@ def x__is_transient_genai_error__mutmut_9(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code not in (429, 500, 502, 503, 504):
-            return True
+        return code not in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -257,8 +246,7 @@ def x__is_transient_genai_error__mutmut_10(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (430, 500, 502, 503, 504):
-            return True
+        return code in (430, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -278,8 +266,7 @@ def x__is_transient_genai_error__mutmut_11(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 501, 502, 503, 504):
-            return True
+        return code in (429, 501, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -299,8 +286,7 @@ def x__is_transient_genai_error__mutmut_12(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 503, 503, 504):
-            return True
+        return code in (429, 500, 503, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -320,8 +306,7 @@ def x__is_transient_genai_error__mutmut_13(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 504, 504):
-            return True
+        return code in (429, 500, 502, 504, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -341,8 +326,7 @@ def x__is_transient_genai_error__mutmut_14(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 505):
-            return True
+        return code in (429, 500, 502, 503, 505)
     msg = str(exc)
     return any(
         pattern in msg
@@ -362,9 +346,8 @@ def x__is_transient_genai_error__mutmut_15(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return False
-    msg = str(exc)
+        return code in (429, 500, 502, 503, 504)
+    msg = None
     return any(
         pattern in msg
         for pattern in (
@@ -383,9 +366,8 @@ def x__is_transient_genai_error__mutmut_16(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
-    msg = None
+        return code in (429, 500, 502, 503, 504)
+    msg = str(None)
     return any(
         pattern in msg
         for pattern in (
@@ -404,20 +386,10 @@ def x__is_transient_genai_error__mutmut_17(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
-    msg = str(None)
+        return code in (429, 500, 502, 503, 504)
+    msg = str(exc)
     return any(
-        pattern in msg
-        for pattern in (
-            "503",
-            "429",
-            "UNAVAILABLE",
-            "ResourceExhausted",
-            "high demand",
-            "rate limit",
-            "Connection reset",
-        )
+        None
     )
 
 
@@ -425,20 +397,7 @@ def x__is_transient_genai_error__mutmut_18(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
-    msg = str(exc)
-    return any(
-        None
-    )
-
-
-def x__is_transient_genai_error__mutmut_19(exc: BaseException) -> bool:
-    """Determine if a Gemini API exception represents a temporary, retryable condition."""
-    if isinstance(exc, errors.APIError):
-        code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern not in msg
@@ -454,12 +413,11 @@ def x__is_transient_genai_error__mutmut_19(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_20(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_19(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -475,12 +433,11 @@ def x__is_transient_genai_error__mutmut_20(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_21(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_20(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -496,12 +453,11 @@ def x__is_transient_genai_error__mutmut_21(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_22(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_21(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -517,12 +473,11 @@ def x__is_transient_genai_error__mutmut_22(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_23(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_22(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -538,12 +493,11 @@ def x__is_transient_genai_error__mutmut_23(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_24(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_23(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -559,12 +513,11 @@ def x__is_transient_genai_error__mutmut_24(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_25(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_24(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -580,12 +533,11 @@ def x__is_transient_genai_error__mutmut_25(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_26(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_25(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -601,12 +553,11 @@ def x__is_transient_genai_error__mutmut_26(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_27(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_26(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -622,12 +573,11 @@ def x__is_transient_genai_error__mutmut_27(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_28(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_27(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -643,12 +593,11 @@ def x__is_transient_genai_error__mutmut_28(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_29(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_28(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -664,12 +613,11 @@ def x__is_transient_genai_error__mutmut_29(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_30(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_29(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -685,12 +633,11 @@ def x__is_transient_genai_error__mutmut_30(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_31(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_30(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -706,12 +653,11 @@ def x__is_transient_genai_error__mutmut_31(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_32(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_31(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -727,12 +673,11 @@ def x__is_transient_genai_error__mutmut_32(exc: BaseException) -> bool:
     )
 
 
-def x__is_transient_genai_error__mutmut_33(exc: BaseException) -> bool:
+def x__is_transient_genai_error__mutmut_32(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg
@@ -780,7 +725,6 @@ mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut
 mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_30'] = x__is_transient_genai_error__mutmut_30 # type: ignore # mutmut generated
 mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_31'] = x__is_transient_genai_error__mutmut_31 # type: ignore # mutmut generated
 mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_32'] = x__is_transient_genai_error__mutmut_32 # type: ignore # mutmut generated
-mutants_x__is_transient_genai_error__mutmut['x__is_transient_genai_error__mutmut_33'] = x__is_transient_genai_error__mutmut_33 # type: ignore # mutmut generated
 
 
 @retry(

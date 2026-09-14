@@ -21,8 +21,7 @@ def _is_transient_genai_error(exc: BaseException) -> bool:
     """Determine if a Gemini API exception represents a temporary, retryable condition."""
     if isinstance(exc, errors.APIError):
         code = getattr(exc, "code", None)
-        if code in (429, 500, 502, 503, 504):
-            return True
+        return code in (429, 500, 502, 503, 504)
     msg = str(exc)
     return any(
         pattern in msg

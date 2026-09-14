@@ -17,7 +17,11 @@ import pytest
 import yt_dlp
 import yt_dlp.utils
 
-from cresmo.domain.exceptions import IngestionNetworkError, RateLimitExceededError
+from cresmo.domain.exceptions import (
+    CresmoInfrastructureError,
+    IngestionNetworkError,
+    RateLimitExceededError,
+)
 from cresmo.domain.value_objects import ChannelFeedQuery, ContentId
 from cresmo.infrastructure.adapters.native_media_ingestion_adapter import (
     NativeMediaIngestionAdapter,
@@ -410,6 +414,228 @@ class TestNativeMediaIngestionAdapter:
             mock_ydl.extract_info.side_effect = yt_dlp.utils.DownloadError("Video unavailable")
             mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
 
-            res = adapter.extract_channel_url_from_video("https://www.youtube.com/watch?v=unavailable")
+            res = adapter.extract_channel_url_from_video(
+                "https://www.youtube.com/watch?v=unavailable"
+            )
             assert res is None
 
+    def test_extract_video_id_fallback_to_path_stem(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        assert adapter._extract_video_id("local_custom_video_123.mp4") == "local_custom_video_123"
+
+    def test_is_native_subtitle_url_none_returns_false(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        assert adapter._is_native_subtitle_url(None) is False
+
+    def test_find_native_subtitle_url_non_pt_video(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        info = {
+            "language": "en",
+            "subtitles": {
+                "en": [{"ext": "json3", "url": "https://video.google.com/timedtext?lang=en"}],
+            },
+            "automatic_captions": {},
+        }
+        url = adapter._find_native_subtitle_url(info)
+        assert url == "https://video.google.com/timedtext?lang=en"
+
+    def test_find_native_subtitle_url_fallback_any_manual_language(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        info = {
+            "language": "es",
+            "subtitles": {
+                "fr": [{"ext": "json3", "url": "https://video.google.com/timedtext?lang=fr"}],
+            },
+            "automatic_captions": {},
+        }
+        url = adapter._find_native_subtitle_url(info)
+        assert url == "https://video.google.com/timedtext?lang=fr"
+
+    def test_find_native_subtitle_url_automatic_captions_orig_and_fallbacks(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        # Test auto captions with orig suffix
+        info_orig = {
+            "language": "pt",
+            "subtitles": {},
+            "automatic_captions": {
+                "pt-orig": [
+                    {"ext": "json3", "url": "https://video.google.com/timedtext?lang=pt-orig"}
+                ],
+            },
+        }
+        assert (
+            adapter._find_native_subtitle_url(info_orig)
+            == "https://video.google.com/timedtext?lang=pt-orig"
+        )
+
+        # Test auto captions any language fallback
+        info_any = {
+            "language": "it",
+            "subtitles": {},
+            "automatic_captions": {
+                "de": [{"ext": "json3", "url": "https://video.google.com/timedtext?lang=de"}],
+            },
+        }
+        assert (
+            adapter._find_native_subtitle_url(info_any)
+            == "https://video.google.com/timedtext?lang=de"
+        )
+
+    def test_fetch_url_content_http_errors(self) -> None:
+        import urllib.error
+        from email.message import Message
+
+        adapter = NativeMediaIngestionAdapter()
+
+        # 429 raises RateLimitExceededError
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.side_effect = urllib.error.HTTPError(
+                url="https://test", code=429, msg="Too Many Requests", hdrs=Message(), fp=None
+            )
+            with pytest.raises(RateLimitExceededError, match="HTTP 429"):
+                adapter._fetch_url_content("https://test")
+
+        # 500 raises IngestionNetworkError
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.side_effect = urllib.error.HTTPError(
+                url="https://test", code=500, msg="Internal Server Error", hdrs=Message(), fp=None
+            )
+            with pytest.raises(IngestionNetworkError, match="HTTP error"):
+                adapter._fetch_url_content("https://test")
+
+        # Generic network exception raises IngestionNetworkError
+        with patch("urllib.request.urlopen") as mock_urlopen:
+            mock_urlopen.side_effect = ConnectionResetError("Connection reset")
+            with pytest.raises(IngestionNetworkError, match="Network error"):
+                adapter._fetch_url_content("https://test")
+
+    def test_handle_yt_dlp_error_generic_raises_cresmo_infrastructure_error(self) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with pytest.raises(
+            CresmoInfrastructureError, match="Media extraction infrastructure error"
+        ):
+            adapter._handle_yt_dlp_error(ValueError("Unexpected parser state"))
+
+    def test_transcribe_audio_fallback_empty_scratch_raises_error(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            pytest.raises(IngestionNetworkError, match="no file was found"),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+            # yt-dlp finishes but scratch dir contains no downloaded files
+            adapter._transcribe_audio_fallback(
+                video_url="https://youtube.com/watch?v=empty",
+                output_dir=tmp_path,
+                whisper_model="base",
+                keep_audio=False,
+            )
+
+    def test_transcribe_audio_fallback_whisper_failure_raises_infrastructure_error(
+        self, tmp_path: Path
+    ) -> None:
+        adapter = NativeMediaIngestionAdapter()
+
+        def fake_download(urls: list[str]) -> None:
+            # Create dummy audio file in temp scratch
+            pass
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch("whisper.load_model") as mock_whisper_load,
+            patch("pathlib.Path.glob") as mock_glob,
+            pytest.raises(CresmoInfrastructureError, match="Whisper transcription failed"),
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+            mock_glob.return_value = [tmp_path / "dummy_audio.m4a"]
+            mock_whisper_load.side_effect = RuntimeError("Whisper weights corrupt")
+
+            adapter._transcribe_audio_fallback(
+                video_url="https://youtube.com/watch?v=error",
+                output_dir=tmp_path,
+                whisper_model="base",
+                keep_audio=False,
+            )
+
+    def test_transcribe_audio_fallback_keep_audio_copies_file(self, tmp_path: Path) -> None:
+        adapter = NativeMediaIngestionAdapter()
+
+        dummy_audio = tmp_path / "scratch_dummy.m4a"
+        dummy_audio.write_bytes(b"FAKE AUDIO BYTES")
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch("whisper.load_model") as mock_whisper_load,
+            patch("tempfile.TemporaryDirectory") as mock_tempdir,
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            scratch_dir = tmp_path / "scratch"
+            scratch_dir.mkdir(parents=True, exist_ok=True)
+            audio_in_scratch = scratch_dir / "dQw4w9WgXcQ.m4a"
+            audio_in_scratch.write_bytes(b"FAKE AUDIO DATA")
+
+            mock_tempdir.return_value.__enter__.return_value = str(scratch_dir)
+
+            mock_model = MagicMock()
+            mock_model.transcribe.return_value = {"text": "Transcribed speech content."}
+            mock_whisper_load.return_value = mock_model
+
+            body, channel = adapter._transcribe_audio_fallback(
+                video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                output_dir=tmp_path,
+                whisper_model="base",
+                keep_audio=True,
+                info={"channel": "Test Channel"},
+            )
+
+            assert body == "Transcribed speech content."
+            assert channel == "Test Channel"
+            # Verify audio was copied to output_dir / Test Channel
+            preserved_audio = tmp_path / "Test Channel" / "dQw4w9WgXcQ.m4a"
+            assert preserved_audio.exists()
+            assert preserved_audio.read_bytes() == b"FAKE AUDIO DATA"
+
+    def test_ingest_single_video_subtitle_fetch_fails_falls_back_to_whisper(
+        self, tmp_path: Path
+    ) -> None:
+        adapter = NativeMediaIngestionAdapter()
+        fake_info = {
+            "id": "dQw4w9WgXcQ",
+            "title": "Fallback Video",
+            "channel": "Fallback Channel",
+            "language": "pt",
+            "subtitles": {
+                "pt": [{"ext": "json3", "url": "https://video.google.com/timedtext?v=fail"}],
+            },
+            "automatic_captions": {},
+        }
+
+        with (
+            patch("yt_dlp.YoutubeDL") as mock_ydl_cls,
+            patch.object(
+                adapter,
+                "_fetch_url_content",
+                side_effect=IngestionNetworkError("Subtitle connection refused"),
+            ),
+            patch.object(
+                adapter,
+                "_transcribe_audio_fallback",
+                return_value=("Transcribed from audio fallback.", "Fallback_Channel"),
+            ) as mock_whisper_fb,
+        ):
+            mock_ydl = MagicMock()
+            mock_ydl.extract_info.return_value = fake_info
+            mock_ydl_cls.return_value.__enter__.return_value = mock_ydl
+
+            transcript = adapter.ingest_single_video(
+                video_url="https://youtube.com/watch?v=dQw4w9WgXcQ",
+                output_dir=tmp_path,
+            )
+
+            assert transcript is not None
+            assert transcript.body == "Transcribed from audio fallback."
+            mock_whisper_fb.assert_called_once()
