@@ -298,7 +298,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._header_generator = header_generator or RandomHeaderGenerator()
         self._whisper_semaphore = threading.BoundedSemaphore(max(2, whisper_concurrency_limit))
 
-
     @_mutmut_mutated(mutants_xǁNativeMediaIngestionAdapterǁ_extract_video_id__mutmut)
     def _extract_video_id(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
@@ -307,14 +306,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             return match.group(1)
         return Path(url).stem
 
-
     def xǁNativeMediaIngestionAdapterǁ_extract_video_id__mutmut_orig(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
         match = _VIDEO_ID_REGEX.search(url)
         if match:
             return match.group(1)
         return Path(url).stem
-
 
     def xǁNativeMediaIngestionAdapterǁ_extract_video_id__mutmut_1(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
@@ -323,14 +320,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             return match.group(1)
         return Path(url).stem
 
-
     def xǁNativeMediaIngestionAdapterǁ_extract_video_id__mutmut_2(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
         match = _VIDEO_ID_REGEX.search(None)
         if match:
             return match.group(1)
         return Path(url).stem
-
 
     def xǁNativeMediaIngestionAdapterǁ_extract_video_id__mutmut_3(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
@@ -339,14 +334,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             return match.group(None)
         return Path(url).stem
 
-
     def xǁNativeMediaIngestionAdapterǁ_extract_video_id__mutmut_4(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
         match = _VIDEO_ID_REGEX.search(url)
         if match:
             return match.group(2)
         return Path(url).stem
-
 
     def xǁNativeMediaIngestionAdapterǁ_extract_video_id__mutmut_5(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
@@ -15406,7 +15399,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         return body, channel_name
 
-
     @_mutmut_mutated(mutants_xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut)
     def ingest_single_video(
         self,
@@ -15449,10 +15441,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -15491,7 +15485,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_orig(
         self,
@@ -15534,10 +15527,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -15576,7 +15571,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_1(
         self,
@@ -15619,10 +15613,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -15661,7 +15657,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_2(
         self,
@@ -15704,10 +15699,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -15746,7 +15743,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_3(
         self,
@@ -15789,10 +15785,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -15831,7 +15829,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_4(
         self,
@@ -15874,10 +15871,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -15916,7 +15915,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_5(
         self,
@@ -15959,10 +15957,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16001,7 +16001,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_6(
         self,
@@ -16039,10 +16038,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16081,7 +16082,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_7(
         self,
@@ -16124,10 +16124,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16166,7 +16168,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_8(
         self,
@@ -16209,10 +16210,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16251,7 +16254,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_9(
         self,
@@ -16294,10 +16296,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16336,7 +16340,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_10(
         self,
@@ -16379,10 +16382,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16421,7 +16426,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_11(
         self,
@@ -16464,10 +16468,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16506,7 +16512,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_12(
         self,
@@ -16549,10 +16554,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16591,7 +16598,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_13(
         self,
@@ -16634,10 +16640,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16676,7 +16684,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_14(
         self,
@@ -16719,10 +16726,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16761,7 +16770,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_15(
         self,
@@ -16804,10 +16812,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16846,7 +16856,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_16(
         self,
@@ -16889,10 +16898,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -16931,7 +16942,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_17(
         self,
@@ -16974,10 +16984,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17016,7 +17028,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_18(
         self,
@@ -17059,10 +17070,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17101,7 +17114,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_19(
         self,
@@ -17144,10 +17156,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17186,7 +17200,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_20(
         self,
@@ -17229,10 +17242,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17271,7 +17286,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_21(
         self,
@@ -17314,10 +17328,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17356,7 +17372,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_22(
         self,
@@ -17399,10 +17414,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17441,7 +17458,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_23(
         self,
@@ -17484,10 +17500,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17526,7 +17544,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_24(
         self,
@@ -17569,10 +17586,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17611,7 +17630,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_25(
         self,
@@ -17654,10 +17672,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17696,7 +17716,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_26(
         self,
@@ -17739,10 +17758,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17781,7 +17802,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_27(
         self,
@@ -17824,10 +17844,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17866,7 +17888,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_28(
         self,
@@ -17909,10 +17930,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -17951,7 +17974,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_29(
         self,
@@ -17994,10 +18016,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18036,7 +18060,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_30(
         self,
@@ -18079,10 +18102,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18121,7 +18146,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_31(
         self,
@@ -18164,10 +18188,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18206,7 +18232,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_32(
         self,
@@ -18249,10 +18274,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18291,7 +18318,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_33(
         self,
@@ -18334,10 +18360,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18376,7 +18404,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_34(
         self,
@@ -18417,10 +18444,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18459,7 +18488,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_35(
         self,
@@ -18502,10 +18530,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18544,7 +18574,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_36(
         self,
@@ -18587,10 +18616,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18629,7 +18660,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_37(
         self,
@@ -18672,10 +18702,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18714,7 +18746,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_38(
         self,
@@ -18757,10 +18788,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18799,7 +18832,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_39(
         self,
@@ -18842,10 +18874,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18884,7 +18918,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_40(
         self,
@@ -18927,10 +18960,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -18969,7 +19004,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_41(
         self,
@@ -19012,10 +19046,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19054,7 +19090,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_42(
         self,
@@ -19097,10 +19132,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19139,7 +19176,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_43(
         self,
@@ -19182,10 +19218,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19224,7 +19262,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_44(
         self,
@@ -19267,10 +19304,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19309,7 +19348,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_45(
         self,
@@ -19352,10 +19390,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19394,7 +19434,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_46(
         self,
@@ -19437,10 +19476,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19479,7 +19520,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_47(
         self,
@@ -19522,10 +19562,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19564,7 +19606,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_48(
         self,
@@ -19607,10 +19648,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19649,7 +19692,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_49(
         self,
@@ -19692,10 +19734,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19734,7 +19778,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_50(
         self,
@@ -19777,10 +19820,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = None
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19819,7 +19864,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_51(
         self,
@@ -19862,10 +19906,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = "XXXX"
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19904,7 +19950,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_52(
         self,
@@ -19947,10 +19992,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = None
             try:
+                raw_sub = None
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -19989,7 +20036,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_53(
         self,
@@ -20032,10 +20078,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(None)
             try:
+                raw_sub = self._fetch_url_content(None)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20074,7 +20122,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_54(
         self,
@@ -20117,10 +20164,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = None
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20159,7 +20208,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_55(
         self,
@@ -20202,10 +20250,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(None)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20244,7 +20294,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_56(
         self,
@@ -20287,10 +20336,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = None
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20329,7 +20380,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_57(
         self,
@@ -20372,10 +20422,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(None)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20414,7 +20466,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_58(
         self,
@@ -20457,10 +20508,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = None
 
@@ -20499,7 +20552,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_59(
         self,
@@ -20542,10 +20594,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = "XXXX"
 
@@ -20584,7 +20638,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_60(
         self,
@@ -20627,10 +20680,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20669,7 +20724,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_61(
         self,
@@ -20712,10 +20766,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20748,7 +20804,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_62(
         self,
@@ -20791,10 +20846,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20833,7 +20890,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_63(
         self,
@@ -20876,10 +20932,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -20918,7 +20976,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_64(
         self,
@@ -20961,10 +21018,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21003,7 +21062,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_65(
         self,
@@ -21046,10 +21104,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21088,7 +21148,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_66(
         self,
@@ -21131,10 +21190,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21173,7 +21234,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_67(
         self,
@@ -21216,10 +21276,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21257,7 +21319,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_68(
         self,
@@ -21300,10 +21361,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21341,7 +21404,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_69(
         self,
@@ -21384,10 +21446,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21425,7 +21489,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_70(
         self,
@@ -21468,10 +21531,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21509,7 +21574,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_71(
         self,
@@ -21552,10 +21616,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21593,7 +21659,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_72(
         self,
@@ -21636,10 +21701,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21678,7 +21745,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_73(
         self,
@@ -21721,10 +21787,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21763,7 +21831,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_74(
         self,
@@ -21806,10 +21873,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21848,7 +21917,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_75(
         self,
@@ -21891,10 +21959,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -21933,7 +22003,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_76(
         self,
@@ -21976,10 +22045,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22018,7 +22089,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_77(
         self,
@@ -22061,10 +22131,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22103,7 +22175,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_78(
         self,
@@ -22146,10 +22217,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22188,7 +22261,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_79(
         self,
@@ -22231,10 +22303,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22273,7 +22347,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_80(
         self,
@@ -22316,10 +22389,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22358,7 +22433,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_81(
         self,
@@ -22401,10 +22475,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22443,7 +22519,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_82(
         self,
@@ -22486,10 +22561,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22528,7 +22605,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_83(
         self,
@@ -22571,10 +22647,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22613,7 +22691,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_84(
         self,
@@ -22656,10 +22733,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22698,7 +22777,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_85(
         self,
@@ -22741,10 +22819,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22783,7 +22863,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_86(
         self,
@@ -22826,10 +22905,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22868,7 +22949,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_87(
         self,
@@ -22911,10 +22991,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -22953,7 +23035,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_88(
         self,
@@ -22996,10 +23077,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23038,7 +23121,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_89(
         self,
@@ -23081,10 +23163,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23123,7 +23207,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_90(
         self,
@@ -23166,10 +23249,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23208,7 +23293,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_91(
         self,
@@ -23251,10 +23335,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23293,7 +23379,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_92(
         self,
@@ -23336,10 +23421,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23378,7 +23465,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_93(
         self,
@@ -23421,10 +23507,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23463,7 +23551,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_94(
         self,
@@ -23506,10 +23593,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23548,7 +23637,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_95(
         self,
@@ -23591,10 +23679,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23633,7 +23723,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_96(
         self,
@@ -23676,10 +23765,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23718,7 +23809,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_97(
         self,
@@ -23761,10 +23851,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23803,7 +23895,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_98(
         self,
@@ -23846,10 +23937,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23888,7 +23981,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_99(
         self,
@@ -23931,10 +24023,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -23973,7 +24067,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_100(
         self,
@@ -24016,10 +24109,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24058,7 +24153,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_101(
         self,
@@ -24101,10 +24195,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24143,7 +24239,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_102(
         self,
@@ -24186,10 +24281,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24228,7 +24325,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_103(
         self,
@@ -24271,10 +24367,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24313,7 +24411,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=None,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_104(
         self,
@@ -24356,10 +24453,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24398,7 +24497,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=None,
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_105(
         self,
@@ -24441,10 +24539,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24482,7 +24582,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_106(
         self,
@@ -24525,10 +24624,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24566,7 +24667,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_107(
         self,
@@ -24609,10 +24709,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24650,7 +24752,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_108(
         self,
@@ -24693,10 +24794,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24734,7 +24837,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_109(
         self,
@@ -24777,10 +24879,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24818,7 +24922,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_110(
         self,
@@ -24861,10 +24964,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24902,7 +25007,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_111(
         self,
@@ -24945,10 +25049,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -24986,7 +25092,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_112(
         self,
@@ -25029,10 +25134,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25070,7 +25177,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_id=str(info.get("channel_id") or "unknown_channel"),
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_113(
         self,
@@ -25113,10 +25219,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25154,7 +25262,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_id=str(info.get("channel_id") or "unknown_channel"),
             channel_category=category,
             )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_114(
         self,
@@ -25197,10 +25304,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25239,7 +25348,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_115(
         self,
@@ -25282,10 +25390,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25324,7 +25434,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_116(
         self,
@@ -25367,10 +25476,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25409,7 +25520,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_117(
         self,
@@ -25452,10 +25562,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25494,7 +25606,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_118(
         self,
@@ -25537,10 +25648,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25579,7 +25692,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_119(
         self,
@@ -25622,10 +25734,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25664,7 +25778,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_120(
         self,
@@ -25707,10 +25820,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25749,7 +25864,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_121(
         self,
@@ -25792,10 +25906,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25834,7 +25950,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_122(
         self,
@@ -25877,10 +25992,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -25919,7 +26036,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_123(
         self,
@@ -25962,10 +26078,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26004,7 +26122,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_124(
         self,
@@ -26047,10 +26164,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26089,7 +26208,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_125(
         self,
@@ -26132,10 +26250,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26174,7 +26294,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_126(
         self,
@@ -26217,10 +26336,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26259,7 +26380,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_127(
         self,
@@ -26302,10 +26422,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26344,7 +26466,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_128(
         self,
@@ -26387,10 +26508,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26429,7 +26552,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(None),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_129(
         self,
@@ -26472,10 +26594,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26514,7 +26638,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("description") and ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_130(
         self,
@@ -26557,10 +26680,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26599,7 +26724,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get(None) or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_131(
         self,
@@ -26642,10 +26766,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26684,7 +26810,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("XXdescriptionXX") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_132(
         self,
@@ -26727,10 +26852,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -26769,7 +26896,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             channel_category=category,
             video_description=str(info.get("DESCRIPTION") or ""),
         )
-
 
     def xǁNativeMediaIngestionAdapterǁingest_single_video__mutmut_133(
         self,
@@ -26812,10 +26938,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -33913,7 +34041,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -33945,7 +34072,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -33971,7 +34097,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34004,7 +34129,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34035,7 +34159,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34068,7 +34191,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34099,7 +34221,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34132,7 +34253,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34163,7 +34283,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34196,7 +34315,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34227,7 +34345,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34260,7 +34377,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34291,7 +34407,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34324,7 +34439,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34355,7 +34469,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34388,7 +34501,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34419,7 +34531,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(None, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34452,7 +34563,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34483,7 +34593,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34516,7 +34625,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34547,7 +34655,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=True)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34580,7 +34687,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info and not isinstance(info, dict):
             return None
 
@@ -34611,7 +34717,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if info or not isinstance(info, dict):
             return None
@@ -34644,7 +34749,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or isinstance(info, dict):
             return None
 
@@ -34675,7 +34779,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34708,7 +34811,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34739,7 +34841,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34772,7 +34873,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34803,7 +34903,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34836,7 +34935,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34867,7 +34965,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34900,7 +34997,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34931,7 +35027,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -34964,7 +35059,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -34995,7 +35089,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -35028,7 +35121,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -35059,7 +35151,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -35092,7 +35183,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -35123,7 +35213,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -35156,7 +35245,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -35188,7 +35276,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -35219,7 +35306,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
                 info = ydl.extract_info(video_url, download=False)
         except Exception:  # noqa: BLE001
             return None
-
 
         if not info or not isinstance(info, dict):
             return None
@@ -35914,4 +36000,3 @@ mutants_xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut['
 mutants_xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut['xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut_38'] = NativeMediaIngestionAdapter.xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut_38 # type: ignore # mutmut generated
 mutants_xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut['xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut_39'] = NativeMediaIngestionAdapter.xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut_39 # type: ignore # mutmut generated
 mutants_xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut['xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut_40'] = NativeMediaIngestionAdapter.xǁNativeMediaIngestionAdapterǁextract_channel_url_from_video__mutmut_40 # type: ignore # mutmut generated
-

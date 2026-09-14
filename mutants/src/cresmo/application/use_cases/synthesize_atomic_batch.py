@@ -24,7 +24,8 @@ from cresmo.domain.value_objects import (
     NoteType,
 )
 
-_PREFIX_RE = re.compile(r"^(?:o|a|os|as|um|uma|uns|umas|dr|dra|prof|dom|frei)\s+", re.IGNORECASE)
+_HONORIFIC_PREFIXES: tuple[str, ...] = ("dom ", "dona ", "d. ", "d ")
+_PUNCT_COLLAPSE_RE = re.compile(r"[\s\-_.,()]+")
 
 
 from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
@@ -32,36 +33,124 @@ mutants_x__norm_honorific__mutmut: MutantDict = {}  # type: ignore
 
 
 @_mutmut_mutated(mutants_x__norm_honorific__mutmut)
-def _norm_honorific(text: str) -> str:
-    return _PREFIX_RE.sub("", text.strip().lower())
+def _norm_honorific(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
-def x__norm_honorific__mutmut_orig(text: str) -> str:
-    return _PREFIX_RE.sub("", text.strip().lower())
+def x__norm_honorific__mutmut_orig(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
-def x__norm_honorific__mutmut_1(text: str) -> str:
-    return _PREFIX_RE.sub(None, text.strip().lower())
+def x__norm_honorific__mutmut_1(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = None
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
-def x__norm_honorific__mutmut_2(text: str) -> str:
-    return _PREFIX_RE.sub("", None)
+def x__norm_honorific__mutmut_2(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.upper().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
-def x__norm_honorific__mutmut_3(text: str) -> str:
-    return _PREFIX_RE.sub(text.strip().lower())
+def x__norm_honorific__mutmut_3(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(None):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
-def x__norm_honorific__mutmut_4(text: str) -> str:
-    return _PREFIX_RE.sub("", )
+def x__norm_honorific__mutmut_4(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = None
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
-def x__norm_honorific__mutmut_5(text: str) -> str:
-    return _PREFIX_RE.sub("XXXX", text.strip().lower())
+def x__norm_honorific__mutmut_5(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            return
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
-def x__norm_honorific__mutmut_6(text: str) -> str:
-    return _PREFIX_RE.sub("", text.strip().upper())
+def x__norm_honorific__mutmut_6(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(None, cleaned).strip()
+
+
+def x__norm_honorific__mutmut_7(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", None).strip()
+
+
+def x__norm_honorific__mutmut_8(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(cleaned).strip()
+
+
+def x__norm_honorific__mutmut_9(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", ).strip()
+
+
+def x__norm_honorific__mutmut_10(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub("XX XX", cleaned).strip()
 
 mutants_x__norm_honorific__mutmut['_mutmut_orig'] = x__norm_honorific__mutmut_orig # type: ignore # mutmut generated
 mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_1'] = x__norm_honorific__mutmut_1 # type: ignore # mutmut generated
@@ -70,6 +159,10 @@ mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_3'] = x__norm_honor
 mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_4'] = x__norm_honorific__mutmut_4 # type: ignore # mutmut generated
 mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_5'] = x__norm_honorific__mutmut_5 # type: ignore # mutmut generated
 mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_6'] = x__norm_honorific__mutmut_6 # type: ignore # mutmut generated
+mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_7'] = x__norm_honorific__mutmut_7 # type: ignore # mutmut generated
+mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_8'] = x__norm_honorific__mutmut_8 # type: ignore # mutmut generated
+mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_9'] = x__norm_honorific__mutmut_9 # type: ignore # mutmut generated
+mutants_x__norm_honorific__mutmut['x__norm_honorific__mutmut_10'] = x__norm_honorific__mutmut_10 # type: ignore # mutmut generated
 mutants_xǁSynthesizeAtomicBatchUseCaseǁ__init____mutmut: MutantDict = {}  # type: ignore
 mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut: MutantDict = {}  # type: ignore
 
@@ -342,14 +435,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -484,14 +569,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -628,14 +705,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -770,14 +839,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -914,14 +975,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -1056,14 +1109,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.upper()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -1200,14 +1245,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = None
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -1342,14 +1379,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.upper()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -1486,19 +1515,7 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = None
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
+        norm_lookup: dict[str, AtomicNote] = None
 
         synthesized_notes: list[AtomicNote] = []
         pending_items: list[tuple[NoteTitle, NoteType]] = []
@@ -1629,16 +1646,8 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.upper().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
+            _norm_honorific(None): n
             for n in existing_notes
             if len(_norm_honorific(n.title.value)) >= 4
         }
@@ -1772,18 +1781,10 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("XXdom XX", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
+            if len(_norm_honorific(n.title.value)) > 4
         }
 
         synthesized_notes: list[AtomicNote] = []
@@ -1915,18 +1916,10 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("DOM ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
+            if len(_norm_honorific(n.title.value)) >= 5
         }
 
         synthesized_notes: list[AtomicNote] = []
@@ -2058,21 +2051,13 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "XXdona XX", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
             if len(_norm_honorific(n.title.value)) >= 4
         }
 
-        synthesized_notes: list[AtomicNote] = []
+        synthesized_notes: list[AtomicNote] = None
         pending_items: list[tuple[NoteTitle, NoteType]] = []
 
         for title, note_type in inventory.items:
@@ -2201,14 +2186,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "DONA ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -2216,7 +2193,7 @@ class SynthesizeAtomicBatchUseCase:
         }
 
         synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
+        pending_items: list[tuple[NoteTitle, NoteType]] = None
 
         for title, note_type in inventory.items:
             key = title.value.lower()
@@ -2344,14 +2321,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "XXd. XX", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -2362,7 +2331,7 @@ class SynthesizeAtomicBatchUseCase:
         pending_items: list[tuple[NoteTitle, NoteType]] = []
 
         for title, note_type in inventory.items:
-            key = title.value.lower()
+            key = None
             norm_key = _norm_honorific(key)
             if key in existing_lookup:
                 synthesized_notes.append(existing_lookup[key])
@@ -2487,14 +2456,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "D. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -2505,7 +2466,7 @@ class SynthesizeAtomicBatchUseCase:
         pending_items: list[tuple[NoteTitle, NoteType]] = []
 
         for title, note_type in inventory.items:
-            key = title.value.lower()
+            key = title.value.upper()
             norm_key = _norm_honorific(key)
             if key in existing_lookup:
                 synthesized_notes.append(existing_lookup[key])
@@ -2630,14 +2591,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "XXd XX"):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -2649,7 +2602,7 @@ class SynthesizeAtomicBatchUseCase:
 
         for title, note_type in inventory.items:
             key = title.value.lower()
-            norm_key = _norm_honorific(key)
+            norm_key = None
             if key in existing_lookup:
                 synthesized_notes.append(existing_lookup[key])
             elif norm_key in norm_lookup:
@@ -2773,14 +2726,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "D "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -2792,7 +2737,7 @@ class SynthesizeAtomicBatchUseCase:
 
         for title, note_type in inventory.items:
             key = title.value.lower()
-            norm_key = _norm_honorific(key)
+            norm_key = _norm_honorific(None)
             if key in existing_lookup:
                 synthesized_notes.append(existing_lookup[key])
             elif norm_key in norm_lookup:
@@ -2916,14 +2861,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(None):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -2936,7 +2873,7 @@ class SynthesizeAtomicBatchUseCase:
         for title, note_type in inventory.items:
             key = title.value.lower()
             norm_key = _norm_honorific(key)
-            if key in existing_lookup:
+            if key not in existing_lookup:
                 synthesized_notes.append(existing_lookup[key])
             elif norm_key in norm_lookup:
                 synthesized_notes.append(norm_lookup[norm_key])
@@ -3059,14 +2996,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = None
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -3080,7 +3009,7 @@ class SynthesizeAtomicBatchUseCase:
             key = title.value.lower()
             norm_key = _norm_honorific(key)
             if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
+                synthesized_notes.append(None)
             elif norm_key in norm_lookup:
                 synthesized_notes.append(norm_lookup[norm_key])
             else:
@@ -3202,14 +3131,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    return
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -3224,7 +3145,7 @@ class SynthesizeAtomicBatchUseCase:
             norm_key = _norm_honorific(key)
             if key in existing_lookup:
                 synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
+            elif norm_key not in norm_lookup:
                 synthesized_notes.append(norm_lookup[norm_key])
             else:
                 pending_items.append((title, note_type))
@@ -3345,14 +3266,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(None, " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -3368,7 +3281,7 @@ class SynthesizeAtomicBatchUseCase:
             if key in existing_lookup:
                 synthesized_notes.append(existing_lookup[key])
             elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
+                synthesized_notes.append(None)
             else:
                 pending_items.append((title, note_type))
 
@@ -3488,14 +3401,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", None, cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -3513,7 +3418,7 @@ class SynthesizeAtomicBatchUseCase:
             elif norm_key in norm_lookup:
                 synthesized_notes.append(norm_lookup[norm_key])
             else:
-                pending_items.append((title, note_type))
+                pending_items.append(None)
 
         # Partition pending entities into chunks of size <= batch_size
         for i in range(0, len(pending_items), self.batch_size):
@@ -3631,14 +3536,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", None).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -3659,7 +3556,7 @@ class SynthesizeAtomicBatchUseCase:
                 pending_items.append((title, note_type))
 
         # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
+        for i in range(None, len(pending_items), self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
@@ -3774,14 +3671,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(" ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -3802,7 +3691,7 @@ class SynthesizeAtomicBatchUseCase:
                 pending_items.append((title, note_type))
 
         # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
+        for i in range(0, None, self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
@@ -3917,14 +3806,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -3945,7 +3826,7 @@ class SynthesizeAtomicBatchUseCase:
                 pending_items.append((title, note_type))
 
         # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
+        for i in range(0, len(pending_items), None):
             chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
@@ -4060,14 +3941,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", ).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -4088,7 +3961,7 @@ class SynthesizeAtomicBatchUseCase:
                 pending_items.append((title, note_type))
 
         # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
+        for i in range(len(pending_items), self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
@@ -4203,14 +4076,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"XX[\s\-_.,()]+XX", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -4231,7 +4096,7 @@ class SynthesizeAtomicBatchUseCase:
                 pending_items.append((title, note_type))
 
         # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
+        for i in range(0, self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
@@ -4346,14 +4211,6 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", "XX XX", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
@@ -4374,7 +4231,7 @@ class SynthesizeAtomicBatchUseCase:
                 pending_items.append((title, note_type))
 
         # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
+        for i in range(0, len(pending_items), ):
             chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
@@ -4489,15 +4346,11 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = None
+        norm_lookup: dict[str, AtomicNote] = {
+            _norm_honorific(n.title.value): n
+            for n in existing_notes
+            if len(_norm_honorific(n.title.value)) >= 4
+        }
 
         synthesized_notes: list[AtomicNote] = []
         pending_items: list[tuple[NoteTitle, NoteType]] = []
@@ -4513,7 +4366,7 @@ class SynthesizeAtomicBatchUseCase:
                 pending_items.append((title, note_type))
 
         # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
+        for i in range(1, len(pending_items), self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
@@ -4628,16 +4481,8 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(None): n
+            _norm_honorific(n.title.value): n
             for n in existing_notes
             if len(_norm_honorific(n.title.value)) >= 4
         }
@@ -4657,7 +4502,7 @@ class SynthesizeAtomicBatchUseCase:
 
         # Partition pending entities into chunks of size <= batch_size
         for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
+            chunk = None
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
             ]
@@ -4771,18 +4616,10 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
-            if len(_norm_honorific(n.title.value)) > 4
+            if len(_norm_honorific(n.title.value)) >= 4
         }
 
         synthesized_notes: list[AtomicNote] = []
@@ -4800,7 +4637,7 @@ class SynthesizeAtomicBatchUseCase:
 
         # Partition pending entities into chunks of size <= batch_size
         for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
+            chunk = pending_items[i : i - self.batch_size]
             targets_summary = [
                 {"title": title.value, "type": note_type.value} for title, note_type in chunk
             ]
@@ -4914,18 +4751,10 @@ class SynthesizeAtomicBatchUseCase:
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
 
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
             for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 5
+            if len(_norm_honorific(n.title.value)) >= 4
         }
 
         synthesized_notes: list[AtomicNote] = []
@@ -4944,9 +4773,7 @@ class SynthesizeAtomicBatchUseCase:
         # Partition pending entities into chunks of size <= batch_size
         for i in range(0, len(pending_items), self.batch_size):
             chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
+            targets_summary = None
 
             # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
             prompt = self.prompt_provider.get_batch_notes_prompt(
@@ -5056,3015 +4883,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = None
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_33(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = None
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_34(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = None
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_35(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.upper()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_36(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = None
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_37(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(None)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_38(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key not in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_39(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(None)
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_40(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key not in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_41(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(None)
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_42(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append(None)
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_43(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(None, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_44(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, None, self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_45(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), None):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_46(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_47(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_48(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), ):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_49(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(1, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_50(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = None
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_51(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i - self.batch_size]
-            targets_summary = [
-                {"title": title.value, "type": note_type.value} for title, note_type in chunk
-            ]
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_52(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
-
-        norm_lookup: dict[str, AtomicNote] = {
-            _norm_honorific(n.title.value): n
-            for n in existing_notes
-            if len(_norm_honorific(n.title.value)) >= 4
-        }
-
-        synthesized_notes: list[AtomicNote] = []
-        pending_items: list[tuple[NoteTitle, NoteType]] = []
-
-        for title, note_type in inventory.items:
-            key = title.value.lower()
-            norm_key = _norm_honorific(key)
-            if key in existing_lookup:
-                synthesized_notes.append(existing_lookup[key])
-            elif norm_key in norm_lookup:
-                synthesized_notes.append(norm_lookup[norm_key])
-            else:
-                pending_items.append((title, note_type))
-
-        # Partition pending entities into chunks of size <= batch_size
-        for i in range(0, len(pending_items), self.batch_size):
-            chunk = pending_items[i : i + self.batch_size]
-            targets_summary = None
-
-            # Step 2a: Prompt LLM for structured JSON definitions, causal matrices, and relations.
-            prompt = self.prompt_provider.get_batch_notes_prompt(
-                compendium_title=compendium.title.value,
-                channel_name=compendium.channel_name,
-                compendium_body=compendium.body,
-                targets_json=json.dumps(targets_summary, ensure_ascii=False),
-            )
-            response = self.llm_port.transform(prompt=prompt)
-            data = extract_json_data(response)
-            if not isinstance(data, list):
-                raise DomainValidationError(
-                    f"Batch synthesis expected JSON array, got: {type(data).__name__}"
-                )
-
-            # Step 2b: Parse response into AtomicNote domain aggregates.
-            for entry in data:
-                if not isinstance(entry, dict):
-                    continue
-                title_str = entry.get("title")
-                if not title_str or not isinstance(title_str, str):
-                    continue
-                title = NoteTitle(title_str)
-
-                type_raw = entry.get("type", "concept")
-                try:
-                    note_type = NoteType.from_string(str(type_raw))
-                except NoteTypologyError:
-                    note_type = NoteType.CONCEPT
-
-                definition = str(entry.get("definition", "")).strip()
-
-                relations_raw = entry.get("direct_relations", [])
-                relations = tuple(
-                    NoteTitle(r) for r in relations_raw if isinstance(r, str) and r.strip()
-                )
-
-                cm_raw = entry.get("causal_matrix")
-                causal_matrix: CausalMatrix | None = None
-                if isinstance(cm_raw, dict):
-                    causal_matrix = CausalMatrix(
-                        cause=str(cm_raw.get("cause", "")),
-                        effect=str(cm_raw.get("effect", "")),
-                        epistemic_attribution=str(cm_raw.get("epistemic_attribution", "")),
-                    )
-
-                cc_raw = entry.get("cross_context")
-                cross_context: CrossContextRelations | None = None
-                if isinstance(cc_raw, dict):
-                    cross_context = CrossContextRelations(
-                        precursors=str(cc_raw.get("precursors", "")),
-                        lateral_events=str(cc_raw.get("lateral_events", "")),
-                        aftermath=str(cc_raw.get("aftermath", "")),
-                    )
-
-                aliases_raw = entry.get("aliases", [])
-                aliases = tuple(a.strip() for a in aliases_raw if isinstance(a, str) and a.strip())
-
-                tags_raw = entry.get("content_tags", [])
-                content_tags = tuple(
-                    t.strip() for t in tags_raw if isinstance(t, str) and t.strip()
-                )
-
-                note = AtomicNote(
-                    title=title,
-                    note_type=note_type,
-                    definition=definition,
-                    content_tags=content_tags,
-                    domain=str(entry.get("domain", compendium.channel_name)),
-                    cluster=str(entry.get("cluster", "")),
-                    source=str(entry.get("source", compendium.title.value)),
-                    aliases=aliases,
-                    direct_relations=relations,
-                    causal_matrix=causal_matrix,
-                    cross_context=cross_context,
-                )
-
-                # Step 2c & 2d: Save note and update index entry incrementally.
-                self.vault_port.save_atomic_note(note)
-                self.vault_port.update_index_entry(note)
-                synthesized_notes.append(note)
-
-        # Step 3: Return list of all synthesized AtomicNote entities.
-        return synthesized_notes
-
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_53(
-        self,
-        inventory: AtomicEntityInventory,
-        compendium: EnrichedCompendium,
-    ) -> list[AtomicNote]:
-        """Execute Stage 5 batched synthesis.
-
-        Args:
-            inventory: Discovered unique entity inventory from Stage 4.
-            compendium: Enriched compendium from Stage 3.
-
-        Returns:
-            List of all synthesized and persisted AtomicNote domain aggregates.
-
-        Raises:
-            DomainValidationError: If synthesis payload violates domain rules.
-        """
-        # Check existing notes in vault for incremental idempotency (Tier 1 lookup)
-        existing_notes = self.vault_port.get_all_atomic_notes()
-        existing_lookup: dict[str, AtomicNote] = {}
-        for n in existing_notes:
-            existing_lookup[n.title.value.lower()] = n
-            for a in n.aliases:
-                existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -8176,7 +4994,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_54(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_33(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -8200,14 +5018,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -8319,7 +5129,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_55(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_34(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -8343,14 +5153,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -8462,7 +5264,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_56(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_35(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -8486,14 +5288,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -8605,7 +5399,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_57(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_36(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -8629,14 +5423,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -8743,7 +5529,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_58(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_37(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -8767,14 +5553,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -8886,7 +5664,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_59(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_38(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -8910,14 +5688,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -9029,7 +5799,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_60(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_39(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -9053,14 +5823,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -9172,7 +5934,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_61(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_40(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -9196,14 +5958,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -9315,7 +6069,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_62(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_41(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -9339,14 +6093,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -9457,7 +6203,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_63(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_42(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -9481,14 +6227,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -9599,7 +6337,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_64(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_43(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -9623,14 +6361,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -9741,7 +6471,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_65(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_44(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -9765,14 +6495,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -9883,7 +6605,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_66(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_45(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -9907,14 +6629,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -10026,7 +6740,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_67(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_46(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -10050,14 +6764,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -10169,7 +6875,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_68(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_47(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -10193,14 +6899,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -10312,7 +7010,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_69(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_48(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -10336,14 +7034,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -10455,7 +7145,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_70(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_49(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -10479,14 +7169,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -10598,7 +7280,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_71(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_50(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -10622,14 +7304,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -10741,7 +7415,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_72(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_51(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -10765,14 +7439,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -10884,7 +7550,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_73(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_52(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -10908,14 +7574,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -11027,7 +7685,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_74(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_53(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -11051,14 +7709,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -11170,7 +7820,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_75(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_54(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -11194,14 +7844,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -11313,7 +7955,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_76(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_55(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -11337,14 +7979,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -11456,7 +8090,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_77(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_56(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -11480,14 +8114,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -11599,7 +8225,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_78(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_57(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -11623,14 +8249,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -11742,7 +8360,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_79(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_58(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -11766,14 +8384,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -11885,7 +8495,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_80(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_59(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -11909,14 +8519,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -12028,7 +8630,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_81(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_60(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -12052,14 +8654,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -12171,7 +8765,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_82(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_61(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -12195,14 +8789,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -12314,7 +8900,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_83(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_62(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -12338,14 +8924,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -12457,7 +9035,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_84(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_63(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -12481,14 +9059,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -12600,7 +9170,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_85(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_64(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -12624,14 +9194,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -12743,7 +9305,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_86(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_65(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -12767,14 +9329,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -12886,7 +9440,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_87(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_66(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -12910,14 +9464,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -13029,7 +9575,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_88(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_67(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -13053,14 +9599,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -13172,7 +9710,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_89(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_68(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -13196,14 +9734,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -13315,7 +9845,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_90(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_69(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -13339,14 +9869,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -13458,7 +9980,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_91(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_70(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -13482,14 +10004,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -13601,7 +10115,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_92(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_71(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -13625,14 +10139,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -13744,7 +10250,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_93(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_72(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -13768,14 +10274,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -13887,7 +10385,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_94(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_73(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -13911,14 +10409,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -14030,7 +10520,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_95(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_74(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -14054,14 +10544,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -14173,7 +10655,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_96(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_75(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -14197,14 +10679,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -14316,7 +10790,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_97(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_76(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -14340,14 +10814,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -14459,7 +10925,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_98(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_77(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -14483,14 +10949,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -14602,7 +11060,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_99(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_78(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -14626,14 +11084,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -14745,7 +11195,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_100(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_79(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -14769,14 +11219,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -14888,7 +11330,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_101(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_80(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -14912,14 +11354,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -15031,7 +11465,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_102(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_81(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -15055,14 +11489,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -15174,7 +11600,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_103(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_82(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -15198,14 +11624,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -15317,7 +11735,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_104(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_83(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -15341,14 +11759,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -15460,7 +11870,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_105(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_84(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -15484,14 +11894,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -15603,7 +12005,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_106(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_85(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -15627,14 +12029,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -15746,7 +12140,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_107(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_86(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -15770,14 +12164,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -15889,7 +12275,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_108(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_87(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -15913,14 +12299,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -16032,7 +12410,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_109(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_88(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -16056,14 +12434,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -16175,7 +12545,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_110(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_89(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -16199,14 +12569,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -16318,7 +12680,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_111(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_90(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -16342,14 +12704,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -16461,7 +12815,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_112(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_91(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -16485,14 +12839,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -16604,7 +12950,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_113(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_92(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -16628,14 +12974,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -16747,7 +13085,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_114(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_93(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -16771,14 +13109,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -16890,7 +13220,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_115(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_94(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -16914,14 +13244,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -17033,7 +13355,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_116(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_95(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -17057,14 +13379,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -17176,7 +13490,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_117(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_96(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -17200,14 +13514,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -17319,7 +13625,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_118(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_97(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -17343,14 +13649,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -17462,7 +13760,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_119(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_98(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -17486,14 +13784,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -17603,7 +13893,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_120(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_99(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -17627,14 +13917,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -17746,7 +14028,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_121(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_100(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -17770,14 +14052,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -17889,7 +14163,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_122(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_101(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -17913,14 +14187,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -18032,7 +14298,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_123(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_102(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -18056,14 +14322,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -18175,7 +14433,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_124(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_103(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -18199,14 +14457,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -18318,7 +14568,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_125(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_104(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -18342,14 +14592,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -18461,7 +14703,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_126(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_105(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -18485,14 +14727,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -18604,7 +14838,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_127(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_106(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -18628,14 +14862,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -18747,7 +14973,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_128(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_107(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -18771,14 +14997,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -18886,7 +15104,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_129(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_108(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -18910,14 +15128,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -19029,7 +15239,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_130(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_109(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -19053,14 +15263,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -19172,7 +15374,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_131(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_110(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -19196,14 +15398,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -19315,7 +15509,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_132(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_111(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -19339,14 +15533,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -19457,7 +15643,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_133(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_112(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -19481,14 +15667,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -19599,7 +15777,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_134(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_113(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -19623,14 +15801,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -19741,7 +15911,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_135(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_114(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -19765,14 +15935,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -19884,7 +16046,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_136(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_115(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -19908,14 +16070,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -20027,7 +16181,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_137(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_116(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -20051,14 +16205,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -20170,7 +16316,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_138(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_117(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -20194,14 +16340,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -20313,7 +16451,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_139(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_118(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -20337,14 +16475,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -20456,7 +16586,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_140(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_119(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -20480,14 +16610,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -20599,7 +16721,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_141(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_120(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -20623,14 +16745,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -20742,7 +16856,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_142(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_121(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -20766,14 +16880,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -20885,7 +16991,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_143(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_122(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -20909,14 +17015,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -21028,7 +17126,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_144(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_123(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -21052,14 +17150,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -21171,7 +17261,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_145(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_124(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -21195,14 +17285,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -21314,7 +17396,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_146(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_125(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -21338,14 +17420,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -21457,7 +17531,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_147(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_126(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -21481,14 +17555,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -21600,7 +17666,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_148(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_127(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -21624,14 +17690,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -21743,7 +17801,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_149(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_128(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -21767,14 +17825,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -21886,7 +17936,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_150(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_129(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -21910,14 +17960,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -22029,7 +18071,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_151(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_130(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -22053,14 +18095,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -22172,7 +18206,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_152(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_131(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -22196,14 +18230,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -22315,7 +18341,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_153(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_132(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -22339,14 +18365,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -22458,7 +18476,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_154(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_133(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -22482,14 +18500,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -22601,7 +18611,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_155(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_134(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -22625,14 +18635,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -22744,7 +18746,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_156(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_135(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -22768,14 +18770,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -22887,7 +18881,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_157(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_136(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -22911,14 +18905,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -23030,7 +19016,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_158(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_137(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -23054,14 +19040,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -23173,7 +19151,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_159(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_138(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -23197,14 +19175,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -23316,7 +19286,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_160(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_139(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -23340,14 +19310,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -23459,7 +19421,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_161(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_140(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -23483,14 +19445,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -23602,7 +19556,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_162(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_141(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -23626,14 +19580,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -23745,7 +19691,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_163(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_142(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -23769,14 +19715,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -23888,7 +19826,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_164(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_143(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -23912,14 +19850,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -24027,7 +19957,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_165(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_144(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -24051,14 +19981,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -24170,7 +20092,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_166(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_145(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -24194,14 +20116,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -24313,7 +20227,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_167(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_146(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -24337,14 +20251,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -24456,7 +20362,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_168(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_147(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -24480,14 +20386,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -24598,7 +20496,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_169(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_148(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -24622,14 +20520,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -24740,7 +20630,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_170(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_149(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -24764,14 +20654,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -24882,7 +20764,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_171(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_150(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -24906,14 +20788,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -25025,7 +20899,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_172(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_151(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -25049,14 +20923,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -25168,7 +21034,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_173(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_152(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -25192,14 +21058,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -25311,7 +21169,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_174(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_153(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -25335,14 +21193,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -25454,7 +21304,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_175(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_154(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -25478,14 +21328,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -25597,7 +21439,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_176(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_155(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -25621,14 +21463,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -25740,7 +21574,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_177(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_156(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -25764,14 +21598,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -25883,7 +21709,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_178(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_157(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -25907,14 +21733,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -26026,7 +21844,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_179(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_158(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -26050,14 +21868,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -26169,7 +21979,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_180(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_159(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -26193,14 +22003,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -26312,7 +22114,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_181(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_160(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -26336,14 +22138,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -26455,7 +22249,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_182(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_161(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -26479,14 +22273,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -26598,7 +22384,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_183(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_162(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -26622,14 +22408,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -26741,7 +22519,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_184(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_163(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -26765,14 +22543,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -26884,7 +22654,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_185(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_164(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -26908,14 +22678,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -27027,7 +22789,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_186(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_165(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -27051,14 +22813,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -27170,7 +22924,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_187(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_166(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -27194,14 +22948,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -27313,7 +23059,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_188(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_167(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -27337,14 +23083,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -27456,7 +23194,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_189(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_168(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -27480,14 +23218,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -27599,7 +23329,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_190(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_169(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -27623,14 +23353,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -27742,7 +23464,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_191(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_170(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -27766,14 +23488,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -27885,7 +23599,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_192(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_171(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -27909,14 +23623,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -28028,7 +23734,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_193(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_172(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -28052,14 +23758,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -28171,7 +23869,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_194(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_173(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -28195,14 +23893,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -28314,7 +24004,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_195(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_174(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -28338,14 +24028,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -28457,7 +24139,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_196(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_175(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -28481,14 +24163,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -28600,7 +24274,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_197(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_176(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -28624,14 +24298,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -28743,7 +24409,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_198(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_177(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -28767,14 +24433,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -28886,7 +24544,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_199(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_178(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -28910,14 +24568,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -29029,7 +24679,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_200(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_179(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -29053,14 +24703,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -29172,7 +24814,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_201(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_180(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -29196,14 +24838,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -29315,7 +24949,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_202(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_181(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -29339,14 +24973,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -29458,7 +25084,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_203(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_182(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -29482,14 +25108,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -29601,7 +25219,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_204(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_183(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -29625,14 +25243,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -29744,7 +25354,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_205(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_184(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -29768,14 +25378,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -29887,7 +25489,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_206(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_185(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -29911,14 +25513,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -30030,7 +25624,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_207(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_186(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -30054,14 +25648,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -30173,7 +25759,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_208(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_187(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -30197,14 +25783,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -30316,7 +25894,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_209(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_188(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -30340,14 +25918,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -30459,7 +26029,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_210(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_189(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -30483,14 +26053,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -30602,7 +26164,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_211(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_190(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -30626,14 +26188,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -30745,7 +26299,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_212(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_191(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -30769,14 +26323,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -30886,7 +26432,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_213(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_192(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -30910,14 +26456,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -31029,7 +26567,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_214(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_193(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -31053,14 +26591,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -31172,7 +26702,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_215(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_194(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -31196,14 +26726,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -31303,7 +26825,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_216(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_195(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -31327,14 +26849,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -31446,7 +26960,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_217(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_196(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -31470,14 +26984,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -31589,7 +27095,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_218(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_197(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -31613,14 +27119,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -31732,7 +27230,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_219(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_198(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -31756,14 +27254,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -31875,7 +27365,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_220(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_199(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -31899,14 +27389,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -32018,7 +27500,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_221(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_200(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -32042,14 +27524,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -32161,7 +27635,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_222(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_201(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -32185,14 +27659,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -32304,7 +27770,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_223(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_202(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -32328,14 +27794,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -32447,7 +27905,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_224(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_203(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -32471,14 +27929,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -32590,7 +28040,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_225(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_204(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -32614,14 +28064,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -32733,7 +28175,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_226(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_205(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -32757,14 +28199,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -32876,7 +28310,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_227(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_206(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -32900,14 +28334,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -33018,7 +28444,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_228(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_207(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -33042,14 +28468,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -33160,7 +28578,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_229(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_208(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -33184,14 +28602,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -33302,7 +28712,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_230(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_209(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -33326,14 +28736,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -33444,7 +28846,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_231(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_210(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -33468,14 +28870,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -33586,7 +28980,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_232(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_211(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -33610,14 +29004,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -33728,7 +29114,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_233(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_212(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -33752,14 +29138,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -33870,7 +29248,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_234(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_213(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -33894,14 +29272,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -34012,7 +29382,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_235(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_214(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -34036,14 +29406,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -34154,7 +29516,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_236(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_215(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -34178,14 +29540,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -34296,7 +29650,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_237(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_216(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -34320,14 +29674,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -34438,7 +29784,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_238(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_217(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -34462,14 +29808,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -34581,7 +29919,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_239(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_218(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -34605,14 +29943,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -34724,7 +30054,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_240(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_219(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -34748,14 +30078,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -34867,7 +30189,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_241(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_220(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -34891,14 +30213,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -35010,7 +30324,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_242(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_221(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -35034,14 +30348,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -35153,7 +30459,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_243(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_222(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -35177,14 +30483,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -35296,7 +30594,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_244(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_223(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -35320,14 +30618,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -35439,7 +30729,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_245(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_224(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -35463,14 +30753,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -35582,7 +30864,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_246(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_225(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -35606,14 +30888,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -35725,7 +30999,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_247(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_226(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -35749,14 +31023,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -35868,7 +31134,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_248(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_227(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -35892,14 +31158,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -36011,7 +31269,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_249(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_228(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -36035,14 +31293,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -36154,7 +31404,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_250(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_229(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -36178,14 +31428,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -36297,7 +31539,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_251(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_230(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -36321,14 +31563,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -36440,7 +31674,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_252(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_231(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -36464,14 +31698,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -36583,7 +31809,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_253(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_232(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -36607,14 +31833,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -36726,7 +31944,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_254(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_233(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -36750,14 +31968,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -36869,7 +32079,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_255(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_234(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -36893,14 +32103,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -37012,7 +32214,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_256(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_235(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -37036,14 +32238,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -37155,7 +32349,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_257(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_236(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -37179,14 +32373,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -37298,7 +32484,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_258(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_237(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -37322,14 +32508,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -37441,7 +32619,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_259(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_238(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -37465,14 +32643,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -37584,7 +32754,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_260(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_239(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -37608,14 +32778,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -37727,7 +32889,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_261(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_240(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -37751,14 +32913,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -37870,7 +33024,7 @@ class SynthesizeAtomicBatchUseCase:
         # Step 3: Return list of all synthesized AtomicNote entities.
         return synthesized_notes
 
-    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_262(
+    def xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_241(
         self,
         inventory: AtomicEntityInventory,
         compendium: EnrichedCompendium,
@@ -37894,14 +33048,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n
@@ -38269,24 +33415,3 @@ mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBat
 mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_239'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_239 # type: ignore # mutmut generated
 mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_240'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_240 # type: ignore # mutmut generated
 mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_241'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_241 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_242'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_242 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_243'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_243 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_244'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_244 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_245'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_245 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_246'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_246 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_247'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_247 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_248'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_248 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_249'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_249 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_250'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_250 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_251'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_251 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_252'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_252 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_253'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_253 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_254'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_254 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_255'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_255 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_256'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_256 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_257'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_257 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_258'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_258 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_259'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_259 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_260'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_260 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_261'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_261 # type: ignore # mutmut generated
-mutants_xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut['xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_262'] = SynthesizeAtomicBatchUseCase.xǁSynthesizeAtomicBatchUseCaseǁexecute__mutmut_262 # type: ignore # mutmut generated

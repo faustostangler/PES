@@ -29,6 +29,7 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -36,6 +37,7 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -52,6 +54,8 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -68,6 +72,8 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -81,6 +87,7 @@ def x__extract_individual_objects__mutmut_orig(text: str) -> list[dict[str, Any]
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -88,6 +95,7 @@ def x__extract_individual_objects__mutmut_orig(text: str) -> list[dict[str, Any]
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -104,6 +112,8 @@ def x__extract_individual_objects__mutmut_orig(text: str) -> list[dict[str, Any]
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -120,6 +130,8 @@ def x__extract_individual_objects__mutmut_orig(text: str) -> list[dict[str, Any]
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -133,6 +145,7 @@ def x__extract_individual_objects__mutmut_1(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -140,6 +153,7 @@ def x__extract_individual_objects__mutmut_1(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -156,6 +170,8 @@ def x__extract_individual_objects__mutmut_1(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -172,6 +188,8 @@ def x__extract_individual_objects__mutmut_1(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -185,6 +203,7 @@ def x__extract_individual_objects__mutmut_2(text: str) -> list[dict[str, Any]]:
     i = None
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -192,6 +211,7 @@ def x__extract_individual_objects__mutmut_2(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -208,6 +228,8 @@ def x__extract_individual_objects__mutmut_2(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -224,6 +246,8 @@ def x__extract_individual_objects__mutmut_2(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -237,6 +261,7 @@ def x__extract_individual_objects__mutmut_3(text: str) -> list[dict[str, Any]]:
     i = 1
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -244,6 +269,7 @@ def x__extract_individual_objects__mutmut_3(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -260,6 +286,8 @@ def x__extract_individual_objects__mutmut_3(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -276,6 +304,8 @@ def x__extract_individual_objects__mutmut_3(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -289,6 +319,7 @@ def x__extract_individual_objects__mutmut_4(text: str) -> list[dict[str, Any]]:
     i = 0
     n = None
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -296,6 +327,7 @@ def x__extract_individual_objects__mutmut_4(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -312,6 +344,8 @@ def x__extract_individual_objects__mutmut_4(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -328,6 +362,8 @@ def x__extract_individual_objects__mutmut_4(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -341,6 +377,7 @@ def x__extract_individual_objects__mutmut_5(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i <= n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -348,6 +385,7 @@ def x__extract_individual_objects__mutmut_5(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -364,6 +402,8 @@ def x__extract_individual_objects__mutmut_5(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -380,6 +420,8 @@ def x__extract_individual_objects__mutmut_5(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -393,13 +435,15 @@ def x__extract_individual_objects__mutmut_6(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
-        if text[i] != "{":
+        outer_prev_i = None
+        if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -416,6 +460,8 @@ def x__extract_individual_objects__mutmut_6(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -432,6 +478,8 @@ def x__extract_individual_objects__mutmut_6(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -445,13 +493,15 @@ def x__extract_individual_objects__mutmut_7(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
-        if text[i] == "XX{XX":
+        outer_prev_i = i
+        if text[i] != "{":
             depth = 1
             in_string = False
             escape = False
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -468,6 +518,8 @@ def x__extract_individual_objects__mutmut_7(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -484,6 +536,8 @@ def x__extract_individual_objects__mutmut_7(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -497,13 +551,15 @@ def x__extract_individual_objects__mutmut_8(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
-        if text[i] == "{":
-            depth = None
+        outer_prev_i = i
+        if text[i] == "XX{XX":
+            depth = 1
             in_string = False
             escape = False
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -520,6 +576,8 @@ def x__extract_individual_objects__mutmut_8(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -536,6 +594,8 @@ def x__extract_individual_objects__mutmut_8(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -549,13 +609,15 @@ def x__extract_individual_objects__mutmut_9(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
-            depth = 2
+            depth = None
             in_string = False
             escape = False
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -572,6 +634,8 @@ def x__extract_individual_objects__mutmut_9(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -588,6 +652,8 @@ def x__extract_individual_objects__mutmut_9(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -601,13 +667,15 @@ def x__extract_individual_objects__mutmut_10(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
-            depth = 1
-            in_string = None
+            depth = 2
+            in_string = False
             escape = False
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -624,6 +692,8 @@ def x__extract_individual_objects__mutmut_10(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -640,6 +710,8 @@ def x__extract_individual_objects__mutmut_10(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -653,13 +725,15 @@ def x__extract_individual_objects__mutmut_11(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
-            in_string = True
+            in_string = None
             escape = False
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -676,6 +750,8 @@ def x__extract_individual_objects__mutmut_11(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -692,6 +768,8 @@ def x__extract_individual_objects__mutmut_11(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -705,13 +783,15 @@ def x__extract_individual_objects__mutmut_12(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
-            in_string = False
-            escape = None
+            in_string = True
+            escape = False
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -728,6 +808,8 @@ def x__extract_individual_objects__mutmut_12(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -744,6 +826,8 @@ def x__extract_individual_objects__mutmut_12(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -757,13 +841,15 @@ def x__extract_individual_objects__mutmut_13(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
-            escape = True
+            escape = None
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -780,6 +866,8 @@ def x__extract_individual_objects__mutmut_13(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -796,6 +884,8 @@ def x__extract_individual_objects__mutmut_13(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -809,13 +899,15 @@ def x__extract_individual_objects__mutmut_14(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
-            escape = False
-            start = None
+            escape = True
+            start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -832,6 +924,8 @@ def x__extract_individual_objects__mutmut_14(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -848,6 +942,8 @@ def x__extract_individual_objects__mutmut_14(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -861,13 +957,15 @@ def x__extract_individual_objects__mutmut_15(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
-            start = i
-            i = 1
+            start = None
+            i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -884,6 +982,8 @@ def x__extract_individual_objects__mutmut_15(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -900,6 +1000,8 @@ def x__extract_individual_objects__mutmut_15(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -913,13 +1015,15 @@ def x__extract_individual_objects__mutmut_16(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
             start = i
-            i -= 1
+            i = 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -936,6 +1040,8 @@ def x__extract_individual_objects__mutmut_16(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -952,6 +1058,8 @@ def x__extract_individual_objects__mutmut_16(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -965,13 +1073,15 @@ def x__extract_individual_objects__mutmut_17(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
             start = i
-            i += 2
+            i -= 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -988,6 +1098,8 @@ def x__extract_individual_objects__mutmut_17(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1004,6 +1116,8 @@ def x__extract_individual_objects__mutmut_17(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -1017,13 +1131,15 @@ def x__extract_individual_objects__mutmut_18(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
             start = i
-            i += 1
-            while i < n or depth > 0:
+            i += 2
+            while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1040,6 +1156,8 @@ def x__extract_individual_objects__mutmut_18(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1056,6 +1174,8 @@ def x__extract_individual_objects__mutmut_18(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -1069,13 +1189,15 @@ def x__extract_individual_objects__mutmut_19(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
             start = i
             i += 1
-            while i <= n and depth > 0:
+            while i < n or depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1092,6 +1214,8 @@ def x__extract_individual_objects__mutmut_19(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1108,6 +1232,8 @@ def x__extract_individual_objects__mutmut_19(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -1121,13 +1247,15 @@ def x__extract_individual_objects__mutmut_20(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
             start = i
             i += 1
-            while i < n and depth >= 0:
+            while i <= n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1144,6 +1272,8 @@ def x__extract_individual_objects__mutmut_20(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1160,6 +1290,8 @@ def x__extract_individual_objects__mutmut_20(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -1173,13 +1305,15 @@ def x__extract_individual_objects__mutmut_21(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
             escape = False
             start = i
             i += 1
-            while i < n and depth > 1:
+            while i < n and depth >= 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1196,6 +1330,8 @@ def x__extract_individual_objects__mutmut_21(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1212,6 +1348,8 @@ def x__extract_individual_objects__mutmut_21(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
@@ -1225,6 +1363,65 @@ def x__extract_individual_objects__mutmut_22(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
+        if text[i] == "{":
+            depth = 1
+            in_string = False
+            escape = False
+            start = i
+            i += 1
+            while i < n and depth > 1:
+                inner_prev_i = i
+                char = text[i]
+                if in_string:
+                    if escape:
+                        escape = False
+                    elif char == "\\":
+                        escape = True
+                    elif char == '"':
+                        in_string = False
+                else:
+                    if char == '"':
+                        in_string = True
+                    elif char == "{":
+                        depth += 1
+                    elif char == "}":
+                        depth -= 1
+                i += 1
+                if i <= inner_prev_i:
+                    break
+            if depth == 0:
+                candidate = text[start:i]
+                try:
+                    parsed = json.loads(candidate)
+                    if isinstance(parsed, dict):
+                        objects.append(parsed)
+                except (json.JSONDecodeError, ValueError):
+                    cleaned = _TRAILING_COMMA_PATTERN.sub(r"\1", candidate)
+                    try:
+                        parsed = json.loads(cleaned)
+                        if isinstance(parsed, dict):
+                            objects.append(parsed)
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+        else:
+            i += 1
+        if i <= outer_prev_i:
+            break
+    return objects
+
+
+def x__extract_individual_objects__mutmut_23(text: str) -> list[dict[str, Any]]:
+    """Scan text for balanced curly brace blocks and parse each valid JSON object.
+
+    Handles truncated responses or arrays with trailing syntax errors by
+    extracting every syntactically valid object individually.
+    """
+    objects: list[dict[str, Any]] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1232,6 +1429,65 @@ def x__extract_individual_objects__mutmut_22(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = None
+                char = text[i]
+                if in_string:
+                    if escape:
+                        escape = False
+                    elif char == "\\":
+                        escape = True
+                    elif char == '"':
+                        in_string = False
+                else:
+                    if char == '"':
+                        in_string = True
+                    elif char == "{":
+                        depth += 1
+                    elif char == "}":
+                        depth -= 1
+                i += 1
+                if i <= inner_prev_i:
+                    break
+            if depth == 0:
+                candidate = text[start:i]
+                try:
+                    parsed = json.loads(candidate)
+                    if isinstance(parsed, dict):
+                        objects.append(parsed)
+                except (json.JSONDecodeError, ValueError):
+                    cleaned = _TRAILING_COMMA_PATTERN.sub(r"\1", candidate)
+                    try:
+                        parsed = json.loads(cleaned)
+                        if isinstance(parsed, dict):
+                            objects.append(parsed)
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+        else:
+            i += 1
+        if i <= outer_prev_i:
+            break
+    return objects
+
+
+def x__extract_individual_objects__mutmut_24(text: str) -> list[dict[str, Any]]:
+    """Scan text for balanced curly brace blocks and parse each valid JSON object.
+
+    Handles truncated responses or arrays with trailing syntax errors by
+    extracting every syntactically valid object individually.
+    """
+    objects: list[dict[str, Any]] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        outer_prev_i = i
+        if text[i] == "{":
+            depth = 1
+            in_string = False
+            escape = False
+            start = i
+            i += 1
+            while i < n and depth > 0:
+                inner_prev_i = i
                 char = None
                 if in_string:
                     if escape:
@@ -1248,6 +1504,8 @@ def x__extract_individual_objects__mutmut_22(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1264,10 +1522,12 @@ def x__extract_individual_objects__mutmut_22(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_23(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_25(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1277,6 +1537,7 @@ def x__extract_individual_objects__mutmut_23(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1284,6 +1545,7 @@ def x__extract_individual_objects__mutmut_23(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1300,6 +1562,8 @@ def x__extract_individual_objects__mutmut_23(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1316,10 +1580,12 @@ def x__extract_individual_objects__mutmut_23(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_24(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_26(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1329,6 +1595,7 @@ def x__extract_individual_objects__mutmut_24(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1336,6 +1603,7 @@ def x__extract_individual_objects__mutmut_24(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1352,6 +1620,8 @@ def x__extract_individual_objects__mutmut_24(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1368,10 +1638,12 @@ def x__extract_individual_objects__mutmut_24(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_25(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_27(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1381,6 +1653,7 @@ def x__extract_individual_objects__mutmut_25(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1388,6 +1661,7 @@ def x__extract_individual_objects__mutmut_25(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1404,6 +1678,8 @@ def x__extract_individual_objects__mutmut_25(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1420,10 +1696,12 @@ def x__extract_individual_objects__mutmut_25(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_26(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_28(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1433,6 +1711,7 @@ def x__extract_individual_objects__mutmut_26(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1440,6 +1719,7 @@ def x__extract_individual_objects__mutmut_26(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1456,6 +1736,8 @@ def x__extract_individual_objects__mutmut_26(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1472,10 +1754,12 @@ def x__extract_individual_objects__mutmut_26(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_27(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_29(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1485,6 +1769,7 @@ def x__extract_individual_objects__mutmut_27(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1492,6 +1777,7 @@ def x__extract_individual_objects__mutmut_27(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1508,6 +1794,8 @@ def x__extract_individual_objects__mutmut_27(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1524,10 +1812,12 @@ def x__extract_individual_objects__mutmut_27(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_28(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_30(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1537,6 +1827,7 @@ def x__extract_individual_objects__mutmut_28(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1544,6 +1835,7 @@ def x__extract_individual_objects__mutmut_28(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1560,6 +1852,8 @@ def x__extract_individual_objects__mutmut_28(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1576,10 +1870,12 @@ def x__extract_individual_objects__mutmut_28(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_29(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_31(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1589,6 +1885,7 @@ def x__extract_individual_objects__mutmut_29(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1596,6 +1893,7 @@ def x__extract_individual_objects__mutmut_29(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1612,6 +1910,8 @@ def x__extract_individual_objects__mutmut_29(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1628,10 +1928,12 @@ def x__extract_individual_objects__mutmut_29(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_30(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_32(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1641,6 +1943,7 @@ def x__extract_individual_objects__mutmut_30(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1648,6 +1951,7 @@ def x__extract_individual_objects__mutmut_30(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1664,6 +1968,8 @@ def x__extract_individual_objects__mutmut_30(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1680,10 +1986,12 @@ def x__extract_individual_objects__mutmut_30(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_31(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_33(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1693,6 +2001,7 @@ def x__extract_individual_objects__mutmut_31(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1700,6 +2009,7 @@ def x__extract_individual_objects__mutmut_31(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1716,6 +2026,8 @@ def x__extract_individual_objects__mutmut_31(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1732,10 +2044,12 @@ def x__extract_individual_objects__mutmut_31(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_32(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_34(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1745,6 +2059,7 @@ def x__extract_individual_objects__mutmut_32(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1752,6 +2067,7 @@ def x__extract_individual_objects__mutmut_32(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1768,6 +2084,8 @@ def x__extract_individual_objects__mutmut_32(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1784,10 +2102,12 @@ def x__extract_individual_objects__mutmut_32(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_33(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_35(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1797,6 +2117,7 @@ def x__extract_individual_objects__mutmut_33(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1804,6 +2125,7 @@ def x__extract_individual_objects__mutmut_33(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1820,6 +2142,8 @@ def x__extract_individual_objects__mutmut_33(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1836,10 +2160,12 @@ def x__extract_individual_objects__mutmut_33(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_34(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_36(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1849,6 +2175,7 @@ def x__extract_individual_objects__mutmut_34(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1856,6 +2183,7 @@ def x__extract_individual_objects__mutmut_34(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1872,6 +2200,8 @@ def x__extract_individual_objects__mutmut_34(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1888,10 +2218,12 @@ def x__extract_individual_objects__mutmut_34(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_35(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_37(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1901,6 +2233,7 @@ def x__extract_individual_objects__mutmut_35(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1908,6 +2241,7 @@ def x__extract_individual_objects__mutmut_35(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1924,6 +2258,8 @@ def x__extract_individual_objects__mutmut_35(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1940,10 +2276,12 @@ def x__extract_individual_objects__mutmut_35(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_36(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_38(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -1953,6 +2291,7 @@ def x__extract_individual_objects__mutmut_36(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -1960,6 +2299,7 @@ def x__extract_individual_objects__mutmut_36(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -1976,6 +2316,8 @@ def x__extract_individual_objects__mutmut_36(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -1992,10 +2334,12 @@ def x__extract_individual_objects__mutmut_36(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_37(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_39(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2005,6 +2349,7 @@ def x__extract_individual_objects__mutmut_37(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2012,6 +2357,7 @@ def x__extract_individual_objects__mutmut_37(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2028,6 +2374,8 @@ def x__extract_individual_objects__mutmut_37(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2044,10 +2392,12 @@ def x__extract_individual_objects__mutmut_37(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_38(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_40(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2057,6 +2407,7 @@ def x__extract_individual_objects__mutmut_38(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2064,6 +2415,7 @@ def x__extract_individual_objects__mutmut_38(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2080,6 +2432,8 @@ def x__extract_individual_objects__mutmut_38(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2096,10 +2450,12 @@ def x__extract_individual_objects__mutmut_38(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_39(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_41(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2109,6 +2465,7 @@ def x__extract_individual_objects__mutmut_39(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2116,6 +2473,7 @@ def x__extract_individual_objects__mutmut_39(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2132,6 +2490,8 @@ def x__extract_individual_objects__mutmut_39(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2148,10 +2508,12 @@ def x__extract_individual_objects__mutmut_39(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_40(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_42(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2161,6 +2523,7 @@ def x__extract_individual_objects__mutmut_40(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2168,6 +2531,7 @@ def x__extract_individual_objects__mutmut_40(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2184,6 +2548,8 @@ def x__extract_individual_objects__mutmut_40(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2200,10 +2566,12 @@ def x__extract_individual_objects__mutmut_40(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_41(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_43(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2213,6 +2581,7 @@ def x__extract_individual_objects__mutmut_41(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2220,6 +2589,7 @@ def x__extract_individual_objects__mutmut_41(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2236,6 +2606,8 @@ def x__extract_individual_objects__mutmut_41(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2252,10 +2624,12 @@ def x__extract_individual_objects__mutmut_41(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_42(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_44(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2265,6 +2639,7 @@ def x__extract_individual_objects__mutmut_42(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2272,6 +2647,7 @@ def x__extract_individual_objects__mutmut_42(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2288,6 +2664,8 @@ def x__extract_individual_objects__mutmut_42(text: str) -> list[dict[str, Any]]:
                     elif char != "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2304,10 +2682,12 @@ def x__extract_individual_objects__mutmut_42(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_43(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_45(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2317,6 +2697,7 @@ def x__extract_individual_objects__mutmut_43(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2324,6 +2705,7 @@ def x__extract_individual_objects__mutmut_43(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2340,6 +2722,8 @@ def x__extract_individual_objects__mutmut_43(text: str) -> list[dict[str, Any]]:
                     elif char == "XX}XX":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2356,10 +2740,12 @@ def x__extract_individual_objects__mutmut_43(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_44(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_46(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2369,6 +2755,7 @@ def x__extract_individual_objects__mutmut_44(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2376,6 +2763,7 @@ def x__extract_individual_objects__mutmut_44(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2392,6 +2780,8 @@ def x__extract_individual_objects__mutmut_44(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth = 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2408,10 +2798,12 @@ def x__extract_individual_objects__mutmut_44(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_45(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_47(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2421,6 +2813,7 @@ def x__extract_individual_objects__mutmut_45(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2428,6 +2821,7 @@ def x__extract_individual_objects__mutmut_45(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2444,6 +2838,8 @@ def x__extract_individual_objects__mutmut_45(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth += 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2460,10 +2856,12 @@ def x__extract_individual_objects__mutmut_45(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_46(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_48(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2473,6 +2871,7 @@ def x__extract_individual_objects__mutmut_46(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2480,6 +2879,7 @@ def x__extract_individual_objects__mutmut_46(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2496,6 +2896,8 @@ def x__extract_individual_objects__mutmut_46(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 2
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2512,10 +2914,12 @@ def x__extract_individual_objects__mutmut_46(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_47(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_49(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2525,6 +2929,7 @@ def x__extract_individual_objects__mutmut_47(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2532,6 +2937,7 @@ def x__extract_individual_objects__mutmut_47(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2548,6 +2954,8 @@ def x__extract_individual_objects__mutmut_47(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i = 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2564,10 +2972,12 @@ def x__extract_individual_objects__mutmut_47(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_48(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_50(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2577,6 +2987,7 @@ def x__extract_individual_objects__mutmut_48(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2584,6 +2995,7 @@ def x__extract_individual_objects__mutmut_48(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2600,6 +3012,8 @@ def x__extract_individual_objects__mutmut_48(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i -= 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2616,10 +3030,12 @@ def x__extract_individual_objects__mutmut_48(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_49(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_51(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2629,6 +3045,7 @@ def x__extract_individual_objects__mutmut_49(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2636,6 +3053,7 @@ def x__extract_individual_objects__mutmut_49(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2652,6 +3070,8 @@ def x__extract_individual_objects__mutmut_49(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 2
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2668,10 +3088,12 @@ def x__extract_individual_objects__mutmut_49(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_50(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_52(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2681,6 +3103,7 @@ def x__extract_individual_objects__mutmut_50(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2688,6 +3111,7 @@ def x__extract_individual_objects__mutmut_50(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2704,6 +3128,124 @@ def x__extract_individual_objects__mutmut_50(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i < inner_prev_i:
+                    break
+            if depth == 0:
+                candidate = text[start:i]
+                try:
+                    parsed = json.loads(candidate)
+                    if isinstance(parsed, dict):
+                        objects.append(parsed)
+                except (json.JSONDecodeError, ValueError):
+                    cleaned = _TRAILING_COMMA_PATTERN.sub(r"\1", candidate)
+                    try:
+                        parsed = json.loads(cleaned)
+                        if isinstance(parsed, dict):
+                            objects.append(parsed)
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+        else:
+            i += 1
+        if i <= outer_prev_i:
+            break
+    return objects
+
+
+def x__extract_individual_objects__mutmut_53(text: str) -> list[dict[str, Any]]:
+    """Scan text for balanced curly brace blocks and parse each valid JSON object.
+
+    Handles truncated responses or arrays with trailing syntax errors by
+    extracting every syntactically valid object individually.
+    """
+    objects: list[dict[str, Any]] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        outer_prev_i = i
+        if text[i] == "{":
+            depth = 1
+            in_string = False
+            escape = False
+            start = i
+            i += 1
+            while i < n and depth > 0:
+                inner_prev_i = i
+                char = text[i]
+                if in_string:
+                    if escape:
+                        escape = False
+                    elif char == "\\":
+                        escape = True
+                    elif char == '"':
+                        in_string = False
+                else:
+                    if char == '"':
+                        in_string = True
+                    elif char == "{":
+                        depth += 1
+                    elif char == "}":
+                        depth -= 1
+                i += 1
+                if i <= inner_prev_i:
+                    return
+            if depth == 0:
+                candidate = text[start:i]
+                try:
+                    parsed = json.loads(candidate)
+                    if isinstance(parsed, dict):
+                        objects.append(parsed)
+                except (json.JSONDecodeError, ValueError):
+                    cleaned = _TRAILING_COMMA_PATTERN.sub(r"\1", candidate)
+                    try:
+                        parsed = json.loads(cleaned)
+                        if isinstance(parsed, dict):
+                            objects.append(parsed)
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+        else:
+            i += 1
+        if i <= outer_prev_i:
+            break
+    return objects
+
+
+def x__extract_individual_objects__mutmut_54(text: str) -> list[dict[str, Any]]:
+    """Scan text for balanced curly brace blocks and parse each valid JSON object.
+
+    Handles truncated responses or arrays with trailing syntax errors by
+    extracting every syntactically valid object individually.
+    """
+    objects: list[dict[str, Any]] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        outer_prev_i = i
+        if text[i] == "{":
+            depth = 1
+            in_string = False
+            escape = False
+            start = i
+            i += 1
+            while i < n and depth > 0:
+                inner_prev_i = i
+                char = text[i]
+                if in_string:
+                    if escape:
+                        escape = False
+                    elif char == "\\":
+                        escape = True
+                    elif char == '"':
+                        in_string = False
+                else:
+                    if char == '"':
+                        in_string = True
+                    elif char == "{":
+                        depth += 1
+                    elif char == "}":
+                        depth -= 1
+                i += 1
+                if i <= inner_prev_i:
+                    break
             if depth != 0:
                 candidate = text[start:i]
                 try:
@@ -2720,10 +3262,12 @@ def x__extract_individual_objects__mutmut_50(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_51(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_55(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2733,6 +3277,7 @@ def x__extract_individual_objects__mutmut_51(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2740,6 +3285,7 @@ def x__extract_individual_objects__mutmut_51(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2756,6 +3302,8 @@ def x__extract_individual_objects__mutmut_51(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 1:
                 candidate = text[start:i]
                 try:
@@ -2772,10 +3320,12 @@ def x__extract_individual_objects__mutmut_51(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_52(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_56(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2785,6 +3335,7 @@ def x__extract_individual_objects__mutmut_52(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2792,6 +3343,7 @@ def x__extract_individual_objects__mutmut_52(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2808,6 +3360,8 @@ def x__extract_individual_objects__mutmut_52(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = None
                 try:
@@ -2824,10 +3378,12 @@ def x__extract_individual_objects__mutmut_52(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_53(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_57(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2837,6 +3393,7 @@ def x__extract_individual_objects__mutmut_53(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2844,6 +3401,7 @@ def x__extract_individual_objects__mutmut_53(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2860,6 +3418,8 @@ def x__extract_individual_objects__mutmut_53(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2876,10 +3436,12 @@ def x__extract_individual_objects__mutmut_53(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_54(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_58(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2889,6 +3451,7 @@ def x__extract_individual_objects__mutmut_54(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2896,6 +3459,7 @@ def x__extract_individual_objects__mutmut_54(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2912,6 +3476,8 @@ def x__extract_individual_objects__mutmut_54(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2928,10 +3494,12 @@ def x__extract_individual_objects__mutmut_54(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_55(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_59(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2941,6 +3509,7 @@ def x__extract_individual_objects__mutmut_55(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -2948,6 +3517,7 @@ def x__extract_individual_objects__mutmut_55(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -2964,6 +3534,8 @@ def x__extract_individual_objects__mutmut_55(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -2980,10 +3552,12 @@ def x__extract_individual_objects__mutmut_55(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_56(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_60(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -2993,6 +3567,7 @@ def x__extract_individual_objects__mutmut_56(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3000,6 +3575,7 @@ def x__extract_individual_objects__mutmut_56(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3016,6 +3592,8 @@ def x__extract_individual_objects__mutmut_56(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3032,10 +3610,12 @@ def x__extract_individual_objects__mutmut_56(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_57(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_61(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3045,6 +3625,7 @@ def x__extract_individual_objects__mutmut_57(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3052,6 +3633,7 @@ def x__extract_individual_objects__mutmut_57(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3068,6 +3650,8 @@ def x__extract_individual_objects__mutmut_57(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3084,10 +3668,12 @@ def x__extract_individual_objects__mutmut_57(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_58(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_62(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3097,6 +3683,7 @@ def x__extract_individual_objects__mutmut_58(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3104,6 +3691,7 @@ def x__extract_individual_objects__mutmut_58(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3120,6 +3708,8 @@ def x__extract_individual_objects__mutmut_58(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3136,10 +3726,12 @@ def x__extract_individual_objects__mutmut_58(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_59(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_63(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3149,6 +3741,7 @@ def x__extract_individual_objects__mutmut_59(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3156,6 +3749,7 @@ def x__extract_individual_objects__mutmut_59(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3172,6 +3766,8 @@ def x__extract_individual_objects__mutmut_59(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3188,10 +3784,12 @@ def x__extract_individual_objects__mutmut_59(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_60(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_64(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3201,6 +3799,7 @@ def x__extract_individual_objects__mutmut_60(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3208,6 +3807,7 @@ def x__extract_individual_objects__mutmut_60(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3224,6 +3824,8 @@ def x__extract_individual_objects__mutmut_60(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3240,10 +3842,12 @@ def x__extract_individual_objects__mutmut_60(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_61(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_65(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3253,6 +3857,7 @@ def x__extract_individual_objects__mutmut_61(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3260,6 +3865,7 @@ def x__extract_individual_objects__mutmut_61(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3276,6 +3882,8 @@ def x__extract_individual_objects__mutmut_61(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3292,10 +3900,12 @@ def x__extract_individual_objects__mutmut_61(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_62(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_66(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3305,6 +3915,7 @@ def x__extract_individual_objects__mutmut_62(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3312,6 +3923,7 @@ def x__extract_individual_objects__mutmut_62(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3328,6 +3940,8 @@ def x__extract_individual_objects__mutmut_62(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3344,10 +3958,12 @@ def x__extract_individual_objects__mutmut_62(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_63(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_67(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3357,6 +3973,7 @@ def x__extract_individual_objects__mutmut_63(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3364,6 +3981,7 @@ def x__extract_individual_objects__mutmut_63(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3380,6 +3998,8 @@ def x__extract_individual_objects__mutmut_63(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3396,10 +4016,12 @@ def x__extract_individual_objects__mutmut_63(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_64(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_68(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3409,6 +4031,7 @@ def x__extract_individual_objects__mutmut_64(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3416,6 +4039,7 @@ def x__extract_individual_objects__mutmut_64(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3432,6 +4056,8 @@ def x__extract_individual_objects__mutmut_64(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3448,10 +4074,12 @@ def x__extract_individual_objects__mutmut_64(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_65(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_69(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3461,6 +4089,7 @@ def x__extract_individual_objects__mutmut_65(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3468,6 +4097,7 @@ def x__extract_individual_objects__mutmut_65(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3484,6 +4114,8 @@ def x__extract_individual_objects__mutmut_65(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3500,10 +4132,12 @@ def x__extract_individual_objects__mutmut_65(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i = 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_66(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_70(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3513,6 +4147,7 @@ def x__extract_individual_objects__mutmut_66(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3520,6 +4155,7 @@ def x__extract_individual_objects__mutmut_66(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3536,6 +4172,8 @@ def x__extract_individual_objects__mutmut_66(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3552,10 +4190,12 @@ def x__extract_individual_objects__mutmut_66(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i -= 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 
-def x__extract_individual_objects__mutmut_67(text: str) -> list[dict[str, Any]]:
+def x__extract_individual_objects__mutmut_71(text: str) -> list[dict[str, Any]]:
     """Scan text for balanced curly brace blocks and parse each valid JSON object.
 
     Handles truncated responses or arrays with trailing syntax errors by
@@ -3565,6 +4205,7 @@ def x__extract_individual_objects__mutmut_67(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -3572,6 +4213,7 @@ def x__extract_individual_objects__mutmut_67(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -3588,6 +4230,8 @@ def x__extract_individual_objects__mutmut_67(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -3604,6 +4248,124 @@ def x__extract_individual_objects__mutmut_67(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 2
+        if i <= outer_prev_i:
+            break
+    return objects
+
+
+def x__extract_individual_objects__mutmut_72(text: str) -> list[dict[str, Any]]:
+    """Scan text for balanced curly brace blocks and parse each valid JSON object.
+
+    Handles truncated responses or arrays with trailing syntax errors by
+    extracting every syntactically valid object individually.
+    """
+    objects: list[dict[str, Any]] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        outer_prev_i = i
+        if text[i] == "{":
+            depth = 1
+            in_string = False
+            escape = False
+            start = i
+            i += 1
+            while i < n and depth > 0:
+                inner_prev_i = i
+                char = text[i]
+                if in_string:
+                    if escape:
+                        escape = False
+                    elif char == "\\":
+                        escape = True
+                    elif char == '"':
+                        in_string = False
+                else:
+                    if char == '"':
+                        in_string = True
+                    elif char == "{":
+                        depth += 1
+                    elif char == "}":
+                        depth -= 1
+                i += 1
+                if i <= inner_prev_i:
+                    break
+            if depth == 0:
+                candidate = text[start:i]
+                try:
+                    parsed = json.loads(candidate)
+                    if isinstance(parsed, dict):
+                        objects.append(parsed)
+                except (json.JSONDecodeError, ValueError):
+                    cleaned = _TRAILING_COMMA_PATTERN.sub(r"\1", candidate)
+                    try:
+                        parsed = json.loads(cleaned)
+                        if isinstance(parsed, dict):
+                            objects.append(parsed)
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+        else:
+            i += 1
+        if i < outer_prev_i:
+            break
+    return objects
+
+
+def x__extract_individual_objects__mutmut_73(text: str) -> list[dict[str, Any]]:
+    """Scan text for balanced curly brace blocks and parse each valid JSON object.
+
+    Handles truncated responses or arrays with trailing syntax errors by
+    extracting every syntactically valid object individually.
+    """
+    objects: list[dict[str, Any]] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        outer_prev_i = i
+        if text[i] == "{":
+            depth = 1
+            in_string = False
+            escape = False
+            start = i
+            i += 1
+            while i < n and depth > 0:
+                inner_prev_i = i
+                char = text[i]
+                if in_string:
+                    if escape:
+                        escape = False
+                    elif char == "\\":
+                        escape = True
+                    elif char == '"':
+                        in_string = False
+                else:
+                    if char == '"':
+                        in_string = True
+                    elif char == "{":
+                        depth += 1
+                    elif char == "}":
+                        depth -= 1
+                i += 1
+                if i <= inner_prev_i:
+                    break
+            if depth == 0:
+                candidate = text[start:i]
+                try:
+                    parsed = json.loads(candidate)
+                    if isinstance(parsed, dict):
+                        objects.append(parsed)
+                except (json.JSONDecodeError, ValueError):
+                    cleaned = _TRAILING_COMMA_PATTERN.sub(r"\1", candidate)
+                    try:
+                        parsed = json.loads(cleaned)
+                        if isinstance(parsed, dict):
+                            objects.append(parsed)
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+        else:
+            i += 1
+        if i <= outer_prev_i:
+            return
     return objects
 
 mutants_x__extract_individual_objects__mutmut['_mutmut_orig'] = x__extract_individual_objects__mutmut_orig # type: ignore # mutmut generated
@@ -3674,6 +4436,12 @@ mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mu
 mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_65'] = x__extract_individual_objects__mutmut_65 # type: ignore # mutmut generated
 mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_66'] = x__extract_individual_objects__mutmut_66 # type: ignore # mutmut generated
 mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_67'] = x__extract_individual_objects__mutmut_67 # type: ignore # mutmut generated
+mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_68'] = x__extract_individual_objects__mutmut_68 # type: ignore # mutmut generated
+mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_69'] = x__extract_individual_objects__mutmut_69 # type: ignore # mutmut generated
+mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_70'] = x__extract_individual_objects__mutmut_70 # type: ignore # mutmut generated
+mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_71'] = x__extract_individual_objects__mutmut_71 # type: ignore # mutmut generated
+mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_72'] = x__extract_individual_objects__mutmut_72 # type: ignore # mutmut generated
+mutants_x__extract_individual_objects__mutmut['x__extract_individual_objects__mutmut_73'] = x__extract_individual_objects__mutmut_73 # type: ignore # mutmut generated
 mutants_x_extract_json_data__mutmut: MutantDict = {}  # type: ignore
 
 

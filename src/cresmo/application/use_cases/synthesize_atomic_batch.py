@@ -24,11 +24,18 @@ from cresmo.domain.value_objects import (
     NoteType,
 )
 
-_PREFIX_RE = re.compile(r"^(?:o|a|os|as|um|uma|uns|umas|dr|dra|prof|dom|frei)\s+", re.IGNORECASE)
+_HONORIFIC_PREFIXES: tuple[str, ...] = ("dom ", "dona ", "d. ", "d ")
+_PUNCT_COLLAPSE_RE = re.compile(r"[\s\-_.,()]+")
 
 
-def _norm_honorific(text: str) -> str:
-    return _PREFIX_RE.sub("", text.strip().lower())
+def _norm_honorific(s: str) -> str:
+    """Normalize note title by stripping honorific prefixes and collapsing punctuation."""
+    cleaned = s.lower().strip()
+    for pfx in _HONORIFIC_PREFIXES:
+        if cleaned.startswith(pfx):
+            cleaned = cleaned[len(pfx) :].strip()
+            break
+    return _PUNCT_COLLAPSE_RE.sub(" ", cleaned).strip()
 
 
 class SynthesizeAtomicBatchUseCase:
@@ -75,14 +82,6 @@ class SynthesizeAtomicBatchUseCase:
             existing_lookup[n.title.value.lower()] = n
             for a in n.aliases:
                 existing_lookup[a.lower()] = n
-
-        def _norm_honorific(s: str) -> str:
-            cleaned = s.lower().strip()
-            for pfx in ("dom ", "dona ", "d. ", "d "):
-                if cleaned.startswith(pfx):
-                    cleaned = cleaned[len(pfx) :].strip()
-                    break
-            return re.sub(r"[\s\-_.,()]+", " ", cleaned).strip()
 
         norm_lookup: dict[str, AtomicNote] = {
             _norm_honorific(n.title.value): n

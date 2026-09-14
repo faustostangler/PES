@@ -82,7 +82,10 @@ class TestNoteType:
         assert NoteType.from_string(raw) == expected
 
     def test_invalid_note_type_raises_typology_error(self) -> None:
-        with pytest.raises(NoteTypologyError):
+        with pytest.raises(
+            NoteTypologyError,
+            match=r"Invalid note typology 'invalid_type'\. Expected one of: \['concept', 'entity', 'event', 'process'\]",
+        ):
             NoteType.from_string("invalid_type")
 
 

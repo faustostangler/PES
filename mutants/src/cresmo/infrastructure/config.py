@@ -15,7 +15,17 @@ from typing import Self
 from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-_WORKSPACE_DIR = Path(__file__).resolve().parents[3]
+
+def find_workspace_root(start_path: Path | None = None) -> Path:
+    """Locate the workspace root directory using Anchor Marker resolution."""
+    current = (start_path or Path(__file__)).resolve()
+    for directory in [current, *current.parents]:
+        if (directory / "pyproject.toml").exists() or (directory / ".git").exists():
+            return directory
+    return (start_path or Path(__file__)).resolve().parents[3]
+
+
+_WORKSPACE_DIR = find_workspace_root()
 
 
 from mutmut.mutation.trampoline import wrap_in_trampoline as _mutmut_mutated, MutantDict
@@ -435,6 +445,7 @@ class CresmoSettings(BaseSettings):
         if self.channel_discovery_workers <= 0:
             self.channel_discovery_workers = max(1, self.whisper_workers * 10)
         return self
+
     batch_size: int = Field(
         default=5,
         validation_alias=AliasChoices("batch_size", "stage_5_batch_size", "atomic_batch_size"),
@@ -481,4 +492,3 @@ mutants_xǁCresmoSettingsǁensure_directories__mutmut['xǁCresmoSettingsǁensure
 mutants_xǁCresmoSettingsǁensure_directories__mutmut['xǁCresmoSettingsǁensure_directories__mutmut_28'] = CresmoSettings.xǁCresmoSettingsǁensure_directories__mutmut_28 # type: ignore # mutmut generated
 mutants_xǁCresmoSettingsǁensure_directories__mutmut['xǁCresmoSettingsǁensure_directories__mutmut_29'] = CresmoSettings.xǁCresmoSettingsǁensure_directories__mutmut_29 # type: ignore # mutmut generated
 mutants_xǁCresmoSettingsǁensure_directories__mutmut['xǁCresmoSettingsǁensure_directories__mutmut_30'] = CresmoSettings.xǁCresmoSettingsǁensure_directories__mutmut_30 # type: ignore # mutmut generated
-

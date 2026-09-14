@@ -14,12 +14,13 @@ from pathlib import Path
 from typing import Any
 
 from cresmo.application.ports import PromptProviderPort
+from cresmo.infrastructure.config import find_workspace_root
 
 logger = logging.getLogger(__name__)
 
 _CANDIDATE_SKILLS_DIRS = (
     Path.cwd() / ".agents" / "skills",
-    Path(__file__).resolve().parents[4] / ".agents" / "skills",
+    find_workspace_root() / ".agents" / "skills",
 )
 
 

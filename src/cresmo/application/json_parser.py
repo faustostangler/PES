@@ -24,6 +24,7 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
     i = 0
     n = len(text)
     while i < n:
+        outer_prev_i = i
         if text[i] == "{":
             depth = 1
             in_string = False
@@ -31,6 +32,7 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
             start = i
             i += 1
             while i < n and depth > 0:
+                inner_prev_i = i
                 char = text[i]
                 if in_string:
                     if escape:
@@ -47,6 +49,8 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
                     elif char == "}":
                         depth -= 1
                 i += 1
+                if i <= inner_prev_i:
+                    break
             if depth == 0:
                 candidate = text[start:i]
                 try:
@@ -63,6 +67,8 @@ def _extract_individual_objects(text: str) -> list[dict[str, Any]]:
                         pass
         else:
             i += 1
+        if i <= outer_prev_i:
+            break
     return objects
 
 

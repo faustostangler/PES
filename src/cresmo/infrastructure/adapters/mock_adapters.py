@@ -80,7 +80,6 @@ class MockMediaIngestionPort(MediaIngestionPort):
         return getattr(self, "canned_channel_url", None)
 
 
-
 class MockLLMAdapter(LLMTransformationPort):
     """In-memory mock for LLMTransformationPort."""
 

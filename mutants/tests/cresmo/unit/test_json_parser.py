@@ -68,3 +68,68 @@ class TestJsonParser:
         assert len(result) == 2
         assert result[0]["title"] == "Item 1"
         assert result[1]["title"] == "Item 2"
+
+    def test_markdown_fence_with_trailing_comma(self) -> None:
+        raw = 'Explanation:\n```json\n[{"title": "Note 1", "type": "concept"}, ]\n```\nDone.'
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert result[0]["title"] == "Note 1"
+
+    def test_markdown_multiple_fences_skips_invalid(self) -> None:
+        raw = '```json\nInvalid {Not JSON}\n```\n```json\n[{"title": "Valid Fence"}]\n```'
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert result[0]["title"] == "Valid Fence"
+
+    def test_outermost_brackets_with_trailing_comma(self) -> None:
+        raw = 'Preceding text [{"title": "Bracket Trailing", "type": "entity"}, ] trailing words.'
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert result[0]["title"] == "Bracket Trailing"
+
+    def test_extract_individual_objects_escapes_and_nested_braces(self) -> None:
+        raw = (
+            'Some partial stream: [{"title": "Quote \\"Nested\\"", "meta": {"depth": 2}}, '
+            '{"title": "Back\\\\slash"}, {"broken": "unclosed'
+        )
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert len(result) == 2
+        assert result[0]["meta"]["depth"] == 2
+        assert result[1]["title"] == "Back\\slash"
+
+    def test_extract_individual_objects_with_trailing_comma(self) -> None:
+        raw = 'Text: {"title": "Object 1", "type": "concept", } and then {"title": "Object 2"}'
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert len(result) == 2
+        assert result[0]["title"] == "Object 1"
+        assert result[1]["title"] == "Object 2"
+
+    def test_extract_single_object_without_brackets_returns_dict(self) -> None:
+        # Step 4 will fail because the outermost braces span invalid content across multiple blocks
+        raw = 'prefix { "title": "Single" } suffix with unclosed { brace'
+        result = extract_json_data(raw)
+        assert isinstance(result, dict)
+        assert result["title"] == "Single"
+
+    def test_outermost_brackets_malformed_falls_through_to_step5(self) -> None:
+        raw = 'Unclosed [ not json at all but here is {"title": "Salvaged 1"} and {"title": "Salvaged 2"} inside ]'
+        result = extract_json_data(raw)
+        assert isinstance(result, list)
+        assert len(result) == 2
+        assert result[0]["title"] == "Salvaged 1"
+        assert result[1]["title"] == "Salvaged 2"
+
+    def test_outermost_braces_malformed_with_extra_trailing_brace_returns_single_dict(self) -> None:
+        raw = 'prefix text {"title": "Single Salvaged", "val": 1} stray text }'
+        result = extract_json_data(raw)
+        assert isinstance(result, dict)
+        assert result["title"] == "Single Salvaged"
+
+    def test_individual_objects_skips_unparseable_block(self) -> None:
+        raw = 'Random stream: {"invalid": unquoted_bareword} and {"valid": "recovered"}'
+        result = extract_json_data(raw)
+        assert isinstance(result, dict)
+        assert result["valid"] == "recovered"

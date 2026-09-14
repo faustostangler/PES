@@ -60,7 +60,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         self._header_generator = header_generator or RandomHeaderGenerator()
         self._whisper_semaphore = threading.BoundedSemaphore(max(1, whisper_concurrency_limit))
 
-
     def _extract_video_id(self, url: str) -> str:
         """Extract YouTube video identifier from URL string."""
         match = _VIDEO_ID_REGEX.search(url)
@@ -245,7 +244,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
 
         return body, channel_name
 
-
     def ingest_single_video(
         self,
         video_url: str,
@@ -287,10 +285,12 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         body = ""
 
         if sub_url:
-            raw_sub = self._fetch_url_content(sub_url)
             try:
+                raw_sub = self._fetch_url_content(sub_url)
                 sub_data = json.loads(raw_sub)
                 body = self._reconstruct_json3_paragraphs(sub_data)
+            except RateLimitExceededError:
+                raise
             except Exception:  # noqa: BLE001
                 body = ""
 
@@ -429,7 +429,6 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
         except Exception:  # noqa: BLE001
             return None
 
-
         if not info or not isinstance(info, dict):
             return None
 
@@ -442,4 +441,3 @@ class NativeMediaIngestionAdapter(MediaIngestionPort):
             return f"https://www.youtube.com/channel/{str(channel_id).strip()}"
 
         return None
-

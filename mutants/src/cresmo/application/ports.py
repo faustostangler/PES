@@ -98,7 +98,6 @@ class MediaIngestionPort(ABC):
         raise NotImplementedError("Step 1: Implement video channel resolution contract.")
 
 
-
 class LLMTransformationPort(ABC):
     """Port defining contract for text generation and structured extraction."""
 
