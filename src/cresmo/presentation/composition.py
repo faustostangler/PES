@@ -6,8 +6,11 @@ from CresmoSettings to concrete infrastructure adapters and instantiating Cresmo
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from cresmo.application.pipeline import CresmoPipeline
 from cresmo.application.services.preflight import PreflightHealthChecker
+from cresmo.application.use_cases.discover_batch_sources import DiscoverBatchSourcesUseCase
 from cresmo.application.use_cases.sync_channel import SyncChannelUseCase
 from cresmo.application.use_cases.unify_duplicate_notes import UnifyDuplicateNotesUseCase
 from cresmo.infrastructure.adapters.gemini_adapter import GeminiLLMAdapter
@@ -162,3 +165,31 @@ def build_unify_duplicates_use_case(
         enriched_dir=resolved_settings.enriched_dir,
     )
     return UnifyDuplicateNotesUseCase(vault_port=vault_port)
+
+
+def build_discover_batch_sources_use_case(
+    settings: CresmoSettings | None = None,
+    progress_callback: Callable[[str], object] | None = None,
+) -> DiscoverBatchSourcesUseCase:
+    """Construct DiscoverBatchSourcesUseCase with NativeMediaIngestionAdapter wired.
+
+    Args:
+        settings: Validated application settings.
+        progress_callback: Optional callback for status and discovery notifications.
+
+    Returns:
+        Configured DiscoverBatchSourcesUseCase instance.
+    """
+    resolved_settings = settings or CresmoSettings()
+    headers_path = getattr(resolved_settings, "browser_headers_path", None)
+    header_generator = RandomHeaderGenerator(headers_path=headers_path)
+    whisper_workers = getattr(resolved_settings, "whisper_workers", 1)
+    media_ingestion_port = NativeMediaIngestionAdapter(
+        header_generator=header_generator,
+        whisper_concurrency_limit=whisper_workers,
+    )
+    return DiscoverBatchSourcesUseCase(
+        media_ingestion_port=media_ingestion_port,
+        settings=resolved_settings,
+        progress_callback=progress_callback,
+    )

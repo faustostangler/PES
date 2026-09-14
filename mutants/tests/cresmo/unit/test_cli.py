@@ -479,8 +479,7 @@ class TestCresmoCLI:
 
     def test_load_batch_sources_includes_raw_directory(self, tmp_path: Path) -> None:
         """Verify local raw transcript lake files are loaded into Tier 2."""
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
-        from cresmo.presentation.commands.run import load_batch_sources
+        from cresmo.presentation.cli import _load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
         settings.priority_texts_dir = tmp_path / "priority"
@@ -498,8 +497,7 @@ class TestCresmoCLI:
         raw_file = chan_dir / "vid123.md"
         raw_file.write_text("---\nvideo_title: 'Test'\n---\nTranscript body", encoding="utf-8")
 
-        query = BatchDiscoveryQuery(scan_raw=True)
-        sources = load_batch_sources(query=query, settings=settings)
+        sources = _load_batch_sources(settings)
         targets = [s.target for s in sources]
         assert str(raw_file.resolve()) in targets
         raw_src = next(s for s in sources if s.target == str(raw_file.resolve()))
@@ -509,9 +507,8 @@ class TestCresmoCLI:
         """Verify channel URLs in playlist.txt trigger discover_channel_feed with lookback window."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
         from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
-        from cresmo.presentation.commands.run import load_batch_sources
+        from cresmo.presentation.cli import _load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
         settings.priority_texts_dir = tmp_path / "priority"
@@ -544,8 +541,7 @@ class TestCresmoCLI:
         )
         mock_ingestion.discover_channel_feed.return_value = [recent_item, old_item]
 
-        query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
+        sources = _load_batch_sources(settings, media_ingestion_port=mock_ingestion)
         urls = [s.target for s in sources if s.kind == "url"]
         assert "https://www.youtube.com/watch?v=recent123" in urls
         assert "https://www.youtube.com/watch?v=old123456" not in urls
@@ -557,9 +553,8 @@ class TestCresmoCLI:
         """Verify video URLs in playlist.txt resolve parent channel and query its feed."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
         from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
-        from cresmo.presentation.commands.run import load_batch_sources
+        from cresmo.presentation.cli import _load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
         settings.priority_texts_dir = tmp_path / "priority"
@@ -588,8 +583,7 @@ class TestCresmoCLI:
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
-        query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
+        sources = _load_batch_sources(settings, media_ingestion_port=mock_ingestion)
         urls = [s.target for s in sources if s.kind == "url"]
 
         # Both seed video and discovered channel video should be present in sources
@@ -608,9 +602,8 @@ class TestCresmoCLI:
         """Verify multiple videos from the same channel trigger channel feed query only once."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
         from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
-        from cresmo.presentation.commands.run import load_batch_sources
+        from cresmo.presentation.cli import _load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
         settings.priority_texts_dir = tmp_path / "priority"
@@ -643,8 +636,7 @@ class TestCresmoCLI:
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
-        query = BatchDiscoveryQuery(scan_raw=False)
-        sources = load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
+        sources = _load_batch_sources(settings, media_ingestion_port=mock_ingestion)
         urls = [s.target for s in sources if s.kind == "url"]
 
         assert "https://www.youtube.com/watch?v=videoA1234" in urls
@@ -659,9 +651,8 @@ class TestCresmoCLI:
         """Verify channel is extracted from local raw frontmatter without remote resolution call."""
         from datetime import UTC, datetime, timedelta
 
-        from cresmo.application.use_cases.discover_batch_sources import BatchDiscoveryQuery
         from cresmo.domain.value_objects import ContentId, DiscoveredMediaItem
-        from cresmo.presentation.commands.run import load_batch_sources
+        from cresmo.presentation.cli import _load_batch_sources
 
         settings = MagicMock(spec=CresmoSettings)
         settings.priority_texts_dir = tmp_path / "priority"
@@ -695,15 +686,13 @@ class TestCresmoCLI:
         )
         mock_ingestion.discover_channel_feed.return_value = [discovered_item]
 
-        query = BatchDiscoveryQuery(scan_raw=True)
-        sources = load_batch_sources(query=query, settings=settings, media_ingestion_port=mock_ingestion)
+        sources = _load_batch_sources(settings, media_ingestion_port=mock_ingestion)
         urls = [s.target for s in sources if s.kind == "url"]
 
         assert "https://www.youtube.com/watch?v=discLocalCh_item" in urls
         # extract_channel_url_from_video should NOT be called because it was resolved from raw frontmatter
         mock_ingestion.extract_channel_url_from_video.assert_not_called()
         mock_ingestion.discover_channel_feed.assert_called_once()
-
         call_query = mock_ingestion.discover_channel_feed.call_args[0][0]
         assert call_query.channel_url == "https://www.youtube.com/channel/UCLocal123"
 
